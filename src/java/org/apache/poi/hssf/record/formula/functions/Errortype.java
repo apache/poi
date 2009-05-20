@@ -6,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-	   http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,8 +43,8 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  *      <tr><td>#N/A!</td><td>7</td></tr>
  *      <tr><td>everything else</td><td>#N/A!</td></tr>
  *    </table>
- * 
- * Note - the results of ERROR.TYPE() are different to the constants defined in 
+ *
+ * Note - the results of ERROR.TYPE() are different to the constants defined in
  * <tt>HSSFErrorConstants</tt>.
  * </p>
  *
@@ -53,7 +53,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 public final class Errortype implements Function {
 
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-		
+
 		try {
 			OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
 			return ErrorEval.NA;

@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * 
+ *
  * @author Josh Micich
  */
 public final class Choose implements Function {

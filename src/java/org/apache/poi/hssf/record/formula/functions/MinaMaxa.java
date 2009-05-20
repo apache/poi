@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record.formula.functions;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
 public abstract class MinaMaxa extends MultiOperandNumericFunction {
 

@@ -34,15 +34,15 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
-public class Mode implements Function {
+public final class Mode implements Function {
 
 	/**
 	 * if v is zero length or contains no duplicates, return value is
 	 * Double.NaN. Else returns the value that occurs most times and if there is
 	 * a tie, returns the first such value.
-	 * 
+	 *
 	 * @param v
 	 */
 	public static double evaluate(double[] v) throws EvaluationException {
@@ -77,13 +77,13 @@ public class Mode implements Function {
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		double result;
 		try {
-			List temp = new ArrayList();
+			List<Double> temp = new ArrayList<Double>();
 			for (int i = 0; i < args.length; i++) {
 				collectValues(args[i], temp);
 			}
 			double[] values = new double[temp.size()];
 			for (int i = 0; i < values.length; i++) {
-				values[i] = ((Double) temp.get(i)).doubleValue();
+				values[i] = temp.get(i).doubleValue();
 			}
 			result = evaluate(values);
 		} catch (EvaluationException e) {
@@ -92,7 +92,7 @@ public class Mode implements Function {
 		return new NumberEval(result);
 	}
 
-	private static void collectValues(Eval arg, List temp) throws EvaluationException {
+	private static void collectValues(Eval arg, List<Double> temp) throws EvaluationException {
 		if (arg instanceof AreaEval) {
 			AreaEval ae = (AreaEval) arg;
 			int width = ae.getWidth();
@@ -114,7 +114,7 @@ public class Mode implements Function {
 
 	}
 
-	private static void collectValue(Eval arg, List temp, boolean mustBeNumber)
+	private static void collectValue(Eval arg, List<Double> temp, boolean mustBeNumber)
 			throws EvaluationException {
 		if (arg instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) arg);

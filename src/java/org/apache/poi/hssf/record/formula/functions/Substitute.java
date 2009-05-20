@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * An implementation of the SUBSTITUTE function:
+ * An implementation of the SUBSTITUTE function:<P/>
  * Substitutes text in a text string with new text, some number of times.
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */

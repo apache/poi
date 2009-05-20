@@ -26,14 +26,14 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Implementation for Excel VALUE() function.<p/>
- * 
+ *
  * <b>Syntax</b>:<br/> <b>VALUE</b>(<b>text</b>)<br/>
- * 
+ *
  * Converts the text argument to a number. Leading and/or trailing whitespace is
  * ignored. Currency symbols and thousands separators are stripped out.
  * Scientific notation is also supported. If the supplied text does not convert
  * properly the result is <b>#VALUE!</b> error. Blank string converts to zero.
- * 
+ *
  * @author Josh Micich
  */
 public final class Value implements Function {
@@ -61,8 +61,8 @@ public final class Value implements Function {
 	}
 
 	/**
-	 * TODO see if the same functionality is needed in {@link OperandResolver#parseDouble(String)} 
-	 * 
+	 * TODO see if the same functionality is needed in {@link OperandResolver#parseDouble(String)}
+	 *
 	 * @return <code>null</code> if there is any problem converting the text
 	 */
 	private static Double convertTextToNumber(String strText) {
@@ -156,7 +156,7 @@ public final class Value implements Function {
 					lastThousandsSeparatorIndex = i;
 					// don't append ','
 					continue;
-	
+
 				case 'E':
 				case 'e':
 					if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {

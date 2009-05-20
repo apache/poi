@@ -29,10 +29,10 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Implementation for Excel function OFFSET()<p/>
- * 
- * OFFSET returns an area reference that is a specified number of rows and columns from a 
+ *
+ * OFFSET returns an area reference that is a specified number of rows and columns from a
  * reference cell or area.<p/>
- * 
+ *
  * <b>Syntax</b>:<br/>
  * <b>OFFSET</b>(<b>reference</b>, <b>rows</b>, <b>cols</b>, height, width)<p/>
  * <b>reference</b> is the base reference.<br/>
@@ -40,16 +40,16 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * <b>cols</b> is the number of columns left or right from the base reference.<br/>
  * <b>height</b> (default same height as base reference) is the row count for the returned area reference.<br/>
  * <b>width</b> (default same width as base reference) is the column count for the returned area reference.<br/>
- * 
+ *
  * @author Josh Micich
  */
 public final class Offset implements Function {
 	// These values are specific to BIFF8
 	private static final int LAST_VALID_ROW_INDEX = 0xFFFF;
 	private static final int LAST_VALID_COLUMN_INDEX = 0xFF;
-	
 
-	/** 
+
+	/**
 	 * A one dimensional base + offset.  Represents either a row range or a column range.
 	 * Two instances of this class together specify an area range.
 	 */
@@ -66,7 +66,7 @@ public final class Offset implements Function {
 			_offset = offset;
 			_length = length;
 		}
-		
+
 		public short getFirstIndex() {
 			return (short) _offset;
 		}
@@ -75,13 +75,13 @@ public final class Offset implements Function {
 		}
 		/**
 		 * Moves the range by the specified translation amount.<p/>
-		 * 
-		 * This method also 'normalises' the range: Excel specifies that the width and height 
+		 *
+		 * This method also 'normalises' the range: Excel specifies that the width and height
 		 * parameters (length field here) cannot be negative.  However, OFFSET() does produce
 		 * sensible results in these cases.  That behavior is replicated here. <p/>
-		 * 
+		 *
 		 * @param translationAmount may be zero negative or positive
-		 * 
+		 *
 		 * @return the equivalent <tt>LinearOffsetRange</tt> with a positive length, moved by the
 		 * specified translationAmount.
 		 */
@@ -123,7 +123,7 @@ public final class Offset implements Function {
 		private final int _height;
 		private final RefEval _refEval;
 		private final AreaEval _areaEval;
-		
+
 		public BaseRef(RefEval re) {
 			_refEval = re;
 			_areaEval = null;
@@ -155,7 +155,7 @@ public final class Offset implements Function {
 			return _firstColumnIndex;
 		}
 
-		public AreaEval offset(int relFirstRowIx, int relLastRowIx, 
+		public AreaEval offset(int relFirstRowIx, int relLastRowIx,
 				int relFirstColIx, int relLastColIx) {
 			if (_refEval == null) {
 				return _areaEval.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
@@ -163,12 +163,12 @@ public final class Offset implements Function {
 			return _refEval.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 		}
 	}
-	
+
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		
+
 		try {
 			BaseRef baseRef = evaluateBaseRef(args[0]);
 			int rowOffset = evaluateIntArg(args[1], srcCellRow, srcCellCol);
@@ -193,11 +193,11 @@ public final class Offset implements Function {
 		}
 	}
 
-	private static AreaEval createOffset(BaseRef baseRef, 
+	private static AreaEval createOffset(BaseRef baseRef,
 			LinearOffsetRange orRow, LinearOffsetRange orCol) throws EvaluationException {
 		LinearOffsetRange absRows = orRow.normaliseAndTranslate(baseRef.getFirstRowIndex());
 		LinearOffsetRange absCols = orCol.normaliseAndTranslate(baseRef.getFirstColumnIndex());
-		
+
 		if(absRows.isOutOfBounds(0, LAST_VALID_ROW_INDEX)) {
 			throw new EvaluationException(ErrorEval.REF_INVALID);
 		}
@@ -208,7 +208,7 @@ public final class Offset implements Function {
 	}
 
 	private static BaseRef evaluateBaseRef(Eval eval) throws EvaluationException {
-		
+
 		if(eval instanceof RefEval) {
 			return new BaseRef((RefEval)eval);
 		}
@@ -239,10 +239,10 @@ public final class Offset implements Function {
 		// but Math.floor() truncates toward negative infinity
 		return (int)Math.floor(d);
 	}
-	
+
 	private static double evaluateDoubleArg(Eval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcCellRow, srcCellCol);
-		
+
 		if (ve instanceof NumericValueEval) {
 			return ((NumericValueEval) ve).getNumberValue();
 		}

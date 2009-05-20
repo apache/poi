@@ -21,15 +21,15 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
- * 
+ *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * This is the default implementation of a Function class. 
- * The default behaviour is to raise a POI internal error 
- * ({@link NotImplementedException}). This error should alert 
+ * This is the default implementation of a Function class.
+ * The default behaviour is to raise a POI internal error
+ * ({@link NotImplementedException}). This error should alert
  * the user that the formula contained a function that is not
  * yet implemented.
  */
-public class NotImplementedFunction implements Function {
+public final class NotImplementedFunction implements Function {
 	private final String _functionName;
 	protected NotImplementedFunction() {
 		_functionName = getClass().getName();
@@ -37,8 +37,11 @@ public class NotImplementedFunction implements Function {
 	public NotImplementedFunction(String name) {
 		_functionName = name;
 	}
-	
+
 	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
 		throw new NotImplementedException(_functionName);
+	}
+	public String getFunctionName() {
+		return _functionName;
 	}
 }

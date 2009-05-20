@@ -30,8 +30,6 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 		super(false, false);
 	}
 
-	/* ---------------------------------------------------------------------- */
-
 	public static final Function AVEDEV = new AggregateFunction() {
 		protected double evaluate(double[] values) {
 			return StatsLib.avedev(values);

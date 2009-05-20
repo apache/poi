@@ -25,21 +25,21 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 
 /**
  * Implementation of Excel HYPERLINK function.<p/>
- * 
+ *
  * In Excel this function has special behaviour - it causes the displayed cell value to behave like
- * a hyperlink in the GUI. From an evaluation perspective however, it is very simple.<p/> 
- * 
+ * a hyperlink in the GUI. From an evaluation perspective however, it is very simple.<p/>
+ *
  * <b>Syntax</b>:<br/>
  * <b>HYPERLINK</b>(<b>link_location</b>, friendly_name)<p/>
- * 
+ *
  * <b>link_location</b> The URL of the hyperlink <br/>
  * <b>friendly_name</b> (optional) the value to display<p/>
- * 
+ *
  *  Returns last argument.  Leaves type unchanged (does not convert to {@link StringEval}).
 
  * @author Wayne Clingingsmith
  */
-public class Hyperlink implements Function {
+public final class Hyperlink implements Function {
 
 	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
 		int lastArgIx = operands.length - 1;

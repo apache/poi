@@ -60,8 +60,7 @@ public abstract class NumericFunction implements Function {
 	protected abstract double eval(Eval[] args, int srcCellRow, short srcCellCol) throws EvaluationException;
 
 	/* -------------------------------------------------------------------------- */
-	// intermediate sub-classes (one-arg, two-arg and multi-arg
-
+	// intermediate sub-classes (one-arg, two-arg and multi-arg)
 
 	public static abstract class OneArg extends NumericFunction {
 		protected OneArg() {
@@ -114,7 +113,6 @@ public abstract class NumericFunction implements Function {
 	}
 
 	/* -------------------------------------------------------------------------- */
-
 
 	public static final Function ABS = new OneArg() {
 		protected double evaluate(double d) {
@@ -232,7 +230,6 @@ public abstract class NumericFunction implements Function {
 			return MathX.tanh(d);
 		}
 	};
-
 
 	/* -------------------------------------------------------------------------- */
 

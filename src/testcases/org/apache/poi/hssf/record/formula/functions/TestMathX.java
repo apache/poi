@@ -458,54 +458,6 @@ public class TestMathX extends AbstractNumericTestCase {
         
     }
 
-    public void testSumproduct() {
-        double d = 0;
-        double[][] darr = new double[][]
-               {{0   ,0.11   ,23.23},
-                {1  ,0.22   ,46.46},
-                {2  ,0.33   ,69.69},
-                {3  ,0.44   ,92.92},
-                {4  ,0.55   ,116.15},
-                {5  ,0.66   ,139.38},
-                {6  ,0.77   ,162.61},
-                {7  ,0.88   ,185.84},
-                {8  ,0.99   ,209.07},
-                {9  ,1.1    ,232.3},
-                {10 ,1.21   ,255.53}};
-        d = MathX.sumproduct(darr);
-        assertEquals("Sumproduct ", 4.243234425E+22, d);
-        darr = new double[][]
-               {{0  ,0.11   ,23.23},
-                {0  ,0.22   ,46.46},
-                {0  ,0.33   ,69.69},
-                {0  ,0.44   ,92.92},
-                {0  ,0.55   ,116.15},
-                {0  ,0.66   ,139.38},
-                {0  ,0.77   ,162.61},
-                {0  ,0.88   ,185.84},
-                {0  ,0.99   ,209.07},
-                {0  ,1.1    ,232.3},
-                {0  ,1.21   ,255.53}};
-        d = MathX.sumproduct(darr);
-        assertEquals("Sumproduct ", 4.243234425E+22, d);
-        
-        darr = new double[][]
-               {{0, 0, 0, 0, 0, 0, 0, 0},
-                {0.11, 0.22, 0.33, 0.44, 0.55, 0.66, 0.77, 0.88},
-                {23.23, 46.46, 69.69, 92.92, 116.15, 139.38, 162.61, 185.84}};
-        d = MathX.sumproduct(darr);
-        assertEquals("Sumproduct ", 0, d);
-
-        darr = new double[][]
-               {{0, 1, 2, 3, 4, 5, 6, 7},
-                {0.11, 0.22, 0.33, 0.44, 0.55, 0.66, 0.77, 0.88},
-                {23.23, 46.46, 69.69, 92.92, 116.15, 139.38, 162.61, 185.84}};
-        d = MathX.sumproduct(darr);
-        assertEquals("Sumproduct ", 2790.3876, d);
-
-        
-    }
-
     public void testSumsq() {
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1; 

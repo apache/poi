@@ -45,7 +45,6 @@ public abstract class MultiOperandNumericFunction implements Function {
 		_isBlankCounted = isBlankCounted;
 	}
 
-
 	static final double[] EMPTY_DOUBLE_ARRAY = { };
 
 	private static class DoubleList {
@@ -101,7 +100,6 @@ public abstract class MultiOperandNumericFunction implements Function {
 	}
 
 	protected abstract double evaluate(double[] values) throws EvaluationException;
-
 
 	/**
 	 * Maximum number of operands accepted by this function.

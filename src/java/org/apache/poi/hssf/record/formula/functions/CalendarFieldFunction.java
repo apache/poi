@@ -31,16 +31,16 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  * Implementation of Excel functions DAY, MONTH and YEAR
- * 
- * 
+ *
+ *
  * @author Guenter Kickinger g.kickinger@gmx.net
  */
 public final class CalendarFieldFunction implements Function {
-	
+
 	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR, false);
 	public static final Function MONTH = new CalendarFieldFunction(Calendar.MONTH, true);
 	public static final Function DAY = new CalendarFieldFunction(Calendar.DAY_OF_MONTH, false);
-	
+
 	private final int _dateFieldId;
 	private final boolean _needsOneBaseAdjustment;
 

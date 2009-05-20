@@ -1,23 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 30, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.functions;
 
 import java.util.Arrays;
@@ -27,9 +24,11 @@ import java.util.Arrays;
  *
  * Library for common statistics functions
  */
-public final class StatsLib {
+final class StatsLib {
 
-    private StatsLib() {}
+    private StatsLib() {
+        // no instances of this class
+    }
 
 
     /**
@@ -51,7 +50,7 @@ public final class StatsLib {
         r = s / v.length;
         return r;
     }
-    
+
     public static double stdev(double[] v) {
         double r = Double.NaN;
         if (v!=null && v.length > 1) {
@@ -59,11 +58,11 @@ public final class StatsLib {
         }
         return r;
     }
-    
-    
+
+
     public static double median(double[] v) {
         double r = Double.NaN;
-        
+
         if (v!=null && v.length >= 1) {
             int n = v.length;
             Arrays.sort(v);
@@ -71,11 +70,11 @@ public final class StatsLib {
                 ? (v[n / 2] + v[n / 2 - 1]) / 2
                 : v[n / 2];
         }
-        
+
         return r;
     }
-    
-    
+
+
     public static double devsq(double[] v) {
         double r = Double.NaN;
         if (v!=null && v.length >= 1) {
@@ -90,14 +89,14 @@ public final class StatsLib {
             for (int i=0; i<n; i++) {
                 s += (v[i]- m) * (v[i] - m);
             }
-            
+
             r = (n == 1)
                     ? 0
                     : s;
         }
         return r;
     }
-    
+
     /**
      * returns the kth largest element in the array. Duplicates
      * are considered as distinct values. Hence, eg.
@@ -105,15 +104,13 @@ public final class StatsLib {
      * <br/>
      * k <= 0 & k >= v.length and null or empty arrays
      * will result in return value Double.NaN
-     * @param v
-     * @param k
      */
     public static double kthLargest(double[] v, int k) {
         double r = Double.NaN;
-        k--; // since arrays are 0-based
-        if (v!=null && v.length > k && k >= 0) {
+        int index = k-1; // since arrays are 0-based
+        if (v!=null && v.length > index && index >= 0) {
             Arrays.sort(v);
-            r = v[v.length-k-1];
+            r = v[v.length-index-1];
         }
         return r;
     }
@@ -130,10 +127,10 @@ public final class StatsLib {
      */
     public static double kthSmallest(double[] v, int k) {
         double r = Double.NaN;
-        k--; // since arrays are 0-based
-        if (v!=null && v.length > k && k >= 0) {
+        int index = k-1; // since arrays are 0-based
+        if (v!=null && v.length > index && index >= 0) {
             Arrays.sort(v);
-            r = v[k];
+            r = v[index];
         }
         return r;
     }

@@ -1,26 +1,21 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-/*
- * Created on May 19, 2005
- *
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.record.formula.functions;
-
-
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -28,22 +23,23 @@ package org.apache.poi.hssf.record.formula.functions;
  * provided by java.lang.Math class. It follows the Math class
  * in that it has a private constructor and all static methods.
  */
-public final class MathX {
+final class MathX {
 
-    
-    private MathX() {}
-    
-    
+    private MathX() {
+        // no instances of this class
+    }
+
+
     /**
      * Returns a value rounded to p digits after decimal.
      * If p is negative, then the number is rounded to
-     * places to the left of the decimal point. eg. 
+     * places to the left of the decimal point. eg.
      * 10.23 rounded to -1 will give: 10. If p is zero,
      * the returned value is rounded to the nearest integral
      * value.
      * <p>If n is negative, the resulting value is obtained
      * as the round value of absolute value of n multiplied
-     * by the sign value of n (@see MathX.sign(double d)). 
+     * by the sign value of n (@see MathX.sign(double d)).
      * Thus, -0.6666666 rounded to p=0 will give -1 not 0.
      * <p>If n is NaN, returned value is NaN.
      * @param n
@@ -51,7 +47,7 @@ public final class MathX {
      */
     public static double round(double n, int p) {
         double retval;
-        
+
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             retval = Double.NaN;
         }
@@ -64,20 +60,20 @@ public final class MathX {
                 retval = Math.round(n);
             }
         }
-        
+
         return retval;
     }
 
     /**
      * Returns a value rounded-up to p digits after decimal.
      * If p is negative, then the number is rounded to
-     * places to the left of the decimal point. eg. 
+     * places to the left of the decimal point. eg.
      * 10.23 rounded to -1 will give: 20. If p is zero,
      * the returned value is rounded to the nearest integral
      * value.
      * <p>If n is negative, the resulting value is obtained
      * as the round-up value of absolute value of n multiplied
-     * by the sign value of n (@see MathX.sign(double d)). 
+     * by the sign value of n (@see MathX.sign(double d)).
      * Thus, -0.2 rounded-up to p=0 will give -1 not 0.
      * <p>If n is NaN, returned value is NaN.
      * @param n
@@ -85,7 +81,7 @@ public final class MathX {
      */
     public static double roundUp(double n, int p) {
         double retval;
-        
+
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             retval = Double.NaN;
         }
@@ -93,34 +89,34 @@ public final class MathX {
             if (p != 0) {
                 double temp = Math.pow(10, p);
                 double nat = Math.abs(n*temp);
-                
-                retval = sign(n) * 
+
+                retval = sign(n) *
                     ((nat == (long) nat)
                             ? nat / temp
                             : Math.round(nat + 0.5) / temp);
             }
             else {
                 double na = Math.abs(n);
-                retval = sign(n) * 
+                retval = sign(n) *
                     ((na == (long) na)
                         ? na
                         : (long) na + 1);
             }
         }
-        
+
         return retval;
     }
 
     /**
      * Returns a value rounded to p digits after decimal.
      * If p is negative, then the number is rounded to
-     * places to the left of the decimal point. eg. 
+     * places to the left of the decimal point. eg.
      * 10.23 rounded to -1 will give: 10. If p is zero,
      * the returned value is rounded to the nearest integral
      * value.
      * <p>If n is negative, the resulting value is obtained
      * as the round-up value of absolute value of n multiplied
-     * by the sign value of n (@see MathX.sign(double d)). 
+     * by the sign value of n (@see MathX.sign(double d)).
      * Thus, -0.8 rounded-down to p=0 will give 0 not -1.
      * <p>If n is NaN, returned value is NaN.
      * @param n
@@ -128,7 +124,7 @@ public final class MathX {
      */
     public static double roundDown(double n, int p) {
         double retval;
-        
+
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             retval = Double.NaN;
         }
@@ -141,17 +137,17 @@ public final class MathX {
                 retval = (long) n;
             }
         }
-        
+
         return retval;
     }
-    
-    
+
+
     /**
      * If d < 0, returns short -1
      * <br/>
      * If d > 0, returns short 1
      * <br/>
-     * If d == 0, returns short 0 
+     * If d == 0, returns short 0
      * <p> If d is NaN, then 1 will be returned. It is the responsibility
      * of caller to check for d isNaN if some other value is desired.
      * @param d
@@ -163,7 +159,7 @@ public final class MathX {
                         ? -1
                         : 1);
     }
-   
+
     /**
      * average of all values
      * @param values
@@ -177,8 +173,8 @@ public final class MathX {
         ave = sum / values.length;
         return ave;
     }
-    
-    
+
+
     /**
      * sum of all values
      * @param values
@@ -190,7 +186,7 @@ public final class MathX {
         }
         return sum;
     }
-    
+
     /**
      * sum of squares of all values
      * @param values
@@ -202,8 +198,8 @@ public final class MathX {
         }
         return sumsq;
     }
-    
-    
+
+
     /**
      * product of all values
      * @param values
@@ -218,7 +214,7 @@ public final class MathX {
         }
         return product;
     }
-    
+
     /**
      * min of all values. If supplied array is zero length,
      * Double.POSITIVE_INFINITY is returned.
@@ -262,17 +258,17 @@ public final class MathX {
      */
     public static double floor(double n, double s) {
         double f;
-        
+
         if ((n<0 && s>0) || (n>0 && s<0) || (s==0 && n!=0)) {
             f = Double.NaN;
         }
         else {
             f = (n==0 || s==0) ? 0 : Math.floor(n/s) * s;
         }
-        
+
         return f;
     }
-    
+
     /**
      * Note: this function is different from java.lang.Math.ceil(..).
      * <p>
@@ -290,30 +286,30 @@ public final class MathX {
      */
     public static double ceiling(double n, double s) {
         double c;
-        
+
         if ((n<0 && s>0) || (n>0 && s<0)) {
             c = Double.NaN;
         }
         else {
             c = (n == 0 || s == 0) ? 0 : Math.ceil(n/s) * s;
         }
-        
+
         return c;
     }
-    
+
     /**
-     * <br/> for all n >= 1; factorial n = n * (n-1) * (n-2) * ... * 1 
+     * <br/> for all n >= 1; factorial n = n * (n-1) * (n-2) * ... * 1
      * <br/> else if n == 0; factorial n = 1
      * <br/> else if n < 0; factorial n = Double.NaN
      * <br/> Loss of precision can occur if n is large enough.
-     * If n is large so that the resulting value would be greater 
+     * If n is large so that the resulting value would be greater
      * than Double.MAX_VALUE; Double.POSITIVE_INFINITY is returned.
-     * If n < 0, Double.NaN is returned. 
+     * If n < 0, Double.NaN is returned.
      * @param n
      */
     public static double factorial(int n) {
         double d = 1;
-        
+
         if (n >= 0) {
             if (n <= 170) {
                 for (int i=1; i<=n; i++) {
@@ -329,11 +325,11 @@ public final class MathX {
         }
         return d;
     }
-    
+
 
     /**
      * returns the remainder resulting from operation:
-     * n / d. 
+     * n / d.
      * <br/> The result has the sign of the divisor.
      * <br/> Examples:
      * <ul>
@@ -348,7 +344,7 @@ public final class MathX {
      */
     public static double mod(double n, double d) {
         double result = 0;
-        
+
         if (d == 0) {
             result = Double.NaN;
         }
@@ -363,11 +359,11 @@ public final class MathX {
             t = Math.ceil(t) - t;
             result = sign(d) * Math.abs(t * d);
         }
-        
+
         return result;
     }
-    
-    
+
+
     /**
      * inverse hyperbolic cosine
      * @param d
@@ -375,16 +371,15 @@ public final class MathX {
     public static double acosh(double d) {
         return Math.log(Math.sqrt(Math.pow(d, 2) - 1) + d);
     }
-    
+
     /**
      * inverse hyperbolic sine
      * @param d
      */
     public static double asinh(double d) {
-        double d2 = d*d;
         return Math.log(Math.sqrt(d*d + 1) + d);
     }
-    
+
     /**
      * inverse hyperbolic tangent
      * @param d
@@ -392,7 +387,7 @@ public final class MathX {
     public static double atanh(double d) {
         return Math.log((1 + d)/(1 - d)) / 2;
     }
-    
+
     /**
      * hyperbolic cosine
      * @param d
@@ -400,10 +395,9 @@ public final class MathX {
     public static double cosh(double d) {
         double ePowX = Math.pow(Math.E, d);
         double ePowNegX = Math.pow(Math.E, -d);
-        d = (ePowX + ePowNegX) / 2;
-        return d;
+        return (ePowX + ePowNegX) / 2;
     }
-    
+
     /**
      * hyperbolic sine
      * @param d
@@ -411,10 +405,9 @@ public final class MathX {
     public static double sinh(double d) {
         double ePowX = Math.pow(Math.E, d);
         double ePowNegX = Math.pow(Math.E, -d);
-        d = (ePowX - ePowNegX) / 2;
-        return d;
+        return (ePowX - ePowNegX) / 2;
     }
-    
+
     /**
      * hyperbolic tangent
      * @param d
@@ -422,40 +415,10 @@ public final class MathX {
     public static double tanh(double d) {
         double ePowX = Math.pow(Math.E, d);
         double ePowNegX = Math.pow(Math.E, -d);
-        d = (ePowX - ePowNegX) / (ePowX + ePowNegX);
-        return d;
+        return (ePowX - ePowNegX) / (ePowX + ePowNegX);
     }
-    
-    /**
-     * returns the sum of product of corresponding double value in each
-     * subarray. It is the responsibility of the caller to ensure that
-     * all the subarrays are of equal length. If the subarrays are
-     * not of equal length, the return value can be unpredictable.
-     * @param arrays
-     */
-    public static double sumproduct(double[][] arrays) {
-        double d = 0;
-        
-        try {
-            int narr = arrays.length;
-            int arrlen = arrays[0].length; 
-            
-            for (int j=0; j<arrlen; j++) {
-                double t = 1;
-                for (int i=0; i<narr; i++) {
-                    t *= arrays[i][j];
-                }
-                d += t;
-            }            
-        }
-        catch (ArrayIndexOutOfBoundsException ae) {
-            d = Double.NaN;
-        }
-        
-        return d;
-    }
-    
-    
+
+
     /**
      * returns the total number of combinations possible when
      * k items are chosen out of total of n items. If the number
@@ -479,8 +442,8 @@ public final class MathX {
             }
             d /= factorial(minnk);
         }
-        
+
         return d;
     }
-    
+
 }

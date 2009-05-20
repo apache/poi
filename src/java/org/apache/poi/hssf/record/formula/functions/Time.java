@@ -43,7 +43,7 @@ public final class Time implements Function {
 			return ErrorEval.VALUE_INVALID;
 		}
 		double result;
-		
+
 		try {
 			result = evaluate(evalArg(args[0]), evalArg(args[1]), evalArg(args[2]));
 		} catch (EvaluationException e) {

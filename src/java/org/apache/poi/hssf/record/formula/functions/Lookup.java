@@ -27,16 +27,16 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
 
 /**
  * Implementation of Excel function LOOKUP.<p/>
- * 
+ *
  * LOOKUP finds an index  row in a lookup table by the first column value and returns the value from another column.
- * 
+ *
  * <b>Syntax</b>:<br/>
  * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>lookup_vector</b>, result_vector)<p/>
- * 
+ *
  * <b>lookup_value</b>  The value to be found in the lookup vector.<br/>
  * <b>lookup_vector</> An area reference for the lookup data. <br/>
  * <b>result_vector</b> Single row or single column area reference from which the result value is chosen.<br/>
- * 
+ *
  * @author Josh Micich
  */
 public final class Lookup implements Function {
@@ -51,13 +51,13 @@ public final class Lookup implements Function {
 			default:
 				return ErrorEval.VALUE_INVALID;
 		}
-		
-		
+
+
 		try {
 			ValueEval lookupValue = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
 			AreaEval aeLookupVector = LookupUtils.resolveTableArrayArg(args[1]);
 			AreaEval aeResultVector = LookupUtils.resolveTableArrayArg(args[2]);
-			
+
 			ValueVector lookupVector = createVector(aeLookupVector);
 			ValueVector resultVector = createVector(aeResultVector);
 			if(lookupVector.getSize() > resultVector.getSize()) {
@@ -65,7 +65,7 @@ public final class Lookup implements Function {
 				throw new RuntimeException("Lookup vector and result vector of differing sizes not supported yet");
 			}
 			int index = LookupUtils.lookupIndexOfValue(lookupValue, lookupVector, true);
-			
+
 			return resultVector.getItem(index);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();

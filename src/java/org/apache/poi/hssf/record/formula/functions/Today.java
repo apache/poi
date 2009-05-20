@@ -27,10 +27,10 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
  * Implementation of Excel TODAY() Function<br/>
- * 
+ *
  * @author Frank Taffelt
  */
-public class Today implements Function {
+public final class Today implements Function {
 
 	public Eval evaluate(Eval[] evals, int srcCellRow, short srcCellCol) {
 		if (evals.length > 0) {

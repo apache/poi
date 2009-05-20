@@ -218,7 +218,7 @@ final class LookupUtils {
 
 	private static abstract class LookupValueComparerBase implements LookupValueComparer {
 
-		private final Class _targetClass;
+		private final Class<? extends ValueEval> _targetClass;
 		protected LookupValueComparerBase(ValueEval targetValue) {
 			if(targetValue == null) {
 				throw new RuntimeException("targetValue cannot be null");
@@ -231,9 +231,6 @@ final class LookupUtils {
 			}
 			if (_targetClass != other.getClass()) {
 				return CompareResult.TYPE_MISMATCH;
-			}
-			if (_targetClass == StringEval.class) {
-
 			}
 			return compareSameType(other);
 		}
@@ -330,7 +327,7 @@ final class LookupUtils {
 		if(rowColIndexArg == null) {
 			throw new IllegalArgumentException("argument must not be null");
 		}
-		
+
 		ValueEval veRowColIndexArg;
 		try {
 			veRowColIndexArg = OperandResolver.getSingleValue(rowColIndexArg, srcCellRow, (short)srcCellCol);
@@ -353,7 +350,7 @@ final class LookupUtils {
 		// actual BoolEval values get interpreted as FALSE->0 and TRUE->1
 		oneBasedIndex = OperandResolver.coerceValueToInt(veRowColIndexArg);
 		if (oneBasedIndex < 1) {
-			// note this is asymmetric with the errors when the index is too large (#REF!)  
+			// note this is asymmetric with the errors when the index is too large (#REF!)
 			throw EvaluationException.invalidValue();
 		}
 		return oneBasedIndex - 1; // convert to zero based
@@ -599,7 +596,7 @@ final class LookupUtils {
 		if (lookupValue == BlankEval.INSTANCE) {
 			// blank eval translates to zero
 			// Note - a blank eval in the lookup column/row never matches anything
-			// empty string in the lookup column/row can only be matched by explicit emtpty string
+			// empty string in the lookup column/row can only be matched by explicit empty string
 			return new NumberLookupComparer(NumberEval.ZERO);
 		}
 		if (lookupValue instanceof StringEval) {
