@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -39,13 +37,13 @@ import java.util.Hashtable;
  * @author Nick Burch
  */
 
-public class PersistPtrHolder extends PositionDependentRecordAtom
+public final class PersistPtrHolder extends PositionDependentRecordAtom
 {
 	private byte[] _header;
 	private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
 	private long _type;
-	
-	/** 
+
+	/**
 	 * Holds the lookup for slides to their position on disk.
 	 * You always need to check the most recent PersistPtrHolder
 	 *  that knows about a given slide to find the right location
@@ -82,7 +80,7 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 	}
 	/**
 	 * Get the lookup from slide numbers to their offsets inside
-	 *  _ptrData, used when adding or moving slides. 
+	 *  _ptrData, used when adding or moving slides.
 	 */
 	public Hashtable getSlideOffsetDataLocationsLookup() {
 		return _slideOffsetDataLocation;
@@ -102,7 +100,7 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 		// Add to the slide location lookup hash
 		_slideLocations.put(new Integer(slideID), new Integer(posOnDisk));
 		// Add to the ptrData offset lookup hash
-		_slideOffsetDataLocation.put(new Integer(slideID), 
+		_slideOffsetDataLocation.put(new Integer(slideID),
 				new Integer(_ptrData.length + 4));
 
 		// Build the info block
@@ -122,7 +120,7 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 		LittleEndian.putInt(_header,4,newPtrData.length);
 	}
 
-	/** 
+	/**
 	 * Create a new holder for a PersistPtr record
 	 */
 	protected PersistPtrHolder(byte[] source, int start, int len) {
@@ -181,7 +179,7 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 
 	/**
 	 * At write-out time, update the references to the sheets to their
-	 *  new positions 
+	 *  new positions
 	 */
 	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
 		int[] slideIDs = getKnownSlideIDs();

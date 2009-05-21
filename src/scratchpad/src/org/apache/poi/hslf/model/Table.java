@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -26,10 +26,10 @@ import java.awt.*;
 
 /**
  * Represents a table in a PowerPoint presentation
- * 
+ *
  * @author Yegor Kozlov
  */
-public class Table extends ShapeGroup {
+public final class Table extends ShapeGroup {
 
     protected static final int BORDER_TOP = 1;
     protected static final int BORDER_RIGHT = 2;

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -37,7 +36,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author Yegor Kozlov
  */
-public class PPT2PNG {
+public final class PPT2PNG {
 
     public static void main(String args[]) throws Exception {
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
@@ -38,7 +35,7 @@ import org.apache.poi.util.StringUtil;
  * @author Nick Burch
  */
 
-public class TextRun
+public final class TextRun
 {
 	// Note: These fields are protected to help with unit testing
 	//   Other classes shouldn't really go playing with them!
@@ -80,7 +77,7 @@ public class TextRun
 	public TextRun(TextHeaderAtom tha, TextBytesAtom tba, StyleTextPropAtom sta) {
 		this(tha,tba,null,sta);
 	}
-	
+
 	/**
 	 * Internal constructor and initializer
 	 */
@@ -95,7 +92,7 @@ public class TextRun
 			_isUnicode = true;
 		}
 		String runRawText = getText();
-		
+
 		// Figure out the rich text runs
 		LinkedList pStyles = new LinkedList();
 		LinkedList cStyles = new LinkedList();
@@ -107,7 +104,7 @@ public class TextRun
 		}
         buildRichTextRuns(pStyles, cStyles, runRawText);
 	}
-	
+
 	public void buildRichTextRuns(LinkedList pStyles, LinkedList cStyles, String runRawText){
 
         // Handle case of no current style, with a default
@@ -258,25 +255,25 @@ public class TextRun
     }
 
     // Update methods follow
-	
+
 	/**
-	 * Adds the supplied text onto the end of the TextRun, 
+	 * Adds the supplied text onto the end of the TextRun,
 	 *  creating a new RichTextRun (returned) for it to
-	 *  sit in. 
+	 *  sit in.
 	 * In many cases, before calling this, you'll want to add
 	 *  a newline onto the end of your last RichTextRun
 	 */
 	public RichTextRun appendText(String s) {
 		// We will need a StyleTextProp atom
 		ensureStyleAtomPresent();
-		
-		// First up, append the text to the 
+
+		// First up, append the text to the
 		//  underlying text atom
 		int oldSize = getRawText().length();
 		storeText(
 				getRawText() + s
 		);
-		
+
 		// If either of the previous styles overran
 		//  the text by one, we need to shuffle that
 		//  extra character onto the new ones
@@ -296,32 +293,32 @@ public class TextRun
 					tpc.getCharactersCovered() - cOverRun
 			);
 		}
-		
+
 		// Next, add the styles for its paragraph and characters
 		TextPropCollection newPTP =
 			_styleAtom.addParagraphTextPropCollection(s.length()+pOverRun);
 		TextPropCollection newCTP =
 			_styleAtom.addCharacterTextPropCollection(s.length()+cOverRun);
-		
+
 		// Now, create the new RichTextRun
 		RichTextRun nr = new RichTextRun(
-				this, oldSize, s.length(), 
+				this, oldSize, s.length(),
 				newPTP, newCTP, false, false
 		);
-		
+
 		// Add the new RichTextRun onto our list
 		RichTextRun[] newRuns = new RichTextRun[_rtRuns.length+1];
 		System.arraycopy(_rtRuns, 0, newRuns, 0, _rtRuns.length);
 		newRuns[newRuns.length-1] = nr;
 		_rtRuns = newRuns;
-		
+
 		// And return the new run to the caller
 		return nr;
 	}
 
 	/**
-	 * Saves the given string to the records. Doesn't 
-	 *  touch the stylings. 
+	 * Saves the given string to the records. Doesn't
+	 *  touch the stylings.
 	 */
 	private void storeText(String s) {
 		// Remove a single trailing \r, as there is an implicit one at the
@@ -329,7 +326,7 @@ public class TextRun
 		if(s.endsWith("\r")) {
 			s = s.substring(0, s.length()-1);
 		}
-		
+
 		// Store in the appropriate record
 		if(_isUnicode) {
 			// The atom can safely convert to unicode
@@ -344,11 +341,11 @@ public class TextRun
 				_byteAtom.setText(text);
 			} else {
 				// Need to swap a TextBytesAtom for a TextCharsAtom
-				
+
 				// Build the new TextCharsAtom
 				_charAtom = new TextCharsAtom();
 				_charAtom.setText(s);
-				
+
 				// Use the TextHeaderAtom to do the swap on the parent
 				RecordContainer parent = _headerAtom.getParentRecord();
 				Record[] cr = parent.getChildRecords();
@@ -360,7 +357,7 @@ public class TextRun
 						break;
 					}
 				}
-				
+
 				// Flag the change
 				_byteAtom = null;
 				_isUnicode = true;
@@ -379,7 +376,7 @@ public class TextRun
             }
         }
 	}
-	
+
 	/**
 	 * Handles an update to the text stored in one of the Rich Text Runs
 	 * @param run
@@ -396,10 +393,10 @@ public class TextRun
 		if(runID == -1) {
 			throw new IllegalArgumentException("Supplied RichTextRun wasn't from this TextRun");
 		}
-		
+
 		// Ensure a StyleTextPropAtom is present, adding if required
 		ensureStyleAtomPresent();
-		
+
 		// Update the text length for its Paragraph and Character stylings
 		// If it's shared:
 		//   * calculate the new length based on the run's old text
@@ -416,7 +413,7 @@ public class TextRun
 		if(runID == _rtRuns.length-1) {
 			newSize++;
 		}
-		
+
 		if(run._isParagraphStyleShared()) {
 			pCol.updateTextSize( pCol.getCharactersCovered() - run.getLength() + s.length() );
 		} else {
@@ -427,14 +424,14 @@ public class TextRun
 		} else {
 			cCol.updateTextSize(newSize);
 		}
-		
+
 		// Build up the new text
 		// As we go through, update the start position for all subsequent runs
 		// The building relies on the old text still being present
 		StringBuffer newText = new StringBuffer();
 		for(int i=0; i<_rtRuns.length; i++) {
 			int newStartPos = newText.length();
-			
+
 			// Build up the new text
 			if(i != runID) {
 				// Not the affected run, so keep old text
@@ -443,7 +440,7 @@ public class TextRun
 				// Affected run, so use new text
 				newText.append(s);
 			}
-			
+
 			// Do we need to update the start position of this run?
 			// (Need to get the text before we update the start pos)
 			if(i <= runID) {
@@ -453,15 +450,15 @@ public class TextRun
 				_rtRuns[i].updateStartPosition(newStartPos);
 			}
 		}
-		
+
 		// Now we can save the new text
 		storeText(newText.toString());
 	}
 
 	/**
 	 * Changes the text, and sets it all to have the same styling
-	 *  as the the first character has. 
-	 * If you care about styling, do setText on a RichTextRun instead 
+	 *  as the the first character has.
+	 * If you care about styling, do setText on a RichTextRun instead
 	 */
 	public void setRawText(String s) {
 		// Save the new text to the atoms
@@ -481,10 +478,10 @@ public class TextRun
 		if(_styleAtom != null) {
 			LinkedList pStyles = _styleAtom.getParagraphStyles();
 			while(pStyles.size() > 1) { pStyles.removeLast(); }
-			
+
 			LinkedList cStyles = _styleAtom.getCharacterStyles();
 			while(cStyles.size() > 1) { cStyles.removeLast(); }
-			
+
 			_rtRuns[0].setText(s);
 		} else {
 			// Recreate rich text run with no styling
@@ -503,7 +500,7 @@ public class TextRun
     }
 
     /**
-	 * Ensure a StyleTextPropAtom is present for this run, 
+	 * Ensure a StyleTextPropAtom is present for this run,
 	 *  by adding if required. Normally for internal TextRun use.
 	 */
 	public void ensureStyleAtomPresent() {
@@ -511,23 +508,23 @@ public class TextRun
 			// All there
 			return;
 		}
-		
+
 		// Create a new one at the right size
 		_styleAtom = new StyleTextPropAtom(getRawText().length() + 1);
-		
+
 		// Use the TextHeader atom to get at the parent
 		RecordContainer runAtomsParent = _headerAtom.getParentRecord();
-		
+
 		// Add the new StyleTextPropAtom after the TextCharsAtom / TextBytesAtom
 		Record addAfter = _byteAtom;
 		if(_byteAtom == null) { addAfter = _charAtom; }
 		runAtomsParent.addChildAfter(_styleAtom, addAfter);
-		
+
 		// Feed this to our sole rich text run
 		if(_rtRuns.length != 1) {
 			throw new IllegalStateException("Needed to add StyleTextPropAtom when had many rich text runs");
 		}
-		// These are the only styles for now 
+		// These are the only styles for now
 		_rtRuns[0].supplyTextProps(
 				(TextPropCollection)_styleAtom.getParagraphStyles().get(0),
 				(TextPropCollection)_styleAtom.getCharacterStyles().get(0),
@@ -572,7 +569,7 @@ public class TextRun
 			return _byteAtom.getText();
 		}
 	}
-	
+
 	/**
 	 * Fetch the rich text runs (runs of text with the same styling) that
 	 *  are contained within this block of text
@@ -580,13 +577,13 @@ public class TextRun
 	public RichTextRun[] getRichTextRuns() {
 		return 	_rtRuns;
 	}
-	
+
 	/**
 	* Returns the type of the text, from the TextHeaderAtom.
 	* Possible values can be seen from TextHeaderAtom
 	* @see org.apache.poi.hslf.record.TextHeaderAtom
 	*/
-	public int getRunType() { 
+	public int getRunType() {
 		return _headerAtom.getTextType();
 	}
 
@@ -599,7 +596,7 @@ public class TextRun
 	public void setRunType(int type) {
 		_headerAtom.setTextType(type);
 	}
-	
+
 	/**
 	 * Supply the SlideShow we belong to.
 	 * Also passes it on to our child RichTextRuns
@@ -618,7 +615,7 @@ public class TextRun
     }
 
     public Sheet getSheet(){
-        return this.sheet;        
+        return this.sheet;
     }
 
     /**

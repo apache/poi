@@ -31,10 +31,10 @@ import java.awt.*;
 
 /**
  * Tests for SlideMaster
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestSlideMaster extends TestCase{
+public final class TestSlideMaster extends TestCase{
     String home;
 
     public void setUp() throws Exception {

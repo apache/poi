@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.usermodel.PictureData;
@@ -24,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Represents a bitmap picture data:  JPEG or PNG.
  * The data is not compressed and the exact file content is written in the stream.
- * 
+ *
  * @author Yegor Kozlov
  */
 public abstract  class Bitmap extends PictureData {

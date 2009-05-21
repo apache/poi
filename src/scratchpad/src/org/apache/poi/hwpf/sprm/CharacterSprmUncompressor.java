@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
@@ -26,7 +24,7 @@ import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.util.LittleEndian;
 
-public class CharacterSprmUncompressor
+public final class CharacterSprmUncompressor
 {
   public CharacterSprmUncompressor()
   {

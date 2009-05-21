@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 import java.util.Hashtable;
@@ -36,16 +34,16 @@ public abstract class PositionDependentRecordAtom extends RecordAtom implements 
 	/** Fetch our location on the disk, as of the last write out */
 	public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
 
-	/** 
+	/**
 	 * Update the Record's idea of where on disk it lives, after a write out.
 	 * Use with care...
 	 */
-	public void setLastOnDiskOffset(int offset) { 
+	public void setLastOnDiskOffset(int offset) {
 		myLastOnDiskOffset = offset;
 	}
 
 	/**
-	 * Offer the record the list of records that have changed their 
+	 * Offer the record the list of records that have changed their
 	 *  location as part of the writeout.
 	 * Allows records to update their internal pointers to other records
 	 *  locations

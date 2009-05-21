@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 import java.io.FileInputStream;
@@ -28,7 +29,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests for bugs with streams
  */
-public class TestStreamBugs extends StreamTest {
+public final class TestStreamBugs extends StreamTest {
 	private byte[] contents;
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
@@ -42,7 +43,7 @@ public class TestStreamBugs extends StreamTest {
 
 		FileInputStream fin = new FileInputStream(filename);
 		filesystem = new POIFSFileSystem(fin);
-		
+
 		DocumentEntry docProps =
 			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");
 
@@ -50,41 +51,41 @@ public class TestStreamBugs extends StreamTest {
 		contents = new byte[docProps.getSize()];
 		filesystem.createDocumentInputStream("VisioDocument").read(contents);
 	}
-	
+
 	public void testGetTrailer() throws Exception {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
 	}
-	
+
 	public void TOIMPLEMENTtestGetCertainChunks() throws Exception {
 		int offsetA = 3708;
 		int offsetB = 3744;
 	}
-	
+
 	public void testGetChildren() throws Exception {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		TrailerStream trailer = (TrailerStream)
 			Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
-		
+
 		// Get without recursing
 		Pointer[] ptrs = trailer.getChildPointers();
 		for(int i=0; i<ptrs.length; i++) {
 			Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
 		}
-		
+
 		// Get with recursing into chunks
 		for(int i=0; i<ptrs.length; i++) {
-			Stream stream = 
+			Stream stream =
 				Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
 			if(stream instanceof ChunkStream) {
 				ChunkStream cStream = (ChunkStream)stream;
 				cStream.findChunks();
 			}
 		}
-		
+
 		// Get with recursing into chunks and pointers
 		for(int i=0; i<ptrs.length; i++) {
-			Stream stream = 
+			Stream stream =
 				Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
 			if(stream instanceof PointerContainingStream) {
 				PointerContainingStream pStream =
@@ -92,7 +93,7 @@ public class TestStreamBugs extends StreamTest {
 				pStream.findChildren(contents);
 			}
 		}
-		
+
 		trailer.findChildren(contents);
 	}
 

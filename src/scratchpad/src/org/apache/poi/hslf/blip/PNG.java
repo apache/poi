@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
@@ -26,10 +27,10 @@ import java.io.IOException;
 
 /**
  * Represents a PNG picture data in a PPT file
- * 
+ *
  * @author Yegor Kozlov
  */
-public class PNG extends Bitmap {
+public final class PNG extends Bitmap {
 
     /**
      * @return PNG data

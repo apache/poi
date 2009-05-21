@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hdf.model.util;
 
 import org.apache.poi.hdf.model.hdftypes.FormattedDiskPage;
 
-public class ParsingState
+public final class ParsingState
 {
 
   //int _numPages;// = charPlcf.length();

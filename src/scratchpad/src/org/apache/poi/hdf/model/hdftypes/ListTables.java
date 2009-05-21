@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.model.hdftypes;
 
@@ -31,7 +28,7 @@ import org.apache.poi.hdf.extractor.*;
  * @author Ryan Ackley
  */
 
-public class ListTables implements HDFType
+public final class ListTables implements HDFType
 {
 
   LFO[] _pllfo;
@@ -148,7 +145,7 @@ public class ListTables implements HDFType
             lfolvl._fFormatting = StyleSheet.getFlag(lfolvl._ilvl & 0x20);
             lfolvl._ilvl = (lfolvl._ilvl & (byte)0x0f);
             lfolvlNum++;
-    
+
             if(lfolvl._fFormatting)
             {
               // The size of a LFOLVL is 8 bytes.
@@ -175,7 +172,7 @@ public class ListTables implements HDFType
     lvl._fPrevSpace = StyleSheet.getFlag(code & 0x20);
     lvl._fWord6 = StyleSheet.getFlag(code & 0x40);
 
-    //  rgbxchNums - This array should be zero terminated unless it is full 
+    //  rgbxchNums - This array should be zero terminated unless it is full
     //  (all 9 levels full).
     System.arraycopy(data, offset, lvl._rgbxchNums, 0, 9);
     offset += 9;

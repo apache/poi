@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.LittleEndian;
@@ -50,7 +49,7 @@ import org.apache.poi.ddf.EscherRecordFactory;
  *
  * @author Dmitry Romanov
  */
-public class PicturesTable
+public final class PicturesTable
 {
   static final int TYPE_IMAGE = 0x08;
   static final int TYPE_IMAGE_WORD2000 = 0x00;
@@ -72,7 +71,7 @@ public class PicturesTable
 
   /**
    *
-   * @param _document 
+   * @param _document
    * @param _dataStream
    */
   public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)
@@ -94,7 +93,7 @@ public class PicturesTable
     }
     return false;
   }
-  
+
   public boolean hasEscherPicture(CharacterRun run) {
     if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && run.text().startsWith("\u0008")) {
       return true;
@@ -132,7 +131,7 @@ public class PicturesTable
    * to have that byte array in memory but only write picture's contents to stream, pass false and then use Picture.writeImageContent
    * @see Picture#writeImageContent(java.io.OutputStream)
    * @return a Picture object if picture exists for specified CharacterRun, null otherwise. PicturesTable.hasPicture is used to determine this.
-   * @see #hasPicture(org.apache.poi.hwpf.usermodel.CharacterRun) 
+   * @see #hasPicture(org.apache.poi.hwpf.usermodel.CharacterRun)
    */
   public Picture extractPicture(CharacterRun run, boolean fillBytes) {
     if (hasPicture(run)) {
@@ -140,7 +139,7 @@ public class PicturesTable
     }
     return null;
   }
-  
+
   /**
      * Performs a recursive search for pictures in the given list of escher records.
      *
@@ -184,12 +183,12 @@ public class PicturesTable
   /**
    * Not all documents have all the images concatenated in the data stream
    * although MS claims so. The best approach is to scan all character runs.
-   *  
+   *
    * @return a list of Picture objects found in current document
    */
   public List getAllPictures() {
     ArrayList pictures = new ArrayList();
-	
+
     Range range = _document.getRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {
     	CharacterRun run = range.getCharacterRun(i);
@@ -199,7 +198,7 @@ public class PicturesTable
     		pictures.add(picture);
     	}
 	}
-    
+
     searchForPictures(_dgg.getEscherRecords(), pictures);
 
     return pictures;

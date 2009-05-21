@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.extractor;
 
@@ -42,12 +39,12 @@ import org.apache.poi.hslf.model.TextRun;
  * This class will get all the text from a Powerpoint Document, including
  *  all the bits you didn't want, and in a somewhat random order, but will
  *  do it very fast.
- * The class ignores most of the hslf classes, and doesn't use 
+ * The class ignores most of the hslf classes, and doesn't use
  *  HSLFSlideShow. Instead, it just does a very basic scan through the
  *  file, grabbing all the text records as it goes. It then returns the
  *  text, either as a single string, or as a vector of all the individual
  *  strings.
- * Because of how it works, it will return a lot of "crud" text that you 
+ * Because of how it works, it will return a lot of "crud" text that you
  *  probably didn't want! It will return text from master slides. It will
  *  return duplicate text, and some mangled text (powerpoint files often
  *  have duplicate copies of slide text in them). You don't get any idea
@@ -59,7 +56,7 @@ import org.apache.poi.hslf.model.TextRun;
  * @author Nick Burch
  */
 
-public class QuickButCruddyTextExtractor
+public final class QuickButCruddyTextExtractor
 {
 	private POIFSFileSystem fs;
 	private InputStream is;
@@ -193,12 +190,12 @@ public class QuickButCruddyTextExtractor
 			TextCharsAtom tca = (TextCharsAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
 			trun = new TextRun((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
 		}
-		
+
 		// CString (doesn't go via a TextRun)
 		if(type == RecordTypes.CString.typeID) {
 			CString cs = (CString)Record.createRecordForType(type, pptContents, startPos, len+8);
 			String text = cs.getText();
-			
+
 			// Ignore the ones we know to be rubbish
 			if(text.equals("___PPT10")) {
 			} else if(text.equals("Default Design")) {
@@ -211,10 +208,10 @@ public class QuickButCruddyTextExtractor
 		if(trun != null) {
 			textV.add(trun.getText());
 		}
-		
+
 		// Wind on by the atom length, and check we're not at the end
 		int newPos = (startPos + 8 + len);
-		if(newPos > (pptContents.length - 8)) { 
+		if(newPos > (pptContents.length - 8)) {
 			newPos = -1;
 		}
 		return newPos;

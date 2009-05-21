@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 /**
@@ -21,9 +22,9 @@ package org.apache.poi.hdgf.streams;
  *  handles de-compressing it as required.
  * In future, may also handle writing it back out again
  */
-public class StreamStore {
+public class StreamStore { // TODO - instantiable superclass
 	private byte[] contents;
-	
+
 	/**
 	 * Creates a new, non compressed Stream Store
 	 */
@@ -31,7 +32,7 @@ public class StreamStore {
 		contents = new byte[length];
 		System.arraycopy(data, offset, contents, 0, length);
 	}
-	
+
 	protected void prependContentsWith(byte[] b) {
 		byte[] newContents = new byte[contents.length + b.length];
 		System.arraycopy(b, 0, newContents, 0, b.length);
@@ -39,7 +40,7 @@ public class StreamStore {
 		contents = newContents;
 	}
 	protected void copyBlockHeaderToContents() {}
-	
+
 	protected byte[] getContents() { return contents; }
 	public byte[] _getContents() { return contents; }
 }

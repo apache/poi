@@ -20,10 +20,10 @@ package org.apache.poi.hsmf.datatypes;
 
 /**
  * Collection of convenence chunks for standard parts of the MSG file.
- * 
+ *
  * @author Travis Ferguson
  */
-public class Chunks {
+public final class Chunks {
 	/* String parts of Outlook Messages that are currently known */
 
 	/** Type of message that the MSG represents (ie. IPM.Note) */
@@ -44,7 +44,7 @@ public class Chunks {
 	public StringChunk conversationTopic;
 	/** Type of server that the message originated from (SMTP, etc). */
 	public StringChunk sentByServerType;
-	
+
 	private Chunks(boolean newStringType) {
 		messageClass = new StringChunk(0x001A, newStringType);
 		textBodyChunk = new StringChunk(0x1000, newStringType);
@@ -56,7 +56,7 @@ public class Chunks {
 		conversationTopic = new StringChunk(0x0070, newStringType);
 		sentByServerType = new StringChunk(0x0075, newStringType);
 	}
-	
+
 	public static Chunks getInstance(boolean newStringType) {
 		return new Chunks(newStringType);
 	}

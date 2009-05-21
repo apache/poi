@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
@@ -23,10 +24,10 @@ import java.io.IOException;
 
 /**
  * Represents a DIB picture data in a PPT file
- * 
+ *
  * @author Yegor Kozlov
  */
-public class DIB extends Bitmap {
+public final class DIB extends Bitmap {
     /**
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
      */

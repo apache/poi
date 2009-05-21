@@ -14,16 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
 
 /**
  * Represents a JPEG picture data in a PPT file
- * 
+ *
  * @author Yegor Kozlov
  */
-public class JPEG extends Bitmap {
+public final class JPEG extends Bitmap {
 
     /**
      * @return type of  this picture

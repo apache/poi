@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -26,7 +27,7 @@ import java.awt.geom.Point2D;
  *
  * @author Yegor Kozlov
  */
-public class Polygon extends AutoShape {
+public final class Polygon extends AutoShape {
     /**
      * Create a Polygon object and initialize it from the supplied Record container.
      *

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model.qcbits;
 
 import org.apache.poi.util.StringUtil;
@@ -21,7 +22,7 @@ import org.apache.poi.util.StringUtil;
 /**
  * A Text based bit of Quill Contents
  */
-public class QCTextBit extends QCBit {
+public final class QCTextBit extends QCBit {
 	public QCTextBit(String thingType, String bitType, byte[] data) {
 		super(thingType, bitType, data);
 	}
@@ -35,7 +36,7 @@ public class QCTextBit extends QCBit {
 				data, 0, data.length/2
 		);
 	}
-	
+
 	public void setText(String text) {
 		data = new byte[text.length()*2];
 		StringUtil.putUnicodeLE(text, data, 0);

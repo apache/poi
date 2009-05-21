@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
@@ -25,10 +26,10 @@ import java.util.ArrayList;
 /**
  * The special info runs contained in this text.
  * Special info runs consist of character properties which don?t follow styles.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TextSpecInfoAtom extends RecordAtom {
+public final class TextSpecInfoAtom extends RecordAtom {
     /**
      * Record header.
      */

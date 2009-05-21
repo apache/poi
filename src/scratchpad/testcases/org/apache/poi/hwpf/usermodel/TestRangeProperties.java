@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.usermodel;
 
 import java.io.File;
@@ -32,9 +33,9 @@ import junit.framework.TestCase;
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
-public class TestRangeProperties extends TestCase {
+public final class TestRangeProperties extends TestCase {
 	private static final char page_break = (char)12;
-	
+
 	private static final String u_page_1 =
 		"This is a fairly simple word document, over two pages, with headers and footers.\r" +
 		"The trick with this one is that it contains some Unicode based strings in it.\r" +
@@ -50,23 +51,23 @@ public class TestRangeProperties extends TestCase {
 	private static final String u_page_2 =
 		"This is page two. Les Pr\u00e9cieuses ridicules. The end.\r"
 	;
-	
-	private static final String a_page_1 = 
+
+	private static final String a_page_1 =
 		"I am a test document\r" +
-		"This is page 1\r" + 
+		"This is page 1\r" +
 		"I am Calibri (Body) in font size 11\r"
 	;
-	private static final String a_page_2 = 
-		"This is page two\r" + 
+	private static final String a_page_2 =
+		"This is page two\r" +
 		"It\u2019s Arial Black in 16 point\r" +
 		"It\u2019s also in blue\r"
 	;
-	
+
 	private HWPFDocument u;
 	private HWPFDocument a;
-	
+
 	private String dirname;
-	
+
 	protected void setUp() throws Exception {
 		dirname = System.getProperty("HWPF.testdata.path");
 		u = new HWPFDocument(
@@ -76,34 +77,34 @@ public class TestRangeProperties extends TestCase {
 				new FileInputStream(new File(dirname, "SampleDoc.doc"))
 		);
 	}
-	
-	
+
+
 	public void testAsciiTextParagraphs() throws Exception {
 		Range r = a.getRange();
 		assertEquals(
 				a_page_1 +
-				page_break + "\r" + 
+				page_break + "\r" +
 				a_page_2,
 				r.text()
 		);
-		
+
 		assertEquals(1, r.numSections());
 		assertEquals(1, a.getSectionTable().getSections().size());
 		Section s = r.getSection(0);
 		assertEquals(
 				a_page_1 +
-				page_break + "\r" + 
+				page_break + "\r" +
 				a_page_2,
 				s.text()
 		);
-		
+
 		assertEquals(
 				7,
 				r.numParagraphs()
 		);
 		String[] p1_parts = a_page_1.split("\r");
 		String[] p2_parts = a_page_2.split("\r");
-		
+
 		// Check paragraph contents
 		assertEquals(
 				p1_parts[0] + "\r",
@@ -117,12 +118,12 @@ public class TestRangeProperties extends TestCase {
 				p1_parts[2] + "\r",
 				r.getParagraph(2).text()
 		);
-		
+
 		assertEquals(
 				page_break + "\r",
 				r.getParagraph(3).text()
 		);
-		
+
 		assertEquals(
 				p2_parts[0] + "\r",
 				r.getParagraph(4).text()
@@ -136,19 +137,19 @@ public class TestRangeProperties extends TestCase {
 				r.getParagraph(6).text()
 		);
 	}
-	
+
 	public void testAsciiStyling() throws Exception {
 		Range r = a.getRange();
-		
+
 		Paragraph p1 = r.getParagraph(0);
 		Paragraph p7 = r.getParagraph(6);
-		
+
 		assertEquals(1, p1.numCharacterRuns());
 		assertEquals(1, p7.numCharacterRuns());
-		
+
 		CharacterRun c1 = p1.getCharacterRun(0);
 		CharacterRun c7 = p7.getCharacterRun(0);
-		
+
 		assertEquals("Times New Roman", c1.getFontName()); // No Calibri
 		assertEquals("Arial Black", c7.getFontName());
 		assertEquals(22, c1.getFontSize());
@@ -163,7 +164,7 @@ public class TestRangeProperties extends TestCase {
 		Range r = u.getRange();
 		String[] p1_parts = u_page_1.split("\r");
 		String[] p2_parts = u_page_2.split("\r");
-		
+
 		assertEquals(
 				u_page_1 + page_break + "\r" + u_page_2,
 				r.text()
@@ -171,37 +172,37 @@ public class TestRangeProperties extends TestCase {
 		assertEquals(
 				408, r.text().length()
 		);
-	
-		
+
+
 		assertEquals(1, r.numSections());
 		assertEquals(1, u.getSectionTable().getSections().size());
 		Section s = r.getSection(0);
 		assertEquals(
 				u_page_1 +
-				page_break + "\r" + 
+				page_break + "\r" +
 				u_page_2,
 				s.text()
 		);
 		assertEquals(0, s.getStartOffset());
 		assertEquals(408, s.getEndOffset());
 
-		
+
 		List pDefs = r._paragraphs;
 		assertEquals(35, pDefs.size());
-		
+
 		// Check that the last paragraph ends where it should do
 		assertEquals(531, u.getOverallRange().text().length());
 		assertEquals(530, u.getCPSplitCalculator().getHeaderTextboxEnd());
 		PropertyNode pLast = (PropertyNode)pDefs.get(34);
 //		assertEquals(530, pLast.getEnd());
-		
+
 		// Only care about the first few really though
 		PropertyNode p0 = (PropertyNode)pDefs.get(0);
 		PropertyNode p1 = (PropertyNode)pDefs.get(1);
 		PropertyNode p2 = (PropertyNode)pDefs.get(2);
 		PropertyNode p3 = (PropertyNode)pDefs.get(3);
 		PropertyNode p4 = (PropertyNode)pDefs.get(4);
-		
+
 		// 5 paragraphs should get us to the end of our text
 		assertTrue(p0.getStart() < 408);
 		assertTrue(p0.getEnd() < 408);
@@ -213,7 +214,7 @@ public class TestRangeProperties extends TestCase {
 		assertTrue(p3.getEnd() < 408);
 		assertTrue(p4.getStart() < 408);
 		assertTrue(p4.getEnd() < 408);
-		
+
 		// Paragraphs should match with lines
 		assertEquals(
 				0,
@@ -223,17 +224,17 @@ public class TestRangeProperties extends TestCase {
 				p1_parts[0].length() + 1,
 				p0.getEnd()
 		);
-		
+
 		assertEquals(
 				p1_parts[0].length() + 1,
 				p1.getStart()
-		);		
+		);
 		assertEquals(
 				p1_parts[0].length() + 1 +
 				p1_parts[1].length() + 1,
 				p1.getEnd()
 		);
-		
+
 		assertEquals(
 				p1_parts[0].length() + 1 +
 				p1_parts[1].length() + 1,
@@ -254,18 +255,18 @@ public class TestRangeProperties extends TestCase {
 		Range r = u.getRange();
 		assertEquals(
 				u_page_1 +
-				page_break + "\r" + 
+				page_break + "\r" +
 				u_page_2,
 				r.text()
 		);
-		
+
 		assertEquals(
 				12,
 				r.numParagraphs()
 		);
 		String[] p1_parts = u_page_1.split("\r");
 		String[] p2_parts = u_page_2.split("\r");
-		
+
 		// Check text all matches up properly
 		assertEquals(p1_parts[0] + "\r", r.getParagraph(0).text());
 		assertEquals(p1_parts[1] + "\r", r.getParagraph(1).text());
@@ -283,86 +284,86 @@ public class TestRangeProperties extends TestCase {
 	public void testUnicodeStyling() throws Exception {
 		Range r = u.getRange();
 		String[] p1_parts = u_page_1.split("\r");
-		
+
 		Paragraph p1 = r.getParagraph(0);
 		Paragraph p7 = r.getParagraph(6);
-		
+
 		// Line ending in its own run each time!
 		assertEquals(2, p1.numCharacterRuns());
 		assertEquals(2, p7.numCharacterRuns());
-		
+
 		CharacterRun c1a = p1.getCharacterRun(0);
 		CharacterRun c1b = p1.getCharacterRun(1);
 		CharacterRun c7a = p7.getCharacterRun(0);
 		CharacterRun c7b = p7.getCharacterRun(1);
-		
+
 		assertEquals("Times New Roman", c1a.getFontName()); // No Calibri
 		assertEquals(22, c1a.getFontSize());
-		
+
 		assertEquals("Times New Roman", c1b.getFontName()); // No Calibri
 		assertEquals(22, c1b.getFontSize());
-		
+
 		assertEquals("Times New Roman", c7a.getFontName());
 		assertEquals(48, c7a.getFontSize());
-		
+
 		assertEquals("Times New Roman", c7b.getFontName());
 		assertEquals(48, c7b.getFontSize());
-		
+
 		// Now check where they crop up
 		assertEquals(
-				0, 
+				0,
 				c1a.getStartOffset()
 		);
 		assertEquals(
-				p1_parts[0].length(), 
+				p1_parts[0].length(),
 				c1a.getEndOffset()
 		);
-		
+
 		assertEquals(
-				p1_parts[0].length(), 
+				p1_parts[0].length(),
 				c1b.getStartOffset()
 		);
 		assertEquals(
-				p1_parts[0].length()+1, 
+				p1_parts[0].length()+1,
 				c1b.getEndOffset()
 		);
-		
+
 		assertEquals(
-				p1_parts[0].length() + 1 + 
-				p1_parts[1].length() + 1 + 
-				p1_parts[2].length() + 1 + 
-				p1_parts[3].length() + 1 + 
-				p1_parts[4].length() + 1 + 
-				p1_parts[5].length() + 1, 
+				p1_parts[0].length() + 1 +
+				p1_parts[1].length() + 1 +
+				p1_parts[2].length() + 1 +
+				p1_parts[3].length() + 1 +
+				p1_parts[4].length() + 1 +
+				p1_parts[5].length() + 1,
 				c7a.getStartOffset()
 		);
 		assertEquals(
-				p1_parts[0].length() + 1 + 
-				p1_parts[1].length() + 1 + 
-				p1_parts[2].length() + 1 + 
-				p1_parts[3].length() + 1 + 
-				p1_parts[4].length() + 1 + 
+				p1_parts[0].length() + 1 +
+				p1_parts[1].length() + 1 +
+				p1_parts[2].length() + 1 +
+				p1_parts[3].length() + 1 +
+				p1_parts[4].length() + 1 +
 				p1_parts[5].length() + 1 +
 				1,
 				c7a.getEndOffset()
 		);
-		
+
 		assertEquals(
-				p1_parts[0].length() + 1 + 
-				p1_parts[1].length() + 1 + 
-				p1_parts[2].length() + 1 + 
-				p1_parts[3].length() + 1 + 
-				p1_parts[4].length() + 1 + 
+				p1_parts[0].length() + 1 +
+				p1_parts[1].length() + 1 +
+				p1_parts[2].length() + 1 +
+				p1_parts[3].length() + 1 +
+				p1_parts[4].length() + 1 +
 				p1_parts[5].length() + 1 +
-				1, 
+				1,
 				c7b.getStartOffset()
 		);
 		assertEquals(
-				p1_parts[0].length() + 1 + 
-				p1_parts[1].length() + 1 + 
-				p1_parts[2].length() + 1 + 
-				p1_parts[3].length() + 1 + 
-				p1_parts[4].length() + 1 + 
+				p1_parts[0].length() + 1 +
+				p1_parts[1].length() + 1 +
+				p1_parts[2].length() + 1 +
+				p1_parts[3].length() + 1 +
+				p1_parts[4].length() + 1 +
 				p1_parts[5].length() + 1 +
 				p1_parts[6].length() + 1,
 				c7b.getEndOffset()

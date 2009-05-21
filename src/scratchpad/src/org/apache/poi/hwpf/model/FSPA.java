@@ -23,10 +23,10 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * File Shape Address structure
- * 
+ *
  * @author Squeeself
  */
-public class FSPA 
+public final class FSPA
 {
     public static final int FSPA_SIZE = 26;
     private int spid; // Shape identifier. Used to get data position
@@ -44,11 +44,11 @@ public class FSPA
         private static BitField fBelowText = BitFieldFactory.getInstance(0x4000); // if true, shape is below text, otherwise above
         private static BitField fAnchorLock = BitFieldFactory.getInstance(0x8000); // if true, anchor is locked
     private int cTxbx; // Count of textboxes in shape (undo doc only)
-    
+
     public FSPA()
     {
     }
-    
+
     public FSPA(byte[] bytes, int offset)
     {
         spid = LittleEndian.getInt(bytes, offset);
@@ -65,77 +65,77 @@ public class FSPA
         offset += LittleEndian.SHORT_SIZE;
         cTxbx = LittleEndian.getInt(bytes, offset);
     }
-    
+
     public int getSpid()
     {
         return spid;
     }
-    
+
     public int getXaLeft()
     {
         return xaLeft;
     }
-    
+
     public int getYaTop()
     {
         return yaTop;
     }
-    
+
     public int getXaRight()
     {
         return xaRight;
     }
-    
+
     public int getYaBottom()
     {
         return yaBottom;
     }
-    
+
     public boolean isFHdr()
     {
         return fHdr.isSet(options);
     }
-    
+
     public short getBx()
     {
         return bx.getShortValue(options);
     }
-    
+
     public short getBy()
     {
         return by.getShortValue(options);
     }
-    
+
     public short getWr()
     {
         return wr.getShortValue(options);
     }
-    
+
     public short getWrk()
     {
         return wrk.getShortValue(options);
     }
-    
+
     public boolean isFRcaSimple()
     {
         return fRcaSimple.isSet(options);
     }
-    
+
     public boolean isFBelowText()
     {
         return fBelowText.isSet(options);
     }
-    
+
     public boolean isFAnchorLock()
     {
         return fAnchorLock.isSet(options);
     }
-    
+
     public int getCTxbx()
     {
         return cTxbx;
     }
-    
+
     public byte[] toByteArray()
     {
         int offset = 0;
@@ -158,7 +158,7 @@ public class FSPA
 
         return buf;
     }
-    
+
     public String toString()
     {
         StringBuffer buf = new StringBuffer();

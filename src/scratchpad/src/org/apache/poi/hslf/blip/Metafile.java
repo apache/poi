@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.util.LittleEndian;
@@ -27,7 +28,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * Represents a metafile picture which can be one of the following types: EMF, WMF, or PICT.
  * A metafile is stored compressed using the ZIP deflate/inflate algorithm.
- * 
+ *
  * @author Yegor Kozlov
  */
 public abstract class Metafile extends PictureData {

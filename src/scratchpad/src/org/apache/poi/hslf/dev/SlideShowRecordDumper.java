@@ -58,10 +58,10 @@ public final class SlideShowRecordDumper {
 	boolean escher = false;
 
 	int ndx=0;
-	for (; ndx<args.length; ndx++) {		
+	for (; ndx<args.length; ndx++) {
 		if (!args[ndx].substring(0,1).equals("-"))
 			break;
-				
+
 		if (args[ndx].equals("-escher")) {
 			escher = true;
 		} else if (args[ndx].equals("-verbose")) {
@@ -71,20 +71,20 @@ public final class SlideShowRecordDumper {
 			return;
 		}
 	}
-	
+
 	// parsed any options, expect exactly one remaining arg (filename)
 	if (ndx != args.length-1) {
 		printUsage();
 		return;
 	}
-	
+
 	filename = args[ndx];
 
 	SlideShowRecordDumper foo = new SlideShowRecordDumper(filename, verbose, escher);
 
 	foo.printDump();
   }
-  
+
   public static void printUsage() {
 		System.err.println("Usage: SlideShowRecordDumper [-escher] [-verbose] <filename>");
 		System.err.println("Valid Options:");
@@ -94,7 +94,7 @@ public final class SlideShowRecordDumper {
 
 
   /**
-   * Constructs a Powerpoint dump from fileName. Parses the document 
+   * Constructs a Powerpoint dump from fileName. Parses the document
    * and dumps out the contents
    *
    * @param fileName The name of the file to read.
@@ -139,7 +139,7 @@ public final class SlideShowRecordDumper {
 
   public int getDiskLen(Record r) throws IOException {
   	if (r == null) return 0;
-  	
+
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	r.writeOut(baos);
 	byte[] b = baos.toByteArray();
@@ -148,13 +148,13 @@ public final class SlideShowRecordDumper {
 
   public String getPrintableRecordContents(Record r) throws IOException {
   	if (r==null) return "<<null>>";
-  	
+
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	r.writeOut(baos);
 	byte[] b = baos.toByteArray();
 	return HexDump.dump(b, 0, 0);
   }
-  
+
   public String printEscherRecord( EscherRecord er ) {
         String nl = System.getProperty( "line.separator" );
         StringBuffer buf = new StringBuffer();
@@ -163,41 +163,41 @@ public final class SlideShowRecordDumper {
 			buf.append(printEscherContainerRecord( (EscherContainerRecord)er ));
 		} else if (er instanceof EscherTextboxRecord) {
 			buf.append("EscherTextboxRecord:" + nl);
-			
+
 			EscherTextboxWrapper etw = new EscherTextboxWrapper((EscherTextboxRecord)er);
 			Record children[] = etw.getChildRecords();
 			for (int j=0; j<children.length; j++) {
 				if (children[j] instanceof StyleTextPropAtom) {
-					
+
 					// need preceding Text[Chars|Bytes]Atom to initialize the data structure
-					if (j > 0 && (children[j-1] instanceof TextCharsAtom || 
+					if (j > 0 && (children[j-1] instanceof TextCharsAtom ||
 								  children[j-1] instanceof TextBytesAtom)) {
-								  	
-						int size = (children[j-1] instanceof TextCharsAtom) ? 
-										((TextCharsAtom)children[j-1]).getText().length() : 
+
+						int size = (children[j-1] instanceof TextCharsAtom) ?
+										((TextCharsAtom)children[j-1]).getText().length() :
 										((TextBytesAtom)children[j-1]).getText().length();
-										
+
 						StyleTextPropAtom tsp = (StyleTextPropAtom)children[j];
 						tsp.setParentTextSize(size);
-						
+
 					} else {
 						buf.append("Error! Couldn't find preceding TextAtom for style\n");
 					}
-					
+
 					buf.append(children[j].toString() + nl );
-				} else {				
+				} else {
 					buf.append(children[j].toString() + nl );
 				}
 			}
 		} else {
 			buf.append( er.toString() );
-		}			
+		}
 		return buf.toString();
   }
-  
+
   public String printEscherContainerRecord( EscherContainerRecord ecr ) {
   		String indent = "";
-  		
+
         String nl = System.getProperty( "line.separator" );
 
         StringBuffer children = new StringBuffer();
@@ -211,13 +211,13 @@ public final class SlideShowRecordDumper {
 
             EscherRecord record = iterator.next();
             children.append(newIndent + "Child " + count + ":" + nl);
-            
+
            	children.append( printEscherRecord(record) );
 
             count++;
         }
 
-        return 
+        return
         	indent + ecr.getClass().getName() + " (" + ecr.getRecordName() + "):" + nl +
             indent + "  isContainer: " + ecr.isContainerRecord() + nl +
             indent + "  options: 0x" + HexDump.toHex( ecr.getOptions() ) + nl +
@@ -242,7 +242,7 @@ public final class SlideShowRecordDumper {
 
 		// Figure out how big it is
 		int len = getDiskLen(r);
-		
+
 		// Grab the type as hex
 		String hexType = makeHex((int)r.getRecordType(),4);
 		String rHexType = reverseHex(hexType);
@@ -273,9 +273,9 @@ public final class SlideShowRecordDumper {
 
 			EscherRecord er = factory.createRecord(b, 0);
 			er.fillFields(b, 0, factory);
-			
+
 			System.out.println( printEscherRecord( er ) );
-						
+
 		} else if(optVerbose && r.getChildRecords() == null) {
 			String recData = getPrintableRecordContents(r);
 			System.out.println(ind + recData );

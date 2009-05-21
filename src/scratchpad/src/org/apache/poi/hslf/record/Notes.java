@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -29,7 +27,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class Notes extends SheetContainer
+public final class Notes extends SheetContainer
 {
 	private byte[] _header;
 	private static long _type = 1008l;
@@ -44,13 +42,13 @@ public class Notes extends SheetContainer
 	 */
 	public NotesAtom getNotesAtom() { return notesAtom; }
 	/**
-	 * Returns the PPDrawing of this Notes, which has all the 
+	 * Returns the PPDrawing of this Notes, which has all the
 	 *  interesting data in it
 	 */
 	public PPDrawing getPPDrawing() { return ppDrawing; }
 
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected Notes(byte[] source, int start, int len) {

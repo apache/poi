@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,7 @@ package org.apache.poi.hslf.exceptions;
  *
  * @author Yegor Kozlov
  */
-public class HSLFException extends RuntimeException {
+public final class HSLFException extends RuntimeException {
 
     public HSLFException() {
 	    super();

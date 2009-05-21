@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
@@ -23,10 +22,10 @@ import java.io.IOException;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Handles the fibRgW / FibRgW97 part of 
+ * Handles the fibRgW / FibRgW97 part of
  *  the FIB (File Information Block)
  */
-public class FIBShortHandler {
+public final class FIBShortHandler {
   public final static int MAGICCREATED = 0;
   public final static int MAGICREVISED = 1;
   public final static int MAGICCREATEDPRIVATE = 2;

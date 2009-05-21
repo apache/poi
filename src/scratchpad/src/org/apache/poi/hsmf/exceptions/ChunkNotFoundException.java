@@ -17,7 +17,7 @@
 
 package org.apache.poi.hsmf.exceptions;
 
-public class ChunkNotFoundException extends Exception {
+public final class ChunkNotFoundException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public ChunkNotFoundException(String chunkName) {

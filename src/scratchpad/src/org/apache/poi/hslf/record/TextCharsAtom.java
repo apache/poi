@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -32,7 +30,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class TextCharsAtom extends RecordAtom
+public final class TextCharsAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 4000l;
@@ -41,7 +39,7 @@ public class TextCharsAtom extends RecordAtom
 	private byte[] _text;
 
 	/** Grabs the text. */
-	public String getText() { 
+	public String getText() {
 		return StringUtil.getFromUnicodeLE(_text);
 	}
 
@@ -57,8 +55,8 @@ public class TextCharsAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
-	 * For the TextChars Atom 
+	/**
+	 * For the TextChars Atom
 	 */
 	protected TextCharsAtom(byte[] source, int start, int len) {
 		// Sanity Checking
@@ -98,9 +96,9 @@ public class TextCharsAtom extends RecordAtom
 		// Write out our text
 		out.write(_text);
 	}
-	
+
 	/**
-	 * dump debug info; use getText() to return a string 
+	 * dump debug info; use getText() to return a string
 	 * representation of the atom
 	 */
 	public String toString() {

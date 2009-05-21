@@ -26,7 +26,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
  */
 public final class MainContents extends HPBFPart {
 	private static final String[] PATH = { "Contents", };
-	
+
 	public MainContents(DirectoryNode baseDir) throws IOException {
 		super(baseDir, PATH);
 	}

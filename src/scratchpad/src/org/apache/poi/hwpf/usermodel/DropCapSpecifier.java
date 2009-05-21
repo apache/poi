@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class DropCapSpecifier
+public final class DropCapSpecifier
 {
   private short _info;
     private static BitField _type = BitFieldFactory.getInstance(0x07);

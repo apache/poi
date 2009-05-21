@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
@@ -26,10 +26,10 @@ import java.io.FileOutputStream;
 
 /**
  * Demonstrates how to create tables
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TableDemo {
+public final class TableDemo {
 
     public static void main(String[] args) throws Exception {
 

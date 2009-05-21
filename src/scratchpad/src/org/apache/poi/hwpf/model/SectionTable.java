@@ -27,7 +27,7 @@ import org.apache.poi.hwpf.model.io.*;
 /**
  * @author Ryan Ackley
  */
-public class SectionTable
+public final class SectionTable
 {
   private static final int SED_SIZE = 12;
 
@@ -60,7 +60,7 @@ public class SectionTable
       int fileOffset = sed.getFc();
       int startAt = CPtoFC(node.getStart());
       int endAt = CPtoFC(node.getEnd());
-      
+
       boolean isUnicodeAtStart = tpt.isUnicodeAtByteOffset( startAt );
 //      System.err.println(startAt + " -> " + endAt + " = " + isUnicodeAtStart);
 
@@ -79,7 +79,7 @@ public class SectionTable
         _sections.add(new SEPX(sed, startAt, endAt, buf, isUnicodeAtStart));
       }
     }
-    
+
     // Some files seem to lie about their unicode status, which
     //  is very very pesky. Try to work around these, but this
     //  is getting on for black magic...
@@ -99,7 +99,7 @@ public class SectionTable
         for(int i=0; i<_sections.size(); i++) {
         	SEPX s = (SEPX)_sections.get(i);
             GenericPropertyNode node = sedPlex.getProperty(i);
-            
+
         	s.setStart( CPtoFC(node.getStart()) );
         	s.setEnd( CPtoFC(node.getEnd()) );
         }

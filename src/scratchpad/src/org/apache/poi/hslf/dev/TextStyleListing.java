@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
@@ -33,7 +30,7 @@ import java.util.LinkedList;
  * Uses record level code to locate StyleTextPropAtom entries.
  * Having found them, it shows the contents
  */
-public class TextStyleListing {
+public final class TextStyleListing {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
@@ -84,7 +81,7 @@ public class TextStyleListing {
 			System.out.println("  Characters covered is " + tpc.getCharactersCovered());
 			showTextProps(tpc);
 		}
-		
+
 		LinkedList charStyles = stpa.getCharacterStyles();
 		System.out.println("Contains " + charStyles.size() + " character styles:");
 		for(int i=0; i<charStyles.size(); i++) {

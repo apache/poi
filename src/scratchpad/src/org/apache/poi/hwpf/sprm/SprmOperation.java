@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
@@ -29,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Ryan Ackley
  * @version 1.0
  */
-public class SprmOperation
+public final class SprmOperation
 {
   final static private BitField OP_BITFIELD = BitFieldFactory.getInstance(0x1ff);
   final static private BitField SPECIAL_BITFIELD = BitFieldFactory.getInstance(0x200);
@@ -102,7 +100,7 @@ public class SprmOperation
         return LittleEndian.getInt(_grpprl, _gOffset);
       case 6:
           byte operandLength = _grpprl[_gOffset + 1];   //surely shorter than an int...
-    	  
+
           byte [] codeBytes = new byte[LittleEndian.INT_SIZE]; //initialized to zeros by JVM
           for(int i = 0; i < operandLength; i++)
               if(_gOffset + i < _grpprl.length)

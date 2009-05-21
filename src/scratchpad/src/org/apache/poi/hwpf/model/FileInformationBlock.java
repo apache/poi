@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -31,7 +29,7 @@ import org.apache.poi.hwpf.model.types.FIBAbstractType;
  * The File Information Block (FIB). Holds pointers
  *  to various bits of the file, and lots of flags which
  *  specify properties of the document.
- * 
+ *
  * The parent class, {@link FIBAbstractType}, holds the
  *  first 32 bytes, which make up the FibBase.
  * The next part, the fibRgW / FibRgW97, is handled
@@ -40,10 +38,10 @@ import org.apache.poi.hwpf.model.types.FIBAbstractType;
  *  handled by the {@link FIBLongHandler}.
  * Finally, the rest of the fields are handled by
  *  the {@link FIBFieldHandler}.
- * 
+ *
  * @author  andy
  */
-public class FileInformationBlock extends FIBAbstractType
+public final class FileInformationBlock extends FIBAbstractType
   implements Cloneable
 {
 
@@ -321,8 +319,8 @@ public class FileInformationBlock extends FIBAbstractType
     {
       _fieldHandler.setFieldSize(FIBFieldHandler.PLFLFO, modifiedHigh);
     }
-    
-    
+
+
     /**
      * How many bytes of the main stream contain real data.
      */
@@ -331,7 +329,7 @@ public class FileInformationBlock extends FIBAbstractType
     }
     /**
      * Updates the count of the number of bytes in the
-     * main stream which contain real data 
+     * main stream which contain real data
      */
     public void setCbMac(int cbMac) {
        _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
@@ -431,7 +429,7 @@ public class FileInformationBlock extends FIBAbstractType
        _longHandler.setLong(FIBLongHandler.CCPHDRTXBX, ccpTxtBx);
     }
 
-	
+
     public void clearOffsetsSizes()
     {
       _fieldHandler.clearFields();
@@ -446,22 +444,22 @@ public class FileInformationBlock extends FIBAbstractType
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
     }
-    
+
     public int getFcPlcspaMom()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCSPAMOM);
     }
-    
+
     public int getLcbPlcspaMom()
     {
         return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
     }
-    
+
     public int getFcDggInfo()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.DGGINFO);
     }
-    
+
     public int getLcbDggInfo()
     {
         return _fieldHandler.getFieldSize(FIBFieldHandler.DGGINFO);

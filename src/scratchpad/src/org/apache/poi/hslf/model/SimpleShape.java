@@ -38,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
  *
  *  @author Yegor Kozlov
  */
-public class SimpleShape extends Shape {
+public abstract class SimpleShape extends Shape {
 
     /**
      * Records stored in EscherClientDataRecord

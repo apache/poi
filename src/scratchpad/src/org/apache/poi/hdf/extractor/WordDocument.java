@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.extractor;
 
@@ -39,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Ryan Ackley
  */
 
-public class WordDocument
+public final class WordDocument
 {
   /** byte buffer containing the main Document stream*/
   byte[] _header;
@@ -182,7 +179,7 @@ public class WordDocument
   {
   	this(new FileInputStream(fileName));
   }
-  
+
   public WordDocument(InputStream inputStream) throws IOException
   {
         //do Ole stuff
@@ -818,8 +815,8 @@ public class WordDocument
 
     return "<fo:region-" + where + " display-align=\"" + align + "\" extent=\""
              + extent + "pt\" "+region+"/>";
-// org.apache.fop.fo.expr.PropertyException: 
-// Border and padding for region "xsl-region-before" must be '0' 
+// org.apache.fop.fo.expr.PropertyException:
+// Border and padding for region "xsl-region-before" must be '0'
 // (See 6.4.13 in XSL 1.0).
 //             extent + "pt\" padding-left=\"" + marginLeft + "pt\" padding-right=\"" +
 //             marginRight + "pt\" padding-top=\"" + marginTop + "pt\" padding-bottom=\"" +

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
 import java.io.ByteArrayInputStream;
@@ -34,15 +35,15 @@ public abstract class HPBFPart {
 	 * @param path  the path to the part, eg Contents or Quill, QuillSub, CONTENTS
 	 */
 	public HPBFPart(DirectoryNode baseDir, String[] path) throws IOException {
-		 
+
 		DirectoryNode dir = getDir(path, baseDir);
 		String name = path[path.length-1];
-		
+
 		DocumentEntry docProps;
 		try {
 			docProps = (DocumentEntry)dir.getEntry(name);
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - failed to find document entry '" 
+			throw new IllegalArgumentException("File invalid - failed to find document entry '"
 					+ name + "'");
 		}
 
@@ -56,16 +57,16 @@ public abstract class HPBFPart {
 			try {
 				dir = (DirectoryNode)dir.getEntry(path[i]);
 			} catch (FileNotFoundException e) {
-				throw new IllegalArgumentException("File invalid - failed to find directory entry '" 
+				throw new IllegalArgumentException("File invalid - failed to find directory entry '"
 						+ path[i] + "'");
 			}
 		}
 		return dir;
 	}
-	
+
 	public void writeOut(DirectoryNode baseDir) throws IOException {
 		String[] path = getPath();
-		
+
 		// Ensure that all parent directories exist
 		DirectoryNode dir = baseDir;
 		for(int i=0; i<path.length-1; i++) {
@@ -75,22 +76,22 @@ public abstract class HPBFPart {
 				dir.createDirectory(path[i]);
 			}
 		}
-		
+
 		// Update the byte array with the latest data
 		generateData();
-		
+
 		// Write out
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		dir.createDocument(path[path.length-1], bais);
 	}
-	
+
 	/**
 	 * Called just before writing out, to trigger
 	 *  the data byte array to be updated with the
 	 *  latest contents.
 	 */
 	protected abstract void generateData();
-	
+
 	/**
 	 * Returns the raw data that makes up
 	 *  this document part.

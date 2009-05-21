@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -33,7 +30,7 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestDocument extends TestCase {
+public final class TestDocument extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow ss;
 	// POIFS primed on the test data
@@ -46,7 +43,7 @@ public class TestDocument extends TestCase {
 		pfs = new POIFSFileSystem(fis);
 		ss = new HSLFSlideShow(pfs);
     }
-    
+
     private Document getDocRecord() {
     	Record[] r = ss.getRecords();
     	for(int i=(r.length-1); i>=0; i--) {
@@ -61,15 +58,15 @@ public class TestDocument extends TestCase {
     	Document dr = getDocRecord();
     	assertEquals(1000, dr.getRecordType());
 	}
-    
+
     public void testChildRecords() throws Exception {
     	Document dr = getDocRecord();
     	assertNotNull(dr.getDocumentAtom());
     	assertTrue(dr.getDocumentAtom() instanceof DocumentAtom);
-    	
+
     	assertNotNull(dr.getEnvironment());
     	assertTrue(dr.getEnvironment() instanceof Environment);
-    	
+
     	assertNotNull(dr.getSlideListWithTexts());
     	assertEquals(3, dr.getSlideListWithTexts().length);
     	assertNotNull(dr.getSlideListWithTexts()[0]);
@@ -79,15 +76,15 @@ public class TestDocument extends TestCase {
     	assertNotNull(dr.getSlideListWithTexts()[2]);
     	assertTrue(dr.getSlideListWithTexts()[2] instanceof SlideListWithText);
     }
-    
+
     public void testEnvironment() throws Exception {
     	Document dr = getDocRecord();
     	Environment env = dr.getEnvironment();
-    	
+
     	assertEquals(1010, env.getRecordType());
     	assertNotNull(env.getFontCollection());
     	assertTrue(env.getFontCollection() instanceof FontCollection);
     }
-    
+
     // No need to check re-writing - hslf.TestReWrite does all that for us
 }

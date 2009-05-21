@@ -79,7 +79,7 @@ public final class TestOleEmbedding extends TestCase {
                     assertEquals(3, sheet.getRow(3).getCell(0).getNumericCellValue(), 0);
                     assertEquals(8, sheet.getRow(5).getCell(0).getNumericCellValue(), 0);
                 } else if ("Document".equals(ole.getInstanceName())){
-                    //creating a HWPF document 
+                    //creating a HWPF document
                     HWPFDocument doc = new HWPFDocument(data.getData());
                     String txt = doc.getRange().getParagraph(0).text();
                     assertEquals("OLE embedding is thoroughly unremarkable.\r", txt);

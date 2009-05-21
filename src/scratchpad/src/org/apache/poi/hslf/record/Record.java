@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -53,10 +50,10 @@ public abstract class Record
 	 */
 	public abstract long getRecordType();
 
-	/** 
+	/**
 	 * Fetch all the child records of this record
 	 * If this record is an atom, will return null
-	 * If this record is a non-atom, but has no children, will return 
+	 * If this record is a non-atom, but has no children, will return
 	 *  an empty array
 	 */
 	public abstract Record[] getChildRecords();
@@ -65,7 +62,7 @@ public abstract class Record
 	 * Have the contents printer out into an OutputStream, used when
 	 *  writing a file back out to disk
 	 * (Normally, atom classes will keep their bytes around, but
-	 *  non atom classes will just request the bytes from their 
+	 *  non atom classes will just request the bytes from their
 	 *  children, then chuck on their header and return)
 	 */
 	public abstract void writeOut(OutputStream o) throws IOException;
@@ -86,7 +83,7 @@ public abstract class Record
 		LittleEndian.putShort(bs,s);
 		o.write(bs);
 	}
-	
+
 	/**
 	 * Build and return the Record at the given offset.
 	 * Note - does less error checking and handling than findChildRecords
@@ -171,7 +168,7 @@ public abstract class Record
 		Class c = null;
 		try {
 			c = RecordTypes.recordHandlingClass((int)type);
-			if(c == null) { 
+			if(c == null) {
 				// How odd. RecordTypes normally subsitutes in
 				//  a default handler class if it has heard of the record
 				//  type but there's no support for it. Explicitly request

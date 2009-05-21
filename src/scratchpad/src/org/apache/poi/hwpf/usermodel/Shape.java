@@ -20,14 +20,14 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.util.LittleEndian;
 
-public class Shape {
+public final class Shape {
         int _id, _left, _right, _top, _bottom;
         /**
          * true if the Shape bounds are within document (for
          * example, it's false if the image left corner is outside the doc, like for
          * embedded documents)
          */
-        boolean _inDoc; 
+        boolean _inDoc;
 
         public Shape(GenericPropertyNode nodo) {
                 byte [] contenuto = nodo.getBytes();

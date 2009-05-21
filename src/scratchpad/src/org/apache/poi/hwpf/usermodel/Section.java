@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.SEPX;
 
-public class Section
+public final class Section
   extends Range
 {
 

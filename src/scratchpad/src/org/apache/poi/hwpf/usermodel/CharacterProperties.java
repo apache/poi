@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.types.CHPAbstractType;
@@ -24,7 +22,7 @@ import org.apache.poi.hwpf.model.types.CHPAbstractType;
 /**
  * @author Ryan Ackley
  */
-public class CharacterProperties
+public final class CharacterProperties
   extends CHPAbstractType implements Cloneable
 {
   public final static short SPRM_FRMARKDEL = (short)0x0800;

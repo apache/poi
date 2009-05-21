@@ -15,14 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-/**
- * @author Ryan Ackley
- */
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.HWPFDocument;
 
-public class DocumentPosition
+public final class DocumentPosition
   extends Range
 {
   public DocumentPosition(HWPFDocument doc, int pos)

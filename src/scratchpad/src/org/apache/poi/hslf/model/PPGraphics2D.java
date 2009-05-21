@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 
@@ -37,7 +38,7 @@ import org.apache.poi.util.POILogFactory;
  *
  * @author Yegor Kozlov
  */
-public class PPGraphics2D extends Graphics2D implements Cloneable {
+public final class PPGraphics2D extends Graphics2D implements Cloneable {
 
     protected POILogger log = POILogFactory.getLogger(this.getClass());
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-/*
- * HDFObjectFactory.java
- *
- * Created on February 24, 2002, 2:17 PM
- */
 
 package org.apache.poi.hdf.model;
 
@@ -53,7 +46,7 @@ import org.apache.poi.util.LittleEndian;
  * that represent the data.
  * @author  andy
  */
-public class HDFObjectFactory
+public final class HDFObjectFactory
 {
 
     /** OLE stuff*/

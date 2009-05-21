@@ -14,13 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model.qcbits;
 
 /**
  * Any Quill Contents bits we don't know
  *  how to handle explicitly
  */
-public class UnknownQCBit extends QCBit {
+public final class UnknownQCBit extends QCBit {
 	public UnknownQCBit(String thingType, String bitType, byte[] data) {
 		super(thingType, bitType, data);
 	}

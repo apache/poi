@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.LittleEndian;
@@ -32,7 +31,7 @@ import java.util.zip.InflaterInputStream;
  * Represents embedded picture extracted from Word Document
  * @author Dmitry Romanov
  */
-public class Picture
+public final class Picture
 {
   private static final POILogger log = POILogFactory.getLogger(Picture.class);
 
@@ -98,7 +97,7 @@ public class Picture
       fillImageContent();
     }
   }
-  
+
   public Picture(byte[] _dataStream)
   {
       this._dataStream = _dataStream;

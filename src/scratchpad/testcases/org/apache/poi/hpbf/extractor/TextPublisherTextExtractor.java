@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.extractor;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import org.apache.poi.hpbf.HPBFDocument;
 
 import junit.framework.TestCase;
 
-public class TextPublisherTextExtractor extends TestCase {
+public final class TextPublisherTextExtractor extends TestCase {
 	private String dir;
 
 	protected void setUp() throws Exception {
@@ -36,27 +37,27 @@ public class TextPublisherTextExtractor extends TestCase {
 				new FileInputStream(f)
 		);
 
-		PublisherTextExtractor ext = 
+		PublisherTextExtractor ext =
 			new PublisherTextExtractor(doc);
 		ext.getText();
-		
+
 		f = new File(dir, "Simple.pub");
 		ext = new PublisherTextExtractor(
 				new FileInputStream(f)
 		);
 		ext.getText();
 	}
-	
+
 	public void testContents() throws Exception {
 		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
 				new FileInputStream(f)
 		);
 
-		PublisherTextExtractor ext = 
+		PublisherTextExtractor ext =
 			new PublisherTextExtractor(doc);
 		String text = ext.getText();
-		
+
 		assertEquals(
 "This is some text on the first page\n" +
 "It\u2019s in times new roman, font size 10, all normal\n" +
@@ -84,7 +85,7 @@ public class TextPublisherTextExtractor extends TestCase {
 "Within doc to page 1\n"
 				, text
 		);
-		
+
 		// Now a simpler one
 		f = new File(dir, "Simple.pub");
 		ext = new PublisherTextExtractor(
@@ -102,7 +103,7 @@ public class TextPublisherTextExtractor extends TestCase {
 				, text
 		);
 	}
-	
+
 	/**
 	 * We have the same file saved for Publisher 98, Publisher
 	 *  2000 and Publisher 2007. Check they all agree.
@@ -111,30 +112,30 @@ public class TextPublisherTextExtractor extends TestCase {
 	public void testMultipleVersions() throws Exception {
 		File f;
 		HPBFDocument doc;
-		
+
 		f = new File(dir, "Sample.pub");
 		doc = new HPBFDocument(
 				new FileInputStream(f)
 		);
 		String s2007 = (new PublisherTextExtractor(doc)).getText();
-		
+
 		f = new File(dir, "Sample2000.pub");
 		doc = new HPBFDocument(
 				new FileInputStream(f)
 		);
 		String s2000 = (new PublisherTextExtractor(doc)).getText();
-		
+
 		f = new File(dir, "Sample98.pub");
 		doc = new HPBFDocument(
 				new FileInputStream(f)
 		);
 		String s98 = (new PublisherTextExtractor(doc)).getText();
-		
+
 		// Check they all agree
 		assertEquals(s2007, s2000);
 		assertEquals(s2007, s98);
 	}
-	
+
 	/**
 	 * Test that the hyperlink extraction stuff works as well
 	 *  as we can hope it to.
@@ -145,24 +146,24 @@ public class TextPublisherTextExtractor extends TestCase {
 				new FileInputStream(f)
 		);
 
-		PublisherTextExtractor ext = 
+		PublisherTextExtractor ext =
 			new PublisherTextExtractor(doc);
 		ext.getText();
-		
+
 		// Default is no hyperlinks
 		assertEquals("1234567890LINK\n", ext.getText());
-		
+
 		// Turn on
 		ext.setHyperlinksByDefault(true);
 		assertEquals("1234567890LINK\n<http://poi.apache.org/>\n", ext.getText());
-		
-		
+
+
 		// Now a much more complex document
 		f = new File(dir, "Sample.pub");
 		ext = new PublisherTextExtractor(new FileInputStream(f));
 		ext.setHyperlinksByDefault(true);
 		String text = ext.getText();
-		
+
 		assertTrue(text.endsWith(
 				"<http://poi.apache.org/>\n" +
 				"<C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx>\n" +

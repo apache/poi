@@ -43,7 +43,7 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  *
  * @author Ryan Ackley
  */
-public class HWPFList
+public final class HWPFList
 {
   private ListData _listData;
   private ListFormatOverride _override;

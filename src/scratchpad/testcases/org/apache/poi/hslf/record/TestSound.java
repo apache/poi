@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -38,7 +35,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public class TestSound extends TestCase {
+public final class TestSound extends TestCase {
 	public void testRealFile() throws Exception {
 		String cwd = System.getProperty("HSLF.testdata.path");
 		FileInputStream is = new FileInputStream(new File(cwd, "sound.ppt"));

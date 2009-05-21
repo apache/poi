@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class LineSpacingDescriptor
+public final class LineSpacingDescriptor
   implements Cloneable
 {
   short _dyaLine;

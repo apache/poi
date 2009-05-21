@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -38,22 +35,22 @@ import org.apache.poi.util.POILogFactory;
 
 /**
  * Represents a run of text, all with the same style
- * 
+ *
  */
-public class RichTextRun {
+public final class RichTextRun {
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
 	/** The TextRun we belong to */
 	private TextRun parentRun;
 	/** The SlideShow we belong to */
 	private SlideShow slideShow;
-	
+
 	/** Where in the parent TextRun we start from */
 	private int startPos;
-	
+
 	/** How long a string (in the parent TextRun) we represent */
 	private int length;
-	
+
     private String _fontname;
     /**
 	 * Our paragraph and character style.
@@ -84,7 +81,7 @@ public class RichTextRun {
 	 * @param pShared The paragraph styles are shared with other runs
 	 * @param cShared The character styles are shared with other runs
 	 */
-	public RichTextRun(TextRun parent, int startAt, int len, 
+	public RichTextRun(TextRun parent, int startAt, int len,
 	TextPropCollection pStyle,  TextPropCollection cStyle,
 	boolean pShared, boolean cShared) {
 		parentRun = parent;
@@ -97,8 +94,8 @@ public class RichTextRun {
 	}
 
 	/**
-	 * Supply (normally default) textprops, and if they're shared, 
-	 *  when a run gets them 
+	 * Supply (normally default) textprops, and if they're shared,
+	 *  when a run gets them
 	 */
 	public void supplyTextProps(TextPropCollection pStyle,  TextPropCollection cStyle, boolean pShared, boolean cShared) {
 		if(paragraphStyle != null || characterStyle != null) {
@@ -119,7 +116,7 @@ public class RichTextRun {
             _fontname = null;
         }
 	}
-	
+
 	/**
 	 * Get the length of the text
 	 */
@@ -157,7 +154,7 @@ public class RichTextRun {
 	public String getRawText() {
 		return parentRun.getRawText().substring(startPos, startPos+length);
 	}
-	
+
 	/**
 	 * Change the text
 	 */
@@ -165,7 +162,7 @@ public class RichTextRun {
         String s = parentRun.normalize(text);
         setRawText(s);
 	}
-	
+
     /**
      * Change the text
      */
@@ -181,10 +178,10 @@ public class RichTextRun {
 	public void updateStartPosition(int startAt) {
 		startPos = startAt;
 	}
-	
-	
+
+
 	// --------------- Internal helpers on rich text properties -------
-	
+
 	/**
 	 * Fetch the value of the given flag in the CharFlagsTextProp.
 	 * Returns false if the CharFlagsTextProp isn't present, since the
@@ -227,7 +224,7 @@ public class RichTextRun {
 
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
-	 *  it if required. 
+	 *  it if required.
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
         if(getFlag(true, index) != value) setFlag(true, index, value);
@@ -268,11 +265,11 @@ public class RichTextRun {
 		}
 		return tp;
 	}
-	
+
 	/**
-	 * Fetch the value of the given Character related TextProp. 
-	 * Returns -1 if that TextProp isn't present. 
-	 * If the TextProp isn't present, the value from the appropriate 
+	 * Fetch the value of the given Character related TextProp.
+	 * Returns -1 if that TextProp isn't present.
+	 * If the TextProp isn't present, the value from the appropriate
 	 *  Master Sheet will apply.
 	 */
 	private int getCharTextPropVal(String propName) {
@@ -315,7 +312,7 @@ public class RichTextRun {
 
 		return prop == null ? -1 : prop.getValue();
 	}
-	
+
 	/**
 	 * Sets the value of the given Character TextProp, add if required
 	 * @param propName The name of the Character TextProp
@@ -327,7 +324,7 @@ public class RichTextRun {
 			parentRun.ensureStyleAtomPresent();
 			// paragraphStyle will now be defined
 		}
-		
+
 		TextProp tp = fetchOrAddTextProp(paragraphStyle, propName);
 		tp.setValue(val);
 	}
@@ -342,12 +339,12 @@ public class RichTextRun {
 			parentRun.ensureStyleAtomPresent();
 			// characterStyle will now be defined
 		}
-		
+
 		TextProp tp = fetchOrAddTextProp(characterStyle, propName);
 		tp.setValue(val);
 	}
-	
-	
+
+
 	// --------------- Friendly getters / setters on rich text properties -------
 
     /**
@@ -363,7 +360,7 @@ public class RichTextRun {
 	public void setBold(boolean bold) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
 	}
-	
+
     /**
      * Is the text italic?
      */
@@ -377,7 +374,7 @@ public class RichTextRun {
 	public void setItalic(boolean italic) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
 	}
-	
+
     /**
      * Is the text underlined?
      */
@@ -509,7 +506,7 @@ public class RichTextRun {
             return slideShow.getFontCollection().getFontWithId(fontIdx);
         }
 	}
-	
+
 	/**
 	 * @return font color as RGB value
 	 * @see java.awt.Color
@@ -529,13 +526,13 @@ public class RichTextRun {
 	/**
 	 * Sets color of the text, as a int bgr.
 	 * (PowerPoint stores as BlueGreenRed, not the more
-	 *  usual RedGreenBlue) 
+	 *  usual RedGreenBlue)
 	 * @see java.awt.Color
 	 */
 	public void setFontColor(int bgr) {
 		setCharTextPropVal("font.color", bgr);
 	}
-	
+
     /**
      * Sets color of the text, as a java.awt.Color
      */
@@ -772,15 +769,15 @@ public class RichTextRun {
         return val == -1 ? 0 : val;
     }
 	// --------------- Internal HSLF methods, not intended for end-user use! -------
-	
+
 	/**
 	 * Internal Use Only - get the underlying paragraph style collection.
-	 * For normal use, use the friendly setters and getters 
+	 * For normal use, use the friendly setters and getters
 	 */
 	public TextPropCollection _getRawParagraphStyle() { return paragraphStyle; }
 	/**
 	 * Internal Use Only - get the underlying character style collection.
-	 * For normal use, use the friendly setters and getters 
+	 * For normal use, use the friendly setters and getters
 	 */
 	public TextPropCollection _getRawCharacterStyle() { return characterStyle; }
 	/**

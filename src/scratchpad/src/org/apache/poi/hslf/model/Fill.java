@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +31,7 @@ import java.awt.*;
  *
  * @author Yegor Kozlov
  */
-public class Fill {
+public final class Fill {
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -229,7 +228,7 @@ public class Fill {
     /**
      * Assign picture used to fill the underlying shape.
      *
-     * @param idx 0-based index of the picture added to this ppt by <code>SlideShow.addPicture</code> method. 
+     * @param idx 0-based index of the picture added to this ppt by <code>SlideShow.addPicture</code> method.
      */
     public void setPictureData(int idx){
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);

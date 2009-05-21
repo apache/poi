@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 import java.io.IOException;
@@ -33,21 +34,21 @@ import org.apache.poi.hdgf.exceptions.HDGFException;
 public abstract class Stream {
 	private Pointer pointer;
 	private StreamStore store;
-	
+
 	public Pointer getPointer() { return pointer; }
 	protected StreamStore getStore() { return store; }
 	public StreamStore _getStore() { return store; }
 	public int _getContentsLength() { return store.getContents().length; }
-	
+
 	/**
 	 * Creates a new Stream, having already used the pointer
-	 *  to build a store 
+	 *  to build a store
 	 */
 	protected Stream(Pointer pointer, StreamStore store) {
 		this.pointer = pointer;
 		this.store = store;
 	}
-	
+
 	/**
 	 * Uses the pointer to locate a Stream within the document
 	 *  data, and creates it.
@@ -71,7 +72,7 @@ public abstract class Stream {
 					documentData, pointer.getOffset(), pointer.getLength()
 			);
 		}
-		
+
 		// Figure out what sort of Stream to create, create and return it
 		if(pointer.getType() == 20) {
 			return new TrailerStream(pointer, store, chunkFactory, pointerFactory);
@@ -80,12 +81,12 @@ public abstract class Stream {
 			return new PointerContainingStream(pointer, store, chunkFactory, pointerFactory);
 		}
 		else if(pointer.destinationHasChunks()) {
-			return new ChunkStream(pointer, store, chunkFactory); 
+			return new ChunkStream(pointer, store, chunkFactory);
 		}
 		else if(pointer.destinationHasStrings()) {
 			return new StringsStream(pointer, store, chunkFactory);
 		}
-		
+
 		// Give up and return a generic one
 		return new UnknownStream(pointer, store);
 	}

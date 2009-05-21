@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -28,7 +29,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public class TestHyperlink extends TestCase {
+public final class TestHyperlink extends TestCase {
     protected String cwd = System.getProperty("HSLF.testdata.path");
 
     public void testTextRunHyperlinks() throws Exception {

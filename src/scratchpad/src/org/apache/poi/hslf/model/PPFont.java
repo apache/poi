@@ -24,11 +24,11 @@ import org.apache.poi.hslf.record.FontEntityAtom;
  * <p>
  * In PowerPoint Font is a shared resource and can be shared among text object in the presentation.
  * </p>
- * Some commonly used fonts are predefined in static constants. 
+ * Some commonly used fonts are predefined in static constants.
  *
  * @author Yegor Kozlov
  */
-public class PPFont {
+public final class PPFont {
     /**
      * ANSI character set
      */

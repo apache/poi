@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -32,7 +30,7 @@ import java.io.OutputStream;
  * @author Yegor Kozlov
  */
 
-public class OEPlaceholderAtom extends RecordAtom{
+public final class OEPlaceholderAtom extends RecordAtom{
 
     /**
      * The full size of the master body text placeholder shape.
@@ -109,7 +107,7 @@ public class OEPlaceholderAtom extends RecordAtom{
     public static final byte MasterFooter = 9;
 
     /**
-     * The corresponding shape contains a header text field. 
+     * The corresponding shape contains a header text field.
      * The corresponding slide must be a notes master slide or handout master slide.
      */
     public static final byte MasterHeader = 10;

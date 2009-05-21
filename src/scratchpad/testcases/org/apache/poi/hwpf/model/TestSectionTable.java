@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
 
-public class TestSectionTable
+public final class TestSectionTable
   extends TestCase
 {
   private HWPFDocFixture _hWPFDocFixture;
@@ -46,7 +44,7 @@ public class TestSectionTable
     int fcMin = fib.getFcMin();
 
     CPSplitCalculator cps = new CPSplitCalculator(fib);
-    
+
     ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream, fib.getFcClx(), fcMin);
     TextPieceTable tpt = cft.getTextPieceTable();
 
@@ -64,7 +62,7 @@ public class TestSectionTable
     byte[] newMainStream = mainOut.toByteArray();
 
     SectionTable newSectionTable = new SectionTable(
-    		newMainStream, newTableStream, 0, 
+    		newMainStream, newTableStream, 0,
     		newTableStream.length, 0, tpt, cps);
 
     ArrayList oldSections = sectionTable.getSections();

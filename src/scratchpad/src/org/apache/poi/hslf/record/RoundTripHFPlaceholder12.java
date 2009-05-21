@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -32,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Yegor Kozlov
  */
 
-public class RoundTripHFPlaceholder12 extends RecordAtom
+public final class RoundTripHFPlaceholder12 extends RecordAtom
 {
     /**
      * Record header.
@@ -42,7 +41,7 @@ public class RoundTripHFPlaceholder12 extends RecordAtom
     /**
      * Specifies the placeholder shape ID.
      *
-     * MUST be {@link OEPlaceholderAtom#MasterDate},  {@link OEPlaceholderAtom#MasterSlideNumber}, 
+     * MUST be {@link OEPlaceholderAtom#MasterDate},  {@link OEPlaceholderAtom#MasterSlideNumber},
      * {@link OEPlaceholderAtom#MasterFooter}, or {@link OEPlaceholderAtom#MasterHeader}
      */
     private byte _placeholderId;

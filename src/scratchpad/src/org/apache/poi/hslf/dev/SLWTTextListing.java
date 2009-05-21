@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
@@ -28,7 +25,7 @@ import org.apache.poi.hslf.record.*;
  * Having found them, it sees if they have any text, and prints out
  *  what it finds.
  */
-public class SLWTTextListing {
+public final class SLWTTextListing {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
@@ -48,7 +45,7 @@ public class SLWTTextListing {
 						System.out.println("Found SLWT at pos " + j + " in the Document at " + i);
 						System.out.println("  Has " + docChildren[j].getChildRecords().length + " children");
 
-						// Grab the SlideAtomSet's, which contain 
+						// Grab the SlideAtomSet's, which contain
 						//  a SlidePersistAtom and then a bunch of text
 						//  + related records
 						SlideListWithText slwt = (SlideListWithText)docChildren[j];

@@ -29,36 +29,36 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
  */
 public abstract class EscherPart extends HPBFPart {
 	private EscherRecord[] records;
-	
+
 	/**
 	 * Creates the Escher Part, and finds our child
 	 *  escher records
 	 */
 	public EscherPart(DirectoryNode baseDir, String[] parts) throws IOException {
 		super(baseDir, parts);
-		
+
 		// Now create our Escher children
-		DefaultEscherRecordFactory erf = 
+		DefaultEscherRecordFactory erf =
 			new DefaultEscherRecordFactory();
-		
+
 		ArrayList ec = new ArrayList();
 		int left = data.length;
 		while(left > 0) {
 			EscherRecord er = erf.createRecord(data, 0);
 			er.fillFields(data, 0, erf);
 			left -= er.getRecordSize();
-			
+
 			ec.add(er);
 		}
-		
+
 		records = (EscherRecord[])
 			ec.toArray(new EscherRecord[ec.size()]);
 	}
-	
+
 	public EscherRecord[] getEscherRecords() {
 		return records;
 	}
-	
+
 	/**
 	 * Serialises our Escher children back
 	 *  into bytes.
@@ -66,13 +66,13 @@ public abstract class EscherPart extends HPBFPart {
 	protected void generateData() {
 		int size = 0;
 		for(int i=0; i<records.length; i++) {
-			size += records[i].getRecordSize(); 
+			size += records[i].getRecordSize();
 		}
-		
+
 		data = new byte[size];
 		size = 0;
 		for(int i=0; i<records.length; i++) {
-			int thisSize = 
+			int thisSize =
 				records[i].serialize(size, data);
 			size += thisSize;
 		}

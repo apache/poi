@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -29,7 +30,7 @@ import java.io.ByteArrayInputStream;
  *
  * @author Yegor Kozlov
  */
-public class TestSetBoldItalic extends TestCase {
+public final class TestSetBoldItalic extends TestCase {
     /**
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes

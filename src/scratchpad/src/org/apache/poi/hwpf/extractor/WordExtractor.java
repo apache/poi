@@ -1,19 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hwpf.extractor;
 
 import java.io.IOException;
@@ -33,16 +34,16 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to extract the text from a Word Document.
- * 
+ *
  * You should use either getParagraphText() or getText() unless
  *  you have a strong reason otherwise.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class WordExtractor extends POIOLE2TextExtractor {
+public final class WordExtractor extends POIOLE2TextExtractor {
 	private POIFSFileSystem fs;
 	private HWPFDocument doc;
-	
+
 	/**
 	 * Create a new Word Extractor
 	 * @param is InputStream containing the word file
@@ -63,7 +64,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 		this(new HWPFDocument(dir, fs));
 		this.fs = fs;
 	}
-	
+
 	/**
 	 * Create a new Word Extractor
 	 * @param doc The HWPFDocument to extract from
@@ -89,14 +90,14 @@ public class WordExtractor extends POIOLE2TextExtractor {
 		WordExtractor extractor = new WordExtractor(fin);
 		System.out.println(extractor.getText());
 	}
-	
+
 	/**
 	 * Get the text from the word file, as an array with one String
 	 *  per paragraph
 	 */
 	public String[] getParagraphText() {
 		String[] ret;
-		
+
 		// Extract using the model code
 		try {
 	    	Range r = doc.getRange();
@@ -105,7 +106,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 			for(int i=0; i<ret.length; i++) {
 				Paragraph p = r.getParagraph(i);
 				ret[i] = p.text();
-				
+
 				// Fix the line ending
 				if(ret[i].endsWith("\r")) {
 					ret[i] = ret[i] + "\n";
@@ -117,10 +118,10 @@ public class WordExtractor extends POIOLE2TextExtractor {
 			ret = new String[1];
 			ret[0] = getTextFromPieces();
 		}
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Add the header/footer text, if it's not empty
 	 */
@@ -146,7 +147,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	 */
 	public String getHeaderText() {
 		HeaderStories hs = new HeaderStories(doc);
-		
+
 		StringBuffer ret = new StringBuffer();
 		if(hs.getFirstHeader() != null) {
 			appendHeaderFooter(hs.getFirstHeader(), ret);
@@ -157,7 +158,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 		if(hs.getOddHeader() != null) {
 			appendHeaderFooter(hs.getOddHeader(), ret);
 		}
-		
+
 		return ret.toString();
 	}
 	/**
@@ -165,7 +166,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	 */
 	public String getFooterText() {
 		HeaderStories hs = new HeaderStories(doc);
-		
+
 		StringBuffer ret = new StringBuffer();
 		if(hs.getFirstFooter() != null) {
 			appendHeaderFooter(hs.getFirstFooter(), ret);
@@ -176,10 +177,10 @@ public class WordExtractor extends POIOLE2TextExtractor {
 		if(hs.getOddFooter() != null) {
 			appendHeaderFooter(hs.getOddFooter(), ret);
 		}
-		
+
 		return ret.toString();
 	}
-	
+
 	/**
 	 * Grab the text out of the text pieces. Might also include various
 	 *  bits of crud, but will work in cases where the text piece -> paragraph
@@ -187,7 +188,7 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	 */
 	public String getTextFromPieces() {
     	StringBuffer textBuf = new StringBuffer();
-    	
+
     	Iterator textPieces = doc.getTextTable().getTextPieces().iterator();
     	while (textPieces.hasNext()) {
     		TextPiece piece = (TextPiece) textPieces.next();
@@ -203,39 +204,39 @@ public class WordExtractor extends POIOLE2TextExtractor {
     			throw new InternalError("Standard Encoding " + encoding + " not found, JVM broken");
     		}
     	}
-    	
+
     	String text = textBuf.toString();
-    	
+
     	// Fix line endings (Note - won't get all of them
     	text = text.replaceAll("\r\r\r", "\r\n\r\n\r\n");
     	text = text.replaceAll("\r\r", "\r\n\r\n");
-    	
+
     	if(text.endsWith("\r")) {
     		text += "\n";
     	}
-    	
+
     	return text;
 	}
-	
+
 	/**
 	 * Grab the text, based on the paragraphs. Shouldn't include any crud,
 	 *  but slightly slower than getTextFromPieces().
 	 */
 	public String getText() {
 		StringBuffer ret = new StringBuffer();
-		
+
 		ret.append(getHeaderText());
-		
+
 		String[] text = getParagraphText();
 		for(int i=0; i<text.length; i++) {
 			ret.append(text[i]);
 		}
-		
+
 		ret.append(getFooterText());
-		
+
 		return ret.toString();
 	}
-	
+
 	/**
 	 * Removes any fields (eg macros, page markers etc)
 	 *  from the string.

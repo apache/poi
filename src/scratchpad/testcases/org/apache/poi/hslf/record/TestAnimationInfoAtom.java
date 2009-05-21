@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -32,7 +29,7 @@ import org.apache.poi.util.HexDump;
  *
  * @author Yegor Kozlov
  */
-public class TestAnimationInfoAtom extends TestCase {
+public final class TestAnimationInfoAtom extends TestCase {
     // From a real file
     /*
      <AnimationInfoAtom info="1" type="4081" size="28" offset="4015" header="01 00 F1 0F 1C 00 00 00 ">

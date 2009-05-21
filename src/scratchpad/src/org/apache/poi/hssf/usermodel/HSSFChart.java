@@ -45,13 +45,13 @@ import org.apache.poi.hssf.record.formula.Ptg;
  */
 public final class HSSFChart {
 	private ChartRecord chartRecord;
-	
+
 	private LegendRecord legendRecord;
 	private ChartTitleFormatRecord chartTitleFormat;
 	private SeriesTextRecord chartTitleText;
-	
+
 	private List series = new ArrayList();
-	
+
 	private HSSFChart(ChartRecord chartRecord) {
 		this.chartRecord = chartRecord;
 	}
@@ -129,22 +129,22 @@ public final class HSSFChart {
 		sheet.insertChartRecords( records );
 		workbook.insertChartRecord();
 	}
-	
+
 	/**
 	 * Returns all the charts for the given sheet.
-	 * 
+	 *
 	 * NOTE: You won't be able to do very much with
 	 *  these charts yet, as this is very limited support
 	 */
 	public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
 		List charts = new ArrayList();
 		HSSFChart lastChart = null;
-		
+
 		// Find records of interest
 		List records = sheet.getSheet().getRecords();
 		for(Iterator it = records.iterator(); it.hasNext();) {
 			RecordBase r = (RecordBase)it.next();
-			
+
 			if(r instanceof ChartRecord) {
 				lastChart = new HSSFChart((ChartRecord)r);
 				charts.add(lastChart);
@@ -174,7 +174,7 @@ public final class HSSFChart {
 				}
 			}
 		}
-		
+
 		return (HSSFChart[])
 			charts.toArray( new HSSFChart[charts.size()] );
 	}
@@ -196,7 +196,7 @@ public final class HSSFChart {
 	public void setChartWidth(int width) { chartRecord.setWidth(width); }
 	/** Sets the height of the chart. {@link ChartRecord} */
 	public void setChartHeight(int height) { chartRecord.setHeight(height); }
-	
+
 	/**
 	 * Returns the series of the chart
 	 */
@@ -204,7 +204,7 @@ public final class HSSFChart {
 		return (HSSFSeries[])
 			series.toArray(new HSSFSeries[series.size()]);
 	}
-	
+
 	/**
 	 * Returns the chart's title, if there is one,
 	 *  or null if not
@@ -215,9 +215,9 @@ public final class HSSFChart {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Changes the chart's title, but only if there 
+	 * Changes the chart's title, but only if there
 	 *  was one already.
 	 * TODO - add in the records if not
 	 */
@@ -860,18 +860,18 @@ public final class HSSFChart {
 		return r;
 	}
 
-	
+
 	/**
 	 * A series in a chart
 	 */
 	public class HSSFSeries {
 		private SeriesRecord series;
 		private SeriesTextRecord seriesTitleText;
-		
+
 		/* package */ HSSFSeries(SeriesRecord series) {
 			this.series = series;
 		}
-		
+
 		public short getNumValues() {
 			return series.getNumValues();
 		}
@@ -881,7 +881,7 @@ public final class HSSFChart {
 		public short getValueType() {
 			return series.getValuesDataType();
 		}
-		
+
 		/**
 		 * Returns the series' title, if there is one,
 		 *  or null if not
@@ -892,9 +892,9 @@ public final class HSSFChart {
 			}
 			return null;
 		}
-		
+
 		/**
-		 * Changes the series' title, but only if there 
+		 * Changes the series' title, but only if there
 		 *  was one already.
 		 * TODO - add in the records if not
 		 */

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.sl.usermodel;
 
 import java.io.IOException;
@@ -21,9 +22,9 @@ import java.io.IOException;
 public interface SlideShow {
 	public Slide createSlide() throws IOException;
 	public MasterSheet createMasterSheet() throws IOException;
-	
+
 	public Slide[] getSlides();
 	public MasterSheet[] getMasterSheet();
-	
+
 	public Resources getResources();
 }

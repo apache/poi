@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.*;
@@ -22,12 +22,12 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Header / Footer settings.
- * 
+ *
  * You can get these on slides, or across all notes
  *
  * @author Yegor Kozlov
  */
-public class HeadersFooters {
+public final class HeadersFooters {
 
     private HeadersFootersContainer _container;
     private boolean _newRecord;

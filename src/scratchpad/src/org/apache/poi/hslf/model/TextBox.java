@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -33,7 +32,7 @@ public class TextBox extends TextShape {
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
-     * 
+     *
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */

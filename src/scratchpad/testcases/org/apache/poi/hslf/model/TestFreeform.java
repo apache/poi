@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
  *
  * @author Yegor Kozlov
  */
-public class TestFreeform extends TestCase {
+public final class TestFreeform extends TestCase {
 
     public void testClosedPath() throws Exception {
 

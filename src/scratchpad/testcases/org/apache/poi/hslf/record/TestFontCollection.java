@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +27,7 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestFontCollection extends TestCase {
+public final class TestFontCollection extends TestCase {
     // From a real file
     private byte[] data = new byte[]  {
         0x0F, 0x00, 0xD5-256, 0x07, 0x4C, 0x00, 0x00, 0x00,
@@ -64,7 +63,7 @@ public class TestFontCollection extends TestCase {
         // Font collection should contain 3 fonts
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 3);
-        
+
         // Check we get the right font name for the indicies
         assertEquals("Times New Roman", fonts.getFontWithId(0));
         assertEquals("Helvetica", fonts.getFontWithId(1));

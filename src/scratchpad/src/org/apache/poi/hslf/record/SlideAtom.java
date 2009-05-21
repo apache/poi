@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -31,7 +29,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class SlideAtom extends RecordAtom
+public final class SlideAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 1007l;
@@ -50,7 +48,7 @@ public class SlideAtom extends RecordAtom
 
 	/** Get the ID of the master slide used. 0 if this is a master slide, otherwise -2147483648 */
 	public int getMasterID() { return masterID; }
-    /** Change slide master.  */ 
+    /** Change slide master.  */
     public void setMasterID(int id) { masterID = id; }
 	/** Get the ID of the notes for this slide. 0 if doesn't have one */
 	public int getNotesID()  { return notesID; }
@@ -70,7 +68,7 @@ public class SlideAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Slide Atom
 	 */
 	protected SlideAtom(byte[] source, int start, int len) {
@@ -114,7 +112,7 @@ public class SlideAtom extends RecordAtom
 		reserved = new byte[len-30];
 		System.arraycopy(source,start+30,reserved,0,reserved.length);
 	}
-	
+
 	/**
 	 * Create a new SlideAtom, to go with a new Slide
 	 */
@@ -123,7 +121,7 @@ public class SlideAtom extends RecordAtom
 		LittleEndian.putUShort(_header, 0, 2);
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 24);
-		 
+
 		byte[] ssdate = new byte[12];
 		layoutAtom = new SSlideLayoutAtom(ssdate);
 		layoutAtom.setGeometryType(SSlideLayoutAtom.BLANK_SLIDE);
@@ -172,7 +170,7 @@ public class SlideAtom extends RecordAtom
 	 * Holds the geometry of the Slide, and the ID of the placeholders
 	 *  on the slide.
 	 * (Embeded inside SlideAtom is a SSlideLayoutAtom, without the
-	 *  usual record header. Since it's a fixed size and tied to 
+	 *  usual record header. Since it's a fixed size and tied to
 	 *  the SlideAtom, we'll hold it here.)
 	 */
 	public class SSlideLayoutAtom {

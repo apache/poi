@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.extractor;
 
 import java.io.FileInputStream;
@@ -36,7 +37,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Can opperate on the command line (outputs to stdout), or
  *  can return the text for you (eg for use with Lucene).
  */
-public class VisioTextExtractor extends POIOLE2TextExtractor {
+public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	private HDGFDiagram hdgf;
 	private POIFSFileSystem fs;
 
@@ -54,7 +55,7 @@ public class VisioTextExtractor extends POIOLE2TextExtractor {
 	public VisioTextExtractor(InputStream inp) throws IOException {
 		this(new POIFSFileSystem(inp));
 	}
-	
+
 	/**
 	 * Locates all the text entries in the file, and returns their
 	 *  contents.
@@ -77,7 +78,7 @@ public class VisioTextExtractor extends POIOLE2TextExtractor {
 			ChunkStream cs = (ChunkStream)stream;
 			for(int i=0; i<cs.getChunks().length; i++) {
 				Chunk chunk = cs.getChunks()[i];
-				if(chunk != null && 
+				if(chunk != null &&
 						chunk.getName() != null &&
 						chunk.getName().equals("Text") &&
 						chunk.getCommands().length > 0) {
@@ -90,7 +91,7 @@ public class VisioTextExtractor extends POIOLE2TextExtractor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the textual contents of the file.
 	 * Each textual object's text will be separated
@@ -108,17 +109,17 @@ public class VisioTextExtractor extends POIOLE2TextExtractor {
 		}
 		return text.toString();
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("   VisioTextExtractor <file.vsd>");
 			System.exit(1);
 		}
-		
-		VisioTextExtractor extractor = 
+
+		VisioTextExtractor extractor =
 			new VisioTextExtractor(new FileInputStream(args[0]));
-		
+
 		// Print not PrintLn as already has \n added to it
 		System.out.print(extractor.getText());
 	}

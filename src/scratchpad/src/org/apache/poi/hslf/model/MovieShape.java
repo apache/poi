@@ -147,8 +147,6 @@ public final class MovieShape extends Picture {
     }
 
     /**
-     *  Returns UNC or local path to a video file
-     *
      * @return UNC or local path to a video file
      */
     public String getPath(){

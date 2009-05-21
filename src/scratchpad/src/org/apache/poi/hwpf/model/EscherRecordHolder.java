@@ -27,21 +27,21 @@ import org.apache.poi.ddf.EscherRecordFactory;
 
 /**
  * Based on AbstractEscherRecordHolder from HSSF.
- * 
+ *
  * @author Squeeself
  */
 public final class EscherRecordHolder {
 	private final ArrayList<EscherRecord> escherRecords;
-	
+
 	public EscherRecordHolder() {
 		escherRecords = new ArrayList<EscherRecord>();
 	}
-	
+
 	public EscherRecordHolder(byte[] data, int offset, int size) {
 		this();
 		fillEscherRecords(data, offset, size);
 	}
-	
+
 	private void fillEscherRecords(byte[] data, int offset, int size)
 	{
 		EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
@@ -54,11 +54,11 @@ public final class EscherRecordHolder {
 			pos += bytesRead + 1; // There is an empty byte between each top-level record in a Word doc
 		}
 	}
-	
+
 	public List<EscherRecord> getEscherRecords() {
 		return escherRecords;
 	}
-	
+
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 
@@ -72,7 +72,7 @@ public final class EscherRecordHolder {
 		}
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * If we have a EscherContainerRecord as one of our
 	 *  children (and most top level escher holders do),
@@ -104,7 +104,7 @@ public final class EscherRecordHolder {
 				return r;
 			}
 		}
-		
+
 		// Then check our children in turn
 		for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
 			EscherRecord r = it.next();
@@ -115,7 +115,7 @@ public final class EscherRecordHolder {
 				}
 			}
 		}
-		
+
 		// Not found in this lot
 		return null;
 	}

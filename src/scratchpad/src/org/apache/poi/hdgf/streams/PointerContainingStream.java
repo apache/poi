@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory;
@@ -25,35 +26,35 @@ import org.apache.poi.util.LittleEndian;
  * A stream that holds pointers, possibly in addition to some
  *  other data too.
  */
-public class PointerContainingStream extends Stream {
+public class PointerContainingStream extends Stream { // TODO - instantiable superclass
 	private Pointer[] childPointers;
 	private Stream[] childStreams;
-	
+
 	private ChunkFactory chunkFactory;
 	private PointerFactory pointerFactory;
 	private int numPointersLocalOffset;
-	
+
 	protected PointerContainingStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
 		super(pointer, store);
 		this.chunkFactory = chunkFactory;
 		this.pointerFactory = pointerFactory;
-		
+
 		// Find the offset to the number of child pointers we have
 		// This ought to be the first thing stored in us
 		numPointersLocalOffset = (int)LittleEndian.getUInt(
 				store.getContents(), 0
 		);
-		
+
 		// Generate the objects for the pointers we contain
 		int numPointers = (int)LittleEndian.getUInt(
 				store.getContents(), numPointersLocalOffset
 		);
 		childPointers = new Pointer[numPointers];
-		
+
 		// After the number of pointers is another (unknown)
 		//  4 byte value
 		int pos = numPointersLocalOffset + 4 + 4;
-		
+
 		// Now create the pointer objects
 		for(int i=0; i<numPointers; i++) {
 			childPointers[i] = pointerFactory.createPointer(
@@ -62,7 +63,7 @@ public class PointerContainingStream extends Stream {
 			pos += childPointers[i].getSizeInBytes();
 		}
 	}
-	
+
 	/**
 	 * Returns all the pointers that we contain
 	 */
@@ -72,8 +73,8 @@ public class PointerContainingStream extends Stream {
 	 * These are all the streams pointed to by the pointers
 	 *  that we contain.
 	 */
-	public Stream[] getPointedToStreams() { return childStreams; } 
-	
+	public Stream[] getPointedToStreams() { return childStreams; }
+
 	/**
 	 * Performs a recursive search, identifying the pointers we contain,
 	 *  creating the Streams for where they point to, then searching
@@ -85,16 +86,16 @@ public class PointerContainingStream extends Stream {
 		for(int i=0; i<childPointers.length; i++) {
 			Pointer ptr = childPointers[i];
 			childStreams[i] = Stream.createStream(ptr, documentData, chunkFactory, pointerFactory);
-			
+
 			// Process chunk streams into their chunks
 			if(childStreams[i] instanceof ChunkStream) {
 				ChunkStream child = (ChunkStream)childStreams[i];
 				child.findChunks();
 			}
-			
+
 			// Recurse into pointer containing streams
 			if(childStreams[i] instanceof PointerContainingStream) {
-				PointerContainingStream child = 
+				PointerContainingStream child =
 					(PointerContainingStream)childStreams[i];
 				child.findChildren(documentData);
 			}

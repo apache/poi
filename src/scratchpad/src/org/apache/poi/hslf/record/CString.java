@@ -1,19 +1,20 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
@@ -30,15 +31,15 @@ import org.apache.poi.util.StringUtil;
  * @author Nick Burch
  */
 
-public class CString extends RecordAtom {
+public final class CString extends RecordAtom {
 	private byte[] _header;
 	private static long _type = 4026l;
-	
+
 	/** The bytes that make up the text */
 	private byte[] _text;
-	
+
 	/** Grabs the text. */
-	public String getText() { 
+	public String getText() {
 		return StringUtil.getFromUnicodeLE(_text);
 	}
 
@@ -51,18 +52,18 @@ public class CString extends RecordAtom {
 		// Update the size (header bytes 5-8)
 		LittleEndian.putInt(_header,4,_text.length);
 	}
-	
-	/** 
+
+	/**
 	 * Grabs the count, from the first two bytes of the header.
-	 * The meaning of the count is specific to the type of the parent record 
+	 * The meaning of the count is specific to the type of the parent record
 	 */
 	public int getOptions() {
 		return (int)LittleEndian.getShort(_header);
 	}
-	
-	/** 
+
+	/**
 	 * Sets the count
-	 * The meaning of the count is specific to the type of the parent record 
+	 * The meaning of the count is specific to the type of the parent record
 	 */
 	public void setOptions(int count) {
 		LittleEndian.putShort(_header, (short)count);
@@ -70,8 +71,8 @@ public class CString extends RecordAtom {
 
 	/* *************** record code follows ********************** */
 
-	/** 
-	 * For the CStrubg Atom 
+	/**
+	 * For the CStrubg Atom
 	 */
 	protected CString(byte[] source, int start, int len) {
 		// Sanity Checking

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
@@ -26,7 +23,7 @@ import org.apache.poi.hwpf.usermodel.SectionProperties;
 
 /**
  */
-public class SEPX extends BytePropertyNode
+public final class SEPX extends BytePropertyNode
 {
 
   SectionDescriptor _sed;

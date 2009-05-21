@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -31,7 +29,7 @@ import java.util.Arrays;
  *
  * @author Praveen Mathew
  */
-public class Ffn
+public final class Ffn
 {
   private int _cbFfnM1;//total length of FFN - 1.
   private byte _info;

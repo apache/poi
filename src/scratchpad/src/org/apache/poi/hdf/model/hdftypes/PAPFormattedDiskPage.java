@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hdf.model.hdftypes;
 
 import org.apache.poi.util.LittleEndian;
@@ -36,7 +35,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class PAPFormattedDiskPage extends FormattedDiskPage
+public final class PAPFormattedDiskPage extends FormattedDiskPage
 {
 
     /**

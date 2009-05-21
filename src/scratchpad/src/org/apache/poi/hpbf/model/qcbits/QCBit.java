@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model.qcbits;
 
 /**
@@ -23,19 +24,19 @@ public abstract class QCBit {
 	protected String thingType;
 	protected String bitType;
 	protected byte[] data;
-	
+
 	protected int optA;
 	protected int optB;
 	protected int optC;
-	
+
 	protected int dataOffset;
-	
+
 	public QCBit(String thingType, String bitType, byte[] data) {
 		this.thingType = thingType;
 		this.bitType = bitType;
 		this.data = data;
 	}
-	
+
 	/**
 	 * Returns the type of the thing, eg TEXT, FONT
 	 *  or TOKN
@@ -75,7 +76,7 @@ public abstract class QCBit {
 	public void setDataOffset(int offset) {
 		this.dataOffset = offset;
 	}
-	
+
 	public int getLength() {
 		return data.length;
 	}

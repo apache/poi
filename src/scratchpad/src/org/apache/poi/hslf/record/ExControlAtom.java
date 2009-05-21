@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class ExControlAtom extends RecordAtom {
+public final class ExControlAtom extends RecordAtom {
 
 
     /**

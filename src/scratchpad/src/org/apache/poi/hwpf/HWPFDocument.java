@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf;
 
 import java.io.InputStream;
@@ -47,7 +46,7 @@ import org.apache.poi.hwpf.usermodel.*;
  *
  * @author Ryan Ackley
  */
-public class HWPFDocument extends POIDocument
+public final class HWPFDocument extends POIDocument
 //  implements Cloneable
 {
   /** The FIB */
@@ -93,13 +92,13 @@ public class HWPFDocument extends POIDocument
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
-  
+
   /** Holds pictures table */
   protected PicturesTable _pictures;
-  
+
   /** Holds FSBA (shape) information */
   protected FSPATable _fspa;
-  
+
   /** Escher Drawing Group information */
   protected EscherRecordHolder _dgg;
 
@@ -145,7 +144,7 @@ public class HWPFDocument extends POIDocument
     //do Ole stuff
     this( verifyAndBuildPOIFS(istream) );
   }
-  
+
   /**
    * This constructor loads a Word document from a POIFSFileSystem
    *
@@ -157,7 +156,7 @@ public class HWPFDocument extends POIDocument
   {
 	this(pfilesystem.getRoot(), pfilesystem);
   }
-  
+
   /**
    * This constructor loads a Word document from a specific point
    *  in a POIFSFileSystem, probably not the default.
@@ -172,12 +171,12 @@ public class HWPFDocument extends POIDocument
     // Sort out the hpsf properties
 	super(directory, pfilesystem);
     readProperties();
-    
+
     // read in the main stream.
     DocumentEntry documentProps = (DocumentEntry)
        directory.getEntry("WordDocument");
     _mainStream = new byte[documentProps.getSize()];
-    
+
     directory.createDocumentInputStream("WordDocument").read(_mainStream);
 
     // Create our FIB, and check for the doc being encrypted
@@ -225,26 +224,26 @@ public class HWPFDocument extends POIDocument
     // Get the cp of the start of text in the main stream
     // The latest spec doc says this is always zero!
     int fcMin = 0;
-    //fcMin = _fib.getFcMin() 
+    //fcMin = _fib.getFcMin()
 
     // Start to load up our standard structures.
     _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     _tpt = _cft.getTextPieceTable();
-    
+
     // Word XP and later all put in a zero filled buffer in
     //  front of the text. This screws up the system for offsets,
     //  which assume we always start at zero. This is an adjustment.
     int cpMin = _tpt.getCpMin();
-    
+
     // Now load the rest of the properties, which need to be adjusted
     //  for where text really begin
     _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), cpMin, _tpt);
     _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), cpMin, _tpt);
-    
+
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());
-    
+
     if (_fib.getFcDggInfo() != 0)
     {
         _dgg = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
@@ -252,7 +251,7 @@ public class HWPFDocument extends POIDocument
     {
         _dgg = new EscherRecordHolder();
     }
-    
+
     // read in the pictures stream
     _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspa, _dgg);
     // And the art shapes stream
@@ -303,7 +302,7 @@ public class HWPFDocument extends POIDocument
   {
     return _dop;
   }
-  
+
   /**
    * Returns the range that covers all text in the
    *  file, including main text, footnotes, headers
@@ -325,35 +324,35 @@ public class HWPFDocument extends POIDocument
 	  // First up, trigger a full-recalculate
 	  // Needed in case of deletes etc
 	  getOverallRange();
-	  
+
 	  // Now, return the real one
 	  return new Range(
-			  _cpSplit.getMainDocumentStart(), 
-			  _cpSplit.getMainDocumentEnd(), 
+			  _cpSplit.getMainDocumentStart(),
+			  _cpSplit.getMainDocumentEnd(),
 			  this
       );
   }
-  
+
   /**
    * Returns the range which covers all the Footnotes.
    */
   public Range getFootnoteRange() {
 	  return new Range(
-			  _cpSplit.getFootnoteStart(), 
-			  _cpSplit.getFootnoteEnd(), 
+			  _cpSplit.getFootnoteStart(),
+			  _cpSplit.getFootnoteEnd(),
 			  this
       );
   }
-  
+
   /**
    * Returns the range which covers all "Header Stories".
    * A header story contains a header, footer, end note
-   *  separators and footnote separators. 
+   *  separators and footnote separators.
    */
   public Range getHeaderStoryRange() {
 	  return new Range(
-			  _cpSplit.getHeaderStoryStart(), 
-			  _cpSplit.getHeaderStoryEnd(), 
+			  _cpSplit.getHeaderStoryStart(),
+			  _cpSplit.getHeaderStoryEnd(),
 			  this
       );
   }
@@ -390,14 +389,14 @@ public class HWPFDocument extends POIDocument
   {
     return _sbt;
   }
-  
+
   /**
    * @return PicturesTable object, that is able to extract images from this document
    */
   public PicturesTable getPicturesTable() {
 	  return _pictures;
   }
-  
+
   /**
    * @return ShapesTable object, that is able to extract office are shapes from this document
    */
@@ -553,7 +552,7 @@ public class HWPFDocument extends POIDocument
     pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
     pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
     writeProperties(pfs);
-    
+
     pfs.writeFilesystem(out);
   }
 

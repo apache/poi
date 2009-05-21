@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.EscherProperties;
@@ -28,7 +29,7 @@ import java.awt.geom.*;
  *
  * @author Yegor Kozlov
  */
-public class AutoShapes {
+public final class AutoShapes {
     protected static ShapeOutline[] shapes;
 
 

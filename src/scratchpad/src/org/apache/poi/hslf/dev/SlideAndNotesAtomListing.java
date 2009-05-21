@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
@@ -30,7 +27,7 @@ import org.apache.poi.hslf.record.*;
  *  what they are all about. Useful for checking the matching between
  *  Slides, Master Slides and Notes
  */
-public class SlideAndNotesAtomListing {
+public final class SlideAndNotesAtomListing {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");

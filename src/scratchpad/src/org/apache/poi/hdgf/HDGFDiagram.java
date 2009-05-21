@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf;
 
 import java.io.FileInputStream;
@@ -40,59 +41,59 @@ import org.apache.poi.util.LittleEndian;
  *  http://www.gnome.ru/projects/docs/slide1.png
  *  http://www.gnome.ru/projects/docs/slide2.png
  */
-public class HDGFDiagram extends POIDocument {
+public final class HDGFDiagram extends POIDocument {
 	private static final String VISIO_HEADER = "Visio (TM) Drawing\r\n";
-	
+
 	private byte[] _docstream;
-	
+
 	private short version;
 	private long docSize;
-	
+
 	private Pointer trailerPointer;
 	private TrailerStream trailer;
-	
+
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
-	
+
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot(), fs);
 	}
 	public HDGFDiagram(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
 		super(dir, fs);
-		
+
 		DocumentEntry docProps =
 			(DocumentEntry)dir.getEntry("VisioDocument");
 
 		// Grab the document stream
 		_docstream = new byte[docProps.getSize()];
 		dir.createDocumentInputStream("VisioDocument").read(_docstream);
-		
+
 		// Read in the common POI streams
 		readProperties();
-		
+
 		// Check it's really visio
 		String typeString = new String(_docstream, 0, 20);
 		if(! typeString.equals(VISIO_HEADER)) {
 			throw new IllegalArgumentException("Wasn't a valid visio document, started with " + typeString);
 		}
-		
+
 		// Grab the version number, 0x1a -> 0x1b
 		version = LittleEndian.getShort(_docstream, 0x1a);
 		// Grab the document size, 0x1c -> 0x1f
 		docSize = LittleEndian.getUInt(_docstream, 0x1c);
 		// ??? 0x20 -> 0x23
-		
+
 		// Create the Chunk+Pointer Factories for the document version
 		ptrFactory = new PointerFactory(version);
 		chunkFactory = new ChunkFactory(version);
-		
+
 		// Grab the pointer to the trailer
 		trailerPointer = ptrFactory.createPointer(_docstream, 0x24);
-		
+
 		// Now grab the trailer
 		trailer = (TrailerStream)
 			Stream.createStream(trailerPointer, _docstream, chunkFactory, ptrFactory);
-		
+
 		// Finally, find all our streams
 		trailer.findChildren(_docstream);
 	}
@@ -108,21 +109,21 @@ public class HDGFDiagram extends POIDocument {
 	 */
 	public Stream[] getTopLevelStreams() { return trailer.getPointedToStreams(); }
 	public long getDocumentSize() { return docSize; }
-	
+
 	/**
 	 * Prints out some simple debug on the base contents of the file.
-	 * @see org.apache.poi.hdgf.dev.VSDDumper 
+	 * @see org.apache.poi.hdgf.dev.VSDDumper
 	 */
 	public void debug() throws IOException {
 		System.err.println("Trailer is at " + trailerPointer.getOffset());
 		System.err.println("Trailer has type " + trailerPointer.getType());
 		System.err.println("Trailer has length " + trailerPointer.getLength());
 		System.err.println("Trailer has format " + trailerPointer.getFormat());
-		
+
 		for(int i=0; i<trailer.getPointedToStreams().length; i++) {
 			Stream stream = trailer.getPointedToStreams()[i];
 			Pointer ptr = stream.getPointer();
-			
+
 			System.err.println("Looking at pointer " + i);
 			System.err.println("\tType is " + ptr.getType() + "\t\t" + Integer.toHexString(ptr.getType()));
 			System.err.println("\tOffset is " + ptr.getOffset() + "\t\t" + Long.toHexString(ptr.getOffset()));
@@ -131,10 +132,10 @@ public class HDGFDiagram extends POIDocument {
 			System.err.println("\tFormat is " + ptr.getFormat() + "\t\t" + Long.toHexString(ptr.getFormat()));
 			System.err.println("\tCompressed is " + ptr.destinationCompressed());
 			System.err.println("\tStream is " + stream.getClass());
-			
+
 			if(stream instanceof PointerContainingStream) {
 				PointerContainingStream pcs = (PointerContainingStream)stream;
-				
+
 				if(pcs.getPointedToStreams() != null && pcs.getPointedToStreams().length > 0) {
 					System.err.println("\tContains " + pcs.getPointedToStreams().length + " other pointers/streams");
 					for(int j=0; j<pcs.getPointedToStreams().length; j++) {
@@ -145,7 +146,7 @@ public class HDGFDiagram extends POIDocument {
 					}
 				}
 			}
-			
+
 			if(stream instanceof StringsStream) {
 				System.err.println("\t\t**strings**");
 				StringsStream ss = (StringsStream)stream;
@@ -153,11 +154,11 @@ public class HDGFDiagram extends POIDocument {
 			}
 		}
 	}
-	
+
 	public void write(OutputStream out) {
 		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hdgf/");
 	}
-	
+
 	/**
 	 * For testing only
 	 */

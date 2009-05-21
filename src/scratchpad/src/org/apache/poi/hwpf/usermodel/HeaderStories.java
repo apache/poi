@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -22,25 +23,25 @@ import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.PlexOfCps;
 
 /**
- * A HeaderStory is a Header, a Footer, or footnote/endnote 
+ * A HeaderStory is a Header, a Footer, or footnote/endnote
  *  separator.
  * All the Header Stories get stored in the same Range in the
  *  document, and this handles getting out all the individual
  *  parts.
- * 
+ *
  * WARNING - you shouldn't change the headers or footers,
  *  as offsets are not yet updated!
  */
-public class HeaderStories {
+public final class HeaderStories {
 	private Range headerStories;
 	private PlexOfCps plcfHdd;
-	
+
 	private boolean stripFields = false;
-	
+
 	public HeaderStories(HWPFDocument doc) {
 		this.headerStories = doc.getHeaderStoryRange();
 		FileInformationBlock fib = doc.getFileInformationBlock();
-		
+
 		// If there's no PlcfHdd, nothing to do
 		if(fib.getCcpHdd() == 0) {
 			return;
@@ -48,14 +49,14 @@ public class HeaderStories {
 		if(fib.getPlcfHddSize() == 0) {
 			return;
 		}
-		
+
 		// Handle the PlcfHdd
 		plcfHdd = new PlexOfCps(
 				doc.getTableStream(), fib.getPlcfHddOffset(),
 				fib.getPlcfHddSize(), 0
 		);
 	}
-	
+
 	public String getFootnoteSeparator() {
 		return getAt(0);
 	}
@@ -74,8 +75,8 @@ public class HeaderStories {
 	public String getEndnoteContNote() {
 		return getAt(5);
 	}
-	
-	
+
+
 	public String getEvenHeader() {
 		return getAt(6+0);
 	}
@@ -108,8 +109,8 @@ public class HeaderStories {
 		// Odd is the default
 		return getOddHeader();
 	}
-	
-	
+
+
 	public String getEvenFooter() {
 		return getAt(6+2);
 	}
@@ -142,25 +143,25 @@ public class HeaderStories {
 		// Odd is the default
 		return getOddFooter();
 	}
-	
-	
+
+
 	/**
 	 * Get the string that's pointed to by the
-	 *  given plcfHdd index 
+	 *  given plcfHdd index
 	 */
 	private String getAt(int plcfHddIndex) {
 		if(plcfHdd == null) return null;
-		
+
 		GenericPropertyNode prop = plcfHdd.getProperty(plcfHddIndex);
 		if(prop.getStart() == prop.getEnd()) {
 			// Empty story
 			return "";
 		}
-		
+
 		// Grab the contents
 		String text =
 			headerStories.text().substring(prop.getStart(), prop.getEnd());
-		
+
 		// Strip off fields and macros if requested
 		if(stripFields) {
 			return Range.stripFields(text);
@@ -171,17 +172,17 @@ public class HeaderStories {
 		if(text.equals("\r\r")) {
 			return "";
 		}
-		
+
 		return text;
 	}
-	
+
 	public Range getRange() {
 		return headerStories;
 	}
 	protected PlexOfCps getPlcfHdd() {
 		return plcfHdd;
 	}
-	
+
 	/**
 	 * Are fields currently being stripped from
 	 *  the text that this {@link HeaderStories} returns?

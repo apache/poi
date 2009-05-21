@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,19 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.extractor.util;
 
 /**
  * Comment me
  *
- * @author Ryan Ackley 
+ * @author Ryan Ackley
  */
 
-public class PropertyNode implements Comparable
-{
+public abstract class PropertyNode implements Comparable {
   private byte[] _grpprl;
   private int _fcStart;
   private int _fcEnd;

@@ -25,33 +25,33 @@ import java.util.Map;
 
 /**
  * This class holds all the FSPA (File Shape Address) structures.
- * 
+ *
  * @author Squeeself
  */
-public final class FSPATable 
+public final class FSPATable
 {
     private final List _shapes = new ArrayList();
     private final Map _shapeIndexesByPropertyStart = new HashMap();
     private final List _text;
-    
+
     public FSPATable(byte[] tableStream, int fcPlcspa, int lcbPlcspa, List tpt)
     {
         _text = tpt;
         // Will be 0 if no drawing objects in document
         if (fcPlcspa == 0)
             return;
-        
+
         PlexOfCps plex = new PlexOfCps(tableStream, fcPlcspa, lcbPlcspa, FSPA.FSPA_SIZE);
         for (int i=0; i < plex.length(); i++)
         {
             GenericPropertyNode property = plex.getProperty(i);
             FSPA fspa = new FSPA(property.getBytes(), 0);
-            
+
             _shapes.add(fspa);
             _shapeIndexesByPropertyStart.put(new Integer(property.getStart()), new Integer(i));
         }
     }
-    
+
     public FSPA getFspaFromCp(int cp)
     {
         Integer idx = (Integer)_shapeIndexesByPropertyStart.get(new Integer(cp));
@@ -60,14 +60,14 @@ public final class FSPATable
         }
         return (FSPA)_shapes.get(idx.intValue());
     }
-    
+
     public FSPA[] getShapes()
     {
         FSPA[] result = new FSPA[_shapes.size()];
         _shapes.toArray(result);
         return result;
     }
-    
+
     public String toString()
     {
         StringBuffer buf = new StringBuffer();

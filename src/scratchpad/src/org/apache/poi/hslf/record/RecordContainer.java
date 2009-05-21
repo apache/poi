@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -38,18 +36,18 @@ public abstract class RecordContainer extends Record
 {
 	protected Record[] _children;
 	private Boolean changingChildRecordsLock = new Boolean(true);
-	
-	/** 
-	 * Return any children 
+
+	/**
+	 * Return any children
 	 */
 	public Record[] getChildRecords() { return _children; }
 
-	/** 
+	/**
 	 * We're not an atom
 	 */
 	public boolean isAnAtom() { return false; }
 
-	
+
 	/* ===============================================================
 	 *                   Internal Move Helpers
 	 * ===============================================================
@@ -59,7 +57,7 @@ public abstract class RecordContainer extends Record
 	 * Finds the location of the given child record
 	 */
 	private int findChildLocation(Record child) {
-		// Synchronized as we don't want things changing 
+		// Synchronized as we don't want things changing
 		//  as we're doing our search
 		synchronized(changingChildRecordsLock) {
 			for(int i=0; i<_children.length; i++) {
@@ -67,10 +65,10 @@ public abstract class RecordContainer extends Record
 					return i;
 				}
 			}
-		}	
+		}
 		return -1;
 	}
-	
+
 	/**
 	 * Adds a child record, at the very end.
 	 * @param newChild The child record to add
@@ -85,7 +83,7 @@ public abstract class RecordContainer extends Record
 			_children = nc;
 		}
 	}
-	
+
 	/**
 	 * Adds the given new Child Record at the given location,
 	 *  shuffling everything from there on down by one
@@ -96,12 +94,12 @@ public abstract class RecordContainer extends Record
 		synchronized(changingChildRecordsLock) {
 			// Firstly, have the child added in at the end
 			appendChild(newChild);
-			
+
 			// Now, have them moved to the right place
 			moveChildRecords( (_children.length-1), position, 1 );
 		}
 	}
-	
+
 	/**
 	 * Moves <i>number</i> child records from <i>oldLoc</i>
 	 *  to <i>newLoc</i>. Caller must have the changingChildRecordsLock
@@ -112,17 +110,17 @@ public abstract class RecordContainer extends Record
 	private void moveChildRecords(int oldLoc, int newLoc, int number) {
 		if(oldLoc == newLoc) { return; }
 		if(number == 0) { return; }
-			
+
 		// Check that we're not asked to move too many
 		if(oldLoc+number > _children.length) {
 			throw new IllegalArgumentException("Asked to move more records than there are!");
 		}
-		
+
 		// Do the move
 		ArrayUtil.arrayMoveWithin(_children, oldLoc, newLoc, number);
 	}
-	
-	
+
+
 	/**
 	 * Finds the first child record of the given type,
 	 *  or null if none of the child records are of the
@@ -136,7 +134,7 @@ public abstract class RecordContainer extends Record
 		}
 		return null;
 	}
-	
+
 	/* ===============================================================
 	 *                   External Move Methods
 	 * ===============================================================
@@ -150,7 +148,7 @@ public abstract class RecordContainer extends Record
 			appendChild(newChild);
 		}
 	}
-	
+
 	/**
 	 * Adds the given Child Record after the supplied record
 	 * @param newChild
@@ -163,12 +161,12 @@ public abstract class RecordContainer extends Record
 			if(loc == -1) {
 				throw new IllegalArgumentException("Asked to add a new child after another record, but that record wasn't one of our children!");
 			}
-				
+
 			// Add one place after the supplied record
 			addChildAt(newChild, loc+1);
 		}
 	}
-	
+
 	/**
 	 * Adds the given Child Record before the supplied record
 	 * @param newChild
@@ -181,49 +179,49 @@ public abstract class RecordContainer extends Record
 			if(loc == -1) {
 				throw new IllegalArgumentException("Asked to add a new child before another record, but that record wasn't one of our children!");
 			}
-				
+
 			// Add at the place of the supplied record
 			addChildAt(newChild, loc);
 		}
 	}
-	
+
 	/**
 	 * Moves the given Child Record to before the supplied record
 	 */
 	public void moveChildBefore(Record child, Record before) {
 		moveChildrenBefore(child, 1, before);
 	}
-	
+
 	/**
 	 * Moves the given Child Records to before the supplied record
 	 */
 	public void moveChildrenBefore(Record firstChild, int number, Record before) {
 		if(number < 1) { return; }
-		
+
 		synchronized(changingChildRecordsLock) {
 			// Decide where we're going to put them
 			int newLoc = findChildLocation(before);
 			if(newLoc == -1) {
 				throw new IllegalArgumentException("Asked to move children before another record, but that record wasn't one of our children!");
 			}
-			
+
 			// Figure out where they are now
 			int oldLoc = findChildLocation(firstChild);
 			if(oldLoc == -1) {
 				throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
 			}
-			
+
 			// Actually move
 			moveChildRecords(oldLoc, newLoc, number);
 		}
 	}
-	
+
 	/**
-	 * Moves the given Child Records to after the supplied record 
+	 * Moves the given Child Records to after the supplied record
 	 */
 	public void moveChildrenAfter(Record firstChild, int number, Record after) {
 		if(number < 1) { return; }
-		
+
 		synchronized(changingChildRecordsLock) {
 			// Decide where we're going to put them
 			int newLoc = findChildLocation(after);
@@ -232,20 +230,20 @@ public abstract class RecordContainer extends Record
 			}
 			// We actually want after this though
 			newLoc++;
-			
+
 			// Figure out where they are now
 			int oldLoc = findChildLocation(firstChild);
 			if(oldLoc == -1) {
 				throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
 			}
-			
+
 			// Actually move
 			moveChildRecords(oldLoc, newLoc, number);
 		}
 	}
 
     /**
-     * Set child records. 
+     * Set child records.
      *
      * @param records   the new child records
      */
@@ -269,7 +267,7 @@ public abstract class RecordContainer extends Record
 	public void writeOut(byte headerA, byte headerB, long type, Record[] children, OutputStream out) throws IOException {
 		// If we have a mutable output stream, take advantage of that
 		if(out instanceof MutableByteArrayOutputStream) {
-			MutableByteArrayOutputStream mout = 
+			MutableByteArrayOutputStream mout =
 				(MutableByteArrayOutputStream)out;
 
 			// Grab current size

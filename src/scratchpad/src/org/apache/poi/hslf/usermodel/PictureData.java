@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.util.LittleEndian;
@@ -234,7 +235,7 @@ public abstract class PictureData {
      * Register ImagePainter for the specified image type
      *
      * @param type  image type, must be one of the static constants defined in the <code>Picture<code> class.
-     * @param painter   
+     * @param painter
      */
     public static void setImagePainter(int type, ImagePainter painter){
         painters[type] = painter;

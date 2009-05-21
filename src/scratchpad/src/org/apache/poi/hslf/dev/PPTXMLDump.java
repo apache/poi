@@ -28,7 +28,7 @@ import java.io.*;
  * @author Yegor Kozlov
  */
 
-public class PPTXMLDump {
+public final class PPTXMLDump {
     public static final int HEADER_SIZE = 8; //size of the record header
     public static final int PICT_HEADER_SIZE = 25; //size of the picture header
     public final static String PPDOC_ENTRY = "PowerPoint Document";

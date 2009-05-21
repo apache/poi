@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.chunks;
 
 /**
@@ -29,7 +30,7 @@ public class ChunkHeaderV6 extends ChunkHeader {
 	public short getUnknown3() {
 		return unknown3;
 	}
-	
+
 	protected static int getHeaderSize() {
 		// Looks like it ought to be 19...
 		return 19;
@@ -37,7 +38,7 @@ public class ChunkHeaderV6 extends ChunkHeader {
 	public int getSizeInBytes() {
 		return getHeaderSize();
 	}
-	
+
 	/**
 	 * Does the chunk have a trailer?
 	 */

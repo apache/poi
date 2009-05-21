@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model.types;
 
@@ -1430,1934 +1427,1934 @@ public abstract class DOPAbstractType
 
     /**
      * Sets the fFacingPages field value.
-     * 
+     *
      */
     public void setFFacingPages(boolean value)
     {
         field_1_formatFlags = (byte)fFacingPages.setBoolean(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fFacingPages field value.
      */
     public boolean isFFacingPages()
     {
         return fFacingPages.isSet(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the fWidowControl field value.
-     * 
+     *
      */
     public void setFWidowControl(boolean value)
     {
         field_1_formatFlags = (byte)fWidowControl.setBoolean(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWidowControl field value.
      */
     public boolean isFWidowControl()
     {
         return fWidowControl.isSet(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the fPMHMainDoc field value.
-     * 
+     *
      */
     public void setFPMHMainDoc(boolean value)
     {
         field_1_formatFlags = (byte)fPMHMainDoc.setBoolean(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPMHMainDoc field value.
      */
     public boolean isFPMHMainDoc()
     {
         return fPMHMainDoc.isSet(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the grfSupression field value.
-     * 
+     *
      */
     public void setGrfSupression(byte value)
     {
         field_1_formatFlags = (byte)grfSupression.setValue(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the grfSupression field value.
      */
     public byte getGrfSupression()
     {
         return ( byte )grfSupression.getValue(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the fpc field value.
-     * 
+     *
      */
     public void setFpc(byte value)
     {
         field_1_formatFlags = (byte)fpc.setValue(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fpc field value.
      */
     public byte getFpc()
     {
         return ( byte )fpc.getValue(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the unused1 field value.
-     * 
+     *
      */
     public void setUnused1(boolean value)
     {
         field_1_formatFlags = (byte)unused1.setBoolean(field_1_formatFlags, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the unused1 field value.
      */
     public boolean isUnused1()
     {
         return unused1.isSet(field_1_formatFlags);
-        
+
     }
 
     /**
      * Sets the rncFtn field value.
-     * 
+     *
      */
     public void setRncFtn(byte value)
     {
         field_3_footnoteInfo = (short)rncFtn.setValue(field_3_footnoteInfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the rncFtn field value.
      */
     public byte getRncFtn()
     {
         return ( byte )rncFtn.getValue(field_3_footnoteInfo);
-        
+
     }
 
     /**
      * Sets the nFtn field value.
-     * 
+     *
      */
     public void setNFtn(short value)
     {
         field_3_footnoteInfo = (short)nFtn.setValue(field_3_footnoteInfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the nFtn field value.
      */
     public short getNFtn()
     {
         return ( short )nFtn.getValue(field_3_footnoteInfo);
-        
+
     }
 
     /**
      * Sets the fOnlyMacPics field value.
-     * 
+     *
      */
     public void setFOnlyMacPics(boolean value)
     {
         field_5_docinfo = (byte)fOnlyMacPics.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fOnlyMacPics field value.
      */
     public boolean isFOnlyMacPics()
     {
         return fOnlyMacPics.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fOnlyWinPics field value.
-     * 
+     *
      */
     public void setFOnlyWinPics(boolean value)
     {
         field_5_docinfo = (byte)fOnlyWinPics.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fOnlyWinPics field value.
      */
     public boolean isFOnlyWinPics()
     {
         return fOnlyWinPics.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fLabelDoc field value.
-     * 
+     *
      */
     public void setFLabelDoc(boolean value)
     {
         field_5_docinfo = (byte)fLabelDoc.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLabelDoc field value.
      */
     public boolean isFLabelDoc()
     {
         return fLabelDoc.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fHyphCapitals field value.
-     * 
+     *
      */
     public void setFHyphCapitals(boolean value)
     {
         field_5_docinfo = (byte)fHyphCapitals.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fHyphCapitals field value.
      */
     public boolean isFHyphCapitals()
     {
         return fHyphCapitals.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fAutoHyphen field value.
-     * 
+     *
      */
     public void setFAutoHyphen(boolean value)
     {
         field_5_docinfo = (byte)fAutoHyphen.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fAutoHyphen field value.
      */
     public boolean isFAutoHyphen()
     {
         return fAutoHyphen.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fFormNoFields field value.
-     * 
+     *
      */
     public void setFFormNoFields(boolean value)
     {
         field_5_docinfo = (byte)fFormNoFields.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fFormNoFields field value.
      */
     public boolean isFFormNoFields()
     {
         return fFormNoFields.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fLinkStyles field value.
-     * 
+     *
      */
     public void setFLinkStyles(boolean value)
     {
         field_5_docinfo = (byte)fLinkStyles.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLinkStyles field value.
      */
     public boolean isFLinkStyles()
     {
         return fLinkStyles.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fRevMarking field value.
-     * 
+     *
      */
     public void setFRevMarking(boolean value)
     {
         field_5_docinfo = (byte)fRevMarking.setBoolean(field_5_docinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fRevMarking field value.
      */
     public boolean isFRevMarking()
     {
         return fRevMarking.isSet(field_5_docinfo);
-        
+
     }
 
     /**
      * Sets the fBackup field value.
-     * 
+     *
      */
     public void setFBackup(boolean value)
     {
         field_6_docinfo1 = (byte)fBackup.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fBackup field value.
      */
     public boolean isFBackup()
     {
         return fBackup.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fExactCWords field value.
-     * 
+     *
      */
     public void setFExactCWords(boolean value)
     {
         field_6_docinfo1 = (byte)fExactCWords.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fExactCWords field value.
      */
     public boolean isFExactCWords()
     {
         return fExactCWords.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fPagHidden field value.
-     * 
+     *
      */
     public void setFPagHidden(boolean value)
     {
         field_6_docinfo1 = (byte)fPagHidden.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPagHidden field value.
      */
     public boolean isFPagHidden()
     {
         return fPagHidden.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fPagResults field value.
-     * 
+     *
      */
     public void setFPagResults(boolean value)
     {
         field_6_docinfo1 = (byte)fPagResults.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPagResults field value.
      */
     public boolean isFPagResults()
     {
         return fPagResults.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fLockAtn field value.
-     * 
+     *
      */
     public void setFLockAtn(boolean value)
     {
         field_6_docinfo1 = (byte)fLockAtn.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLockAtn field value.
      */
     public boolean isFLockAtn()
     {
         return fLockAtn.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fMirrorMargins field value.
-     * 
+     *
      */
     public void setFMirrorMargins(boolean value)
     {
         field_6_docinfo1 = (byte)fMirrorMargins.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMirrorMargins field value.
      */
     public boolean isFMirrorMargins()
     {
         return fMirrorMargins.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the unused3 field value.
-     * 
+     *
      */
     public void setUnused3(boolean value)
     {
         field_6_docinfo1 = (byte)unused3.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the unused3 field value.
      */
     public boolean isUnused3()
     {
         return unused3.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fDfltTrueType field value.
-     * 
+     *
      */
     public void setFDfltTrueType(boolean value)
     {
         field_6_docinfo1 = (byte)fDfltTrueType.setBoolean(field_6_docinfo1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fDfltTrueType field value.
      */
     public boolean isFDfltTrueType()
     {
         return fDfltTrueType.isSet(field_6_docinfo1);
-        
+
     }
 
     /**
      * Sets the fPagSupressTopSpacing field value.
-     * 
+     *
      */
     public void setFPagSupressTopSpacing(boolean value)
     {
         field_7_docinfo2 = (byte)fPagSupressTopSpacing.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPagSupressTopSpacing field value.
      */
     public boolean isFPagSupressTopSpacing()
     {
         return fPagSupressTopSpacing.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fProtEnabled field value.
-     * 
+     *
      */
     public void setFProtEnabled(boolean value)
     {
         field_7_docinfo2 = (byte)fProtEnabled.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fProtEnabled field value.
      */
     public boolean isFProtEnabled()
     {
         return fProtEnabled.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fDispFormFldSel field value.
-     * 
+     *
      */
     public void setFDispFormFldSel(boolean value)
     {
         field_7_docinfo2 = (byte)fDispFormFldSel.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fDispFormFldSel field value.
      */
     public boolean isFDispFormFldSel()
     {
         return fDispFormFldSel.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fRMView field value.
-     * 
+     *
      */
     public void setFRMView(boolean value)
     {
         field_7_docinfo2 = (byte)fRMView.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fRMView field value.
      */
     public boolean isFRMView()
     {
         return fRMView.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fRMPrint field value.
-     * 
+     *
      */
     public void setFRMPrint(boolean value)
     {
         field_7_docinfo2 = (byte)fRMPrint.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fRMPrint field value.
      */
     public boolean isFRMPrint()
     {
         return fRMPrint.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the unused4 field value.
-     * 
+     *
      */
     public void setUnused4(boolean value)
     {
         field_7_docinfo2 = (byte)unused4.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the unused4 field value.
      */
     public boolean isUnused4()
     {
         return unused4.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fLockRev field value.
-     * 
+     *
      */
     public void setFLockRev(boolean value)
     {
         field_7_docinfo2 = (byte)fLockRev.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLockRev field value.
      */
     public boolean isFLockRev()
     {
         return fLockRev.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the fEmbedFonts field value.
-     * 
+     *
      */
     public void setFEmbedFonts(boolean value)
     {
         field_7_docinfo2 = (byte)fEmbedFonts.setBoolean(field_7_docinfo2, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fEmbedFonts field value.
      */
     public boolean isFEmbedFonts()
     {
         return fEmbedFonts.isSet(field_7_docinfo2);
-        
+
     }
 
     /**
      * Sets the oldfNoTabForInd field value.
-     * 
+     *
      */
     public void setOldfNoTabForInd(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoTabForInd.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoTabForInd field value.
      */
     public boolean isOldfNoTabForInd()
     {
         return oldfNoTabForInd.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfNoSpaceRaiseLower field value.
-     * 
+     *
      */
     public void setOldfNoSpaceRaiseLower(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoSpaceRaiseLower.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoSpaceRaiseLower field value.
      */
     public boolean isOldfNoSpaceRaiseLower()
     {
         return oldfNoSpaceRaiseLower.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfSuppressSpbfAfterPageBreak field value.
-     * 
+     *
      */
     public void setOldfSuppressSpbfAfterPageBreak(boolean value)
     {
         field_8_docinfo3 = (short)oldfSuppressSpbfAfterPageBreak.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfSuppressSpbfAfterPageBreak field value.
      */
     public boolean isOldfSuppressSpbfAfterPageBreak()
     {
         return oldfSuppressSpbfAfterPageBreak.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfWrapTrailSpaces field value.
-     * 
+     *
      */
     public void setOldfWrapTrailSpaces(boolean value)
     {
         field_8_docinfo3 = (short)oldfWrapTrailSpaces.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfWrapTrailSpaces field value.
      */
     public boolean isOldfWrapTrailSpaces()
     {
         return oldfWrapTrailSpaces.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfMapPrintTextColor field value.
-     * 
+     *
      */
     public void setOldfMapPrintTextColor(boolean value)
     {
         field_8_docinfo3 = (short)oldfMapPrintTextColor.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfMapPrintTextColor field value.
      */
     public boolean isOldfMapPrintTextColor()
     {
         return oldfMapPrintTextColor.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfNoColumnBalance field value.
-     * 
+     *
      */
     public void setOldfNoColumnBalance(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoColumnBalance.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoColumnBalance field value.
      */
     public boolean isOldfNoColumnBalance()
     {
         return oldfNoColumnBalance.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfConvMailMergeEsc field value.
-     * 
+     *
      */
     public void setOldfConvMailMergeEsc(boolean value)
     {
         field_8_docinfo3 = (short)oldfConvMailMergeEsc.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfConvMailMergeEsc field value.
      */
     public boolean isOldfConvMailMergeEsc()
     {
         return oldfConvMailMergeEsc.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfSupressTopSpacing field value.
-     * 
+     *
      */
     public void setOldfSupressTopSpacing(boolean value)
     {
         field_8_docinfo3 = (short)oldfSupressTopSpacing.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfSupressTopSpacing field value.
      */
     public boolean isOldfSupressTopSpacing()
     {
         return oldfSupressTopSpacing.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfOrigWordTableRules field value.
-     * 
+     *
      */
     public void setOldfOrigWordTableRules(boolean value)
     {
         field_8_docinfo3 = (short)oldfOrigWordTableRules.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfOrigWordTableRules field value.
      */
     public boolean isOldfOrigWordTableRules()
     {
         return oldfOrigWordTableRules.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfTransparentMetafiles field value.
-     * 
+     *
      */
     public void setOldfTransparentMetafiles(boolean value)
     {
         field_8_docinfo3 = (short)oldfTransparentMetafiles.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfTransparentMetafiles field value.
      */
     public boolean isOldfTransparentMetafiles()
     {
         return oldfTransparentMetafiles.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfShowBreaksInFrames field value.
-     * 
+     *
      */
     public void setOldfShowBreaksInFrames(boolean value)
     {
         field_8_docinfo3 = (short)oldfShowBreaksInFrames.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfShowBreaksInFrames field value.
      */
     public boolean isOldfShowBreaksInFrames()
     {
         return oldfShowBreaksInFrames.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the oldfSwapBordersFacingPgs field value.
-     * 
+     *
      */
     public void setOldfSwapBordersFacingPgs(boolean value)
     {
         field_8_docinfo3 = (short)oldfSwapBordersFacingPgs.setBoolean(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the oldfSwapBordersFacingPgs field value.
      */
     public boolean isOldfSwapBordersFacingPgs()
     {
         return oldfSwapBordersFacingPgs.isSet(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the unused5 field value.
-     * 
+     *
      */
     public void setUnused5(byte value)
     {
         field_8_docinfo3 = (short)unused5.setValue(field_8_docinfo3, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the unused5 field value.
      */
     public byte getUnused5()
     {
         return ( byte )unused5.getValue(field_8_docinfo3);
-        
+
     }
 
     /**
      * Sets the rncEdn field value.
-     * 
+     *
      */
     public void setRncEdn(byte value)
     {
         field_23_Edn = (short)rncEdn.setValue(field_23_Edn, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the rncEdn field value.
      */
     public byte getRncEdn()
     {
         return ( byte )rncEdn.getValue(field_23_Edn);
-        
+
     }
 
     /**
      * Sets the nEdn field value.
-     * 
+     *
      */
     public void setNEdn(short value)
     {
         field_23_Edn = (short)nEdn.setValue(field_23_Edn, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the nEdn field value.
      */
     public short getNEdn()
     {
         return ( short )nEdn.getValue(field_23_Edn);
-        
+
     }
 
     /**
      * Sets the epc field value.
-     * 
+     *
      */
     public void setEpc(byte value)
     {
         field_24_Edn1 = (short)epc.setValue(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the epc field value.
      */
     public byte getEpc()
     {
         return ( byte )epc.getValue(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the nfcFtnRef1 field value.
-     * 
+     *
      */
     public void setNfcFtnRef1(byte value)
     {
         field_24_Edn1 = (short)nfcFtnRef1.setValue(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the nfcFtnRef1 field value.
      */
     public byte getNfcFtnRef1()
     {
         return ( byte )nfcFtnRef1.getValue(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the nfcEdnRef1 field value.
-     * 
+     *
      */
     public void setNfcEdnRef1(byte value)
     {
         field_24_Edn1 = (short)nfcEdnRef1.setValue(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the nfcEdnRef1 field value.
      */
     public byte getNfcEdnRef1()
     {
         return ( byte )nfcEdnRef1.getValue(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the fPrintFormData field value.
-     * 
+     *
      */
     public void setFPrintFormData(boolean value)
     {
         field_24_Edn1 = (short)fPrintFormData.setBoolean(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPrintFormData field value.
      */
     public boolean isFPrintFormData()
     {
         return fPrintFormData.isSet(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the fSaveFormData field value.
-     * 
+     *
      */
     public void setFSaveFormData(boolean value)
     {
         field_24_Edn1 = (short)fSaveFormData.setBoolean(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSaveFormData field value.
      */
     public boolean isFSaveFormData()
     {
         return fSaveFormData.isSet(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the fShadeFormData field value.
-     * 
+     *
      */
     public void setFShadeFormData(boolean value)
     {
         field_24_Edn1 = (short)fShadeFormData.setBoolean(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fShadeFormData field value.
      */
     public boolean isFShadeFormData()
     {
         return fShadeFormData.isSet(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the fWCFtnEdn field value.
-     * 
+     *
      */
     public void setFWCFtnEdn(boolean value)
     {
         field_24_Edn1 = (short)fWCFtnEdn.setBoolean(field_24_Edn1, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWCFtnEdn field value.
      */
     public boolean isFWCFtnEdn()
     {
         return fWCFtnEdn.isSet(field_24_Edn1);
-        
+
     }
 
     /**
      * Sets the wvkSaved field value.
-     * 
+     *
      */
     public void setWvkSaved(byte value)
     {
         field_32_view = (short)wvkSaved.setValue(field_32_view, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the wvkSaved field value.
      */
     public byte getWvkSaved()
     {
         return ( byte )wvkSaved.getValue(field_32_view);
-        
+
     }
 
     /**
      * Sets the wScaleSaved field value.
-     * 
+     *
      */
     public void setWScaleSaved(short value)
     {
         field_32_view = (short)wScaleSaved.setValue(field_32_view, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the wScaleSaved field value.
      */
     public short getWScaleSaved()
     {
         return ( short )wScaleSaved.getValue(field_32_view);
-        
+
     }
 
     /**
      * Sets the zkSaved field value.
-     * 
+     *
      */
     public void setZkSaved(byte value)
     {
         field_32_view = (short)zkSaved.setValue(field_32_view, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the zkSaved field value.
      */
     public byte getZkSaved()
     {
         return ( byte )zkSaved.getValue(field_32_view);
-        
+
     }
 
     /**
      * Sets the fRotateFontW6 field value.
-     * 
+     *
      */
     public void setFRotateFontW6(boolean value)
     {
         field_32_view = (short)fRotateFontW6.setBoolean(field_32_view, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fRotateFontW6 field value.
      */
     public boolean isFRotateFontW6()
     {
         return fRotateFontW6.isSet(field_32_view);
-        
+
     }
 
     /**
      * Sets the iGutterPos field value.
-     * 
+     *
      */
     public void setIGutterPos(boolean value)
     {
         field_32_view = (short)iGutterPos.setBoolean(field_32_view, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the iGutterPos field value.
      */
     public boolean isIGutterPos()
     {
         return iGutterPos.isSet(field_32_view);
-        
+
     }
 
     /**
      * Sets the fNoTabForInd field value.
-     * 
+     *
      */
     public void setFNoTabForInd(boolean value)
     {
         field_33_docinfo4 = (int)fNoTabForInd.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fNoTabForInd field value.
      */
     public boolean isFNoTabForInd()
     {
         return fNoTabForInd.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fNoSpaceRaiseLower field value.
-     * 
+     *
      */
     public void setFNoSpaceRaiseLower(boolean value)
     {
         field_33_docinfo4 = (int)fNoSpaceRaiseLower.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fNoSpaceRaiseLower field value.
      */
     public boolean isFNoSpaceRaiseLower()
     {
         return fNoSpaceRaiseLower.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fSupressSpdfAfterPageBreak field value.
-     * 
+     *
      */
     public void setFSupressSpdfAfterPageBreak(boolean value)
     {
         field_33_docinfo4 = (int)fSupressSpdfAfterPageBreak.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSupressSpdfAfterPageBreak field value.
      */
     public boolean isFSupressSpdfAfterPageBreak()
     {
         return fSupressSpdfAfterPageBreak.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fWrapTrailSpaces field value.
-     * 
+     *
      */
     public void setFWrapTrailSpaces(boolean value)
     {
         field_33_docinfo4 = (int)fWrapTrailSpaces.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWrapTrailSpaces field value.
      */
     public boolean isFWrapTrailSpaces()
     {
         return fWrapTrailSpaces.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fMapPrintTextColor field value.
-     * 
+     *
      */
     public void setFMapPrintTextColor(boolean value)
     {
         field_33_docinfo4 = (int)fMapPrintTextColor.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMapPrintTextColor field value.
      */
     public boolean isFMapPrintTextColor()
     {
         return fMapPrintTextColor.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fNoColumnBalance field value.
-     * 
+     *
      */
     public void setFNoColumnBalance(boolean value)
     {
         field_33_docinfo4 = (int)fNoColumnBalance.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fNoColumnBalance field value.
      */
     public boolean isFNoColumnBalance()
     {
         return fNoColumnBalance.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fConvMailMergeEsc field value.
-     * 
+     *
      */
     public void setFConvMailMergeEsc(boolean value)
     {
         field_33_docinfo4 = (int)fConvMailMergeEsc.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fConvMailMergeEsc field value.
      */
     public boolean isFConvMailMergeEsc()
     {
         return fConvMailMergeEsc.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fSupressTopSpacing field value.
-     * 
+     *
      */
     public void setFSupressTopSpacing(boolean value)
     {
         field_33_docinfo4 = (int)fSupressTopSpacing.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSupressTopSpacing field value.
      */
     public boolean isFSupressTopSpacing()
     {
         return fSupressTopSpacing.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fOrigWordTableRules field value.
-     * 
+     *
      */
     public void setFOrigWordTableRules(boolean value)
     {
         field_33_docinfo4 = (int)fOrigWordTableRules.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fOrigWordTableRules field value.
      */
     public boolean isFOrigWordTableRules()
     {
         return fOrigWordTableRules.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fTransparentMetafiles field value.
-     * 
+     *
      */
     public void setFTransparentMetafiles(boolean value)
     {
         field_33_docinfo4 = (int)fTransparentMetafiles.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fTransparentMetafiles field value.
      */
     public boolean isFTransparentMetafiles()
     {
         return fTransparentMetafiles.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fShowBreaksInFrames field value.
-     * 
+     *
      */
     public void setFShowBreaksInFrames(boolean value)
     {
         field_33_docinfo4 = (int)fShowBreaksInFrames.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fShowBreaksInFrames field value.
      */
     public boolean isFShowBreaksInFrames()
     {
         return fShowBreaksInFrames.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fSwapBordersFacingPgs field value.
-     * 
+     *
      */
     public void setFSwapBordersFacingPgs(boolean value)
     {
         field_33_docinfo4 = (int)fSwapBordersFacingPgs.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSwapBordersFacingPgs field value.
      */
     public boolean isFSwapBordersFacingPgs()
     {
         return fSwapBordersFacingPgs.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fSuppressTopSPacingMac5 field value.
-     * 
+     *
      */
     public void setFSuppressTopSPacingMac5(boolean value)
     {
         field_33_docinfo4 = (int)fSuppressTopSPacingMac5.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSuppressTopSPacingMac5 field value.
      */
     public boolean isFSuppressTopSPacingMac5()
     {
         return fSuppressTopSPacingMac5.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fTruncDxaExpand field value.
-     * 
+     *
      */
     public void setFTruncDxaExpand(boolean value)
     {
         field_33_docinfo4 = (int)fTruncDxaExpand.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fTruncDxaExpand field value.
      */
     public boolean isFTruncDxaExpand()
     {
         return fTruncDxaExpand.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fPrintBodyBeforeHdr field value.
-     * 
+     *
      */
     public void setFPrintBodyBeforeHdr(boolean value)
     {
         field_33_docinfo4 = (int)fPrintBodyBeforeHdr.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fPrintBodyBeforeHdr field value.
      */
     public boolean isFPrintBodyBeforeHdr()
     {
         return fPrintBodyBeforeHdr.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fNoLeading field value.
-     * 
+     *
      */
     public void setFNoLeading(boolean value)
     {
         field_33_docinfo4 = (int)fNoLeading.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fNoLeading field value.
      */
     public boolean isFNoLeading()
     {
         return fNoLeading.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the fMWSmallCaps field value.
-     * 
+     *
      */
     public void setFMWSmallCaps(boolean value)
     {
         field_33_docinfo4 = (int)fMWSmallCaps.setBoolean(field_33_docinfo4, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMWSmallCaps field value.
      */
     public boolean isFMWSmallCaps()
     {
         return fMWSmallCaps.isSet(field_33_docinfo4);
-        
+
     }
 
     /**
      * Sets the lvl field value.
-     * 
+     *
      */
     public void setLvl(byte value)
     {
         field_37_docinfo5 = (short)lvl.setValue(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the lvl field value.
      */
     public byte getLvl()
     {
         return ( byte )lvl.getValue(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fGramAllDone field value.
-     * 
+     *
      */
     public void setFGramAllDone(boolean value)
     {
         field_37_docinfo5 = (short)fGramAllDone.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fGramAllDone field value.
      */
     public boolean isFGramAllDone()
     {
         return fGramAllDone.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fGramAllClean field value.
-     * 
+     *
      */
     public void setFGramAllClean(boolean value)
     {
         field_37_docinfo5 = (short)fGramAllClean.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fGramAllClean field value.
      */
     public boolean isFGramAllClean()
     {
         return fGramAllClean.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fSubsetFonts field value.
-     * 
+     *
      */
     public void setFSubsetFonts(boolean value)
     {
         field_37_docinfo5 = (short)fSubsetFonts.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSubsetFonts field value.
      */
     public boolean isFSubsetFonts()
     {
         return fSubsetFonts.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fHideLastVersion field value.
-     * 
+     *
      */
     public void setFHideLastVersion(boolean value)
     {
         field_37_docinfo5 = (short)fHideLastVersion.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fHideLastVersion field value.
      */
     public boolean isFHideLastVersion()
     {
         return fHideLastVersion.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fHtmlDoc field value.
-     * 
+     *
      */
     public void setFHtmlDoc(boolean value)
     {
         field_37_docinfo5 = (short)fHtmlDoc.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fHtmlDoc field value.
      */
     public boolean isFHtmlDoc()
     {
         return fHtmlDoc.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fSnapBorder field value.
-     * 
+     *
      */
     public void setFSnapBorder(boolean value)
     {
         field_37_docinfo5 = (short)fSnapBorder.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSnapBorder field value.
      */
     public boolean isFSnapBorder()
     {
         return fSnapBorder.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fIncludeHeader field value.
-     * 
+     *
      */
     public void setFIncludeHeader(boolean value)
     {
         field_37_docinfo5 = (short)fIncludeHeader.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fIncludeHeader field value.
      */
     public boolean isFIncludeHeader()
     {
         return fIncludeHeader.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fIncludeFooter field value.
-     * 
+     *
      */
     public void setFIncludeFooter(boolean value)
     {
         field_37_docinfo5 = (short)fIncludeFooter.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fIncludeFooter field value.
      */
     public boolean isFIncludeFooter()
     {
         return fIncludeFooter.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fForcePageSizePag field value.
-     * 
+     *
      */
     public void setFForcePageSizePag(boolean value)
     {
         field_37_docinfo5 = (short)fForcePageSizePag.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fForcePageSizePag field value.
      */
     public boolean isFForcePageSizePag()
     {
         return fForcePageSizePag.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fMinFontSizePag field value.
-     * 
+     *
      */
     public void setFMinFontSizePag(boolean value)
     {
         field_37_docinfo5 = (short)fMinFontSizePag.setBoolean(field_37_docinfo5, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMinFontSizePag field value.
      */
     public boolean isFMinFontSizePag()
     {
         return fMinFontSizePag.isSet(field_37_docinfo5);
-        
+
     }
 
     /**
      * Sets the fHaveVersions field value.
-     * 
+     *
      */
     public void setFHaveVersions(boolean value)
     {
         field_38_docinfo6 = (short)fHaveVersions.setBoolean(field_38_docinfo6, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fHaveVersions field value.
      */
     public boolean isFHaveVersions()
     {
         return fHaveVersions.isSet(field_38_docinfo6);
-        
+
     }
 
     /**
      * Sets the fAutoVersions field value.
-     * 
+     *
      */
     public void setFAutoVersions(boolean value)
     {
         field_38_docinfo6 = (short)fAutoVersions.setBoolean(field_38_docinfo6, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fAutoVersions field value.
      */
     public boolean isFAutoVersions()
     {
         return fAutoVersions.isSet(field_38_docinfo6);
-        
+
     }
 
     /**
      * Sets the fVirusPrompted field value.
-     * 
+     *
      */
     public void setFVirusPrompted(boolean value)
     {
         field_43_virusinfo = (int)fVirusPrompted.setBoolean(field_43_virusinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fVirusPrompted field value.
      */
     public boolean isFVirusPrompted()
     {
         return fVirusPrompted.isSet(field_43_virusinfo);
-        
+
     }
 
     /**
      * Sets the fVirusLoadSafe field value.
-     * 
+     *
      */
     public void setFVirusLoadSafe(boolean value)
     {
         field_43_virusinfo = (int)fVirusLoadSafe.setBoolean(field_43_virusinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fVirusLoadSafe field value.
      */
     public boolean isFVirusLoadSafe()
     {
         return fVirusLoadSafe.isSet(field_43_virusinfo);
-        
+
     }
 
     /**
      * Sets the KeyVirusSession30 field value.
-     * 
+     *
      */
     public void setKeyVirusSession30(int value)
     {
         field_43_virusinfo = (int)KeyVirusSession30.setValue(field_43_virusinfo, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the KeyVirusSession30 field value.
      */
     public int getKeyVirusSession30()
     {
         return ( int )KeyVirusSession30.getValue(field_43_virusinfo);
-        
+
     }
 
 

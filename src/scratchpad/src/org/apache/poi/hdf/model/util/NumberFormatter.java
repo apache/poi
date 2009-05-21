@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.model.util;
 
@@ -27,7 +24,7 @@ package org.apache.poi.hdf.model.util;
  * @author Ryan Ackley
  */
 
-public class NumberFormatter
+public final class NumberFormatter
 {
   private final static int ARABIC = 0;
   private final static int UPPER_ROMAN = 1;

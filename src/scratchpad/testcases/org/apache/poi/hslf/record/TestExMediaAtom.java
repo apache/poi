@@ -29,19 +29,19 @@ import java.util.Arrays;
  */
 public final class TestExMediaAtom extends TestCase {
 	// From a real file
-    private static final byte[] data = {
-            0x00, 0x00, (byte)0x04, 0x10, 0x08, 0x00, 0x00, 00,
-            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	private static final byte[] data = {
+			0x00, 0x00, (byte)0x04, 0x10, 0x08, 0x00, 0x00, 00,
+			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-    public void testRead() {
+	public void testRead() {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExMediaAtom.typeID, record.getRecordType());
 
-        assertEquals(1, record.getObjectId());
-        assertFalse(record.getFlag(ExMediaAtom.fLoop));
-        assertFalse(record.getFlag(ExMediaAtom.fNarration));
-        assertFalse(record.getFlag(ExMediaAtom.fRewind));
-    }
+		assertEquals(1, record.getObjectId());
+		assertFalse(record.getFlag(ExMediaAtom.fLoop));
+		assertFalse(record.getFlag(ExMediaAtom.fNarration));
+		assertFalse(record.getFlag(ExMediaAtom.fRewind));
+	}
 
 	public void testWrite() throws Exception {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
@@ -52,40 +52,40 @@ public final class TestExMediaAtom extends TestCase {
 		assertTrue(Arrays.equals(data, b));
 	}
 
-    public void testNewRecord() throws Exception {
-        ExMediaAtom ref = new ExMediaAtom(data, 0, data.length);
-        assertEquals(0, ref.getMask()); //
+	public void testNewRecord() throws Exception {
+		ExMediaAtom ref = new ExMediaAtom(data, 0, data.length);
+		assertEquals(0, ref.getMask()); //
 
-        ExMediaAtom record = new ExMediaAtom();
-        record.setObjectId(1);
-        record.setFlag(HeadersFootersAtom.fHasDate, false);
-        record.setFlag(HeadersFootersAtom.fHasTodayDate, false);
-        record.setFlag(HeadersFootersAtom.fHasFooter, false);
+		ExMediaAtom record = new ExMediaAtom();
+		record.setObjectId(1);
+		record.setFlag(HeadersFootersAtom.fHasDate, false);
+		record.setFlag(HeadersFootersAtom.fHasTodayDate, false);
+		record.setFlag(HeadersFootersAtom.fHasFooter, false);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        record.writeOut(baos);
-        byte[] b = baos.toByteArray();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		record.writeOut(baos);
+		byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
-    }
+		assertTrue(Arrays.equals(data, b));
+	}
 
-    public void testFlags() {
-        ExMediaAtom record = new ExMediaAtom();
+	public void testFlags() {
+		ExMediaAtom record = new ExMediaAtom();
 
-        //in a new record all the bits are 0
-        for(int i = 0; i < 3; i++) assertFalse(record.getFlag(1 << i));
+		//in a new record all the bits are 0
+		for(int i = 0; i < 3; i++) assertFalse(record.getFlag(1 << i));
 
-        record.setFlag(ExMediaAtom.fLoop, true);
-        assertTrue(record.getFlag(ExMediaAtom.fLoop));
+		record.setFlag(ExMediaAtom.fLoop, true);
+		assertTrue(record.getFlag(ExMediaAtom.fLoop));
 
-        record.setFlag(ExMediaAtom.fNarration, true);
-        assertTrue(record.getFlag(ExMediaAtom.fNarration));
+		record.setFlag(ExMediaAtom.fNarration, true);
+		assertTrue(record.getFlag(ExMediaAtom.fNarration));
 
-        record.setFlag(ExMediaAtom.fNarration, false);
-        assertFalse(record.getFlag(ExMediaAtom.fNarration));
+		record.setFlag(ExMediaAtom.fNarration, false);
+		assertFalse(record.getFlag(ExMediaAtom.fNarration));
 
-        record.setFlag(ExMediaAtom.fNarration, false);
-        assertFalse(record.getFlag(ExMediaAtom.fNarration));
+		record.setFlag(ExMediaAtom.fNarration, false);
+		assertFalse(record.getFlag(ExMediaAtom.fNarration));
 
-    }
+	}
 }

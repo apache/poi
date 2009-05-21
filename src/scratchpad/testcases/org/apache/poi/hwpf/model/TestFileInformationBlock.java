@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import junit.framework.*;
@@ -23,7 +22,7 @@ import org.apache.poi.hwpf.*;
 
 import java.lang.reflect.*;
 
-public class TestFileInformationBlock
+public final class TestFileInformationBlock
   extends TestCase
 {
   private FileInformationBlock _fileInformationBlock = null;

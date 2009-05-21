@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.*;
@@ -26,10 +27,10 @@ import org.apache.poi.hslf.HSLFSlideShow;
 
 /**
  * Test Line shape.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestLine extends TestCase {
+public final class TestLine extends TestCase {
 
     public void setUp() throws Exception {
 

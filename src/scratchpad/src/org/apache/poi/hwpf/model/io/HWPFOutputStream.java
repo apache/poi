@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model.io;
 
 import java.io.ByteArrayOutputStream;
 
-public class HWPFOutputStream extends ByteArrayOutputStream
+public final class HWPFOutputStream extends ByteArrayOutputStream
 {
 
   int _offset;

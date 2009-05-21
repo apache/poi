@@ -47,7 +47,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * This class contains the main functionality for the Powerpoint file 
+ * This class contains the main functionality for the Powerpoint file
  * "reader". It is only a very basic class for now
  *
  * @author Nick Burch
@@ -80,7 +80,7 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
 	/**
-	 * Constructs a Powerpoint document from fileName. Parses the document 
+	 * Constructs a Powerpoint document from fileName. Parses the document
 	 * and places all the important stuff into data structures.
 	 *
 	 * @param fileName The name of the file to read.
@@ -90,9 +90,9 @@ public final class HSLFSlideShow extends POIDocument {
 	{
 		this(new FileInputStream(fileName));
 	}
-  
+
 	/**
-	 * Constructs a Powerpoint document from an input stream. Parses the 
+	 * Constructs a Powerpoint document from an input stream. Parses the
 	 * document and places all the important stuff into data structures.
 	 *
 	 * @param inputStream the source of the data
@@ -104,7 +104,7 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
 	/**
-	 * Constructs a Powerpoint document from a POIFS Filesystem. Parses the 
+	 * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
 	 * document and places all the important stuff into data structures.
 	 *
 	 * @param filesystem the POIFS FileSystem to read from
@@ -114,9 +114,9 @@ public final class HSLFSlideShow extends POIDocument {
 	{
 		this(filesystem.getRoot(), filesystem);
 	}
-	
+
 	/**
-	 * Constructs a Powerpoint document from a specific point in a 
+	 * Constructs a Powerpoint document from a specific point in a
 	 *  POIFS Filesystem. Parses the document and places all the
 	 *  important stuff into data structures.
 	 *
@@ -127,15 +127,15 @@ public final class HSLFSlideShow extends POIDocument {
 	public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
 	{
 		super(dir, filesystem);
-		
+
 		// First up, grab the "Current User" stream
 		// We need this before we can detect Encrypted Documents
 		readCurrentUserStream();
-		
-		// Next up, grab the data that makes up the 
+
+		// Next up, grab the data that makes up the
 		//  PowerPoint stream
 		readPowerPointStream();
-		
+
 		// Check to see if we have an encrypted document,
 		//  bailing out if we do
 		boolean encrypted = EncryptedSlideShow.checkIfEncrypted(this);
@@ -148,7 +148,7 @@ public final class HSLFSlideShow extends POIDocument {
 
 		// Look for Property Streams:
 		readProperties();
-		
+
 		// Look for any other streams
 		readOtherStreams();
 
@@ -171,8 +171,8 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
 	/**
-	 * Extracts the main PowerPoint document stream from the 
-	 *  POI file, ready to be passed 
+	 * Extracts the main PowerPoint document stream from the
+	 *  POI file, ready to be passed
 	 *
 	 * @throws IOException
 	 */
@@ -186,9 +186,9 @@ public final class HSLFSlideShow extends POIDocument {
 		_docstream = new byte[docProps.getSize()];
 		directory.createDocumentInputStream("PowerPoint Document").read(_docstream);
 	}
-	
+
 	/**
-	 * Builds the list of records, based on the contents  
+	 * Builds the list of records, based on the contents
 	 *  of the PowerPoint stream
 	 */
 	private void buildRecords()
@@ -206,7 +206,7 @@ public final class HSLFSlideShow extends POIDocument {
 		//      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
 		// All lengths given exclude the 8 byte record header
 		// (Data records are known as Atoms)
-	
+
 		// Document should start with:
 		//   0F 00 E8 03 ## ## ## ##
 	    //     (type 1000 = document, info 00 0f is normal, rest is document length)
@@ -216,9 +216,9 @@ public final class HSLFSlideShow extends POIDocument {
 		//   05 00 00 00 0A 00 00 00 xx xx xx
 		//     (the contents of the document atom, not sure what it means yet)
 		//   (records then follow)
-	
+
 		// When parsing a document, look to see if you know about that type
-		//  of the current record. If you know it's a type that has children, 
+		//  of the current record. If you know it's a type that has children,
 		//  process the record's data area looking for more records
 		// If you know about the type and it doesn't have children, either do
 		//  something with the data (eg TextRun) or skip over it
@@ -231,7 +231,7 @@ public final class HSLFSlideShow extends POIDocument {
 
     private Record[] read(byte[] docstream, int usrOffset){
         ArrayList lst = new ArrayList();
-        HashMap offset2id = new HashMap(); 
+        HashMap offset2id = new HashMap();
         while (usrOffset != 0){
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
             lst.add(new Integer(usrOffset));
@@ -269,7 +269,7 @@ public final class HSLFSlideShow extends POIDocument {
     }
 
 	/**
-	 * Find the "Current User" stream, and load it 
+	 * Find the "Current User" stream, and load it
 	 */
 	private void readCurrentUserStream() {
 		try {
@@ -279,9 +279,9 @@ public final class HSLFSlideShow extends POIDocument {
 			currentUser = new CurrentUserAtom();
 		}
 	}
-	
+
 	/**
-	 * Find any other streams from the filesystem, and load them 
+	 * Find any other streams from the filesystem, and load them
 	 */
 	private void readOtherStreams() {
 		// Currently, there aren't any
@@ -301,7 +301,7 @@ public final class HSLFSlideShow extends POIDocument {
 			DocumentInputStream is = directory.createDocumentInputStream("Pictures");
 			is.read(pictstream);
 		} catch (FileNotFoundException e){
-			// Silently catch exceptions if the presentation doesn't 
+			// Silently catch exceptions if the presentation doesn't
 			//  contain pictures - will use a null set instead
 			return;
 		}
@@ -348,7 +348,7 @@ public final class HSLFSlideShow extends POIDocument {
 					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
 				}
 			}
-            
+
             pos += imgsize;
         }
 	}
@@ -383,7 +383,7 @@ public final class HSLFSlideShow extends POIDocument {
 
         // The list of entries we've written out
         List writtenEntries = new ArrayList(1);
-        
+
         // Write out the Property Streams
         writeProperties(outFS, writtenEntries);
 
@@ -449,7 +449,7 @@ public final class HSLFSlideShow extends POIDocument {
         currentUser.writeToFS(outFS);
         writtenEntries.add("Current User");
 
-	
+
         // Write any pictures, into another stream
         if (_pictures.size() > 0) {
             ByteArrayOutputStream pict = new ByteArrayOutputStream();
@@ -461,7 +461,7 @@ public final class HSLFSlideShow extends POIDocument {
             );
             writtenEntries.add("Pictures");
         }
-        
+
         // If requested, write out any other streams we spot
         if(preserveNodes) {
         	copyNodes(filesystem, outFS, writtenEntries);
@@ -498,7 +498,7 @@ public final class HSLFSlideShow extends POIDocument {
 		_records = r;
 		return addedAt;
 	}
-	
+
 	/**
 	 * Add a new picture to this presentation.
      *

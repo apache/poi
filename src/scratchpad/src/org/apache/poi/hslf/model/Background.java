@@ -29,10 +29,10 @@ import java.io.ByteArrayInputStream;
 
 /**
  * Background shape
- * 
+ *
  * @author Yegor Kozlov
  */
-public class Background extends Shape {
+public final class Background extends Shape {
 
     protected Background(EscherContainerRecord escherRecord, Shape parent) {
         super(escherRecord, parent);

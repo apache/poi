@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.pointers;
 
 import org.apache.poi.util.LittleEndian;
@@ -22,13 +23,13 @@ import org.apache.poi.util.LittleEndian;
  * Factor class to create the appropriate pointers, based on the version
  *  of the file
  */
-public class PointerFactory {
+public final class PointerFactory {
 	private int version;
 	public PointerFactory(int version) {
 		this.version = version;
 	}
 	public int getVersion() { return version; }
-	
+
 	public Pointer createPointer(byte[] data, int offset) {
 		Pointer p;
 		if(version >= 6) {
@@ -38,7 +39,7 @@ public class PointerFactory {
 			p.offset = (int)LittleEndian.getUInt(data, offset+8);
 			p.length = (int)LittleEndian.getUInt(data, offset+12);
 			p.format = LittleEndian.getShort(data, offset+16);
-			
+
 			return p;
 		} else if(version == 5) {
 			throw new RuntimeException("TODO");

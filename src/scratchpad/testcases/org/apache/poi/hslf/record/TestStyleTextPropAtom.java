@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -38,11 +35,11 @@ import java.util.Arrays;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestStyleTextPropAtom extends TestCase {
+public final class TestStyleTextPropAtom extends TestCase {
     /** From a real file: a paragraph with 4 different styles */
     private byte[] data_a = new byte[] {
       0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
-      0x36, 00, 00, 00, // paragraph is 54 long 
+      0x36, 00, 00, 00, // paragraph is 54 long
       00, 00,           // (paragraph reserved field)
       00, 00, 00, 00,   // it doesn't have any styles
       0x15, 00, 00, 00, // first char run is 21 long
@@ -759,7 +756,7 @@ public class TestStyleTextPropAtom extends TestCase {
                 0x50, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x04, 0x00, 0x00,
                 0x01, 0x04, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x00, 0x00,
-                0x01, 0x08, 0x0C, 0x00, 0x00, 0x00, 0x01, 0x0C, 0x00, 0x00, 
+                0x01, 0x08, 0x0C, 0x00, 0x00, 0x00, 0x01, 0x0C, 0x00, 0x00,
                 0x01, 0x0C, 0x01, 0x00, 0x00, 0x00, 0x01, 0x10, 0x00, 0x00,
                 0x01, 0x10, 0x01, 0x00, 0x00, 0x00, 0x01, 0x14, 0x00, 0x00,
                 0x01, 0x14, 0x01, 0x00, 0x00, 0x00, 0x01, 0x18, 0x00, 0x00,

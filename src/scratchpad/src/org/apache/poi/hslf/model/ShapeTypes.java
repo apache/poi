@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -26,7 +27,7 @@ import java.lang.reflect.Field;
  *
  * @author Yegor Kozlov
  */
-public class ShapeTypes implements org.apache.poi.sl.usermodel.ShapeTypes {
+public final class ShapeTypes implements org.apache.poi.sl.usermodel.ShapeTypes {
     /**
      * Return name of the shape by id
      * @param type  - the id of the shape, one of the static constants defined in this class

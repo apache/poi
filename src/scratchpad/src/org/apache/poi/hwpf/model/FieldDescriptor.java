@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
-public class FieldDescriptor
+public final class FieldDescriptor
 {
   byte _fieldBoundaryType;
   byte _info;

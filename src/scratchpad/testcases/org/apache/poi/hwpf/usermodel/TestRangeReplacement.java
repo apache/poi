@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -7,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-	   http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +29,7 @@ import org.apache.poi.hwpf.HWPFDocument;
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
-public class TestRangeReplacement extends TestCase {
+public final class TestRangeReplacement extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
 	private String originalText =
@@ -76,8 +75,8 @@ public class TestRangeReplacement extends TestCase {
 		Paragraph para = section.getParagraph(2);
 
 		assertEquals(5, para.numCharacterRuns());
-		String text = 
-			para.getCharacterRun(0).text() + 
+		String text =
+			para.getCharacterRun(0).text() +
 			para.getCharacterRun(1).text() +
 			para.getCharacterRun(2).text() +
 			para.getCharacterRun(3).text() +

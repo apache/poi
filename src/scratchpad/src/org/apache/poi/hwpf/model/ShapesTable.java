@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.Shape;
 
-public class ShapesTable {
+public final class ShapesTable {
         private List _shapes;
         private List _shapesVisibili;  //holds visible shapes
 

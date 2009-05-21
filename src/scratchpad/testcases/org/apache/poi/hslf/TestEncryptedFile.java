@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
@@ -31,7 +28,7 @@ import org.apache.poi.hslf.record.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestEncryptedFile extends TestCase {
+public final class TestEncryptedFile extends TestCase {
 	// A non encrypted file
 	private String ss_ne;
 	// An encrypted file, with encrypted properties
@@ -40,23 +37,23 @@ public class TestEncryptedFile extends TestCase {
 	private String ss_np_e;
 	// An encrypted file, with a 56 bit key
 	private String ss_56_e;
-	
+
 
     public TestEncryptedFile() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
-		
+
 		ss_ne = dirname + "/basic_test_ppt_file.ppt";
 		ss_e = dirname + "/Password_Protected-hello.ppt";
 		ss_np_e = dirname + "/Password_Protected-np-hello.ppt";
 		ss_56_e = dirname + "/Password_Protected-56-hello.ppt";
     }
-    
+
     public void testLoadNonEncrypted() throws Exception {
     	HSLFSlideShow hss = new HSLFSlideShow(ss_ne);
-    	
+
     	assertNotNull(hss);
     }
-    
+
     public void testLoadEncrypted() throws Exception {
     	try {
     		new HSLFSlideShow(ss_e);
@@ -64,14 +61,14 @@ public class TestEncryptedFile extends TestCase {
     	} catch(EncryptedPowerPointFileException e) {
     		// Good
     	}
-    	
+
     	try {
     		new HSLFSlideShow(ss_np_e);
     		fail();
     	} catch(EncryptedPowerPointFileException e) {
     		// Good
     	}
-    	
+
     	try {
     		new HSLFSlideShow(ss_56_e);
     		fail();

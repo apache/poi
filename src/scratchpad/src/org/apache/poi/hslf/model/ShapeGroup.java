@@ -86,7 +86,7 @@ public class ShapeGroup extends Shape{
         		logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
         	}
         }
-        
+
         // Put the shapes into an array, and return
         Shape[] shapes = shapeList.toArray(new Shape[shapeList.size()]);
         return shapes;

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import java.util.List;
@@ -39,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class CHPFormattedDiskPage extends FormattedDiskPage
+public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
     private static final int FC_SIZE = 4;
 

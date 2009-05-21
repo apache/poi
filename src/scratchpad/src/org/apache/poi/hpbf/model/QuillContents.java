@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
 import java.io.IOException;
@@ -31,20 +32,20 @@ import org.apache.poi.util.LittleEndian;
 public final class QuillContents extends HPBFPart {
 	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
 	private QCBit[] bits;
-	
+
 	public QuillContents(DirectoryNode baseDir) throws IOException {
 		super(baseDir, PATH);
-		
+
 		// Now parse the first 512 bytes, and produce
 		//  all our bits
-		
+
 		// Check first 8 bytes
 		String f8 = new String(data, 0, 8);
 		if(! f8.equals("CHNKINK ")) {
 			throw new IllegalArgumentException("Expecting 'CHNKINK ' but was '"+f8+"'");
 		}
 		// Ignore the next 24, for now at least
-		
+
 		// Now, parse all our QC Bits
 		bits = new QCBit[20];
 		for(int i=0; i<20; i++) {
@@ -58,10 +59,10 @@ public final class QuillContents extends HPBFPart {
 				String bitType = new String(data, offset+12, 4);
 				int from = (int)LittleEndian.getUInt(data, offset+16);
 				int len = (int)LittleEndian.getUInt(data, offset+20);
-				
+
 				byte[] bitData = new byte[len];
 				System.arraycopy(data, from, bitData, 0, len);
-				
+
 				// Create
 				if(bitType.equals("TEXT")) {
 					bits[i] = new QCTextBit(thingType, bitType, bitData);
@@ -83,7 +84,7 @@ public final class QuillContents extends HPBFPart {
 	public QCBit[] getBits() {
 		return bits;
 	}
-	
+
 	protected void generateData() {
 		// TODO
 		throw new IllegalStateException("Not done yet!");

@@ -14,20 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.chunks;
 
 /**
  * A separator between the trailer of one chunk, and the
  *  header of the next one
  */
-public class ChunkSeparator {
+public final class ChunkSeparator {
 	protected byte[] separatorData;
-	
+
 	public ChunkSeparator(byte[] data, int offset) {
 		separatorData = new byte[4];
 		System.arraycopy(data, offset, separatorData, 0, 4);
 	}
-	
+
 	public String toString() {
 		return "<ChunkSeparator of length " + separatorData.length + ">";
 	}

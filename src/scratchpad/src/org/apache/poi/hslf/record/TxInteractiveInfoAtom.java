@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
@@ -26,7 +27,7 @@ import java.io.IOException;
  *
  * @author Yegor Kozlov
  */
-public class TxInteractiveInfoAtom extends RecordAtom {
+public final class TxInteractiveInfoAtom extends RecordAtom {
     /**
      * Record header.
      */

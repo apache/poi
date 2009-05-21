@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -190,7 +189,7 @@ public abstract class Sheet {
                     lst.toArray(recs);
                     trun._records = recs;
                     trun.setIndex(slwtIndex);
-                    
+
                     found.add(trun);
                     i++;
                 } else {
@@ -379,7 +378,7 @@ public abstract class Sheet {
      * @param shape
      */
     protected void onAddTextShape(TextShape shape) {
-    
+
     }
 
     /**

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.model;
 
 /**
@@ -25,7 +26,7 @@ package org.apache.poi.hwpf.model;
  */
 public abstract class BytePropertyNode extends PropertyNode {
 	private boolean isUnicode;
-	
+
 	/**
 	 * @param fcStart The start of the text for this property, in _bytes_
 	 * @param fcEnd The end of the text for this property, in _bytes_
@@ -43,7 +44,7 @@ public abstract class BytePropertyNode extends PropertyNode {
 			return val/2;
 		return val;
 	}
-	
+
 	public boolean isUnicode() {
 		return isUnicode;
 	}

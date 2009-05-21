@@ -43,7 +43,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	private HSLFSlideShow _hslfshow;
 	private SlideShow _show;
 	private Slide[] _slides;
-	
+
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;
 	private boolean commentsByDefault = false;
@@ -135,7 +135,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	}
 
 	/**
-	 * Fetches all the slide text from the slideshow, 
+	 * Fetches all the slide text from the slideshow,
 	 *  but not the notes, unless you've called
 	 *  setSlidesByDefault() and setNotesByDefault()
 	 *  to change this
@@ -162,18 +162,18 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	  return getText(getSlideText, getNoteText, commentsByDefault);
   }
   public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText) {
-	StringBuffer ret = new StringBuffer(); 
+	StringBuffer ret = new StringBuffer();
 
 	if(getSlideText) {
 		for(int i=0; i<_slides.length; i++) {
 			Slide slide = _slides[i];
-			
+
 			// Slide header, if set
 			HeadersFooters hf = slide.getHeadersFooters();
 			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
 				ret.append(hf.getHeaderText() + "\n");
 			}
-			
+
 			// Slide text
 			TextRun[] runs = slide.getTextRuns();
 			for(int j=0; j<runs.length; j++) {
@@ -186,20 +186,20 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 					}
 				}
 			}
-			
+
 			// Slide footer, if set
 			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
 				ret.append(hf.getFooterText() + "\n");
 			}
-			
+
 			// Comments, if requested and present
 			if(getCommentText) {
 				Comment[] comments = slide.getComments();
 				for(int j=0; j<comments.length; j++) {
 					ret.append(
-							comments[j].getAuthor() + 
+							comments[j].getAuthor() +
 							" - " +
-							comments[j].getText() + 
+							comments[j].getText() +
 							"\n"
 					);
 				}
@@ -216,14 +216,14 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		//  but ensure no duplicates
 		HashSet seenNotes = new HashSet();
 		HeadersFooters hf = _show.getNotesHeadersFooters();
-		
+
 		for(int i=0; i<_slides.length; i++) {
 			Notes notes = _slides[i].getNotesSheet();
 			if(notes == null) { continue; }
 			Integer id = new Integer(notes._getSheetNumber());
 			if(seenNotes.contains(id)) { continue; }
 			seenNotes.add(id);
-			
+
 			// Repeat the Notes header, if set
 			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
 				ret.append(hf.getHeaderText() + "\n");
@@ -241,7 +241,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 					}
 				}
 			}
-			
+
 			// Repeat the notes footer, if set
 			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
 				ret.append(hf.getFooterText() + "\n");

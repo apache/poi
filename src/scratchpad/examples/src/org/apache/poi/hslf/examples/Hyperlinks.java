@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
@@ -29,7 +30,7 @@ import java.io.FileInputStream;
  *
  * @author Yegor Kozlov
  */
-public class Hyperlinks {
+public final class Hyperlinks {
 
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {

@@ -32,7 +32,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  *
  * @author Ryan Ackley
  */
-public class CHPBinTable
+public final class CHPBinTable
 {
   /** List of character properties.*/
   protected ArrayList _textRuns = new ArrayList();
@@ -120,13 +120,13 @@ public class CHPBinTable
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
 	boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
-	  
+
     CHPX insertChpx = new CHPX(0, 0, buf, needsToBeUnicode);
-    
+
     // Ensure character offsets are really characters
     insertChpx.setStart(cpStart);
     insertChpx.setEnd(cpStart);
-    
+
     if (listIndex == _textRuns.size())
     {
       _textRuns.add(insertChpx);
@@ -145,7 +145,7 @@ public class CHPBinTable
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(chpx.getEnd());
-        
+
         chpx.setEnd(cpStart);
 
         _textRuns.add(listIndex + 1, insertChpx);
