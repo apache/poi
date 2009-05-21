@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +32,6 @@ import java.util.Set;
 
 import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.hssf.record.pivottable.*;
-import org.apache.poi.util.HexDump;
 
 /**
  * Title:  Record Factory<P>
@@ -51,7 +49,7 @@ public final class RecordFactory {
 	private interface I_RecordCreator {
 		Record create(RecordInputStream in);
 
-		String getRecordClassName();
+		Class<? extends Record> getRecordClass();
 	}
 	private static final class ReflectionRecordCreator implements I_RecordCreator {
 
@@ -73,8 +71,8 @@ public final class RecordFactory {
 				throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
 			}
 		}
-		public String getRecordClassName() {
-			return _c.getDeclaringClass().getName();
+		public Class<? extends Record> getRecordClass() {
+			return _c.getDeclaringClass();
 		}
 	}
 
@@ -222,10 +220,25 @@ public final class RecordFactory {
 	/**
 	 * cache of the recordsToMap();
 	 */
-	private static Map<Short, I_RecordCreator> recordsMap  = recordsToMap(recordClasses);
+	private static final Map<Integer, I_RecordCreator> _recordCreatorsById  = recordsToMap(recordClasses);
 
 	private static short[] _allKnownRecordSIDs;
 	
+	/**
+	 * Debug / diagnosis method<br/>
+	 * Gets the POI implementation class for a given <tt>sid</tt>.  Only a subset of the any BIFF
+	 * records are actually interpreted by POI.  A few others are known but not interpreted 
+	 * (see {@link UnknownRecord#getBiffName(int)}). 
+	 * @return the POI implementation class for the specified record <tt>sid</tt>.
+	 * <code>null</code> if the specified record is not interpreted by POI.
+	 */
+	public static Class<? extends Record> getRecordClass(int sid) {
+		I_RecordCreator rc = _recordCreatorsById.get(new Integer(sid));
+		if (rc == null) {
+			return null;
+		}
+		return rc.getRecordClass();
+	}
 	/**
 	 * create a record, if there are MUL records than multiple records
 	 * are returned digested into the non-mul form.
@@ -247,7 +260,7 @@ public final class RecordFactory {
 	}
 	
 	static Record createSingleRecord(RecordInputStream in) {
-		I_RecordCreator constructor = recordsMap.get(new Short(in.getSid()));
+		I_RecordCreator constructor = _recordCreatorsById.get(new Integer(in.getSid()));
 
 		if (constructor == null) {
 			return new UnknownRecord(in);
@@ -293,11 +306,11 @@ public final class RecordFactory {
 	 */
 	public static short[] getAllKnownRecordSIDs() {
 		if (_allKnownRecordSIDs == null) {
-			short[] results = new short[ recordsMap.size() ];
+			short[] results = new short[ _recordCreatorsById.size() ];
 			int i = 0;
 
-			for (Iterator<Short> iterator = recordsMap.keySet().iterator(); iterator.hasNext(); ) {
-				Short sid = iterator.next();
+			for (Iterator<Integer> iterator = _recordCreatorsById.keySet().iterator(); iterator.hasNext(); ) {
+				Integer sid = iterator.next();
 
 				results[i++] = sid.shortValue();
 			}
@@ -313,8 +326,8 @@ public final class RecordFactory {
 	 * @return map of SIDs to short,short,byte[] constructors for Record classes
 	 * most of org.apache.poi.hssf.record.*
 	 */
-	private static Map<Short, I_RecordCreator> recordsToMap(Class<? extends Record> [] records) {
-		Map<Short, I_RecordCreator> result = new HashMap<Short, I_RecordCreator>();
+	private static Map<Integer, I_RecordCreator> recordsToMap(Class<? extends Record> [] records) {
+		Map<Integer, I_RecordCreator> result = new HashMap<Integer, I_RecordCreator>();
 		Set<Class<?>> uniqueRecClasses = new HashSet<Class<?>>(records.length * 3 / 2);
 
 		for (int i = 0; i < records.length; i++) {
@@ -339,33 +352,17 @@ public final class RecordFactory {
 				throw new RecordFormatException(
 					"Unable to determine record types");
 			}
-			Short key = new Short(sid);
+			Integer key = new Integer(sid);
 			if (result.containsKey(key)) {
-				String prevClassName = result.get(key).getRecordClassName();
+				Class<?> prevClass = result.get(key).getRecordClass();
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
-						+ " for classes (" + recClass.getName() + ") and (" + prevClassName + ")");
+						+ " for classes (" + recClass.getName() + ") and (" + prevClass.getName() + ")");
 			}
 			result.put(key, new ReflectionRecordCreator(constructor));
 		}
 		return result;
 	}
 
-	private static void checkZeros(InputStream in, int avail) throws IOException {
-		int count=0;
-		while(true) {
-			int b = in.read();
-			if (b < 0) {
-				break;
-			}
-			if (b!=0) {
-				System.err.print(HexDump.byteToHex(b));
-			}
-			count++;
-		}
-		if (avail != count) {
-			System.err.println("avail!=count (" + avail + "!=" + count + ").");
-		}
-	}
 	/**
 	 * Create an array of records from an input stream
 	 *

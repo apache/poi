@@ -123,9 +123,9 @@ public final class UnknownRecord extends StandardRecord {
 	/**
 	 * These BIFF record types are known but still uninterpreted by POI
 	 * 
-	 * @return the documented name of this BIFF record type
+	 * @return the documented name of this BIFF record type, <code>null</code> if unknown to POI
 	 */
-	private static String getBiffName(int sid) {
+	public static String getBiffName(int sid) {
 		// Note to POI developers:
 		// Make sure you delete the corresponding entry from 
 		// this method any time a new Record subclass is created.
