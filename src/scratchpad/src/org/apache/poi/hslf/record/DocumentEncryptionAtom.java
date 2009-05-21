@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -32,7 +30,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class DocumentEncryptionAtom extends RecordAtom
+public final class DocumentEncryptionAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 12052l;
@@ -40,7 +38,7 @@ public class DocumentEncryptionAtom extends RecordAtom
 	private byte[] data;
 	private String encryptionProviderName;
 
-	/** 
+	/**
 	 * For the Document Encryption Atom
 	 */
 	protected DocumentEncryptionAtom(byte[] source, int start, int len) {
@@ -67,21 +65,21 @@ public class DocumentEncryptionAtom extends RecordAtom
 		int stringLen = (endPos-pos) / 2;
 		encryptionProviderName = StringUtil.getFromUnicodeLE(source, pos, stringLen);
 	}
-	
+
 	/**
 	 * Return the length of the encryption key, in bits
 	 */
 	public int getKeyLength() {
 		return data[28];
 	}
-	
+
 	/**
 	 * Return the name of the encryption provider used
 	 */
 	public String getEncryptionProviderName() {
 		return encryptionProviderName;
 	}
-	
+
 
 	/**
 	 * We are of type 12052

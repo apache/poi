@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.extractor.util;
 
@@ -24,10 +21,10 @@ package org.apache.poi.hdf.extractor.util;
 /**
  * Comment me
  *
- * @author Ryan Ackley 
+ * @author Ryan Ackley
  */
 
-public class ChpxNode extends PropertyNode
+public final class ChpxNode extends PropertyNode
 {
 
 

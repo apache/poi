@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.chunks;
 
 import java.util.ArrayList;
@@ -27,10 +28,10 @@ import org.apache.poi.util.StringUtil;
 /**
  * Base of all chunks, which hold data, flags etc
  */
-public class Chunk {
-	/** 
-	 * The contents of the chunk, excluding the header, 
-	 * trailer and separator 
+public final class Chunk {
+	/**
+	 * The contents of the chunk, excluding the header,
+	 * trailer and separator
 	 */
 	private byte[] contents;
 	private ChunkHeader header;
@@ -46,17 +47,17 @@ public class Chunk {
 	//private Block[] blocks
 	/** The name of the chunk, as found from the commandDefinitions */
 	private String name;
-	
+
 	/** For logging warnings about the structure of the file */
 	private POILogger logger = POILogFactory.getLogger(Chunk.class);
-	
+
 	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
 		this.header = header;
 		this.trailer = trailer;
 		this.separator = separator;
 		this.contents = contents;
 	}
-	
+
 	public byte[] _getContents() {
 		return contents;
 	}
@@ -102,7 +103,7 @@ public class Chunk {
 		}
 		return size;
 	}
-	
+
 	/**
 	 * Uses our CommandDefinitions to process the commands
 	 *  our chunk type has, and figure out the
@@ -112,14 +113,14 @@ public class Chunk {
 		if(commandDefinitions == null) {
 			throw new IllegalStateException("You must supply the command definitions before calling processCommands!");
 		}
-		
+
 		// Loop over the definitions, building the commands
 		//  and getting their values
 		ArrayList commands = new ArrayList();
 		for(int i=0; i<commandDefinitions.length; i++) {
 			int type = commandDefinitions[i].getType();
 			int offset = commandDefinitions[i].getOffset();
-			
+
 			// Handle virtual commands
 			if(type == 10) {
 				name = commandDefinitions[i].getName();
@@ -128,7 +129,7 @@ public class Chunk {
 				continue;
 			}
 
-			
+
 			// Build the appropriate command for the type
 			Command command;
 			if(type == 11 || type == 21) {
@@ -136,7 +137,7 @@ public class Chunk {
 			} else {
 				command = new Command(commandDefinitions[i]);
 			}
-			
+
 			// Bizarely, many of the offsets are from the start of the
 			//  header, not from the start of the chunk body
 			switch(type) {
@@ -151,15 +152,15 @@ public class Chunk {
 					offset -= 19;
 				}
 			}
-			
+
 			// Check we seem to have enough data
 			if(offset >= contents.length) {
-				logger.log(POILogger.WARN, 
+				logger.log(POILogger.WARN,
 						"Command offset " + offset + " past end of data at " + contents.length
 				);
 				continue;
 			}
-		
+
 			// Process
 			switch(type) {
 			// Types 0->7 = a flat at bit 0->7
@@ -189,7 +190,7 @@ public class Chunk {
 				if(endsAt == startsAt) {
 					endsAt = contents.length;
 				}
-				
+
 				int strLen = (endsAt-startsAt) / 2;
 				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
 				break;
@@ -203,7 +204,7 @@ public class Chunk {
 						LittleEndian.getInt(contents, offset)
 				);
 				break;
-				
+
 			// Types 11 and 21 hold the offset to the blocks
 			case 11: case 21:
 				if(offset < contents.length - 3) {
@@ -212,26 +213,26 @@ public class Chunk {
 					bcmd.setOffset(bOffset);
 				}
 				break;
-				
+
 			default:
-				logger.log(POILogger.INFO, 
+				logger.log(POILogger.INFO,
 						"Command of type " + type + " not processed!");
 			}
-			
+
 			// Add to the array
 			commands.add(command);
 		}
-		
+
 		// Save the commands we liked the look of
 		this.commands = (Command[])commands.toArray(
 							new Command[commands.size()] );
-		
+
 		// Now build up the blocks, if we had a command that tells
 		//  us where a block is
 	}
-	
+
 	/**
-	 * A command in the visio file. In order to make things fun, 
+	 * A command in the visio file. In order to make things fun,
 	 *  all the chunk actually stores is the value of the command.
 	 * You have to have your own lookup table to figure out what
 	 *  the commands are based on the chunk type.
@@ -239,7 +240,7 @@ public class Chunk {
 	public static class Command {
 		protected Object value;
 		private CommandDefinition definition;
-		
+
 		private Command(CommandDefinition definition, Object value) {
 			this.definition = definition;
 			this.value = value;
@@ -247,7 +248,7 @@ public class Chunk {
 		private Command(CommandDefinition definition) {
 			this(definition, null);
 		}
-		
+
 		public CommandDefinition getDefinition() { return definition; }
 		public Object getValue() { return value; }
 	}

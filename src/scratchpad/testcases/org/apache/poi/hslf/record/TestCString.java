@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,7 +26,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestCString extends TestCase {
+public final class TestCString extends TestCase {
 	// From a real file
 	private byte[] data_a = new byte[] { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
 		0x48, 00, 0x6F, 00, 0x67, 00, 0x77, 00,
@@ -37,7 +34,7 @@ public class TestCString extends TestCase {
 	private byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
 		0x43, 00, 0x6F, 00, 0x6D, 00, 0x6D, 00,
 		0x65, 00, 0x6E, 00, 0x74, 00, 0x73, 00 };
-	
+
     public void testRecordType() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(4026l, ca.getRecordType());
@@ -49,17 +46,17 @@ public class TestCString extends TestCase {
 		assertEquals(0, ca.getOptions());
 		CString cb = new CString(data_b, 0, data_a.length);
 		assertEquals(0x10, cb.getOptions());
-		
+
 		ca.setOptions(28);
 		assertEquals(28, ca.getOptions());
 	}
-	
+
 	public void testText() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals("Hogwarts", ca.getText());
 		CString cb = new CString(data_b, 0, data_a.length);
 		assertEquals("Comments", cb.getText());
-		
+
 		ca.setText("FooBar");
 		assertEquals("FooBar", ca.getText());
 	}
@@ -74,7 +71,7 @@ public class TestCString extends TestCase {
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
 		}
-		
+
 		CString cb = new CString(data_b, 0, data_a.length);
 		ByteArrayOutputStream baosB = new ByteArrayOutputStream();
 		cb.writeOut(baosB);
@@ -85,13 +82,13 @@ public class TestCString extends TestCase {
 			assertEquals(data_b[i],b[i]);
 		}
 	}
-	
+
 	// Turn data_a into data_b
 	public void testChange() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ca.setText("Comments");
 		ca.setOptions(0x10);
-		
+
 		try {
 			for(int i=0; i<data_a.length; i++) {
 				assertEquals(data_a[i],data_b[i]);
@@ -100,11 +97,11 @@ public class TestCString extends TestCase {
 		} catch(Error e) {
 			// Good, they're not the same
 		}
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-		
+
 		// Should now be the same
 		assertEquals(data_b.length, b.length);
 		for(int i=0; i<data_b.length; i++) {

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
@@ -29,7 +26,7 @@ import org.apache.poi.hslf.record.*;
  * Having found them, it sees if they have DDF Textbox records, and if so,
  *  searches those for text. Prints out any text it finds
  */
-public class PPDrawingTextListing {
+public final class PPDrawingTextListing {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");

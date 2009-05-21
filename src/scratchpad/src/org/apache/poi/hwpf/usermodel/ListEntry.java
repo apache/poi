@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.ListFormatOverride;
@@ -26,18 +25,18 @@ import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-public class ListEntry
+public final class ListEntry
   extends Paragraph
 {
 	private static POILogger log = POILogFactory.getLogger(ListEntry.class);
-	
+
 	ListLevel _level;
 	ListFormatOverrideLevel _overrideLevel;
 
   ListEntry(PAPX papx, Range parent, ListTables tables)
   {
     super(papx, parent);
-    
+
     if(tables != null) {
 	    ListFormatOverride override = tables.getOverride(_props.getIlfo());
 	    _overrideLevel = override.getOverrideLevel(_props.getIlvl());

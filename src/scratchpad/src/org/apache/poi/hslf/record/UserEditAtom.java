@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -35,7 +33,7 @@ import java.util.Hashtable;
  * @author Nick Burch
  */
 
-public class UserEditAtom extends PositionDependentRecordAtom
+public final class UserEditAtom extends PositionDependentRecordAtom
 {
 	public static final int LAST_VIEW_NONE = 0;
 	public static final int LAST_VIEW_SLIDE_VIEW = 1;
@@ -72,7 +70,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the UserEdit Atom
 	 */
 	protected UserEditAtom(byte[] source, int start, int len) {
@@ -90,12 +88,12 @@ public class UserEditAtom extends PositionDependentRecordAtom
 		pptVersion = (int)LittleEndian.getInt(source,start+4+8);
 
 		// Get the offset to the previous incremental save's UserEditAtom
-		// This will be the byte offset on disk where the previous one 
+		// This will be the byte offset on disk where the previous one
 		//  starts, or 0 if this is the first one
 		lastUserEditAtomOffset = (int)LittleEndian.getInt(source,start+8+8);
 
 		// Get the offset to the persist pointers
-		// This will be the byte offset on disk where the preceding 
+		// This will be the byte offset on disk where the preceding
 		//  PersistPtrFullBlock or PersistPtrIncrementalBlock starts
 		persistPointersOffset = (int)LittleEndian.getInt(source,start+12+8);
 
@@ -105,7 +103,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 
 		// Maximum number of persist objects written
 		maxPersistWritten = (int)LittleEndian.getInt(source,start+20+8);
-		
+
 		// Last view type
 		lastViewType = (short)LittleEndian.getShort(source,start+24+8);
 

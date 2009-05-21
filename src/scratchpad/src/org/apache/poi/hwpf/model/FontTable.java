@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -32,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Praveen Mathew
  */
-public class FontTable
+public final class FontTable
 {
   private short _stringCount;// how many strings are included in the string table
   private short _extraDataSz;// size in bytes of the extra data

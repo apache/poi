@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor kozlov
  */
-public class ExControl extends ExEmbed {
+public final class ExControl extends ExEmbed {
 
     /**
      * Set things up, and find our more interesting children

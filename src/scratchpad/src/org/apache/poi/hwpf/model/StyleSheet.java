@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
@@ -39,7 +36,7 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
  * @author Ryan Ackley
  */
 
-public class StyleSheet implements HDFType
+public final class StyleSheet implements HDFType
 {
 
   public static final int NIL_STYLE = 4095;
@@ -231,7 +228,7 @@ public class StyleSheet implements HDFType
           {
 
               parentPAP = _styleDescriptions[baseIndex].getPAP();
-              if(parentPAP == null) 
+              if(parentPAP == null)
               {
             	  if(baseIndex == istd) {
             		  // Oh dear, style claims that it is its own parent

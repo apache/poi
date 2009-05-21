@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
@@ -26,7 +24,7 @@ package org.apache.poi.hwpf.sprm;
  * @version 1.0
  */
 
-public class SprmIterator
+public final class SprmIterator
 {
   private byte[] _grpprl;
   int _offset;

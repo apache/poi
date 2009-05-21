@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory;
@@ -26,7 +27,7 @@ import org.apache.poi.hdgf.pointers.PointerFactory;
  * These is one of these in each document, and it's pointed to by
  *  a special series of byte near the start of the file.
  */
-public class TrailerStream extends PointerContainingStream {
+public class TrailerStream extends PointerContainingStream { // TODO - instantiable superclass
 	protected TrailerStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
 		super(pointer, store, chunkFactory, pointerFactory);
 	}

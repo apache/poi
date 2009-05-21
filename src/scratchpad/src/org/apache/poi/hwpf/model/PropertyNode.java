@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public abstract class PropertyNode implements Comparable, Cloneable
       _cpStart = fcStart;
       _cpEnd = fcEnd;
       _buf = buf;
-      
+
       if(_cpStart < 0) {
     	  System.err.println("A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
     	  _cpStart = 0;
@@ -92,7 +91,7 @@ public abstract class PropertyNode implements Comparable, Cloneable
 
     if (_cpEnd > start) {
         // The start of the change is before we end
-    	
+
         if (_cpStart < end) {
             // The delete was somewhere in the middle of us
             _cpEnd = end >= _cpEnd ? start : _cpEnd - length;

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -29,12 +30,12 @@ import java.util.Iterator;
  *
  * @author Yegor Kozlov
  */
-public class ShapeFactory {
+public final class ShapeFactory {
     // For logging
     protected static POILogger logger = POILogFactory.getLogger(ShapeFactory.class);
 
     /**
-     * Create a new shape from the data provided.  
+     * Create a new shape from the data provided.
      */
     public static Shape createShape(EscherContainerRecord spContainer, Shape parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
@@ -96,7 +97,7 @@ public class ShapeFactory {
                 } else if (oes != null){
                     shape = new OLEShape(spContainer, parent);
                 }
-                
+
                 if(shape == null) shape = new Picture(spContainer, parent);
                 break;
             }

@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class PAPBinTable
+public final class PAPBinTable
 {
   protected ArrayList _paragraphs = new ArrayList();
   byte[] _dataStream;
@@ -77,13 +77,13 @@ public class PAPBinTable
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
     boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
-    
+
     PAPX forInsert = new PAPX(0, 0, buf, _dataStream, needsToBeUnicode);
-    
+
     // Ensure character offsets are really characters
     forInsert.setStart(cpStart);
     forInsert.setEnd(cpStart);
-    
+
     if (listIndex == _paragraphs.size())
     {
        _paragraphs.add(forInsert);
@@ -102,7 +102,7 @@ public class PAPBinTable
         {
           exc.printStackTrace();
         }
-        
+
     	// Copy the properties of the one before to afterwards
     	// Will go:
     	//  Original, until insert at point
@@ -112,7 +112,7 @@ public class PAPBinTable
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(currentPap.getEnd());
-        
+
         currentPap.setEnd(cpStart);
 
         _paragraphs.add(listIndex + 1, forInsert);

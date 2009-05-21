@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
 /**
- * This class represents a slide's notes in a PowerPoint Document. It 
- *  allows access to the text within, and the layout. For now, it only 
+ * This class represents a slide's notes in a PowerPoint Document. It
+ *  allows access to the text within, and the layout. For now, it only
  *  does the text side of things though
  *
  * @author Nick Burch
  */
 
-public class Notes extends Sheet
+public final class Notes extends Sheet
 {
   private TextRun[] _runs;
 
@@ -42,7 +39,7 @@ public class Notes extends Sheet
       super(notes, notes.getNotesAtom().getSlideID());
 
 	// Now, build up TextRuns from pairs of TextHeaderAtom and
-	//  one of TextBytesAtom or TextCharsAtom, found inside 
+	//  one of TextBytesAtom or TextCharsAtom, found inside
 	//  EscherTextboxWrapper's in the PPDrawing
 	_runs = findTextRuns(getPPDrawing());
 

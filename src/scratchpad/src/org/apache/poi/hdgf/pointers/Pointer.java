@@ -14,10 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.pointers;
 
 /**
- * Base class of pointers, which hold metadata and offsets about 
+ * Base class of pointers, which hold metadata and offsets about
  *  blocks elsewhere in the file
  */
 public abstract class Pointer {
@@ -26,7 +27,7 @@ public abstract class Pointer {
 	protected int offset;
 	protected int length;
 	protected short format;
-	
+
 	public int getAddress() {
 		return address;
 	}
@@ -42,7 +43,7 @@ public abstract class Pointer {
 	public int getType() {
 		return type;
 	}
-	
+
 	public abstract int getSizeInBytes();
 	public abstract boolean destinationHasStrings();
 	public abstract boolean destinationHasPointers();

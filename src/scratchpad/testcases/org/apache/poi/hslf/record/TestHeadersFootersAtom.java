@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -30,7 +27,7 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestHeadersFootersAtom extends TestCase {
+public final class TestHeadersFootersAtom extends TestCase {
 	// From a real file
 	private byte[] data = new byte[] {
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 00,

@@ -27,7 +27,7 @@ import java.awt.geom.Line2D;
  *
  *  @author Yegor Kozlov
  */
-public class Line extends SimpleShape {
+public final class Line extends SimpleShape {
     /**
     * Solid (continuous) pen
     */
@@ -114,7 +114,7 @@ public class Line extends SimpleShape {
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         short type = (ShapeTypes.Line << 4) | 0x2;
         spRecord.setOptions(type);
-  
+
         //set default properties for a line
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
 

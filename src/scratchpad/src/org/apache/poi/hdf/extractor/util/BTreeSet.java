@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.extractor.util;
 
@@ -34,11 +31,11 @@ import java.util.*;
  * are in ascending order.  The Iterator.remove() method is supported.
  * Comment me
  *
- * @author Ryan Ackley 
+ * @author Ryan Ackley
  *
 */
 
-public class BTreeSet extends AbstractSet implements Set {
+public final class BTreeSet extends AbstractSet implements Set {
 
     /*
      * Instance Variables

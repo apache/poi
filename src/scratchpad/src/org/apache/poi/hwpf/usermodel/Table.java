@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 
-public class Table
+public final class Table
   extends Range
 {
   ArrayList _rows;

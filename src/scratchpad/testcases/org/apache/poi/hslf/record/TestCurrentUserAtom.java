@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -40,7 +37,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestCurrentUserAtom extends TestCase {
+public final class TestCurrentUserAtom extends TestCase {
 	/** Not encrypted */
 	private String normalFile;
 	/** Encrypted */
@@ -48,7 +45,7 @@ public class TestCurrentUserAtom extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		String dirname = System.getProperty("HSLF.testdata.path");
 		normalFile = dirname + "/basic_test_ppt_file.ppt";
 		encFile = dirname + "/Password_Protected-hello.ppt";
@@ -58,27 +55,27 @@ public class TestCurrentUserAtom extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(normalFile)
 		);
-		
+
 		CurrentUserAtom cu = new CurrentUserAtom(fs);
-		
+
 		// Check the contents
 		assertEquals("Hogwarts", cu.getLastEditUsername());
 		assertEquals(0x2942, cu.getCurrentEditOffset());
-		
+
 		// Round trip
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		cu.writeOut(baos);
-		
+
 		CurrentUserAtom cu2 = new CurrentUserAtom(baos.toByteArray());
 		assertEquals("Hogwarts", cu2.getLastEditUsername());
 		assertEquals(0x2942, cu2.getCurrentEditOffset());
 	}
-	
+
 	public void testReadEnc() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				new FileInputStream(encFile)
 		);
-		
+
 		try {
 			new CurrentUserAtom(fs);
 			fail();
@@ -86,7 +83,7 @@ public class TestCurrentUserAtom extends TestCase {
 			// Good
 		}
 	}
-	
+
 	public void testWriteNormal() throws Exception {
 		// Get raw contents from a known file
 		POIFSFileSystem fs = new POIFSFileSystem(
@@ -96,17 +93,17 @@ public class TestCurrentUserAtom extends TestCase {
 		byte[] contents = new byte[docProps.getSize()];
 		InputStream in = fs.getRoot().createDocumentInputStream("Current User");
 		in.read(contents);
-		
+
 		// Now build up a new one
 		CurrentUserAtom cu = new CurrentUserAtom();
 		cu.setLastEditUsername("Hogwarts");
 		cu.setCurrentEditOffset(0x2942);
-		
+
 		// Check it matches
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		cu.writeOut(baos);
 		byte[] out = baos.toByteArray();
-		
+
 		assertEquals(contents.length, out.length);
 		for(int i=0; i<contents.length; i++) {
 			assertEquals("Byte " + i, contents[i], out[i]);

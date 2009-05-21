@@ -15,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.CHPX;
@@ -28,7 +26,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  *
  * @author Ryan Ackley
  */
-public class CharacterRun
+public final class CharacterRun
   extends Range
   implements Cloneable
 {
@@ -530,7 +528,7 @@ public class CharacterRun
        return (CharacterProperties)_props.clone();
     } catch(java.lang.CloneNotSupportedException e) {
        throw new RuntimeException(e);
-    } 
+    }
   }
 
   /**

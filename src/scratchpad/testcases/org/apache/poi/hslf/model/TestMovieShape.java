@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -27,10 +28,10 @@ import org.apache.poi.hslf.HSLFSlideShow;
 
 /**
  * Test <code>MovieShape</code> object.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestMovieShape extends TestCase {
+public final class TestMovieShape extends TestCase {
 
     protected String cwd = System.getProperty("HSLF.testdata.path");
 

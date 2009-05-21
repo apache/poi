@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
@@ -29,10 +30,10 @@ import java.util.zip.DeflaterOutputStream;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class EMF extends Metafile {
+public final class EMF extends Metafile {
 
     /**
      * Extract compressed EMF data from a ppt

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,17 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 
-public class Paragraph
-  extends Range
-    implements Cloneable
-{
+public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_JC = 0x2403;
   public final static short SPRM_FSIDEBYSIDE = 0x2404;
   public final static short SPRM_FKEEP = 0x2405;
@@ -457,7 +452,7 @@ public class Paragraph
   /**
    * clone the ParagraphProperties object associated with this Paragraph so
    * that you can apply the same properties to another paragraph.
-   * 
+   *
    */
   public ParagraphProperties cloneProperties() {
     try {

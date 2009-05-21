@@ -15,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.BitField;
@@ -28,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class DateAndTime
+public final class DateAndTime
   implements Cloneable
 {
   public static final int SIZE = 4;

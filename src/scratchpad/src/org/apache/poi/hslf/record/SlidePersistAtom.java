@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -30,22 +28,22 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class SlidePersistAtom extends RecordAtom
+public final class SlidePersistAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 1011l;
 
-	/** 
-	 * Slide reference ID. Should correspond to the PersistPtr 
-	 *  "sheet ID" of the matching slide/notes record 
+	/**
+	 * Slide reference ID. Should correspond to the PersistPtr
+	 *  "sheet ID" of the matching slide/notes record
 	 */
 	private int refID;
 	private boolean hasShapesOtherThanPlaceholders;
 	/** Number of placeholder texts that will follow in the SlideListWithText */
 	private int numPlaceholderTexts;
-	/** 
+	/**
 	 * The internal identifier (256+), which is used to tie slides
-	 *  and notes together 
+	 *  and notes together
 	 */
 	private int slideIdentifier;
 	/** Reserved fields. Who knows what they do */
@@ -55,7 +53,7 @@ public class SlidePersistAtom extends RecordAtom
 	public int getSlideIdentifier() { return slideIdentifier; }
 	public int getNumPlaceholderTexts() { return numPlaceholderTexts; }
 	public boolean getHasShapesOtherThanPlaceholders() { return hasShapesOtherThanPlaceholders; }
-	
+
 	// Only set these if you know what you're doing!
 	public void setRefID(int id) {
 		refID = id;
@@ -66,7 +64,7 @@ public class SlidePersistAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the SlidePersist Atom
 	 */
 	protected SlidePersistAtom(byte[] source, int start, int len) {
@@ -94,12 +92,12 @@ public class SlidePersistAtom extends RecordAtom
 		// Last useful one is the unique slide identifier
 		slideIdentifier = (int)LittleEndian.getInt(source,start+20);
 
-		// Finally you have typically 4 or 8 bytes of reserved fields, 
+		// Finally you have typically 4 or 8 bytes of reserved fields,
 		//  all zero running from 24 bytes in to the end
 		reservedFields = new byte[len-24];
 		System.arraycopy(source,start+24,reservedFields,0,reservedFields.length);
 	}
-	
+
 	/**
 	 * Create a new SlidePersistAtom, for use with a new Slide
 	 */

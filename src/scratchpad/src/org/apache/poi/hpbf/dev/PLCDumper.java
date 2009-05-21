@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.dev;
 
 import java.io.FileInputStream;
@@ -31,10 +32,10 @@ import org.apache.poi.util.HexDump;
  *  HPBF (Publisher) file, while we try to figure out
  *  what the format of them is.
  */
-public class PLCDumper {
+public final class PLCDumper {
 	private HPBFDocument doc;
 	private QuillContents qc;
-	
+
 	public PLCDumper(HPBFDocument hpbfDoc) {
 		doc = hpbfDoc;
 		qc = doc.getQuillContents();
@@ -45,7 +46,7 @@ public class PLCDumper {
 	public PLCDumper(InputStream inp) throws IOException {
 		this(new POIFSFileSystem(inp));
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Use:");
@@ -55,14 +56,14 @@ public class PLCDumper {
 		PLCDumper dump = new PLCDumper(
 				new FileInputStream(args[0])
 		);
-		
+
 		System.out.println("Dumping " + args[0]);
 		dump.dumpPLC();
 	}
-	
-	private void dumpPLC() {	
+
+	private void dumpPLC() {
 		QCBit[] bits = qc.getBits();
-		
+
 		for(int i=0; i<bits.length; i++) {
 			if(bits[i] == null) continue;
 			if(bits[i].getBitType().equals("PLC ")) {
@@ -70,14 +71,14 @@ public class PLCDumper {
 			}
 		}
 	}
-	
+
 	private void dumpBit(QCBit bit, int index) {
 		System.out.println("");
 		System.out.println("Dumping " + bit.getBitType() + " bit at " + index);
 		System.out.println("  Is a " + bit.getThingType() + ", number is " + bit.getOptA());
 		System.out.println("  Starts at " + bit.getDataOffset() + " (0x" + Integer.toHexString(bit.getDataOffset()) + ")");
 		System.out.println("  Runs for  " + bit.getLength() + " (0x" + Integer.toHexString(bit.getLength()) + ")");
-		
+
 		System.out.println(HexDump.dump(bit.getData(), 0, 0));
 	}
 }

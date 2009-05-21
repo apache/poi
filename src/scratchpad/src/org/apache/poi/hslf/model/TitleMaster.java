@@ -25,7 +25,7 @@ import org.apache.poi.hslf.record.*;
  *
  * @author Yegor Kozlov
  */
-public class TitleMaster extends MasterSheet {
+public final class TitleMaster extends MasterSheet {
     private TextRun[] _runs;
 
     /**

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
@@ -29,7 +29,7 @@ import java.io.FileInputStream;
  *
  * @author Yegor Kozlov
  */
-public class Graphics2DDemo {
+public final class Graphics2DDemo {
 
     /**
      * A simple bar chart demo

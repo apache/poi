@@ -31,7 +31,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public class TextRulerAtom extends RecordAtom {
+public final class TextRulerAtom extends RecordAtom {
 
     /**
      * Record header.
@@ -81,7 +81,7 @@ public class TextRulerAtom extends RecordAtom {
         try {
             read();
         } catch (Exception e){
-            logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage()); 
+            logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage());
             e.printStackTrace();
         }
     }

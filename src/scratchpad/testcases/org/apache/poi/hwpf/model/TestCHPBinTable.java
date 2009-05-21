@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -27,12 +25,12 @@ import junit.framework.*;
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
 
-public class TestCHPBinTable
+public final class TestCHPBinTable
   extends TestCase
 {
   private CHPBinTable _cHPBinTable = null;
   private HWPFDocFixture _hWPFDocFixture;
-  
+
   private TextPieceTable fakeTPT = new TextPieceTable();
 
   public TestCHPBinTable(String name)

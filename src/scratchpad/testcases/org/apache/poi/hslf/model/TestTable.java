@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -28,10 +29,10 @@ import org.apache.poi.hslf.record.TextHeaderAtom;
 
 /**
  * Test <code>Table</code> object.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestTable extends TestCase {
+public final class TestTable extends TestCase {
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>

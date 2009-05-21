@@ -14,18 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.sl.usermodel;
 
 public interface Slide extends Sheet {
 	public Notes getNotes();
 	public void setNotes(Notes notes);
-	
+
 	public boolean getFollowMasterBackground();
 	public void setFollowMasterBackground(boolean follow);
-	
+
 	public boolean getFollowMasterColourScheme();
 	public void setFollowMasterColourScheme(boolean follow);
-	
+
 	public boolean getFollowMasterObjects();
 	public void setFollowMasterObjects(boolean follow);
 }

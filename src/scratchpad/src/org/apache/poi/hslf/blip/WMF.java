@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.util.LittleEndian;
@@ -28,10 +29,10 @@ import java.util.zip.DeflaterOutputStream;
 
 /**
  * Represents a WMF (Windows Metafile) picture data.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class WMF extends Metafile {
+public final class WMF extends Metafile {
 
     /**
      * Extract compressed WMF data from a ppt

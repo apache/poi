@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf;
 
 import java.io.FileInputStream;
@@ -24,35 +25,35 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
 
-public class TestHDGFCore extends TestCase {
+public final class TestHDGFCore extends TestCase {
 	private POIFSFileSystem fs;
 	private String dirname;
 	private String filename;
-	
+
 	protected void setUp() throws Exception {
 		dirname = System.getProperty("HDGF.testdata.path");
 		filename = dirname + "/Test_Visio-Some_Random_Text.vsd";
 		fs = new POIFSFileSystem(new FileInputStream(filename));
 	}
-	
+
 	public void testCreate() throws Exception {
 		new HDGFDiagram(fs);
 	}
-	
+
 	public void testTrailer() throws Exception {
 		HDGFDiagram hdgf = new HDGFDiagram(fs);
 		assertNotNull(hdgf);
 		assertNotNull(hdgf.getTrailerStream());
-		
+
 		// Check it has what we'd expect
 		TrailerStream trailer = hdgf.getTrailerStream();
 		assertEquals(0x8a94, trailer.getPointer().getOffset());
-		
+
 		assertNotNull(trailer.getPointedToStreams());
 		assertEquals(20, trailer.getPointedToStreams().length);
-		
+
 		assertEquals(20, hdgf.getTopLevelStreams().length);
-		
+
 		// 9th one should have children
 		assertNotNull(trailer.getPointedToStreams()[8]);
 		assertNotNull(trailer.getPointedToStreams()[8].getPointer());
@@ -61,7 +62,7 @@ public class TestHDGFCore extends TestCase {
 		assertNotNull(ps8.getPointedToStreams());
 		assertEquals(8, ps8.getPointedToStreams().length);
 	}
-	
+
 	/**
 	 * Tests that we can open a problematic file, that initially
 	 *  appears to have a negative chunk length
@@ -69,7 +70,7 @@ public class TestHDGFCore extends TestCase {
 	public void DISABLEDtestNegativeChunkLength() throws Exception {
 		filename = dirname + "/NegativeChunkLength.vsd";
 		fs = new POIFSFileSystem(new FileInputStream(filename));
-		
+
 		HDGFDiagram hdgf = new HDGFDiagram(fs);
 		assertNotNull(hdgf);
 	}

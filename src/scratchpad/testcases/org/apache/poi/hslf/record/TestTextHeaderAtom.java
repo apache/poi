@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,7 +26,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestTextHeaderAtom extends TestCase {
+public final class TestTextHeaderAtom extends TestCase {
 	// From a real file
 	private byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
 	private byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };

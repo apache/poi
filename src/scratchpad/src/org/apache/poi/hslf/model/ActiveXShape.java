@@ -164,6 +164,5 @@ public final class ActiveXShape extends Picture {
         } catch (UnsupportedEncodingException e){
             throw new HSLFException(e);
         }
-
     }
 }

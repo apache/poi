@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -31,30 +28,30 @@ import java.util.Date;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestComment2000Atom extends TestCase {
+public final class TestComment2000Atom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 
+	private byte[] data_a = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		01, 00, 00, 00, 0xD6-256, 07, 01, 00,
-		02, 00, 0x18, 00, 0x0A, 00, 0x1A, 00, 
-		0x0F, 00, 0xCD-256, 00, 0x92-256, 00, 
+		02, 00, 0x18, 00, 0x0A, 00, 0x1A, 00,
+		0x0F, 00, 0xCD-256, 00, 0x92-256, 00,
 		00,	00, 0x92-256, 00, 00, 00
 	};
-	private byte[] data_b = new byte[] { 
+	private byte[] data_b = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
-		05, 00, 00, 00, 0xD6-256, 0x07, 01, 00, 
+		05, 00, 00, 00, 0xD6-256, 0x07, 01, 00,
 		02, 00, 0x18, 00, 0x15, 00, 0x19, 00, 03,
-		00, 0xD5-256, 02, 0x0A, 00, 00, 00, 
+		00, 0xD5-256, 02, 0x0A, 00, 00, 00,
 		0x0E, 00, 00, 00
 		};
-	
+
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	
+
     public void testRecordType() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		assertEquals(12001l, ca.getRecordType());
 	}
-    
+
     public void testGetDate() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
@@ -63,11 +60,11 @@ public class TestComment2000Atom extends TestCase {
 		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
 		// B is 2006-01-24 (2nd day of week) 21:25:03.725
 		Date exp_b = sdf.parse("2006-01-24 21:25:03.725");
-		
+
 		assertEquals(exp_a, ca.getDate());
 		assertEquals(exp_b, cb.getDate());
     }
-    
+
     public void testGetNums() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
@@ -77,7 +74,7 @@ public class TestComment2000Atom extends TestCase {
     	// B is number 5
 		assertEquals(5, cb.getNumber());
     }
-    
+
     public void testGetPos() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
@@ -85,12 +82,12 @@ public class TestComment2000Atom extends TestCase {
 		// A is at 0x92, 0x92
 		assertEquals(0x92, ca.getXOffset());
 		assertEquals(0x92, ca.getYOffset());
-		
+
 		// B is at 0x0A, 0x0E
 		assertEquals(0x0A, cb.getXOffset());
 		assertEquals(0x0E, cb.getYOffset());
     }
-    
+
 	public void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -106,21 +103,21 @@ public class TestComment2000Atom extends TestCase {
 	// Create A from scratch
     public void testCreate() throws Exception {
     	Comment2000Atom a = new Comment2000Atom();
-    	
+
     	// Set number, x and y
     	a.setNumber(1);
     	a.setXOffset(0x92);
     	a.setYOffset(0x92);
-    	
+
     	// Set the date
 		Date date_a = sdf.parse("2006-01-24 10:26:15.205");
 		a.setDate(date_a);
-		
+
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		a.writeOut(baos);
 		byte[] b = baos.toByteArray();
-		
+
 		assertEquals(data_a.length, b.length);
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
@@ -133,11 +130,11 @@ public class TestComment2000Atom extends TestCase {
 
 		// Change the number
 		ca.setNumber(5);
-		
+
 		// Change the date
 		Date new_date = sdf.parse("2006-01-24 21:25:03.725");
 		ca.setDate(new_date);
-		
+
 		// Change the x and y
 		ca.setXOffset(0x0A);
 		ca.setYOffset(0x0E);
@@ -146,7 +143,7 @@ public class TestComment2000Atom extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
 		byte[] b = baos.toByteArray();
-		
+
 		// Should now be the same
 		assertEquals(data_b.length, b.length);
 		for(int i=0; i<data_b.length; i++) {

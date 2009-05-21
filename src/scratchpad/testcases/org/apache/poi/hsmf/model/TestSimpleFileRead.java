@@ -27,115 +27,115 @@ import junit.framework.TestCase;
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text format with no attachments
  * or extra recipents.
- * 
+ *
  * @author Travis Ferguson
  */
-public class TestSimpleFileRead extends TestCase {
+public final class TestSimpleFileRead extends TestCase {
 private MAPIMessage mapiMessage;
-	
+
 	/**
 	 * Initialize this test, load up the blank.msg mapi message.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public TestSimpleFileRead() throws IOException {
 		String dirname = System.getProperty("HSMF.testdata.path");
 		this.mapiMessage = new MAPIMessage(dirname + "/simple_test_msg.msg");
 	}
-	
+
 	/**
 	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException 
-	 * 
+	 * @throws ChunkNotFoundException
+	 *
 	 */
 	public void testReadDisplayCC() throws ChunkNotFoundException {
 		String obtained = mapiMessage.getDisplayCC();
 		String expected = "";
-		
+
 		TestCase.assertEquals(obtained, expected);
 	}
-	
+
 	/**
 	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException 
-	 * 
+	 * @throws ChunkNotFoundException
+	 *
 	 */
 	public void testReadDisplayTo() throws ChunkNotFoundException {
 		String obtained = mapiMessage.getDisplayTo();
 		String expected = "travis@overwrittenstack.com";
-		
+
 		TestCase.assertEquals(obtained, expected);
 	}
-	
+
 	/**
 	 * Test to see if we can read the From Chunk.
-	 * @throws ChunkNotFoundException 
-	 * 
+	 * @throws ChunkNotFoundException
+	 *
 	 */
 	public void testReadDisplayFrom() throws ChunkNotFoundException {
 		String obtained = mapiMessage.getDisplayFrom();
 		String expected = "Travis Ferguson";
-		
+
 		TestCase.assertEquals(obtained, expected);
 	}
-	
+
 	/**
 	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException 
-	 * 
+	 * @throws ChunkNotFoundException
+	 *
 	 */
 	public void testReadDisplayBCC() throws ChunkNotFoundException {
 		String obtained = mapiMessage.getDisplayBCC();
 		String expected = "";
-		
+
 		TestCase.assertEquals(obtained, expected);
 	}
-	
-	
-	/** 
+
+
+	/**
 	 * Check if we can read the body of the blank message, we expect "".
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadBody() throws Exception {
 		String obtained = mapiMessage.getTextBody();
 		String expected = "This is a test message.";
-		
+
 		TestCase.assertEquals(obtained, expected);
 	}
-	
+
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadSubject() throws Exception {
 		String obtained = mapiMessage.getSubject();
 		String expected = "test message";
-		
+
 		TestCase.assertEquals(expected, obtained);
 	}
 
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadConversationTopic() throws Exception {
 		String obtained = mapiMessage.getConversationTopic();
 		TestCase.assertEquals("test message", obtained);
 	}
-	
+
 
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testReadMessageClass() throws Exception {
 		String obtained = mapiMessage.getMessageClass();
 		TestCase.assertEquals("IPM.Note", obtained);
 	}
-	
-	
-	
+
+
+
 }

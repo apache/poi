@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -33,7 +32,7 @@ import java.util.Iterator;
  *
  * @author Yegor Kozlov
  */
-public class Hyperlink {
+public final class Hyperlink {
     public static final byte LINK_NEXTSLIDE = InteractiveInfoAtom.LINK_NextSlide;
     public static final byte LINK_PREVIOUSSLIDE = InteractiveInfoAtom.LINK_PreviousSlide;
     public static final byte LINK_FIRSTSLIDE = InteractiveInfoAtom.LINK_FirstSlide;

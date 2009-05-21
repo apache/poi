@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
@@ -32,11 +29,11 @@ import org.apache.poi.poifs.filesystem.*;
 /**
  * Tests that if we load something up, get a TextRun, set the text
  *  to be the same as it was before, and write it all back out again,
- *  that we don't break anything in the process. 
+ *  that we don't break anything in the process.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestTextRunReWrite extends TestCase {
+public final class TestTextRunReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow hss;
 	// HSLFSlideShow primed on the test data
@@ -60,33 +57,33 @@ public class TestTextRunReWrite extends TestCase {
     	// Grab the first text run on the first sheet
     	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
     	TextRun tr2 = ss.getSlides()[0].getTextRuns()[1];
-    	
+
     	// Ensure the text lengths are as we'd expect to start with
     	assertEquals(1, ss.getSlides().length);
     	assertEquals(2, ss.getSlides()[0].getTextRuns().length);
     	assertEquals(30, tr1.getText().length());
     	assertEquals(179, tr2.getText().length());
-    	
+
     	assertEquals(1, tr1.getRichTextRuns().length);
     	assertEquals(30, tr1.getRichTextRuns()[0].getLength());
     	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
     	assertEquals(31, tr1.getRichTextRuns()[0]._getRawCharacterStyle().getCharactersCovered());
     	assertEquals(31, tr1.getRichTextRuns()[0]._getRawParagraphStyle().getCharactersCovered());
-    	
+
     	// Set the text to be as it is now
     	tr1.setText( tr1.getText() );
-    	
+
     	// Check the text lengths are still right
     	assertEquals(30, tr1.getText().length());
     	assertEquals(179, tr2.getText().length());
-    	
+
     	assertEquals(1, tr1.getRichTextRuns().length);
     	assertEquals(30, tr1.getRichTextRuns()[0].getLength());
     	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
     	assertEquals(31, tr1.getRichTextRuns()[0]._getRawCharacterStyle().getCharactersCovered());
     	assertEquals(31, tr1.getRichTextRuns()[0]._getRawParagraphStyle().getCharactersCovered());
-    	
-    	
+
+
 		// Write the slideshow out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ss.write(baos);
@@ -116,11 +113,11 @@ public class TestTextRunReWrite extends TestCase {
     public void testWritesOutTheSameRich() throws Exception {
     	// Grab the first text run on the first sheet
     	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
-    	
+
     	// Get the first rich text run
     	RichTextRun rtr1 = tr1.getRichTextRuns()[0];
-    	
-    	
+
+
     	// Check that the text sizes are as expected
     	assertEquals(1, tr1.getRichTextRuns().length);
     	assertEquals(30, tr1.getText().length());
@@ -129,11 +126,11 @@ public class TestTextRunReWrite extends TestCase {
     	assertEquals(30, rtr1.getText().length());
     	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
     	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
-    	
+
     	// Set the text to be as it is now
     	rtr1.setText( rtr1.getText() );
     	rtr1 = tr1.getRichTextRuns()[0];
-    	
+
     	// Check that the text sizes are still as expected
     	assertEquals(1, tr1.getRichTextRuns().length);
     	assertEquals(30, tr1.getText().length());
@@ -142,8 +139,8 @@ public class TestTextRunReWrite extends TestCase {
     	assertEquals(30, rtr1.getText().length());
     	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
     	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
-    	
-    	
+
+
 		// Write the slideshow out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ss.write(baos);

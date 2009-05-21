@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -28,7 +25,7 @@ import junit.framework.TestCase;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRecordTypes extends TestCase {
+public final class TestRecordTypes extends TestCase {
     public void testPPTNameLookups() throws Exception {
 		assertEquals("MainMaster", RecordTypes.recordName(1016));
 		assertEquals("TextBytesAtom", RecordTypes.recordName(4008));

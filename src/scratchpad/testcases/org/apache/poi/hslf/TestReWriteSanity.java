@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
@@ -33,7 +30,7 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestReWriteSanity extends TestCase {
+public final class TestReWriteSanity extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow ss;
 	// POIFS primed on the test data
@@ -58,7 +55,7 @@ public class TestReWriteSanity extends TestCase {
 		// Create a new one from that
 		HSLFSlideShow wss = new HSLFSlideShow(bais);
 
-		// Find the location of the PersistPtrIncrementalBlocks and 
+		// Find the location of the PersistPtrIncrementalBlocks and
 		// UserEditAtoms
 		Record[] r = wss.getRecords();
 		Hashtable pp = new Hashtable();
@@ -75,7 +72,7 @@ public class TestReWriteSanity extends TestCase {
 				ue.put(new Integer(pos), r[i]);
 				lastUEPos = pos;
 			}
-			
+
 			ByteArrayOutputStream bc = new ByteArrayOutputStream();
 			r[i].writeOut(bc);
 			pos += bc.size();

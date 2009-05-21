@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.dev;
 
@@ -40,14 +37,14 @@ import org.apache.poi.util.LittleEndian;
  * To figure out what things are, and if they are atoms or not, used the
  *  list in hslf.record.RecordTypes
  *
- * To peek inside PPDrawings, which hold Escher drawings, we use the 
+ * To peek inside PPDrawings, which hold Escher drawings, we use the
  *  DDF package from POI (but we can fake it by using the Escher listings
  *  from hslf.record.RecordTypes also)
- * 
+ *
  * @author Nick Burch
  */
 
-public class SlideShowDumper
+public final class SlideShowDumper
 {
   private InputStream istream;
   private POIFSFileSystem filesystem;
@@ -91,7 +88,7 @@ public class SlideShowDumper
 
 
   /**
-   * Constructs a Powerpoint dump from fileName. Parses the document 
+   * Constructs a Powerpoint dump from fileName. Parses the document
    * and dumps out the contents
    *
    * @param fileName The name of the file to read.
@@ -101,9 +98,9 @@ public class SlideShowDumper
   {
   	this(new FileInputStream(fileName));
   }
-  
+
   /**
-   * Constructs a Powerpoint dump from an input stream. Parses the 
+   * Constructs a Powerpoint dump from an input stream. Parses the
    * document and dumps out the contents
    *
    * @param inputStream the source of the data
@@ -117,7 +114,7 @@ public class SlideShowDumper
   }
 
   /**
-   * Constructs a Powerpoint dump from a POIFS Filesystem. Parses the 
+   * Constructs a Powerpoint dump from a POIFS Filesystem. Parses the
    * document and dumps out the contents
    *
    * @param filesystem the POIFS FileSystem to read from
@@ -189,7 +186,7 @@ public class SlideShowDumper
 	//     (type 1001 = document atom, info 00 01 normal, 28 bytes long)
 
 	// When parsing a document, look to see if you know about that type
-	//  of the current record. If you know it's a type that has children, 
+	//  of the current record. If you know it's a type that has children,
 	//  process the record's data area looking for more records
 	// If you know about the type and it doesn't have children, either do
 	//  something with the data (eg TextRun) or skip over it

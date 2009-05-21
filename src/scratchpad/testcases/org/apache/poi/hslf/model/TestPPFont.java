@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -25,10 +24,10 @@ import java.io.IOException;
 
 /**
  * Test adding fonts to the presenataion resources
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestPPFont extends TestCase{
+public final class TestPPFont extends TestCase{
 
     public void testCreate() throws IOException {
         SlideShow ppt = new SlideShow();

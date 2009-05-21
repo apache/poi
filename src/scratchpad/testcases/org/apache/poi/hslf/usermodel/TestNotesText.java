@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -30,7 +27,7 @@ import org.apache.poi.hslf.model.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestNotesText extends TestCase {
+public final class TestNotesText extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 

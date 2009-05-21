@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -26,7 +24,7 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * A wrapper around a DDF (Escher) EscherTextbox Record. Causes the DDF 
+ * A wrapper around a DDF (Escher) EscherTextbox Record. Causes the DDF
  *  Record to be accessible as if it were a HSLF record.
  * Note: when asked to write out, will simply put any child records correctly
  *  into the Escher layer. A call to the escher layer to write out (by the
@@ -35,7 +33,7 @@ import java.io.ByteArrayOutputStream;
  * @author Nick Burch
  */
 
-public class EscherTextboxWrapper extends RecordContainer
+public final class EscherTextboxWrapper extends RecordContainer
 {
 	private EscherTextboxRecord _escherRecord;
 	private long _type;
@@ -46,7 +44,7 @@ public class EscherTextboxWrapper extends RecordContainer
 	 */
 	public EscherTextboxRecord getEscherRecord() { return _escherRecord; }
 
-	/** 
+	/**
 	 * Creates the wrapper for the given DDF Escher Record and children
 	 */
 	public EscherTextboxWrapper(EscherTextboxRecord textbox) {
@@ -57,7 +55,7 @@ public class EscherTextboxWrapper extends RecordContainer
 		byte[] data = _escherRecord.getData();
 		_children = Record.findChildRecords(data,0,data.length);
 	}
-	
+
 	/**
 	 * Creates a new, empty wrapper for DDF Escher Records and their children
 	 */
@@ -68,7 +66,7 @@ public class EscherTextboxWrapper extends RecordContainer
 
 		_children = new Record[0];
 	}
-	
+
 
 	/**
 	 * Return the type of the escher record (normally in the 0xFnnn range)

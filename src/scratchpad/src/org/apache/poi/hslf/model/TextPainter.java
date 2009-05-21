@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.usermodel.RichTextRun;
@@ -35,10 +36,10 @@ import java.util.ArrayList;
 
 /**
  * Paint text into java.awt.Graphics2D
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TextPainter {
+public final class TextPainter {
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
     /**

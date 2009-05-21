@@ -30,7 +30,7 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestPictures extends TestCase{
+public final class TestPictures extends TestCase{
 
     protected File cwd;
 
@@ -258,10 +258,10 @@ public class TestPictures extends TestCase{
 
         Slide slide = ppt.createSlide();
         File img = new File(cwd, "sci_cec.dib");
-        
+
         // Check we can read the test DIB image
         assertTrue(img.exists());
-        
+
         // Add the image
         int idx = ppt.addPicture(img, Picture.DIB);
         Picture pict = new Picture(idx);
@@ -375,7 +375,7 @@ public class TestPictures extends TestCase{
     }
 
 	/**
-	 * Test that on a party corrupt powerpoint document, which has 
+	 * Test that on a party corrupt powerpoint document, which has
 	 *  crazy pictures of type 0, we do our best.
 	 */
 	public void testZeroPictureType() throws Exception {
@@ -393,21 +393,21 @@ public class TestPictures extends TestCase{
         PictureData[] pictures = ppt.getPictureData();
         assertEquals(12, slides.length);
         assertEquals(2, pictures.length);
-        
+
 		Picture pict;
 		PictureData pdata;
-		
+
         pict = (Picture)slides[0].getShapes()[1]; // 2nd object on 1st slide
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
-		
+
         pict = (Picture)slides[0].getShapes()[2]; // 3rd object on 1st slide
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
 	}
-	
+
 	public void testZeroPictureLength() throws Exception {
 		HSLFSlideShow hslf = new HSLFSlideShow(new File(cwd, "PictureLengthZero.ppt").getPath());
 
@@ -416,22 +416,22 @@ public class TestPictures extends TestCase{
 		// Both are real pictures, both WMF
 		assertEquals(Picture.WMF, hslf.getPictures()[0].getType());
 		assertEquals(Picture.WMF, hslf.getPictures()[1].getType());
-		
+
 		// Now test what happens when we use the SlideShow interface
 		SlideShow ppt = new SlideShow(hslf);
         Slide[] slides = ppt.getSlides();
         PictureData[] pictures = ppt.getPictureData();
         assertEquals(27, slides.length);
         assertEquals(2, pictures.length);
-        
+
 		Picture pict;
 		PictureData pdata;
-		
+
         pict = (Picture)slides[6].getShapes()[13];
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
-		
+
         pict = (Picture)slides[7].getShapes()[13];
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);

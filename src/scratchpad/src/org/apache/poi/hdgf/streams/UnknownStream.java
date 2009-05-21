@@ -14,15 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
 
 import org.apache.poi.hdgf.pointers.Pointer;
 
 /**
- * A placeholder for a stream where we don't known anything 
+ * A placeholder for a stream where we don't known anything
  *  about how to process / handle it
  */
-public class UnknownStream extends Stream {
+public final class UnknownStream extends Stream {
 	protected UnknownStream(Pointer pointer, StreamStore store) {
 		super(pointer, store);
 	}

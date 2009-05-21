@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -30,7 +28,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class DocumentAtom extends RecordAtom
+public final class DocumentAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 1001l;
@@ -96,7 +94,7 @@ public class DocumentAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Document Atom
 	 */
 	protected DocumentAtom(byte[] source, int start, int len) {

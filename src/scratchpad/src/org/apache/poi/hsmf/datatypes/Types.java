@@ -17,18 +17,18 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-public class Types {
+public final class Types {
 	public static int BINARY = 0x0102;
-	
+
 	/** A string, until Outlook 3.0 */
 	public static int OLD_STRING = 0x001E;
 	/** A string, from Outlook 3.0 onwards */
 	public static int NEW_STRING = 0x001F;
-	
+
 	public static int LONG = 0x0003;
 	public static int TIME = 0x0040;
 	public static int BOOLEAN = 0x000B;
-	
+
 	public static String asFileEnding(int type) {
 		String str = Integer.toHexString(type).toUpperCase();
 		while(str.length() < 4) {

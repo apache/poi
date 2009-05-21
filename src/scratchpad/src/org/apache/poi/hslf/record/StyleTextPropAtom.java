@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -35,7 +33,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.HexDump;
 
 /**
- * A StyleTextPropAtom (type 4001). Holds basic character properties 
+ * A StyleTextPropAtom (type 4001). Holds basic character properties
  *  (bold, italic, underline, font size etc) and paragraph properties
  *  (alignment, line spacing etc) for the block of text (TextBytesAtom
  *  or TextCharsAtom) that this record follows.
@@ -51,7 +49,7 @@ import org.apache.poi.util.HexDump;
  * @author Yegor Kozlov
  */
 
-public class StyleTextPropAtom extends RecordAtom
+public final class StyleTextPropAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 4001l;
@@ -59,13 +57,13 @@ public class StyleTextPropAtom extends RecordAtom
 
 	private byte[] rawContents; // Holds the contents between write-outs
 
-	/** 
+	/**
 	 * Only set to true once setParentTextSize(int) is called.
 	 * Until then, no stylings will have been decoded
 	 */
 	private boolean initialised = false;
 
-	/** 
+	/**
 	 * The list of all the different paragraph stylings we code for.
 	 * Each entry is a TextPropCollection, which tells you how many
 	 *  Characters the paragraph covers, and also contains the TextProps
@@ -78,10 +76,10 @@ public class StyleTextPropAtom extends RecordAtom
 	 *  paragraph stylings
 	 */
 	public void setParagraphStyles(LinkedList ps) { paragraphStyles = ps; }
-	/** 
+	/**
 	 * The list of all the different character stylings we code for.
 	 * Each entry is a TextPropCollection, which tells you how many
-	 *  Characters the character styling covers, and also contains the 
+	 *  Characters the character styling covers, and also contains the
 	 *  TextProps that actually define the styling of the characters.
 	 */
 	private LinkedList charStyles;
@@ -91,7 +89,7 @@ public class StyleTextPropAtom extends RecordAtom
 	 *  character stylings
 	 */
 	public void setCharacterStyles(LinkedList cs) { charStyles = cs; }
-	
+
 	/**
 	 * Returns how many characters the paragraph's
 	 *  TextPropCollections cover.
@@ -334,7 +332,7 @@ public class StyleTextPropAtom extends RecordAtom
 
 			// Save this properties set
 			charStyles.add(thisCollection);
-			
+
 			// Handle extra 1 char styles at the end
 			if(pos < rawContents.length && textHandled == size) {
 				chsize++;
@@ -407,7 +405,7 @@ public class StyleTextPropAtom extends RecordAtom
 		charStyles.add(tpc);
 		return tpc;
 	}
-	
+
 /* ************************************************************************ */
 
 
@@ -418,14 +416,14 @@ public class StyleTextPropAtom extends RecordAtom
      */
     public String toString(){
         StringBuffer out = new StringBuffer();
-        
+
 	    out.append("StyleTextPropAtom:\n");
         if (!initialised) {
 	        out.append("Uninitialised, dumping Raw Style Data\n");
         } else {
-        
+
 	        out.append("Paragraph properties\n");
-	        
+
 	        for (Iterator it1 = getParagraphStyles().iterator(); it1.hasNext();) {
 	            TextPropCollection pr = (TextPropCollection)it1.next();
 	            out.append("  chars covered: " + pr.getCharactersCovered());
@@ -435,9 +433,9 @@ public class StyleTextPropAtom extends RecordAtom
 	                out.append("    " + p.getName() + " = " + p.getValue() );
 	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
 	            }
-	            
+
 	            out.append("  para bytes that would be written: \n");
-	            
+
 	            try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					pr.writeOut(baos);
@@ -447,7 +445,7 @@ public class StyleTextPropAtom extends RecordAtom
 	            	e.printStackTrace();
 	            }
 	        }
-	
+
 	        out.append("Character properties\n");
 	        for (Iterator it1 = getCharacterStyles().iterator(); it1.hasNext();) {
 	            TextPropCollection pr = (TextPropCollection)it1.next();
@@ -458,9 +456,9 @@ public class StyleTextPropAtom extends RecordAtom
 	                out.append("    " + p.getName() + " = " + p.getValue() );
 	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
 	            }
-	            
+
 	            out.append("  char bytes that would be written: \n");
-	            
+
 	            try {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					pr.writeOut(baos);
@@ -471,7 +469,7 @@ public class StyleTextPropAtom extends RecordAtom
 	            }
 	        }
         }
-        	
+
         out.append("  original byte stream \n");
 		out.append( HexDump.dump(rawContents, 0, 0) );
 

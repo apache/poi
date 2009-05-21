@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
@@ -30,15 +27,15 @@ import org.apache.poi.hwpf.sprm.SprmOperation;
 
 /**
  * DANGER - works in bytes!
- * 
+ *
  * Make sure you call getStart() / getEnd() when you want characters
- *  (normal use), but getStartByte() / getEndByte() when you're 
+ *  (normal use), but getStartByte() / getEndByte() when you're
  *  reading in / writing out!
  *
  * @author Ryan Ackley
  */
 
-public class PAPX extends BytePropertyNode {
+public final class PAPX extends BytePropertyNode {
 
   private ParagraphHeight _phe;
   private int _hugeGrpprlOffset = -1;

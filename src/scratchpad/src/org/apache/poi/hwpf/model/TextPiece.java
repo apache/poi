@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
 
@@ -29,7 +28,7 @@ import java.io.UnsupportedEncodingException;
  * @author Ryan Ackley
  */
 
-public class TextPiece extends PropertyNode implements Comparable
+public final class TextPiece extends PropertyNode implements Comparable
 {
   private boolean _usesUnicode;
 
@@ -44,7 +43,7 @@ public class TextPiece extends PropertyNode implements Comparable
 	  super(start, end, buildInitSB(text, pd));
 	  _usesUnicode = pd.isUnicode();
 	  _pd = pd;
-	  
+
 	  // Validate
 	  int textLength = ((StringBuffer)_buf).length();
 	  if(end-start != textLength) {
@@ -54,7 +53,7 @@ public class TextPiece extends PropertyNode implements Comparable
 		  throw new IllegalStateException("Told we're of negative size! start="+start + " end="+end);
 	  }
   }
-  
+
   /**
    * Create the StringBuffer from the text and unicode flag
    */
@@ -71,7 +70,7 @@ public class TextPiece extends PropertyNode implements Comparable
 	  }
 	  return new StringBuffer(str);
   }
-  
+
   /**
    * @return If this text piece is unicode
    */
@@ -101,7 +100,7 @@ public class TextPiece extends PropertyNode implements Comparable
    }
 
    /**
-    * Returns part of the string. 
+    * Returns part of the string.
     * Works only in characters, not in bytes!
     * @param start Local start position, in characters
     * @param end Local end position, in characters
@@ -109,7 +108,7 @@ public class TextPiece extends PropertyNode implements Comparable
    public String substring(int start, int end)
    {
 	   StringBuffer buf = (StringBuffer)_buf;
-	   
+
 	   // Validate
 	   if(start < 0) {
 		   throw new StringIndexOutOfBoundsException("Can't request a substring before 0 - asked for " + start);

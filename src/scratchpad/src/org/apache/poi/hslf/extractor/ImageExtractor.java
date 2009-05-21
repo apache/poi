@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.extractor;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
@@ -30,7 +30,7 @@ import java.io.FileOutputStream;
  *
  * @author Yegor Kozlov
  */
-public class ImageExtractor {
+public final class ImageExtractor {
     public static void main(String args[]) throws IOException {
         if (args.length < 1) {
             System.err.println("Usage:");

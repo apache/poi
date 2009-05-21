@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -27,14 +25,14 @@ import java.io.OutputStream;
 
 /**
  * A TextBytesAtom (type 4008). Holds text in ascii form (unknown
- *  code page, for now assumed to be the default of 
+ *  code page, for now assumed to be the default of
  *  org.apache.poi.util.StringUtil, which is the Excel default).
  * The trailing return character is always stripped from this
  *
  * @author Nick Burch
  */
 
-public class TextBytesAtom extends RecordAtom
+public final class TextBytesAtom extends RecordAtom
 {
 	private byte[] _header;
 	private static long _type = 4008l;
@@ -43,12 +41,12 @@ public class TextBytesAtom extends RecordAtom
 	private byte[] _text;
 
 	/** Grabs the text. Uses the default codepage */
-	public String getText() { 
+	public String getText() {
 		return StringUtil.getFromCompressedUnicode(_text,0,_text.length);
 	}
 
 	/** Updates the text in the Atom. Must be 8 bit ascii */
-	public void setText(byte[] b) { 
+	public void setText(byte[] b) {
 		// Set the text
 		_text = b;
 
@@ -58,7 +56,7 @@ public class TextBytesAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the TextBytes Atom
 	 */
 	protected TextBytesAtom(byte[] source, int start, int len) {
@@ -73,7 +71,7 @@ public class TextBytesAtom extends RecordAtom
 		_text = new byte[len-8];
 		System.arraycopy(source,start+8,_text,0,len-8);
 	}
-	
+
 	/**
 	 * Create an empty TextBytes Atom
 	 */
@@ -104,7 +102,7 @@ public class TextBytesAtom extends RecordAtom
 	}
 
 	/**
-	 * dump debug info; use getText() to return a string 
+	 * dump debug info; use getText() to return a string
 	 * representation of the atom
 	 */
 	public String toString() {

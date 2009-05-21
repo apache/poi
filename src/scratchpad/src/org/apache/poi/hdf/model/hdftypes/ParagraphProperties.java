@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.model.hdftypes;
 
@@ -27,7 +24,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.PAPAbstractType;
  * @author Ryan Ackley
  */
 
-public class ParagraphProperties  extends PAPAbstractType implements Cloneable
+public final class ParagraphProperties  extends PAPAbstractType implements Cloneable
 {
 
 

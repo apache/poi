@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-/*
- * HDFType.java
- *
- * Created on February 24, 2002, 2:37 PM
- */
 
 package org.apache.poi.hdf.model.hdftypes;
 

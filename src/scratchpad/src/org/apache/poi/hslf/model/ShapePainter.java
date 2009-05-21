@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 
@@ -25,10 +26,10 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Paint a shape into java.awt.Graphics2D
- * 
+ *
  * @author Yegor Kozlov
  */
-public class ShapePainter {
+public final class ShapePainter {
     protected static POILogger logger = POILogFactory.getLogger(ShapePainter.class);
 
     public static void paint(SimpleShape shape, Graphics2D graphics){

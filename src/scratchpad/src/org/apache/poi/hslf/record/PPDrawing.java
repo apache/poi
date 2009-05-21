@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -36,7 +34,7 @@ import java.util.Iterator;
  * These are actually wrappers onto Escher drawings. Make use of
  *  the DDF classes to do useful things with them.
  * For now, creates a tree of the Escher records, and then creates any
- *  PowerPoint (hslf) records found within the EscherTextboxRecord 
+ *  PowerPoint (hslf) records found within the EscherTextboxRecord
  *  (msofbtClientTextbox) records.
  * Also provides easy access to the EscherTextboxRecords, so that their
  *  text may be extracted and used in Sheets
@@ -46,7 +44,7 @@ import java.util.Iterator;
 
 // For now, pretending to be an atom. Might not always be, but that
 //  would require a wrapping class
-public class PPDrawing extends RecordAtom
+public final class PPDrawing extends RecordAtom
 {
 	private byte[] _header;
 	private long _type;
@@ -70,7 +68,7 @@ public class PPDrawing extends RecordAtom
 
 	/* ******************** record stuff follows ********************** */
 
-	/** 
+	/**
 	 * Sets everything up, groks the escher etc
 	 */
 	protected PPDrawing(byte[] source, int start, int len) {
@@ -104,7 +102,7 @@ public class PPDrawing extends RecordAtom
 			textboxWrappers[i] = (EscherTextboxWrapper)textboxes.get(i);
 		}
 	}
-	
+
 	/**
 	 * Creates a new, empty, PPDrawing (typically for use with a new Slide
 	 *  or Notes)
@@ -114,12 +112,12 @@ public class PPDrawing extends RecordAtom
 		LittleEndian.putUShort(_header, 0, 15);
 		LittleEndian.putUShort(_header, 2, (int)RecordTypes.PPDrawing.typeID);
 		LittleEndian.putInt(_header, 4, 0);
-		 
+
 		textboxWrappers = new EscherTextboxWrapper[]{};
 		create();
 	}
 
-	/** 
+	/**
 	 * Tree walking way of finding Escher Child Records
 	 */
 	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector found) {
@@ -143,7 +141,7 @@ public class PPDrawing extends RecordAtom
          * Sanity check. Always advance the cursor by the correct value.
          *
          * getRecordSize() must return exatcly the same number of bytes that was written in fillFields.
-         * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size. 
+         * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
          */
         if(size != escherBytes){
             logger.log(POILogger.WARN, "Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
@@ -156,7 +154,7 @@ public class PPDrawing extends RecordAtom
 		}
 	}
 
-	/** 
+	/**
 	 * Look for EscherTextboxRecords
 	 */
 	private void findEscherTextboxRecord(EscherRecord[] toSearch, Vector found) {
@@ -189,7 +187,7 @@ public class PPDrawing extends RecordAtom
 	 */
 	public long getRecordType() { return _type; }
 
-	/** 
+	/**
 	 * We're pretending to be an atom, so return null
 	 */
 	public Record[] getChildRecords() { return null; }
@@ -245,11 +243,11 @@ public class PPDrawing extends RecordAtom
 		EscherContainerRecord spgrContainer = new EscherContainerRecord();
 		spgrContainer.setOptions((short)15);
 		spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
-		
+
 		EscherContainerRecord spContainer = new EscherContainerRecord();
 		spContainer.setOptions((short)15);
 		spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
-		
+
 		EscherSpgrRecord spgr = new EscherSpgrRecord();
 		spgr.setOptions((short)1);
 		spContainer.addChildRecord(spgr);
@@ -287,14 +285,14 @@ public class PPDrawing extends RecordAtom
 			dgContainer
 		};
 	}
-	
+
 	/**
 	 * Add a new EscherTextboxWrapper to this <code>PPDrawing</code>.
 	 */
 	public void addTextboxWrapper(EscherTextboxWrapper txtbox){
 		EscherTextboxWrapper[] tw = new EscherTextboxWrapper[textboxWrappers.length + 1];
 		System.arraycopy(textboxWrappers, 0, tw, 0, textboxWrappers.length);
-		
+
 		tw[textboxWrappers.length] = txtbox;
 		textboxWrappers = tw;
 	}

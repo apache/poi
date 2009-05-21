@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
@@ -32,7 +29,7 @@ import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 
 /**
- * This class represents a slide in a PowerPoint Document. It allows 
+ * This class represents a slide in a PowerPoint Document. It allows
  *  access to the text within, and the layout. For now, it only does
  *  the text side of things though
  *
@@ -40,7 +37,7 @@ import org.apache.poi.ddf.EscherSpRecord;
  * @author Yegor Kozlov
  */
 
-public class Slide extends Sheet
+public final class Slide extends Sheet
 {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
@@ -90,7 +87,7 @@ public class Slide extends Sheet
             _runs[i].setSheet(this);
 		}
 	}
-  
+
 	/**
 	* Create a new Slide instance
 	* @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
@@ -120,7 +117,7 @@ public class Slide extends Sheet
 			sa.setNotesID(notes._getSheetNumber());
 		}
 	}
-  
+
 	/**
 	* Changes the Slide's (external facing) page number.
 	* @see org.apache.poi.hslf.usermodel.SlideShow#reorderSlide(int, int)
@@ -128,7 +125,7 @@ public class Slide extends Sheet
 	public void setSlideNumber(int newSlideNumber) {
 		_slideNo = newSlideNumber;
 	}
-  
+
     /**
      * Called by SlideShow ater a new slide is created.
      * <p>
@@ -162,7 +159,7 @@ public class Slide extends Sheet
             if(spr != null) spr.setShapeId(allocateShapeId());
         }
 
-        //PPT doen't increment the number of saved shapes for group descriptor and background 
+        //PPT doen't increment the number of saved shapes for group descriptor and background
         dg.setNumShapes(1);
     }
 
@@ -207,7 +204,7 @@ public class Slide extends Sheet
 		}
 		return null;
 	}
-  
+
 	// Simple Accesser methods follow
 
 	/**
@@ -361,10 +358,10 @@ public class Slide extends Sheet
         }
         return super.getColorScheme();
     }
-    
+
     /**
      * Get the comment(s) for this slide.
-     * Note - for now, only works on PPT 2000 and 
+     * Note - for now, only works on PPT 2000 and
      *  PPT 2003 files. Doesn't work for PPT 97
      *  ones, as they do their comments oddly.
      */
@@ -393,7 +390,7 @@ public class Slide extends Sheet
     						count++;
     					}
     				}
-    				
+
     				// Now build
     				Comment[] comments = new Comment[count];
     				count = 0;
@@ -405,12 +402,12 @@ public class Slide extends Sheet
     						count++;
     					}
     				}
-    				
+
     				return comments;
     			}
     		}
     	}
-    	
+
     	// None found
     	return new Comment[0];
     }
@@ -433,7 +430,7 @@ public class Slide extends Sheet
     }
 
     /**
-     * Header / Footer settings for this slide.  
+     * Header / Footer settings for this slide.
      *
      * @return Header / Footer settings for this slide
      */

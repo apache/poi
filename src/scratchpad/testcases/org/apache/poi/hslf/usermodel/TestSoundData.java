@@ -31,7 +31,7 @@ import java.util.Arrays;
  *
  * @author Yegor Kozlov
  */
-public class TestSoundData extends TestCase{
+public final class TestSoundData extends TestCase{
 
     protected File cwd;
 
@@ -41,7 +41,7 @@ public class TestSoundData extends TestCase{
 
     /**
      * Read a reference sound file from disk and compare it from the data extracted from the slide show
-     */ 
+     */
     public void testSounds() throws Exception {
         //read the reference sound file
         File f = new File(cwd, "ringin.wav");

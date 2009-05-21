@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -34,7 +32,7 @@ import java.io.UnsupportedEncodingException;
  * @author Yegor Kozlov
  */
 
-public class FontEntityAtom extends RecordAtom {
+public final class FontEntityAtom extends RecordAtom {
 	/**
      * record header
      */
@@ -75,7 +73,7 @@ public class FontEntityAtom extends RecordAtom {
 
     /**
      * A null-terminated string that specifies the typeface name of the font.
-     * The length of this string must not exceed 32 characters 
+     * The length of this string must not exceed 32 characters
 	 *  including the null terminator.
      * @return font name
      */
@@ -99,7 +97,7 @@ public class FontEntityAtom extends RecordAtom {
 
     /**
      * Set the name of the font.
-     * The length of this string must not exceed 32 characters 
+     * The length of this string must not exceed 32 characters
 	 *  including the null terminator.
 	 * Will be converted to null-terminated if not already
      * @param name of the font

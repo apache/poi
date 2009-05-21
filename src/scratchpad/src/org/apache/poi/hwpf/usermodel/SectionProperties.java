@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.usermodel;
 
@@ -24,7 +22,7 @@ import org.apache.poi.hwpf.model.types.SEPAbstractType;
 import java.lang.reflect.Field;
 import java.lang.reflect.AccessibleObject;
 
-public class SectionProperties
+public final class SectionProperties
   extends SEPAbstractType
 {
   public SectionProperties()

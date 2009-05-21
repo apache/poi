@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.sl.usermodel;
 
 /**
@@ -23,6 +24,6 @@ public interface Sheet extends ShapeContainer {
 	public SlideShow getSlideShow();
 
 	public MasterSheet getMasterSheet();
-	
+
 	public Background getBackground();
 }

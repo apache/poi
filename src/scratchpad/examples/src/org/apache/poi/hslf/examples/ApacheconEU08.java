@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -29,10 +28,10 @@ import java.awt.*;
 
 /**
  * Presentation for Fast Feather Track on ApacheconEU 2008
- * 
+ *
  * @author Yegor Kozlov
  */
-public class ApacheconEU08 {
+public final class ApacheconEU08 {
 
     public static void main(String[] args) throws IOException {
         SlideShow ppt = new SlideShow();

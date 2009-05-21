@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf;
 
 import java.io.File;
@@ -21,7 +22,7 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-public class TestHPBFDocument extends TestCase {
+public final class TestHPBFDocument extends TestCase {
 	private String dir;
 
 	protected void setUp() throws Exception {
@@ -33,10 +34,10 @@ public class TestHPBFDocument extends TestCase {
 		HPBFDocument doc = new HPBFDocument(
 				new FileInputStream(f)
 		);
-		
+
 		assertNotNull(doc);
 	}
-	
+
 	public void testBits() throws Exception {
 		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
@@ -47,13 +48,13 @@ public class TestHPBFDocument extends TestCase {
 		assertNotNull(doc.getQuillContents());
 		assertNotNull(doc.getEscherStm());
 		assertNotNull(doc.getEscherDelayStm());
-		
+
 		assertTrue(doc.getMainContents().getData().length > 0);
 		assertTrue(doc.getQuillContents().getData().length > 0);
 		assertTrue(doc.getEscherStm().getData().length > 0);
 		assertTrue(doc.getEscherDelayStm().getData().length == 0);
 	}
-	
+
 	// TODO
 //	public void testWrite() throws Exception {
 //	}

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -31,12 +29,12 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class UnknownRecordPlaceholder extends RecordAtom
+public final class UnknownRecordPlaceholder extends RecordAtom
 {
 	private byte[] _contents;
 	private long _type;
 
-	/** 
+	/**
 	 * Create a new holder for a record we don't grok
 	 */
 	protected UnknownRecordPlaceholder(byte[] source, int start, int len) {

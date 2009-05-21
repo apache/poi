@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -30,7 +27,7 @@ import org.apache.poi.hslf.model.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSheetText extends TestCase {
+public final class TestSheetText extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
@@ -59,7 +56,7 @@ public class TestSheetText extends TestCase {
 			assertEquals(expectText[i], slideTwo.getTextRuns()[i].getText());
 		}
 	}
-	
+
 	/**
 	 * Check we can still get the text from a file where the
 	 *  TextProps don't have enough data.
@@ -70,14 +67,14 @@ public class TestSheetText extends TestCase {
 		String filename = dirname + "/iisd_report.ppt";
 		HSLFSlideShow hss = new HSLFSlideShow(filename);
 		SlideShow sss = new SlideShow(hss);
-		
+
 		// Should come out with 10 slides, no notes
 		assertEquals(10, sss.getSlides().length);
 		assertEquals(0, sss.getNotes().length);
-		
+
 		// Check text on first slide
 		Slide s = sss.getSlides()[0];
-		String exp = 
+		String exp =
 			"Realizing the Development Dividend:\n" +
 			"Community Capacity Building and CDM.\n" +
 			"Can they co-exist?\n\n" +

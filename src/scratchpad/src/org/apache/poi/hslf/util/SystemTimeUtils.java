@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * A helper class for dealing with SystemTime Structs, as defined at
  * http://msdn.microsoft.com/library/en-us/sysinfo/base/systemtime_str.asp .
- * 
+ *
  * Discrepancies between Calendar and SYSTEMTIME:
  *  - that January = 1 in SYSTEMTIME, 0 in Calendar.
  *  - that the day of the week (0) starts on Sunday in SYSTEMTIME, and Monday in Calendar
@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Daniel Noll
  * @author Nick Burch
  */
-public class SystemTimeUtils {
+public final class SystemTimeUtils {
 	/**
 	 * Get the date found in the byte array, as a java Data object
 	 */
@@ -48,10 +48,10 @@ public class SystemTimeUtils {
 	 */
 	public static Date getDate(byte[] data, int offset) {
         Calendar cal = new GregorianCalendar();
-        
+
         cal.set(Calendar.YEAR,         LittleEndian.getShort(data,offset));
         cal.set(Calendar.MONTH,        LittleEndian.getShort(data,offset+2)-1);
-        // Not actually needed - can be found from day of month 
+        // Not actually needed - can be found from day of month
         //cal.set(Calendar.DAY_OF_WEEK,  LittleEndian.getShort(data,offset+4)+1);
         cal.set(Calendar.DAY_OF_MONTH, LittleEndian.getShort(data,offset+6));
         cal.set(Calendar.HOUR_OF_DAY,  LittleEndian.getShort(data,offset+8));
@@ -61,17 +61,17 @@ public class SystemTimeUtils {
 
         return cal.getTime();
 	}
-	
+
 	/**
 	 * Convert the supplied java Date into a SystemTime struct, and write it
-	 *  into the supplied byte array. 
+	 *  into the supplied byte array.
 	 */
 	public static void storeDate(Date date, byte[] dest) {
 		storeDate(date, dest, 0);
 	}
 	/**
 	 * Convert the supplied java Date into a SystemTime struct, and write it
-	 *  into the supplied byte array. 
+	 *  into the supplied byte array.
 	 */
 	public static void storeDate(Date date, byte[] dest, int offset) {
         Calendar cal = new GregorianCalendar();

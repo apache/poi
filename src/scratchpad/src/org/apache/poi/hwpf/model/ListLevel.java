@@ -23,7 +23,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * 
+ *
  */
 public final class ListLevel
 {
@@ -90,7 +90,7 @@ public final class ListLevel
     _rgbxchNums = new byte[RGBXCH_NUMS_SIZE];
     System.arraycopy(buf, offset, _rgbxchNums, 0, RGBXCH_NUMS_SIZE);
     offset += RGBXCH_NUMS_SIZE;
-  
+
    _ixchFollow = buf[offset++];
     _dxaSpace = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
@@ -108,7 +108,7 @@ public final class ListLevel
     System.arraycopy(buf, offset, _grpprlChpx, 0, _cbGrpprlChpx);
     offset += _cbGrpprlChpx;
 
-    int numberTextLength = LittleEndian.getShort(buf, offset); 
+    int numberTextLength = LittleEndian.getShort(buf, offset);
     /* sometimes numberTextLength<0 */
     /* by derjohng */
     if (numberTextLength>0)
@@ -241,7 +241,7 @@ public final class ListLevel
         6 // int byte byte
         + RGBXCH_NUMS_SIZE
         + 13 // byte int int byte byte short
-        + _cbGrpprlChpx 
+        + _cbGrpprlChpx
         + _cbGrpprlPapx
         + 2; // numberText length
     if (_numberText != null) {

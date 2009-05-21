@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -30,7 +27,7 @@ import org.apache.poi.hslf.model.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestCounts extends TestCase {
+public final class TestCounts extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
@@ -45,15 +42,15 @@ public class TestCounts extends TestCase {
 		Slide[] slides = ss.getSlides();
 		// Two sheets - master sheet is seperate
 		assertEquals(2, slides.length);
-		
+
 		// They are slides 1+2
 		assertEquals(1, slides[0].getSlideNumber());
 		assertEquals(2, slides[1].getSlideNumber());
-		
+
 		// The ref IDs are 4 and 6
 		assertEquals(4, slides[0]._getSheetRefId());
 		assertEquals(6, slides[1]._getSheetRefId());
-		
+
 		// These are slides 1+2 -> 256+257
 		assertEquals(256, slides[0]._getSheetNumber());
 		assertEquals(257, slides[1]._getSheetNumber());
@@ -65,14 +62,14 @@ public class TestCounts extends TestCase {
 		// Note: there are also notes on the slide master
 		//assertEquals(3, notes.length); // When we do slide masters
 		assertEquals(2, notes.length);
-		
+
 		// First is for master
 		//assertEquals(-2147483648, notes[0]._getSheetNumber());  // When we do slide masters
-		
+
 		// Next two are for the two slides
 		assertEquals(256, notes[0]._getSheetNumber());
 		assertEquals(257, notes[1]._getSheetNumber());
-		
+
 		// They happen to go between the two slides in Ref terms
 		assertEquals(5, notes[0]._getSheetRefId());
 		assertEquals(7, notes[1]._getSheetRefId());

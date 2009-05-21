@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
@@ -35,7 +35,7 @@ import java.awt.*;
  *
  * @author Yegor Kozlov
  */
-public class TestBugs extends TestCase {
+public final class TestBugs extends TestCase {
     protected String cwd = System.getProperty("HSLF.testdata.path");
 
     /**
@@ -279,7 +279,7 @@ public class TestBugs extends TestCase {
         FileInputStream is = new FileInputStream(new File(cwd, "38256.ppt"));
         SlideShow ppt = new SlideShow(is);
         is.close();
-         
+
         assertTrue("No Exceptions while reading file", true);
 
         Slide[] slide = ppt.getSlides();
@@ -381,7 +381,7 @@ public class TestBugs extends TestCase {
         assertEquals(1, run.length);
         assertEquals("Fundera, planera och involvera.", run[0].getText());
     }
-    
+
     /**
      * PowerPoint 95 files should throw a more helpful exception
      * @throws Exception
@@ -390,7 +390,7 @@ public class TestBugs extends TestCase {
     	// New file is fine
         FileInputStream is = new FileInputStream(new File(cwd, "SampleShow.ppt"));
         SlideShow ppt = new SlideShow(is);
-        
+
         // PowerPoint 95 gives an old format exception
         is = new FileInputStream(new File(cwd, "PPT95.ppt"));
         try {

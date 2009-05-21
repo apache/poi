@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -30,7 +31,7 @@ import java.io.ByteArrayInputStream;
  *
  * @author Yegor Kozlov
  */
-public class TestPPGraphics2D extends TestCase {
+public final class TestPPGraphics2D extends TestCase {
     private SlideShow ppt;
 
     protected void setUp() throws Exception {
@@ -42,7 +43,7 @@ public class TestPPGraphics2D extends TestCase {
     public void testGraphics() throws Exception {
     	// Starts off empty
     	assertEquals(0, ppt.getSlides().length);
-    	
+
     	// Add a slide
         Slide slide = ppt.createSlide();
     	assertEquals(1, ppt.getSlides().length);

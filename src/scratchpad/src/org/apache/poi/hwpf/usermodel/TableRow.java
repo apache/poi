@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 
-public class TableRow
+public final class TableRow
   extends Paragraph
 {
   private final static char TABLE_CELL_MARK = '\u0007';

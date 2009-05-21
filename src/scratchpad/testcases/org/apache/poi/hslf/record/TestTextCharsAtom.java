@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,9 +26,9 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestTextCharsAtom extends TestCase {
+public final class TestTextCharsAtom extends TestCase {
 	// From a real file
-	private byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0, 
+	private byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00 };
 	private String data_text = "This";
 	private byte[] alt_data = new byte[] { 0, 0, 0xA0-256, 0x0F, 0x0a, 0, 0, 0,
@@ -66,7 +63,7 @@ public class TestTextCharsAtom extends TestCase {
 			assertEquals(alt_data[i],b[i]);
 		}
 	}
-	
+
 	public void testWrite() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -78,14 +75,14 @@ public class TestTextCharsAtom extends TestCase {
 			assertEquals(data[i],b[i]);
 		}
 	}
-	
+
 	public void testCreateNew() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom();
 		assertEquals(0, tca.getText().length());
-		
+
 		tca.setText(data_text);
 		assertEquals(data_text, tca.getText());
-		
+
 		// Check it's now like data
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tca.writeOut(baos);

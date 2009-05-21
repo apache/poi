@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -30,7 +28,7 @@ import java.io.OutputStream;
  * @author Yegor Kozlov
  */
 
-public class HeadersFootersAtom extends RecordAtom {
+public final class HeadersFootersAtom extends RecordAtom {
 
     /**
      * A bit that specifies whether the date is displayed in the footer.
@@ -57,7 +55,7 @@ public class HeadersFootersAtom extends RecordAtom {
 
     /**
      * A bit that specifies whether the slide number is displayed in the footer.
-     * 
+     *
      * @see #getMask()
      * @see #setMask(int)
      */

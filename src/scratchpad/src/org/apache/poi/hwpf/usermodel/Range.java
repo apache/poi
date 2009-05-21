@@ -15,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hwpf.usermodel;
 
 
@@ -60,8 +58,7 @@ import java.lang.ref.WeakReference;
  *
  * @author Ryan Ackley
  */
-public class Range
-{
+public class Range { // TODO -instantiable superclass
 
   public static final int TYPE_PARAGRAPH = 0;
   public static final int TYPE_CHARACTER= 1;
@@ -155,7 +152,7 @@ public class Range
     _characters = _doc.getCharacterTable().getTextRuns();
     _text = _doc.getTextTable().getTextPieces();
     _parent = new WeakReference(null);
-    
+
     sanityCheckStartEnd();
   }
 
@@ -177,7 +174,7 @@ public class Range
     _characters = parent._characters;
     _text = parent._text;
     _parent = new WeakReference(parent);
-    
+
     sanityCheckStartEnd();
   }
 
@@ -230,10 +227,10 @@ public class Range
         _textRangeFound = true;
         break;
     }
-    
+
     sanityCheckStartEnd();
   }
-  
+
   /**
    * Ensures that the start and end were were given
    *  are actually valid, to avoid issues later on
@@ -281,7 +278,7 @@ public class Range
     for (int x = _textStart; x < _textEnd; x++)
     {
       TextPiece piece = (TextPiece)_text.get(x);
-      
+
       // Figure out where in this piece the text
       //  we're after lives
       int rStart = 0;
@@ -292,14 +289,14 @@ public class Range
       if(_end < piece.getEnd()) {
     	  rEnd -= (piece.getEnd() - _end);
       }
-      
+
       // Luckily TextPieces work in characters, so we don't
       //  need to worry about unicode here
       sb.append(piece.substring(rStart, rEnd));
     }
     return sb.toString();
   }
-  
+
   /**
    * Removes any fields (eg macros, page markers etc)
    *  from the string.
@@ -311,10 +308,10 @@ public class Range
 	  // First up, fields can be nested...
 	  // A field can be 0x13 [contents] 0x15
 	  // Or it can be 0x13 [contents] 0x14 [real text] 0x15
-	  
+
 	  // If there are no fields, all easy
 	  if(text.indexOf('\u0013') == -1) return text;
-	  
+
 	  // Loop over until they're all gone
 	  // That's when we're out of both 0x13s and 0x15s
 	  while( text.indexOf('\u0013') > -1 &&
@@ -323,19 +320,19 @@ public class Range
 		  int next13 = text.indexOf('\u0013', first13+1);
 		  int first14 = text.indexOf('\u0014', first13+1);
 		  int last15 = text.lastIndexOf('\u0015');
-		  
+
 		  // If they're the wrong way around, give up
 		  if(last15 < first13) {
 			  break;
 		  }
-		  
+
 		  // If no more 13s and 14s, just zap
 		  if(next13 == -1 && first14 == -1) {
 			  text = text.substring(0, first13) +
 			  			text.substring(last15+1);
 			  break;
 		  }
-		  
+
 		  // If a 14 comes before the next 13, then
 		  //  zap from the 13 to the 14, and remove
 		  //  the 15
@@ -345,7 +342,7 @@ public class Range
 			  			text.substring(last15+1);
 			  continue;
 		  }
-		  
+
 		  // Another 13 comes before the next 14.
 		  // This means there's nested stuff, so we
 		  //  can just zap the lot
@@ -626,7 +623,7 @@ public class Range
       sepx.adjustForDelete(_start, _end - _start);
       //System.err.println("Section " + x + " is now " + sepx.getStart() + " -> " + sepx.getEnd());
     }
-    
+
     for (int x = _textStart; x < numTextPieces; x++)
     {
     	TextPiece piece = (TextPiece)_text.get(x);
@@ -728,7 +725,7 @@ public class Range
   {
 	int absPlaceHolderIndex = getStartOffset() + pOffset;
     Range subRange = new Range(
-                absPlaceHolderIndex, 
+                absPlaceHolderIndex,
 				(absPlaceHolderIndex + pPlaceHolder.length()), getDocument()
     );
 
@@ -744,7 +741,7 @@ public class Range
     // re-create the sub-range so we can delete it
     subRange = new Range(
             (absPlaceHolderIndex + pValue.length()),
-            (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()), 
+            (absPlaceHolderIndex + pPlaceHolder.length() + pValue.length()),
 			getDocument()
     );
 
@@ -1005,7 +1002,7 @@ public class Range
   /**
    * Adjust the value of the various FIB character count fields,
    *  eg <code>FIB.CCPText</code> after an insert or a delete...
-   *  
+   *
    * Works on all CCP fields from this range onwards
    *
    * @param	adjustment	The (signed) value that should be added to the FIB CCP fields
@@ -1017,12 +1014,12 @@ public class Range
 
 	CPSplitCalculator cpS = _doc.getCPSplitCalculator();
 	FileInformationBlock fib = _doc.getFileInformationBlock();
-	
+
 	// Do for each affected part
 	if(_start < cpS.getMainDocumentEnd()) {
 		fib.setCcpText(fib.getCcpText() + adjustment);
 	}
-	
+
 	if(_start < cpS.getCommentsEnd()) {
 		fib.setCcpAtn(fib.getCcpAtn() + adjustment);
 	}

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -48,7 +46,7 @@ import java.util.Vector;
  */
 
 // For now, pretend to be an atom
-public class SlideListWithText extends RecordContainer
+public final class SlideListWithText extends RecordContainer
 {
 
     /**
@@ -72,7 +70,7 @@ public class SlideListWithText extends RecordContainer
 
 	private SlideAtomsSet[] slideAtomsSets;
 
-	/** 
+	/**
 	 * Create a new holder for slide records
 	 */
 	protected SlideListWithText(byte[] source, int start, int len) {
@@ -81,10 +79,10 @@ public class SlideListWithText extends RecordContainer
 		System.arraycopy(source,start,_header,0,8);
 
 		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);	
+		_children = Record.findChildRecords(source,start+8,len-8);
 
 		// Group our children together into SlideAtomsSets
-		// That way, model layer code can just grab the sets to use, 
+		// That way, model layer code can just grab the sets to use,
 		//  without having to try to match the children together
 		Vector sets = new Vector();
 		for(int i=0; i<_children.length; i++) {
@@ -98,7 +96,7 @@ public class SlideListWithText extends RecordContainer
 				int clen = endPos - i - 1;
 				boolean emptySet = false;
 				if(clen == 0) { emptySet = true; }
-				
+
 				// Create a SlideAtomsSets, not caring if they're empty
 				//if(emptySet) { continue; }
 				Record[] spaChildren = new Record[clen];
@@ -127,11 +125,11 @@ public class SlideListWithText extends RecordContainer
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 0);
 
-		// We have no children to start with 
+		// We have no children to start with
 		_children = new Record[0];
 		slideAtomsSets = new SlideAtomsSet[0];
 	}
-	
+
 	/**
 	 * Add a new SlidePersistAtom, to the end of the current list,
 	 *  and update the internal list of SlidePersistAtoms
@@ -184,7 +182,7 @@ public class SlideListWithText extends RecordContainer
 	/**
 	 * Inner class to wrap up a matching set of records that hold the
 	 *  text for a given sheet. Contains the leading SlidePersistAtom,
-	 *  and all of the records until the next SlidePersistAtom. This 
+	 *  and all of the records until the next SlidePersistAtom. This
 	 *  includes sets of TextHeaderAtom and TextBytesAtom/TextCharsAtom,
 	 *  along with some others.
 	 */

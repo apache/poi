@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -30,10 +28,10 @@ import org.apache.poi.hslf.record.TextHeaderAtom;
 
 /**
  * Verify behavior of <code>TextShape</code> and its sub-classes
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestTextShape extends TestCase {
+public final class TestTextShape extends TestCase {
     protected String cwd = System.getProperty("HSLF.testdata.path");
 
     public void testCreateAutoShape(){

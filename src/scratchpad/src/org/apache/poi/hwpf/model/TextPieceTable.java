@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
 
@@ -38,7 +37,7 @@ import java.util.List;
  *  convertion.
  * @author Ryan Ackley
  */
-public class TextPieceTable
+public final class TextPieceTable
 {
   protected ArrayList _textPieces = new ArrayList();
   //int _multiple;
@@ -65,7 +64,7 @@ public class TextPieceTable
       pieces[x] = new PieceDescriptor(node.getBytes(), 0);
     }
 
-    
+
     // Figure out the cp of the earliest text piece
     // Note that text pieces don't have to be stored in order!
     _cpMin = pieces[0].getFilePosition() - fcMin;
@@ -82,18 +81,18 @@ public class TextPieceTable
     {
       int start = pieces[x].getFilePosition();
       PropertyNode node = pieceTable.getProperty(x);
-      
+
       // Grab the start and end, which are in characters
       int nodeStartChars = node.getStart();
       int nodeEndChars = node.getEnd();
-      
+
       // What's the relationship between bytes and characters?
       boolean unicode = pieces[x].isUnicode();
       int multiple = 1;
       if (unicode) {
         multiple = 2;
       }
-      
+
       // Figure out the length, in bytes and chars
       int textSizeChars = (nodeEndChars - nodeStartChars);
       int textSizeBytes = textSizeChars * multiple;
@@ -105,7 +104,7 @@ public class TextPieceTable
       // And now build the piece
       _textPieces.add(new TextPiece(nodeStartChars, nodeEndChars, buf, pieces[x], node.getStart()));
     }
-    
+
     // In the interest of our sanity, now sort the text pieces
     //  into order, if they're not already
     TextPiece[] tp = (TextPiece[])
@@ -125,18 +124,18 @@ public class TextPieceTable
   {
     return _textPieces;
   }
-  
+
   /**
    * Is the text at the given Character offset
    *  unicode, or plain old ascii?
-   * In a very evil fashion, you have to actually 
+   * In a very evil fashion, you have to actually
    *  know this to make sense of character and
    *  paragraph properties :(
    * @param cp The character offset to check about
    */
   public boolean isUnicodeAtCharOffset(int cp) {
 	  boolean lastWas = false;
-	  
+
 	  Iterator it = _textPieces.iterator();
 	  while(it.hasNext()) {
 		  TextPiece tp = (TextPiece)it.next();
@@ -147,14 +146,14 @@ public class TextPieceTable
 		  // Otherwise keep track for the last one
 		  lastWas = tp.isUnicode();
 	  }
-	  
+
 	  // If they ask off the end, just go with the last one...
 	  return lastWas;
   }
   /**
    * Is the text at the given byte offset
    *  unicode, or plain old ascii?
-   * In a very evil fashion, you have to actually 
+   * In a very evil fashion, you have to actually
    *  know this to make sense of character and
    *  paragraph properties :(
    * @param bytePos The character offset to check about
@@ -162,12 +161,12 @@ public class TextPieceTable
   public boolean isUnicodeAtByteOffset(int bytePos) {
 	  boolean lastWas = false;
 	  int curByte = 0;
-	  
+
 	  Iterator it = _textPieces.iterator();
 	  while(it.hasNext()) {
 		  TextPiece tp = (TextPiece)it.next();
 		  int nextByte = curByte + tp.bytesLength();
-		  
+
 		  // If the text piece covers the character, all good
 		  if(curByte <= bytePos && nextByte >= bytePos) {
 			  return tp.isUnicode();
@@ -177,7 +176,7 @@ public class TextPieceTable
 		  // Move along
 		  curByte = nextByte;
 	  }
-	  
+
 	  // If they ask off the end, just go with the last one...
 	  return lastWas;
   }
@@ -234,10 +233,10 @@ public class TextPieceTable
     int size = _textPieces.size();
 
     TextPiece tp = (TextPiece)_textPieces.get(listIndex);
-    
+
     // Update with the new end
     tp.setEnd(tp.getEnd() + length);
-    
+
     // Now change all subsequent ones
     for (int x = listIndex + 1; x < size; x++)
     {
@@ -245,7 +244,7 @@ public class TextPieceTable
       tp.setStart(tp.getStart() + length);
       tp.setEnd(tp.getEnd() + length);
     }
-    
+
     // All done
     return length;
   }

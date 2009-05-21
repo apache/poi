@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -30,7 +27,7 @@ import org.apache.poi.hslf.model.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSlideOrdering extends TestCase {
+public final class TestSlideOrdering extends TestCase {
 	// Simple slideshow, record order matches slide order
 	private SlideShow ssA;
 	// Complex slideshow, record order doesn't match slide order
@@ -38,11 +35,11 @@ public class TestSlideOrdering extends TestCase {
 
     public TestSlideOrdering() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
-		
+
 		String filenameA = dirname + "/basic_test_ppt_file.ppt";
 		HSLFSlideShow hssA = new HSLFSlideShow(filenameA);
 		ssA = new SlideShow(hssA);
-		
+
 		String filenameB = dirname + "/incorrect_slide_order.ppt";
 		HSLFSlideShow hssB = new HSLFSlideShow(filenameB);
 		ssB = new SlideShow(hssB);
@@ -53,15 +50,15 @@ public class TestSlideOrdering extends TestCase {
      */
     public void testSimpleCase() throws Exception {
     	assertEquals(2, ssA.getSlides().length);
-    	
+
     	Slide s1 = ssA.getSlides()[0];
     	Slide s2 = ssA.getSlides()[1];
-    	
+
     	String[] firstTRs = new String[] {
     			"This is a test title",
     			"This is the title on page 2"
     	};
-    	
+
     	assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
     	assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
     }
@@ -71,17 +68,17 @@ public class TestSlideOrdering extends TestCase {
      */
     public void testComplexCase() throws Exception {
     	assertEquals(3, ssB.getSlides().length);
-    	
+
     	Slide s1 = ssB.getSlides()[0];
     	Slide s2 = ssB.getSlides()[1];
     	Slide s3 = ssB.getSlides()[2];
-    	
+
     	String[] firstTRs = new String[] {
     			"Slide 1",
     			"Slide 2",
     			"Slide 3"
     	};
-    	
+
     	assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
     	assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
     	assertEquals(firstTRs[2], s3.getTextRuns()[0].getText());

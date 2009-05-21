@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
@@ -35,15 +32,15 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * This class provides helper functions for determining if a
- *  PowerPoint document is Encrypted. 
+ *  PowerPoint document is Encrypted.
  * In future, it may also provide Encryption and Decryption
- *  functions, but first we'd need to figure out how 
+ *  functions, but first we'd need to figure out how
  *  PowerPoint encryption is really done!
  *
  * @author Nick Burch
  */
 
-public class EncryptedSlideShow
+public final class EncryptedSlideShow
 {
 	/**
 	 * Check to see if a HSLFSlideShow represents an encrypted
@@ -61,11 +58,11 @@ public class EncryptedSlideShow
 		} catch(FileNotFoundException fnfe) {
 			// Doesn't have encrypted properties
 		}
-		
+
 		// If they encrypted the document but not the properties,
 		//  it's harder.
 		// We need to see what the last record pointed to by the
-		//  first PersistPrtHolder is - if it's a 
+		//  first PersistPrtHolder is - if it's a
 		//  DocumentEncryptionAtom, then the file's Encrypted
 		DocumentEncryptionAtom dea = fetchDocumentEncryptionAtom(hss);
 		if(dea != null) {
@@ -73,23 +70,23 @@ public class EncryptedSlideShow
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return the DocumentEncryptionAtom for a HSLFSlideShow, or
 	 *  null if there isn't one.
 	 * @return a DocumentEncryptionAtom, or null if there isn't one
 	 */
 	public static DocumentEncryptionAtom fetchDocumentEncryptionAtom(HSLFSlideShow hss) {
-		// Will be the last Record pointed to by the 
+		// Will be the last Record pointed to by the
 		//  first PersistPrtHolder, if there is one
-		
+
 		CurrentUserAtom cua = hss.getCurrentUserAtom();
 		if(cua.getCurrentEditOffset() != 0) {
 			// Check it's not past the end of the file
 			if(cua.getCurrentEditOffset() > hss.getUnderlyingBytes().length) {
 				throw new CorruptPowerPointFileException("The CurrentUserAtom claims that the offset of last edit details are past the end of the file");
 			}
-			
+
 			// Grab the details of the UserEditAtom there
 			// If the record's messed up, we could AIOOB
 			Record r = null;
@@ -102,7 +99,7 @@ public class EncryptedSlideShow
 			if(r == null) { return null; }
 			if(! (r instanceof UserEditAtom)) { return null; }
 			UserEditAtom uea = (UserEditAtom)r;
-			
+
 			// Now get the PersistPtrHolder
 			Record r2 = Record.buildRecordAtOffset(
 					hss.getUnderlyingBytes(),
@@ -110,7 +107,7 @@ public class EncryptedSlideShow
 			);
 			if(! (r2 instanceof PersistPtrHolder)) { return null; }
 			PersistPtrHolder pph = (PersistPtrHolder)r2;
-			
+
 			// Now get the last record
 			int[] slideIds = pph.getKnownSlideIDs();
 			int maxSlideId = -1;
@@ -118,7 +115,7 @@ public class EncryptedSlideShow
 				if(slideIds[i] > maxSlideId) { maxSlideId = slideIds[i]; }
 			}
 			if(maxSlideId == -1) { return null; }
-			
+
 			int offset = (
 					(Integer)pph.getSlideLocationsLookup().get(
 							new Integer(maxSlideId)
@@ -127,13 +124,13 @@ public class EncryptedSlideShow
 					hss.getUnderlyingBytes(),
 					offset
 			);
-			
+
 			// If we have a DocumentEncryptionAtom, it'll be this one
 			if(r3 instanceof DocumentEncryptionAtom) {
 				return (DocumentEncryptionAtom)r3;
 			}
 		}
-		
+
 		return null;
 	}
 }

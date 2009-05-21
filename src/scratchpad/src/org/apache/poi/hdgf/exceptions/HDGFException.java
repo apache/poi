@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hdgf.exceptions;
 
 /**
@@ -23,7 +22,7 @@ package org.apache.poi.hdgf.exceptions;
  *
  * @author Yegor Kozlov
  */
-public class HDGFException extends RuntimeException {
+public final class HDGFException extends RuntimeException {
 
     public HDGFException() {
 	    super();

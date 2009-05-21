@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
@@ -31,10 +30,10 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 /**
  * String table containing the history of the last few revisions ("saves") of the document.
  * Read-only for the time being.
- * 
+ *
  * @author Daniel Noll
  */
-public class SavedByTable
+public final class SavedByTable
 {
   /**
    * A value that I don't know what it does, but is maintained for accuracy.

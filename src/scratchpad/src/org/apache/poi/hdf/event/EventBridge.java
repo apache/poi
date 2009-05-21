@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hdf.event;
 
 
@@ -27,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
 
 import java.util.ArrayList;
 
-public class EventBridge implements HDFLowLevelParsingListener
+public final class EventBridge implements HDFLowLevelParsingListener
 {
 
   private static int HEADER_EVEN_INDEX = 0;

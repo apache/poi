@@ -29,7 +29,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public class SlideMaster extends MasterSheet {
+public final class SlideMaster extends MasterSheet {
     private TextRun[] _runs;
 
     /**
@@ -64,7 +64,7 @@ public class SlideMaster extends MasterSheet {
 
     /**
      * Pickup a style attribute from the master.
-     * This is the "workhorse" which returns the default style attrubutes. 
+     * This is the "workhorse" which returns the default style attrubutes.
      */
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
 
@@ -111,7 +111,7 @@ public class SlideMaster extends MasterSheet {
     /**
      * Assign SlideShow for this slide master.
      * (Used interanlly)
-     */ 
+     */
     public void setSlideShow(SlideShow ss) {
         super.setSlideShow(ss);
 

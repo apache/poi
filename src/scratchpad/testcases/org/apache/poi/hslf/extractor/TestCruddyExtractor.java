@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.extractor;
 
@@ -29,7 +26,7 @@ import java.util.Vector;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestCruddyExtractor extends TestCase {
+public final class TestCruddyExtractor extends TestCase {
 	// Extractor primed on the test data
 	private QuickButCruddyTextExtractor te;
 	// All the text to be found in the file

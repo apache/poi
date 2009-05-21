@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hdf.extractor;
 
@@ -26,10 +23,10 @@ import java.util.*;
 /**
  * Comment me
  *
- * @author Ryan Ackley 
+ * @author Ryan Ackley
  */
 
-public class NewOleFile extends RandomAccessFile
+public final class NewOleFile extends RandomAccessFile
 {
     private byte[] LAOLA_ID_ARRAY = new byte[]{(byte)0xd0, (byte)0xcf, (byte)0x11,
                                                (byte)0xe0, (byte)0xa1, (byte)0xb1,

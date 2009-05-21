@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import org.apache.poi.hpbf.HPBFDocument;
 
 import junit.framework.TestCase;
 
-public class TestEscherParts extends TestCase {
+public final class TestEscherParts extends TestCase {
 	private String dir;
 
 	protected void setUp() throws Exception {
@@ -38,16 +39,16 @@ public class TestEscherParts extends TestCase {
 
 		EscherStm es = doc.getEscherStm();
 		EscherDelayStm eds = doc.getEscherDelayStm();
-		
+
 		assertNotNull(es);
 		assertNotNull(eds);
-		
+
 		assertEquals(13, es.getEscherRecords().length);
 		assertEquals(0, eds.getEscherRecords().length);
-		
+
 		// TODO - check the contents
 	}
-	
+
 	public void testComplex() throws Exception {
 		File f = new File(dir, "SampleBrochure.pub");
 		HPBFDocument doc = new HPBFDocument(
@@ -56,16 +57,16 @@ public class TestEscherParts extends TestCase {
 
 		EscherStm es = doc.getEscherStm();
 		EscherDelayStm eds = doc.getEscherDelayStm();
-		
+
 		assertNotNull(es);
 		assertNotNull(eds);
-		
+
 		assertEquals(30, es.getEscherRecords().length);
 		assertEquals(19, eds.getEscherRecords().length);
-		
+
 		// TODO - check contents
-		
-		
+
+
 		// Now do another complex file
 		f = new File(dir, "SampleNewsletter.pub");
 		doc = new HPBFDocument(
@@ -74,10 +75,10 @@ public class TestEscherParts extends TestCase {
 
 		es = doc.getEscherStm();
 		eds = doc.getEscherDelayStm();
-		
+
 		assertNotNull(es);
 		assertNotNull(eds);
-		
+
 		assertEquals(51, es.getEscherRecords().length);
 		assertEquals(92, eds.getEscherRecords().length);
 	}

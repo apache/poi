@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -34,7 +35,7 @@ import java.util.Arrays;
  * </p>
  * @author Yegor Kozlov
  */
-public class Freeform extends AutoShape {
+public final class Freeform extends AutoShape {
 
     public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
@@ -109,7 +110,7 @@ public class Freeform extends AutoShape {
                     segInfo.add(SEGMENTINFO_ESCAPE2);
                     break;
                 case PathIterator.SEG_QUADTO:
-                    //TODO: figure out how to convert SEG_QUADTO into SEG_CUBICTO  
+                    //TODO: figure out how to convert SEG_QUADTO into SEG_CUBICTO
                     logger.log(POILogger.WARN, "SEG_QUADTO is not supported");
                     break;
                 case PathIterator.SEG_CLOSE:

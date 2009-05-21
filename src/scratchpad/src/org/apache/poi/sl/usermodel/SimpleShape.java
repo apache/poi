@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.sl.usermodel;
 
 public interface SimpleShape extends Shape {
 	public Fill getFill();
 	public LineStyle getLineStyle();
-	
+
 	public Hyperlink getHyperlink();
 	public void setHyperlink(Hyperlink hyperlink);
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -41,7 +40,7 @@ import java.util.Arrays;
  *
  * @author Ryan Ackley
  */
-public class PAPFormattedDiskPage extends FormattedDiskPage
+public final class PAPFormattedDiskPage extends FormattedDiskPage
 {
 
     private static final int BX_SIZE = 13;
@@ -69,7 +68,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
          int endAt = getEnd(x) - fcMin;
     	 boolean isUnicode = tpt.isUnicodeAtByteOffset(startAt);
          //System.err.println(startAt + " -> " + endAt + " = " + isUnicode);
-    	 
+
          _papxList.add(new PAPX(startAt, endAt, getGrpprl(x), getParagraphHeight(x), dataStream, isUnicode));
       }
       _fkp = null;

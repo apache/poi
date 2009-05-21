@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
-
 
 package org.apache.poi.hslf.dev;
 
@@ -37,7 +34,7 @@ import java.util.Hashtable;
  *  persistence related atoms. Tries to match them together, to help
  *  illuminate quite what all the offsets mean
  */
-public class UserEditAndPersistListing {
+public final class UserEditAndPersistListing {
 	private static byte[] fileContents;
 
 	public static void main(String[] args) throws Exception {
@@ -122,7 +119,7 @@ public class UserEditAndPersistListing {
 		CurrentUserAtom cua = ss.getCurrentUserAtom();
 		System.out.println("Checking Current User Atom");
 		System.out.println("  Thinks the CurrentEditOffset is " + cua.getCurrentEditOffset());
-		
+
 		System.out.println("");
 	}
 
@@ -133,7 +130,7 @@ public class UserEditAndPersistListing {
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 
 		Record r = Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
-		
+
 		return r;
 	}
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +31,7 @@ import java.io.*;
  *
  * @author Yegor Kozlov
  */
-public class DataExtraction {
+public final class DataExtraction {
 
     public static void main(String args[]) throws Exception {
 
@@ -75,7 +74,7 @@ public class DataExtraction {
                     } else if ("Document".equals(name)) {
                         HWPFDocument doc = new HWPFDocument(data.getData());
                         //read the word document
-                        Range r = doc.getRange();    	
+                        Range r = doc.getRange();
                         for(int k = 0; k < r.numParagraphs(); k++) {
                             Paragraph p = r.getParagraph(k);
                             System.out.println(p.text());

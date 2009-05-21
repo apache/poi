@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
@@ -24,10 +24,10 @@ import java.awt.*;
 
 /**
  * Represents a cell in a ppt table
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TableCell extends TextBox {
+public final class TableCell extends TextBox {
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 

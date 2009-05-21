@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  *  - figure out how to match notes to their correct sheet
  *    (will involve understanding DocSlideList and DocNotesList)
  *  - handle Slide creation cleaner
- * 
+ *
  * @author Nick Burch
  * @author Yegor kozlov
  */
@@ -80,15 +80,15 @@ public final class SlideShow {
   // For logging
     private POILogger logger = POILogFactory.getLogger(this.getClass());
 
-  
+
   /* ===============================================================
    *                       Setup Code
    * ===============================================================
    */
-  
+
 
   /**
-   * Constructs a Powerpoint document from the underlying 
+   * Constructs a Powerpoint document from the underlying
    * HSLFSlideShow object. Finds the model stuff from this
    *
    * @param hslfSlideShow the HSLFSlideShow to base on
@@ -97,7 +97,7 @@ public final class SlideShow {
 	// Get useful things from our base slideshow
     _hslfSlideShow = hslfSlideShow;
 	_records = _hslfSlideShow.getRecords();
-	
+
 	// Handle Parent-aware Reocrds
 	for(int i=0; i<_records.length; i++) {
 		handleParentAwareRecords(_records[i]);
@@ -105,11 +105,11 @@ public final class SlideShow {
 
 	// Find the versions of the core records we'll want to use
 	findMostRecentCoreRecords();
-	
+
 	// Build up the model level Slides and Notes
 	buildSlidesAndNotes();
   }
-  
+
   /**
    * Constructs a new, empty, Powerpoint document.
    */
@@ -133,7 +133,7 @@ public final class SlideShow {
 	  if(baseRecord instanceof RecordContainer) {
 		RecordContainer br = (RecordContainer)baseRecord;
 		Record[] childRecords = br.getChildRecords();
-		
+
 		// Loop over child records, looking for interesting ones
 		for(int i=0; i<childRecords.length; i++) {
 			Record record = childRecords[i];
@@ -164,14 +164,14 @@ public final class SlideShow {
 		if(_records[i] instanceof PersistPtrHolder) {
 			PersistPtrHolder pph = (PersistPtrHolder)_records[i];
 
-			// If we've already seen any of the "slide" IDs for this 
+			// If we've already seen any of the "slide" IDs for this
 			//  PersistPtr, remove their old positions
 			int[] ids = pph.getKnownSlideIDs();
 			for(int j=0; j<ids.length; j++) {
 				Integer id = new Integer(ids[j]);
 				if( mostRecentByBytes.containsKey(id)) {
 					mostRecentByBytes.remove(id);
-				}	
+				}
 			}
 
 			// Now, update the byte level locations with their latest values
@@ -186,7 +186,7 @@ public final class SlideShow {
 	// We now know how many unique special records we have, so init
 	//  the array
 	_mostRecentCoreRecords = new Record[mostRecentByBytes.size()];
-	
+
 	// We'll also want to be able to turn the slide IDs into a position
 	//  in this array
 	_sheetIdToCoreRecordsLookup = new Hashtable();
@@ -214,24 +214,24 @@ public final class SlideShow {
 
 				if(thatRecordAt.equals(recordAt)) {
 					// Bingo. Now, where do we store it?
-					Integer storeAtI = 
+					Integer storeAtI =
 						(Integer)_sheetIdToCoreRecordsLookup.get(thisID);
 					int storeAt = storeAtI.intValue();
-					
+
 					// Tell it its Sheet ID, if it cares
 					if(pdr instanceof PositionDependentRecordContainer) {
-						PositionDependentRecordContainer pdrc = 
+						PositionDependentRecordContainer pdrc =
 							(PositionDependentRecordContainer)_records[i];
 						pdrc.setSheetId(thisID.intValue());
 					}
-					
+
 					// Finally, save the record
 					_mostRecentCoreRecords[storeAt] = _records[i];
 				}
 			}
 		}
 	}
-	
+
 	// Now look for the interesting records in there
 	for(int i=0; i<_mostRecentCoreRecords.length; i++) {
 		// Check there really is a record at this number
@@ -247,7 +247,7 @@ public final class SlideShow {
 		}
 	}
   }
-  
+
   	/**
   	 * For a given SlideAtomsSet, return the core record, based on the refID from the
   	 *  SlidePersistAtom
@@ -257,7 +257,7 @@ public final class SlideShow {
 		int refID = spa.getRefID();
 		return getCoreRecordForRefID(refID);
 	}
-  
+
 	/**
    	 * For a given refID (the internal, 0 based numbering scheme), return the
 	 *  core record
@@ -302,7 +302,7 @@ public final class SlideShow {
 	// Having indentified the masters, slides and notes + their orders,
 	//  we have to go and find their matching records
 	// We always use the latest versions of these records, and use the
-	//  SlideAtom/NotesAtom to match them with the StyleAtomSet 
+	//  SlideAtom/NotesAtom to match them with the StyleAtomSet
 
 	SlideListWithText masterSLWT = _documentRecord.getMasterSlideListWithText();
 	SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
@@ -354,7 +354,7 @@ public final class SlideShow {
 	Hashtable slideIdToNotes = new Hashtable();
 	if(notesSLWT == null) {
 		// None
-		notesRecords = new org.apache.poi.hslf.record.Notes[0]; 
+		notesRecords = new org.apache.poi.hslf.record.Notes[0];
 	} else {
 		// Match up the records and the SlideAtomSets
 		notesSets = notesSLWT.getSlideAtomsSets();
@@ -380,13 +380,13 @@ public final class SlideShow {
 		notesRecords = (org.apache.poi.hslf.record.Notes[])
 			notesRecordsL.toArray(notesRecords);
 	}
-	
+
 	// Now, do the same thing for our slides
 	org.apache.poi.hslf.record.Slide[] slidesRecords;
 	SlideAtomsSet[] slidesSets = new SlideAtomsSet[0];
 	if(slidesSLWT == null) {
 		// None
-		slidesRecords = new org.apache.poi.hslf.record.Slide[0]; 
+		slidesRecords = new org.apache.poi.hslf.record.Slide[0];
 	} else {
 		// Match up the records and the SlideAtomSets
 		slidesSets = slidesSLWT.getSlideAtomsSets();
@@ -394,7 +394,7 @@ public final class SlideShow {
 		for(int i=0; i<slidesSets.length; i++) {
 			// Get the right core record
 			Record r = getCoreRecordForSAS(slidesSets[i]);
-			
+
 			// Ensure it really is a slide record
 			if(r instanceof org.apache.poi.hslf.record.Slide) {
 				slidesRecords[i] = (org.apache.poi.hslf.record.Slide)r;
@@ -403,7 +403,7 @@ public final class SlideShow {
 			}
 		}
 	}
-	
+
 	// Finally, generate model objects for everything
 	// Notes first
 	_notes = new Notes[notesRecords.length];
@@ -449,7 +449,7 @@ public final class SlideShow {
     *                       Accessor Code
     * ===============================================================
     */
-   
+
 
 	/**
 	 * Returns an array of the most recent version of all the interesting
@@ -506,10 +506,10 @@ public final class SlideShow {
 		int pgy = (int)docatom.getSlideSizeY()*Shape.POINT_DPI/Shape.MASTER_DPI;
 		return new Dimension(pgx, pgy);
 	}
-	
+
 	/**
 	 * Change the current page size
-	 * 
+	 *
 	 * @param pgsize page size (in points)
 	 */
 	public void setPageSize(Dimension pgsize){
@@ -517,7 +517,7 @@ public final class SlideShow {
 		docatom.setSlideSizeX(pgsize.width*Shape.MASTER_DPI/Shape.POINT_DPI);
 		docatom.setSlideSizeY(pgsize.height*Shape.MASTER_DPI/Shape.POINT_DPI);
 	}
-	
+
 	/**
 	 * Helper method for usermodel: Get the font collection
 	 */
@@ -527,13 +527,13 @@ public final class SlideShow {
 	 */
 	public Document getDocumentRecord() { return _documentRecord; }
 
-	
+
 	/* ===============================================================
 	 *                       Re-ordering Code
 	 * ===============================================================
 	 */
-	   
-	
+
+
 	/**
 	 * Re-orders a slide, to a new position.
 	 * @param oldSlideNumber The old slide number (1 based)
@@ -612,7 +612,7 @@ public final class SlideShow {
 	 *                       Addition Code
 	 * ===============================================================
 	 */
-	   
+
 
 	/**
 	 * Create a blank <code>Slide</code>.

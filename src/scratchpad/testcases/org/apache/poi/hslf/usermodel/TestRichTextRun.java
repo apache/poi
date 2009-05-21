@@ -37,7 +37,7 @@ import org.apache.poi.hslf.record.SlideListWithText;
  * (model.TestTextRun tests the other functionality)
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRichTextRun extends TestCase {
+public final class TestRichTextRun extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 	private SlideShow ssRichA;

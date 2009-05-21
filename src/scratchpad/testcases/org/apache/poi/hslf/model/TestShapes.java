@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
  *
  * @author Yegor Kozlov
  */
-public class TestShapes extends TestCase {
+public final class TestShapes extends TestCase {
     private SlideShow ppt;
     private SlideShow pptB;
 
@@ -44,7 +45,7 @@ public class TestShapes extends TestCase {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/empty.ppt";
 		ppt = new SlideShow(new HSLFSlideShow(filename));
-		
+
 		String filenameB = dirname + "/empty_textbox.ppt";
 		pptB = new SlideShow(new HSLFSlideShow(filenameB));
     }
@@ -166,7 +167,7 @@ public class TestShapes extends TestCase {
 
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
         sl = ppt.getSlides()[0];
-        
+
         txtbox = (TextBox)sl.getShapes()[0];
         rt = txtbox.getTextRun().getRichTextRuns()[0];
 
@@ -179,7 +180,7 @@ public class TestShapes extends TestCase {
         assertEquals("Arial", rt.getFontName());
         assertEquals(Color.red, rt.getFontColor());
     }
-    
+
     /**
      * Test with an empty text box
      */
@@ -187,7 +188,7 @@ public class TestShapes extends TestCase {
     	assertEquals(2, pptB.getSlides().length);
     	Slide s1 = pptB.getSlides()[0];
     	Slide s2 = pptB.getSlides()[1];
-    	
+
     	// Check we can get the shapes count
     	assertEquals(2, s1.getShapes().length);
     	assertEquals(2, s2.getShapes().length);

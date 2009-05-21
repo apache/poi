@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
@@ -33,7 +34,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public class TestSheet extends TestCase{
+public final class TestSheet extends TestCase{
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
@@ -44,7 +45,7 @@ public class TestSheet extends TestCase{
         for (int i = 0; i < files.length; i++) {
             if(!files[i].getName().endsWith(".ppt")) continue;
             if(files[i].getName().endsWith("PPT95.ppt")) continue;
-            
+
             try {
                 FileInputStream is = new FileInputStream(files[i]);
                 HSLFSlideShow hslf = new HSLFSlideShow(is);

@@ -23,39 +23,39 @@ abstract public class Chunk {
 	protected int chunkId;
 	protected int type;
 	protected String namePrefix = "__substg1.0_";
-	
+
 	/**
 	 * Gets the id of this chunk
 	 */
 	public int getChunkId() {
 		return this.chunkId;
 	}
-	
+
 	/**
 	 * Gets the numeric type of this chunk.
 	 */
 	public int getType() {
 		return this.type;
 	}
-	
+
 	/**
 	 * Creates a string to use to identify this chunk in the POI file system object.
 	 */
 	public String getEntryName() {
 		String type = Integer.toHexString(this.type);
 		while(type.length() < 4) type = "0" + type;
-		
+
 		String chunkId = Integer.toHexString(this.chunkId);
 		while(chunkId.length() < 4) chunkId = "0" + chunkId;
-		
+
 		return this.namePrefix + chunkId.toUpperCase() + type.toUpperCase();
 	}
-	
+
 	/**
 	 * Gets a reference to a ByteArrayOutputStream that contains the value of this chunk.
 	 */
 	public abstract ByteArrayOutputStream getValueByteArray();
-	
+
 	/**
 	 * Sets the value of this chunk using a OutputStream
 	 * @param value

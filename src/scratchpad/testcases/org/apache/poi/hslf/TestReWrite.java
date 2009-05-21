@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
@@ -33,7 +30,7 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestReWrite extends TestCase {
+public final class TestReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow hssA;
 	private HSLFSlideShow hssB;
@@ -45,17 +42,17 @@ public class TestReWrite extends TestCase {
 
     public void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
-		
+
 		String filenameA = dirname + "/basic_test_ppt_file.ppt";
 		FileInputStream fisA = new FileInputStream(filenameA);
 		pfsA = new POIFSFileSystem(fisA);
 		hssA = new HSLFSlideShow(pfsA);
-		
+
 		String filenameB = dirname + "/ParagraphStylesShorterThanCharStyles.ppt";
 		FileInputStream fisB = new FileInputStream(filenameB);
 		pfsB = new POIFSFileSystem(fisB);
 		hssB = new HSLFSlideShow(pfsB);
-		
+
 		String filenameC = dirname + "/WithMacros.ppt";
 		FileInputStream fisC = new FileInputStream(filenameC);
 		pfsC = new POIFSFileSystem(fisC);
@@ -92,27 +89,27 @@ public class TestReWrite extends TestCase {
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
-    
+
     public void testWithMacroStreams() throws Exception {
     	// Check that they're apparently the same
     	assertSlideShowWritesOutTheSame(hssC, pfsC);
-    	
+
     	// Currently has a Macros stream
     	assertNotNull( pfsC.getRoot().getEntry("Macros") );
-    	
+
     	// Write out normally, will loose the macro stream
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	hssC.write(baos);
     	POIFSFileSystem pfsNew = new POIFSFileSystem(
     			new ByteArrayInputStream(baos.toByteArray()) );
-    	
+
     	try {
     		pfsNew.getRoot().getEntry("Macros");
     		fail();
     	} catch(FileNotFoundException e) {
     		// Good, as expected
     	}
-    	
+
     	// But if we write out with nodes preserved, will be there
     	baos = new ByteArrayOutputStream();
     	hssC.write(baos, true);
@@ -123,11 +120,11 @@ public class TestReWrite extends TestCase {
 
     /**
      * Ensure that simply opening a slideshow (usermodel) view of it
-     *  doesn't change things 
+     *  doesn't change things
      */
     public void testSlideShowWritesOutTheSame() throws Exception {
     	assertSlideShowWritesOutTheSame(hssA, pfsA);
-    	
+
     	// Some bug in StyleTextPropAtom rewriting means this will fail
     	// We need to identify and fix that first
     	//assertSlideShowWritesOutTheSame(hssB, pfsB);
@@ -137,7 +134,7 @@ public class TestReWrite extends TestCase {
     	SlideShow ss = new SlideShow(hss);
     	ss.getSlides();
     	ss.getNotes();
-    	
+
 		// Now write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		hss.write(baos);

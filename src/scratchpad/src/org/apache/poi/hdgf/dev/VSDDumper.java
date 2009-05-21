@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.dev;
 
 import java.io.FileInputStream;
@@ -31,27 +32,27 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Developer helper class to dump out the pointer+stream structure
  *  of a Visio file
  */
-public class VSDDumper {
+public final class VSDDumper {
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("  VSDDumper <filename>");
 			System.exit(1);
 		}
-		
+
 		HDGFDiagram hdgf = new HDGFDiagram(
 				new POIFSFileSystem(new FileInputStream(args[0]))
 		);
-		
+
 		System.out.println("Opened " + args[0]);
 		System.out.println("The document claims a size of " +
-				hdgf.getDocumentSize() + "   (" + 
+				hdgf.getDocumentSize() + "   (" +
 				Long.toHexString(hdgf.getDocumentSize()) + ")");
 		System.out.println();
-		
+
 		dumpStream(hdgf.getTrailerStream(), 0);
 	}
-	
+
 	public static void dumpStream(Stream stream, int indent) {
 		String ind = "";
 		for(int i=0; i<indent; i++) {
@@ -59,8 +60,8 @@ public class VSDDumper {
 		}
 		String ind2 = ind  + "    ";
 		String ind3 = ind2 + "    ";
-		
-		
+
+
 		Pointer ptr = stream.getPointer();
 		System.out.println(ind + "Stream at\t" + ptr.getOffset() +
 				" - " + Integer.toHexString(ptr.getOffset()));
@@ -77,7 +78,7 @@ public class VSDDumper {
 		}
 		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
 		System.out.println(ind + "  Stream is\t" + stream.getClass().getName());
-		
+
 		byte[] db = stream._getStore()._getContents();
 		String ds = "";
 		if(db.length >= 8) {
@@ -87,12 +88,12 @@ public class VSDDumper {
 			}
 		}
 		System.out.println(ind + "  First few bytes are\t" + ds);
-		
+
 		if(stream instanceof PointerContainingStream) {
 			PointerContainingStream pcs = (PointerContainingStream)stream;
-			System.out.println(ind + "  Has " + 
+			System.out.println(ind + "  Has " +
 					pcs.getPointedToStreams().length + " children:");
-			
+
 			for(int i=0; i<pcs.getPointedToStreams().length; i++) {
 				dumpStream(pcs.getPointedToStreams()[i], (indent+1));
 			}
@@ -101,7 +102,7 @@ public class VSDDumper {
 			ChunkStream cs = (ChunkStream)stream;
 			System.out.println(ind + "  Has " + cs.getChunks().length +
 					" chunks:");
-			
+
 			for(int i=0; i<cs.getChunks().length; i++) {
 				Chunk chunk = cs.getChunks()[i];
 				System.out.println(ind2 + "" + chunk.getName());
@@ -111,7 +112,7 @@ public class VSDDumper {
 				System.out.println(ind2 + "  Holds " + chunk.getCommands().length + " commands");
 				for(int j=0; j<chunk.getCommands().length; j++) {
 					Command command = chunk.getCommands()[j];
-					System.out.println(ind3 + "" + 
+					System.out.println(ind3 + "" +
 							command.getDefinition().getName() +
 							" " + command.getValue()
 					);

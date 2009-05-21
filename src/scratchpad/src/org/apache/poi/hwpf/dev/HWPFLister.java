@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.dev;
 
 import java.io.FileInputStream;
@@ -26,25 +27,25 @@ import org.apache.poi.hwpf.model.FileInformationBlock;
  *  HWPF file. End users will probably never need to
  *  use this program.
  */
-public class HWPFLister {
+public final class HWPFLister {
 	private HWPFDocument doc;
 	public HWPFLister(HWPFDocument doc) {
 		this.doc = doc;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("   HWPFLister <filename>");
 			System.exit(1);
 		}
-		
+
 		HWPFLister l = new HWPFLister(
 				new HWPFDocument(new FileInputStream(args[0]))
 		);
 		l.dumpFIB();
 	}
-	
+
 	public void dumpFIB() throws Exception {
 		FileInformationBlock fib = doc.getFileInformationBlock();
 		System.out.println(fib.toString());

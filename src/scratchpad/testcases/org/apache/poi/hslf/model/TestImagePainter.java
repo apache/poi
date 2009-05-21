@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import junit.framework.*;
@@ -31,10 +32,10 @@ import org.apache.poi.ddf.EscherBSERecord;
 
 /**
  * Test Picture shape.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestImagePainter extends TestCase {
+public final class TestImagePainter extends TestCase {
 
     private static class CustomImagePainer implements ImagePainter{
         public void paint(Graphics2D graphics, PictureData pict, Picture parent){

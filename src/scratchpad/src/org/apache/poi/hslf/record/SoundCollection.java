@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.POILogger;
@@ -28,7 +29,7 @@ import java.io.IOException;
  *
  * @author Yegor Kozlov
  */
-public class SoundCollection extends RecordContainer {
+public final class SoundCollection extends RecordContainer {
     /**
      * Record header data.
      */

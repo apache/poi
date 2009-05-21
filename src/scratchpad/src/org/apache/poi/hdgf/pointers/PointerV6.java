@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.pointers;
 
 /**
- * A Pointer from v6+ 
+ * A Pointer from v6+
  */
-public class PointerV6 extends Pointer {
+public final class PointerV6 extends Pointer {
 	public boolean destinationHasStrings() {
 		return (0x40 <= format && format < 0x50);
 	}
@@ -31,12 +32,12 @@ public class PointerV6 extends Pointer {
 	public boolean destinationHasChunks() {
 		return (0xd0 <= format && format < 0xdf);
 	}
-	
+
 	public boolean destinationCompressed() {
 		// Apparently, it's the second least significant bit
 		return (format & 2) > 0;
 	}
-	
+
 	/**
 	 * With v6 pointers, the on-disk size is 18 bytes
 	 */

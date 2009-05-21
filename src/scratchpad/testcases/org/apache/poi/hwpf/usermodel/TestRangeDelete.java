@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -7,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-	   http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +28,12 @@ import org.apache.poi.hwpf.model.PAPX;
  *	Test to see if Range.delete() works even if the Range contains a
  *	CharacterRun that uses Unicode characters.
  */
-public class TestRangeDelete extends TestCase {
+public final class TestRangeDelete extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
-	private String introText = 
+	private String introText =
 		"Introduction\r";
-	private String fillerText = 
+	private String fillerText =
 		"${delete} This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
 	private String originalText =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} ${delete} and all the POI contributors for their assistance in this matter.\r";
@@ -78,48 +77,48 @@ public class TestRangeDelete extends TestCase {
 		range = daDoc.getOverallRange();
 		assertEquals(1, range.numSections());
 		assertEquals(5, range.numParagraphs());
-		
-		
+
+
 		// Now, onto just the doc bit
 		range = daDoc.getRange();
 
 		assertEquals(1, range.numSections());
 		assertEquals(1, daDoc.getSectionTable().getSections().size());
 		section = range.getSection(0);
-		
+
 		assertEquals(5, section.numParagraphs());
-		
+
 		para = section.getParagraph(0);
 		assertEquals(1, para.numCharacterRuns());
 		assertEquals(introText, para.text());
-		
+
 		para = section.getParagraph(1);
 		assertEquals(5, para.numCharacterRuns());
 		assertEquals(fillerText, para.text());
-		
-		
+
+
 		paraDef = (PAPX)daDoc.getParagraphTable().getParagraphs().get(2);
 		assertEquals(132, paraDef.getStart());
 		assertEquals(400, paraDef.getEnd());
-		
+
 		para = section.getParagraph(2);
 		assertEquals(5, para.numCharacterRuns());
 		assertEquals(originalText, para.text());
-		
-		
+
+
 		paraDef = (PAPX)daDoc.getParagraphTable().getParagraphs().get(3);
 		assertEquals(400, paraDef.getStart());
 		assertEquals(438, paraDef.getEnd());
-		
+
 		para = section.getParagraph(3);
 		assertEquals(1, para.numCharacterRuns());
 		assertEquals(lastText, para.text());
-		
-		
+
+
 		// Check things match on text length
 		assertEquals(439, range.text().length());
 		assertEquals(439, section.text().length());
-		assertEquals(439, 
+		assertEquals(439,
 				section.getParagraph(0).text().length() +
 				section.getParagraph(1).text().length() +
 				section.getParagraph(2).text().length() +

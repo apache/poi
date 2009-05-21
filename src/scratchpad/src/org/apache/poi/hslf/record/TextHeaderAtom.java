@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -31,7 +29,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
+public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 {
 	private byte[] _header;
 	private static long _type = 3999l;
@@ -51,13 +49,13 @@ public class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 
 	public int getTextType() { return textType; }
 	public void setTextType(int type) { textType = type; }
-	
+
 	public RecordContainer getParentRecord() { return parentRecord; }
-	public void setParentRecord(RecordContainer record) { this.parentRecord = record; } 
+	public void setParentRecord(RecordContainer record) { this.parentRecord = record; }
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the TextHeader Atom
 	 */
 	protected TextHeaderAtom(byte[] source, int start, int len) {
@@ -76,7 +74,7 @@ public class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 		// Grab the type
 		textType = (int)LittleEndian.getInt(source,start+8);
 	}
-	
+
 	/**
 	 * Create a new TextHeader Atom, for an unknown type of text
 	 */

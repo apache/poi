@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -41,7 +40,7 @@ import org.apache.poi.hslf.model.textproperties.*;
  *
  *  @author Yegor Kozlov
  */
-public class TxMasterStyleAtom extends RecordAtom {
+public final class TxMasterStyleAtom extends RecordAtom {
 
     /**
      * Maximum number of indentatio levels allowed in PowerPoint documents
@@ -116,7 +115,7 @@ public class TxMasterStyleAtom extends RecordAtom {
      * Must be a constant defined in <code>TextHeaderAtom</code>
      *
      * @return type of the text
-     * @see TextHeaderAtom 
+     * @see TextHeaderAtom
      */
     public int getTextType(){
         //The atom instance value is the text type

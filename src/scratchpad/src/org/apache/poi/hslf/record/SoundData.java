@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class SoundData extends RecordAtom {
+public final class SoundData extends RecordAtom {
 
     /**
      * Record header.
@@ -74,7 +74,7 @@ public class SoundData extends RecordAtom {
     /**
      * Returns the sound data.
      *
-     * @return the sound data 
+     * @return the sound data
      */
     public byte[] getData() {
         return _data;

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class PlexOfCps
+public final class PlexOfCps
 {
   private int _count;
   private int _offset;
@@ -56,7 +55,7 @@ public class PlexOfCps
   {
 	// Figure out the number we hold
     _count = (size - 4)/(4 + sizeOfStruct);
-    
+
     _sizeOfStruct = sizeOfStruct;
     _props = new ArrayList(_count);
 

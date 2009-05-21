@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,8 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
@@ -34,7 +31,7 @@ import java.util.Hashtable;
  *  in them, and displays them, so you can try to guess what they
  *  all mean
  */
-public class SlideIdListing {
+public final class SlideIdListing {
 	private static byte[] fileContents;
 
 	public static void main(String[] args) throws Exception {
@@ -47,12 +44,12 @@ public class SlideIdListing {
 		// Create the slideshow object, for normal working with
 		HSLFSlideShow hss = new HSLFSlideShow(args[0]);
 		SlideShow ss = new SlideShow(hss);
-		
+
 		// Grab the base contents
 		fileContents = hss.getUnderlyingBytes();
 		Record[] records = hss.getRecords();
 		Record[] latestRecords = ss.getMostRecentCoreRecords();
-		
+
 		// Grab any records that interest us
 		Document document = null;
 		for(int i=0; i<latestRecords.length; i++) {
@@ -60,10 +57,10 @@ public class SlideIdListing {
 				document = (Document)latestRecords[i];
 			}
 		}
-		
+
 		System.out.println("");
-		
-		
+
+
 		// Look for SlidePersistAtoms, and report what they have to
 		//  say about possible slide IDs
 		SlideListWithText[] slwts = document.getSlideListWithTexts();
@@ -78,9 +75,9 @@ public class SlideIdListing {
 				}
 			}
 		}
-		
+
 		System.out.println("");
-		
+
 		// Look for latest core records that are slides or notes
 		for(int i=0; i<latestRecords.length; i++) {
 			if(latestRecords[i] instanceof Slide) {
@@ -108,7 +105,7 @@ public class SlideIdListing {
 		}
 
 		System.out.println("");
-		
+
 		// Find any persist ones first
 		int pos = 0;
 		for(int i=0; i<records.length; i++) {
@@ -159,7 +156,7 @@ public class SlideIdListing {
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 
 		Record r = Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
-		
+
 		return r;
 	}
 }

@@ -20,7 +20,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.record.Comment2000;
 
 /**
- * 
+ *
  * @author Nick Burch
  */
 public final class Comment {

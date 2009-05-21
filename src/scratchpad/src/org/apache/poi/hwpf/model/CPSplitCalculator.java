@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -23,12 +24,12 @@ import org.apache.poi.hwpf.HWPFDocument;
  *  where different kinds of text can be found within the
  *  overall CP splurge.
  */
-public class CPSplitCalculator {
+public final class CPSplitCalculator {
 	private FileInformationBlock fib;
 	public CPSplitCalculator(FileInformationBlock fib) {
 		this.fib = fib;
 	}
-	
+
 	/**
 	 * Where the main document text starts. Always 0.
 	 */
@@ -36,13 +37,13 @@ public class CPSplitCalculator {
 		return 0;
 	}
 	/**
-	 * Where the main document text ends. 
+	 * Where the main document text ends.
 	 * Given by FibRgLw97.ccpText
 	 */
 	public int getMainDocumentEnd() {
 		return fib.getCcpText();
 	}
-	
+
 	/**
 	 * Where the Footnotes text starts.
 	 * Follows straight on from the main text.
@@ -58,7 +59,7 @@ public class CPSplitCalculator {
 		return getFootnoteStart() +
 			fib.getCcpFtn();
 	}
-	
+
 	/**
 	 * Where the "Header Story" text starts.
 	 * Follows straight on from the footnotes.
@@ -74,7 +75,7 @@ public class CPSplitCalculator {
 		return getHeaderStoryStart() +
 			fib.getCcpHdd();
 	}
-	
+
 	/**
 	 * Where the Comment (Atn) text starts.
 	 * Follows straight on from the header stories.
@@ -90,7 +91,7 @@ public class CPSplitCalculator {
 		return getCommentsStart() +
 			fib.getCcpCommentAtn();
 	}
-	
+
 	/**
 	 * Where the End Note text starts.
 	 * Follows straight on from the comments.
@@ -106,7 +107,7 @@ public class CPSplitCalculator {
 		return getEndNoteStart() +
 			fib.getCcpEdn();
 	}
-	
+
 	/**
 	 * Where the Main Textbox text starts.
 	 * Follows straight on from the end note.
@@ -122,7 +123,7 @@ public class CPSplitCalculator {
 		return getMainTextboxStart() +
 			fib.getCcpTxtBx();
 	}
-	
+
 	/**
 	 * Where the Header Textbox text starts.
 	 * Follows straight on from the main textbox.

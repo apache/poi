@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
@@ -29,13 +26,13 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 
 /**
- * Tests that the record setup done by SlideShow 
+ * Tests that the record setup done by SlideShow
  *  has worked correctly
  * Note: most recent record stuff has its own test
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRecordSetup extends TestCase {
+public final class TestRecordSetup extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 	private HSLFSlideShow hss;

@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.LittleEndian;
@@ -35,7 +34,7 @@ import java.io.IOException;
 /**
  * @author Ryan Ackley
  */
-public class ListTables
+public final class ListTables
 {
   private static final int LIST_DATA_SIZE = 28;
   private static final int LIST_FORMAT_OVERRIDE_SIZE = 16;
@@ -196,7 +195,7 @@ public class ListTables
     	ListLevel lvl = lst.getLevels()[level];
     	return lvl;
     } else {
-    	log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")"); 
+    	log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")");
     	return null;
     }
   }

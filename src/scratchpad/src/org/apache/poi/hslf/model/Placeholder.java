@@ -29,7 +29,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Yegor Kozlov
  */
-public class Placeholder extends TextBox {
+public final class Placeholder extends TextBox {
 
     protected Placeholder(EscherContainerRecord escherRecord, Shape parent){
         super(escherRecord, parent);

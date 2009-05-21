@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.sprm;
 
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
@@ -33,7 +31,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.util.ArrayList;
 
-public class ParagraphSprmUncompressor
+public final class ParagraphSprmUncompressor
   extends SprmUncompressor
 {
   public ParagraphSprmUncompressor()
