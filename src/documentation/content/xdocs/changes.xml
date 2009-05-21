@@ -37,6 +37,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47229 - Fixed ExternalNameRecord to handle DDE links</action>
            <action dev="POI-DEVELOPERS" type="add">46287 - Control of header and footer extraction in ExcelExtractor / XSSFExcelExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">46554 - New ant target "jar-examples"</action>
            <action dev="POI-DEVELOPERS" type="add">46161 - Support in XSSF for setGroupColumnCollapsed and setGroupRowCollapsed</action>

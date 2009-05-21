@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexRead;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 /**
@@ -101,5 +103,36 @@ public final class TestExternalNameRecord extends TestCase {
 		assertFalse(enr.isStdDocumentNameIdentifier());
 
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
+	}
+
+	public void testDDELink_bug47229() {
+		/**
+		 * Hex dump read directly from text of bugzilla 47229
+		 */
+		final byte[] dataDDE = HexRead.readFromString(
+				"E2 7F 00 00 00 00 " +
+				"37 00 " + // text len
+				// 010672AT0 MUNI,[RTG_MOODY_UNDERLYING,RTG_SP_UNDERLYING]
+				"30 31 30 36 37 32 41 54 30 20 4D 55 4E 49 2C " +
+				"5B 52 54 47 5F 4D 4F 4F 44 59 5F 55 4E 44 45 52 4C 59 49 4E 47 2C " +
+				"52 54 47 5F 53 50 5F 55 4E 44 45 52 4C 59 49 4E 47 5D " +
+				// constant array { { "#N/A N.A.", "#N/A N.A.", }, }
+				" 01 00 00 " +
+				"02 09 00 00 23 4E 2F 41 20 4E 2E 41 2E " +
+				"02 09 00 00 23 4E 2F 41 20 4E 2E 41 2E");
+		ExternalNameRecord enr;
+		try {
+			enr = createSimpleENR(dataDDE);
+		} catch (RecordFormatException e) {
+			// actual msg reported in bugzilla 47229 is different
+			// because that seems to be using a version from before svn r646666
+			if (e.getMessage().startsWith("Some unread data (is formula present?)")) {
+				throw new AssertionFailedError("Identified bug 47229 - failed to read ENR with OLE/DDE result data");
+			}
+			throw e;
+		}
+		assertEquals("010672AT0 MUNI,[RTG_MOODY_UNDERLYING,RTG_SP_UNDERLYING]", enr.getText());
+
+		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataDDE, enr.serialize());
 	}
 }

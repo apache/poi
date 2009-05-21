@@ -17,14 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
  * EXTERNALNAME (0x0023)<p/>
- * 
+ *
  * @author Josh Micich
  */
 public final class ExternalNameRecord extends StandardRecord {
@@ -32,7 +32,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	public final static short sid = 0x0023; // as per BIFF8. (some old versions used 0x223)
 
 	private static final int OPT_BUILTIN_NAME          = 0x0001;
-	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise 
+	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise
 	private static final int OPT_PICTURE_LINK          = 0x0004;
 	private static final int OPT_STD_DOCUMENT_NAME     = 0x0008;
 	private static final int OPT_OLE_LINK              = 0x0010;
@@ -45,6 +45,21 @@ public final class ExternalNameRecord extends StandardRecord {
 	private short  field_3_not_used;
 	private String field_4_name;
 	private Formula  field_5_name_definition;
+
+	/**
+	 * 'rgoper' / 'Last received results of the DDE link'
+	 * (seems to be only applicable to DDE links)<br/>
+	 * Logically this is a 2-D array, which has been flattened into 1-D array here.
+	 */
+	private Object[] _ddeValues;
+	/**
+	 * (logical) number of columns in the {@link #_ddeValues} array
+	 */
+	private int _nColumns;
+	/**
+	 * (logical) number of rows in the {@link #_ddeValues} array
+	 */
+	private int _nRows;
 
 	/**
 	 * Convenience Function to determine if the name is a built-in name
@@ -88,6 +103,11 @@ public final class ExternalNameRecord extends StandardRecord {
 			+ 2 + field_4_name.length(); // nameLen and name
 		if(hasFormula()) {
 			result += field_5_name_definition.getEncodedSize();
+		} else {
+			if (_ddeValues != null) {
+				result += 3; // byte, short
+				result += ConstantValueParser.getEncodedSize(_ddeValues);
+			}
 		}
 		return result;
 	}
@@ -101,6 +121,12 @@ public final class ExternalNameRecord extends StandardRecord {
 		StringUtil.putCompressedUnicode(field_4_name, out);
 		if (hasFormula()) {
 			field_5_name_definition.serialize(out);
+		} else {
+			if (_ddeValues != null) {
+				out.writeByte(_nColumns-1);
+				out.writeShort(_nRows-1);
+				ConstantValueParser.encode(out, _ddeValues);
+			}
 		}
 	}
 
@@ -112,6 +138,16 @@ public final class ExternalNameRecord extends StandardRecord {
 		short nameLength    = in.readShort();
 		field_4_name = in.readCompressedUnicode(nameLength);
 		if(!hasFormula()) {
+			if (!isStdDocumentNameIdentifier() && !isOLELink() && isAutomaticLink()) {
+				// both need to be incremented
+				int nColumns = in.readUByte() + 1;
+				int nRows = in.readShort() + 1;
+
+				int totalCount = nRows * nColumns;
+				_ddeValues = ConstantValueParser.parse(in, totalCount);
+				_nColumns = nColumns;
+				_nRows = nRows;
+			}
 			if(in.remaining() > 0) {
 				throw readFail("Some unread data (is formula present?)");
 			}
@@ -127,11 +163,11 @@ public final class ExternalNameRecord extends StandardRecord {
 		field_5_name_definition = Formula.read(formulaLen, in, nBytesRemaining);
 	}
 	/*
-	 * Makes better error messages (while hasFormula() is not reliable) 
+	 * Makes better error messages (while hasFormula() is not reliable)
 	 * Remove this when hasFormula() is stable.
 	 */
 	private RuntimeException readFail(String msg) {
-		String fullMsg = msg + " fields: (option=" + field_1_option_flag + " index=" + field_2_index 
+		String fullMsg = msg + " fields: (option=" + field_1_option_flag + " index=" + field_2_index
 		+ " not_used=" + field_3_not_used + " name='" + field_4_name + "')";
 		return new RecordFormatException(fullMsg);
 	}
