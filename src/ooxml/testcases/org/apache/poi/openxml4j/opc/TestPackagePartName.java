@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.openxml4j.opc;
 
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -21,7 +22,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
 import junit.framework.TestCase;
 
-public class TestPackagePartName extends TestCase {
+public final class TestPackagePartName extends TestCase {
 
 	/**
 	 * Test method getExtension().

@@ -26,7 +26,7 @@ import org.apache.poi.openxml4j.opc.internal.AllOpenXML4JInternalTests;
 public final class AllOpenXML4JTests {
 
 	public static Test suite() {
-		
+
 		TestSuite suite = new TestSuite(AllOpenXML4JTests.class.getName());
 		suite.addTestSuite(TestContentType.class);
 		suite.addTestSuite(TestFileHelper.class);

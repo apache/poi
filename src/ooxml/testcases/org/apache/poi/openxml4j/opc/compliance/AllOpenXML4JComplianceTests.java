@@ -20,7 +20,7 @@ package org.apache.poi.openxml4j.opc.compliance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllOpenXML4JComplianceTests {
+public final class AllOpenXML4JComplianceTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllOpenXML4JComplianceTests.class.getName());

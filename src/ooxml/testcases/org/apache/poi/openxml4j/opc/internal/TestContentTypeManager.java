@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
-public class TestContentTypeManager extends TestCase {
+public final class TestContentTypeManager extends TestCase {
 
 	/**
 	 * Test the properties part content parsing.

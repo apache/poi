@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  *
  * @author Yegor Kozlov
  */
-public class TestXSSFRichTextString extends TestCase {
+public final class TestXSSFRichTextString extends TestCase {
 
     public void testCreate() throws Exception {
 

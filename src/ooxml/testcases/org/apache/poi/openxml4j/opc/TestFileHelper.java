@@ -26,30 +26,31 @@ import junit.framework.TestCase;
 
 /**
  * Test TestFileHelper class.
- * 
+ *
  * @author Julien Chable
  */
-public class TestFileHelper extends TestCase {
+public final class TestFileHelper extends TestCase {
 
+	/**
+	 * TODO - use simple JDK methods on {@link File} instead:<br/>
+	 * {@link File#getParentFile()} instead of {@link FileHelper#getDirectory(File)
+	 * {@link File#getName()} instead of {@link FileHelper#getFilename(File)
+	 */
 	public void testGetDirectory() {
 		TreeMap<String, String> expectedValue = new TreeMap<String, String>();
 		expectedValue.put("/dir1/test.doc", "/dir1");
 		expectedValue.put("/dir1/dir2/test.doc.xml", "/dir1/dir2");
 
 		for (String filename : expectedValue.keySet()) {
-            File f1 = new File(expectedValue.get(filename));
-            File f2 = FileHelper.getDirectory(new File(filename));
+			File f1 = new File(expectedValue.get(filename));
+			File f2 = FileHelper.getDirectory(new File(filename));
 
-            /*
-             * YK: The original version asserted expected values against File#getAbsolutePath():
-             * assertTrue(expectedValue.get(filename).equalsIgnoreCase(
-             *        FileHelper.getDirectory(new File(filename))
-             *                .getAbsolutePath()));
-             *
-             * This comparison is platform dependent and resulted in build errors in Gump since 21/02/2009.
-             * Assertion via File#equals(File otherFile) is a better approach. 
-             */
-            assertTrue(f1.equals(f2));
+			if (false) {
+				// YK: The original version asserted expected values against File#getAbsolutePath():
+				assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
+				// This comparison is platform dependent. A better approach is below
+			}
+			assertTrue(f1.equals(f2));
 		}
 	}
 }

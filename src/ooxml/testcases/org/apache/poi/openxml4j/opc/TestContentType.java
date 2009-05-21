@@ -24,10 +24,10 @@ import org.apache.poi.openxml4j.opc.internal.ContentType;
 
 /**
  * Tests for content type (ContentType class).
- * 
+ *
  * @author Julien Chable
  */
-public class TestContentType extends TestCase {
+public final class TestContentType extends TestCase {
 
 	/**
 	 * Check rule M1.13: Package implementers shall only create and only
@@ -51,7 +51,7 @@ public class TestContentType extends TestCase {
 	 * content type for each part included in the format. Content types for
 	 * package parts shall fit the definition and syntax for media types as
 	 * specified in RFC 2616, \u00A3.7.
-	 * 
+	 *
 	 * Check rule M1.14: Content types shall not use linear white space either
 	 * between the type and subtype or between an attribute and its value.
 	 * Content types also shall not have leading or trailing white spaces.

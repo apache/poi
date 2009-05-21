@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
@@ -29,7 +30,7 @@ import java.util.Arrays;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFPicture extends BaseTestPicture {
+public final class TestXSSFPicture extends BaseTestPicture {
 
     @Override
     protected XSSFITestDataProvider getTestDataProvider(){

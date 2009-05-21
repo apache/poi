@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
@@ -22,7 +23,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 /**
  * @author Yegor Kozlov
  */
-public class TestSheetHiding extends TestCase {
+public final class TestSheetHiding extends TestCase {
     private XSSFWorkbook wbH;
     private XSSFWorkbook wbU;
 
