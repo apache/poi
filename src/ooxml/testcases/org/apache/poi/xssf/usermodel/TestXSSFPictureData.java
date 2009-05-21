@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
@@ -28,7 +29,7 @@ import java.io.IOException;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFPictureData extends TestCase {
+public final class TestXSSFPictureData extends TestCase {
     public void testRead(){
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();

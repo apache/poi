@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
@@ -24,7 +25,7 @@ import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFName extends BaseTestNamedRange {
+public final class TestXSSFName extends BaseTestNamedRange {
 
     @Override
     protected XSSFITestDataProvider getTestDataProvider(){

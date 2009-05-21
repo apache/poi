@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf;
 
 import org.apache.poi.ss.ITestDataProvider;
@@ -28,16 +29,16 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 public final class XSSFITestDataProvider implements ITestDataProvider {
 
     public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
-		return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
-	}
+        return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
 
-	public XSSFWorkbook writeOutAndReadBack(Workbook original) {
+    public XSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof XSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
         }
 
         return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
-	}
+    }
 
     public XSSFWorkbook createWorkbook(){
         return new XSSFWorkbook();
@@ -51,7 +52,9 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
         return SpreadsheetVersion.EXCEL2007;
     }
 
-    private XSSFITestDataProvider(){}
+    private XSSFITestDataProvider() {
+        // enforce singleton
+    }
     private static XSSFITestDataProvider inst = new XSSFITestDataProvider();
     public static XSSFITestDataProvider getInstance(){
         return inst;

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
@@ -23,7 +24,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 /**
  * @author Yegor Kozlov
  */
-public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
+public final class TestSheetShiftRows  extends BaseTestSheetShiftRows {
 
     @Override
     protected ITestDataProvider getTestDataProvider(){
@@ -47,7 +48,7 @@ public class TestSheetShiftRows  extends BaseTestSheetShiftRows {
         baseTestShiftRowBreaks();
     }
 
-    //TODO support shifting of comments. 
+    //TODO support shifting of comments.
     public void $testShiftWithComments() {
         baseTestShiftWithComments("comments.xlsx");
     }

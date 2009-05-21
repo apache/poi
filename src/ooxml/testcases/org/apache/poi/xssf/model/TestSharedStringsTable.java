@@ -17,9 +17,6 @@
 
 package org.apache.poi.xssf.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -38,15 +35,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
  */
 public final class TestSharedStringsTable extends TestCase {
 
-	public void testCreateNew() {
-		SharedStringsTable sst = new SharedStringsTable();
-		
+    public void testCreateNew() {
+        SharedStringsTable sst = new SharedStringsTable();
+
         CTRst st;
         int idx;
 
         // Check defaults
-		assertNotNull(sst.getItems());
-		assertEquals(0, sst.getItems().size());
+        assertNotNull(sst.getItems());
+        assertEquals(0, sst.getItems().size());
         assertEquals(0, sst.getCount());
         assertEquals(0, sst.getUniqueCount());
 
@@ -58,13 +55,13 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals(1, sst.getCount());
         assertEquals(1, sst.getUniqueCount());
 
-        //add the same entry egain
+        //add the same entry again
         idx = sst.addEntry(st);
         assertEquals(0, idx);
         assertEquals(2, sst.getCount());
         assertEquals(1, sst.getUniqueCount());
 
-        //and egain
+        //and again
         idx = sst.addEntry(st);
         assertEquals(0, idx);
         assertEquals(3, sst.getCount());
@@ -78,7 +75,7 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals(4, sst.getCount());
         assertEquals(2, sst.getUniqueCount());
 
-        //add the same entry egain
+        //add the same entry again
         idx = sst.addEntry(st);
         assertEquals(1, idx);
         assertEquals(5, sst.getCount());
@@ -102,20 +99,20 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals(7, sst.getCount());
         assertEquals(3, sst.getUniqueCount());
 
-        //ok. the sst table is filled, check the contents
+        //OK. the sst table is filled, check the contents
         assertEquals(3, sst.getItems().size());
         assertEquals("Hello, World!", new XSSFRichTextString(sst.getEntryAt(0)).toString());
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(1)).toString());
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(2)).toString());
     }
-	
-	public void testReadWrite() {
+
+    public void testReadWrite() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         SharedStringsTable sst1 = wb.getSharedStringSource();
 
         //serialize, read back and compare with the original
-		SharedStringsTable sst2 = XSSFTestDataSamples.writeOutAndReadBack(wb).getSharedStringSource();
-        
+        SharedStringsTable sst2 = XSSFTestDataSamples.writeOutAndReadBack(wb).getSharedStringSource();
+
         assertEquals(sst1.getCount(), sst2.getCount());
         assertEquals(sst1.getUniqueCount(), sst2.getUniqueCount());
 
