@@ -18,7 +18,10 @@
 package org.apache.poi.hssf.record;
 
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests the serialization and deserialization of the {@link FontRecord}
@@ -26,6 +29,7 @@ import junit.framework.TestCase;
  */
 public final class TestFontRecord extends TestCase {
 
+    private static final int SID = 0x31;
     private static final byte[] data = {
             0xC8-256, 00,       // font height = xc8
             00, 00,             // attrs = 0
@@ -87,9 +91,7 @@ public final class TestFontRecord extends TestCase {
         record.setFontName("Arial");
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        TestcaseRecordInputStream.confirmRecordEncoding(0x31, data, recordBytes);
     }
 
     public void testCloneOnto() {
@@ -104,7 +106,7 @@ public final class TestFontRecord extends TestCase {
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
 
-    public void testSameProperties() throws Exception {
+    public void testSameProperties() {
         FontRecord f1 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         FontRecord f2 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
 
@@ -119,5 +121,29 @@ public final class TestFontRecord extends TestCase {
         assertFalse(f1.sameProperties(f2));
         f2.setFontHeight((short)0xc8);
         assertTrue(f1.sameProperties(f2));
+    }
+
+    /**
+     * Bugzilla 47250 suggests that the unicode options byte should be present even when the name
+     * length is zero.  The OOO documentation seems to agree with this and POI had no test data
+     * samples to say otherwise.
+     */
+    public void testEmptyName_bug47250() {
+        byte[] emptyNameData = HexRead.readFromString(
+                "C8 00 00 00 FF 7F 90 01 00 00 00 00 00 00 "
+                + "00" // zero length
+                + "00" // unicode options byte
+                );
+
+        RecordInputStream in = TestcaseRecordInputStream.create(SID, emptyNameData);
+        FontRecord fr = new FontRecord(in);
+        if (in.available() == 1) {
+            throw new AssertionFailedError("Identified bug 47250");
+        }
+        assertEquals(0, in.available());
+
+        assertEquals(0, fr.getFontName().length());
+        byte[] recordBytes = fr.serialize();
+        TestcaseRecordInputStream.confirmRecordEncoding(SID, emptyNameData, recordBytes);
     }
 }

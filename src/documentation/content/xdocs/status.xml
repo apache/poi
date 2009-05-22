@@ -34,6 +34,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.5-beta6" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47250 - Fixed FontRecord to expect unicode flags even when name length is zero</action>
            <action dev="POI-DEVELOPERS" type="add">47198 - Fixed formula evaluator comparison of -0.0 and 0.0</action>
            <action dev="POI-DEVELOPERS" type="add">47229 - Fixed ExternalNameRecord to handle DDE links</action>
            <action dev="POI-DEVELOPERS" type="add">46287 - Control of header and footer extraction in ExcelExtractor / XSSFExcelExtractor</action>
