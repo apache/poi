@@ -108,6 +108,10 @@ public abstract class RelationalOperationEval implements OperationEval {
 			if (vb instanceof NumberEval) {
 				NumberEval nA = (NumberEval) va;
 				NumberEval nB = (NumberEval) vb;
+				if (nA.getNumberValue() == nB.getNumberValue()) {
+					// Excel considers -0.0 == 0.0 which is different to Double.compare()
+					return 0;
+				}
 				return Double.compare(nA.getNumberValue(), nB.getNumberValue());
 			}
 		}

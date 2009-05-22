@@ -91,4 +91,18 @@ public final class TestEqualEval extends TestCase {
 		BoolEval be = (BoolEval) result;
 		return be.getBooleanValue();
 	}
+
+	/**
+	 * Excel considers -0.0 to be equal to 0.0
+	 */
+	public void testZeroEquality_bug47198() {
+		NumberEval zero = new NumberEval(0.0);
+		NumberEval mZero = (NumberEval) UnaryMinusEval.instance.evaluate(new Eval[] { zero, }, 0,
+				(short) 0);
+		Eval[] args = { zero, mZero, };
+		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
+		if (!result.getBooleanValue()) {
+			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
+		}
+	}
 }
