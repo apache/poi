@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.chart;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -41,7 +42,7 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 		private int rtFirst;
 		private int rtLast;
 
-		public CFRTID(RecordInputStream in) {
+		public CFRTID(LittleEndianInput in) {
 			rtFirst = in.readShort();
 			rtLast = in.readShort();
 		}
