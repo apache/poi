@@ -143,7 +143,6 @@ under the License.
   <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
   <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
   <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
-  <property name="changelog.file" location="${build.site}/changelog.html"/>
   <property name="dist.dir" location="build/dist"/>
   <property name="mavendist.ooxml.dir" location="build/maven-ooxml-dependencies"/>
   <property name="apache.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository"/>
@@ -1016,14 +1015,6 @@ FORREST_HOME environment variable!</echo>
         <filterchain>
           <replacetokens>
             <token key="REPOSITORY" value="${apache.repository}" />
-            <token key="VERSION" value="${version.id}" />
-            <token key="DSTAMP" value="${DSTAMP}" />
-          </replacetokens>
-        </filterchain>
-      </copy>
-      <copy file="maven/mvn-sig.sh" todir="${dist.dir}">
-        <filterchain>
-          <replacetokens>
             <token key="VERSION" value="${version.id}" />
             <token key="DSTAMP" value="${DSTAMP}" />
           </replacetokens>
