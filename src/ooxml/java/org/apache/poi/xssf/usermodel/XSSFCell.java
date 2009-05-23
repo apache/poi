@@ -242,13 +242,23 @@ public final class XSSFCell implements Cell {
                 rt = new XSSFRichTextString("");
                 break;
             case CELL_TYPE_STRING:
-                if (!cell.isSetV()) rt = new XSSFRichTextString("");
-                else {
-                    if (cell.getT() == STCellType.INLINE_STR) {
-                        return new XSSFRichTextString(cell.getV());
+                if (cell.getT() == STCellType.INLINE_STR) {
+                    if(cell.isSetIs()) {
+                        //string is expressed directly in the cell definition instead of implementing the shared string table.
+                        rt = new XSSFRichTextString(cell.getIs());
+                    } else if (cell.isSetV()) {
+                        //cached result of a formula
+                        rt = new XSSFRichTextString(cell.getV());
                     } else {
+                        rt = new XSSFRichTextString("");
+                    }
+                } else {
+                    if (cell.isSetV()) {
                         int idx = Integer.parseInt(cell.getV());
                         rt = new XSSFRichTextString(sharedStringSource.getEntryAt(idx));
+                    }
+                    else {
+                        rt = new XSSFRichTextString("");
                     }
                 }
                 break;
