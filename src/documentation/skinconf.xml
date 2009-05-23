@@ -57,7 +57,7 @@ be used to configure the chosen Forrest skin.
   <!ELEMENT host-logo (#PCDATA)>
   <!ELEMENT year (#PCDATA)>
   <!ELEMENT vendor (#PCDATA)>
-  <!ELEMENT trail (link1, link2, link3)>
+  <!ELEMENT trail (link1, link2)>
   <!ELEMENT link1 EMPTY>
   <!-- Seems we can't use param entity refs until this is DTDified -->
   <!ATTLIST link1 name CDATA #REQUIRED href CDATA #IMPLIED>
@@ -90,23 +90,20 @@ be used to configure the chosen Forrest skin.
   <!-- Whether to render mailto: links unrecognisable by spam harvesters -->
   <obfuscate-mail-links>true</obfuscate-mail-links>
 
-  <!-- Do we want to disable the Google search box? -->
-  <disable-search>false</disable-search>
-  <!-- Do we want to disable w3c compliance links? -->
-  <disable-compliance-links>false</disable-compliance-links>
-
   <searchsite-domain>poi.apache.org</searchsite-domain>
   <searchsite-name>poi</searchsite-name>
 
   <!-- mandatory project logo
        skin: forrest-site renders it at the top -->
   <project-name>POI</project-name>
+  <project-description>POI</project-description>
   <project-url>http://poi.apache.org/</project-url>
   <project-logo>resources/images/project-logo.jpg</project-logo>
 
   <!-- optional group logo
        skin: forrest-site renders it at the top-left corner -->
   <group-name>Apache POI</group-name>
+  <group-description>Apache POI</group-description>
   <group-url>http://poi.apache.org</group-url>
   <group-logo>resources/images/group-logo.jpg</group-logo>
 
@@ -116,7 +113,7 @@ be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2002-2007</year>
+  <year>2002-2009</year>
   <vendor>The Apache Software Foundation</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
