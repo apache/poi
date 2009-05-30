@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
@@ -79,4 +80,30 @@ public final class TestXSSFCell extends BaseTestCell {
         assertTrue(cell_2.getCTCell().isSetIs());
         assertEquals("bar", row.getCell(2).getStringCellValue());
     }
+
+    /**
+     *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
+     */
+    public void test47278() throws Exception {
+        XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        SharedStringsTable sst = wb.getSharedStringSource();
+        assertEquals(0, sst.getCount());
+
+        //case 1. cell.setCellValue(new XSSFRichTextString((String)null));
+        XSSFCell cell_0 = row.createCell(0);
+        XSSFRichTextString str = new XSSFRichTextString((String)null);
+        assertNull(str.getString());
+        cell_0.setCellValue(str);
+        assertEquals(0, sst.getCount());
+        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_0.getCellType());
+
+        //case 2. cell.setCellValue((String)null);
+        XSSFCell cell_1 = row.createCell(1);
+        cell_1.setCellValue((String)null);
+        assertEquals(0, sst.getCount());
+        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_1.getCellType());
+    }
+    
 }
