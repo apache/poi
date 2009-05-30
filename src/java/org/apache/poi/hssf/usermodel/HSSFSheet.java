@@ -253,7 +253,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     private int findLastRow(int lastrow) {
         if (lastrow < 1) {
-            return -1;
+            return 0;
         }
         int rownum = lastrow - 1;
         HSSFRow r = getRow(rownum);
@@ -262,7 +262,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             r = getRow(--rownum);
         }
         if (r == null) {
-            return -1;
+            return 0;
         }
         return rownum;
     }
@@ -282,7 +282,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         if (rownum > getLastRowNum())
-            return -1;
+            return 0;
 
         return rownum;
     }
@@ -300,11 +300,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         {
             _sheet.addRow(row.getRowRecord());
         }
-        if (row.getRowNum() > getLastRowNum())
+        boolean firstRow = _rows.size() == 1;
+        if (row.getRowNum() > getLastRowNum() || firstRow)
         {
             _lastrow = row.getRowNum();
         }
-        if (row.getRowNum() < getFirstRowNum())
+        if (row.getRowNum() < getFirstRowNum() || firstRow)
         {
             _firstrow = row.getRowNum();
         }

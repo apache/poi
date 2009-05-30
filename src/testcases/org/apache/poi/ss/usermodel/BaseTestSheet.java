@@ -79,21 +79,32 @@ public abstract class BaseTestSheet extends TestCase {
         Workbook workbook = getTestDataProvider().createWorkbook();
         Sheet sheet1 = workbook.createSheet();
         assertEquals(0, sheet1.getPhysicalNumberOfRows());
+        assertEquals(0, sheet1.getFirstRowNum());
+        assertEquals(0, sheet1.getLastRowNum());
 
         Row row0 = sheet1.createRow(0);
         assertEquals(1, sheet1.getPhysicalNumberOfRows());
+        assertEquals(0, sheet1.getFirstRowNum());
+        assertEquals(0, sheet1.getLastRowNum());
         sheet1.removeRow(row0);
         assertEquals(0, sheet1.getPhysicalNumberOfRows());
+        assertEquals(0, sheet1.getFirstRowNum());
+        assertEquals(0, sheet1.getLastRowNum());
 
         Row row1 = sheet1.createRow(1);
         Row row2 = sheet1.createRow(2);
         assertEquals(2, sheet1.getPhysicalNumberOfRows());
+        assertEquals(1, sheet1.getFirstRowNum());
+        assertEquals(2, sheet1.getLastRowNum());
 
         assertNotNull(sheet1.getRow(1));
         assertNotNull(sheet1.getRow(2));
         sheet1.removeRow(row2);
         assertNotNull(sheet1.getRow(1));
         assertNull(sheet1.getRow(2));
+        assertEquals(1, sheet1.getPhysicalNumberOfRows());
+        assertEquals(1, sheet1.getFirstRowNum());
+        assertEquals(1, sheet1.getLastRowNum());
 
         Row row3 = sheet1.createRow(3);
         Sheet sheet2 = workbook.createSheet();
