@@ -293,7 +293,7 @@ public final class XSSFCell implements Cell {
      * If value is null then we will change the cell to a Blank cell.
      */
     public void setCellValue(RichTextString str) {
-        if(str == null){
+        if(str == null || str.getString() == null){
             setBlank();
             return;
         }
