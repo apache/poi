@@ -177,28 +177,6 @@ public final class SSTRecord extends ContinuableRecord {
     }
 
     /**
-     * @return hashcode
-     */
-    public int hashCode()
-    {
-        return field_2_num_unique_strings;
-    }
-
-    public boolean equals( Object o )
-    {
-        if ( ( o == null ) || ( o.getClass() != this.getClass() ) )
-        {
-            return false;
-        }
-        SSTRecord other = (SSTRecord) o;
-
-        return ( ( field_1_num_strings == other
-                .field_1_num_strings ) && ( field_2_num_unique_strings == other
-                .field_2_num_unique_strings ) && field_3_strings
-                .equals( other.field_3_strings ) );
-    }
-
-    /**
      * Fill the fields from the data
      * <P>
      * The data consists of sets of string data. This string data is
