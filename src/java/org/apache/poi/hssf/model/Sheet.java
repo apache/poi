@@ -57,7 +57,6 @@ import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
@@ -207,7 +206,7 @@ public final class Sheet implements Model {
                 records.add(rra); //only add the aggregate once
                 continue;
             }
-            
+
             if (CustomViewSettingsRecordAggregate.isBeginRecord(recSid)) {
                 // This happens three times in test sample file "29982.xls"
                 // Also several times in bugzilla samples 46840-23373 and 46840-23374
@@ -217,28 +216,13 @@ public final class Sheet implements Model {
 
             if (PageSettingsBlock.isComponentRecord(recSid)) {
                 if (_psBlock == null) {
-                    // typical case - just one PSB (so far)
+                    // first PSB record encountered - read all of them:
                     _psBlock = new PageSettingsBlock(rs);
                     records.add(_psBlock);
-                    continue;
+                } else {
+                    // one or more PSB records found after some intervening non-PSB records
+                    _psBlock.addLateRecords(rs);
                 }
-                if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
-                    // test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls
-                    _psBlock.addLateHeaderFooter(rs.getNext());
-                    continue;
-                }
-                // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
-                // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
-                // In this case the first PSB is two records back
-                int prevPsbIx = records.size()-2;
-                if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
-                    // not quite the expected situation
-                    throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                }
-                records.remove(prevPsbIx); // WSBOOL will drop down one position.
-                PageSettingsBlock latePsb = new PageSettingsBlock(rs);
-                _psBlock = mergePSBs(_psBlock, latePsb);
-                records.add(_psBlock);
                 continue;
             }
 
@@ -247,7 +231,7 @@ public final class Sheet implements Model {
                 _mergedCellsTable.read(rs);
                 continue;
             }
-            
+
             if (recSid == BOFRecord.sid) {
                 ChartSubstreamRecordAggregate chartAgg = new ChartSubstreamRecordAggregate(rs);
                 if (false) {
@@ -372,34 +356,7 @@ public final class Sheet implements Model {
                 recs.add(r);
             }});
     }
-    /**
-     * Hack to recover from the situation where the page settings block has been split by
-     * an intervening {@link WSBoolRecord}
-     */
-    private static PageSettingsBlock mergePSBs(PageSettingsBlock a, PageSettingsBlock b) {
-        List<Record> temp = new ArrayList<Record>();
-        RecordTransferrer rt = new RecordTransferrer(temp);
-        a.visitContainedRecords(rt);
-        b.visitContainedRecords(rt);
-        RecordStream rs = new RecordStream(temp, 0);
-        PageSettingsBlock result = new PageSettingsBlock(rs);
-        if (rs.hasNext()) {
-            throw new RuntimeException("PageSettingsBlocks did not merge properly");
-        }
-        return result;
-    }
 
-    private static final class RecordTransferrer  implements RecordVisitor {
-
-        private final List<Record> _destList;
-
-        public RecordTransferrer(List<Record> destList) {
-            _destList = destList;
-        }
-        public void visitRecord(Record r) {
-            _destList.add(r);
-        }
-    }
     private static final class RecordCloner implements RecordVisitor {
 
         private final List<RecordBase> _destList;
@@ -1099,7 +1056,7 @@ public final class Sheet implements Model {
      */
     public void setColumnWidth(int column, int width) {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
-        
+
         setColumn(column, null, new Integer(width), null, null, null);
     }
 

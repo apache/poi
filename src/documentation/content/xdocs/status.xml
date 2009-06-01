@@ -35,6 +35,7 @@
         <release version="3.5-beta7" date="2009-??-??">
         </release>
         <release version="3.5-beta6" date="2009-06-11">
+           <action dev="POI-DEVELOPERS" type="fix">47199 - Fixed PageSettingsBlock/Sheet to tolerate margin records after other non-PSB records</action>
            <action dev="POI-DEVELOPERS" type="fix">47069 - Fixed HSSFSheet#getFirstRowNum and HSSFSheet#getLastRowNum to return correct values after removal of all rows</action>
            <action dev="POI-DEVELOPERS" type="fix">47278 - Fixed XSSFCell to avoid generating xsi:nil entries in shared string table</action>
            <action dev="POI-DEVELOPERS" type="fix">47206 - Fixed XSSFCell to properly read inline strings</action>
