@@ -22,8 +22,6 @@ package org.apache.poi.hpsf;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2004-06-20
- * @version $Id$
  */
 public class Constants
 {

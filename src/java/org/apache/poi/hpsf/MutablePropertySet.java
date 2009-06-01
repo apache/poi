@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.ByteArrayInputStream;
@@ -33,8 +33,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
-
-
 /**
  * <p>Adds writing support to the {@link PropertySet} class.</p>
  *
@@ -43,8 +41,6 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2003-02-19
  */
 public class MutablePropertySet extends PropertySet
 {

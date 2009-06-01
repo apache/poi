@@ -64,14 +64,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 
-
-
 /**
  * <p>Tests HPSF's writing functionality.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2003-02-07
- * @version $Id$
  */
 public class TestWrite extends TestCase
 {
@@ -94,19 +90,6 @@ public class TestWrite extends TestCase
         "\"de_DE\".";
 
     POIFile[] poiFiles;
-
-
-
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name the test case's name
-     */
-    public TestWrite(final String name)
-    {
-        super(name);
-    }
-
 
 
     /**
@@ -923,20 +906,4 @@ public class TestWrite extends TestCase
         final Charset charSet = Charset.forName(charSetName);
         return charSet.newEncoder().canEncode('\u00e4');
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args The command-line parameters.
-     * @throws Throwable if anything goes wrong.
-     */
-    public static void main(final String[] args) throws Throwable
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestWrite.class);
-    }
-
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.contrib.poibrowser;
 
@@ -28,24 +26,19 @@ import javax.swing.*;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-01-25
  */
-public class Util
-{
+public class Util {
 
     /**
      * <p>Makes a Swing component inverted by swapping its foreground
      * and background colors. Hint: Depending on your needs it might
      * also be a good idea to call <tt>c.setOpaque(true)</tt>.</p>
      */
-    public static void invert(final JComponent c)
-    {
-        final Color invBackground = c.getForeground();
-        final Color invForeground = c.getBackground();
+    public static void invert(JComponent c) {
+        Color invBackground = c.getForeground();
+        Color invForeground = c.getBackground();
         c.setBackground(invBackground);
         c.setForeground(invForeground);
     }
-
 }
 

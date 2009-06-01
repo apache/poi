@@ -45,8 +45,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * This class tests reading and writing of meta data. No actual document is created. All information
  * is stored in a virtal document in a ByteArrayOutputStream
  * @author Matthias G\u00fcnter
- * @since 2006-03-03
- * @version $Id: TestEmptyProperties.java 353563 2004-06-22 16:16:33Z klute $
  */
 public class TestMetaDataIPI extends TestCase{
 
@@ -56,13 +54,7 @@ public class TestMetaDataIPI extends TestCase{
  DocumentSummaryInformation dsi=null;
  SummaryInformation si=null;
  
- /**
-  * Standard constructor
-  * @param s
-  */
- public TestMetaDataIPI(String s ){
-	 super(s);
- }
+
 
  /**
   * Setup is used to get the document ready. Gets the DocumentSummaryInformation and the 

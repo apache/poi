@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf.wellknown;
 
 import java.util.HashMap;
@@ -35,11 +35,8 @@ import java.util.HashMap;
  * property IDs in sections with the specified section format ID.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @version $Id$
- * @since 2002-02-09
  */
-public class SectionIDMap extends HashMap
-{
+public class SectionIDMap extends HashMap {
 
     /**
      * <p>The SummaryInformation's section's format ID.</p>

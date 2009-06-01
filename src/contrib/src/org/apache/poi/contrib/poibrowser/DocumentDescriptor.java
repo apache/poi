@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.contrib.poibrowser;
 
@@ -26,10 +24,6 @@ import org.apache.poi.poifs.filesystem.*;
  * <p>Describes the most important (whatever that is) features of a
  * {@link POIFSDocument}.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @version $Id$
- * @since 2002-02-05
- * *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */

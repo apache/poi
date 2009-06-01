@@ -54,32 +54,16 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-
-
 /**
  * <p>Tests HPSF's high-level writing functionality for the well-known property
  * set "SummaryInformation" and "DocumentSummaryInformation".</p>
  * 
  * @author Rainer Klute
  *     <a href="mailto:klute@rainer-klute.de">klute@rainer-klute.de</a>
- * @since 2006-02-01
- * @version $Id$
  */
-public class TestWriteWellKnown extends TestCase
-{
+public class TestWriteWellKnown extends TestCase {
 
     private static final String POI_FS = "TestWriteWellKnown.doc";
-
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name the test case's name
-     */
-    public TestWriteWellKnown(final String name)
-    {
-        super(name);
-    }
-
 
 
     /**
@@ -744,20 +728,4 @@ public class TestWriteWellKnown extends TestCase
         assertEquals(1, cps.size());
         assertFalse(cps.isPure());
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args The command-line parameters.
-     * @throws Throwable if anything goes wrong.
-     */
-    public static void main(final String[] args) throws Throwable
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestWriteWellKnown.class);
-    }
-
 }

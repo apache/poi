@@ -47,12 +47,10 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * unmodified) or whether one or more properties have been dropped.</p>
  * 
  * <p>This class is not thread-safe; concurrent access to instances of this
- * class must be syncronized.</p>
+ * class must be synchronized.</p>
  * 
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2006-02-09
- * @version $Id$
  */
 public class CustomProperties extends HashMap
 {

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link Section} class at a later time, so the API will change.</p>
- *
- * @version $Id$
- * @since 2002-02-20
  */
 public class MutableSection extends Section
 {
