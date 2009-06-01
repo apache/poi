@@ -613,7 +613,7 @@ public final class TestSheet extends TestCase {
 		try {
 			sheet = createSheet(inRecs);
 		} catch (RuntimeException e) {
-			if (e.getMessage().equals("DimensionsRecord was not found")) {
+			if ("DimensionsRecord was not found".equals(e.getMessage())) {
 				throw new AssertionFailedError("Identified bug 46206");
 			}
 			throw e;
