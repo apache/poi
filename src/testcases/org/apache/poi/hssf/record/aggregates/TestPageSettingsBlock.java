@@ -26,6 +26,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BottomMarginRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FooterRecord;
@@ -33,6 +34,7 @@ import org.apache.poi.hssf.record.HeaderRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
@@ -135,7 +137,7 @@ public final class TestPageSettingsBlock extends TestCase {
 		Sheet sheet = Sheet.createSheet(rs);
 
 		RecordCollector rv = new RecordCollector();
-		sheet.visitContainedRecords(rv, rowIx);
+		sheet.visitContainedRecords(rv, 0);
 		Record[] outRecs = rv.getRecords();
 		if (outRecs[4] == EOFRecord.instance) {
 			throw new AssertionFailedError("Identified bug 46953 - EOF incorrectly appended to PSB");
@@ -150,6 +152,85 @@ public final class TestPageSettingsBlock extends TestCase {
 		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
 		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
 		assertEquals(EOFRecord.instance, outRecs[7]);
+	}
+	/**
+	 * Bug 47199 was due to the margin records being located well after the initial PSB records.
+	 * The example file supplied (attachment 23710) had three non-PSB record types 
+	 * between the PRINTSETUP record and first MARGIN record:
+	 * <ul>
+	 * <li>PRINTSETUP(0x00A1)</li>
+	 * <li>DEFAULTCOLWIDTH(0x0055)</li>
+	 * <li>COLINFO(0x007D)</li>
+	 * <li>DIMENSIONS(0x0200)</li>
+	 * <li>BottomMargin(0x0029)</li>
+	 * </ul>
+	 */
+	public void testLateMargins_bug47199() {
+
+		Record[] recs = {
+				BOFRecord.createSheetBOF(),
+				new HeaderRecord("&LSales Figures"),
+				new FooterRecord("&LJanuary"),
+				new DimensionsRecord(),
+				createBottomMargin(0.787F),
+				new WindowTwoRecord(),
+				EOFRecord.instance,
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+
+		Sheet sheet;
+		try {
+			sheet = Sheet.createSheet(rs);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
+				throw new AssertionFailedError("Identified bug 47199a - failed to process late margings records");
+			}
+			throw e;
+		}
+
+		RecordCollector rv = new RecordCollector();
+		sheet.visitContainedRecords(rv, 0);
+		Record[] outRecs = rv.getRecords();
+		assertEquals(recs.length+1, outRecs.length); // +1 for index record
+
+		assertEquals(BOFRecord.class, outRecs[0].getClass());
+		assertEquals(IndexRecord.class, outRecs[1].getClass());
+		assertEquals(HeaderRecord.class, outRecs[2].getClass());
+		assertEquals(FooterRecord.class, outRecs[3].getClass());
+		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
+		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
+		assertEquals(EOFRecord.instance, outRecs[7]);
+	}
+
+	private Record createBottomMargin(float value) {
+		BottomMarginRecord result = new BottomMarginRecord();
+		result.setMargin(value);
+		return result;
+	}
+
+	/**
+	 * The PageSettingsBlock should not allow multiple copies of the same record.  This extra assertion
+	 * was added while fixing bug 47199.  All existing POI test samples comply with this requirement.
+	 */
+	public void testDuplicatePSBRecord_bug47199() {
+
+		// Hypothetical setup of PSB records which should cause POI to crash
+		Record[] recs = {
+				new HeaderRecord("&LSales Figures"),
+				new HeaderRecord("&LInventory"),
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+
+		try {
+			new PageSettingsBlock(rs);
+			throw new AssertionFailedError("Identified bug 47199b - duplicate PSB records should not be allowed");
+		} catch (RecordFormatException e) {
+			if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x14)")) {
+				// expected during successful test
+			} else {
+				throw new AssertionFailedError("Expected RecordFormatException due to duplicate PSB record");
+			}
+		}
 	}
 
 	private static UnknownRecord ur(int sid, String hexData) {

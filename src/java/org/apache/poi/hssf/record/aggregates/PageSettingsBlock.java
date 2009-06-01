@@ -125,36 +125,47 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private boolean readARecord(RecordStream rs) {
 		switch (rs.peekNextSid()) {
 			case HorizontalPageBreakRecord.sid:
+				checkNotPresent(_rowBreaksRecord);
 				_rowBreaksRecord = (PageBreakRecord) rs.getNext();
 				break;
 			case VerticalPageBreakRecord.sid:
+				checkNotPresent(_columnBreaksRecord);
 				_columnBreaksRecord = (PageBreakRecord) rs.getNext();
 				break;
 			case HeaderRecord.sid:
+				checkNotPresent(_header);
 				_header = (HeaderRecord) rs.getNext();
 				break;
 			case FooterRecord.sid:
+				checkNotPresent(_footer);
 				_footer = (FooterRecord) rs.getNext();
 				break;
 			case HCenterRecord.sid:
+				checkNotPresent(_hCenter);
 				_hCenter = (HCenterRecord) rs.getNext();
 				break;
 			case VCenterRecord.sid:
+				checkNotPresent(_vCenter);
 				_vCenter = (VCenterRecord) rs.getNext();
 				break;
 			case LeftMarginRecord.sid:
+				checkNotPresent(_leftMargin);
 				_leftMargin = (LeftMarginRecord) rs.getNext();
 				break;
 			case RightMarginRecord.sid:
+				checkNotPresent(_rightMargin);
 				_rightMargin = (RightMarginRecord) rs.getNext();
 				break;
 			case TopMarginRecord.sid:
+				checkNotPresent(_topMargin);
 				_topMargin = (TopMarginRecord) rs.getNext();
 				break;
 			case BottomMarginRecord.sid:
+				checkNotPresent(_bottomMargin);
 				_bottomMargin = (BottomMarginRecord) rs.getNext();
 				break;
 			case UnknownRecord.PLS_004D:
+				checkNotPresent(_pls);
 				_pls = rs.getNext();
 				while (rs.peekNextSid()==ContinueRecord.sid) {
 					if (_plsContinues==null) {
@@ -164,15 +175,19 @@ public final class PageSettingsBlock extends RecordAggregate {
 				}
 				break;
 			case PrintSetupRecord.sid:
+				checkNotPresent(_printSetup);
 				_printSetup = (PrintSetupRecord)rs.getNext();
 				break;
 			case UnknownRecord.BITMAP_00E9:
+				checkNotPresent(_bitmap);
 				_bitmap = rs.getNext();
 				break;
 			case UnknownRecord.PRINTSIZE_0033:
+				checkNotPresent(_printSize);
 				_printSize = rs.getNext();
 				break;
 			case UnknownRecord.HEADER_FOOTER_089C:
+				checkNotPresent(_headerFooter);
 				_headerFooter = rs.getNext();
 				break;
 			default:
@@ -180,6 +195,13 @@ public final class PageSettingsBlock extends RecordAggregate {
 				return false;
 		}
 		return true;
+	}
+
+	private void checkNotPresent(Record rec) {
+		if (rec != null) {
+			throw new RecordFormatException("Duplicate PageSettingsBlock record (sid=0x"
+					+ Integer.toHexString(rec.getSid()) + ")");
+		}
 	}
 
 	private PageBreakRecord getRowBreaksRecord() {
@@ -550,5 +572,41 @@ public final class PageSettingsBlock extends RecordAggregate {
 			throw new RecordFormatException("Unexpected header-footer record sid: 0x" + Integer.toHexString(rec.getSid()));
 		}
 		_headerFooter = rec;
+	}
+
+	/**
+	 * This method reads PageSettingsBlock records from the supplied RecordStream until the first
+	 * non-PageSettingsBlock record is encountered.  As each record is read, it is incorporated
+	 * into this PageSettingsBlock.
+	 * <p/>
+	 * The latest Excel version seems to write the PageSettingsBlock uninterrupted. However there
+	 * are several examples (that Excel reads OK) where these records are not written together:
+	 * <ul>
+	 * <li><b>HEADER_FOOTER(0x089C) after WINDOW2</b> - This record is new in 2007.  Some apps
+	 * seem to have scattered this record long after the PageSettingsBlock where it belongs
+	 * test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls</li>
+	 * <li><b>PLS, WSBOOL, PageSettingsBlock</b> - WSBOOL is not a PSB record. 
+	 * This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"</li>
+	 * <li><b>Margins after DIMENSION</b> - All of PSB should be before DIMENSION. (Bug-47199)</li>
+	 * </ul>
+	 * These were probably written by other applications (or earlier versions of Excel). It was 
+	 * decided to not write specific code for detecting each of these cases.  POI now tolerates
+	 * PageSettingsBlock records scattered all over the sheet record stream, and in any order, but
+	 * does not allow duplicates of any of those records.
+	 * 
+	 * <p/>
+	 * <b>Note</b> - when POI writes out this PageSettingsBlock, the records will always be written
+	 * in one consolidated block (in the standard ordering) regardless of how scattered the records
+	 * were when they were originally read. 
+	 * 
+	 * @throws  RecordFormatException if any PSB record encountered has the same type (sid) as 
+	 * a record that is already part of this PageSettingsBlock
+	 */
+	public void addLateRecords(RecordStream rs) {
+		while(true) {
+			if (!readARecord(rs)) {
+				break;
+			}
+		}
 	}
 }
