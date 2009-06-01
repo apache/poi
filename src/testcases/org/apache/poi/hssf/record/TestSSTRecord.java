@@ -17,141 +17,127 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-
 public final class TestSSTRecord extends TestCase {
 
     /**
-     * test processContinueRecord
+     * decodes hexdump files and concatenates the results
+     * @param hexDumpFileNames names of sample files in the hssf test data directory
      */
-    public void testProcessContinueRecord() {
-//jmh        byte[] testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord" );
-//jmh        byte[] input = new byte[testdata.length - 4];
-//jmh
-//jmh        System.arraycopy( testdata, 4, input, 0, input.length );
-//jmh        SSTRecord record =
-//jmh                new SSTRecord( LittleEndian.getShort( testdata, 0 ),
-//jmh                        LittleEndian.getShort( testdata, 2 ), input );
-//jmh        byte[] continueRecord = HexRead.readData( _test_file_path + File.separator + "BigSSTRecordCR" );
-//jmh
-//jmh        input = new byte[continueRecord.length - 4];
-//jmh        System.arraycopy( continueRecord, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        assertEquals( 1464, record.getNumStrings() );
-//jmh        assertEquals( 688, record.getNumUniqueStrings() );
-//jmh        assertEquals( 688, record.countStrings() );
-//jmh        byte[] ser_output = record.serialize();
-//jmh        int offset = 0;
-//jmh        short type = LittleEndian.getShort( ser_output, offset );
-//jmh
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        short length = LittleEndian.getShort( ser_output, offset );
-//jmh
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        byte[] recordData = new byte[length];
-//jmh
-//jmh        System.arraycopy( ser_output, offset, recordData, 0, length );
-//jmh        offset += length;
-//jmh        SSTRecord testRecord = new SSTRecord( type, length, recordData );
-//jmh
-//jmh        assertEquals( ContinueRecord.sid,
-//jmh                LittleEndian.getShort( ser_output, offset ) );
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        length = LittleEndian.getShort( ser_output, offset );
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        byte[] cr = new byte[length];
-//jmh
-//jmh        System.arraycopy( ser_output, offset, cr, 0, length );
-//jmh        offset += length;
-//jmh        assertEquals( offset, ser_output.length );
-//jmh        testRecord.processContinueRecord( cr );
-//jmh        assertEquals( record, testRecord );
-//jmh
-//jmh        // testing based on new bug report
-//jmh        testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2" );
-//jmh        input = new byte[testdata.length - 4];
-//jmh        System.arraycopy( testdata, 4, input, 0, input.length );
-//jmh        record = new SSTRecord( LittleEndian.getShort( testdata, 0 ),
-//jmh                LittleEndian.getShort( testdata, 2 ), input );
-//jmh        byte[] continueRecord1 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR1" );
-//jmh
-//jmh        input = new byte[continueRecord1.length - 4];
-//jmh        System.arraycopy( continueRecord1, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord2 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR2" );
-//jmh
-//jmh        input = new byte[continueRecord2.length - 4];
-//jmh        System.arraycopy( continueRecord2, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord3 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR3" );
-//jmh
-//jmh        input = new byte[continueRecord3.length - 4];
-//jmh        System.arraycopy( continueRecord3, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord4 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR4" );
-//jmh
-//jmh        input = new byte[continueRecord4.length - 4];
-//jmh        System.arraycopy( continueRecord4, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord5 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR5" );
-//jmh
-//jmh        input = new byte[continueRecord5.length - 4];
-//jmh        System.arraycopy( continueRecord5, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord6 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR6" );
-//jmh
-//jmh        input = new byte[continueRecord6.length - 4];
-//jmh        System.arraycopy( continueRecord6, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        byte[] continueRecord7 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR7" );
-//jmh
-//jmh        input = new byte[continueRecord7.length - 4];
-//jmh        System.arraycopy( continueRecord7, 4, input, 0, input.length );
-//jmh        record.processContinueRecord( input );
-//jmh        assertEquals( 158642, record.getNumStrings() );
-//jmh        assertEquals( 5249, record.getNumUniqueStrings() );
-//jmh        assertEquals( 5249, record.countStrings() );
-//jmh        ser_output = record.serialize();
-//jmh        offset = 0;
-//jmh        type = LittleEndian.getShort( ser_output, offset );
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        length = LittleEndian.getShort( ser_output, offset );
-//jmh        offset += LittleEndianConsts.SHORT_SIZE;
-//jmh        recordData = new byte[length];
-//jmh        System.arraycopy( ser_output, offset, recordData, 0, length );
-//jmh        offset += length;
-//jmh        testRecord = new SSTRecord( type, length, recordData );
-//jmh        for ( int count = 0; count < 7; count++ )
-//jmh        {
-//jmh            assertEquals( ContinueRecord.sid,
-//jmh                    LittleEndian.getShort( ser_output, offset ) );
-//jmh            offset += LittleEndianConsts.SHORT_SIZE;
-//jmh            length = LittleEndian.getShort( ser_output, offset );
-//jmh            offset += LittleEndianConsts.SHORT_SIZE;
-//jmh            cr = new byte[length];
-//jmh            System.arraycopy( ser_output, offset, cr, 0, length );
-//jmh            testRecord.processContinueRecord( cr );
-//jmh            offset += length;
-//jmh        }
-//jmh        assertEquals( offset, ser_output.length );
-//jmh        assertEquals( record, testRecord );
-//jmh        assertEquals( record.countStrings(), testRecord.countStrings() );
+    private static byte[] concatHexDumps(String... hexDumpFileNames) {
+        int nFiles = hexDumpFileNames.length;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(nFiles * 8228);
+        for (int i = 0; i < nFiles; i++) {
+            String sampleFileName = hexDumpFileNames[i];
+            InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            try {
+                while (true) {
+                    String line = br.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    baos.write(HexRead.readFromString(line));
+                }
+                is.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return baos.toByteArray();
+    }
+
+    /**
+     * @param rawData serialization of one {@link SSTRecord} and zero or more {@link ContinueRecord}s
+     */
+    private static SSTRecord createSSTFromRawData(byte[] rawData) {
+        RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(rawData));
+        in.nextRecord();
+        SSTRecord result = new SSTRecord(in);
+        assertEquals(0, in.remaining());
+        assertTrue(!in.hasNextRecord());
+        return result;
+    }
+
+    /**
+     * SST is often split over several {@link ContinueRecord}s
+     */
+    public void testContinuedRecord() {
+        byte[] origData;
+        SSTRecord record;
+        byte[] ser_output;
+
+        origData = concatHexDumps("BigSSTRecord", "BigSSTRecordCR");
+        record = createSSTFromRawData(origData);
+        assertEquals( 1464, record.getNumStrings() );
+        assertEquals( 688, record.getNumUniqueStrings() );
+        assertEquals( 688, record.countStrings() );
+        ser_output = record.serialize();
+        assertTrue(Arrays.equals(origData, ser_output));
+
+        // testing based on new bug report
+        origData = concatHexDumps("BigSSTRecord2", "BigSSTRecord2CR1", "BigSSTRecord2CR2", "BigSSTRecord2CR3",
+                "BigSSTRecord2CR4", "BigSSTRecord2CR5", "BigSSTRecord2CR6", "BigSSTRecord2CR7");
+        record = createSSTFromRawData(origData);
+
+
+        assertEquals( 158642, record.getNumStrings() );
+        assertEquals( 5249, record.getNumUniqueStrings() );
+        assertEquals( 5249, record.countStrings() );
+        ser_output = record.serialize();
+        if (false) { // set true to observe make sure areSameSSTs() is working
+            ser_output[11000] = 'X';
+        }
+
+        SSTRecord rec2 = createSSTFromRawData(ser_output);
+        if (!areSameSSTs(record, rec2)) {
+            throw new AssertionFailedError("large SST re-serialized incorrectly");
+        }
+        if (false) {
+            // TODO - trivial differences in ContinueRecord break locations
+            // Sample data should be checked against what most recent Excel version produces.
+            // maybe tweaks are required in ContinuableRecordOutput
+            assertTrue(Arrays.equals(origData, ser_output));
+        }
+    }
+
+    private boolean areSameSSTs(SSTRecord a, SSTRecord b) {
+
+        if (a.getNumStrings() != b.getNumStrings()) {
+            return false;
+        }
+        int nElems = a.getNumUniqueStrings();
+        if (nElems != b.getNumUniqueStrings()) {
+            return false;
+        }
+        for(int i=0; i<nElems; i++) {
+            if (!a.getString(i).equals(b.getString(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -277,8 +263,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * test simple addString
      */
-    public void testSimpleAddString()
-    {
+    public void testSimpleAddString() {
         SSTRecord record = new SSTRecord();
         UnicodeString s1 = new UnicodeString("Hello world");
 
@@ -324,9 +309,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * test simple constructor
      */
-
-    public void testSimpleConstructor()
-    {
+    public void testSimpleConstructor() {
         SSTRecord record = new SSTRecord();
 
         assertEquals( 0, record.getNumStrings() );
@@ -348,28 +331,15 @@ public final class TestSSTRecord extends TestCase {
     }
 
     /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main( String[] ignored_args ) {
-        junit.textui.TestRunner.run( TestSSTRecord.class );
-    }
-
-    /**
      * Tests that workbooks with rich text that duplicates a non rich text cell can be read and written.
      */
-    public void testReadWriteDuplicatedRichText1()
-            throws Exception
-    {
+    public void testReadWriteDuplicatedRichText1() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("duprich1.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 );
         assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell(8 ).getStringCellValue() );
         assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell(8 ).getStringCellValue() );
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        wb.write( baos );
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
 
         // test the second file.
         wb = HSSFTestDataSamples.openSampleWorkbook("duprich2.xls");
@@ -382,6 +352,6 @@ public final class TestSSTRecord extends TestCase {
         assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
         assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
 
-        wb.write( baos );
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 }
