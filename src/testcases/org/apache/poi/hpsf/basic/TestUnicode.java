@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.basic;
 
@@ -34,18 +33,13 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 
-
-
 /**
  * <p>Tests whether Unicode string can be read from a
  * DocumentSummaryInformation.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-12-09
- * @version $Id$
  */
-public class TestUnicode extends TestCase
-{
+public class TestUnicode extends TestCase {
 
     static final String POI_FS = "TestUnicode.xls";
     static final String[] POI_FILES = new String[]
@@ -56,27 +50,13 @@ public class TestUnicode extends TestCase
     POIFile[] poiFiles;
 
 
-
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name the test case's name
-     */
-    public TestUnicode(final String name)
-    {
-        super(name);
-    }
-
-
-
     /**
      * <p>Read a the test file from the "data" directory.</p>
      * 
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs
      */
-    protected void setUp() throws FileNotFoundException, IOException
-    {
+    protected void setUp() {
         final File dataDir =
             new File(System.getProperty("HPSF.testdata.path"));
         data = new File(dataDir, POI_FS);
@@ -112,19 +92,4 @@ public class TestUnicode extends TestCase
         Assert.assertEquals(s.getProperty(5),
                             "Petrovitsch, Wilhelm");
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args Command-line arguments.
-     */
-    public static void main(final String[] args)
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestUnicode.class);
-    }
-
 }

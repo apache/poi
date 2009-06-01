@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayInputStream;
@@ -42,8 +42,6 @@ import org.apache.poi.hpsf.Variant;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2003-07-25
- * @version $Id$
  */
 public class TestEmptyProperties extends TestCase
 {

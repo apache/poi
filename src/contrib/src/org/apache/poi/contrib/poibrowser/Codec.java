@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.contrib.poibrowser;
 
@@ -32,8 +30,6 @@ import org.apache.poi.hpsf.ClassID;
  * data.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de) - with portions from Tomcat
- * @version $Id$
- * @since 2002-01-24
  */
 public class Codec
 {

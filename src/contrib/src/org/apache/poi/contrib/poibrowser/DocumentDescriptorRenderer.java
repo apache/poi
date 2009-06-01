@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.contrib.poibrowser;
 
@@ -30,8 +28,6 @@ import javax.swing.tree.*;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-02-05
  */
 public class DocumentDescriptorRenderer extends DefaultTreeCellRenderer
 {

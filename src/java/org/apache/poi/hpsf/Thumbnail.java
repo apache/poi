@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.LittleEndian;
@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Drew Varner (Drew.Varner inOrAround sc.edu)
  * @see SummaryInformation#getThumbnail()
- * @version $Id$
- * @since 2002-04-29
  */
 public class Thumbnail
 {

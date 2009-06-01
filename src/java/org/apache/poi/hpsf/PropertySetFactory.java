@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.InputStream;
@@ -30,8 +30,6 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-02-09
  */
 public class PropertySetFactory
 {

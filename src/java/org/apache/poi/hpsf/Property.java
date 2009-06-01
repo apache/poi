@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.UnsupportedEncodingException;
@@ -56,8 +56,6 @@ import org.apache.poi.util.POILogger;
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
  * @see Section
  * @see Variant
- * @version $Id$
- * @since 2002-02-09
  */
 public class Property
 {

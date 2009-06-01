@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.IOException;
@@ -27,8 +27,6 @@ import java.util.Date;
  * <p>Provides various static utility methods.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @version $Id$
- * @since 2002-02-09
  */
 public class Util
 {
