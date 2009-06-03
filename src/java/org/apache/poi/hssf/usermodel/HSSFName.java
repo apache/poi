@@ -21,8 +21,10 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
@@ -133,12 +135,36 @@ public final class HSSFName implements Name {
         }
     }
 
-    private static void validateName(String name){
-        if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
+    static void validateName(String name){
+        if(name.length() == 0) {
+			throw new IllegalArgumentException("Name cannot be blank");
+		}
         
         char c = name.charAt(0);
         if(!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
             throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
+        }
+        if (true) {
+        	return;
+        }
+        int looksLikeType = CellReference.classifyCellReference(name, SpreadsheetVersion.EXCEL97);
+        String looksLikeStr;
+        switch (looksLikeType) {
+        	case CellReference.NameType.NAMED_RANGE:
+        		// all OK
+        		return;
+        	case CellReference.NameType.CELL:
+        		looksLikeStr = "cell reference";
+        		break;
+        	case CellReference.NameType.COLUMN:
+        		looksLikeStr = "column reference";
+        		break;
+        	default:
+        		looksLikeStr = null;
+        }
+		if (looksLikeType != CellReference.NameType.NAMED_RANGE) {
+        	throw new IllegalArgumentException("Specified name '" + name + "' is invalid"
+        			+ (looksLikeStr == null ? "" : " because it looks like a " + looksLikeStr));
         }
     }
 

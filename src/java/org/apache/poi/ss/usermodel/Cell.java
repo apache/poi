@@ -149,11 +149,19 @@ public interface Cell {
     void setCellValue(double value);
 
     /**
-     * Set a boolean value for the cell
-     *
-     * @param value the boolean value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for booleans we'll set its value. For other types we
-     *        will change the cell to a boolean cell and set its value.
+     * Converts the supplied date to its equivalent Excel numeric value and sets
+     * that into the cell.
+     * <p/>
+     * <b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
+     * cases (when entering date values), Excel automatically adjusts the
+     * <i>cell style</i> to some date format, creating the illusion that the cell
+     * data type is now something besides {@link Cell#CELL_TYPE_NUMERIC}.  POI
+     * does not attempt to replicate this behaviour.  To make a numeric cell
+     * display as a date, use {@link #setCellStyle(CellStyle)} etc.
+     * 
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numerics cell and set its value.
      */
     void setCellValue(Date value);
 

@@ -406,8 +406,8 @@ public interface Sheet extends Iterable<Row> {
     PrintSetup getPrintSetup();
 
     /**
-     * Gets the user model for the default document header.
-     * <p>
+     * Gets the user model for the default document header.  If it does not exist, the footer will
+     * be created. See {@link #hasHeader()} and {@link #removeHeader()}. <br/>
      * Note that XSSF offers more kinds of document headers than HSSF does
      * </p>
      * @return the document header.
@@ -415,12 +415,33 @@ public interface Sheet extends Iterable<Row> {
     Header getHeader();
 
     /**
-     * Gets the user model for the default document footer.
+     * @return <code>true</code> if this sheet has a header 
+     */
+//    boolean hasHeader();
+
+    /**
+     * Removes the header if it exists. If it does not exist, this method does nothing.
+     */
+//    void removeHeader();
+
+    /**
+     * Gets the user model for the default document footer.  If it does not exist, the footer will
+     * be created. See {@link #hasFooter()} and {@link #removeFooter()}. <br/>
      * Note that XSSF offers more kinds of document footers than HSSF does.
      *
      * @return the document footer.
      */
     Footer getFooter();
+    
+    /**
+     * @return <code>true</code> if this sheet has a footer 
+     */
+//    boolean hasFooter();
+
+    /**
+     * Removes the footer if it exists. If it does not exist, this method does nothing.
+     */
+//    void removeFooter();
 
     /**
      * Sets a flag indicating whether this sheet is selected.

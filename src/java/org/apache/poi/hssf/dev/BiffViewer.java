@@ -155,6 +155,7 @@ public final class BiffViewer {
 			case EndRecord.sid:            return new EndRecord(in);
 			case ExtSSTRecord.sid:         return new ExtSSTRecord(in);
 			case ExtendedFormatRecord.sid: return new ExtendedFormatRecord(in);
+			case ExternalNameRecord.sid:   return new ExternalNameRecord(in);
 			case ExternSheetRecord.sid:    return new ExternSheetRecord(in);
 			case FilePassRecord.sid:       return new FilePassRecord(in);
 			case FileSharingRecord.sid:    return new FileSharingRecord(in);
@@ -358,6 +359,7 @@ public final class BiffViewer {
 	 *
 	 */
 	public static void main(String[] args) {
+		args = new String[] { "--out", "c:/josh/temp/ex47199-23710-twoPSBs-x.xls", };
 
 		CommandArgs cmdArgs;
 		try {
