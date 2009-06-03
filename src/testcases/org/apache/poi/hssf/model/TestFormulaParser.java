@@ -68,6 +68,7 @@ import org.apache.poi.hssf.usermodel.TestHSSFName;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParserTestHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Name;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
@@ -1228,5 +1229,47 @@ public final class TestFormulaParser extends TestCase {
 		}
 		assertNotNull("Ptg array should not be null", result);
 		confirmTokenClasses(result, new Class[] { IntPtg.class, NamePtg.class, AddPtg.class,});
+	}
+
+	/**
+	 * Zero is not a valid row number so cell references like 'A0' are not valid.
+	 * Actually, they should be treated like defined names.
+	 * <br/>
+	 * In addition, leading zeros (on the row component) should be removed from cell
+	 * references during parsing.
+	 */
+	public void testZeroRowRefs() {
+		String badCellRef = "B0"; // bad because zero is not a valid row number
+		String leadingZeroCellRef = "B000001"; // this should get parsed as "B1"
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		try {
+			HSSFFormulaParser.parse(badCellRef, wb);
+			throw new AssertionFailedError("Identified bug 47312b - Shouldn't be able to parse cell ref '"
+					+ badCellRef + "'.");
+		} catch (RuntimeException e) {
+			// expected during successful test
+			FormulaParserTestHelper.confirmParseException(e, "Specified named range '"
+					+ badCellRef + "' does not exist in the current workbook.");
+		}
+
+		Ptg[] ptgs;
+		try {
+			ptgs = HSSFFormulaParser.parse(leadingZeroCellRef, wb);
+			assertEquals("B1", ((RefPtg) ptgs[0]).toFormulaString());
+		} catch (RuntimeException e) {
+			FormulaParserTestHelper.confirmParseException(e, "Specified named range '"
+					+ leadingZeroCellRef + "' does not exist in the current workbook.");
+			// close but no cigar
+			throw new AssertionFailedError("Identified bug 47312c - '"
+					+ leadingZeroCellRef + "' should parse as 'B1'.");
+		}
+
+		// create a defined name called 'B0' and try again
+		Name n = wb.createName();
+		n.setNameName("B0");
+		n.setRefersToFormula("1+1");
+		ptgs = HSSFFormulaParser.parse("B0", wb);
+		assertEquals(NamePtg.class, ptgs[0].getClass());
 	}
 }

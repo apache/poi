@@ -17,15 +17,17 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellReference;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 
 /**
  * Tests that the common CellReference works as we need it to
  */
-public class TestCellReference extends TestCase {
+public final class TestCellReference extends TestCase {
 	
 	public void testGetCellRefParts() {
 		CellReference cellReference;
@@ -167,5 +169,36 @@ public class TestCellReference extends TestCase {
 		short col4 = 2080;
 		String collRef4 = new CellReference(0, col4).formatAsString();
 		assertEquals("CBA1", collRef4);
+	}
+
+	public void testBadRowNumber() {
+		SpreadsheetVersion v97 = SpreadsheetVersion.EXCEL97;
+		SpreadsheetVersion v2007 = SpreadsheetVersion.EXCEL2007;
+
+		confirmCrInRange(true, "A", "1", v97);
+		confirmCrInRange(true, "IV", "65536", v97);
+		confirmCrInRange(false, "IV", "65537", v97);
+		confirmCrInRange(false, "IW", "65536", v97);
+
+		confirmCrInRange(true, "A", "1", v2007);
+		confirmCrInRange(true, "XFD", "1048576", v2007);
+		confirmCrInRange(false, "XFD", "1048577", v2007);
+		confirmCrInRange(false, "XFE", "1048576", v2007);
+
+		if (CellReference.cellReferenceIsWithinRange("B", "0", v97)) {
+			throw new AssertionFailedError("Identified bug 47312a");
+		}
+
+		confirmCrInRange(false, "A", "0", v97);
+		confirmCrInRange(false, "A", "0", v2007);
+	}
+
+	private static void confirmCrInRange(boolean expResult, String colStr, String rowStr,
+			SpreadsheetVersion sv) {
+		if (expResult == CellReference.cellReferenceIsWithinRange(colStr, rowStr, sv)) {
+			return;
+		}
+		throw new AssertionFailedError("expected (c='" + colStr + "', r='" + rowStr + "' to be "
+				+ (expResult ? "within" : "out of") + " bounds for version " + sv.name());
 	}
 }
