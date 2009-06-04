@@ -30,82 +30,82 @@
 
   <body>
    <section><title>Purpose</title>
-      <p>This document hopes to serve as a general introduction and helpful set of  
-         guidelines for translating POI documentation into other languages.  We hope 
+      <p>This document hopes to serve as a general introduction and helpful set of
+         guidelines for translating POI documentation into other languages.  We hope
          to capture both general information here (such as "how do I test my changes")
          as well as language specific guidelines and translation conventions.</p>
    </section>
    <section><title>Introduction</title>
      <p>
        POI's XML based documentation is built along side the sources.  To build poi's documentation
-       you run "./build.sh docs" (UNIX/cygwin) or "build docs" (Windows) from the jakarta-poi 
+       you run "./build.sh docs" (UNIX/cygwin) or "build docs" (Windows) from the jakarta-poi
        directory.  This will put the documentation under the build/docs directory, you can navigate
        there using your browser generally by typing in the path name or File -&gt; Open new web location
-       (or some similar wording) 
-       and browsing to the "index.html" file.   You may also want to run "./build.sh clean docs" or 
+       (or some similar wording)
+       and browsing to the "index.html" file.   You may also want to run "./build.sh clean docs" or
        "build clean docs" so that all documentation previously built is erased before running the build.
-       The words "clean" and "docs" are called "targets", from here on out we will refer to them as 
-       "targets" in which case you may assume you type "./build.sh" or "build" before them in order to 
-       execute them.  
+       The words "clean" and "docs" are called "targets", from here on out we will refer to them as
+       "targets" in which case you may assume you type "./build.sh" or "build" before them in order to
+       execute them.
      </p>
      <p>
-       To generate all of the documentation such as it would appear on the 
+       To generate all of the documentation such as it would appear on the
        <link href="http://poi.apache.org/">POI Website</link> you can execute the "site" target (optionally
        preceeded by the "clean" target. See "<link href="../howtobuild.html">How to Build</link>" page for more detail (Now, POI build uses <link href="http://xml.apache.org/forrest/">Forrest</link>).
      </p>
-     <p> 
+     <p>
        The source for POI's XML documentation is in src/documentation/content/xdocs.  To edit one of these files you can use
-       a standard text editor.  Translated documentation is under src/documentation/content/xdocs/trans/xx, where xx is a 
+       a standard text editor.  Translated documentation is under src/documentation/content/xdocs/trans/xx, where xx is a
        two to three letter country code, in general this should match the internet domain suffix of the country where
-       that language generally evolved or just be generally recognizable and unique.  The directory structure under 
-       build/site/trans/xx should match the structure of build/site (the English edition) minus the 
-       trans directory.  
+       that language generally evolved or just be generally recognizable and unique.  The directory structure under
+       build/site/trans/xx should match the structure of build/site (the English edition) minus the
+       trans directory.
      </p>
      <p>
        The translated documentation should match the content and meaning of the "master" or English documentation.
        All documentation should originate in English (this is for simplicity).  While documentation written in other
-       languages is certainly welcome, it must first be translated (perhaps by posting it to the mail list and 
+       languages is certainly welcome, it must first be translated (perhaps by posting it to the mail list and
        requesting it be translated) into English and applied to the master before being applied to a translation.
      </p>
      <p>
        We prefer you donate translations directly to the <link href="http://poi.apache.org/">Apache POI</link>
-       project rather than hosting them offsite.  We will make every effort to accomidate you as we greatly appreciate your 
+       project rather than hosting them offsite.  We will make every effort to accomidate you as we greatly appreciate your
        efforts.  However, we understand that sites located within a country are the fastest and most searchable.  Therefore,
-       we recommend and welcome folks mirroring the POI site and making the translated page the home page.  You can do this 
+       we recommend and welcome folks mirroring the POI site and making the translated page the home page.  You can do this
        either via an HTML copy with some <link href="http://httpd.apache.org/info/how-to-mirror.html">appropriate software</link>
        or the preferred method of executing the POI build directly.  You can contact us via the mail list for both push and
        pull options.  The same scripts which regenerate the POI website every 2 hours, should work for others.  These are not
        yet in CVS as they are nasty dirty shell scripts ;-).  If you mirror us, tell us so we can link you.  (This will help google
-       associate you strongly with the project) 
+       associate you strongly with the project)
      </p>
      <p>
-       Submitting translations is simple, you follow the same 
+       Submitting translations is simple, you follow the same
        <link href="/getinvolved/index.html">instructions</link> as you would for submitting a code patch.
        Remeber to always generate patchs in diff -u format preserving the context relative to the jakarta-poi directory.  Also remember
-       to submit any new files in a directory preserving archive format.  Never post these to the list, always use 
+       to submit any new files in a directory preserving archive format.  Never post these to the list, always use
        <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr">Bugzilla</link>
        and create attachments per the above linked instructions.
      </p>
    </section>
    <section><title>Credits</title>
      <p>
-       Some people feel uncomfortable putting themselves in the &lt;authors&gt; tags at the top of the documentation as they feel that 
+       Some people feel uncomfortable putting themselves in the &lt;authors&gt; tags at the top of the documentation as they feel that
        translation does not give them the right to claim authorship.  Please don't feel this way, please add yourself to the authors
        tags.  It can be assumed that authors on the master documentation are all content creators and any additional authors listed
-       on the translation that are not on the master document are translators of the documentation.  You authored the xx language 
-       version of the document and should freely add yourself there.  Additionally, please supply a patch to the 
-       <link href="../who.html">Who We Are</link> page noting you as a developer once you've submitted a few translation patches.  You deserve 
+       on the translation that are not on the master document are translators of the documentation.  You authored the xx language
+       version of the document and should freely add yourself there.  Additionally, please supply a patch to the
+       <link href="../who.html">Who We Are</link> page noting you as a developer once you've submitted a few translation patches.  You deserve
        credit and it helps the project to give you credit.  Remember documentation is on par with code contribution.
      </p>
    </section>
    <section><title>Starting a new translation</title>
       <p>
-        To start a translation for a language not already in existance you must create a directory under src/documentation/content/xdocs/trans with a 
+        To start a translation for a language not already in existance you must create a directory under src/documentation/content/xdocs/trans with a
         two or three letter designation of the country where the language originated.  (For example es = Spanish, de = German)
-        Copy the book.xml and index.xml file from src/documentation/content/xdocs directory into the src/documentation/content/xdocs/trans/xx directory.  
-        Change all paths in the book.xml and index.xml to match the relative location of the English version.  For example if there is a 
+        Copy the book.xml and index.xml file from src/documentation/content/xdocs directory into the src/documentation/content/xdocs/trans/xx directory.
+        Change all paths in the book.xml and index.xml to match the relative location of the English version.  For example if there is a
         link in index.html that references ./poifs/index.html, you'd change that to ../../poifs/index.html (up 2 directories from trans/xx).
-        Create a link from the book.xml file in the src/documentation/content/trans directory (this is necessary or the build will ignore your 
+        Create a link from the book.xml file in the src/documentation/content/trans directory (this is necessary or the build will ignore your
         documentation) similar to the other languages.
         Run the clean target followed by the docs target.  If the build is successful, congratulations!  If it fails, you probably got one of
         the relative paths incorrect!  Go fix it (the first error message generally contains the most useful information).  If you need help
@@ -114,24 +114,24 @@
       <p>
         So now you have a directory with a copy of the index from the master documentation...so what?  Well now translate book.xml and index.xml.
         Try to build again.  It probably won't work.  Why?  The encoding.  At the top of every file there is an encoding="UTF-8" (in general).
-        This encoding will work for many Western European languages, but not for others, or will require some nasty escape sequencing.  This is 
-        where trial and error + guess work come in.  This <link 
-        href="http://www.ibiblio.org/xml/books/xmljava/chapters/ch03s03.html#encoding_table">Table of encodings</link> may help.  There is a 
+        This encoding will work for many Western European languages, but not for others, or will require some nasty escape sequencing.  This is
+        where trial and error + guess work come in.  This <link
+        href="http://www.ibiblio.org/xml/books/xmljava/chapters/ch03s03.html#encoding_table">Table of encodings</link> may help.  There is a
         catch.  Your encoding should work on a Linux system under Java 1.3.1 and of course with the build in general.  If in doubt, ask.
         (This is a practical consideration as thats the setup of the machine currently running the nightly/site builds.)
       </p>
    </section>
    <section><title>Need help?</title>
-      <p> 
-        Andy Oliver is the cofounder of the POI project and one of its most active documentation contributers.  Well, Andy used to think he 
-        spoke very clearly until he traveled abroad and discovered his speech was composed almost entirely of coloquialisms.  This can make some 
+      <p>
+        Andy Oliver is the cofounder of the POI project and one of its most active documentation contributers.  Well, Andy used to think he
+        spoke very clearly until he traveled abroad and discovered his speech was composed almost entirely of coloquialisms.  This can make some
         of the POI documentation difficult to translate, if in doubt...ask.  Its also appropriate to eliminate these from the master documentation
-        where it makes it clearer.  
+        where it makes it clearer.
       </p>
    </section>
    <section><title>Translation Conventions</title>
       <p>
-        In addition to the above practical guidelines we hope to come up with a set of translation guidelines here (or linked from here) for 
+        In addition to the above practical guidelines we hope to come up with a set of translation guidelines here (or linked from here) for
         general use as well as language specific translation guidelines and conventions.  We assume that the POI translators will document
         them here as they develop.
       </p>
@@ -140,7 +140,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

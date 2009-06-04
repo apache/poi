@@ -18,14 +18,13 @@
    ====================================================================
 -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
-<!-- $Id$ -->
 
 <document>
  <header>
   <title>Apache POI - HPSF - Java API to Handle Microsoft Format Document
    Properties</title>
   <subtitle>Overview</subtitle>
-  <authors>     
+  <authors>
    <person name="Rainer Klute" email="klute@apache.org"/>
   </authors>
  </header>

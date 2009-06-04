@@ -19,7 +19,6 @@
 -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
 "../dtd/document-v11.dtd">
-<!-- $Id$ -->
 
 <document>
  <header>
@@ -94,7 +93,7 @@
 
     <p>If all you are interested in is getting the textual content of
      all the document properties, such as for full text indexing, then
-     take a look at 
+     take a look at
      <code>org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor</code>. However,
      if you want full access to the properties, please read on!</p>
 
@@ -367,7 +366,7 @@ else
     <note>This section explains how to <strong>write standard
       properties</strong>. HPSF provides some high-level classes and methods
      which make writing of standard properties easy. They are based on the
-     low-level writing functions explained in <link href="#sec4">another 
+     low-level writing functions explained in <link href="#sec4">another
       section</link>.</note>
 
     <p>As explained above, standard properties are located in the summary
@@ -1236,7 +1235,7 @@ No property set stream: "/1Table"</source>
     <section><title>Low-level Writing Functions In Details</title>
      <p>Writing properties is introduced by an artificial but simple example: a
       program creating a new document (aka POI file system) which contains only
-      a single document: a summary information property set stream. The latter 
+      a single document: a summary information property set stream. The latter
       will hold the document's title only. This is artificial in that it does
       not contain any Word, Excel or other kind of useful application document
       data. A document containing just a property set is without any practical
@@ -1279,10 +1278,10 @@ public class WriteTitle
     /**
      * &lt;p&gt;Runs the example program.&lt;/p&gt;
      *
-     * @param args Command-line arguments. The first and only command-line 
+     * @param args Command-line arguments. The first and only command-line
      * argument is the name of the POI file system to create.
      * @throws IOException if any I/O exception occurs.
-     * @throws WritingNotSupportedException if HPSF does not (yet) support 
+     * @throws WritingNotSupportedException if HPSF does not (yet) support
      * writing a certain property type.
      */
     public static void main(final String[] args)
@@ -1310,7 +1309,7 @@ public class WriteTitle
          * SectionIDMap.SUMMARY_INFORMATION_ID. */
         ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
 
-        /* Create an empty property. */    
+        /* Create an empty property. */
         final MutableProperty p = new MutableProperty();
 
         /* Fill the property with appropriate settings so that it specifies the

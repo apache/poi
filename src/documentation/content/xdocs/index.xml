@@ -44,33 +44,33 @@
        People interested should also follow the
        <link href="mailinglists.html">dev list</link> to track progress.</p>
       <p>
-        The release is also available from the central Maven repository 
+        The release is also available from the central Maven repository
         under Group ID "org.apache.poi" and Version "3.5-beta5".
-      </p>  
+      </p>
     </section>
     <section><title>POI 3.2-FINAL Released (2008-10-19)</title>
       <p>
         The POI team is pleased to announce the release of 3.2 FINAL, the latest release of Apache POI.
-        There have been many important bug fixes since the 3.1 release and a lot of new features. 
+        There have been many important bug fixes since the 3.1 release and a lot of new features.
        </p><p>  A full list of changes	is available in
-      <link href="./changes.html">the changelog</link>, and 
+      <link href="./changes.html">the changelog</link>, and
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
     <link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.
       </p>
       <p>
-        The release is also available from the central Maven repository 
+        The release is also available from the central Maven repository
         under Group ID "org.apache.poi" and Version "3.2-FINAL".
-      </p>  
+      </p>
     </section>
 
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format, and Office OpenXML format, using 
+      based upon Microsoft's OLE 2 Compound Document format, and Office OpenXML format, using
       pure Java.  In short, you can read and write MS Excel files using Java. In addition,
-      you can read and write MS Word and MS PowerPoint files using Java.  POI is your Java Excel 
-      solution (for Excel 97-2007). However, we have a complete API for porting other OLE 2 
+      you can read and write MS Word and MS PowerPoint files using Java.  POI is your Java Excel
+      solution (for Excel 97-2007). However, we have a complete API for porting other OLE 2
       Compound Document formats and welcome others to participate.
       </p>
       <p>
@@ -86,8 +86,8 @@
          provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
          which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
-         XLS format; and <link href="http://lucene.apache.org/">Lucene</link> 
-         for which we provide format interpretors.  When practical, we donate 
+         XLS format; and <link href="http://lucene.apache.org/">Lucene</link>
+         for which we provide format interpretors.  When practical, we donate
          components directly to those projects for POI-enabling them.
       </p>
       <section><title>Why/when would I use POI?</title>
@@ -124,10 +124,10 @@
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
         <section><title>HSSF and XSSF for Excel Documents</title>
-             <p>HSSF is our port of the Microsoft Excel 97(-2007) file format (BIFF8) to pure 
+             <p>HSSF is our port of the Microsoft Excel 97(-2007) file format (BIFF8) to pure
               Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
-              pure Java. They both supports read and write capability. Please see 
-              <link href="./spreadsheet/index.html">the HSSF+XSSF project page</link> for more 
+              pure Java. They both supports read and write capability. Please see
+              <link href="./spreadsheet/index.html">the HSSF+XSSF project page</link> for more
               information.</p>
         </section>
         <section><title>HWPF for Word Documents</title>
@@ -172,7 +172,7 @@
      <section><title>Component map</title>
        <p>
          The POI distribution consists of several JAR files. Not all of them are needed in every case. The following table
-         shows the relationships between POI components and the JAR files. 
+         shows the relationships between POI components and the JAR files.
        </p>
         <table>
           <tr>
@@ -257,7 +257,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

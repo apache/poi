@@ -27,7 +27,7 @@
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
-  
+
   <body>
     <section><title>¿Qué es?</title>
       <p>El proyecto POI es el proyecto principal para el desarrollo de adaptaciones (ports)
@@ -43,11 +43,11 @@
       </p>
       <section><title>POIFS</title>
         <p>
-          <link href="../../poifs/index.html">POIFS [EN]</link> es el conjunto de APIs (Interfaces de Aplicación) 
+          <link href="../../poifs/index.html">POIFS [EN]</link> es el conjunto de APIs (Interfaces de Aplicación)
 	  para la lectura y escritura del Formato de Documento Compuesto OLE 2 utilizando (únicamente) Java.
-        </p> 
+        </p>
       </section>
-      
+
       <section><title>HSSF</title>
         <p>
           <link href="../../spreadsheet/index.html">HSSF [EN]</link> es el conjunto de APIs para la lectura y
@@ -66,7 +66,7 @@
         <p>
           <link href="../../hpsf/index.html">HPSF [EN]</link> es el conjunto de APIs para la lectura
 	  de conjuntos de propiedades utilizando (únicamente) Java.
-        </p> 
+        </p>
       </section>
 
       <section><title>Utilidades-POI (POI-Utils)</title>
@@ -83,7 +83,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The POI Project All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

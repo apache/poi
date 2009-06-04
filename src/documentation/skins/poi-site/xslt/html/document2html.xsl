@@ -28,7 +28,6 @@ to HTML.  It renders XML as HTML in this form:
 ..which site2xhtml.xsl then combines with HTML from the index (book2menu.xsl)
 and tabs (tab2menu.xsl) to generate the final HTML.
 
-$Id$
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
@@ -53,7 +52,7 @@ $Id$
       <body>
         <xsl:apply-templates/>
         <xsl:if test="header/authors">
-            <div align="right" id="authors">       
+            <div align="right" id="authors">
                <xsl:for-each select="header/authors/person">
                      <xsl:choose>
                         <xsl:when test="position()=1">by&#160;</xsl:when>
@@ -65,14 +64,14 @@ $Id$
                      <!-- </a> -->
                   </xsl:for-each>
               </div>
-         </xsl:if>         
+         </xsl:if>
         <!--xsl:call-template name="pdflink"/-->
       </body>
       </document>
    </xsl:if>
 
-  
-    
+
+
    <xsl:if test="book">
     <xsl:apply-templates/>
    </xsl:if>
@@ -81,8 +80,8 @@ $Id$
    <xsl:template match="body">
     <xsl:apply-templates/>
   </xsl:template>
-  
- 
+
+
 <!-- ====================================================================== -->
 <!-- header section -->
 <!-- ====================================================================== -->
@@ -96,9 +95,9 @@ $Id$
 <!-- ====================================================================== -->
 
    <xsl:template match="section">
-	
+
 	 <xsl:variable name = "level" select = "count(ancestor::section)+1" />
-	 
+
 	 <xsl:choose>
 	 	<xsl:when test="$level=1">
 	 	  <div class="h3"><h3><xsl:value-of select="title"/></h3></div>
@@ -114,15 +113,15 @@ $Id$
 	 	</xsl:when>
 	 	<xsl:otherwise>
 	 	  <div class="h5"><h5><xsl:value-of select="title"/></h5></div>
-	      <xsl:apply-templates/>	 	 
+	      <xsl:apply-templates/>
 	 	</xsl:otherwise>
 	 </xsl:choose>
 
-	</xsl:template>  
+	</xsl:template>
 
  <xsl:template match="title">
  </xsl:template>
- 	       
+
 <!-- ====================================================================== -->
 <!-- footer section -->
 <!-- ====================================================================== -->
@@ -146,11 +145,11 @@ $Id$
   <xsl:template match="source">
     <xsl:apply-imports/>
   </xsl:template>
-  
+
   <xsl:template match="//source/font">
     <font color="{@color}"><xsl:apply-templates/></font>
   </xsl:template>
-    
+
   <xsl:template match="fixme">
     <xsl:apply-imports/>
   </xsl:template>
@@ -162,7 +161,7 @@ $Id$
  <xsl:template match="ul|ol|dl">
     <xsl:apply-imports/>
  </xsl:template>
- 
+
  <xsl:template match="li">
     <xsl:apply-imports/>
  </xsl:template>
@@ -194,7 +193,7 @@ $Id$
              <xsl:attribute name="class">b</xsl:attribute>
           </xsl:otherwise>
        </xsl:choose>
-     
+
        <xsl:apply-templates/>
     </tr>
   </xsl:template>
@@ -210,7 +209,7 @@ $Id$
   <xsl:template match="tn">
     <xsl:apply-imports/>
   </xsl:template>
-  
+
   <xsl:template match="caption">
     <!-- ignore since already used -->
   </xsl:template>
@@ -230,7 +229,7 @@ $Id$
  <xsl:template match="code">
     <xsl:apply-imports/>
  </xsl:template>
- 
+
 <!-- ====================================================================== -->
 <!-- images section -->
 <!-- ====================================================================== -->
@@ -238,7 +237,7 @@ $Id$
  <xsl:template match="figure">
     <xsl:apply-imports/>
  </xsl:template>
- 
+
  <xsl:template match="img">
     <xsl:apply-imports/>
  </xsl:template>
@@ -269,7 +268,7 @@ $Id$
 
  <xsl:template match="anchor">
     <xsl:apply-imports/>
- </xsl:template>  
+ </xsl:template>
 
 <!-- ====================================================================== -->
 <!-- specials section -->
@@ -281,7 +280,7 @@ $Id$
 
   <!-- Generates the PDF link -->
   <xsl:template name="pdflink">
-    <xsl:if test="not($config/disable-pdf-link) or $disable-pdf-link = 'false'"> 
+    <xsl:if test="not($config/disable-pdf-link) or $disable-pdf-link = 'false'">
       <div align="right" id="pdf"><a href="{$filename-noext}.pdf">
           <img class="skin" src="{$skin-img-dir}/pdfdoc.gif" alt="PDF"/><br/>
           PDF</a>

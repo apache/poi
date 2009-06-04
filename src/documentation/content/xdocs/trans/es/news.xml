@@ -28,7 +28,7 @@
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
-  
+
   <body>
     <section><title>POI en los medios de comunicación</title>
         <p>
@@ -40,23 +40,23 @@
 		dedicaremos el mismo tiempo así que no tengáis reparos en enviar
 		difamaciones coléricas así como comentarios favorables, técnicos y
 		objetivos. No mencionaremos mensajes realmente estúpidos (lo sentimos).
-        </p>                        
+        </p>
     </section>
     <section><title>Inglés</title>
         <ul>
-                <li>   
+                <li>
                       <link href="http://archive.midrange.com/web400/200204/msg00023.html">Discusión sobre el uso de POI en AS/400s</link>
                 </li>
                 <li>
-                      <link href="http://www.somelist.com/mails/23819.html">Discusión de cuando casi tuvimos POI como el filtro para KOffice si asuntos de política y licencias no lo hubieran condenado al fracaso</link> 
+                      <link href="http://www.somelist.com/mails/23819.html">Discusión de cuando casi tuvimos POI como el filtro para KOffice si asuntos de política y licencias no lo hubieran condenado al fracaso</link>
                 </li>
                 <li>
                        <link href="http://www.oreillynet.com/pub/wlg/1552?page=last&amp;x-showcontent=text">Discusión Java en O'Reilly Network incluyendo discusión sobre POI</link> - O'Reilly.net
                 </li>
-                <li>   
+                <li>
                        <link href="http://www.rollerweblogger.org/page/roller/20020715">Poor Obfuscation Implementation (Implementación Pobre de Ofuscación).</link> - Blog de David M. Johnson
                 </li>
-		<li>   
+		<li>
                        <link href="http://www.jsurfer.org/article.php?sid=322">
                         Descarga POI 1.5-dev-rc2 </link> - JSurfer
                 </li>
@@ -75,10 +75,10 @@
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?folderId=20&amp;discussionContextId=11523">
                         Descarga Jakarta POI 1.4583</link> - JavaLobby
-                </li>        
+                </li>
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?discussionContextId=11442&amp;folderId=20">
-                        El proyecto POI se mueve a Jakarta (OLE 2 CDF/Excel/Word en 
+                        El proyecto POI se mueve a Jakarta (OLE 2 CDF/Excel/Word en
                         java puro)</link> - JavaLobby
                 </li>
                 <li>
@@ -104,7 +104,7 @@
                 <li>
                         <link href="http://chicago.sourceforge.net/devel/">
                         Página del Desarrollador de Chicago
-                        </link>                        
+                        </link>
                 </li>
                 <li>
                         <link href="http://www.onjava.com/pub/d/1157">
@@ -118,26 +118,26 @@
                         Noticias en la Red
                         </link> - Java World
                 </li>
-                
+
         </ul>
     </section>
     <section><title>Nederlandstalige (Holandés)</title>
         <ul>
                 <li>
-                        <link 
+                        <link
                         href="http://www.ster.be/java/java9.html">
-                        Een Excel-werkboek maken vanuit Java - Lieven Smits 
+                        Een Excel-werkboek maken vanuit Java - Lieven Smits
                         </link>
                 </li>
         </ul>
     </section>
     <section><title>Deutsch (Alemán)</title>
         <ul>
-                <li> <link 
-                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com 
+                <li> <link
+                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com
                 </li>
                 <li>
-                       <link 
+                       <link
                        href="http://www.jsp-develop.de/newsletter/10/">
                        Apache Jakarta-Projekt bringt Word und Excel in die Java-Welt </link> - jsp-develop.de  (for the misguided who use JSP ;-) )
                 </li>
@@ -158,14 +158,14 @@
                 </li>
                 <li>
                       <link href="http://p2p.wrox.com/archive/java_espanol/2002-08/3.asp">Discusión sobre Excel y Java incluyendo POI de los foros de Wrox</link>
-                </li> 
+                </li>
         </ul>
     </section>
     <section><title>Francais (Francés)</title>
         <ul>
 		<li>
 			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
-			Excel/OLE accessibles   
+			Excel/OLE accessibles
                         </link> - Da Linux French Page
                 </li>
                 <li>
@@ -212,8 +212,8 @@
 		diciéndonos en qué idioma está escrito y lo pondremos donde corresponda!
         </p>
 	<ul>
-                <li> 
-                       <link 
+                <li>
+                       <link
                        href="http://www.javacentrix.com/index.htm">
                        Si tuviera que adivinar, diría que es Tailandés, pero a lo mejor
 		       alguno de vosotros lo sabe con seguridad.</link> - javacentrix.com
@@ -224,7 +224,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

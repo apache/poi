@@ -186,7 +186,6 @@
     <footer>
         <legal>
           Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-          $Revision$ $Date$
         </legal>
     </footer>
 </document>

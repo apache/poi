@@ -64,7 +64,7 @@
         zu stellen. Einige Beispiele: Für
         <link href="http://xml.apache.org/cocoon">Cocoon</link>
         werden bald Generatoren und Serializer zur Verfügung stehen. Wir
-        arbeiten mit 
+        arbeiten mit
         <link href="http://www.openoffice.org/">Open Office.org</link>
         zusammen, um das Excel-Dateiformat zu
         dokumentieren.
@@ -110,7 +110,7 @@
           wie tar, gzip, zip oder arc genutzt, sondern stattdessen ein
           eigenes Archivformat erfunden,
           das keinerlei Standardverschlüsselung oder -komprimierung
-          bietet, das schlecht erweiterbar ist, und das zur 
+          bietet, das schlecht erweiterbar ist, und das zur
           Fragmentierung neigt.
         </p>
         <p>POI ist außerdem eine Spezialität der hawaiianischen Küche. Sie wird
@@ -203,7 +203,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

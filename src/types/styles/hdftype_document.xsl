@@ -50,7 +50,6 @@
     <footer>
         <legal>
           Copyright (c) @year@ The Poi Project All rights reserved.
-          $Revision$ $Date$
         </legal>
     </footer>
 

@@ -34,7 +34,6 @@ footer, searchbar, css etc.  As input, it takes XML of the form:
   </div>
 </site>
 
-$Id$
 -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -54,13 +53,13 @@ $Id$
               <xsl:value-of select="/site/document/title" />
             </title>
          </head>
-    
+
   <body class="composite" bgcolor="white">
-    
+
     <xsl:comment>================= start Banner ==================</xsl:comment>
       <div id="banner">
         <table border="0" summary="banner" cellspacing="0" cellpadding="8" width="100%">
-         <tbody>        
+         <tbody>
           <tr>
             <xsl:comment>================= start Group Logo ==================</xsl:comment>
             <xsl:if test="$config/group-name">
@@ -89,24 +88,24 @@ $Id$
             </td>
             <xsl:comment>================= end Project Logo ==================</xsl:comment>
           </tr>
-         </tbody>          
+         </tbody>
         </table>
       </div>
     <xsl:comment>================= end Banner ==================</xsl:comment>
 
     <xsl:comment>================= start Main ==================</xsl:comment>
     <table id="breadcrumbs" summary="nav" border="0" cellspacing="0" cellpadding="0" width="100%">
-     <tbody>    
+     <tbody>
       <xsl:comment>================= start Status ==================</xsl:comment>
       <tr class="status">
         <td>
           <xsl:comment>================= start BreadCrumb ==================</xsl:comment>
-            <a href="{$config/trail/link1/@href}"><xsl:value-of select="$config/trail/link1/@name" /></a> 
-            <xsl:if test = "($config/trail/link2/@name)and(normalize-space($config/trail/link2/@name)!='')"><xsl:text> | </xsl:text></xsl:if>                                 
+            <a href="{$config/trail/link1/@href}"><xsl:value-of select="$config/trail/link1/@name" /></a>
+            <xsl:if test = "($config/trail/link2/@name)and(normalize-space($config/trail/link2/@name)!='')"><xsl:text> | </xsl:text></xsl:if>
             <a href="{$config/trail/link2/@href}"><xsl:value-of select="$config/trail/link2/@name" /></a>
-            <xsl:if test = "($config/trail/link3/@name)and(normalize-space($config/trail/link3/@name)!='')"><xsl:text> | </xsl:text></xsl:if>                                 
+            <xsl:if test = "($config/trail/link3/@name)and(normalize-space($config/trail/link3/@name)!='')"><xsl:text> | </xsl:text></xsl:if>
             <a href="{$config/trail/link3/@href}"><xsl:value-of select="$config/trail/link3/@name" /></a>
-          <!-- useful when we have <link> elements instead of link(n:=1..3)  
+          <!-- useful when we have <link> elements instead of link(n:=1..3)
           <xsl:for-each select="$config/trail/link">
             <xsl:if test="position()!=1">|</xsl:if>
             <a href="{@href}"><xsl:value-of select="@name"/></a>
@@ -120,8 +119,8 @@ $Id$
           <xsl:comment>================= end Tabs ==================</xsl:comment>
         </td>
       </tr>
-     </tbody>      
-    </table>      
+     </tbody>
+    </table>
       <xsl:comment>================= end Status ==================</xsl:comment>
 
 
@@ -188,7 +187,7 @@ $Id$
         </td>
         <xsl:comment>================= end Content ==================</xsl:comment>
       </tr>
-     </tbody>      
+     </tbody>
     </table>
     <xsl:comment>================= end Main ==================</xsl:comment>
 
