@@ -557,7 +557,7 @@ public final class FormulaParser {
 		// which will either be named ranges or functions
 		StringBuilder sb = new StringBuilder();
 
-		if (!isValidDefinedNameChar(look)) {
+		if (!Character.isLetter(look)) {
 			throw expected("number, string, or defined name");
 		}
 		while (isValidDefinedNameChar(look)) {
