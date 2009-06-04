@@ -29,7 +29,6 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
 
 /**
@@ -251,11 +250,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
         for (int i = 0; i < ptgs.length; i++) {
             assertEquals('R', ptgs[i].getRVAType());
         }
+
     }
-    
-    public void testValidNames() {
-    	Name n = getTestDataProvider().createWorkbook().createName();
-		n.setNameName("B00000001");
-		
-	}
 }
