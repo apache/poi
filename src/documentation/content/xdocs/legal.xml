@@ -30,17 +30,17 @@
   <body>
     <section><title>Apache POI - Legal Stuff</title>
 <p>
-All material on this website is Copyright &#169; 2002-2003, The Apache 
+All material on this website is Copyright &#169; 2002-2003, The Apache
 Software Foundation
 </p>
 
 <p>
-Sun, Sun Microsystems, Solaris, Java, JavaServer Web Development Kit, 
-and JavaServer Pages are trademarks or registered trademarks of Sun 
-Microsystems, Inc. UNIX is a registered trademark in the United States 
+Sun, Sun Microsystems, Solaris, Java, JavaServer Web Development Kit,
+and JavaServer Pages are trademarks or registered trademarks of Sun
+Microsystems, Inc. UNIX is a registered trademark in the United States
 and other countries, exclusively licensed through 'The Open Group'.
 Microsoft, Windows, WindowsNT, Excel, Word, PowerPoint and Win32 are
-registered trademarks of 
+registered trademarks of
 Microsoft Corporation. Linux is a registered trademark of Linus Torvalds.
 All other product names mentioned herein and throughout the entire
 web site are trademarks of their respective owners.
@@ -51,7 +51,6 @@ web site are trademarks of their respective owners.
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

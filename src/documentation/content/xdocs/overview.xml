@@ -27,7 +27,7 @@
       <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
     </authors>
   </header>
-  
+
   <body>
     <section><title>What is it?</title>
       <p>The POI project is the master project for developing pure
@@ -43,47 +43,47 @@
       </p>
       <section><title>POIFS</title>
         <p>
-          <link href="poifs/index.html">POIFS</link> is the set of APIs 
+          <link href="poifs/index.html">POIFS</link> is the set of APIs
           for reading and writing OLE 2 Compound Document Formats using (only) Java.
-        </p> 
+        </p>
       </section>
-      
+
       <section><title>HSSF and XSSF</title>
         <p>
-          <link href="spreadsheet/index.html">HSSF and XSSF</link> are 
-           the set of APIs for reading and writing Microsoft Excel 
+          <link href="spreadsheet/index.html">HSSF and XSSF</link> are
+           the set of APIs for reading and writing Microsoft Excel
            97-2007 and OOXML spreadsheets using (only) Java.
         </p>
       </section>
 
       <section><title>HWPF</title>
         <p>
-          <link href="hwpf/index.html">HWPF</link>  is the set of APIs                   
+          <link href="hwpf/index.html">HWPF</link>  is the set of APIs
           for reading and writing Microsoft Word 97(-XP) documents using (only) Java.
         </p>
       </section>
 
       <section><title>HSLF</title>
         <p>
-          <link href="slideshow/index.html">HSLF</link>  is the set of APIs                   
+          <link href="slideshow/index.html">HSLF</link>  is the set of APIs
           for reading and writing Microsoft PowerPoint 97(-XP) documents using (only) Java.
         </p>
       </section>
 
       <section><title>HPSF</title>
         <p>
-          <link href="hpsf/index.html">HPSF</link> is the set of APIs 
+          <link href="hpsf/index.html">HPSF</link> is the set of APIs
           for reading property sets using (only) Java.
-        </p> 
+        </p>
       </section>
 
       <section><title>POI-Utils</title>
         <p>
           <link href="utils/index.html">POI-Utils</link> are general purpose artifacts
-          from POI development that have not yet been implemented elsewhere.  We're 
+          from POI development that have not yet been implemented elsewhere.  We're
           always looking to donate these and maintain them as part of a general library
           used in another project.  These are things we need to complete our mission but
-          are generally outside of it.  
+          are generally outside of it.
         </p>
       </section>
     </section>
@@ -96,7 +96,7 @@
         studying the source code you might want to have a look at the
         "Examples" section of the <link
           href="apidocs/overview-summary.html">POI API
-          documentation</link>.</p> 
+          documentation</link>.</p>
     </section>
 
     <section><title>Contributed Software</title>
@@ -119,7 +119,6 @@
   <footer>
     <legal>
       Copyright 2007 The Apache Software Foundation or its licensors, as applicable.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

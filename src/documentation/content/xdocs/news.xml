@@ -27,7 +27,7 @@
       <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
     </authors>
   </header>
-  
+
   <body>
     <section><title>POI in the news</title>
         <p>
@@ -39,15 +39,15 @@
                 equal time will be given so please feel free to send inflamatory
                 defamation as well as favorable, technical and factual.  Really
                 stupid things won't be mentioned (sorry).
-        </p>                        
+        </p>
     </section>
     <section><title>English</title>
         <ul>
-                <li> 
+                <li>
                       <link href="http://archive.midrange.com/web400/200204/msg00023.html">Discussion about using POI on AS/400s</link>
                 </li>
                 <li>
-                      <link href="http://www.somelist.com/mails/23819.html">Discussion from back when we almost had POI as the filter for KOffice if politics and licenses hadn't killed iit</link> 
+                      <link href="http://www.somelist.com/mails/23819.html">Discussion from back when we almost had POI as the filter for KOffice if politics and licenses hadn't killed iit</link>
                 </li>
                 <li>
                        <link href="http://www.oreillynet.com/pub/wlg/1552?page=last&amp;x-showcontent=text">Java discussion on O'Reilly Network including discussion about POI</link> - O'Reilly.net
@@ -55,7 +55,7 @@
                 <li>
                        <link href="http://www.rollerweblogger.org/page/roller/20020715">Poor Obfuscation Implementation.</link> - Blog of David M. Johnson
                 </li>
-                <li>   
+                <li>
                        <link href="http://www.jsurfer.org/article.php?sid=322">
                         POI 1.5-dev-rc2 released </link> - JSurfer
                 </li>
@@ -74,10 +74,10 @@
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?folderId=20&amp;discussionContextId=11523">
                         Jakarta POI 1.4583 Released</link> - JavaLobby
-                </li>        
+                </li>
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?discussionContextId=11442&amp;folderId=20">
-                        POI project moves to Jakarta (OLE 2 CDF/Excel/Word in 
+                        POI project moves to Jakarta (OLE 2 CDF/Excel/Word in
                         pure java)</link> - JavaLobby
                 </li>
                 <li>
@@ -104,7 +104,7 @@
                 <li>
                         <link href="http://chicago.sourceforge.net/devel/">
                         Chicago Developer Page
-                        </link>                        
+                        </link>
                 </li>
                 <li>
                         <link href="http://www.onjava.com/pub/d/1157">
@@ -118,26 +118,26 @@
                         News Around the Net
                         </link> - Java World
                 </li>
-                
+
         </ul>
     </section>
     <section><title>Nederlandstalige (Dutch)</title>
         <ul>
                 <li>
-                        <link 
+                        <link
                         href="http://www.ster.be/java/java9.html">
-                        Een Excel-werkboek maken vanuit Java - Lieven Smits 
+                        Een Excel-werkboek maken vanuit Java - Lieven Smits
                         </link>
                 </li>
         </ul>
     </section>
     <section><title>Deutsch (German)</title>
         <ul>
-                <li> <link 
-                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com 
+                <li> <link
+                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com
                 </li>
                 <li>
-                       <link 
+                       <link
                        href="http://www.jsp-develop.de/newsletter/10/">
                        Apache Jakarta-Projekt bringt Word und Excel in die Java-Welt </link> - jsp-develop.de  (for the misguided who use JSP ;-) )
                 </li>
@@ -158,14 +158,14 @@
                 </li>
                 <li>
                       <link href="http://p2p.wrox.com/archive/java_espanol/2002-08/3.asp">Spanish discussion about Excel and Java including POI from Wrox forums</link>
-                </li> 
+                </li>
         </ul>
     </section>
     <section><title>Fran&#231;ais (French)</title>
         <ul>
 		<li>
 			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
-			Excel/OLE accessibles   
+			Excel/OLE accessibles
                         </link> - Da Linux French Page
                 </li>
                 <li>
@@ -188,7 +188,7 @@
                 <li><link href="http://www.tech-arts.co.jp/macosx/webobjects-jp/htdocs/3200/3218.html">Various discussion in Japanese including on POI</link></li>
                 <li><link href="http://muimi.com/j/jakarta/">Japanese resources on Jakarta projects including POI</link></li>
                 <li><link href="http://www.fk.urban.ne.jp/home/kishida/">Kishida's site</link> -- Weekly Forte Lectures -- includes a snip about POI and Japanese.</li>
-               
+
         </ul>
     </section>
     <section><title>Russkii Yazyk (Russian)</title>
@@ -213,8 +213,8 @@
                 telling us what language it is and we'll categorize it!
         </p>
         <ul>
-                <li> 
-                       <link 
+                <li>
+                       <link
                        href="http://www.javacentrix.com/index.htm">
                        If I had to guess, I'd say this is Thai, but
                        maybe you actually know</link> - javacentrix.com
@@ -225,7 +225,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

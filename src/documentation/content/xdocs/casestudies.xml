@@ -68,7 +68,7 @@
               </p>
               <p>
 
-              The Apache-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them. 
+              The Apache-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them.
               </p>
 
               <p>
@@ -205,7 +205,6 @@ format,
     <footer>
         <legal>
             Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-            $Revision$ $Date$
         </legal>
     </footer>
 </document>

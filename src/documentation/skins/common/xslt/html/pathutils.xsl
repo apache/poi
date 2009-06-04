@@ -29,7 +29,6 @@ ext: return the last extension of the filename in a path
 filename-noext: return the file part of a path without its last extension
 
 @author Jeff Turner <jefft@apache.org>
-$Id$
 -->
 
 <!-- Returns the directory part of a path.  Equivalent to Unix 'dirname'.
@@ -63,9 +62,9 @@ Examples:
 
 <!-- Returns the filename part of a path.  Equivalent to Unix 'basename'
 Examples:
-'index.html'  ->  'index.html' 
-'foo/bar/'  ->  '' 
-'foo/bar/index.html'  ->  'index.html' 
+'index.html'  ->  'index.html'
+'foo/bar/'  ->  ''
+'foo/bar/index.html'  ->  'index.html'
 -->
 <xsl:template name="filename">
   <xsl:param name="path"/>
@@ -83,11 +82,11 @@ Examples:
 
 <!-- Returns the last extension of a filename in a path.
 Examples:
-'index.html'  ->  '.html' 
-'index.dtdx.html'  ->  '.html' 
-'foo/bar/'  ->  '' 
-'foo/bar/index.html'  ->  '.html' 
-'foo/bar/index'  ->  '' 
+'index.html'  ->  '.html'
+'index.dtdx.html'  ->  '.html'
+'foo/bar/'  ->  ''
+'foo/bar/index.html'  ->  '.html'
+'foo/bar/index'  ->  ''
 -->
 <xsl:template name="ext">
   <xsl:param name="path"/>
@@ -235,7 +234,7 @@ Usage: saxon pathutils.xsl pathutils.xsl path=foo/bar
     path-nofrag    = <xsl:call-template name="path-nofrag">
       <xsl:with-param name="path" select="$path"/>
     </xsl:call-template>
- 
+
   </xsl:message>
 </xsl:template>
 -->
