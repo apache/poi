@@ -182,7 +182,7 @@ public interface Sheet extends Iterable<Row> {
      * @param height default row height
      */
     void setDefaultRowHeightInPoints(float height);
-    
+
     /**
      * Returns the CellStyle that applies to the given
      *  (0 based) column, or null if no style has been
@@ -275,7 +275,7 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Set whether the window should show 0 (zero) in cells containing zero value.
      * When false, cells with zero value appear blank instead of showing the number zero.
-     * 
+     *
      * @param value whether to display or hide all zero values on the worksheet
      */
     void setDisplayZeros(boolean value);
@@ -407,18 +407,19 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Gets the user model for the default document header.
-     * <p>
+     * <p/>
      * Note that XSSF offers more kinds of document headers than HSSF does
      * </p>
-     * @return the document header.
+     * @return the document header. Never <code>null</code>
      */
     Header getHeader();
 
     /**
      * Gets the user model for the default document footer.
+     * <p/>
      * Note that XSSF offers more kinds of document footers than HSSF does.
      *
-     * @return the document footer.
+     * @return the document footer. Never <code>null</code>
      */
     Footer getFooter();
 
@@ -473,7 +474,7 @@ public interface Sheet extends Iterable<Row> {
     void setZoom(int numerator, int denominator);
 
     /**
-     * The top row in the visible view when the sheet is 
+     * The top row in the visible view when the sheet is
      * first viewed after opening it in a viewer
      *
      * @return short indicating the rownum (0 based) of the top row
@@ -481,7 +482,7 @@ public interface Sheet extends Iterable<Row> {
     short getTopRow();
 
     /**
-     * The left col in the visible view when the sheet is 
+     * The left col in the visible view when the sheet is
      * first viewed after opening it in a viewer
      *
      * @return short indicating the rownum (0 based) of the top row
@@ -489,7 +490,7 @@ public interface Sheet extends Iterable<Row> {
     short getLeftCol();
 
     /**
-     * Sets desktop window pane display area, when the 
+     * Sets desktop window pane display area, when the
      * file is first opened in a viewer.
      *
      * @param toprow the top row to show in desktop window pane

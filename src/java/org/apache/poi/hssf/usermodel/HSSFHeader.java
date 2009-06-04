@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.ss.usermodel.Header;
 
 /**
@@ -33,66 +34,30 @@ import org.apache.poi.ss.usermodel.Header;
  *
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFHeader extends HeaderFooter implements Header {
-	private HeaderRecord headerRecord;
+public final class HSSFHeader extends HeaderFooter implements Header {
 
-    /**
-     * Constructor.  Creates a new header interface from a header record
-     *
-     * @param headerRecord Header record to create the header with
-     */
-    protected HSSFHeader( HeaderRecord headerRecord ) {
-    	super(headerRecord.getHeader());
-        this.headerRecord = headerRecord;
-    }
+	private final PageSettingsBlock _psb;
 
-    /**
-     * Sets the left string.
-     *
-     * @param newLeft The string to set as the left side.
-     */
-    public void setLeft( String newLeft )
-    {
-        left = newLeft;
-        createHeaderString();
-    }
+	protected HSSFHeader(PageSettingsBlock psb) {
+		_psb = psb;
+	}
 
-    /**
-     * Sets the center string.
-     *
-     * @param newCenter The string to set as the center.
-     */
-    public void setCenter( String newCenter )
-    {
-        center = newCenter;
-        createHeaderString();
-    }
+	protected String getRawText() {
+		HeaderRecord hf = _psb.getHeader();
+		if (hf == null) {
+			return "";
+		}
+		return hf.getText();
+	}
 
-    /**
-     * Sets the right string.
-     *
-     * @param newRight The string to set as the right side.
-     */
-    public void setRight( String newRight )
-    {
-        right = newRight;
-        createHeaderString();
-    }
-    
-    protected String getRawHeader() {
-    	return headerRecord.getHeader();
-    }
-
-    /**
-     * Creates the complete header string based on the left, center, and middle
-     * strings.
-     */
-    private void createHeaderString()
-    {
-        headerRecord.setHeader( "&C" + ( center == null ? "" : center ) +
-                "&L" + ( left == null ? "" : left ) +
-                "&R" + ( right == null ? "" : right ) );
-    }
-
+	@Override
+	protected void setHeaderFooterText(String text) {
+		HeaderRecord hfr = _psb.getHeader();
+		if (hfr == null) {
+			hfr = new HeaderRecord(text);
+			_psb.setHeader(hfr);
+		} else {
+			hfr.setText(text);
+		}
+	}
 }
-
