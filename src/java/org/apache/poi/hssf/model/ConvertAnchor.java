@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
 
 /**
- * $Id$
+ *
  */
 public class ConvertAnchor
 {
