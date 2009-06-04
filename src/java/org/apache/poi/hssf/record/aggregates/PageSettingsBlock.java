@@ -239,10 +239,21 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 
 	public void visitContainedRecords(RecordVisitor rv) {
+		// Replicates record order from Excel 2007, though this is not critical
+
 		visitIfPresent(_rowBreaksRecord, rv);
 		visitIfPresent(_columnBreaksRecord, rv);
-		visitIfPresent(_header, rv);
-		visitIfPresent(_footer, rv);
+		// Write out empty header / footer records if these are missing 
+		if (_header == null) {
+			rv.visitRecord(new HeaderRecord(""));
+		} else {
+			rv.visitRecord(_header);
+		}
+		if (_footer == null) {
+			rv.visitRecord(new FooterRecord(""));
+		} else {
+			rv.visitRecord(_footer);
+		}
 		visitIfPresent(_hCenter, rv);
 		visitIfPresent(_vCenter, rv);
 		visitIfPresent(_leftMargin, rv);

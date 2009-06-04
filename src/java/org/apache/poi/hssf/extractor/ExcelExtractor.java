@@ -293,10 +293,8 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			}
 			
 			// Header text, if there is any
-			if(_includeHeadersFooters && sheet.getHeader() != null) {
-				text.append(
-						_extractHeaderFooter(sheet.getHeader())
-				);
+			if(_includeHeadersFooters) {
+				text.append(_extractHeaderFooter(sheet.getHeader()));
 			}
 			
 			int firstRow = sheet.getFirstRowNum();
@@ -382,11 +380,9 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 				text.append("\n");
 			}
 			
-			// Finally Feader text, if there is any
-			if(_includeHeadersFooters && sheet.getFooter() != null) {
-				text.append(
-						_extractHeaderFooter(sheet.getFooter())
-				);
+			// Finally Footer text, if there is any
+			if(_includeHeadersFooters) {
+				text.append(_extractHeaderFooter(sheet.getFooter()));
 			}
 		}
 		

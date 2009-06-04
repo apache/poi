@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.ss.usermodel.Footer;
 
 /**
@@ -33,59 +33,29 @@ import org.apache.poi.ss.usermodel.Footer;
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFFooter extends HeaderFooter implements Footer {
-    private FooterRecord footerRecord;
+public final class HSSFFooter extends HeaderFooter implements Footer {
+	private final PageSettingsBlock _psb;
 
-    /**
-     * Constructor.  Creates a new footer interface from a footer record
-     * @param footerRecord Footer record to create the footer with
-     */
-    protected HSSFFooter(FooterRecord footerRecord) {
-    	super(footerRecord.getFooter());
-    	this.footerRecord = footerRecord;
-    }
+	protected HSSFFooter(PageSettingsBlock psb) {
+		_psb = psb;
+	}
 
-    /**
-     * Sets the left string.
-     * @param newLeft The string to set as the left side.
-     */
-    public void setLeft(String newLeft) {
-	left = newLeft;
-	createFooterString();
-    }
+	protected String getRawText() {
+		FooterRecord hf = _psb.getFooter();
+		if (hf == null) {
+			return "";
+		}
+		return hf.getText();
+	}
 
-    /**
-     * Sets the center string.
-     * @param newCenter The string to set as the center.
-     */
-    public void setCenter(String newCenter) {
-	center = newCenter;
-	createFooterString();
-    }
-
-    /**
-     * Sets the right string.
-     * @param newRight The string to set as the right side.
-     */
-    public void setRight(String newRight) {
-	right = newRight;
-	createFooterString();
-    }
-    
-    protected String getRawFooter() {
-    	return footerRecord.getFooter();
-    }
-
-
-    /**
-     * Creates the complete footer string based on the left, center, and middle
-     * strings.
-     */
-    private void createFooterString() {
-	footerRecord.setFooter(
-			       "&C" + (center == null ? "" : center) +
-			       "&L" + (left == null ? "" : left) +
-			       "&R" + (right == null ? "" : right));
-    }
+	@Override
+	protected void setHeaderFooterText(String text) {
+		FooterRecord hfr = _psb.getFooter();
+		if (hfr == null) {
+			hfr = new FooterRecord(text);
+			_psb.setFooter(hfr);
+		} else {
+			hfr.setText(text);
+		}
+	}
 }
-

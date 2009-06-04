@@ -30,12 +30,14 @@ import org.apache.poi.hssf.record.BottomMarginRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -235,5 +237,40 @@ public final class TestPageSettingsBlock extends TestCase {
 
 	private static UnknownRecord ur(int sid, String hexData) {
 		return new UnknownRecord(sid, HexRead.readFromString(hexData));
+	}
+	
+	/**
+	 * Excel tolerates missing header / footer records, but adds them (empty) in when re-saving.
+	 * This is not critical functionality but it has been decided to keep POI consistent with
+	 * Excel in this regard.
+	 */
+	public void testMissingHeaderFooter() {
+		// initialise PSB with some records, but not the header / footer
+		Record[] recs = {
+				new HCenterRecord(),
+				new VCenterRecord(),
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+		PageSettingsBlock psb = new PageSettingsBlock(rs);
+
+		// serialize the PSB to see what records come out
+		RecordCollector rc = new RecordCollector();
+		psb.visitContainedRecords(rc);
+		Record[] outRecs = rc.getRecords();
+		
+		if (outRecs.length == 2) {
+			throw new AssertionFailedError("PageSettingsBlock didn't add missing header/footer records");
+		}
+		assertEquals(4, outRecs.length);
+		assertEquals(HeaderRecord.class, outRecs[0].getClass());
+		assertEquals(FooterRecord.class, outRecs[1].getClass());
+		assertEquals(HCenterRecord.class, outRecs[2].getClass());
+		assertEquals(VCenterRecord.class, outRecs[3].getClass());
+		
+		// make sure the added header / footer records are empty 
+		HeaderRecord hr = (HeaderRecord) outRecs[0];
+		assertEquals("", hr.getText());
+		FooterRecord fr = (FooterRecord) outRecs[1];
+		assertEquals("", fr.getText());
 	}
 }

@@ -913,20 +913,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return new HSSFPrintSetup(_sheet.getPageSettings().getPrintSetup());
     }
 
-    /**
-     * Gets the user model for the document header.
-     * @return The Document header.
-     */
     public HSSFHeader getHeader() {
-        return new HSSFHeader(_sheet.getPageSettings().getHeader());
+        return new HSSFHeader(_sheet.getPageSettings());
     }
 
-    /**
-     * Gets the user model for the document footer.
-     * @return The Document footer.
-     */
     public HSSFFooter getFooter() {
-        return new HSSFFooter(_sheet.getPageSettings().getFooter());
+        return new HSSFFooter(_sheet.getPageSettings());
     }
 
     /**
