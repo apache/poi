@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +65,5 @@ public class WorkingWithPictures {
         FileOutputStream fileOut = new FileOutputStream(file);
         wb.write(fileOut);
         fileOut.close();
-
     }
 }
