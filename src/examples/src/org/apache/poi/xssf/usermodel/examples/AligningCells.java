@@ -14,20 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
-
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
 
 /**
  * Shows how various alignment options work.
  */
 public class AligningCells {
 
-    public static void main(String[] args)  throws Exception {
+    public static void main(String[] args)  throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
         Sheet sheet = wb.createSheet();
@@ -50,7 +51,6 @@ public class AligningCells {
         FileOutputStream fileOut = new FileOutputStream("xssf-align.xlsx");
         wb.write(fileOut);
         fileOut.close();
-
     }
 
     /**
@@ -69,5 +69,4 @@ public class AligningCells {
         cellStyle.setVerticalAlignment(valign);
         cell.setCellStyle(cellStyle);
     }
-
 }
