@@ -35,6 +35,7 @@
         <release version="3.5-beta7" date="2009-??-??">
         </release>
         <release version="3.5-beta6" date="2009-06-11">
+           <action dev="POI-DEVELOPERS" type="fix">46776 - Added clone() method to MulBlankRecord to fix crash in Sheet.cloneSheet()</action>
            <action dev="POI-DEVELOPERS" type="fix">47244 - Fixed HSSFSheet to handle missing header / footer records</action>
            <action dev="POI-DEVELOPERS" type="fix">47312 - Fixed formula parser to properly reject cell references with a '0' row component</action>
            <action dev="POI-DEVELOPERS" type="fix">47199 - Fixed PageSettingsBlock/Sheet to tolerate margin records after other non-PSB records</action>
