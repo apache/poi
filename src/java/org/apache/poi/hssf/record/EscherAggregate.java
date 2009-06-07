@@ -812,7 +812,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		ObjRecord obj = new ObjRecord();
 		CommonObjectDataSubRecord cmo = new CommonObjectDataSubRecord();
 		cmo.setObjectType( CommonObjectDataSubRecord.OBJECT_TYPE_GROUP );
-		cmo.setObjectId( (short) ( shapeId ) );
+		cmo.setObjectId( shapeId );
 		cmo.setLocked( true );
 		cmo.setPrintable( true );
 		cmo.setAutofill( true );

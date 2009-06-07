@@ -134,7 +134,7 @@ public class PolygonShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType( OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING );
-        c.setObjectId( (short) ( shapeId ) );
+        c.setObjectId(shapeId);
         c.setLocked( true );
         c.setPrintable( true );
         c.setAutofill( true );
