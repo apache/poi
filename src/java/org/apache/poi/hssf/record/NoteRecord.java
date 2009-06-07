@@ -45,7 +45,7 @@ public final class NoteRecord extends StandardRecord {
 	private int field_1_row;
 	private int field_2_col;
 	private short field_3_flags;
-	private short field_4_shapeid;
+	private int field_4_shapeid;
 	private boolean field_5_hasMultibyte;
 	private String field_6_author;
 	/**
@@ -77,10 +77,10 @@ public final class NoteRecord extends StandardRecord {
 	 * Read the record data from the supplied <code>RecordInputStream</code>
 	 */
 	public NoteRecord(RecordInputStream in) {
-		field_1_row = in.readShort();
+		field_1_row = in.readUShort();
 		field_2_col = in.readShort();
 		field_3_flags = in.readShort();
-		field_4_shapeid = in.readShort();
+		field_4_shapeid = in.readUShort();
 		int length = in.readShort();
 		field_5_hasMultibyte = in.readByte() != 0x00;
 		if (field_5_hasMultibyte) {
@@ -194,14 +194,14 @@ public final class NoteRecord extends StandardRecord {
 	/**
 	 * Object id for OBJ record that contains the comment
 	 */
-	public short getShapeId() {
+	public int getShapeId() {
 		return field_4_shapeid;
 	}
 
 	/**
 	 * Object id for OBJ record that contains the comment
 	 */
-	public void setShapeId(short id) {
+	public void setShapeId(int id) {
 		field_4_shapeid = id;
 	}
 

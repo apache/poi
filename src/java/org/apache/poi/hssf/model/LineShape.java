@@ -97,7 +97,7 @@ public class LineShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType((short) ((HSSFSimpleShape)shape).getShapeType());
-        c.setObjectId((short) ( shapeId ));
+        c.setObjectId(shapeId);
         c.setLocked(true);
         c.setPrintable(true);
         c.setAutofill(true);
