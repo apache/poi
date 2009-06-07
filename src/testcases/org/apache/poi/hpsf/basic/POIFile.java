@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.basic;
 
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
-
-
 /**
  * <p>A POI file just for testing.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
- * @version $Id$
  */
 public class POIFile
 {

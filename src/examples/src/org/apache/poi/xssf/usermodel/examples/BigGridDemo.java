@@ -14,18 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.DateUtil;
-
 import java.io.*;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.*;
 
 /**
  * Demonstrates a workaround you can use to generate large workbooks and avoid OutOfMemory exception.
@@ -148,13 +149,15 @@ public class BigGridDemo {
      * @param entry the name of the sheet entry to substitute, e.g. xl/worksheets/sheet1.xml
      * @param out the stream to write the result to
      */
-    private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
+	private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
         ZipFile zip = new ZipFile(zipfile);
 
         ZipOutputStream zos = new ZipOutputStream(out);
 
-        for (Enumeration en = zip.entries(); en.hasMoreElements(); ) {
-            ZipEntry ze = (ZipEntry)en.nextElement();
+        @SuppressWarnings("unchecked")
+        Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
+        while (en.hasMoreElements()) {
+            ZipEntry ze = en.nextElement();
             if(!ze.getName().equals(entry)){
                 zos.putNextEntry(new ZipEntry(ze.getName()));
                 InputStream is = zip.getInputStream(ze);
@@ -183,22 +186,22 @@ public class BigGridDemo {
      * (YK: in future it may evolve in a full-featured API for streaming data in Excel)
      */
     public static class SpreadsheetWriter {
-        private Writer out;
-        private int rownum;
+        private final Writer _out;
+        private int _rownum;
 
         public SpreadsheetWriter(Writer out){
-            this.out = out;
+            _out = out;
         }
 
         public void beginSheet() throws IOException {
-            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            _out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">" );
-            out.write("<sheetData>\n");
+            _out.write("<sheetData>\n");
         }
 
         public void endSheet() throws IOException {
-            out.write("</sheetData>");
-            out.write("</worksheet>");
+            _out.write("</sheetData>");
+            _out.write("</worksheet>");
         }
 
         /**
@@ -207,24 +210,24 @@ public class BigGridDemo {
          * @param rownum 0-based row number
          */
         public void insertRow(int rownum) throws IOException {
-            out.write("<row r=\""+(rownum+1)+"\">\n");
-            this.rownum = rownum;
+            _out.write("<row r=\""+(rownum+1)+"\">\n");
+            this._rownum = rownum;
         }
 
         /**
          * Insert row end marker
          */
         public void endRow() throws IOException {
-            out.write("</row>\n");
+            _out.write("</row>\n");
         }
 
         public void createCell(int columnIndex, String value, int styleIndex) throws IOException {
-            String ref = new CellReference(rownum, columnIndex).formatAsString();
-            out.write("<c r=\""+ref+"\" t=\"inlineStr\"");
-            if(styleIndex != -1) out.write(" s=\""+styleIndex+"\"");
-            out.write(">");
-            out.write("<is><t>"+value+"</t></is>");
-            out.write("</c>");
+            String ref = new CellReference(_rownum, columnIndex).formatAsString();
+            _out.write("<c r=\""+ref+"\" t=\"inlineStr\"");
+            if(styleIndex != -1) _out.write(" s=\""+styleIndex+"\"");
+            _out.write(">");
+            _out.write("<is><t>"+value+"</t></is>");
+            _out.write("</c>");
         }
 
         public void createCell(int columnIndex, String value) throws IOException {
@@ -232,12 +235,12 @@ public class BigGridDemo {
         }
 
         public void createCell(int columnIndex, double value, int styleIndex) throws IOException {
-            String ref = new CellReference(rownum, columnIndex).formatAsString();
-            out.write("<c r=\""+ref+"\" t=\"n\"");
-            if(styleIndex != -1) out.write(" s=\""+styleIndex+"\"");
-            out.write(">");
-            out.write("<v>"+value+"</v>");
-            out.write("</c>");
+            String ref = new CellReference(_rownum, columnIndex).formatAsString();
+            _out.write("<c r=\""+ref+"\" t=\"n\"");
+            if(styleIndex != -1) _out.write(" s=\""+styleIndex+"\"");
+            _out.write(">");
+            _out.write("<v>"+value+"</v>");
+            _out.write("</c>");
         }
 
         public void createCell(int columnIndex, double value) throws IOException {
@@ -248,5 +251,4 @@ public class BigGridDemo {
             createCell(columnIndex, DateUtil.getExcelDate(value, false), styleIndex);
         }
     }
-
 }

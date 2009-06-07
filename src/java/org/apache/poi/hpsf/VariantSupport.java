@@ -45,8 +45,6 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2003-08-08
- * @version $Id$
  */
 public class VariantSupport extends Variant
 {

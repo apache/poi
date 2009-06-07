@@ -28,14 +28,14 @@
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
-  
+
   <body>
     <section>
        <title>Introducción</title>
        <p>
           Mucha gente está utilizando POI para distintos propósitos. Como con cualquier
           nueva API o tecnologia, la primera pregunta que la gente pregunta normalmente
-          no es "cómo puedo" sino "Quién más está haciendo lo que yo estoy a punto de 
+          no es "cómo puedo" sino "Quién más está haciendo lo que yo estoy a punto de
           hacer?" Esto es comprensible con el abismal porcentage de éxito en el negocio
           del software. Estos Casos pretenden ayudar a crear
           confianza y comprensión.
@@ -62,17 +62,17 @@
             solución de informes basada en POI para un paquete software de optimización de precios
             que se usa en grandes cadenas de venta.
          </p>
-         <p> La solución permitió a los planificadores y gestores de la mercancía mercancía pedir 
-           unos informes de soporte a la decisión e informes de cambios de precios utilizando un 
+         <p> La solución permitió a los planificadores y gestores de la mercancía mercancía pedir
+           unos informes de soporte a la decisión e informes de cambios de precios utilizando un
            navegador estándar. Los usuarios pueden especificar el tipo de informe, las opciones, así
            como criterios de filtros como la división de la compañía
-           o departamento. La generación de informes se llevó a cabo en el 
+           o departamento. La generación de informes se llevó a cabo en el
            servidor de aplicaciones multi-hilo
            y fue capaz de soportar muchas peticiones de informe simultáneas.
          </p>
          <p>La aplicación de informes recogía información del negocio de la base
-         de datos Oracle de la aplicación de optimización de precios. 
-         Los datos se agregaban y resumían basándose en el tipo específico 
+         de datos Oracle de la aplicación de optimización de precios.
+         Los datos se agregaban y resumían basándose en el tipo específico
          de informe y los criterios de filtro pedidos por el usuario. El
          informe final se generaba como una hoja de cálculo de Microsoft Excel utilizando
          el API de POI HSSF y se almacenaba en el
@@ -84,7 +84,7 @@
          a datos del negocio críticios
          a través de una interfaz basada en navegador extremadamente fácil de usar.
          No necesitaban entrenar a su amplia comunidad de usuarios en las complejidades de la
-         aplicación de optimización. Lo que es más, los informes se generaban en un formato de 
+         aplicación de optimización. Lo que es más, los informes se generaban en un formato de
          hoja de cálculo Excel,
          que todo el mundo conocía y que también permitía análisis
          de datos adicionales utilizando
@@ -98,12 +98,12 @@
                 <p>
                     El
                     <link href="http://www.lbank.lt/">Banco de Lituania</link>
-                    genera informes de datos estadísticos financieros en formato Excel 
+                    genera informes de datos estadísticos financieros en formato Excel
                     utilizando el API <link href="http://jakarta.apache.org/poi/spreadsheet/">
-                        HSSF</link> del proyecto 
+                        HSSF</link> del proyecto
                     <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
                     El sistema está basado en Oracle JServer y utiliza
-                    un procedimiento almacenado Java que utilizando el API HSSF 
+                    un procedimiento almacenado Java que utilizando el API HSSF
                     responde en formato XLS.  - Arian Lashkov (alaskov at lbank.lt)
                 </p>
             </section>
@@ -132,7 +132,7 @@
                     para la industria de las Telecomunicaciones.
                     basado en Turbine y Velocity.
                     Originalmente la factura se hacía con una sencilla
-                    hoja CVS que era entonces 
+                    hoja CVS que era entonces
                     marcada por cada cuenta y particularizada para cada cliente.
                     Como el crecimiento ha sido consistente con la aplicación, las necesidades de
                     facturas que no necesitasen ser retocadas a mano aumentaron. POI proporcionó la
@@ -176,13 +176,12 @@
                     <p>Es evidente que los ficheros de Microsoft Excel también estan soportados.
                         POI se ha utilizado para implementar con éxito este soporte en ETL4ALL.</p>
             </section>
-            
+
        </section>
       </body>
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

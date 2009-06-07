@@ -17,16 +17,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
@@ -34,11 +38,7 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -1247,16 +1247,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * header / footer text too long
+     * The resolution for bug 45777 assumed that the maximum text length in a header / footer
+     * record was 256 bytes.  This assumption appears to be wrong.  Since the fix for bug 47244,
+     * POI now supports header / footer text lengths beyond 256 bytes.  
      */
     public void test45777() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
-        String s248 = "";
-        for(int i=0; i<248; i++) {
-            s248 += "x";
-        }
+        char[] cc248 = new char[248];
+        Arrays.fill(cc248, 'x');
+        String s248 = new String(cc248);
+
         String s249 = s248 + "1";
         String s250 = s248 + "12";
         String s251 = s248 + "123";
@@ -1268,42 +1270,45 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Try on headers
         s.getHeader().setCenter(s248);
-        assertEquals(254, s.getHeader().getRawHeader().length());
+        assertEquals(254, s.getHeader().getRawText().length());
         writeOutAndReadBack(wb);
 
-        s.getHeader().setCenter(s249);
-        assertEquals(255, s.getHeader().getRawHeader().length());
+        s.getHeader().setCenter(s251);
+        assertEquals(257, s.getHeader().getRawText().length());
         writeOutAndReadBack(wb);
 
         try {
-            s.getHeader().setCenter(s250); // 256
-            fail();
-        } catch(IllegalArgumentException e) {}
+            s.getHeader().setCenter(s250); // 256 bytes required
+        } catch(IllegalArgumentException e) {
+            throw new AssertionFailedError("Identified bug 47244b - header can be more than 256 bytes");
+        }
 
         try {
-            s.getHeader().setCenter(s251); // 257
-            fail();
-        } catch(IllegalArgumentException e) {}
-
+            s.getHeader().setCenter(s251); // 257 bytes required
+        } catch(IllegalArgumentException e) {
+            throw new AssertionFailedError("Identified bug 47244b - header can be more than 256 bytes");
+        }
 
         // Now try on footers
         s.getFooter().setCenter(s248);
-        assertEquals(254, s.getFooter().getRawFooter().length());
+        assertEquals(254, s.getFooter().getRawText().length());
         writeOutAndReadBack(wb);
 
-        s.getFooter().setCenter(s249);
-        assertEquals(255, s.getFooter().getRawFooter().length());
+        s.getFooter().setCenter(s251);
+        assertEquals(257, s.getFooter().getRawText().length());
         writeOutAndReadBack(wb);
 
         try {
-            s.getFooter().setCenter(s250); // 256
-            fail();
-        } catch(IllegalArgumentException e) {}
+            s.getFooter().setCenter(s250); // 256 bytes required
+        } catch(IllegalArgumentException e) {
+            throw new AssertionFailedError("Identified bug 47244b - footer can be more than 256 bytes");
+        }
 
         try {
-            s.getFooter().setCenter(s251); // 257
-            fail();
-        } catch(IllegalArgumentException e) {}
+            s.getFooter().setCenter(s251); // 257 bytes required
+        } catch(IllegalArgumentException e) {
+            throw new AssertionFailedError("Identified bug 47244b - footer can be more than 256 bytes");
+        }
     }
 
     /**
@@ -1469,24 +1474,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * java.io.IOException: block[ 0 ] already removed
      * (is an excel 95 file though)
      */
-    public void test46904() throws IOException {
-    	try {
-    		HSSFWorkbook wb = openSample("46904.xls");
-    		fail();
-    	} catch(OldExcelFormatException e) {
-    		assertTrue(e.getMessage().startsWith(
-    				"The supplied spreadsheet seems to be Excel"
-    		));
-    	}
+    public void test46904() {
+        try {
+            openSample("46904.xls");
+            fail();
+        } catch(OldExcelFormatException e) {
+            assertTrue(e.getMessage().startsWith(
+                    "The supplied spreadsheet seems to be Excel"
+            ));
+        }
     }
     
     /**
      * java.lang.NegativeArraySizeException reading long
      *  non-unicode data for a name record
      */
-    public void test47034() throws IOException {
-		HSSFWorkbook wb = openSample("47034.xls");
-		assertEquals(893, wb.getNumberOfNames());
-		assertEquals("Matthew\\Matthew11_1\\Matthew2331_1\\Matthew2351_1\\Matthew2361_1___lab", wb.getNameName(300));
+    public void test47034() {
+        HSSFWorkbook wb = openSample("47034.xls");
+        assertEquals(893, wb.getNumberOfNames());
+        assertEquals("Matthew\\Matthew11_1\\Matthew2331_1\\Matthew2351_1\\Matthew2361_1___lab", wb.getNameName(300));
     }
 }

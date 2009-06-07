@@ -27,7 +27,7 @@
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
-  
+
   <body>
 
 
@@ -71,7 +71,7 @@
         y trabajen hacer que la gente conociera este proyecto.
         </p>
 
-        <p> 
+        <p>
           Poco antes de la distribuci, POI tuvo la fortuna de entrar
           en contacto con Nicola -Ken- Barrozzi quien proporcionejemplos
           para el Serializador HSSF y ayuda descrubir sus desafortunados
@@ -119,7 +119,7 @@
         <p>
          Despu, tenemos algo de trabajo que hacer aquen Jakarta
          para terminar de integrar POI en la comunidad. Lo que es m,
-         todav estamos realizando la transici del Serializador a 
+         todav estamos realizando la transici del Serializador a
          Cocoon.
         </p>
         <p>
@@ -132,7 +132,7 @@
           para escribir o modificar, uno necesita ser capaz de actualizar
           punteros del flujo de subida (upstream pointers) a datos del flujo
           de bajada. Para hacer esto hay que tener todo lo que haya en
-          medio en memoria. En vez de eso, un Generador permitir que se 
+          medio en memoria. En vez de eso, un Generador permitir que se
           procesaran eventos SAX. (Esto se basaren las estructuras de
           bajo nivel). Una de las mejores cosas sobre esto es que asno so
           tendremos una manera m eficiente de leer el fichero, tambi
@@ -143,7 +143,7 @@
           El Serializador HSSF, se separarm aíì en un marco genico
           para la creaci de serializadores para otras plataformas y
           en la implementaci especica del serializador HSSF. (Esto ya
-          es cierto en gran medida). Tambi adiremos soporte para 
+          es cierto en gran medida). Tambi adiremos soporte para
           caracterticas ya soportadas por HSSF (estilos, fuentes, formatos
           de texto). Esperamos adir soporte para fmulas durante este ciclo.
         </p>
@@ -162,7 +162,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 

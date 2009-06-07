@@ -14,318 +14,325 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
-import java.util.ArrayList;
 
 /**
- * Common class for {@link HSSFHeader} and
- *  {@link HSSFFooter}.
+ * Common class for {@link HSSFHeader} and {@link HSSFFooter}.
  */
 public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.HeaderFooter {
-	protected String left;
-	protected String center;
-	protected String right;
+
+	protected HeaderFooter() {
+		//
+	}
 	
-	private boolean stripFields = false;
+	/**
+	 * @return the internal text representation (combining center, left and right parts).
+	 * Possibly empty string if no header or footer is set.  Never <code>null</code>.
+	 */
+	protected abstract String getRawText(); 
 	
-	protected HeaderFooter(String text) {
-		while (text != null && text.length() > 1) {
-		    int pos = text.length();
-		    switch (text.substring(1, 2).charAt(0)) {
-			    case 'L' :
+	private String[] splitParts() {
+		String text = getRawText();
+		// default values
+		String _left = "";
+		String _center = "";
+		String _right = "";
+
+		while (text.length() > 1) {
+			int pos = text.length();
+			switch (text.charAt(1)) {
+			case 'L':
 				if (text.indexOf("&C") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&C"));
-				} 
+					pos = Math.min(pos, text.indexOf("&C"));
+				}
 				if (text.indexOf("&R") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&R"));
-				} 
-				left = text.substring(2, pos);
+					pos = Math.min(pos, text.indexOf("&R"));
+				}
+				_left = text.substring(2, pos);
 				text = text.substring(pos);
 				break;
-		    case 'C' : 
+			case 'C':
 				if (text.indexOf("&L") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&L"));
-				} 
+					pos = Math.min(pos, text.indexOf("&L"));
+				}
 				if (text.indexOf("&R") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&R"));
-				} 
-				center = text.substring(2, pos);
+					pos = Math.min(pos, text.indexOf("&R"));
+				}
+				_center = text.substring(2, pos);
 				text = text.substring(pos);
 				break;
-		    case 'R' : 
+			case 'R':
 				if (text.indexOf("&C") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&C"));
-				} 
+					pos = Math.min(pos, text.indexOf("&C"));
+				}
 				if (text.indexOf("&L") >= 0) {
-				    pos = Math.min(pos, text.indexOf("&L"));
-				} 
-				right = text.substring(2, pos);
+					pos = Math.min(pos, text.indexOf("&L"));
+				}
+				_right = text.substring(2, pos);
 				text = text.substring(pos);
 				break;
-		    default: 
-		    	text = null;
-		    }
+			default:
+				throw new IllegalStateException("bad text '" + getRawText() + "'.");
+			}
+		}
+		return new String[] { _left, _center, _right, };
+	}
+
+	/**
+	 * @return the left side of the header or footer.
+	 */
+	public final String getLeft() {
+		return splitParts()[0];
+	}
+
+	/**
+	 * @param newLeft The string to set as the left side.
+	 */
+	public final void setLeft(String newLeft) {
+		updatePart(0, newLeft); 
+	}
+
+	/**
+	 * @return the center of the header or footer.
+	 */
+	public final String getCenter() {
+		return splitParts()[1];
+	}
+
+	/**
+	 * @param newCenter The string to set as the center.
+	 */
+	public final void setCenter(String newCenter) {
+		updatePart(1, newCenter); 
+	}
+
+	/**
+	 * @return The right side of the header or footer.
+	 */
+	public final String getRight() {
+		return splitParts()[2];
+	}
+
+	/**
+	 * @param newRight The string to set as the right side.
+	 */
+	public final void setRight(String newRight) {
+		updatePart(2, newRight); 
+	}
+	
+	private void updatePart(int partIndex, String newValue) {
+		String[] parts = splitParts();
+		parts[partIndex] = newValue == null ? "" : newValue;
+		updateHeaderFooterText(parts);
+	}
+	/**
+	 * Creates the complete footer string based on the left, center, and middle
+	 * strings.
+	 */
+	private void updateHeaderFooterText(String[] parts) {
+		String _left = parts[0];
+		String _center = parts[1];
+		String _right = parts[2];
+		
+		if (_center.length() < 1 && _left.length() < 1 && _right.length() < 1) {
+			setHeaderFooterText("");
+			return;
+		}
+		StringBuilder sb = new StringBuilder(64);
+		sb.append("&C");
+		sb.append(_center);
+		sb.append("&L");
+		sb.append(_left);
+		sb.append("&R");
+		sb.append(_right);
+		String text = sb.toString();
+		setHeaderFooterText(text);
+	}
+
+	/**
+	 * @param text the new header footer text (contains mark-up tags). Possibly
+	 *            empty string never <code>null</code>
+	 */
+	protected abstract void setHeaderFooterText(String text);
+
+	/**
+	 * @param size
+	 *            the new font size
+	 * @return The mark-up tag representing a new font size
+	 */
+	public static String fontSize(short size) {
+		return "&" + size;
+	}
+
+	/**
+	 * @param font
+	 *            the new font
+	 * @param style
+	 *            the fonts style, one of regular, italic, bold, italic bold or
+	 *            bold italic
+	 * @return The mark-up tag representing a new font size
+	 */
+	public static String font(String font, String style) {
+		return "&\"" + font + "," + style + "\"";
+	}
+
+	/**
+	 * @return The mark-up tag representing the current page number
+	 */
+	public static String page() {
+		return MarkupTag.PAGE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag representing the number of pages
+	 */
+	public static String numPages() {
+		return MarkupTag.NUM_PAGES_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag representing the current date date
+	 */
+	public static String date() {
+		return MarkupTag.DATE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag representing current time
+	 */
+	public static String time() {
+		return MarkupTag.TIME_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag representing the current file name
+	 */
+	public static String file() {
+		return MarkupTag.FILE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag representing the current tab (sheet) name
+	 */
+	public static String tab() {
+		return MarkupTag.SHEET_NAME_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for start bold
+	 */
+	public static String startBold() {
+		return MarkupTag.BOLD_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for end bold
+	 */
+	public static String endBold() {
+		return MarkupTag.BOLD_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for start underline
+	 */
+	public static String startUnderline() {
+		return MarkupTag.UNDERLINE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for end underline
+	 */
+	public static String endUnderline() {
+		return MarkupTag.UNDERLINE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for start double underline
+	 */
+	public static String startDoubleUnderline() {
+		return MarkupTag.DOUBLE_UNDERLINE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * @return The mark-up tag for end double underline
+	 */
+	public static String endDoubleUnderline() {
+		return MarkupTag.DOUBLE_UNDERLINE_FIELD.getRepresentation();
+	}
+
+	/**
+	 * Removes any fields (eg macros, page markers etc) from the string.
+	 * Normally used to make some text suitable for showing to humans, and the
+	 * resultant text should not normally be saved back into the document!
+	 */
+	public static String stripFields(String pText) {
+		int pos;
+
+		// Check we really got something to work on
+		if (pText == null || pText.length() == 0) {
+			return pText;
+		}
+
+		String text = pText;
+
+		// Firstly, do the easy ones which are static
+		for (MarkupTag mt : MarkupTag.values()) {
+			String seq = mt.getRepresentation();
+			while ((pos = text.indexOf(seq)) > -1) {
+				text = text.substring(0, pos) + text.substring(pos + seq.length());
+			}
+		}
+
+		// Now do the tricky, dynamic ones
+		// These are things like font sizes and font names
+		text = text.replaceAll("\\&\\d+", "");
+		text = text.replaceAll("\\&\".*?,.*?\"", "");
+
+		// All done
+		return text;
+	}
+
+	private enum MarkupTag {
+		SHEET_NAME_FIELD ("&A", false),
+		DATE_FIELD       ("&D", false),
+		FILE_FIELD       ("&F", false),
+		FULL_FILE_FIELD  ("&Z", false),
+		PAGE_FIELD       ("&P", false),
+		TIME_FIELD       ("&T", false),
+		NUM_PAGES_FIELD  ("&N", false),
+
+		PICTURE_FIELD    ("&G", false),
+
+		BOLD_FIELD             ("&B", true),
+		ITALIC_FIELD           ("&I", true),
+		STRIKETHROUGH_FIELD    ("&S", true),
+		SUBSCRIPT_FIELD        ("&Y", true),
+		SUPERSCRIPT_FIELD      ("&X", true),
+		UNDERLINE_FIELD        ("&U", true),
+		DOUBLE_UNDERLINE_FIELD ("&E", true),
+		;
+		
+		private final String _representation;
+		private final boolean _occursInPairs;
+		private MarkupTag(String sequence, boolean occursInPairs) {
+			_representation = sequence;
+			_occursInPairs = occursInPairs;
+		}
+		/**
+		 * @return The character sequence that marks this field
+		 */
+		public String getRepresentation() {
+			return _representation;
+		}
+
+		/**
+		 * @return true if this markup tag normally comes in a pair, eg turn on
+		 *         underline / turn off underline
+		 */
+		public boolean occursPairs() {
+			return _occursInPairs;
 		}
 	}
-	
-    /**
-     * Get the left side of the header or footer.
-     * @return The string representing the left side.
-     */
-    public String getLeft() {
-    	if(stripFields)
-    		return stripFields(left);
-		return left;
-	}
-    public abstract void setLeft( String newLeft );
-
-    /**
-     * Get the center of the header or footer.
-     * @return The string representing the center.
-     */
-    public String getCenter() {
-    	if(stripFields)
-    		return stripFields(center);
-    	return center;
-    }
-    public abstract void setCenter( String newCenter );
-
-    /**
-     * Get the right side of the header or footer.
-     * @return The string representing the right side.
-     */
-    public String getRight() {
-    	if(stripFields)
-    		return stripFields(right);
-    	return right;
-    }
-    public abstract void setRight( String newRight );
-
-
-    /**
-     * Returns the string that represents the change in font size.
-     *
-     * @param size the new font size
-     * @return The special string to represent a new font size
-     */
-    public static String fontSize( short size )
-    {
-        return "&" + size;
-    }
-
-    /**
-     * Returns the string that represents the change in font.
-     *
-     * @param font  the new font
-     * @param style the fonts style, one of regular, italic, bold, italic bold or bold italic
-     * @return The special string to represent a new font size
-     */
-    public static String font( String font, String style )
-    {
-        return "&\"" + font + "," + style + "\"";
-    }
-
-    /**
-     * Returns the string representing the current page number
-     *
-     * @return The special string for page number
-     */
-    public static String page() {
-    	return PAGE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the number of pages.
-     *
-     * @return The special string for the number of pages
-     */
-    public static String numPages() {
-    	return NUM_PAGES_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the current date
-     *
-     * @return The special string for the date
-     */
-    public static String date() {
-    	return DATE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the current time
-     *
-     * @return The special string for the time
-     */
-    public static String time() {
-    	return TIME_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the current file name
-     *
-     * @return The special string for the file name
-     */
-    public static String file() {
-    	return FILE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the current tab (sheet) name
-     *
-     * @return The special string for tab name
-     */
-    public static String tab() {
-    	return SHEET_NAME_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the start bold
-     *
-     * @return The special string for start bold
-     */
-    public static String startBold() {
-    	return BOLD_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the end bold
-     *
-     * @return The special string for end bold
-     */
-    public static String endBold() {
-    	return BOLD_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the start underline
-     *
-     * @return The special string for start underline
-     */
-    public static String startUnderline() {
-    	return UNDERLINE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the end underline
-     *
-     * @return The special string for end underline
-     */
-    public static String endUnderline() {
-    	return UNDERLINE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the start double underline
-     *
-     * @return The special string for start double underline
-     */
-    public static String startDoubleUnderline() {
-    	return DOUBLE_UNDERLINE_FIELD.sequence;
-    }
-
-    /**
-     * Returns the string representing the end double underline
-     *
-     * @return The special string for end double underline
-     */
-    public static String endDoubleUnderline() {
-    	return DOUBLE_UNDERLINE_FIELD.sequence;
-    }
-    
-    
-    /**
-     * Removes any fields (eg macros, page markers etc)
-     *  from the string.
-     * Normally used to make some text suitable for showing
-     *  to humans, and the resultant text should not normally
-     *  be saved back into the document!
-     */
-    public static String stripFields(String text) {
-    	int pos;
-    	
-    	// Check we really got something to work on
-    	if(text == null || text.length() == 0) {
-    		return text;
-    	}
-    	
-    	// Firstly, do the easy ones which are static
-    	for(int i=0; i<Field.ALL_FIELDS.size(); i++) {
-    		String seq = ((Field)Field.ALL_FIELDS.get(i)).sequence;
-    		while((pos = text.indexOf(seq)) > -1) {
-    			text = text.substring(0, pos) +
-    				text.substring(pos+seq.length());
-    		}
-    	}
-    	
-    	// Now do the tricky, dynamic ones
-    	// These are things like font sizes and font names
-    	text = text.replaceAll("\\&\\d+", "");
-    	text = text.replaceAll("\\&\".*?,.*?\"", "");
-    	
-    	// All done
-    	return text;
-    }
-    
-	
-	/**
-	 * Are fields currently being stripped from
-	 *  the text that this {@link HeaderFooter} returns?
-	 *  Default is false, but can be changed
-	 */
-	public boolean areFieldsStripped() {
-		return stripFields;
-	}
-	/**
-	 * Should fields (eg macros) be stripped from
-	 *  the text that this class returns?
-	 * Default is not to strip.
-	 * @param stripFields
-	 */
-	public void setAreFieldsStripped(boolean stripFields) {
-		this.stripFields = stripFields;
-	}
-
-    
-    public static final Field SHEET_NAME_FIELD = new Field("&A");
-    public static final Field DATE_FIELD = new Field("&D");
-    public static final Field FILE_FIELD = new Field("&F");
-    public static final Field FULL_FILE_FIELD = new Field("&Z");
-    public static final Field PAGE_FIELD = new Field("&P");
-    public static final Field TIME_FIELD = new Field("&T");
-    public static final Field NUM_PAGES_FIELD = new Field("&N");
-    
-    public static final Field PICTURE_FIELD = new Field("&G");
-    
-    public static final PairField BOLD_FIELD = new PairField("&B");
-    public static final PairField ITALIC_FIELD = new PairField("&I");
-    public static final PairField STRIKETHROUGH_FIELD = new PairField("&S");
-    public static final PairField SUBSCRIPT_FIELD = new PairField("&Y");
-    public static final PairField SUPERSCRIPT_FIELD = new PairField("&X");
-    public static final PairField UNDERLINE_FIELD = new PairField("&U");
-    public static final PairField DOUBLE_UNDERLINE_FIELD = new PairField("&E");
-    
-    /**
-     * Represents a special field in a header or footer,
-     *  eg the page number
-     */
-    public static class Field {
-    	private static ArrayList ALL_FIELDS = new ArrayList();
-    	/** The character sequence that marks this field */
-    	public final String sequence;
-    	private Field(String sequence) {
-    		this.sequence = sequence;
-    		ALL_FIELDS.add(this);
-    	}
-    }
-    /**
-     * A special field that normally comes in a pair, eg
-     *  turn on underline / turn off underline
-     */
-    public static class PairField extends Field {
-    	private PairField(String sequence) {
-    		super(sequence);
-    	}
-    }
 }

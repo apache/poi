@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-
 /**
  * Title:        Header Record<P>
  * Description:  Specifies a header for a sheet<P>
@@ -27,49 +26,30 @@ package org.apache.poi.hssf.record;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class HeaderRecord extends HeaderFooterBase {
-    public final static short sid = 0x0014;
+	public final static short sid = 0x0014;
 
-    public HeaderRecord(String text) {
-    	super(text);
-    }
+	public HeaderRecord(String text) {
+		super(text);
+	}
 
-    public HeaderRecord(RecordInputStream in) {
-    	super(in);
-    }
+	public HeaderRecord(RecordInputStream in) {
+		super(in);
+	}
 
-    /**
-     * set the header string
-     *
-     * @param header string to display
-     */
-    public void setHeader(String header) {
-    	setText(header);
-    }
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
 
-    /**
-     * get the header string
-     *
-     * @return header string to display
-     */
-    public String getHeader() {
-        return getText();
-    }
+		buffer.append("[HEADER]\n");
+		buffer.append("    .header = ").append(getText()).append("\n");
+		buffer.append("[/HEADER]\n");
+		return buffer.toString();
+	}
 
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
+	public short getSid() {
+		return sid;
+	}
 
-        buffer.append("[HEADER]\n");
-        buffer.append("    .header = ").append(getText()).append("\n");
-        buffer.append("[/HEADER]\n");
-        return buffer.toString();
-    }
-
-
-    public short getSid() {
-        return sid;
-    }
-
-    public Object clone() {
-      return new HeaderRecord(getText());
-    }
+	public Object clone() {
+		return new HeaderRecord(getText());
+	}
 }

@@ -83,7 +83,7 @@ public final class TestObjRecord extends TestCase {
         ObjRecord record = new ObjRecord();
         CommonObjectDataSubRecord ftCmo = new CommonObjectDataSubRecord();
         ftCmo.setObjectType( CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT);
-        ftCmo.setObjectId( (short) 1024 );
+        ftCmo.setObjectId( 1024 );
         ftCmo.setLocked( true );
         ftCmo.setPrintable( true );
         ftCmo.setAutofill( true );

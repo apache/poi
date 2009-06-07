@@ -21,14 +21,13 @@ import java.io.FileOutputStream;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public class SelectedSheet {
 
     public static void main(String[]args) throws Exception {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("row sheet");
 
+        Sheet sheet = wb.createSheet("row sheet");
         Sheet sheet2 = wb.createSheet("another sheet");
         Sheet sheet3 = wb.createSheet(" sheet 3 ");
         sheet3.setSelected(true);

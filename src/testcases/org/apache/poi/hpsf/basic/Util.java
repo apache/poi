@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.basic;
 
@@ -45,11 +44,8 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  * <p>Static utility methods needed by the HPSF test cases.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
- * @version $Id$
  */
-public class Util
-{
+final class Util {
 
     /**
      * <p>Reads bytes from an input stream and writes them to an
@@ -261,7 +257,4 @@ public class Util
         System.out.println("Current directory: " +
                            System.getProperty("user.dir"));
     }
-
-
-
 }

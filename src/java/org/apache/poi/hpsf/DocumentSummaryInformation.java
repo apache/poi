@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.util.Iterator;
@@ -32,8 +32,6 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  * @author Drew Varner (Drew.Varner closeTo sc.edu)
  * @author robert_flaherty@hyperion.com
  * @see SummaryInformation
- * @version $Id$
- * @since 2002-02-09
  */
 public class DocumentSummaryInformation extends SpecialPropertySet
 {

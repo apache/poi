@@ -19,11 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
@@ -56,6 +52,8 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -75,6 +73,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
  * @author  Yegor Kozlov cell comments support
  */
 public class HSSFCell implements Cell {
+    private static POILogger log = POILogFactory.getLogger(HSSFCell.class);
 
     private static final String FILE_FORMAT_NAME  = "BIFF8";
     /**
@@ -980,7 +979,7 @@ public class HSSFCell implements Cell {
             return;
         }
 
-        comment.setRow((short)_record.getRow());
+        comment.setRow(_record.getRow());
         comment.setColumn(_record.getColumn());
         _comment = (HSSFComment)comment;
     }
@@ -1047,45 +1046,51 @@ public class HSSFCell implements Cell {
      *
      * @return cell comment or <code>null</code> if not found
      */
-    protected static HSSFComment findCellComment(Sheet sheet, int row, int column){
+    protected static HSSFComment findCellComment(Sheet sheet, int row, int column) {
         // TODO - optimise this code by searching backwards, find NoteRecord first, quit if not found. Find one TXO by id
         HSSFComment comment = null;
-        HashMap<Integer, TextObjectRecord> txshapesByShapeId = new HashMap<Integer, TextObjectRecord>(); 
-        for (Iterator<RecordBase> it = sheet.getRecords().iterator(); it.hasNext(); ) {
-           RecordBase rec = it.next();
-           if (rec instanceof NoteRecord){
-               NoteRecord note = (NoteRecord)rec;
-               if (note.getRow() == row && note.getColumn() == column){
-                   TextObjectRecord txo = txshapesByShapeId.get(new Integer(note.getShapeId()));
-                   comment = new HSSFComment(note, txo);
-                   comment.setRow(note.getRow());
-                   comment.setColumn((short)note.getColumn());
-                   comment.setAuthor(note.getAuthor());
-                   comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
-                   comment.setString(txo.getStr());
-                   break;
-               }
-           } else if (rec instanceof ObjRecord){
-               ObjRecord obj = (ObjRecord)rec;
-               SubRecord sub = obj.getSubRecords().get(0);
-               if (sub instanceof CommonObjectDataSubRecord){
-                   CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)sub;
-                   if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT){
-                       //find the nearest TextObjectRecord which holds comment's text and map it to its shapeId
-                       while(it.hasNext()) {
-                           rec = it.next();
-                           if (rec instanceof TextObjectRecord) {
-                               txshapesByShapeId.put(new Integer(cmo.getObjectId()), (TextObjectRecord)rec);
-                               break;
-                           }
-                       }
-
-                   }
-               }
-           }
+        ArrayList<TextObjectRecord> noteTxo = new ArrayList<TextObjectRecord>();
+        int i = 0;
+        for (Iterator<RecordBase> it = sheet.getRecords().iterator(); it.hasNext();) {
+            RecordBase rec = it.next();
+            if (rec instanceof NoteRecord) {
+                NoteRecord note = (NoteRecord) rec;
+                if (note.getRow() == row && note.getColumn() == column) {
+                    if(i < noteTxo.size()) {
+                        TextObjectRecord txo = noteTxo.get(i);
+                        comment = new HSSFComment(note, txo);
+                        comment.setRow(note.getRow());
+                        comment.setColumn((short) note.getColumn());
+                        comment.setAuthor(note.getAuthor());
+                        comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
+                        comment.setString(txo.getStr());
+                    } else {
+                        log.log(POILogger.WARN, "Failed to match NoteRecord and TextObjectRecord, row: " + row + ", column: " + column);
+                    }
+                    break;
+                }
+                i++;
+            } else if (rec instanceof ObjRecord) {
+                ObjRecord obj = (ObjRecord) rec;
+                SubRecord sub = obj.getSubRecords().get(0);
+                if (sub instanceof CommonObjectDataSubRecord) {
+                    CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord) sub;
+                    if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT) {
+                        //find the next TextObjectRecord which holds the comment's text
+                        //the order of TXO matches the order of NoteRecords: i-th TXO record corresponds to the i-th NoteRecord
+                        while (it.hasNext()) {
+                            rec = it.next();
+                            if (rec instanceof TextObjectRecord) {
+                                noteTxo.add((TextObjectRecord) rec);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         return comment;
-   }
+    }
 
     /**
      * @return hyperlink associated with this cell or <code>null</code> if not found

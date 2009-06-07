@@ -18,9 +18,8 @@
    ====================================================================
 -->
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
-<!-- $Id$ -->
-<book software="POI Project" 
-      title="HPSF" 
+<book software="POI Project"
+      title="HPSF"
       copyright="@year@ POI Project">
 
   <menu label="Apache POI">
@@ -35,5 +34,3 @@
   </menu>
 
 </book>
-
-

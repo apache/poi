@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -34,6 +35,7 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
@@ -613,7 +615,7 @@ public final class TestSheet extends TestCase {
 		try {
 			sheet = createSheet(inRecs);
 		} catch (RuntimeException e) {
-			if (e.getMessage().equals("DimensionsRecord was not found")) {
+			if ("DimensionsRecord was not found".equals(e.getMessage())) {
 				throw new AssertionFailedError("Identified bug 46206");
 			}
 			throw e;
@@ -629,11 +631,11 @@ public final class TestSheet extends TestCase {
 		assertEquals(colIx, dims.getFirstCol());
 		assertEquals(colIx, dims.getLastCol());
 	}
-	
+
 	/**
-	 * Prior to the fix for bug 46547, shifting formulas would have the side-effect 
+	 * Prior to the fix for bug 46547, shifting formulas would have the side-effect
 	 * of creating a {@link ConditionalFormattingTable}.  There was no impairment to
-	 * functionality since empty record aggregates are equivalent to missing record 
+	 * functionality since empty record aggregates are equivalent to missing record
 	 * aggregates. However, since this unnecessary creation helped expose bug 46547b,
 	 * and since there is a slight performance hit the fix was made to avoid it.
 	 */
@@ -643,14 +645,14 @@ public final class TestSheet extends TestCase {
 
 		List<RecordBase> sheetRecs = sheet.getRecords();
 		assertEquals(22, sheetRecs.size());
-		
+
 		FormulaShifter shifter = FormulaShifter.createForRowShift(0, 0, 0, 1);
 		sheet.updateFormulasAfterCellShift(shifter, 0);
 		if (sheetRecs.size() == 23 && sheetRecs.get(21) instanceof ConditionalFormattingTable) {
 			throw new AssertionFailedError("Identified bug 46547a");
 		}
 		assertEquals(22, sheetRecs.size());
-		
+
 	}
 	/**
 	 * Bug 46547 happened when attempting to add conditional formatting to a sheet
@@ -670,5 +672,34 @@ public final class TestSheet extends TestCase {
 			throw new AssertionFailedError("Identified bug 46547b");
 		}
 		assertNotNull(cft);
+	}
+
+	public void testCloneMulBlank_bug46776() {
+		Record[]  recs = {
+				Sheet.createBOF(),
+				new DimensionsRecord(),
+				new RowRecord(1),
+				new MulBlankRecord(1, 3, new short[] { 0x0F, 0x0F, 0x0F, } ),
+				new RowRecord(2),
+				createWindow2Record(),
+				EOFRecord.instance,
+		};
+
+		Sheet sheet = createSheet(Arrays.asList(recs));
+
+		Sheet sheet2;
+		try {
+			sheet2 = sheet.cloneSheet();
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("The class org.apache.poi.hssf.record.MulBlankRecord needs to define a clone method")) {
+				throw new AssertionFailedError("Identified bug 46776");
+			}
+			throw e;
+		}
+
+		RecordCollector rc = new RecordCollector();
+		sheet2.visitContainedRecords(rc, 0);
+		Record[] clonedRecs = rc.getRecords();
+		assertEquals(recs.length+2, clonedRecs.length); // +2 for INDEX and DBCELL
 	}
 }

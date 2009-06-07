@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,7 +24,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.hssf.util.Region;
 
 import java.io.FileOutputStream;
 
@@ -45,6 +45,5 @@ public class MergingCells {
         FileOutputStream fileOut = new FileOutputStream("merging_cells.xlsx");
         wb.write(fileOut);
         fileOut.close();
-
     }
 }

@@ -30,16 +30,16 @@
   <body>
    <section><title>Introduction</title>
       <p>
-        The POI project has always had a very international following.  In fact even today POI is 
-        more popular in Europe than in the US where the original founders reside.  Today POI is 
-        developed by people from all over the world including India, Austrailia, Japan, and Russia. 
+        The POI project has always had a very international following.  In fact even today POI is
+        more popular in Europe than in the US where the original founders reside.  Today POI is
+        developed by people from all over the world including India, Austrailia, Japan, and Russia.
         We recognize and welcome our geographically and culturally diverse users and contributors and
-        wish to accomidate you as best as we can.  
+        wish to accomidate you as best as we can.
       </p>
       <p>
-        Documentation has always been a cornerstone to POI's success.  No matter how fluent one is in 
+        Documentation has always been a cornerstone to POI's success.  No matter how fluent one is in
         a second language, it is always easier to comprehend concepts explained in one's native language,
-        therefore, we encourage volunteers to come and help us translate the documentation into other 
+        therefore, we encourage volunteers to come and help us translate the documentation into other
         languages.  Below is a list of the translations that are currently in progress and their status.
       </p>
    </section>
@@ -60,7 +60,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

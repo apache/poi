@@ -35,8 +35,6 @@ public final class AllPOIUtilTests {
         result.addTestSuite(TestHexDump.class);
         result.addTestSuite(TestIntegerField.class);
         result.addTestSuite(TestIntList.class);
-        result.addTestSuite(TestIntList2d.class);
-        result.addTestSuite(TestList2d.class);
         result.addTestSuite(TestLittleEndian.class);
         result.addTestSuite(TestLongField.class);
         result.addTestSuite(TestPOILogFactory.class);

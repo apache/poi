@@ -28,19 +28,14 @@ import java.util.logging.Logger;
  * 
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2006-02-11
- * @version $Id$
  */
-public class AllDataFilesTester
-{
+public class AllDataFilesTester {
 
     /**
      * <p>Interface specifying how to run a test on a single file.</p>
      *
      * @author Rainer Klute <a
      * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
-     * @since 2006-02-11
-     * @version $Id$
      */
     public interface TestTask
     {

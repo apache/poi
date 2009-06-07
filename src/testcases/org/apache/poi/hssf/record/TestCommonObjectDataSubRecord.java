@@ -56,7 +56,7 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();
 
 		record.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX);
-		record.setObjectId((short) 1);
+		record.setObjectId( 1);
 		record.setOption((short) 1);
 		record.setLocked(true);
 		record.setPrintable(false);

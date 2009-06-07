@@ -28,8 +28,6 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @see DocumentSummaryInformation
- * @version $Id$
- * @since 2002-02-09
  */
 public class SummaryInformation extends SpecialPropertySet
 {

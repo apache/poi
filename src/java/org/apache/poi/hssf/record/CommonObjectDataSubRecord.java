@@ -69,7 +69,7 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
     
     private  short      field_1_objectType;
-    private  short      field_2_objectId;
+    private  int        field_2_objectId;
     private  short      field_3_option;
     private  int        field_4_reserved1;
     private  int        field_5_reserved2;
@@ -86,7 +86,7 @@ public final class CommonObjectDataSubRecord extends SubRecord {
             throw new RecordFormatException("Expected size 18 but got (" + size + ")");
         }
         field_1_objectType             = in.readShort();
-        field_2_objectId               = in.readShort();
+        field_2_objectId               = in.readUShort();
         field_3_option                 = in.readShort();
         field_4_reserved1              = in.readInt();
         field_5_reserved2              = in.readInt();
@@ -252,7 +252,7 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     /**
      * Get the object id field for the CommonObjectData record.
      */
-    public short getObjectId()
+    public int getObjectId()
     {
         return field_2_objectId;
     }
@@ -260,7 +260,7 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     /**
      * Set the object id field for the CommonObjectData record.
      */
-    public void setObjectId(short field_2_objectId)
+    public void setObjectId(int field_2_objectId)
     {
         this.field_2_objectId = field_2_objectId;
     }

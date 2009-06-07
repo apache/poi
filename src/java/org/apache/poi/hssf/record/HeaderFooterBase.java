@@ -25,7 +25,7 @@ import org.apache.poi.util.StringUtil;
  *
  * @author Josh Micich
  */
-abstract class HeaderFooterBase extends StandardRecord {
+public abstract class HeaderFooterBase extends StandardRecord {
 	private boolean field_2_hasMultibyte;
 	private String field_3_text;
 
@@ -44,7 +44,8 @@ abstract class HeaderFooterBase extends StandardRecord {
 				field_3_text = in.readCompressedUnicode(field_1_footer_len);
 			}
 		} else {
-			// Note - this is unusual: when the text is empty string, the whole record is empty (just the 4 byte BIFF header)
+			// Note - this is unusual for BIFF records in general, but normal for header / footer records:
+			// when the text is empty string, the whole record is empty (just the 4 byte BIFF header)
 			field_3_text = "";
 		}
 	}
@@ -62,16 +63,9 @@ abstract class HeaderFooterBase extends StandardRecord {
 		field_3_text = text;
 
 		// Check it'll fit into the space in the record
-		if (field_2_hasMultibyte) {
-			if (field_3_text.length() > 127) {
-				throw new IllegalArgumentException(
-						"Footer string too long (limit is 127 for unicode strings)");
-			}
-		} else {
-			if (field_3_text.length() > 255) {
-				throw new IllegalArgumentException(
-						"Footer string too long (limit is 255 for non-unicode strings)");
-			}
+		if (getDataSize() > RecordInputStream.MAX_RECORD_DATA_SIZE) {
+			throw new IllegalArgumentException("Header/Footer string too long (limit is "
+					+ RecordInputStream.MAX_RECORD_DATA_SIZE + " bytes)");
 		}
 	}
 

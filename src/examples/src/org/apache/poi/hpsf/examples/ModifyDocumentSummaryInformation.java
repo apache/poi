@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.examples;
 
@@ -40,8 +39,6 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-
 
 /**
  * <p>This is a sample application showing how to easily modify properties in
@@ -82,8 +79,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * 
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">klute@rainer-klute.de</a>
- * @since 2006-02-09
- * @version $Id: TestWrite.java 353637 2005-04-13 16:33:22Z klute $
  */
 public class ModifyDocumentSummaryInformation
 {

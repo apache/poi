@@ -22,128 +22,114 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Title:        Multiple Blank cell record(0x00BE) <P/>
  * Description:  Represents a  set of columns in a row with no value but with styling.
- *               In this release we have read-only support for this record type.
- *               The RecordFactory converts this to a set of BlankRecord objects.<P/>
+ * <p/>
  * REFERENCE:  PG 329 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  * @see BlankRecord
  */
 public final class MulBlankRecord extends StandardRecord {
-    public final static short sid = 0x00BE;
-    
-    private int               field_1_row;
-    private short             field_2_first_col;
-    private short[]           field_3_xfs;
-    private short             field_4_last_col;
+	public final static short sid = 0x00BE;
 
-    public MulBlankRecord(int row, int firstCol, short[] xfs) {
-        field_1_row = row;
-        field_2_first_col = (short)firstCol;
-        field_3_xfs = xfs;
-        field_4_last_col = (short) (firstCol + xfs.length - 1);
-    }
+	private final int _row;
+	private final int _firstCol;
+	private final short[] _xfs;
+	private final int _lastCol;
 
-    /**
-     * get the row number of the cells this represents
-     *
-     * @return row number
-     */
-    public int getRow()
-    {
-        return field_1_row;
-    }
+	public MulBlankRecord(int row, int firstCol, short[] xfs) {
+		_row = row;
+		_firstCol = firstCol;
+		_xfs = xfs;
+		_lastCol = firstCol + xfs.length - 1;
+	}
 
-    /**
-     * starting column (first cell this holds in the row)
-     * @return first column number
-     */
-    public short getFirstColumn()
-    {
-        return field_2_first_col;
-    }
+	/**
+	 * @return the row number of the cells this represents
+	 */
+	public int getRow() {
+		return _row;
+	}
 
-    /**
-     * ending column (last cell this holds in the row)
-     * @return first column number
-     */
-    public short getLastColumn()
-    {
-        return field_4_last_col;
-    }
+	/**
+	 * @return starting column (first cell this holds in the row). Zero based
+	 */
+	public int getFirstColumn() {
+		return _firstCol;
+	}
 
-    /**
-     * get the number of columns this contains (last-first +1)
-     * @return number of columns (last - first +1)
-     */
-    public int getNumColumns()
-    {
-        return field_4_last_col - field_2_first_col + 1;
-    }
+	/**
+	 * get the number of columns this contains (last-first +1)
+	 * @return number of columns (last - first +1)
+	 */
+	public int getNumColumns() {
+		return _lastCol - _firstCol + 1;
+	}
 
-    /**
-     * returns the xf index for column (coffset = column - field_2_first_col)
-     * @param coffset  the column (coffset = column - field_2_first_col)
-     * @return the XF index for the column
-     */
-    public short getXFAt(int coffset)
-    {
-        return field_3_xfs[ coffset ];
-    }
+	/**
+	 * returns the xf index for column (coffset = column - field_2_first_col)
+	 * @param coffset  the column (coffset = column - field_2_first_col)
+	 * @return the XF index for the column
+	 */
+	public short getXFAt(int coffset) {
+		return _xfs[coffset];
+	}
 
-    /**
-     * @param in the RecordInputstream to read the record from
-     */
-    public MulBlankRecord(RecordInputStream in) {
-        field_1_row       = in.readUShort();
-        field_2_first_col = in.readShort();
-        field_3_xfs       = parseXFs(in);
-        field_4_last_col  = in.readShort();
-    }
+	/**
+	 * @param in the RecordInputstream to read the record from
+	 */
+	public MulBlankRecord(RecordInputStream in) {
+		_row	   = in.readUShort();
+		_firstCol = in.readShort();
+		_xfs	   = parseXFs(in);
+		_lastCol  = in.readShort();
+	}
 
-    private static short [] parseXFs(RecordInputStream in)
-    {
-        short[] retval = new short[ (in.remaining() - 2) / 2 ];
+	private static short [] parseXFs(RecordInputStream in) {
+		short[] retval = new short[(in.remaining() - 2) / 2];
 
-        for (int idx = 0; idx < retval.length;idx++)
-        {
-          retval[idx] = in.readShort();
-        }
-        return retval;
-    }
+		for (int idx = 0; idx < retval.length;idx++) {
+		  retval[idx] = in.readShort();
+		}
+		return retval;
+	}
 
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[MULBLANK]\n");
-        buffer.append("row  = ").append(Integer.toHexString(getRow())).append("\n");
-        buffer.append("firstcol  = ").append(Integer.toHexString(getFirstColumn())).append("\n");
-        buffer.append(" lastcol  = ").append(Integer.toHexString(getLastColumn())).append("\n");
-        for (int k = 0; k < getNumColumns(); k++) {
-            buffer.append("xf").append(k).append("        = ").append(
-                    Integer.toHexString(getXFAt(k))).append("\n");
-        }
-        buffer.append("[/MULBLANK]\n");
-        return buffer.toString();
-    }
+		buffer.append("[MULBLANK]\n");
+		buffer.append("row  = ").append(Integer.toHexString(getRow())).append("\n");
+		buffer.append("firstcol  = ").append(Integer.toHexString(getFirstColumn())).append("\n");
+		buffer.append(" lastcol  = ").append(Integer.toHexString(_lastCol)).append("\n");
+		for (int k = 0; k < getNumColumns(); k++) {
+			buffer.append("xf").append(k).append("		= ").append(
+					Integer.toHexString(getXFAt(k))).append("\n");
+		}
+		buffer.append("[/MULBLANK]\n");
+		return buffer.toString();
+	}
 
-    public short getSid()
-    {
-        return sid;
-    }
+	public short getSid() {
+		return sid;
+	}
 
-    public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_row);
-        out.writeShort(field_2_first_col);
-        int nItems = field_3_xfs.length;
-        for (int i = 0; i < nItems; i++) {
-            out.writeShort(field_3_xfs[i]);
-        }
-        out.writeShort(field_4_last_col);
-    }
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(_row);
+		out.writeShort(_firstCol);
+		int nItems = _xfs.length;
+		for (int i = 0; i < nItems; i++) {
+			out.writeShort(_xfs[i]);
+		}
+		out.writeShort(_lastCol);
+	}
 
-    protected int getDataSize() {
-        // 3 short fields + array of shorts
-        return 6 + field_3_xfs.length * 2; 
-    }
+	protected int getDataSize() {
+		// 3 short fields + array of shorts
+		return 6 + _xfs.length * 2;
+	}
+
+	@Override
+	public Object clone() {
+		// immutable - so OK to return this
+		return this;
+	}
 }

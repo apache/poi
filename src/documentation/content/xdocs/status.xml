@@ -31,9 +31,15 @@
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </developers>
 
-	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.5-beta6" date="2009-06-11">
+        <release version="3.5-beta7" date="2009-??-??">
+        </release>
+        <release version="3.5-beta6" date="2009-06-??">
+           <action dev="POI-DEVELOPERS" type="fix">47309 - Fixed logic in HSSFCell.getCellComment to handle sheets with more than 65536 comments</action>
+           <action dev="POI-DEVELOPERS" type="fix">46776 - Added clone() method to MulBlankRecord to fix crash in Sheet.cloneSheet()</action>
+           <action dev="POI-DEVELOPERS" type="fix">47244 - Fixed HSSFSheet to handle missing header / footer records</action>
+           <action dev="POI-DEVELOPERS" type="fix">47312 - Fixed formula parser to properly reject cell references with a '0' row component</action>
+           <action dev="POI-DEVELOPERS" type="fix">47199 - Fixed PageSettingsBlock/Sheet to tolerate margin records after other non-PSB records</action>
            <action dev="POI-DEVELOPERS" type="fix">47069 - Fixed HSSFSheet#getFirstRowNum and HSSFSheet#getLastRowNum to return correct values after removal of all rows</action>
            <action dev="POI-DEVELOPERS" type="fix">47278 - Fixed XSSFCell to avoid generating xsi:nil entries in shared string table</action>
            <action dev="POI-DEVELOPERS" type="fix">47206 - Fixed XSSFCell to properly read inline strings</action>

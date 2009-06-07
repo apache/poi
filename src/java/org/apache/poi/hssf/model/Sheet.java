@@ -57,7 +57,6 @@ import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
@@ -106,7 +105,7 @@ public final class Sheet implements Model {
 
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
 
-    private List<RecordBase>             records;
+    private List<RecordBase>             _records;
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
@@ -118,10 +117,10 @@ public final class Sheet implements Model {
     protected ProtectRecord              protect           =     null;
     protected ObjectProtectRecord        objprotect        =     null;
     protected ScenarioProtectRecord      scenprotect       =     null;
-    protected PasswordRecord             password          =     null;
+    protected PasswordRecord             _password          =     null;
 
     protected WindowTwoRecord            windowTwo         =     null;
-    protected SelectionRecord            selection         =     null;
+    protected SelectionRecord            _selection         =     null;
     /** java object always present, but if empty no BIFF records are written */
     private final MergedCellsTable       _mergedCellsTable;
     /** always present in this POI object, not always written to Excel file */
@@ -165,7 +164,8 @@ public final class Sheet implements Model {
         _mergedCellsTable = new MergedCellsTable();
         RowRecordsAggregate rra = null;
 
-        records            = new ArrayList<RecordBase>(128);
+        List<RecordBase> records = new ArrayList<RecordBase>(128);
+        _records = records; // needed here due to calls to findFirstRecordLocBySid before we're done
         int dimsloc = -1;
 
         if (rs.peekNextSid() != BOFRecord.sid) {
@@ -207,7 +207,7 @@ public final class Sheet implements Model {
                 records.add(rra); //only add the aggregate once
                 continue;
             }
-            
+
             if (CustomViewSettingsRecordAggregate.isBeginRecord(recSid)) {
                 // This happens three times in test sample file "29982.xls"
                 // Also several times in bugzilla samples 46840-23373 and 46840-23374
@@ -217,28 +217,13 @@ public final class Sheet implements Model {
 
             if (PageSettingsBlock.isComponentRecord(recSid)) {
                 if (_psBlock == null) {
-                    // typical case - just one PSB (so far)
+                    // first PSB record encountered - read all of them:
                     _psBlock = new PageSettingsBlock(rs);
                     records.add(_psBlock);
-                    continue;
+                } else {
+                    // one or more PSB records found after some intervening non-PSB records
+                    _psBlock.addLateRecords(rs);
                 }
-                if (recSid == UnknownRecord.HEADER_FOOTER_089C) {
-                    // test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls
-                    _psBlock.addLateHeaderFooter(rs.getNext());
-                    continue;
-                }
-                // Some apps write PLS, WSBOOL, <psb> but PLS is part of <psb>
-                // This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"
-                // In this case the first PSB is two records back
-                int prevPsbIx = records.size()-2;
-                if (_psBlock != records.get(prevPsbIx) || !(records.get(prevPsbIx+1) instanceof WSBoolRecord)) {
-                    // not quite the expected situation
-                    throw new RuntimeException("two Page Settings Blocks found in the same sheet");
-                }
-                records.remove(prevPsbIx); // WSBOOL will drop down one position.
-                PageSettingsBlock latePsb = new PageSettingsBlock(rs);
-                _psBlock = mergePSBs(_psBlock, latePsb);
-                records.add(_psBlock);
                 continue;
             }
 
@@ -247,7 +232,7 @@ public final class Sheet implements Model {
                 _mergedCellsTable.read(rs);
                 continue;
             }
-            
+
             if (recSid == BOFRecord.sid) {
                 ChartSubstreamRecordAggregate chartAgg = new ChartSubstreamRecordAggregate(rs);
                 if (false) {
@@ -308,7 +293,7 @@ public final class Sheet implements Model {
             }
             else if ( recSid == SelectionRecord.sid )
             {
-                selection = (SelectionRecord) rec;
+                _selection = (SelectionRecord) rec;
             }
             else if ( recSid == WindowTwoRecord.sid )
             {
@@ -328,7 +313,7 @@ public final class Sheet implements Model {
             }
             else if ( recSid == PasswordRecord.sid )
             {
-                password = (PasswordRecord) rec;
+                _password = (PasswordRecord) rec;
             }
             else if ( recSid == GutsRecord.sid )
             {
@@ -372,34 +357,7 @@ public final class Sheet implements Model {
                 recs.add(r);
             }});
     }
-    /**
-     * Hack to recover from the situation where the page settings block has been split by
-     * an intervening {@link WSBoolRecord}
-     */
-    private static PageSettingsBlock mergePSBs(PageSettingsBlock a, PageSettingsBlock b) {
-        List<Record> temp = new ArrayList<Record>();
-        RecordTransferrer rt = new RecordTransferrer(temp);
-        a.visitContainedRecords(rt);
-        b.visitContainedRecords(rt);
-        RecordStream rs = new RecordStream(temp, 0);
-        PageSettingsBlock result = new PageSettingsBlock(rs);
-        if (rs.hasNext()) {
-            throw new RuntimeException("PageSettingsBlocks did not merge properly");
-        }
-        return result;
-    }
 
-    private static final class RecordTransferrer  implements RecordVisitor {
-
-        private final List<Record> _destList;
-
-        public RecordTransferrer(List<Record> destList) {
-            _destList = destList;
-        }
-        public void visitRecord(Record r) {
-            _destList.add(r);
-        }
-    }
     private static final class RecordCloner implements RecordVisitor {
 
         private final List<RecordBase> _destList;
@@ -420,9 +378,9 @@ public final class Sheet implements Model {
      * belongs to a sheet.
      */
     public Sheet cloneSheet() {
-        List<RecordBase> clonedRecords = new ArrayList<RecordBase>(records.size());
-        for (int i = 0; i < records.size(); i++) {
-            RecordBase rb = records.get(i);
+        List<RecordBase> clonedRecords = new ArrayList<RecordBase>(_records.size());
+        for (int i = 0; i < _records.size(); i++) {
+            RecordBase rb = _records.get(i);
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
                 continue;
@@ -445,7 +403,7 @@ public final class Sheet implements Model {
     }
     private Sheet() {
         _mergedCellsTable = new MergedCellsTable();
-        records = new ArrayList<RecordBase>(32);
+        List<RecordBase> records = new ArrayList<RecordBase>(32);
 
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
@@ -487,12 +445,13 @@ public final class Sheet implements Model {
         records.add(_rowsAggregate);
         // 'Sheet View Settings'
         records.add(windowTwo = createWindowTwo());
-        selection = createSelection();
-        records.add(selection);
+        _selection = createSelection();
+        records.add(_selection);
 
         records.add(_mergedCellsTable); // MCT comes after 'Sheet View Settings'
         records.add(EOFRecord.instance);
 
+        _records = records;
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
     }
@@ -534,8 +493,7 @@ public final class Sheet implements Model {
         return mrt.getNumberOfMergedRegions()-1;
     }
 
-    public void removeMergedRegion(int index)
-    {
+    public void removeMergedRegion(int index) {
         //safety checks
         MergedCellsTable mrt = getMergedRecords();
         if (index >= mrt.getNumberOfMergedRegions()) {
@@ -559,7 +517,7 @@ public final class Sheet implements Model {
     public ConditionalFormattingTable getConditionalFormattingTable() {
         if (condFormatting == null) {
             condFormatting = new ConditionalFormattingTable();
-            RecordOrderer.addNewSheetRecord(records, condFormatting);
+            RecordOrderer.addNewSheetRecord(_records, condFormatting);
         }
         return condFormatting;
     }
@@ -597,8 +555,8 @@ public final class Sheet implements Model {
 
         boolean haveSerializedIndex = false;
 
-        for (int k = 0; k < records.size(); k++) {
-            RecordBase record = records.get(k);
+        for (int k = 0; k < _records.size(); k++) {
+            RecordBase record = _records.get(k);
 
             if (record instanceof RecordAggregate) {
                 RecordAggregate agg = (RecordAggregate) record;
@@ -639,8 +597,8 @@ public final class Sheet implements Model {
 
         int result = 0;
         // start just after BOF record (INDEX is not present in this list)
-        for (int j = bofRecordIndex + 1; j < records.size(); j++) {
-            RecordBase tmpRec = records.get(j);
+        for (int j = bofRecordIndex + 1; j < _records.size(); j++) {
+            RecordBase tmpRec = _records.get(j);
             if (tmpRec instanceof RowRecordsAggregate) {
                 break;
             }
@@ -671,12 +629,10 @@ public final class Sheet implements Model {
         }
         DimensionsRecord d = _dimensions;
 
-        if (col.getColumn() > d.getLastCol())
-        {
+        if (col.getColumn() > d.getLastCol()) {
             d.setLastCol(( short ) (col.getColumn() + 1));
         }
-        if (col.getColumn() < d.getFirstCol())
-        {
+        if (col.getColumn() < d.getFirstCol()) {
             d.setFirstCol(col.getColumn());
         }
         _rowsAggregate.insertCell(col);
@@ -733,18 +689,15 @@ public final class Sheet implements Model {
      * @param row the row record to be added
      */
 
-    public void addRow(RowRecord row)
-    {
+    public void addRow(RowRecord row) {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "addRow ");
         DimensionsRecord d = _dimensions;
 
-        if (row.getRowNumber() >= d.getLastRow())
-        {
+        if (row.getRowNumber() >= d.getLastRow()) {
             d.setLastRow(row.getRowNumber() + 1);
         }
-        if (row.getRowNumber() < d.getFirstRow())
-        {
+        if (row.getRowNumber() < d.getFirstRow()) {
             d.setFirstRow(row.getRowNumber());
         }
 
@@ -944,10 +897,11 @@ public final class Sheet implements Model {
         retval.setColLevelMax(( short ) 0);
         return retval;
     }
+
     private GutsRecord getGutsRecord() {
         if (_gutsRecord == null) {
             GutsRecord result = createGuts();
-            RecordOrderer.addNewSheetRecord(records, result);
+            RecordOrderer.addNewSheetRecord(_records, result);
             _gutsRecord = result;
         }
 
@@ -995,17 +949,14 @@ public final class Sheet implements Model {
     }
 
     /**
-     * get whether gridlines are printed.
-     * @return true if printed
+     * @return <code>true</code> if gridlines are printed
      */
-
-    public boolean isGridsPrinted()
-    {
+    public boolean isGridsPrinted() {
         if (gridset == null) {
             gridset = createGridset();
             //Insert the newlycreated Gridset record at the end of the record (just before the EOF)
             int loc = findFirstRecordLocBySid(EOFRecord.sid);
-            records.add(loc, gridset);
+            _records.add(loc, gridset);
         }
         return !gridset.getGridset();
     }
@@ -1014,9 +965,7 @@ public final class Sheet implements Model {
      * set whether gridlines printed or not.
      * @param value     True if gridlines printed.
      */
-
-    public void setGridsPrinted(boolean value)
-    {
+    public void setGridsPrinted(boolean value) {
         gridset.setGridset(!value);
     }
 
@@ -1031,9 +980,7 @@ public final class Sheet implements Model {
     /**
      * set the default row height for the sheet (if the rows do not define their own height)
      */
-
-    public void setDefaultRowHeight(short dch)
-    {
+    public void setDefaultRowHeight(short dch) {
         defaultrowheight.setRowHeight(dch);
     }
 
@@ -1041,9 +988,7 @@ public final class Sheet implements Model {
      * get the default row height for the sheet (if the rows do not define their own height)
      * @return  default row height
      */
-
-    public short getDefaultRowHeight()
-    {
+    public short getDefaultRowHeight() {
         return defaultrowheight.getRowHeight();
     }
 
@@ -1055,7 +1000,6 @@ public final class Sheet implements Model {
      * @see #setColumnWidth(int, int)
      * @return column width in units of 1/256th of a character width
      */
-
     public int getColumnWidth(int columnIndex) {
 
         ColumnInfoRecord ci = _columnInfos.findColumnInfo(columnIndex);
@@ -1099,7 +1043,7 @@ public final class Sheet implements Model {
      */
     public void setColumnWidth(int column, int width) {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
-        
+
         setColumn(column, null, new Integer(width), null, null, null);
     }
 
@@ -1202,15 +1146,12 @@ public final class Sheet implements Model {
         return new SelectionRecord(0, 0);
     }
 
-    public short getTopRow()
-    {
+    public short getTopRow() {
         return (windowTwo==null) ? (short) 0 : windowTwo.getTopRow();
     }
 
-    public void setTopRow(short topRow)
-    {
-        if (windowTwo!=null)
-        {
+    public void setTopRow(short topRow) {
+        if (windowTwo!=null) {
             windowTwo.setTopRow(topRow);
         }
     }
@@ -1219,7 +1160,7 @@ public final class Sheet implements Model {
      * Sets the left column to show in desktop window pane.
      * @param leftCol the left column to show in desktop window pane
      */
-    public void setLeftCol(short leftCol){
+    public void setLeftCol(short leftCol) {
         if (windowTwo!=null) {
             windowTwo.setLeftCol(leftCol);
         }
@@ -1235,13 +1176,11 @@ public final class Sheet implements Model {
      * @see org.apache.poi.hssf.record.SelectionRecord
      * @return row the active row index
      */
-    public int getActiveCellRow()
-    {
-        if (selection == null)
-        {
+    public int getActiveCellRow() {
+        if (_selection == null) {
             return 0;
         }
-        return selection.getActiveCellRow();
+        return _selection.getActiveCellRow();
     }
 
     /**
@@ -1250,12 +1189,10 @@ public final class Sheet implements Model {
      * @param row the row index
      * @see org.apache.poi.hssf.record.SelectionRecord
      */
-    public void setActiveCellRow(int row)
-    {
+    public void setActiveCellRow(int row) {
         //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
-        if (selection != null)
-        {
-            selection.setActiveCellRow(row);
+        if (_selection != null) {
+            _selection.setActiveCellRow(row);
         }
     }
 
@@ -1264,10 +1201,10 @@ public final class Sheet implements Model {
      * @return column of the active cell
      */
     public short getActiveCellCol() {
-        if (selection == null) {
+        if (_selection == null) {
             return 0;
         }
-        return (short)selection.getActiveCellCol();
+        return (short)_selection.getActiveCellCol();
     }
 
     /**
@@ -1276,24 +1213,21 @@ public final class Sheet implements Model {
      * @param col the column index
      * @see org.apache.poi.hssf.record.SelectionRecord
      */
-    public void setActiveCellCol(short col)
-    {
+    public void setActiveCellCol(short col) {
         //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
-        if (selection != null)
+        if (_selection != null)
         {
-            selection.setActiveCellCol(col);
+            _selection.setActiveCellCol(col);
         }
     }
 
-    public List<RecordBase> getRecords()
-    {
-        return records;
+    public List<RecordBase> getRecords() {
+        return _records;
     }
 
     /**
      * Gets the gridset record for this sheet.
      */
-
     public GridsetRecord getGridsetRecord()
     {
         return gridset;
@@ -1302,14 +1236,12 @@ public final class Sheet implements Model {
     /**
      * Returns the first occurrence of a record matching a particular sid.
      */
-
-    public Record findFirstRecordBySid(short sid)
-    {
+    public Record findFirstRecordBySid(short sid) {
         int ix = findFirstRecordLocBySid(sid);
         if (ix < 0) {
             return null;
         }
-        return (Record) records.get(ix);
+        return (Record) _records.get(ix);
     }
 
     /**
@@ -1318,20 +1250,15 @@ public final class Sheet implements Model {
      *
      * @param sclRecord     The record to set.
      */
-    public void setSCLRecord(SCLRecord sclRecord)
-    {
+    public void setSCLRecord(SCLRecord sclRecord) {
         int oldRecordLoc = findFirstRecordLocBySid(SCLRecord.sid);
-        if (oldRecordLoc == -1)
-        {
+        if (oldRecordLoc == -1) {
             // Insert it after the window record
             int windowRecordLoc = findFirstRecordLocBySid(WindowTwoRecord.sid);
-            records.add(windowRecordLoc+1, sclRecord);
+            _records.add(windowRecordLoc+1, sclRecord);
+        } else {
+            _records.set(oldRecordLoc, sclRecord);
         }
-        else
-        {
-            records.set(oldRecordLoc, sclRecord);
-        }
-
     }
 
     /**
@@ -1342,9 +1269,9 @@ public final class Sheet implements Model {
      *          is made.
      */
     public int findFirstRecordLocBySid( short sid ) { // TODO - remove this method
-        int max = records.size();
+        int max = _records.size();
         for (int i=0; i< max; i++) {
-            Object rb = records.get(i);
+            Object rb = _records.get(i);
             if (!(rb instanceof Record)) {
                 continue;
             }
@@ -1393,11 +1320,10 @@ public final class Sheet implements Model {
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
      */
-    public void createFreezePane(int colSplit, int rowSplit, int topRow, int leftmostColumn )
-    {
+    public void createFreezePane(int colSplit, int rowSplit, int topRow, int leftmostColumn) {
         int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
         if (paneLoc != -1)
-            records.remove(paneLoc);
+            _records.remove(paneLoc);
 
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord pane = new PaneRecord();
@@ -1405,21 +1331,16 @@ public final class Sheet implements Model {
         pane.setY((short)rowSplit);
         pane.setTopRow((short) topRow);
         pane.setLeftColumn((short) leftmostColumn);
-        if (rowSplit == 0)
-        {
+        if (rowSplit == 0) {
             pane.setTopRow((short)0);
             pane.setActivePane((short)1);
-        }
-        else if (colSplit == 0)
-        {
+        } else if (colSplit == 0) {
             pane.setLeftColumn((short)64);
             pane.setActivePane((short)2);
-        }
-        else
-        {
+        } else {
             pane.setActivePane((short)0);
         }
-        records.add(loc+1, pane);
+        _records.add(loc+1, pane);
 
         windowTwo.setFreezePanes(true);
         windowTwo.setFreezePanesNoSplit(true);
@@ -1442,11 +1363,10 @@ public final class Sheet implements Model {
      * @see #PANE_UPPER_LEFT
      * @see #PANE_UPPER_RIGHT
      */
-    public void createSplitPane(int xSplitPos, int ySplitPos, int topRow, int leftmostColumn, int activePane )
-    {
+    public void createSplitPane(int xSplitPos, int ySplitPos, int topRow, int leftmostColumn, int activePane) {
         int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
         if (paneLoc != -1)
-            records.remove(paneLoc);
+            _records.remove(paneLoc);
 
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord r = new PaneRecord();
@@ -1455,7 +1375,7 @@ public final class Sheet implements Model {
         r.setTopRow((short) topRow);
         r.setLeftColumn((short) leftmostColumn);
         r.setActivePane((short) activePane);
-        records.add(loc+1, r);
+        _records.add(loc+1, r);
 
         windowTwo.setFreezePanes(false);
         windowTwo.setFreezePanesNoSplit(false);
@@ -1467,7 +1387,7 @@ public final class Sheet implements Model {
 
     /**
      * Returns the information regarding the currently configured pane (split or freeze).
-     * @return null if no pane configured, or the pane information.
+     * @return <code>null</code> if no pane configured, or the pane information.
      */
     public PaneInformation getPaneInformation() {
       PaneRecord rec = (PaneRecord)findFirstRecordBySid(PaneRecord.sid);
@@ -1478,14 +1398,12 @@ public final class Sheet implements Model {
                                  rec.getLeftColumn(), (byte)rec.getActivePane(), windowTwo.getFreezePanes());
     }
 
-    public SelectionRecord getSelection()
-    {
-        return selection;
+    public SelectionRecord getSelection() {
+        return _selection;
     }
 
-    public void setSelection( SelectionRecord selection )
-    {
-        this.selection = selection;
+    public void setSelection( SelectionRecord selection) {
+        _selection = selection;
     }
 
     /**
@@ -1512,32 +1430,30 @@ public final class Sheet implements Model {
         return retval;
     }
 
-    /** Returns the ProtectRecord.
-     * If one is not contained in the sheet, then one is created.
+    /**
+     * @return the ProtectRecord. If one is not contained in the sheet, then one is created.
      */
-    public ProtectRecord getProtect()
-    {
+    public ProtectRecord getProtect() {
         if (protect == null) {
             protect = new ProtectRecord(false);
             // Insert the newly created protect record just before DefaultColWidthRecord
             int loc = findFirstRecordLocBySid(DefaultColWidthRecord.sid);
-            records.add(loc, protect);
+            _records.add(loc, protect);
         }
         return protect;
     }
 
-    /** Returns the PasswordRecord.
-     * If one is not contained in the sheet, then one is created.
+    /**
+     * @return the PasswordRecord. If one is not contained in the sheet, then one is created.
      */
-    public PasswordRecord getPassword()
-    {
-        if (password == null) {
-            password = createPassword();
+    public PasswordRecord getPassword() {
+        if (_password == null) {
+            _password = createPassword();
             //Insert the newly created password record at the end of the record (just before the EOF)
             int loc = findFirstRecordLocBySid(EOFRecord.sid);
-            records.add(loc, password);
+            _records.add(loc, _password);
         }
-        return password;
+        return _password;
     }
 
     /**
@@ -1548,8 +1464,6 @@ public final class Sheet implements Model {
     }
 
     /**
-
-    /**
      * Sets whether the gridlines are shown in a viewer.
      * @param show whether to show gridlines or not
      */
@@ -1558,8 +1472,7 @@ public final class Sheet implements Model {
     }
 
     /**
-     * Returns if gridlines are displayed.
-     * @return whether gridlines are displayed
+     * @return <code>true</code> if gridlines are displayed
      */
     public boolean isDisplayGridlines() {
     return windowTwo.getDisplayGridlines();
@@ -1620,12 +1533,10 @@ public final class Sheet implements Model {
      * @param drawingManager The DrawingManager2 for our workbook
      * @param createIfMissing Should one be created if missing?
      */
-    public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing)
-    {
+    public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing) {
         int loc = findFirstRecordLocBySid(DrawingRecord.sid);
         boolean noDrawingRecordsFound = (loc == -1);
-        if (noDrawingRecordsFound)
-        {
+        if (noDrawingRecordsFound) {
             if(!createIfMissing) {
                 // None found, and not allowed to add in
                 return -1;
@@ -1633,35 +1544,29 @@ public final class Sheet implements Model {
 
             EscherAggregate aggregate = new EscherAggregate( drawingManager );
             loc = findFirstRecordLocBySid(EscherAggregate.sid);
-            if (loc == -1)
-            {
+            if (loc == -1) {
                 loc = findFirstRecordLocBySid( WindowTwoRecord.sid );
-            }
-            else
-            {
+            } else {
                 getRecords().remove(loc);
             }
             getRecords().add( loc, aggregate );
             return loc;
         }
-        else
+        List<RecordBase> records = getRecords();
+        EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
+        int startloc = loc;
+        while ( loc + 1 < records.size()
+                && records.get( loc ) instanceof DrawingRecord
+                && records.get( loc + 1 ) instanceof ObjRecord )
         {
-            List<RecordBase> records = getRecords();
-            EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
-            int startloc = loc;
-            while ( loc + 1 < records.size()
-                    && records.get( loc ) instanceof DrawingRecord
-                    && records.get( loc + 1 ) instanceof ObjRecord )
-            {
-                loc += 2;
-            }
-            int endloc = loc-1;
-            for(int i = 0; i < (endloc - startloc + 1); i++)
-                records.remove(startloc);
-            records.add(startloc, r);
-
-            return startloc;
+            loc += 2;
         }
+        int endloc = loc-1;
+        for(int i = 0; i < (endloc - startloc + 1); i++)
+            records.remove(startloc);
+        records.add(startloc, r);
+
+        return startloc;
     }
 
     /**
@@ -1669,13 +1574,12 @@ public final class Sheet implements Model {
      * For instance the escher aggregates size needs to be calculated before
      * serialization so that the dgg record (which occurs first) can be written.
      */
-    public void preSerialize()
-    {
-        for ( Iterator iterator = getRecords().iterator(); iterator.hasNext(); )
-        {
-            RecordBase r = (RecordBase) iterator.next();
-            if (r instanceof EscherAggregate)
-                r.getRecordSize();   // Trigger flatterning of user model and corresponding update of dgg record.
+    public void preSerialize() {
+        for (RecordBase r: getRecords()) {
+            if (r instanceof EscherAggregate) {
+                // Trigger flattening of user model and corresponding update of dgg record.
+                r.getRecordSize();
+            }
         }
     }
 
@@ -1683,7 +1587,7 @@ public final class Sheet implements Model {
     public PageSettingsBlock getPageSettings() {
         if (_psBlock == null) {
             _psBlock = new PageSettingsBlock();
-            RecordOrderer.addNewSheetRecord(records, _psBlock);
+            RecordOrderer.addNewSheetRecord(_records, _psBlock);
         }
         return _psBlock;
     }
@@ -1711,18 +1615,18 @@ public final class Sheet implements Model {
         prec.setProtect(true);
         pass.setPassword(PasswordRecord.hashPassword(password));
         if((objprotect == null && objects) || (scenprotect != null && scenarios)) {
-            protIdx = records.indexOf( protect );
+            protIdx = _records.indexOf( protect );
         }
         if(objprotect == null && objects) {
             ObjectProtectRecord rec = createObjectProtect();
             rec.setProtect(true);
-            records.add(protIdx+1,rec);
+            _records.add(protIdx+1,rec);
             objprotect = rec;
         }
         if(scenprotect == null && scenarios) {
             ScenarioProtectRecord srec = createScenarioProtect();
             srec.setProtect(true);
-            records.add(protIdx+2,srec);
+            _records.add(protIdx+2,srec);
             scenprotect = srec;
         }
     }
@@ -1780,12 +1684,10 @@ public final class Sheet implements Model {
         recalcRowGutter();
     }
 
-    private void recalcRowGutter()
-    {
+    private void recalcRowGutter() {
         int maxLevel = 0;
         Iterator iterator = _rowsAggregate.getIterator();
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
             RowRecord rowRecord = (RowRecord) iterator.next();
             maxLevel = Math.max(rowRecord.getOutlineLevel(), maxLevel);
         }
@@ -1800,7 +1702,7 @@ public final class Sheet implements Model {
     public DataValidityTable getOrCreateDataValidityTable() {
         if (_dataValidityTable == null) {
             DataValidityTable result = new DataValidityTable();
-            RecordOrderer.addNewSheetRecord(records, result);
+            RecordOrderer.addNewSheetRecord(_records, result);
             _dataValidityTable = result;
         }
         return _dataValidityTable;
@@ -1811,8 +1713,8 @@ public final class Sheet implements Model {
      */
     public NoteRecord[] getNoteRecords() {
         List<NoteRecord> temp = new ArrayList<NoteRecord>();
-        for(int i=records.size()-1; i>=0; i--) {
-            RecordBase rec = records.get(i);
+        for(int i=_records.size()-1; i>=0; i--) {
+            RecordBase rec = _records.get(i);
             if (rec instanceof NoteRecord) {
                 temp.add((NoteRecord) rec);
             }

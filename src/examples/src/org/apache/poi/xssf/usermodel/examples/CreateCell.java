@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**

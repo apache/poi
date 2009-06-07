@@ -26,7 +26,7 @@
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
   </header>
-  
+
   <body>
 
 
@@ -94,7 +94,7 @@ already started making waves.
          looks like everything turned out since you're reading this!
         </p>
 
-         <p>In Early 2007, we graduated from 
+         <p>In Early 2007, we graduated from
           <link href="http://jakarta.apache.org/">Jakarta</link>, and became
           our own Top Level Project (TLP) within Apache.</p>
     </section>
@@ -148,7 +148,6 @@ already started making waves.
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 

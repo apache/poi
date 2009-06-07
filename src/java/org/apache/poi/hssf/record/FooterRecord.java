@@ -27,48 +27,30 @@ package org.apache.poi.hssf.record;
  *
  */
 public final class FooterRecord extends HeaderFooterBase {
-    public final static short sid = 0x0015;
+	public final static short sid = 0x0015;
 
-    public FooterRecord(String text) {
-    	super(text);
-    }
+	public FooterRecord(String text) {
+		super(text);
+	}
 
-    public FooterRecord(RecordInputStream in) {
+	public FooterRecord(RecordInputStream in) {
 		super(in);
 	}
 
-     /**
-     * set the footer string
-     *
-     * @param footer string to display
-     */
-    public void setFooter(String footer) {
-        setText(footer);
-    }
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
 
-    /**
-     * get the footer string
-     *
-     * @return footer string to display
-     */
-    public String getFooter() {
-        return getText();
-    }
+		buffer.append("[FOOTER]\n");
+		buffer.append("    .footer = ").append(getText()).append("\n");
+		buffer.append("[/FOOTER]\n");
+		return buffer.toString();
+	}
 
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
+	public short getSid() {
+		return sid;
+	}
 
-        buffer.append("[FOOTER]\n");
-        buffer.append("    .footer = ").append(getText()).append("\n");
-        buffer.append("[/FOOTER]\n");
-        return buffer.toString();
-    }
-
-    public short getSid() {
-        return sid;
-    }
-
-    public Object clone() {
-        return new FooterRecord(getText());
-    }
+	public Object clone() {
+		return new FooterRecord(getText());
+	}
 }

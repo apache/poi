@@ -35,21 +35,21 @@
       <p>
       El proyecto POI consiste en APIs para manipular varios formatos de ficheros
       basados en el formato de Documento Compuesto OLE 2 de Microsoft, utilizando Java puro. En concreto, se pueden
-      leer y escribir ficheros MS Excel utilizando Java. Pronto se podrá leer y escribir 
+      leer y escribir ficheros MS Excel utilizando Java. Pronto se podrá leer y escribir
       ficheros Word utilizando Java. POI es su solución Java Excel así como su solución Java Word.
       En cualquier caso, tenemos un API completo para portar otros formatos de Documento Compuesto OLE 2 y todo aquel
       que quiera participar será bienvenido.
       </p>
       <p>
-      Entre los ficheros basados en el formato de Documento Compuesto OLE 2 de Microsoft se incluyen la mayor parte de los 
+      Entre los ficheros basados en el formato de Documento Compuesto OLE 2 de Microsoft se incluyen la mayor parte de los
       ficheros de Microsoft Office tales como XLS y DOC así como formatos de fichero basados en el API de serialización MFC.
       </p>
       <p>
          Como regla general intentamos colaborar lo más posible con otros proyectos para proporcionar esta
 	 funcionalidad. Algunos ejemplos: <link href="http://xml.apache.org/cocoon">Cocoon</link> para
 	 el que hay serializadores para HSSF;
-	 <link href="http://www.openoffice.org">Open Office.org</link> con quienes colaboramos en la documentación del 
-         formato XLS; y <link href="http://jakarta.apache.org/lucene">Lucene</link> para el que pronto tendremos intérpretes del 
+	 <link href="http://www.openoffice.org">Open Office.org</link> con quienes colaboramos en la documentación del
+         formato XLS; y <link href="http://jakarta.apache.org/lucene">Lucene</link> para el que pronto tendremos intérpretes del
          formato de fichero. Cuando es práctico, donamos componentes directamente a los proyectos para dotarles de capacidad-POI.
       </p>
       <section><title>¿Por qué/cuándo utilizar POI?</title>
@@ -60,13 +60,13 @@
 		Así que, ¿por qué debería utilizar POIFS o HSSF?
         </p>
         <p>
-		Utilizarías POIFS si tuvieras un documento escrito en el Formato de Documento Compuesto OLE 2, probablemente escrito utilizando 
-                MFC, que necesitaras leer en Java. Alternativamente, utilizarías POI para escribir en el Formato de Documento Compuesto OLE 2 
-                si necesitaras inter-operar con programas ejecutándose en la plataforma Windows. No nos estamos jactando cuando decimos que 
+		Utilizarías POIFS si tuvieras un documento escrito en el Formato de Documento Compuesto OLE 2, probablemente escrito utilizando
+                MFC, que necesitaras leer en Java. Alternativamente, utilizarías POI para escribir en el Formato de Documento Compuesto OLE 2
+                si necesitaras inter-operar con programas ejecutándose en la plataforma Windows. No nos estamos jactando cuando decimos que
                 ¡POIFS es la adaptación más completa y correcta de este formato de fichero hasta la fecha!
         </p>
         <p>
-		Utilizarías HSSF si necesitaras leer o escribir un fichero Excel utilizando Java (XLS). También se pueden leer y modificar 
+		Utilizarías HSSF si necesitaras leer o escribir un fichero Excel utilizando Java (XLS). También se pueden leer y modificar
                 hojas de cálculo utilizando este API, aunque ahora mismo la escritura está más madura.
       </p>
       </section>
@@ -95,11 +95,11 @@
         </section>
         <section><title>HPSF</title>
 	<p>HPSF es nuestra adaptación del formato de conjunto de propiedades OLE 2 a java puro.
-	  Los conjuntos de propiedades se utilizan mayoritariamente para almacenar las propiedades 
-          de un documento (título, autor, fecha de la última modificación etc.), pero también pueden ser 
-          utilizados para propósitos específicos de una aplicación. Actualmente HPSF soporta 
+	  Los conjuntos de propiedades se utilizan mayoritariamente para almacenar las propiedades
+          de un documento (título, autor, fecha de la última modificación etc.), pero también pueden ser
+          utilizados para propósitos específicos de una aplicación. Actualmente HPSF soporta
           sólo funcionalidad de lectura. Por favor, vea
-	  <link href="../../hpsf/index.html">la página del proyecto HPSF [EN]</link> para más 
+	  <link href="../../hpsf/index.html">la página del proyecto HPSF [EN]</link> para más
           información.</p>
      </section>
 
@@ -107,11 +107,11 @@
 
     <section><title>Contribuyendo </title>
         <p>
-		Así que ¿te gustaría contribuir al proyecto? ¡Genial! Necesitamos gente entusiasta, que trabaje duro, que tenga talento para ayudarnos 
-                con el proyecto en varias áreas. ¡La primera es petición de nuevas funciones y aviso de errores! La segunda es documentación - 
-                estaremos a tu entera disposición si tienes alguna crítica o te gustaría contribuir o mejorar de alguna forma la documentación. 
+		Así que ¿te gustaría contribuir al proyecto? ¡Genial! Necesitamos gente entusiasta, que trabaje duro, que tenga talento para ayudarnos
+                con el proyecto en varias áreas. ¡La primera es petición de nuevas funciones y aviso de errores! La segunda es documentación -
+                estaremos a tu entera disposición si tienes alguna crítica o te gustaría contribuir o mejorar de alguna forma la documentación.
                 ¡Especialmente no nos vendría mal algo de ayuda en documentar el formato de fichero HSSF! ¡Por último, aunque no por ello
-		menos importante, nos vendría bien algunos programadores Java que mastiquen binario, para que le echen el diente a la convolución que caracteriza 
+		menos importante, nos vendría bien algunos programadores Java que mastiquen binario, para que le echen el diente a la convolución que caracteriza
                 los formatos de fichero de Microsoft y para que nos ayude a adaptar nuevos formatos a una plataforma Java superior!
         </p>
         <p> ¡Así que si estás motivado, listo, y tienes tiempo, únete a las listas de correo y estaremos encantados de ayudarte a
@@ -124,7 +124,6 @@
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation All rights reserved.
-      $Revision$ $Date$
     </legal>
   </footer>
 </document>

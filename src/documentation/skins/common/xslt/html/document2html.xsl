@@ -31,21 +31,20 @@ and tabs (tab2menu.xsl) to generate the final HTML.
 Section handling
   - <a name/> anchors are added if the id attribute is specified
 
-$Id$
 -->
-<xsl:stylesheet version="1.0" 
+<xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <!-- the skinconf file -->
   <xsl:param name="config-file" select="'../../../../skinconf.xml'"/>
   <xsl:variable name="config" select="document($config-file)/skinconfig"/>
-  
+
   <!-- If true, a PDF link for this page will not be generated -->
   <xsl:variable name="disable-pdf-link" select="$config/disable-pdf-link"/>
   <!-- If true, a "print" link for this page will not be generated -->
   <xsl:variable name="disable-print-link" select="$config/disable-print-link"/>
   <!-- If true, an XML link for this page will not be generated -->
-  <xsl:variable name="disable-xml-link" select="$config/disable-xml-link"/>  
+  <xsl:variable name="disable-xml-link" select="$config/disable-xml-link"/>
   <!-- Get the section depth to use when generating the minitoc (default is 2) -->
   <xsl:variable name="config-max-depth" select="$config/toc/@level"/>
   <!-- Whether to obfuscate email links -->
@@ -59,7 +58,7 @@ $Id$
       <xsl:otherwise>2</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-    
+
   <xsl:param name="notoc"/>
   <xsl:param name="path"/>
   <!-- <xsl:include href="split.xsl"/> -->
@@ -78,21 +77,21 @@ $Id$
       <xsl:with-param name="path" select="$path"/>
     </xsl:call-template>
   </xsl:variable>
- 
+
   <xsl:variable name="skin-img-dir" select="concat(string($root), 'skin/images')"/>
 
   <xsl:template match="document">
     <div class="content">
       <table summary="" class="title">
-        <tr> 
-          <td valign="middle"> 
+        <tr>
+          <td valign="middle">
             <xsl:if test="normalize-space(header/title)!=''">
               <h1>
                 <xsl:value-of select="header/title"/>
               </h1>
             </xsl:if>
           </td>
-          <xsl:call-template name="printlink"/> 
+          <xsl:call-template name="printlink"/>
           <xsl:call-template name="pdflink"/>
           <xsl:call-template name="xmllink"/>
         </tr>
@@ -118,15 +117,15 @@ $Id$
 
   <!-- Generates the "printer friendly version" link -->
   <xsl:template name="printlink">
-    <xsl:if test="$disable-print-link = 'false'"> 
+    <xsl:if test="$disable-print-link = 'false'">
 <script type="text/javascript" language="Javascript">
-function printit() {  
+function printit() {
 if (window.print) {
-    window.print() ;  
+    window.print() ;
 } else {
     var WebBrowser = '&lt;OBJECT ID="WebBrowser1" WIDTH="0" HEIGHT="0" CLASSID="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2">&lt;/OBJECT>';
 document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
-    WebBrowser1.ExecWB(6, 2);//Use a 1 vs. a 2 for a prompting dialog box    WebBrowser1.outerHTML = "";  
+    WebBrowser1.ExecWB(6, 2);//Use a 1 vs. a 2 for a prompting dialog box    WebBrowser1.outerHTML = "";
 }
 }
 </script>
@@ -148,14 +147,14 @@ if (VERSION > 3) {
 
   <!-- Generates the PDF link -->
   <xsl:template name="pdflink">
-    <xsl:if test="not($config/disable-pdf-link) or $disable-pdf-link = 'false'"> 
+    <xsl:if test="not($config/disable-pdf-link) or $disable-pdf-link = 'false'">
       <td align="center" width="40" nowrap="nowrap"><a href="{$filename-noext}.pdf" class="dida">
           <img class="skin" src="{$skin-img-dir}/pdfdoc.gif" alt="PDF"/><br/>
           PDF</a>
       </td>
     </xsl:if>
   </xsl:template>
-  
+
 
   <!-- Generates the XML link -->
   <xsl:template name="xmllink">
@@ -166,7 +165,7 @@ if (VERSION > 3) {
       </td>
     </xsl:if>
   </xsl:template>
-  
+
   <xsl:template match="body">
     <xsl:if test="$max-depth&gt;0 and not($notoc='true')" >
       <xsl:call-template name="minitoc">
@@ -287,8 +286,8 @@ if (VERSION > 3) {
       <xsl:apply-templates/>
 <!--
     <xsl:call-template name="format">
-    <xsl:with-param select="." name="txt" /> 
-     <xsl:with-param name="width">80</xsl:with-param> 
+    <xsl:with-param select="." name="txt" />
+     <xsl:with-param name="width">80</xsl:with-param>
      </xsl:call-template>
 -->
     </pre>
@@ -347,9 +346,9 @@ if (VERSION > 3) {
     </xsl:attribute>
   </xsl:template>
 
-  <xsl:template name="minitoc">  
+  <xsl:template name="minitoc">
     <xsl:param name="tocroot"/>
-    <xsl:param name="depth"/>     
+    <xsl:param name="depth"/>
     <xsl:if test="count($tocroot/section) > 0">
       <ul class="minitoc">
         <xsl:for-each select="$tocroot/section">
@@ -408,19 +407,19 @@ if (VERSION > 3) {
       </xsl:choose>
     </span>
   </xsl:template>
-  
+
   <xsl:template match="@major">
      v<xsl:value-of select="."/>
   </xsl:template>
-  
+
   <xsl:template match="@minor">
      <xsl:value-of select="concat('.',.)"/>
   </xsl:template>
-  
+
   <xsl:template match="@fix">
      <xsl:value-of select="concat('.',.)"/>
   </xsl:template>
-  
+
   <xsl:template match="@tag">
      <xsl:value-of select="concat('-',.)"/>
   </xsl:template>
@@ -463,6 +462,5 @@ if (VERSION > 3) {
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
-  
-</xsl:stylesheet>
 
+</xsl:stylesheet>

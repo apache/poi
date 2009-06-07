@@ -18,15 +18,13 @@
 package org.apache.poi.hpsf;
 
 /**
- * <p>This class represents custum properties in the document summary
+ * <p>This class represents custom properties in the document summary
  * information stream. The difference to normal properties is that custom
  * properties have an optional name. If the name is not <code>null</code> it
  * will be maintained in the section's dictionary.</p>
  * 
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2006-02-09
- * @version $Id$
  */
 public class CustomProperty extends MutableProperty
 {
