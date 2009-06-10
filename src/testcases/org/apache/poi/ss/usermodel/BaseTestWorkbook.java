@@ -293,6 +293,16 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(row, cell.getRow());
     }
 
+    public void testSetRepeatingRowsAnsColumns(){
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Sheet sheet1 = wb.createSheet();
+        wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
+
+        //must handle sheets with quotas, see Bugzilla #47294
+        Sheet sheet2 = wb.createSheet("My' Sheet");
+        wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet2), 0, 0, 0, 3);
+    }
+
     /**
      * Tests that all of the unicode capable string fields can be set, written and then read back
      */
