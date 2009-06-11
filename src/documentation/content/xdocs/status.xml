@@ -32,9 +32,7 @@
     </developers>
 
     <changes>
-        <release version="3.5-beta7" date="2009-??-??">
-        </release>
-        <release version="3.5-beta6" date="2009-06-??">
+        <release version="3.5-beta6" date="2009-06-21">
            <action dev="POI-DEVELOPERS" type="fix">47294 - Fixed XSSFWorkbook#setRepeatingRowsAndColumns to tolerate sheet names with quotes</action>
            <action dev="POI-DEVELOPERS" type="fix">47309 - Fixed logic in HSSFCell.getCellComment to handle sheets with more than 65536 comments</action>
            <action dev="POI-DEVELOPERS" type="fix">46776 - Added clone() method to MulBlankRecord to fix crash in Sheet.cloneSheet()</action>
