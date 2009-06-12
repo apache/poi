@@ -27,22 +27,19 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefNPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.ss.formula.Formula;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
  * class works correctly.
  *
- * @author Dmitriy Kumshayev 
+ * @author Dmitriy Kumshayev
  */
-public final class TestCFRuleRecord extends TestCase
-{
-    public void testConstructors ()
-    {
+public final class TestCFRuleRecord extends TestCase {
+    public void testConstructors () {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
@@ -65,8 +62,7 @@ public final class TestCFRuleRecord extends TestCase
         assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
     }
 
-    public void testCreateCFRuleRecord ()
-    {
+    public void testCreateCFRuleRecord() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CFRuleRecord record = CFRuleRecord.create(sheet, "7");
@@ -94,8 +90,7 @@ public final class TestCFRuleRecord extends TestCase
         }
     }
 
-    private void testCFRuleRecord(CFRuleRecord record)
-    {
+    private void testCFRuleRecord(CFRuleRecord record) {
         FontFormatting fontFormatting = new FontFormatting();
         testFontFormattingAccessors(fontFormatting);
         assertFalse(record.containsFontFormattingBlock());
@@ -152,8 +147,7 @@ public final class TestCFRuleRecord extends TestCase
         assertTrue(record.isPatternStyleModified());
     }
 
-    private void testPatternFormattingAccessors(PatternFormatting patternFormatting)
-    {
+    private void testPatternFormattingAccessors(PatternFormatting patternFormatting) {
         patternFormatting.setFillBackgroundColor(HSSFColor.GREEN.index);
         assertEquals(HSSFColor.GREEN.index,patternFormatting.getFillBackgroundColor());
 
@@ -164,8 +158,7 @@ public final class TestCFRuleRecord extends TestCase
         assertEquals(PatternFormatting.DIAMONDS,patternFormatting.getFillPattern());
     }
 
-    private void testBorderFormattingAccessors(BorderFormatting borderFormatting)
-    {
+    private void testBorderFormattingAccessors(BorderFormatting borderFormatting) {
         borderFormatting.setBackwardDiagonalOn(false);
         assertFalse(borderFormatting.isBackwardDiagonalOn());
         borderFormatting.setBackwardDiagonalOn(true);
@@ -207,8 +200,7 @@ public final class TestCFRuleRecord extends TestCase
     }
 
 
-    private void testFontFormattingAccessors(FontFormatting fontFormatting)
-    {
+    private void testFontFormattingAccessors(FontFormatting fontFormatting) {
         // Check for defaults
         assertFalse(fontFormatting.isEscapementTypeModified());
         assertFalse(fontFormatting.isFontCancellationModified());
@@ -357,31 +349,6 @@ public final class TestCFRuleRecord extends TestCase
         assertTrue(refNPtg.isRowRelative());
 
         byte[] data = rr.serialize();
-
-        if (!compareArrays(DATA_REFN, 0, data, 4, DATA_REFN.length)) {
-            fail("Did not re-serialize correctly");
-        }
-    }
-
-    private static boolean compareArrays(byte[] arrayA, int offsetA, byte[] arrayB, int offsetB, int length) {
-
-        if (offsetA + length > arrayA.length) {
-            return false;
-        }
-        if (offsetB + length > arrayB.length) {
-            return false;
-        }
-        for (int i = 0; i < length; i++) {
-            if (arrayA[i+offsetA] != arrayB[i+offsetB]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static void main(String[] ignored_args)
-    {
-        System.out.println("Testing org.apache.poi.hssf.record.CFRuleRecord");
-        junit.textui.TestRunner.run(TestCFRuleRecord.class);
+        TestcaseRecordInputStream.confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
     }
 }

@@ -28,13 +28,7 @@ public final class TestPlexOfCps
   private PlexOfCps _plexOfCps = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestPlexOfCps(String name)
-  {
-    super(name);
-  }
-  public void testWriteRead()
-    throws Exception
-  {
+  public void testWriteRead() {
     _plexOfCps = new PlexOfCps(4);
 
     int last = 0;

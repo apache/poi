@@ -28,11 +28,6 @@ public final class TestFileInformationBlock
   private FileInformationBlock _fileInformationBlock = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestFileInformationBlock(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

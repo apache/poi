@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,43 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
 import junit.framework.TestCase;
-
-import java.io.IOException;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
+public final class TestPOILogFactory extends TestCase {
 
-public class TestPOILogFactory
-        extends TestCase
-{
-    /**
-     * Creates new TestPOILogFactory
-     *
-     * @param name
-     */
-
-    public TestPOILogFactory( String name )
-    {
-        super( name );
-    }
 
     /**
      * test log creation
-     *
-     * @exception IOException
      */
-
-    public void testLog()
-            throws IOException
-    {
+    public void testLog() {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging
         //    output is done.
@@ -71,17 +50,5 @@ public class TestPOILogFactory
         l2.log( POILogger.INFO, "testing cat org.apache.poi.hdf.*:INFO" );
         l2.log( POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG" );
 
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing basic util.POILogFactory functionality" );
-        junit.textui.TestRunner.run( TestPOILogFactory.class );
     }
 }

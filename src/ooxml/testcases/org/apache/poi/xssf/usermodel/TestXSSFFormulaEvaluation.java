@@ -23,9 +23,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public final class TestXSSFFormulaEvaluation extends TestCase {
-    public TestXSSFFormulaEvaluation(String name) {
-        super(name);
-
+	@Override
+	protected void setUp() {
         // Use system out logger
         System.setProperty(
                 "org.apache.poi.util.POILogger",

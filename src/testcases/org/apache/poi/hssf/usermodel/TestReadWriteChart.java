@@ -52,13 +52,7 @@ public final class TestReadWriteChart extends TestCase {
         Sheet newSheet = workbook.getSheetAt(0).getSheet();
         List  records  = newSheet.getRecords();
 
-        //System.out.println("BOF Assertion");
         assertTrue(records.get(0) instanceof BOFRecord);
-        //System.out.println("EOF Assertion");
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
-    }
-    
-    public static void main(String [] args) {
-        junit.textui.TestRunner.run(TestReadWriteChart.class);
     }
 }

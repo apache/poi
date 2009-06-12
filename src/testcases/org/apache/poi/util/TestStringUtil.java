@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.util;
 
-import junit.framework.*;
-
+import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
+
+import junit.framework.TestCase;
 
 /**
  * Unit test for StringUtil
@@ -29,26 +29,12 @@ import java.text.NumberFormat;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  */
-public class TestStringUtil
-        extends TestCase
-{
-    /**
-     * Creates new TestStringUtil
-     *
-     * @param name
-     */
-    public TestStringUtil( String name )
-    {
-        super( name );
-    }
-
-
+public final class TestStringUtil extends TestCase {
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127
      */
-    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127()
-    {
+    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127() {
         byte[] test_data = new byte[]{0x22, 0x04,
                                       0x35, 0x04,
                                       0x41, 0x04,
@@ -65,13 +51,7 @@ public class TestStringUtil
                 StringUtil.getFromUnicodeLE( test_data ) );
     }
 
-
-
-    /**
-     * Test putCompressedUnicode
-     */
-    public void testPutCompressedUnicode() throws Exception
-    {
+    public void testPutCompressedUnicode() {
         byte[] output = new byte[100];
         byte[] expected_output =
                 {
@@ -79,7 +59,12 @@ public class TestStringUtil
                     (byte) 'o', (byte) ' ', (byte) 'W', (byte) 'o',
                     (byte) 'r', (byte) 'l', (byte) 'd', (byte) 0xAE
                 };
-        String input = new String( expected_output, StringUtil.getPreferredEncoding() );
+        String input;
+		try {
+			input = new String( expected_output, StringUtil.getPreferredEncoding() );
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 
         StringUtil.putCompressedUnicode( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )
@@ -106,11 +91,7 @@ public class TestStringUtil
         }
     }
 
-    /**
-     * Test putUncompressedUnicode
-     */
-    public void testPutUncompressedUnicode()
-    {
+    public void testPutUncompressedUnicode() {
         byte[] output = new byte[100];
         String input = "Hello World";
         byte[] expected_output =
@@ -147,10 +128,7 @@ public class TestStringUtil
         }
     }
 
-
-    public void testFormat()
-            throws Exception
-    {
+    public void testFormat() {
         assertEquals( "This is a test " + fmt( 1.2345, 2, 2 ),
                 StringUtil.format( "This is a test %2.2", new Object[]
                 {
@@ -192,8 +170,7 @@ public class TestStringUtil
     }
 
 
-    private String fmt( double num, int minIntDigits, int maxFracDigitis )
-    {
+    private static String fmt(double num, int minIntDigits, int maxFracDigitis) {
         NumberFormat nf = NumberFormat.getInstance();
 
         if ( minIntDigits != -1 )
@@ -207,28 +184,5 @@ public class TestStringUtil
 
         return nf.format( num );
     }
-
-
-    /**
-     * main
-     *
-     * @param ignored_args
-     */
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing util.StringUtil functionality" );
-        junit.textui.TestRunner.run( TestStringUtil.class );
-    }
-
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
-        // System.setProperty()
-    }
-
 }
 

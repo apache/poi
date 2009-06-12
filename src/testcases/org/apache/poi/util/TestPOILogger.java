@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -28,31 +27,12 @@ import junit.framework.TestCase;
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
-public class TestPOILogger
-        extends TestCase
-{
-    /**
-     * Constructor TestPOILogger
-     *
-     *
-     * @param s
-     *
-     */
-
-    public TestPOILogger( String s )
-    {
-        super( s );
-    }
+public final class TestPOILogger extends TestCase {
 
     /**
      * Test different types of log output.
-     *
-     * @exception Exception
      */
-    public void testVariousLogTypes()
-            throws Exception
-    {
+    public void testVariousLogTypes() {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging
         //    output is done.

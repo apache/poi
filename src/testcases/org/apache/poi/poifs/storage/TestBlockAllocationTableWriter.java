@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
@@ -34,28 +32,9 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson
  */
+public final class TestBlockAllocationTableWriter extends TestCase {
 
-public class TestBlockAllocationTableWriter
-    extends TestCase
-{
-
-    /**
-     * Constructor TestBlockAllocationTableWriter
-     *
-     * @param name
-     */
-
-    public TestBlockAllocationTableWriter(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test the allocateSpace method.
-     */
-
-    public void testAllocateSpace()
-    {
+    public void testAllocateSpace() {
         BlockAllocationTableWriter table         =
             new BlockAllocationTableWriter();
         int[]                      blockSizes    =
@@ -71,15 +50,7 @@ public class TestBlockAllocationTableWriter
         }
     }
 
-    /**
-     * Test the createBlocks method
-     *
-     * @exception IOException
-     */
-
-    public void testCreateBlocks()
-        throws IOException
-    {
+    public void testCreateBlocks() {
         BlockAllocationTableWriter table = new BlockAllocationTableWriter();
 
         table.allocateSpace(127);
@@ -117,13 +88,8 @@ public class TestBlockAllocationTableWriter
 
     /**
      * Test content produced by BlockAllocationTableWriter
-     *
-     * @exception IOException
      */
-
-    public void testProduct()
-        throws IOException
-    {
+    public void testProduct() throws IOException {
         BlockAllocationTableWriter table = new BlockAllocationTableWriter();
 
         for (int k = 1; k <= 22; k++)
@@ -168,28 +134,16 @@ public class TestBlockAllocationTableWriter
         }
     }
 
-    private void verifyBlocksCreated(BlockAllocationTableWriter table,
-                                     int count)
-        throws IOException
-    {
+    private static void verifyBlocksCreated(BlockAllocationTableWriter table, int count){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        table.writeBlocks(stream);
+        try {
+			table.writeBlocks(stream);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
         byte[] output = stream.toByteArray();
 
         assertEquals(count * 512, output.length);
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.BlockAllocationTableWriter");
-        junit.textui.TestRunner.run(TestBlockAllocationTableWriter.class);
     }
 }

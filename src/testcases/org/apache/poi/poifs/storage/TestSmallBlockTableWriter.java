@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.property.PropertyTable;
@@ -34,32 +33,10 @@ import org.apache.poi.poifs.property.RootProperty;
  *
  * @author Marc Johnson
  */
+public final class TestSmallBlockTableWriter extends TestCase {
 
-public class TestSmallBlockTableWriter
-    extends TestCase
-{
-
-    /**
-     * Constructor TestSmallBlockTableWriter
-     *
-     * @param name
-     */
-
-    public TestSmallBlockTableWriter(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test writing constructor
-     *
-     * @exception IOException
-     */
-
-    public void testWritingConstructor()
-        throws IOException
-    {
-        List documents = new ArrayList();
+    public void testWritingConstructor() throws IOException {
+        List<POIFSDocument> documents = new ArrayList<POIFSDocument>();
 
         documents.add(
             new POIFSDocument(
@@ -112,18 +89,5 @@ public class TestSmallBlockTableWriter
 
         sbtw.setStartBlock(start_block);
         assertEquals(start_block, root.getStartBlock());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallBlockTableWriter");
-        junit.textui.TestRunner.run(TestSmallBlockTableWriter.class);
     }
 }

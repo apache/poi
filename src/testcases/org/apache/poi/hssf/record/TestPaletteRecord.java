@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 import java.util.Iterator;
@@ -28,20 +27,14 @@ import org.apache.poi.hssf.util.HSSFColor;
  *
  * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public class TestPaletteRecord extends TestCase
-{
-    public TestPaletteRecord(String name)
-    {
-        super(name);
-    }
-    
+public final class TestPaletteRecord extends TestCase {
+
     /**
      * Tests that the default palette matches the constants of HSSFColor
      */
-    public void testDefaultPalette()
-    {
+    public void testDefaultPalette() {
         PaletteRecord palette = new PaletteRecord();
-        
+
         //make sure all the HSSFColor constants match
         Map colors = HSSFColor.getIndexHash();
         Iterator indexes = colors.keySet().iterator();

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.storage.RawDataBlock;
 
@@ -32,31 +30,9 @@ import org.apache.poi.poifs.storage.RawDataBlock;
  *
  * @author Marc Johnson
  */
+public final class TestPropertyFactory extends TestCase {
 
-public class TestPropertyFactory
-    extends TestCase
-{
-
-    /**
-     * Constructor TestPropertyFactory
-     *
-     * @param name
-     */
-
-    public TestPropertyFactory(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test executing convertToProperties
-     *
-     * @exception IOException
-     */
-
-    public void testConvertToProperties()
-        throws IOException
-    {
+    public void testConvertToProperties() throws IOException {
 
         // real data from a real file!
         byte[]               testdata =
@@ -2222,18 +2198,5 @@ public class TestPropertyFactory
                              (( Property ) properties.get(j)).getName());
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.property.PropertyFactory");
-        junit.textui.TestRunner.run(TestPropertyFactory.class);
     }
 }

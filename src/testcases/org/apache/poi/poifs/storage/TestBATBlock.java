@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,49 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test BATBlock functionality
  *
  * @author Marc Johnson
  */
-
-public class TestBATBlock
-    extends TestCase
-{
-
-    /**
-     * Constructor TestBATBlock
-     *
-     * @param name
-     */
-
-    public TestBATBlock(String name)
-    {
-        super(name);
-    }
+public final class TestBATBlock extends TestCase {
 
     /**
      * Test the createBATBlocks method. The test involves setting up
      * various arrays of int's and ensuring that the correct number of
      * BATBlocks is created for each array, and that the data from
      * each array is correctly written to the BATBlocks.
-     *
-     * @exception IOException
      */
-
-    public void testCreateBATBlocks()
-        throws IOException
-    {
+    public void testCreateBATBlocks() throws IOException {
 
         // test 0 length array (basic sanity)
         BATBlock[] rvalue = BATBlock.createBATBlocks(createTestArray(0));
@@ -85,8 +64,7 @@ public class TestBATBlock
         verifyContents(rvalue, 129);
     }
 
-    private int [] createTestArray(int count)
-    {
+    private static int[] createTestArray(int count) {
         int[] rvalue = new int[ count ];
 
         for (int j = 0; j < count; j++)
@@ -96,9 +74,7 @@ public class TestBATBlock
         return rvalue;
     }
 
-    private void verifyContents(BATBlock [] blocks, int entries)
-        throws IOException
-    {
+    private static void verifyContents(BATBlock[] blocks, int entries) throws IOException {
         byte[] expected = new byte[ 512 * blocks.length ];
 
         Arrays.fill(expected, ( byte ) 0xFF);
@@ -127,16 +103,7 @@ public class TestBATBlock
         }
     }
 
-    /**
-     * test createXBATBlocks
-     *
-     * @exception IOException
-     */
-
-    public void testCreateXBATBlocks()
-        throws IOException
-    {
-
+    public void testCreateXBATBlocks() throws IOException {
         // test 0 length array (basic sanity)
         BATBlock[] rvalue = BATBlock.createXBATBlocks(createTestArray(0), 1);
 
@@ -168,10 +135,8 @@ public class TestBATBlock
         verifyXBATContents(rvalue, 255, 1);
     }
 
-    private void verifyXBATContents(BATBlock [] blocks, int entries,
-                                    int start_block)
-        throws IOException
-    {
+    private static void verifyXBATContents(BATBlock[] blocks, int entries, int start_block)
+			throws IOException {
         byte[] expected = new byte[ 512 * blocks.length ];
 
         Arrays.fill(expected, ( byte ) 0xFF);
@@ -220,20 +185,9 @@ public class TestBATBlock
         }
     }
 
-    /**
-     * test calculateXBATStorageRequirements
-     */
-
-    public void testCalculateXBATStorageRequirements()
-    {
-        int[] blockCounts  =
-        {
-            0, 1, 127, 128
-        };
-        int[] requirements =
-        {
-            0, 1, 1, 2
-        };
+    public void testCalculateXBATStorageRequirements() {
+        int[] blockCounts = { 0, 1, 127, 128 };
+        int[] requirements = { 0, 1, 1, 2 };
 
         for (int j = 0; j < blockCounts.length; j++)
         {
@@ -243,42 +197,13 @@ public class TestBATBlock
         }
     }
 
-    /**
-     * test entriesPerBlock
-     */
-
-    public void testEntriesPerBlock()
-    {
+    public void testEntriesPerBlock() {
         assertEquals(128, BATBlock.entriesPerBlock());
     }
-
-    /**
-     * test entriesPerXBATBlock
-     */
-
-    public void testEntriesPerXBATBlock()
-    {
+    public void testEntriesPerXBATBlock() {
         assertEquals(127, BATBlock.entriesPerXBATBlock());
     }
-
-    /**
-     * test getXBATChainOffset
-     */
-
-    public void testGetXBATChainOffset()
-    {
+    public void testGetXBATChainOffset() {
         assertEquals(508, BATBlock.getXBATChainOffset());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println("Testing org.apache.poi.poifs.storage.BATBlock");
-        junit.textui.TestRunner.run(TestBATBlock.class);
     }
 }

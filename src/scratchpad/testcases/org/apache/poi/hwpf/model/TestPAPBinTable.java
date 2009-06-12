@@ -32,11 +32,6 @@ public final class TestPAPBinTable
 
   private TextPieceTable fakeTPT = new TextPieceTable();
 
-  public TestPAPBinTable(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

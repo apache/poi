@@ -28,12 +28,6 @@ public final class TestStyleSheet
   private StyleSheet _styleSheet = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-
-  public TestStyleSheet(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

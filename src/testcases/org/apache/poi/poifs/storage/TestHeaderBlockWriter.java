@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -33,38 +31,19 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson
  */
-
-public class TestHeaderBlockWriter
-    extends TestCase
-{
-
-    /**
-     * Constructor TestHeaderBlockWriter
-     *
-     * @param name
-     */
-
-    public TestHeaderBlockWriter(String name)
-    {
-        super(name);
-    }
+public final class TestHeaderBlockWriter extends TestCase {
 
     /**
      * Test creating a HeaderBlockWriter
-     *
-     * @exception IOException
      */
-
-    public void testConstructors()
-        throws IOException
-    {
+    public void testConstructors() throws IOException {
         HeaderBlockWriter     block  = new HeaderBlockWriter();
         ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
         block.writeBlocks(output);
         byte[] copy     = output.toByteArray();
         byte[] expected =
-        {
+        {   // TODO - put this raw data in a better format
             ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
             ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
@@ -213,13 +192,8 @@ public class TestHeaderBlockWriter
 
     /**
      * Test setting the SBAT start block
-     *
-     * @exception IOException
      */
-
-    public void testSetSBATStart()
-        throws IOException
-    {
+    public void testSetSBATStart() throws IOException {
         HeaderBlockWriter block = new HeaderBlockWriter();
 
         block.setSBATStart(0x01234567);
@@ -368,13 +342,8 @@ public class TestHeaderBlockWriter
 
     /**
      * test setPropertyStart and getPropertyStart
-     *
-     * @exception IOException
      */
-
-    public void testSetPropertyStart()
-        throws IOException
-    {
+    public void testSetPropertyStart() throws IOException {
         HeaderBlockWriter block = new HeaderBlockWriter();
 
         block.setPropertyStart(0x01234567);
@@ -524,13 +493,8 @@ public class TestHeaderBlockWriter
     /**
      * test setting the BAT blocks; also tests getBATCount,
      * getBATArray, getXBATCount
-     *
-     * @exception IOException
      */
-
-    public void testSetBATBlocks()
-        throws IOException
-    {
+    public void testSetBATBlocks() throws IOException {
 
         // first, a small set of blocks
         HeaderBlockWriter block = new HeaderBlockWriter();
@@ -1008,18 +972,5 @@ public class TestHeaderBlockWriter
         }
         assertEquals("XBAT End of chain", -2,
                      LittleEndian.getInt(copy, offset));
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.HeaderBlockWriter");
-        junit.textui.TestRunner.run(TestHeaderBlockWriter.class);
     }
 }

@@ -15,46 +15,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import java.io.*;
+import junit.framework.TestCase;
 
 /**
  * Title:        Unit test for ByteField class
  * Description:  Unit test for ByteField class
  * @author       Marc Johnson (mjohnson at apache dot org)
  */
+public final class TestByteField extends TestCase {
 
-public class TestByteField
-    extends TestCase
-{
-
-    /**
-     * Constructor
-     *
-     * @param name
-     */
-
-    public TestByteField(String name)
-    {
-        super(name);
-    }
-
-    static private final byte[] _test_array =
+    private static final byte[] _test_array =
     {
         Byte.MIN_VALUE, ( byte ) -1, ( byte ) 0, ( byte ) 1, Byte.MAX_VALUE
     };
 
-    /**
-     * Test constructors.
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         try
         {
             new ByteField(-1);
@@ -114,12 +95,7 @@ public class TestByteField
         }
     }
 
-    /**
-     * Test set() methods
-     */
-
-    public void testSet()
-    {
+    public void testSet() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 
@@ -134,12 +110,7 @@ public class TestByteField
         }
     }
 
-    /**
-     * Test readFromBytes
-     */
-
-    public void testReadFromBytes()
-    {
+    public void testReadFromBytes() {
         ByteField field = new ByteField(1);
         byte[]    array = new byte[ 1 ];
 
@@ -162,15 +133,7 @@ public class TestByteField
         }
     }
 
-    /**
-     * Test readFromStream
-     *
-     * @exception IOException
-     */
-
-    public void testReadFromStream()
-        throws IOException
-    {
+    public void testReadFromStream() throws IOException {
         ByteField field  = new ByteField(0);
         byte[]    buffer = new byte[ _test_array.length ];
 
@@ -184,12 +147,7 @@ public class TestByteField
         }
     }
 
-    /**
-     * test writeToBytes
-     */
-
-    public void testWriteToBytes()
-    {
+    public void testWriteToBytes() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 
@@ -199,17 +157,5 @@ public class TestByteField
             field.writeToBytes(array);
             assertEquals("testing ", _test_array[ j ], array[ 0 ]);
         }
-    }
-
-    /**
-     * Main
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println("Testing util.ByteField functionality");
-        junit.textui.TestRunner.run(TestByteField.class);
     }
 }

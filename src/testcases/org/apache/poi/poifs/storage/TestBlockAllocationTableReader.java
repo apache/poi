@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
@@ -34,36 +31,18 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson
  */
-
-public class TestBlockAllocationTableReader
-    extends TestCase
-{
-
-    /**
-     * Constructor TestBlockAllocationTableReader
-     *
-     * @param name
-     */
-
-    public TestBlockAllocationTableReader(String name)
-    {
-        super(name);
-    }
+public final class TestBlockAllocationTableReader extends TestCase {
 
     /**
      * Test small block allocation table constructor
-     *
-     * @exception IOException
      */
-
-    public void testSmallBATConstructor()
-        throws IOException
-    {
+    public void testSmallBATConstructor() throws IOException {
 
         // need to create an array of raw blocks containing the SBAT,
         // and a small document block list
         byte[]               sbat_data =
         {
+        		// TODO - put this raw data in a better format
             ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
             ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
             ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
@@ -1160,28 +1139,20 @@ public class TestBlockAllocationTableReader
         }
     }
 
-    /**
-     * Test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
+    public void testReadingConstructor() throws IOException {
 
         // create a document, minus the header block, and use that to
         // create a RawDataBlockList. The document will exist entire
         // of BATBlocks and XBATBlocks
-        // 
+        //
         // we will create two XBAT blocks, which will encompass 128
         // BAT blocks between them, and two extra BAT blocks which
         // will be in the block array passed to the constructor. This
         // makes a total of 130 BAT blocks, which will encompass
         // 16,640 blocks, for a file size of some 8.5 megabytes.
-        // 
+        //
         // Naturally, we'll fake that out ...
-        // 
+        //
         // map of blocks:
         // block 0: xbat block 0
         // block 1: xbat block 1
@@ -1229,18 +1200,10 @@ public class TestBlockAllocationTableReader
         }
     }
 
-    /**
-     * Test fetchBlocks
-     *
-     * @exception IOException
-     */
-
-    public void testFetchBlocks()
-        throws IOException
-    {
+    public void testFetchBlocks() throws IOException {
 
         // strategy:
-        // 
+        //
         // 1. set up a single BAT block from which to construct a
         // BAT. create nonsense blocks in the raw data block list
         // corresponding to the indices in the BAT block.
@@ -1349,18 +1312,5 @@ public class TestBlockAllocationTableReader
                 }
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.BlockAllocationTableReader");
-        junit.textui.TestRunner.run(TestBlockAllocationTableReader.class);
     }
 }

@@ -43,37 +43,22 @@ import org.apache.poi.hpsf.Variant;
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
-public class TestEmptyProperties extends TestCase
-{
+public final class TestEmptyProperties extends TestCase {
 
     /**
      * <p>This test file's summary information stream contains some empty
      * properties.</p>
      */
-    static final String POI_FS = "TestCorel.shw";
+	private static final String POI_FS = "TestCorel.shw";
 
-    static final String[] POI_FILES = new String[]
+	private static final String[] POI_FILES = new String[]
         {
             "PerfectOffice_MAIN",
             "\005SummaryInformation",
             "Main"
         };
 
-    POIFile[] poiFiles;
-
-
-
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name The name of the test case
-     */
-    public TestEmptyProperties(final String name)
-    {
-        super(name);
-    }
-
-
+	private POIFile[] poiFiles;
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
@@ -91,8 +76,6 @@ public class TestEmptyProperties extends TestCase
         poiFiles = Util.readPOIFiles(data);
     }
 
-
-
     /**
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
@@ -104,8 +87,6 @@ public class TestEmptyProperties extends TestCase
             Assert.assertEquals(poiFiles[i].getName(), expected[i]);
     }
 
-
-
     /**
      * <p>Tests whether property sets can be created from the POI
      * files in the POI file system. This test case expects the first
@@ -114,15 +95,15 @@ public class TestEmptyProperties extends TestCase
      * property sets. In the latter cases a {@link
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs.
-     * 
+     *
      * @exception UnsupportedEncodingException if a character encoding is not
      * supported.
      */
     public void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException
-    { 
+    {
         Class[] expected = new Class[]
             {
                 NoPropertySetStreamException.class,
@@ -150,13 +131,11 @@ public class TestEmptyProperties extends TestCase
         }
     }
 
-
-
     /**
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if an HPSF operation fails
      */
@@ -184,21 +163,4 @@ public class TestEmptyProperties extends TestCase
         assertNull(s.getThumbnail());
         assertNull(s.getApplicationName());
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args the command-line arguments (unused)
-     * 
-     * @exception Throwable if any exception or error occurs
-     */
-    public static void main(final String[] args) throws Throwable
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestBasic.class);
-    }
-
 }

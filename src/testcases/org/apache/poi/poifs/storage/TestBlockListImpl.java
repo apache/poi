@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -33,31 +33,9 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson
  */
+public final class TestBlockListImpl extends TestCase {
 
-public class TestBlockListImpl
-    extends TestCase
-{
-
-    /**
-     * Constructor TestBlockListImpl
-     *
-     * @param name
-     */
-
-    public TestBlockListImpl(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test zap method
-     *
-     * @exception IOException
-     */
-
-    public void testZap()
-        throws IOException
-    {
+    public void testZap() throws IOException {
         BlockListImpl list = new BlockListImpl();
 
         // verify that you can zap anything
@@ -92,15 +70,7 @@ public class TestBlockListImpl
         }
     }
 
-    /**
-     * test remove method
-     *
-     * @exception IOException
-     */
-
-    public void testRemove()
-        throws IOException
-    {
+    public void testRemove() throws IOException {
         BlockListImpl  list   = new BlockListImpl();
         RawDataBlock[] blocks = new RawDataBlock[ 5 ];
         byte[]         data   = new byte[ 512 * 5 ];
@@ -159,15 +129,7 @@ public class TestBlockListImpl
         }
     }
 
-    /**
-     * test setBAT
-     *
-     * @exception IOException
-     */
-
-    public void testSetBAT()
-        throws IOException
-    {
+    public void testSetBAT() throws IOException {
         BlockListImpl list = new BlockListImpl();
 
         list.setBAT(null);
@@ -182,18 +144,10 @@ public class TestBlockListImpl
         }
     }
 
-    /**
-     * Test fetchBlocks
-     *
-     * @exception IOException
-     */
-
-    public void testFetchBlocks()
-        throws IOException
-    {
+    public void testFetchBlocks() throws IOException {
 
         // strategy:
-        // 
+        //
         // 1. set up a single BAT block from which to construct a
         // BAT. create nonsense blocks in the raw data block list
         // corresponding to the indices in the BAT block.
@@ -309,18 +263,5 @@ public class TestBlockListImpl
                 }
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.storage.BlockListImpl");
-        junit.textui.TestRunner.run(TestBlockListImpl.class);
     }
 }

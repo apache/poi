@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.basic;
 
@@ -31,17 +30,7 @@ import org.apache.poi.hpsf.SummaryInformation;
  *
  * @author Michael Zalewski (zalewski@optonline.net)
  */
-public class TestClassID extends TestCase
-{
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name the test case's name
-     */
-    public TestClassID(final String name)
-    {
-        super(name);
-    }
+public final class TestClassID extends TestCase {
 
     /**
      * Various tests of overridden .equals()
@@ -130,19 +119,4 @@ public class TestClassID extends TestCase
                             "{04030201-0605-0807-090A-0B0C0D0E0F10}"
         );
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args Command-line parameters (ignored)
-     */
-    public static void main(final String[] args)
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestClassID.class);
-    }
-
 }
