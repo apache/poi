@@ -45,7 +45,7 @@ import org.apache.poi.hssf.record.pivottable.*;
  */
 public final class RecordFactory {
 	private static final int NUM_RECORDS = 512;
-	
+
 	private interface I_RecordCreator {
 		Record create(RecordInputStream in);
 
@@ -194,7 +194,7 @@ public final class RecordFactory {
 		WriteAccessRecord.class,
 		WriteProtectRecord.class,
 		WSBoolRecord.class,
-		
+
 		// chart records
 		BeginRecord.class,
 		ChartFRTInfoRecord.class,
@@ -206,29 +206,29 @@ public final class RecordFactory {
 		EndRecord.class,
 		LinkedDataRecord.class,
 		SeriesToChartGroupRecord.class,
-		
+
 		// pivot table records
 		DataItemRecord.class,
 		ExtendedPivotTableViewFieldsRecord.class,
 		PageItemRecord.class,
 		StreamIDRecord.class,
-		ViewDefinitionRecord.class, 
+		ViewDefinitionRecord.class,
 		ViewFieldsRecord.class,
 		ViewSourceRecord.class,
 	};
-	
+
 	/**
 	 * cache of the recordsToMap();
 	 */
 	private static final Map<Integer, I_RecordCreator> _recordCreatorsById  = recordsToMap(recordClasses);
 
 	private static short[] _allKnownRecordSIDs;
-	
+
 	/**
 	 * Debug / diagnosis method<br/>
 	 * Gets the POI implementation class for a given <tt>sid</tt>.  Only a subset of the any BIFF
-	 * records are actually interpreted by POI.  A few others are known but not interpreted 
-	 * (see {@link UnknownRecord#getBiffName(int)}). 
+	 * records are actually interpreted by POI.  A few others are known but not interpreted
+	 * (see {@link UnknownRecord#getBiffName(int)}).
 	 * @return the POI implementation class for the specified record <tt>sid</tt>.
 	 * <code>null</code> if the specified record is not interpreted by POI.
 	 */
@@ -244,7 +244,7 @@ public final class RecordFactory {
 	 * are returned digested into the non-mul form.
 	 */
 	public static Record [] createRecord(RecordInputStream in) {
-		
+
 		Record record = createSingleRecord(in);
 		if (record instanceof DBCellRecord) {
 			// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
@@ -258,14 +258,14 @@ public final class RecordFactory {
 		}
 		return new Record[] { record, };
 	}
-	
+
 	static Record createSingleRecord(RecordInputStream in) {
 		I_RecordCreator constructor = _recordCreatorsById.get(new Integer(in.getSid()));
 
 		if (constructor == null) {
 			return new UnknownRecord(in);
 		}
-		
+
 		return constructor.create(in);
 	}
 
@@ -342,7 +342,7 @@ public final class RecordFactory {
 			if(!uniqueRecClasses.add(recClass)) {
 				throw new RuntimeException("duplicate record class (" + recClass.getName() + ")");
 			}
-			
+
 			short sid;
 			Constructor<? extends Record> constructor;
 			try {
@@ -360,6 +360,7 @@ public final class RecordFactory {
 			}
 			result.put(key, new ReflectionRecordCreator(constructor));
 		}
+//		result.put(new Integer(0x0406), result.get(new Integer(0x06)));
 		return result;
 	}
 
@@ -386,17 +387,17 @@ public final class RecordFactory {
 		 * reliably use zeros for padding and if this were always the case, this code could just
 		 * skip all the (zero sized) records with sid==0.  However, bug 46987 shows a file with
 		 * non-zero padding that is read OK by Excel (Excel also fixes the padding).
-		 * 
+		 *
 		 * So to properly detect the workbook end of stream, this code has to identify the last
-		 * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the 
-		 * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many 
-		 * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not 
+		 * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the
+		 * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many
+		 * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not
 		 * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
 		 * streams can be nested within worksheet streams and it's not clear in these cases what
-		 * record might follow any EOF record.  So we also need to keep track of the bof/eof 
+		 * record might follow any EOF record.  So we also need to keep track of the bof/eof
 		 * nesting level.
 		 */
-		 
+
 		int bofDepth=0;
 		boolean lastRecordWasEOFLevelZero = false;
 		while (recStream.hasNextRecord()) {
@@ -420,7 +421,7 @@ public final class RecordFactory {
 				}
 				continue;
 			}
-			
+
 			if (record instanceof DBCellRecord) {
 				// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
 				continue;
@@ -441,7 +442,7 @@ public final class RecordFactory {
 				lastDGRecord.join((AbstractEscherHolderRecord) record);
 			} else if (record.getSid() == ContinueRecord.sid) {
 				ContinueRecord contRec = (ContinueRecord)record;
-				
+
 				if (lastRecord instanceof ObjRecord || lastRecord instanceof TextObjectRecord) {
 					// Drawing records have a very strange continue behaviour.
 					//There can actually be OBJ records mixed between the continues.
