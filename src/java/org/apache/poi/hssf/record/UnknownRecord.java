@@ -44,6 +44,7 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int PRINTSIZE_0033       = 0x0033;
 	public static final int PLS_004D             = 0x004D;
 	public static final int SHEETPR_0081         = 0x0081;
+	public static final int SORT_0090            = 0x0090;
 	public static final int STANDARDWIDTH_0099   = 0x0099;
 	public static final int SCL_00A0             = 0x00A0;
 	public static final int BITMAP_00E9          = 0x00E9;
@@ -56,7 +57,7 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETPROTECTION_0867 = 0x0867;
 	public static final int RANGEPROTECTION_0868 = 0x0868;
 	public static final int HEADER_FOOTER_089C   = 0x089C;
-	
+
 	private int _sid;
 	private byte[] _rawData;
 
@@ -65,8 +66,8 @@ public final class UnknownRecord extends StandardRecord {
 	 * @param data  the data
 	 */
 	public UnknownRecord(int id, byte[] data) {
-	  _sid = id & 0xFFFF;
-	  _rawData = data;
+		_sid = id & 0xFFFF;
+		_rawData = data;
 	}
 
 
@@ -122,12 +123,12 @@ public final class UnknownRecord extends StandardRecord {
 
 	/**
 	 * These BIFF record types are known but still uninterpreted by POI
-	 * 
+	 *
 	 * @return the documented name of this BIFF record type, <code>null</code> if unknown to POI
 	 */
 	public static String getBiffName(int sid) {
 		// Note to POI developers:
-		// Make sure you delete the corresponding entry from 
+		// Make sure you delete the corresponding entry from
 		// this method any time a new Record subclass is created.
 		switch (sid) {
 			case PRINTSIZE_0033: return "PRINTSIZE";
@@ -135,7 +136,7 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0050: return "DCON"; // Data Consolidation Information
 			case 0x007F: return "IMDATA";
 			case SHEETPR_0081: return "SHEETPR";
-			case 0x0090: return "SORT"; // Sorting Options
+			case SORT_0090: return "SORT"; // Sorting Options
 			case 0x0094: return "LHRECORD"; // .WK? File Conversion Information
 			case STANDARDWIDTH_0099: return "STANDARDWIDTH"; //Standard Column Width
 			case 0x009D: return "AUTOFILTERINFO"; // Drop-Down Arrow Count
@@ -145,7 +146,7 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x00B2: return "SXVI";        // (pivot table) View Item
 			case 0x00B4: return "SXIVD";       // (pivot table) Row/Column Field IDs
 			case 0x00B5: return "SXLI";        // (pivot table) Line Item Array
-			
+
 			case 0x00D3: return "OBPROJ";
 			case 0x00DC: return "PARAMQRY";
 			case 0x00DE: return "OLESIZE";
@@ -181,7 +182,7 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x087B: return "CFEX";
 			case 0x087C: return "XFCRC";
 			case 0x087D: return "XFEXT";
-			case 0x087F: return "CONTINUEFRT12";	
+			case 0x087F: return "CONTINUEFRT12";
 			case 0x088B: return "PLV";
 			case 0x088C: return "COMPAT12";
 			case 0x088D: return "DXF";
@@ -209,12 +210,11 @@ public final class UnknownRecord extends StandardRecord {
 	}
 
 	/**
-	 * 
 	 * @return <code>true</code> if the unknown record id has been observed in POI unit tests
 	 */
 	private static boolean isObservedButUnknown(int sid) {
 		switch (sid) {
-			case 0x0033: 
+			case 0x0033:
 				// contains 2 bytes of data: 0x0001 or 0x0003
 			case 0x0034:
 				// Seems to be written by MSAccess
@@ -222,7 +222,7 @@ public final class UnknownRecord extends StandardRecord {
 				// appears after last cell value record and before WINDOW2
 			case 0x01BD:
 			case 0x01C2:
-				// Written by Excel 2007 
+				// Written by Excel 2007
 				// rawData is multiple of 12 bytes long
 				// appears after last cell value record and before WINDOW2 or drawing records
 			case 0x089D:

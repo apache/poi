@@ -44,6 +44,7 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
@@ -126,7 +127,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return the parent workbook
      */
     public HSSFWorkbook getWorkbook(){
-        return _workbook;    
+        return _workbook;
     }
 
     /**
@@ -162,7 +163,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 hrow = getRow( cval.getRow() );
                 lastrow = hrow;
                 if (hrow == null) {
-                    // Some tools (like Perl module Spreadsheet::WriteExcel - bug 41187) skip the RowRecords 
+                    // Some tools (like Perl module Spreadsheet::WriteExcel - bug 41187) skip the RowRecords
                     // Excel, OpenOffice.org and GoogleDocs are all OK with this, so POI should be too.
                     if (rowRecordsAlreadyPresent) {
                         // if at least one row record is present, all should be present.
@@ -180,7 +181,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             if (log.check( POILogger.DEBUG ))
                 log.log( DEBUG, "record took ",
                     new Long( System.currentTimeMillis() - cellstart ) );
-            
+
         }
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "total sheet cell creation took ",
@@ -340,12 +341,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Gets the number last row on the sheet.
      * Owing to idiosyncrasies in the excel file
      *  format, if the result of calling this method
-     *  is zero, you can't tell if that means there 
+     *  is zero, you can't tell if that means there
      *  are zero rows on the sheet, or one at
      *  position zero. For that case, additionally
      *  call {@link #getPhysicalNumberOfRows()} to
      *  tell if there is a row at position zero
-     *  or not. 
+     *  or not.
      * @return the number of the last row contained in this sheet, zero based.
      */
     public int getLastRowNum() {
@@ -504,20 +505,20 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     {
         _sheet.setDefaultRowHeight((short) (height * 20));
     }
-    
+
     /**
      * Returns the HSSFCellStyle that applies to the given
      *  (0 based) column, or null if no style has been
      *  set for that column
      */
     public HSSFCellStyle getColumnStyle(int column) {
-    	short styleIndex = _sheet.getXFIndexForColAt((short)column);
-    	
-    	if(styleIndex == 0xf) {
-    		// None set
-    		return null;
-    	}
-    	
+        short styleIndex = _sheet.getXFIndexForColAt((short)column);
+
+        if(styleIndex == 0xf) {
+            // None set
+            return null;
+        }
+
         ExtendedFormatRecord xf = _book.getExFormatAt(styleIndex);
         return new HSSFCellStyle(styleIndex, xf, _book);
     }
@@ -660,8 +661,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public Region getMergedRegionAt(int index) {
         CellRangeAddress cra = getMergedRegion(index);
-        
-        return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(), 
+
+        return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
                 cra.getLastRow(), (short)cra.getLastColumn());
     }
     /**
@@ -858,7 +859,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param value whether to display or hide all zero values on the worksheet
      */
     public void setDisplayZeros(boolean value){
-        _sheet.getWindowTwo().setDisplayZeros(value);    
+        _sheet.getWindowTwo().setDisplayZeros(value);
     }
 
     /**
@@ -967,19 +968,22 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.getPageSettings().setMargin(margin, size);
     }
 
+    private WorksheetProtectionBlock getProtectionBlock() {
+        return _sheet.getProtectionBlock();
+    }
     /**
      * Answer whether protection is enabled or disabled
      * @return true => protection enabled; false => protection disabled
      */
     public boolean getProtect() {
-        return getSheet().isProtected()[0];
+        return getProtectionBlock().isSheetProtected();
     }
 
     /**
      * @return hashed password
      */
     public short getPassword() {
-        return (short)getSheet().getPassword().getPassword();
+        return (short)getProtectionBlock().getPasswordHash();
     }
 
     /**
@@ -987,7 +991,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return true => protection enabled; false => protection disabled
      */
     public boolean getObjectProtect() {
-        return getSheet().isProtected()[1];
+        return getProtectionBlock().isObjectProtected();
     }
 
     /**
@@ -995,24 +999,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return true => protection enabled; false => protection disabled
      */
     public boolean getScenarioProtect() {
-        return getSheet().isProtected()[2];
+        return getProtectionBlock().isScenarioProtected();
     }
-
-    /**
-     * Sets the protection on enabled or disabled
-     * @param protect true => protection enabled; false => protection disabled
-     * @deprecated (Jul 2007) use {@link #protectSheet(String)}
-     */
-    public void setProtect(boolean protect) {
-        getSheet().getProtect().setProtect(protect);
-    }
-
     /**
      * Sets the protection enabled as well as the password
-     * @param password to set for protection
+     * @param password to set for protection. Pass <code>null</code> to remove protection
      */
     public void protectSheet(String password) {
-            getSheet().protectSheet(password, true, true); //protect objs&scenarios(normal)
+        getProtectionBlock().protectSheet(password, true, true); //protect objs&scenarios(normal)
     }
 
     /**
@@ -1153,7 +1147,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
     }
-    
+
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
@@ -1171,7 +1165,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      * @param moveComments whether to move comments at the same time as the cells they are attached to
      */
-    public void shiftRows(int startRow, int endRow, int n, 
+    public void shiftRows(int startRow, int endRow, int n,
             boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments) {
         int s, inc;
         if (n < 0) {
@@ -1183,7 +1177,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
         NoteRecord[] noteRecs;
         if (moveComments) {
-            noteRecs = _sheet.getNoteRecords(); 
+            noteRecs = _sheet.getNoteRecords();
         } else {
             noteRecs = NoteRecord.EMPTY_ARRAY;
         }
@@ -1197,10 +1191,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             if ( row2Replace == null )
                 row2Replace = createRow( rowNum + n );
 
-            
+
             // Remove all the old cells from the row we'll
-            //  be writing too, before we start overwriting 
-            //  any cells. This avoids issues with cells 
+            //  be writing too, before we start overwriting
+            //  any cells. This avoids issues with cells
             //  changing type, and records not being correctly
             //  overwritten
             row2Replace.removeAllCells();
@@ -1235,7 +1229,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             // Now zap all the cells in the source row
             row.removeAllCells();
-            
+
             // Move comments from the source row to the
             //  destination row. Note that comments can
             //  exist for cells which are null
@@ -1476,10 +1470,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         for (Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext();) {
             EscherRecord escherRecord = iterator.next();
             if (fat) {
-				System.out.println(escherRecord.toString());
-			} else {
-				escherRecord.display(w, 0);
-			}
+                System.out.println(escherRecord.toString());
+            } else {
+                escherRecord.display(w, 0);
+            }
         }
         w.flush();
     }
@@ -1533,7 +1527,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
         return agg;
     }
-    
+
     /**
      * Returns the top-level drawing patriach, if there is
      *  one.
@@ -1549,7 +1543,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public HSSFPatriarch getDrawingPatriarch() {
         EscherAggregate agg = getDrawingEscherAggregate();
         if(agg == null) return null;
-        
+
         HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.setPatriarch(patriarch);
 
@@ -1649,7 +1643,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public void autoSizeColumn(int column) {
         autoSizeColumn(column, false);
     }
-    
+
     /**
      * Adjusts the column width to fit the contents.
      *
@@ -1657,9 +1651,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *  normally only be called once per column, at the end of your
      *  processing.
      *
-     * You can specify whether the content of merged cells should be considered or ignored.  
+     * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
-     *   
+     *
      * @param column the column index
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
@@ -1672,13 +1666,13 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
          * '0' looks to be a good choice.
          */
         char defaultChar = '0';
-       
+
         /**
          * This is the multiple that the font height is scaled by when determining the
          * boundary of rotated text.
          */
         double fontHeightMultiple = 2.0;
-       
+
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = new HSSFWorkbook(_book);
@@ -1704,7 +1698,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 CellRangeAddress region = getMergedRegion(i);
                 if (containsCell(region, row.getRowNum(), column)) {
                     if (!useMergedCells) {
-                        // If we're not using merged cells, skip this one and move on to the next. 
+                        // If we're not using merged cells, skip this one and move on to the next.
                         continue rows;
                     }
                     cell = row.getCell(region.getFirstColumn());
@@ -1715,7 +1709,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             HSSFCellStyle style = cell.getCellStyle();
             int cellType = cell.getCellType();
             if(cellType == HSSFCell.CELL_TYPE_FORMULA) cellType = cell.getCachedFormulaResultType();
-            
+
             HSSFFont font = wb.getFontAt(style.getFontIndex());
 
             if (cellType == HSSFCell.CELL_TYPE_STRING) {
@@ -1836,9 +1830,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             if(c != null) {
                 return c.getCellComment();
             }
-			// No cell, so you will get new
-			//  objects every time, sorry...
-			return HSSFCell.findCellComment(_sheet, row, column);
+            // No cell, so you will get new
+            //  objects every time, sorry...
+            return HSSFCell.findCellComment(_sheet, row, column);
         }
         return null;
     }

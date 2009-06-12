@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DefaultColWidthRecord;
 import org.apache.poi.hssf.record.DefaultRowHeightRecord;
 import org.apache.poi.hssf.record.DeltaRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
@@ -62,21 +63,23 @@ import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 
 /**
  * Finds correct insert positions for records in workbook streams<p/>
- * 
+ *
  * See OOO excelfileformat.pdf sec. 4.2.5 'Record Order in a BIFF8 Workbook Stream'
- * 
+ *
  * @author Josh Micich
  */
 final class RecordOrderer {
-	
+
 	// TODO - simplify logic using a generalised record ordering
 
 	private RecordOrderer() {
@@ -84,7 +87,6 @@ final class RecordOrderer {
 	}
 	/**
 	 * Adds the specified new record in the correct place in sheet records list
-	 * 
 	 */
 	public static void addNewSheetRecord(List<RecordBase> sheetRecords, RecordBase newRecord) {
 		int index = findSheetInsertPos(sheetRecords, newRecord.getClass());
@@ -107,7 +109,67 @@ final class RecordOrderer {
 		if (recClass == PageSettingsBlock.class) {
 			return getPageBreakRecordInsertPos(records);
 		}
+		if (recClass == WorksheetProtectionBlock.class) {
+			return getWorksheetProtectionBlockInsertPos(records);
+		}
 		throw new RuntimeException("Unexpected record class (" + recClass.getName() + ")");
+	}
+
+	/**
+	 * Finds the index where the protection block should be inserted
+	 * @param records the records for this sheet
+	 * <pre>
+	 * + BOF
+	 * o INDEX
+	 * o Calculation Settings Block
+	 * o PRINTHEADERS
+	 * o PRINTGRIDLINES
+	 * o GRIDSET
+	 * o GUTS
+	 * o DEFAULTROWHEIGHT
+	 * o SHEETPR
+	 * o Page Settings Block
+	 * o Worksheet Protection Block
+	 * o DEFCOLWIDTH
+	 * oo COLINFO
+	 * o SORT
+	 * + DIMENSION
+	 * </pre>
+	 */
+	private static int getWorksheetProtectionBlockInsertPos(List<RecordBase> records) {
+		int i = getDimensionsIndex(records);
+		while (i > 0) {
+			i--;
+			Object rb = records.get(i);
+			if (!isProtectionSubsequentRecord(rb)) {
+				return i+1;
+			}
+		}
+		throw new IllegalStateException("did not find insert pos for protection block");
+	}
+
+
+	/**
+	 * These records may occur between the 'Worksheet Protection Block' and DIMENSION:
+	 * <pre>
+	 * o DEFCOLWIDTH
+	 * oo COLINFO
+	 * o SORT
+	 * </pre>
+	 */
+	private static boolean isProtectionSubsequentRecord(Object rb) {
+		if (rb instanceof ColumnInfoRecordsAggregate) {
+			return true; // oo COLINFO
+		}
+		if (rb instanceof Record) {
+			Record record = (Record) rb;
+			switch (record.getSid()) {
+				case DefaultColWidthRecord.sid:
+				case UnknownRecord.SORT_0090:
+					return true;
+			}
+		}
+		return false;
 	}
 
 	private static int getPageBreakRecordInsertPos(List<RecordBase> records) {
@@ -163,7 +225,7 @@ final class RecordOrderer {
 			if (rb instanceof DataValidityTable) {
 				continue;
 			}
-			
+
 			Record rec = (Record) rb;
 			switch (rec.getSid()) {
 				case WindowTwoRecord.sid:
@@ -171,7 +233,7 @@ final class RecordOrderer {
 				case PaneRecord.sid:
 				case SelectionRecord.sid:
 				case UnknownRecord.STANDARDWIDTH_0099:
-				// MergedCellsTable usually here 
+				// MergedCellsTable usually here
 				case UnknownRecord.LABELRANGES_015F:
 				case UnknownRecord.PHONETICPR_00EF:
 					// ConditionalFormattingTable goes here
@@ -187,13 +249,13 @@ final class RecordOrderer {
 		for (int i = records.size() - 2; i >= 0; i--) { // -2 to skip EOF record
 			Object rb = records.get(i);
 			if (!(rb instanceof Record)) {
-				// DataValidityTable, ConditionalFormattingTable, 
+				// DataValidityTable, ConditionalFormattingTable,
 				// even PageSettingsBlock (which doesn't normally appear after 'View Settings')
-				continue; 
+				continue;
 			}
 			Record rec = (Record) rb;
 			switch (rec.getSid()) {
-				// 'View Settings' (4 records) 
+				// 'View Settings' (4 records)
 				case WindowTwoRecord.sid:
 				case SCLRecord.sid:
 				case PaneRecord.sid:
@@ -206,11 +268,11 @@ final class RecordOrderer {
 		throw new RuntimeException("Did not find Window2 record");
 	}
 
-	
+
 	/**
 	 * Finds the index where the sheet validations header record should be inserted
 	 * @param records the records for this sheet
-	 * 
+	 *
 	 * + WINDOW2
 	 * o SCL
 	 * o PANE
@@ -340,7 +402,7 @@ final class RecordOrderer {
 	}
 	/**
 	 * @return <code>true</code> if the specified record ID terminates a sequence of Row block records
-	 * It is assumed that at least one row or cell value record has been found prior to the current 
+	 * It is assumed that at least one row or cell value record has been found prior to the current
 	 * record
 	 */
 	public static boolean isEndOfRowBlock(int sid) {
@@ -359,7 +421,7 @@ final class RecordOrderer {
 
 			case DVALRecord.sid:
 				return true;
-			case EOFRecord.sid: 
+			case EOFRecord.sid:
 				// WINDOW2 should always be present, so shouldn't have got this far
 				throw new RuntimeException("Found EOFRecord before WindowTwoRecord was encountered");
 		}
@@ -367,13 +429,13 @@ final class RecordOrderer {
 	}
 
 	/**
-	 * @return <code>true</code> if the specified record id normally appears in the row blocks section 
+	 * @return <code>true</code> if the specified record id normally appears in the row blocks section
 	 * of the sheet records
 	 */
 	public static boolean isRowBlockRecord(int sid) {
 		switch (sid) {
 			case RowRecord.sid:
-				
+
 			case BlankRecord.sid:
 			case BoolErrRecord.sid:
 			case FormulaRecord.sid:

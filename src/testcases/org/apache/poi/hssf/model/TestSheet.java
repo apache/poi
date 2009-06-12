@@ -644,15 +644,14 @@ public final class TestSheet extends TestCase {
 		Sheet sheet = Sheet.createSheet();
 
 		List<RecordBase> sheetRecs = sheet.getRecords();
-		assertEquals(22, sheetRecs.size());
+		assertEquals(23, sheetRecs.size());
 
 		FormulaShifter shifter = FormulaShifter.createForRowShift(0, 0, 0, 1);
 		sheet.updateFormulasAfterCellShift(shifter, 0);
-		if (sheetRecs.size() == 23 && sheetRecs.get(21) instanceof ConditionalFormattingTable) {
+		if (sheetRecs.size() == 24 && sheetRecs.get(22) instanceof ConditionalFormattingTable) {
 			throw new AssertionFailedError("Identified bug 46547a");
 		}
-		assertEquals(22, sheetRecs.size());
-
+		assertEquals(23, sheetRecs.size());
 	}
 	/**
 	 * Bug 46547 happened when attempting to add conditional formatting to a sheet
