@@ -28,7 +28,10 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
+import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ddf.EscherDgRecord;
 
@@ -125,7 +128,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         s.setRowSumsRight(true);
 
         // Check
-        assertEquals(true, record.getAlternateExpression()); //sheet.setRowSumsBelow alters this field too 
+        assertEquals(true, record.getAlternateExpression()); //sheet.setRowSumsBelow alters this field too
         assertEquals(false, record.getAlternateFormula());
         assertEquals(true, record.getAutobreaks());
         assertEquals(true, record.getDialog());
@@ -300,37 +303,104 @@ public final class TestHSSFSheet extends BaseTestSheet {
     /**
      * Test that the ProtectRecord is included when creating or cloning a sheet
      */
-    public void testProtect() {
+    public void testCloneWithProtect() {
+        String passwordA = "secrect";
+        int expectedHashA = -6810;
+        String passwordB = "admin";
+        int expectedHashB = -14556;
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = workbook.createSheet();
-        Sheet sheet = hssfSheet.getSheet();
-        ProtectRecord protect = sheet.getProtect();
+        hssfSheet.protectSheet(passwordA);
 
-        assertFalse(protect.getProtect());
+        assertEquals(expectedHashA, hssfSheet.getSheet().getProtectionBlock().getPasswordHash());
 
-        // This will tell us that cloneSheet, and by extension,
-        // the list forms of createSheet leave us with an accessible
-        // ProtectRecord.
-        hssfSheet.protectSheet("secret");
-        Sheet cloned = sheet.cloneSheet();
-        assertNotNull(cloned.getProtect());
-        assertTrue(hssfSheet.getProtect());
+        // Clone the sheet, and make sure the password hash is preserved
+        HSSFSheet sheet2 = workbook.cloneSheet(0);
+        assertEquals(expectedHashA, sheet2.getSheet().getProtectionBlock().getPasswordHash());
+
+        // change the password on the first sheet
+        hssfSheet.protectSheet(passwordB);
+        assertEquals(expectedHashB, hssfSheet.getSheet().getProtectionBlock().getPasswordHash());
+        // but the cloned sheet's password should remain unchanged
+        assertEquals(expectedHashA, sheet2.getSheet().getProtectionBlock().getPasswordHash());
     }
 
     public void testProtectSheet() {
-        short expected = (short)0xfef1;
+        int expectedHash = (short)0xfef1;
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         s.protectSheet("abcdefghij");
-        Sheet sheet = s.getSheet();
-        ProtectRecord protect = sheet.getProtect();
-        PasswordRecord pass = sheet.getPassword();
-        assertTrue("protection should be on",protect.getProtect());
-        assertTrue("object protection should be on",sheet.isProtected()[1]);
-        assertTrue("scenario protection should be on",sheet.isProtected()[2]);
-        assertEquals("well known value for top secret hash should be "+Integer.toHexString(expected).substring(4),expected,pass.getPassword());
+        WorksheetProtectionBlock pb = s.getSheet().getProtectionBlock();
+        assertTrue("protection should be on", pb.isSheetProtected());
+        assertTrue("object protection should be on",pb.isObjectProtected());
+        assertTrue("scenario protection should be on",pb.isScenarioProtected());
+        assertEquals("well known value for top secret hash should be "+Integer.toHexString(expectedHash).substring(4), expectedHash, pb.getPasswordHash());
     }
 
+    /**
+     * {@link PasswordRecord} belongs with the rest of the Worksheet Protection Block
+     * (which should be before {@link DimensionsRecord}).
+     */
+    public void testProtectSheetRecordOrder_bug47363a() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        s.protectSheet("secret");
+        RecordCollector rc = new RecordCollector();
+        s.getSheet().visitContainedRecords(rc, 0);
+        Record[] recs = rc.getRecords();
+        int nRecs = recs.length;
+        if (recs[nRecs-2] instanceof PasswordRecord && recs[nRecs-5] instanceof DimensionsRecord) {
+           throw new AssertionFailedError("Identified bug 47363a - PASSWORD after DIMENSION");
+        }
+        // Check that protection block is together, and before DIMENSION
+        confirmRecordClass(recs, nRecs-4, DimensionsRecord.class);
+        confirmRecordClass(recs, nRecs-9, ProtectRecord.class);
+        confirmRecordClass(recs, nRecs-8, ObjectProtectRecord.class);
+        confirmRecordClass(recs, nRecs-7, ScenarioProtectRecord.class);
+        confirmRecordClass(recs, nRecs-6, PasswordRecord.class);
+    }
+
+    private static void confirmRecordClass(Record[] recs, int index, Class<? extends Record> cls) {
+        if (recs.length <= index) {
+            throw new AssertionFailedError("Expected (" + cls.getName() + ") at index "
+                    + index + " but array length is " + recs.length + ".");
+        }
+        assertEquals(cls, recs[index].getClass());
+    }
+
+    /**
+     * There should be no problem with adding data validations after sheet protection
+     */
+    public void testDvProtectionOrder_bug47363b() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Sheet1");
+        sheet.protectSheet("secret");
+
+        DVConstraint dvc = DVConstraint.createNumericConstraint(DVConstraint.ValidationType.INTEGER,
+                                                DVConstraint.OperatorType.BETWEEN, "10", "100");
+        CellRangeAddressList numericCellAddressList = new CellRangeAddressList(0, 0, 1, 1);
+        HSSFDataValidation dv = new HSSFDataValidation(numericCellAddressList, dvc);
+        try {
+            sheet.addValidationData(dv);
+        } catch (IllegalStateException e) {
+            String expMsg = "Unexpected (org.apache.poi.hssf.record.PasswordRecord) while looking for DV Table insert pos";
+            if (expMsg.equals(e.getMessage())) {
+                throw new AssertionFailedError("Identified bug 47363b");
+            }
+            throw e;
+        }
+        RecordCollector rc;
+        rc = new RecordCollector();
+        sheet.getSheet().visitContainedRecords(rc, 0);
+        int nRecsWithProtection = rc.getRecords().length;
+
+        sheet.protectSheet(null);
+        rc = new RecordCollector();
+        sheet.getSheet().visitContainedRecords(rc, 0);
+        int nRecsWithoutProtection = rc.getRecords().length;
+
+        assertEquals(4, nRecsWithProtection - nRecsWithoutProtection);
+    }
 
     public void testZoom() {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -674,16 +744,16 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         //TODO: check shapeId in the cloned sheet
     }
-    
+
     /**
      * POI now (Sep 2008) allows sheet names longer than 31 chars (for other apps besides Excel).
      * Since Excel silently truncates to 31, make sure that POI enforces uniqueness on the first
-     * 31 chars. 
+     * 31 chars.
      */
     public void testLongSheetNames() {
         HSSFWorkbook wb = new HSSFWorkbook();
         final String SAME_PREFIX = "A123456789B123456789C123456789"; // 30 chars
-        
+
         wb.createSheet(SAME_PREFIX + "Dxxxx");
         try {
             wb.createSheet(SAME_PREFIX + "Dyyyy"); // identical up to the 32nd char
@@ -693,7 +763,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         }
         wb.createSheet(SAME_PREFIX + "Exxxx"); // OK - differs in the 31st char
     }
-    
+
     /**
      * Tests that we can read existing column styles
      */
@@ -701,17 +771,17 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wbNone = HSSFTestDataSamples.openSampleWorkbook("ColumnStyleNone.xls");
         HSSFWorkbook wbSimple = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dp.xls");
         HSSFWorkbook wbComplex = HSSFTestDataSamples.openSampleWorkbook("ColumnStyle1dpColoured.xls");
-    	
+
         // Presence / absence checks
         assertNull(wbNone.getSheetAt(0).getColumnStyle(0));
         assertNull(wbNone.getSheetAt(0).getColumnStyle(1));
-        
+
         assertNull(wbSimple.getSheetAt(0).getColumnStyle(0));
         assertNotNull(wbSimple.getSheetAt(0).getColumnStyle(1));
-        
+
         assertNull(wbComplex.getSheetAt(0).getColumnStyle(0));
         assertNotNull(wbComplex.getSheetAt(0).getColumnStyle(1));
-        
+
         // Details checks
         HSSFCellStyle bs = wbSimple.getSheetAt(0).getColumnStyle(1);
         assertEquals(62, bs.getIndex());
@@ -721,8 +791,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(8, bs.getFont(wbSimple).getColor());
         assertFalse(bs.getFont(wbSimple).getItalic());
         assertEquals(HSSFFont.BOLDWEIGHT_NORMAL, bs.getFont(wbSimple).getBoldweight());
-        
-        
+
+
         HSSFCellStyle cs = wbComplex.getSheetAt(0).getColumnStyle(1);
         assertEquals(62, cs.getIndex());
         assertEquals("#,##0.0_ ;\\-#,##0.0\\ ", cs.getDataFormatString());
@@ -732,5 +802,4 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertFalse(cs.getFont(wbComplex).getItalic());
         assertEquals(HSSFFont.BOLDWEIGHT_BOLD, cs.getFont(wbComplex).getBoldweight());
     }
-
 }

@@ -42,19 +42,15 @@ import org.apache.poi.hssf.record.IterationRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.ObjectProtectRecord;
 import org.apache.poi.hssf.record.PaneRecord;
-import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.PrintGridlinesRecord;
 import org.apache.poi.hssf.record.PrintHeadersRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RefModeRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
-import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -68,6 +64,7 @@ import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
@@ -113,11 +110,11 @@ public final class Sheet implements Model {
     protected DefaultRowHeightRecord     defaultrowheight  =     null;
     private PageSettingsBlock _psBlock;
 
-    // 'Worksheet Protection Block'
-    protected ProtectRecord              protect           =     null;
-    protected ObjectProtectRecord        objprotect        =     null;
-    protected ScenarioProtectRecord      scenprotect       =     null;
-    protected PasswordRecord             _password          =     null;
+    /**
+     * 'Worksheet Protection Block'<br/>
+     *  Aggregate object is always present, but possibly empty.
+     */
+    private final WorksheetProtectionBlock _protectionBlock = new WorksheetProtectionBlock();
 
     protected WindowTwoRecord            windowTwo         =     null;
     protected SelectionRecord            _selection         =     null;
@@ -227,6 +224,11 @@ public final class Sheet implements Model {
                 continue;
             }
 
+            if (WorksheetProtectionBlock.isComponentRecord(recSid)) {
+                _protectionBlock.addRecords(rs);
+                continue;
+            }
+
             if (recSid == MergeCellsRecord.sid) {
                 // when the MergedCellsTable is found in the right place, we expect those records to be contiguous
                 _mergedCellsTable.read(rs);
@@ -299,22 +301,6 @@ public final class Sheet implements Model {
             {
                 windowTwo = (WindowTwoRecord) rec;
             }
-            else if ( recSid == ProtectRecord.sid )
-            {
-                protect = (ProtectRecord) rec;
-            }
-            else if ( recSid == ObjectProtectRecord.sid )
-            {
-                objprotect = (ObjectProtectRecord) rec;
-            }
-            else if ( recSid == ScenarioProtectRecord.sid )
-            {
-                scenprotect = (ScenarioProtectRecord) rec;
-            }
-            else if ( recSid == PasswordRecord.sid )
-            {
-                _password = (PasswordRecord) rec;
-            }
             else if ( recSid == GutsRecord.sid )
             {
                 _gutsRecord = (GutsRecord) rec;
@@ -348,6 +334,7 @@ public final class Sheet implements Model {
         _rowsAggregate = rra;
         // put merged cells table in the right place (regardless of where the first MergedCellsRecord was found */
         RecordOrderer.addNewSheetRecord(records, _mergedCellsTable);
+        RecordOrderer.addNewSheetRecord(records, _protectionBlock);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
     }
@@ -432,7 +419,7 @@ public final class Sheet implements Model {
         records.add(_psBlock);
 
         // 'Worksheet Protection Block' (after 'Page Settings Block' and before DEFCOLWIDTH)
-        // PROTECT record normally goes here, don't add yet since the flag is initially false
+        records.add(_protectionBlock); // initially empty
 
         defaultcolwidth = createDefaultColWidth();
         records.add( defaultcolwidth);
@@ -1407,62 +1394,11 @@ public final class Sheet implements Model {
     }
 
     /**
-     * creates an ObjectProtect record with protect set to false.
+     * @return the {@link WorksheetProtectionBlock} for this sheet
      */
-    private static ObjectProtectRecord createObjectProtect() {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "create protect record with protection disabled");
-        ObjectProtectRecord retval = new ObjectProtectRecord();
-
-        retval.setProtect(false);
-        return retval;
+    public WorksheetProtectionBlock getProtectionBlock() {
+        return _protectionBlock;
     }
-
-    /**
-     * creates a ScenarioProtect record with protect set to false.
-     */
-    private static ScenarioProtectRecord createScenarioProtect() {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "create protect record with protection disabled");
-        ScenarioProtectRecord retval = new ScenarioProtectRecord();
-
-        retval.setProtect(false);
-        return retval;
-    }
-
-    /**
-     * @return the ProtectRecord. If one is not contained in the sheet, then one is created.
-     */
-    public ProtectRecord getProtect() {
-        if (protect == null) {
-            protect = new ProtectRecord(false);
-            // Insert the newly created protect record just before DefaultColWidthRecord
-            int loc = findFirstRecordLocBySid(DefaultColWidthRecord.sid);
-            _records.add(loc, protect);
-        }
-        return protect;
-    }
-
-    /**
-     * @return the PasswordRecord. If one is not contained in the sheet, then one is created.
-     */
-    public PasswordRecord getPassword() {
-        if (_password == null) {
-            _password = createPassword();
-            //Insert the newly created password record at the end of the record (just before the EOF)
-            int loc = findFirstRecordLocBySid(EOFRecord.sid);
-            _records.add(loc, _password);
-        }
-        return _password;
-    }
-
-    /**
-     * creates a Password record with password set to 0x0000.
-     */
-    private static PasswordRecord createPassword() {
-        return new PasswordRecord(0x0000);
-    }
-
     /**
      * Sets whether the gridlines are shown in a viewer.
      * @param show whether to show gridlines or not
@@ -1599,68 +1535,6 @@ public final class Sheet implements Model {
         } else {
             _columnInfos.expandColumn(columnNumber);
         }
-    }
-
-    /**
-     * protect a spreadsheet with a password (not encypted, just sets protect
-     * flags and the password.
-     * @param password to set
-     * @param objects are protected
-     * @param scenarios are protected
-     */
-    public void protectSheet( String password, boolean objects, boolean scenarios ) {
-        int protIdx = -1;
-        ProtectRecord prec = getProtect();
-        PasswordRecord pass = getPassword();
-        prec.setProtect(true);
-        pass.setPassword(PasswordRecord.hashPassword(password));
-        if((objprotect == null && objects) || (scenprotect != null && scenarios)) {
-            protIdx = _records.indexOf( protect );
-        }
-        if(objprotect == null && objects) {
-            ObjectProtectRecord rec = createObjectProtect();
-            rec.setProtect(true);
-            _records.add(protIdx+1,rec);
-            objprotect = rec;
-        }
-        if(scenprotect == null && scenarios) {
-            ScenarioProtectRecord srec = createScenarioProtect();
-            srec.setProtect(true);
-            _records.add(protIdx+2,srec);
-            scenprotect = srec;
-        }
-    }
-
-    /**
-     * unprotect objects in the sheet (will not protect them, but any set to false are
-     * unprotected.
-     * @param sheet is unprotected (false = unprotect)
-     * @param objects are unprotected (false = unprotect)
-     * @param scenarios are unprotected (false = unprotect)
-     */
-    public void unprotectSheet( boolean sheet, boolean objects, boolean scenarios ) {
-
-        if (!sheet) {
-           ProtectRecord prec = getProtect();
-           prec.setProtect(sheet);
-           PasswordRecord pass = getPassword();
-           pass.setPassword((short)00);
-        }
-        if(objprotect != null && !objects) {
-            objprotect.setProtect(false);
-        }
-        if(scenprotect != null && !scenarios) {
-            scenprotect.setProtect(false);
-        }
-    }
-
-    /**
-     * @return {sheet is protected, objects are proteced, scenarios are protected}
-     */
-    public boolean[] isProtected() {
-        return new boolean[] { (protect != null && protect.getProtect()),
-                             (objprotect != null && objprotect.getProtect()),
-                             (scenprotect != null && scenprotect.getProtect())};
     }
 
 
