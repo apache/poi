@@ -27,18 +27,17 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  *
-
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
 public final class TestTickRecord extends TestCase {
-    byte[] data = new byte[] {
-	(byte)0x02, (byte)0x00, (byte)0x03, (byte)0x01, 
+    private static final byte[] data = {
+        (byte)0x02, (byte)0x00, (byte)0x03, (byte)0x01,
         (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, 
-	(byte)0x00, (byte)0x00, (byte)0x00,
-	(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, 
-	(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x23, (byte)0x00, 
-	(byte)0x4D, (byte)0x00, (byte)0x00, (byte)0x00
+        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+        (byte)0x00, (byte)0x00, (byte)0x00,
+        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x23, (byte)0x00,
+        (byte)0x4D, (byte)0x00, (byte)0x00, (byte)0x00
     };
 
     public void testLoad() {
@@ -62,8 +61,7 @@ public final class TestTickRecord extends TestCase {
         assertEquals( 34, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         TickRecord record = new TickRecord();
         record.setMajorTickType( (byte)2 );
         record.setMinorTickType( (byte)0 );
@@ -86,16 +84,4 @@ public final class TestTickRecord extends TestCase {
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
-    
-    
-    /**
-     *  The main program for the TestTickRecord class
-     *
-     *@param  args  The command line arguments
-     */
-    public static void main(String[] args) {
-        System.out.println("Testing org.apache.poi.hssf.record.TickRecord");
-        junit.textui.TestRunner.run(TestTickRecord.class);
-    }
-    
 }

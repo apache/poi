@@ -79,10 +79,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
  */
 public final class TestOPCCompliancePartName extends TestCase {
 
-	public TestOPCCompliancePartName(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test some common invalid names.
 	 *

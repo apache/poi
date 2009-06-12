@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,49 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
+import junit.framework.TestCase;
 
 /**
  * Class to test HeaderBlockReader functionality
  *
  * @author Marc Johnson
  */
+public final class TestHeaderBlockReader extends TestCase {
 
-public class TestHeaderBlockReader
-    extends TestCase
-{
-
-    /**
-     * Constructor TestHeaderBlockReader
-     *
-     * @param name
-     */
-
-    public TestHeaderBlockReader(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test creating a HeaderBlockReader
-     *
-     * @exception IOException
-     */
-
-    public void testConstructors()
-        throws IOException
-    {
+    public void testConstructors() throws IOException {
         byte[]            content =
         {
             ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
@@ -230,18 +202,5 @@ public class TestHeaderBlockReader
             // restore byte value
             content[ index ] = ( byte ) (content[ index ] + 1);
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.HeaderBlockReader");
-        junit.textui.TestRunner.run(TestHeaderBlockReader.class);
     }
 }

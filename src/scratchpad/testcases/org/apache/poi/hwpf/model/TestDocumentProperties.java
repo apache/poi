@@ -29,12 +29,6 @@ public final class TestDocumentProperties
   private DocumentProperties _documentProperties = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestDocumentProperties(String name)
-  {
-    super(name);
-  }
-
-
   public void testReadWrite()
     throws Exception
   {

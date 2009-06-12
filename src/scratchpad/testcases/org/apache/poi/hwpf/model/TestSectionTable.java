@@ -30,11 +30,6 @@ public final class TestSectionTable
 {
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestSectionTable(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

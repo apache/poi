@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
@@ -32,31 +31,12 @@ import org.apache.poi.poifs.storage.RawDataBlock;
  *
  * @author Marc Johnson
  */
-
-public class TestDocumentNode
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocumentNode
-     *
-     * @param name
-     */
-
-    public TestDocumentNode(String name)
-    {
-        super(name);
-    }
+public final class TestDocumentNode extends TestCase {
 
     /**
      * test constructor
-     *
-     * @exception IOException
      */
-
-    public void testConstructor()
-        throws IOException
-    {
+    public void testConstructor() throws IOException {
         DirectoryProperty    property1 = new DirectoryProperty("directory");
         RawDataBlock[]       rawBlocks = new RawDataBlock[ 4 ];
         ByteArrayInputStream stream    =
@@ -89,18 +69,5 @@ public class TestDocumentNode
 
         // verify getParent behaves correctly
         assertEquals(parent, node.getParent());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.filesystem.DocumentNode");
-        junit.textui.TestRunner.run(TestDocumentNode.class);
     }
 }

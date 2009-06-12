@@ -33,11 +33,6 @@ public final class TestCHPBinTable
 
   private TextPieceTable fakeTPT = new TextPieceTable();
 
-  public TestCHPBinTable(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

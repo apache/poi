@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 
@@ -32,33 +29,12 @@ import org.apache.poi.poifs.common.POIFSConstants;
  *
  * @author Marc Johnson
  */
-
-public class TestRootProperty
-    extends TestCase
-{
+public final class TestRootProperty extends TestCase {
     private RootProperty _property;
     private byte[]       _testblock;
 
-    /**
-     * Constructor TestRootProperty
-     *
-     * @param name
-     */
 
-    public TestRootProperty(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test constructing RootProperty
-     *
-     * @exception IOException
-     */
-
-    public void testConstructor()
-        throws IOException
-    {
+    public void testConstructor() throws IOException {
         createBasicRootProperty();
         verifyProperty();
     }
@@ -105,9 +81,7 @@ public class TestRootProperty
         }
     }
 
-    private void verifyProperty()
-        throws IOException
-    {
+    private void verifyProperty() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
 
         _property.writeData(stream);
@@ -121,12 +95,7 @@ public class TestRootProperty
         }
     }
 
-    /**
-     * test setSize
-     */
-
-    public void testSetSize()
-    {
+    public void testSetSize() {
         for (int j = 0; j < 10; j++)
         {
             createBasicRootProperty();
@@ -136,15 +105,7 @@ public class TestRootProperty
         }
     }
 
-    /**
-     * Test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
+    public void testReadingConstructor() throws IOException {
         byte[] input =
         {
             ( byte ) 0x52, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
@@ -184,10 +145,8 @@ public class TestRootProperty
         verifyReadingProperty(0, input, 0, "Root Entry", "{00020820-0000-0000-C000-000000000046}");
     }
 
-    private void verifyReadingProperty(int index, byte [] input, int offset,
-                                       String name, String sClsId)
-        throws IOException
-    {
+    private void verifyReadingProperty(int index, byte[] input, int offset, String name,
+			String sClsId) throws IOException {
         RootProperty          property = new RootProperty(index, input,
                                              offset);
         ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
@@ -207,18 +166,5 @@ public class TestRootProperty
         assertEquals(name, property.getName());
         assertTrue(!property.getChildren().hasNext());
         assertEquals(property.getStorageClsid().toString(), sClsId);
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.property.RootProperty");
-        junit.textui.TestRunner.run(TestRootProperty.class);
     }
 }

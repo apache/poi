@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,39 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test ShortList
  *
  * @author Marc Johnson
  */
+public final class TestShortList extends TestCase {
 
-public class TestShortList
-    extends TestCase
-{
-
-    /**
-     * Constructor TestShortList
-     *
-     * @param name
-     */
-
-    public TestShortList(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test the various ShortListconstructors
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         ShortList list = new ShortList();
 
         assertTrue(list.isEmpty());
@@ -61,12 +40,7 @@ public class TestShortList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the add method
-     */
-
-    public void testAdd()
-    {
+    public void testAdd() {
         ShortList list      = new ShortList();
         short[]   testArray =
         {
@@ -144,12 +118,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the addAll method
-     */
-
-    public void testAddAll()
-    {
+    public void testAddAll() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 5; j++)
@@ -223,12 +192,7 @@ public class TestShortList
         assertEquals(list.get(4), empty.get(14));
     }
 
-    /**
-     * test the clear method
-     */
-
-    public void testClear()
-    {
+    public void testClear() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 500; j++)
@@ -249,12 +213,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the contains method
-     */
-
-    public void testContains()
-    {
+    public void testContains() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j += 2)
@@ -274,12 +233,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the containsAll method
-     */
-
-    public void testContainsAll()
-    {
+    public void testContainsAll() {
         ShortList list = new ShortList();
 
         assertTrue(list.containsAll(list));
@@ -299,12 +253,7 @@ public class TestShortList
         assertTrue(!list.containsAll(list2));
     }
 
-    /**
-     * test the equals method
-     */
-
-    public void testEquals()
-    {
+    public void testEquals() {
         ShortList list = new ShortList();
 
         assertEquals(list, list);
@@ -328,12 +277,7 @@ public class TestShortList
         assertTrue(!list2.equals(list));
     }
 
-    /**
-     * test the get method
-     */
-
-    public void testGet()
-    {
+    public void testGet() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -360,12 +304,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the indexOf method
-     */
-
-    public void testIndexOf()
-    {
+    public void testIndexOf() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -385,12 +324,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the isEmpty method
-     */
-
-    public void testIsEmpty()
-    {
+    public void testIsEmpty() {
         ShortList list1 = new ShortList();
         ShortList list2 = new ShortList(1000);
         ShortList list3 = new ShortList(list1);
@@ -412,12 +346,7 @@ public class TestShortList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the lastIndexOf method
-     */
-
-    public void testLastIndexOf()
-    {
+    public void testLastIndexOf() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -437,12 +366,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the remove method
-     */
-
-    public void testRemove()
-    {
+    public void testRemove() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -476,12 +400,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the removeValue method
-     */
-
-    public void testRemoveValue()
-    {
+    public void testRemoveValue() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -499,12 +418,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the removeAll method
-     */
-
-    public void testRemoveAll()
-    {
+    public void testRemoveAll() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -536,12 +450,7 @@ public class TestShortList
         assertTrue(listCopy.isEmpty());
     }
 
-    /**
-     * test the retainAll method
-     */
-
-    public void testRetainAll()
-    {
+    public void testRetainAll() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -573,12 +482,7 @@ public class TestShortList
         assertTrue(listCopy.isEmpty());
     }
 
-    /**
-     * test the set method
-     */
-
-    public void testSet()
-    {
+    public void testSet() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -606,12 +510,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the size method
-     */
-
-    public void testSize()
-    {
+    public void testSize() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -628,12 +527,7 @@ public class TestShortList
         }
     }
 
-    /**
-     * test the toArray method
-     */
-
-    public void testToArray()
-    {
+    public void testToArray() {
         ShortList list = new ShortList();
 
         for (short j = 0; j < 1000; j++)
@@ -672,17 +566,5 @@ public class TestShortList
         {
             assertEquals(a5[ j ], list.get(j));
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param unused_args
-     */
-
-    public static void main(String [] unused_args)
-    {
-        System.out.println("Testing util.ShortList functionality");
-        junit.textui.TestRunner.run(TestShortList.class);
     }
 }

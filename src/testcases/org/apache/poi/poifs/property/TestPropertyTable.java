@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
@@ -34,21 +34,7 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  *
  * @author Marc Johnson
  */
-
-public class TestPropertyTable
-    extends TestCase
-{
-
-    /**
-     * Constructor TestPropertyTable
-     *
-     * @param name
-     */
-
-    public TestPropertyTable(String name)
-    {
-        super(name);
-    }
+public final class TestPropertyTable extends TestCase {
 
     /**
      * Test PropertyTable
@@ -65,13 +51,8 @@ public class TestPropertyTable
      * the output (including the preWrite phase first), and comparing
      * it against a real property table extracted from a file known to
      * be acceptable to Excel.
-     *
-     * @exception IOException
      */
-
-    public void testWriterPropertyTable()
-        throws IOException
-    {
+    public void testWriterPropertyTable() throws IOException {
 
         // create the PropertyTable
         PropertyTable    table    = new PropertyTable();
@@ -105,6 +86,7 @@ public class TestPropertyTable
         ByteArrayOutputStream stream    = new ByteArrayOutputStream(512);
         byte[]                testblock =
         {
+        		// TODO - put this raw data in a better format
             ( byte ) 0x52, ( byte ) 0x00, ( byte ) 0x6f, ( byte ) 0x00,
             ( byte ) 0x6f, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
             ( byte ) 0x20, ( byte ) 0x00, ( byte ) 0x45, ( byte ) 0x00,
@@ -2622,6 +2604,9 @@ public class TestPropertyTable
             child = ( Property ) iter.next();
             ++count;
         }
+        if (child == null) {
+        	throw new AssertionFailedError("no children found");
+        }
         assertEquals(1, count);
         assertTrue(child.isDirectory());
         iter  = (( DirectoryProperty ) child).getChildren();
@@ -2632,18 +2617,5 @@ public class TestPropertyTable
             ++count;
         }
         assertEquals(35, count);
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.property.PropertyTable");
-        junit.textui.TestRunner.run(TestPropertyTable.class);
     }
 }

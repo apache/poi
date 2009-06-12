@@ -32,17 +32,13 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 
 /**
  * Test Open Packaging Convention package model compliance.
- * 
+ *
  * M1.11 : A package implementer shall neither create nor recognize a part with
  * a part name derived from another part name by appending segments to it.
- * 
+ *
  * @author Julien Chable
  */
 public class TestOPCCompliancePackageModel extends TestCase {
-
-	public TestOPCCompliancePackageModel(String name) {
-		super(name);
-	}
 
 	/**
 	 * A package implementer shall neither create nor recognize a part with a
@@ -135,7 +131,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 
 	/**
 	 * Try to add a relationship to a relationship part.
-	 * 
+	 *
 	 * Check rule M1.25: The Relationships part shall not have relationships to
 	 * any other part. Package implementers shall enforce this requirement upon
 	 * the attempt to create such a relationship and shall treat any such

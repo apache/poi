@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.PropertyTable;
@@ -34,35 +31,13 @@ import org.apache.poi.poifs.property.RootProperty;
  *
  * @author Marc Johnson
  */
+public final class TestSmallBlockTableReader extends TestCase {
 
-public class TestSmallBlockTableReader
-    extends TestCase
-{
-
-    /**
-     * Constructor TestSmallBlockTableReader
-     *
-     * @param name
-     */
-
-    public TestSmallBlockTableReader(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
+    public void testReadingConstructor() throws IOException {
 
         // first, we need the raw data blocks
         byte[]           raw_data_array =
-        {
+        {   // TODO - put this raw data in a better format
             ( byte ) 0x52, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
             ( byte ) 0x6F, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
             ( byte ) 0x20, ( byte ) 0x00, ( byte ) 0x45, ( byte ) 0x00,
@@ -2129,18 +2104,5 @@ public class TestSmallBlockTableReader
         BlockList     bl         =
             SmallBlockTableReader.getSmallDocumentBlocks(data_blocks, root,
                 14);
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallBlockTableReader");
-        junit.textui.TestRunner.run(TestSmallBlockTableReader.class);
     }
 }

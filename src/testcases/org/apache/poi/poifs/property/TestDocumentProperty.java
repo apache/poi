@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,49 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
-
-import org.apache.poi.poifs.property.DocumentProperty;
+import junit.framework.TestCase;
 
 /**
  * Class to test DocumentProperty functionality
  *
  * @author Marc Johnson
  */
+public final class TestDocumentProperty extends TestCase {
 
-public class TestDocumentProperty
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocumentProperty
-     *
-     * @param name
-     */
-
-    public TestDocumentProperty(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test constructing DocumentPropertys
-     *
-     * @exception IOException
-     */
-
-    public void testConstructor()
-        throws IOException
-    {
-
+    public void testConstructor() throws IOException {
         // test with short name, small file
         verifyProperty("foo", 1234);
 
@@ -71,15 +43,7 @@ public class TestDocumentProperty
         verifyProperty("A.really.long.long.long.name123", 4096);
     }
 
-    /**
-     * Test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
+    public void testReadingConstructor() throws IOException {
         byte[] input =
         {
             ( byte ) 0x52, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
@@ -217,14 +181,11 @@ public class TestDocumentProperty
 
         verifyReadingProperty(1, input, 128, "Workbook");
         verifyReadingProperty(2, input, 256, "\005SummaryInformation");
-        verifyReadingProperty(3, input, 384,
-                              "\005DocumentSummaryInformation");
+        verifyReadingProperty(3, input, 384, "\005DocumentSummaryInformation");
     }
 
-    private void verifyReadingProperty(int index, byte [] input, int offset,
-                                       String name)
-        throws IOException
-    {
+    private void verifyReadingProperty(int index, byte[] input, int offset, String name)
+			throws IOException {
         DocumentProperty      property = new DocumentProperty(index, input,
                                              offset);
         ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
@@ -244,9 +205,7 @@ public class TestDocumentProperty
         assertEquals(name, property.getName());
     }
 
-    private void verifyProperty(String name, int size)
-        throws IOException
-    {
+    private void verifyProperty(String name, int size) throws IOException {
         DocumentProperty property = new DocumentProperty(name, size);
 
         if (size >= 4096)
@@ -308,18 +267,5 @@ public class TestDocumentProperty
             assertEquals("mismatch at offset " + j, testblock[ j ],
                          output[ j ]);
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.property.DocumentProperty");
-        junit.textui.TestRunner.run(TestDocumentProperty.class);
     }
 }

@@ -33,11 +33,6 @@ public final class TestTextPieceTable extends TestCase {
   private HWPFDocFixture _hWPFDocFixture;
   private String dirname;
 
-  public TestTextPieceTable(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

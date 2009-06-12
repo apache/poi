@@ -43,11 +43,10 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  */
-public class TestBasic extends TestCase
-{
+public final class TestBasic extends TestCase {
 
-    static final String POI_FS = "TestGermanWord90.doc";
-    static final String[] POI_FILES = new String[]
+    private static final String POI_FS = "TestGermanWord90.doc";
+    private static final String[] POI_FILES = new String[]
         {
             "\005SummaryInformation",
             "\005DocumentSummaryInformation",
@@ -55,42 +54,29 @@ public class TestBasic extends TestCase
             "\001CompObj",
             "1Table"
         };
-    static final int BYTE_ORDER = 0xfffe;
-    static final int FORMAT     = 0x0000;
-    static final int OS_VERSION = 0x00020A04;
-    static final byte[] CLASS_ID =
+    private static final int BYTE_ORDER = 0xfffe;
+    private static final int FORMAT     = 0x0000;
+    private static final int OS_VERSION = 0x00020A04;
+    private static final byte[] CLASS_ID =
         {
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
         };
-    static final int[] SECTION_COUNT =
+    private static final int[] SECTION_COUNT =
         {1, 2};
-    static final boolean[] IS_SUMMARY_INFORMATION =
+    private static final boolean[] IS_SUMMARY_INFORMATION =
         {true, false};
-    static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION =
-        {false, true};            
+    private static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION =
+        {false, true};
 
-    POIFile[] poiFiles;
-
-
-
-    /**
-     * <p>Test case constructor.</p>
-     * 
-     * @param name The test case's name.
-     */
-    public TestBasic(final String name)
-    {
-        super(name);
-    }
-
+    private POIFile[] poiFiles;
 
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
-     * 
+     *
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs.
      */
@@ -101,8 +87,6 @@ public class TestBasic extends TestCase
         final File data = new File(dataDir, POI_FS);
         poiFiles = Util.readPOIFiles(data);
     }
-
-
 
     /**
      * <p>Checks the names of the files in the POI filesystem. They
@@ -115,8 +99,6 @@ public class TestBasic extends TestCase
             Assert.assertEquals(poiFiles[i].getName(), expected[i]);
     }
 
-
-
     /**
      * <p>Tests whether property sets can be created from the POI
      * files in the POI file system. This test case expects the first
@@ -125,9 +107,9 @@ public class TestBasic extends TestCase
      * property sets. In the latter cases a {@link
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs.
-     * 
+     *
      * @exception UnsupportedEncodingException if a character encoding is not
      * supported.
      */
@@ -163,13 +145,11 @@ public class TestBasic extends TestCase
         }
     }
 
-
-
     /**
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if any HPSF exception occurs
      */
@@ -194,13 +174,11 @@ public class TestBasic extends TestCase
         }
     }
 
-
-
     /**
      * <p>Tests the {@link Section} methods. The test file has two
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if any HPSF exception occurs
      */
@@ -218,21 +196,4 @@ public class TestBasic extends TestCase
         Assert.assertEquals("Titel", s.getProperty(2));
         Assert.assertEquals(1748, s.getSize());
     }
-
-
-
-    /**
-     * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args Command-line arguments (ignored)
-     * 
-     * @exception Throwable if any sort of exception or error occurs
-     */
-    public static void main(final String[] args) throws Throwable
-    {
-        System.setProperty("HPSF.testdata.path",
-                           "./src/testcases/org/apache/poi/hpsf/data");
-        junit.textui.TestRunner.run(TestBasic.class);
-    }
-
 }

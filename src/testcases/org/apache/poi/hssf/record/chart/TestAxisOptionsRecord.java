@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
 public final class TestAxisOptionsRecord extends TestCase {
-    byte[] data = new byte[] {        
+    private static final byte[] data = {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
@@ -87,15 +87,5 @@ public final class TestAxisOptionsRecord extends TestCase {
         assertEquals(recordBytes.length - 4, data.length);
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-    }
-
-    /**
-     *  The main program for the TestAxisOptionsRecord class
-     *
-     *@param  args  The command line arguments
-     */
-    public static void main(String[] args) {
-        System.out.println("Testing org.apache.poi.hssf.record.AxisOptionsRecord");
-        junit.textui.TestRunner.run(TestAxisOptionsRecord.class);
     }
 }

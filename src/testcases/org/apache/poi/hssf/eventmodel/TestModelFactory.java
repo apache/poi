@@ -36,41 +36,25 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import junit.framework.TestCase;
 
 /**
- * Tests the ModelFactory.  
- * 
+ * Tests the ModelFactory.
+ *
  * @author Andrew C. Oliver acoliver@apache.org
  */
-public class TestModelFactory extends TestCase
-{
+public class TestModelFactory extends TestCase {
     private ModelFactory factory;
     private HSSFWorkbook book;
     private InputStream  in;
     private List         models;
 
-    /**
-     * Tests that the listeners collection is created
-     * @param arg0
-     */
-    public TestModelFactory(String arg0)
-    {
-        super(arg0);
-        ModelFactory mf = new ModelFactory();
-        assertTrue("listeners member cannot be null", mf.listeners != null);
-        assertTrue("listeners member must be a List", mf.listeners instanceof List);     
-    }
-
-    public static void main(String[] args)
-    {
-        junit.textui.TestRunner.run(TestModelFactory.class);
-    }
-
     protected void setUp() throws Exception
     {
-        super.setUp();
+        ModelFactory mf = new ModelFactory();
+        assertTrue("listeners member cannot be null", mf.listeners != null);
+        assertTrue("listeners member must be a List", mf.listeners instanceof List);
         models = new ArrayList(3);
         factory = new ModelFactory();
         book = new HSSFWorkbook();
-        ByteArrayOutputStream stream = (ByteArrayOutputStream)setupRunFile(book);    
+        ByteArrayOutputStream stream = (ByteArrayOutputStream)setupRunFile(book);
         POIFSFileSystem fs = new POIFSFileSystem(
                                    new ByteArrayInputStream(stream.toByteArray())
                                    );
@@ -91,9 +75,9 @@ public class TestModelFactory extends TestCase
     public void testRegisterListener()
     {
         if (factory.listeners.size() != 0) {
-         factory = new ModelFactory();   
+         factory = new ModelFactory();
         }
-        
+
         factory.registerListener(new MFListener(null));
         factory.registerListener(new MFListener(null));
         assertTrue("Factory listeners should be two, was="+
@@ -109,29 +93,29 @@ public class TestModelFactory extends TestCase
     {
         Model temp = null;
         Iterator mi = null;
-        
+
         if (factory.listeners.size() != 0) {
-         factory = new ModelFactory();   
+         factory = new ModelFactory();
         }
-        
+
         factory.registerListener(new MFListener(models));
         factory.run(in);
-        
+
         assertTrue("Models size must be 2 was = "+models.size(),
                                              models.size() == 2);
-        mi = models.iterator();    
+        mi = models.iterator();
         temp = (Model)mi.next();
-        
+
         assertTrue("First model is Workbook was " + temp.getClass().getName(),
                     temp instanceof Workbook);
-                    
+
         temp = (Model)mi.next();
-        
+
         assertTrue("Second model is Sheet was " + temp.getClass().getName(),
                     temp instanceof Sheet);
-        
+
     }
-    
+
     /**
      * Sets up a test file
      */
@@ -153,17 +137,16 @@ public class TestModelFactory extends TestCase
 class MFListener implements ModelFactoryListener {
     private List mlist;
     public MFListener(List mlist) {
-      this.mlist = mlist;     
-    }
-    
-    public boolean process(Model model)
-    {
-        mlist.add(model);        
-        return true;
-    }
-    
-    public Iterator models() {
-        return mlist.iterator();   
+      this.mlist = mlist;
     }
 
+    public boolean process(Model model)
+    {
+        mlist.add(model);
+        return true;
+    }
+
+    public Iterator models() {
+        return mlist.iterator();
+    }
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,46 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import java.io.*;
+import junit.framework.TestCase;
 
 /**
  * Test IntegerField code
  *
  * @author  Marc Johnson (mjohnson at apache dot org)
  */
+public final class TestIntegerField extends TestCase {
 
-public class TestIntegerField
-    extends TestCase
-{
-
-    /**
-     * Constructor
-     *
-     * @param name
-     */
-
-    public TestIntegerField(String name)
-    {
-        super(name);
-    }
-
-    static private final int[] _test_array =
+    private static final int[] _test_array =
     {
         Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE
     };
 
-    /**
-     * Test constructors.
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         try
         {
             new IntegerField(-1);
@@ -117,12 +97,7 @@ public class TestIntegerField
         }
     }
 
-    /**
-     * Test set() methods
-     */
-
-    public void testSet()
-    {
+    public void testSet() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 
@@ -147,12 +122,7 @@ public class TestIntegerField
         }
     }
 
-    /**
-     * Test readFromBytes
-     */
-
-    public void testReadFromBytes()
-    {
+    public void testReadFromBytes() {
         IntegerField field = new IntegerField(1);
         byte[]       array = new byte[ 4 ];
 
@@ -178,15 +148,7 @@ public class TestIntegerField
         }
     }
 
-    /**
-     * Test readFromStream
-     *
-     * @exception IOException
-     */
-
-    public void testReadFromStream()
-        throws IOException
-    {
+    public void testReadFromStream() throws IOException {
         IntegerField field  = new IntegerField(0);
         byte[]       buffer = new byte[ _test_array.length * 4 ];
 
@@ -206,12 +168,7 @@ public class TestIntegerField
         }
     }
 
-    /**
-     * test writeToBytes
-     */
-
-    public void testWriteToBytes()
-    {
+    public void testWriteToBytes() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 
@@ -227,17 +184,5 @@ public class TestIntegerField
             val += (array[ 0 ] & 0x000000FF);
             assertEquals("testing ", _test_array[ j ], val);
         }
-    }
-
-    /**
-     * Main
-     *
-     * @param args
-     */
-
-    public static void main(String [] args)
-    {
-        System.out.println("Testing util.IntegerField functionality");
-        junit.textui.TestRunner.run(TestIntegerField.class);
     }
 }

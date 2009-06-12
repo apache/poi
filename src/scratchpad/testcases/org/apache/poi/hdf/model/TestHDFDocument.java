@@ -17,130 +17,74 @@
 
 package org.apache.poi.hdf.model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-
 /**
- * Class to test HDFDocument functionality
+ * Class to test {@link HDFDocument} functionality
  *
  * @author Bob Otterberg
  */
-public final class TestHDFDocument
-        extends TestCase
-{
-
-    public TestHDFDocument( String name )
-    {
-        super( name );
+public final class TestHDFDocument extends TestCase {
+    public void testStopJUnitComplainintAboutNoTests() {
+        // TODO - fix these junits
     }
 
-    public void testStopJUnitComplainintAboutNoTests()
-            throws Exception
-    {
-
+    private static InputStream openSample(String sampleFileName) {
+        String fullPathName = System.getProperty("HDF.testdata.path") + "/" + sampleFileName;
+        try {
+            return new FileInputStream(System.getProperty("HDF.testdata.path"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Sample HDF file '" + fullPathName + "' was not found.");
+        }
     }
 
     /**
-     * TEST NAME:  Test Read Empty <P>
      * OBJECTIVE:  Test that HDF can read an empty document (empty.doc).<P>
      * SUCCESS:    HDF reads the document.  Matches values in their particular positions.<P>
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
-     *
      */
-    public void fixme_testEmpty()
-            throws IOException
-    {
-
-        String filename = System.getProperty( "HDF.testdata.path" );
-
-
-        filename = filename + "/empty.doc";
-
-        FileInputStream stream = new FileInputStream( filename );
-
-        HDFDocument empty = new HDFDocument( stream );
-
-        stream.close();
-
+    public void fixme_testEmpty() throws IOException {
+        InputStream stream = openSample("empty.doc");
+        new HDFDocument(stream);
     }
 
-
     /**
-     * TEST NAME:  Test Simple <P>
      * OBJECTIVE:  Test that HDF can read an _very_ simple document (simple.doc).<P>
      * SUCCESS:    HDF reads the document.  Matches values in their particular positions.<P>
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
-     *
      */
-    public void fixme_testSimple()
-            throws IOException
-    {
-        String filename = System.getProperty( "HDF.testdata.path" );
-        filename = filename + "/simple.doc";
-        FileInputStream stream = new FileInputStream( filename );
-        HDFDocument empty = new HDFDocument( stream );
-        stream.close();
+    public void fixme_testSimple() throws IOException {
+        InputStream stream = openSample("simple.doc");
+        new HDFDocument(stream);
     }
 
     /**
-     * TEST NAME:  Test Read Simple List <P>
      * OBJECTIVE:  Test that HDF can read a document containing a simple list (simple-list.doc).<P>
      * SUCCESS:    HDF reads the document.  Matches values in their particular positions.<P>
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
      *
      */
-    public void fixme_testSimpleList()
-            throws IOException
-    {
-        String filename = System.getProperty( "HDF.testdata.path" );
-
-        filename = filename + "/simple-list.doc";
-        FileInputStream stream = new FileInputStream( filename );
-        HDFDocument empty = new HDFDocument( stream );
-        stream.close();
+    public void fixme_testSimpleList() throws IOException {
+        InputStream stream = openSample("simple-list.doc");
+        new HDFDocument(stream);
     }
 
     /**
-     * TEST NAME:  Test Read Simple Table <P>
      * OBJECTIVE:  Test that HDF can read a document containing a simple table (simple-table.doc).<P>
      * SUCCESS:    HDF reads the document.  Matches values in their particular positions.<P>
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
-     *
      */
-    public void fixme_testSimpleTable()
-            throws IOException
-    {
-        String filename = System.getProperty( "HDF.testdata.path" );
-
-        filename = filename + "/simple-table.doc";
-        FileInputStream stream = new FileInputStream( filename );
-        HDFDocument empty = new HDFDocument( stream );
-        stream.close();
-    }
-
-    public static void main( String[] ignored_args )
-    {
-        String path = System.getProperty( "HDF.testdata.path" );
-
-        // assume this is relative to basedir
-        if ( path == null )
-        {
-            System.setProperty(
-                    "HDF.testdata.path",
-                    "src/scratchpad/testcases/org/apache/poi/hdf/data" );
-        }
-        System.out.println( "Testing org.apache.poi.hdf.model.HDFDocument" );
-
-        junit.textui.TestRunner.run( TestHDFDocument.class );
+    public void fixme_testSimpleTable() throws IOException {
+        InputStream stream = openSample("simple-table.doc");
+        new HDFDocument(stream);
     }
 }
-
-

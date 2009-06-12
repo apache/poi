@@ -27,11 +27,6 @@ public final class TestFontTable
   private FontTable _fontTable = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestFontTable(String name)
-  {
-    super(name);
-  }
-
   public void testReadWrite()
     throws Exception
   {

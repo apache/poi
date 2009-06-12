@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,48 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
-
-import junit.framework.*;
-
-import org.apache.poi.poifs.property.Property;
+import junit.framework.TestCase;
 
 /**
  * Class to test PropertyBlock functionality
  *
  * @author Marc Johnson
  */
+public final class TestPropertyBlock extends TestCase {
 
-public class TestPropertyBlock
-    extends TestCase
-{
-
-    /**
-     * Constructor TestPropertyBlock
-     *
-     * @param name
-     */
-
-    public TestPropertyBlock(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test constructing PropertyBlocks
-     *
-     * @exception IOException
-     */
-
-    public void testCreatePropertyBlocks()
-        throws IOException
-    {
+    public void testCreatePropertyBlocks() {
 
         // test with 0 properties
         List            properties = new ArrayList();
@@ -178,7 +153,7 @@ public class TestPropertyBlock
         verifyCorrect(blocks, testblock);
     }
 
-    private void setDefaultBlock(byte [] testblock, int j)
+    private static void setDefaultBlock(byte [] testblock, int j)
     {
         int base  = j * 128;
         int index = 0;
@@ -204,15 +179,16 @@ public class TestPropertyBlock
         }
     }
 
-    private void verifyCorrect(BlockWritable [] blocks, byte [] testblock)
-        throws IOException
-    {
+    private static void verifyCorrect(BlockWritable[] blocks, byte[] testblock) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512
                                            * blocks.length);
 
-        for (int j = 0; j < blocks.length; j++)
-        {
-            blocks[ j ].writeBlocks(stream);
+        for (int j = 0; j < blocks.length; j++) {
+            try {
+				blocks[ j ].writeBlocks(stream);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
         }
         byte[] output = stream.toByteArray();
 
@@ -222,18 +198,5 @@ public class TestPropertyBlock
             assertEquals("mismatch at offset " + j, testblock[ j ],
                          output[ j ]);
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.storage.PropertyBlock");
-        junit.textui.TestRunner.run(TestPropertyBlock.class);
     }
 }
