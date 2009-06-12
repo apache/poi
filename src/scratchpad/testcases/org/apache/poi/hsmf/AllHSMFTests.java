@@ -17,26 +17,21 @@
 
 package org.apache.poi.hsmf;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public class AllTests
-  extends TestCase
-{
+import org.apache.poi.hsmf.model.*;
 
-  public AllTests(String s)
-  {
-    super(s);
-  }
+public final class AllHSMFTests {
 
-  public static Test suite()
-  {
-    TestSuite suite = new TestSuite();
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestBlankFileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestSimpleFileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestOutlook30FileRead.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestChunkData.class);
-    suite.addTestSuite(org.apache.poi.hsmf.model.TestFileWithAttachmentsRead.class);
-    
-    return suite;
-  }
+	public static Test suite() {
+		TestSuite suite = new TestSuite(AllHSMFTests.class.getName());
+		suite.addTestSuite(TestBlankFileRead.class);
+		suite.addTestSuite(TestSimpleFileRead.class);
+		suite.addTestSuite(TestOutlook30FileRead.class);
+		suite.addTestSuite(TestChunkData.class);
+		suite.addTestSuite(TestFileWithAttachmentsRead.class);
+
+		return suite;
+	}
 }
