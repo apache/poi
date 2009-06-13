@@ -33,944 +33,237 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 public final class TestHeaderBlockWriter extends TestCase {
 
-    /**
-     * Test creating a HeaderBlockWriter
-     */
-    public void testConstructors() throws IOException {
-        HeaderBlockWriter     block  = new HeaderBlockWriter();
-        ByteArrayOutputStream output = new ByteArrayOutputStream(512);
+	private static void confirmEqual(String[] expectedDataHexDumpLines, byte[] actual) {
+		byte[] expected = RawDataUtil.decode(expectedDataHexDumpLines);
 
-        block.writeBlocks(output);
-        byte[] copy     = output.toByteArray();
-        byte[] expected =
-        {   // TODO - put this raw data in a better format
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF
-        };
+		assertEquals(expected.length, actual.length);
+		for (int j = 0; j < expected.length; j++) {
+			assertEquals("testing byte " + j, expected[j], actual[j]);
+		}
+	}
 
-        assertEquals(expected.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected[ j ], copy[ j ]);
-        }
+	/**
+	 * Test creating a HeaderBlockWriter
+	 */
+	public void testConstructors() throws IOException {
+		HeaderBlockWriter block = new HeaderBlockWriter();
+		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
-        // verify we can read a 'good' HeaderBlockWriter (also test
-        // getPropertyStart)
-        block.setPropertyStart(0x87654321);
-        output = new ByteArrayOutputStream(512);
-        block.writeBlocks(output);
-        assertEquals(0x87654321,
-                     new HeaderBlockReader(new ByteArrayInputStream(output
-                         .toByteArray())).getPropertyStart());
-    }
+		block.writeBlocks(output);
+		byte[] copy = output.toByteArray();
+		String[] expected = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
+			"00 00 00 00 FE FF FF FF 00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+		};
 
-    /**
-     * Test setting the SBAT start block
-     */
-    public void testSetSBATStart() throws IOException {
-        HeaderBlockWriter block = new HeaderBlockWriter();
+		confirmEqual(expected, copy);
 
-        block.setSBATStart(0x01234567);
-        ByteArrayOutputStream output = new ByteArrayOutputStream(512);
+		// verify we can read a 'good' HeaderBlockWriter (also test
+		// getPropertyStart)
+		block.setPropertyStart(0x87654321);
+		output = new ByteArrayOutputStream(512);
+		block.writeBlocks(output);
+		assertEquals(0x87654321, new HeaderBlockReader(new ByteArrayInputStream(output
+				.toByteArray())).getPropertyStart());
+	}
 
-        block.writeBlocks(output);
-        byte[] copy     = output.toByteArray();
-        byte[] expected =
-        {
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF
-        };
+	/**
+	 * Test setting the SBAT start block
+	 */
+	public void testSetSBATStart() throws IOException {
+		HeaderBlockWriter block = new HeaderBlockWriter();
 
-        assertEquals(expected.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected[ j ], copy[ j ]);
-        }
-    }
+		block.setSBATStart(0x01234567);
+		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
-    /**
-     * test setPropertyStart and getPropertyStart
-     */
-    public void testSetPropertyStart() throws IOException {
-        HeaderBlockWriter block = new HeaderBlockWriter();
+		block.writeBlocks(output);
+		byte[] copy = output.toByteArray();
+		String[] expected = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 67 45 23 01",
+			"00 00 00 00 FE FF FF FF 00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+		};
+		confirmEqual(expected, copy);
+	}
 
-        block.setPropertyStart(0x01234567);
-        ByteArrayOutputStream output = new ByteArrayOutputStream(512);
+	/**
+	 * test setPropertyStart and getPropertyStart
+	 */
+	public void testSetPropertyStart() throws IOException {
+		HeaderBlockWriter block = new HeaderBlockWriter();
 
-        block.writeBlocks(output);
-        byte[] copy     = output.toByteArray();
-        byte[] expected =
-        {
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF
-        };
+		block.setPropertyStart(0x01234567);
+		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
-        assertEquals(expected.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected[ j ], copy[ j ]);
-        }
-    }
+		block.writeBlocks(output);
+		byte[] copy = output.toByteArray();
+		String[] expected = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 67 45 23 01 00 00 00 00 00 10 00 00 FE FF FF FF",
+			"00 00 00 00 FE FF FF FF 00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+		};
+		confirmEqual(expected, copy);
+	}
 
-    /**
-     * test setting the BAT blocks; also tests getBATCount,
-     * getBATArray, getXBATCount
-     */
-    public void testSetBATBlocks() throws IOException {
+	/**
+	 * test setting the BAT blocks; also tests getBATCount, getBATArray,
+	 * getXBATCount
+	 */
+	public void testSetBATBlocks() throws IOException {
 
-        // first, a small set of blocks
-        HeaderBlockWriter block = new HeaderBlockWriter();
-        BATBlock[]        xbats = block.setBATBlocks(5, 0x01234567);
+		// first, a small set of blocks
+		HeaderBlockWriter block = new HeaderBlockWriter();
+		BATBlock[] xbats = block.setBATBlocks(5, 0x01234567);
 
-        assertEquals(0, xbats.length);
-        assertEquals(0, HeaderBlockWriter
-            .calculateXBATStorageRequirements(5));
-        ByteArrayOutputStream output = new ByteArrayOutputStream(512);
+		assertEquals(0, xbats.length);
+		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(5));
+		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
-        block.writeBlocks(output);
-        byte[] copy     = output.toByteArray();
-        byte[] expected =
-        {
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x05, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x68, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x69, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF
-        };
+		block.writeBlocks(output);
+		byte[] copy = output.toByteArray();
+		String[] expected = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 05 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
+			"00 00 00 00 FE FF FF FF 00 00 00 00 67 45 23 01 68 45 23 01 69 45 23 01 6A 45 23 01 6B 45 23 01",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
+		};
 
-        assertEquals(expected.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected[ j ], copy[ j ]);
-        }
+		confirmEqual(expected, copy);
 
-        // second, a full set of blocks (109 blocks)
-        block = new HeaderBlockWriter();
-        xbats = block.setBATBlocks(109, 0x01234567);
-        assertEquals(0, xbats.length);
-        assertEquals(0, HeaderBlockWriter
-            .calculateXBATStorageRequirements(109));
-        output = new ByteArrayOutputStream(512);
-        block.writeBlocks(output);
-        copy = output.toByteArray();
-        byte[] expected2 =
-        {
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x6D, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x68, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x69, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x70, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x71, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x72, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x73, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x74, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x75, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x76, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x77, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x78, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x79, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x80, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x81, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x82, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x83, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x84, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x85, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x86, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x87, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x88, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x89, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x90, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x91, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x92, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x93, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x94, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x95, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x96, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x97, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x98, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x99, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01
-        };
+		// second, a full set of blocks (109 blocks)
+		block = new HeaderBlockWriter();
+		xbats = block.setBATBlocks(109, 0x01234567);
+		assertEquals(0, xbats.length);
+		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(109));
+		output = new ByteArrayOutputStream(512);
+		block.writeBlocks(output);
+		copy = output.toByteArray();
+		String[] expected2 = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 6D 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
+			"00 00 00 00 FE FF FF FF 00 00 00 00 67 45 23 01 68 45 23 01 69 45 23 01 6A 45 23 01 6B 45 23 01",
+			"6C 45 23 01 6D 45 23 01 6E 45 23 01 6F 45 23 01 70 45 23 01 71 45 23 01 72 45 23 01 73 45 23 01",
+			"74 45 23 01 75 45 23 01 76 45 23 01 77 45 23 01 78 45 23 01 79 45 23 01 7A 45 23 01 7B 45 23 01",
+			"7C 45 23 01 7D 45 23 01 7E 45 23 01 7F 45 23 01 80 45 23 01 81 45 23 01 82 45 23 01 83 45 23 01",
+			"84 45 23 01 85 45 23 01 86 45 23 01 87 45 23 01 88 45 23 01 89 45 23 01 8A 45 23 01 8B 45 23 01",
+			"8C 45 23 01 8D 45 23 01 8E 45 23 01 8F 45 23 01 90 45 23 01 91 45 23 01 92 45 23 01 93 45 23 01",
+			"94 45 23 01 95 45 23 01 96 45 23 01 97 45 23 01 98 45 23 01 99 45 23 01 9A 45 23 01 9B 45 23 01",
+			"9C 45 23 01 9D 45 23 01 9E 45 23 01 9F 45 23 01 A0 45 23 01 A1 45 23 01 A2 45 23 01 A3 45 23 01",
+			"A4 45 23 01 A5 45 23 01 A6 45 23 01 A7 45 23 01 A8 45 23 01 A9 45 23 01 AA 45 23 01 AB 45 23 01",
+			"AC 45 23 01 AD 45 23 01 AE 45 23 01 AF 45 23 01 B0 45 23 01 B1 45 23 01 B2 45 23 01 B3 45 23 01",
+			"B4 45 23 01 B5 45 23 01 B6 45 23 01 B7 45 23 01 B8 45 23 01 B9 45 23 01 BA 45 23 01 BB 45 23 01",
+			"BC 45 23 01 BD 45 23 01 BE 45 23 01 BF 45 23 01 C0 45 23 01 C1 45 23 01 C2 45 23 01 C3 45 23 01",
+			"C4 45 23 01 C5 45 23 01 C6 45 23 01 C7 45 23 01 C8 45 23 01 C9 45 23 01 CA 45 23 01 CB 45 23 01",
+			"CC 45 23 01 CD 45 23 01 CE 45 23 01 CF 45 23 01 D0 45 23 01 D1 45 23 01 D2 45 23 01 D3 45 23 01",
+		};
+		confirmEqual(expected2, copy);
 
-        assertEquals(expected2.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected2[ j ], copy[ j ]);
-        }
+		// finally, a really large set of blocks (256 blocks)
+		block = new HeaderBlockWriter();
+		xbats = block.setBATBlocks(256, 0x01234567);
+		assertEquals(2, xbats.length);
+		assertEquals(2, HeaderBlockWriter.calculateXBATStorageRequirements(256));
+		output = new ByteArrayOutputStream(512);
+		block.writeBlocks(output);
+		copy = output.toByteArray();
+		String[] expected3 = {
+			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
+			"06 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
+			"00 00 00 00 67 46 23 01 02 00 00 00 67 45 23 01 68 45 23 01 69 45 23 01 6A 45 23 01 6B 45 23 01",
+			"6C 45 23 01 6D 45 23 01 6E 45 23 01 6F 45 23 01 70 45 23 01 71 45 23 01 72 45 23 01 73 45 23 01",
+			"74 45 23 01 75 45 23 01 76 45 23 01 77 45 23 01 78 45 23 01 79 45 23 01 7A 45 23 01 7B 45 23 01",
+			"7C 45 23 01 7D 45 23 01 7E 45 23 01 7F 45 23 01 80 45 23 01 81 45 23 01 82 45 23 01 83 45 23 01",
+			"84 45 23 01 85 45 23 01 86 45 23 01 87 45 23 01 88 45 23 01 89 45 23 01 8A 45 23 01 8B 45 23 01",
+			"8C 45 23 01 8D 45 23 01 8E 45 23 01 8F 45 23 01 90 45 23 01 91 45 23 01 92 45 23 01 93 45 23 01",
+			"94 45 23 01 95 45 23 01 96 45 23 01 97 45 23 01 98 45 23 01 99 45 23 01 9A 45 23 01 9B 45 23 01",
+			"9C 45 23 01 9D 45 23 01 9E 45 23 01 9F 45 23 01 A0 45 23 01 A1 45 23 01 A2 45 23 01 A3 45 23 01",
+			"A4 45 23 01 A5 45 23 01 A6 45 23 01 A7 45 23 01 A8 45 23 01 A9 45 23 01 AA 45 23 01 AB 45 23 01",
+			"AC 45 23 01 AD 45 23 01 AE 45 23 01 AF 45 23 01 B0 45 23 01 B1 45 23 01 B2 45 23 01 B3 45 23 01",
+			"B4 45 23 01 B5 45 23 01 B6 45 23 01 B7 45 23 01 B8 45 23 01 B9 45 23 01 BA 45 23 01 BB 45 23 01",
+			"BC 45 23 01 BD 45 23 01 BE 45 23 01 BF 45 23 01 C0 45 23 01 C1 45 23 01 C2 45 23 01 C3 45 23 01",
+			"C4 45 23 01 C5 45 23 01 C6 45 23 01 C7 45 23 01 C8 45 23 01 C9 45 23 01 CA 45 23 01 CB 45 23 01",
+			"CC 45 23 01 CD 45 23 01 CE 45 23 01 CF 45 23 01 D0 45 23 01 D1 45 23 01 D2 45 23 01 D3 45 23 01",
+		};
 
-        // finally, a really large set of blocks (256 blocks)
-        block = new HeaderBlockWriter();
-        xbats = block.setBATBlocks(256, 0x01234567);
-        assertEquals(2, xbats.length);
-        assertEquals(2, HeaderBlockWriter
-            .calculateXBATStorageRequirements(256));
-        output = new ByteArrayOutputStream(512);
-        block.writeBlocks(output);
-        copy = output.toByteArray();
-        byte[] expected3 =
-        {
-            ( byte ) 0xD0, ( byte ) 0xCF, ( byte ) 0x11, ( byte ) 0xE0,
-            ( byte ) 0xA1, ( byte ) 0xB1, ( byte ) 0x1A, ( byte ) 0xE1,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x3B, ( byte ) 0x00, ( byte ) 0x03, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0x09, ( byte ) 0x00,
-            ( byte ) 0x06, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x01, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x46, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x02, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x67, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x68, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x69, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x6F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x70, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x71, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x72, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x73, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x74, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x75, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x76, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x77, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x78, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x79, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x7F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x80, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x81, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x82, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x83, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x84, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x85, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x86, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x87, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x88, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x89, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x8F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x90, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x91, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x92, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x93, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x94, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x95, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x96, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x97, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x98, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x99, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9A, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9B, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9C, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9D, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9E, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0x9F, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xA9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xAF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xB9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xBF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC4, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC5, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC6, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC7, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC8, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xC9, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCA, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCB, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCC, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCD, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCE, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xCF, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD0, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD1, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD2, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01,
-            ( byte ) 0xD3, ( byte ) 0x45, ( byte ) 0x23, ( byte ) 0x01
-        };
+		confirmEqual(expected3, copy);
 
-        assertEquals(expected3.length, copy.length);
-        for (int j = 0; j < 512; j++)
-        {
-            assertEquals("testing byte " + j, expected3[ j ], copy[ j ]);
-        }
-        output = new ByteArrayOutputStream(1028);
-        xbats[ 0 ].writeBlocks(output);
-        xbats[ 1 ].writeBlocks(output);
-        copy = output.toByteArray();
-        int correct = 0x012345D4;
-        int offset  = 0;
-        int k       = 0;
+		output = new ByteArrayOutputStream(1028);
+		xbats[0].writeBlocks(output);
+		xbats[1].writeBlocks(output);
+		copy = output.toByteArray();
+		int correct = 0x012345D4;
+		int offset = 0;
+		int k = 0;
 
-        for (; k < 127; k++)
-        {
-            assertEquals("XBAT entry " + k, correct,
-                         LittleEndian.getInt(copy, offset));
-            correct++;
-            offset += LittleEndianConsts.INT_SIZE;
-        }
-        assertEquals("XBAT Chain", 0x01234567 + 257,
-                     LittleEndian.getInt(copy, offset));
-        offset += LittleEndianConsts.INT_SIZE;
-        k++;
-        for (; k < 148; k++)
-        {
-            assertEquals("XBAT entry " + k, correct,
-                         LittleEndian.getInt(copy, offset));
-            correct++;
-            offset += LittleEndianConsts.INT_SIZE;
-        }
-        for (; k < 255; k++)
-        {
-            assertEquals("XBAT entry " + k, -1,
-                         LittleEndian.getInt(copy, offset));
-            offset += LittleEndianConsts.INT_SIZE;
-        }
-        assertEquals("XBAT End of chain", -2,
-                     LittleEndian.getInt(copy, offset));
-    }
+		for (; k < 127; k++) {
+			assertEquals("XBAT entry " + k, correct, LittleEndian.getInt(copy, offset));
+			correct++;
+			offset += LittleEndianConsts.INT_SIZE;
+		}
+		assertEquals("XBAT Chain", 0x01234567 + 257, LittleEndian.getInt(copy, offset));
+		offset += LittleEndianConsts.INT_SIZE;
+		k++;
+		for (; k < 148; k++) {
+			assertEquals("XBAT entry " + k, correct, LittleEndian.getInt(copy, offset));
+			correct++;
+			offset += LittleEndianConsts.INT_SIZE;
+		}
+		for (; k < 255; k++) {
+			assertEquals("XBAT entry " + k, -1, LittleEndian.getInt(copy, offset));
+			offset += LittleEndianConsts.INT_SIZE;
+		}
+		assertEquals("XBAT End of chain", -2, LittleEndian.getInt(copy, offset));
+	}
 }
