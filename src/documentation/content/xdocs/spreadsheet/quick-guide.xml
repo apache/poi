@@ -72,6 +72,7 @@
                     <li><link href="#CellComments">How to set cell comments</link></li>
                     <li><link href="#Autofit">How to adjust column width to fit the contents</link></li>
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
+                    <li><link href="#Validation">Data Validation</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -1550,6 +1551,113 @@ Examples:
     out.close();
         </source>
      </section>
+     <anchor id="Validation"/>
+     <section><title>Data Validations</title>
+        <note>
+          Currently - as of version 3.5 - the XSSF stream does not support data validations and neither it nor the HSSF stream 
+          allow data validations to be recovered from sheets
+        </note>
+         <p><strong>Check the value a user enters into a cell against one or more predefined value(s).</strong></p>
+         <p>The following code will limit the value the user can enter into cell A1 to one of three integer values, 10, 20 or 30.</p>
+        <source>
+  HSSFWorkbook workbook = new HSSFWorkbook();
+  HSSFSheet sheet = workbook.createSheet("Data Validation");
+  CellRangeAddressList addressList = new CellRangeAddressList(
+      0, 0, 0, 0);
+  DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
+      new String[]{"10", "20", "30"});
+  HSSFDataValidation dataValidation = new HSSFDataValidation
+      (addressList, dvConstraint);
+  datavalidation.setSuppressDropDownArrow(true);
+  sheet.addValidationData(dataValidation);
+        </source>
+        <p><strong> Drop Down Lists:</strong></p>
+        <p>This code will do the same but offer the user a drop down list to select a value from.</p>
+        <source>
+  HSSFWorkbook workbook = new HSSFWorkbook();
+  HSSFSheet sheet = workbook.createSheet("Data Validation");
+  CellRangeAddressList addressList = new CellRangeAddressList(
+      0, 0, 0, 0);
+  DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
+      new String[]{"10", "20", "30"});
+  HSSFDataValidation dataValidation = new HSSFDataValidation
+      (addressList, dvConstraint);
+  datavalidation.setSuppressDropDownArrow(false);
+  sheet.addValidationData(dataValidation);
+        </source>
+        <p><strong>Messages On Error:</strong></p>
+        <p>To create a message box that will be shown to the user if the value they enter is invalid.</p>
+        <source>
+  dataValidation.setErrorStyle(HSSFDataValidation.ErrorStyle.STOP);
+  dataValidation.createErrorBox("Box Title", "Message Text");
+        </source>
+        <p>Replace 'Box Title' with the text you wish to display in the message box's title bar 
+          and 'Message Text' with the text of your error message.</p>
+        <p><strong>Prompts:</strong></p>
+        <p>To create a prompt that the user will see when the cell containing the data validation receives focus</p>
+        <source>
+  dataValidation.createPromptBox("Title", "Message Text");
+  dataValidation.setShowPromptBox(true);
+        </source>
+        <p>The text encapsulated in the first parameter passed to the createPromptBox() method will appear emboldened 
+          and as a title to the prompt whilst the second will be displayed as the text of the message.
+          The createExplicitListConstraint() method can be passed and array of String(s) containing interger, floating point, dates or text values.</p>
+        <p><strong>Further Data Validations:</strong></p>
+        <p>To obtain a validation that would check the value entered was, for example, an integer between 10 and 100, 
+          use the DVConstraint.createNumericConstraint(int, int, String, String) factory method.</p>
+        <source>
+  dvConstraint = DVConstraint.createNumericConstraint(
+    DVConstraint.ValidationType.INTEGER,
+    DVConstraint.OperatorType.BETWEEN, "10", "100");
+        </source>
+        <p>Look at the javadoc for the other validation and operator types; also note that not all validation 
+          types are supported for this method. The values passed to the two String parameters can be formulas; the '=' symbol is used to denote a formula</p>
+        <source>
+  dvConstraint = DVConstraint.createNumericConstraint(
+    DVConstraint.ValidationType.INTEGER,
+    DVConstraint.OperatorType.BETWEEN, "=SUM(A1:A3)", "100");
+        </source>
+      <p>It is not possible to create a drop down list if the createNumericConstraint() method is called, 
+        the setSuppressDropDownArrow(false) method call will simply be ignored.</p>
+      <p>Date and time constraints can be created by calling the createDateConstraint(int, String, String, String) 
+        or the createTimeConstraint(int, String, String). Both are very similar to the above and are explained in the javadoc. </p>
 
+      <p><strong>Creating Data Validations From Spreadsheet Cells.</strong></p>
+      <p>The contents of specific cells can be used to provide the values for the data validation 
+        and the DVConstraint.createFormulaListConstraint(String) method supports this.
+        To specify that the values come from a contiguous range of cells do either of the following:</p>
+      <source>
+  dvConstraint = DVConstraint.createFormulaListConstraint("$A$1:$A$3");
+      </source>
+      <p>or</p>
+      <source>
+  HSSFNamedRange namedRange = workbook.createName();
+  namedRange.setNameName("list1");
+  namedRange.setRefersToFormula("$A$1:$A$3");
+  dvConstraint = DVConstraint.createFormulaListConstraint("list1");
+      </source>
+      <p>and in both cases the user will be able to select from a drop down list containing the values from cells A1, A2 and A3.</p>
+      <p>The data does not have to be as the data validation. To select the data from a different sheet however, the sheet 
+        must be given a name when created and that name should be used in the formula. So assuming the existence of a sheet named 'Data Sheet' this will work:</p>        
+      <source>
+  HSSFNamedRange namedRange = workbook.createName();
+  namedRange.setNameName("list1");
+  namedRange.setRefersToFormula("'Data Sheet'!$A$1:$A$3");
+  dvConstraint = DVConstraint.createFormulaListConstraint("list1");
+      </source>
+      <p>as will this:</p>
+      <source>
+  dvConstraint = DVConstraint.createFormulaListConstraint("'Data Sheet'!$A$1:$A$3");
+      </source>
+      <p>whilst this will not:</p>
+      <source>
+  HSSFNamedRange namedRange = workbook.createName();
+  namedRange.setNameName("list1");
+  namedRange.setRefersToFormula("'Sheet1'!$A$1:$A$3");
+  dvConstraint = DVConstraint.createFormulaListConstraint("list1");
+      </source><p>and nor will this:</p><source>
+  dvConstraint = DVConstraint.createFormulaListConstraint("'Sheet1'!$A$1:$A$3");
+      </source>
+    </section>
     </body>
 </document>
