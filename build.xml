@@ -562,6 +562,8 @@ under the License.
     <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
       failureproperty="main.test.failed" showoutput="true">
       <classpath refid="test.classpath"/>
+      <sysproperty key="user.language" value="en"/> 
+      <sysproperty key="user.country" value="US"/> 
       <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/> 
       <sysproperty key="HSLF.testdata.path" file="${main.src.test}/org/apache/poi/hslf/data"/> 
       <sysproperty key="HWPF.testdata.path" file="${main.src.test}/org/apache/poi/hwpf/data"/> 
@@ -596,6 +598,8 @@ under the License.
         <pathelement location="${scratchpad.output.test.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
+      <sysproperty key="user.language" value="en"/> 
+      <sysproperty key="user.country" value="US"/> 
       <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
       <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
       <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
@@ -623,6 +627,8 @@ under the License.
               <pathelement location="${scratchpad.output.test.dir}"/>
               <pathelement location="${junit.jar1.dir}"/>
             </classpath>
+            <sysproperty key="user.language" value="en"/> 
+            <sysproperty key="user.country" value="US"/> 
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
@@ -665,6 +671,8 @@ under the License.
                 <pathelement location="${scratchpad.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
             </classpath>
+            <sysproperty key="user.language" value="en"/> 
+            <sysproperty key="user.country" value="US"/> 
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
@@ -702,14 +710,16 @@ under the License.
 	            <pathelement location="${scratchpad.output.test.dir}"/>
 	            <pathelement location="${junit.jar1.dir}"/>
 	        </classpath>
-                <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+              <sysproperty key="user.language" value="en"/> 
+              <sysproperty key="user.country" value="US"/> 
+              <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
 	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
 	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-                <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-                <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
-                <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-                <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
-                <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
+              <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+              <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
+              <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+              <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
+              <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <formatter type="plain" usefile="no"/>
@@ -734,6 +744,8 @@ under the License.
                 <pathelement location="${contrib.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
             </classpath>
+            <sysproperty key="user.language" value="en"/> 
+            <sysproperty key="user.country" value="US"/> 
             <sysproperty key="HSSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="java.awt.headless" value="true"/>
@@ -764,6 +776,8 @@ under the License.
     <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
         <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
             <classpath refid="test.ooxml.classpath" />
+            <sysproperty key="user.language" value="en"/> 
+            <sysproperty key="user.country" value="US"/> 
             <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
@@ -793,6 +807,8 @@ under the License.
     <target name="single-test-ooxml" depends="-test-property-check,compile-main,compile-ooxml" description="Runs a single ooxml test case specified with -Dtestcase=classname">
         <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
             <classpath refid="test.ooxml.classpath" />
+            <sysproperty key="user.language" value="en"/> 
+            <sysproperty key="user.country" value="US"/> 
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
