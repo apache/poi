@@ -135,8 +135,13 @@ public final class ExternalNameRecord extends StandardRecord {
 		field_1_option_flag = in.readShort();
 		field_2_index       = in.readShort();
 		field_3_not_used    = in.readShort();
-		short nameLength    = in.readShort();
-		field_4_name = in.readCompressedUnicode(nameLength);
+		int nameLength = in.readUByte();
+		int multibyteFlag = in.readUByte();
+		if (multibyteFlag == 0) {
+			field_4_name = in.readCompressedUnicode(nameLength);
+		} else {
+			field_4_name = in.readUnicodeLEString(nameLength);
+		}
 		if(!hasFormula()) {
 			if (!isStdDocumentNameIdentifier() && !isOLELink() && isAutomaticLink()) {
 				// both need to be incremented

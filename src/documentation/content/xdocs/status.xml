@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47384 - Fixed ExternalNameRecord to handle unicode names</action>
            <action dev="POI-DEVELOPERS" type="fix">47372 - Fixed locale-sensitive unit tests to pass when running on non-US locale</action>
         </release>
         <release version="3.5-beta6" date="2009-06-22">

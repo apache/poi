@@ -135,4 +135,28 @@ public final class TestExternalNameRecord extends TestCase {
 
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataDDE, enr.serialize());
 	}
+
+	public void testUnicodeName_bug47384() {
+		// 0x13A0
+		byte[] dataUN = HexRead.readFromString(
+				"23 00 22 00" +
+				"00 00 00 00 00 00 " +
+				"0C 01 " +
+				"59 01 61 00 7A 00 65 00 6E 00 ED 00 5F 00 42 00 69 00 6C 00 6C 00 61 00" +
+				"00 00");
+
+		RecordInputStream in = TestcaseRecordInputStream.create(dataUN);
+		ExternalNameRecord enr;
+		try {
+			enr = new ExternalNameRecord(in);
+		} catch (RecordFormatException e) {
+			// actual msg reported in bugzilla 47229 is different
+			// because that seems to be using a version from before svn r646666
+			if (e.getMessage().startsWith("Expected to find a ContinueRecord in order to read remaining 242 of 268 chars")) {
+				throw new AssertionFailedError("Identified bug 47384 - failed to read ENR with unicode name");
+			}
+			throw e;
+		}
+		assertEquals("\u0159azen\u00ED_Billa", enr.getText());
+	}
 }
