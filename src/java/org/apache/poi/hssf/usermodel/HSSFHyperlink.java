@@ -162,7 +162,7 @@ public class HSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @return  the address of this hyperlink
      */
@@ -172,12 +172,23 @@ public class HSSFHyperlink implements Hyperlink {
     public String getTextMark(){
         return record.getTextMark();
     }
+
+    /**
+     * Convenience method equivalent to {@link #setAddress(String)}
+     *
+     * @param textMark the place in worksheet this hypelrink referes to, e.g. 'Target Sheet'!A1'
+     */
     public void setTextMark(String textMark) {
         record.setTextMark(textMark);
     }
     public String getShortFilename(){
         return record.getShortFilename();
     }
+    /**
+     * Convenience method equivalent to {@link #setAddress(String)}
+     *
+     * @param shortFilename the path to a file this hypelrink points to, e.g. 'readme.txt'
+     */
     public void setShortFilename(String shortFilename) {
         record.setShortFilename(shortFilename);
     }

@@ -19,15 +19,16 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 
-public final class TestXSSFHyperlink extends TestCase {
+public final class TestXSSFHyperlink extends BaseTestHyperlink {
+    @Override
+    protected XSSFITestDataProvider getTestDataProvider() {
+        return XSSFITestDataProvider.getInstance();
+    }
+
 	@Override
 	protected void setUp() {
 		// Use system out logger

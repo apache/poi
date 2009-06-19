@@ -281,7 +281,7 @@ public final class TestHyperlinkRecord extends TestCase {
 
         assertEquals("file", link.getLabel());
         assertEquals("link1.xls", link.getShortFilename());
-        assertEquals(null, link.getAddress());
+        assertEquals("link1.xls", link.getAddress());
     }
 
     public void testReadEmailLink(){
@@ -317,7 +317,7 @@ public final class TestHyperlinkRecord extends TestCase {
 
         assertEquals("place", link.getLabel());
         assertEquals("Sheet1!A1", link.getTextMark());
-        assertEquals(null, link.getAddress());
+        assertEquals("Sheet1!A1", link.getAddress());
     }
 
     private void serialize(byte[] data){

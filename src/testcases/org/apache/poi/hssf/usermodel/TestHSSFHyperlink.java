@@ -17,25 +17,27 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import java.io.*;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 
 /**
  * Tests HSSFHyperlink.
  *
  * @author  Yegor Kozlov
  */
-public final class TestHSSFHyperlink extends TestCase {
+public final class TestHSSFHyperlink extends BaseTestHyperlink {
 
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
+    }
     /**
      * Test that we can read hyperlinks.
      */
     public void testRead() {
 
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -71,10 +73,11 @@ public final class TestHSSFHyperlink extends TestCase {
         assertEquals("Link To First Sheet", link.getLabel());
         assertEquals("Link To First Sheet", cell.getRichStringCellValue().getString());
         assertEquals("WebLinks!A1", link.getTextMark());
+        assertEquals("WebLinks!A1", link.getAddress());
     }
 
     public void testModify() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -86,11 +89,7 @@ public final class TestHSSFHyperlink extends TestCase {
         //modify the link
         link.setAddress("www.apache.org");
 
-        //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
         sheet = wb.getSheet("WebLinks");
         cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
@@ -99,71 +98,53 @@ public final class TestHSSFHyperlink extends TestCase {
 
     }
 
-    public void testCreate() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
-
-        HSSFCell cell;
-        HSSFSheet sheet = wb.createSheet("Hyperlinks");
-
-        //URL
-        cell = sheet.createRow(0).createCell(0);
-        cell.setCellValue("URL Link");
-        HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-        link.setAddress("http://poi.apache.org/");
-        cell.setHyperlink(link);
-
-        //link to a file in the current directory
-        cell = sheet.createRow(1).createCell(0);
-        cell.setCellValue("File Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
-        link.setAddress("link1.xls");
-        cell.setHyperlink(link);
-
-        //e-mail link
-        cell = sheet.createRow(2).createCell(0);
-        cell.setCellValue("Email Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
-        //note, if subject contains white spaces, make sure they are url-encoded
-        link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
-        cell.setHyperlink(link);
+    /**
+     * HSSF-specific ways of creating links to a place in workbook.
+     * You can set the target  in two ways:
+     *  link.setTextMark("'Target Sheet-1'!A1"); //HSSF-specific
+     *  or
+     *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
+     */
+    public void testCreateDocumentLink() throws Exception {
+        HSSFWorkbook wb = getTestDataProvider().createWorkbook();
 
         //link to a place in this workbook
+        HSSFHyperlink link;
+        HSSFCell cell;
+        HSSFSheet sheet = wb.createSheet("Hyperlinks");
 
         //create a target sheet and cell
         HSSFSheet sheet2 = wb.createSheet("Target Sheet");
         sheet2.createRow(0).createCell(0).setCellValue("Target Cell");
 
-        cell = sheet.createRow(3).createCell(0);
+        //cell A1 has a link to 'Target Sheet-1'!A1
+        cell = sheet.createRow(0).createCell(0);
         cell.setCellValue("Worksheet Link");
         link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
         link.setTextMark("'Target Sheet'!A1");
         cell.setHyperlink(link);
 
-        //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
+        //cell B1 has a link to cell A1 on the same sheet
+        cell = sheet.createRow(1).createCell(0);
+        cell.setCellValue("Worksheet Link");
+        link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        link.setAddress("'Hyperlinks'!A1");
+        cell.setHyperlink(link);
 
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
         sheet = wb.getSheet("Hyperlinks");
+
         cell = sheet.getRow(0).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
-        assertEquals("http://poi.apache.org/", link.getAddress());
+        assertEquals("'Target Sheet'!A1", link.getTextMark());
+        assertEquals("'Target Sheet'!A1", link.getAddress());
 
         cell = sheet.getRow(1).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
-        assertEquals("link1.xls", link.getAddress());
-
-        cell = sheet.getRow(2).getCell(0);
-        link = cell.getHyperlink();
-        assertNotNull(link);
-        assertEquals("mailto:poi@apache.org?subject=Hyperlinks", link.getAddress());
-
-        cell = sheet.getRow(3).getCell(0);
-        link = cell.getHyperlink();
-        assertNotNull(link);
-        assertEquals("'Target Sheet'!A1", link.getTextMark());
+        assertEquals("'Hyperlinks'!A1", link.getTextMark());
+        assertEquals("'Hyperlinks'!A1", link.getAddress());
     }
 
     public void testCloneSheet() {
@@ -190,7 +171,7 @@ public final class TestHSSFHyperlink extends TestCase {
      * see bugs #46445 and #29957
      */
     public void testShiftRows(){
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("46445.xls");
+        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("46445.xls");
 
 
         HSSFSheet sheet = wb.getSheetAt(0);
