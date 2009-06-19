@@ -81,7 +81,9 @@ public final class HyperlinkRecord extends StandardRecord {
 		@Override
 		public boolean equals(Object obj) {
 			GUID other = (GUID) obj;
-			return _d1 == other._d1 && _d2 == other._d2 
+            if (obj == null || !(obj instanceof GUID))
+                return false;
+			return _d1 == other._d1 && _d2 == other._d2
 			    && _d3 == other._d3 && _d4 == other._d4;
 		}
 
@@ -360,21 +362,31 @@ public final class HyperlinkRecord extends StandardRecord {
     }
 
     /**
-     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @return  the address of this hyperlink
      */
     public String getAddress() {
-        return cleanString(_address);
+        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker))
+            return cleanString(_address != null ? _address : _shortFilename);
+        else if((_linkOpts & HLINK_PLACE) != 0)
+            return cleanString(_textMark);
+        else
+            return cleanString(_address);
     }
 
     /**
-     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @param address  the address of this hyperlink
      */
     public void setAddress(String address) {
-        _address = appendNullTerm(address);
+        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker))
+            _shortFilename = appendNullTerm(address);
+        else if((_linkOpts & HLINK_PLACE) != 0)
+            _textMark = appendNullTerm(address);
+        else
+            _address = appendNullTerm(address);
     }
 
     public String getShortFilename() {
