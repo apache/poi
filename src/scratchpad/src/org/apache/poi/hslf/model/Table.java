@@ -155,7 +155,7 @@ public final class Table extends ShapeGroup {
                 Rectangle anchor1 = ((Shape)o1).getAnchor();
                 Rectangle anchor2 = ((Shape)o2).getAnchor();
                 int delta = anchor1.y - anchor2.y;
-                if(delta == 0) delta = anchor1.x - anchor2.y;
+                if(delta == 0) delta = anchor1.x - anchor2.x;
                 return delta;
             }
         });
