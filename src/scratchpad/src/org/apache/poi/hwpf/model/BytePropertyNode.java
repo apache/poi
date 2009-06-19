@@ -25,37 +25,28 @@ package org.apache.poi.hwpf.model;
  *  and characters.
  */
 public abstract class BytePropertyNode extends PropertyNode {
-	private boolean isUnicode;
+        private final int startBytes;
+        private final int endBytes;
 
 	/**
 	 * @param fcStart The start of the text for this property, in _bytes_
 	 * @param fcEnd The end of the text for this property, in _bytes_
 	 */
-	public BytePropertyNode(int fcStart, int fcEnd, Object buf, boolean isUnicode) {
+	public BytePropertyNode(int fcStart, int fcEnd, CharIndexTranslator translator, Object buf) {
 		super(
-				generateCp(fcStart, isUnicode),
-				generateCp(fcEnd, isUnicode),
+				translator.getCharIndex(fcStart),
+				translator.getCharIndex(fcEnd),
 				buf
 		);
-		this.isUnicode = isUnicode;
-	}
-	private static int generateCp(int val, boolean isUnicode) {
-		if(isUnicode)
-			return val/2;
-		return val;
+                this.startBytes = fcStart;
+                this.endBytes = fcEnd;
 	}
 
-	public boolean isUnicode() {
-		return isUnicode;
-	}
 	public int getStartBytes() {
-		if(isUnicode)
-			return getStart()*2;
-		return getStart();
+                return startBytes;
 	}
+
 	public int getEndBytes() {
-		if(isUnicode)
-			return getEnd()*2;
-		return getEnd();
+                return endBytes;
 	}
 }

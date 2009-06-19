@@ -61,13 +61,10 @@ public final class SectionTable
       int startAt = CPtoFC(node.getStart());
       int endAt = CPtoFC(node.getEnd());
 
-      boolean isUnicodeAtStart = tpt.isUnicodeAtByteOffset( startAt );
-//      System.err.println(startAt + " -> " + endAt + " = " + isUnicodeAtStart);
-
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, startAt, endAt, new byte[0], isUnicodeAtStart));
+        _sections.add(new SEPX(sed, startAt, endAt, tpt, new byte[0]));
       }
       else
       {
@@ -76,7 +73,7 @@ public final class SectionTable
         byte[] buf = new byte[sepxSize];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, startAt, endAt, buf, isUnicodeAtStart));
+        _sections.add(new SEPX(sed, startAt, endAt, tpt, buf));
       }
     }
 
@@ -138,32 +135,12 @@ public final class SectionTable
       }
       int FC = TP.getPieceDescriptor().getFilePosition();
       int offset = CP - TP.getCP();
-      FC = FC+offset-((TextPiece)_text.get(0)).getPieceDescriptor().getFilePosition();
+      if (TP.isUnicode()) {
+        offset = offset*2;
+      }
+      FC = FC+offset;
       return FC;
     }
-
-    // Ryans code
-    private int FCtoCP(int fc)
-   {
-     int size = _text.size();
-     int cp = 0;
-     for (int x = 0; x < size; x++)
-     {
-       TextPiece piece = (TextPiece)_text.get(x);
-
-       if (fc <= piece.getEnd())
-       {
-         cp += (fc - piece.getStart());
-         break;
-       }
-       else
-       {
-         cp += (piece.getEnd() - piece.getStart());
-       }
-     }
-     return cp;
-   }
-
 
   public ArrayList getSections()
   {
@@ -205,7 +182,7 @@ public final class SectionTable
 
       // Line using Ryan's FCtoCP() conversion method -
       // unable to observe any effect on our testcases when using this code - piers
-      GenericPropertyNode property = new GenericPropertyNode(FCtoCP(sepx.getStartBytes()), FCtoCP(sepx.getEndBytes()), sed.toByteArray());
+      GenericPropertyNode property = new GenericPropertyNode(tpt.getCharIndex(sepx.getStartBytes()), tpt.getCharIndex(sepx.getEndBytes()), sed.toByteArray());
 
 
       plex.addProperty(property);

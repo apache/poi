@@ -40,18 +40,18 @@ public final class PAPX extends BytePropertyNode {
   private ParagraphHeight _phe;
   private int _hugeGrpprlOffset = -1;
 
-  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe, byte[] dataStream, boolean isUnicode)
+  public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] papx, ParagraphHeight phe, byte[] dataStream)
   {
-    super(fcStart, fcEnd, new SprmBuffer(papx), isUnicode);
+    super(fcStart, fcEnd, translator, new SprmBuffer(papx));
     _phe = phe;
     SprmBuffer buf = findHuge(new SprmBuffer(papx), dataStream);
     if(buf != null)
       _buf = buf;
   }
 
-  public PAPX(int fcStart, int fcEnd, SprmBuffer buf, byte[] dataStream, boolean isUnicode)
+  public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, SprmBuffer buf, byte[] dataStream)
   {
-    super(fcStart, fcEnd, buf, isUnicode);
+    super(fcStart, fcEnd, translator, buf);
     _phe = new ParagraphHeight();
     buf = findHuge(buf, dataStream);
     if(buf != null)

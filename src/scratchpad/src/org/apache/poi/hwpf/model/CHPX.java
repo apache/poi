@@ -34,14 +34,14 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 public final class CHPX extends BytePropertyNode
 {
 
-  public CHPX(int fcStart, int fcEnd, byte[] grpprl, boolean isUnicode)
+  public CHPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] grpprl)
   {
-    super(fcStart, fcEnd, new SprmBuffer(grpprl), isUnicode);
+    super(fcStart, fcEnd, translator, new SprmBuffer(grpprl));
   }
 
-  public CHPX(int fcStart, int fcEnd, SprmBuffer buf, boolean isUnicode)
+  public CHPX(int fcStart, int fcEnd, CharIndexTranslator translator, SprmBuffer buf)
   {
-    super(fcStart, fcEnd, buf, isUnicode);
+    super(fcStart, fcEnd, translator ,buf);
   }
 
 

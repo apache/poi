@@ -76,9 +76,8 @@ public final class PAPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-    boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
 
-    PAPX forInsert = new PAPX(0, 0, buf, _dataStream, needsToBeUnicode);
+    PAPX forInsert = new PAPX(0, 0, tpt, buf, _dataStream);
 
     // Ensure character offsets are really characters
     forInsert.setStart(cpStart);
@@ -108,7 +107,7 @@ public final class PAPBinTable
     	//  Original, until insert at point
     	//  New one
     	//  Clone of original, on to the old end
-        PAPX clone = new PAPX(0, 0, clonedBuf, _dataStream, needsToBeUnicode);
+        PAPX clone = new PAPX(0, 0, tpt, clonedBuf, _dataStream);
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(currentPap.getEnd());

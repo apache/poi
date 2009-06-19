@@ -119,9 +119,8 @@ public final class CHPBinTable
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-	boolean needsToBeUnicode = tpt.isUnicodeAtCharOffset(cpStart);
 
-    CHPX insertChpx = new CHPX(0, 0, buf, needsToBeUnicode);
+    CHPX insertChpx = new CHPX(0, 0, tpt,buf);
 
     // Ensure character offsets are really characters
     insertChpx.setStart(cpStart);
@@ -141,7 +140,7 @@ public final class CHPBinTable
     	//  Original, until insert at point
     	//  New one
     	//  Clone of original, on to the old end
-        CHPX clone = new CHPX(0, 0, chpx.getSprmBuf(), needsToBeUnicode);
+        CHPX clone = new CHPX(0, 0, tpt,chpx.getSprmBuf());
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(chpx.getEnd());
