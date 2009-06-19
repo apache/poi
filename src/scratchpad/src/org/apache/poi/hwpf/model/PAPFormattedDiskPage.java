@@ -62,14 +62,10 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage
     public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin, TextPieceTable tpt)
     {
       super(documentStream, offset);
-
       for (int x = 0; x < _crun; x++) {
-         int startAt = getStart(x) - fcMin;
-         int endAt = getEnd(x) - fcMin;
-    	 boolean isUnicode = tpt.isUnicodeAtByteOffset(startAt);
-         //System.err.println(startAt + " -> " + endAt + " = " + isUnicode);
-
-         _papxList.add(new PAPX(startAt, endAt, getGrpprl(x), getParagraphHeight(x), dataStream, isUnicode));
+         int startAt = getStart(x);
+         int endAt = getEnd(x);
+         _papxList.add(new PAPX(startAt, endAt, tpt, getGrpprl(x), getParagraphHeight(x), dataStream));
       }
       _fkp = null;
       _dataStream = dataStream;

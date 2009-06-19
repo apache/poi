@@ -60,8 +60,9 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
 
       for (int x = 0; x < _crun; x++)
       {
-    	boolean isUnicode = tpt.isUnicodeAtByteOffset( getStart(x) );
-        _chpxList.add(new CHPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), isUnicode));
+    	int startAt = getStart(x);
+		int endAt = getEnd(x);
+		_chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
       }
     }
 

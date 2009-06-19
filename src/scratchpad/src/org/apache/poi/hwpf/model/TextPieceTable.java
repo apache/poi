@@ -37,7 +37,7 @@ import java.util.List;
  *  convertion.
  * @author Ryan Ackley
  */
-public final class TextPieceTable
+public final class TextPieceTable implements CharIndexTranslator
 {
   protected ArrayList _textPieces = new ArrayList();
   //int _multiple;
@@ -150,31 +150,25 @@ public final class TextPieceTable
 	  // If they ask off the end, just go with the last one...
 	  return lastWas;
   }
-  /**
-   * Is the text at the given byte offset
-   *  unicode, or plain old ascii?
-   * In a very evil fashion, you have to actually
-   *  know this to make sense of character and
-   *  paragraph properties :(
-   * @param bytePos The character offset to check about
-   */
+
   public boolean isUnicodeAtByteOffset(int bytePos) {
 	  boolean lastWas = false;
-	  int curByte = 0;
+	 
 
 	  Iterator it = _textPieces.iterator();
 	  while(it.hasNext()) {
 		  TextPiece tp = (TextPiece)it.next();
-		  int nextByte = curByte + tp.bytesLength();
+		  int curByte = tp.getPieceDescriptor().getFilePosition();
+		  int pieceEnd = curByte + tp.bytesLength();
 
 		  // If the text piece covers the character, all good
-		  if(curByte <= bytePos && nextByte >= bytePos) {
+		  if(curByte <= bytePos && pieceEnd > bytePos) {
 			  return tp.isUnicode();
 		  }
 		  // Otherwise keep track for the last one
 		  lastWas = tp.isUnicode();
 		  // Move along
-		  curByte = nextByte;
+		  curByte = pieceEnd;
 	  }
 
 	  // If they ask off the end, just go with the last one...
@@ -268,4 +262,34 @@ public final class TextPieceTable
     }
     return false;
   }
+  	/* (non-Javadoc)
+	 * @see org.apache.poi.hwpf.model.CharIndexTranslator#getLengthInChars(int)
+	 */
+	public int getCharIndex(int bytePos) {
+		int charCount = 0;
+
+		Iterator it = _textPieces.iterator();
+		while (it.hasNext()) {
+			TextPiece tp = (TextPiece) it.next();
+			int pieceStart = tp.getPieceDescriptor().getFilePosition();
+			if(pieceStart >= bytePos) {
+				break;
+			}
+			
+			int bytesLength = tp.bytesLength();
+			int pieceEnd = pieceStart + bytesLength;
+
+			int toAdd = bytePos > pieceEnd ? bytesLength : bytesLength
+					- (pieceEnd - bytePos);
+
+			if (tp.isUnicode()) {
+				charCount += toAdd / 2;
+			} else {
+				charCount += toAdd;
+			}
+		}
+
+		return charCount;
+	}
+	
 }

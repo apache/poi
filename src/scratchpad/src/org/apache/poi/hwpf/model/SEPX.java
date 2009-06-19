@@ -28,9 +28,9 @@ public final class SEPX extends BytePropertyNode
 
   SectionDescriptor _sed;
 
-  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl, boolean isUnicode)
+  public SEPX(SectionDescriptor sed, int start, int end, CharIndexTranslator translator, byte[] grpprl)
   {
-    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0), isUnicode);
+    super(start, end, translator, SectionSprmUncompressor.uncompressSEP(grpprl, 0));
     _sed = sed;
   }
 
