@@ -21,8 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.*;
 
 import java.awt.*;
 import java.awt.Rectangle;
@@ -309,6 +308,20 @@ public final class TestShapes extends TestCase {
         ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
         sl = ppt.getSlides()[0];
         assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
+    }
+
+    public void testLineWidth() throws IOException {
+        SimpleShape sh = new AutoShape(ShapeTypes.RightTriangle);
+
+        EscherOptRecord opt = (EscherOptRecord)SimpleShape.getEscherChild(sh.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty prop = (EscherSimpleProperty)SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        assertNull(prop);
+        assertEquals(SimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth());
+
+        sh.setLineWidth(1.0);
+        prop = (EscherSimpleProperty)SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        assertNotNull(prop);
+        assertEquals(1.0, sh.getLineWidth());
     }
 
     public void testShapeId() throws IOException {

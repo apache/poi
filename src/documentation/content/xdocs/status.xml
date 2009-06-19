@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">46793 - fixed SimpleShape#getLineWidth to handle default line width </action>
            <action dev="POI-DEVELOPERS" type="add">47356 - removed unused private fields in HWPF BorderCode</action>
            <action dev="POI-DEVELOPERS" type="add">47355 - Improved  HWPF TableCell to expose TableCellDescriptor</action>
            <action dev="POI-DEVELOPERS" type="fix">46610 - Improved HWPF to better handle unicode</action>
