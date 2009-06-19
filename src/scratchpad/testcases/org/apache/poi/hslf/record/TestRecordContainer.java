@@ -136,7 +136,14 @@ public final class TestRecordContainer extends TestCase {
 		assertEquals(before, ncr[1]);
 	}
 
-	protected void setUp() throws Exception {
+    public void testRemove() {
+        Record[] ch = recordContainer.getChildRecords();
+        Record removeRecord = recordContainer.removeChild(ch[0]);
+        assertSame(ch[0], removeRecord);
+        assertEquals(ch.length-1, recordContainer.getChildRecords().length);
+    }
+
+    protected void setUp() throws Exception {
 		super.setUp();
 
 		// Find a real RecordContainer record

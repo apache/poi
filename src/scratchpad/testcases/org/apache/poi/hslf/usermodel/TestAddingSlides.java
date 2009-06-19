@@ -20,12 +20,15 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.File;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.model.*;
 
 /**
@@ -269,4 +272,24 @@ public final class TestAddingSlides extends TestCase {
         assertEquals(1, s3.length);
     }
 
+
+    public void test47261() throws Exception {
+        File src = new File(System.getProperty("HSLF.testdata.path"), "47261.ppt");
+        SlideShow ppt = new SlideShow(new FileInputStream(src));
+        Slide[] slides = ppt.getSlides();
+        Document doc = ppt.getDocumentRecord();
+        assertNotNull(doc.getSlideSlideListWithText());
+        assertEquals(1, ppt.getSlides().length);
+        int notesId = slides[0].getSlideRecord().getSlideAtom().getNotesID();
+        assertTrue(notesId > 0);
+        assertNotNull(doc.getNotesSlideListWithText());
+        //the SLWT container for notes has one entry which will deleted
+        assertEquals(1, doc.getNotesSlideListWithText().getSlideAtomsSets().length);
+
+        ppt.removeSlide(0);
+        assertEquals(0, ppt.getSlides().length);
+        assertNull(doc.getSlideSlideListWithText());
+        assertNull(doc.getNotesSlideListWithText());
+
+    }
 }

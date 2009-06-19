@@ -601,9 +601,38 @@ public final class SlideShow {
                 removedSlide = _slides[i];
             }
         }
-        slwt.setSlideAtomsSets( sa.toArray(new SlideAtomsSet[sa.size()]) );
-        slwt.setChildRecord(records.toArray(new Record[records.size()]));
+        if(sa.size() == 0){
+            _documentRecord.removeSlideListWithText(slwt);
+        } else {
+            slwt.setSlideAtomsSets( sa.toArray(new SlideAtomsSet[sa.size()]) );
+            slwt.setChildRecord(records.toArray(new Record[records.size()]));
+        }
         _slides = sl.toArray(new Slide[sl.size()]);
+
+        //if the removed slide had notes - remove references to them too
+        if(removedSlide != null){
+            int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
+            if(notesId != 0){
+                SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
+                records = new ArrayList<Record>();
+                ArrayList<SlideAtomsSet> na = new ArrayList<SlideAtomsSet>();
+                for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()){
+                    if(ns.getSlidePersistAtom().getSlideIdentifier() != notesId) {
+                        na.add(ns);
+                        records.add(ns.getSlidePersistAtom());
+                        if(ns.getSlideRecords() != null) records.addAll(Arrays.asList(ns.getSlideRecords()));
+                    }
+                }
+                if(na.size() == 0){
+                    _documentRecord.removeSlideListWithText(nslwt);
+                } else {
+                    slwt.setSlideAtomsSets( na.toArray(new SlideAtomsSet[na.size()]) );
+                    slwt.setChildRecord(records.toArray(new Record[records.size()]));
+                }
+
+            }
+
+        }
 
         return removedSlide;
     }
