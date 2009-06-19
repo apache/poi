@@ -40,6 +40,8 @@ import org.apache.poi.util.LittleEndian;
  */
 public abstract class SimpleShape extends Shape {
 
+    public final static double DEFAULT_LINE_WIDTH = 0.75;
+
     /**
      * Records stored in EscherClientDataRecord
      */
@@ -101,7 +103,8 @@ public abstract class SimpleShape extends Shape {
     public double getLineWidth(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
-        return prop == null ? 0 : (double)prop.getPropertyValue()/EMU_PER_POINT;
+        double width = prop == null ? DEFAULT_LINE_WIDTH : (double)prop.getPropertyValue()/EMU_PER_POINT;
+        return width;
     }
 
     /**

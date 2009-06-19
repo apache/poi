@@ -74,7 +74,6 @@ public final class ShapePainter {
         if (lineColor != null){
             graphics.setPaint(lineColor);
             float width = (float)shape.getLineWidth();
-            if(width == 0) width = 0.75f;
 
             int dashing = shape.getLineDashing();
             //TODO: implement more dashing styles
