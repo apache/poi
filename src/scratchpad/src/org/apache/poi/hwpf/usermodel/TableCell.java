@@ -104,4 +104,9 @@ public final class TableCell
     return _width;
   }
 
+  /** Returns the TableCellDescriptor for this cell.*/
+  public TableCellDescriptor getDescriptor(){
+  	return _tcd;
+  }
+
 }
