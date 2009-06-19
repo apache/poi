@@ -21,6 +21,7 @@ import org.apache.poi.util.POILogger;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * Master container for Document. There is one of these for every
@@ -189,6 +190,16 @@ public final class Document extends PositionDependentRecordContainer
 		slwts = nl;
 	}
 
+    public void removeSlideListWithText(SlideListWithText slwt) {
+        ArrayList<SlideListWithText> lst = new ArrayList<SlideListWithText>();
+        for(SlideListWithText s : slwts) {
+            if(s != slwt) lst.add(s);
+            else {
+                removeChild(slwt);
+            }
+        }
+        slwts = lst.toArray(new SlideListWithText[lst.size()]);
+    }
 
 	/**
 	 * We are of type 1000

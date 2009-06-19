@@ -24,6 +24,7 @@ import org.apache.poi.hslf.util.MutableByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * Abstract class which all container records will extend. Providers
@@ -135,7 +136,24 @@ public abstract class RecordContainer extends Record
 		return null;
 	}
 
-	/* ===============================================================
+    /**
+     * Remove a child record from this record container
+     *
+     * @param ch the child to remove
+     * @return the removed record
+     */
+    public Record removeChild(Record ch) {
+        Record rm = null;
+        ArrayList<Record> lst = new ArrayList<Record>();
+        for(Record r : _children) {
+            if(r != ch) lst.add(r);
+            else rm = r;
+        }
+        _children = lst.toArray(new Record[lst.size()]);
+        return rm;
+    }
+
+    /* ===============================================================
 	 *                   External Move Methods
 	 * ===============================================================
 	 */
