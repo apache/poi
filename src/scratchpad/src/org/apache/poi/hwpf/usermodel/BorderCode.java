@@ -26,13 +26,7 @@ public final class BorderCode
 {
   public static final int SIZE = 4;
   private short _info;
-    private final static BitField _dptLineWidth = BitFieldFactory.getInstance(0xff);
-    private final static BitField _brcType = BitFieldFactory.getInstance(0xff00);
   private short _info2;
-    private final static BitField _ico = BitFieldFactory.getInstance(0xff);
-    private final static BitField _dptDpace = BitFieldFactory.getInstance(0x1f00);
-    private final static BitField _fShadow = BitFieldFactory.getInstance(0x2000);
-    private final static BitField _fFrame = BitFieldFactory.getInstance(0x4000);
 
   public BorderCode()
   {
