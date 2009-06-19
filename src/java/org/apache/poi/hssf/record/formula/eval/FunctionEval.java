@@ -26,7 +26,6 @@ import org.apache.poi.hssf.record.formula.functions.*;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
  */
 public abstract class FunctionEval implements OperationEval {
 	/**
@@ -79,6 +78,7 @@ public abstract class FunctionEval implements OperationEval {
 
 		retval[0] = new Count();
 		retval[1] = new If();
+		retval[2] = new IsNa();
 
 		retval[3] = new IsError();
 		retval[ID.SUM] = AggregateFunction.SUM;

@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Added implementation for ISNA()</action>
            <action dev="POI-DEVELOPERS" type="add">46793 - fixed SimpleShape#getLineWidth to handle default line width </action>
            <action dev="POI-DEVELOPERS" type="add">47356 - removed unused private fields in HWPF BorderCode</action>
            <action dev="POI-DEVELOPERS" type="add">47355 - Improved  HWPF TableCell to expose TableCellDescriptor</action>
@@ -319,7 +320,7 @@
            <action dev="POI-DEVELOPERS" type="add">44937 - Partial support for extracting Escher images from HWPF files</action>
            <action dev="POI-DEVELOPERS" type="fix">44824 - Avoid an infinite loop when reading some HWPF pictures</action>
            <action dev="POI-DEVELOPERS" type="fix">44898 - Correctly handle short last blocks in POIFS</action>
-        </release>  
+        </release>
         <release version="3.1-beta2" date="2008-05-26">
            <action dev="POI-DEVELOPERS" type="fix">44306 - fixed reading/writing of AttrPtg(type=choose) and method toFormulaString() for CHOOSE formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">24207 - added HSSFName.isDeleted() to check if the name points to cell that no longer exists</action>
@@ -523,14 +524,14 @@
 	    <action dev="POI-DEVELOPERS" type="add" context="All">Image writing support</action>
 	    <action dev="NB" type="add" context="All">HSLF - Initial PowerPoint Support. Includes: Support for text extraction across the whole file; Support for getting individual slides, and their notes, and extracting text from those; Initial support for changing (but not adding) text</action>
         </release>
- 
+
         <release version="2.5.1-FINAL" date="2004-02-29">
             <action dev="POI-DEVELOPERS" type="add" context="All">Outlining support</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">27574 - [PATCH] HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">26465 - [PATCH] wrong lastrow entry</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">28203 - [PATCH] Unable to open read-write excel file including forms</action>
         </release>
- 
+
         <release version="2.5-FINAL" date="2004-02-29">
             <action dev="POI-DEVELOPERS" type="add" context="All">Add support for the Escher file format</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">27005 java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
@@ -539,7 +540,7 @@
         <release version="2.0-FINAL" date="2004-01-26">
             <action dev="POI-DEVELOPERS" type="update" context="All">No changes</action>
         </release>
-        
+
         <release version="2.0-RC2" date="2004-01-11">
             <action dev="POI-DEVELOPERS" type="fix" context="All">Bug 25695 - HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters.</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">Updated website for upcoming release</action>
