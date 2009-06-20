@@ -310,13 +310,13 @@ public final class EscherBSERecord extends EscherRecord {
     }
 
     public String toString() {
-        String extraData = HexDump.toHex(_remainingData, 32);
+        String extraData = _remainingData == null ? null : HexDump.toHex(_remainingData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + '\n' +
                 "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
                 "  BlipTypeWin32: " + field_1_blipTypeWin32 + '\n' +
                 "  BlipTypeMacOS: " + field_2_blipTypeMacOS + '\n' +
-                "  SUID: " + HexDump.toHex(field_3_uid) + '\n' +
+                "  SUID: " + (field_3_uid == null ? "" : HexDump.toHex(field_3_uid)) + '\n' +
                 "  Tag: " + field_4_tag + '\n' +
                 "  Size: " + field_5_size + '\n' +
                 "  Ref: " + field_6_ref + '\n' +

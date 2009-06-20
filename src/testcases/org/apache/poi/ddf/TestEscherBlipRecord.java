@@ -152,4 +152,22 @@ public final class TestEscherBlipRecord extends TestCase {
         return data;
     }
 
+    /**
+     * The test data was created from pl031405.xls attached to Bugzilla #47143
+     */
+    public void test47143() {
+        byte[] data = read(new File(cwd, "47143.dat"));
+        EscherBSERecord bse = new EscherBSERecord();
+        bse.fillFields(data, 0, new DefaultEscherRecordFactory());
+        bse.toString(); //assert that toString() works
+        assertTrue(bse.getBlipRecord() instanceof EscherMetafileBlip);
+
+        EscherMetafileBlip blip = (EscherMetafileBlip)bse.getBlipRecord();
+        blip.toString(); //assert that toString() works
+        byte[] remaining = blip.getRemainingData();
+        assertNotNull(remaining);
+
+        byte[] ser = bse.serialize();  //serialize and assert against the source data
+        assertTrue(Arrays.equals(data, ser));
+    }
 }
