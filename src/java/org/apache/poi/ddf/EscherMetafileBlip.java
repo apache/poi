@@ -65,11 +65,11 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     private byte field_7_fFilter;
 
     private byte[] raw_pictureData;
+    private byte[] remainingData;
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos = offset + HEADER_SIZE;
-
         field_1_UID = new byte[16];
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
 
@@ -91,6 +91,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
         raw_pictureData = new byte[field_5_cbSave];
         System.arraycopy( data, pos, raw_pictureData, 0, field_5_cbSave );
+        pos += field_5_cbSave;
 
         // 0 means DEFLATE compression
         // 0xFE means no compression
@@ -100,6 +101,11 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
             field_pictureData = raw_pictureData;
         }
 
+        int remaining = bytesAfterHeader - pos + offset + HEADER_SIZE;
+        if(remaining > 0) {
+            remainingData = new byte[remaining];
+            System.arraycopy( data, pos, remainingData, 0, remaining );
+        }
         return bytesAfterHeader + HEADER_SIZE;
     }
 
@@ -126,7 +132,10 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         data[pos] = field_6_fCompression; pos++;
         data[pos] = field_7_fFilter; pos++;
 
-        System.arraycopy( raw_pictureData, 0, data, pos, raw_pictureData.length );
+        System.arraycopy( raw_pictureData, 0, data, pos, raw_pictureData.length ); pos += raw_pictureData.length;
+        if(remainingData != null) {
+            System.arraycopy( remainingData, 0, data, pos, remainingData.length ); pos += remainingData.length;
+        }
 
         listener.afterRecordSerialize(offset + getRecordSize(), getRecordId(), getRecordSize(), this);
         return getRecordSize();
@@ -157,6 +166,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     public int getRecordSize() {
         int size = 8 + 50 + raw_pictureData.length;
+        if(remainingData != null) size += remainingData.length;
         if((getOptions() ^ getSignature()) == 0x10){
             size += field_2_UID.length;
         }
@@ -227,10 +237,14 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         field_6_fCompression = compressed ? 0 : (byte)0xFE;
     }
 
+    public byte[] getRemainingData() {
+        return remainingData;
+    }
+
     // filtering is always 254 according to available docs, so no point giving it a setter method.
 
     public String toString() {
-        String extraData = HexDump.toHex(field_pictureData, 32);
+        String extraData = "";//HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
                 "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
@@ -242,7 +256,9 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
                 "  Compressed Size: " + HexDump.toHex( field_5_cbSave ) + '\n' +
                 "  Compression: " + HexDump.toHex( field_6_fCompression ) + '\n' +
                 "  Filter: " + HexDump.toHex( field_7_fFilter ) + '\n' +
-                "  Extra Data:" + '\n' + extraData;
+                "  Extra Data:" + '\n' + extraData +
+                (remainingData == null ? null : ("\n" +
+                 " Remaining Data: " + HexDump.toHex(remainingData, 32)));
     }
 
     /**

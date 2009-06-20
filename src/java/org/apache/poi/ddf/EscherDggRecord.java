@@ -122,7 +122,7 @@ public final class EscherDggRecord extends EscherRecord {
     public String toString() {
 
         StringBuffer field_5_string = new StringBuffer();
-        for (int i = 0; i < field_5_fileIdClusters.length; i++) {
+        if(field_5_fileIdClusters != null) for (int i = 0; i < field_5_fileIdClusters.length; i++) {
             field_5_string.append("  DrawingGroupId").append(i+1).append(": ");
             field_5_string.append(field_5_fileIdClusters[i].field_1_drawingGroupId);
             field_5_string.append('\n');
@@ -156,7 +156,7 @@ public final class EscherDggRecord extends EscherRecord {
      * Number of id clusters + 1
      */
     public int getNumIdClusters() {
-        return field_5_fileIdClusters.length + 1;
+        return (field_5_fileIdClusters == null ? 0 : (field_5_fileIdClusters.length + 1));
     }
 
     public int getNumShapesSaved() {
