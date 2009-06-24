@@ -6,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
@@ -44,14 +43,52 @@ import org.apache.poi.hssf.record.VerticalPageBreakRecord;
 
 /**
  * Groups the page settings records for a worksheet.<p/>
- * 
+ *
  * See OOO excelfileformat.pdf sec 4.4 'Page Settings Block'
- * 
+ *
  * @author Josh Micich
  */
 public final class PageSettingsBlock extends RecordAggregate {
-	// Every one of these component records is optional 
-	// (The whole PageSettingsBlock may not be present) 
+
+	/**
+	 * PLS is potentially a <i>continued</i> record, but is currently uninterpreted by POI
+	 */
+	private static final class PLSAggregate extends RecordAggregate {
+		private static final ContinueRecord[] EMPTY_CONTINUE_RECORD_ARRAY = { };
+		private final Record _pls;
+		/**
+		 * holds any continue records found after the PLS record.<br/>
+		 * This would not be required if PLS was properly interpreted.
+		 * Currently, PLS is an {@link UnknownRecord} and does not automatically
+		 * include any trailing {@link ContinueRecord}s.
+		 */
+		private ContinueRecord[] _plsContinues;
+
+		public PLSAggregate(RecordStream rs) {
+			_pls = rs.getNext();
+			if (rs.peekNextSid()==ContinueRecord.sid) {
+				List<ContinueRecord> temp = new ArrayList<ContinueRecord>();
+				while (rs.peekNextSid()==ContinueRecord.sid) {
+					temp.add((ContinueRecord)rs.getNext());
+				}
+				_plsContinues = new ContinueRecord[temp.size()];
+				temp.toArray(_plsContinues);
+			} else {
+				_plsContinues = EMPTY_CONTINUE_RECORD_ARRAY;
+			}
+		}
+
+		@Override
+		public void visitContainedRecords(RecordVisitor rv) {
+			rv.visitRecord(_pls);
+			for (int i = 0; i < _plsContinues.length; i++) {
+				rv.visitRecord(_plsContinues[i]);
+			}
+		}
+	}
+
+	// Every one of these component records is optional
+	// (The whole PageSettingsBlock may not be present)
 	private PageBreakRecord _rowBreaksRecord;
 	private PageBreakRecord _columnBreaksRecord;
 	private HeaderRecord _header;
@@ -62,20 +99,14 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private RightMarginRecord _rightMargin;
 	private TopMarginRecord _topMargin;
 	private BottomMarginRecord _bottomMargin;
-	private Record _pls;
-	/**
-	 * holds any continue records found after the PLS record.<br/>
-	 * This would not be required if PLS was properly interpreted.
-	 * Currently, PLS is an {@link UnknownRecord} and does not automatically
-	 * include any trailing {@link ContinueRecord}s.
-	 */
-	private List<ContinueRecord> _plsContinues;
+	private final List<PLSAggregate> _plsRecords;
 	private PrintSetupRecord _printSetup;
 	private Record _bitmap;
 	private Record _headerFooter;
 	private Record _printSize;
 
 	public PageSettingsBlock(RecordStream rs) {
+		_plsRecords = new ArrayList<PLSAggregate>();
 		while(true) {
 			if (!readARecord(rs)) {
 				break;
@@ -87,6 +118,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 * Creates a PageSettingsBlock with default settings
 	 */
 	public PageSettingsBlock() {
+		_plsRecords = new ArrayList<PLSAggregate>();
 		_rowBreaksRecord = new HorizontalPageBreakRecord();
 		_columnBreaksRecord = new VerticalPageBreakRecord();
 		_header = new HeaderRecord("");
@@ -97,7 +129,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 	}
 
 	/**
-	 * @return <code>true</code> if the specified Record sid is one belonging to the 
+	 * @return <code>true</code> if the specified Record sid is one belonging to the
 	 * 'Page Settings Block'.
 	 */
 	public static boolean isComponentRecord(int sid) {
@@ -115,8 +147,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case UnknownRecord.PLS_004D:
 			case PrintSetupRecord.sid:
 			case UnknownRecord.BITMAP_00E9:
-			case UnknownRecord.PRINTSIZE_0033: 
-			case UnknownRecord.HEADER_FOOTER_089C: // extra header/footer settings supported by Excel 2007 
+			case UnknownRecord.PRINTSIZE_0033:
+			case UnknownRecord.HEADER_FOOTER_089C: // extra header/footer settings supported by Excel 2007
 				return true;
 		}
 		return false;
@@ -165,14 +197,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 				_bottomMargin = (BottomMarginRecord) rs.getNext();
 				break;
 			case UnknownRecord.PLS_004D:
-				checkNotPresent(_pls);
-				_pls = rs.getNext();
-				while (rs.peekNextSid()==ContinueRecord.sid) {
-					if (_plsContinues==null) {
-						_plsContinues = new LinkedList<ContinueRecord>();
-					}
-					_plsContinues.add((ContinueRecord)rs.getNext());
-				}
+				_plsRecords.add(new PLSAggregate(rs));
 				break;
 			case PrintSetupRecord.sid:
 				checkNotPresent(_printSetup);
@@ -243,7 +268,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 		visitIfPresent(_rowBreaksRecord, rv);
 		visitIfPresent(_columnBreaksRecord, rv);
-		// Write out empty header / footer records if these are missing 
+		// Write out empty header / footer records if these are missing
 		if (_header == null) {
 			rv.visitRecord(new HeaderRecord(""));
 		} else {
@@ -260,11 +285,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 		visitIfPresent(_rightMargin, rv);
 		visitIfPresent(_topMargin, rv);
 		visitIfPresent(_bottomMargin, rv);
-		visitIfPresent(_pls, rv);
-		if (_plsContinues != null) {
-			for (ContinueRecord cr : _plsContinues) {
-				visitIfPresent(cr, rv);
-			}
+		for (RecordAggregate pls : _plsRecords) {
+			pls.visitContainedRecords(rv);
 		}
 		visitIfPresent(_printSetup, rv);
 		visitIfPresent(_bitmap, rv);
@@ -569,11 +591,10 @@ public final class PageSettingsBlock extends RecordAggregate {
 	public HCenterRecord getHCenter() {
 		return _hCenter;
 	}
-	
+
 	/**
 	 * HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
 	 * the {@link PageSettingsBlock} where it belongs.
-	 * 
 	 */
 	public void addLateHeaderFooter(Record rec) {
 		if (_headerFooter != null) {
@@ -596,21 +617,21 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 * <li><b>HEADER_FOOTER(0x089C) after WINDOW2</b> - This record is new in 2007.  Some apps
 	 * seem to have scattered this record long after the PageSettingsBlock where it belongs
 	 * test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls</li>
-	 * <li><b>PLS, WSBOOL, PageSettingsBlock</b> - WSBOOL is not a PSB record. 
+	 * <li><b>PLS, WSBOOL, PageSettingsBlock</b> - WSBOOL is not a PSB record.
 	 * This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"</li>
 	 * <li><b>Margins after DIMENSION</b> - All of PSB should be before DIMENSION. (Bug-47199)</li>
 	 * </ul>
-	 * These were probably written by other applications (or earlier versions of Excel). It was 
+	 * These were probably written by other applications (or earlier versions of Excel). It was
 	 * decided to not write specific code for detecting each of these cases.  POI now tolerates
 	 * PageSettingsBlock records scattered all over the sheet record stream, and in any order, but
 	 * does not allow duplicates of any of those records.
-	 * 
+	 *
 	 * <p/>
 	 * <b>Note</b> - when POI writes out this PageSettingsBlock, the records will always be written
 	 * in one consolidated block (in the standard ordering) regardless of how scattered the records
-	 * were when they were originally read. 
-	 * 
-	 * @throws  RecordFormatException if any PSB record encountered has the same type (sid) as 
+	 * were when they were originally read.
+	 *
+	 * @throws  RecordFormatException if any PSB record encountered has the same type (sid) as
 	 * a record that is already part of this PageSettingsBlock
 	 */
 	public void addLateRecords(RecordStream rs) {

@@ -27,6 +27,7 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FooterRecord;
@@ -47,19 +48,19 @@ import org.apache.poi.util.HexRead;
 
 /**
  * Tess for {@link PageSettingsBlock}
- * 
+ *
  * @author Dmitriy Kumshayev
  */
 public final class TestPageSettingsBlock extends TestCase {
-	
+
 	public void testPrintSetup_bug46548() {
-		
-		// PageSettingBlock in this file contains PLS (sid=x004D) record 
-		// followed by ContinueRecord (sid=x003C)  
+
+		// PageSettingBlock in this file contains PLS (sid=x004D) record
+		// followed by ContinueRecord (sid=x003C)
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex46548-23133.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFPrintSetup ps = sheet.getPrintSetup();
-		
+
 		try {
 			ps.getCopies();
 		} catch (NullPointerException e) {
@@ -71,7 +72,6 @@ public final class TestPageSettingsBlock extends TestCase {
 	/**
 	 * Bug 46840 occurred because POI failed to recognise HEADERFOOTER as part of the
 	 * {@link PageSettingsBlock}.
-	 * 
 	 */
 	public void testHeaderFooter_bug46840() {
 
@@ -157,7 +157,7 @@ public final class TestPageSettingsBlock extends TestCase {
 	}
 	/**
 	 * Bug 47199 was due to the margin records being located well after the initial PSB records.
-	 * The example file supplied (attachment 23710) had three non-PSB record types 
+	 * The example file supplied (attachment 23710) had three non-PSB record types
 	 * between the PRINTSETUP record and first MARGIN record:
 	 * <ul>
 	 * <li>PRINTSETUP(0x00A1)</li>
@@ -238,7 +238,7 @@ public final class TestPageSettingsBlock extends TestCase {
 	private static UnknownRecord ur(int sid, String hexData) {
 		return new UnknownRecord(sid, HexRead.readFromString(hexData));
 	}
-	
+
 	/**
 	 * Excel tolerates missing header / footer records, but adds them (empty) in when re-saving.
 	 * This is not critical functionality but it has been decided to keep POI consistent with
@@ -257,7 +257,7 @@ public final class TestPageSettingsBlock extends TestCase {
 		RecordCollector rc = new RecordCollector();
 		psb.visitContainedRecords(rc);
 		Record[] outRecs = rc.getRecords();
-		
+
 		if (outRecs.length == 2) {
 			throw new AssertionFailedError("PageSettingsBlock didn't add missing header/footer records");
 		}
@@ -266,11 +266,53 @@ public final class TestPageSettingsBlock extends TestCase {
 		assertEquals(FooterRecord.class, outRecs[1].getClass());
 		assertEquals(HCenterRecord.class, outRecs[2].getClass());
 		assertEquals(VCenterRecord.class, outRecs[3].getClass());
-		
-		// make sure the added header / footer records are empty 
+
+		// make sure the added header / footer records are empty
 		HeaderRecord hr = (HeaderRecord) outRecs[0];
 		assertEquals("", hr.getText());
 		FooterRecord fr = (FooterRecord) outRecs[1];
 		assertEquals("", fr.getText());
+	}
+
+	/**
+	 * Apparently it's OK to have more than one PLS record.
+	 * Attachment 23866 from bug 47415 had a PageSettingsBlock with two PLS records.  This file
+	 * seems to open OK in Excel(2007) but both PLS records are removed (perhaps because the
+	 * specified printers were not available on the testing machine).  Since the example file does
+	 * not upset Excel, POI will preserve multiple PLS records.</p>
+	 *
+	 * As of June 2009, PLS is still uninterpreted by POI
+	 */
+	public void testDuplicatePLS_bug47415() {
+		Record plsA = ur(UnknownRecord.PLS_004D, "BA AD F0 0D");
+		Record plsB = ur(UnknownRecord.PLS_004D, "DE AD BE EF");
+		Record contB1 = new ContinueRecord(HexRead.readFromString("FE ED"));
+		Record contB2 = new ContinueRecord(HexRead.readFromString("FA CE"));
+		Record[] recs = {
+				new HeaderRecord("&LSales Figures"),
+				new FooterRecord("&LInventory"),
+				new HCenterRecord(),
+				new VCenterRecord(),
+				plsA,
+				plsB, contB1, contB2, // make sure continuing PLS is still OK
+		};
+		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+		PageSettingsBlock psb;
+		try {
+			psb = new PageSettingsBlock(rs);
+		} catch (RecordFormatException e) {
+			if ("Duplicate PageSettingsBlock record (sid=0x4d)".equals(e.getMessage())) {
+				throw new AssertionFailedError("Identified bug 47415");
+			}
+			throw e;
+		}
+
+		// serialize the PSB to see what records come out
+		RecordCollector rc = new RecordCollector();
+		psb.visitContainedRecords(rc);
+		Record[] outRecs = rc.getRecords();
+
+		// records were assembled in standard order, so this simple check is OK
+		assertTrue(Arrays.equals(recs, outRecs));
 	}
 }
