@@ -42,6 +42,9 @@ public final class UnknownRecord extends StandardRecord {
 	 * The few POI test samples with this record have data { 0x03, 0x00 }.
 	 */
 	public static final int PRINTSIZE_0033       = 0x0033;
+	/**
+	 * Environment-Specific Print Record
+	 */
 	public static final int PLS_004D             = 0x004D;
 	public static final int SHEETPR_0081         = 0x0081;
 	public static final int SORT_0090            = 0x0090;
