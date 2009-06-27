@@ -215,6 +215,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private void onWorkbookCreate() {
         workbook = CTWorkbook.Factory.newInstance();
+
+        // don't EVER use the 1904 date system
+        CTWorkbookPr workbookPr = workbook.addNewWorkbookPr();
+        workbookPr.setDate1904(false);
+
         CTBookViews bvs = workbook.addNewBookViews();
         CTBookView bv = bvs.addNewWorkbookView();
         bv.setActiveTab(0);

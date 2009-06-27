@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 
 public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
@@ -49,7 +50,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 */
 	public void testSaveLoadNew() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook();
-		Sheet sheet1 = workbook.createSheet("sheet1");
+
+        //check that the default date system is set to 1900
+        CTWorkbookPr pr = workbook.getCTWorkbook().getWorkbookPr();
+        assertNotNull(pr);
+        assertTrue(pr.isSetDate1904());
+        assertFalse("XSSF must use the 1900 date system", pr.getDate1904());
+
+        Sheet sheet1 = workbook.createSheet("sheet1");
 		Sheet sheet2 = workbook.createSheet("sheet2");
 		workbook.createSheet("sheet3");
 		
