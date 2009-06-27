@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
+import java.util.Arrays;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -95,34 +96,58 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 	 * Get the text from the word file, as an array with one String
 	 *  per paragraph
 	 */
-	public String[] getParagraphText() {
-		String[] ret;
+        public String[] getParagraphText() {
+                String[] ret;
 
-		// Extract using the model code
-		try {
-	    	Range r = doc.getRange();
+                // Extract using the model code
+                try {
+                        Range r = doc.getRange();
 
-			ret = new String[r.numParagraphs()];
-			for(int i=0; i<ret.length; i++) {
-				Paragraph p = r.getParagraph(i);
-				ret[i] = p.text();
+                        ret = getParagraphText(r);
+                } catch (Exception e) {
+                        // Something's up with turning the text pieces into paragraphs
+                        // Fall back to ripping out the text pieces
+                        ret = new String[1];
+                        ret[0] = getTextFromPieces();
+                }
 
-				// Fix the line ending
-				if(ret[i].endsWith("\r")) {
-					ret[i] = ret[i] + "\n";
-				}
-			}
-		} catch(Exception e) {
-			// Something's up with turning the text pieces into paragraphs
-			// Fall back to ripping out the text pieces
-			ret = new String[1];
-			ret[0] = getTextFromPieces();
-		}
+                return ret;
+        }
 
-		return ret;
-	}
+        public String[] getFootnoteText() {
+                Range r = doc.getFootnoteRange();
 
-	/**
+                return getParagraphText(r);
+        }
+
+        public String[] getEndnoteText() {
+                Range r = doc.getEndnoteRange();
+
+                return getParagraphText(r);
+        }
+
+        public String[] getCommentsText() {
+                Range r = doc.getCommentsRange();
+
+                return getParagraphText(r);
+        }
+
+        private String[] getParagraphText(Range r) {
+                String[] ret;
+                ret = new String[r.numParagraphs()];
+                for (int i = 0; i < ret.length; i++) {
+                        Paragraph p = r.getParagraph(i);
+                        ret[i] = p.text();
+
+                        // Fix the line ending
+                        if (ret[i].endsWith("\r")) {
+                                ret[i] = ret[i] + "\n";
+                        }
+                }
+                return ret;
+        }
+
+        /**
 	 * Add the header/footer text, if it's not empty
 	 */
 	private void appendHeaderFooter(String text, StringBuffer out) {

@@ -345,6 +345,28 @@ public final class HWPFDocument extends POIDocument
   }
 
   /**
+   * Returns the range which covers all the Endnotes.
+  */
+  public Range getEndnoteRange() {
+          return new Range(
+                          _cpSplit.getEndNoteStart(),
+                          _cpSplit.getEndNoteEnd(),
+                          this
+      );
+  }
+
+  /**
+   * Returns the range which covers all the Endnotes.
+  */
+  public Range getCommentsRange() {
+          return new Range(
+                          _cpSplit.getCommentsStart(),
+                          _cpSplit.getCommentsEnd(),
+                          this
+      );
+  }
+
+  /**
    * Returns the range which covers all "Header Stories".
    * A header story contains a header, footer, end note
    *  separators and footnote separators.
