@@ -60,6 +60,8 @@ public final class TestWordExtractor extends TestCase {
 	private String filename4;
 	// With unicode header and footer
 	private String filename5;
+        // With footnote
+        private String filename6;
 
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
@@ -70,6 +72,7 @@ public final class TestWordExtractor extends TestCase {
 		filename3 = pdirname + "/excel_with_embeded.xls";
 		filename4 = dirname + "/ThreeColHeadFoot.doc";
 		filename5 = dirname + "/HeaderFooterUnicode.doc";
+                filename6 = dirname + "/footnote.doc";
 
 		extractor = new WordExtractor(new FileInputStream(filename));
 		extractor2 = new WordExtractor(new FileInputStream(filename2));
@@ -225,5 +228,50 @@ public final class TestWordExtractor extends TestCase {
     	assertTrue(
     			text.indexOf("The footer, with") > -1
     	);
+    }
+
+    public void testFootnote() throws Exception {
+        HWPFDocument doc = new HWPFDocument(
+                new FileInputStream(filename6)
+        );
+        extractor = new WordExtractor(doc);
+
+        String[] text = extractor.getFootnoteText();
+        StringBuffer b = new StringBuffer();
+        for (int i=0; i<text.length; i++) {
+            b.append(text[i]);
+        }
+
+        assertTrue(b.toString().contains("TestFootnote"));
+    }
+
+    public void testEndnote() throws Exception {
+        HWPFDocument doc = new HWPFDocument(
+                new FileInputStream(filename6)
+        );
+        extractor = new WordExtractor(doc);
+
+        String[] text = extractor.getEndnoteText();
+        StringBuffer b = new StringBuffer();
+        for (int i=0; i<text.length; i++) {
+            b.append(text[i]);
+        }
+
+        assertTrue(b.toString().contains("TestEndnote"));
+    }
+
+    public void testComments() throws Exception {
+        HWPFDocument doc = new HWPFDocument(
+                new FileInputStream(filename6)
+        );
+        extractor = new WordExtractor(doc);
+
+        String[] text = extractor.getCommentsText();
+        StringBuffer b = new StringBuffer();
+        for (int i=0; i<text.length; i++) {
+            b.append(text[i]);
+        }
+
+        assertTrue(b.toString().contains("TestComment"));
     }
 }

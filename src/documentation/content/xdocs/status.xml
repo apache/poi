@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47400 - Support fo text extraction of footnotes, endnotes and comments in HWPF</action>
            <action dev="POI-DEVELOPERS" type="fix">47415 - Fixed PageSettingsBlock to allow multiple PLS records</action>
            <action dev="POI-DEVELOPERS" type="fix">47412 - Fixed concurrency issue with EscherProperties.initProps()</action>
            <action dev="POI-DEVELOPERS" type="fix">47143 - Fixed OOM in HSSFWorkbook#getAllPictures when reading .xls files containing metafiles</action>
