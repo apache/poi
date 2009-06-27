@@ -279,15 +279,18 @@ public final class TestAddingSlides extends TestCase {
         Slide[] slides = ppt.getSlides();
         Document doc = ppt.getDocumentRecord();
         assertNotNull(doc.getSlideSlideListWithText());
-        assertEquals(1, ppt.getSlides().length);
+        assertEquals(14, ppt.getSlides().length);
         int notesId = slides[0].getSlideRecord().getSlideAtom().getNotesID();
         assertTrue(notesId > 0);
         assertNotNull(doc.getNotesSlideListWithText());
-        //the SLWT container for notes has one entry which will deleted
-        assertEquals(1, doc.getNotesSlideListWithText().getSlideAtomsSets().length);
+        assertEquals(14, doc.getNotesSlideListWithText().getSlideAtomsSets().length);
 
-        ppt.removeSlide(0);
+        //remove all slides, corresponding notes should be removed too
+        for (int i = 0; i < slides.length; i++) {
+            ppt.removeSlide(0);
+        }
         assertEquals(0, ppt.getSlides().length);
+        assertEquals(0, ppt.getNotes().length);
         assertNull(doc.getSlideSlideListWithText());
         assertNull(doc.getNotesSlideListWithText());
 

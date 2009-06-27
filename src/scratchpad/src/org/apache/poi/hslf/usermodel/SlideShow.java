@@ -590,6 +590,10 @@ public final class SlideShow {
         ArrayList<Record> records = new ArrayList<Record>();
         ArrayList<SlideAtomsSet> sa = new ArrayList<SlideAtomsSet>();
         ArrayList<Slide> sl = new ArrayList<Slide>();
+
+        ArrayList<Notes> nt = new ArrayList<Notes>();
+        for(Notes notes : getNotes()) nt.add(notes);
+
         for (int i = 0, num = 0; i < _slides.length; i++){
             if(i != index) {
                 sl.add(_slides[i]);
@@ -599,6 +603,7 @@ public final class SlideShow {
                 records.addAll(Arrays.asList(sas[i].getSlideRecords()));
             } else {
                 removedSlide = _slides[i];
+                nt.remove(_slides[i].getNotesSheet());
             }
         }
         if(sa.size() == 0){
@@ -610,8 +615,9 @@ public final class SlideShow {
         _slides = sl.toArray(new Slide[sl.size()]);
 
         //if the removed slide had notes - remove references to them too
+
         if(removedSlide != null){
-            int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
+             int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
             if(notesId != 0){
                 SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
                 records = new ArrayList<Record>();
@@ -626,13 +632,13 @@ public final class SlideShow {
                 if(na.size() == 0){
                     _documentRecord.removeSlideListWithText(nslwt);
                 } else {
-                    slwt.setSlideAtomsSets( na.toArray(new SlideAtomsSet[na.size()]) );
-                    slwt.setChildRecord(records.toArray(new Record[records.size()]));
+                    nslwt.setSlideAtomsSets( na.toArray(new SlideAtomsSet[na.size()]) );
+                    nslwt.setChildRecord(records.toArray(new Record[records.size()]));
                 }
 
             }
-
         }
+        _notes = nt.toArray(new Notes[nt.size()]);
 
         return removedSlide;
     }
