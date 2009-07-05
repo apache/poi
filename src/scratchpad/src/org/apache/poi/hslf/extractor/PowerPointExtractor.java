@@ -21,14 +21,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Comment;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -151,7 +149,24 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		return getText(false,true);
 	}
 
-  /**
+    public List<OLEShape> getOLEShapes() {
+        List<OLEShape> list = new ArrayList<OLEShape>();
+
+        for (int i = 0; i < _slides.length; i++) {
+            Slide slide = _slides[i];
+
+            Shape[] shapes = slide.getShapes();
+            for (int j = 0; j < shapes.length; j++) {
+                if (shapes[j] instanceof OLEShape) {
+                    list.add((OLEShape) shapes[j]);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    /**
    * Fetches text from the slideshow, be it slide text or note text.
    * Because the final block of text in a TextRun normally have their
    *  last \n stripped, we add it back

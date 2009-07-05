@@ -18,11 +18,16 @@
 package org.apache.poi.hslf.extractor;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocument;
 
 import junit.framework.TestCase;
 
@@ -167,51 +172,30 @@ public final class TestExtractor extends TestCase {
 
     /**
      * A powerpoint file with embeded powerpoint files
-     * TODO - figure out how to handle this, as ppt
-     *  appears to embed not as ole2 streams
      */
-    public void DISABLEDtestExtractFromOwnEmbeded() throws Exception {
-    	String filename3 = pdirname + "/ppt_with_embeded.ppt";
-    	POIFSFileSystem fs = new POIFSFileSystem(
-    			new FileInputStream(filename3)
-    	);
-    	HSLFSlideShow ss;
-    	
-    	DirectoryNode dirA = (DirectoryNode)
-    		fs.getRoot().getEntry("MBD0000A3B6");
-		DirectoryNode dirB = (DirectoryNode)
-			fs.getRoot().getEntry("MBD0000A3B3");
-		
-		assertNotNull(dirA.getEntry("PowerPoint Document"));
-		assertNotNull(dirB.getEntry("PowerPoint Document"));
-    	
-		// Check the first file
-    	ss = new HSLFSlideShow(dirA, fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
-				ppe.getText(true, false)
-		);
-
-		// And the second
-    	ss = new HSLFSlideShow(dirB, fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
-				ppe.getText(true, false)
-		);
-		
-		
-		// Check the master doc two ways
-    	ss = new HSLFSlideShow(fs.getRoot(), fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("I have embeded files in me\n",
-				ppe.getText(true, false)
-		);
-		
-    	ss = new HSLFSlideShow(fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("I have embeded files in me\n",
-				ppe.getText(true, false)
-		);
+    public void testExtractFromOwnEmbeded() throws Exception {
+    	String path = pdirname + "/ppt_with_embeded.ppt";
+		ppe = new PowerPointExtractor(path);
+        List<OLEShape> shapes = ppe.getOLEShapes();
+        assertEquals("Expected 6 ole shapes in " + path, 6, shapes.size());
+        int num_ppt = 0, num_doc = 0, num_xls = 0;
+        for(OLEShape ole : shapes) {
+            String name = ole.getInstanceName();
+            InputStream data = ole.getObjectData().getData();
+            if ("Worksheet".equals(name)) {
+                HSSFWorkbook wb = new HSSFWorkbook(data);
+                num_xls++;
+            } else if ("Document".equals(name)) {
+                HWPFDocument doc = new HWPFDocument(data);
+                num_doc++;
+            } else if ("Presentation".equals(name)) {
+                num_ppt++;
+                SlideShow ppt = new SlideShow(data);
+            }
+        }
+        assertEquals("Expected 2 embedded Word Documents", 2, num_doc);
+        assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
+        assertEquals("Expected 2 embedded PowerPoint Presentations", 2, num_ppt);
     }
     
     /**
