@@ -134,7 +134,7 @@ public class HSSFEventFactory
 		Record r = null;
 		
 		// Create a new RecordStream and use that
-		HSSFRecordStream recordStream = new HSSFRecordStream(in);
+		RecordFactoryInputStream recordStream = new RecordFactoryInputStream(in);
 		
 		// Process each record as they come in
 		while(going) {

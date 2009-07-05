@@ -17,21 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.pivottable.*;
+
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
+import java.util.*;
 
 /**
  * Title:  Record Factory<P>
@@ -259,7 +252,7 @@ public final class RecordFactory {
 		return new Record[] { record, };
 	}
 
-	static Record createSingleRecord(RecordInputStream in) {
+	public static Record createSingleRecord(RecordInputStream in) {
 		I_RecordCreator constructor = _recordCreatorsById.get(new Integer(in.getSid()));
 
 		if (constructor == null) {
@@ -273,7 +266,7 @@ public final class RecordFactory {
 	 * RK record is a slightly smaller alternative to NumberRecord
 	 * POI likes NumberRecord better
 	 */
-	private static NumberRecord convertToNumberRecord(RKRecord rk) {
+	public static NumberRecord convertToNumberRecord(RKRecord rk) {
 		NumberRecord num = new NumberRecord();
 
 		num.setColumn(rk.getColumn());
@@ -286,7 +279,7 @@ public final class RecordFactory {
 	/**
 	 * Converts a {@link MulRKRecord} into an equivalent array of {@link NumberRecord}s
 	 */
-	private static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
+	public static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
 
 		NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
 		for (int k = 0; k < mrk.getNumColumns(); k++) {
@@ -374,109 +367,16 @@ public final class RecordFactory {
 	 * @exception RecordFormatException on error processing the InputStream
 	 */
 	public static List<Record> createRecords(InputStream in) throws RecordFormatException {
-
 		List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 
-		RecordInputStream recStream = new RecordInputStream(in);
-		DrawingRecord lastDrawingRecord = new DrawingRecord( );
-		Record lastRecord = null;
-		/*
-		 * How to recognise end of stream?
-		 * In the best case, the underlying input stream (in) ends just after the last EOF record
-		 * Usually however, the stream is padded with an arbitrary byte count.  Excel and most apps
-		 * reliably use zeros for padding and if this were always the case, this code could just
-		 * skip all the (zero sized) records with sid==0.  However, bug 46987 shows a file with
-		 * non-zero padding that is read OK by Excel (Excel also fixes the padding).
-		 *
-		 * So to properly detect the workbook end of stream, this code has to identify the last
-		 * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the
-		 * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many
-		 * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not
-		 * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
-		 * streams can be nested within worksheet streams and it's not clear in these cases what
-		 * record might follow any EOF record.  So we also need to keep track of the bof/eof
-		 * nesting level.
-		 */
+		RecordFactoryInputStream recStream = new RecordFactoryInputStream(new RecordInputStream(in));
+                recStream.setIncludeContinueRecords(true);
 
-		int bofDepth=0;
-		boolean lastRecordWasEOFLevelZero = false;
-		while (recStream.hasNextRecord()) {
-			recStream.nextRecord();
-			if (lastRecordWasEOFLevelZero && recStream.getSid() != BOFRecord.sid) {
-				// Normally InputStream (in) contains only zero padding after this point
-				break;
-			}
-			Record record = createSingleRecord(recStream);
-			lastRecordWasEOFLevelZero = false;
-			if (record instanceof BOFRecord) {
-				bofDepth++;
-				records.add(record);
-				continue;
-			}
-			if (record instanceof EOFRecord) {
-				bofDepth--;
-				records.add(record);
-				if (bofDepth<1) {
-					lastRecordWasEOFLevelZero = true;
-				}
-				continue;
-			}
-
-			if (record instanceof DBCellRecord) {
-				// Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
-				continue;
-			}
-
-			if (record instanceof RKRecord) {
-				records.add(convertToNumberRecord((RKRecord) record));
-				continue;
-			}
-			if (record instanceof MulRKRecord) {
-				addAll(records, convertRKRecords((MulRKRecord)record));
-				continue;
-			}
-
-			if (record.getSid() == DrawingGroupRecord.sid
-				   && lastRecord instanceof DrawingGroupRecord) {
-				DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) lastRecord;
-				lastDGRecord.join((AbstractEscherHolderRecord) record);
-			} else if (record.getSid() == ContinueRecord.sid) {
-				ContinueRecord contRec = (ContinueRecord)record;
-
-				if (lastRecord instanceof ObjRecord || lastRecord instanceof TextObjectRecord) {
-					// Drawing records have a very strange continue behaviour.
-					//There can actually be OBJ records mixed between the continues.
-					lastDrawingRecord.processContinueRecord(contRec.getData() );
-					//we must remember the position of the continue record.
-					//in the serialization procedure the original structure of records must be preserved
-					records.add(record);
-				} else if (lastRecord instanceof DrawingGroupRecord) {
-					((DrawingGroupRecord)lastRecord).processContinueRecord(contRec.getData());
-				} else if (lastRecord instanceof UnknownRecord) {
-					//Gracefully handle records that we don't know about,
-					//that happen to be continued
-					records.add(record);
-				} else if (lastRecord instanceof EOFRecord) {
-					// This is really odd, but excel still sometimes
-					//  outputs a file like this all the same
-					records.add(record);
-				} else {
-					throw new RecordFormatException("Unhandled Continue Record");
-				}
-			} else {
-				lastRecord = record;
-				if (record instanceof DrawingRecord) {
-					lastDrawingRecord = (DrawingRecord) record;
-				}
-				records.add(record);
-			}
+        Record record;
+		while ((record = recStream.nextRecord())!=null) {
+                        records.add(record);
 		}
+
 		return records;
-	}
-
-	private static void addAll(List<Record> destList, Record[] srcRecs) {
-		for (int i = 0; i < srcRecs.length; i++) {
-			destList.add(srcRecs[i]);
-		}
 	}
 }
