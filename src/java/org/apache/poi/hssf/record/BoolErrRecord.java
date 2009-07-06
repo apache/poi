@@ -29,12 +29,15 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class BoolErrRecord extends CellRecord {
 	public final static short sid = 0x0205;
-	private byte field_4_bBoolErr;
-	private byte field_5_fError;
+	private int _value;
+	/**
+	 * If <code>true</code>, this record represents an error cell value, otherwise this record represents a boolean cell value
+	 */
+	private boolean _isError;
 
 	/** Creates new BoolErrRecord */
 	public BoolErrRecord() {
-		// fields uninitialised 
+		// fields uninitialised
 	}
 
 	/**
@@ -42,8 +45,29 @@ public final class BoolErrRecord extends CellRecord {
 	 */
 	public BoolErrRecord(RecordInputStream in) {
 		super(in);
-		field_4_bBoolErr = in.readByte();
-		field_5_fError   = in.readByte();
+		switch (in.remaining()) {
+			case 2:
+				_value = in.readByte();
+				break;
+			case 3:
+				_value = in.readUShort();
+				break;
+			default:
+				throw new RecordFormatException("Unexpected size ("
+						+ in.remaining() + ") for BOOLERR record.");
+		}
+		int flag = in.readUByte();
+		switch (flag) {
+			case 0:
+				_isError = false;
+				break;
+			case 1:
+				_isError = true;
+				break;
+			default:
+				throw new RecordFormatException("Unexpected isError flag ("
+						+ flag + ") for BOOLERR record.");
+		}
 	}
 
 	/**
@@ -52,8 +76,8 @@ public final class BoolErrRecord extends CellRecord {
 	 * @param value   representing the boolean value
 	 */
 	public void setValue(boolean value) {
-		field_4_bBoolErr = value ? ( byte ) 1 : ( byte ) 0;
-		field_5_fError   = ( byte ) 0;
+		_value = value ? 1 : 0;
+		_isError = false;
 	}
 
 	/**
@@ -72,8 +96,8 @@ public final class BoolErrRecord extends CellRecord {
 			case ErrorConstants.ERROR_NAME:
 			case ErrorConstants.ERROR_NUM:
 			case ErrorConstants.ERROR_NA:
-				field_4_bBoolErr = value;
-				field_5_fError   = ( byte ) 1;
+				_value = value;
+				_isError = true;
 				return;
 		}
 		throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
@@ -85,7 +109,7 @@ public final class BoolErrRecord extends CellRecord {
 	 * @return boolean representing the boolean value
 	 */
 	public boolean getBooleanValue() {
-		return (field_4_bBoolErr != 0);
+		return _value != 0;
 	}
 
 	/**
@@ -94,7 +118,7 @@ public final class BoolErrRecord extends CellRecord {
 	 * @return byte representing the error value
 	 */
 	public byte getErrorValue() {
-		return field_4_bBoolErr;
+		return (byte)_value;
 	}
 
 	/**
@@ -103,14 +127,7 @@ public final class BoolErrRecord extends CellRecord {
 	 * @return boolean true if the cell holds a boolean value
 	 */
 	public boolean isBoolean() {
-		return (field_5_fError == ( byte ) 0);
-	}
-
-	/**
-	 * manually indicate this is an error rather than a boolean
-	 */
-	public void setError(boolean val) {
-		field_5_fError = (byte) (val == false ? 0 : 1);
+		return !_isError;
 	}
 
 	/**
@@ -118,9 +135,8 @@ public final class BoolErrRecord extends CellRecord {
 	 *
 	 * @return boolean true if the cell holds an error value
 	 */
-
 	public boolean isError() {
-		return field_5_fError != 0;
+		return _isError;
 	}
 
 	@Override
@@ -140,8 +156,8 @@ public final class BoolErrRecord extends CellRecord {
 	}
 	@Override
 	protected void serializeValue(LittleEndianOutput out) {
-		out.writeByte(field_4_bBoolErr);
-		out.writeByte(field_5_fError);
+		out.writeByte(_value);
+		out.writeByte(_isError ? 1 : 0);
 	}
 
 	@Override
@@ -156,8 +172,8 @@ public final class BoolErrRecord extends CellRecord {
 	public Object clone() {
 	  BoolErrRecord rec = new BoolErrRecord();
 	  copyBaseFields(rec);
-	  rec.field_4_bBoolErr = field_4_bBoolErr;
-	  rec.field_5_fError = field_5_fError;
+	  rec._value = _value;
+	  rec._isError = _isError;
 	  return rec;
 	}
 }
