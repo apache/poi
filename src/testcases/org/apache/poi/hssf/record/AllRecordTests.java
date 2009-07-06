@@ -43,6 +43,7 @@ public final class AllRecordTests {
 		result.addTest(AllRecordAggregateTests.suite());
 
 		result.addTestSuite(TestBOFRecord.class);
+		result.addTestSuite(TestBoolErrRecord.class);
 		result.addTestSuite(TestBoundSheetRecord.class);
 		result.addTestSuite(TestCFHeaderRecord.class);
 		result.addTestSuite(TestCFRuleRecord.class);
