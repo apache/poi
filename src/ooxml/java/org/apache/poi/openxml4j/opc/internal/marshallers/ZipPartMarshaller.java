@@ -161,8 +161,12 @@ public final class ZipPartMarshaller implements PartMarshaller {
 						PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME,
 						"External");
 			} else {
-				targetValue = PackagingURIHelper.relativizeURI(
-						sourcePartURI, rel.getTargetURI()).getPath();
+                URI targetURI = rel.getTargetURI();
+                targetValue = PackagingURIHelper.relativizeURI(
+						sourcePartURI, targetURI).getPath();
+                if (targetURI.getRawFragment() != null) {
+                    targetValue += "#" + targetURI.getRawFragment();
+                }
 			}
 			relElem.addAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME,
 					targetValue);

@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.util.TempFile;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -167,8 +168,10 @@ public final class TestPackage extends TestCase {
         coreOut = corePart.getOutputStream();
         coreOut.write("<dummy-xml2 />".getBytes());
         coreOut.close();
-        
-        
+
+        //add a relationship with internal target: "#Sheet1!A1"
+        corePart.addRelationship(new URI("#Sheet1!A1"), TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", "rId2");
+
         // Check things are as expected
         PackageRelationshipCollection coreRels =
         	pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
@@ -181,11 +184,12 @@ public final class TestPackage extends TestCase {
         
         // Save and re-load
         pkg.close();
-        FileOutputStream fout = new FileOutputStream(File.createTempFile("testCreatePackageWithCoreDocument", ".zip"));
+        File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
+        FileOutputStream fout = new FileOutputStream(tmp);
         fout.write(baos.toByteArray());
         fout.close();
-        pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()));
-        
+        pkg = OPCPackage.open(tmp.getPath());
+        //tmp.delete();
         
         // Check still right
         coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
@@ -193,8 +197,16 @@ public final class TestPackage extends TestCase {
         coreRel = coreRels.getRelationship(0);
         assertEquals("/", coreRel.getSourceURI().toString());
         assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
-        assertNotNull(pkg.getPart(coreRel));
-	}
+        corePart = pkg.getPart(coreRel);
+        assertNotNull(corePart);
+
+        PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
+        assertEquals(1, rels.size());
+        rel = rels.getRelationship(0);
+        assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
+
+
+    }
 
 	/**
 	 * Test package opening.

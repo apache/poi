@@ -30,6 +30,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.util.TempFile;
 
 /**
  * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder. 
@@ -57,8 +58,7 @@ public class XSSFTestDataSamples {
                 InputStream is = new ByteArrayInputStream(baos.toByteArray());
 	    		result = new HSSFWorkbook(is);
 	    	} else if (wb instanceof XSSFWorkbook) {
-                File tmp = File.createTempFile("poi-ooxml-", ".xlsx");
-                tmp.deleteOnExit();
+                File tmp = TempFile.createTempFile("poi-ooxml-", ".xlsx");
                 FileOutputStream out = new FileOutputStream(tmp);
                 wb.write(out);
                 out.close();

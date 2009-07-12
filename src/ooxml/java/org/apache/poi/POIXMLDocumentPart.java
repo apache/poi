@@ -19,6 +19,7 @@ package org.apache.poi;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.net.URI;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.poi.util.POILogger;
@@ -142,7 +143,7 @@ public class POIXMLDocumentPart {
 
     @Override
     public String toString(){
-        return packagePart.toString();
+        return packagePart == null ? null : packagePart.toString();
     }
 
     /**
@@ -231,17 +232,28 @@ public class POIXMLDocumentPart {
         PackageRelationshipCollection rels = packagePart.getRelationships();
         for (PackageRelationship rel : rels) {
             if(rel.getTargetMode() == TargetMode.INTERNAL){
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                PackagePart p = packagePart.getPackage().getPart(relName);
-                if(p == null) {
-                    logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
-                    continue;
+                URI uri = rel.getTargetURI();
+
+                PackagePart p;
+                if(uri.getRawFragment() != null) {
+                    /*
+                     * For internal references (e.g. '#Sheet1!A1') the package part is null
+                     */
+                    p = null;
+                } else {
+                    PackagePartName relName = PackagingURIHelper.createPartName(uri);
+                    p = packagePart.getPackage().getPart(relName);
+                    if(p == null) {
+                        logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
+                        continue;
+                    }
                 }
+
                 POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
                 childPart.parent = this;
                 addRelation(childPart);
 
-                if(p.hasRelationships()) childPart.read(factory);
+                if(p != null && p.hasRelationships()) childPart.read(factory);
             }
         }
     }

@@ -17,9 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 
 import junit.framework.TestCase;
 
@@ -254,4 +252,5 @@ public class TestRelationships extends TestCase {
     	assertEquals("/docProps/core.xml",
     			pkg.getRelationshipsByType("http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties").getRelationship(0).getTargetURI().toString());
     }
+
 }
