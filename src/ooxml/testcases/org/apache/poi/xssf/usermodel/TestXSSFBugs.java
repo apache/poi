@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -28,6 +29,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.POIXMLDocumentPart;
 
 public class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Override
@@ -121,4 +123,24 @@ public class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
         assertNotNull(drw);
     }
+    public void test47504() {
+        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("47504.xlsx");
+        assertEquals(1, wb.getNumberOfSheets());
+        XSSFSheet sh = wb.getSheetAt(0);
+        XSSFDrawing drawing = sh.createDrawingPatriarch();
+        List<POIXMLDocumentPart> rels = drawing.getRelations();
+        assertEquals(1, rels.size());
+        assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
+
+        // And again, just to be sure
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(1, wb.getNumberOfSheets());
+        sh = wb.getSheetAt(0);
+        drawing = sh.createDrawingPatriarch();
+        rels = drawing.getRelations();
+        assertEquals(1, rels.size());
+        assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
+
+    }
+
 }

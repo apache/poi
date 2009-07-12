@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.TempFile;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
@@ -74,7 +75,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals(0, workbook.getSheetAt(2).getFirstRowNum());
 		assertEquals(0, workbook.getSheetAt(2).getLastRowNum());
 		
-		File file = File.createTempFile("poi-", ".xlsx");
+		File file = TempFile.createTempFile("poi-", ".xlsx");
 		OutputStream out = new FileOutputStream(file);
 		workbook.write(out);
 		out.close();

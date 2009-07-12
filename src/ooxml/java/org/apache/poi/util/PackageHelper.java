@@ -22,6 +22,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.IOUtils;
 
 import java.io.*;
+import java.net.URI;
 
 /**
  * Provides handy methods to work with OOXML packages
@@ -83,11 +84,10 @@ public class PackageHelper {
      * Creates an empty file in the default temporary-file directory, 
      */
     public static File createTempFile() throws IOException {
-        File file = File.createTempFile("poi-ooxml-", ".tmp");
+        File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
         //there is no way to pass an existing file to Package.create(file),
         //delete first, the file will be re-created in Packe.create(file)
         file.delete();
-        file.deleteOnExit();
         return file;
 
     }
@@ -104,11 +104,18 @@ public class PackageHelper {
                 //external relations don't have associated package parts
                 continue;
             } else {
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                p = pkg.getPart(relName);
+                URI uri = rel.getTargetURI();
+
+                if(uri.getRawFragment() != null) {
+                    part_tgt.addRelationship(uri, rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+                    continue;
+                } else {
+                    PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                    p = pkg.getPart(relName);
+                    part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+                }
             }
 
-            part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
 
             PackagePart dest;
             if(!tgt.containPart(p.getPartName())){
