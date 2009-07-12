@@ -433,8 +433,13 @@ public final class HyperlinkRecord extends StandardRecord {
 
         _guid = new GUID(in);
 
-        if (in.readInt() != 0x00000002) {
-            throw new RecordFormatException("expected "); // TODO
+        /**
+         * streamVersion (4 bytes): An unsigned integer that specifies the version number
+         * of the serialization implementation used to save this structure. This value MUST equal 2.
+         */
+        int streamVersion = in.readInt();
+        if (streamVersion != 0x00000002) {
+            throw new RecordFormatException("Stream Version must be 0x2 but found " + streamVersion);
         }
         _linkOpts = in.readInt();
 
@@ -448,23 +453,38 @@ public final class HyperlinkRecord extends StandardRecord {
             _targetFrame = in.readUnicodeLEString(len);
         }
 
-        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) != 0) {
             _moniker = null;
             int nChars = in.readInt();
             _address = in.readUnicodeLEString(nChars);
+        }
 
-        } else if ((_linkOpts & HLINK_URL) != 0) {
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
             _moniker = new GUID(in);
 
             if(URL_MONIKER.equals(_moniker)){
-                int fieldSize = in.readInt();
-
-                if ((_linkOpts & HLINK_TARGET_FRAME) != 0) { 
-                    int nChars = fieldSize/2;
+                int length = in.readInt();
+                /**
+                 * The value of <code>length<code> be either the byte size of the url field
+                 * (including the terminating NULL character) or the byte size of the url field plus 24.
+                 * If the value of this field is set to the byte size of the url field,
+                 * then the tail bytes fields are not present.
+                 */
+                int remaining = in.remaining();
+                if (length == remaining) {
+                    int nChars = length/2;
                     _address = in.readUnicodeLEString(nChars);
                 } else {
-                    int nChars = (fieldSize - TAIL_SIZE)/2;
+                    int nChars = (length - TAIL_SIZE)/2;
                     _address = in.readUnicodeLEString(nChars);
+                    /**
+                     * TODO: make sense of the remaining bytes
+                     * According to the spec they consist of:
+                     * 1. 16-byte  GUID: This field MUST equal
+                     *    {0xF4815879, 0x1D3B, 0x487F, 0xAF, 0x2C, 0x82, 0x5D, 0xC4, 0x85, 0x27, 0x63}
+                     * 2. Serial version, this field MUST equal 0 if present.
+                     * 3. URI Flags
+                     */
                     _uninterpretedTail = readTail(URL_TAIL, in);
                 }
             } else if (FILE_MONIKER.equals(_moniker)) {
@@ -476,12 +496,15 @@ public final class HyperlinkRecord extends StandardRecord {
                 int size = in.readInt();
                 if (size > 0) {
                     int charDataSize = in.readInt();
-                    if (in.readUShort() != 0x0003) {
-                        throw new RecordFormatException("expected "); // TODO
+
+                    //From the spec: An optional unsigned integer that MUST be 3 if present
+                    int optFlags = in.readUShort();
+                    if (optFlags != 0x0003) {
+                        throw new RecordFormatException("Expected 0x3 but found " + optFlags);
                     }
                     _address = StringUtil.readUnicodeLE(in, charDataSize/2);
                 } else {
-                    _address = null; // TODO
+                    _address = null;
                 }
             } else if (STD_MONIKER.equals(_moniker)) {
                 _fileOpts = in.readShort();
@@ -493,9 +516,6 @@ public final class HyperlinkRecord extends StandardRecord {
 
                 _address = new String(path_bytes);
             }
-        } else {
-            // can happen for a plain link within the current document
-            _moniker = null;
         }
 
         if((_linkOpts & HLINK_PLACE) != 0) {
@@ -525,13 +545,15 @@ public final class HyperlinkRecord extends StandardRecord {
             StringUtil.putUnicodeLE(_targetFrame, out);
         }
 
-        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) != 0) {
             out.writeInt(_address.length());
             StringUtil.putUnicodeLE(_address, out);
-        } else if ((_linkOpts & HLINK_URL) != 0){
+        }
+
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
             _moniker.serialize(out);
             if(URL_MONIKER.equals(_moniker)){
-                if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
+                if (_uninterpretedTail == null) {
                     out.writeInt(_address.length()*2);
                     StringUtil.putUnicodeLE(_address, out);
                 } else {
@@ -575,15 +597,16 @@ public final class HyperlinkRecord extends StandardRecord {
             size += 4;  // int nChars
             size += _targetFrame.length()*2;
         }
-        if ((_linkOpts & HLINK_UNC_PATH) != 0) {
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) != 0) {
             size += 4;  // int nChars
             size += _address.length()*2;
-        } else if ((_linkOpts & HLINK_URL) != 0){
+        }
+        if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
             size += GUID.ENCODED_SIZE;
             if(URL_MONIKER.equals(_moniker)){
                 size += 4;  //address length
                 size += _address.length()*2;
-                if ((_linkOpts & HLINK_TARGET_FRAME) == 0) {
+                if (_uninterpretedTail != null) {
                 	size += TAIL_SIZE;
                 }
             } else if (FILE_MONIKER.equals(_moniker)){
