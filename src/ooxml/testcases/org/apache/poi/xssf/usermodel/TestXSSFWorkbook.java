@@ -33,7 +33,9 @@ import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.POIXMLProperties;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
@@ -249,5 +251,28 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         int lastSheetId = (int)wb.getSheetAt(wb.getNumberOfSheets() - 1).sheet.getSheetId();
         sheetId = (int)wb.createSheet().sheet.getSheetId();
         assertEquals(lastSheetId+1, sheetId);
+    }
+
+    /**
+     *  Test setting of core properties such as Title and Author
+     */
+    public void testWorkbookProperties() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        POIXMLProperties props = workbook.getProperties();
+        assertNotNull(props);
+
+        PackagePropertiesPart opcProps = props.getCoreProperties().getUnderlyingProperties();
+        assertNotNull(opcProps);
+
+        opcProps.setTitleProperty("Testing Bugzilla #47460");
+        assertEquals("Apache POI", opcProps.getCreatorProperty().getValue());
+        opcProps.setCreatorProperty("poi-dev@poi.apache.org");
+
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        opcProps = workbook.getProperties().getCoreProperties().getUnderlyingProperties();
+        assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
+        assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+
+
     }
 }

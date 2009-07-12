@@ -38,14 +38,7 @@ public class POIXMLProperties {
 		this.pkg = docPackage;
 		
 		// Core properties
-		PackageRelationshipCollection coreRel =
-			pkg.getRelationshipsByType(POIXMLDocument.CORE_PROPERTIES_REL_TYPE);
-		if(coreRel.size() == 1) {
-			core = new CoreProperties( (PackagePropertiesPart)
-					pkg.getPart(coreRel.getRelationship(0)) );
-		} else {
-			throw new IllegalArgumentException("A document must always have core properties defined!");
-		}
+        core = new CoreProperties((PackagePropertiesPart)pkg.getPackageProperties() );
 		
 		// Extended properties
 		PackageRelationshipCollection extRel =
