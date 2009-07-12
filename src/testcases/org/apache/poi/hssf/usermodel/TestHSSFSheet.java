@@ -34,6 +34,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.util.TempFile;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -572,8 +573,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertFalse(sheet2.getForceFormulaRecalculation());
 
         // Save and manually verify that on column C we have 0, value in template
-        File tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_err.xls" );
-        tempFile.delete();
+        File tempFile = TempFile.createTempFile("uncalced_err", ".xls" );
         FileOutputStream fout = new FileOutputStream( tempFile );
         workbook.write( fout );
         fout.close();
@@ -581,7 +581,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertTrue(sheet.getForceFormulaRecalculation());
 
         // Save and manually verify that on column C we have now 13, calculated value
-        tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_succ.xls" );
+        tempFile = TempFile.createTempFile("uncalced_succ", ".xls");
         tempFile.delete();
         fout = new FileOutputStream( tempFile );
         workbook.write( fout );

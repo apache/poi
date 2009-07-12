@@ -166,6 +166,28 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
     }
 
+    public void testCreate() throws Exception {
+        HSSFWorkbook wb = getTestDataProvider().createWorkbook();
+
+        HSSFHyperlink link;
+        HSSFCell cell;
+        HSSFSheet sheet = wb.createSheet("Hyperlinks");
+
+        cell = sheet.createRow(1).createCell(0);
+        cell.setCellValue("File Link");
+        link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
+        link.setAddress("testfolder\\test.PDF");
+        cell.setHyperlink(link);
+
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        sheet = wb.getSheet("Hyperlinks");
+
+        cell = sheet.getRow(1).getCell(0);
+        link = cell.getHyperlink();
+        assertNotNull(link);
+        assertEquals("testfolder\\test.PDF", link.getAddress());
+    }
+
     /**
      * Test that HSSFSheet#shiftRows moves hyperlinks,
      * see bugs #46445 and #29957

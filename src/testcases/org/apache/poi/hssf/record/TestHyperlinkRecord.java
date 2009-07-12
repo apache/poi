@@ -243,7 +243,24 @@ public final class TestHyperlinkRecord extends TestCase {
 			"43 00 32 00 00 00");
 
 
-	private void confirmGUID(GUID expectedGuid, GUID actualGuid) {
+    /**
+     * From Bugzilla 47498
+     */
+    private static byte[] data_47498 = {
+            0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xD0, (byte)0xC9,
+            (byte)0xEA, 0x79, (byte)0xF9, (byte)0xBA, (byte)0xCE, 0x11, (byte)0x8C,
+            (byte)0x82, 0x00, (byte)0xAA, 0x00, 0x4B, (byte)0xA9, 0x0B, 0x02, 0x00,
+            0x00, 0x00, 0x15, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x50, 0x00,
+            0x44, 0x00, 0x46, 0x00, 0x00, 0x00, (byte)0xE0, (byte)0xC9, (byte)0xEA,
+            0x79, (byte)0xF9, (byte)0xBA, (byte)0xCE, (byte)0x11, (byte)0x8C, (byte)0x82,
+            0x00, (byte)0xAA, 0x00, 0x4B, (byte)0xA9, 0x0B, 0x28, 0x00, 0x00, 0x00,
+            0x74, 0x00, 0x65, 0x00, 0x73, 0x00, 0x74, 0x00, 0x66, 0x00, 0x6F, 0x00,
+            0x6C, 0x00, 0x64, 0x00, 0x65, 0x00, 0x72, 0x00, 0x2F, 0x00, 0x74, 0x00,
+            0x65, 0x00, 0x73, 0x00, 0x74, 0x00, 0x2E, 0x00, 0x50, 0x00, 0x44, 0x00,
+            0x46, 0x00, 0x00, 0x00};
+
+
+    private void confirmGUID(GUID expectedGuid, GUID actualGuid) {
 		assertEquals(expectedGuid, actualGuid);
 	}
     public void testReadURLLink(){
@@ -479,4 +496,24 @@ public final class TestHyperlinkRecord extends TestCase {
 		assertEquals(new String(HexDump.longToHex(d4)), new String(HexDump.longToHex(g.getD4())));
 	}
 
+    public void test47498(){
+        RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data_47498);
+        HyperlinkRecord link = new HyperlinkRecord(is);
+        assertEquals(2, link.getFirstRow());
+        assertEquals(2, link.getLastRow());
+        assertEquals(0, link.getFirstColumn());
+        assertEquals(0, link.getLastColumn());
+        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
+        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
+        assertEquals(2, link.getLabelOptions());
+        int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_LABEL;
+        assertEquals(opts, link.getLinkOptions());
+        assertEquals(0, link.getFileOptions());
+
+        assertEquals("PDF", link.getLabel());
+        assertEquals("testfolder/test.PDF", link.getAddress());
+
+        byte[] ser = link.serialize();
+        TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, data_47498, ser);
+    }
 }
