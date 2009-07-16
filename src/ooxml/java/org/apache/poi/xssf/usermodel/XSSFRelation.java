@@ -25,10 +25,13 @@ import java.util.HashMap;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xssf.model.MapInfo;
+import org.apache.poi.xssf.model.SingleXmlCells;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.Table;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -93,6 +96,28 @@ public final class XSSFRelation extends POIXMLRelation {
 			"/xl/drawings/vmlDrawing#.vml",
 			null
 	);
+	
+	public static final XSSFRelation CUSTOM_XML_MAPPINGS = new XSSFRelation(
+			"application/xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps",
+			"/xl/xmlMaps.xml",
+			MapInfo.class
+	);
+	
+	public static final XSSFRelation SINGLE_XML_CELLS = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/tableSingleCells",
+			"/tables/tableSingleCells#.xml",
+			SingleXmlCells.class
+	);
+	
+	public static final XSSFRelation TABLE = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",
+			"/tables/table#.xml",
+			Table.class
+	);
+	
     public static final XSSFRelation IMAGES = new XSSFRelation(
             null,
      		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",

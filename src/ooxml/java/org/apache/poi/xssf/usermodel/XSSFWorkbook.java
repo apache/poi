@@ -22,12 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -56,6 +51,8 @@ import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.MapInfo;
+import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -105,6 +102,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * TODO
      */
     private CalculationChain calcChain;
+
+    /**
+     * A collection of custom XML mappings
+     */
+    private MapInfo mapInfo;
 
     /**
      * Used to keep track of the data formatter so that all
@@ -174,6 +176,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
                 else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
+                else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
                 }
@@ -1282,4 +1285,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return calcChain;
     }
 
+    /**
+     * 
+     * @return a collection of custom XML mappings defined in this workbook
+     */
+    public Collection<XSSFMap> getCustomXMLMappings(){
+        return mapInfo == null ? new ArrayList<XSSFMap>() : mapInfo.getAllXSSFMaps();
+    }
 }
