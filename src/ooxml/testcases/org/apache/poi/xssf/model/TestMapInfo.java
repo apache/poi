@@ -56,7 +56,7 @@ public class TestMapInfo extends TestCase {
                 assertEquals(1, schemas.length);
 
 
-                for (XSSFMap map : mapInfo) {
+                for (XSSFMap map : mapInfo.getAllXSSFMaps()) {
                     Node xmlSchema = map.getSchema();
                     assertNotNull(xmlSchema);
                 }
