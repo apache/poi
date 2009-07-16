@@ -77,8 +77,16 @@ public final class HSSFTestDataSamples {
 			throw new RuntimeException("Sample file '" + sampleFileName
 					+ "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
 		}
-//		System.out.println("opening " + f.getAbsolutePath());
-		try {
+        try {
+            if(!sampleFileName.equals(f.getCanonicalFile().getName())){
+                throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
+                        + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
+            }
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        
+        try {
 			return new FileInputStream(f);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);

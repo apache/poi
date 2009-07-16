@@ -36,7 +36,7 @@ public class TestMapInfo extends TestCase {
     public void testMapInfoExists() throws Exception {
 
 
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXmlMappings.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
 
         MapInfo mapInfo = null;
         SingleXmlCells singleXMLCells = null;

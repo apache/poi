@@ -43,7 +43,7 @@ public class TestXSSFExportToXML extends TestCase{
 	public void testExportToXML() throws Exception{
 	
 		
-		 XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXmlMappings.xlsx");
+		 XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
 		  
 		 
 		 
