@@ -53,6 +53,7 @@ public class XWPFDocument extends POIXMLDocument {
     protected List<XWPFParagraph> paragraphs;
     protected List<XWPFTable> tables;
     protected Map<Integer, XWPFFootnote> footnotes;
+    protected Map<Integer, XWPFFootnote> endnotes;
 
     /** Handles the joy of different headers/footers for different pages */
     private XWPFHeaderFooterPolicy headerFooterPolicy;
@@ -81,6 +82,7 @@ public class XWPFDocument extends POIXMLDocument {
         paragraphs = new ArrayList<XWPFParagraph>();
         tables= new ArrayList<XWPFTable>();
         footnotes = new HashMap<Integer, XWPFFootnote>();
+        endnotes = new HashMap<Integer, XWPFFootnote>();
 
         try {
             DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream());
@@ -142,6 +144,12 @@ public class XWPFDocument extends POIXMLDocument {
 
                 for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteArray()) {
                     footnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
+                }
+            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
+                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+
+                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
+                    endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
                 }
             }
         }
@@ -216,6 +224,10 @@ public class XWPFDocument extends POIXMLDocument {
 
     public XWPFFootnote getFootnoteByID(int id) {
         return footnotes.get(id);
+    }
+
+    public XWPFFootnote getEndnoteByID(int id) {
+        return endnotes.get(id);
     }
 
     public Collection<XWPFFootnote> getFootnotes() {
