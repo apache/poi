@@ -1568,10 +1568,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      *
      * @return the list of pictures (a list of {@link HSSFPictureData} objects.)
      */
-    public List getAllPictures()
+    public List<HSSFPictureData> getAllPictures()
     {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
-        List pictures = new ArrayList();
+        List<HSSFPictureData> pictures = new ArrayList<HSSFPictureData>();
         Iterator recordIter = workbook.getRecords().iterator();
         while (recordIter.hasNext())
         {
@@ -1592,7 +1592,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List pictures)
+    private void searchForPictures(List escherRecords, List<HSSFPictureData> pictures)
     {
         Iterator recordIter = escherRecords.iterator();
         while (recordIter.hasNext())
@@ -1646,9 +1646,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      *
      * @return the list of embedded objects (a list of {@link HSSFObjectData} objects.)
      */
-    public List getAllEmbeddedObjects()
+    public List<HSSFObjectData> getAllEmbeddedObjects()
     {
-        List objects = new ArrayList();
+        List<HSSFObjectData> objects = new ArrayList<HSSFObjectData>();
         for (int i = 0; i < getNumberOfSheets(); i++)
         {
             getAllEmbeddedObjects(getSheetAt(i).getSheet().getRecords(), objects);
@@ -1662,7 +1662,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @param records the list of records to search.
      * @param objects the list of embedded objects to populate.
      */
-    private void getAllEmbeddedObjects(List records, List objects)
+    private void getAllEmbeddedObjects(List records, List<HSSFObjectData> objects)
     {
         Iterator recordIter = records.iterator();
         while (recordIter.hasNext())
