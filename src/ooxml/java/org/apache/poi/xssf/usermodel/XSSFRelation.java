@@ -66,6 +66,24 @@ public final class XSSFRelation extends POIXMLRelation {
 			"/xl/workbook.xml",
 			null
 	);
+    public static final XSSFRelation TEMPLATE_WORKBOOK = new XSSFRelation(
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml",
+              "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+              "/xl/workbook.xml",
+              null
+    );
+    public static final XSSFRelation MACRO_TEMPLATE_WORKBOOK = new XSSFRelation(
+              "application/vnd.ms-excel.template.macroEnabled.main+xml",
+              "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+              "/xl/workbook.xml",
+              null
+    );
+    public static final XSSFRelation MACRO_ADDIN_WORKBOOK = new XSSFRelation(
+              "application/vnd.ms-excel.addin.macroEnabled.main+xml",
+              "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+              "/xl/workbook.xml",
+              null
+    );
 	public static final XSSFRelation WORKSHEET = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",

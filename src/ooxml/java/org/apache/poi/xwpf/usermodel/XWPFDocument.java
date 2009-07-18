@@ -30,15 +30,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import javax.xml.namespace.QName;
 
@@ -60,6 +52,7 @@ public class XWPFDocument extends POIXMLDocument {
     protected List<XWPFHyperlink> hyperlinks;
     protected List<XWPFParagraph> paragraphs;
     protected List<XWPFTable> tables;
+    protected Map<Integer, XWPFFootnote> footnotes;
 
     /** Handles the joy of different headers/footers for different pages */
     private XWPFHeaderFooterPolicy headerFooterPolicy;
@@ -87,12 +80,15 @@ public class XWPFDocument extends POIXMLDocument {
         comments = new ArrayList<XWPFComment>();
         paragraphs = new ArrayList<XWPFParagraph>();
         tables= new ArrayList<XWPFTable>();
+        footnotes = new HashMap<Integer, XWPFFootnote>();
 
         try {
             DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream());
             ctDocument = doc.getDocument();
 
             CTBody body = ctDocument.getBody();
+
+            initFootnotes();
 
             // filling paragraph list
             for (CTP p : body.getPArray())	{
@@ -101,7 +97,7 @@ public class XWPFDocument extends POIXMLDocument {
 
             // Get any tables
             for(CTTbl table : body.getTblArray()) {
-                tables.add(new XWPFTable(table));
+                tables.add(new XWPFTable(this, table));
             }
 
             // Sort out headers and footers
@@ -118,7 +114,6 @@ public class XWPFDocument extends POIXMLDocument {
             }
 
             initHyperlinks();
-
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
@@ -136,6 +131,19 @@ public class XWPFDocument extends POIXMLDocument {
             }
         } catch (InvalidFormatException e){
             throw new POIXMLException(e);
+        }
+    }
+
+    private void initFootnotes() throws XmlException, IOException {
+        for(POIXMLDocumentPart p : getRelations()){
+            String relation = p.getPackageRelationship().getRelationshipType();
+            if(relation.equals(XWPFRelation.FOOTNOTE.getRelation())){
+                FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+
+                for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteArray()) {
+                    footnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
+                }
+            }
         }
     }
 
@@ -205,6 +213,15 @@ public class XWPFDocument extends POIXMLDocument {
 
         return null;
     }
+
+    public XWPFFootnote getFootnoteByID(int id) {
+        return footnotes.get(id);
+    }
+
+    public Collection<XWPFFootnote> getFootnotes() {
+        return footnotes == null ? new ArrayList<XWPFFootnote>() : footnotes.values();
+    }
+
     public XWPFHyperlink[] getHyperlinks() {
         return hyperlinks.toArray(
                 new XWPFHyperlink[hyperlinks.size()]
@@ -323,7 +340,7 @@ public class XWPFDocument extends POIXMLDocument {
      * @return a new table
      */
     public XWPFTable createTable(){
-        return new XWPFTable(ctDocument.getBody().addNewTbl());
+        return new XWPFTable(this, ctDocument.getBody().addNewTbl());
     }
     
     /**
@@ -333,7 +350,7 @@ public class XWPFDocument extends POIXMLDocument {
      * @return table
      */
     public XWPFTable createTable(int rows, int cols) {
-	return new XWPFTable(ctDocument.getBody().addNewTbl(), rows, cols);
+	return new XWPFTable(this, ctDocument.getBody().addNewTbl(), rows, cols);
     }
 }
 
