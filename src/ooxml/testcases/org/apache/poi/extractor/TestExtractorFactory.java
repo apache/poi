@@ -50,9 +50,11 @@ public class TestExtractorFactory extends TestCase {
 	
 	private File xls;
 	private File xlsx;
-	
+        private File xltx;
+
 	private File doc;
 	private File docx;
+        private File dotx;
 
 	private File ppt;
 	private File pptx;
@@ -77,10 +79,12 @@ public class TestExtractorFactory extends TestCase {
 		
 		xls = new File(excel_dir, "SampleSS.xls");
 		xlsx = new File(excel_dir, "SampleSS.xlsx");
-		
+                xltx = new File(excel_dir, "test.xltx");
+
 		doc = new File(word_dir, "SampleDoc.doc");
 		docx = new File(word_dir, "SampleDoc.docx");
-		
+        dotx = new File(word_dir, "test.dotx");
+
 		ppt = new File(powerpoint_dir, "SampleShow.ppt");
 		pptx = new File(powerpoint_dir, "SampleShow.pptx");
 		
@@ -104,6 +108,15 @@ public class TestExtractorFactory extends TestCase {
 		assertTrue(
 				ExtractorFactory.createExtractor(xlsx).getText().length() > 200
 		);
+
+                assertTrue(
+                                ExtractorFactory.createExtractor(xltx)
+                                instanceof XSSFExcelExtractor
+                );
+                assertTrue(
+                                ExtractorFactory.createExtractor(xltx).getText().contains("test")
+                );
+
 		
 		// Word
 		assertTrue(
@@ -121,7 +134,15 @@ public class TestExtractorFactory extends TestCase {
 		assertTrue(
 				ExtractorFactory.createExtractor(docx).getText().length() > 120
 		);
-		
+
+                assertTrue(
+                                ExtractorFactory.createExtractor(dotx)
+                                instanceof XWPFWordExtractor
+                );
+                assertTrue(
+                                ExtractorFactory.createExtractor(dotx).getText().contains("Test")
+                );
+
 		// PowerPoint
 		assertTrue(
 				ExtractorFactory.createExtractor(ppt)
