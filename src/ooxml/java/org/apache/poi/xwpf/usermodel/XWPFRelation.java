@@ -112,6 +112,12 @@ public final class XWPFRelation extends POIXMLRelation {
             null,
             null
     );
+    public static final XWPFRelation ENDNOTE = new XWPFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes",
+            null,
+            null
+    );
 
 
     private XWPFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {

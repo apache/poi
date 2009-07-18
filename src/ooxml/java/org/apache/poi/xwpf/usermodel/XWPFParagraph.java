@@ -93,7 +93,10 @@ public class XWPFParagraph {
                     if (o instanceof CTFtnEdnRef) {
                         CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                         footnoteText.append("[").append(ftn.getId()).append(": ");
-                        XWPFFootnote footnote = document.getFootnoteByID(ftn.getId().intValue());
+                        XWPFFootnote footnote = 
+                                ftn.getDomNode().getLocalName().equals("footnoteReference") ?
+                                        document.getFootnoteByID(ftn.getId().intValue()) :
+                                        document.getEndnoteByID(ftn.getId().intValue());
 
                         boolean first = true;
                         for (XWPFParagraph p : footnote.getParagraphs()) {

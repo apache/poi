@@ -185,7 +185,15 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
     }
 
-    //TODO use the same logic as in HSSFTestDataSamples
+    public void testEndnotes() throws Exception {
+        XWPFDocument doc = open("endnotes.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        assertTrue(extractor.getText().contains("XXX"));
+    }
+
+
+    //TODO use the same logic for opening test files as in HSSFTestDataSamples
     private XWPFDocument open(String sampleFileName) throws IOException {
         File file = new File(
                 System.getProperty("HWPF.testdata.path"), sampleFileName);
