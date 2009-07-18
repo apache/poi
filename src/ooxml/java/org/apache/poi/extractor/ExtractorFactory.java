@@ -94,18 +94,27 @@ public class ExtractorFactory {
 		if(core.size() != 1) {
 			throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
 		}
-		
-		PackagePart corePart = pkg.getPart(core.getRelationship(0));
-		if(corePart.getContentType().equals(XSSFRelation.WORKBOOK.getContentType())) {
-			return new XSSFExcelExtractor(pkg);
-		}
-		if(corePart.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
+
+        PackagePart corePart = pkg.getPart(core.getRelationship(0));
+        if (corePart.getContentType().equals(XSSFRelation.WORKBOOK.getContentType()) ||
+            corePart.getContentType().equals(XSSFRelation.MACRO_TEMPLATE_WORKBOOK.getContentType()) ||
+            corePart.getContentType().equals(XSSFRelation.MACRO_ADDIN_WORKBOOK.getContentType()) ||
+            corePart.getContentType().equals(XSSFRelation.TEMPLATE_WORKBOOK.getContentType()) ||
+            corePart.getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType())) {
+            return new XSSFExcelExtractor(pkg);
+        }
+
+        if(corePart.getContentType().equals(XWPFRelation.DOCUMENT.getContentType()) ||
+            corePart.getContentType().equals(XWPFRelation.TEMPLATE.getContentType()) ||
+            corePart.getContentType().equals(XWPFRelation.MACRO_DOCUMENT.getContentType()) ||
+            corePart.getContentType().equals(XWPFRelation.MACRO_TEMPLATE_DOCUMENT.getContentType()) ) {
 			return new XWPFWordExtractor(pkg);
 		}
+
 		if(corePart.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
 			return new XSLFPowerPointExtractor(pkg);
 		}
-		throw new IllegalArgumentException("No supported documents found in the OOXML package");
+		throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
 	
 	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
