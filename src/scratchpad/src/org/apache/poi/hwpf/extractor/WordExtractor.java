@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -252,9 +253,13 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 
 		ret.append(getHeaderText());
 
-		String[] text = getParagraphText();
-		for(int i=0; i<text.length; i++) {
-			ret.append(text[i]);
+                ArrayList<String> text = new ArrayList<String>();
+                text.addAll(Arrays.asList(getParagraphText()));
+                text.addAll(Arrays.asList(getFootnoteText()));
+                text.addAll(Arrays.asList(getEndnoteText()));
+
+		for(String p : text) {
+			ret.append(p);
 		}
 
 		ret.append(getFooterText());

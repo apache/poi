@@ -978,6 +978,10 @@ public class Range { // TODO -instantiable superclass
       node = (PropertyNode)rpl.get(x);
     }
 
+    if (node.getEnd() <= start) {
+        return new int[] {rpl.size(), rpl.size()};
+    }
+
     int y = x;
     node = (PropertyNode)rpl.get(y);
     while(node.getEnd() < end && y < rpl.size()-1)
