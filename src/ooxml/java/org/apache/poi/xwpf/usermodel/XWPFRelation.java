@@ -40,6 +40,24 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/document.xml",
             null
     );
+    public static final XWPFRelation TEMPLATE = new XWPFRelation(
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml",
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+          "/word/document.xml",
+          null
+    );
+    public static final XWPFRelation MACRO_DOCUMENT = new XWPFRelation(
+            "application/vnd.ms-word.document.macroEnabled.main+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            "/word/document.xml",
+            null
+    );
+    public static final XWPFRelation MACRO_TEMPLATE_DOCUMENT = new XWPFRelation(
+            "application/vnd.ms-word.template.macroEnabledTemplate.main+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            "/word/document.xml",
+            null
+    );
     public static final XWPFRelation FONT_TABLE = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable",
@@ -85,6 +103,12 @@ public final class XWPFRelation extends POIXMLRelation {
     public static final XWPFRelation COMMENT = new XWPFRelation(
             null,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
+            null,
+            null
+    );
+    public static final XWPFRelation FOOTNOTE = new XWPFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes",
             null,
             null
     );

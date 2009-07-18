@@ -21,26 +21,7 @@ import java.util.ArrayList;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
@@ -58,6 +39,7 @@ public class XWPFParagraph {
      */
     private StringBuffer text = new StringBuffer();
     private StringBuffer pictureText = new StringBuffer();
+    private StringBuffer footnoteText = new StringBuffer();
 
 
     protected XWPFParagraph(CTP prgrph) {
@@ -66,79 +48,96 @@ public class XWPFParagraph {
 
 
     protected XWPFParagraph(CTP prgrph, XWPFDocument docRef) {
-	this.paragraph = prgrph;
-	this.document = docRef;
+        this.paragraph = prgrph;
+        this.document = docRef;
 
-	if (!isEmpty()) {
-	    // All the runs to loop over
-	    // TODO - replace this with some sort of XPath expression
-	    // to directly find all the CTRs, in the right order
-	    ArrayList<CTR> rs = new ArrayList<CTR>();
-	    CTR[] tmp;
+        if (!isEmpty()) {
+            // All the runs to loop over
+            // TODO - replace this with some sort of XPath expression
+            // to directly find all the CTRs, in the right order
+            ArrayList<CTR> rs = new ArrayList<CTR>();
+            CTR[] tmp;
 
-	    // Get the main text runs
-	    tmp = paragraph.getRArray();
-	    for (int i = 0; i < tmp.length; i++) {
-		rs.add(tmp[i]);
-	    }
+            // Get the main text runs
+            tmp = paragraph.getRArray();
+            for (int i = 0; i < tmp.length; i++) {
+                rs.add(tmp[i]);
+            }
 
-	    // Not sure quite what these are, but they hold
-	    // more text runs
-	    CTSdtRun[] sdts = paragraph.getSdtArray();
-	    for (int i = 0; i < sdts.length; i++) {
-		CTSdtContentRun run = sdts[i].getSdtContent();
-		tmp = run.getRArray();
-		for (int j = 0; j < tmp.length; j++) {
-		    rs.add(tmp[j]);
-		}
-	    }
+            // Not sure quite what these are, but they hold
+            // more text runs
+            CTSdtRun[] sdts = paragraph.getSdtArray();
+            for (int i = 0; i < sdts.length; i++) {
+                CTSdtContentRun run = sdts[i].getSdtContent();
+                tmp = run.getRArray();
+                for (int j = 0; j < tmp.length; j++) {
+                    rs.add(tmp[j]);
+                }
+            }
 
-	    // Get text of the paragraph
-	    for (int j = 0; j < rs.size(); j++) {
-		// Grab the text and tabs of the paragraph
-		// Do so in a way that preserves the ordering
-		XmlCursor c = rs.get(j).newCursor();
-		c.selectPath("./*");
-		while (c.toNextSelection()) {
-		    XmlObject o = c.getObject();
-		    if (o instanceof CTText) {
-			text.append(((CTText) o).getStringValue());
-		    }
-		    if (o instanceof CTPTab) {
-			text.append("\t");
-		    }
-		}
+            // Get text of the paragraph
+            for (int j = 0; j < rs.size(); j++) {
+                // Grab the text and tabs of the paragraph
+                // Do so in a way that preserves the ordering
+                XmlCursor c = rs.get(j).newCursor();
+                c.selectPath("./*");
+                while (c.toNextSelection()) {
+                    XmlObject o = c.getObject();
+                    if (o instanceof CTText) {
+                        text.append(((CTText) o).getStringValue());
+                    }
+                    if (o instanceof CTPTab) {
+                        text.append("\t");
+                    }
+                    //got a reference to a footnote
+                    if (o instanceof CTFtnEdnRef) {
+                        CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+                        footnoteText.append("[").append(ftn.getId()).append(": ");
+                        XWPFFootnote footnote = document.getFootnoteByID(ftn.getId().intValue());
 
-		// Loop over pictures inside our
-		// paragraph, looking for text in them
-		CTPicture[] picts = rs.get(j).getPictArray();
-		for (int k = 0; k < picts.length; k++) {
-		    XmlObject[] t = picts[k]
-		                          .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
-		    for (int m = 0; m < t.length; m++) {
-			NodeList kids = t[m].getDomNode().getChildNodes();
-			for (int n = 0; n < kids.getLength(); n++) {
-			    if (kids.item(n) instanceof Text) {
-				pictureText.append("\n");
-				pictureText.append(kids.item(n).getNodeValue());
-			    }
-			}
-		    }
-		}
-	    }
-	}
+                        boolean first = true;
+                        for (XWPFParagraph p : footnote.getParagraphs()) {
+                            if (!first) {
+                                footnoteText.append("\n");
+                                first = false;
+                            }
+                            footnoteText.append(p.getText());
+                        }
+
+                        footnoteText.append("]");
+                    }
+                }
+
+                // Loop over pictures inside our
+                // paragraph, looking for text in them
+                CTPicture[] picts = rs.get(j).getPictArray();
+                for (int k = 0; k < picts.length; k++) {
+                    XmlObject[] t = picts[k]
+                            .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+                    for (int m = 0; m < t.length; m++) {
+                        NodeList kids = t[m].getDomNode().getChildNodes();
+                        for (int n = 0; n < kids.getLength(); n++) {
+                            if (kids.item(n) instanceof Text) {
+                                pictureText.append("\n");
+                                pictureText.append(kids.item(n).getNodeValue());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public CTP getCTP() {
-	return paragraph;
+        return paragraph;
     }
 
     public boolean isEmpty() {
-	return !paragraph.getDomNode().hasChildNodes();
+        return !paragraph.getDomNode().hasChildNodes();
     }
 
     public XWPFDocument getDocument() {
-	return document;
+        return document;
     }
 
     /**
@@ -146,7 +145,9 @@ public class XWPFParagraph {
      * in it.
      */
     public String getText() {
-	return getParagraphText() + getPictureText();
+        StringBuffer out = new StringBuffer();
+        out.append(text).append(footnoteText).append(pictureText);
+        return out.toString();
     }
 
     /**
@@ -154,14 +155,23 @@ public class XWPFParagraph {
      * paragraph
      */
     public String getParagraphText() {
-	return text.toString();
+        return text.toString();
     }
 
     /**
      * Returns any text from any suitable pictures in the paragraph
      */
     public String getPictureText() {
-	return pictureText.toString();
+        return pictureText.toString();
+    }
+
+    /**
+     * Returns the footnote text of the paragraph
+     *
+     * @return  the footnote text or empty string if the paragraph does not have footnotes
+     */
+    public String getFootnoteText() {
+        return footnoteText.toString();
     }
 
     /**
@@ -170,7 +180,7 @@ public class XWPFParagraph {
      * @return a new text run
      */
     public XWPFRun createRun() {
-	return new XWPFRun(paragraph.addNewR(), this);
+        return new XWPFRun(paragraph.addNewR(), this);
     }
 
     /**
@@ -350,12 +360,12 @@ public class XWPFParagraph {
      * @see Borders a list of all types of borders
      */
     public void setBorderBottom(Borders border) {
-	CTPBdr ct = getCTPBrd(true);
-	CTBorder pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
-	if (border.getValue() == Borders.NONE.getValue())
-	    ct.unsetBottom();
-	else
-	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        CTPBdr ct = getCTPBrd(true);
+        CTBorder pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
+        if (border.getValue() == Borders.NONE.getValue())
+            ct.unsetBottom();
+        else
+            pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -367,13 +377,13 @@ public class XWPFParagraph {
      * @see Borders a list of all types of borders
      */
     public Borders getBorderBottom() {
-	CTPBdr border = getCTPBrd(false);
-	CTBorder ct = null;
-	if (border != null) {
-	    ct = border.getBottom();
-	}
-	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-	return Borders.valueOf(ptrn.intValue());
+        CTPBdr border = getCTPBrd(false);
+        CTBorder ct = null;
+        if (border != null) {
+            ct = border.getBottom();
+        }
+        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+        return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -399,12 +409,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderLeft(Borders border) {
-	CTPBdr ct = getCTPBrd(true);
-	CTBorder pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
-	if (border.getValue() == Borders.NONE.getValue())
-	    ct.unsetLeft();
-	else
-	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        CTPBdr ct = getCTPBrd(true);
+        CTBorder pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
+        if (border.getValue() == Borders.NONE.getValue())
+            ct.unsetLeft();
+        else
+            pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -416,13 +426,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderLeft() {
-	CTPBdr border = getCTPBrd(false);
-	CTBorder ct = null;
-	if (border != null) {
-	    ct = border.getLeft();
-	}
-	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-	return Borders.valueOf(ptrn.intValue());
+        CTPBdr border = getCTPBrd(false);
+        CTBorder ct = null;
+        if (border != null) {
+            ct = border.getLeft();
+        }
+        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+        return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -448,12 +458,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderRight(Borders border) {
-	CTPBdr ct = getCTPBrd(true);
-	CTBorder pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
-	if (border.getValue() == Borders.NONE.getValue())
-	    ct.unsetRight();
-	else
-	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        CTPBdr ct = getCTPBrd(true);
+        CTBorder pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
+        if (border.getValue() == Borders.NONE.getValue())
+            ct.unsetRight();
+        else
+            pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -465,13 +475,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderRight() {
-	CTPBdr border = getCTPBrd(false);
-	CTBorder ct = null;
-	if (border != null) {
-	    ct = border.getRight();
-	}
-	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-	return Borders.valueOf(ptrn.intValue());
+        CTPBdr border = getCTPBrd(false);
+        CTBorder ct = null;
+        if (border != null) {
+            ct = border.getRight();
+        }
+        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+        return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -501,12 +511,12 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public void setBorderBetween(Borders border) {
-	CTPBdr ct = getCTPBrd(true);
-	CTBorder pr = ct.isSetBetween() ? ct.getBetween() : ct.addNewBetween();
-	if (border.getValue() == Borders.NONE.getValue())
-	    ct.unsetBetween();
-	else
-	    pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        CTPBdr ct = getCTPBrd(true);
+        CTBorder pr = ct.isSetBetween() ? ct.getBetween() : ct.addNewBetween();
+        if (border.getValue() == Borders.NONE.getValue())
+            ct.unsetBetween();
+        else
+            pr.setVal(STBorder.Enum.forInt(border.getValue()));
     }
 
     /**
@@ -518,13 +528,13 @@ public class XWPFParagraph {
      * @see Borders for a list of all possible borders
      */
     public Borders getBorderBetween() {
-	CTPBdr border = getCTPBrd(false);
-	CTBorder ct = null;
-	if (border != null) {
-	    ct = border.getBetween();
-	}
-	STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
-	return Borders.valueOf(ptrn.intValue());
+        CTPBdr border = getCTPBrd(false);
+        CTBorder ct = null;
+        if (border != null) {
+            ct = border.getBetween();
+        }
+        STBorder.Enum ptrn = ct != null ? ct.getVal() : STBorder.NONE;
+        return Borders.valueOf(ptrn.intValue());
     }
 
     /**
@@ -544,13 +554,13 @@ public class XWPFParagraph {
      *                  boolean value
      */
     public void setPageBreak(boolean pageBreak) {
-	CTPPr ppr = getCTPPr();
-	CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
-		.getPageBreakBefore() : ppr.addNewPageBreakBefore();
-		if (pageBreak)
-		    ct_pageBreak.setVal(STOnOff.TRUE);
-		else
-		    ct_pageBreak.setVal(STOnOff.FALSE);
+        CTPPr ppr = getCTPPr();
+        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+                .getPageBreakBefore() : ppr.addNewPageBreakBefore();
+        if (pageBreak)
+            ct_pageBreak.setVal(STOnOff.TRUE);
+        else
+            ct_pageBreak.setVal(STOnOff.FALSE);
     }
 
     /**
@@ -569,14 +579,14 @@ public class XWPFParagraph {
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-	CTPPr ppr = getCTPPr();
-	CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
-		.getPageBreakBefore() : null;
-		if (ct_pageBreak != null
-			&& ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE)
-		    return true;
-		else
-		    return false;
+        CTPPr ppr = getCTPPr();
+        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+                .getPageBreakBefore() : null;
+        if (ct_pageBreak != null
+                && ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE)
+            return true;
+        else
+            return false;
     }
 
     /**
@@ -640,7 +650,7 @@ public class XWPFParagraph {
      * paragraph in the document in absolute units.
      *
      * @return bigInteger - value representing the spacing after the paragraph
-     * @see #setSpacingAfterLines(int) 
+     * @see #setSpacingAfterLines(int)
      */
     public int getSpacingAfterLines() {
         CTSpacing spacing = getCTSpacing(false);
@@ -902,12 +912,12 @@ public class XWPFParagraph {
      * @param wrap - boolean
      */
     public void setWordWrap(boolean wrap) {
-	CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-		.getWordWrap() : getCTPPr().addNewWordWrap();
-		if (wrap)
-		    wordWrap.setVal(STOnOff.TRUE);
-		else
-		    wordWrap.unsetVal();
+        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
+                .getWordWrap() : getCTPPr().addNewWordWrap();
+        if (wrap)
+            wordWrap.setVal(STOnOff.TRUE);
+        else
+            wordWrap.unsetVal();
     }
 
     /**
@@ -919,14 +929,14 @@ public class XWPFParagraph {
      * @return boolean
      */
     public boolean isWordWrap() {
-	CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-		.getWordWrap() : null;
-		if (wordWrap != null) {
-		    return (wordWrap.getVal() == STOnOff.ON
-			    || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
-				    : false;
-		} else
-		    return false;
+        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
+                .getWordWrap() : null;
+        if (wordWrap != null) {
+            return (wordWrap.getVal() == STOnOff.ON
+                    || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
+                    : false;
+        } else
+            return false;
     }
 
     /**

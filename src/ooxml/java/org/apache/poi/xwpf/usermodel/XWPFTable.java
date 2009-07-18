@@ -42,8 +42,8 @@ public class XWPFTable {
     private CTTbl ctTbl;
 
 
-    public XWPFTable(CTTbl table, int row, int col) {
-        this(table);
+    public XWPFTable(XWPFDocument doc, CTTbl table, int row, int col) {
+        this(doc, table);
         for (int i = 0; i < row; i++) {
             XWPFTableRow tabRow = (getRow(i) == null) ? createRow() : getRow(i);
             for (int k = 0; k < col; k++) {
@@ -54,7 +54,7 @@ public class XWPFTable {
     }
 
 
-    public XWPFTable(CTTbl table) {
+    public XWPFTable(XWPFDocument doc, CTTbl table) {
         this.ctTbl = table;
 
         // is an empty table: I add one row and one column as default
@@ -65,7 +65,7 @@ public class XWPFTable {
             StringBuffer rowText = new StringBuffer();
             for (CTTc cell : row.getTcArray()) {
                 for (CTP ctp : cell.getPArray()) {
-                    XWPFParagraph p = new XWPFParagraph(ctp, null);
+                    XWPFParagraph p = new XWPFParagraph(ctp, doc);
                     if (rowText.length() > 0) {
                         rowText.append('\t');
                     }

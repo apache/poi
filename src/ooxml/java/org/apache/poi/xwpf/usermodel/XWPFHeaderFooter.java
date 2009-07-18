@@ -65,7 +65,8 @@ public abstract class XWPFHeaderFooter {
 			new XWPFTable[headerFooter.getTblArray().length];
 		for(int i=0; i<tables.length; i++) {
 			tables[i] = new XWPFTable(
-					headerFooter.getTblArray(i)
+                    null,
+                    headerFooter.getTblArray(i)
 			);
 		}
 		return tables;

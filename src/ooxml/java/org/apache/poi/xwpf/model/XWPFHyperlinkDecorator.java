@@ -19,7 +19,7 @@ package org.apache.poi.xwpf.model;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 /**
  * Decorator class for XWPFParagraph allowing to add hyperlinks 

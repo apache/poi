@@ -33,6 +33,8 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">45556 - Fixed ExtractorFactory to support .xltx and .dotx files</action>
+           <action dev="POI-DEVELOPERS" type="add">45556 - Support for extraction of footnotes from docx files</action>
            <action dev="POI-DEVELOPERS" type="add">47520 - Initial support for custom XML mappings in XSSF</action>
            <action dev="POI-DEVELOPERS" type="fix">47460 - Fixed NPE when retrieving core properties from a newly created workbook</action>
            <action dev="POI-DEVELOPERS" type="fix">47498 - Fixed HyperlinkRecord to properly handle URL monikers</action>
@@ -41,7 +43,7 @@
            <action dev="POI-DEVELOPERS" type="fix">47448 - Allow HSSFEventFactory to handle non-zero padding at the end of the workbook stream</action>
            <action dev="POI-DEVELOPERS" type="add">47456 - Support for getting OLE object data in PowerPointExtractor</action>
            <action dev="POI-DEVELOPERS" type="fix">47411 - Explicitly set the 1900 date system when creating XSSF workbooks</action>
-           <action dev="POI-DEVELOPERS" type="add">47400 - Support fo text extraction of footnotes, endnotes and comments in HWPF</action>
+           <action dev="POI-DEVELOPERS" type="add">47400 - Support for text extraction of footnotes, endnotes and comments in HWPF</action>
            <action dev="POI-DEVELOPERS" type="fix">47415 - Fixed PageSettingsBlock to allow multiple PLS records</action>
            <action dev="POI-DEVELOPERS" type="fix">47412 - Fixed concurrency issue with EscherProperties.initProps()</action>
            <action dev="POI-DEVELOPERS" type="fix">47143 - Fixed OOM in HSSFWorkbook#getAllPictures when reading .xls files containing metafiles</action>
