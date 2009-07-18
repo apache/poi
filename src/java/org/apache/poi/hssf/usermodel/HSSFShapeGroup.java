@@ -31,7 +31,7 @@ public class HSSFShapeGroup
         extends HSSFShape
         implements HSSFShapeContainer
 {
-    List shapes = new ArrayList();
+    List<HSSFShape> shapes = new ArrayList<HSSFShape>();
     int x1 = 0;
     int y1  = 0 ;
     int x2 = 1023;
@@ -115,7 +115,7 @@ public class HSSFShapeGroup
     /**
      * Return all children contained by this shape.
      */
-    public List getChildren()
+    public List<HSSFShape> getChildren()
     {
         return shapes;
     }

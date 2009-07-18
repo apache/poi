@@ -73,6 +73,7 @@
                     <li><link href="#Autofit">How to adjust column width to fit the contents</link></li>
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
                     <li><link href="#Validation">Data Validation</link></li>
+                    <li><link href="#Embedded">Embedded Objects</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -1659,5 +1660,84 @@ Examples:
   dvConstraint = DVConstraint.createFormulaListConstraint("'Sheet1'!$A$1:$A$3");
       </source>
     </section>
+     <anchor id="Embedded"/>
+     <section><title>Embedded Objects</title>
+       <p>It is possible to perform more detailed processing of an embedded Excel, Word or PowerPoint document, 
+         or to work with any other type of embedded object.</p>
+       <p><strong>HSSF:</strong></p>
+       <source>
+  POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream("excel_with_embeded.xls"));
+  HSSFWorkbook workbook = new HSSFWorkbook(fs);
+  for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
+      //the OLE2 Class Name of the object
+      String oleName = obj.getOLE2ClassName();
+      if (oleName.equals("Worksheet")) {
+          DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+          HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, fs, false);
+          //System.out.println(entry.getName() + ": " + embeddedWorkbook.getNumberOfSheets());
+      } else if (oleName.equals("Document")) {
+          DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+          HWPFDocument embeddedWordDocument = new HWPFDocument(dn, fs);
+          //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
+      }  else if (oleName.equals("Presentation")) {
+          DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+          SlideShow embeddedPowerPointDocument = new SlideShow(new HSLFSlideShow(dn, fs));
+          //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
+      } else {
+          if(obj.hasDirectoryEntry()){
+              // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
+              DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+              for (Iterator entries = dn.getEntries(); entries.hasNext();) {
+                  Entry entry = (Entry) entries.next();
+                  //System.out.println(oleName + "." + entry.getName());
+              }
+          } else {
+              // There is no DirectoryEntry
+              // Recover the object's data from the HSSFObjectData instance.
+              byte[] objectData = obj.getObjectData();
+          }
+      }
+  }
+       </source>  
+       <p><strong>XSSF:</strong></p>
+       <source>
+  XSSFWorkbook workbook = new XSSFWorkbook("excel_with_embeded.xlsx");
+  for (PackagePart pPart : workbook.getAllEmbedds()) {
+      String contentType = pPart.getContentType();
+      // Excel Workbook - either binary or OpenXML
+      if (contentType.equals("application/vnd.ms-excel")) {
+          HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
+      }
+      // Excel Workbook - OpenXML file format
+      else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+          OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
+          XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(docPackage);
+      }
+      // Word Document - binary (OLE2CDF) file format
+      else if (contentType.equals("application/msword")) {
+          HWPFDocument document = new HWPFDocument(pPart.getInputStream());
+      }
+      // Word Document - OpenXML file format
+      else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+          OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
+          XWPFDocument document = new XWPFDocument(docPackage);
+      }
+      // PowerPoint Document - binary file format
+      else if (contentType.equals("application/vnd.ms-powerpoint")) {
+          HSLFSlideShow slideShow = new HSLFSlideShow(pPart.getInputStream());
+      }
+      // PowerPoint Document - OpenXML file format
+      else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+          OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
+          XSLFSlideShow slideShow = new XSLFSlideShow(docPackage);
+      }
+      // Any other type of embedded object.
+      else {
+          System.out.println("Unknown Embedded Document: " + contentType);
+          InputStream inputStream = pPart.getInputStream();
+      }
+  }
+       </source>  
+     </section>  
     </body>
 </document>
