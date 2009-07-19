@@ -157,9 +157,13 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      * Get the document properties. This gives you access to the
      *  core ooxml properties, and the extended ooxml properties.
      */
-    public POIXMLProperties getProperties() throws OpenXML4JException, IOException, XmlException {
+    public POIXMLProperties getProperties() {
         if(properties == null) {
-            properties = new POIXMLProperties(pkg);
+            try {
+                properties = new POIXMLProperties(pkg);
+            } catch (Exception e){
+                throw new POIXMLException(e);
+            }
         }
         return properties;
     }
@@ -196,6 +200,9 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     public final void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
         onSave();
+
+        //save extended and custom properties
+        getProperties().commit();
 
         getPackage().save(stream);
     }
