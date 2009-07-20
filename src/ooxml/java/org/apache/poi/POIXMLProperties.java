@@ -165,6 +165,18 @@ public class POIXMLProperties {
 		public String getTitle() {
 			return part.getTitleProperty().getValue();
 		}
+		public String getCreator() {
+			return part.getCreatorProperty().getValue();
+		}
+		public void setCreator(String creator) {
+			part.setCreatorProperty(creator);
+		}
+		public String getSubject() {
+			return part.getSubjectProperty().getValue();
+		}
+		public void setSubjectProperty(String subject) {
+			part.setSubjectProperty(subject);
+		}
 		
 		public PackagePropertiesPart getUnderlyingProperties() {
 			return part;

@@ -18,15 +18,20 @@
 
 package org.apache.poi;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.XSSFTestDataSamples;
+import java.io.File;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Test setting extended and custom OOXML properties
  */
 public class TestPOIXMLProperties extends TestCase {
+	
     public void testWorkbookExtendedProperties() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         POIXMLProperties props = workbook.getProperties();
@@ -130,5 +135,25 @@ public class TestPOIXMLProperties extends TestCase {
         assertEquals(stringValue, newpProperty.getBstr());
 
 
+    }
+    
+    public void testDocumentProperties() throws Exception {
+		File sampleFile = new File(
+				System.getProperty("HWPF.testdata.path") +
+				File.separator + "documentProperties.docx"
+		);
+		assertTrue(sampleFile.exists());
+		XWPFDocument sampleDoc;
+		sampleDoc = new XWPFDocument(
+				POIXMLDocument.openPackage(sampleFile.toString())
+		);
+		POIXMLProperties props = sampleDoc.getProperties();
+		assertNotNull(props);
+		String title = props.getCoreProperties().getTitle();
+		assertEquals("Hello World", title);
+		String creator = props.getCoreProperties().getCreator();
+		assertEquals("Paolo Mottadelli", creator);
+		String subject = props.getCoreProperties().getSubject();
+		assertEquals("Greetings", subject);
     }
 }
