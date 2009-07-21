@@ -19,10 +19,12 @@
 package org.apache.poi;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -31,6 +33,23 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * Test setting extended and custom OOXML properties
  */
 public class TestPOIXMLProperties extends TestCase {
+	POIXMLProperties props;
+	CoreProperties coreProperties;
+	
+	public void setUp() throws Exception{
+		File sampleFile = new File(
+				System.getProperty("HWPF.testdata.path") +
+				File.separator + "documentProperties.docx"
+		);
+		assertTrue(sampleFile.exists());
+		XWPFDocument sampleDoc;
+		sampleDoc = new XWPFDocument(
+				POIXMLDocument.openPackage(sampleFile.toString())
+		);
+		props = sampleDoc.getProperties();
+		coreProperties = props.getCoreProperties();
+		assertNotNull(props);
+	}
 	
     public void testWorkbookExtendedProperties() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -137,23 +156,29 @@ public class TestPOIXMLProperties extends TestCase {
 
     }
     
-    public void testDocumentProperties() throws Exception {
-		File sampleFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "documentProperties.docx"
-		);
-		assertTrue(sampleFile.exists());
-		XWPFDocument sampleDoc;
-		sampleDoc = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
-		POIXMLProperties props = sampleDoc.getProperties();
-		assertNotNull(props);
-		String title = props.getCoreProperties().getTitle();
-		assertEquals("Hello World", title);
-		String creator = props.getCoreProperties().getCreator();
+    public void testDocumentProperties() {
+		String category = coreProperties.getCategory();
+		assertEquals("test", category);
+		String contentStatus = "Draft";
+		coreProperties.setContentStatus(contentStatus);
+		assertEquals("Draft", contentStatus);
+		Date created = coreProperties.getCreated();
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy");
+		assertEquals("Mon, Jul 20, '09", formatter.format(created));
+		String creator = coreProperties.getCreator();
 		assertEquals("Paolo Mottadelli", creator);
-		String subject = props.getCoreProperties().getSubject();
+		String subject = coreProperties.getSubject();
 		assertEquals("Greetings", subject);
+		String title = coreProperties.getTitle();
+		assertEquals("Hello World", title);
+    }
+    
+    public void testGetSetRevision() {
+		String revision = coreProperties.getRevision();
+		assertTrue("Revision number is 1", new Integer(coreProperties.getRevision()).intValue() > 1);
+		coreProperties.setRevision("20");
+		assertEquals("20", coreProperties.getRevision());
+		coreProperties.setRevision("20xx");
+		assertEquals("20", coreProperties.getRevision());
     }
 }

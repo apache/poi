@@ -18,16 +18,22 @@ package org.apache.poi;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
 
 /**
  * Wrapper around the two different kinds of OOXML properties 
@@ -159,11 +165,32 @@ public class POIXMLProperties {
 			this.part = part;
 		}
 		
-		public void setTitle(String title) {
-			part.setTitleProperty(title);
+		public String getCategory() {
+			return part.getCategoryProperty().getValue();
 		}
-		public String getTitle() {
-			return part.getTitleProperty().getValue();
+		public void setCategory(String category) {
+			part.setCategoryProperty(category);
+		}
+		public String getContentStatus() {
+			return part.getContentStatusProperty().getValue();
+		}
+		public void setContentStatus(String contentStatus) {
+			part.setContentStatusProperty(contentStatus);
+		}
+		public String getContentType() {
+			return part.getContentTypeProperty().getValue();
+		}
+		public void setContentType(String contentType) {
+			part.setContentTypeProperty(contentType);
+		}
+		public Date getCreated() {
+			return part.getCreatedProperty().getValue();
+		}
+		public void setCreated(Nullable<Date> date) {
+			part.setCreatedProperty(date);
+		}
+		public void setCreated(String date) {
+			part.setCreatedProperty(date);
 		}
 		public String getCreator() {
 			return part.getCreatorProperty().getValue();
@@ -171,11 +198,57 @@ public class POIXMLProperties {
 		public void setCreator(String creator) {
 			part.setCreatorProperty(creator);
 		}
+		public String getDescription() {
+			return part.getDescriptionProperty().getValue();
+		}
+		public void setDescription(String description) {
+			part.setDescriptionProperty(description);
+		}
+		public String getIdentifier() {
+			return part.getIdentifierProperty().getValue();
+		}
+		public void setIdentifier(String identifier) {
+			part.setIdentifierProperty(identifier);
+		}
+		public Date getLastPrinted() {
+			return part.getLastPrintedProperty().getValue();
+		}
+		public void setLastPrinted(Nullable<Date> date) {
+			part.setLastPrintedProperty(date);
+		}
+		public void setLastPrinted(String date) {
+			part.setLastPrintedProperty(date);
+		}
+		public Date getModified() {
+			return part.getModifiedProperty().getValue();
+		}
+		public void setModified(Nullable<Date> date) {
+			part.setModifiedProperty(date);
+		}
+		public void setModified(String date) {
+			part.setModifiedProperty(date);
+		}
 		public String getSubject() {
 			return part.getSubjectProperty().getValue();
 		}
 		public void setSubjectProperty(String subject) {
 			part.setSubjectProperty(subject);
+		}
+		public void setTitle(String title) {
+			part.setTitleProperty(title);
+		}
+		public String getTitle() {
+			return part.getTitleProperty().getValue();
+		}
+		public String getRevision() {
+			return part.getRevisionProperty().getValue();
+		}
+		public void setRevision(String revision) {
+			try {
+				new Long(revision);
+				part.setRevisionProperty(revision);
+			}
+			catch (NumberFormatException e) {}
 		}
 		
 		public PackagePropertiesPart getUnderlyingProperties() {
