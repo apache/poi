@@ -26,13 +26,19 @@ abstract class TwoOperandNumericOperation implements OperationEval {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
 	}
-	
+
 	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		double result;
 		try {
 			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
 			double d1 = singleOperandEvaluate(args[1], srcCellRow, srcCellCol);
 			result = evaluate(d0, d1);
+			if (result == 0.0) { // this '==' matches +0.0 and -0.0
+				// Excel converts -0.0 to +0.0 for '*', '/', '%', '+' and '^'
+				if (!(this instanceof SubtractEval)) {
+					return NumberEval.ZERO;
+				}
+			}
 			if (Double.isNaN(result) || Double.isInfinite(result)) {
 				return ErrorEval.NUM_ERROR;
 			}

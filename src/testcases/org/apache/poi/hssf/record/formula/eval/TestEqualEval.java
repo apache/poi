@@ -93,12 +93,21 @@ public final class TestEqualEval extends TestCase {
 	}
 
 	/**
-	 * Excel considers -0.0 to be equal to 0.0
+	 * Bug 47198 involved a formula "-A1=0" where cell A1 was 0.0.
+	 * Excel evaluates "-A1=0" to TRUE, not because it thinks -0.0==0.0 
+	 * but because "-A1" evaluated to +0.0
+	 * <p/>
+	 * Note - the original diagnosis of bug 47198 was that 
+	 * "Excel considers -0.0 to be equal to 0.0" which is NQR
+	 * See {@link TestMinusZeroResult} for more specific tests regarding -0.0.
 	 */
 	public void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
 		NumberEval mZero = (NumberEval) UnaryMinusEval.instance.evaluate(new Eval[] { zero, }, 0,
 				(short) 0);
+		if (Double.doubleToLongBits(mZero.getNumberValue()) == 0x8000000000000000L) {
+			throw new AssertionFailedError("Identified bug 47198: unary minus should convert -0.0 to 0.0");
+		}
 		Eval[] args = { zero, mZero, };
 		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
 		if (!result.getBooleanValue()) {

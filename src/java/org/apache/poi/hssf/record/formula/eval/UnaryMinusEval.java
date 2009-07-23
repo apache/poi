@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public final class UnaryMinusEval implements OperationEval {
 
@@ -40,6 +40,9 @@ public final class UnaryMinusEval implements OperationEval {
 			d = OperandResolver.coerceValueToDouble(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
+		}
+		if (d == 0.0) { // this '==' matches +0.0 and -0.0
+			return NumberEval.ZERO;
 		}
 		return new NumberEval(-d);
 	}

@@ -26,16 +26,16 @@ import java.math.BigInteger;
  * <ul>
  * <li>No more than 15 significant figures are output (java does 18).</li>
  * <li>The sign char for the exponent is included even if positive</li>
- * <li>Special values (<tt>NaN</tt> and <tt>Infinity</tt>) get rendered like the ordinary 
+ * <li>Special values (<tt>NaN</tt> and <tt>Infinity</tt>) get rendered like the ordinary
  * number that the bit pattern represents.</li>
  * <li>Denormalised values (between &plusmn;2<sup>-1074</sup> and &plusmn;2<sup>-1022</sup>
  *  are displayed as "0"</sup>
  * </ul>
  * IEEE 64-bit Double Rendering Comparison
- * 
+ *
  * <table border="1" cellpadding="2" cellspacing="0" summary="IEEE 64-bit Double Rendering Comparison">
  * <tr><th>Raw bits</th><th>Java</th><th>Excel</th></tr>
- * 
+ *
  * <tr><td>0x0000000000000000L</td><td>0.0</td><td>0</td></tr>
  * <tr><td>0x3FF0000000000000L</td><td>1.0</td><td>1</td></tr>
  * <tr><td>0x3FF00068DB8BAC71L</td><td>1.0001</td><td>1.0001</td></tr>
@@ -96,8 +96,8 @@ import java.math.BigInteger;
  * <tr><td>0x7FFFFFFFFFFFFFFFL</td><td>NaN</td><td>3.5953862697246E+308</td></tr>
  * <tr><td>0xFFF7FFFFFFFFFFFFL</td><td>NaN</td><td>2.6965397022935E+308</td></tr>
  * </table>
- * 
- * <b>Note</b>:  
+ *
+ * <b>Note</b>:
  * Excel has inconsistent rules for the following numeric operations:
  * <ul>
  * <li>Conversion to string (as handled here)</li>
@@ -105,10 +105,10 @@ import java.math.BigInteger;
  * <li>Conversion from text</li>
  * <li>General arithmetic</li>
  * </ul>
- * Excel's text to number conversion is not a true <i>inverse</i> of this operation.  The 
+ * Excel's text to number conversion is not a true <i>inverse</i> of this operation.  The
  * allowable ranges are different.  Some numbers that don't correctly convert to text actually
  * <b>do</b> get handled properly when used in arithmetic evaluations.
- * 
+ *
  * @author Josh Micich
  */
 public final class NumberToTextConverter {
@@ -119,49 +119,49 @@ public final class NumberToTextConverter {
 	private static final int  FRAC_BITS_WIDTH = EXPONENT_SHIFT;
 	private static final int  EXPONENT_BIAS  = 1023;
 	private static final long FRAC_ASSUMED_HIGH_BIT = ( 1L<<EXPONENT_SHIFT );
-	
+
 	private static final long EXCEL_NAN_BITS = 0xFFFF0420003C0000L;
 	private static final int MAX_TEXT_LEN = 20;
-	
+
 	private static final int DEFAULT_COUNT_SIGNIFICANT_DIGITS = 15;
 	private static final int MAX_EXTRA_ZEROS = MAX_TEXT_LEN - DEFAULT_COUNT_SIGNIFICANT_DIGITS;
 	private static final float LOG2_10 = 3.32F;
-	
+
 
 	private NumberToTextConverter() {
 		// no instances of this class
 	}
 
 	/**
-	 * Converts the supplied <tt>value</tt> to the text representation that Excel would give if 
+	 * Converts the supplied <tt>value</tt> to the text representation that Excel would give if
 	 * the value were to appear in an unformatted cell, or as a literal number in a formula.<br/>
 	 * Note - the results from this method differ slightly from those of <tt>Double.toString()</tt>
 	 * In some special cases Excel behaves quite differently.  This function attempts to reproduce
-	 * those results. 
+	 * those results.
 	 */
 	public static String toText(double value) {
 		return rawDoubleBitsToText(Double.doubleToLongBits(value));
 	}
 	/* package */ static String rawDoubleBitsToText(long pRawBits) {
-		
+
 		long rawBits = pRawBits;
 		boolean isNegative = rawBits < 0; // sign bit is in the same place for long and double
 		if (isNegative) {
 			rawBits &= 0x7FFFFFFFFFFFFFFFL;
 		}
-		
+
 		int biasedExponent = (int) ((rawBits & expMask) >> EXPONENT_SHIFT);
 		if (biasedExponent == 0) {
 			// value is 'denormalised' which means it is less than 2^-1022
 			// excel displays all these numbers as zero, even though calculations work OK
-			return "0";
+			return isNegative ? "-0" : "0";
 		}
-		
-		int exponent = biasedExponent - EXPONENT_BIAS; 
-		
+
+		int exponent = biasedExponent - EXPONENT_BIAS;
+
 		long fracBits = FRAC_ASSUMED_HIGH_BIT | rawBits & FRAC_MASK;
-		
-		
+
+
 		// Start by converting double value to BigDecimal
 		BigDecimal bd;
 		if (biasedExponent == 0x07FF) {
@@ -175,26 +175,26 @@ public final class NumberToTextConverter {
 			isNegative = false; // except that the sign bit is ignored
 		}
 		bd = convertToBigDecimal(exponent, fracBits);
-		
+
 		return formatBigInteger(isNegative, bd.unscaledValue(), bd.scale());
 	}
 
 	private static BigDecimal convertToBigDecimal(int exponent, long fracBits) {
 		byte[] joob = {
-				(byte) (fracBits >> 48), 	
-				(byte) (fracBits >> 40), 	
-				(byte) (fracBits >> 32), 	
-				(byte) (fracBits >> 24), 	
-				(byte) (fracBits >> 16), 	
-				(byte) (fracBits >>  8), 	
-				(byte) (fracBits >>  0), 	
+				(byte) (fracBits >> 48),
+				(byte) (fracBits >> 40),
+				(byte) (fracBits >> 32),
+				(byte) (fracBits >> 24),
+				(byte) (fracBits >> 16),
+				(byte) (fracBits >>  8),
+				(byte) (fracBits >>  0),
 		};
-		
+
 		BigInteger bigInt = new BigInteger(joob);
 		int lastSigBitIndex = exponent-FRAC_BITS_WIDTH;
 		if(lastSigBitIndex < 0) {
 			BigInteger shifto = new BigInteger("1").shiftLeft(-lastSigBitIndex);
-			int scale = 1 -(int) (lastSigBitIndex/LOG2_10); 
+			int scale = 1 -(int) (lastSigBitIndex/LOG2_10);
 			BigDecimal bd1 = new BigDecimal(bigInt);
 			BigDecimal bdShifto = new BigDecimal(shifto);
 			return bd1.divide(bdShifto, scale, BigDecimal.ROUND_HALF_UP);
@@ -208,10 +208,10 @@ public final class NumberToTextConverter {
 		if (scale < 0) {
 			throw new RuntimeException("negative scale");
 		}
-		
+
 		StringBuffer sb = new StringBuffer(unscaledValue.toString());
 		int numberOfLeadingZeros = -1;
-		
+
 		int unscaledLength = sb.length();
 		if (scale > 0 && scale >= unscaledLength) {
 			// less than one
@@ -226,7 +226,7 @@ public final class NumberToTextConverter {
 		}
 		return sb.toString();
 	}
-	
+
 	private static int getNumberOfSignificantFiguresDisplayed(int exponent) {
 		int nLostDigits; // number of significand digits lost due big exponents
 		if(exponent > 99) {
@@ -241,19 +241,19 @@ public final class NumberToTextConverter {
 		}
 		return DEFAULT_COUNT_SIGNIFICANT_DIGITS - nLostDigits;
 	}
-	
+
 	private static boolean needsScientificNotation(int nDigits) {
 		return nDigits > MAX_TEXT_LEN;
 	}
 
 	private static void formatGreaterThanOne(StringBuffer sb, int nIntegerDigits) {
-		
+
 		int maxSigFigs = getNumberOfSignificantFiguresDisplayed(nIntegerDigits);
 		int decimalPointIndex = nIntegerDigits;
 		boolean roundCausedCarry = performRound(sb, 0, maxSigFigs);
 
 		int endIx = Math.min(maxSigFigs, sb.length()-1);
-		
+
 		int nSigFigures;
 		if(roundCausedCarry) {
 			sb.insert(0, '1');
@@ -292,11 +292,11 @@ public final class NumberToTextConverter {
 		if (pAbsExponent < 1) {
 			throw new IllegalArgumentException("abs(exponent) must be positive");
 		}
-		
+
 		int numberOfLeadingZeros = pAbsExponent-1;
-		int absExponent = pAbsExponent; 
-		int maxSigFigs = getNumberOfSignificantFiguresDisplayed(-absExponent); 
-		
+		int absExponent = pAbsExponent;
+		int maxSigFigs = getNumberOfSignificantFiguresDisplayed(-absExponent);
+
 		boolean roundCausedCarry = performRound(sb, 0, maxSigFigs);
 		int nRemainingSigFigs;
 		if(roundCausedCarry) {
@@ -309,9 +309,9 @@ public final class NumberToTextConverter {
 			nRemainingSigFigs = countSignifantDigits(sb, 0 + maxSigFigs);
 			sb.setLength(nRemainingSigFigs);
 		}
-		
+
 		int normalLength = 2 + numberOfLeadingZeros + nRemainingSigFigs; // 2 == "0.".length()
-		
+
 		if (needsScientificNotation(normalLength)) {
 			if (sb.length()>1) {
 				sb.insert(1, '.');
@@ -319,7 +319,7 @@ public final class NumberToTextConverter {
 			sb.append('E');
 			sb.append('-');
 			appendExp(sb, absExponent);
-		} else { 
+		} else {
 			sb.insert(0, "0.");
 			for(int i=numberOfLeadingZeros; i>0; i--) {
 				sb.insert(2, '0');
@@ -345,7 +345,7 @@ public final class NumberToTextConverter {
 			return;
 		}
 		sb.append(val);
-		
+
 	}
 
 
@@ -391,12 +391,12 @@ public final class NumberToTextConverter {
 		while(sb.charAt(changeDigitIx) == '9') {
 			sb.setCharAt(changeDigitIx, '0');
 			changeDigitIx--;
-			// All nines, rounded up.  Notify caller 
+			// All nines, rounded up.  Notify caller
 			if(changeDigitIx < 0) {
 				return true;
 			}
 		}
-		// no more '9's to round up.  
+		// no more '9's to round up.
 		// Last digit to be changed is still inside sb
 		char prevDigit = sb.charAt(changeDigitIx);
 		sb.setCharAt(changeDigitIx, (char) (prevDigit + 1));
