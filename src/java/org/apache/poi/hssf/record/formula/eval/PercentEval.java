@@ -34,14 +34,17 @@ public final class PercentEval implements OperationEval {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		double d0;
+		double d;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRow, srcCol);
-			d0 = OperandResolver.coerceValueToDouble(ve);
+			d = OperandResolver.coerceValueToDouble(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		return new NumberEval(d0 / 100);
+		if (d == 0.0) { // this '==' matches +0.0 and -0.0
+			return NumberEval.ZERO;
+		}
+		return new NumberEval(d / 100);
 	}
 
 	public int getNumberOfOperands() {

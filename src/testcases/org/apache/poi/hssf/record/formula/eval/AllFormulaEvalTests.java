@@ -22,11 +22,11 @@ import junit.framework.TestSuite;
 
 /**
  * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
- * 
+ *
  * @author Josh Micich
  */
 public class AllFormulaEvalTests {
-	
+
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
 		result.addTestSuite(TestAreaEval.class);
@@ -36,6 +36,7 @@ public class AllFormulaEvalTests {
 		result.addTestSuite(TestExternalFunction.class);
 		result.addTestSuite(TestFormulaBugs.class);
 		result.addTestSuite(TestFormulasFromSpreadsheet.class);
+		result.addTestSuite(TestMinusZeroResult.class);
 		result.addTestSuite(TestMissingArgEval.class);
 		result.addTestSuite(TestPercentEval.class);
 		result.addTestSuite(TestRangeEval.class);
