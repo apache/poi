@@ -17,47 +17,44 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.ConcatPtg;
-
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
  */
 public final class ConcatEval implements OperationEval {
 
-    private ConcatPtg delegate;
+	public static final OperationEval instance = new ConcatEval();
 
-    public ConcatEval(ConcatPtg ptg) {
-        delegate = ptg;
-    }
+	private ConcatEval() {
+		// enforce singleton
+	}
 
-    public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
-    	if(args.length != 2) {
-    		return ErrorEval.VALUE_INVALID;
-    	}
-        StringBuffer sb = new StringBuffer();
-        try {
-			for (int i = 0; i < 2; i++) { 
-			    
-			    ValueEval ve = OperandResolver.getSingleValue(args[i], srcRow, srcCol);
-			    if (ve instanceof StringValueEval) {
-			        StringValueEval sve = (StringValueEval) ve;
-			        sb.append(sve.getStringValue());
-			    } else if (ve == BlankEval.INSTANCE) {
-			        // do nothing
-			    } else {
-			        throw new RuntimeException("Unexpected value type (" 
-			        		+ ve.getClass().getName() + ")");
-			    }
+	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+		if(args.length != 2) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		StringBuffer sb = new StringBuffer();
+		try {
+			for (int i = 0; i < 2; i++) {
+
+				ValueEval ve = OperandResolver.getSingleValue(args[i], srcRow, srcCol);
+				if (ve instanceof StringValueEval) {
+					StringValueEval sve = (StringValueEval) ve;
+					sb.append(sve.getStringValue());
+				} else if (ve == BlankEval.INSTANCE) {
+					// do nothing
+				} else {
+					throw new RuntimeException("Unexpected value type ("
+							+ ve.getClass().getName() + ")");
+				}
 			}
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-        
-        return new StringEval(sb.toString());
-    }
 
-    public int getNumberOfOperands() {
-        return delegate.getNumberOfOperands();
-    }
+		return new StringEval(sb.toString());
+	}
+
+	public int getNumberOfOperands() {
+		return 2;
+	}
 }

@@ -84,6 +84,7 @@ final class OperationEvaluatorFactory {
 		m.put(LessThanPtg.class, LessThanEval.instance);
 		m.put(NotEqualPtg.class, NotEqualEval.instance);
 
+		m.put(ConcatPtg.class, ConcatEval.instance);
 		m.put(AddPtg.class, AddEval.instance);
 		m.put(DividePtg.class, DivideEval.instance);
 		m.put(MultiplyPtg.class, MultiplyEval.instance);
@@ -112,15 +113,12 @@ final class OperationEvaluatorFactory {
 		if (result != null) {
 			return  result;
 		}
-		
+
 		if (ptgClass == FuncPtg.class) {
 			return new FuncVarEval((FuncPtg)ptg);
 		}
 		if (ptgClass == FuncVarPtg.class) {
 			return new FuncVarEval((FuncVarPtg)ptg);
-		}
-		if (ptgClass == ConcatPtg.class) {
-			return new ConcatEval((ConcatPtg)ptg);
 		}
 		throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 	}
