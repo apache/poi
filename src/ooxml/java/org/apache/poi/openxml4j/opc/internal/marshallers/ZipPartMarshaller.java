@@ -163,7 +163,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 			} else {
                 URI targetURI = rel.getTargetURI();
                 targetValue = PackagingURIHelper.relativizeURI(
-						sourcePartURI, targetURI).getPath();
+						sourcePartURI, targetURI, true).getPath();
                 if (targetURI.getRawFragment() != null) {
                     targetValue += "#" + targetURI.getRawFragment();
                 }

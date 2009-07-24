@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.TreeMap;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -36,11 +37,14 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+import org.dom4j.io.SAXReader;
 
 public final class TestPackage extends TestCase {
 	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
@@ -185,16 +189,17 @@ public final class TestPackage extends TestCase {
         // Save and re-load
         pkg.close();
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
-        FileOutputStream fout = new FileOutputStream(tmp);
+            FileOutputStream fout = new FileOutputStream(tmp);
         fout.write(baos.toByteArray());
         fout.close();
         pkg = OPCPackage.open(tmp.getPath());
         //tmp.delete();
-        
+
         // Check still right
         coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         assertEquals(1, coreRels.size());
         coreRel = coreRels.getRelationship(0);
+
         assertEquals("/", coreRel.getSourceURI().toString());
         assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
         corePart = pkg.getPart(coreRel);
@@ -205,10 +210,30 @@ public final class TestPackage extends TestCase {
         rel = rels.getRelationship(0);
         assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
 
+        assertMSCompatibility(pkg);
+    }
+
+    private void assertMSCompatibility(OPCPackage pkg) throws Exception {
+        PackagePartName relName = PackagingURIHelper.createPartName(PackageRelationship.getContainerPartRelationship());
+        PackagePart relPart = pkg.getPart(relName);
+        SAXReader reader = new SAXReader();
+        Document xmlRelationshipsDoc = reader
+                .read(relPart.getInputStream());
+
+        Element root = xmlRelationshipsDoc.getRootElement();
+        for (Iterator i = root
+                .elementIterator(PackageRelationship.RELATIONSHIP_TAG_NAME); i
+                .hasNext();) {
+            Element element = (Element) i.next();
+            String value = element.attribute(
+                    PackageRelationship.TARGET_ATTRIBUTE_NAME)
+                    .getValue();
+            assertTrue("Root target must not start with a leadng slash ('/'): " + value, value.charAt(0) != '/');
+        }
 
     }
 
-	/**
+    /**
 	 * Test package opening.
 	 */
 	public void testOpenPackage() throws Exception {

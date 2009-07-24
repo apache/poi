@@ -136,7 +136,7 @@ public final class PackageRelationship {
 
 	/* Getters */
 
-	public URI getContainerPartRelationship() {
+	public static URI getContainerPartRelationship() {
 		return containerRelationshipPart;
 	}
 

@@ -21,6 +21,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -119,4 +120,12 @@ public class TestXWPFDocument extends TestCase {
 		assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
 		assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
+
+    public void testWorkbookProperties() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        POIXMLProperties props = doc.getProperties();
+        assertNotNull(props);
+        assertEquals("Microsoft Office Word", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+    }
+
 }
