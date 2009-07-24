@@ -31,8 +31,6 @@ public class TestPackagingURIHelper extends TestCase {
 
 	/**
 	 * Test relativizePartName() method.
-     *
-     * TODO: fix and unable
 	 */
 	public void testRelativizeURI() throws Exception {
 		URI uri1 = new URI("/word/document.xml");
@@ -54,23 +52,15 @@ public class TestPackagingURIHelper extends TestCase {
 		URI retURI2 = PackagingURIHelper.relativizeURI(uri1, uri1);
 		assertEquals("", retURI2.getPath());
 
-		// Document and root totally different
-		URI uri4 = new URI("/");
-		try {
-			PackagingURIHelper.relativizeURI(uri1, uri4);
-			//TODO: figure oout why the assertion fails
-            //fail("Must throw an exception ! Can't relativize with an empty URI");
-		} catch (Exception e) {
-			// Do nothing
-		}
-		try {
-			PackagingURIHelper.relativizeURI(uri4, uri1);
-            //TODO: figure oout why the assertion fails
-			//fail("Must throw an exception ! Can't relativize with an empty URI");
-		} catch (Exception e) {
-			// Do nothing
-		}
-	}
+		// relativization against root
+		URI root = new URI("/");
+        uriRes = PackagingURIHelper.relativizeURI(root, uri1);
+        assertEquals("/word/document.xml", uriRes.toString());
+
+        //URI compatible with MS Office and OpenOffice: leading slash is removed
+        uriRes = PackagingURIHelper.relativizeURI(root, uri1, true);
+        assertEquals("word/document.xml", uriRes.toString());
+    }
 
 	/**
 	 * Test createPartName(String, y)

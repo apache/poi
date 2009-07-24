@@ -22,10 +22,6 @@
 <document>
     <header>
         <title>Busy Developers' Guide to HSSF and XSSF Features</title>
-        <authors>
-            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="CO"/>
-            <person email="user@poi.apache.org" name="Yegor Kozlov" id="YK"/>
-        </authors>
     </header>
     <body>
         <section><title>Busy Developers' Guide to Features</title>

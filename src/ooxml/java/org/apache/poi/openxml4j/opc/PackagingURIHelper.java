@@ -259,11 +259,14 @@ public final class PackagingURIHelper {
 	 *            The source part URI.
 	 * @param targetURI
 	 *            The target part URI.
+     * @param  msCompatible if true then remove leading slash from the relativized URI.
+     *         This flag violates [M1.4]: A part name shall start with a forward slash ('/') character, but
+     *         allows generating URIs compatible with MS Office and OpenOffice.
 	 * @return A fully relativize part name URI ('word/media/image1.gif',
 	 *         '/word/document.xml' => 'media/image1.gif') else
 	 *         <code>null</code>.
 	 */
-	public static URI relativizeURI(URI sourceURI, URI targetURI) {
+	public static URI relativizeURI(URI sourceURI, URI targetURI, boolean msCompatible) {
 		StringBuilder retVal = new StringBuilder();
 		String[] segmentsSource = sourceURI.getPath().split("/", -1);
 		String[] segmentsTarget = targetURI.getPath().split("/", -1);
@@ -283,6 +286,15 @@ public final class PackagingURIHelper {
 		// If the source is the root, then the relativized
 		//  form must actually be an absolute URI
 		if(sourceURI.toString().equals("/")) {
+            String path = targetURI.getPath();
+            if(msCompatible && path.charAt(0) == '/') {
+                try {
+                    targetURI = new URI(path.substring(1));
+                } catch (Exception e) {
+                    System.err.println(e);
+                    return null;
+                }
+            }
 			return targetURI;
 		}
 
@@ -358,7 +370,22 @@ public final class PackagingURIHelper {
 		}
 	}
 
-	/**
+    /**
+     * Fully relativize the source part URI against the target part URI.
+     *
+     * @param sourceURI
+     *            The source part URI.
+     * @param targetURI
+     *            The target part URI.
+     * @return A fully relativize part name URI ('word/media/image1.gif',
+     *         '/word/document.xml' => 'media/image1.gif') else
+     *         <code>null</code>.
+     */
+    public static URI relativizeURI(URI sourceURI, URI targetURI) {
+        return relativizeURI(sourceURI, targetURI, false);        
+    }
+
+    /**
 	 * Resolve a source uri against a target.
 	 *
 	 * @param sourcePartUri

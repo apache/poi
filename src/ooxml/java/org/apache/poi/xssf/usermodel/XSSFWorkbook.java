@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -227,6 +228,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTBookView bv = bvs.addNewWorkbookView();
         bv.setActiveTab(0);
         workbook.addNewSheets();
+
+        //required by Excel 2008 Mac sp2, see Bugzilla #47559
+        POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
+        expProps.getUnderlyingProperties().setApplication("Microsoft Excel");
 
         sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
         stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());

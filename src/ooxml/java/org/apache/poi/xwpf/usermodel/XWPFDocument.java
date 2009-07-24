@@ -23,6 +23,7 @@ import java.util.*;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlException;
@@ -187,6 +188,9 @@ public class XWPFDocument extends POIXMLDocument {
 
         ctDocument = CTDocument1.Factory.newInstance();
         ctDocument.addNewBody();
+
+        POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
+        expProps.getUnderlyingProperties().setApplication("Microsoft Office Word");
     }
 
     /**
