@@ -197,6 +197,9 @@ public class RecordFactoryInputStream {
                 } else if (lastRecord instanceof DrawingGroupRecord) {
                     ((DrawingGroupRecord) lastRecord).processContinueRecord(contRec.getData());
                     return null;
+                } else if (lastRecord instanceof DrawingRecord) {
+                    ((DrawingRecord) lastRecord).processContinueRecord(contRec.getData());
+                    return null;
                 } else if (lastRecord instanceof UnknownRecord) {
                     //Gracefully handle records that we don't know about,
                     //that happen to be continued
