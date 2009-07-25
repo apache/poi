@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -56,23 +57,18 @@ public class XWPFParagraph {
             // TODO - replace this with some sort of XPath expression
             // to directly find all the CTRs, in the right order
             ArrayList<CTR> rs = new ArrayList<CTR>();
-            CTR[] tmp;
+            rs.addAll(Arrays.asList(paragraph.getRArray()));
 
-            // Get the main text runs
-            tmp = paragraph.getRArray();
-            for (int i = 0; i < tmp.length; i++) {
-                rs.add(tmp[i]);
+            for (CTSdtRun sdt : paragraph.getSdtArray()) {
+                CTSdtContentRun run = sdt.getSdtContent();
+                rs.addAll(Arrays.asList(run.getRArray()));
+            }
+            for (CTRunTrackChange c : paragraph.getDelArray()) {
+                rs.addAll(Arrays.asList(c.getRArray()));
             }
 
-            // Not sure quite what these are, but they hold
-            // more text runs
-            CTSdtRun[] sdts = paragraph.getSdtArray();
-            for (int i = 0; i < sdts.length; i++) {
-                CTSdtContentRun run = sdts[i].getSdtContent();
-                tmp = run.getRArray();
-                for (int j = 0; j < tmp.length; j++) {
-                    rs.add(tmp[j]);
-                }
+            for (CTRunTrackChange c : paragraph.getInsArray()) {
+                rs.addAll(Arrays.asList(c.getRArray()));
             }
 
             // Get text of the paragraph
