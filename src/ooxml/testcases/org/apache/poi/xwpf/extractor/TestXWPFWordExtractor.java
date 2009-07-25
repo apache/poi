@@ -192,6 +192,13 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("XXX"));
     }
 
+    public void testInsertedDeletedText() throws Exception {
+        XWPFDocument doc = open("delins.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        assertTrue(extractor.getText().contains("pendant worn"));
+        assertTrue(extractor.getText().contains("extremely well"));
+    }
 
     //TODO use the same logic for opening test files as in HSSFTestDataSamples
     private XWPFDocument open(String sampleFileName) throws IOException {
