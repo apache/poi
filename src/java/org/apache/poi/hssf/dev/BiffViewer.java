@@ -48,7 +48,7 @@ import org.apache.poi.util.LittleEndian;
 public final class BiffViewer {
 	static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
 
-	private BiffViewer() {
+    private BiffViewer() {
 		// no instances of this class
 	}
 
@@ -294,8 +294,10 @@ public final class BiffViewer {
 						noint = true;
 					} else if ("--out".equals(arg)) {
 						out = true;
-					} else if ("--rawhex".equals(arg)) {
-						rawhex = true;
+					} else if ("--escher".equals(arg)) {
+						System.setProperty("poi.deserialize.escher", "true");
+                    } else if ("--rawhex".equals(arg)) {
+                        rawhex = true;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}
@@ -342,7 +344,7 @@ public final class BiffViewer {
 	 *
 	 * <b>Usage</b>:<br/>
 	 *
-	 * BiffViewer [--biffhex] [--noint] [--out] &lt;fileName&gt; <br/>
+	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt; <br/>
 	 * BiffViewer --rawhex  [--out] &lt;fileName&gt; <br/>
 	 * <br/>
 	 *
@@ -351,10 +353,8 @@ public final class BiffViewer {
 	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
 	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
 	 * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
+     * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
 	 * </table>
-	 *
-	 * Define the system property <code>poi.deserialize.escher</code> to turn on
-	 * deserialization of escher records.
 	 *
 	 */
 	public static void main(String[] args) {
@@ -366,9 +366,6 @@ public final class BiffViewer {
 			e.printStackTrace();
 			return;
 		}
-
-		System.setProperty("poi.deserialize.escher", "true");
-
 
 		try {
 
