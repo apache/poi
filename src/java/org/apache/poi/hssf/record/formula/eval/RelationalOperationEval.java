@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.ss.util.NumberComparer;
+
 /**
  * Base class for all comparison operator evaluators
  *
@@ -108,8 +110,7 @@ public abstract class RelationalOperationEval implements OperationEval {
 			if (vb instanceof NumberEval) {
 				NumberEval nA = (NumberEval) va;
 				NumberEval nB = (NumberEval) vb;
-				// Excel considers -0.0 < 0.0 which is the same as Double.compare()
-				return Double.compare(nA.getNumberValue(), nB.getNumberValue());
+				return NumberComparer.compare(nA.getNumberValue(), nB.getNumberValue());
 			}
 		}
 		throw new IllegalArgumentException("Bad operand types (" + va.getClass().getName() + "), ("
@@ -126,7 +127,7 @@ public abstract class RelationalOperationEval implements OperationEval {
 		}
 		if (v instanceof NumberEval) {
 			NumberEval ne = (NumberEval) v;
-			return Double.compare(0, ne.getNumberValue());
+			return NumberComparer.compare(0.0, ne.getNumberValue());
 		}
 		if (v instanceof StringEval) {
 			StringEval se = (StringEval) v;

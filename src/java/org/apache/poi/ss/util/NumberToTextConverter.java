@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * Excel converts numbers to text with different rules to those of java, so
@@ -113,20 +111,8 @@ import java.math.BigInteger;
  */
 public final class NumberToTextConverter {
 
-	private static final long expMask  = 0x7FF0000000000000L;
-	private static final long FRAC_MASK= 0x000FFFFFFFFFFFFFL;
-	private static final int  EXPONENT_SHIFT = 52;
-	private static final int  FRAC_BITS_WIDTH = EXPONENT_SHIFT;
-	private static final int  EXPONENT_BIAS  = 1023;
-	private static final long FRAC_ASSUMED_HIGH_BIT = ( 1L<<EXPONENT_SHIFT );
-
 	private static final long EXCEL_NAN_BITS = 0xFFFF0420003C0000L;
 	private static final int MAX_TEXT_LEN = 20;
-
-	private static final int DEFAULT_COUNT_SIGNIFICANT_DIGITS = 15;
-	private static final int MAX_EXTRA_ZEROS = MAX_TEXT_LEN - DEFAULT_COUNT_SIGNIFICANT_DIGITS;
-	private static final float LOG2_10 = 3.32F;
-
 
 	private NumberToTextConverter() {
 		// no instances of this class
@@ -149,186 +135,110 @@ public final class NumberToTextConverter {
 		if (isNegative) {
 			rawBits &= 0x7FFFFFFFFFFFFFFFL;
 		}
-
-		int biasedExponent = (int) ((rawBits & expMask) >> EXPONENT_SHIFT);
-		if (biasedExponent == 0) {
+		if (rawBits == 0) {
+			return isNegative ? "-0" : "0";
+		}
+		ExpandedDouble ed = new ExpandedDouble(rawBits);
+		if (ed.getBinaryExponent() < -1022) {
 			// value is 'denormalised' which means it is less than 2^-1022
 			// excel displays all these numbers as zero, even though calculations work OK
 			return isNegative ? "-0" : "0";
 		}
-
-		int exponent = biasedExponent - EXPONENT_BIAS;
-
-		long fracBits = FRAC_ASSUMED_HIGH_BIT | rawBits & FRAC_MASK;
-
-
-		// Start by converting double value to BigDecimal
-		BigDecimal bd;
-		if (biasedExponent == 0x07FF) {
+		if (ed.getBinaryExponent() == 1024) {
 			// Special number NaN /Infinity
+			// Normally one would not create HybridDecimal objects from these values
+			// except in these cases Excel really tries to render them as if they were normal numbers
 			if(rawBits == EXCEL_NAN_BITS) {
 				return "3.484840871308E+308";
 			}
 			// This is where excel really gets it wrong
-			// Special numbers like Infinity and Nan are interpreted according to
+			// Special numbers like Infinity and NaN are interpreted according to
 			// the standard rules below.
 			isNegative = false; // except that the sign bit is ignored
 		}
-		bd = convertToBigDecimal(exponent, fracBits);
-
-		return formatBigInteger(isNegative, bd.unscaledValue(), bd.scale());
-	}
-
-	private static BigDecimal convertToBigDecimal(int exponent, long fracBits) {
-		byte[] joob = {
-				(byte) (fracBits >> 48),
-				(byte) (fracBits >> 40),
-				(byte) (fracBits >> 32),
-				(byte) (fracBits >> 24),
-				(byte) (fracBits >> 16),
-				(byte) (fracBits >>  8),
-				(byte) (fracBits >>  0),
-		};
-
-		BigInteger bigInt = new BigInteger(joob);
-		int lastSigBitIndex = exponent-FRAC_BITS_WIDTH;
-		if(lastSigBitIndex < 0) {
-			BigInteger shifto = new BigInteger("1").shiftLeft(-lastSigBitIndex);
-			int scale = 1 -(int) (lastSigBitIndex/LOG2_10);
-			BigDecimal bd1 = new BigDecimal(bigInt);
-			BigDecimal bdShifto = new BigDecimal(shifto);
-			return bd1.divide(bdShifto, scale, BigDecimal.ROUND_HALF_UP);
+		NormalisedDecimal nd = ed.normaliseBaseTen();
+		StringBuilder sb = new StringBuilder(MAX_TEXT_LEN+1);
+		if (isNegative) {
+			sb.append('-');
 		}
-		BigInteger sl = bigInt.shiftLeft(lastSigBitIndex);
-		return new BigDecimal(sl);
-	}
-
-	private static String formatBigInteger(boolean isNegative, BigInteger unscaledValue, int scale) {
-
-		if (scale < 0) {
-			throw new RuntimeException("negative scale");
-		}
-
-		StringBuffer sb = new StringBuffer(unscaledValue.toString());
-		int numberOfLeadingZeros = -1;
-
-		int unscaledLength = sb.length();
-		if (scale > 0 && scale >= unscaledLength) {
-			// less than one
-			numberOfLeadingZeros = scale-unscaledLength;
-			formatLessThanOne(sb, numberOfLeadingZeros+1);
-		} else {
-			int decimalPointIndex = unscaledLength - scale;
-			formatGreaterThanOne(sb, decimalPointIndex);
-		}
-		if(isNegative) {
-			sb.insert(0, '-');
-		}
+		convertToText(sb, nd);
 		return sb.toString();
 	}
-
-	private static int getNumberOfSignificantFiguresDisplayed(int exponent) {
-		int nLostDigits; // number of significand digits lost due big exponents
-		if(exponent > 99) {
-			// any exponent greater than 99 has 3 digits instead of 2
-			nLostDigits = 1;
-		} else if (exponent < -98) {
-			// For some weird reason on the negative side
-			// step is occurs from -98 to -99 (not from -99 to -100)
-			nLostDigits = 1;
+	private static void convertToText(StringBuilder sb, NormalisedDecimal pnd) {
+		NormalisedDecimal rnd = pnd.roundUnits();
+		int decExponent = rnd.getDecimalExponent();
+		String decimalDigits;
+		if (Math.abs(decExponent)>98) {
+			decimalDigits = rnd.getSignificantDecimalDigitsLastDigitRounded();
+			if (decimalDigits.length() == 16) {
+				// rounding caused carry
+				decExponent++;
+			}
 		} else {
-			nLostDigits = 0;
+			decimalDigits = rnd.getSignificantDecimalDigits();
 		}
-		return DEFAULT_COUNT_SIGNIFICANT_DIGITS - nLostDigits;
+		int countSigDigits = countSignifantDigits(decimalDigits);
+		if (decExponent < 0) {
+			formatLessThanOne(sb, decimalDigits, decExponent, countSigDigits);
+		} else {
+			formatGreaterThanOne(sb, decimalDigits, decExponent, countSigDigits);
+		}
+	}
+
+	private static void formatLessThanOne(StringBuilder sb, String decimalDigits, int decExponent,
+			int countSigDigits) {
+		int nLeadingZeros = -decExponent - 1;
+		int normalLength = 2 + nLeadingZeros + countSigDigits; // 2 == "0.".length()
+
+		if (needsScientificNotation(normalLength)) {
+			sb.append(decimalDigits.charAt(0));
+			if (countSigDigits > 1) {
+    			sb.append('.');
+    			sb.append(decimalDigits.subSequence(1, countSigDigits));
+			}
+			sb.append("E-");
+			appendExp(sb, -decExponent);
+			return;
+		}
+		sb.append("0.");
+		for (int i=nLeadingZeros; i>0; i--) {
+			sb.append('0');
+		}
+		sb.append(decimalDigits.subSequence(0, countSigDigits));
+	}
+
+	private static void formatGreaterThanOne(StringBuilder sb, String decimalDigits, int decExponent, int countSigDigits) {
+
+		if (decExponent > 19) {
+			// scientific notation
+			sb.append(decimalDigits.charAt(0));
+			if (countSigDigits>1) {
+				sb.append('.');
+				sb.append(decimalDigits.subSequence(1, countSigDigits));
+			}
+			sb.append("E+");
+			appendExp(sb, decExponent);
+			return;
+		}
+		int nFractionalDigits = countSigDigits - decExponent-1;
+		if (nFractionalDigits > 0) {
+			sb.append(decimalDigits.subSequence(0, decExponent+1));
+			sb.append('.');
+			sb.append(decimalDigits.subSequence(decExponent+1, countSigDigits));
+			return;
+		}
+		sb.append(decimalDigits.subSequence(0, countSigDigits));
+		for (int i=-nFractionalDigits; i>0; i--) {
+			sb.append('0');
+		}
 	}
 
 	private static boolean needsScientificNotation(int nDigits) {
 		return nDigits > MAX_TEXT_LEN;
 	}
 
-	private static void formatGreaterThanOne(StringBuffer sb, int nIntegerDigits) {
-
-		int maxSigFigs = getNumberOfSignificantFiguresDisplayed(nIntegerDigits);
-		int decimalPointIndex = nIntegerDigits;
-		boolean roundCausedCarry = performRound(sb, 0, maxSigFigs);
-
-		int endIx = Math.min(maxSigFigs, sb.length()-1);
-
-		int nSigFigures;
-		if(roundCausedCarry) {
-			sb.insert(0, '1');
-			decimalPointIndex++;
-			nSigFigures = 1;
-		} else {
-			nSigFigures = countSignifantDigits(sb, endIx);
-		}
-
-		if(needsScientificNotation(decimalPointIndex)) {
-			sb.setLength(nSigFigures);
-			if (nSigFigures > 1) {
-				sb.insert(1, '.');
-			}
-			sb.append("E+");
-			appendExp(sb, decimalPointIndex-1);
-			return;
-		}
-		if(isAllZeros(sb, decimalPointIndex, maxSigFigs)) {
-			sb.setLength(decimalPointIndex);
-			return;
-		}
-		// else some sig-digits after the decimal point
-		sb.setLength(nSigFigures);
-		sb.insert(decimalPointIndex, '.');
-	}
-
-	/**
-	 * @param sb initially contains just the significant digits
-	 * @param pAbsExponent to be inserted (after "0.") at the start of the number
-	 */
-	private static void formatLessThanOne(StringBuffer sb, int pAbsExponent) {
-		if (sb.charAt(0) == 0) {
-			throw new IllegalArgumentException("First digit of significand should be non-zero");
-		}
-		if (pAbsExponent < 1) {
-			throw new IllegalArgumentException("abs(exponent) must be positive");
-		}
-
-		int numberOfLeadingZeros = pAbsExponent-1;
-		int absExponent = pAbsExponent;
-		int maxSigFigs = getNumberOfSignificantFiguresDisplayed(-absExponent);
-
-		boolean roundCausedCarry = performRound(sb, 0, maxSigFigs);
-		int nRemainingSigFigs;
-		if(roundCausedCarry) {
-			absExponent--;
-			numberOfLeadingZeros--;
-			nRemainingSigFigs = 1;
-			sb.setLength(0);
-			sb.append("1");
-		} else {
-			nRemainingSigFigs = countSignifantDigits(sb, 0 + maxSigFigs);
-			sb.setLength(nRemainingSigFigs);
-		}
-
-		int normalLength = 2 + numberOfLeadingZeros + nRemainingSigFigs; // 2 == "0.".length()
-
-		if (needsScientificNotation(normalLength)) {
-			if (sb.length()>1) {
-				sb.insert(1, '.');
-			}
-			sb.append('E');
-			sb.append('-');
-			appendExp(sb, absExponent);
-		} else {
-			sb.insert(0, "0.");
-			for(int i=numberOfLeadingZeros; i>0; i--) {
-				sb.insert(2, '0');
-			}
-		}
-	}
-
-	private static int countSignifantDigits(StringBuffer sb, int startIx) {
-		int result=startIx;
+	private static int countSignifantDigits(String sb) {
+		int result=sb.length()-1;
 		while(sb.charAt(result) == '0') {
 			result--;
 			if(result < 0) {
@@ -338,68 +248,12 @@ public final class NumberToTextConverter {
 		return result + 1;
 	}
 
-	private static void appendExp(StringBuffer sb, int val) {
+	private static void appendExp(StringBuilder sb, int val) {
 		if(val < 10) {
 			sb.append('0');
 			sb.append((char)('0' + val));
 			return;
 		}
 		sb.append(val);
-
-	}
-
-
-	private static boolean isAllZeros(StringBuffer sb, int startIx, int endIx) {
-		for(int i=startIx; i<=endIx && i<sb.length(); i++) {
-			if(sb.charAt(i) != '0') {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @return <code>true</code> if carry (out of the MS digit) occurred
-	 */
-	private static boolean performRound(StringBuffer sb, int firstSigFigIx, int nSigFigs) {
-		int nextDigitIx = firstSigFigIx + nSigFigs;
-		if(nextDigitIx == sb.length()) {
-			return false; // nothing to do - digit to be rounded is at the end of the buffer
-		}
-		if(nextDigitIx > sb.length()) {
-			throw new RuntimeException("Buffer too small to fit all significant digits");
-		}
-		boolean hadCarryOutOfFirstDigit;
-		if(sb.charAt(nextDigitIx) < '5') {
-			// change to digit
-			hadCarryOutOfFirstDigit = false;
-		} else {
-			hadCarryOutOfFirstDigit = roundAndCarry(sb, nextDigitIx);
-		}
-		// clear out the rest of the digits after the rounded digit
-		// (at least the nearby digits)
-		int endIx = Math.min(nextDigitIx + MAX_EXTRA_ZEROS, sb.length());
-		for(int i = nextDigitIx; i<endIx; i++) {
-			sb.setCharAt(i, '0');
-		}
-		return hadCarryOutOfFirstDigit;
-	}
-
-	private static boolean roundAndCarry(StringBuffer sb, int nextDigitIx) {
-
-		int changeDigitIx = nextDigitIx - 1;
-		while(sb.charAt(changeDigitIx) == '9') {
-			sb.setCharAt(changeDigitIx, '0');
-			changeDigitIx--;
-			// All nines, rounded up.  Notify caller
-			if(changeDigitIx < 0) {
-				return true;
-			}
-		}
-		// no more '9's to round up.
-		// Last digit to be changed is still inside sb
-		char prevDigit = sb.charAt(changeDigitIx);
-		sb.setCharAt(changeDigitIx, (char) (prevDigit + 1));
-		return false;
 	}
 }
