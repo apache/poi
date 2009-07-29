@@ -94,10 +94,10 @@ public final class TestEqualEval extends TestCase {
 
 	/**
 	 * Bug 47198 involved a formula "-A1=0" where cell A1 was 0.0.
-	 * Excel evaluates "-A1=0" to TRUE, not because it thinks -0.0==0.0 
+	 * Excel evaluates "-A1=0" to TRUE, not because it thinks -0.0==0.0
 	 * but because "-A1" evaluated to +0.0
 	 * <p/>
-	 * Note - the original diagnosis of bug 47198 was that 
+	 * Note - the original diagnosis of bug 47198 was that
 	 * "Excel considers -0.0 to be equal to 0.0" which is NQR
 	 * See {@link TestMinusZeroResult} for more specific tests regarding -0.0.
 	 */
@@ -112,6 +112,21 @@ public final class TestEqualEval extends TestCase {
 		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
+		}
+	}
+
+	public void testRounding_bug47598() {
+		double x = 1+1.0028-0.9973; // should be 1.0055, but has IEEE rounding
+		assertFalse(x == 1.0055);
+
+		NumberEval a = new NumberEval(x);
+		NumberEval b = new NumberEval(1.0055);
+		assertEquals("1.0055", b.getStringValue());
+
+		Eval[] args = { a, b, };
+		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
+		if (!result.getBooleanValue()) {
+			throw new AssertionFailedError("Identified bug 47598: 1+1.0028-0.9973 != 1.0055");
 		}
 	}
 }
