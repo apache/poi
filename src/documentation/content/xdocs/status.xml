@@ -37,7 +37,8 @@
            <action dev="POI-DEVELOPERS" type="fix">47571 - Fixed XWPFWordExtractor to extract inserted/deleted text</action>
            <action dev="POI-DEVELOPERS" type="fix">47548 - Fixed RecordFactoryInputStream to properly read continued DrawingRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">46419 - Fixed compatibility issue with OpenOffice 3.0</action>
-           <action dev="POI-DEVELOPERS" type="fix">47559 - Fixed compatibility issue with Excel 2008 Mac sp2</action>
+           <action dev="POI-DEVELOPERS" type="fix">47559 - Fixed compatibility issue with Excel 2008 Mac sp2. Please see 
+             <link href="./spreadsheet/index.html"> the HSSF+XSSF project page</link> for more information. </action>
            <action dev="POI-DEVELOPERS" type="fix">47540 - Fix for saving custom and extended OOXML properties</action>
            <action dev="POI-DEVELOPERS" type="fix">47535 - Fixed WordExtractor to tolerate files with empty footnote block</action>
            <action dev="POI-DEVELOPERS" type="fix">47517 - Fixed ExtractorFactory to support .xltx and .dotx files</action>

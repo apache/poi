@@ -66,5 +66,36 @@
         can also generate spreadsheets this way.
             </p>
         </section>
+        <section>
+          <title>Compatibility of POI-generated .xlsx files with MS Office 2008 for Mac SP2</title>
+          <p>
+            Office 2008 for Mac SP2 version 12.2.0 has a serious bug causing some Open XML files to fail to open. 
+            This bug is affecting Open XML files from a variety of sources including the Apache POI project. 
+            The Apache POI project adjusted the XSSF module to produce "MS-compatible OOXML" by setting the Application extended property to "Microsoft Excel". This will allow users of future versions of Apache POI to produce OOXML documents that will work with Office 2008 for Mac SP2. 
+            Please see <link href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47559">Bugzilla 47559</link> for more information.
+          </p>
+          <p>
+            Users are advised to patch existing .xlsx files by the following code:
+          </p>
+          <source>
+  XSSFWorkbook wb = new XSSFWorkbook(path);
+
+  POIXMLProperties.ExtendedProperties ext = wb.getProperties().getExtendedProperties();
+  expProps.getUnderlyingProperties().setApplication("Microsoft Excel");
+
+  FileOutputStream out = new FileOutputStream(path);
+  wb.write(out);
+  out.close(); 
+        </source>  
+        <p>To unset the Application property use the following code:</p>
+        <source>  
+  POIXMLProperties.ExtendedProperties ext = workbook.getProperties().getExtendedProperties();
+  expProps.getUnderlyingProperties().unsetApplication();
+        </source>  
+          <warning>
+            This is an effective workaround for a short-term bug which is likely to be removed in future versions of POI, 
+            when Microsoft returns to compliance with the standard. The proper value for Apache POI created documents would to be "Apache POI" and not "Microsoft Excel".  
+        </warning>
+        </section>
     </body>
 </document>
