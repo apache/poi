@@ -69,9 +69,9 @@
         <section>
           <title>Compatibility of POI-generated .xlsx files with MS Office 2008 for Mac SP2</title>
           <p>
-            Office 2008 for Mac SP2 version 12.2.0 has a serious bug causing some Open XML files to fail to open. 
+            Office 2008 for Mac SP2 version 12.2.0 introduced a serious bug causing some Open XML files to fail to open. 
             This bug is affecting Open XML files from a variety of sources including the Apache POI project. 
-            The Apache POI project adjusted the XSSF module to produce "MS-compatible OOXML" by setting the Application extended property to "Microsoft Excel". This will allow users of future versions of Apache POI to produce OOXML documents that will work with Office 2008 for Mac SP2. 
+            The Apache POI project adjusted the XSSF module to produce "MS-compatible OOXML" by setting the Application extended property to "Microsoft Excel". This will allow users to produce OOXML documents that will work with Office 2008 for Mac SP2. 
             Please see <link href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47559">Bugzilla 47559</link> for more information.
           </p>
           <p>
