@@ -65,7 +65,7 @@ import org.xml.sax.SAXException;
  * The output XML Schema must respect this limitations:
  * 
  * <ul>
- * <li> all mandatory elements and attributes must be mapped </li>
+ * <li> all mandatory elements and attributes must be mapped (enable validation to check this)</li>
  * 
  * <li> no &lt;any&gt; in complex type/element declaration </li>
  * <li> no &lt;anyAttribute&gt; attributes declaration </li>

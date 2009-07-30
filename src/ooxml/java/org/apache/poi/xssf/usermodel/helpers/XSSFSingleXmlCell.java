@@ -48,7 +48,7 @@ public class XSSFSingleXmlCell {
 	}
 	
 	/**
-	 * Gets the XSSFCell referenced by the R attribute
+	 * Gets the XSSFCell referenced by the R attribute or creates a new one if cell doesn't exists
 	 * @return the referenced XSSFCell, null if the cell reference is invalid
 	 */
 	public XSSFCell getReferencedCell(){
@@ -58,7 +58,14 @@ public class XSSFSingleXmlCell {
 		CellReference cellReference =  new CellReference(singleXmlCell.getR()); 
 		
 		XSSFRow row = parent.getXSSFSheet().getRow(cellReference.getRow());
+		if(row==null){
+			row = parent.getXSSFSheet().createRow(cellReference.getRow());
+		}
+		
 		cell = row.getCell(cellReference.getCol());  
+		if(cell==null){
+			cell = row.createCell(cellReference.getCol());
+		}
 		
 		
 		return cell;
