@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -121,6 +120,19 @@ public class MapInfo extends POIXMLDocumentPart {
 	
 	public XSSFMap getXSSFMapById(int id){
 		return maps.get(id);
+	}
+	
+	public XSSFMap getXSSFMapByName(String name){
+		
+		XSSFMap matchedMap = null;
+		
+		for(XSSFMap map :maps.values()){
+			if(map.getCtMap().getName()!=null && map.getCtMap().getName().equals(name)){
+				matchedMap = map;
+			}
+		}		
+		
+		return matchedMap;
 	}
 	
 	/**

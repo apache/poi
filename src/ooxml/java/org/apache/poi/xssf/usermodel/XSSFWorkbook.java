@@ -1297,4 +1297,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public Collection<XSSFMap> getCustomXMLMappings(){
         return mapInfo == null ? new ArrayList<XSSFMap>() : mapInfo.getAllXSSFMaps();
     }
+    
+    /**
+     * 
+     * @return the helper class used to query the custom XML mapping defined in this workbook
+     */
+    public MapInfo getMapInfo(){
+    	return mapInfo;
+    }
+    
 }
