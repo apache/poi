@@ -65,6 +65,14 @@
         If you're modifying spreadsheet data then use the usermodel api.  You
         can also generate spreadsheets this way.
             </p>
+            <p>
+        Note that the usermodel system has a higher memory footprint than
+        the low level eventusermodel, but have the major advantage of being 
+        much simpler to work with. Also please be aware that as the new
+        XSSF supported Excel 2007 OOXML (.xlsx) files are XML based, 
+        the memory footprint for processing them is higher than for the 
+        older HSSF supported (.xls) binary files.
+            </p>
         </section>
         <section>
           <title>Compatibility of POI-generated .xlsx files with MS Office 2008 for Mac SP2</title>
