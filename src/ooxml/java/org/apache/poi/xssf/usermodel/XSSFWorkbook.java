@@ -937,16 +937,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         boolean removingRange = startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
 
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
-        if (removingRange && name != null) {
-            namedRanges.remove(name);
+        if (removingRange) {
+            if(name != null)namedRanges.remove(name);
             return;
         }
         if (name == null) {
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
-            String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
-            name.setRefersToFormula(reference);
             namedRanges.add(name);
         }
+
+        String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
+        name.setRefersToFormula(reference);
 
         XSSFPrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setValidSettings(false);
@@ -959,17 +960,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         String escapedName = SheetNameFormatter.format(sheetName);
 
-        String c = escapedName + "!$" + colRef.getCellRefParts()[2] + ":$" + colRef2.getCellRefParts()[2];
+        String c;
+        if(startC == -1 && endC == -1) c= "";
+        else c = escapedName + "!$" + colRef.getCellRefParts()[2] + ":$" + colRef2.getCellRefParts()[2];
 
         CellReference rowRef = new CellReference(sheetName, startR, 0, true, true);
         CellReference rowRef2 = new CellReference(sheetName, endR, 0, true, true);
 
         String r = "";
-
-        if (!rowRef.getCellRefParts()[1].equals("0") && !rowRef2.getCellRefParts()[1].equals("0")) {
-            r = "," + escapedName + "!$" + rowRef.getCellRefParts()[1] + ":$" + rowRef2.getCellRefParts()[1];
+        if(startR == -1 && endR == -1) r = "";
+        else {
+            if (!rowRef.getCellRefParts()[1].equals("0") && !rowRef2.getCellRefParts()[1].equals("0")) {
+                r = escapedName + "!$" + rowRef.getCellRefParts()[1] + ":$" + rowRef2.getCellRefParts()[1];
+            }
         }
-        return c + r;
+        
+        StringBuffer rng = new StringBuffer();
+        rng.append(c);
+        if(rng.length() > 0 && r.length() > 0) rng.append(',');
+        rng.append(r);
+        return rng.toString();
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {

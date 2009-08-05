@@ -39,6 +39,8 @@ public final class TestXSSFName extends BaseTestNamedRange {
         XSSFWorkbook wb = getTestDataProvider().createWorkbook();
         XSSFSheet sheet = wb.createSheet("First Sheet");
 
+        wb.setRepeatingRowsAndColumns(0, -1, -1, -1, -1);
+
         // set repeating rows and columns twice for the first sheet
         for (int i = 0; i < 2; i++) {
             wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
@@ -49,6 +51,20 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr1.getNameName());
         assertEquals("'First Sheet'!$A:$A,'First Sheet'!$1:$4", nr1.getRefersToFormula());
+
+        //remove the columns part
+        wb.setRepeatingRowsAndColumns(0, -1, -1, 0, 3);
+        assertEquals("'First Sheet'!$1:$4", nr1.getRefersToFormula());
+
+        //revert
+        wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
+
+        //remove the rows part
+        wb.setRepeatingRowsAndColumns(0, 0, 0, -1, -1);
+        assertEquals("'First Sheet'!$A:$A", nr1.getRefersToFormula());
+
+        //revert
+        wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
 
         // Save and re-open
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
