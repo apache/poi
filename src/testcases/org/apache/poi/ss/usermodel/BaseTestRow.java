@@ -160,8 +160,6 @@ public abstract class BaseTestRow extends TestCase {
             assertTrue(e.getMessage().startsWith("Invalid column index (-1)"));
         }
 
-        row.createCell(maxCellNum);
-
         //Test high cell bound
         try {
             Cell cell = row.createCell(maxCellNum + 1);
@@ -170,6 +168,19 @@ public abstract class BaseTestRow extends TestCase {
             // expected during successful test
             assertTrue(e.getMessage().startsWith("Invalid column index ("+(maxCellNum+1)+")"));
         }
+        for(int i=0; i < maxCellNum; i++){
+            Cell cell = row.createCell(i);
+        }
+        assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
+        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+        row = sheet.getRow(0);
+        assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
+        for(int i=0; i < maxCellNum; i++){
+            Cell cell = row.getCell(i);
+            assertEquals(i, cell.getColumnIndex());
+        }
+
     }
 
     /**

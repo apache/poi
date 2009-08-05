@@ -97,7 +97,7 @@ public final class XSSFCell implements Cell {
         this.cell = cell;
         this.row = row;
         if (cell.getR() != null) {
-            this.cellNum = parseCellNum(cell.getR());
+            this.cellNum = new CellReference(cell.getR()).getCol();
         }
         this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         this.stylesSource = row.getSheet().getWorkbook().getStylesSource();
@@ -645,21 +645,6 @@ public final class XSSFCell implements Cell {
         cellNum = num;
         String ref = new CellReference(getRowIndex(), getColumnIndex()).formatAsString();
         cell.setR(ref);
-    }
-
-    /**
-     * Converts A1 style reference into 0-based column index
-     *
-     * @param r an A1 style reference to the location of this cell
-     * @return 0-based column index
-     */
-    protected static short parseCellNum(String r) {
-        r = r.split("\\d+")[0];
-        if (r.length() == 1) {
-            return (short) (r.charAt(0) - 'A');
-        } else {
-            return (short) (r.charAt(1) - 'A' + 26 * (r.charAt(0) - '@'));
-        }
     }
 
     /**
