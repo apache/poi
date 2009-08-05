@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47606 - Fixed  XSSFCell to correctly parse column indexes greater than 702 (ZZ)</action>
            <action dev="POI-DEVELOPERS" type="fix">47598 - Improved formula evaluator number comparison</action>
            <action dev="POI-DEVELOPERS" type="fix">47571 - Fixed XWPFWordExtractor to extract inserted/deleted text</action>
            <action dev="POI-DEVELOPERS" type="fix">47548 - Fixed RecordFactoryInputStream to properly read continued DrawingRecords</action>
