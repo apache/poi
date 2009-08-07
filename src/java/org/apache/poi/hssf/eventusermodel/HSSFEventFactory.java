@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -83,7 +82,7 @@ public class HSSFEventFactory {
 	 */
 	public void processEvents(HSSFRequest req, InputStream in) {
 		try {
-			genericProcessEvents(req, new RecordInputStream(in));
+			genericProcessEvents(req, in);
 		} catch (HSSFUserException hue) {
 			/*If an HSSFUserException user exception is thrown, ignore it.*/
 		}
@@ -100,7 +99,7 @@ public class HSSFEventFactory {
 	 */
 	public short abortableProcessEvents(HSSFRequest req, InputStream in)
 		throws HSSFUserException {
-		return genericProcessEvents(req, new RecordInputStream(in));
+		return genericProcessEvents(req, in);
 	}
 
 	/**
@@ -111,7 +110,7 @@ public class HSSFEventFactory {
 	 * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
 	 * @return    numeric user-specified result code.
 	 */
-	protected short genericProcessEvents(HSSFRequest req, RecordInputStream in)
+	private short genericProcessEvents(HSSFRequest req, InputStream in)
 		throws HSSFUserException {
 		short userCode = 0;
 

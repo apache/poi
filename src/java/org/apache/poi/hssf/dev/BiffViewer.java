@@ -81,17 +81,23 @@ public final class BiffViewer {
 			if (recStream.getSid() == 0) {
 				continue;
 			}
-			Record record = createRecord (recStream);
-			if (record.getSid() == ContinueRecord.sid) {
-				continue;
-			}
-			temp.add(record);
+			Record record;
 			if (dumpInterpretedRecords) {
-				String[] headers = recListener.getRecentHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					ps.println(headers[i]);
+				record = createRecord (recStream);
+				if (record.getSid() == ContinueRecord.sid) {
+					continue;
 				}
-				ps.print(record.toString());
+				temp.add(record);
+
+				if (dumpInterpretedRecords) {
+					String[] headers = recListener.getRecentHeaders();
+					for (int i = 0; i < headers.length; i++) {
+						ps.println(headers[i]);
+					}
+					ps.print(record.toString());
+				}
+			} else {
+				recStream.readRemainder();
 			}
 			ps.println();
 		}
@@ -296,8 +302,8 @@ public final class BiffViewer {
 						out = true;
 					} else if ("--escher".equals(arg)) {
 						System.setProperty("poi.deserialize.escher", "true");
-                    } else if ("--rawhex".equals(arg)) {
-                        rawhex = true;
+					} else if ("--rawhex".equals(arg)) {
+						rawhex = true;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}
@@ -389,7 +395,7 @@ public final class BiffViewer {
 			} else {
 				boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
 				boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-				boolean zeroAlignHexDump = dumpInterpretedRecords;
+				boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
 				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump);
 				is = new BiffDumpingStream(is, recListener);
 				createRecords(is, ps, recListener, dumpInterpretedRecords);
@@ -558,11 +564,21 @@ public final class BiffViewer {
 		int startDelta = globalStart % DUMP_LINE_LEN;
 		int endDelta = globalEnd % DUMP_LINE_LEN;
 		if (zeroAlignEachRecord) {
+			endDelta -= startDelta;
+			if (endDelta < 0) {
+				endDelta += DUMP_LINE_LEN;
+			}
 			startDelta = 0;
-			endDelta = 0;
 		}
-		int startLineAddr = globalStart - startDelta;
-		int endLineAddr = globalEnd - endDelta;
+		int startLineAddr;
+		int endLineAddr;
+		if (zeroAlignEachRecord) {
+			endLineAddr = globalEnd - endDelta - (globalStart - startDelta);
+			startLineAddr = 0;
+		} else {
+			startLineAddr = globalStart - startDelta;
+			endLineAddr = globalEnd - endDelta;
+		}
 
 		int lineDataOffset = baseDataOffset - startDelta;
 		int lineAddr = startLineAddr;

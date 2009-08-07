@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,67 +14,134 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        File Pass Record<P>
- * Description:  Indicates that the record after this record are encrypted. HSSF does not support encrypted excel workbooks
- * and the presence of this record will cause processing to be aborted.<p>
- * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Title: File Pass Record (0x002F) <p/>
+ *
+ * Description: Indicates that the record after this record are encrypted.
+ *
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 3.0-pre
  */
+public final class FilePassRecord extends StandardRecord {
+	public final static short sid = 0x002F;
+	private int _encryptionType;
+	private int _encryptionInfo;
+	private int _minorVersionNo;
+	private byte[] _docId;
+	private byte[] _saltData;
+	private byte[] _saltHash;
 
-public final class FilePassRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x2F;
-    private int             field_1_encryptedpassword;
+	private static final int ENCRYPTION_XOR = 0;
+	private static final int ENCRYPTION_OTHER = 1;
 
-    public FilePassRecord()
-    {
-    }
+	private static final int ENCRYPTION_OTHER_RC4 = 1;
+	private static final int ENCRYPTION_OTHER_CAPI_2 = 2;
+	private static final int ENCRYPTION_OTHER_CAPI_3 = 3;
 
-    public FilePassRecord(RecordInputStream in)
-    {
-        field_1_encryptedpassword = in.readInt();
-        
-        //Whilst i have read in the password, HSSF currently has no plans to support/decrypt the remainder
-        //of this workbook
-        throw new RecordFormatException("HSSF does not currently support encrypted workbooks");
-    }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+	public FilePassRecord(RecordInputStream in) {
+		_encryptionType = in.readUShort();
 
-        buffer.append("[FILEPASS]\n");
-        buffer.append("    .password        = ").append(field_1_encryptedpassword)
-            .append("\n");
-        buffer.append("[/FILEPASS]\n");
-        return buffer.toString();
-    }
+		switch (_encryptionType) {
+			case ENCRYPTION_XOR:
+				throw new RecordFormatException("HSSF does not currently support XOR obfuscation");
+			case ENCRYPTION_OTHER:
+				// handled below
+				break;
+			default:
+				throw new RecordFormatException("Unknown encryption type " + _encryptionType);
+		}
+		_encryptionInfo = in.readUShort();
+		switch (_encryptionInfo) {
+			case ENCRYPTION_OTHER_RC4:
+				// handled below
+				break;
+			case ENCRYPTION_OTHER_CAPI_2:
+			case ENCRYPTION_OTHER_CAPI_3:
+				throw new RecordFormatException(
+						"HSSF does not currently support CryptoAPI encryption");
+			default:
+				throw new RecordFormatException("Unknown encryption info " + _encryptionInfo);
+		}
+		_minorVersionNo = in.readUShort();
+		if (_minorVersionNo!=1) {
+			throw new RecordFormatException("Unexpected VersionInfo number for RC4Header " + _minorVersionNo);
+		}
+		_docId = read(in, 16);
+		_saltData = read(in, 16);
+		_saltHash = read(in, 16);
+	}
 
-    public void serialize(LittleEndianOutput out) {
-        out.writeInt(( short ) field_1_encryptedpassword);
-    }
+	private static byte[] read(RecordInputStream in, int size) {
+		byte[] result = new byte[size];
+		in.readFully(result);
+		return result;
+	}
 
-    protected int getDataSize() {
-        return 4;
-    }
+	public void serialize(LittleEndianOutput out) {
+		out.writeShort(_encryptionType);
+		out.writeShort(_encryptionInfo);
+		out.writeShort(_minorVersionNo);
+		out.write(_docId);
+		out.write(_saltData);
+		out.write(_saltHash);
+	}
 
-    public short getSid()
-    {
-        return sid;
-    }
+	protected int getDataSize() {
+		return 54;
+	}
 
-    public Object clone() {
-      FilePassRecord rec = new FilePassRecord();
-      rec.field_1_encryptedpassword = field_1_encryptedpassword;
-      return rec;
-    }
+
+
+	public byte[] getDocId() {
+		return _docId.clone();
+	}
+
+	public void setDocId(byte[] docId) {
+		_docId = docId.clone();
+	}
+
+	public byte[] getSaltData() {
+		return _saltData.clone();
+	}
+
+	public void setSaltData(byte[] saltData) {
+		_saltData = saltData.clone();
+	}
+
+	public byte[] getSaltHash() {
+		return _saltHash.clone();
+	}
+
+	public void setSaltHash(byte[] saltHash) {
+		_saltHash = saltHash.clone();
+	}
+
+	public short getSid() {
+		return sid;
+	}
+
+	public Object clone() {
+		// currently immutable
+		return this;
+	}
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+
+		buffer.append("[FILEPASS]\n");
+		buffer.append("    .type = ").append(HexDump.shortToHex(_encryptionType)).append("\n");
+		buffer.append("    .info = ").append(HexDump.shortToHex(_encryptionInfo)).append("\n");
+		buffer.append("    .ver  = ").append(HexDump.shortToHex(_minorVersionNo)).append("\n");
+		buffer.append("    .docId= ").append(HexDump.toHex(_docId)).append("\n");
+		buffer.append("    .salt = ").append(HexDump.toHex(_saltData)).append("\n");
+		buffer.append("    .hash = ").append(HexDump.toHex(_saltHash)).append("\n");
+		buffer.append("[/FILEPASS]\n");
+		return buffer.toString();
+	}
 }
