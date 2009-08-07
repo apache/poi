@@ -369,12 +369,11 @@ public final class RecordFactory {
 	public static List<Record> createRecords(InputStream in) throws RecordFormatException {
 		List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 
-		RecordFactoryInputStream recStream = new RecordFactoryInputStream(new RecordInputStream(in));
-                recStream.setIncludeContinueRecords(true);
+		RecordFactoryInputStream recStream = new RecordFactoryInputStream(new RecordInputStream(in), true);
 
-        Record record;
+		Record record;
 		while ((record = recStream.nextRecord())!=null) {
-                        records.add(record);
+			records.add(record);
 		}
 
 		return records;
