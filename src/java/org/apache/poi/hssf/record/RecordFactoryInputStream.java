@@ -16,8 +16,13 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 
 /**
  * A stream based way to get at complete records, with
@@ -29,21 +34,110 @@ import org.apache.poi.hssf.eventusermodel.HSSFListener;
  * {@link HSSFListener} and have new records pushed to
  * them, but this does allow for a "pull" style of coding.
  */
-public class RecordFactoryInputStream {
+public final class RecordFactoryInputStream {
+
+	/**
+	 * Keeps track of the sizes of the initial records up to and including {@link FilePassRecord}
+	 * Needed for protected files because each byte is encrypted with respect to its absolute
+	 * position from the start of the stream.
+	 */
+	public static final class StreamEncryptionInfo {
+		private final int _initialRecordsSize;
+		private final FilePassRecord _filePassRec;
+		private final Record _lastRecord;
+		private final boolean _hasBOFRecord;
+
+		public StreamEncryptionInfo(RecordInputStream rs, List<Record> outputRecs) {
+			Record rec;
+			rs.nextRecord();
+			int recSize = 4 + rs.remaining();
+			rec = RecordFactory.createSingleRecord(rs);
+			outputRecs.add(rec);
+			FilePassRecord fpr = null;
+			if (rec instanceof BOFRecord) {
+				_hasBOFRecord = true;
+				if (rs.hasNextRecord()) {
+					rs.nextRecord();
+					rec = RecordFactory.createSingleRecord(rs);
+					recSize += rec.getRecordSize();
+					outputRecs.add(rec);
+					if (rec instanceof FilePassRecord) {
+						fpr = (FilePassRecord) rec;
+						outputRecs.remove(outputRecs.size()-1);
+						// TODO - add fpr not added to outputRecs
+						rec = outputRecs.get(0);
+					} else {
+						// workbook not encrypted (typical case)
+						if (rec instanceof EOFRecord) {
+							// A workbook stream is never empty, so crash instead
+							// of trying to keep track of nesting level
+							throw new IllegalStateException("Nothing between BOF and EOF");
+						}
+					}
+				}
+			} else {
+				// Invalid in a normal workbook stream.
+				// However, some test cases work on sub-sections of
+				// the workbook stream that do not begin with BOF
+				_hasBOFRecord = false;
+			}
+			_initialRecordsSize = recSize;
+			_filePassRec = fpr;
+			_lastRecord = rec;
+		}
+
+		public RecordInputStream createDecryptingStream(InputStream original) {
+			FilePassRecord fpr = _filePassRec;
+			String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
+
+			Biff8EncryptionKey key;
+			if (userPassword == null) {
+				key = Biff8EncryptionKey.create(fpr.getDocId());
+			} else {
+				key = Biff8EncryptionKey.create(userPassword, fpr.getDocId());
+			}
+			if (!key.validate(fpr.getSaltData(), fpr.getSaltHash())) {
+				throw new RecordFormatException("Password/docId do not correspond to saltData/saltHash");
+			}
+			return new RecordInputStream(original, key, _initialRecordsSize);
+		}
+
+		public boolean hasEncryption() {
+			return _filePassRec != null;
+		}
+
+		/**
+		 * @return last record scanned while looking for encryption info.
+		 * This will typically be the first or second record read. Possibly <code>null</code>
+		 * if stream was empty
+		 */
+		public Record getLastRecord() {
+			return _lastRecord;
+		}
+
+		/**
+		 * <code>false</code> in some test cases
+		 */
+		public boolean hasBOFRecord() {
+			return _hasBOFRecord;
+		}
+	}
+
 
 	private final RecordInputStream _recStream;
 	private final boolean _shouldIncludeContinueRecords;
 
 	/**
-	 * Temporarily stores a group of {@link NumberRecord}s.  This is uses when the most
-	 * recently read underlying record is a {@link MulRKRecord}
+	 * Temporarily stores a group of {@link Record}s, for future return by {@link #nextRecord()}.
+	 * This is used at the start of the workbook stream, and also when the most recently read
+	 * underlying record is a {@link MulRKRecord}
 	 */
-	private NumberRecord[] _multipleNumberRecords;
+	private Record[] _unreadRecordBuffer;
 
 	/**
-	 * used to help iterating over multiple number records
+	 * used to help iterating over the unread records
 	 */
-	private int _multipleNumberRecordIndex = -1;
+	private int _unreadRecordIndex = -1;
 
 	/**
 	 * The most recent record that we gave to the user
@@ -64,9 +158,24 @@ public class RecordFactoryInputStream {
 	 * {@link ContinueRecord}s should be skipped (this is sometimes useful in event based
 	 * processing).
 	 */
-	public RecordFactoryInputStream(RecordInputStream inp, boolean shouldIncludeContinueRecords) {
-		_recStream = inp;
+	public RecordFactoryInputStream(InputStream in, boolean shouldIncludeContinueRecords) {
+		RecordInputStream rs = new RecordInputStream(in);
+		List<Record> records = new ArrayList<Record>();
+		StreamEncryptionInfo sei = new StreamEncryptionInfo(rs, records);
+		if (sei.hasEncryption()) {
+			rs = sei.createDecryptingStream(in);
+		} else {
+			// typical case - non-encrypted stream
+		}
+
+		if (!records.isEmpty()) {
+			_unreadRecordBuffer = new Record[records.size()];
+			records.toArray(_unreadRecordBuffer);
+			_unreadRecordIndex =0;
+		}
+		_recStream = rs;
 		_shouldIncludeContinueRecords = shouldIncludeContinueRecords;
+		_lastRecord = sei.getLastRecord();
 
 		/*
 		* How to recognise end of stream?
@@ -85,7 +194,7 @@ public class RecordFactoryInputStream {
 		* record might follow any EOF record.  So we also need to keep track of the bof/eof
 		* nesting level.
 		*/
-		_bofDepth=0;
+		_bofDepth = sei.hasBOFRecord() ? 1 : 0;
 		_lastRecordWasEOFLevelZero = false;
 	}
 
@@ -95,15 +204,15 @@ public class RecordFactoryInputStream {
 	 */
 	public Record nextRecord() {
 		Record r;
-		r = getNextMultipleNumberRecord();
+		r = getNextUnreadRecord();
 		if (r != null) {
-			// found a NumberRecord (expanded from a recent MULRK record)
+			// found an unread record
 			return r;
 		}
 		while (true) {
 			if (!_recStream.hasNextRecord()) {
 				// recStream is exhausted;
-	    		return null;
+				return null;
 			}
 
 			// step underlying RecordInputStream to the next record
@@ -131,19 +240,19 @@ public class RecordFactoryInputStream {
 	}
 
 	/**
-	 * @return the next {@link NumberRecord} from the multiple record group as expanded from
+	 * @return the next {@link Record} from the multiple record group as expanded from
 	 * a recently read {@link MulRKRecord}. <code>null</code> if not present.
 	 */
-	private NumberRecord getNextMultipleNumberRecord() {
-		if (_multipleNumberRecords != null) {
-			int ix = _multipleNumberRecordIndex;
-			if (ix < _multipleNumberRecords.length) {
-				NumberRecord result = _multipleNumberRecords[ix];
-				_multipleNumberRecordIndex = ix + 1;
+	private Record getNextUnreadRecord() {
+		if (_unreadRecordBuffer != null) {
+			int ix = _unreadRecordIndex;
+			if (ix < _unreadRecordBuffer.length) {
+				Record result = _unreadRecordBuffer[ix];
+				_unreadRecordIndex = ix + 1;
 				return result;
 			}
-			_multipleNumberRecordIndex = -1;
-			_multipleNumberRecords = null;
+			_unreadRecordIndex = -1;
+			_unreadRecordBuffer = null;
 		}
 		return null;
 	}
@@ -182,10 +291,10 @@ public class RecordFactoryInputStream {
 		}
 
 		if (record instanceof MulRKRecord) {
-			NumberRecord[] records = RecordFactory.convertRKRecords((MulRKRecord) record);
+			Record[] records = RecordFactory.convertRKRecords((MulRKRecord) record);
 
-			_multipleNumberRecords = records;
-			_multipleNumberRecordIndex = 1;
+			_unreadRecordBuffer = records;
+			_unreadRecordIndex = 1;
 			return records[0];
 		}
 

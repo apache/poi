@@ -24,20 +24,22 @@ import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.cf.TestCellRange;
 import org.apache.poi.hssf.record.chart.AllChartRecordTests;
 import org.apache.poi.hssf.record.constant.TestConstantValueParser;
+import org.apache.poi.hssf.record.crypto.AllHSSFEncryptionTests;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;
 import org.apache.poi.hssf.record.pivot.AllPivotRecordTests;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record</tt> and sub-packages.
- * 
+ *
  * @author Josh Micich
  */
 public final class AllRecordTests {
-	
+
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllRecordTests.class.getName());
 
 		result.addTest(AllChartRecordTests.suite());
+		result.addTest(AllHSSFEncryptionTests.suite());
 		result.addTest(AllFormulaTests.suite());
 		result.addTest(AllPivotRecordTests.suite());
 		result.addTest(AllRecordAggregateTests.suite());

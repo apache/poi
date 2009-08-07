@@ -155,7 +155,7 @@ public final class TestRecordFactory extends TestCase {
 	 */
 	public void testMixedContinue() throws Exception {
 		/**
-		 *  Adapted from a real test sample file 39512.xls (Offset 0x4854). 
+		 *  Adapted from a real test sample file 39512.xls (Offset 0x4854).
 		 *  See Bug 39512 for details.
 		 */
 		String dump =
@@ -208,6 +208,7 @@ public final class TestRecordFactory extends TestCase {
 	public void testNonZeroPadding_bug46987() {
 		Record[] recs = {
 			new BOFRecord(),
+			new WriteAccessRecord(), // need *something* between BOF and EOF
 			EOFRecord.instance,
 			BOFRecord.createSheetBOF(),
 			EOFRecord.instance,
@@ -229,7 +230,7 @@ public final class TestRecordFactory extends TestCase {
 			baos.write(0x00);
 		}
 
-		
+
 		POIFSFileSystem fs = new POIFSFileSystem();
 		InputStream is;
 		try {
@@ -237,7 +238,7 @@ public final class TestRecordFactory extends TestCase {
 			is = fs.getRoot().createDocumentInputStream("dummy");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		} 
+		}
 
 		List<Record> outRecs;
 		try {
@@ -248,7 +249,6 @@ public final class TestRecordFactory extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals(4, outRecs.size());
-		
+		assertEquals(5, outRecs.size());
 	}
 }

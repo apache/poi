@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
+
+import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.pivottable.*;
 
 /**
  * Title:  Record Factory<P>
@@ -193,6 +194,7 @@ public final class RecordFactory {
 		ChartFRTInfoRecord.class,
 		ChartStartBlockRecord.class,
 		ChartEndBlockRecord.class,
+// TODO ChartFormatRecord.class,
 		ChartStartObjectRecord.class,
 		ChartEndObjectRecord.class,
 		CatLabRecord.class,
@@ -367,9 +369,10 @@ public final class RecordFactory {
 	 * @exception RecordFormatException on error processing the InputStream
 	 */
 	public static List<Record> createRecords(InputStream in) throws RecordFormatException {
+
 		List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 
-		RecordFactoryInputStream recStream = new RecordFactoryInputStream(new RecordInputStream(in), true);
+		RecordFactoryInputStream recStream = new RecordFactoryInputStream(in, true);
 
 		Record record;
 		while ((record = recStream.nextRecord())!=null) {
