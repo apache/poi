@@ -543,7 +543,7 @@ public class AddDimensionedImage {
 
             // Next, from the columns width, calculate how many co-ordinate
             // positons there are per millimetre
-            coordinatePositionsPerMM = ExcelUtil.TOTAL_COLUMN_COORDINATE_POSITIONS /
+            coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
                     colWidthMM;
             // From this figure, determine how many co-ordinat positions to
             // inset the left hand or bottom edge of the image.
