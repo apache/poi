@@ -261,7 +261,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         POIXMLProperties props = workbook.getProperties();
         assertNotNull(props);
         //the Application property must be set for new workbooks, see Bugzilla #47559
-        assertEquals("Microsoft Excel", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+        assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
 
         PackagePropertiesPart opcProps = props.getCoreProperties().getUnderlyingProperties();
         assertNotNull(opcProps);
@@ -271,7 +271,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         opcProps.setCreatorProperty("poi-dev@poi.apache.org");
 
         workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        assertEquals("Microsoft Excel", workbook.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+        assertEquals("Apache POI", workbook.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
         opcProps = workbook.getProperties().getCoreProperties().getUnderlyingProperties();
         assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
         assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());

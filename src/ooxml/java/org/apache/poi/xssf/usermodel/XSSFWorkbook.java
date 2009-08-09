@@ -229,9 +229,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         bv.setActiveTab(0);
         workbook.addNewSheets();
 
-        //required by Excel 2008 Mac sp2, see Bugzilla #47559
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
-        expProps.getUnderlyingProperties().setApplication("Microsoft Excel");
+        expProps.getUnderlyingProperties().setApplication(DOCUMENT_CREATOR);
 
         sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
         stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
@@ -253,7 +252,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // Create main document part
             pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
 
-            pkg.getPackageProperties().setCreatorProperty("Apache POI");
+            pkg.getPackageProperties().setCreatorProperty(DOCUMENT_CREATOR);
 
             return pkg;
         } catch (Exception e){
