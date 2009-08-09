@@ -169,7 +169,7 @@ public class XWPFDocument extends POIXMLDocument {
             // Create main document part
             pkg.createPart(corePartName, XWPFRelation.DOCUMENT.getContentType());
 
-            pkg.getPackageProperties().setCreatorProperty("Apache POI");
+            pkg.getPackageProperties().setCreatorProperty(DOCUMENT_CREATOR);
 
             return pkg;
         } catch (Exception e){
@@ -190,7 +190,7 @@ public class XWPFDocument extends POIXMLDocument {
         ctDocument.addNewBody();
 
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
-        expProps.getUnderlyingProperties().setApplication("Microsoft Office Word");
+        expProps.getUnderlyingProperties().setApplication(DOCUMENT_CREATOR);
     }
 
     /**

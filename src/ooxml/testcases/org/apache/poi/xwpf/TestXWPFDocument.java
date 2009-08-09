@@ -125,7 +125,7 @@ public class TestXWPFDocument extends TestCase {
         XWPFDocument doc = new XWPFDocument();
         POIXMLProperties props = doc.getProperties();
         assertNotNull(props);
-        assertEquals("Microsoft Office Word", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+        assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
     }
 
 }
