@@ -129,8 +129,10 @@ public final class PackageRelationship {
 
 	@Override
 	public int hashCode() {
-		return this.id.hashCode() + this.relationshipType.hashCode()
-				+ this.source.hashCode() + this.targetMode.hashCode()
+		return this.id.hashCode()
+                + this.relationshipType.hashCode()
+				+ (this.source == null ? 0 : this.source.hashCode())
+                + this.targetMode.hashCode()
 				+ this.targetUri.hashCode();
 	}
 

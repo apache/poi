@@ -17,7 +17,7 @@
 package org.apache.poi;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
@@ -191,21 +191,33 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
         return pkg;
     }
 
+    protected final void load(POIXMLFactory factory) throws IOException {
+    	Map<PackageRelationship, POIXMLDocumentPart> context = new HashMap<PackageRelationship, POIXMLDocumentPart>();
+        try {
+            read(factory, context);
+        } catch (OpenXML4JException e){
+            throw new POIXMLException(e);
+        }
+    	onDocumentRead();
+    	context.clear();
+    }
+
     /**
      * Write out this document to an Outputstream.
      *
-     * @param stream - the java OutputStream you wish to write the XLS to
+     * @param stream - the java OutputStream you wish to write the file to
      *
      * @exception IOException if anything can't be written.
      */
     public final void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
-        onSave();
+        Set<PackageRelationship> context = new HashSet<PackageRelationship>();
+        onSave(context);
+        context.clear();
 
         //save extended and custom properties
         getProperties().commit();
 
         getPackage().save(stream);
     }
-
 }

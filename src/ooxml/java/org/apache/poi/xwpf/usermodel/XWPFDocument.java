@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.*;
 
 import org.apache.poi.POIXMLDocument;
@@ -63,12 +64,14 @@ public class XWPFDocument extends POIXMLDocument {
         super(ensureWriteAccess(pkg));
 
         //build a tree of POIXMLDocumentParts, this document being the root
-        try {
-            read(XWPFFactory.getInstance());
-        } catch (OpenXML4JException e){
-            throw new POIXMLException(e);
-        }
-        onDocumentRead();
+        load(XWPFFactory.getInstance());
+    }
+    
+    public XWPFDocument(InputStream is) throws IOException {
+        super(PackageHelper.open(is));
+
+        //build a tree of POIXMLDocumentParts, this workbook being the root
+        load(XWPFFactory.getInstance());
     }
 
     public XWPFDocument(){
