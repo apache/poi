@@ -17,8 +17,7 @@
 package org.apache.poi;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.net.URI;
 
 import org.apache.xmlbeans.XmlOptions;
@@ -75,11 +74,11 @@ public class POIXMLDocumentPart {
 
     /**
      * Creates an POIXMLDocumentPart representing the given package part and relationship.
-     * Called by {@link #read(POIXMLFactory)} when reading in an exisiting file.
+     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an exisiting file.
      *
      * @param part - The package part that holds xml data represenring this sheet.
      * @param rel - the relationship of the given package part
-     * @see #read(POIXMLFactory)
+     * @see #read(POIXMLFactory, java.util.Map) 
      */
     public POIXMLDocumentPart(PackagePart part, PackageRelationship rel){
         this.relations = new LinkedList<POIXMLDocumentPart>();
@@ -172,11 +171,14 @@ public class POIXMLDocumentPart {
      * Save changes in the underlying OOXML package.
      * Recursively fires {@link #commit()} for each package part
      */
-    protected final void onSave() throws IOException{
-        commit();
-        for(POIXMLDocumentPart p : relations){
-            p.onSave();
-        }
+    protected final void onSave(Set<PackageRelationship> alreadySaved) throws IOException{
+    	commit();
+    	alreadySaved.add(this.getPackageRelationship());
+    	for(POIXMLDocumentPart p : relations){
+    		if (!alreadySaved.contains(p.getPackageRelationship())) {
+    			p.onSave(alreadySaved);
+    		}
+    	}
     }
 
     /**
@@ -228,10 +230,10 @@ public class POIXMLDocumentPart {
      *
      * @param factory   the factory object that creates POIXMLFactory instances
      */
-    protected final void read(POIXMLFactory factory) throws OpenXML4JException {
-        PackageRelationshipCollection rels = packagePart.getRelationships();
-        for (PackageRelationship rel : rels) {
-            if(rel.getTargetMode() == TargetMode.INTERNAL){
+    protected void read(POIXMLFactory factory, Map<PackageRelationship, POIXMLDocumentPart> context) throws OpenXML4JException {
+    	PackageRelationshipCollection rels = packagePart.getRelationships();
+    	for (PackageRelationship rel : rels) {
+    		if(rel.getTargetMode() == TargetMode.INTERNAL){
                 URI uri = rel.getTargetURI();
 
                 PackagePart p;
@@ -249,15 +251,21 @@ public class POIXMLDocumentPart {
                     }
                 }
 
-                POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
-                childPart.parent = this;
-                addRelation(childPart);
-
-                if(p != null && p.hasRelationships()) childPart.read(factory);
-            }
-        }
+                if (!context.containsKey(rel)) {
+    				POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
+    				childPart.parent = this;
+    				addRelation(childPart);
+                    if(p != null){
+                        context.put(rel, childPart);
+                        if(p.hasRelationships()) childPart.read(factory, context);
+                    }
+    			}
+    			else {
+    				addRelation(context.get(rel));
+    			}
+    		}
+    	}
     }
-
 
     /**
      * Fired when a new package part is created

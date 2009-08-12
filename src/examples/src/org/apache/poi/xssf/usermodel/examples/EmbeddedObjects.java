@@ -41,8 +41,7 @@ public class EmbeddedObjects {
             }
             // Excel Workbook – OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-                OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-                XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(docPackage);
+                XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
             }
             // Word Document – binary (OLE2CDF) file format
             else if (contentType.equals("application/msword")) {
@@ -50,8 +49,7 @@ public class EmbeddedObjects {
             }
             // Word Document – OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-                XWPFDocument document = new XWPFDocument(docPackage);
+                XWPFDocument document = new XWPFDocument(pPart.getInputStream());
             }
             // PowerPoint Document – binary file format
             else if (contentType.equals("application/vnd.ms-powerpoint")) {

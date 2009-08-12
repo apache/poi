@@ -149,12 +149,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         super(ensureWriteAccess(pkg));
 
         //build a tree of POIXMLDocumentParts, this workbook being the root
-        try {
-            read(XSSFFactory.getInstance());
-        } catch (OpenXML4JException e){
-            throw new POIXMLException(e);
-        }
-        onDocumentRead();
+        load(XSSFFactory.getInstance());
+    }
+
+    public XSSFWorkbook(InputStream is) throws IOException {
+        super(PackageHelper.open(is));
+
+        //build a tree of POIXMLDocumentParts, this workbook being the root
+        load(XSSFFactory.getInstance());
     }
 
     /**

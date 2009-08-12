@@ -20,6 +20,8 @@ package org.apache.poi.xssf.usermodel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.zip.CRC32;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -29,10 +31,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.POIXMLProperties;
@@ -275,7 +274,41 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         opcProps = workbook.getProperties().getCoreProperties().getUnderlyingProperties();
         assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
         assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+    }
 
+    /**
+     * Verify that the attached test data was not modified. If this test method
+     * fails, the test data is not working properly.
+     */
+    public void test47668() throws Exception {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("47668.xlsx");
+        List<XSSFPictureData> allPictures = workbook.getAllPictures();
+        assertEquals(2, allPictures.size());
 
+        PackagePartName imagePartName = PackagingURIHelper
+                .createPartName("/xl/media/image1.jpeg");
+        PackagePart imagePart = workbook.getPackage().getPart(imagePartName);
+        assertNotNull(imagePart);
+
+        for (XSSFPictureData pictureData : allPictures) {
+            PackagePart picturePart = pictureData.getPackagePart();
+            assertSame(imagePart, picturePart);
+        }
+
+        XSSFSheet sheet0 = workbook.getSheetAt(0);
+        XSSFDrawing drawing0 = sheet0.createDrawingPatriarch();
+        XSSFPictureData pictureData0 = (XSSFPictureData) drawing0.getRelations().get(0);
+        byte[] data0 = pictureData0.getData();
+        CRC32 crc0 = new CRC32();
+        crc0.update(data0);
+
+        XSSFSheet sheet1 = workbook.getSheetAt(1);
+        XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
+        XSSFPictureData pictureData1 = (XSSFPictureData) drawing1.getRelations().get(0);
+        byte[] data1 = pictureData1.getData();
+        CRC32 crc1 = new CRC32();
+        crc1.update(data1);
+
+        assertEquals(crc0.getValue(), crc1.getValue());
     }
 }

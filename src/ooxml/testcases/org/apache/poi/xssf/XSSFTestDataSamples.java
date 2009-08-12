@@ -41,10 +41,7 @@ public class XSSFTestDataSamples {
 	public static final XSSFWorkbook openSampleWorkbook(String sampleName) {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
 		try {
-			OPCPackage pkg = OPCPackage.open(is);
-			return new XSSFWorkbook(pkg);
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
+			return new XSSFWorkbook(is);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

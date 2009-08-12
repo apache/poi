@@ -19,7 +19,9 @@ package org.apache.poi.util;
 import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.POIXMLException;
 
 import java.io.*;
 import java.net.URI;
@@ -39,6 +41,18 @@ public class PackageHelper {
      */
     public static OPCPackage clone(OPCPackage pkg) throws OpenXML4JException, IOException {
         return clone(pkg, createTempFile());
+    }
+
+    public static OPCPackage open(InputStream is) throws IOException {
+        File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
+        FileOutputStream out = new FileOutputStream(file);
+        IOUtils.copy(is, out);
+        out.close();
+        try {
+            return OPCPackage.open(file.getAbsolutePath());
+        } catch (InvalidFormatException e){
+            throw new POIXMLException(e);
+        }
     }
 
     /**
