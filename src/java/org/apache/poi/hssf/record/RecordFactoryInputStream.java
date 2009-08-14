@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.EncryptedDocumentException;
 
 /**
  * A stream based way to get at complete records, with
@@ -41,7 +42,7 @@ public final class RecordFactoryInputStream {
 	 * Needed for protected files because each byte is encrypted with respect to its absolute
 	 * position from the start of the stream.
 	 */
-	public static final class StreamEncryptionInfo {
+	private static final class StreamEncryptionInfo {
 		private final int _initialRecordsSize;
 		private final FilePassRecord _filePassRec;
 		private final Record _lastRecord;
@@ -97,7 +98,9 @@ public final class RecordFactoryInputStream {
 				key = Biff8EncryptionKey.create(userPassword, fpr.getDocId());
 			}
 			if (!key.validate(fpr.getSaltData(), fpr.getSaltHash())) {
-				throw new RecordFormatException("Password/docId do not correspond to saltData/saltHash");
+				throw new EncryptedDocumentException(
+						(userPassword == null ? "Default" : "Supplied")
+						+ " password is invalid for docId/saltData/saltHash");
 			}
 			return new RecordInputStream(original, key, _initialRecordsSize);
 		}
