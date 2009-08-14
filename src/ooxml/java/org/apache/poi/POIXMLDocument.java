@@ -192,7 +192,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     }
 
     protected final void load(POIXMLFactory factory) throws IOException {
-    	Map<PackageRelationship, POIXMLDocumentPart> context = new HashMap<PackageRelationship, POIXMLDocumentPart>();
+    	Map<PackagePart, POIXMLDocumentPart> context = new HashMap<PackagePart, POIXMLDocumentPart>();
         try {
             read(factory, context);
         } catch (OpenXML4JException e){
@@ -211,7 +211,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      */
     public final void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
-        Set<PackageRelationship> context = new HashSet<PackageRelationship>();
+        Set<PackagePart> context = new HashSet<PackagePart>();
         onSave(context);
         context.clear();
 
