@@ -44,7 +44,7 @@ public class TestEmbeded extends TestCase
 	}
 
 	public void testExcel() throws Exception {
-		File f = new File(dirname, "ExcelWithAttachments.xlsx");
+		File f = new File(dirname, "ExcelWithAttachments.xlsm");
 		assertTrue(f.exists());
 		
 		POIXMLDocument doc = new XSSFWorkbook(OPCPackage.open(f.toString()));
@@ -60,7 +60,7 @@ public class TestEmbeded extends TestCase
 	}
 
 	public void testPowerPoint() throws Exception {
-		File f = new File(dirname, "PPTWithAttachments.pptx");
+		File f = new File(dirname, "PPTWithAttachments.pptm");
 		assertTrue(f.exists());
 		
 		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(f.toString()));

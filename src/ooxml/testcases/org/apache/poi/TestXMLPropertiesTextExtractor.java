@@ -34,7 +34,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	
 	public void testGetFromMainExtractor() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
+				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
@@ -55,7 +55,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 
 	public void testCore() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
+				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		
@@ -72,7 +72,7 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 	
 	public void testExtended() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsx")).toString()
+				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		
@@ -82,7 +82,6 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 		// Now check
 		String text = ext.getText();
 		String eText = ext.getExtendedPropertiesText();
-		System.out.println(eText);
 		
 		assertTrue(text.contains("Application = Microsoft Excel"));
 		assertTrue(text.contains("Company = Mera"));
