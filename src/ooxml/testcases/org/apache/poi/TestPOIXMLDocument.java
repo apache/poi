@@ -24,12 +24,9 @@ import java.io.IOException;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.apache.poi.xslf.XSLFSlideShow;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -69,11 +66,31 @@ public class TestPOIXMLDocument extends TestCase
 
     }
 
+    /**
+     * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
+     */
+    private static void traverse(POIXMLDocumentPart part, HashMap<String,POIXMLDocumentPart> context) throws IOException{
+    	context.put(part.getPackageRelationship().getTargetURI().toString(), part);
+    	for(POIXMLDocumentPart p : part.getRelations()){
+            String uri = p.getPackageRelationship().getTargetURI().toString();
+            if (!context.containsKey(uri)) {
+    			traverse(p, context);
+    		} else {
+                POIXMLDocumentPart prev = context.get(uri);
+                assertSame("Duplicate POIXMLDocumentPart instance for targetURI=" + uri, prev, p);
+            }
+    	}
+    }
+
     public void assertReadWrite(String path) throws Exception {
 
         OPCPackage pkg1 = OPCPackage.open(path);
         OPCParser doc = new OPCParser(pkg1);
         doc.parse(new TestFactory());
+
+        HashMap<String,POIXMLDocumentPart> context = new HashMap<String,POIXMLDocumentPart>();
+        traverse(doc, context);
+        context.clear();
 
         File tmp = TempFile.createTempFile("poi-ooxml", ".tmp");
         FileOutputStream out = new FileOutputStream(tmp);
@@ -81,6 +98,12 @@ public class TestPOIXMLDocument extends TestCase
         out.close();
 
         OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
+
+        doc = new OPCParser(pkg1);
+        doc.parse(new TestFactory());
+        context = new HashMap<String,POIXMLDocumentPart>();
+        traverse(doc, context);
+        context.clear();
 
         assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
 
@@ -102,12 +125,12 @@ public class TestPOIXMLDocument extends TestCase
     }
 
     public void testPPTX() throws Exception {
-        File file = new File(System.getProperty("OOXML.testdata.path"), "PPTWithAttachments.pptx");
+        File file = new File(System.getProperty("OOXML.testdata.path"), "PPTWithAttachments.pptm");
         assertReadWrite(file.getAbsolutePath());
     }
 
     public void testXLSX() throws Exception {
-        File file = new File(System.getProperty("OOXML.testdata.path"), "ExcelWithAttachments.xlsx");
+        File file = new File(System.getProperty("OOXML.testdata.path"), "ExcelWithAttachments.xlsm");
         assertReadWrite(file.getAbsolutePath());
     }
 
