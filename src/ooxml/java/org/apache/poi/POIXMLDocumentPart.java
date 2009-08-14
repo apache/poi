@@ -170,12 +170,14 @@ public class POIXMLDocumentPart {
     /**
      * Save changes in the underlying OOXML package.
      * Recursively fires {@link #commit()} for each package part
+     *
+     * @param alreadySaved    context set containing already visited nodes
      */
-    protected final void onSave(Set<PackageRelationship> alreadySaved) throws IOException{
+    protected final void onSave(Set<PackagePart> alreadySaved) throws IOException{
     	commit();
-    	alreadySaved.add(this.getPackageRelationship());
+    	alreadySaved.add(this.getPackagePart());
     	for(POIXMLDocumentPart p : relations){
-    		if (!alreadySaved.contains(p.getPackageRelationship())) {
+            if (!alreadySaved.contains(p.getPackagePart())) {
     			p.onSave(alreadySaved);
     		}
     	}
@@ -229,8 +231,9 @@ public class POIXMLDocumentPart {
      * using the specified factory
      *
      * @param factory   the factory object that creates POIXMLFactory instances
+     * @param context   context map containing already visited noted keyed by targetURI
      */
-    protected void read(POIXMLFactory factory, Map<PackageRelationship, POIXMLDocumentPart> context) throws OpenXML4JException {
+    protected void read(POIXMLFactory factory, Map<PackagePart, POIXMLDocumentPart> context) throws OpenXML4JException {
     	PackageRelationshipCollection rels = packagePart.getRelationships();
     	for (PackageRelationship rel : rels) {
     		if(rel.getTargetMode() == TargetMode.INTERNAL){
@@ -251,17 +254,17 @@ public class POIXMLDocumentPart {
                     }
                 }
 
-                if (!context.containsKey(rel)) {
+                if (!context.containsKey(p)) {
     				POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
     				childPart.parent = this;
     				addRelation(childPart);
                     if(p != null){
-                        context.put(rel, childPart);
+                        context.put(p, childPart);
                         if(p.hasRelationships()) childPart.read(factory, context);
                     }
     			}
     			else {
-    				addRelation(context.get(rel));
+    				addRelation(context.get(p));
     			}
     		}
     	}
