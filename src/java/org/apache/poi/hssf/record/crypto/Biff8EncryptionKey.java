@@ -90,9 +90,21 @@ public final class Biff8EncryptionKey {
 		md5.update(saltDataPrime);
 		byte[] finalSaltResult = md5.digest();
 
+		if (false) { // set true to see a valid saltHash value
+			byte[] saltHashThatWouldWork = xor(saltHash, xor(saltHashPrime, finalSaltResult));
+			System.out.println(HexDump.toHex(saltHashThatWouldWork));
+		}
+
 		return Arrays.equals(saltHashPrime, finalSaltResult);
 	}
 
+	private static byte[] xor(byte[] a, byte[] b) {
+		byte[] c = new byte[a.length];
+		for (int i = 0; i < c.length; i++) {
+			c[i] = (byte) (a[i] ^ b[i]);
+		}
+		return c;
+	}
 	private static void check16Bytes(byte[] data, String argName) {
 		if (data.length != 16) {
 			throw new IllegalArgumentException("Expected 16 byte " + argName + ", but got " + HexDump.toHex(data));

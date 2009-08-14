@@ -47,9 +47,11 @@ public final class AllRecordTests {
 		result.addTestSuite(TestBOFRecord.class);
 		result.addTestSuite(TestBoolErrRecord.class);
 		result.addTestSuite(TestBoundSheetRecord.class);
+		result.addTestSuite(TestCellRange.class);
 		result.addTestSuite(TestCFHeaderRecord.class);
 		result.addTestSuite(TestCFRuleRecord.class);
 		result.addTestSuite(TestCommonObjectDataSubRecord.class);
+		result.addTestSuite(TestConstantValueParser.class);
 		result.addTestSuite(TestDrawingGroupRecord.class);
 		result.addTestSuite(TestEmbeddedObjectRefSubRecord.class);
 		result.addTestSuite(TestEndSubRecord.class);
@@ -67,8 +69,9 @@ public final class AllRecordTests {
 		result.addTestSuite(TestObjRecord.class);
 		result.addTestSuite(TestPaletteRecord.class);
 		result.addTestSuite(TestPaneRecord.class);
-		result.addTestSuite(TestRecordInputStream.class);
 		result.addTestSuite(TestRecordFactory.class);
+		result.addTestSuite(TestRecordFactoryInputStream.class);
+		result.addTestSuite(TestRecordInputStream.class);
 		result.addTestSuite(TestSCLRecord.class);
 		result.addTestSuite(TestSSTDeserializer.class);
 		result.addTestSuite(TestSSTRecord.class);
@@ -84,8 +87,6 @@ public final class AllRecordTests {
 		result.addTestSuite(TestUnicodeNameRecord.class);
 		result.addTestSuite(TestUnicodeString.class);
 		result.addTestSuite(TestWriteAccessRecord.class);
-		result.addTestSuite(TestCellRange.class);
-		result.addTestSuite(TestConstantValueParser.class);
 		return result;
 	}
 }
