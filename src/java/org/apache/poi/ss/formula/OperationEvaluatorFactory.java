@@ -20,12 +20,11 @@ package org.apache.poi.ss.formula;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.ConcatPtg;
 import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
 import org.apache.poi.hssf.record.formula.GreaterThanPtg;
 import org.apache.poi.hssf.record.formula.LessEqualPtg;
@@ -44,7 +43,7 @@ import org.apache.poi.hssf.record.formula.eval.AddEval;
 import org.apache.poi.hssf.record.formula.eval.ConcatEval;
 import org.apache.poi.hssf.record.formula.eval.DivideEval;
 import org.apache.poi.hssf.record.formula.eval.EqualEval;
-import org.apache.poi.hssf.record.formula.eval.FuncVarEval;
+import org.apache.poi.hssf.record.formula.eval.FunctionEval;
 import org.apache.poi.hssf.record.formula.eval.GreaterEqualEval;
 import org.apache.poi.hssf.record.formula.eval.GreaterThanEval;
 import org.apache.poi.hssf.record.formula.eval.LessEqualEval;
@@ -114,11 +113,8 @@ final class OperationEvaluatorFactory {
 			return  result;
 		}
 
-		if (ptgClass == FuncPtg.class) {
-			return new FuncVarEval((FuncPtg)ptg);
-		}
-		if (ptgClass == FuncVarPtg.class) {
-			return new FuncVarEval((FuncVarPtg)ptg);
+		if (ptg instanceof AbstractFunctionPtg) {
+			return new FunctionEval((AbstractFunctionPtg)ptg);
 		}
 		throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 	}

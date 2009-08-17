@@ -40,6 +40,12 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
  */
 public final class Indirect implements FreeRefFunction {
 
+	public static final FreeRefFunction instance = new Indirect();
+
+	private Indirect() {
+		// enforce singleton
+	}
+
 	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol) {
 		// TODO - implement INDIRECT()
 		throw new NotImplementedException("INDIRECT");
