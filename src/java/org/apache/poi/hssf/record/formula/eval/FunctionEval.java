@@ -243,12 +243,12 @@ public final class FunctionEval implements OperationEval {
 		_delegate = funcPtg;
 	}
 
-	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
 		Function f = getFunction();
 		if (f == null) {
 			throw new NotImplementedException("FuncIx=" + getFunctionIndex());
 		}
-		return f.evaluate(operands, srcRow, srcCol);
+		return (ValueEval) f.evaluate(operands, srcRow, srcCol);
 	}
 
 	public int getNumberOfOperands() {

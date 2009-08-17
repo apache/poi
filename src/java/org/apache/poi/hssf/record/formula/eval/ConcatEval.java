@@ -28,7 +28,7 @@ public final class ConcatEval implements OperationEval {
 		// enforce singleton
 	}
 
-	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
 		if(args.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}

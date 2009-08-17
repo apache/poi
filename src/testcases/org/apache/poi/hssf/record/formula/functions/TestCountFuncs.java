@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
@@ -44,31 +43,31 @@ import org.apache.poi.ss.usermodel.CellValue;
  * @author Josh Micich
  */
 public final class TestCountFuncs extends TestCase {
-	
+
 	private static final String NULL = null;
 
 	public void testCountA() {
 
-		Eval[] args;
+		ValueEval[] args;
 
-		args = new Eval[] {
+		args = new ValueEval[] {
 			new NumberEval(0),
 		};
 		confirmCountA(1, args);
 
-		args = new Eval[] {
+		args = new ValueEval[] {
 			new NumberEval(0),
 			new NumberEval(0),
 			new StringEval(""),
 		};
 		confirmCountA(3, args);
 
-		args = new Eval[] {
+		args = new ValueEval[] {
 			EvalFactory.createAreaEval("D2:F5", new ValueEval[12]),
 		};
 		confirmCountA(12, args);
 
-		args = new Eval[] {
+		args = new ValueEval[] {
 			EvalFactory.createAreaEval("D1:F5", new ValueEval[15]),
 			EvalFactory.createRefEval("A1"),
 			EvalFactory.createAreaEval("A1:G6", new ValueEval[42]),
@@ -163,7 +162,6 @@ public final class TestCountFuncs extends TestCase {
 
 		range = EvalFactory.createAreaEval("A1:A5", values);
 		confirmCountIf(4, range, new StringEval("<>111"));
-	
 	}
 
 	/**
@@ -182,57 +180,57 @@ public final class TestCountFuncs extends TestCase {
 		AreaEval arg0 = EvalFactory.createAreaEval("C1:C6", values);
 
 		ValueEval criteriaArg = EvalFactory.createRefEval("A1", new NumberEval(25));
-		Eval[] args=  { arg0, criteriaArg, };
+		ValueEval[] args=  { arg0, criteriaArg, };
 
 		double actual = NumericFunctionInvoker.invoke(new Countif(), args);
 		assertEquals(4, actual, 0D);
 	}
 
-	private static void confirmCountA(int expected, Eval[] args) {
+	private static void confirmCountA(int expected, ValueEval[] args) {
 		double result = NumericFunctionInvoker.invoke(new Counta(), args);
 		assertEquals(expected, result, 0);
 	}
-	private static void confirmCountIf(int expected, AreaEval range, Eval criteria) {
+	private static void confirmCountIf(int expected, AreaEval range, ValueEval criteria) {
 
-		Eval[] args = { range, criteria, };
+		ValueEval[] args = { range, criteria, };
 		double result = NumericFunctionInvoker.invoke(new Countif(), args);
 		assertEquals(expected, result, 0);
 	}
 
-	private static I_MatchPredicate createCriteriaPredicate(Eval ev) {
+	private static I_MatchPredicate createCriteriaPredicate(ValueEval ev) {
 		return Countif.createCriteriaPredicate(ev, 0, 0);
 	}
-	
+
 	/**
 	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(Eval, int, short)}
 	 */
 	public void testCountifAreaCriteria() {
 		int srcColIx = 2; // anything but column A
-		
+
 		ValueEval v0 = new NumberEval(2.0);
 		ValueEval v1 = new StringEval("abc");
 		ValueEval v2 = ErrorEval.DIV_ZERO;
-		
+
 		AreaEval ev = EvalFactory.createAreaEval("A10:A12", new ValueEval[] { v0, v1, v2, });
-		
+
 		I_MatchPredicate mp;
 		mp = Countif.createCriteriaPredicate(ev, 9, srcColIx);
 		confirmPredicate(true, mp, srcColIx);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
-		
+
 		mp = Countif.createCriteriaPredicate(ev, 10, srcColIx);
 		confirmPredicate(false, mp, srcColIx);
 		confirmPredicate(true, mp, "abc");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
-		
+
 		mp = Countif.createCriteriaPredicate(ev, 11, srcColIx);
 		confirmPredicate(false, mp, srcColIx);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(true, mp, ErrorEval.DIV_ZERO);
 		confirmPredicate(false, mp, ErrorEval.VALUE_INVALID);
 
-		// tricky: indexing outside of A10:A12 
+		// tricky: indexing outside of A10:A12
 		// even this #VALUE! error gets used by COUNTIF as valid criteria
 		mp = Countif.createCriteriaPredicate(ev, 12, srcColIx);
 		confirmPredicate(false, mp, srcColIx);
@@ -240,7 +238,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
 		confirmPredicate(true, mp, ErrorEval.VALUE_INVALID);
 	}
-	
+
 	public void testCountifEmptyStringCriteria() {
 		I_MatchPredicate mp;
 
@@ -296,7 +294,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, "500");
 		confirmPredicate(true, mp, "4t4");
 	}
-	
+
 	/**
 	 * the criteria arg value can be an error code (the error does not
 	 * propagate to the COUNTIF result).
@@ -315,7 +313,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(false, mp, "#REF!");
 		confirmPredicate(true, mp, ErrorEval.DIV_ZERO);
 		confirmPredicate(false, mp, ErrorEval.REF_INVALID);
-		
+
 		// not quite an error literal, should be treated as plain text
 		mp = createCriteriaPredicate(new StringEval("<=#REF!a"));
 		confirmPredicate(false, mp, 4);
@@ -382,7 +380,7 @@ public final class TestCountFuncs extends TestCase {
 		assertEquals(expectedResult, matchPredicate.matches(new NumberEval(value)));
 	}
 	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, String value) {
-		Eval ev = value == null ? (Eval)BlankEval.INSTANCE : new StringEval(value);
+		ValueEval ev = value == null ? BlankEval.INSTANCE : new StringEval(value);
 		assertEquals(expectedResult, matchPredicate.matches(ev));
 	}
 	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, ErrorEval value) {

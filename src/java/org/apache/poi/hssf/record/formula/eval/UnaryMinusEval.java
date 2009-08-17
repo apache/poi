@@ -30,7 +30,7 @@ public final class UnaryMinusEval implements OperationEval {
 		// enforce singleton
 	}
 
-	public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

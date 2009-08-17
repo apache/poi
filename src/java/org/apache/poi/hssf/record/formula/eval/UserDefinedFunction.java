@@ -36,7 +36,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook,
+	public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook,
 			int srcCellSheet, int srcCellRow,int srcCellCol) {
 
 		int nIncomingArgs = args.length;
@@ -55,7 +55,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 					+ nameArg.getClass().getName() + ")");
 		}
 		int nOutGoingArgs = nIncomingArgs -1;
-		Eval[] outGoingArgs = new Eval[nOutGoingArgs];
+		ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];
 		System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
 		return targetFunc.evaluate(outGoingArgs, workbook, srcCellSheet, srcCellRow, srcCellCol);
 	}

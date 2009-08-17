@@ -33,14 +33,14 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
- * 
+ *
  * Returns the fraction of the year spanned by two dates.<p/>
- * 
+ *
  * <b>Syntax</b><br/>
  * <b>YEARFRAC</b>(<b>startDate</b>, <b>endDate</b>, basis)<p/>
- * 
+ *
  * The <b>basis</b> optionally specifies the behaviour of YEARFRAC as follows:
- * 
+ *
  * <table border="0" cellpadding="1" cellspacing="0" summary="basis parameter description">
  *   <tr><th>Value</th><th>Days per Month</th><th>Days per Year</th></tr>
  *   <tr align='center'><td>0 (default)</td><td>30</td><td>360</td></tr>
@@ -49,17 +49,17 @@ import org.apache.poi.ss.formula.EvaluationWorkbook;
  *   <tr align='center'><td>3</td><td>actual</td><td>365</td></tr>
  *   <tr align='center'><td>4</td><td>30</td><td>360</td></tr>
  * </table>
- * 
+ *
  */
 final class YearFrac implements FreeRefFunction {
 
 	public static final FreeRefFunction instance = new YearFrac();
-	
+
 	private YearFrac() {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
+	public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
 			int srcCellCol) {
 
 		double result;
@@ -71,7 +71,7 @@ final class YearFrac implements FreeRefFunction {
 				case 2:
 					break;
 				default:
-					return ErrorEval.VALUE_INVALID;  
+					return ErrorEval.VALUE_INVALID;
 			}
 			double startDateVal = evaluateDateArg(args[0], srcCellRow, srcCellCol);
 			double endDateVal = evaluateDateArg(args[1], srcCellRow, srcCellCol);
@@ -79,7 +79,7 @@ final class YearFrac implements FreeRefFunction {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		
+
 		return new NumberEval(result);
 	}
 
@@ -123,7 +123,7 @@ final class YearFrac implements FreeRefFunction {
 			// easy to see this cannot be a valid date
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
-		
+
 		if (f0 >= 1900 && f0 < 9999) {
 			// when 4 digit value appears first, the format is YYYY/MM/DD, regardless of OS settings
 			return makeDate(f0, f1, f2);

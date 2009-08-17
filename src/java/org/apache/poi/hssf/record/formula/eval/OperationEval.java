@@ -19,21 +19,21 @@ package org.apache.poi.hssf.record.formula.eval;
 
 /**
  * Common interface for implementations of Excel formula operations.
- * 
+ *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public interface OperationEval {
 
 	/**
-	 * @param args the evaluated operation arguments. Elements of this array typically implement 
-	 * {@link ValueEval}.  Empty values are represented with {@link BlankEval} or {@link 
+	 * @param args the evaluated operation arguments. Elements of this array typically implement
+	 * {@link ValueEval}.  Empty values are represented with {@link BlankEval} or {@link
 	 * MissingArgEval}, never <code>null</code>.
 	 * @param srcRowIndex row index of the cell containing the formula under evaluation
 	 * @param srcColumnIndex column index of the cell containing the formula under evaluation
 	 * @return The evaluated result, possibly an {@link ErrorEval}, never <code>null</code>.
 	 */
-	Eval evaluate(Eval[] args, int srcRowIndex, short srcColumnIndex);
+	ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex);
 
 	int getNumberOfOperands();
 }

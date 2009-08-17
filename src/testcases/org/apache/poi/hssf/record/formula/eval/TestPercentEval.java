@@ -31,19 +31,19 @@ import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Test for percent operator evaluator.
- * 
+ *
  * @author Josh Micich
  */
 public final class TestPercentEval extends TestCase {
-	
+
 	private static void confirm(ValueEval arg, double expectedResult) {
-		Eval[] args = { 
-			arg,	
+		ValueEval[] args = {
+			arg,
 		};
-		
+
 		OperationEval opEval = PercentEval.instance;
 		double result = NumericFunctionInvoker.invoke(opEval, args, 0, 0);
-		
+
 		assertEquals(expectedResult, result, 0);
 	}
 
@@ -66,7 +66,7 @@ public final class TestPercentEval extends TestCase {
 		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("B1%");
 		row.createCell(1).setCellValue(50.0);
-		
+
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv;
 		try {
@@ -81,5 +81,4 @@ public final class TestPercentEval extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(0.5, cv.getNumberValue(), 0.0);
 	}
-
 }

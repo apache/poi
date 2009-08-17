@@ -19,18 +19,18 @@ package org.apache.poi.hssf.record.formula.eval;
 
 
 /**
- * 
- * @author Josh Micich 
+ *
+ * @author Josh Micich
  */
 public final class RangeEval implements OperationEval {
 
 	public static final OperationEval instance = new RangeEval();
-	
+
 	private RangeEval() {
 		// enforces singleton
 	}
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		if(args.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -45,18 +45,18 @@ public final class RangeEval implements OperationEval {
 	}
 
 	/**
-	 * @return simple rectangular {@link AreaEval} which fully encloses both areas 
+	 * @return simple rectangular {@link AreaEval} which fully encloses both areas
 	 * <tt>aeA</tt> and <tt>aeB</tt>
 	 */
 	private static AreaEval resolveRange(AreaEval aeA, AreaEval aeB) {
 		int aeAfr = aeA.getFirstRow();
 		int aeAfc = aeA.getFirstColumn();
-		
+
 		int top = Math.min(aeAfr, aeB.getFirstRow());
 		int bottom = Math.max(aeA.getLastRow(), aeB.getLastRow());
 		int left = Math.min(aeAfc, aeB.getFirstColumn());
 		int right = Math.max(aeA.getLastColumn(), aeB.getLastColumn());
-		
+
 		return aeA.offset(top-aeAfr, bottom-aeAfr, left-aeAfc, right-aeAfc);
 	}
 

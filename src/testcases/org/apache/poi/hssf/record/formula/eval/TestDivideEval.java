@@ -24,18 +24,18 @@ import org.apache.poi.hssf.record.formula.functions.NumericFunctionInvoker;
 
 /**
  * Test for divide operator evaluator.
- * 
+ *
  * @author Josh Micich
  */
 public final class TestDivideEval extends TestCase {
-	
+
 	private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
-		Eval[] args = { 
-			arg0, arg1,	 
+		ValueEval[] args = {
+			arg0, arg1,
 		};
-		
+
 		double result = NumericFunctionInvoker.invoke(DivideEval.instance, args, 0, 0);
-		
+
 		assertEquals(expectedResult, result, 0);
 	}
 
@@ -53,10 +53,10 @@ public final class TestDivideEval extends TestCase {
 		confirm(ae0, ae1, 5);
 	}
 	public void testDivZero() {
-		Eval[] args = { 
-			new NumberEval(5), NumberEval.ZERO,	 
+		ValueEval[] args = {
+			new NumberEval(5), NumberEval.ZERO,
 		};
-		Eval result = DivideEval.instance.evaluate(args, 0, (short) 0);
+		ValueEval result = DivideEval.instance.evaluate(args, 0, (short) 0);
 		assertEquals(ErrorEval.DIV_ZERO, result);
 	}
 }

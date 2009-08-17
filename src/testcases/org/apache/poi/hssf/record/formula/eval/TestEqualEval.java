@@ -36,11 +36,11 @@ public final class TestEqualEval extends TestCase {
 	public void test1x1AreaOperand() {
 
 		ValueEval[] values = { BoolEval.FALSE, };
-		Eval[] args = {
+		ValueEval[] args = {
 			EvalFactory.createAreaEval("B1:B1", values),
 			BoolEval.FALSE,
 		};
-		Eval result = EqualEval.instance.evaluate(args, 10, (short)20);
+		ValueEval result = EqualEval.instance.evaluate(args, 10, (short)20);
 		if (result instanceof ErrorEval) {
 			if (result == ErrorEval.VALUE_INVALID) {
 				throw new AssertionFailedError("Identified bug in evaluation of 1x1 area");
@@ -54,11 +54,11 @@ public final class TestEqualEval extends TestCase {
 	 */
 	public void testBlankEqualToEmptyString() {
 
-		Eval[] args = {
+		ValueEval[] args = {
 			new StringEval(""),
 			BlankEval.INSTANCE,
 		};
-		Eval result = EqualEval.instance.evaluate(args, 10, (short)20);
+		ValueEval result = EqualEval.instance.evaluate(args, 10, (short)20);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
 		if (!be.getBooleanValue()) {
@@ -82,11 +82,11 @@ public final class TestEqualEval extends TestCase {
 	}
 
 	private static boolean evalStringCmp(String a, String b, OperationEval cmpOp) {
-		Eval[] args = {
+		ValueEval[] args = {
 			new StringEval(a),
 			new StringEval(b),
 		};
-		Eval result = cmpOp.evaluate(args, 10, (short)20);
+		ValueEval result = cmpOp.evaluate(args, 10, (short)20);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
 		return be.getBooleanValue();
@@ -103,12 +103,12 @@ public final class TestEqualEval extends TestCase {
 	 */
 	public void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
-		NumberEval mZero = (NumberEval) UnaryMinusEval.instance.evaluate(new Eval[] { zero, }, 0,
+		NumberEval mZero = (NumberEval) UnaryMinusEval.instance.evaluate(new ValueEval[] { zero, }, 0,
 				(short) 0);
 		if (Double.doubleToLongBits(mZero.getNumberValue()) == 0x8000000000000000L) {
 			throw new AssertionFailedError("Identified bug 47198: unary minus should convert -0.0 to 0.0");
 		}
-		Eval[] args = { zero, mZero, };
+		ValueEval[] args = { zero, mZero, };
 		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
@@ -123,7 +123,7 @@ public final class TestEqualEval extends TestCase {
 		NumberEval b = new NumberEval(1.0055);
 		assertEquals("1.0055", b.getStringValue());
 
-		Eval[] args = { a, b, };
+		ValueEval[] args = { a, b, };
 		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47598: 1+1.0028-0.9973 != 1.0055");

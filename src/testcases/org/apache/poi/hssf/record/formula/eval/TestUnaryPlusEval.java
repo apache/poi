@@ -47,7 +47,7 @@ public final class TestUnaryPlusEval extends TestCase {
 				new NumberEval(37),
 				new NumberEval(38),
 		};
-		Eval[] args = {
+		ValueEval[] args = {
 			EvalFactory.createAreaEval(areaPtg, values),
 		};
 
