@@ -22,23 +22,28 @@ import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 /**
- * 
- * Common entry point for all user-defined (non-built-in) functions (where 
+ *
+ * Common entry point for all user-defined (non-built-in) functions (where
  * <tt>AbstractFunctionPtg.field_2_fnc_index</tt> == 255)
- * 
- * TODO rename to UserDefinedFunction
+ *
  * @author Josh Micich
  */
-final class ExternalFunction implements FreeRefFunction {
+final class UserDefinedFunction implements FreeRefFunction {
 
-	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, 
+	public static final FreeRefFunction instance = new UserDefinedFunction();
+
+	private UserDefinedFunction() {
+		// enforce singleton
+	}
+
+	public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook,
 			int srcCellSheet, int srcCellRow,int srcCellCol) {
-		
+
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {
 			throw new RuntimeException("function name argument missing");
 		}
-		
+
 		Eval nameArg = args[0];
 		FreeRefFunction targetFunc;
 		if (nameArg instanceof NameEval) {
@@ -78,7 +83,7 @@ final class ExternalFunction implements FreeRefFunction {
 			System.out.println("received call to internal user defined function  (" + functionName + ")");
 		}
 		// TODO find the implementation for the user defined function
-		
+
 		throw new NotImplementedException(functionName);
 	}
 }

@@ -17,17 +17,16 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.record.formula.functions.*;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public abstract class FunctionEval implements OperationEval {
+public final class FunctionEval implements OperationEval {
 	/**
 	 * Some function IDs that require special treatment
 	 */
@@ -44,34 +43,26 @@ public abstract class FunctionEval implements OperationEval {
 	// convenient access to namespace
 	private static final FunctionID ID = null;
 
-	protected static final Function[] functions ;
-
-	private static Map<Integer, FreeRefFunction> freeRefFunctionsByIdMap;
-
-	static {
-		Map<Integer, FreeRefFunction> m = new HashMap<Integer, FreeRefFunction>();
-		m.put(createFRFKey(ID.INDIRECT), new Indirect());
-		m.put(createFRFKey(ID.EXTERNAL_FUNC), new ExternalFunction());
-		freeRefFunctionsByIdMap = m;
-		functions = produceFunctions();
-	}
-	private static Integer createFRFKey(int functionIndex) {
-		return new Integer(functionIndex);
-	}
+	protected static final Function[] functions = produceFunctions();
 
 
-	public Function getFunction() {
+	/**
+	 * @return <code>null</code> if specified function
+	 */
+	private Function getFunction() {
 		short fidx = getFunctionIndex();
 		return functions[fidx];
 	}
 	public boolean isFreeRefFunction() {
-		return freeRefFunctionsByIdMap.containsKey(createFRFKey(getFunctionIndex()));
+		return getFreeRefFunction() != null;
 	}
 	public FreeRefFunction getFreeRefFunction() {
-		return freeRefFunctionsByIdMap.get(createFRFKey(getFunctionIndex()));
+		switch (getFunctionIndex()) {
+			case FunctionID.INDIRECT: return Indirect.instance;
+			case FunctionID.EXTERNAL_FUNC: return UserDefinedFunction.instance;
+		}
+		return null;
 	}
-
-	public abstract short getFunctionIndex();
 
 	private static Function[] produceFunctions() {
 		Function[] retval = new Function[368];
@@ -244,5 +235,27 @@ public abstract class FunctionEval implements OperationEval {
 			}
 		}
 		return retval;
+	}
+
+	private AbstractFunctionPtg _delegate;
+
+	public FunctionEval(AbstractFunctionPtg funcPtg) {
+		_delegate = funcPtg;
+	}
+
+	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
+		Function f = getFunction();
+		if (f == null) {
+			throw new NotImplementedException("FuncIx=" + getFunctionIndex());
+		}
+		return f.evaluate(operands, srcRow, srcCol);
+	}
+
+	public int getNumberOfOperands() {
+		return _delegate.getNumberOfOperands();
+	}
+
+	private short getFunctionIndex() {
+		return _delegate.getFunctionIndex();
 	}
 }
