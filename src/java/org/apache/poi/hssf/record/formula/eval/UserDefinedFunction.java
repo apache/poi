@@ -44,7 +44,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 			throw new RuntimeException("function name argument missing");
 		}
 
-		Eval nameArg = args[0];
+		ValueEval nameArg = args[0];
 		FreeRefFunction targetFunc;
 		if (nameArg instanceof NameEval) {
 			targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);

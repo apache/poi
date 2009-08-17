@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record.formula.eval;
 
 /**
  * Provides functionality for evaluating arguments to functions and operators.
- * 
+ *
  * @author Josh Micich
  */
 public final class OperandResolver {
@@ -37,12 +37,12 @@ public final class OperandResolver {
 	 * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>.
 	 * Never <code>null</code> or <tt>ErrorEval</tt>.
 	 * @throws EvaluationException(#VALUE!) if srcCellRow or srcCellCol do not properly index into
-	 *  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding 
+	 *  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding
 	 *  EvaluationException is thrown.
 	 */
-	public static ValueEval getSingleValue(Eval arg, int srcCellRow, short srcCellCol)
+	public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
-		Eval result;
+		ValueEval result;
 		if (arg instanceof RefEval) {
 			result = ((RefEval) arg).getInnerValueEval();
 		} else if (arg instanceof AreaEval) {
@@ -63,7 +63,7 @@ public final class OperandResolver {
 	 * Implements (some perhaps not well known) Excel functionality to select a single cell from an
 	 * area depending on the coordinates of the calling cell.  Here is an example demonstrating
 	 * both selection from a single row area and a single column area in the same formula.
-	 * 
+	 *
 	 *    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
 	 *      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
 	 *      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
@@ -71,10 +71,10 @@ public final class OperandResolver {
 	 *      <tr><th>3</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>300</td></tr>
 	 *      <tr><th>3</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>400</td></tr>
 	 *    </table>
-	 * 
+	 *
 	 * If the formula "=1000+A1:B1+D2:D3" is put into the 9 cells from A2 to C4, the spreadsheet
 	 * will look like this:
-	 * 
+	 *
 	 *    <table border="1" cellpadding="1" cellspacing="1" summary="sample spreadsheet">
 	 *      <tr><th>&nbsp;</th><th>&nbsp;A&nbsp;</th><th>&nbsp;B&nbsp;</th><th>&nbsp;C&nbsp;</th><th>&nbsp;D&nbsp;</th></tr>
 	 *      <tr><th>1</th><td>15</td><td>20</td><td>25</td><td>&nbsp;</td></tr>
@@ -82,28 +82,28 @@ public final class OperandResolver {
 	 *      <tr><th>3</th><td>1315</td><td>1320</td><td>#VALUE!</td><td>300</td></tr>
 	 *      <tr><th>4</th><td>#VALUE!</td><td>#VALUE!</td><td>#VALUE!</td><td>400</td></tr>
 	 *    </table>
-	 * 
-	 * Note that the row area (A1:B1) does not include column C and the column area (D2:D3) does 
+	 *
+	 * Note that the row area (A1:B1) does not include column C and the column area (D2:D3) does
 	 * not include row 4, so the values in C1(=25) and D4(=400) are not accessible to the formula
 	 * as written, but in the 4 cells A2:B3, the row and column selection works ok.<p/>
-	 * 
-	 * The same concept is extended to references across sheets, such that even multi-row, 
+	 *
+	 * The same concept is extended to references across sheets, such that even multi-row,
 	 * multi-column areas can be useful.<p/>
-	 * 
+	 *
 	 * Of course with carefully (or carelessly) chosen parameters, cyclic references can occur and
-	 * hence this method <b>can</b> throw a 'circular reference' EvaluationException.  Note that 
+	 * hence this method <b>can</b> throw a 'circular reference' EvaluationException.  Note that
 	 * this method does not attempt to detect cycles.  Every cell in the specified Area <tt>ae</tt>
-	 * has already been evaluated prior to this method call.  Any cell (or cell<b>s</b>) part of 
-	 * <tt>ae</tt> that would incur a cyclic reference error if selected by this method, will 
+	 * has already been evaluated prior to this method call.  Any cell (or cell<b>s</b>) part of
+	 * <tt>ae</tt> that would incur a cyclic reference error if selected by this method, will
 	 * already have the value <t>ErrorEval.CIRCULAR_REF_ERROR</tt> upon entry to this method.  It
 	 * is assumed logic exists elsewhere to produce this behaviour.
-	 * 
+	 *
 	 * @return whatever the selected cell's evaluated value is.  Never <code>null</code>. Never
 	 *  <tt>ErrorEval</tt>.
 	 * @throws EvaluationException if there is a problem with indexing into the area, or if the
 	 *  evaluated cell has an error.
 	 */
-	public static ValueEval chooseSingleElementFromArea(AreaEval ae, 
+	public static ValueEval chooseSingleElementFromArea(AreaEval ae,
 			int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol);
 		if(result == null) {
@@ -119,9 +119,9 @@ public final class OperandResolver {
 	}
 
 	/**
-	 * @return possibly  <tt>ErrorEval</tt>, and <code>null</code> 
+	 * @return possibly <tt>ErrorEval</tt>, and <code>null</code>
 	 */
-	private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae, 
+	private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae,
 			int srcCellRow, short srcCellCol) throws EvaluationException {
 
 		if(false) {
@@ -140,10 +140,10 @@ public final class OperandResolver {
 
 		Another reason there's little value in attempting to detect circular references here is
 		that only direct circular references could be detected.  If the cycle involved two or more
-		cells this method could not detect it.  
+		cells this method could not detect it.
 
 		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
-		(and HSSFFormulaEvaluator). 
+		(and HSSFFormulaEvaluator).
 		 */
 		}
 
@@ -172,14 +172,14 @@ public final class OperandResolver {
 	/**
 	 * Applies some conversion rules if the supplied value is not already an integer.<br/>
 	 * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
-	 * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p/> 
-	 * 
+	 * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p/>
+	 *
 	 * Excel typically converts doubles to integers by truncating toward negative infinity.<br/>
 	 * The equivalent java code is:<br/>
 	 * &nbsp;&nbsp;<code>return (int)Math.floor(d);</code><br/>
 	 * <b>not</b>:<br/>
-	 * &nbsp;&nbsp;<code>return (int)d; // wrong - rounds toward zero</code> 
-	 * 
+	 * &nbsp;&nbsp;<code>return (int)d; // wrong - rounds toward zero</code>
+	 *
 	 */
 	public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
 		if (ev == BlankEval.INSTANCE) {
@@ -193,13 +193,13 @@ public final class OperandResolver {
 
 	/**
 	 * Applies some conversion rules if the supplied value is not already a number.
-	 * Note - <tt>BlankEval</tt> is converted to {@link NumberEval#ZERO}. 
-	 * @param ev must be a {@link NumberEval}, {@link StringEval}, {@link BoolEval} or 
+	 * Note - <tt>BlankEval</tt> is converted to {@link NumberEval#ZERO}.
+	 * @param ev must be a {@link NumberEval}, {@link StringEval}, {@link BoolEval} or
 	 * {@link BlankEval}
 	 * @return actual, parsed or interpreted double value (respectively).
 	 * @throws EvaluationException(#VALUE!) only if a StringEval is supplied and cannot be parsed
 	 * as a double (See <tt>parseDouble()</tt> for allowable formats).
-	 * @throws RuntimeException if the supplied parameter is not {@link NumberEval}, 
+	 * @throws RuntimeException if the supplied parameter is not {@link NumberEval},
 	 * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
 	 */
 	public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
@@ -224,8 +224,8 @@ public final class OperandResolver {
 	/**
 	 * Converts a string to a double using standard rules that Excel would use.<br/>
 	 * Tolerates currency prefixes, commas, leading and trailing spaces.<p/>
-	 *   
-	 *  Some examples:<br/> 
+	 *
+	 *  Some examples:<br/>
 	 *  " 123 " -&gt; 123.0<br/>
 	 *  ".123" -&gt; 0.123<br/>
 	 *  These not supported yet:<br/>
@@ -233,8 +233,7 @@ public final class OperandResolver {
 	 *  "$1.25E4" -&gt; 12500.0<br/>
 	 *  "5**2" -&gt; 500<br/>
 	 *  "250%" -&gt; 2.5<br/>
-	 *  
-	 * @param pText
+	 *
 	 * @return <code>null</code> if the specified text cannot be parsed as a number
 	 */
 	public static Double parseDouble(String pText) {

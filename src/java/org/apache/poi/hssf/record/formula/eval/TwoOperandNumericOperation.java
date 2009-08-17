@@ -22,7 +22,7 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 abstract class TwoOperandNumericOperation implements OperationEval {
 
-	protected final double singleOperandEvaluate(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	protected final double singleOperandEvaluate(ValueEval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
 	}

@@ -23,7 +23,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -190,7 +189,7 @@ public final class Countif implements Function {
 			return String.valueOf(_value);
 		}
 
-		public boolean matches(Eval x) {
+		public boolean matches(ValueEval x) {
 			double testValue;
 			if(x instanceof StringEval) {
 				// if the target(x) is a string, but parses as a number
@@ -241,7 +240,7 @@ public final class Countif implements Function {
 			return value ? 1 : 0;
 		}
 
-		public boolean matches(Eval x) {
+		public boolean matches(ValueEval x) {
 			int testValue;
 			if(x instanceof StringEval) {
 				if (true) { // change to false to observe more intuitive behaviour
@@ -278,7 +277,7 @@ public final class Countif implements Function {
 			return ErrorConstants.getText(_value);
 		}
 
-		public boolean matches(Eval x) {
+		public boolean matches(ValueEval x) {
 			if(x instanceof ErrorEval) {
 				int testValue = ((ErrorEval)x).getErrorCode();
 				return evaluate(testValue - _value);
@@ -313,7 +312,7 @@ public final class Countif implements Function {
 			return _pattern.pattern();
 		}
 
-		public boolean matches(Eval x) {
+		public boolean matches(ValueEval x) {
 			if (x instanceof BlankEval) {
 				switch(getCode()) {
 					case CmpOp.NONE:
@@ -423,7 +422,7 @@ public final class Countif implements Function {
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
-	private double countMatchingCellsInArea(Eval rangeArg, I_MatchPredicate criteriaPredicate) {
+	private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) {
 
 		if (rangeArg instanceof RefEval) {
 			return CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
@@ -438,9 +437,9 @@ public final class Countif implements Function {
 	 * Creates a criteria predicate object for the supplied criteria arg
 	 * @return <code>null</code> if the arg evaluates to blank.
 	 */
-	/* package */ static I_MatchPredicate createCriteriaPredicate(Eval arg, int srcRowIndex, int srcColumnIndex) {
+	/* package */ static I_MatchPredicate createCriteriaPredicate(ValueEval arg, int srcRowIndex, int srcColumnIndex) {
 
-		Eval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
+		ValueEval evaluatedCriteriaArg = evaluateCriteriaArg(arg, srcRowIndex, srcColumnIndex);
 
 		if(evaluatedCriteriaArg instanceof NumberEval) {
 			return new NumberMatcher(((NumberEval)evaluatedCriteriaArg).getNumberValue(), CmpOp.OP_NONE);
@@ -466,7 +465,7 @@ public final class Countif implements Function {
 	 *
 	 * @return the de-referenced criteria arg (possibly {@link ErrorEval})
 	 */
-	private static Eval evaluateCriteriaArg(Eval arg, int srcRowIndex, int srcColumnIndex) {
+	private static ValueEval evaluateCriteriaArg(ValueEval arg, int srcRowIndex, int srcColumnIndex) {
 		try {
 			return OperandResolver.getSingleValue(arg, srcRowIndex, (short)srcColumnIndex);
 		} catch (EvaluationException e) {

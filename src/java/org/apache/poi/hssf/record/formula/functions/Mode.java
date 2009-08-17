@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
@@ -92,7 +91,7 @@ public final class Mode implements Function {
 		return new NumberEval(result);
 	}
 
-	private static void collectValues(Eval arg, List<Double> temp) throws EvaluationException {
+	private static void collectValues(ValueEval arg, List<Double> temp) throws EvaluationException {
 		if (arg instanceof AreaEval) {
 			AreaEval ae = (AreaEval) arg;
 			int width = ae.getWidth();
@@ -114,7 +113,7 @@ public final class Mode implements Function {
 
 	}
 
-	private static void collectValue(Eval arg, List<Double> temp, boolean mustBeNumber)
+	private static void collectValue(ValueEval arg, List<Double> temp, boolean mustBeNumber)
 			throws EvaluationException {
 		if (arg instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) arg);

@@ -22,7 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -83,7 +83,7 @@ final class YearFrac implements FreeRefFunction {
 		return new NumberEval(result);
 	}
 
-	private static double evaluateDateArg(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	private static double evaluateDateArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 
 		if (ve instanceof StringEval) {
@@ -153,7 +153,7 @@ final class YearFrac implements FreeRefFunction {
 		return cal;
 	}
 
-	private static int evaluateIntArg(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	private static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short) srcCellCol);
 		return OperandResolver.coerceValueToInt(ve);
 	}

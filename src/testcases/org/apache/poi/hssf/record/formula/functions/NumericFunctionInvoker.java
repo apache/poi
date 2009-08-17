@@ -20,7 +20,7 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -82,7 +82,7 @@ public final class NumericFunctionInvoker {
 	 */
 	private static double invokeInternal(Object target, ValueEval[] args, int srcCellRow, int srcCellCol)
 				throws NumericEvalEx {
-		Eval evalResult;
+		ValueEval evalResult;
 		// TODO - make OperationEval extend Function
 		try {
 			if (target instanceof Function) {

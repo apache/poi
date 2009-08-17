@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -43,7 +42,7 @@ public final class Rows implements Function {
 				// too many arguments
 				return ErrorEval.VALUE_INVALID;
 		}
-		Eval firstArg = args[0];
+		ValueEval firstArg = args[0];
 
 		int result;
 		if (firstArg instanceof AreaEval) {

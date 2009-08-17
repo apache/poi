@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -207,7 +206,7 @@ public final class Offset implements Function {
 		return baseRef.offset(orRow.getFirstIndex(), orRow.getLastIndex(), orCol.getFirstIndex(), orCol.getLastIndex());
 	}
 
-	private static BaseRef evaluateBaseRef(Eval eval) throws EvaluationException {
+	private static BaseRef evaluateBaseRef(ValueEval eval) throws EvaluationException {
 
 		if(eval instanceof RefEval) {
 			return new BaseRef((RefEval)eval);
@@ -224,7 +223,7 @@ public final class Offset implements Function {
 	/**
 	 * OFFSET's numeric arguments (2..5) have similar processing rules
 	 */
-	private static int evaluateIntArg(Eval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static int evaluateIntArg(ValueEval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
 
 		double d = evaluateDoubleArg(eval, srcCellRow, srcCellCol);
 		return convertDoubleToInt(d);
@@ -240,7 +239,7 @@ public final class Offset implements Function {
 		return (int)Math.floor(d);
 	}
 
-	private static double evaluateDoubleArg(Eval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static double evaluateDoubleArg(ValueEval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcCellRow, srcCellCol);
 
 		if (ve instanceof NumericValueEval) {

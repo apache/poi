@@ -17,11 +17,10 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Implementation of the FIND() function.<p/>
@@ -37,7 +36,7 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
  */
 public final class Find extends TextFunction {
 
-	protected ValueEval evaluateFunc(Eval[] args, int srcCellRow, short srcCellCol)
+	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
 
 		int nArgs = args.length;

@@ -20,11 +20,10 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Here are the general rules concerning Boolean functions:
@@ -52,7 +51,7 @@ public abstract class BooleanFunction implements Function {
 		return BoolEval.valueOf(boolResult);
 	}
 
-	private boolean calculate(Eval[] args) throws EvaluationException {
+	private boolean calculate(ValueEval[] args) throws EvaluationException {
 
 		boolean result = getInitialResultValue();
 		boolean atleastOneNonBlank = false;
@@ -61,7 +60,7 @@ public abstract class BooleanFunction implements Function {
 		 * Note: no short-circuit boolean loop exit because any ErrorEvals will override the result
 		 */
 		for (int i=0, iSize=args.length; i<iSize; i++) {
-			Eval arg = args[i];
+			ValueEval arg = args[i];
 			if (arg instanceof AreaEval) {
 				AreaEval ae = (AreaEval) arg;
 				int height = ae.getHeight();
@@ -82,11 +81,8 @@ public abstract class BooleanFunction implements Function {
 			if (arg instanceof RefEval) {
 				ValueEval ve = ((RefEval) arg).getInnerValueEval();
 				tempVe = OperandResolver.coerceValueToBoolean(ve, true);
-			} else if (arg instanceof ValueEval) {
-				ValueEval ve = (ValueEval) arg;
-				tempVe = OperandResolver.coerceValueToBoolean(ve, false);
 			} else {
-				throw new RuntimeException("Unexpected eval (" + arg.getClass().getName() + ")");
+				tempVe = OperandResolver.coerceValueToBoolean(arg, false);
 			}
 
 

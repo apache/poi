@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
@@ -123,7 +122,7 @@ public final class Match implements Function {
 		}
 	}
 
-	private static ValueVector evaluateLookupRange(Eval eval) throws EvaluationException {
+	private static ValueVector evaluateLookupRange(ValueEval eval) throws EvaluationException {
 		if (eval instanceof RefEval) {
 			RefEval re = (RefEval) eval;
 			return new SingleValueVector(re.getInnerValueEval());
@@ -155,9 +154,9 @@ public final class Match implements Function {
 
 
 
-	private static double evaluateMatchTypeArg(Eval arg, int srcCellRow, short srcCellCol)
+	private static double evaluateMatchTypeArg(ValueEval arg, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
-		Eval match_type = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+		ValueEval match_type = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 
 		if(match_type instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval)match_type);

@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
@@ -100,7 +99,7 @@ public final class Sumif implements Function {
 	 * @return a range of the same dimensions as aeRange using eval to define the top left corner.
 	 * @throws EvaluationException if eval is not a reference
 	 */
-	private static AreaEval createSumRange(Eval eval, AreaEval aeRange) throws EvaluationException {
+	private static AreaEval createSumRange(ValueEval eval, AreaEval aeRange) throws EvaluationException {
 		if (eval instanceof AreaEval) {
 			return ((AreaEval) eval).offset(0, aeRange.getHeight()-1, 0, aeRange.getWidth()-1);
 		}
@@ -110,7 +109,7 @@ public final class Sumif implements Function {
 		throw new EvaluationException(ErrorEval.VALUE_INVALID);
 	}
 
-	private static AreaEval convertRangeArg(Eval eval) throws EvaluationException {
+	private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
 		if (eval instanceof AreaEval) {
 			return (AreaEval) eval;
 		}

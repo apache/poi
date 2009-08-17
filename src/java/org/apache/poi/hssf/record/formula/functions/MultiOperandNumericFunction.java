@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -118,7 +117,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 	 *
 	 * @return never <code>null</code>
 	 */
-	protected final double[] getNumberArray(Eval[] operands) throws EvaluationException {
+	protected final double[] getNumberArray(ValueEval[] operands) throws EvaluationException {
 		if (operands.length > getMaxNumOperands()) {
 			throw EvaluationException.invalidValue();
 		}
@@ -133,7 +132,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 	/**
 	 * Collects values from a single argument
 	 */
-	private void collectValues(Eval operand, DoubleList temp) throws EvaluationException {
+	private void collectValues(ValueEval operand, DoubleList temp) throws EvaluationException {
 
 		if (operand instanceof AreaEval) {
 			AreaEval ae = (AreaEval) operand;
@@ -152,7 +151,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 			collectValue(re.getInnerValueEval(), true, temp);
 			return;
 		}
-		collectValue((ValueEval)operand, false, temp);
+		collectValue(operand, false, temp);
 	}
 	private void collectValue(ValueEval ve, boolean isViaReference, DoubleList temp)  throws EvaluationException {
 		if (ve == null) {

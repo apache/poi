@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -35,7 +34,7 @@ public final class Isblank implements Function {
 		if(args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		Eval arg = args[0];
+		ValueEval arg = args[0];
 
 		ValueEval singleCellValue;
 		try {

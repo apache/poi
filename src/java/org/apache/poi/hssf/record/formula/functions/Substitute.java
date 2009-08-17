@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -30,7 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Substitute extends TextFunction {
 
-	protected ValueEval evaluateFunc(Eval[] args, int srcCellRow, short srcCellCol)
+	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
 		if (args.length < 3 || args.length > 4) {
 			return ErrorEval.VALUE_INVALID;

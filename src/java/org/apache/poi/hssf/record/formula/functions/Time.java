@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -51,12 +50,12 @@ public final class Time implements Function {
 		}
 		return new NumberEval(result);
 	}
-	private static int evalArg(Eval arg) throws EvaluationException {
+	private static int evalArg(ValueEval arg) throws EvaluationException {
 		if (arg == MissingArgEval.instance) {
 			return 0;
 		}
 		// Excel silently truncates double values to integers
-		return OperandResolver.coerceValueToInt((ValueEval) arg);
+		return OperandResolver.coerceValueToInt(arg);
 	}
 	/**
 	 * Converts the supplied hours, minutes and seconds to an Excel time value.

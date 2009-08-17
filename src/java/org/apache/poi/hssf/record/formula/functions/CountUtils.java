@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
@@ -37,7 +36,7 @@ final class CountUtils {
 	 * Common interface for the matching criteria.
 	 */
 	public interface I_MatchPredicate {
-		boolean matches(Eval x);
+		boolean matches(ValueEval x);
 	}
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
@@ -66,7 +65,7 @@ final class CountUtils {
 		}
 		return 0;
 	}
-	public static int countArg(Eval eval, I_MatchPredicate criteriaPredicate) {
+	public static int countArg(ValueEval eval, I_MatchPredicate criteriaPredicate) {
 		if (eval == null) {
 			throw new IllegalArgumentException("eval must not be null");
 		}

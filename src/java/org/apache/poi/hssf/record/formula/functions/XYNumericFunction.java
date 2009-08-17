@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
@@ -167,7 +166,7 @@ public abstract class XYNumericFunction implements Function {
 		return result;
 	}
 
-	private static ValueVector createValueVector(Eval arg) throws EvaluationException {
+	private static ValueVector createValueVector(ValueEval arg) throws EvaluationException {
 		if (arg instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) arg);
 		}
@@ -177,9 +176,6 @@ public abstract class XYNumericFunction implements Function {
 		if (arg instanceof RefEval) {
 			return new RefValueArray((RefEval) arg);
 		}
-		if (arg instanceof ValueEval) {
-			return new SingleCellValueArray((ValueEval) arg);
-		}
-		throw new RuntimeException("Unexpected eval class (" + arg.getClass().getName() + ")");
+		return new SingleCellValueArray(arg);
 	}
 }
