@@ -27,7 +27,7 @@ abstract class TwoOperandNumericOperation implements OperationEval {
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 
-	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		double result;
 		try {
 			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);

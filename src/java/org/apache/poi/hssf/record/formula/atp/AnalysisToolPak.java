@@ -35,12 +35,12 @@ public final class AnalysisToolPak {
 			_functionName = functionName;
 		}
 
-		public ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet,
+		public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet,
 				int srcCellRow, int srcCellCol) {
 			throw new NotImplementedException(_functionName);
 		}
 	};
-	
+
 	private static Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
 
 	private AnalysisToolPak() {
@@ -50,7 +50,7 @@ public final class AnalysisToolPak {
 	public static FreeRefFunction findFunction(String name) {
 		return _functionsByName.get(name);
 	}
-	
+
 	private static Map<String, FreeRefFunction> createFunctionsMap() {
 		Map<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(100);
 
@@ -147,7 +147,7 @@ public final class AnalysisToolPak {
 		r(m, "YIELD", null);
 		r(m, "YIELDDISC", null);
 		r(m, "YIELDMAT", null);
-		
+
 		return m;
 	}
 

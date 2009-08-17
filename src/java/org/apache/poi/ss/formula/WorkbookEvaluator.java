@@ -51,7 +51,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
@@ -237,20 +236,20 @@ public final class WorkbookEvaluator {
 			CellReference cr = new CellReference(rowIndex, columnIndex);
 			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
 		}
-		// Usually (result === cce.getValue())  
+		// Usually (result === cce.getValue())
 		// But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)
-		// When circular references are detected, the cache entry is only updated for 
-		// the top evaluation frame 
+		// When circular references are detected, the cache entry is only updated for
+		// the top evaluation frame
 		return result;
 	}
 
 	/**
-	 * Adds the current cell reference to the exception for easier debugging. 
+	 * Adds the current cell reference to the exception for easier debugging.
 	 * Would be nice to get the formula text as well, but that seems to require
-	 * too much digging around and casting to get the FormulaRenderingWorkbook. 
+	 * too much digging around and casting to get the FormulaRenderingWorkbook.
 	 */
 	private NotImplementedException addExceptionInfo(NotImplementedException inner, int sheetIndex, int rowIndex, int columnIndex) {
-		
+
 		try {
 			String sheetName = _workbook.getSheetName(sheetIndex);
 			CellReference cr = new CellReference(sheetName, rowIndex, columnIndex, false, false);
@@ -385,7 +384,7 @@ public final class WorkbookEvaluator {
 		return evaluationResult;
 	}
 
-	private static ValueEval invokeOperation(OperationEval operation, Eval[] ops,
+	private static ValueEval invokeOperation(OperationEval operation, ValueEval[] ops,
 			EvaluationWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
 
 		if(operation instanceof FunctionEval) {

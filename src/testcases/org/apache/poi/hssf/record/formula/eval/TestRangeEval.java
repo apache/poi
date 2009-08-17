@@ -59,12 +59,12 @@ public final class TestRangeEval extends TestCase {
 
 	private static void confirm(String refA, String refB, String expectedAreaRef) {
 
-		Eval[] args = {
+		ValueEval[] args = {
 			createRefEval(refA),
 			createRefEval(refB),
 		};
 		AreaReference ar = new AreaReference(expectedAreaRef);
-		Eval result = RangeEval.instance.evaluate(args, 0, (short)0);
+		ValueEval result = RangeEval.instance.evaluate(args, 0, (short)0);
 		assertTrue(result instanceof AreaEval);
 		AreaEval ae = (AreaEval) result;
 		assertEquals(ar.getFirstCell().getRow(), ae.getFirstRow());
@@ -73,7 +73,7 @@ public final class TestRangeEval extends TestCase {
 		assertEquals(ar.getLastCell().getCol(), ae.getLastColumn());
 	}
 
-	private static Eval createRefEval(String refStr) {
+	private static ValueEval createRefEval(String refStr) {
 		CellReference cr = new CellReference(refStr);
 		return new MockRefEval(cr.getRow(), cr.getCol());
 

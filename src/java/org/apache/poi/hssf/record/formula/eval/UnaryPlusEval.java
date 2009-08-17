@@ -20,17 +20,17 @@ package org.apache.poi.hssf.record.formula.eval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public final class UnaryPlusEval implements OperationEval {
 
 	public static final OperationEval instance = new UnaryPlusEval();
-	
+
 	private UnaryPlusEval() {
 		// enforce singleton
 	}
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		if(args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

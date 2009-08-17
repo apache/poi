@@ -77,7 +77,7 @@ public final class TestMinusZeroResult extends TestCase {
 	 * Uses {@link ConcatEval} to force number-to-text conversion
 	 */
 	private static void confirmTextRendering(String expRendering, double d) {
-		Eval[] args = { StringEval.EMPTY_INSTANCE, new NumberEval(d), };
+		ValueEval[] args = { StringEval.EMPTY_INSTANCE, new NumberEval(d), };
 		StringEval se = (StringEval) ConcatEval.instance.evaluate(args, -1, (short)-1);
 		String result = se.getStringValue();
 		assertEquals(expRendering, result);
@@ -91,13 +91,13 @@ public final class TestMinusZeroResult extends TestCase {
 		BoolEval result = (BoolEval) evaluate(instance, dArgs);
 		assertEquals(expectedResult, result.getBooleanValue());
 	}
-	private static Eval evaluate(OperationEval instance, double... dArgs) {
-		Eval[] evalArgs;
-		evalArgs = new Eval[dArgs.length];
+	private static ValueEval evaluate(OperationEval instance, double... dArgs) {
+		ValueEval[] evalArgs;
+		evalArgs = new ValueEval[dArgs.length];
 		for (int i = 0; i < evalArgs.length; i++) {
 			evalArgs[i] = new NumberEval(dArgs[i]);
 		}
-		Eval r = instance.evaluate(evalArgs, -1, (short)-1);
+		ValueEval r = instance.evaluate(evalArgs, -1, (short)-1);
 		return r;
 	}
 

@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 
@@ -52,5 +51,5 @@ public interface FreeRefFunction {
 	 * a specified Excel error (Exceptions are never thrown to represent Excel errors).
 	 *
 	 */
-	ValueEval evaluate(Eval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol);
+	ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol);
 }

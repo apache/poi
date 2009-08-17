@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -24,11 +23,12 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * Test helper class for invoking functions with numeric results.
- * 
+ *
  * @author Josh Micich
  */
 public final class NumericFunctionInvoker {
@@ -36,13 +36,13 @@ public final class NumericFunctionInvoker {
 	private NumericFunctionInvoker() {
 		// no instances of this class
 	}
-	
+
 	private static final class NumericEvalEx extends Exception {
 		public NumericEvalEx(String msg) {
 			super(msg);
 		}
 	}
-	
+
 	/**
 	 * Invokes the specified function with the arguments.
 	 * <p/>
@@ -53,14 +53,14 @@ public final class NumericFunctionInvoker {
 	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
 	 * result causes the current junit test to fail.
 	 */
-	public static double invoke(Function f, Eval[] args) {
+	public static double invoke(Function f, ValueEval[] args) {
 		try {
 			return invokeInternal(f, args, -1, -1);
 		} catch (NumericEvalEx e) {
-			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName() 
+			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName()
 					+ ") failed: " + e.getMessage());
 		}
-		
+
 	}
 	/**
 	 * Invokes the specified operator with the arguments.
@@ -68,19 +68,19 @@ public final class NumericFunctionInvoker {
 	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
 	 * result causes the current junit test to fail.
 	 */
-	public static double invoke(OperationEval f, Eval[] args, int srcCellRow, int srcCellCol) {
+	public static double invoke(OperationEval f, ValueEval[] args, int srcCellRow, int srcCellCol) {
 		try {
 			return invokeInternal(f, args, srcCellRow, srcCellCol);
 		} catch (NumericEvalEx e) {
-			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName() 
+			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName()
 					+ ") failed: " + e.getMessage());
 		}
-		
+
 	}
 	/**
 	 * Formats nicer error messages for the junit output
 	 */
-	private static double invokeInternal(Object target, Eval[] args, int srcCellRow, int srcCellCol)
+	private static double invokeInternal(Object target, ValueEval[] args, int srcCellRow, int srcCellCol)
 				throws NumericEvalEx {
 		Eval evalResult;
 		// TODO - make OperationEval extend Function
@@ -95,7 +95,7 @@ public final class NumericFunctionInvoker {
 		} catch (NotImplementedException e) {
 			throw new NumericEvalEx("Not implemented:" + e.getMessage());
 		}
-		
+
 		if(evalResult == null) {
 			throw new NumericEvalEx("Result object was null");
 		}
@@ -105,10 +105,10 @@ public final class NumericFunctionInvoker {
 		}
 		if(!(evalResult instanceof NumericValueEval)) {
 			throw new NumericEvalEx("Result object type (" + evalResult.getClass().getName()
-					+ ") is invalid.  Expected implementor of (" 
+					+ ") is invalid.  Expected implementor of ("
 					+ NumericValueEval.class.getName() + ")");
 		}
-		
+
 		NumericValueEval result = (NumericValueEval) evalResult;
 		return result.getNumberValue();
 	}
@@ -124,5 +124,4 @@ public final class NumericFunctionInvoker {
 		}
 		return a.getErrorCode() == b.getErrorCode();
 	}
-
 }

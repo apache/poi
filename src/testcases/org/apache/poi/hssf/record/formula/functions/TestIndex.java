@@ -21,7 +21,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -77,11 +76,11 @@ public final class TestIndex extends TestCase {
 		}
 		AreaEval arg0 = EvalFactory.createAreaEval(areaRefString, values);
 
-		Eval[] args;
+		ValueEval[] args;
 		if (colNum > 0) {
-			args = new Eval[] { arg0, new NumberEval(rowNum), new NumberEval(colNum), };
+			args = new ValueEval[] { arg0, new NumberEval(rowNum), new NumberEval(colNum), };
 		} else {
-			args = new Eval[] { arg0, new NumberEval(rowNum), };
+			args = new ValueEval[] { arg0, new NumberEval(rowNum), };
 		}
 
 		double actual = NumericFunctionInvoker.invoke(FUNC_INST, args);
@@ -99,10 +98,10 @@ public final class TestIndex extends TestCase {
 				new NumberEval(28.0),
 		};
 		AreaEval arg0 = EvalFactory.createAreaEval("A10:C10", values);
-		Eval[] args = new Eval[] { arg0, MissingArgEval.instance, new NumberEval(2), };
-		Eval actualResult;
+		ValueEval[] args = new ValueEval[] { arg0, MissingArgEval.instance, new NumberEval(2), };
+		ValueEval actualResult;
 		try {
-			actualResult = FUNC_INST.evaluate(args, 1, (short)1);
+			actualResult = (ValueEval) FUNC_INST.evaluate(args, 1, (short)1);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Unexpected arg eval type (org.apache.poi.hssf.record.formula.eval.MissingArgEval")) {
 				throw new AssertionFailedError("Identified bug 47048b - INDEX() should support missing-arg");
