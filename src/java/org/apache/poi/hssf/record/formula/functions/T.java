@@ -18,20 +18,20 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 public final class T implements Function {
 
-    public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+    public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
         switch (args.length) {
             default:
                 return ErrorEval.VALUE_INVALID;
             case 1:
                  break;
         }
-        Eval arg = args[0];
+        ValueEval arg = args[0];
         if (arg instanceof RefEval) {
             RefEval re = (RefEval) arg;
             arg = re.getInnerValueEval();

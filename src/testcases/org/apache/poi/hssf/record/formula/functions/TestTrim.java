@@ -22,36 +22,36 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Tests for Excel function TRIM()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestTrim extends TestCase {
 
-	
-	private static Eval invokeTrim(Eval text) {
-		Eval[] args = new Eval[] { text, };
+
+	private static ValueEval invokeTrim(ValueEval text) {
+		ValueEval[] args = new ValueEval[] { text, };
 		return TextFunction.TRIM.evaluate(args, -1, (short)-1);
 	}
 
-	private void confirmTrim(Eval text, String expected) {
-		Eval result = invokeTrim(text);
+	private void confirmTrim(ValueEval text, String expected) {
+		ValueEval result = invokeTrim(text);
 		assertEquals(StringEval.class, result.getClass());
 		assertEquals(expected, ((StringEval)result).getStringValue());
 	}
 
-	private void confirmTrim(Eval text, ErrorEval expectedError) {
-		Eval result = invokeTrim(text);
+	private void confirmTrim(ValueEval text, ErrorEval expectedError) {
+		ValueEval result = invokeTrim(text);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
-	
+
 	public void testBasic() {
-		
+
 		confirmTrim(new StringEval(" hi "), "hi");
 		confirmTrim(new StringEval("hi "), "hi");
 		confirmTrim(new StringEval("  hi"), "hi");
@@ -59,13 +59,13 @@ public final class TestTrim extends TestCase {
 		confirmTrim(new StringEval(""), "");
 		confirmTrim(new StringEval("   "), "");
 	}
-	
+
 	/**
 	 * Valid cases where text arg is not exactly a string
 	 */
 	public void testUnusualArgs() {
-		
-		// text (first) arg type is number, other args are strings with fractional digits 
+
+		// text (first) arg type is number, other args are strings with fractional digits
 		confirmTrim(new NumberEval(123456), "123456");
 		confirmTrim(BoolEval.FALSE, "FALSE");
 		confirmTrim(BoolEval.TRUE, "TRUE");

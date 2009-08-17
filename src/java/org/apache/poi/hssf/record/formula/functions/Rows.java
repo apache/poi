@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Implementation for Excel ROWS function.
@@ -30,7 +31,7 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
  */
 public final class Rows implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		switch(args.length) {
 			case 1:
 				// expected

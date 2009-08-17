@@ -17,28 +17,76 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  */
 public abstract class LogicalFunction implements Function {
 
-    /**
-     * recursively evaluate any RefEvals
-     * TODO - use {@link OperandResolver}
-     */
-    protected ValueEval xlateRefEval(RefEval reval) {
-        ValueEval retval = reval.getInnerValueEval();
+	/**
+	 * recursively evaluate any RefEvals TODO - use {@link OperandResolver}
+	 */
+	private static ValueEval xlateRefEval(RefEval reval) {
+		ValueEval retval = reval.getInnerValueEval();
 
-        if (retval instanceof RefEval) {
-            RefEval re = (RefEval) retval;
-            retval = xlateRefEval(re);
-        }
+		if (retval instanceof RefEval) {
+			RefEval re = (RefEval) retval;
+			retval = xlateRefEval(re);
+		}
 
-        return retval;
-    }
+		return retval;
+	}
+
+	public final ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
+		if (operands.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		ValueEval ve;
+		try {
+			ve = OperandResolver.getSingleValue(operands[0], srcCellRow, srcCellCol);
+		} catch (EvaluationException e) {
+			if (false) {
+				// Note - it is more usual to propagate error codes straight to the result like this:
+				return e.getErrorEval();
+				// but logical functions behave a little differently
+			}
+			// this will usually cause a 'FALSE' result except for ISNONTEXT()
+			ve = e.getErrorEval();
+		}
+		if (ve instanceof RefEval) {
+			ve = xlateRefEval((RefEval) ve);
+		}
+		return BoolEval.valueOf(evaluate(ve));
+
+	}
+	protected abstract boolean evaluate(ValueEval arg);
+
+	public static final Function IsLogical = new LogicalFunction() {
+		protected boolean evaluate(ValueEval arg) {
+			return arg instanceof BoolEval;
+		}
+	};
+	public static final Function IsNonText = new LogicalFunction() {
+		protected boolean evaluate(ValueEval arg) {
+			return !(arg instanceof StringEval);
+		}
+	};
+	public static final Function IsNumber = new LogicalFunction() {
+		protected boolean evaluate(ValueEval arg) {
+			return arg instanceof NumberEval;
+		}
+	};
+	public static final Function IsText = new LogicalFunction() {
+		protected boolean evaluate(ValueEval arg) {
+			return arg instanceof StringEval;
+		}
+	};
 }

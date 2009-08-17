@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
@@ -32,18 +31,18 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class TestAverage extends TestCase {
 
-	private static Eval invokeAverage(Eval[] args) {
+	private static ValueEval invokeAverage(ValueEval[] args) {
 		return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);
 	}
 
-	private void confirmAverage(Eval[] args, double expected) {
-		Eval result = invokeAverage(args);
+	private void confirmAverage(ValueEval[] args, double expected) {
+		ValueEval result = invokeAverage(args);
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
 	}
 
-	private void confirmAverage(Eval[] args, ErrorEval expectedError) {
-		Eval result = invokeAverage(args);
+	private void confirmAverage(ValueEval[] args, ErrorEval expectedError) {
+		ValueEval result = invokeAverage(args);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}

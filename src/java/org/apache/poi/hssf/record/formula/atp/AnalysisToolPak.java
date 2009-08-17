@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.atp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.EvaluationWorkbook;

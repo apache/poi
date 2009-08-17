@@ -20,31 +20,31 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 
 /**
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestRoundFuncs extends TestCase {
 	private static final NumericFunction F = null;
 	public void testRounddownWithStringArg() {
-		
-		Eval strArg = new StringEval("abc");
-		Eval[] args = { strArg, new NumberEval(2), };
-		Eval result = F.ROUNDDOWN.evaluate(args, -1, (short)-1);
+
+		ValueEval strArg = new StringEval("abc");
+		ValueEval[] args = { strArg, new NumberEval(2), };
+		ValueEval result = F.ROUNDDOWN.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
-	
+
 	public void testRoundupWithStringArg() {
-		
-		Eval strArg = new StringEval("abc");
-		Eval[] args = { strArg, new NumberEval(2), };
-		Eval result = F.ROUNDUP.evaluate(args, -1, (short)-1);
+
+		ValueEval strArg = new StringEval("abc");
+		ValueEval[] args = { strArg, new NumberEval(2), };
+		ValueEval result = F.ROUNDUP.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
-	
+
 }

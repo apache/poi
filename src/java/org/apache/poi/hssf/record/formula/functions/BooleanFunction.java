@@ -39,7 +39,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public abstract class BooleanFunction implements Function {
 
-	public final Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
 		if (args.length < 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

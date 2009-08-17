@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
@@ -54,14 +53,14 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 public final class Sumproduct implements Function {
 
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 
 		int maxN = args.length;
 
 		if(maxN < 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		Eval firstArg = args[0];
+		ValueEval firstArg = args[0];
 		try {
 			if(firstArg instanceof NumericValueEval) {
 				return evaluateSingleProduct(args);
@@ -83,7 +82,7 @@ public final class Sumproduct implements Function {
 				+ firstArg.getClass().getName() + ")");
 	}
 
-	private static Eval evaluateSingleProduct(Eval[] evalArgs) throws EvaluationException {
+	private static ValueEval evaluateSingleProduct(ValueEval[] evalArgs) throws EvaluationException {
 		int maxN = evalArgs.length;
 
 		double term = 1D;
@@ -94,9 +93,9 @@ public final class Sumproduct implements Function {
 		return new NumberEval(term);
 	}
 
-	private static double getScalarValue(Eval arg) throws EvaluationException {
+	private static double getScalarValue(ValueEval arg) throws EvaluationException {
 
-		Eval eval;
+		ValueEval eval;
 		if (arg instanceof RefEval) {
 			RefEval re = (RefEval) arg;
 			eval = re.getInnerValueEval();
@@ -116,15 +115,10 @@ public final class Sumproduct implements Function {
 			eval = ae.getRelativeValue(0, 0);
 		}
 
-		if (!(eval instanceof ValueEval)) {
-			throw new RuntimeException("Unexpected value eval class ("
-					+ eval.getClass().getName() + ")");
-		}
-
-		return getProductTerm((ValueEval) eval, true);
+		return getProductTerm(eval, true);
 	}
 
-	private static Eval evaluateAreaSumProduct(Eval[] evalArgs) throws EvaluationException {
+	private static ValueEval evaluateAreaSumProduct(ValueEval[] evalArgs) throws EvaluationException {
 		int maxN = evalArgs.length;
 		AreaEval[] args = new AreaEval[maxN];
 		try {

@@ -47,7 +47,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Index implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		int nArgs = args.length;
 		if(nArgs < 2) {
 			// too few arguments

@@ -20,45 +20,44 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Tests for Excel functions SUMX2MY2(), SUMX2PY2(), SUMXMY2()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestXYNumericFunction extends TestCase {
 	private static final Function SUM_SQUARES = new Sumx2py2();
 	private static final Function DIFF_SQUARES = new Sumx2my2();
 	private static final Function SUM_SQUARES_OF_DIFFS = new Sumxmy2();
-	
-	private static Eval invoke(Function function, Eval xArray, Eval yArray) {
-		Eval[] args = new Eval[] { xArray, yArray, };
+
+	private static ValueEval invoke(Function function, ValueEval xArray, ValueEval yArray) {
+		ValueEval[] args = new ValueEval[] { xArray, yArray, };
 		return function.evaluate(args, -1, (short)-1);
 	}
 
-	private void confirm(Function function, Eval xArray, Eval yArray, double expected) {
-		Eval result = invoke(function, xArray, yArray);
+	private void confirm(Function function, ValueEval xArray, ValueEval yArray, double expected) {
+		ValueEval result = invoke(function, xArray, yArray);
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
 	}
-	private void confirmError(Function function, Eval xArray, Eval yArray, ErrorEval expectedError) {
-		Eval result = invoke(function, xArray, yArray);
+	private void confirmError(Function function, ValueEval xArray, ValueEval yArray, ErrorEval expectedError) {
+		ValueEval result = invoke(function, xArray, yArray);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
 
-	private void confirmError(Eval xArray, Eval yArray, ErrorEval expectedError) {
+	private void confirmError(ValueEval xArray, ValueEval yArray, ErrorEval expectedError) {
 		confirmError(SUM_SQUARES, xArray, yArray, expectedError);
 		confirmError(DIFF_SQUARES, xArray, yArray, expectedError);
 		confirmError(SUM_SQUARES_OF_DIFFS, xArray, yArray, expectedError);
 	}
-	
+
 	public void testBasic() {
 		ValueEval[] xValues = {
-			new NumberEval(1),	
-			new NumberEval(2),	
+			new NumberEval(1),
+			new NumberEval(2),
 		};
 		ValueEval areaEvalX = createAreaEval(xValues);
 		confirm(SUM_SQUARES, areaEvalX, areaEvalX, 10.0);
@@ -66,27 +65,27 @@ public final class TestXYNumericFunction extends TestCase {
 		confirm(SUM_SQUARES_OF_DIFFS, areaEvalX, areaEvalX, 0.0);
 
 		ValueEval[] yValues = {
-			new NumberEval(3),	
-			new NumberEval(4),	
+			new NumberEval(3),
+			new NumberEval(4),
 		};
 		ValueEval areaEvalY = createAreaEval(yValues);
 		confirm(SUM_SQUARES, areaEvalX, areaEvalY, 30.0);
 		confirm(DIFF_SQUARES, areaEvalX, areaEvalY, -20.0);
 		confirm(SUM_SQUARES_OF_DIFFS, areaEvalX, areaEvalY, 8.0);
 	}
-	
+
 	/**
 	 * number of items in array is not limited to 30
 	 */
 	public void testLargeArrays() {
 		ValueEval[] xValues = createMockNumberArray(100, 3);
 		ValueEval[] yValues = createMockNumberArray(100, 2);
-		
+
 		confirm(SUM_SQUARES, createAreaEval(xValues), createAreaEval(yValues), 1300.0);
 		confirm(DIFF_SQUARES, createAreaEval(xValues), createAreaEval(yValues), 500.0);
 		confirm(SUM_SQUARES_OF_DIFFS, createAreaEval(xValues), createAreaEval(yValues), 100.0);
 	}
-	
+
 
 	private ValueEval[] createMockNumberArray(int size, double value) {
 		ValueEval[] result = new ValueEval[size];
@@ -103,20 +102,20 @@ public final class TestXYNumericFunction extends TestCase {
 
 	public void testErrors() {
 		ValueEval[] xValues = {
-				ErrorEval.REF_INVALID,	
-				new NumberEval(2),	
+				ErrorEval.REF_INVALID,
+				new NumberEval(2),
 		};
 		ValueEval areaEvalX = createAreaEval(xValues);
 		ValueEval[] yValues = {
-				new NumberEval(2),	
-				ErrorEval.NULL_INTERSECTION,	
+				new NumberEval(2),
+				ErrorEval.NULL_INTERSECTION,
 		};
 		ValueEval areaEvalY = createAreaEval(yValues);
 		ValueEval[] zValues = { // wrong size
-				new NumberEval(2),	
+				new NumberEval(2),
 		};
 		ValueEval areaEvalZ = createAreaEval(zValues);
-		
+
 		// if either arg is an error, that error propagates
 		confirmError(ErrorEval.REF_INVALID, ErrorEval.NAME_INVALID, ErrorEval.REF_INVALID);
 		confirmError(areaEvalX, ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
@@ -128,10 +127,9 @@ public final class TestXYNumericFunction extends TestCase {
 
 		// any error in an array item propagates up
 		confirmError(areaEvalX, areaEvalX, ErrorEval.REF_INVALID);
-		
+
 		// search for errors array by array, not pair by pair
 		confirmError(areaEvalX, areaEvalY, ErrorEval.REF_INVALID);
 		confirmError(areaEvalY, areaEvalX, ErrorEval.NULL_INTERSECTION);
-		
 	}
 }

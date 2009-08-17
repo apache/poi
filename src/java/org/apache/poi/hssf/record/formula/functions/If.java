@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -30,8 +29,8 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class If implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
-		Eval falseResult;
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+		ValueEval falseResult;
 		switch (args.length) {
 			case 3:
 				falseResult = args[2];
@@ -54,7 +53,7 @@ public final class If implements Function {
 		return falseResult;
 	}
 
-	private static boolean evaluateFirstArg(Eval arg, int srcCellRow, short srcCellCol)
+	private static boolean evaluateFirstArg(ValueEval arg, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		Boolean b = OperandResolver.coerceValueToBoolean(ve, false);

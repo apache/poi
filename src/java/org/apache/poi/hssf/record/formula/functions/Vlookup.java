@@ -42,7 +42,7 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
  */
 public final class Vlookup implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		Eval arg3 = null;
 		switch(args.length) {
 			case 4:
