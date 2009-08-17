@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -60,7 +59,7 @@ public final class Count implements Function {
 
 	private static final I_MatchPredicate predicate = new I_MatchPredicate() {
 
-		public boolean matches(Eval valueEval) {
+		public boolean matches(ValueEval valueEval) {
 
 			if(valueEval instanceof NumberEval) {
 				// only numbers are counted

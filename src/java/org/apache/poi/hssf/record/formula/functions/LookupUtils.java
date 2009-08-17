@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
@@ -323,7 +322,7 @@ final class LookupUtils {
 	 * @return column or row index as a zero-based value, never negative.
 	 * @throws EvaluationException when the specified arg cannot be coerced to a non-negative integer
 	 */
-	public static int resolveRowOrColIndexArg(Eval rowColIndexArg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	public static int resolveRowOrColIndexArg(ValueEval rowColIndexArg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		if(rowColIndexArg == null) {
 			throw new IllegalArgumentException("argument must not be null");
 		}
@@ -362,7 +361,7 @@ final class LookupUtils {
 	 * The second argument (table_array) should be an area ref, but can actually be a cell ref, in
 	 * which case it is interpreted as a 1x1 area ref.  Other scalar values cause #VALUE! error.
 	 */
-	public static AreaEval resolveTableArrayArg(Eval eval) throws EvaluationException {
+	public static AreaEval resolveTableArrayArg(ValueEval eval) throws EvaluationException {
 		if (eval instanceof AreaEval) {
 			return (AreaEval) eval;
 		}
@@ -386,7 +385,7 @@ final class LookupUtils {
 	 * @return
 	 * @throws EvaluationException
 	 */
-	public static boolean resolveRangeLookupArg(Eval rangeLookupArg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, short srcCellCol) throws EvaluationException {
 		if(rangeLookupArg == null) {
 			// range_lookup arg not provided
 			return true; // default is TRUE

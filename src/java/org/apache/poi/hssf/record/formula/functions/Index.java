@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -53,7 +52,7 @@ public final class Index implements Function {
 			// too few arguments
 			return ErrorEval.VALUE_INVALID;
 		}
-		Eval firstArg = args[0];
+		ValueEval firstArg = args[0];
 		if (firstArg instanceof RefEval) {
 			// convert to area ref for simpler code in getValueFromArea()
 			firstArg = ((RefEval)firstArg).offset(0, 0, 0, 0);
@@ -180,7 +179,7 @@ public final class Index implements Function {
 	 * @return the resolved 1-based index. Zero if the arg was missing or blank
 	 * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
 	 */
-	private static int resolveIndexArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static int resolveIndexArg(ValueEval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
 
 		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		if (ev == MissingArgEval.instance) {

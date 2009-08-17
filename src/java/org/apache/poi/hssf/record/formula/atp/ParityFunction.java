@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record.formula.atp;
 
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -56,7 +56,7 @@ final class ParityFunction implements FreeRefFunction {
 		return BoolEval.valueOf(val == _desiredParity);
 	}
 
-	private static int evaluateArgParity(Eval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	private static int evaluateArgParity(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, (short)srcCellCol);
 
 		double d = OperandResolver.coerceValueToDouble(ve);

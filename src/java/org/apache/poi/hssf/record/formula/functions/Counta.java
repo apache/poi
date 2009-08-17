@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
@@ -58,7 +57,7 @@ public final class Counta implements Function {
 
 	private static final I_MatchPredicate predicate = new I_MatchPredicate() {
 
-		public boolean matches(Eval valueEval) {
+		public boolean matches(ValueEval valueEval) {
 			// Note - observed behavior of Excel:
 			// Error values like #VALUE!, #REF!, #DIV/0!, #NAME? etc don't cause this COUNTA to return an error
 			// in fact, they seem to get counted

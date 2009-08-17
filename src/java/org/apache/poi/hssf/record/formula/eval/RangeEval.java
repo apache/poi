@@ -60,7 +60,7 @@ public final class RangeEval implements OperationEval {
 		return aeA.offset(top-aeAfr, bottom-aeAfr, left-aeAfc, right-aeAfc);
 	}
 
-	private static AreaEval evaluateRef(Eval arg) throws EvaluationException {
+	private static AreaEval evaluateRef(ValueEval arg) throws EvaluationException {
 		if (arg instanceof AreaEval) {
 			return (AreaEval) arg;
 		}
