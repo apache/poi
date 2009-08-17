@@ -19,8 +19,8 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -29,18 +29,18 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests for {@link FinanceFunction#NPER}
- * 
+ *
  * @author Josh Micich
  */
 public final class TestNper extends TestCase {
 	public void testSimpleEvaluate() {
 
-		Eval[] args = {
+		ValueEval[] args = {
 			new NumberEval(0.05),
 			new NumberEval(250),
 			new NumberEval(-1000),
 		};
-		Eval result = FinanceFunction.NPER.evaluate(args, 0, (short)0);
+		ValueEval result = FinanceFunction.NPER.evaluate(args, 0, (short)0);
 
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(4.57353557, ((NumberEval)result).getNumberValue(), 0.00000001);

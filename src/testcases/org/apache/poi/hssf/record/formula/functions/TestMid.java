@@ -23,7 +23,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
@@ -36,19 +35,19 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 public final class TestMid extends TestCase {
 
 
-	private static Eval invokeMid(Eval text, Eval startPos, Eval numChars) {
-		Eval[] args = new Eval[] { text, startPos, numChars, };
+	private static ValueEval invokeMid(ValueEval text, ValueEval startPos, ValueEval numChars) {
+		ValueEval[] args = new ValueEval[] { text, startPos, numChars, };
 		return TextFunction.MID.evaluate(args, -1, (short)-1);
 	}
 
-	private void confirmMid(Eval text, Eval startPos, Eval numChars, String expected) {
-		Eval result = invokeMid(text, startPos, numChars);
+	private void confirmMid(ValueEval text, ValueEval startPos, ValueEval numChars, String expected) {
+		ValueEval result = invokeMid(text, startPos, numChars);
 		assertEquals(StringEval.class, result.getClass());
 		assertEquals(expected, ((StringEval)result).getStringValue());
 	}
 
-	private void confirmMid(Eval text, Eval startPos, Eval numChars, ErrorEval expectedError) {
-		Eval result = invokeMid(text, startPos, numChars);
+	private void confirmMid(ValueEval text, ValueEval startPos, ValueEval numChars, ErrorEval expectedError) {
+		ValueEval result = invokeMid(text, startPos, numChars);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}

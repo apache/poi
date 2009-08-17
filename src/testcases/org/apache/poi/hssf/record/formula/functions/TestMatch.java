@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
@@ -41,11 +40,11 @@ public final class TestMatch extends TestCase {
 	private static final NumberEval MATCH_SMALLEST_GTE = new NumberEval(-1);
 
 
-	private static Eval invokeMatch(Eval lookup_value, Eval lookup_array, Eval match_type) {
-		Eval[] args = { lookup_value, lookup_array, match_type, };
+	private static ValueEval invokeMatch(ValueEval lookup_value, ValueEval lookup_array, ValueEval match_type) {
+		ValueEval[] args = { lookup_value, lookup_array, match_type, };
 		return new Match().evaluate(args, -1, (short)-1);
 	}
-	private static void confirmInt(int expected, Eval actualEval) {
+	private static void confirmInt(int expected, ValueEval actualEval) {
 		if(!(actualEval instanceof NumericValueEval)) {
 			fail("Expected numeric result");
 		}

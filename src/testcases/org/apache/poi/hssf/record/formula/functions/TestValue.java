@@ -20,30 +20,30 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Tests for {@link Value}
- * 
+ *
  * @author Josh Micich
  */
 public final class TestValue extends TestCase {
 
-	private static Eval invokeValue(String strText) {
-		Eval[] args = new Eval[] { new StringEval(strText), };
+	private static ValueEval invokeValue(String strText) {
+		ValueEval[] args = new ValueEval[] { new StringEval(strText), };
 		return new Value().evaluate(args, -1, (short) -1);
 	}
 
 	private static void confirmValue(String strText, double expected) {
-		Eval result = invokeValue(strText);
+		ValueEval result = invokeValue(strText);
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0);
 	}
 
 	private static void confirmValueError(String strText) {
-		Eval result = invokeValue(strText);
+		ValueEval result = invokeValue(strText);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}

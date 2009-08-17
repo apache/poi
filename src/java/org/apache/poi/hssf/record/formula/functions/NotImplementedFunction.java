@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
@@ -38,7 +38,7 @@ public final class NotImplementedFunction implements Function {
 		_functionName = name;
 	}
 
-	public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
 		throw new NotImplementedException(_functionName);
 	}
 	public String getFunctionName() {

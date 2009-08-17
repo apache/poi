@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -29,7 +28,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Choose implements Function {
 
-	public Eval evaluate(Eval[] args, int srcRowIndex, short srcColumnIndex) {
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex) {
 		if (args.length < 2) {
 			return ErrorEval.VALUE_INVALID;
 		}

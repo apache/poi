@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -49,7 +48,7 @@ public final class CalendarFieldFunction implements Function {
 		_needsOneBaseAdjustment = needsOneBaseAdjustment;
 	}
 
-	public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
 		if (operands.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

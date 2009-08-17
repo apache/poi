@@ -20,7 +20,63 @@ package org.apache.poi.hssf.record.formula.eval;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.hssf.record.formula.functions.*;
+import org.apache.poi.hssf.record.formula.functions.AggregateFunction;
+import org.apache.poi.hssf.record.formula.functions.And;
+import org.apache.poi.hssf.record.formula.functions.CalendarFieldFunction;
+import org.apache.poi.hssf.record.formula.functions.Choose;
+import org.apache.poi.hssf.record.formula.functions.Column;
+import org.apache.poi.hssf.record.formula.functions.Columns;
+import org.apache.poi.hssf.record.formula.functions.Count;
+import org.apache.poi.hssf.record.formula.functions.Counta;
+import org.apache.poi.hssf.record.formula.functions.Countif;
+import org.apache.poi.hssf.record.formula.functions.DateFunc;
+import org.apache.poi.hssf.record.formula.functions.Errortype;
+import org.apache.poi.hssf.record.formula.functions.Even;
+import org.apache.poi.hssf.record.formula.functions.False;
+import org.apache.poi.hssf.record.formula.functions.FinanceFunction;
+import org.apache.poi.hssf.record.formula.functions.Find;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.apache.poi.hssf.record.formula.functions.Function;
+import org.apache.poi.hssf.record.formula.functions.Hlookup;
+import org.apache.poi.hssf.record.formula.functions.Hyperlink;
+import org.apache.poi.hssf.record.formula.functions.If;
+import org.apache.poi.hssf.record.formula.functions.Index;
+import org.apache.poi.hssf.record.formula.functions.Indirect;
+import org.apache.poi.hssf.record.formula.functions.IsError;
+import org.apache.poi.hssf.record.formula.functions.IsNa;
+import org.apache.poi.hssf.record.formula.functions.Isblank;
+import org.apache.poi.hssf.record.formula.functions.Isref;
+import org.apache.poi.hssf.record.formula.functions.LogicalFunction;
+import org.apache.poi.hssf.record.formula.functions.Lookup;
+import org.apache.poi.hssf.record.formula.functions.Match;
+import org.apache.poi.hssf.record.formula.functions.MinaMaxa;
+import org.apache.poi.hssf.record.formula.functions.Mode;
+import org.apache.poi.hssf.record.formula.functions.Na;
+import org.apache.poi.hssf.record.formula.functions.Not;
+import org.apache.poi.hssf.record.formula.functions.NotImplementedFunction;
+import org.apache.poi.hssf.record.formula.functions.Now;
+import org.apache.poi.hssf.record.formula.functions.NumericFunction;
+import org.apache.poi.hssf.record.formula.functions.Odd;
+import org.apache.poi.hssf.record.formula.functions.Offset;
+import org.apache.poi.hssf.record.formula.functions.Or;
+import org.apache.poi.hssf.record.formula.functions.Pi;
+import org.apache.poi.hssf.record.formula.functions.Rand;
+import org.apache.poi.hssf.record.formula.functions.Replace;
+import org.apache.poi.hssf.record.formula.functions.Row;
+import org.apache.poi.hssf.record.formula.functions.Rows;
+import org.apache.poi.hssf.record.formula.functions.Substitute;
+import org.apache.poi.hssf.record.formula.functions.Sumif;
+import org.apache.poi.hssf.record.formula.functions.Sumproduct;
+import org.apache.poi.hssf.record.formula.functions.Sumx2my2;
+import org.apache.poi.hssf.record.formula.functions.Sumx2py2;
+import org.apache.poi.hssf.record.formula.functions.Sumxmy2;
+import org.apache.poi.hssf.record.formula.functions.T;
+import org.apache.poi.hssf.record.formula.functions.TextFunction;
+import org.apache.poi.hssf.record.formula.functions.Time;
+import org.apache.poi.hssf.record.formula.functions.Today;
+import org.apache.poi.hssf.record.formula.functions.True;
+import org.apache.poi.hssf.record.formula.functions.Value;
+import org.apache.poi.hssf.record.formula.functions.Vlookup;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
@@ -151,8 +207,8 @@ public final class FunctionEval implements OperationEval {
 
 		retval[124] = new Find();
 
-		retval[127] = new Istext();
-		retval[128] = new Isnumber();
+		retval[127] = LogicalFunction.IsText;
+		retval[128] = LogicalFunction.IsNumber;
 		retval[129] = new Isblank();
 		retval[130] = new T();
 
@@ -163,9 +219,9 @@ public final class FunctionEval implements OperationEval {
 		retval[183] = AggregateFunction.PRODUCT;
 		retval[184] = NumericFunction.FACT;
 
-		retval[190] = new Isnontext();
+		retval[190] = LogicalFunction.IsNonText;
 
-		retval[198] = new Islogical();
+		retval[198] = LogicalFunction.IsLogical;
 
 		retval[212] = NumericFunction.ROUNDUP;
 		retval[213] = NumericFunction.ROUNDDOWN;
@@ -248,7 +304,7 @@ public final class FunctionEval implements OperationEval {
 		if (f == null) {
 			throw new NotImplementedException("FuncIx=" + getFunctionIndex());
 		}
-		return (ValueEval) f.evaluate(operands, srcRow, srcCol);
+		return f.evaluate(operands, srcRow, srcCol);
 	}
 
 	public int getNumberOfOperands() {

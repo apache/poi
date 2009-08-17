@@ -22,14 +22,13 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Test cases for Excel function T()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestTFunc extends TestCase {
@@ -37,9 +36,9 @@ public final class TestTFunc extends TestCase {
 	/**
 	 * @return the result of calling function T() with the specified argument
 	 */
-	private static Eval invokeT(Eval arg) {
-		Eval[] args = { arg, };
-		Eval result = new T().evaluate(args, -1, (short)-1);
+	private static ValueEval invokeT(ValueEval arg) {
+		ValueEval[] args = { arg, };
+		ValueEval result = new T().evaluate(args, -1, (short)-1);
 		assertNotNull("result may never be null", result);
 		return result;
 	}
@@ -47,20 +46,20 @@ public final class TestTFunc extends TestCase {
 	 * Simulates call: T(A1)
 	 * where cell A1 has the specified innerValue
 	 */
-	private Eval invokeTWithReference(ValueEval innerValue) {
-		Eval arg = EvalFactory.createRefEval("$B$2", innerValue);
+	private ValueEval invokeTWithReference(ValueEval innerValue) {
+		ValueEval arg = EvalFactory.createRefEval("$B$2", innerValue);
 		return invokeT(arg);
 	}
-	
+
 	private static void confirmText(String text) {
-		Eval arg = new StringEval(text);
-		Eval eval = invokeT(arg);
+		ValueEval arg = new StringEval(text);
+		ValueEval eval = invokeT(arg);
 		StringEval se = (StringEval) eval;
 		assertEquals(text, se.getStringValue());
 	}
-	
+
 	public void testTextValues() {
-		
+
 		confirmText("abc");
 		confirmText("");
 		confirmText(" ");
@@ -68,26 +67,26 @@ public final class TestTFunc extends TestCase {
 		confirmText("123");
 		confirmText("TRUE");
 	}
-	
-	private static void confirmError(Eval arg) {
-		Eval eval = invokeT(arg);
+
+	private static void confirmError(ValueEval arg) {
+		ValueEval eval = invokeT(arg);
 		assertTrue(arg == eval);
 	}
 
 	public void testErrorValues() {
-		
+
 		confirmError(ErrorEval.VALUE_INVALID);
 		confirmError(ErrorEval.NA);
 		confirmError(ErrorEval.REF_INVALID);
 	}
-	
-	private static void confirmString(Eval eval, String expected) {
+
+	private static void confirmString(ValueEval eval, String expected) {
 		assertTrue(eval instanceof StringEval);
 		assertEquals(expected, ((StringEval)eval).getStringValue());
 	}
 
-	private static void confirmOther(Eval arg) {
-		Eval eval = invokeT(arg);
+	private static void confirmOther(ValueEval arg) {
+		ValueEval eval = invokeT(arg);
 		confirmString(eval, "");
 	}
 
@@ -98,8 +97,8 @@ public final class TestTFunc extends TestCase {
 	}
 
 	public void testRefValues() {
-		Eval eval;
-		
+		ValueEval eval;
+
 		eval = invokeTWithReference(new StringEval("def"));
 		confirmString(eval, "def");
 		eval = invokeTWithReference(new StringEval(" "));
@@ -109,7 +108,7 @@ public final class TestTFunc extends TestCase {
 		confirmString(eval, "");
 		eval = invokeTWithReference(BoolEval.TRUE);
 		confirmString(eval, "");
-		
+
 		eval = invokeTWithReference(ErrorEval.NAME_INVALID);
 		assertTrue(eval == ErrorEval.NAME_INVALID);
 	}

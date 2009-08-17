@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
@@ -38,7 +39,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  */
 public final class IsNa implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		if(args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

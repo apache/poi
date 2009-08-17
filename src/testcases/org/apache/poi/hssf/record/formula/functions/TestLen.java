@@ -22,45 +22,44 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Tests for Excel function LEN()
- * 
+ *
  * @author Josh Micich
  */
 public final class TestLen extends TestCase {
 
-	
-	private static Eval invokeLen(Eval text) {
-		Eval[] args = new Eval[] { text, };
+	private static ValueEval invokeLen(ValueEval text) {
+		ValueEval[] args = new ValueEval[] { text, };
 		return TextFunction.LEN.evaluate(args, -1, (short)-1);
 	}
 
-	private void confirmLen(Eval text, int expected) {
-		Eval result = invokeLen(text);
+	private void confirmLen(ValueEval text, int expected) {
+		ValueEval result = invokeLen(text);
 		assertEquals(NumberEval.class, result.getClass());
 		assertEquals(expected, ((NumberEval)result).getNumberValue(), 0);
 	}
 
-	private void confirmLen(Eval text, ErrorEval expectedError) {
-		Eval result = invokeLen(text);
+	private void confirmLen(ValueEval text, ErrorEval expectedError) {
+		ValueEval result = invokeLen(text);
 		assertEquals(ErrorEval.class, result.getClass());
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
-	
+
 	public void testBasic() {
-		
+
 		confirmLen(new StringEval("galactic"), 8);
 	}
-	
+
 	/**
 	 * Valid cases where text arg is not exactly a string
 	 */
 	public void testUnusualArgs() {
-		
-		// text (first) arg type is number, other args are strings with fractional digits 
+
+		// text (first) arg type is number, other args are strings with fractional digits
 		confirmLen(new NumberEval(123456), 6);
 		confirmLen(BoolEval.FALSE, 5);
 		confirmLen(BoolEval.TRUE, 4);

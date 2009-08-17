@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
@@ -400,7 +401,7 @@ public final class Countif implements Function {
 		}
 	}
 
-	public Eval evaluate(Eval[] args, int srcRowIndex, short srcColumnIndex) {
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex) {
 		switch(args.length) {
 			case 2:
 				// expected

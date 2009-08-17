@@ -164,7 +164,7 @@ public final class Offset implements Function {
 		}
 	}
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}

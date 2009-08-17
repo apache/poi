@@ -43,7 +43,7 @@ public abstract class TextFunction implements Function {
 		return OperandResolver.coerceValueToInt(ve);
 	}
 
-	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		try {
 			return evaluateFunc(args, srcCellRow, srcCellCol);
 		} catch (EvaluationException e) {

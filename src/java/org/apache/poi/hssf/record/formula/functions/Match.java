@@ -67,7 +67,7 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
 public final class Match implements Function {
 
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 
 		double match_type = 1; // default
 

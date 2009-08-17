@@ -46,7 +46,7 @@ public abstract class NumericFunction implements Function {
 		}
 	}
 
-	public final Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		double result;
 		try {
 			result = eval(args, srcCellRow, srcCellCol);

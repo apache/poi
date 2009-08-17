@@ -22,26 +22,22 @@ import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  */
 public final class Isref implements Function {
-    public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
-        Eval retval = BoolEval.FALSE;
+	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
+		if (operands.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
 
-        switch (operands.length) {
-        default:
-            retval = ErrorEval.VALUE_INVALID;
-            break;
-        case 1:
-            Eval eval = operands[0];
-            if (eval instanceof RefEval || eval instanceof AreaEval) {
-                retval = BoolEval.TRUE;
-            }
-        }
+		Eval eval = operands[0];
+		if (eval instanceof RefEval || eval instanceof AreaEval) {
+			return BoolEval.TRUE;
+		}
 
-        return retval;
-    }
+		return BoolEval.FALSE;
+	}
 }

@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Implementation of Excel function NA()
@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
  */
 public final class Na implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		return ErrorEval.NA;
 	}
 

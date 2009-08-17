@@ -101,7 +101,7 @@ public final class TestIndex extends TestCase {
 		ValueEval[] args = new ValueEval[] { arg0, MissingArgEval.instance, new NumberEval(2), };
 		ValueEval actualResult;
 		try {
-			actualResult = (ValueEval) FUNC_INST.evaluate(args, 1, (short)1);
+			actualResult = FUNC_INST.evaluate(args, 1, (short)1);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Unexpected arg eval type (org.apache.poi.hssf.record.formula.eval.MissingArgEval")) {
 				throw new AssertionFailedError("Identified bug 47048b - INDEX() should support missing-arg");

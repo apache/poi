@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -28,7 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class False implements Function {
 
-    public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
+    public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
         ValueEval retval;
         switch (operands.length) {
         default:

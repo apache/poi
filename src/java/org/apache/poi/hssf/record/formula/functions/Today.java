@@ -21,8 +21,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  */
 public final class Today implements Function {
 
-	public Eval evaluate(Eval[] evals, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] evals, int srcCellRow, short srcCellCol) {
 		if (evals.length > 0) {
 			return ErrorEval.VALUE_INVALID;
 		}

@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
@@ -34,7 +35,7 @@ import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
  */
 public final class Counta implements Function {
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		int nArgs = args.length;
 		if (nArgs < 1) {
 			// too few arguments

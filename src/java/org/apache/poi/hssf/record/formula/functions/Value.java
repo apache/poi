@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
@@ -42,7 +41,7 @@ public final class Value implements Function {
 	private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
 	private static final Double ZERO = new Double(0.0);
 
-	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

@@ -21,12 +21,11 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
 /**
- * 
  * @author Josh Micich
  */
 public final class TestPmt extends TestCase {
@@ -35,14 +34,14 @@ public final class TestPmt extends TestCase {
 		// only asserting accuracy to 4 fractional digits
 		assertEquals(expected, ne.getNumberValue(), 0.00005);
 	}
-	private static Eval invoke(Eval[] args) {
+	private static ValueEval invoke(ValueEval[] args) {
 		return FinanceFunction.PMT.evaluate(args, -1, (short)-1);
 	}
 	/**
 	 * Invocation when not expecting an error result
 	 */
-	private static NumberEval invokeNormal(Eval[] args) {
-		Eval ev = invoke(args);
+	private static NumberEval invokeNormal(ValueEval[] args) {
+		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
 			throw new AssertionFailedError("Normal evaluation failed with error code: "
 					+ ev.toString());
@@ -51,7 +50,7 @@ public final class TestPmt extends TestCase {
 	}
 
 	private static void confirm(double expected, double rate, double nper, double pv, double fv, boolean isBeginning) {
-		Eval[] args = { 
+		ValueEval[] args = {
 				new NumberEval(rate),
 				new NumberEval(nper),
 				new NumberEval(pv),
@@ -68,20 +67,20 @@ public final class TestPmt extends TestCase {
 	}
 
 	public void test3args() {
-		
-		Eval[] args = { 
+
+		ValueEval[] args = {
 				new NumberEval(0.005),
 				new NumberEval(24),
 				new NumberEval(1000),
 		};
-		Eval ev = invoke(args);
+		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
 			ErrorEval err = (ErrorEval) ev;
 			if(err.getErrorCode() == HSSFErrorConstants.ERROR_VALUE) {
 				throw new AssertionFailedError("Identified bug 44691");
 			}
 		}
-		
+
 		confirm(-44.3206, invokeNormal(args));
 	}
 }
