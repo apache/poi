@@ -86,13 +86,13 @@ public final class XWPFRelation extends POIXMLRelation {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header",
             "/word/header#.xml",
-            null
+            XWPFHeader.class
     );
     public static final XWPFRelation FOOTER = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer",
             "/word/footer#.xml",
-            null
+            XWPFFooter.class
     );
     public static final XWPFRelation HYPERLINK = new XWPFRelation(
             null,

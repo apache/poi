@@ -190,11 +190,11 @@ public class POIXMLDocumentPart {
      * @param factory the factory that will create an instance of the requested relation
      * @return the created child POIXMLDocumentPart
      */
-    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
+    public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
         return createRelationship(descriptor, factory, -1, false);
     }
 
-    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
+    public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
         return createRelationship(descriptor, factory, idx, false);
     }
 
@@ -209,11 +209,9 @@ public class POIXMLDocumentPart {
      */
     protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
-
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
             if(!noRelation) rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
-
             PackagePart part = packagePart.getPackage().createPart(ppName, descriptor.getContentType());
             POIXMLDocumentPart doc = factory.newDocumentPart(descriptor);
             doc.packageRel = rel;

@@ -16,12 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 
 /**
  * Parent of XWPF headers and footers
  */
-public abstract class XWPFHeaderFooter {
+public abstract class XWPFHeaderFooter extends POIXMLDocumentPart{
 	protected CTHdrFtr headerFooter;
 	
 	protected XWPFHeaderFooter(CTHdrFtr hdrFtr) {
@@ -29,6 +34,10 @@ public abstract class XWPFHeaderFooter {
 	}
 	protected XWPFHeaderFooter() {
 		headerFooter = CTHdrFtr.Factory.newInstance();
+	}
+
+	public XWPFHeaderFooter(PackagePart part, PackageRelationship rel) throws IOException {
+		super(part, rel);
 	}
 	
 	public CTHdrFtr _getHdrFtr() {
