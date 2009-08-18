@@ -61,7 +61,7 @@ public final class TestCruddyExtractor extends TestCase {
 		te = new QuickButCruddyTextExtractor(filename);
     }
 
-    public void testReadAsVector() throws Exception {
+    public void testReadAsVector() {
 		// Extract the text from the file as a vector
 		Vector foundTextV = te.getTextAsVector();
 
@@ -73,7 +73,7 @@ public final class TestCruddyExtractor extends TestCase {
 		}
 	}
 
-	public void testReadAsString() throws Exception {
+	public void testReadAsString() {
 		// Extract the text as a String
 		String foundText = te.getTextAsString();
 

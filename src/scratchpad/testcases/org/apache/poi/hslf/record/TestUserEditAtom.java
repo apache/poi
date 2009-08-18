@@ -33,11 +33,11 @@ public final class TestUserEditAtom extends TestCase {
 		00, 00, 00, 00, 00, 0x18, 00, 00, 01, 00, 00, 00,
 		05, 00, 00, 00, 01, 00, 0xF6-256, 77 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 		assertEquals(4085l, uea.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 
 		assertEquals(256, uea.getLastViewedSlideID() );

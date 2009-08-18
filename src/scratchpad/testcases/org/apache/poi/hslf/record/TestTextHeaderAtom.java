@@ -32,11 +32,11 @@ public final class TestTextHeaderAtom extends TestCase {
 	private byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
 	private byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
 		assertEquals(3999l, tha.getRecordType());
 	}
-	public void testTypes() throws Exception {
+	public void testTypes() {
 		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
 		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
 		TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);

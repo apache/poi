@@ -111,7 +111,7 @@ public final class TestWordExtractor extends TestCase {
     /**
      * Test textPieces based extraction
      */
-    public void testExtractFromTextPieces() throws Exception {
+    public void testExtractFromTextPieces() {
     	String text = extractor.getTextFromPieces();
     	assertEquals(p_text1_block, text);
     }

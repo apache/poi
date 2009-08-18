@@ -38,7 +38,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
 
 /**
- * 
+ *
  */
 public final class TestFormulaEvaluatorBugs extends TestCase {
 
@@ -53,7 +53,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	/**
 	 * An odd problem with evaluateFormulaCell giving the
 	 *  right values when file is opened, but changes
-	 *  to the source data in some versions of excel 
+	 *  to the source data in some versions of excel
 	 *  doesn't cause them to be updated. However, other
 	 *  versions of excel, and gnumeric, work just fine
 	 * WARNING - tedious bug where you actually have to
@@ -252,7 +252,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals(true, cell.getBooleanCellValue());
 	}
 
-	public void testClassCast_bug44861() throws Exception {
+	public void testClassCast_bug44861() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44861.xls");
 
 		// Check direct
@@ -291,7 +291,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			throw e;
 		}
 	}
-	
+
 	private static final class EvalListener extends EvaluationListener {
 		private int _countCacheHits;
 		private int _countCacheMisses;
@@ -314,12 +314,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			_countCacheMisses++;
 		}
 	}
-	
+
 	/**
 	 * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
 	 */
 	public void testSlowEvaluate45376() {
-		
+
 		// Firstly set up a sequence of formula cells where each depends on the  previous multiple
 		// times.  Without caching, each subsequent cell take about 4 times longer to evaluate.
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -333,11 +333,11 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			String formula = "IF(DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1)<=$D$3," +
 					"DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1),NA())";
 			cell.setCellFormula(formula);
-			
+
 		}
 		Calendar cal = new GregorianCalendar(2000, 0, 1, 0, 0, 0);
 		row.createCell(0).setCellValue(cal);
-		
+
 		// Choose cell A9, so that the failing test case doesn't take too long to execute.
 		HSSFCell cell = row.getCell(8);
 		EvalListener evalListener = new EvalListener();
@@ -351,7 +351,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			throw new AssertionFailedError("Identifed bug 45376 - Formula evaluator should cache values");
 		}
 		// With caching, the evaluationCount is 8 which is a big improvement
-		// Note - these expected values may change if the WorkbookEvaluator is 
+		// Note - these expected values may change if the WorkbookEvaluator is
 		// ever optimised to short circuit 'if' functions.
 		assertEquals(8, evalCount);
 		assertEquals(24, evalListener.getCountCacheHits());

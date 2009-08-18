@@ -35,16 +35,16 @@ public final class TestTextCharsAtom extends TestCase {
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00, 0xa3-256, 0x01 };
 	private String alt_text = "This\u01A3";
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		assertEquals(4000l, tca.getRecordType());
 	}
 
-	public void testTextA() throws Exception {
+	public void testTextA() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		assertEquals(data_text, tca.getText());
 	}
-	public void testTextB() throws Exception {
+	public void testTextB() {
 		TextCharsAtom tca = new TextCharsAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tca.getText());
 	}

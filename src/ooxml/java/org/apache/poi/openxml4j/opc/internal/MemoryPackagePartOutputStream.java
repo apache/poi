@@ -25,22 +25,21 @@ import java.io.OutputStream;
  * Build an output stream for MemoryPackagePart.
  *
  * @author Julien Chable
- * @version 1.0
  */
 public final class MemoryPackagePartOutputStream extends OutputStream {
 
-	private MemoryPackagePart part;
+	private MemoryPackagePart _part;
 
-	private ByteArrayOutputStream buff;
+	private ByteArrayOutputStream _buff;
 
 	public MemoryPackagePartOutputStream(MemoryPackagePart part) {
-		this.part = part;
-		buff = new ByteArrayOutputStream();
+		this._part = part;
+		_buff = new ByteArrayOutputStream();
 	}
 
 	@Override
-	public void write(int b) throws IOException {
-		buff.write(b);
+	public void write(int b) {
+		_buff.write(b);
 	}
 
 	/**
@@ -59,38 +58,38 @@ public final class MemoryPackagePartOutputStream extends OutputStream {
 	 */
 	@Override
 	public void flush() throws IOException {
-		buff.flush();
-		if (part.data != null) {
-			byte[] newArray = new byte[part.data.length + buff.size()];
+		_buff.flush();
+		if (_part.data != null) {
+			byte[] newArray = new byte[_part.data.length + _buff.size()];
 			// copy the previous contents of part.data in newArray
-			System.arraycopy(part.data, 0, newArray, 0, part.data.length);
+			System.arraycopy(_part.data, 0, newArray, 0, _part.data.length);
 
 			// append the newly added data
-			byte[] buffArr = buff.toByteArray();
-			System.arraycopy(buffArr, 0, newArray, part.data.length,
+			byte[] buffArr = _buff.toByteArray();
+			System.arraycopy(buffArr, 0, newArray, _part.data.length,
 					buffArr.length);
 
 			// save the result as new data
-			part.data = newArray;
+			_part.data = newArray;
 		} else {
 			// was empty, just fill it
-			part.data = buff.toByteArray();
+			_part.data = _buff.toByteArray();
 		}
 
 		/*
 		 * Clear this streams buffer, in case flush() is called a second time
 		 * Fix bug 1921637 - provided by Rainer Schwarze
 		 */
-		buff.reset();
+		_buff.reset();
 	}
 
 	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		buff.write(b, off, len);
+	public void write(byte[] b, int off, int len) {
+		_buff.write(b, off, len);
 	}
 
 	@Override
 	public void write(byte[] b) throws IOException {
-		buff.write(b);
+		_buff.write(b);
 	}
 }

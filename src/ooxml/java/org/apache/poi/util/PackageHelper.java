@@ -97,7 +97,7 @@ public final class PackageHelper {
     /**
      * Creates an empty file in the default temporary-file directory,
      */
-    public static File createTempFile() throws IOException {
+    public static File createTempFile() {
         File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
         //there is no way to pass an existing file to Package.create(file),
         //delete first, the file will be re-created in Packe.create(file)

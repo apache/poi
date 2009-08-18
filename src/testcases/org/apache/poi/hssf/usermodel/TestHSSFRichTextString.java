@@ -19,10 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 
-public class TestHSSFRichTextString extends TestCase
-{
-    public void testApplyFont() throws Exception
-    {
+public final class TestHSSFRichTextString extends TestCase {
+    public void testApplyFont() {
 
         HSSFRichTextString r = new HSSFRichTextString("testing");
         assertEquals(0,r.numFormattingRuns());
@@ -64,8 +62,7 @@ public class TestHSSFRichTextString extends TestCase
 
     }
 
-    public void testClearFormatting() throws Exception
-    {
+    public void testClearFormatting() {
 
       HSSFRichTextString r = new HSSFRichTextString("testing");
       assertEquals(0, r.numFormattingRuns());
@@ -79,7 +76,7 @@ public class TestHSSFRichTextString extends TestCase
     /**
      * Test case proposed in Bug 40520:  formated twice => will format whole String
      */
-    public void test40520_1(){
+    public void test40520_1() {
 
         short font = 3;
 
@@ -96,7 +93,7 @@ public class TestHSSFRichTextString extends TestCase
     /**
      * Test case proposed in Bug 40520:  overlapped range => will format whole String
      */
-    public void test40520_2(){
+    public void test40520_2() {
 
         short font = 3;
         HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
@@ -113,7 +110,7 @@ public class TestHSSFRichTextString extends TestCase
     /**
      * Test case proposed in Bug 40520:  formated twice => will format whole String
      */
-    public void test40520_3(){
+    public void test40520_3() {
 
         short font = 3;
         HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");

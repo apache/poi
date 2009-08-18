@@ -33,14 +33,14 @@ public final class TestMostRecentRecords extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
-    public TestMostRecentRecords() throws Exception {
+	public TestMostRecentRecords() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
+	}
 
-    public void testCount() throws Exception {
+	public void testCount() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -48,7 +48,7 @@ public final class TestMostRecentRecords extends TestCase {
 		assertEquals(7, mrcr.length);
 	}
 
-    public void testRightRecordTypes() throws Exception {
+	public void testRightRecordTypes() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -69,7 +69,7 @@ public final class TestMostRecentRecords extends TestCase {
 		assertEquals(1008, mrcr[6].getRecordType());
 	}
 
-    public void testCorrectRecords() throws Exception {
+	public void testCorrectRecords() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 

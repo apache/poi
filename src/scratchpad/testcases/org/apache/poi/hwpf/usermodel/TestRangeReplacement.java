@@ -42,7 +42,7 @@ public final class TestRangeReplacement extends TestCase {
 
 	private String illustrativeDocFile;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 
 		String dirname = System.getProperty("HWPF.testdata.path");
 

@@ -31,14 +31,14 @@ public final class TestSheetText extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
-    public TestSheetText() throws Exception {
+	public TestSheetText() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		HSLFSlideShow hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
+	}
 
-    public void testSheetOne() throws Exception {
+	public void testSheetOne() {
 		Sheet slideOne = ss.getSlides()[0];
 
 		String[] expectText = new String[] {"This is a test title","This is a test subtitle\nThis is on page 1"};
@@ -46,9 +46,9 @@ public final class TestSheetText extends TestCase {
 		for(int i=0; i<expectText.length; i++) {
 			assertEquals(expectText[i], slideOne.getTextRuns()[i].getText());
 		}
-    }
+	}
 
-	public void testSheetTwo() throws Exception {
+	public void testSheetTwo() {
 		Sheet slideTwo = ss.getSlides()[1];
 		String[] expectText = new String[] {"This is the title on page 2","This is page two\nIt has several blocks of text\nNone of them have formatting"};
 		assertEquals(expectText.length, slideTwo.getTextRuns().length);
@@ -80,7 +80,7 @@ public final class TestSheetText extends TestCase {
 			"Can they co-exist?\n\n" +
 			"Gay Harley\n" +
 			"Clean Development Alliance\n" +
-			"COP 11 \u2013 MOP 1\n" + // special long hyphon
+			"COP 11 \u2013 MOP 1\n" + // special long hyphen
 			"December 5, 2005\n";
 
 		assertEquals(1, s.getTextRuns().length);

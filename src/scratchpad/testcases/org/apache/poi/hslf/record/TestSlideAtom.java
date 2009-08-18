@@ -33,11 +33,11 @@ public final class TestSlideAtom extends TestCase {
 		0, 0, 0, 0, 0x0F, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80-256,
 		0, 1, 0, 0, 7, 0, 0x0C, 0x30 };
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		assertEquals(1007l, sa.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 
 		// First 12 bytes are a SSlideLayoutAtom, checked elsewhere
@@ -51,7 +51,7 @@ public final class TestSlideAtom extends TestCase {
 		assertEquals(true, sa.getFollowMasterScheme());
 		assertEquals(true, sa.getFollowMasterBackground());
 	}
-	public void testSSlideLayoutAtom() throws Exception {
+	public void testSSlideLayoutAtom() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		SSlideLayoutAtom ssla = sa.getSSlideLayoutAtom();
 

@@ -64,9 +64,8 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      * @return an array of SmallDocumentBlock instances, filled from
      *         the array
      */
-
-    public static SmallDocumentBlock [] convert(final byte [] array,
-                                                final int size)
+    public static SmallDocumentBlock [] convert(byte [] array,
+                                                int size)
     {
         SmallDocumentBlock[] rval   =
             new SmallDocumentBlock[ (size + _block_size - 1) / _block_size ];
@@ -103,8 +102,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *
      * @return number of big blocks the list encompasses
      */
-
-    public static int fill(final List blocks)
+    public static int fill(List blocks)
     {
         int count           = blocks.size();
         int big_block_count = (count + _blocks_per_big_block - 1)
@@ -130,9 +128,8 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      * @exception ArrayIndexOutOfBoundsException if, somehow, the store
      *            contains less data than size indicates
      */
-
-    public static SmallDocumentBlock [] convert(final BlockWritable [] store,
-                                                final int size)
+    public static SmallDocumentBlock [] convert(BlockWritable [] store,
+                                                int size)
         throws IOException, ArrayIndexOutOfBoundsException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -159,10 +156,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *               data
      *
      * @return a List of SmallDocumentBlock's extracted from the input
-     *
-     * @exception IOException
      */
-
     public static List extract(ListManagedBlock [] blocks)
         throws IOException
     {
@@ -193,7 +187,6 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *
      * @return total size
      */
-
     public static int calcSize(int size)
     {
         return size * _block_size;
@@ -207,12 +200,10 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
         return block;
     }
 
-    private static int convertToBlockCount(final int size)
+    private static int convertToBlockCount(int size)
     {
         return (size + _block_size - 1) / _block_size;
     }
-
-    /* ********** START implementation of BlockWritable ********** */
 
     /**
      * Write the storage to an OutputStream
@@ -223,15 +214,11 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
-    public void writeBlocks(final OutputStream stream)
+    public void writeBlocks(OutputStream stream)
         throws IOException
     {
         stream.write(_data);
     }
-
-    /* **********  END  implementation of BlockWritable ********** */
-    /* ********** START implementation of ListManagedBlock ********** */
 
     /**
      * Get the data from the block
@@ -240,13 +227,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *
      * @exception IOException if there is no data
      */
-
-    public byte [] getData()
-        throws IOException
-    {
+    public byte [] getData() {
         return _data;
     }
-
-    /* **********  END  implementation of ListManagedBlock ********** */
-}   // end public class SmallDocumentBlock
-
+}

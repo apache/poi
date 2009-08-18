@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss;
 
 import java.io.File;
@@ -28,12 +29,12 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 
 import junit.framework.TestCase;
 
-public class TestWorkbookFactory extends TestCase {
+public final class TestWorkbookFactory extends TestCase {
 	private File xls;
 	private File xlsx;
 	private File txt;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		xls = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "SampleSS.xls"
@@ -50,17 +51,17 @@ public class TestWorkbookFactory extends TestCase {
 		assertTrue(xlsx.exists());
 		assertTrue(txt.exists());
 	}
-	
+
 	public void testCreateNative() throws Exception {
 		Workbook wb;
-		
+
 		// POIFS -> hssf
 		wb = WorkbookFactory.create(
 				new POIFSFileSystem(new FileInputStream(xls))
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
-		
+
 		// Package -> xssf
 		wb = WorkbookFactory.create(
 				OPCPackage.open(xlsx.toString())
@@ -68,7 +69,7 @@ public class TestWorkbookFactory extends TestCase {
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
 	}
-		
+
 	/**
 	 * Creates the appropriate kind of Workbook, but
 	 *  checking the mime magic at the start of the
@@ -76,20 +77,20 @@ public class TestWorkbookFactory extends TestCase {
 	 */
 	public void testCreateGeneric() throws Exception {
 		Workbook wb;
-		
+
 		// InputStream -> either
 		wb = WorkbookFactory.create(
 				new FileInputStream(xls)
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
-		
+
 		wb = WorkbookFactory.create(
 				new FileInputStream(xlsx)
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
-		
+
 		try {
 			wb = WorkbookFactory.create(
 					new FileInputStream(txt)

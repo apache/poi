@@ -183,7 +183,7 @@ public final class TestShapes extends TestCase {
     /**
      * Test with an empty text box
      */
-    public void testEmptyTextBox() throws Exception {
+    public void testEmptyTextBox() {
     	assertEquals(2, pptB.getSlides().length);
     	Slide s1 = pptB.getSlides()[0];
     	Slide s2 = pptB.getSlides()[1];
@@ -310,7 +310,7 @@ public final class TestShapes extends TestCase {
         assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
     }
 
-    public void testLineWidth() throws IOException {
+    public void testLineWidth() {
         SimpleShape sh = new AutoShape(ShapeTypes.RightTriangle);
 
         EscherOptRecord opt = (EscherOptRecord)SimpleShape.getEscherChild(sh.getSpContainer(), EscherOptRecord.RECORD_ID);
@@ -324,7 +324,7 @@ public final class TestShapes extends TestCase {
         assertEquals(1.0, sh.getLineWidth());
     }
 
-    public void testShapeId() throws IOException {
+    public void testShapeId() {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
         Shape shape = null;

@@ -30,11 +30,10 @@ import junit.framework.TestCase;
 /**
  * @author Roberto Manicardi
  */
-public class TestMapInfo extends TestCase {
+public final class TestMapInfo extends TestCase {
 
 
-    public void testMapInfoExists() throws Exception {
-
+    public void testMapInfoExists() {
 
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
 
@@ -72,13 +71,7 @@ public class TestMapInfo extends TestCase {
             }
 
         }
-
-
         assertNotNull(mapInfo);
         assertNotNull(singleXMLCells);
-
-
     }
-
-
 }

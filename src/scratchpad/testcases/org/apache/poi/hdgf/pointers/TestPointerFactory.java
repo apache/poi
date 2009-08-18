@@ -40,7 +40,7 @@ public final class TestPointerFactory extends TestCase {
 		-1, 0, 0, 0, -84, -1, 79, 1, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0
 	};
 
-	public void testCreateV4() throws Exception {
+	public void testCreateV4() {
 		PointerFactory pf = new PointerFactory(4);
 		try {
 			pf.createPointer(new byte[]{}, 0);
@@ -50,7 +50,7 @@ public final class TestPointerFactory extends TestCase {
 		}
 	}
 
-	public void testCreateV5() throws Exception {
+	public void testCreateV5() {
 		PointerFactory pf = new PointerFactory(5);
 		try {
 			pf.createPointer(new byte[]{}, 0);
@@ -61,7 +61,7 @@ public final class TestPointerFactory extends TestCase {
 		}
 	}
 
-	public void testCreateV6() throws Exception {
+	public void testCreateV6() {
 		PointerFactory pf = new PointerFactory(6);
 
 		Pointer a = pf.createPointer(vp6_a, 0);
@@ -117,7 +117,7 @@ public final class TestPointerFactory extends TestCase {
 		assertFalse(d.destinationHasPointers());
 	}
 
-	public void testCreateV6FromMid() throws Exception {
+	public void testCreateV6FromMid() {
 		PointerFactory pf = new PointerFactory(11);
 
 		// Create a from part way down the byte stream

@@ -29,24 +29,24 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
- * 
+ *
  */
 public final class TestBug42464 extends TestCase {
 
-	public void testOKFile() throws Exception {
+	public void testOKFile() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
 		process(wb);
 	}
-	public void testExpSharedBadFile() throws Exception {
+	public void testExpSharedBadFile() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
 		process(wb);
 	}
-	
+
 	private static void process(HSSFWorkbook wb) {
 		HSSFFormulaEvaluator eval =	new HSSFFormulaEvaluator(wb);
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
 			HSSFSheet s = wb.getSheetAt(i);
-			
+
 			Iterator it = s.rowIterator();
 			while(it.hasNext()) {
 				HSSFRow r = (HSSFRow)it.next();
@@ -54,7 +54,7 @@ public final class TestBug42464 extends TestCase {
 			}
 		}
 	}
-	
+
 	private static void process(HSSFRow row, HSSFFormulaEvaluator eval) {
 		Iterator it = row.cellIterator();
 		while(it.hasNext()) {
@@ -65,7 +65,7 @@ public final class TestBug42464 extends TestCase {
 			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
 			FormulaRecord r = record.getFormulaRecord();
 			Ptg[] ptgs = r.getParsedExpression();
-			
+
 			String cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
 			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
 				System.out.print(cellRef);
@@ -76,7 +76,7 @@ public final class TestBug42464 extends TestCase {
 				}
 				System.out.println("-> " + cell.getCellFormula());
 			}
-			
+
 			CellValue evalResult = eval.evaluate(cell);
 			assertNotNull(evalResult);
 		}

@@ -49,7 +49,7 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 	 * Set things up, using a PowerPoint document and
 	 *  a Word Document for our testing
 	 */
-    public void setUp() throws Exception {
+	public void setUp() throws Exception {
 		String dirnameHSLF = System.getProperty("HSLF.testdata.path");
 		String filenameHSLF = dirnameHSLF + "/basic_test_ppt_file.ppt";
 		String dirnameHSSF = System.getProperty("HSSF.testdata.path");
@@ -66,39 +66,35 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 		doc2 = new HWPFDocument(pfs2);
 	}
 
-    public void testReadProperties() throws Exception {
-    	// We should have both sets
-    	assertNotNull(doc.getDocumentSummaryInformation());
-    	assertNotNull(doc.getSummaryInformation());
+	public void testReadProperties() {
+		// We should have both sets
+		assertNotNull(doc.getDocumentSummaryInformation());
+		assertNotNull(doc.getSummaryInformation());
 
-    	// Check they are as expected for the test doc
-    	assertEquals("Hogwarts", doc.getSummaryInformation().getAuthor());
-    	assertEquals(10598, doc.getDocumentSummaryInformation().getByteCount());
-    }
+		// Check they are as expected for the test doc
+		assertEquals("Hogwarts", doc.getSummaryInformation().getAuthor());
+		assertEquals(10598, doc.getDocumentSummaryInformation().getByteCount());
+	}
 
-    public void testReadProperties2() throws Exception {
-    	// Check again on the word one
-    	assertNotNull(doc2.getDocumentSummaryInformation());
-    	assertNotNull(doc2.getSummaryInformation());
+	public void testReadProperties2() {
+		// Check again on the word one
+		assertNotNull(doc2.getDocumentSummaryInformation());
+		assertNotNull(doc2.getSummaryInformation());
 
-    	assertEquals("Hogwarts", doc2.getSummaryInformation().getAuthor());
-    	assertEquals("", doc2.getSummaryInformation().getKeywords());
-    	assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
-    }
+		assertEquals("Hogwarts", doc2.getSummaryInformation().getAuthor());
+		assertEquals("", doc2.getSummaryInformation().getKeywords());
+		assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
+	}
 
-    public void testWriteProperties() throws Exception {
-    	// Just check we can write them back out into a filesystem
-    	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.writeProperties(outFS);
+	public void testWriteProperties() throws Exception {
+		// Just check we can write them back out into a filesystem
+		POIFSFileSystem outFS = new POIFSFileSystem();
+		doc.writeProperties(outFS);
 
-    	// Should now hold them
-    	assertNotNull(
-    			outFS.createDocumentInputStream("\005SummaryInformation")
-    	);
-    	assertNotNull(
-    			outFS.createDocumentInputStream("\005DocumentSummaryInformation")
-    	);
-    }
+		// Should now hold them
+		assertNotNull(outFS.createDocumentInputStream("\005SummaryInformation"));
+		assertNotNull(outFS.createDocumentInputStream("\005DocumentSummaryInformation"));
+	}
 
     public void testWriteReadProperties() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -65,12 +65,12 @@ public final class TestHWPFRangeParts extends TestCase {
 		"The trick with this one is that it contains some Unicode based strings in it.\r" +
 		"Firstly, some currency symbols:\r" +
 		"\tGBP - \u00a3\r" +
-        "\tEUR - \u20ac\r" +
-        "Now, we\u2019ll have some French text, in bold and big:\r" +
-        "\tMoli\u00e8re\r" +
-        "And some normal French text:\r" +
-        "\tL'Avare ou l'\u00c9cole du mensonge\r" +
-        "That\u2019s it for page one\r"
+		"\tEUR - \u20ac\r" +
+		"Now, we\u2019ll have some French text, in bold and big:\r" +
+		"\tMoli\u00e8re\r" +
+		"And some normal French text:\r" +
+		"\tL'Avare ou l'\u00c9cole du mensonge\r" +
+		"That\u2019s it for page one\r"
 	;
 	private static final String u_page_2 =
 		"This is page two. Les Pr\u00e9cieuses ridicules. The end.\r"
@@ -109,7 +109,7 @@ public final class TestHWPFRangeParts extends TestCase {
 		);
 	}
 
-	public void testBasics() throws Exception {
+	public void testBasics() {
 		// First check the start and end bits
 		assertEquals(
 				0,
@@ -142,7 +142,7 @@ public final class TestHWPFRangeParts extends TestCase {
 		);
 	}
 
-	public void testContents() throws Exception {
+	public void testContents() {
 		Range r;
 
 		// Now check the real ranges
@@ -179,7 +179,7 @@ public final class TestHWPFRangeParts extends TestCase {
 		);
 	}
 
-	public void testBasicsUnicode() throws Exception {
+	public void testBasicsUnicode() {
 		// First check the start and end bits
 		assertEquals(
 				0,
@@ -213,7 +213,7 @@ public final class TestHWPFRangeParts extends TestCase {
 		);
 	}
 
-	public void testContentsUnicode() throws Exception {
+	public void testContentsUnicode() {
 		Range r;
 
 		// Now check the real ranges

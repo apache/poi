@@ -45,7 +45,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Named ranges had the right reference, but
      *  the wrong sheet name
      */
-    public void test45430() throws Exception {
+    public void test45430() {
         XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("45430.xlsx");
         assertFalse(wb.isMacroEnabled());
         assertEquals(3, wb.getNumberOfNames());

@@ -41,11 +41,11 @@ public final class TestFormulaParserIf extends TestCase {
 	private static Ptg[] parseFormula(String formula) {
 		return TestFormulaParser.parseFormula(formula);
 	}
-	
-	private static Ptg[] confirmTokenClasses(String formula, Class[] expectedClasses) {
+
+	private static Ptg[] confirmTokenClasses(String formula, Class<?>[] expectedClasses) {
 		return TestFormulaParser.confirmTokenClasses(formula, expectedClasses);
 	}
-	
+
 	private static void confirmAttrData(Ptg[] ptgs, int i, int expectedData) {
 		Ptg ptg = ptgs[i];
 		if (!(ptg instanceof AttrPtg)) {
@@ -54,10 +54,10 @@ public final class TestFormulaParserIf extends TestCase {
 		AttrPtg attrPtg = (AttrPtg) ptg;
 		assertEquals(expectedData, attrPtg.getData());
 	}
-	
+
 	public void testSimpleIf() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -77,8 +77,8 @@ public final class TestFormulaParserIf extends TestCase {
 	}
 
 	public void testSimpleIfNoFalseParam() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -95,8 +95,8 @@ public final class TestFormulaParserIf extends TestCase {
 	}
 
 	public void testIfWithLargeParams() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -110,11 +110,11 @@ public final class TestFormulaParserIf extends TestCase {
 				AddPtg.class,
 				FuncPtg.class,
 				AttrPtg.class, // tAttrSkip
-				
+
 				RefPtg.class,
 				RefPtg.class,
 				FuncPtg.class,
-				
+
 				AttrPtg.class, // tAttrSkip
 				FuncVarPtg.class,
 		};
@@ -125,10 +125,10 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 9, 20);
 		confirmAttrData(ptgs, 13, 3);
 	}
-	
+
 	public void testNestedIf() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 
@@ -164,7 +164,7 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 15, 3);
 		confirmAttrData(ptgs, 17, 3);
 	}
-	
+
 	public void testEmbeddedIf() {
 		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals(17, ptgs.length);

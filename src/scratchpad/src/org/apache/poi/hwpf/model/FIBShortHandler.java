@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.io.IOException;
-
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -60,9 +58,7 @@ public final class FIBShortHandler {
     return (_shorts.length * LittleEndian.SHORT_SIZE) + LittleEndian.SHORT_SIZE;
   }
 
-  void serialize(byte[] mainStream)
-    throws IOException
-  {
+  void serialize(byte[] mainStream) {
     int offset = START;
     LittleEndian.putShort(mainStream, offset, (short)_shorts.length);
     offset += LittleEndian.SHORT_SIZE;

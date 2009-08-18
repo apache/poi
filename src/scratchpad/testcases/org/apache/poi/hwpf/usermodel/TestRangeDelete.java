@@ -47,7 +47,7 @@ public final class TestRangeDelete extends TestCase {
 
 	private String illustrativeDocFile;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 
 		String dirname = System.getProperty("HWPF.testdata.path");
 

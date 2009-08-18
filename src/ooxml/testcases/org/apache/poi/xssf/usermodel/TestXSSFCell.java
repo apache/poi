@@ -35,7 +35,7 @@ public final class TestXSSFCell extends BaseTestCell {
      * Bug 47026: trouble changing cell type when workbook doesn't contain
      * Shared String Table
      */
-    public void test47026_1() throws Exception {
+    public void test47026_1() {
         Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = source.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -44,7 +44,7 @@ public final class TestXSSFCell extends BaseTestCell {
         cell.setCellValue("456");
     }
 
-    public void test47026_2() throws Exception {
+    public void test47026_2() {
         Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = source.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -60,7 +60,7 @@ public final class TestXSSFCell extends BaseTestCell {
      * Some programs, for example, Microsoft Excel Driver for .xlsx insert inline string
      * instead of using the shared string table. See bug 47206
      */
-    public void testInlineString() throws Exception {
+    public void testInlineString() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("xlsx-jdbc.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row = sheet.getRow(1);
@@ -84,7 +84,7 @@ public final class TestXSSFCell extends BaseTestCell {
     /**
      *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
      */
-    public void test47278() throws Exception {
+    public void test47278() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -105,5 +105,4 @@ public final class TestXSSFCell extends BaseTestCell {
         assertEquals(0, sst.getCount());
         assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_1.getCellType());
     }
-    
 }

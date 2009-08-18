@@ -36,7 +36,7 @@ import org.apache.poi.util.HexDump;
  */
 public final class TestStyleTextPropAtom extends TestCase {
     /** From a real file: a paragraph with 4 different styles */
-    private byte[] data_a = new byte[] {
+    private static final byte[] data_a = new byte[] {
       0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
       0x36, 00, 00, 00, // paragraph is 54 long
       00, 00,           // (paragraph reserved field)
@@ -50,7 +50,7 @@ public final class TestStyleTextPropAtom extends TestCase {
       00, 00, 0x04, 00, // font.color only
       0xFF-256, 0x33, 00, 0xFE-256 // red
     };
-    private int data_a_text_len = 0x36-1;
+    private static final int data_a_text_len = 0x36-1;
 
     /**
      * From a real file: 4 paragraphs with text in 4 different styles:
@@ -60,7 +60,7 @@ public final class TestStyleTextPropAtom extends TestCase {
      * left aligned+underlined+larger font size (96)
      * left aligned+underlined+larger font size+red (1)
      */
-    private byte[] data_b = new byte[] {
+    private static final byte[] data_b = new byte[] {
         0, 0, 0xA1-256, 0x0F, 0x80-256, 0, 0, 0,
         0x1E, 00, 00, 00,     // paragraph is 30 long
         00, 00,               // paragraph reserved field
@@ -108,14 +108,14 @@ public final class TestStyleTextPropAtom extends TestCase {
         0x18, 00,             // font size 24
         0xFF-256, 0x33, 00, 0xFE-256 // colour red
     };
-    private int data_b_text_len = 0xB3;
+    private static final int data_b_text_len = 0xB3;
 
     /**
      * From a real file. Has a mask with more bits
      *  set than it actually has data for. Shouldn't do,
      *  but some real files do :(
      */
-    private byte[] data_c = new byte[] {
+    private static final byte[] data_c = new byte[] {
         0, 0, -95, 15, 62, 0, 0, 0,
         123, 0, 0, 0, 0, 0, 48, 8,
         10, 0, 1, 0, 0, 0, 0, 0,
@@ -131,15 +131,15 @@ public final class TestStyleTextPropAtom extends TestCase {
     /**
      * From a real file supplied for Bug 40143 by tales@great.ufc.br
      */
-    private byte[] data_d = {
+    private static final byte[] data_d = {
         0x00, 0x00, 0xA1-256, 0x0F, 0x1E, 0x00, 0x00, 0x00, //header
         (byte)0xA0, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x08 , 0x00 , 0x00 ,
         0x01 , 0x00, (byte)0xA0 , 0x00 , 0x00 , 0x00 , 0x01 , 0x00 , 0x63 , 0x00 ,
         0x01 , 0x00, 0x01 , 0x00 , 0x00, 0x00 , 0x01 , 0x00 , 0x14 , 0x00
     };
-    private int data_d_text_len = 0xA0-1;
+    private static final int data_d_text_len = 0xA0-1;
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
@@ -149,7 +149,7 @@ public final class TestStyleTextPropAtom extends TestCase {
     }
 
 
-    public void testCharacterStyleCounts() throws Exception {
+    public void testCharacterStyleCounts() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -223,7 +223,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         TextProp tp_1_1 = (TextProp)b_ch_1.getTextPropList().get(0);
         TextProp tp_1_2 = (TextProp)b_ch_1.getTextPropList().get(1);
         assertEquals(true, tp_1_1 instanceof CharFlagsTextProp);
-        assertEquals(true, tp_1_2 instanceof TextProp);
         assertEquals("font.size", tp_1_2.getName());
         assertEquals(20, tp_1_2.getValue());
 
@@ -233,8 +232,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         TextProp tp_2_2 = (TextProp)b_ch_2.getTextPropList().get(1);
         TextProp tp_2_3 = (TextProp)b_ch_2.getTextPropList().get(2);
         assertEquals(true, tp_2_1 instanceof CharFlagsTextProp);
-        assertEquals(true, tp_2_2 instanceof TextProp);
-        assertEquals(true, tp_2_3 instanceof TextProp);
         assertEquals("font.size", tp_2_2.getName());
         assertEquals("font.color", tp_2_3.getName());
         assertEquals(20, tp_2_2.getValue());
@@ -243,8 +240,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(2,b_ch_3.getTextPropList().size());
         TextProp tp_3_1 = (TextProp)b_ch_3.getTextPropList().get(0);
         TextProp tp_3_2 = (TextProp)b_ch_3.getTextPropList().get(1);
-        assertEquals(true, tp_3_1 instanceof TextProp);
-        assertEquals(true, tp_3_2 instanceof TextProp);
         assertEquals("font.size", tp_3_1.getName());
         assertEquals("font.color", tp_3_2.getName());
         assertEquals(20, tp_3_1.getValue());
@@ -255,8 +250,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         TextProp tp_4_2 = (TextProp)b_ch_4.getTextPropList().get(1);
         TextProp tp_4_3 = (TextProp)b_ch_4.getTextPropList().get(2);
         assertEquals(true, tp_4_1 instanceof CharFlagsTextProp);
-        assertEquals(true, tp_4_2 instanceof TextProp);
-        assertEquals(true, tp_4_3 instanceof TextProp);
         assertEquals("font.index", tp_4_2.getName());
         assertEquals("font.size", tp_4_3.getName());
         assertEquals(24, tp_4_3.getValue());
@@ -276,8 +269,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(2,b_p_1.getTextPropList().size());
         TextProp tp_1_1 = (TextProp)b_p_1.getTextPropList().get(0);
         TextProp tp_1_2 = (TextProp)b_p_1.getTextPropList().get(1);
-        assertEquals(true, tp_1_1 instanceof TextProp);
-        assertEquals(true, tp_1_2 instanceof TextProp);
         assertEquals("alignment", tp_1_1.getName());
         assertEquals("linespacing", tp_1_2.getName());
         assertEquals(0, tp_1_1.getValue());
@@ -286,8 +277,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         // 2nd is centre aligned (default) + normal line spacing
         assertEquals(1,b_p_2.getTextPropList().size());
         TextProp tp_2_1 = (TextProp)b_p_2.getTextPropList().get(0);
-        assertEquals(true, tp_2_1 instanceof TextProp);
-        assertEquals(true, tp_1_2 instanceof TextProp);
         assertEquals("linespacing", tp_2_1.getName());
         assertEquals(80, tp_2_1.getValue());
 
@@ -295,8 +284,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(2,b_p_3.getTextPropList().size());
         TextProp tp_3_1 = (TextProp)b_p_3.getTextPropList().get(0);
         TextProp tp_3_2 = (TextProp)b_p_3.getTextPropList().get(1);
-        assertEquals(true, tp_3_1 instanceof TextProp);
-        assertEquals(true, tp_3_2 instanceof TextProp);
         assertEquals("alignment", tp_3_1.getName());
         assertEquals("linespacing", tp_3_2.getName());
         assertEquals(2, tp_3_1.getValue());
@@ -306,8 +293,6 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(2,b_p_4.getTextPropList().size());
         TextProp tp_4_1 = (TextProp)b_p_4.getTextPropList().get(0);
         TextProp tp_4_2 = (TextProp)b_p_4.getTextPropList().get(1);
-        assertEquals(true, tp_4_1 instanceof TextProp);
-        assertEquals(true, tp_4_2 instanceof TextProp);
         assertEquals("alignment", tp_4_1.getName());
         assertEquals("linespacing", tp_4_2.getName());
         assertEquals(0, tp_4_1.getValue());

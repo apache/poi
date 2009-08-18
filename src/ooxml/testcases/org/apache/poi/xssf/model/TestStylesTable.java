@@ -25,10 +25,10 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 
 import junit.framework.TestCase;
 
-public class TestStylesTable extends TestCase {
+public final class TestStylesTable extends TestCase {
 	private File xml;
-	
-	protected void setUp() throws Exception {
+
+	protected void setUp() {
 		xml = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "Formatting.xlsx"
@@ -36,92 +36,92 @@ public class TestStylesTable extends TestCase {
 		assertTrue(xml.exists());
 	}
 
-	public void testCreateNew() throws Exception {
+	public void testCreateNew() {
 		StylesTable st = new StylesTable();
-		
+
 		// Check defaults
 		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
 	}
-	
-	public void testCreateSaveLoad() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        StylesTable st = wb.getStylesSource();
+
+	public void testCreateSaveLoad() {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		StylesTable st = wb.getStylesSource();
 
 		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
-		
+
 		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
-        assertNotNull(st.getCTStylesheet());
+		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
 	}
-	
+
 	public void testLoadExisting() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
-		
+
 		StylesTable st = workbook.getStylesSource();
-		
+
 		doTestExisting(st);
 	}
 	public void testLoadSaveLoad() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
-		
+
 		StylesTable st = workbook.getStylesSource();
 		doTestExisting(st);
-		
+
 		st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 		doTestExisting(st);
 	}
-	public void doTestExisting(StylesTable st) throws Exception {
+	public void doTestExisting(StylesTable st) {
 		// Check contents
 		assertNotNull(st.getCTStylesheet());
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(8, st._getNumberFormatSize());
-		
+
 		assertEquals(2, st.getFonts().size());
 		assertEquals(2, st.getFills().size());
 		assertEquals(1, st.getBorders().size());
-		
+
 		assertEquals("yyyy/mm/dd", st.getNumberFormatAt(165));
 		assertEquals("yy/mm/dd", st.getNumberFormatAt(167));
-		
+
 		assertNotNull(st.getStyleAt(0));
 		assertNotNull(st.getStyleAt(1));
 		assertNotNull(st.getStyleAt(2));
-		
+
 		assertEquals(0, st.getStyleAt(0).getDataFormat());
 		assertEquals(14, st.getStyleAt(1).getDataFormat());
 		assertEquals(0, st.getStyleAt(2).getDataFormat());
 		assertEquals(165, st.getStyleAt(3).getDataFormat());
-		
+
 		assertEquals("yyyy/mm/dd", st.getStyleAt(3).getDataFormatString());
 	}
-	
-	public void testPopulateNew() throws Exception {
+
+	public void testPopulateNew() {
 		XSSFWorkbook wb = new XSSFWorkbook();
-        StylesTable st = wb.getStylesSource();
-		
+		StylesTable st = wb.getStylesSource();
+
 		assertNotNull(st.getCTStylesheet());
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
-		
+
 		int nf1 = st.putNumberFormat("yyyy-mm-dd");
 		int nf2 = st.putNumberFormat("yyyy-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
-		
+
 		st.putStyle(new XSSFCellStyle(st));
-		
+
 		// Save and re-load
 		st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
@@ -129,31 +129,31 @@ public class TestStylesTable extends TestCase {
 		assertEquals(2, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(2, st._getNumberFormatSize());
-		
+
 		assertEquals("yyyy-mm-dd", st.getNumberFormatAt(nf1));
 		assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
 		assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
 	}
-	
+
 	public void testPopulateExisting() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getStylesSource());
-		
+
 		StylesTable st = workbook.getStylesSource();
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(8, st._getNumberFormatSize());
-		
+
 		int nf1 = st.putNumberFormat("YYYY-mm-dd");
 		int nf2 = st.putNumberFormat("YYYY-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
-		
+
         st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(10, st._getNumberFormatSize());
-		
+
 		assertEquals("YYYY-mm-dd", st.getNumberFormatAt(nf1));
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 		assertEquals(nf2, st.putNumberFormat("YYYY-mm-DD"));

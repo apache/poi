@@ -32,14 +32,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
- * 
+ *
  * @author Travis Ferguson
  */
 public class MAPIMessage {
 	private POIFSChunkParser chunkParser;
 	private POIFSFileSystem fs;
 	private Chunks chunks;
-	
+
 	/**
 	 * Constructor for creating new files.
 	 *
@@ -47,8 +47,8 @@ public class MAPIMessage {
 	public MAPIMessage() {
 		//TODO make writing possible
 	}
-	
-	
+
+
 	/**
 	 * Constructor for reading MSG Files from the file system.
 	 * @param filename
@@ -57,7 +57,7 @@ public class MAPIMessage {
 	public MAPIMessage(String filename) throws IOException {
 		this(new FileInputStream(new File(filename)));
 	}
-	
+
 	/**
 	 * Constructor for reading MSG Files from an input stream.
 	 * @param in
@@ -66,12 +66,12 @@ public class MAPIMessage {
 	public MAPIMessage(InputStream in) throws IOException {
 		this.fs = new POIFSFileSystem(in);
 		chunkParser = new POIFSChunkParser(this.fs);
-		
+
 		// Figure out the right string type, based on
 		//  the chunks present
 		chunks = chunkParser.identifyChunks();
 	}
-	
+
 
 	/**
 	 * Gets a string value based on the passed chunk.
@@ -83,15 +83,15 @@ public class MAPIMessage {
 		StringChunk strchunk = (StringChunk)out;
 		return strchunk.toString();
 	}
-	
-	
+
+
 	/**
 	 * Gets the plain text body of this Outlook Message
 	 * @return The string representation of the 'text' version of the body, if available.
-	 * @throws IOException 
-	 * @throws ChunkNotFoundException 
+	 * @throws IOException
+	 * @throws ChunkNotFoundException
 	 */
-	public String getTextBody() throws IOException, ChunkNotFoundException {
+	public String getTextBody() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.textBodyChunk);
 	}
 
@@ -102,8 +102,8 @@ public class MAPIMessage {
 	public String getSubject() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.subjectChunk);
 	}
-	
-	
+
+
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
@@ -112,7 +112,7 @@ public class MAPIMessage {
 	public String getDisplayTo() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.displayToChunk);
 	}
-	
+
 	/**
 	 * Gets the display value of the "FROM" line of the outlook message
 	 * This is not the actual address that was sent from but the formated display of the user name.
@@ -121,7 +121,7 @@ public class MAPIMessage {
 	public String getDisplayFrom() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.displayFromChunk);
 	}
-	
+
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
@@ -130,7 +130,7 @@ public class MAPIMessage {
 	public String getDisplayCC() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.displayCCChunk);
 	}
-	
+
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
 	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
@@ -154,19 +154,19 @@ public class MAPIMessage {
 	 * Gets the message class of the parsed Outlook Message.
 	 * (Yes, you can use this to determine if a message is a calendar item, note, or actual outlook Message)
 	 * For emails the class will be IPM.Note
-	 * 
+	 *
 	 * @throws ChunkNotFoundException
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {
 		return getStringFromChunk(chunks.messageClass);
-	}	
-	
+	}
+
 	/**
 	 * Gets the message attachments.
-	 * 
+	 *
 	 * @return a map containing attachment name (String) and data (ByteArrayInputStream)
 	 */
 	public Map getAttachmentFiles() {
 		return this.chunkParser.getAttachmentList();
-	}	
+	}
 }

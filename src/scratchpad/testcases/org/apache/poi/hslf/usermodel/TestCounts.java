@@ -31,16 +31,16 @@ public final class TestCounts extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
-    public TestCounts() throws Exception {
+	public TestCounts() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		HSLFSlideShow hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
+	}
 
-    public void testSheetsCount() throws Exception {
+	public void testSheetsCount() {
 		Slide[] slides = ss.getSlides();
-		// Two sheets - master sheet is seperate
+		// Two sheets - master sheet is separate
 		assertEquals(2, slides.length);
 
 		// They are slides 1+2
@@ -56,7 +56,7 @@ public final class TestCounts extends TestCase {
 		assertEquals(257, slides[1]._getSheetNumber());
 	}
 
-    public void testNotesCount() throws Exception {
+	public void testNotesCount() {
 		Notes[] notes = ss.getNotes();
 		// Two sheets -> two notes
 		// Note: there are also notes on the slide master

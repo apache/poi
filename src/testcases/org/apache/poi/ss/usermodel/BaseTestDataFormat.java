@@ -33,7 +33,7 @@ public abstract class BaseTestDataFormat extends TestCase {
      */
     protected abstract ITestDataProvider getTestDataProvider();
 
-    public void baseBuiltinFormats() throws Exception {
+    public void baseBuiltinFormats() {
         Workbook wb = getTestDataProvider().createWorkbook();
 
         DataFormat df = wb.createDataFormat();

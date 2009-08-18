@@ -79,7 +79,7 @@ public final class TestRangeProperties extends TestCase {
 	}
 
 
-	public void testAsciiTextParagraphs() throws Exception {
+	public void testAsciiTextParagraphs() {
 		Range r = a.getRange();
 		assertEquals(
 				a_page_1 +
@@ -138,7 +138,7 @@ public final class TestRangeProperties extends TestCase {
 		);
 	}
 
-	public void testAsciiStyling() throws Exception {
+	public void testAsciiStyling() {
 		Range r = a.getRange();
 
 		Paragraph p1 = r.getParagraph(0);
@@ -160,7 +160,7 @@ public final class TestRangeProperties extends TestCase {
 	 * Tests the raw definitions of the paragraphs of
 	 *  a unicode document
 	 */
-	public void testUnicodeParagraphDefinitions() throws Exception {
+	public void testUnicodeParagraphDefinitions() {
 		Range r = u.getRange();
 		String[] p1_parts = u_page_1.split("\r");
 		String[] p2_parts = u_page_2.split("\r");
@@ -251,7 +251,7 @@ public final class TestRangeProperties extends TestCase {
 	/**
 	 * Tests the paragraph text of a unicode document
 	 */
-	public void testUnicodeTextParagraphs() throws Exception {
+	public void testUnicodeTextParagraphs() {
 		Range r = u.getRange();
 		assertEquals(
 				u_page_1 +
@@ -281,7 +281,7 @@ public final class TestRangeProperties extends TestCase {
 		assertEquals(page_break + "\r", r.getParagraph(10).text());
 		assertEquals(p2_parts[0] + "\r", r.getParagraph(11).text());
 	}
-	public void testUnicodeStyling() throws Exception {
+	public void testUnicodeStyling() {
 		Range r = u.getRange();
 		String[] p1_parts = u_page_1.split("\r");
 

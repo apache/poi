@@ -21,38 +21,40 @@ import junit.framework.TestCase;
 /**
  */
 public final class TestExtendedFormatRecord extends TestCase {
-	byte[] header = new byte[] {
-    		0xE0-256, 00, 0x14, 00 // sid=e0, 20 bytes long 
+
+	private static final byte[] data = new byte[] {
+			00, 00, // Font 0
+			00, 00, // Format 0
+			0xF5 - 256, 0xFF - 256, // Cell opts ...
+			0x20, 00, // Alignment 20
+			00, 00, // Ident 0
+			00, 00, // Border 0
+			00, 00, // Palette 0
+			00, 00, 00, 00, // ADTL Palette 0
+			0xC0 - 256, 0x20 // Fill Palette 20c0
 	};
-    byte[] data = new byte[] {
-    		00, 00, // Font 0 
-    		00, 00, // Format 0
-    		0xF5-256, 0xFF-256, // Cell opts ...
-    		0x20, 00, // Alignment 20 
-    		00, 00,   // Ident 0
-    		00, 00,   // Border 0
-    		00, 00,   // Palette 0 
-    		00, 00, 00, 00, // ADTL Palette 0
-    		0xC0-256, 0x20  // Fill Palette 20c0
-    };
 
-    public void testLoad() {
-        ExtendedFormatRecord record = new ExtendedFormatRecord(TestcaseRecordInputStream.create(0xe0, data));
-        assertEquals(0, record.getFontIndex());
-        assertEquals(0, record.getFormatIndex());
-        assertEquals(0xF5-256, record.getCellOptions());
-        assertEquals(0x20, record.getAlignmentOptions());
-        assertEquals(0, record.getIndentionOptions());
-        assertEquals(0, record.getBorderOptions());
-        assertEquals(0, record.getPaletteOptions());
-        assertEquals(0, record.getAdtlPaletteOptions());
-        assertEquals(0x20c0, record.getFillPaletteOptions());
+	private static ExtendedFormatRecord createEFR() {
+		return new ExtendedFormatRecord(TestcaseRecordInputStream.create(0x00E0, data));
+	}
 
-        assertEquals( 20 + 4, record.getRecordSize() );
-    }
+	public void testLoad() {
+		ExtendedFormatRecord record = createEFR();
+		assertEquals(0, record.getFontIndex());
+		assertEquals(0, record.getFormatIndex());
+		assertEquals(0xF5 - 256, record.getCellOptions());
+		assertEquals(0x20, record.getAlignmentOptions());
+		assertEquals(0, record.getIndentionOptions());
+		assertEquals(0, record.getBorderOptions());
+		assertEquals(0, record.getPaletteOptions());
+		assertEquals(0, record.getAdtlPaletteOptions());
+		assertEquals(0x20c0, record.getFillPaletteOptions());
 
-    public void testStore()
-    {
+		assertEquals(20 + 4, record.getRecordSize());
+	}
+
+
+	public void testStore() {
 //    .fontindex       = 0
 //    .formatindex     = 0
 //    .celloptions     = fffffff5
@@ -96,35 +98,35 @@ public final class TestExtendedFormatRecord extends TestCase {
 //          .foreground= 40
 //          .background= 41
 
-    	ExtendedFormatRecord record = new ExtendedFormatRecord();
-    	record.setFontIndex((short)0);
-    	record.setFormatIndex((short)0);
-    	
-    	record.setLocked(true);
-    	record.setHidden(false);
-    	record.setXFType((short)1);
-    	record.setParentIndex((short)0xfff);
-    	
-    	record.setVerticalAlignment((short)2);
-    	
-    	record.setFillForeground((short)0x40);
-    	record.setFillBackground((short)0x41);
+		ExtendedFormatRecord record = new ExtendedFormatRecord();
+		record.setFontIndex((short) 0);
+		record.setFormatIndex((short) 0);
 
-        byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-    }
-    
-    public void testCloneOnto() throws Exception {
-        ExtendedFormatRecord base = new ExtendedFormatRecord(TestcaseRecordInputStream.create(0xe0, data));
-    	
-    	ExtendedFormatRecord other = new ExtendedFormatRecord();
-        other.cloneStyleFrom(base);
+		record.setLocked(true);
+		record.setHidden(false);
+		record.setXFType((short) 1);
+		record.setParentIndex((short) 0xfff);
 
-        byte [] recordBytes = other.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-    }
+		record.setVerticalAlignment((short) 2);
+
+		record.setFillForeground((short) 0x40);
+		record.setFillBackground((short) 0x41);
+
+		byte[] recordBytes = record.serialize();
+		assertEquals(recordBytes.length - 4, data.length);
+		for (int i = 0; i < data.length; i++)
+			assertEquals("At offset " + i, data[i], recordBytes[i + 4]);
+	}
+
+	public void testCloneOnto() {
+		ExtendedFormatRecord base = createEFR();
+
+		ExtendedFormatRecord other = new ExtendedFormatRecord();
+		other.cloneStyleFrom(base);
+
+		byte[] recordBytes = other.serialize();
+		assertEquals(recordBytes.length - 4, data.length);
+		for (int i = 0; i < data.length; i++)
+			assertEquals("At offset " + i, data[i], recordBytes[i + 4]);
+	}
 }

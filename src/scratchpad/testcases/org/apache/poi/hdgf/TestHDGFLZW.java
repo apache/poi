@@ -106,7 +106,7 @@ public final class TestHDGFLZW extends TestCase {
 		0, 0, 42, 1, 0, 0, 84, 0, 0, 0, 0, 0
 	};
 
-	public void testFromToInt() throws Exception {
+	public void testFromToInt() {
 		byte b255 = -1;
 		assertEquals(255, HDGFLZW.fromByte(b255));
 		assertEquals(-1, HDGFLZW.fromInt( HDGFLZW.fromByte(b255) ));

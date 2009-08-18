@@ -32,10 +32,10 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 /**
  * Test setting extended and custom OOXML properties
  */
-public class TestPOIXMLProperties extends TestCase {
-	POIXMLProperties props;
-	CoreProperties coreProperties;
-	
+public final class TestPOIXMLProperties extends TestCase {
+	private POIXMLProperties _props;
+	private CoreProperties _coreProperties;
+
 	public void setUp() throws Exception{
 		File sampleFile = new File(
 				System.getProperty("HWPF.testdata.path") +
@@ -46,139 +46,139 @@ public class TestPOIXMLProperties extends TestCase {
 		sampleDoc = new XWPFDocument(
 				POIXMLDocument.openPackage(sampleFile.toString())
 		);
-		props = sampleDoc.getProperties();
-		coreProperties = props.getCoreProperties();
-		assertNotNull(props);
+		_props = sampleDoc.getProperties();
+		_coreProperties = _props.getCoreProperties();
+		assertNotNull(_props);
 	}
-	
-    public void testWorkbookExtendedProperties() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        POIXMLProperties props = workbook.getProperties();
-        assertNotNull(props);
 
-        org.apache.poi.POIXMLProperties.ExtendedProperties properties =
-                props.getExtendedProperties();
+	public void testWorkbookExtendedProperties() {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		POIXMLProperties props = workbook.getProperties();
+		assertNotNull(props);
 
-        org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
-                ctProps = properties.getUnderlyingProperties();
+		org.apache.poi.POIXMLProperties.ExtendedProperties properties =
+				props.getExtendedProperties();
 
-
-        String appVersion = "3.5 beta";
-        String application = "POI";
-
-        ctProps.setApplication(application);
-        ctProps.setAppVersion(appVersion);
-
-        ctProps = null;
-        properties = null;
-        props = null;
-
-        XSSFWorkbook newWorkbook =
-                XSSFTestDataSamples.writeOutAndReadBack(workbook);
-
-        assertTrue(workbook != newWorkbook);
+		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
+				ctProps = properties.getUnderlyingProperties();
 
 
-        POIXMLProperties newProps = newWorkbook.getProperties();
-        assertNotNull(newProps);
-        org.apache.poi.POIXMLProperties.ExtendedProperties newProperties =
-                newProps.getExtendedProperties();
+		String appVersion = "3.5 beta";
+		String application = "POI";
 
-        org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
-                newCtProps = newProperties.getUnderlyingProperties();
+		ctProps.setApplication(application);
+		ctProps.setAppVersion(appVersion);
 
-        assertEquals(application, newCtProps.getApplication());
-        assertEquals(appVersion, newCtProps.getAppVersion());
+		ctProps = null;
+		properties = null;
+		props = null;
 
+		XSSFWorkbook newWorkbook =
+				XSSFTestDataSamples.writeOutAndReadBack(workbook);
 
-    }
-
-
-    public void testWorkbookCustomProperties() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        POIXMLProperties props = workbook.getProperties();
-        assertNotNull(props);
-
-        org.apache.poi.POIXMLProperties.CustomProperties properties =
-                props.getCustomProperties();
-
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-                ctProps = properties.getUnderlyingProperties();
+		assertTrue(workbook != newWorkbook);
 
 
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
-                property = ctProps.addNewProperty();
+		POIXMLProperties newProps = newWorkbook.getProperties();
+		assertNotNull(newProps);
+		org.apache.poi.POIXMLProperties.ExtendedProperties newProperties =
+				newProps.getExtendedProperties();
+
+		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
+				newCtProps = newProperties.getUnderlyingProperties();
+
+		assertEquals(application, newCtProps.getApplication());
+		assertEquals(appVersion, newCtProps.getAppVersion());
 
 
-        String fmtid =
-                "{A1A1A1A1A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1A1A1A1A1}";
-        int pId = 1;
-        String name = "testProperty";
-        String stringValue = "testValue";
+	}
 
 
-        property.setFmtid(fmtid);
-        property.setPid(pId);
-        property.setName(name);
-        property.setBstr(stringValue);
+	public void testWorkbookCustomProperties() {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		POIXMLProperties props = workbook.getProperties();
+		assertNotNull(props);
+
+		org.apache.poi.POIXMLProperties.CustomProperties properties =
+				props.getCustomProperties();
+
+		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
+				ctProps = properties.getUnderlyingProperties();
 
 
-        property = null;
-        ctProps = null;
-        properties = null;
-        props = null;
-
-        XSSFWorkbook newWorkbook =
-                XSSFTestDataSamples.writeOutAndReadBack(workbook);
-
-        assertTrue(workbook != newWorkbook);
+		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
+				property = ctProps.addNewProperty();
 
 
-        POIXMLProperties newProps = newWorkbook.getProperties();
-        assertNotNull(newProps);
-        org.apache.poi.POIXMLProperties.CustomProperties newProperties =
-                newProps.getCustomProperties();
-
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-                newCtProps = newProperties.getUnderlyingProperties();
-
-        assertEquals(1, newCtProps.getPropertyArray().length);
+		String fmtid =
+				"{A1A1A1A1A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1A1A1A1A1}";
+		int pId = 1;
+		String name = "testProperty";
+		String stringValue = "testValue";
 
 
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
-                newpProperty = newCtProps.getPropertyArray()[0];
-
-        assertEquals(fmtid, newpProperty.getFmtid());
-        assertEquals(pId, newpProperty.getPid());
-        assertEquals(name, newpProperty.getName());
-        assertEquals(stringValue, newpProperty.getBstr());
+		property.setFmtid(fmtid);
+		property.setPid(pId);
+		property.setName(name);
+		property.setBstr(stringValue);
 
 
-    }
-    
-    public void testDocumentProperties() {
-		String category = coreProperties.getCategory();
+		property = null;
+		ctProps = null;
+		properties = null;
+		props = null;
+
+		XSSFWorkbook newWorkbook =
+				XSSFTestDataSamples.writeOutAndReadBack(workbook);
+
+		assertTrue(workbook != newWorkbook);
+
+
+		POIXMLProperties newProps = newWorkbook.getProperties();
+		assertNotNull(newProps);
+		org.apache.poi.POIXMLProperties.CustomProperties newProperties =
+				newProps.getCustomProperties();
+
+		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
+				newCtProps = newProperties.getUnderlyingProperties();
+
+		assertEquals(1, newCtProps.getPropertyArray().length);
+
+
+		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
+				newpProperty = newCtProps.getPropertyArray()[0];
+
+		assertEquals(fmtid, newpProperty.getFmtid());
+		assertEquals(pId, newpProperty.getPid());
+		assertEquals(name, newpProperty.getName());
+		assertEquals(stringValue, newpProperty.getBstr());
+
+
+	}
+
+	public void testDocumentProperties() {
+		String category = _coreProperties.getCategory();
 		assertEquals("test", category);
 		String contentStatus = "Draft";
-		coreProperties.setContentStatus(contentStatus);
+		_coreProperties.setContentStatus(contentStatus);
 		assertEquals("Draft", contentStatus);
-		Date created = coreProperties.getCreated();
+		Date created = _coreProperties.getCreated();
 		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy");
 		assertEquals("Mon, Jul 20, '09", formatter.format(created));
-		String creator = coreProperties.getCreator();
+		String creator = _coreProperties.getCreator();
 		assertEquals("Paolo Mottadelli", creator);
-		String subject = coreProperties.getSubject();
+		String subject = _coreProperties.getSubject();
 		assertEquals("Greetings", subject);
-		String title = coreProperties.getTitle();
+		String title = _coreProperties.getTitle();
 		assertEquals("Hello World", title);
-    }
-    
-    public void testGetSetRevision() {
-		String revision = coreProperties.getRevision();
-		assertTrue("Revision number is 1", new Integer(coreProperties.getRevision()).intValue() > 1);
-		coreProperties.setRevision("20");
-		assertEquals("20", coreProperties.getRevision());
-		coreProperties.setRevision("20xx");
-		assertEquals("20", coreProperties.getRevision());
-    }
+	}
+
+	public void testGetSetRevision() {
+		String revision = _coreProperties.getRevision();
+		assertTrue("Revision number is 1", new Integer(_coreProperties.getRevision()).intValue() > 1);
+		_coreProperties.setRevision("20");
+		assertEquals("20", _coreProperties.getRevision());
+		_coreProperties.setRevision("20xx");
+		assertEquals("20", _coreProperties.getRevision());
+	}
 }

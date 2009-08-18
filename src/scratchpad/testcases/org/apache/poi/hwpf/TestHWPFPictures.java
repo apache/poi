@@ -19,12 +19,13 @@ package org.apache.poi.hwpf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
-
-import junit.framework.TestCase;
 
 /**
  * Test picture support in HWPF
@@ -34,25 +35,25 @@ public final class TestHWPFPictures extends TestCase {
 	private String docAFile;
 	private String docBFile;
 	private String docCFile;
-    private String docDFile;
+	private String docDFile;
 
 	private String imgAFile;
 	private String imgBFile;
 	private String imgCFile;
-    private String imgDFile;
+	private String imgDFile;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		String dirname = System.getProperty("HWPF.testdata.path");
 
 		docAFile = dirname + "/testPictures.doc";
 		docBFile = dirname + "/two_images.doc";
 		docCFile = dirname + "/vector_image.doc";
-        docDFile = dirname + "/GaiaTest.doc";
+		docDFile = dirname + "/GaiaTest.doc";
 
 		imgAFile = dirname + "/simple_image.jpg";
 		imgBFile = dirname + "/simple_image.png";
 		imgCFile = dirname + "/vector_image.emf";
-        imgDFile = dirname + "/GaiaTestImg.png";
+		imgDFile = dirname + "/GaiaTestImg.png";
 	}
 
 	/**
@@ -134,21 +135,20 @@ public final class TestHWPFPictures extends TestCase {
 	 * Pending the missing files being uploaded to
 	 *  bug #44937
 	 */
-    public void BROKENtestEscherDrawing() throws Exception
-    {
-        HWPFDocument docD = new HWPFDocument(new FileInputStream(docDFile));
-        List allPictures = docD.getPicturesTable().getAllPictures();
+	public void BROKENtestEscherDrawing() throws Exception {
+		HWPFDocument docD = new HWPFDocument(new FileInputStream(docDFile));
+		List allPictures = docD.getPicturesTable().getAllPictures();
 
-        assertEquals(1, allPictures.size());
+		assertEquals(1, allPictures.size());
 
-        Picture pic = (Picture) allPictures.get(0);
-        assertNotNull(pic);
-        byte[] picD = readFile(imgDFile);
+		Picture pic = (Picture) allPictures.get(0);
+		assertNotNull(pic);
+		byte[] picD = readFile(imgDFile);
 
-        assertEquals(picD.length, pic.getContent().length);
+		assertEquals(picD.length, pic.getContent().length);
 
-        assertBytesSame(picD, pic.getContent());
-    }
+		assertBytesSame(picD, pic.getContent());
+	}
 
 	private void assertBytesSame(byte[] a, byte[] b) {
 		assertEquals(a.length, b.length);
@@ -157,17 +157,22 @@ public final class TestHWPFPictures extends TestCase {
 		}
 	}
 
-	private byte[] readFile(String file) throws Exception {
+	private static byte[] readFile(String file) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		FileInputStream fis = new FileInputStream(file);
-		byte[] buffer = new byte[1024];
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			byte[] buffer = new byte[1024];
 
-		int read = 0;
-		while(read > -1) {
-			read = fis.read(buffer);
-			if(read > 0) {
-				baos.write(buffer,0,read);
+			int read = 0;
+			while(read > -1) {
+				read = fis.read(buffer);
+				if(read > 0) {
+					baos.write(buffer,0,read);
+				}
 			}
+			fis.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 
 		return baos.toByteArray();

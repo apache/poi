@@ -19,7 +19,13 @@ package org.apache.poi.openxml4j.opc.internal;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
 public final class TestContentTypeManager extends TestCase {
@@ -27,25 +33,21 @@ public final class TestContentTypeManager extends TestCase {
 	/**
 	 * Test the properties part content parsing.
 	 */
-	public void testContentType() throws Exception {
-		// File originalFile = new File(testCore.getTestRootPath() +
-		// File.separator +
-		// "sample.docx");
-		//
-		// // Retrieves core properties part
-		// Package p = Package.open(originalFile.getAbsolutePath(),
-		// PackageAccess.READ);
-		// PackageRelationship corePropertiesRelationship = p
-		// .getRelationshipsByType(
-		// PackageRelationshipTypes.CORE_PROPERTIES)
-		// .getRelationship(0);
-		// PackagePart coreDocument = p.getPart(corePropertiesRelationship);
-		//
-		// ContentTypeManager ctm = new ZipContentTypeManager(coreDocument
-		// .getInputStream());
-		//
-		// // TODO
-		//fail();
+	public void disabled_testContentType() throws Exception {
+		String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+
+		 // Retrieves core properties part
+		 OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ);
+		 PackageRelationship corePropertiesRelationship = p
+		 .getRelationshipsByType(
+		 PackageRelationshipTypes.CORE_PROPERTIES)
+		 .getRelationship(0);
+		 PackagePart coreDocument = p.getPart(corePropertiesRelationship);
+
+		 ContentTypeManager ctm = new ZipContentTypeManager(coreDocument.getInputStream(), p);
+
+		 // TODO - finish writing this test
+		fail();
 	}
 
 	/**
@@ -54,14 +56,10 @@ public final class TestContentTypeManager extends TestCase {
 	public void testContentTypeAddition() throws Exception {
 		ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
-		PackagePartName name1 = PackagingURIHelper
-				.createPartName("/foo/foo.XML");
-		PackagePartName name2 = PackagingURIHelper
-				.createPartName("/foo/foo2.xml");
-		PackagePartName name3 = PackagingURIHelper
-				.createPartName("/foo/doc.rels");
-		PackagePartName name4 = PackagingURIHelper
-				.createPartName("/foo/doc.RELS");
+		PackagePartName name1 = PackagingURIHelper.createPartName("/foo/foo.XML");
+		PackagePartName name2 = PackagingURIHelper.createPartName("/foo/foo2.xml");
+		PackagePartName name3 = PackagingURIHelper.createPartName("/foo/doc.rels");
+		PackagePartName name4 = PackagingURIHelper.createPartName("/foo/doc.RELS");
 
 		// Add content types
 		ctm.addContentType(name1, "foo-type1");
@@ -81,14 +79,10 @@ public final class TestContentTypeManager extends TestCase {
 	public void testContentTypeRemoval() throws Exception {
 		ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
-		PackagePartName name1 = PackagingURIHelper
-				.createPartName("/foo/foo.xml");
-		PackagePartName name2 = PackagingURIHelper
-				.createPartName("/foo/foo2.xml");
-		PackagePartName name3 = PackagingURIHelper
-				.createPartName("/foo/doc.rels");
-		PackagePartName name4 = PackagingURIHelper
-				.createPartName("/foo/doc.RELS");
+		PackagePartName name1 = PackagingURIHelper.createPartName("/foo/foo.xml");
+		PackagePartName name2 = PackagingURIHelper.createPartName("/foo/foo2.xml");
+		PackagePartName name3 = PackagingURIHelper.createPartName("/foo/doc.rels");
+		PackagePartName name4 = PackagingURIHelper.createPartName("/foo/doc.RELS");
 
 		// Add content types
 		ctm.addContentType(name1, "foo-type1");
@@ -110,7 +104,7 @@ public final class TestContentTypeManager extends TestCase {
 	/**
 	 * Test the addition then removal of content types in a package.
 	 */
-	public void testContentTypeRemovalPackage() throws Exception {
+	public void testContentTypeRemovalPackage() {
 		// TODO
 	}
 }

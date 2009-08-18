@@ -34,7 +34,7 @@ public final class TestPictures extends TestCase{
 
     protected File cwd;
 
-    public void setUp() throws Exception {
+    public void setUp() {
         cwd = new File(System.getProperty("HSLF.testdata.path"));
     }
 

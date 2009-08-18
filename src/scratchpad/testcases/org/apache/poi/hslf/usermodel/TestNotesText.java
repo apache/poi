@@ -31,14 +31,14 @@ public final class TestNotesText extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
-    public TestNotesText() throws Exception {
+	public TestNotesText() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		HSLFSlideShow hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
+	}
 
-    public void testNotesOne() throws Exception {
+	public void testNotesOne() {
 		Notes notes = ss.getNotes()[0];
 
 		String[] expectText = new String[] {"These are the notes for page 1"};
@@ -46,9 +46,9 @@ public final class TestNotesText extends TestCase {
 		for(int i=0; i<expectText.length; i++) {
 			assertEquals(expectText[i], notes.getTextRuns()[i].getText());
 		}
-    }
+	}
 
-	public void testNotesTwo() throws Exception {
+	public void testNotesTwo() {
 		Notes notes = ss.getNotes()[1];
 		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
 		assertEquals(expectText.length, notes.getTextRuns().length);

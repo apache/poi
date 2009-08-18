@@ -84,16 +84,16 @@ public final class TestComment2000 extends TestCase {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals(12000l, ca.getRecordType());
 	}
-	public void testAuthor() throws Exception {
+	public void testAuthor() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Dumbledore", ca.getAuthor());
 		assertEquals("D", ca.getAuthorInitials());
 	}
-	public void testText() throws Exception {
+	public void testText() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Yes, they certainly are, aren't they!", ca.getText());
 	}

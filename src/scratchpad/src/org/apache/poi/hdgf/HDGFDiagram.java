@@ -114,7 +114,7 @@ public final class HDGFDiagram extends POIDocument {
 	 * Prints out some simple debug on the base contents of the file.
 	 * @see org.apache.poi.hdgf.dev.VSDDumper
 	 */
-	public void debug() throws IOException {
+	public void debug() {
 		System.err.println("Trailer is at " + trailerPointer.getOffset());
 		System.err.println("Trailer has type " + trailerPointer.getType());
 		System.err.println("Trailer has length " + trailerPointer.getLength());

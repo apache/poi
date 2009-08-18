@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 
 package org.apache.poi.hslf.record;
@@ -38,19 +38,19 @@ public class TestInteractiveInfo extends TestCase {
 		00, 00, 00, 00, 01, 00, 00, 00,
 		04, 00, 00, 00, 8, 00, 00, 00
 	};
-	
-    public void testRecordType() throws Exception {
+
+	public void testRecordType() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		assertEquals(4082, ii.getRecordType());
 	}
-    
-    public void testGetChildDetails() throws Exception {
+
+	public void testGetChildDetails() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
-		
+
 		assertEquals(1, ia.getHyperlinkID());
-    }
-    
+	}
+
 	public void testWrite() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,24 +64,24 @@ public class TestInteractiveInfo extends TestCase {
 	}
 
 	// Create A from scratch
-    public void testCreate() throws Exception {
-    	InteractiveInfo ii = new InteractiveInfo();
-    	InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
-    	
-    	// Set values
-    	ia.setHyperlinkID(1);
-    	ia.setSoundRef(0);
-    	ia.setAction((byte)4);
-    	ia.setHyperlinkType((byte)8);
-    	
+	public void testCreate() throws Exception {
+		InteractiveInfo ii = new InteractiveInfo();
+		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
+
+		// Set values
+		ia.setHyperlinkID(1);
+		ia.setSoundRef(0);
+		ia.setAction((byte)4);
+		ia.setHyperlinkType((byte)8);
+
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ii.writeOut(baos);
 		byte[] b = baos.toByteArray();
-		
+
 		assertEquals(data_a.length, b.length);
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
 		}
-    }
+   }
 }
