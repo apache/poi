@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.util.LittleEndianInput;
@@ -25,20 +24,20 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * ArrayPtg - handles arrays
- * 
+ *
  * The ArrayPtg is a little weird, the size of the Ptg when parsing initially only
  * includes the Ptg sid and the reserved bytes. The next Ptg in the expression then follows.
  * It is only after the "size" of all the Ptgs is met, that the ArrayPtg data is actually
- * held after this. So Ptg.createParsedExpression keeps track of the number of 
+ * held after this. So Ptg.createParsedExpression keeps track of the number of
  * ArrayPtg elements and need to parse the data upto the FORMULA record size.
- *  
+ *
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class ArrayPtg extends Ptg {
 	public static final byte sid  = 0x20;
 
 	private static final int RESERVED_FIELD_LEN = 7;
-	/** 
+	/**
 	 * The size of the plain tArray token written within the standard formula tokens
 	 * (not including the data which comes after all formula tokens)
 	 */
@@ -48,7 +47,7 @@ public final class ArrayPtg extends Ptg {
 
 	// TODO - fix up field visibility and subclasses
 	private final byte[] field_1_reserved;
-	
+
 	// data from these fields comes after the Ptg data of all tokens in current formula
 	private int  token_1_columns;
 	private short token_2_rows;
@@ -78,7 +77,7 @@ public final class ArrayPtg extends Ptg {
 				vv[getValueIndex(c, r)] = rowData[c];
 			}
 		}
-		
+
 		token_3_arrayValues = vv;
 		field_1_reserved = DEFAULT_RESERVED_DATA;
 	}
@@ -98,13 +97,13 @@ public final class ArrayPtg extends Ptg {
 		}
 		return result;
 	}
-	
+
 	public boolean isBaseToken() {
 		return false;
 	}
-	
-	/** 
-	 * Read in the actual token (array) values. This occurs 
+
+	/**
+	 * Read in the actual token (array) values. This occurs
 	 * AFTER the last Ptg in the expression.
 	 * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
 	 */
@@ -116,10 +115,10 @@ public final class ArrayPtg extends Ptg {
 		//Which is not explicitly documented.
 		nColumns++;
 		nRows++;
-		
+
 		token_1_columns = nColumns;
 		token_2_rows = nRows;
-		
+
 		int totalCount = nRows * nColumns;
 		token_3_arrayValues = ConstantValueParser.parse(in, totalCount);
 	}
@@ -143,11 +142,11 @@ public final class ArrayPtg extends Ptg {
 	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
 		if(colIx < 0 || colIx >= token_1_columns) {
-			throw new IllegalArgumentException("Specified colIx (" + colIx 
+			throw new IllegalArgumentException("Specified colIx (" + colIx
 					+ ") is outside the allowed range (0.." + (token_1_columns-1) + ")");
 		}
 		if(rowIx < 0 || rowIx >= token_2_rows) {
-			throw new IllegalArgumentException("Specified rowIx (" + rowIx 
+			throw new IllegalArgumentException("Specified rowIx (" + rowIx
 					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
 		}
 		return rowIx * token_1_columns + colIx;
@@ -176,7 +175,7 @@ public final class ArrayPtg extends Ptg {
 
 	/** This size includes the size of the array Ptg plus the Array Ptg Token value size*/
 	public int getSize() {
-		return PLAIN_TOKEN_SIZE 
+		return PLAIN_TOKEN_SIZE
 			// data written after the all tokens:
 			+ 1 + 2 // column, row
 			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
@@ -200,7 +199,7 @@ public final class ArrayPtg extends Ptg {
 		b.append("}");
 		return b.toString();
 	}
-	
+
 	private static String getConstantText(Object o) {
 
 		if (o == null) {
@@ -220,7 +219,7 @@ public final class ArrayPtg extends Ptg {
 		}
 		throw new IllegalArgumentException("Unexpected constant class (" + o.getClass().getName() + ")");
 	}
-	
+
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_ARRAY;
 	}

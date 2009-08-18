@@ -17,21 +17,17 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
-public class TestXSSFBugs extends BaseTestBugzillaIssues {
+public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Override
     protected XSSFITestDataProvider getTestDataProvider(){
         return XSSFITestDataProvider.getInstance();

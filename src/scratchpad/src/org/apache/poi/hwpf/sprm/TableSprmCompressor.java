@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.sprm;
 import org.apache.poi.hwpf.usermodel.TableProperties;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 
 import java.util.ArrayList;

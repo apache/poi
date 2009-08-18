@@ -18,8 +18,6 @@
 package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.util.LittleEndian;

@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;

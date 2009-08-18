@@ -32,7 +32,6 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -428,7 +427,7 @@ public final class TestWorkbook extends TestCase {
         s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
         sanityChecker.checkHSSFWorkbook(wb);
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        
+
         s  = wb.getSheetAt(0);
         CellRangeAddress r1 = s.getMergedRegion(0);
         CellRangeAddress r2 = s.getMergedRegion(1);
@@ -473,7 +472,7 @@ public final class TestWorkbook extends TestCase {
             }
         }
     }
-    
+
     /**
      * This tests is for bug [ #506658 ] Repeating output.
      *

@@ -18,9 +18,6 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.SheetContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 
 /**
@@ -55,5 +52,4 @@ public abstract class MasterSheet extends Sheet {
         TextShape tx = (TextShape)shape;
         return tx.getPlaceholderAtom() != null;
     }
-
 }

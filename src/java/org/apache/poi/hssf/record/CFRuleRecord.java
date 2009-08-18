@@ -22,7 +22,6 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.FormulaType;
@@ -32,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Conditional Formatting Rule Record (0x01B1).<br/>
- * 
+ *
  * @author Dmitriy Kumshayev
  */
 public final class CFRuleRecord extends StandardRecord {
@@ -101,10 +100,10 @@ public final class CFRuleRecord extends StandardRecord {
 	private BorderFormatting borderFormatting;
 
 	private PatternFormatting patternFormatting;
-	
+
 	private Formula field_17_formula1;
 	private Formula field_18_formula2;
-	
+
 	/** Creates new CFRuleRecord */
 	private CFRuleRecord(byte conditionType, byte comparisonOperation)
 	{
@@ -124,9 +123,9 @@ public final class CFRuleRecord extends StandardRecord {
 		field_17_formula1=Formula.create(Ptg.EMPTY_PTG_ARRAY);
 		field_18_formula2=Formula.create(Ptg.EMPTY_PTG_ARRAY);
 	}
-	
+
 	private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
-		this(conditionType, comparisonOperation); 
+		this(conditionType, comparisonOperation);
 		field_17_formula1 = Formula.create(formula1);
 		field_18_formula2 = Formula.create(formula2);
 	}
@@ -199,7 +198,7 @@ public final class CFRuleRecord extends StandardRecord {
 			return null;
 		}
 	}
-	
+
 	public boolean containsAlignFormattingBlock()
 	{
 		return getOptionFlag(align);
@@ -208,7 +207,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setOptionFlag(false,align);
 	}
-	
+
 	public boolean containsBorderFormattingBlock()
 	{
 		return getOptionFlag(bord);
@@ -229,7 +228,7 @@ public final class CFRuleRecord extends StandardRecord {
 			return null;
 		}
 	}
-	
+
 	public boolean containsPatternFormattingBlock()
 	{
 		return getOptionFlag(patt);
@@ -250,7 +249,7 @@ public final class CFRuleRecord extends StandardRecord {
 			return null;
 		}
 	}
-	
+
 	public boolean containsProtectionFormattingBlock()
 	{
 		return getOptionFlag(prot);
@@ -259,7 +258,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setOptionFlag(false,prot);
 	}
-	
+
 	public void setComparisonOperation(byte operation)
 	{
 		field_2_comparison_operator = operation;
@@ -269,7 +268,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		return field_2_comparison_operator;
 	}
-	
+
 
 	/**
 	 * get the option flags
@@ -279,7 +278,7 @@ public final class CFRuleRecord extends StandardRecord {
 	public int getOptions()
 	{
 		return field_5_options;
-	}	
+	}
 
 	private boolean isModified(BitField field)
 	{
@@ -290,7 +289,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		field_5_options = field.setBoolean(field_5_options, !modified);
 	}
-	
+
 	public boolean isLeftBorderModified()
 	{
 		return isModified(bordLeft);
@@ -300,7 +299,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordLeft);
 	}
-	
+
 	public boolean isRightBorderModified()
 	{
 		return isModified(bordRight);
@@ -310,7 +309,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordRight);
 	}
-	
+
 	public boolean isTopBorderModified()
 	{
 		return isModified(bordTop);
@@ -320,7 +319,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordTop);
 	}
-	
+
 	public boolean isBottomBorderModified()
 	{
 		return isModified(bordBot);
@@ -330,7 +329,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordBot);
 	}
-	
+
 	public boolean isTopLeftBottomRightBorderModified()
 	{
 		return isModified(bordTlBr);
@@ -340,7 +339,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordTlBr);
 	}
-	
+
 	public boolean isBottomLeftTopRightBorderModified()
 	{
 		return isModified(bordBlTr);
@@ -350,7 +349,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,bordBlTr);
 	}
-	
+
 	public boolean isPatternStyleModified()
 	{
 		return isModified(pattStyle);
@@ -360,7 +359,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,pattStyle);
 	}
-	
+
 	public boolean isPatternColorModified()
 	{
 		return isModified(pattCol);
@@ -370,7 +369,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,pattCol);
 	}
-	
+
 	public boolean isPatternBackgroundColorModified()
 	{
 		return isModified(pattBgCol);
@@ -380,7 +379,7 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		setModified(modified,pattBgCol);
 	}
-	
+
 	private boolean getOptionFlag(BitField field)
 	{
 		return field.isSet(field_5_options);
@@ -390,12 +389,12 @@ public final class CFRuleRecord extends StandardRecord {
 	{
 		field_5_options = field.setBoolean(field_5_options, flag);
 	}
-	
+
 	/**
 	 * get the stack of the 1st expression as a list
 	 *
 	 * @return list of tokens (casts stack to a list and returns it!)
-	 * this method can return null is we are unable to create Ptgs from 
+	 * this method can return null is we are unable to create Ptgs from
 	 *	 existing excel file
 	 * callers should check for null!
 	 */
@@ -432,7 +431,7 @@ public final class CFRuleRecord extends StandardRecord {
 	private static int getFormulaSize(Formula formula) {
 		return formula.getEncodedTokenSize();
 	}
-	
+
 	/**
 	 * called by the class that is responsible for writing this sucker.
 	 * Subclasses should implement this so that their data is passed back in a
@@ -441,30 +440,30 @@ public final class CFRuleRecord extends StandardRecord {
 	 * @param out the stream to write to
 	 */
 	public void serialize(LittleEndianOutput out) {
-		
+
 		int formula1Len=getFormulaSize(field_17_formula1);
 		int formula2Len=getFormulaSize(field_18_formula2);
-		
+
 		out.writeByte(field_1_condition_type);
 		out.writeByte(field_2_comparison_operator);
 		out.writeShort(formula1Len);
 		out.writeShort(formula2Len);
 		out.writeInt(field_5_options);
 		out.writeShort(field_6_not_used);
-		
+
 		if (containsFontFormattingBlock()) {
 			byte[] fontFormattingRawRecord  = fontFormatting.getRawRecord();
 			out.write(fontFormattingRawRecord);
 		}
-		
+
 		if (containsBorderFormattingBlock()) {
 			borderFormatting.serialize(out);
 		}
-		
+
 		if (containsPatternFormattingBlock()) {
 			patternFormatting.serialize(out);
 		}
-		
+
 		field_17_formula1.serializeTokens(out);
 		field_18_formula2.serializeTokens(out);
 	}
@@ -499,7 +498,7 @@ public final class CFRuleRecord extends StandardRecord {
 		}
 		return buffer.toString();
 	}
-	
+
 	public Object clone() {
 		CFRuleRecord rec = new CFRuleRecord(field_1_condition_type, field_2_comparison_operator);
 		rec.field_5_options = field_5_options;
@@ -524,7 +523,7 @@ public final class CFRuleRecord extends StandardRecord {
 	 * this call will produce the wrong results if the formula contains any cell references
 	 * One approach might be to apply the inverse of SharedFormulaRecord.convertSharedFormulas(Stack, int, int)
 	 * Note - two extra parameters (rowIx & colIx) will be required. They probably come from one of the Region objects.
-	 * 
+	 *
 	 * @return <code>null</code> if <tt>formula</tt> was null.
 	 */
     private static Ptg[] parseFormula(String formula, HSSFSheet sheet) {

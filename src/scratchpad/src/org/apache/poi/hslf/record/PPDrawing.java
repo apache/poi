@@ -22,7 +22,6 @@ import org.apache.poi.util.POILogger;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
-import org.apache.poi.hslf.model.Shape;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,16 +43,15 @@ import java.util.Iterator;
 
 // For now, pretending to be an atom. Might not always be, but that
 //  would require a wrapping class
-public final class PPDrawing extends RecordAtom
-{
+public final class PPDrawing extends RecordAtom {
 	private byte[] _header;
 	private long _type;
 
 	private EscherRecord[] childRecords;
 	private EscherTextboxWrapper[] textboxWrappers;
 
-    //cached EscherDgRecord
-    private EscherDgRecord dg;
+	//cached EscherDgRecord
+	private EscherDgRecord dg;
 
 	/**
 	 * Get access to the underlying Escher Records
@@ -110,7 +108,7 @@ public final class PPDrawing extends RecordAtom
 	public PPDrawing(){
 		_header = new byte[8];
 		LittleEndian.putUShort(_header, 0, 15);
-		LittleEndian.putUShort(_header, 2, (int)RecordTypes.PPDrawing.typeID);
+		LittleEndian.putUShort(_header, 2, RecordTypes.PPDrawing.typeID);
 		LittleEndian.putInt(_header, 4, 0);
 
 		textboxWrappers = new EscherTextboxWrapper[]{};
@@ -122,7 +120,7 @@ public final class PPDrawing extends RecordAtom
 	 */
 	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector found) {
 
-        int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
+		int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
 
 		// Find the record
 		EscherRecord r = erf.createRecord(source,startPos);
@@ -137,16 +135,16 @@ public final class PPDrawing extends RecordAtom
 			logger.log(POILogger.WARN, "Hit short DDF record at " + startPos + " - " + size);
 		}
 
-        /**
-         * Sanity check. Always advance the cursor by the correct value.
-         *
-         * getRecordSize() must return exatcly the same number of bytes that was written in fillFields.
-         * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
-         */
-        if(size != escherBytes){
-            logger.log(POILogger.WARN, "Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
-            size = escherBytes;
-        }
+		/**
+		 * Sanity check. Always advance the cursor by the correct value.
+		 *
+		 * getRecordSize() must return exatcly the same number of bytes that was written in fillFields.
+		 * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
+		 */
+		if(size != escherBytes){
+			logger.log(POILogger.WARN, "Record length=" + escherBytes + " but getRecordSize() returned " + r.getRecordSize() + "; record: " + r.getClass());
+			size = escherBytes;
+		}
 		startPos += size;
 		lenToGo -= size;
 		if(lenToGo >= 8) {
@@ -163,13 +161,13 @@ public final class PPDrawing extends RecordAtom
 				EscherTextboxRecord tbr = (EscherTextboxRecord)toSearch[i];
 				EscherTextboxWrapper w = new EscherTextboxWrapper(tbr);
 				found.add(w);
-                for (int j = i; j >= 0; j--) {
-                    if(toSearch[j] instanceof EscherSpRecord){
-                        EscherSpRecord sp = (EscherSpRecord)toSearch[j];
-                        w.setShapeId(sp.getShapeId());
-                        break;
-                    }
-                }
+				for (int j = i; j >= 0; j--) {
+					if(toSearch[j] instanceof EscherSpRecord){
+						EscherSpRecord sp = (EscherSpRecord)toSearch[j];
+						w.setShapeId(sp.getShapeId());
+						break;
+					}
+				}
 			} else {
 				// If it has children, walk them
 				if(toSearch[i].isContainerRecord()) {
@@ -297,23 +295,22 @@ public final class PPDrawing extends RecordAtom
 		textboxWrappers = tw;
 	}
 
-    /**
-     * Return EscherDgRecord which keeps track of the number of shapes and shapeId in this drawing group
-     *
-     * @return EscherDgRecord
-     */
-    public EscherDgRecord getEscherDgRecord(){
-        if(dg == null){
-            EscherContainerRecord dgContainer = (EscherContainerRecord)childRecords[0];
-            for(Iterator<EscherRecord> it = dgContainer.getChildIterator(); it.hasNext();){
-                EscherRecord r = it.next();
-                if(r instanceof EscherDgRecord){
-                    dg = (EscherDgRecord)r;
-                    break;
-                }
-            }
-        }
-        return dg;
-    }
-
+	/**
+	 * Return EscherDgRecord which keeps track of the number of shapes and shapeId in this drawing group
+	 *
+	 * @return EscherDgRecord
+	 */
+	public EscherDgRecord getEscherDgRecord(){
+		if(dg == null){
+			EscherContainerRecord dgContainer = (EscherContainerRecord)childRecords[0];
+			for(Iterator<EscherRecord> it = dgContainer.getChildIterator(); it.hasNext();){
+				EscherRecord r = it.next();
+				if(r instanceof EscherDgRecord){
+					dg = (EscherDgRecord)r;
+					break;
+				}
+			}
+		}
+		return dg;
+	}
 }

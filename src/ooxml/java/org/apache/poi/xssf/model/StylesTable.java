@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -80,17 +79,17 @@ public class StylesTable extends POIXMLDocumentPart {
 	 * Create a new, empty StylesTable
 	 */
 	public StylesTable() {
-        super();
+		super();
 		doc = StyleSheetDocument.Factory.newInstance();
 		doc.addNewStyleSheet();
 		// Initialization required in order to make the document readable by MSExcel
 		initialize();
 	}
 
-    public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
-        readFrom(part.getInputStream());
-    }
+	public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
+		super(part, rel);
+		readFrom(part.getInputStream());
+	}
 
 	/**
 	 * Read this shared styles table from an XML file.
@@ -107,13 +106,13 @@ public class StylesTable extends POIXMLDocumentPart {
 				numberFormats.put((int)nfmt.getNumFmtId(), nfmt.getFormatCode());
 			}
 			if(doc.getStyleSheet().getFonts() != null){
-                int idx = 0;
-                for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
-                    XSSFFont f = new XSSFFont(font, idx);
-                    fonts.add(f);
-                    idx++;
-                }
-            }
+				int idx = 0;
+				for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
+					XSSFFont f = new XSSFFont(font, idx);
+					fonts.add(f);
+					idx++;
+				}
+			}
 			if(doc.getStyleSheet().getFills() != null)
 			for (CTFill fill : doc.getStyleSheet().getFills().getFillArray()) {
 				fills.add(new XSSFCellFill(fill));
@@ -149,7 +148,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		return numberFormats.get(idx);
 	}
 
-    public int putNumberFormat(String fmt) {
+	public int putNumberFormat(String fmt) {
 		if (numberFormats.containsValue(fmt)) {
 			// Find the key, and return that
 			for(Integer key : numberFormats.keySet() ) {
@@ -174,12 +173,12 @@ public class StylesTable extends POIXMLDocumentPart {
 	}
 
 	public int putFont(XSSFFont font) {
-        int idx = fonts.indexOf(font);
-        if (idx != -1) {
-            return idx;
-        }
-        fonts.add(font);
-        return fonts.size() - 1;
+		int idx = fonts.indexOf(font);
+		if (idx != -1) {
+			return idx;
+		}
+		fonts.add(font);
+		return fonts.size() - 1;
 	}
 
 	public XSSFCellStyle getStyleAt(int idx) {
@@ -205,42 +204,42 @@ public class StylesTable extends POIXMLDocumentPart {
 		return borders.get(idx);
 	}
 
-    public int putBorder(XSSFCellBorder border) {
-        int idx = borders.indexOf(border);
-        if (idx != -1) {
-            return idx;
-        }
-        borders.add(border);
-        return borders.size() - 1;
+	public int putBorder(XSSFCellBorder border) {
+		int idx = borders.indexOf(border);
+		if (idx != -1) {
+			return idx;
+		}
+		borders.add(border);
+		return borders.size() - 1;
 	}
 
-    public XSSFCellFill getFillAt(int idx) {
-        return fills.get(idx);
-    }
+	public XSSFCellFill getFillAt(int idx) {
+		return fills.get(idx);
+	}
 
-    public List<XSSFCellBorder> getBorders(){
-        return borders;
-    }
+	public List<XSSFCellBorder> getBorders(){
+		return borders;
+	}
 
-    public List<XSSFCellFill> getFills(){
-        return fills;
-    }
+	public List<XSSFCellFill> getFills(){
+		return fills;
+	}
 
-    public List<XSSFFont> getFonts(){
-        return fonts;
-    }
+	public List<XSSFFont> getFonts(){
+		return fonts;
+	}
 
-    public Map<Integer, String> getNumberFormats(){
-        return numberFormats;
-    }
+	public Map<Integer, String> getNumberFormats(){
+		return numberFormats;
+	}
 
-    public int putFill(XSSFCellFill fill) {
-        int idx = fills.indexOf(fill);
-        if (idx != -1) {
-            return idx;
-        }
-        fills.add(fill);
-        return fills.size() - 1;
+	public int putFill(XSSFCellFill fill) {
+		int idx = fills.indexOf(fill);
+		if (idx != -1) {
+			return idx;
+		}
+		fills.add(fill);
+		return fills.size() - 1;
 	}
 
 	public CTXf getCellXfAt(int idx) {
@@ -315,31 +314,31 @@ public class StylesTable extends POIXMLDocumentPart {
 		}
 		doc.getStyleSheet().setNumFmts(formats);
 
-        int idx;
+		int idx;
 		// Fonts
 		CTFonts ctFonts = CTFonts.Factory.newInstance();
 		ctFonts.setCount(fonts.size());
-        CTFont[] ctfnt = new CTFont[fonts.size()];
-        idx = 0;
-        for(XSSFFont f : fonts) ctfnt[idx++] = f.getCTFont();
-        ctFonts.setFontArray(ctfnt);
+		CTFont[] ctfnt = new CTFont[fonts.size()];
+		idx = 0;
+		for(XSSFFont f : fonts) ctfnt[idx++] = f.getCTFont();
+		ctFonts.setFontArray(ctfnt);
 		doc.getStyleSheet().setFonts(ctFonts);
 
 		// Fills
 		CTFills ctFills = CTFills.Factory.newInstance();
 		ctFills.setCount(fills.size());
-        CTFill[] ctf = new CTFill[fills.size()];
-        idx = 0;
-        for(XSSFCellFill f : fills) ctf[idx++] = f.getCTFill();
-        ctFills.setFillArray(ctf);
+		CTFill[] ctf = new CTFill[fills.size()];
+		idx = 0;
+		for(XSSFCellFill f : fills) ctf[idx++] = f.getCTFill();
+		ctFills.setFillArray(ctf);
 		doc.getStyleSheet().setFills(ctFills);
 
 		// Borders
 		CTBorders ctBorders = CTBorders.Factory.newInstance();
 		ctBorders.setCount(borders.size());
-        CTBorder[] ctb = new CTBorder[borders.size()];
-        idx = 0;
-        for(XSSFCellBorder b : borders) ctb[idx++] = b.getCTBorder();
+		CTBorder[] ctb = new CTBorder[borders.size()];
+		idx = 0;
+		for(XSSFCellBorder b : borders) ctb[idx++] = b.getCTBorder();
 		ctBorders.setBorderArray(ctb);
 		doc.getStyleSheet().setBorders(ctBorders);
 
@@ -376,13 +375,13 @@ public class StylesTable extends POIXMLDocumentPart {
 		doc.save(out, options);
 	}
 
-    @Override
-    protected void commit() throws IOException {
-        PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
-    }
+	@Override
+	protected void commit() throws IOException {
+		PackagePart part = getPackagePart();
+		OutputStream out = part.getOutputStream();
+		writeTo(out);
+		out.close();
+	}
 
 	private void initialize() {
 		//CTFont ctFont = createDefaultFont();
@@ -452,36 +451,35 @@ public class StylesTable extends POIXMLDocumentPart {
 		return this.dxfs.size();
 	}
 
-    public XSSFCellStyle createCellStyle() {
-        CTXf xf = CTXf.Factory.newInstance();
-        xf.setNumFmtId(0);
-        xf.setFontId(0);
-        xf.setFillId(0);
-        xf.setBorderId(0);
-        xf.setXfId(0);
-        int xfSize = styleXfs.size();
-        int indexXf = putCellXf(xf);
-        return new XSSFCellStyle(indexXf - 1, xfSize - 1, this);
-    }
+	public XSSFCellStyle createCellStyle() {
+		CTXf xf = CTXf.Factory.newInstance();
+		xf.setNumFmtId(0);
+		xf.setFontId(0);
+		xf.setFillId(0);
+		xf.setBorderId(0);
+		xf.setXfId(0);
+		int xfSize = styleXfs.size();
+		int indexXf = putCellXf(xf);
+		return new XSSFCellStyle(indexXf - 1, xfSize - 1, this);
+	}
 
-    /**
-     * Finds a font that matches the one with the supplied attributes
-     */
-    public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-        for (XSSFFont font : fonts) {
-            if (	(font.getBoldweight() == boldWeight)
-                    && font.getColor() == color
-                    && font.getFontHeight() == fontHeight
-                    && font.getFontName().equals(name)
-                    && font.getItalic() == italic
-                    && font.getStrikeout() == strikeout
-                    && font.getTypeOffset() == typeOffset
-                    && font.getUnderline() == underline)
-            {
-                return font;
-            }
-        }
-        return null;
-    }
-
+	/**
+	 * Finds a font that matches the one with the supplied attributes
+	 */
+	public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		for (XSSFFont font : fonts) {
+			if (	(font.getBoldweight() == boldWeight)
+					&& font.getColor() == color
+					&& font.getFontHeight() == fontHeight
+					&& font.getFontName().equals(name)
+					&& font.getItalic() == italic
+					&& font.getStrikeout() == strikeout
+					&& font.getTypeOffset() == typeOffset
+					&& font.getUnderline() == underline)
+			{
+				return font;
+			}
+		}
+		return null;
+	}
 }

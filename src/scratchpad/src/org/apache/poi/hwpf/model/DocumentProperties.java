@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
 
 /**
@@ -25,13 +24,10 @@ import org.apache.poi.hwpf.model.types.DOPAbstractType;
  *
  * @author Ryan Ackley
  */
-
-public final class DocumentProperties extends DOPAbstractType
-{
+public final class DocumentProperties extends DOPAbstractType {
 
 
-  public DocumentProperties(byte[] tableStream, int offset)
-  {
-    super.fillFields(tableStream, offset);
-  }
+	public DocumentProperties(byte[] tableStream, int offset) {
+		super.fillFields(tableStream, offset);
+	}
 }

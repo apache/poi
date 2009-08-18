@@ -14,15 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -32,9 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Nick Burch
  * @author Yegor Kozlov
  */
-
-public class InteractiveInfoAtom extends RecordAtom
-{
+public class InteractiveInfoAtom extends RecordAtom {
 
     /**
      * Action Table
@@ -92,7 +87,7 @@ public class InteractiveInfoAtom extends RecordAtom
 
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
-        
+
         // It is fine for the other values to be zero
     }
 
@@ -108,16 +103,16 @@ public class InteractiveInfoAtom extends RecordAtom
         // Get the header.
         _header = new byte[8];
         System.arraycopy(source,start,_header,0,8);
-        
+
         // Get the record data.
         _data = new byte[len-8];
         System.arraycopy(source,start+8,_data,0,len-8);
-        
+
         // Must be at least 16 bytes long
         if(_data.length < 16) {
         	throw new IllegalArgumentException("The length of the data for a InteractiveInfoAtom must be at least 16 bytes, but was only " + _data.length);
         }
-        
+
         // First 4 bytes - no idea, normally 0
         // Second 4 bytes - the id of the link (from 1 onwards)
         // Third 4 bytes - no idea, normally 4
@@ -141,7 +136,7 @@ public class InteractiveInfoAtom extends RecordAtom
     public void setHyperlinkID(int number) {
         LittleEndian.putInt(_data,4,number);
     }
-    
+
     /**
      * a reference to a sound in the sound collection.
      */

@@ -22,11 +22,10 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * ReferencePtgBase - handles references (such as A1, A2, IA4)
- * 
+ *
  * @author Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */

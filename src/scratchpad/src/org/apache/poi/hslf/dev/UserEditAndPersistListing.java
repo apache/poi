@@ -17,17 +17,12 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.LittleEndian;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
 import java.util.Hashtable;
+
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Uses record level code to locate UserEditAtom records, and other

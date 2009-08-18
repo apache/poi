@@ -18,8 +18,6 @@
 package org.apache.poi.hssf.record;
 
 
-import java.io.ByteArrayInputStream;
-
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.HexRead;
 
@@ -48,11 +46,11 @@ public final class TestTextObjectBaseRecord extends TestCase {
         "00 " + // unicode compressed
         "41 42 " + // 'AB'
         "3C 00 " + // ContinueRecord.sid
-        "10 00 " + // size 16 
+        "10 00 " + // size 16
         "00 00 18 00 00 00 00 00 " +
-        "02 00 00 00 00 00 00 00 " 
+        "02 00 00 00 00 00 00 00 "
     );
-    
+
 
     public void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(data);

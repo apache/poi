@@ -18,19 +18,23 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.File;
-import java.util.Iterator;
 
-import junit.framework.TestCase;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
 public class TestXSSFSheet extends BaseTestSheet {
@@ -205,14 +209,14 @@ public class TestXSSFSheet extends BaseTestSheet {
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
 
         sheet.createFreezePane(2, 4);
-        assertEquals((double) 2, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
+        assertEquals(2.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit(), 0.0);
         assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
         sheet.createFreezePane(3, 6, 10, 10);
-        assertEquals((double) 3, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit());
+        assertEquals(3.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit(), 0.0);
         //	assertEquals(10, sheet.getTopRow());
         //	assertEquals(10, sheet.getLeftCol());
         sheet.createSplitPane(4, 8, 12, 12, 1);
-        assertEquals((double) 8, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit());
+        assertEquals(8.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit(), 0.0);
         assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
     }
 
@@ -375,15 +379,15 @@ public class TestXSSFSheet extends BaseTestSheet {
     public void testSetColumnGroupCollapsed(){
     	Workbook wb = new XSSFWorkbook();
     	XSSFSheet sheet1 =(XSSFSheet) wb.createSheet();
-    	
+
     	CTCols cols=sheet1.getCTWorksheet().getColsArray(0);
     	assertEquals(0,cols.sizeOfColArray());
-    	
+
     	sheet1.groupColumn( (short)4, (short)7 );
     	sheet1.groupColumn( (short)9, (short)12 );
 
     	assertEquals(2,cols.sizeOfColArray());
-    	
+
     	assertEquals(false,cols.getColArray(0).isSetHidden());
     	assertEquals(true, cols.getColArray(0).isSetCollapsed());
     	assertEquals(5, cols.getColArray(0).getMin()); // 1 based
@@ -395,7 +399,7 @@ public class TestXSSFSheet extends BaseTestSheet {
 
     	sheet1.groupColumn( (short)10, (short)11 );
     	assertEquals(4,cols.sizeOfColArray());
-    	
+
     	assertEquals(false,cols.getColArray(0).isSetHidden());
     	assertEquals(true, cols.getColArray(0).isSetCollapsed());
     	assertEquals(5, cols.getColArray(0).getMin()); // 1 based
@@ -412,11 +416,11 @@ public class TestXSSFSheet extends BaseTestSheet {
     	assertEquals(true, cols.getColArray(3).isSetCollapsed());
     	assertEquals(13, cols.getColArray(3).getMin()); // 1 based
     	assertEquals(13, cols.getColArray(3).getMax()); // 1 based
-    	
+
     	// collapse columns - 1
     	sheet1.setColumnGroupCollapsed( (short)5, true );
     	assertEquals(5,cols.sizeOfColArray());
-    	
+
     	assertEquals(true, cols.getColArray(0).isSetHidden());
     	assertEquals(true, cols.getColArray(0).isSetCollapsed());
     	assertEquals(5, cols.getColArray(0).getMin()); // 1 based
@@ -501,7 +505,7 @@ public class TestXSSFSheet extends BaseTestSheet {
     	//outline level 2: the line under ==> collapsed==True
     	assertEquals(2,cols.getColArray(3).getOutlineLevel());
     	assertEquals(true,cols.getColArray(4).isSetCollapsed());
-    	
+
     	assertEquals(false,cols.getColArray(0).isSetHidden());
     	assertEquals(true, cols.getColArray(0).isSetCollapsed());
     	assertEquals(5, cols.getColArray(0).getMin()); // 1 based
@@ -610,7 +614,7 @@ public class TestXSSFSheet extends BaseTestSheet {
     	sheet1.groupRow( 7, 14 );
     	sheet1.groupRow( 16, 19 );
 
-    	assertEquals(14,sheet1.getPhysicalNumberOfRows());	
+    	assertEquals(14,sheet1.getPhysicalNumberOfRows());
     	assertEquals(false,sheet1.getRow(6).getCTRow().isSetCollapsed());
     	assertEquals(false,sheet1.getRow(6).getCTRow().isSetHidden());
     	assertEquals(false,sheet1.getRow(7).getCTRow().isSetCollapsed());
@@ -625,7 +629,7 @@ public class TestXSSFSheet extends BaseTestSheet {
     	assertEquals(false,sheet1.getRow(18).getCTRow().isSetHidden());
 
     	//collapsed
-    	sheet1.setRowGroupCollapsed( 7, true );	
+    	sheet1.setRowGroupCollapsed( 7, true );
 
     	assertEquals(false,sheet1.getRow(6).getCTRow().isSetCollapsed());
     	assertEquals(false,sheet1.getRow(6).getCTRow().isSetHidden());
@@ -698,7 +702,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         // XML is 1 based, POI is 0 based
         assertEquals(2, col.getMin());
         assertEquals(2, col.getMax());
-        assertEquals(22.0, col.getWidth());
+        assertEquals(22.0, col.getWidth(), 0.0);
 
         // Now set another
         sheet.setColumnWidth(3, 33 * 256);
@@ -711,12 +715,11 @@ public class TestXSSFSheet extends BaseTestSheet {
         col = cols.getColArray(0);
         assertEquals(2, col.getMin()); // POI 1
         assertEquals(2, col.getMax());
-        assertEquals(22.0, col.getWidth());
+        assertEquals(22.0, col.getWidth(), 0.0);
 
         col = cols.getColArray(1);
         assertEquals(4, col.getMin()); // POI 3
         assertEquals(4, col.getMax());
-        assertEquals(33.0, col.getWidth());
+        assertEquals(33.0, col.getWidth(), 0.0);
     }
-
 }

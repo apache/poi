@@ -17,19 +17,12 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.HSLFSlideShow;
+import java.awt.geom.Area;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
-import java.awt.*;
-import java.awt.Rectangle;
-import java.awt.geom.*;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import junit.framework.TestCase;
 
 /**
  * Test Freeform object.
@@ -41,7 +34,7 @@ import java.util.ArrayList;
  */
 public final class TestFreeform extends TestCase {
 
-    public void testClosedPath() throws Exception {
+    public void testClosedPath() {
 
         GeneralPath path1 = new GeneralPath();
         path1.moveTo(100, 100);
@@ -57,7 +50,7 @@ public final class TestFreeform extends TestCase {
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
-    public void testLine() throws Exception {
+    public void testLine() {
 
         GeneralPath path1 = new GeneralPath(new Line2D.Double(100, 100, 200, 100));
 
@@ -68,7 +61,7 @@ public final class TestFreeform extends TestCase {
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
-    public void testRectangle() throws Exception {
+    public void testRectangle() {
 
         GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(100, 100, 200, 50));
 

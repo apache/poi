@@ -21,7 +21,6 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
-import java.util.List;
 import java.io.ByteArrayOutputStream;
 
 /**

@@ -17,11 +17,9 @@
 
 package org.apache.poi.hslf.dev;
 
-import java.util.*;
 import java.io.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 
 import org.apache.poi.ddf.*;

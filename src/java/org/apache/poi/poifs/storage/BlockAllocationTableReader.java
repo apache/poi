@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
@@ -43,9 +41,7 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class BlockAllocationTableReader
-{
+public final class BlockAllocationTableReader {
     private IntList _entries;
 
     /**
@@ -154,12 +150,6 @@ public class BlockAllocationTableReader
         setEntries(blocks, raw_block_list);
     }
 
-    /**
-     * Constructor BlockAllocationTableReader
-     *
-     *
-     */
-
     BlockAllocationTableReader()
     {
         _entries = new IntList();
@@ -177,17 +167,16 @@ public class BlockAllocationTableReader
      *
      * @exception IOException if there is a problem acquiring the blocks
      */
-
     ListManagedBlock [] fetchBlocks(final int startBlock,
                                     final int headerPropertiesStartBlock,
                                     final BlockList blockList)
         throws IOException
     {
-        List blocks       = new ArrayList();
+        List<ListManagedBlock> blocks = new ArrayList<ListManagedBlock>();
         int  currentBlock = startBlock;
         boolean firstPass = true;
         ListManagedBlock dataBlock = null;
-        
+
         // Process the chain from the start to the end
         // Normally we have header, data, end
         // Sometimes we have data, header, end
@@ -216,9 +205,8 @@ public class BlockAllocationTableReader
         		}
         	}
         }
-        
-        return ( ListManagedBlock [] ) blocks
-            .toArray(new ListManagedBlock[ blocks.size() ]);
+
+        return blocks.toArray(new ListManagedBlock[blocks.size()]);
     }
 
     // methods for debugging reader
@@ -230,7 +218,6 @@ public class BlockAllocationTableReader
      *
      * @return true if the specific block is used, else false
      */
-
     boolean isUsed(final int index)
     {
         boolean rval = false;
@@ -238,9 +225,8 @@ public class BlockAllocationTableReader
         try
         {
             rval = _entries.get(index) != -1;
-        }
-        catch (IndexOutOfBoundsException ignored)
-        {
+        } catch (IndexOutOfBoundsException e) {
+            // ignored
         }
         return rval;
     }
@@ -256,7 +242,6 @@ public class BlockAllocationTableReader
      *
      * @exception IOException if the current block is unused
      */
-
     int getNextBlockIndex(final int index)
         throws IOException
     {
@@ -264,10 +249,7 @@ public class BlockAllocationTableReader
         {
             return _entries.get(index);
         }
-        else
-        {
-            throw new IOException("index " + index + " is unused");
-        }
+        throw new IOException("index " + index + " is unused");
     }
 
     /**
@@ -276,10 +258,7 @@ public class BlockAllocationTableReader
      * @param blocks the array of blocks containing the indices
      * @param raw_blocks the list of blocks being managed. Unused
      *                   blocks will be eliminated from the list
-     *
-     * @exception IOException
      */
-
     private void setEntries(final ListManagedBlock [] blocks,
                             final BlockList raw_blocks)
         throws IOException
@@ -308,5 +287,4 @@ public class BlockAllocationTableReader
         }
         raw_blocks.setBAT(this);
     }
-}   // end class BlockAllocationTableReader
-
+}

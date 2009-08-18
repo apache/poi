@@ -17,7 +17,6 @@
 
 package org.apache.poi.hdf.model.hdftypes;
 
-import java.util.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
 
@@ -29,9 +28,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
  *
  * @author Ryan Ackley
  */
-
-public final class StyleSheet implements HDFType
-{
+public final class StyleSheet implements HDFType {
 
   private static final int NIL_STYLE = 4095;
   private static final int PAP_TYPE = 1;

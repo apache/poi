@@ -17,18 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.*;
-
-import java.io.FileOutputStream;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.HSLFSlideShow;
+import junit.framework.TestCase;
+
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Test Picture shape.
@@ -71,14 +70,13 @@ public final class TestPicture extends TestCase {
         EscherBSERecord bse3 = pict.getEscherBSERecord();
         assertSame(bse2, bse3);
         assertEquals(3, bse1.getRef());
-
     }
 
     /**
      * Picture#getEscherBSERecord threw NullPointerException if EscherContainerRecord.BSTORE_CONTAINER
      * was not found. The correct behaviour is to return null.
      */
-    public void test46122() throws IOException {
+    public void test46122() {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
 
@@ -90,8 +88,5 @@ public final class TestPicture extends TestCase {
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
         pict.draw(graphics);
-
-        assertTrue("no errors rendering Picture with null data", true);
     }
-
 }

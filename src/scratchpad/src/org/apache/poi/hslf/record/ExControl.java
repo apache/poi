@@ -17,11 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.OutputStream;
-import java.io.IOException;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * A container record that specifies information about an ActiveX control. It contains:

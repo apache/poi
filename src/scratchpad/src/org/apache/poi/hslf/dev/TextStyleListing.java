@@ -22,7 +22,6 @@ import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 
 import java.util.LinkedList;
 

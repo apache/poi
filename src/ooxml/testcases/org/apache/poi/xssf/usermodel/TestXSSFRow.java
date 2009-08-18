@@ -17,21 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Iterator;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
  * Tests for XSSFRow

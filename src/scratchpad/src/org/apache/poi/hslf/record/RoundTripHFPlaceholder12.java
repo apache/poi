@@ -19,10 +19,6 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
-
-import org.apache.poi.hslf.util.SystemTimeUtils;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies that a shape is a header or footer placeholder shape
@@ -30,9 +26,7 @@ import org.apache.poi.util.LittleEndian;
  * @since  PowerPoint 2007
  * @author Yegor Kozlov
  */
-
-public final class RoundTripHFPlaceholder12 extends RecordAtom
-{
+public final class RoundTripHFPlaceholder12 extends RecordAtom {
     /**
      * Record header.
      */

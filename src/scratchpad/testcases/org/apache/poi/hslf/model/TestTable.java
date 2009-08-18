@@ -17,15 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import junit.framework.TestCase;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Test <code>Table</code> object.
@@ -90,13 +88,13 @@ public final class TestTable extends TestCase {
 
     public void testIllegalCOnstruction(){
         try {
-            Table tbl = new Table(0, 5);
+            new Table(0, 5);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 
         }
         try {
-            Table tbl = new Table(5, 0);
+            new Table(5, 0);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 

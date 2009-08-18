@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.IOException;
@@ -46,26 +45,25 @@ import java.util.Vector;
  */
 
 // For now, pretend to be an atom
-public final class SlideListWithText extends RecordContainer
-{
+public final class SlideListWithText extends RecordContainer {
 
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to slides
-     */
-    public static final int SLIDES = 0;
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to master slides
-     */
-    public static final int MASTER = 1;
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to notes
-     */
-    public static final int NOTES = 2;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to slides
+	 */
+	public static final int SLIDES = 0;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to master slides
+	 */
+	public static final int MASTER = 1;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to notes
+	 */
+	public static final int NOTES = 2;
 
-    private byte[] _header;
+	private byte[] _header;
 	private static long _type = 4080;
 
 	private SlideAtomsSet[] slideAtomsSets;
@@ -148,23 +146,23 @@ public final class SlideListWithText extends RecordContainer
 		slideAtomsSets = sas;
 	}
 
-    public int getInstance(){
-        return LittleEndian.getShort(_header, 0) >> 4;
-    }
+	public int getInstance(){
+		return LittleEndian.getShort(_header, 0) >> 4;
+	}
 
-    public void setInstance(int inst){
-        LittleEndian.putShort(_header, (short)((inst << 4) | 0xF));
-    }
+	public void setInstance(int inst){
+		LittleEndian.putShort(_header, (short)((inst << 4) | 0xF));
+	}
 
-    /**
+	/**
 	 * Get access to the SlideAtomsSets of the children of this record
 	 */
 	public SlideAtomsSet[] getSlideAtomsSets() { return slideAtomsSets; }
 
-    /**
-    * Get access to the SlideAtomsSets of the children of this record
-    */
-    public void setSlideAtomsSets( SlideAtomsSet[] sas ) { slideAtomsSets = sas; }
+	/**
+	* Get access to the SlideAtomsSets of the children of this record
+	*/
+	public void setSlideAtomsSets( SlideAtomsSet[] sas ) { slideAtomsSets = sas; }
 
 	/**
 	 * Return the value we were given at creation

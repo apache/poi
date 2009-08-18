@@ -20,8 +20,6 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Tests that TxInteractiveInfoAtom works properly.
@@ -35,24 +33,24 @@ public final class TestTxInteractiveInfoAtom extends TestCase {
 		0x19, 00, 00, 00, 0x38, 00, 00, 00
 	};
 
-    private byte[] data_b = new byte[] {
-        00, 00, (byte)0xDF, 0x0F, 0x08, 00, 00, 00,
-        0x39, 00, 00, 00, 0x4E, 00, 00, 00
-    };
+	private byte[] data_b = new byte[] {
+		00, 00, (byte)0xDF, 0x0F, 0x08, 00, 00, 00,
+		0x39, 00, 00, 00, 0x4E, 00, 00, 00
+	};
 
-    public void testRead() throws Exception {
-        TxInteractiveInfoAtom ia1 = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
+	public void testRead() {
+		TxInteractiveInfoAtom ia1 = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
 
-        assertEquals(4063, ia1.getRecordType());
+		assertEquals(4063, ia1.getRecordType());
 		assertEquals(25, ia1.getStartIndex());
 		assertEquals(56, ia1.getEndIndex());
 
-        TxInteractiveInfoAtom ia2 = new TxInteractiveInfoAtom(data_b, 0, data_b.length);
+		TxInteractiveInfoAtom ia2 = new TxInteractiveInfoAtom(data_b, 0, data_b.length);
 
-        assertEquals(4063, ia2.getRecordType());
+		assertEquals(4063, ia2.getRecordType());
 		assertEquals(57, ia2.getStartIndex());
 		assertEquals(78, ia2.getEndIndex());
-    }
+	}
 
 	public void testWrite() throws Exception {
 		TxInteractiveInfoAtom atom = new TxInteractiveInfoAtom(data_a, 0, data_a.length);
@@ -67,12 +65,12 @@ public final class TestTxInteractiveInfoAtom extends TestCase {
 	}
 
 	// Create A from scratch
-    public void testCreate() throws Exception {
-    	TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom();
+	public void testCreate() throws Exception {
+		TxInteractiveInfoAtom ia = new TxInteractiveInfoAtom();
 
-    	// Set values
-        ia.setStartIndex(25);
-    	ia.setEndIndex(56);
+		// Set values
+		ia.setStartIndex(25);
+		ia.setEndIndex(56);
 
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -83,7 +81,7 @@ public final class TestTxInteractiveInfoAtom extends TestCase {
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
 		}
-    }
+	}
 
 	// Try to turn a into b
 	public void testChange() throws Exception {
@@ -91,7 +89,7 @@ public final class TestTxInteractiveInfoAtom extends TestCase {
 
 		// Change the number
 		ia.setStartIndex(57);
-        ia.setEndIndex(78);
+		ia.setEndIndex(78);
 
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

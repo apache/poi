@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
@@ -37,7 +36,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
         XSSFWorkbook wb = getTestDataProvider().createWorkbook();
-        XSSFSheet sheet = wb.createSheet("First Sheet");
+        wb.createSheet("First Sheet");
 
         wb.setRepeatingRowsAndColumns(0, -1, -1, -1, -1);
 
@@ -77,7 +76,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         // check that setting RR&C on a second sheet causes a new Print_Titles built-in
         // name to be created
-        sheet = nwb.createSheet("SecondSheet");
+        nwb.createSheet("SecondSheet");
         nwb.setRepeatingRowsAndColumns(1, 1, 2, 0, 0);
 
         assertEquals(2, nwb.getNumberOfNames());
@@ -88,6 +87,4 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
     }
-
-
 }

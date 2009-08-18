@@ -17,17 +17,33 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.model.Background;
+import org.apache.poi.hslf.model.Fill;
+import org.apache.poi.hslf.model.MasterSheet;
+import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
-
-import java.io.*;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.awt.*;
+import org.apache.poi.hslf.model.ShapeGroup;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.TextBox;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.TextShape;
+import org.apache.poi.hslf.model.TitleMaster;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -99,7 +115,7 @@ public final class TestBugs extends TestCase {
         SlideShow ppt = new SlideShow(hslf);
 
         //map slide number and starting phrase of its notes
-        HashMap notesMap = new HashMap();
+        Map<Integer, String> notesMap = new HashMap<Integer, String>();
         notesMap.put(new Integer(4), "For  decades before calculators");
         notesMap.put(new Integer(5), "Several commercial applications");
         notesMap.put(new Integer(6), "There are three variations of LNS that are discussed here");
@@ -113,7 +129,7 @@ public final class TestBugs extends TestCase {
             if (notesMap.containsKey(slideNumber)){
                 assertNotNull(notes);
                 String text = notes.getTextRuns()[0].getRawText();
-                String startingPhrase = (String)notesMap.get(slideNumber);
+                String startingPhrase = notesMap.get(slideNumber);
                 assertTrue("Notes for slide " + slideNumber + " must start with " +
                         startingPhrase , text.startsWith(startingPhrase));
             }
@@ -287,7 +303,7 @@ public final class TestBugs extends TestCase {
         TextRun[] runs = slide[0].getTextRuns();
         assertEquals(4, runs.length);
 
-        HashSet txt = new HashSet();
+        Set<String> txt = new HashSet<String>();
         txt.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
         txt.add("Have a HAPPY DAY");
         txt.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
@@ -314,12 +330,14 @@ public final class TestBugs extends TestCase {
         Slide slide = ppt.getSlides()[0];
         TextRun[] tr1 = slide.getTextRuns();
 
-        ArrayList lst = new ArrayList();
+        List<TextRun> lst = new ArrayList<TextRun>();
         Shape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             if( shape[i] instanceof TextShape){
                 TextRun textRun = ((TextShape)shape[i]).getTextRun();
-                if(textRun != null) lst.add(textRun);
+                if(textRun != null) {
+                    lst.add(textRun);
+                }
             }
 
         }
@@ -356,10 +374,15 @@ public final class TestBugs extends TestCase {
      */
     public void test44770() throws Exception {
         FileInputStream is = new FileInputStream(new File(cwd, "44770.ppt"));
-        SlideShow ppt = new SlideShow(is);
+        try {
+            new SlideShow(is);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Couldn't instantiate the class for type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing")) {
+                throw new AssertionFailedError("Identified bug 44770");
+            }
+            throw e;
+        }
         is.close();
-
-        assertTrue("No Exceptions while reading file", true);
     }
 
     /**

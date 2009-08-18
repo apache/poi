@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,29 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.Property;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A block of Property instances
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class PropertyBlock
-    extends BigBlock
-{
+public final class PropertyBlock extends BigBlock {
     private static final int _properties_per_block =
         POIFSConstants.BIG_BLOCK_SIZE / POIFSConstants.PROPERTY_SIZE;
     private Property[]       _properties;

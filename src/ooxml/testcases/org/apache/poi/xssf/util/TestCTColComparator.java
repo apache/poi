@@ -22,11 +22,10 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 
 
-public class TestCTColComparator extends TestCase {
-    
+public final class TestCTColComparator extends TestCase {
+
     public void testCompare() {
         CTColComparator comparator = new CTColComparator();
         CTCol o1 = CTCol.Factory.newInstance();
@@ -44,7 +43,7 @@ public class TestCTColComparator extends TestCase {
         o4.setMax(80);
         assertEquals(-1, comparator.compare(o3, o4));
     }
-    
+
     public void testArraysSort() {
         CTColComparator comparator = new CTColComparator();
         CTCol o1 = CTCol.Factory.newInstance();
@@ -73,5 +72,4 @@ public class TestCTColComparator extends TestCase {
         assertEquals(8, cols[1].getMax());
         assertEquals(80, cols[2].getMax());
     }
-    
 }

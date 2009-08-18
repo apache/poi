@@ -17,14 +17,11 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.blip.*;
-import org.apache.poi.hslf.model.*;
-import junit.framework.TestCase;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Test reading sound data from a ppt
@@ -35,7 +32,7 @@ public final class TestSoundData extends TestCase{
 
     protected File cwd;
 
-    public void setUp() throws Exception {
+    public void setUp() {
         cwd = new File(System.getProperty("HSLF.testdata.path"));
     }
 

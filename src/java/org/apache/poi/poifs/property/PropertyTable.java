@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.PropertyBlock;
-import org.apache.poi.poifs.storage.RawDataBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
@@ -38,22 +36,15 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class PropertyTable
-    implements BATManaged, BlockWritable
-{
+public final class PropertyTable implements BATManaged, BlockWritable {
     private int             _start_block;
-    private List            _properties;
+    private List<Property> _properties;
     private BlockWritable[] _blocks;
-
-    /**
-     * Default constructor
-     */
 
     public PropertyTable()
     {
         _start_block = POIFSConstants.END_OF_CHAIN;
-        _properties  = new ArrayList();
+        _properties  = new ArrayList<Property>();
         addProperty(new RootProperty());
         _blocks = null;
     }
@@ -69,7 +60,6 @@ public class PropertyTable
      * @exception IOException if anything goes wrong (which should be
      *            a result of the input being NFG)
      */
-
     public PropertyTable(final int startBlock,
                          final RawDataBlockList blockList)
         throws IOException
@@ -87,8 +77,7 @@ public class PropertyTable
      *
      * @param property the new Property to manage
      */
-
-    public void addProperty(final Property property)
+    public void addProperty(Property property)
     {
         _properties.add(property);
     }
@@ -98,7 +87,6 @@ public class PropertyTable
      *
      * @param property the Property to be removed
      */
-
     public void removeProperty(final Property property)
     {
         _properties.remove(property);
@@ -109,7 +97,6 @@ public class PropertyTable
      *
      * @return the root property
      */
-
     public RootProperty getRoot()
     {
 
@@ -120,11 +107,9 @@ public class PropertyTable
     /**
      * Prepare to be written
      */
-
     public void preWrite()
     {
-        Property[] properties =
-            ( Property [] ) _properties.toArray(new Property[ 0 ]);
+        Property[] properties = _properties.toArray(new Property[ 0 ]);
 
         // give each property its index
         for (int k = 0; k < properties.length; k++)
@@ -147,7 +132,6 @@ public class PropertyTable
      *
      * @return start block index
      */
-
     public int getStartBlock()
     {
         return _start_block;
@@ -164,12 +148,12 @@ public class PropertyTable
             // property has no children
             return;
         }
-        Stack children = new Stack();
+        Stack<Property> children = new Stack<Property>();
 
         children.push(_properties.get(index));
         while (!children.empty())
         {
-            Property property = ( Property ) children.pop();
+            Property property = children.pop();
 
             root.addChild(property);
             if (property.isDirectory())
@@ -189,14 +173,11 @@ public class PropertyTable
         }
     }
 
-    /* ********** START implementation of BATManaged ********** */
-
     /**
      * Return the number of BigBlock's this instance uses
      *
      * @return count of BigBlock instances
      */
-
     public int countBlocks()
     {
         return (_blocks == null) ? 0
@@ -209,14 +190,10 @@ public class PropertyTable
      * @param index index into the array of BigBlock instances making
      *              up the the filesystem
      */
-
     public void setStartBlock(final int index)
     {
         _start_block = index;
     }
-
-    /* **********  END  implementation of BATManaged ********** */
-    /* ********** START implementation of BlockWritable ********** */
 
     /**
      * Write the storage to an OutputStream
@@ -227,7 +204,6 @@ public class PropertyTable
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
     public void writeBlocks(final OutputStream stream)
         throws IOException
     {
@@ -239,7 +215,4 @@ public class PropertyTable
             }
         }
     }
-
-    /* **********  END  implementation of BlockWritable ********** */
-}   // end public class PropertyTable
-
+}

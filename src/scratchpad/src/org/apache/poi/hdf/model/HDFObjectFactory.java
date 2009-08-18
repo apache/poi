@@ -17,37 +17,25 @@
 
 package org.apache.poi.hdf.model;
 
-
-//import java.io;
-
-import java.util.ArrayList;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
-
-import org.apache.poi.hdf.model.hdftypes.*;
 import org.apache.poi.hdf.event.HDFLowLevelParsingListener;
-import org.apache.poi.hdf.model.util.BTreeSet;
+import org.apache.poi.hdf.model.hdftypes.*;
 import org.apache.poi.hdf.model.util.ParsingState;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
-
-
-
 
 /**
  * The Object Factory takes in a stream and creates the low level objects
  * that represent the data.
  * @author  andy
  */
-public final class HDFObjectFactory
-{
+public final class HDFObjectFactory {
 
     /** OLE stuff*/
     private POIFSFileSystem _filesystem;
@@ -193,36 +181,26 @@ public final class HDFObjectFactory
         {
             throw new IOException("The text piece table is corrupted");
         }
-        else
-        {
-            //parse out the text pieces
-            int pieceTableSize = LittleEndian.getInt(_tableBuffer, ++pos);
-            pos += 4;
-            int pieces = (pieceTableSize - 4) / 12;
-            for (int x = 0; x < pieces; x++)
-            {
-                int filePos = LittleEndian.getInt(_tableBuffer, pos + ((pieces + 1) * 4) + (x * 8) + 2);
-                boolean unicode = false;
-                if ((filePos & 0x40000000) == 0)
-                {
-                    unicode = true;
-                }
-                else
-                {
-                    unicode = false;
-                    filePos &= ~(0x40000000);//gives me FC in doc stream
-                    filePos /= 2;
-                }
-                int totLength = LittleEndian.getInt(_tableBuffer, pos + (x + 1) * 4) -
-                                LittleEndian.getInt(_tableBuffer, pos + (x * 4));
-
-                TextPiece piece = new TextPiece(filePos, totLength, unicode);
-                _listener.text(piece);
-
+        //parse out the text pieces
+        int pieceTableSize = LittleEndian.getInt(_tableBuffer, ++pos);
+        pos += 4;
+        int pieces = (pieceTableSize - 4) / 12;
+        for (int x = 0; x < pieces; x++) {
+            int filePos = LittleEndian.getInt(_tableBuffer, pos + ((pieces + 1) * 4) + (x * 8) + 2);
+            boolean unicode = false;
+            if ((filePos & 0x40000000) == 0) {
+                unicode = true;
+            } else {
+                unicode = false;
+                filePos &= ~(0x40000000);//gives me FC in doc stream
+                filePos /= 2;
             }
+            int totLength = LittleEndian.getInt(_tableBuffer, pos + (x + 1) * 4) -
+                    LittleEndian.getInt(_tableBuffer, pos + (x * 4));
 
+            TextPiece piece = new TextPiece(filePos, totLength, unicode);
+            _listener.text(piece);
         }
-
     }
     /**
      * initializes all of the formatting properties for a Word Document
@@ -532,10 +510,7 @@ public final class HDFObjectFactory
           {
             break;
           }
-          else
-          {
-            x++;
-          }
+          x++;
       }
       //do the header sections
       for (; x < arraySize; x++)// && sectionEnd <= end; x++)

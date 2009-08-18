@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -68,7 +67,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             fail("WindowOneRecord in Workbook is probably not initialized");
         }
     }
-    
+
     /**
      * Tests for {@link HSSFWorkbook#isHidden()} etc
      */

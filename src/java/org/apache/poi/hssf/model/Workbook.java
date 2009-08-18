@@ -72,7 +72,6 @@ import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.UnicodeString;
-import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.UseSelFSRecord;
 import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowProtectRecord;
@@ -271,19 +270,19 @@ public final class Workbook implements Model {
                 case WindowOneRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found WindowOneRecord at " + k);
-                    retval.windowOne = (WindowOneRecord) rec; 
+                    retval.windowOne = (WindowOneRecord) rec;
                     break;
-                case WriteAccessRecord.sid: 
+                case WriteAccessRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found WriteAccess at " + k);
                     retval.writeAccess = (WriteAccessRecord) rec;
                     break;
-                case WriteProtectRecord.sid: 
+                case WriteProtectRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found WriteProtect at " + k);
                     retval.writeProtect = (WriteProtectRecord) rec;
                     break;
-                case FileSharingRecord.sid: 
+                case FileSharingRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found FileSharing at " + k);
                     retval.fileShare = (FileSharingRecord) rec;
@@ -296,7 +295,7 @@ public final class Workbook implements Model {
         //            retval.records.supbookpos = retval.records.bspos + 1;
         //            retval.records.namepos    = retval.records.supbookpos + 1;
         //        }
-        
+
         // Look for other interesting values that
         //  follow the EOFRecord
         for ( ; k < recs.size(); k++) {
@@ -307,7 +306,7 @@ public final class Workbook implements Model {
                     break;
             }
         }
-        
+
         if (retval.windowOne == null) {
             retval.windowOne = createWindowOne();
         }
@@ -388,7 +387,7 @@ public final class Workbook implements Model {
             retval.records.setBspos(records.size() - 1);
         }
         records.add( retval.createCountry() );
-        for ( int k = 0; k < nBoundSheets; k++ ) {   
+        for ( int k = 0; k < nBoundSheets; k++ ) {
             retval.getOrCreateLinkTable().checkExternSheet(k);
         }
         retval.sst = new SSTRecord();
@@ -452,7 +451,7 @@ public final class Workbook implements Model {
 
         return retval;
     }
-    
+
     /**
      * Retrieves the index of the given font
      */
@@ -468,7 +467,7 @@ public final class Workbook implements Model {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Could not find that font!"); 
+        throw new IllegalArgumentException("Could not find that font!");
     }
 
     /**
@@ -487,10 +486,10 @@ public final class Workbook implements Model {
         numfonts++;
         return rec;
     }
-    
+
     /**
      * Removes the given font record from the
-     *  file's list. This will make all 
+     *  file's list. This will make all
      *  subsequent font indicies drop by one,
      *  so you'll need to update those yourself!
      */
@@ -553,7 +552,7 @@ public final class Workbook implements Model {
     }
 
     /**
-     * Determines whether a workbook contains the provided sheet name.  For the purpose of 
+     * Determines whether a workbook contains the provided sheet name.  For the purpose of
      * comparison, long names are truncated to 31 chars.
      *
      * @param name the name to test (case insensitive match)
@@ -580,18 +579,18 @@ public final class Workbook implements Model {
         }
         return false;
     }
-    
+
     /**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
-    
+
     public void setSheetOrder(String sheetname, int pos ) {
     int sheetNumber = getSheetIndex(sheetname);
     //remove the sheet that needs to be reordered and place it in the spot we want
-    boundsheets.add(pos, boundsheets.remove(sheetNumber));    
+    boundsheets.add(pos, boundsheets.remove(sheetNumber));
     }
 
     /**
@@ -606,7 +605,7 @@ public final class Workbook implements Model {
 
     /**
      * Gets the hidden flag for a given sheet.
-     * Note that a sheet could instead be 
+     * Note that a sheet could instead be
      *  set to be very hidden, which is different
      *  ({@link #isSheetVeryHidden(int)})
      *
@@ -619,8 +618,8 @@ public final class Workbook implements Model {
 
     /**
      * Gets the very hidden flag for a given sheet.
-     * This is different from the normal 
-     *  hidden flag 
+     * This is different from the normal
+     *  hidden flag
      *  ({@link #isSheetHidden(int)})
      *
      * @param sheetnum the sheet number (0 based)
@@ -632,20 +631,20 @@ public final class Workbook implements Model {
 
     /**
      * Hide or unhide a sheet
-     * 
+     *
      * @param sheetnum The sheet number
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
     public void setSheetHidden(int sheetnum, boolean hidden) {
         getBoundSheetRec(sheetnum).setHidden(hidden);
     }
-    
+
     /**
      * Hide or unhide a sheet.
      *  0 = not hidden
      *  1 = hidden
      *  2 = very hidden.
-     * 
+     *
      * @param sheetnum The sheet number
      * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
      */
@@ -664,8 +663,8 @@ public final class Workbook implements Model {
         bsr.setHidden(h);
         bsr.setVeryHidden(vh);
     }
-    
-    
+
+
     /**
      * get the sheet's index
      * @param name  sheet name
@@ -713,18 +712,18 @@ public final class Workbook implements Model {
             boundsheets.remove(sheetIndex);
             fixTabIdRecord();
         }
-        
+
         // Within NameRecords, it's ok to have the formula
         //  part point at deleted sheets. It's also ok to
         //  have the ExternSheetNumber point at deleted
-        //  sheets. 
+        //  sheets.
         // However, the sheet index must be adjusted, or
         //  excel will break. (Sheet index is either 0 for
         //  global, or 1 based index to sheet)
         int sheetNum1Based = sheetIndex + 1;
         for(int i=0; i<getNumNames(); i++) {
             NameRecord nr = getNameRecord(i);
-            
+
             if(nr.getSheetNumber() == sheetNum1Based) {
                 // Excel re-writes these to point to no sheet
                 nr.setSheetNumber(0);
@@ -790,10 +789,10 @@ public final class Workbook implements Model {
 
         return retval;
     }
-    
+
     /**
      * Removes the given ExtendedFormatRecord record from the
-     *  file's list. This will make all 
+     *  file's list. This will make all
      *  subsequent font indicies drop by one,
      *  so you'll need to update those yourself!
      */
@@ -818,14 +817,14 @@ public final class Workbook implements Model {
         numxfs++;
         return xf;
     }
-    
+
     /**
      * Returns the StyleRecord for the given
      *  xfIndex, or null if that ExtendedFormat doesn't
      *  have a Style set.
      */
     public StyleRecord getStyleRecord(int xfIndex) {
-        // Style records always follow after 
+        // Style records always follow after
         //  the ExtendedFormat records
         for(int i=records.getXfpos(); i<records.size(); i++) {
             Record r = records.get(i);
@@ -848,11 +847,11 @@ public final class Workbook implements Model {
      *  records collection
      */
     public StyleRecord createStyleRecord(int xfIndex) {
-        // Style records always follow after 
+        // Style records always follow after
         //  the ExtendedFormat records
         StyleRecord newSR = new StyleRecord();
         newSR.setXFIndex(xfIndex);
-        
+
         // Find the spot
         int addAt = -1;
         for(int i=records.getXfpos(); i<records.size() &&
@@ -869,7 +868,7 @@ public final class Workbook implements Model {
             throw new IllegalStateException("No XF Records found!");
         }
         records.add(addAt, newSR);
-        
+
         return newSR;
     }
 
@@ -976,7 +975,7 @@ public final class Workbook implements Model {
             // Let's skip RECALCID records, as they are only use for optimization
             if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
             {
-                int len = 0; 
+                int len = 0;
                 if (record instanceof SSTRecord)
                 {
                     sst = (SSTRecord)record;
@@ -1090,7 +1089,7 @@ public final class Workbook implements Model {
     }
 
     /**
-     * creates the TabId record containing an array 
+     * creates the TabId record containing an array
      */
     private static TabIdRecord createTabId() {
         return new TabIdRecord();
@@ -1121,7 +1120,7 @@ public final class Workbook implements Model {
     private static ProtectRecord createProtect() {
         // by default even when we support it we won't
         // want it to be protected
-        return new ProtectRecord(false); 
+        return new ProtectRecord(false);
     }
 
     /**
@@ -1251,7 +1250,7 @@ public final class Workbook implements Model {
      * @param id    the number of the format record to create (meaning its position in
      *        a file as M$ Excel would create it.)
      */
-    private static FormatRecord createFormat(int id) {  
+    private static FormatRecord createFormat(int id) {
         // we'll need multiple editions for
         // the different formats
 
@@ -1674,7 +1673,7 @@ public final class Workbook implements Model {
     private static PaletteRecord createPalette() {
         return new PaletteRecord();
     }
-    
+
     /**
      * @return a new UseSelFS object with the use natural language flag set to 0 (false)
      */
@@ -1724,7 +1723,7 @@ public final class Workbook implements Model {
         retval.setNumStringsPerBucket(( short ) 0x8);
         return retval;
     }
-    
+
     /**
      * lazy initialization
      * Note - creating the link table causes creation of 1 EXTERNALBOOK and 1 EXTERNALSHEET record
@@ -1784,7 +1783,7 @@ public final class Workbook implements Model {
     public int getExternalSheetIndex(String workbookName, String sheetName) {
         return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName);
     }
-    
+
 
     /** gets the total number of names
      * @return number of names
@@ -1817,7 +1816,7 @@ public final class Workbook implements Model {
      */
     public NameRecord addName(NameRecord name)
     {
-        
+
         LinkTable linkTable = getOrCreateLinkTable();
         if(linkTable.nameAlreadyExists(name)) {
             throw new IllegalArgumentException(
@@ -1828,7 +1827,7 @@ public final class Workbook implements Model {
 
         return name;
     }
-    
+
     /**
      * Generates a NameRecord to represent a built-in region
      * @return a new NameRecord
@@ -1837,11 +1836,11 @@ public final class Workbook implements Model {
         if (sheetNumber < 0 || sheetNumber+1 > Short.MAX_VALUE) {
             throw new IllegalArgumentException("Sheet number ["+sheetNumber+"]is not valid ");
         }
-        
+
         NameRecord name = new NameRecord(builtInName, sheetNumber);
-        
+
         while(linkTable.nameAlreadyExists(name)) {
-            throw new RuntimeException("Builtin (" + builtInName 
+            throw new RuntimeException("Builtin (" + builtInName
                     + ") already exists for sheet (" + sheetNumber + ")");
         }
         addName(name);
@@ -1853,7 +1852,7 @@ public final class Workbook implements Model {
      * @param nameIndex name index
      */
     public void removeName(int nameIndex){
-        
+
         if (linkTable.getNumNames() > nameIndex) {
             int idx = findFirstRecordLocBySid(NameRecord.sid);
             records.remove(idx + nameIndex);
@@ -1912,7 +1911,7 @@ public final class Workbook implements Model {
         return maxformatid;
     }
 
-  
+
 
     /**
      * Returns the first occurance of a record matching a particular sid.
@@ -1920,7 +1919,7 @@ public final class Workbook implements Model {
     public Record findFirstRecordBySid(short sid) {
         for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
             Record record = ( Record ) iterator.next();
-            
+
             if (record.getSid() == sid) {
                 return record;
             }
@@ -1966,7 +1965,7 @@ public final class Workbook implements Model {
     {
         return hyperlinks;
     }
-    
+
     public List<Record> getRecords() {
         return records.getRecords();
     }
@@ -1980,7 +1979,7 @@ public final class Workbook implements Model {
     public boolean isUsing1904DateWindowing() {
         return uses1904datewindowing;
     }
-    
+
     /**
      * Returns the custom palette in use for this workbook; if a custom palette record
      * does not exist, then it is created.
@@ -2004,7 +2003,7 @@ public final class Workbook implements Model {
       }
       return palette;
     }
-    
+
     /**
      * Finds the primary drawing group, if one already exists
      */
@@ -2060,7 +2059,7 @@ public final class Workbook implements Model {
     }
 
     /**
-     * Creates a primary drawing group record.  If it already 
+     * Creates a primary drawing group record.  If it already
      *  exists then it's modified.
      */
     public void createDrawingGroup() {
@@ -2124,7 +2123,7 @@ public final class Workbook implements Model {
 
         }
     }
-    
+
     public WindowOneRecord getWindowOne() {
         return windowOne;
     }
@@ -2172,8 +2171,8 @@ public final class Workbook implements Model {
         if (writeProtect == null) {
            writeProtect = new WriteProtectRecord();
            int i = 0;
-           for (i = 0; 
-                i < records.size() && !(records.get(i) instanceof BOFRecord); 
+           for (i = 0;
+                i < records.size() && !(records.get(i) instanceof BOFRecord);
                 i++) {
            }
            records.add(i+1, writeProtect);
@@ -2185,8 +2184,8 @@ public final class Workbook implements Model {
         if (writeAccess == null) {
            writeAccess = createWriteAccess();
            int i = 0;
-           for (i = 0; 
-                i < records.size() && !(records.get(i) instanceof InterfaceEndRecord); 
+           for (i = 0;
+                i < records.size() && !(records.get(i) instanceof InterfaceEndRecord);
                 i++) {
            }
            records.add(i+1, writeAccess);
@@ -2198,15 +2197,15 @@ public final class Workbook implements Model {
         if (fileShare == null) {
            fileShare = new FileSharingRecord();
            int i = 0;
-           for (i = 0; 
-                i < records.size() && !(records.get(i) instanceof WriteAccessRecord); 
+           for (i = 0;
+                i < records.size() && !(records.get(i) instanceof WriteAccessRecord);
                 i++) {
            }
            records.add(i+1, fileShare);
         }
         return fileShare;
     }
-    
+
     /**
      * is the workbook protected with a password (not encrypted)?
      */

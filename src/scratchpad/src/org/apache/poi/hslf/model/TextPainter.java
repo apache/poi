@@ -17,22 +17,24 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.record.TextRulerAtom;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-
-import java.text.AttributedString;
-import java.text.AttributedCharacterIterator;
-import java.text.BreakIterator;
-import java.awt.font.TextAttribute;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Paint text into java.awt.Graphics2D
@@ -162,7 +164,7 @@ public final class TextPainter {
         int paragraphStart = it.getBeginIndex();
         int paragraphEnd = it.getEndIndex();
 
-        ArrayList lines = new ArrayList();
+        List<TextElement> lines = new ArrayList<TextElement>();
         LineBreakMeasurer measurer = new LineBreakMeasurer(it, frc);
         measurer.setPosition(paragraphStart);
         while (measurer.getPosition() < paragraphEnd) {
@@ -296,7 +298,7 @@ public final class TextPainter {
 
         //finally draw the text fragments
         TextElement[] elems = new TextElement[lines.size()];
-        return (TextElement[])lines.toArray(elems);
+        return lines.toArray(elems);
     }
 
     public static class TextElement {

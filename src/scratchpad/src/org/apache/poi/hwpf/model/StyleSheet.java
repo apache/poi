@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.*;
 import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
@@ -35,9 +34,7 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
  *
  * @author Ryan Ackley
  */
-
-public final class StyleSheet implements HDFType
-{
+public final class StyleSheet implements HDFType {
 
   public static final int NIL_STYLE = 4095;
   private static final int PAP_TYPE = 1;

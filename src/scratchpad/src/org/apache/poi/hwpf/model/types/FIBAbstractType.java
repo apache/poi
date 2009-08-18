@@ -18,25 +18,19 @@
 package org.apache.poi.hwpf.model.types;
 
 
-
+import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Base part of the File information Block (FibBase). Holds the core part of the FIB, from the first 32 bytes.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
-
+ *
  * @author Andrew C. Oliver
  */
-public abstract class FIBAbstractType
-    implements HDFType
-{
+public abstract class FIBAbstractType implements HDFType {
 
     protected  int field_1_wIdent;
     protected  int field_2_nFib;

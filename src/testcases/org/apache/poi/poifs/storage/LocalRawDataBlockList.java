@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,42 +14,32 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-
-import java.io.*;
-
-import java.util.*;
 
 /**
  * Class LocalRawDataBlockList
  *
  * @author Marc Johnson(mjohnson at apache dot org)
  */
-
-public class LocalRawDataBlockList
-    extends RawDataBlockList
-{
-    private List           _list;
+public final class LocalRawDataBlockList extends RawDataBlockList {
+    private List<RawDataBlock> _list;
     private RawDataBlock[] _array;
-
-    /**
-     * Constructor LocalRawDataBlockList
-     *
-     * @exception IOException
-     */
 
     public LocalRawDataBlockList()
         throws IOException
     {
         super(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
-        _list  = new ArrayList();
+        _list  = new ArrayList<RawDataBlock>();
         _array = null;
     }
 
@@ -60,10 +49,7 @@ public class LocalRawDataBlockList
      * @param start index of first BAT block
      * @param end index of last BAT block
      * @param chain index of next XBAT block
-     *
-     * @exception IOException
      */
-
     public void createNewXBATBlock(final int start, final int end,
                                    final int chain)
         throws IOException
@@ -89,10 +75,7 @@ public class LocalRawDataBlockList
      * create a BAT block and add it to the list
      *
      * @param start_index initial index for the block list
-     *
-     * @exception IOException
      */
-
     public void createNewBATBlock(final int start_index)
         throws IOException
     {
@@ -124,10 +107,7 @@ public class LocalRawDataBlockList
      * fill the list with dummy blocks
      *
      * @param count of blocks
-     *
-     * @exception IOException
      */
-
     public void fill(final int count)
         throws IOException
     {
@@ -144,7 +124,6 @@ public class LocalRawDataBlockList
      *
      * @param block new block to add
      */
-
     public void add(RawDataBlock block)
     {
         _list.add(block);
@@ -156,10 +135,7 @@ public class LocalRawDataBlockList
      * @param index of block to be removed
      *
      * @return desired block
-     *
-     * @exception IOException
      */
-
     public ListManagedBlock remove(final int index)
         throws IOException
     {
@@ -189,7 +165,6 @@ public class LocalRawDataBlockList
      * @param index the index of the specified block; if the index is
      *              out of range, that's ok
      */
-
     public void zap(final int index)
     {
         ensureArrayExists();
@@ -203,7 +178,7 @@ public class LocalRawDataBlockList
     {
         if (_array == null)
         {
-            _array = ( RawDataBlock [] ) _list.toArray(new RawDataBlock[ 0 ]);
+            _array = _list.toArray(new RawDataBlock[ 0 ]);
         }
     }
 }

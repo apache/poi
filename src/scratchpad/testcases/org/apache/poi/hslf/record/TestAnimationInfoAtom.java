@@ -22,8 +22,6 @@ import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
-import org.apache.poi.util.HexDump;
-
 /**
  * Tests that {@link HeadersFootersAtom} works properly
  *
@@ -43,7 +41,7 @@ public final class TestAnimationInfoAtom extends TestCase {
             0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    public void testRead() throws Exception {
+    public void testRead() {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         assertEquals(RecordTypes.AnimationInfoAtom.typeID, record.getRecordType());
         assertTrue(record.getFlag(AnimationInfoAtom.Automatic));
@@ -84,5 +82,4 @@ public final class TestAnimationInfoAtom extends TestCase {
 
         assertTrue(Arrays.equals(data, b));
     }
-
 }

@@ -22,7 +22,6 @@ import java.util.*;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.PackageHelper;
-import org.apache.xmlbeans.XmlException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;

@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;

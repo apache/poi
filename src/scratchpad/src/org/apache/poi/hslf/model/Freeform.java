@@ -20,7 +20,6 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.HexDump;
 
 import java.awt.geom.*;
 import java.util.ArrayList;

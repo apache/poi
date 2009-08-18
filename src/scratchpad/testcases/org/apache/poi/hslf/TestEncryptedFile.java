@@ -21,7 +21,6 @@ package org.apache.poi.hslf;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.record.*;
 
 /**
  * Tests that HSLFSlideShow does the right thing with an encrypted file
@@ -39,41 +38,41 @@ public final class TestEncryptedFile extends TestCase {
 	private String ss_56_e;
 
 
-    public TestEncryptedFile() throws Exception {
+	public TestEncryptedFile() {
 		String dirname = System.getProperty("HSLF.testdata.path");
 
 		ss_ne = dirname + "/basic_test_ppt_file.ppt";
 		ss_e = dirname + "/Password_Protected-hello.ppt";
 		ss_np_e = dirname + "/Password_Protected-np-hello.ppt";
 		ss_56_e = dirname + "/Password_Protected-56-hello.ppt";
-    }
+	}
 
-    public void testLoadNonEncrypted() throws Exception {
-    	HSLFSlideShow hss = new HSLFSlideShow(ss_ne);
+	public void testLoadNonEncrypted() throws Exception {
+		HSLFSlideShow hss = new HSLFSlideShow(ss_ne);
 
-    	assertNotNull(hss);
-    }
+		assertNotNull(hss);
+	}
 
-    public void testLoadEncrypted() throws Exception {
-    	try {
-    		new HSLFSlideShow(ss_e);
-    		fail();
-    	} catch(EncryptedPowerPointFileException e) {
-    		// Good
-    	}
+	public void testLoadEncrypted() throws Exception {
+		try {
+			new HSLFSlideShow(ss_e);
+			fail();
+		} catch(EncryptedPowerPointFileException e) {
+			// Good
+		}
 
-    	try {
-    		new HSLFSlideShow(ss_np_e);
-    		fail();
-    	} catch(EncryptedPowerPointFileException e) {
-    		// Good
-    	}
+		try {
+			new HSLFSlideShow(ss_np_e);
+			fail();
+		} catch(EncryptedPowerPointFileException e) {
+			// Good
+		}
 
-    	try {
-    		new HSLFSlideShow(ss_56_e);
-    		fail();
-    	} catch(EncryptedPowerPointFileException e) {
-    		// Good
-    	}
-    }
+		try {
+			new HSLFSlideShow(ss_56_e);
+			fail();
+		} catch(EncryptedPowerPointFileException e) {
+			// Good
+		}
+	}
 }

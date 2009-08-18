@@ -17,21 +17,18 @@
 
 package org.apache.poi.hslf.record;
 
-
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Arrays;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
- * Tests Sound-related records: SoundCollection(2020), Sound(2022) and SoundData(2023)).
+ * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
+ * SoundData(2023)).
  *
  * @author Yegor Kozlov
  */
@@ -44,40 +41,43 @@ public final class TestSound extends TestCase {
 
 		// Get the document
 		Document doc = ppt.getDocumentRecord();
-        SoundCollection soundCollection = null;
-        Record[] doc_ch = doc.getChildRecords();
-        for (int i = 0; i < doc_ch.length; i++) {
-            if(doc_ch[i] instanceof SoundCollection){
-                soundCollection = (SoundCollection)doc_ch[i];
-                break;
-            }
-        }
-        assertNotNull(soundCollection);
+		SoundCollection soundCollection = null;
+		Record[] doc_ch = doc.getChildRecords();
+		for (int i = 0; i < doc_ch.length; i++) {
+			if (doc_ch[i] instanceof SoundCollection) {
+				soundCollection = (SoundCollection) doc_ch[i];
+				break;
+			}
+		}
+		if (soundCollection == null) {
+			throw new AssertionFailedError("soundCollection must not be null");
+		}
 
-        Sound sound = null;
-        Record[] sound_ch = soundCollection.getChildRecords();
-        int k = 0;
-        for (int i = 0; i < sound_ch.length; i++) {
-            if(sound_ch[i] instanceof Sound){
-                sound = (Sound)sound_ch[i];
-                k++;
-            }
-        }
-        assertNotNull(sound);
-        assertEquals(1, k);
+		Sound sound = null;
+		Record[] sound_ch = soundCollection.getChildRecords();
+		int k = 0;
+		for (int i = 0; i < sound_ch.length; i++) {
+			if (sound_ch[i] instanceof Sound) {
+				sound = (Sound) sound_ch[i];
+				k++;
+			}
+		}
+		if (sound == null) {
+			throw new AssertionFailedError("sound must not be null");
+		}
+		assertEquals(1, k);
 
-        assertEquals("ringin.wav", sound.getSoundName());
-        assertEquals(".WAV", sound.getSoundType());
-        assertNotNull(sound.getSoundData());
+		assertEquals("ringin.wav", sound.getSoundName());
+		assertEquals(".WAV", sound.getSoundType());
+		assertNotNull(sound.getSoundData());
 
-        File f = new File(cwd, "ringin.wav");
-        int length = (int)f.length();
-        byte[] ref_data = new byte[length];
-        is = new FileInputStream(f);
-        is.read(ref_data);
-        is.close();
+		File f = new File(cwd, "ringin.wav");
+		int length = (int) f.length();
+		byte[] ref_data = new byte[length];
+		is = new FileInputStream(f);
+		is.read(ref_data);
+		is.close();
 
-        assertTrue(Arrays.equals(ref_data, sound.getSoundData()));
-
+		assertTrue(Arrays.equals(ref_data, sound.getSoundData()));
 	}
 }

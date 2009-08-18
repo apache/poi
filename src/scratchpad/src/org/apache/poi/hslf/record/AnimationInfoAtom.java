@@ -19,9 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -29,8 +27,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public final class AnimationInfoAtom extends RecordAtom
-{
+public final class AnimationInfoAtom extends RecordAtom {
 
     /**
      * whether the animation plays in the reverse direction

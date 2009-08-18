@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 
@@ -33,11 +32,11 @@ import org.apache.poi.hwpf.HWPFDocument;
 public final class TestShapes extends TestCase {
 	private String dirname = System.getProperty("HWPF.testdata.path");
 
-    /**
-     * two shapes, second is a group
-     */
-    public void testShapes() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/WithArtShapes.doc"));
+	/**
+	 * two shapes, second is a group
+	 */
+	public void testShapes() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/WithArtShapes.doc"));
 
 		List shapes = doc.getShapesTable().getAllShapes();
 		List vshapes = doc.getShapesTable().getVisibleShapes();
@@ -79,6 +78,5 @@ public final class TestShapes extends TestCase {
 		assertEquals(4817, s2.getWidth());
 		assertEquals(2164, s2.getHeight());
 		assertEquals(true, s2.isWithinDocument());
-
-    }
+	}
 }

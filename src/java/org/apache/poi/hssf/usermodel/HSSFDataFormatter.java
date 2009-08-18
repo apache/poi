@@ -17,21 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ss.usermodel.DataFormatter;
-
 import java.text.DecimalFormat;
-import java.text.FieldPosition;
 import java.text.Format;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 /**
  * HSSFDataFormatter contains methods for formatting the value stored in an
@@ -73,7 +63,6 @@ import java.util.regex.Pattern;
  * cell's data format string.
  *
  * @author James May (james dot may at fmr dot com)
- *
  */
 public final class HSSFDataFormatter extends DataFormatter {
 

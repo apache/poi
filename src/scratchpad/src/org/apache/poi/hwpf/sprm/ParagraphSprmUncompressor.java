@@ -26,7 +26,6 @@ import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
 import java.util.Collections;
 import java.util.ArrayList;

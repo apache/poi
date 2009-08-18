@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -35,7 +32,7 @@ import org.apache.poi.hssf.usermodel.RecordInspector;
 
 /**
  * Tests for {@link SharedValueManager}
- * 
+ *
  * @author Josh Micich
  */
 public final class TestSharedValueManager extends TestCase {
@@ -46,19 +43,19 @@ public final class TestSharedValueManager extends TestCase {
 	 * The second sheet has two column shared formula ranges - one contained within the other.
 	 * These shared formula ranges were created by fill-dragging a single cell formula across the
 	 * desired region.  The larger shared formula ranges were placed first.<br/>
-	 * 
+	 *
 	 * There are probably many ways to produce similar effects, but it should be noted that Excel
 	 * is quite temperamental in this regard.  Slight variations in technique can cause the shared
 	 * formulas to spill out into plain formula records (which would make these tests pointless).
-	 * 
+	 *
 	 */
 	private static final String SAMPLE_FILE_NAME = "overlapSharedFormula.xls";
 	/**
-	 * Some of these bugs are intermittent, and the test author couldn't think of a way to write 
+	 * Some of these bugs are intermittent, and the test author couldn't think of a way to write
 	 * test code to hit them bug deterministically. The reason for the unpredictability is that
 	 * the bugs depended on the {@link SharedFormulaRecord}s being searched in a particular order.
-	 * At the time of writing of the test, the order was being determined by the call to {@link 
-	 * Collection#toArray(Object[])} on {@link HashMap#values()} where the items in the map were 
+	 * At the time of writing of the test, the order was being determined by the call to {@link
+	 * Collection#toArray(Object[])} on {@link HashMap#values()} where the items in the map were
 	 * using default {@link Object#hashCode()}<br/>
 	 */
 	private static final int MAX_ATTEMPTS=5;
@@ -67,24 +64,24 @@ public final class TestSharedValueManager extends TestCase {
 	 * This bug happened when there were two or more shared formula ranges that overlapped.  POI
 	 * would sometimes associate formulas in the overlapping region with the wrong shared formula
 	 */
-	public void testPartiallyOverlappingRanges() throws IOException {
+	public void testPartiallyOverlappingRanges() {
 		Record[] records;
 
 		int attempt=1;
 		do {
-    		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
-    		
-    		HSSFSheet sheet = wb.getSheetAt(0);
-    		RecordInspector.getRecords(sheet, 0);
-    		assertEquals("1+1", sheet.getRow(2).getCell(0).getCellFormula());
-    		if ("1+1".equals(sheet.getRow(3).getCell(0).getCellFormula())) {
-    			throw new AssertionFailedError("Identified bug - wrong shared formula record chosen"
-    					+ " (attempt " + attempt + ")");
-    		}
-    		assertEquals("2+2", sheet.getRow(3).getCell(0).getCellFormula());
-    		records = RecordInspector.getRecords(sheet, 0);
+			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
+
+			HSSFSheet sheet = wb.getSheetAt(0);
+			RecordInspector.getRecords(sheet, 0);
+			assertEquals("1+1", sheet.getRow(2).getCell(0).getCellFormula());
+			if ("1+1".equals(sheet.getRow(3).getCell(0).getCellFormula())) {
+				throw new AssertionFailedError("Identified bug - wrong shared formula record chosen"
+						+ " (attempt " + attempt + ")");
+			}
+			assertEquals("2+2", sheet.getRow(3).getCell(0).getCellFormula());
+			records = RecordInspector.getRecords(sheet, 0);
 		} while (attempt++ < MAX_ATTEMPTS);
-    		
+
 		int count=0;
 		for (int i = 0; i < records.length; i++) {
 			if (records[i] instanceof SharedFormulaRecord) {
@@ -93,28 +90,28 @@ public final class TestSharedValueManager extends TestCase {
 		}
 		assertEquals(2, count);
 	}
-	
+
 	/**
 	 * This bug occurs for similar reasons to the bug in {@link #testPartiallyOverlappingRanges()}
 	 * but the symptoms are much uglier - serialization fails with {@link NullPointerException}.<br/>
 	 */
-	public void testCompletelyOverlappedRanges() throws IOException {
+	public void testCompletelyOverlappedRanges() {
 		Record[] records;
 
 		int attempt=1;
 		do {
-    		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
-    			
-    		HSSFSheet sheet = wb.getSheetAt(1);
-    		try {
-    			records = RecordInspector.getRecords(sheet, 0);
-    		} catch (NullPointerException e) {
-    			throw new AssertionFailedError("Identified bug " +
-    					"- cannot reserialize completely overlapped shared formula"
-    					+ " (attempt " + attempt + ")");
-    		}
+			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
+
+			HSSFSheet sheet = wb.getSheetAt(1);
+			try {
+				records = RecordInspector.getRecords(sheet, 0);
+			} catch (NullPointerException e) {
+				throw new AssertionFailedError("Identified bug " +
+						"- cannot reserialize completely overlapped shared formula"
+						+ " (attempt " + attempt + ")");
+			}
 		} while (attempt++ < MAX_ATTEMPTS);
-		
+
 		int count=0;
 		for (int i = 0; i < records.length; i++) {
 			if (records[i] instanceof SharedFormulaRecord) {

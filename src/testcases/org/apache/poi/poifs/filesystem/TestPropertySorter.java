@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -20,14 +19,13 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
@@ -62,7 +60,7 @@ public final class TestPropertySorter extends TestCase {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Test sorting of properties in <code>DirectoryProperty</code>
      */
@@ -125,22 +123,22 @@ public final class TestPropertySorter extends TestCase {
         DirectoryNode vba = (DirectoryNode)vba_project.getEntry(VBA);
         DirectoryProperty  p = (DirectoryProperty)vba.getProperty();
 
-        ArrayList lst = new ArrayList();
-        for (Iterator it = p.getChildren(); it.hasNext();){
-            Property ch = (Property)it.next();
+        List<Property> lst = new ArrayList<Property>();
+        for (Iterator<Property> it = p.getChildren(); it.hasNext();){
+            Property ch = it.next();
             lst.add(ch);
         }
-        return (Property [])lst.toArray(new Property[ 0 ]);
+        return lst.toArray(new Property[ 0 ]);
     }
 
     /**
      * Old version of case-sensitive PropertyComparator to demonstrate the problem
      */
-    private static final Comparator OldCaseSensitivePropertyComparator = new Comparator() {
+    private static final Comparator<Property> OldCaseSensitivePropertyComparator = new Comparator<Property>() {
 
-        public int compare(Object o1, Object o2) {
-            String name1  = (( Property ) o1).getName();
-            String name2  = (( Property ) o2).getName();
+        public int compare(Property o1, Property o2) {
+            String name1  = o1.getName();
+            String name2  = o2.getName();
             int result = name1.length() - name2.length();
 
             if (result == 0) {

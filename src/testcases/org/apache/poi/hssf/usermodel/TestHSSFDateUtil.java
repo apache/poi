@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -442,7 +441,7 @@ public final class TestHSSFDateUtil extends TestCase {
      * Ensure that date values *with* a fractional portion get the right time of day
      */
     public void testConvertDateTime() {
-    	// Excel day 30000 is date 18-Feb-1982 
+    	// Excel day 30000 is date 18-Feb-1982
         // 0.7 corresponds to time 16:48:00
         Date actual = HSSFDateUtil.getJavaDate(30000.7);
         Date expected = createDate(1982, 1, 18, 16, 48, 0);

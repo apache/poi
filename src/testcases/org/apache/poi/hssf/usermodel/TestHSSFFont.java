@@ -17,26 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.DBCellRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.usermodel.BaseTestFont;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.

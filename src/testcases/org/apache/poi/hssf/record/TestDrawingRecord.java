@@ -17,18 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-
-import java.io.*;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+
+import junit.framework.TestCase;
 
 public final class TestDrawingRecord extends TestCase {
 

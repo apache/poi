@@ -17,23 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 /**
  * Tests functionality of the XSSFRichTextRun object
@@ -42,7 +28,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  */
 public final class TestXSSFRichTextString extends TestCase {
 
-    public void testCreate() throws Exception {
+    public void testCreate() {
 
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
@@ -59,7 +45,7 @@ public final class TestXSSFRichTextString extends TestCase {
     }
 
 
-    public void testApplyFont() throws Exception {
+    public void testApplyFont() {
 
         XSSFRichTextString rt = new XSSFRichTextString();
         rt.append("123");
@@ -85,7 +71,7 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals(1, rt.getLengthOfFormattingRun(3));
     }
 
-    public void testClearFormatting() throws Exception {
+    public void testClearFormatting() {
 
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
@@ -105,10 +91,9 @@ public final class TestXSSFRichTextString extends TestCase {
         rt.clearFormatting();
         assertEquals("Apache POI", rt.getString());
         assertEquals(0, rt.numFormattingRuns());
-
     }
 
-    public void testGetFonts() throws Exception {
+    public void testGetFonts() {
 
         XSSFRichTextString rt = new XSSFRichTextString();
 
@@ -129,6 +114,5 @@ public final class TestXSSFRichTextString extends TestCase {
         XSSFFont font2$ = rt.getFontOfFormattingRun(1);
         assertEquals(font2.getBold(), font2$.getBold());
         assertEquals(font2.getFontName(), font2$.getFontName());
-
     }
 }

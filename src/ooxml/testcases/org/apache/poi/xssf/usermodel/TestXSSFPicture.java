@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.xssf.XSSFITestDataProvider;

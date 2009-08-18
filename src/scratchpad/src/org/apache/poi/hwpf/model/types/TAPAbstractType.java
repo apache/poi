@@ -18,24 +18,19 @@
 package org.apache.poi.hwpf.model.types;
 
 
-
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 
 /**
  * Table Properties.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
-
+ *
  * @author S. Ryan Ackley
  */
-public abstract class TAPAbstractType
-    implements HDFType
-{
+public abstract class TAPAbstractType implements HDFType {
 
     protected  int field_1_jc;
     protected  int field_2_dxaGapHalf;

@@ -22,15 +22,14 @@ import java.util.GregorianCalendar;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.usermodel.DateUtil;
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
  *

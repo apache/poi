@@ -18,11 +18,9 @@
 package org.apache.poi.hdf.model.hdftypes.definitions;
 
 
-
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 

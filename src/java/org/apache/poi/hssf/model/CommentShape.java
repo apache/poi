@@ -14,16 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.*;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NoteStructureSubRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.ddf.*;
-
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * Represents a cell comment.
@@ -32,9 +39,9 @@ import java.util.Iterator;
  *
  * @author Yegor Kozlov
  */
-public class CommentShape extends TextboxShape {
+public final class CommentShape extends TextboxShape {
 
-    private NoteRecord note;
+    private NoteRecord _note;
 
     /**
      * Creates the low-level records for a comment.
@@ -46,10 +53,10 @@ public class CommentShape extends TextboxShape {
     {
         super(hssfShape, shapeId);
 
-        note = createNoteRecord(hssfShape, shapeId);
+        _note = createNoteRecord(hssfShape, shapeId);
 
         ObjRecord obj = getObjRecord();
-        List records = obj.getSubRecords();
+        List<SubRecord> records = obj.getSubRecords();
         int cmoIdx = 0;
         for (int i = 0; i < records.size(); i++) {
             Object r = records.get(i);
@@ -96,9 +103,9 @@ public class CommentShape extends TextboxShape {
         super.addStandardOptions(shape, opt);
 
         //remove unnecessary properties inherited from TextboxShape
-        java.util.List props = opt.getEscherProperties();
-        for ( Iterator iterator = props.iterator(); iterator.hasNext(); ) {
-            EscherProperty prop = (EscherProperty) iterator.next();
+        List<EscherProperty> props = opt.getEscherProperties();
+        for (Iterator<EscherProperty> iterator = props.iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
             switch (prop.getId()){
                 case EscherProperties.TEXT__TEXTLEFT:
                 case EscherProperties.TEXT__TEXTRIGHT:
@@ -127,7 +134,6 @@ public class CommentShape extends TextboxShape {
      */
     public NoteRecord getNoteRecord()
     {
-        return note;
+        return _note;
     }
-
 }

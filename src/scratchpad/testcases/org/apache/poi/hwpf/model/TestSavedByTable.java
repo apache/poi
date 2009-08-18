@@ -18,12 +18,12 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.*;
-import java.util.*;
-import junit.framework.*;
+import java.util.Arrays;
+import java.util.List;
 
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.*;
-import org.apache.poi.util.*;
+import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.HWPFDocument;
 
 /**
  * Unit test for {@link SavedByTable} and {@link SavedByEntry}.
