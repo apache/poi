@@ -67,13 +67,12 @@ public abstract class TCAbstractType implements HDFType {
 
     public void serialize(byte[] data, int offset)
     {
-        LittleEndian.putShort(data, 0x0 + offset, (short)field_1_rgf);;
-        LittleEndian.putShort(data, 0x2 + offset, (short)field_2_unused);;
-        field_3_brcTop.serialize(data, 0x4 + offset);;
-        field_4_brcLeft.serialize(data, 0x8 + offset);;
-        field_5_brcBottom.serialize(data, 0xc + offset);;
-        field_6_brcRight.serialize(data, 0x10 + offset);;
-
+        LittleEndian.putShort(data, 0x0 + offset, field_1_rgf);
+        LittleEndian.putShort(data, 0x2 + offset, field_2_unused);
+        field_3_brcTop.serialize(data, 0x4 + offset);
+        field_4_brcLeft.serialize(data, 0x8 + offset);
+        field_5_brcBottom.serialize(data, 0xc + offset);
+        field_6_brcRight.serialize(data, 0x10 + offset);
     }
 
     public String toString()
@@ -225,8 +224,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFFirstMerged(boolean value)
     {
         field_1_rgf = (short)fFirstMerged.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -236,7 +233,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFFirstMerged()
     {
         return fFirstMerged.isSet(field_1_rgf);
-
     }
 
     /**
@@ -246,8 +242,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFMerged(boolean value)
     {
         field_1_rgf = (short)fMerged.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -257,7 +251,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFMerged()
     {
         return fMerged.isSet(field_1_rgf);
-
     }
 
     /**
@@ -267,8 +260,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFVertical(boolean value)
     {
         field_1_rgf = (short)fVertical.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -278,7 +269,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFVertical()
     {
         return fVertical.isSet(field_1_rgf);
-
     }
 
     /**
@@ -288,8 +278,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFBackward(boolean value)
     {
         field_1_rgf = (short)fBackward.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -299,7 +287,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFBackward()
     {
         return fBackward.isSet(field_1_rgf);
-
     }
 
     /**
@@ -309,8 +296,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFRotateFont(boolean value)
     {
         field_1_rgf = (short)fRotateFont.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -320,7 +305,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFRotateFont()
     {
         return fRotateFont.isSet(field_1_rgf);
-
     }
 
     /**
@@ -330,8 +314,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFVertMerge(boolean value)
     {
         field_1_rgf = (short)fVertMerge.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -341,7 +323,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFVertMerge()
     {
         return fVertMerge.isSet(field_1_rgf);
-
     }
 
     /**
@@ -351,8 +332,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setFVertRestart(boolean value)
     {
         field_1_rgf = (short)fVertRestart.setBoolean(field_1_rgf, value);
-
-
     }
 
     /**
@@ -362,7 +341,6 @@ public abstract class TCAbstractType implements HDFType {
     public boolean isFVertRestart()
     {
         return fVertRestart.isSet(field_1_rgf);
-
     }
 
     /**
@@ -372,8 +350,6 @@ public abstract class TCAbstractType implements HDFType {
     public void setVertAlign(byte value)
     {
         field_1_rgf = (short)vertAlign.setValue(field_1_rgf, value);
-
-
     }
 
     /**
@@ -383,12 +359,5 @@ public abstract class TCAbstractType implements HDFType {
     public byte getVertAlign()
     {
         return ( byte )vertAlign.getValue(field_1_rgf);
-
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.internal.ContentType;
 
 /**
  * Provides a base class for parts stored in a Package.
- * 
+ *
  * @author Julien Chable
  * @version 0.9
  */
@@ -39,36 +39,36 @@ public abstract class PackagePart implements RelationshipSource {
 	/**
 	 * This part's container.
 	 */
-	protected OPCPackage container;
+	protected OPCPackage _container;
 
 	/**
 	 * The part name. (required by the specification [M1.1])
 	 */
-	protected PackagePartName partName;
+	protected PackagePartName _partName;
 
 	/**
 	 * The type of content of this part. (required by the specification [M1.2])
 	 */
-	protected ContentType contentType;
+	protected ContentType _contentType;
 
 	/**
 	 * Flag to know if this part is a relationship.
 	 */
-	private boolean isRelationshipPart;
+	private boolean _isRelationshipPart;
 
 	/**
 	 * Flag to know if this part has been logically deleted.
 	 */
-	private boolean isDeleted;
+	private boolean _isDeleted;
 
 	/**
 	 * This part's relationships.
 	 */
-	private PackageRelationshipCollection relationships;
+	private PackageRelationshipCollection _relationships;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param pack
 	 *            Parent package.
 	 * @param partName
@@ -85,7 +85,7 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param pack
 	 *            Parent package.
 	 * @param partName
@@ -100,12 +100,12 @@ public abstract class PackagePart implements RelationshipSource {
 	protected PackagePart(OPCPackage pack, PackagePartName partName,
 			ContentType contentType, boolean loadRelationships)
 			throws InvalidFormatException {
-		this.partName = partName;
-		this.contentType = contentType;
-		this.container = (ZipPackage) pack; // TODO - enforcing ZipPackage here - perhaps should change constructor signature
+		_partName = partName;
+		_contentType = contentType;
+		_container = pack;
 
 		// Check if this part is a relationship part
-		isRelationshipPart = this.partName.isRelationshipPartURI();
+		_isRelationshipPart = this._partName.isRelationshipPartURI();
 
 		// Load relationships if any
 		if (loadRelationships)
@@ -114,7 +114,7 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param pack
 	 *            Parent package.
 	 * @param partName
@@ -130,11 +130,11 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Adds an external relationship to a part (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not subject to the same
 	 * validity checks that internal ones are, as the contents is potentially
 	 * any file, URL or similar.
-	 * 
+	 *
 	 * @param target
 	 *            External target of the relationship
 	 * @param relationshipType
@@ -150,11 +150,11 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Adds an external relationship to a part (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not subject to the same
 	 * validity checks that internal ones are, as the contents is potentially
 	 * any file, URL or similar.
-	 * 
+	 *
 	 * @param target
 	 *            External target of the relationship
 	 * @param relationshipType
@@ -174,8 +174,8 @@ public abstract class PackagePart implements RelationshipSource {
 			throw new IllegalArgumentException("relationshipType");
 		}
 
-		if (relationships == null) {
-			relationships = new PackageRelationshipCollection();
+		if (_relationships == null) {
+			_relationships = new PackageRelationshipCollection();
 		}
 
 		URI targetURI;
@@ -185,13 +185,13 @@ public abstract class PackagePart implements RelationshipSource {
 			throw new IllegalArgumentException("Invalid target - " + e);
 		}
 
-		return relationships.addRelationship(targetURI, TargetMode.EXTERNAL,
+		return _relationships.addRelationship(targetURI, TargetMode.EXTERNAL,
 				relationshipType, id);
 	}
 
 	/**
 	 * Add a relationship to a part (except relationships part).
-	 * 
+	 *
 	 * @param targetPartName
 	 *            Name of the target part. This one must be relative to the
 	 *            source root directory of the part.
@@ -227,7 +227,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             If the URI point to a relationship part URI.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
@@ -235,7 +235,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	public PackageRelationship addRelationship(PackagePartName targetPartName,
 			TargetMode targetMode, String relationshipType, String id) {
-		container.throwExceptionIfReadOnly();
+		_container.throwExceptionIfReadOnly();
 
 		if (targetPartName == null) {
 			throw new IllegalArgumentException("targetPartName");
@@ -247,22 +247,22 @@ public abstract class PackagePart implements RelationshipSource {
 			throw new IllegalArgumentException("relationshipType");
 		}
 
-		if (this.isRelationshipPart || targetPartName.isRelationshipPartURI()) {
+		if (this._isRelationshipPart || targetPartName.isRelationshipPartURI()) {
 			throw new InvalidOperationException(
 					"Rule M1.25: The Relationships part shall not have relationships to any other part.");
 		}
 
-		if (relationships == null) {
-			relationships = new PackageRelationshipCollection();
+		if (_relationships == null) {
+			_relationships = new PackageRelationshipCollection();
 		}
 
-		return relationships.addRelationship(targetPartName.getURI(),
+		return _relationships.addRelationship(targetPartName.getURI(),
 				targetMode, relationshipType, id);
 	}
 
 	/**
 	 * Add a relationship to a part (except relationships part).
-	 * 
+	 *
 	 * @param targetURI
 	 *            URI the target part. Must be relative to the source root
 	 *            directory of the part.
@@ -297,7 +297,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             If the URI point to a relationship part URI.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
@@ -305,7 +305,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	public PackageRelationship addRelationship(URI targetURI,
 			TargetMode targetMode, String relationshipType, String id) {
-		container.throwExceptionIfReadOnly();
+		_container.throwExceptionIfReadOnly();
 
 		if (targetURI == null) {
 			throw new IllegalArgumentException("targetPartName");
@@ -319,17 +319,17 @@ public abstract class PackagePart implements RelationshipSource {
 
 		// Try to retrieve the target part
 
-		if (this.isRelationshipPart
+		if (this._isRelationshipPart
 				|| PackagingURIHelper.isRelationshipPartURI(targetURI)) {
 			throw new InvalidOperationException(
 					"Rule M1.25: The Relationships part shall not have relationships to any other part.");
 		}
 
-		if (relationships == null) {
-			relationships = new PackageRelationshipCollection();
+		if (_relationships == null) {
+			_relationships = new PackageRelationshipCollection();
 		}
 
-		return relationships.addRelationship(targetURI,
+		return _relationships.addRelationship(targetURI,
 				targetMode, relationshipType, id);
 	}
 
@@ -337,27 +337,27 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#clearRelationships()
 	 */
 	public void clearRelationships() {
-		if (relationships != null) {
-			relationships.clear();
+		if (_relationships != null) {
+			_relationships.clear();
 		}
 	}
 
 	/**
 	 * Delete the relationship specified by its id.
-	 * 
+	 *
 	 * @param id
 	 *            The ID identified the part to delete.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#removeRelationship(java.lang.String)
 	 */
 	public void removeRelationship(String id) {
-		this.container.throwExceptionIfReadOnly();
-		if (this.relationships != null)
-			this.relationships.removeRelationship(id);
+		this._container.throwExceptionIfReadOnly();
+		if (this._relationships != null)
+			this._relationships.removeRelationship(id);
 	}
 
 	/**
 	 * Retrieve all the relationships attached to this part.
-	 * 
+	 *
 	 * @return This part's relationships.
 	 * @throws OpenXML4JException
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationships()
@@ -369,20 +369,20 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Retrieves a package relationship from its id.
-	 * 
+	 *
 	 * @param id
 	 *            ID of the package relationship to retrieve.
 	 * @return The package relationship
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
 	 */
 	public PackageRelationship getRelationship(String id) {
-		return this.relationships.getRelationshipByID(id);
+		return this._relationships.getRelationshipByID(id);
 	}
 
 	/**
 	 * Retrieve all relationships attached to this part which have the specified
 	 * type.
-	 * 
+	 *
 	 * @param relationshipType
 	 *            Relationship type filter.
 	 * @return All relationships from this part that have the specified type.
@@ -394,14 +394,14 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	public PackageRelationshipCollection getRelationshipsByType(
 			String relationshipType) throws InvalidFormatException {
-		container.throwExceptionIfWriteOnly();
+		_container.throwExceptionIfWriteOnly();
 
 		return getRelationshipsCore(relationshipType);
 	}
 
 	/**
 	 * Implementation of the getRelationships method().
-	 * 
+	 *
 	 * @param filter
 	 *            Relationship type filter. If <i>null</i> then the filter is
 	 *            disabled and return all the relationships.
@@ -415,29 +415,29 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	private PackageRelationshipCollection getRelationshipsCore(String filter)
 			throws InvalidFormatException {
-		this.container.throwExceptionIfWriteOnly();
-		if (relationships == null) {
+		this._container.throwExceptionIfWriteOnly();
+		if (_relationships == null) {
 			this.throwExceptionIfRelationship();
-			relationships = new PackageRelationshipCollection(this);
+			_relationships = new PackageRelationshipCollection(this);
 		}
-		return new PackageRelationshipCollection(relationships, filter);
+		return new PackageRelationshipCollection(_relationships, filter);
 	}
 
 	/**
 	 * Knows if the part have any relationships.
-	 * 
+	 *
 	 * @return <b>true</b> if the part have at least one relationship else
 	 *         <b>false</b>.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
 	 */
 	public boolean hasRelationships() {
-		return (!this.isRelationshipPart && (relationships != null && relationships
+		return (!this._isRelationshipPart && (_relationships != null && _relationships
 				.size() > 0));
 	}
 
 	/**
 	 * Checks if the specified relationship is part of this package part.
-	 * 
+	 *
 	 * @param rel
 	 *            The relationship to check.
 	 * @return <b>true</b> if the specified relationship exists in this part,
@@ -458,7 +458,7 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Get the input stream of this part to read its content.
-	 * 
+	 *
 	 * @return The input stream of the content of this part, else
 	 *         <code>null</code>.
 	 */
@@ -466,9 +466,9 @@ public abstract class PackagePart implements RelationshipSource {
 		InputStream inStream = this.getInputStreamImpl();
 		if (inStream == null) {
 			throw new IOException("Can't obtain the input stream from "
-					+ partName.getName());
-		} else
-			return inStream;
+					+ _partName.getName());
+		}
+		return inStream;
 	}
 
 	/**
@@ -476,7 +476,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 * Zip package, it'll be transform intot a <i>MemoryPackagePart</i> in
 	 * order to write inside (the standard Java API doesn't allow to write in
 	 * the file)
-	 * 
+	 *
 	 * @see org.apache.poi.openxml4j.opc.internal.MemoryPackagePart
 	 */
 	public OutputStream getOutputStream() {
@@ -485,12 +485,12 @@ public abstract class PackagePart implements RelationshipSource {
 		// this part into a MemoryPackagePart instance for write purpose.
 		if (this instanceof ZipPackagePart) {
 			// Delete logically this part
-			this.container.removePart(this.partName);
+			_container.removePart(this._partName);
 
 			// Create a memory part
-			PackagePart part = container.createPart(this.partName,
-					this.contentType.toString(), false);
-			part.relationships = this.relationships;
+			PackagePart part = _container.createPart(this._partName,
+					this._contentType.toString(), false);
+			part._relationships = this._relationships;
 			if (part == null) {
 				throw new InvalidOperationException(
 						"Can't create a temporary part !");
@@ -504,27 +504,27 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Throws an exception if this package part is a relationship part.
-	 * 
+	 *
 	 * @throws InvalidOperationException
 	 *             If this part is a relationship part.
 	 */
 	private void throwExceptionIfRelationship()
 			throws InvalidOperationException {
-		if (this.isRelationshipPart)
+		if (this._isRelationshipPart)
 			throw new InvalidOperationException(
 					"Can do this operation on a relationship part !");
 	}
 
 	/**
 	 * Ensure the package relationships collection instance is built.
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             Throws if
 	 */
 	private void loadRelationships() throws InvalidFormatException {
-		if (this.relationships == null && !this.isRelationshipPart) {
+		if (this._relationships == null && !this._isRelationshipPart) {
 			this.throwExceptionIfRelationship();
-			relationships = new PackageRelationshipCollection(this);
+			_relationships = new PackageRelationshipCollection(this);
 		}
 	}
 
@@ -536,22 +536,22 @@ public abstract class PackagePart implements RelationshipSource {
 	 * @return the uri
 	 */
 	public PackagePartName getPartName() {
-		return partName;
+		return _partName;
 	}
 
 	/**
 	 * @return the contentType
 	 */
 	public String getContentType() {
-		return contentType.toString();
+		return _contentType.toString();
 	}
 
 	/**
 	 * Set the content type.
-	 * 
+	 *
 	 * @param contentType
 	 *            the contentType to set
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             Throws if the content type is not valid.
 	 * @throws InvalidOperationException
@@ -560,29 +560,29 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	public void setContentType(String contentType)
 			throws InvalidFormatException {
-		if (container == null)
-			this.contentType = new ContentType(contentType);
+		if (_container == null)
+			this._contentType = new ContentType(contentType);
 		else
 			throw new InvalidOperationException(
 					"You can't change the content type of a part.");
 	}
 
 	public OPCPackage getPackage() {
-		return container;
+		return _container;
 	}
 
 	/**
 	 * @return true if this part is a relationship
 	 */
 	public boolean isRelationshipPart() {
-		return this.isRelationshipPart;
+		return this._isRelationshipPart;
 	}
 
 	/**
 	 * @return true if this part has been logically deleted
 	 */
 	public boolean isDeleted() {
-		return isDeleted;
+		return _isDeleted;
 	}
 
 	/**
@@ -590,20 +590,20 @@ public abstract class PackagePart implements RelationshipSource {
 	 *            the isDeleted to set
 	 */
 	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
+		this._isDeleted = isDeleted;
 	}
 
 	@Override
 	public String toString() {
-		return "Name: " + this.partName + " - Content Type: "
-				+ this.contentType.toString();
+		return "Name: " + this._partName + " - Content Type: "
+				+ this._contentType.toString();
 	}
 
 	/*-------------- Abstract methods ------------- */
 
 	/**
 	 * Abtract method that get the input stream of this part.
-	 * 
+	 *
 	 * @exception IOException
 	 *                Throws if an IO Exception occur in the implementation
 	 *                method.
@@ -619,7 +619,7 @@ public abstract class PackagePart implements RelationshipSource {
 	 * Save the content of this part and the associated relationships part (if
 	 * this part own at least one relationship) into the specified output
 	 * stream.
-	 * 
+	 *
 	 * @param zos
 	 *            Output stream to save this part.
 	 * @throws OpenXML4JException
@@ -629,7 +629,7 @@ public abstract class PackagePart implements RelationshipSource {
 
 	/**
 	 * Load the content of this part.
-	 * 
+	 *
 	 * @param ios
 	 *            The input stream of the content to load.
 	 * @return <b>true</b> if the content has been successfully loaded, else

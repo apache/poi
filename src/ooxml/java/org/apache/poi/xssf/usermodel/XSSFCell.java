@@ -585,9 +585,11 @@ public final class XSSFCell implements Cell {
      */
     public byte getErrorCellValue() {
         String code = getErrorCellString();
-        if(code == null) return 0;
+        if (code == null) {
+            return 0;
+        }
 
-        return (byte)FormulaError.forString(code).getCode();
+        return FormulaError.forString(code).getCode();
     }
 
     /**
@@ -778,7 +780,7 @@ public final class XSSFCell implements Cell {
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
         int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         if (cellIndex < 0 || cellIndex > maxcol) {
-            throw new IllegalArgumentException("Invalid column index (" + cellIndex 
+            throw new IllegalArgumentException("Invalid column index (" + cellIndex
                     + ").  Allowable column range for " + v.name() + " is (0.."
                     + maxcol + ") or ('A'..'" + v.getLastColumnName() + "')");
         }
@@ -848,7 +850,7 @@ public final class XSSFCell implements Cell {
      */
     private boolean convertCellValueToBoolean() {
         int cellType = getCellType();
-        
+
         if (cellType == CELL_TYPE_FORMULA) {
             cellType = getBaseCellType(false);
         }

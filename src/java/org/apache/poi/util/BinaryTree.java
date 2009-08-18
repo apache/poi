@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -89,34 +87,20 @@ import java.util.*;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-public final class BinaryTree   // final for performance
-
-    extends AbstractMap
-{
-    private Node[]                _root             = new Node[]
-    {
-        null, null
-    };
-    private int                   _size             = 0;
-    private int                   _modifications    = 0;
-    private Set[]                 _key_set          = new Set[]
-    {
-        null, null
-    };
-    private Set[]                 _entry_set        = new Set[]
-    {
-        null, null
-    };
-    private Collection[]          _value_collection = new Collection[]
-    {
-        null, null
-    };
-    private static final int      _KEY              = 0;
-    private static final int      _VALUE            = 1;
-    private static final int      _INDEX_SUM        = _KEY + _VALUE;
-    private static final int      _MINIMUM_INDEX    = 0;
-    private static final int      _INDEX_COUNT      = 2;
-    private static final String[] _data_name        = new String[]
+//for performance
+public class BinaryTree extends AbstractMap {
+    final Node[] _root;
+    int _size = 0;
+    int _modifications = 0;
+    private final Set[] _key_set = new Set[] { null, null };
+    private final Set[] _entry_set = new Set[] { null, null };
+    private final Collection[] _value_collection = new Collection[] { null, null };
+    static int      _KEY              = 0;
+    static int      _VALUE            = 1;
+    private static int      _INDEX_SUM        = _KEY + _VALUE;
+    private static int      _MINIMUM_INDEX    = 0;
+    private static int      _INDEX_COUNT      = 2;
+    private static String[] _data_name        = new String[]
     {
         "key", "value"
     };
@@ -124,9 +108,8 @@ public final class BinaryTree   // final for performance
     /**
      * Construct a new BinaryTree
      */
-
-    public BinaryTree()
-    {
+    public BinaryTree() {
+        _root = new Node[]{ null, null, };
     }
 
     /**
@@ -146,11 +129,11 @@ public final class BinaryTree   // final for performance
      *                                     or duplicate values in the
      *                                     map
      */
-
-    public BinaryTree(final Map map)
+    public BinaryTree(Map map)
         throws ClassCastException, NullPointerException,
                 IllegalArgumentException
     {
+    	this();
         putAll(map);
     }
 
@@ -167,8 +150,7 @@ public final class BinaryTree   // final for performance
      *                               inappropriate type for this map.
      * @exception NullPointerException if the value is null
      */
-
-    public Object getKeyForValue(final Object value)
+    public Object getKeyForValue(Object value)
         throws ClassCastException, NullPointerException
     {
         return doGet(( Comparable ) value, _VALUE);
@@ -182,8 +164,7 @@ public final class BinaryTree   // final for performance
      * @return previous key associated with specified value, or null
      *         if there was no mapping for value.
      */
-
-    public Object removeValue(final Object value)
+    public Object removeValue(Object value)
     {
         return doRemove(( Comparable ) value, _VALUE);
     }
@@ -207,7 +188,6 @@ public final class BinaryTree   // final for performance
      *
      * @return a set view of the mappings contained in this map.
      */
-
     public Set entrySetByValue()
     {
         if (_entry_set[ _VALUE ] == null)
@@ -423,8 +403,7 @@ public final class BinaryTree   // final for performance
      *         key. null if the specified key or value could not be
      *         found
      */
-
-    private Object doRemove(final Comparable o, final int index)
+    private Object doRemove(Comparable o, int index)
     {
         Node   node = lookup(o, index);
         Object rval = null;
@@ -447,8 +426,7 @@ public final class BinaryTree   // final for performance
      *         key was mapped); null if we couldn't find the specified
      *         object
      */
-
-    private Object doGet(final Comparable o, final int index)
+    private Object doGet(Comparable o, int index)
     {
         checkNonNullComparable(o, index);
         Node node = lookup(o, index);
@@ -464,8 +442,7 @@ public final class BinaryTree   // final for performance
      *
      * @return _VALUE (if _KEY was specified), else _KEY
      */
-
-    private int oppositeIndex(final int index)
+    private int oppositeIndex(int index)
     {
 
         // old trick ... to find the opposite of a value, m or n,
@@ -483,8 +460,7 @@ public final class BinaryTree   // final for performance
      * @return the desired Node, or null if there is no mapping of the
      *         specified data
      */
-
-    private Node lookup(final Comparable data, final int index)
+    public Node lookup(Comparable data, int index)
     {
         Node rval = null;
         Node node = _root[ index ];
@@ -498,11 +474,8 @@ public final class BinaryTree   // final for performance
                 rval = node;
                 break;
             }
-            else
-            {
-                node = (cmp < 0) ? node.getLeft(index)
-                                 : node.getRight(index);
-            }
+            node = (cmp < 0) ? node.getLeft(index)
+                             : node.getRight(index);
         }
         return rval;
     }
@@ -516,10 +489,9 @@ public final class BinaryTree   // final for performance
      * @return negative value if o1 < o2; 0 if o1 == o2; positive
      *         value if o1 > o2
      */
-
-    private static int compare(final Comparable o1, final Comparable o2)
+    private static int compare(Comparable o1, Comparable o2)
     {
-        return (( Comparable ) o1).compareTo(o2);
+        return o1.compareTo(o2);
     }
 
     /**
@@ -532,8 +504,7 @@ public final class BinaryTree   // final for performance
      * @return the smallest node, from the specified node, in the
      *         specified mapping
      */
-
-    private static Node leastNode(final Node node, final int index)
+    static Node leastNode(Node node, int index)
     {
         Node rval = node;
 
@@ -555,8 +526,7 @@ public final class BinaryTree   // final for performance
      *
      * @return the specified node
      */
-
-    private Node nextGreater(final Node node, final int index)
+    static Node nextGreater(Node node, int index)
     {
         Node rval = null;
 
@@ -601,9 +571,7 @@ public final class BinaryTree   // final for performance
      * @param to the node whose color we're changing; may be null
      * @param index _KEY or _VALUE
      */
-
-    private static void copyColor(final Node from, final Node to,
-                                  final int index)
+    private static void copyColor(Node from, Node to, int index)
     {
         if (to != null)
         {
@@ -627,11 +595,9 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static boolean isRed(final Node node, final int index)
+    private static boolean isRed(Node node, int index)
     {
-        return ((node == null) ? false
-                               : node.isRed(index));
+        return node == null ? false : node.isRed(index);
     }
 
     /**
@@ -641,11 +607,9 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static boolean isBlack(final Node node, final int index)
+    private static boolean isBlack(Node node, int index)
     {
-        return ((node == null) ? true
-                               : node.isBlack(index));
+        return node == null ? true : node.isBlack(index);
     }
 
     /**
@@ -654,8 +618,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static void makeRed(final Node node, final int index)
+    private static void makeRed(Node node, int index)
     {
         if (node != null)
         {
@@ -669,8 +632,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static void makeBlack(final Node node, final int index)
+    private static void makeBlack(Node node, int index)
     {
         if (node != null)
         {
@@ -685,8 +647,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static Node getGrandParent(final Node node, final int index)
+    private static Node getGrandParent(Node node, int index)
     {
         return getParent(getParent(node, index), index);
     }
@@ -698,8 +659,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static Node getParent(final Node node, final int index)
+    private static Node getParent(Node node, int index)
     {
         return ((node == null) ? null
                                : node.getParent(index));
@@ -712,8 +672,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static Node getRightChild(final Node node, final int index)
+    private static Node getRightChild(Node node, int index)
     {
         return (node == null) ? null
                               : node.getRight(index);
@@ -726,8 +685,7 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static Node getLeftChild(final Node node, final int index)
+    private static Node getLeftChild(Node node, int index)
     {
         return (node == null) ? null
                               : node.getLeft(index);
@@ -744,15 +702,14 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static boolean isLeftChild(final Node node, final int index)
-    {
-        return (node == null) ? true
-                              : ((node.getParent(index) == null) ? false
-                                                                 : (node
-                                                                    == node.getParent(
-                                                                        index).getLeft(
-                                                                        index)));
+    private static boolean isLeftChild(Node node, int index) {
+        if (node == null) {
+            return true;
+        }
+        if (node.getParent(index) == null) {
+            return false;
+        }
+        return node == node.getParent(index).getLeft(index);
     }
 
     /**
@@ -766,15 +723,15 @@ public final class BinaryTree   // final for performance
      * @param node the node (may be null) in question
      * @param index _KEY or _VALUE
      */
-
-    private static boolean isRightChild(final Node node, final int index)
+    private static boolean isRightChild(Node node, int index)
     {
-        return (node == null) ? true
-                              : ((node.getParent(index) == null) ? false
-                                                                 : (node
-                                                                    == node.getParent(
-                                                                        index).getRight(
-                                                                        index)));
+        if (node == null) {
+            return true;
+        }
+        if (node.getParent(index) == null) {
+            return false;
+        }
+        return node == node.getParent(index).getRight(index);
     }
 
     /**
@@ -783,8 +740,7 @@ public final class BinaryTree   // final for performance
      * @param node the node to be rotated
      * @param index _KEY or _VALUE
      */
-
-    private void rotateLeft(final Node node, final int index)
+    private void rotateLeft(Node node, int index)
     {
         Node right_child = node.getRight(index);
 
@@ -818,8 +774,7 @@ public final class BinaryTree   // final for performance
      * @param node the node to be rotated
      * @param index _KEY or _VALUE
      */
-
-    private void rotateRight(final Node node, final int index)
+    private void rotateRight(Node node, int index)
     {
         Node left_child = node.getLeft(index);
 
@@ -854,8 +809,7 @@ public final class BinaryTree   // final for performance
      * @param inserted_node the node to be inserted
      * @param index _KEY or _VALUE
      */
-
-    private void doRedBlackInsert(final Node inserted_node, final int index)
+    private void doRedBlackInsert(Node inserted_node, int index)
     {
         Node current_node = inserted_node;
 
@@ -931,8 +885,7 @@ public final class BinaryTree   // final for performance
      *
      * @param deleted_node the node to be deleted
      */
-
-    private void doRedBlackDelete(final Node deleted_node)
+    void doRedBlackDelete(Node deleted_node)
     {
         for (int index = _MINIMUM_INDEX; index < _INDEX_COUNT; index++)
         {
@@ -1023,9 +976,8 @@ public final class BinaryTree   // final for performance
      * @param replacement_node  the node being replaced
      * @param index _KEY or _VALUE
      */
-
-    private void doRedBlackDeleteFixup(final Node replacement_node,
-                                       final int index)
+    private void doRedBlackDeleteFixup(Node replacement_node,
+                                       int index)
     {
         Node current_node = replacement_node;
 
@@ -1121,8 +1073,7 @@ public final class BinaryTree   // final for performance
      * @param y another node
      * @param index _KEY or _VALUE
      */
-
-    private void swapPosition(final Node x, final Node y, final int index)
+    private void swapPosition(Node x, Node y, int index)
     {
 
         // Save initial values.
@@ -1244,9 +1195,8 @@ public final class BinaryTree   // final for performance
      * @exception NullPointerException if o is null
      * @exception ClassCastException if o is not Comparable
      */
-
-    private static void checkNonNullComparable(final Object o,
-                                               final int index)
+    private static void checkNonNullComparable(Object o,
+                                               int index)
     {
         if (o == null)
         {
@@ -1268,8 +1218,7 @@ public final class BinaryTree   // final for performance
      * @exception NullPointerException if key is null
      * @exception ClassCastException if key is not Comparable
      */
-
-    private static void checkKey(final Object key)
+    private static void checkKey(Object key)
     {
         checkNonNullComparable(key, _KEY);
     }
@@ -1282,8 +1231,7 @@ public final class BinaryTree   // final for performance
      * @exception NullPointerException if value is null
      * @exception ClassCastException if value is not Comparable
      */
-
-    private static void checkValue(final Object value)
+    private static void checkValue(Object value)
     {
         checkNonNullComparable(value, _VALUE);
     }
@@ -1298,8 +1246,7 @@ public final class BinaryTree   // final for performance
      * @exception NullPointerException if key or value is null
      * @exception ClassCastException if key or value is not Comparable
      */
-
-    private static void checkKeyAndValue(final Object key, final Object value)
+    private static void checkKeyAndValue(Object key, Object value)
     {
         checkKey(key);
         checkValue(value);
@@ -1310,7 +1257,6 @@ public final class BinaryTree   // final for performance
      * concurrent modification of the map through the map and through
      * an Iterator from one of its Set or Collection views
      */
-
     private void modify()
     {
         _modifications++;
@@ -1319,7 +1265,6 @@ public final class BinaryTree   // final for performance
     /**
      * bump up the size and note that the map has changed
      */
-
     private void grow()
     {
         modify();
@@ -1329,7 +1274,6 @@ public final class BinaryTree   // final for performance
     /**
      * decrement the size and note that the map has changed
      */
-
     private void shrink()
     {
         modify();
@@ -1344,8 +1288,7 @@ public final class BinaryTree   // final for performance
      * @exception IllegalArgumentException if the node already exists
      *                                     in the value mapping
      */
-
-    private void insertValue(final Node newNode)
+    private void insertValue(Node newNode)
         throws IllegalArgumentException
     {
         Node node = _root[ _VALUE ];
@@ -1400,7 +1343,6 @@ public final class BinaryTree   // final for performance
      *
      * @return the number of key-value mappings in this map.
      */
-
     public int size()
     {
         return _size;
@@ -1419,8 +1361,7 @@ public final class BinaryTree   // final for performance
      *                               type for this map.
      * @exception NullPointerException if the key is null
      */
-
-    public boolean containsKey(final Object key)
+    public boolean containsKey(Object key)
         throws ClassCastException, NullPointerException
     {
         checkKey(key);
@@ -1436,8 +1377,7 @@ public final class BinaryTree   // final for performance
      * @return true if this map maps one or more keys to the specified
      *         value.
      */
-
-    public boolean containsValue(final Object value)
+    public boolean containsValue(Object value)
     {
         checkValue(value);
         return lookup(( Comparable ) value, _VALUE) != null;
@@ -1456,8 +1396,7 @@ public final class BinaryTree   // final for performance
      *                               type for this map.
      * @exception NullPointerException if the key is null
      */
-
-    public Object get(final Object key)
+    public Object get(Object key)
         throws ClassCastException, NullPointerException
     {
         return doGet(( Comparable ) key, _KEY);
@@ -1483,8 +1422,7 @@ public final class BinaryTree   // final for performance
      *                                     value duplicates an
      *                                     existing value
      */
-
-    public Object put(final Object key, final Object value)
+    public Object put(Object key, Object value)
         throws ClassCastException, NullPointerException,
                 IllegalArgumentException
     {
@@ -1562,8 +1500,7 @@ public final class BinaryTree   // final for performance
      * @return previous value associated with specified key, or null
      *         if there was no mapping for key.
      */
-
-    public Object remove(final Object key)
+    public Object remove(Object key)
     {
         return doRemove(( Comparable ) key, _KEY);
     }
@@ -1571,7 +1508,6 @@ public final class BinaryTree   // final for performance
     /**
      * Removes all mappings from this map
      */
-
     public void clear()
     {
         modify();
@@ -1592,7 +1528,6 @@ public final class BinaryTree   // final for performance
      *
      * @return a set view of the keys contained in this map.
      */
-
     public Set keySet()
     {
         if (_key_set[ _KEY ] == null)
@@ -1650,7 +1585,6 @@ public final class BinaryTree   // final for performance
      *
      * @return a collection view of the values contained in this map.
      */
-
     public Collection values()
     {
         if (_value_collection[ _KEY ] == null)
@@ -1723,7 +1657,6 @@ public final class BinaryTree   // final for performance
      *
      * @return a set view of the mappings contained in this map.
      */
-
     public Set entrySet()
     {
         if (_entry_set[ _KEY ] == null)
@@ -1803,8 +1736,7 @@ public final class BinaryTree   // final for performance
          *
          * @param type
          */
-
-        BinaryTreeIterator(final int type)
+        BinaryTreeIterator(int type)
         {
             _type                   = type;
             _expected_modifications = BinaryTree.this._modifications;
@@ -1825,7 +1757,7 @@ public final class BinaryTree   // final for performance
          * @return true if the iterator has more elements.
          */
 
-        public final boolean hasNext()
+        public boolean hasNext()
         {
             return _next_node != null;
         }
@@ -1842,7 +1774,7 @@ public final class BinaryTree   // final for performance
          *                                            back
          */
 
-        public final Object next()
+        public Object next()
             throws NoSuchElementException, ConcurrentModificationException
         {
             if (_next_node == null)
@@ -1878,7 +1810,7 @@ public final class BinaryTree   // final for performance
          *                                            back
          */
 
-        public final void remove()
+        public void remove()
             throws IllegalStateException, ConcurrentModificationException
         {
             if (_last_returned_node == null)
@@ -1897,7 +1829,7 @@ public final class BinaryTree   // final for performance
         /* **********  END  implementation of Iterator ********** */
     }   // end private abstract class BinaryTreeIterator
 
-    // final for performance
+    // for performance
     private static final class Node
         implements Map.Entry
     {
@@ -1917,7 +1849,7 @@ public final class BinaryTree   // final for performance
          * @param value
          */
 
-        Node(final Comparable key, final Comparable value)
+        Node(Comparable key, Comparable value)
         {
             _data                = new Comparable[]
             {
@@ -1949,8 +1881,7 @@ public final class BinaryTree   // final for performance
          *
          * @return the key or value
          */
-
-        private Comparable getData(final int index)
+        public Comparable getData(int index)
         {
             return _data[ index ];
         }
@@ -1961,8 +1892,7 @@ public final class BinaryTree   // final for performance
          * @param node the new left node
          * @param index _KEY or _VALUE
          */
-
-        private void setLeft(final Node node, final int index)
+        public void setLeft(Node node, int index)
         {
             _left[ index ] = node;
         }
@@ -1975,7 +1905,7 @@ public final class BinaryTree   // final for performance
          * @return the left node -- may be null
          */
 
-        private Node getLeft(final int index)
+        public Node getLeft(int index)
         {
             return _left[ index ];
         }
@@ -1986,8 +1916,7 @@ public final class BinaryTree   // final for performance
          * @param node the new right node
          * @param index _KEY or _VALUE
          */
-
-        private void setRight(final Node node, final int index)
+        public void setRight(Node node, int index)
         {
             _right[ index ] = node;
         }
@@ -2000,7 +1929,7 @@ public final class BinaryTree   // final for performance
          * @return the right node -- may be null
          */
 
-        private Node getRight(final int index)
+        public Node getRight(int index)
         {
             return _right[ index ];
         }
@@ -2011,8 +1940,7 @@ public final class BinaryTree   // final for performance
          * @param node the new parent node
          * @param index _KEY or _VALUE
          */
-
-        private void setParent(final Node node, final int index)
+        public void setParent(Node node, int index)
         {
             _parent[ index ] = node;
         }
@@ -2024,8 +1952,7 @@ public final class BinaryTree   // final for performance
          *
          * @return the parent node -- may be null
          */
-
-        private Node getParent(final int index)
+        public Node getParent(int index)
         {
             return _parent[ index ];
         }
@@ -2036,8 +1963,7 @@ public final class BinaryTree   // final for performance
          * @param node the node to swap with
          * @param index _KEY or _VALUE
          */
-
-        private void swapColors(final Node node, final int index)
+        public void swapColors(Node node, int index)
         {
 
             // Swap colors -- old hacker's trick
@@ -2053,8 +1979,7 @@ public final class BinaryTree   // final for performance
          *
          * @return true if black (which is represented as a true boolean)
          */
-
-        private boolean isBlack(final int index)
+        public boolean isBlack(int index)
         {
             return _black[ index ];
         }
@@ -2066,8 +1991,7 @@ public final class BinaryTree   // final for performance
          *
          * @return true if non-black
          */
-
-        private boolean isRed(final int index)
+        public boolean isRed(int index)
         {
             return !_black[ index ];
         }
@@ -2077,8 +2001,7 @@ public final class BinaryTree   // final for performance
          *
          * @param index _KEY or _VALUE
          */
-
-        private void setBlack(final int index)
+        public void setBlack(int index)
         {
             _black[ index ] = true;
         }
@@ -2088,8 +2011,7 @@ public final class BinaryTree   // final for performance
          *
          * @param index _KEY or _VALUE
          */
-
-        private void setRed(final int index)
+        public void setRed(int index)
         {
             _black[ index ] = false;
         }
@@ -2100,8 +2022,7 @@ public final class BinaryTree   // final for performance
          * @param node the node whose color we're adopting
          * @param index _KEY or _VALUE
          */
-
-        private void copyColor(final Node node, final int index)
+        public void copyColor(Node node, int index)
         {
             _black[ index ] = node._black[ index ];
         }
@@ -2111,7 +2032,6 @@ public final class BinaryTree   // final for performance
         /**
          * @return the key corresponding to this entry.
          */
-
         public Object getKey()
         {
             return _data[ _KEY ];
@@ -2120,7 +2040,6 @@ public final class BinaryTree   // final for performance
         /**
          * @return the value corresponding to this entry.
          */
-
         public Object getValue()
         {
             return _data[ _VALUE ];
@@ -2133,10 +2052,7 @@ public final class BinaryTree   // final for performance
          * @param ignored
          *
          * @return does not return
-         *
-         * @exception UnsupportedOperationException
          */
-
         public Object setValue(Object ignored)
             throws UnsupportedOperationException
         {
@@ -2154,7 +2070,6 @@ public final class BinaryTree   // final for performance
          * @return true if the specified object is equal to this map
          *         entry.
          */
-
         public boolean equals(Object o)
         {
             if (this == o)
@@ -2188,5 +2103,4 @@ public final class BinaryTree   // final for performance
 
         /* **********  END  implementation of Map.Entry ********** */
     }
-}   // end public class BinaryTree
-
+}

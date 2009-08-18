@@ -35,10 +35,10 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-
-public final class WordDocument
-{
-  /** byte buffer containing the main Document stream*/
+public final class WordDocument {
+	// TODO - name this constant properly
+	private static final float K_1440_0F = 1440.0f;
+/** byte buffer containing the main Document stream*/
   byte[] _header;
   /** contains all style information for this document see Word 97 Doc spec*/
   StyleSheet _styleSheet;
@@ -1160,19 +1160,19 @@ public final class WordDocument
     }
     if(pap._dxaLeft > 0)
     {
-      buf.append("start-indent=\"" + ((float)pap._dxaLeft)/1440.0f + "in\"\r\n");
+      buf.append("start-indent=\"" + pap._dxaLeft/K_1440_0F + "in\"\r\n");
     }
     if(pap._dxaRight > 0)
     {
-      buf.append("end-indent=\"" + ((float)pap._dxaRight)/1440.0f + "in\"\r\n");
+      buf.append("end-indent=\"" + pap._dxaRight/K_1440_0F + "in\"\r\n");
     }
     if(pap._dxaLeft1 != 0)
     {
-      buf.append("text-indent=\"" + ((float)pap._dxaLeft1)/1440.0f + "in\"\r\n");
+      buf.append("text-indent=\"" + pap._dxaLeft1/K_1440_0F + "in\"\r\n");
     }
     if(pap._lspd[1] == 0)
     {
-      //buf.append("line-height=\"" + ((float)pap._lspd[0])/1440.0f + "in\"\r\n");
+      //buf.append("line-height=\"" + pap._lspd[0]/K_1440_0F + "in\"\r\n");
     }
     addBorder(buf, pap._brcTop, "top");
     addBorder(buf, pap._brcBottom, "bottom");
@@ -1190,7 +1190,7 @@ public final class WordDocument
     buf.append("font-size=\"" + (chp._hps / 2) + "pt\" ");
     buf.append("color=\"" + getColor(chp._ico) + "\" ");
     //not supported by fop
-    //buf.append("letter-spacing=\"" + ((double)chp._dxaSpace)/1440.0f + "in\" ");
+    //buf.append("letter-spacing=\"" + ((double)chp._dxaSpace)/K_1440_0F + "in\" ");
 
     addBorder(buf, chp._brc, "top");
     addBorder(buf, chp._brc, "bottom");
@@ -1236,11 +1236,11 @@ public final class WordDocument
     }
     if(chp._paddingStart != 0)
     {
-      buf.append("padding-start=\"" + (float)chp._paddingStart/1440.0f + "in\" ");
+      buf.append("padding-start=\"" + chp._paddingStart/K_1440_0F + "in\" ");
     }
     if(chp._paddingEnd != 0)
     {
-      buf.append("padding-end=\"" + (float)chp._paddingEnd/1440.0f + "in\" ");
+      buf.append("padding-end=\"" + chp._paddingEnd/K_1440_0F + "in\" ");
     }
     buf.append(">");
   }
@@ -1416,12 +1416,12 @@ public final class WordDocument
   private String createPageMaster(SEP sep, String type, int section,
                                   String regionBefore, String regionAfter)
   {
-    float height = ((float)sep._yaPage)/1440.0f;
-    float width = ((float)sep._xaPage)/1440.0f;
-    float leftMargin = ((float)sep._dxaLeft)/1440.0f;
-    float rightMargin = ((float)sep._dxaRight)/1440.0f;
-    float topMargin = ((float)sep._dyaTop)/1440.0f;
-    float bottomMargin = ((float)sep._dyaBottom)/1440.0f;
+    float height = sep._yaPage/K_1440_0F;
+    float width = sep._xaPage/K_1440_0F;
+    float leftMargin = sep._dxaLeft/K_1440_0F;
+    float rightMargin = sep._dxaRight/K_1440_0F;
+    float topMargin = sep._dyaTop/K_1440_0F;
+    float bottomMargin = sep._dyaBottom/K_1440_0F;
 
     //add these to the header
     String thisPage = type + "-page" + section;
@@ -1452,7 +1452,7 @@ public final class WordDocument
       _headerBuffer.append("column-count=\"" + (sep._ccolM1 + 1) + "\" ");
       if(sep._fEvenlySpaced)
       {
-        _headerBuffer.append("column-gap=\"" + ((float)(sep._dxaColumns))/1440.0f + "in\"");
+        _headerBuffer.append("column-gap=\"" + sep._dxaColumns/K_1440_0F + "in\"");
       }
       else
       {
@@ -1478,7 +1478,7 @@ public final class WordDocument
     if((brc[0] & 0xff00) != 0 && brc[0] != -1)
     {
       int type = (brc[0] & 0xff00) >> 8;
-      float width = ((float)(brc[0] & 0x00ff))/8.0f;
+      float width = (brc[0] & 0x00ff)/8.0f;
       String style = getBorderStyle(brc[0]);
       String color = getColor(brc[1] & 0x00ff);
       String thickness = getBorderThickness(brc[0]);
@@ -1764,7 +1764,7 @@ public final class WordDocument
         rowBuffer.append("<fo:table-row ");
         if(tap._dyaRowHeight > 0)
         {
-          rowBuffer.append("height=\"" + ((float)tap._dyaRowHeight)/1440.0f + "in\" ");
+          rowBuffer.append("height=\"" + tap._dyaRowHeight/K_1440_0F + "in\" ");
         }
         if(tap._fCantSplit)
         {
@@ -1777,9 +1777,9 @@ public final class WordDocument
           TC tc = tap._rgtc[y];
           overrideCellBorder(x, y, size, tap._itcMac, tc, tap);
           rowBuffer.append("<fo:table-cell ");
-          rowBuffer.append("width=\"" + ((float)(tap._rgdxaCenter[y+1] - tap._rgdxaCenter[y]))/1440.0f + "in\" ");
-          rowBuffer.append("padding-start=\"" + ((float)tap._dxaGapHalf)/1440.0f + "in\" ");
-          rowBuffer.append("padding-end=\"" + ((float)tap._dxaGapHalf)/1440.0f + "in\" ");
+          rowBuffer.append("width=\"" + (tap._rgdxaCenter[y+1] - tap._rgdxaCenter[y])/K_1440_0F + "in\" ");
+          rowBuffer.append("padding-start=\"" + tap._dxaGapHalf/K_1440_0F + "in\" ");
+          rowBuffer.append("padding-end=\"" + tap._dxaGapHalf/K_1440_0F + "in\" ");
           addBorder(rowBuffer, tc._brcTop, "top");
           addBorder(rowBuffer, tc._brcLeft, "left");
           addBorder(rowBuffer, tc._brcBottom, "bottom");

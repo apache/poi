@@ -54,7 +54,7 @@ public final class ParagraphSprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
 
       // PAPXs can contain table sprms if the paragraph marks the end of a
       // table row
@@ -326,8 +326,8 @@ public final class ParagraphSprmUncompressor
         {
           byte[] varParam = sprm.getGrpprl();
           int offset = sprm.getGrpprlOffset();
-          newPAP.setFPropRMark ((int) varParam[offset]);
-          newPAP.setIbstPropRMark ((int) LittleEndian.getShort (varParam, offset + 1));
+          newPAP.setFPropRMark (varParam[offset]);
+          newPAP.setIbstPropRMark (LittleEndian.getShort (varParam, offset + 1));
           newPAP.setDttmPropRMark (new DateAndTime(varParam, offset + 3));
         }
         catch (Exception e)

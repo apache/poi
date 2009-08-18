@@ -29,7 +29,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 
 /**
  * Zip implementation of a PackagePart.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  * @see PackagePart
@@ -43,7 +43,7 @@ public class ZipPackagePart extends PackagePart {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param container
 	 *            The container package.
 	 * @param partName
@@ -60,7 +60,7 @@ public class ZipPackagePart extends PackagePart {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param container
 	 *            The container package.
 	 * @param zipEntry
@@ -81,7 +81,7 @@ public class ZipPackagePart extends PackagePart {
 
 	/**
 	 * Get the zip entry of this part.
-	 * 
+	 *
 	 * @return The zip entry in the zip structure coresponding to this part.
 	 */
 	public ZipEntry getZipArchive() {
@@ -91,21 +91,21 @@ public class ZipPackagePart extends PackagePart {
 	/**
 	 * Implementation of the getInputStream() which return the inputStream of
 	 * this part zip entry.
-	 * 
+	 *
 	 * @return Input stream of this part zip entry.
 	 */
 	@Override
 	protected InputStream getInputStreamImpl() throws IOException {
 		// We use the getInputStream() method from java.util.zip.ZipFile
 		// class which return an InputStream to this part zip entry.
-		return ((ZipPackage) container).getZipArchive()
+		return ((ZipPackage) _container).getZipArchive()
 				.getInputStream(zipEntry);
 	}
 
 	/**
 	 * Implementation of the getOutputStream(). Return <b>null</b>. Normally
 	 * will never be called since the MemoryPackage is use instead.
-	 * 
+	 *
 	 * @return <b>null</b>
 	 */
 	@Override
@@ -119,7 +119,7 @@ public class ZipPackagePart extends PackagePart {
 	}
 
 	@Override
-	public boolean load(InputStream ios) throws InvalidFormatException {
+	public boolean load(InputStream ios) {
 		throw new InvalidOperationException("Method not implemented !");
 	}
 

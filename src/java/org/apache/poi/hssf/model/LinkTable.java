@@ -65,8 +65,8 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
  * @author Josh Micich
  */
 final class LinkTable {
-	
-	
+
+
 	// TODO make this class into a record aggregate
 
 	private static final class CRNBlock {
@@ -84,7 +84,7 @@ final class LinkTable {
 			_crns = crns;
 		}
 		public CRNRecord[] getCrns() {
-			return (CRNRecord[]) _crns.clone();
+			return _crns.clone();
 		}
 	}
 
@@ -95,7 +95,7 @@ final class LinkTable {
 
 		public ExternalBookBlock(RecordStream rs) {
 			_externalBookRecord = (SupBookRecord) rs.getNext();
-			List temp = new ArrayList();
+			List<Object> temp = new ArrayList<Object>();
 			while(rs.peekNextClass() == ExternalNameRecord.class) {
 			   temp.add(rs.getNext());
 			}
@@ -141,7 +141,7 @@ final class LinkTable {
 
 	private final ExternalBookBlock[] _externalBookBlocks;
 	private final ExternSheetRecord _externSheetRecord;
-	private final List _definedNames;
+	private final List<NameRecord> _definedNames;
 	private final int _recordCount;
 	private final WorkbookRecordList _workbookRecordList; // TODO - would be nice to remove this
 
@@ -150,15 +150,15 @@ final class LinkTable {
 		_workbookRecordList = workbookRecordList;
 		RecordStream rs = new RecordStream(inputList, startIndex);
 
-		List temp = new ArrayList();
+		List<ExternalBookBlock> temp = new ArrayList<ExternalBookBlock>();
 		while(rs.peekNextClass() == SupBookRecord.class) {
 		   temp.add(new ExternalBookBlock(rs));
 		}
-		
+
 		_externalBookBlocks = new ExternalBookBlock[temp.size()];
 		temp.toArray(_externalBookBlocks);
 		temp.clear();
-		
+
 		if (_externalBookBlocks.length > 0) {
 			// If any ExternalBookBlock present, there is always 1 of ExternSheetRecord
 			if (rs.peekNextClass() != ExternSheetRecord.class) {
@@ -170,8 +170,8 @@ final class LinkTable {
 		} else {
 			_externSheetRecord = null;
 		}
-		
-		_definedNames = new ArrayList();
+
+		_definedNames = new ArrayList<NameRecord>();
 		// collect zero or more DEFINEDNAMEs id=0x18
 		while(rs.peekNextClass() == NameRecord.class) {
 			NameRecord nr = (NameRecord)rs.getNext();
@@ -183,19 +183,19 @@ final class LinkTable {
 	}
 
 	private static ExternSheetRecord readExtSheetRecord(RecordStream rs) {
-		List temp = new ArrayList(2);
+		List<ExternSheetRecord> temp = new ArrayList<ExternSheetRecord>(2);
 		while(rs.peekNextClass() == ExternSheetRecord.class) {
-			temp.add(rs.getNext());
+			temp.add((ExternSheetRecord) rs.getNext());
 		}
-		
+
 		int nItems = temp.size();
 		if (nItems < 1) {
-			throw new RuntimeException("Expected an EXTERNSHEET record but got (" 
+			throw new RuntimeException("Expected an EXTERNSHEET record but got ("
 					+ rs.peekNextClass().getName() + ")");
 		}
 		if (nItems == 1) {
 			// this is the normal case. There should be just one ExternSheetRecord
-			return (ExternSheetRecord) temp.get(0);
+			return temp.get(0);
 		}
 		// Some apps generate multiple ExternSheetRecords (see bug 45698).
 		// It seems like the best thing to do might be to combine these into one
@@ -206,7 +206,7 @@ final class LinkTable {
 
 	public LinkTable(int numberOfSheets, WorkbookRecordList workbookRecordList) {
 		_workbookRecordList = workbookRecordList;
-		_definedNames = new ArrayList();
+		_definedNames = new ArrayList<NameRecord>();
 		_externalBookBlocks = new ExternalBookBlock[] {
 				new ExternalBookBlock(numberOfSheets),
 		};
@@ -267,7 +267,7 @@ final class LinkTable {
 	}
 
 	public NameRecord getNameRecord(int index) {
-		return (NameRecord) _definedNames.get(index);
+		return _definedNames.get(index);
 	}
 
 	public void addName(NameRecord name) {
@@ -301,9 +301,9 @@ final class LinkTable {
 		}
 		return false;
 	}
-	
+
 	private static boolean isDuplicatedNames(NameRecord firstName, NameRecord lastName) {
-		return lastName.getNameText().equalsIgnoreCase(firstName.getNameText()) 
+		return lastName.getNameText().equalsIgnoreCase(firstName.getNameText())
 			&& isSameSheetNames(firstName, lastName);
 	}
 	private static boolean isSameSheetNames(NameRecord firstName, NameRecord lastName) {
@@ -342,10 +342,10 @@ final class LinkTable {
 			throw new RuntimeException("No external workbook with name '" + workbookName + "'");
 		}
 		int sheetIndex = getSheetIndex(ebrTarget.getSheetNames(), sheetName);
-		
+
 		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, sheetIndex);
 		if (result < 0) {
-			throw new RuntimeException("ExternSheetRecord does not contain combination (" 
+			throw new RuntimeException("ExternSheetRecord does not contain combination ("
 					+ externalBookIndex + ", " + sheetIndex + ")");
 		}
 		return result;
@@ -356,7 +356,7 @@ final class LinkTable {
 			if (sheetNames[i].equals(sheetName)) {
 				return i;
 			}
-			
+
 		}
 		throw new RuntimeException("External workbook does not contain sheet '" + sheetName + "'");
 	}
@@ -428,7 +428,7 @@ final class LinkTable {
 				continue;
 			}
 			// found it.
-			int sheetRefIndex = findRefIndexFromExtBookIndex(i); 
+			int sheetRefIndex = findRefIndexFromExtBookIndex(i);
 			if (sheetRefIndex >= 0) {
 				return new NameXPtg(sheetRefIndex, definedNameIndex);
 			}
@@ -437,6 +437,6 @@ final class LinkTable {
 	}
 
 	private int findRefIndexFromExtBookIndex(int extBookIndex) {
-		return _externSheetRecord.findRefIndexFromExtBookIndex(extBookIndex); 
+		return _externSheetRecord.findRefIndexFromExtBookIndex(extBookIndex);
 	}
 }

@@ -465,7 +465,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			pos += temp;
 
 			// Write the matching OBJ record
-			Record obj = (Record) shapeToObj.get( shapes.get( i ) );
+			Record obj = shapeToObj.get( shapes.get( i ) );
 			temp = obj.serialize( pos, data );
 			pos += temp;
 
@@ -535,7 +535,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 	{
 		this.patriarch = patriarch;
 	}
-	
+
 	/**
 	 * Converts the Records into UserModel
 	 *  objects on the bound HSSFPatriarch
@@ -544,7 +544,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		if(patriarch == null) {
 			throw new IllegalStateException("Must call setPatriarch() first");
 		}
-		
+
 		// The top level container ought to have
 		//  the DgRecord and the container of one container
 		//  per shape group (patriach overall first)
@@ -552,14 +552,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		if(topContainer == null) {
 			return;
 		}
-		topContainer = (EscherContainerRecord) 
-			topContainer.getChildContainers().get(0);
-		
+		topContainer = topContainer.getChildContainers().get(0);
+
 		List tcc = topContainer.getChildContainers();
 		if(tcc.size() == 0) {
 			throw new IllegalStateException("No child escher containers at the point that should hold the patriach data, and one container per top level shape!");
 		}
-		
+
 		// First up, get the patriach position
 		// This is in the first EscherSpgrRecord, in
 		//  the first container, with a EscherSRecord too
@@ -579,7 +578,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 					spgr.getRectX2(), spgr.getRectY2()
 			);
 		}
-		
+
 		// Now process the containers for each group
 		//  and objects
 		for(int i=1; i<tcc.size(); i++) {
@@ -587,7 +586,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				(EscherContainerRecord)tcc.get(i);
 			//System.err.println("\n\n*****\n\n");
 			//System.err.println(shapeContainer);
-			
+
 			// Could be a group, or a base object
 			if(shapeContainer.getChildRecords().size() == 1 &&
 					shapeContainer.getChildContainers().size() == 1) {
@@ -595,7 +594,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				HSSFShapeGroup group =
 					new HSSFShapeGroup(null, new HSSFClientAnchor());
 				patriarch.getChildren().add(group);
-				
+
 				EscherContainerRecord groupContainer =
 					(EscherContainerRecord)shapeContainer.getChild(0);
 				convertRecordsToUserModel(groupContainer, group);
@@ -604,7 +603,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				HSSFTextbox box =
 					new HSSFTextbox(null, new HSSFClientAnchor());
 				patriarch.getChildren().add(box);
-				
+
 				convertRecordsToUserModel(shapeContainer, box);
 			} else if(shapeContainer.hasChildOfType((short)0xF011)) {
 				// Not yet supporting EscherClientDataRecord stuff
@@ -613,7 +612,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				convertRecordsToUserModel(shapeContainer, patriarch);
 			}
 		}
-		
+
 		// Now, clear any trace of what records make up
 		//  the patriarch
 		// Otherwise, everything will go horribly wrong
@@ -625,14 +624,14 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		//  back into shapes
 		log.log(POILogger.WARN, "Not processing objects into Patriarch!");
 	}
-	
+
 	private void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
 		for(Iterator<EscherRecord> it = shapeContainer.getChildIterator(); it.hasNext();) {
 			EscherRecord r = it.next();
 			if(r instanceof EscherSpgrRecord) {
 				// This may be overriden by a later EscherClientAnchorRecord
 				EscherSpgrRecord spgr = (EscherSpgrRecord)r;
-				
+
 				if(model instanceof HSSFShapeGroup) {
 					HSSFShapeGroup g = (HSSFShapeGroup)model;
 					g.setCoordinates(
@@ -642,10 +641,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				} else {
 					throw new IllegalStateException("Got top level anchor but not processing a group");
 				}
-			} 
+			}
 			else if(r instanceof EscherClientAnchorRecord) {
 				EscherClientAnchorRecord car = (EscherClientAnchorRecord)r;
-				
+
 				if(model instanceof HSSFShape) {
 					HSSFShape g = (HSSFShape)model;
 					g.getAnchor().setDx1(car.getDx1());
@@ -658,7 +657,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			}
 			else if(r instanceof EscherTextboxRecord) {
 				EscherTextboxRecord tbr = (EscherTextboxRecord)r;
-				
+
 				// Also need to find the TextObjectRecord too
 				// TODO
 			}
@@ -673,7 +672,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			}
 		}
 	}
-	
+
 	public void clear()
 	{
 		clearEscherRecords();
@@ -742,7 +741,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 					EscherRecord escherTextbox = ( (TextboxShape) shapeModel ).getEscherTextbox();
 					shapeToObj.put( escherTextbox, ( (TextboxShape) shapeModel ).getTextObjectRecord() );
 					//					escherParent.addChildRecord(escherTextbox);
-					
+
 					if ( shapeModel instanceof CommentShape ){
 						CommentShape comment = (CommentShape)shapeModel;
 						tailRec.add(comment.getNoteRecord());

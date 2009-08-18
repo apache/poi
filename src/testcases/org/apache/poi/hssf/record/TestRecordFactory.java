@@ -115,7 +115,6 @@ public final class TestRecordFactory extends TestCase {
 	 *             constructs the expected array of records.<P>
 	 * SUCCESS:	Record factory creates the expected records.<P>
 	 * FAILURE:	The wrong records are created or contain the wrong values <P>
-	 *
 	 */
 	public void testContinuedUnknownRecord() {
 		byte[] data = {
@@ -125,8 +124,7 @@ public final class TestRecordFactory extends TestCase {
 		};
 
 		ByteArrayInputStream bois = new ByteArrayInputStream(data);
-		Record[] records = (Record[])
-		  RecordFactory.createRecords(bois).toArray(new Record[0]);
+		Record[] records = RecordFactory.createRecords(bois).toArray(new Record[0]);
 		assertEquals("Created record count", 3, records.length);
 		assertEquals("1st record's type",
 					 UnknownRecord.class.getName(),

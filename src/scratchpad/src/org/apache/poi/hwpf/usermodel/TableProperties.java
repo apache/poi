@@ -65,7 +65,7 @@ public final class TableProperties
     tap.field_14_brcRight = (BorderCode)field_14_brcRight.clone();
     tap.field_15_brcVertical = (BorderCode)field_15_brcVertical.clone();
     tap.field_16_brcHorizontal = (BorderCode)field_16_brcHorizontal.clone();
-    tap.field_8_rgdxaCenter = (short[])field_8_rgdxaCenter.clone();
+    tap.field_8_rgdxaCenter = field_8_rgdxaCenter.clone();
     tap.field_9_rgtc = new TableCellDescriptor[field_9_rgtc.length];
     for (int x = 0; x < field_9_rgtc.length; x++)
     {

@@ -41,9 +41,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Nick Burch
  */
-
-public final class SlideShowDumper
-{
+public final class SlideShowDumper {
   private InputStream istream;
   private POIFSFileSystem filesystem;
 
@@ -196,7 +194,7 @@ public final class SlideShowDumper
 }
 
 public String makeHex(short s) {
-	String hex = Integer.toHexString((int)s).toUpperCase();
+	String hex = Integer.toHexString(s).toUpperCase();
 	if(hex.length() == 1) { return "0" + hex; }
 	return hex;
 }
@@ -232,7 +230,7 @@ public void walkTree(int depth, int startPos, int maxLen) {
 			System.out.println(ind + "That's a " + recordName);
 
 			// Now check if it's a container or not
-			int container = (int)opt & 0x0f;
+			int container = opt & 0x0f;
 
 			// BinaryTagData seems to contain records, but it
 			//  isn't tagged as doing so. Try stepping in anyway

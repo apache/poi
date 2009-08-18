@@ -65,7 +65,7 @@ public final class NotesAtom extends RecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Get the slide ID
-		slideID = (int)LittleEndian.getInt(source,start+8);
+		slideID = LittleEndian.getInt(source,start+8);
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+12);

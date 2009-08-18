@@ -814,9 +814,7 @@ public abstract class CHPAbstractType
      */
     public void setFBold(boolean value)
     {
-        field_2_format_flags = (int)fBold.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fBold.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -826,7 +824,6 @@ public abstract class CHPAbstractType
     public boolean isFBold()
     {
         return fBold.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -835,9 +832,7 @@ public abstract class CHPAbstractType
      */
     public void setFItalic(boolean value)
     {
-        field_2_format_flags = (int)fItalic.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fItalic.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -847,7 +842,6 @@ public abstract class CHPAbstractType
     public boolean isFItalic()
     {
         return fItalic.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -856,9 +850,7 @@ public abstract class CHPAbstractType
      */
     public void setFRMarkDel(boolean value)
     {
-        field_2_format_flags = (int)fRMarkDel.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fRMarkDel.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -868,7 +860,6 @@ public abstract class CHPAbstractType
     public boolean isFRMarkDel()
     {
         return fRMarkDel.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -877,9 +868,7 @@ public abstract class CHPAbstractType
      */
     public void setFOutline(boolean value)
     {
-        field_2_format_flags = (int)fOutline.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fOutline.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -889,7 +878,6 @@ public abstract class CHPAbstractType
     public boolean isFOutline()
     {
         return fOutline.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -898,9 +886,7 @@ public abstract class CHPAbstractType
      */
     public void setFFldVanish(boolean value)
     {
-        field_2_format_flags = (int)fFldVanish.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fFldVanish.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -910,7 +896,6 @@ public abstract class CHPAbstractType
     public boolean isFFldVanish()
     {
         return fFldVanish.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -919,9 +904,7 @@ public abstract class CHPAbstractType
      */
     public void setFSmallCaps(boolean value)
     {
-        field_2_format_flags = (int)fSmallCaps.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fSmallCaps.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -931,7 +914,6 @@ public abstract class CHPAbstractType
     public boolean isFSmallCaps()
     {
         return fSmallCaps.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -940,9 +922,7 @@ public abstract class CHPAbstractType
      */
     public void setFCaps(boolean value)
     {
-        field_2_format_flags = (int)fCaps.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fCaps.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -952,7 +932,6 @@ public abstract class CHPAbstractType
     public boolean isFCaps()
     {
         return fCaps.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -961,9 +940,7 @@ public abstract class CHPAbstractType
      */
     public void setFVanish(boolean value)
     {
-        field_2_format_flags = (int)fVanish.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fVanish.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -973,7 +950,6 @@ public abstract class CHPAbstractType
     public boolean isFVanish()
     {
         return fVanish.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -982,9 +958,7 @@ public abstract class CHPAbstractType
      */
     public void setFRMark(boolean value)
     {
-        field_2_format_flags = (int)fRMark.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fRMark.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -994,7 +968,6 @@ public abstract class CHPAbstractType
     public boolean isFRMark()
     {
         return fRMark.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1003,9 +976,7 @@ public abstract class CHPAbstractType
      */
     public void setFSpec(boolean value)
     {
-        field_2_format_flags = (int)fSpec.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fSpec.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1015,7 +986,6 @@ public abstract class CHPAbstractType
     public boolean isFSpec()
     {
         return fSpec.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1024,9 +994,7 @@ public abstract class CHPAbstractType
      */
     public void setFStrike(boolean value)
     {
-        field_2_format_flags = (int)fStrike.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fStrike.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1036,7 +1004,6 @@ public abstract class CHPAbstractType
     public boolean isFStrike()
     {
         return fStrike.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1045,9 +1012,7 @@ public abstract class CHPAbstractType
      */
     public void setFObj(boolean value)
     {
-        field_2_format_flags = (int)fObj.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fObj.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1057,7 +1022,6 @@ public abstract class CHPAbstractType
     public boolean isFObj()
     {
         return fObj.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1066,9 +1030,7 @@ public abstract class CHPAbstractType
      */
     public void setFShadow(boolean value)
     {
-        field_2_format_flags = (int)fShadow.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fShadow.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1078,7 +1040,6 @@ public abstract class CHPAbstractType
     public boolean isFShadow()
     {
         return fShadow.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1087,9 +1048,7 @@ public abstract class CHPAbstractType
      */
     public void setFLowerCase(boolean value)
     {
-        field_2_format_flags = (int)fLowerCase.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fLowerCase.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1099,7 +1058,6 @@ public abstract class CHPAbstractType
     public boolean isFLowerCase()
     {
         return fLowerCase.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1108,9 +1066,7 @@ public abstract class CHPAbstractType
      */
     public void setFData(boolean value)
     {
-        field_2_format_flags = (int)fData.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fData.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1120,7 +1076,6 @@ public abstract class CHPAbstractType
     public boolean isFData()
     {
         return fData.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1129,9 +1084,7 @@ public abstract class CHPAbstractType
      */
     public void setFOle2(boolean value)
     {
-        field_2_format_flags = (int)fOle2.setBoolean(field_2_format_flags, value);
-
-
+        field_2_format_flags = fOle2.setBoolean(field_2_format_flags, value);
     }
 
     /**
@@ -1141,7 +1094,6 @@ public abstract class CHPAbstractType
     public boolean isFOle2()
     {
         return fOle2.isSet(field_2_format_flags);
-
     }
 
     /**
@@ -1150,9 +1102,7 @@ public abstract class CHPAbstractType
      */
     public void setFEmboss(boolean value)
     {
-        field_3_format_flags1 = (int)fEmboss.setBoolean(field_3_format_flags1, value);
-
-
+        field_3_format_flags1 = fEmboss.setBoolean(field_3_format_flags1, value);
     }
 
     /**
@@ -1162,7 +1112,6 @@ public abstract class CHPAbstractType
     public boolean isFEmboss()
     {
         return fEmboss.isSet(field_3_format_flags1);
-
     }
 
     /**
@@ -1171,9 +1120,7 @@ public abstract class CHPAbstractType
      */
     public void setFImprint(boolean value)
     {
-        field_3_format_flags1 = (int)fImprint.setBoolean(field_3_format_flags1, value);
-
-
+        field_3_format_flags1 = fImprint.setBoolean(field_3_format_flags1, value);
     }
 
     /**
@@ -1183,7 +1130,6 @@ public abstract class CHPAbstractType
     public boolean isFImprint()
     {
         return fImprint.isSet(field_3_format_flags1);
-
     }
 
     /**
@@ -1192,9 +1138,7 @@ public abstract class CHPAbstractType
      */
     public void setFDStrike(boolean value)
     {
-        field_3_format_flags1 = (int)fDStrike.setBoolean(field_3_format_flags1, value);
-
-
+        field_3_format_flags1 = fDStrike.setBoolean(field_3_format_flags1, value);
     }
 
     /**
@@ -1204,7 +1148,6 @@ public abstract class CHPAbstractType
     public boolean isFDStrike()
     {
         return fDStrike.isSet(field_3_format_flags1);
-
     }
 
     /**
@@ -1213,9 +1156,7 @@ public abstract class CHPAbstractType
      */
     public void setFUsePgsuSettings(boolean value)
     {
-        field_3_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_3_format_flags1, value);
-
-
+        field_3_format_flags1 = fUsePgsuSettings.setBoolean(field_3_format_flags1, value);
     }
 
     /**
@@ -1225,7 +1166,6 @@ public abstract class CHPAbstractType
     public boolean isFUsePgsuSettings()
     {
         return fUsePgsuSettings.isSet(field_3_format_flags1);
-
     }
 
     /**
@@ -1235,8 +1175,6 @@ public abstract class CHPAbstractType
     public void setIcoHighlight(byte value)
     {
         field_33_Highlight = (short)icoHighlight.setValue(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1246,7 +1184,6 @@ public abstract class CHPAbstractType
     public byte getIcoHighlight()
     {
         return ( byte )icoHighlight.getValue(field_33_Highlight);
-
     }
 
     /**
@@ -1256,8 +1193,6 @@ public abstract class CHPAbstractType
     public void setFHighlight(boolean value)
     {
         field_33_Highlight = (short)fHighlight.setBoolean(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1267,7 +1202,6 @@ public abstract class CHPAbstractType
     public boolean isFHighlight()
     {
         return fHighlight.isSet(field_33_Highlight);
-
     }
 
     /**
@@ -1277,8 +1211,6 @@ public abstract class CHPAbstractType
     public void setKcd(byte value)
     {
         field_33_Highlight = (short)kcd.setValue(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1288,7 +1220,6 @@ public abstract class CHPAbstractType
     public byte getKcd()
     {
         return ( byte )kcd.getValue(field_33_Highlight);
-
     }
 
     /**
@@ -1298,8 +1229,6 @@ public abstract class CHPAbstractType
     public void setFNavHighlight(boolean value)
     {
         field_33_Highlight = (short)fNavHighlight.setBoolean(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1309,7 +1238,6 @@ public abstract class CHPAbstractType
     public boolean isFNavHighlight()
     {
         return fNavHighlight.isSet(field_33_Highlight);
-
     }
 
     /**
@@ -1319,8 +1247,6 @@ public abstract class CHPAbstractType
     public void setFChsDiff(boolean value)
     {
         field_33_Highlight = (short)fChsDiff.setBoolean(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1330,7 +1256,6 @@ public abstract class CHPAbstractType
     public boolean isFChsDiff()
     {
         return fChsDiff.isSet(field_33_Highlight);
-
     }
 
     /**
@@ -1340,8 +1265,6 @@ public abstract class CHPAbstractType
     public void setFMacChs(boolean value)
     {
         field_33_Highlight = (short)fMacChs.setBoolean(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1351,7 +1274,6 @@ public abstract class CHPAbstractType
     public boolean isFMacChs()
     {
         return fMacChs.isSet(field_33_Highlight);
-
     }
 
     /**
@@ -1361,8 +1283,6 @@ public abstract class CHPAbstractType
     public void setFFtcAsciSym(boolean value)
     {
         field_33_Highlight = (short)fFtcAsciSym.setBoolean(field_33_Highlight, value);
-
-
     }
 
     /**
@@ -1372,12 +1292,5 @@ public abstract class CHPAbstractType
     public boolean isFFtcAsciSym()
     {
         return fFtcAsciSym.isSet(field_33_Highlight);
-
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

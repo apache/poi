@@ -380,13 +380,11 @@ public final class CharacterProperties
     cp.field_23_dttmRMarkDel = (DateAndTime)field_23_dttmRMarkDel.clone();
     cp.field_36_dttmPropRMark = (DateAndTime)field_36_dttmPropRMark.clone();
     cp.field_40_dttmDispFldRMark = (DateAndTime)field_40_dttmDispFldRMark.clone();
-    cp.field_41_xstDispFldRMark = (byte[])field_41_xstDispFldRMark.clone();
+    cp.field_41_xstDispFldRMark = field_41_xstDispFldRMark.clone();
     cp.field_42_shd = (ShadingDescriptor)field_42_shd.clone();
 
     cp._ico24 = _ico24;
 
     return cp;
   }
-
-
 }

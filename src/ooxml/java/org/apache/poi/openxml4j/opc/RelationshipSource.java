@@ -24,7 +24,7 @@ public interface RelationshipSource {
 
 	/**
 	 * Add a relationship to a part (except relationships part).
-	 * 
+	 *
 	 * @param targetPartName
 	 *            Name of the target part. This one must be relative to the
 	 *            source root directory of the part.
@@ -56,7 +56,7 @@ public interface RelationshipSource {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             If the URI point to a relationship part URI.
 	 */
@@ -67,28 +67,28 @@ public interface RelationshipSource {
 	/**
 	 * Adds an external relationship to a part
 	 *  (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not
 	 *  subject to the same validity checks that internal
 	 *  ones are, as the contents is potentially
 	 *  any file, URL or similar.
-	 *  
+	 *
 	 * @param target External target of the relationship
 	 * @param relationshipType Type of relationship.
 	 * @return The newly created and added relationship
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String, java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target, String relationshipType);
-	
+
 	/**
 	 * Adds an external relationship to a part
 	 *  (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not
 	 *  subject to the same validity checks that internal
 	 *  ones are, as the contents is potentially
 	 *  any file, URL or similar.
-	 *  
+	 *
 	 * @param target External target of the relationship
 	 * @param relationshipType Type of relationship.
 	 * @param id Relationship unique id.
@@ -96,7 +96,7 @@ public interface RelationshipSource {
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String, java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target, String relationshipType, String id);
-	
+
 	/**
 	 * Delete all the relationships attached to this.
 	 */
@@ -104,7 +104,7 @@ public interface RelationshipSource {
 
 	/**
 	 * Delete the relationship specified by its id.
-	 * 
+	 *
 	 * @param id
 	 *            The ID identified the part to delete.
 	 */
@@ -112,7 +112,7 @@ public interface RelationshipSource {
 
 	/**
 	 * Retrieve all the relationships attached to this.
-	 * 
+	 *
 	 * @return This part's relationships.
 	 * @throws OpenXML4JException
 	 */
@@ -121,7 +121,7 @@ public interface RelationshipSource {
 
 	/**
 	 * Retrieves a package relationship from its id.
-	 * 
+	 *
 	 * @param id
 	 *            ID of the package relationship to retrieve.
 	 * @return The package relationship
@@ -131,7 +131,7 @@ public interface RelationshipSource {
 	/**
 	 * Retrieve all relationships attached to this part which have the specified
 	 * type.
-	 * 
+	 *
 	 * @param relationshipType
 	 *            Relationship type filter.
 	 * @return All relationships from this part that have the specified type.
@@ -141,12 +141,12 @@ public interface RelationshipSource {
 	 *             If the package is open in write only mode.
 	 */
 	public abstract PackageRelationshipCollection getRelationshipsByType(
-			String relationshipType) throws InvalidFormatException, 
+			String relationshipType) throws InvalidFormatException,
 			IllegalArgumentException, OpenXML4JException;
 
 	/**
 	 * Knows if the part have any relationships.
-	 * 
+	 *
 	 * @return <b>true</b> if the part have at least one relationship else
 	 *         <b>false</b>.
 	 */
@@ -154,13 +154,12 @@ public interface RelationshipSource {
 
 	/**
 	 * Checks if the specified relationship is part of this package part.
-	 * 
+	 *
 	 * @param rel
 	 *            The relationship to check.
 	 * @return <b>true</b> if the specified relationship exists in this part,
 	 *         else returns <b>false</b>
 	 */
-	@SuppressWarnings("finally")
 	public abstract boolean isRelationshipExists(PackageRelationship rel);
 
 }

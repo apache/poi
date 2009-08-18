@@ -33,7 +33,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
       unCompressSEPOperation(newProperties, sprm);
     }
 

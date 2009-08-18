@@ -51,11 +51,11 @@ public abstract class ChunkHeader {
 		} else if(documentVersion == 5 || documentVersion == 4) {
 			ChunkHeaderV4V5 ch = new ChunkHeaderV4V5();
 
-			ch.type = (int)LittleEndian.getShort(data, offset + 0);
-			ch.id   = (int)LittleEndian.getShort(data, offset + 2);
+			ch.type = LittleEndian.getShort(data, offset + 0);
+			ch.id   = LittleEndian.getShort(data, offset + 2);
 			ch.unknown2 = (short)LittleEndian.getUnsignedByte(data, offset + 4);
 			ch.unknown3 = (short)LittleEndian.getUnsignedByte(data, offset + 5);
-			ch.unknown1 = (short)LittleEndian.getShort(data, offset + 6);
+			ch.unknown1 = LittleEndian.getShort(data, offset + 6);
 			ch.length   = (int)LittleEndian.getUInt(data, offset + 8);
 
 			return ch;

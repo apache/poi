@@ -24,10 +24,10 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider() {
-        return XSSFITestDataProvider.getInstance();
-    }
+	@Override
+	protected XSSFITestDataProvider getTestDataProvider() {
+		return XSSFITestDataProvider.getInstance();
+	}
 
 	@Override
 	protected void setUp() {
@@ -48,7 +48,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertEquals(3, workbook.getNumberOfSheets());
 
-		XSSFSheet sheet = (XSSFSheet)workbook.getSheetAt(0);
+		XSSFSheet sheet = workbook.getSheetAt(0);
 
 		// Check the hyperlinks
 		assertEquals(4, sheet.getNumHyperlinks());
@@ -65,7 +65,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		CreationHelper createHelper = workbook.getCreationHelper();
 		assertEquals(3, workbook.getNumberOfSheets());
-		XSSFSheet sheet = (XSSFSheet)workbook.getSheetAt(0);
+		XSSFSheet sheet = workbook.getSheetAt(0);
 
 		// Check hyperlinks
 		assertEquals(4, sheet.getNumHyperlinks());
@@ -81,7 +81,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		assertNotNull(wb2.getSheetAt(1));
 		assertNotNull(wb2.getSheetAt(2));
 
-		sheet = (XSSFSheet)wb2.getSheetAt(0);
+		sheet = wb2.getSheetAt(0);
 
 
 		// Check hyperlinks again

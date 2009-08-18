@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -31,34 +29,32 @@ import java.util.*;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
+public abstract class POILogger {
 
-public abstract class POILogger
-{
-
-    public static final int DEBUG = 1;
-    public static final int INFO  = 3;
-    public static final int WARN  = 5;
-    public static final int ERROR = 7;
-    public static final int FATAL = 9;
+    public static int DEBUG = 1;
+    public static int INFO  = 3;
+    public static int WARN  = 5;
+    public static int ERROR = 7;
+    public static int FATAL = 9;
 
     /**
      * package scope so it cannot be instantiated outside of the util
      * package. You need a POILogger? Go to the POILogFactory for one
-     *
      */
-    POILogger()
-    {}
-    
-    abstract public void initialize(final String cat);
-    
+    POILogger() {
+        // no fields to initialise
+    }
+
+    abstract public void initialize(String cat);
+
     /**
      * Log a message
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      */
-    abstract public void log(final int level, final Object obj1);
-    
+    abstract public void log(int level, Object obj1);
+
     /**
      * Log a message
      *
@@ -66,7 +62,7 @@ public abstract class POILogger
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
-    abstract public void log(final int level, final Object obj1,
+    abstract public void log(int level, Object obj1,
                     final Throwable exception);
 
 
@@ -75,15 +71,7 @@ public abstract class POILogger
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
-    abstract public boolean check(final int level);
-
-    /**
-     * Log a message. Lazily appends Object parameters together.
-     *
-     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 first object to place in the message
-     * @param obj2 second object to place in the message
-     */
+    abstract public boolean check(int level);
 
    /**
      * Log a message. Lazily appends Object parameters together.
@@ -92,8 +80,7 @@ public abstract class POILogger
      * @param obj1 first object to place in the message
      * @param obj2 second object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2)
+    public void log(int level, Object obj1, Object obj2)
     {
         if (check(level))
         {
@@ -109,11 +96,10 @@ public abstract class POILogger
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3)
     {
-        
+
 
         if (check(level))
         {
@@ -132,11 +118,10 @@ public abstract class POILogger
      * @param obj3 third Object to place in the message
      * @param obj4 fourth Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4)
     {
-        
+
 
         if (check(level))
         {
@@ -156,11 +141,10 @@ public abstract class POILogger
      * @param obj4 fourth Object to place in the message
      * @param obj5 fifth Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5)
     {
-        
+
 
         if (check(level))
         {
@@ -181,12 +165,11 @@ public abstract class POILogger
      * @param obj5 fifth Object to place in the message
      * @param obj6 sixth Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6)
     {
-        
+
 
         if (check(level))
         {
@@ -208,12 +191,11 @@ public abstract class POILogger
      * @param obj6 sixth Object to place in the message
      * @param obj7 seventh Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6, final Object obj7)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6, Object obj7)
     {
-        
+
 
         if (check(level))
         {
@@ -237,12 +219,11 @@ public abstract class POILogger
      * @param obj7 seventh Object to place in the message
      * @param obj8 eighth Object to place in the message
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6, final Object obj7, final Object obj8)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6, Object obj7, Object obj8)
     {
-        
+
 
         if (check(level))
         {
@@ -259,8 +240,7 @@ public abstract class POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Throwable exception)
+    public void log(int level, final Throwable exception)
     {
         log(level, null, exception);
     }
@@ -273,11 +253,10 @@ public abstract class POILogger
      * @param obj2 second Object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
+    public void log(int level, Object obj1, Object obj2,
                     final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -295,11 +274,10 @@ public abstract class POILogger
      * @param obj3 third object to place in the message
      * @param exception An error message to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Throwable exception)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -318,12 +296,11 @@ public abstract class POILogger
      * @param obj4 fourth object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4,
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4,
                     final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -343,12 +320,11 @@ public abstract class POILogger
      * @param obj5 fifth object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
                     final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -369,12 +345,11 @@ public abstract class POILogger
      * @param obj6 sixth object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6, final Throwable exception)
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6, final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -397,13 +372,12 @@ public abstract class POILogger
      * @param obj7 seventh object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6, final Object obj7,
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6, Object obj7,
                     final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -427,13 +401,12 @@ public abstract class POILogger
      * @param obj8 eighth object to place in the message
      * @param exception An exception to be logged
      */
-
-    public void log(final int level, final Object obj1, final Object obj2,
-                    final Object obj3, final Object obj4, final Object obj5,
-                    final Object obj6, final Object obj7, final Object obj8,
+    public void log(int level, Object obj1, Object obj2,
+                    Object obj3, Object obj4, Object obj5,
+                    Object obj6, Object obj7, Object obj8,
                     final Throwable exception)
     {
-        
+
 
         if (check(level))
         {
@@ -467,9 +440,8 @@ public abstract class POILogger
      * @param message The message to log.
      * @param obj1 The first object to match against.
      */
-
-    public void logFormatted(final int level, final String message,
-                             final Object obj1)
+    public void logFormatted(int level, String message,
+                             Object obj1)
     {
         commonLogFormatted(level, message, new Object[]
         {
@@ -502,9 +474,8 @@ public abstract class POILogger
      * @param obj1 The first object to match against.
      * @param obj2 The second object to match against.
      */
-
-    public void logFormatted(final int level, final String message,
-                             final Object obj1, final Object obj2)
+    public void logFormatted(int level, String message,
+                             Object obj1, Object obj2)
     {
         commonLogFormatted(level, message, new Object[]
         {
@@ -538,10 +509,9 @@ public abstract class POILogger
      * @param obj2 The second object to match against.
      * @param obj3 The third object to match against.
      */
-
-    public void logFormatted(final int level, final String message,
-                             final Object obj1, final Object obj2,
-                             final Object obj3)
+    public void logFormatted(int level, String message,
+                             Object obj1, Object obj2,
+                             Object obj3)
     {
         commonLogFormatted(level, message, new Object[]
         {
@@ -576,21 +546,20 @@ public abstract class POILogger
      * @param obj3 The third object to match against.
      * @param obj4 The forth object to match against.
      */
-
-    public void logFormatted(final int level, final String message,
-                             final Object obj1, final Object obj2,
-                             final Object obj3, final Object obj4)
+    public void logFormatted(int level, String message,
+                             Object obj1, Object obj2,
+                             Object obj3, Object obj4)
     {
         commonLogFormatted(level, message, new Object[]
         {
             obj1, obj2, obj3, obj4
         });
-    }                             
+    }
 
-    private void commonLogFormatted(final int level, final String message,
-                                    final Object [] unflatParams)
+    private void commonLogFormatted(int level, String message,
+                                    Object [] unflatParams)
     {
-        
+
 
         if (check(level))
         {
@@ -611,21 +580,20 @@ public abstract class POILogger
     /**
      * Flattens any contained objects. Only tranverses one level deep.
      */
-
-    private Object [] flattenArrays(final Object [] objects)
+    private Object [] flattenArrays(Object [] objects)
     {
-        List results = new ArrayList();
+        List<Object> results = new ArrayList<Object>();
 
         for (int i = 0; i < objects.length; i++)
         {
             results.addAll(objectToObjectArray(objects[ i ]));
         }
-        return ( Object [] ) results.toArray(new Object[ results.size() ]);
+        return results.toArray(new Object[ results.size() ]);
     }
 
-    private List objectToObjectArray(Object object)
+    private List<Object> objectToObjectArray(Object object)
     {
-        List results = new ArrayList();
+        List<Object> results = new ArrayList<Object>();
 
         if (object instanceof byte [])
         {
@@ -705,6 +673,4 @@ public abstract class POILogger
         }
         return results;
     }
-                                 
-}   // end package scope abstract class POILogger
-
+}

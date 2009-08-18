@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 
 /**
  * A part relationship.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  */
@@ -86,7 +86,7 @@ public final class PackageRelationship {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param pkg
 	 * @param sourcePart
 	 * @param targetUri
@@ -171,19 +171,19 @@ public final class PackageRelationship {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return URL of the source part of this relationship
 	 */
 	public URI getSourceURI() {
 		if (source == null) {
 			return PackagingURIHelper.PACKAGE_ROOT_URI;
 		}
-		return source.partName.getURI();
+		return source._partName.getURI();
 	}
 
 	/**
 	 * public URI getSourceUri(){ }
-	 * 
+	 *
 	 * @return the targetMode
 	 */
 	public TargetMode getTargetMode() {
@@ -199,7 +199,7 @@ public final class PackageRelationship {
 		if(targetMode == TargetMode.EXTERNAL) {
 			return targetUri;
 		}
-		
+
 		// Internal target
 		// If it isn't absolute, resolve it relative
 		//  to ourselves

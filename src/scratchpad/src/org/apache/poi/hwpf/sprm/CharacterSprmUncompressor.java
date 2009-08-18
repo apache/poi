@@ -46,7 +46,7 @@ public final class CharacterSprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
       unCompressCHPOperation(parent, newProperties, sprm);
     }
 
@@ -108,8 +108,8 @@ public final class CharacterSprmUncompressor
         break;
       case 0x9:
         newCHP.setFSpec (true);
-        newCHP.setFtcSym ((short) LittleEndian.getShort (sprm.getGrpprl(), sprm.getGrpprlOffset()));
-        newCHP.setXchSym ((short) LittleEndian.getShort (sprm.getGrpprl(), sprm.getGrpprlOffset() + 2));
+        newCHP.setFtcSym (LittleEndian.getShort (sprm.getGrpprl(), sprm.getGrpprlOffset()));
+        newCHP.setXchSym (LittleEndian.getShort (sprm.getGrpprl(), sprm.getGrpprlOffset() + 2));
         break;
       case 0xa:
         newCHP.setFOle2 (getFlag (sprm.getOperand()));
@@ -426,8 +426,8 @@ public final class CharacterSprmUncompressor
 //                                styleSheet, opSize);
         break;
       case 0x4d:
-        float percentage = (float) sprm.getOperand() / 100.0f;
-        int add = (int) ((float) percentage * (float) newCHP.getHps ());
+        float percentage = sprm.getOperand() / 100.0f;
+        int add = (int) (percentage * newCHP.getHps ());
         newCHP.setHps (newCHP.getHps () + add);
         break;
       case 0x4e:
@@ -462,7 +462,7 @@ public final class CharacterSprmUncompressor
         byte[] buf = sprm.getGrpprl();
         int offset = sprm.getGrpprlOffset();
         newCHP.setFPropMark (buf[offset]);
-        newCHP.setIbstPropRMark ((short) LittleEndian.getShort (buf, offset + 1));
+        newCHP.setIbstPropRMark (LittleEndian.getShort (buf, offset + 1));
         newCHP.setDttmPropRMark (new DateAndTime(buf, offset +3));
         break;
       case 0x58:
@@ -494,7 +494,7 @@ public final class CharacterSprmUncompressor
         buf = sprm.getGrpprl();
         offset = sprm.getGrpprlOffset();
         newCHP.setFDispFldRMark (buf[offset]);
-        newCHP.setIbstDispFldRMark ((short) LittleEndian.getShort (buf, offset + 1));
+        newCHP.setIbstDispFldRMark (LittleEndian.getShort (buf, offset + 1));
         newCHP.setDttmDispFldRMark (new DateAndTime(buf, offset + 3));
         System.arraycopy (buf, offset + 7, xstDispFldRMark, 0, 32);
         newCHP.setXstDispFldRMark (xstDispFldRMark);
@@ -553,14 +553,7 @@ public final class CharacterSprmUncompressor
    */
   public static boolean getFlag (int x)
   {
-    if (x != 0)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return x != 0;
   }
 
   private static boolean getCHPFlag (byte x, boolean oldVal)

@@ -393,8 +393,7 @@ public final class WorkbookEvaluator {
 				return fe.getFreeRefFunction().evaluate(ops, workbook, sheetIndex, srcRowNum, srcColNum);
 			}
 		}
-		// TODO - fix return type of this evaluate method:
-		return (ValueEval) operation.evaluate(ops, srcRowNum, (short)srcColNum);
+		return operation.evaluate(ops, srcRowNum, (short)srcColNum);
 	}
 	private SheetRefEvaluator createExternSheetRefEvaluator(EvaluationTracker tracker,
 			ExternSheetReferenceToken ptg) {

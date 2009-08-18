@@ -225,21 +225,19 @@ public final class StyleSheet implements HDFType {
           {
 
               parentPAP = _styleDescriptions[baseIndex].getPAP();
-              if(parentPAP == null)
-              {
-            	  if(baseIndex == istd) {
-            		  // Oh dear, style claims that it is its own parent
-            		  throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
-            	  } else {
-            		  // Create the parent style
-                      createPap(baseIndex);
-                      parentPAP = _styleDescriptions[baseIndex].getPAP();
-            	  }
+              if(parentPAP == null) {
+                  if(baseIndex == istd) {
+                      // Oh dear, style claims that it is its own parent
+                      throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
+                  }
+                  // Create the parent style
+                  createPap(baseIndex);
+                  parentPAP = _styleDescriptions[baseIndex].getPAP();
               }
 
           }
 
-          pap = (ParagraphProperties)ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
+          pap = ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
           sd.setPAP(pap);
       }
   }
@@ -274,7 +272,7 @@ public final class StyleSheet implements HDFType {
 
           }
 
-          chp = (CharacterProperties)CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
+          chp = CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
           sd.setCHP(chp);
       }
   }

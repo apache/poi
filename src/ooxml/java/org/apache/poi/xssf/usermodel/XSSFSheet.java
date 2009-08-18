@@ -255,7 +255,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Returns the name of this sheet
-     * 
+     *
      * @return the name of this sheet
      */
     public String getSheetName() {
@@ -358,7 +358,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void createFreezePane(int colSplit, int rowSplit) {
         createFreezePane( colSplit, rowSplit, colSplit, rowSplit );
     }
-    
+
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit	  Horizonatal position of split.
@@ -533,7 +533,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                worksheet.getSheetFormatPr() :
                worksheet.addNewSheetFormatPr();
     }
-    
+
     /**
      * Returns the CellStyle that applies to the given
      *  (0 based) column, or null if no style has been
@@ -571,7 +571,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
      * When false, cells with zero value appear blank instead of showing the number zero.
-     * 
+     *
      * @return whether all zero values on the worksheet are displayed
      */
     public boolean isDisplayZeros(){
@@ -1333,7 +1333,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     			.getOutlineLevel(), true);
 
     	// write collapse field
-    	setColumn((int) (lastColMax + 1), null, 0, null, null, Boolean.TRUE);
+    	setColumn(lastColMax + 1, null, 0, null, null, Boolean.TRUE);
 
     }
 
@@ -1433,7 +1433,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Sets all adjacent columns of the same outline level to the specified
      * hidden status.
-     * 
+     *
      * @param pIdx
      *                the col info index of the start of the outline group
      * @return the column index of the last column in the outline group
@@ -1626,7 +1626,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * 'Collapsed' state is stored in a single column col info record
      * immediately after the outline group
-     * 
+     *
      * @param idx
      * @return a boolean represented if the column is collapsed
      */
@@ -1764,7 +1764,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * outline level collapsed, thus hiding all the child rows. Note that in
      * this case, if the lowest level were expanded, the middle level would
      * remain collapsed.
-     * 
+     *
      * @param rowIndex -
      *                the row involved, 0 based
      * @param collapse -
@@ -1895,8 +1895,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     		endLevel = 0;
     		endHidden = false;
     	} else {
-    		endLevel = (int) (getRow(endOfOutlineGroupIdx).getCTRow()
-    				.getOutlineLevel());
+    		endLevel = getRow(endOfOutlineGroupIdx).getCTRow().getOutlineLevel();
     		endHidden = getRow(endOfOutlineGroupIdx).getCTRow().getHidden();
     	}
 
@@ -1931,7 +1930,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	else
     		return getRow(collapseRow).getCTRow().getCollapsed();
     }
-    
+
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a
      * fraction.  For example to express a zoom of 75% use 3 for the numerator

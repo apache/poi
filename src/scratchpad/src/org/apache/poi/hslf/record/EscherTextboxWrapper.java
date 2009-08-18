@@ -32,12 +32,10 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch
  */
-
-public final class EscherTextboxWrapper extends RecordContainer
-{
+public final class EscherTextboxWrapper extends RecordContainer {
 	private EscherTextboxRecord _escherRecord;
 	private long _type;
-    private int shapeId;
+	private int shapeId;
 
 	/**
 	 * Returns the underlying DDF Escher Record
@@ -49,7 +47,7 @@ public final class EscherTextboxWrapper extends RecordContainer
 	 */
 	public EscherTextboxWrapper(EscherTextboxRecord textbox) {
 		_escherRecord = textbox;
-		_type = (long)_escherRecord.getRecordId();
+		_type = _escherRecord.getRecordId();
 
 		// Find the child records in the escher data
 		byte[] data = _escherRecord.getData();
@@ -93,17 +91,17 @@ public final class EscherTextboxWrapper extends RecordContainer
 		_escherRecord.setData(data);
 	}
 
-    /**
-     * @return  Shape ID
-     */
-    public int getShapeId(){
-        return shapeId;
-    }
+	/**
+	 * @return  Shape ID
+	 */
+	public int getShapeId(){
+		return shapeId;
+	}
 
-    /**
-     *  @param id Shape ID
-     */
-    public void setShapeId(int id){
-        shapeId = id;
-    }
+	/**
+	 *  @param id Shape ID
+	 */
+	public void setShapeId(int id){
+		shapeId = id;
+	}
 }

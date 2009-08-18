@@ -42,17 +42,13 @@ import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.BlockWritable;
 
 /**
- * Provides a HashMap with the ability to parse a PIOFS object and provide 
+ * Provides a HashMap with the ability to parse a PIOFS object and provide
  * an 'easy to access' hashmap structure for the document chunks inside it.
- * 
+ *
  * @author Travis Ferguson
  */
-public class POIFSChunkParser {
-	/**
-	 * Constructor 
-	 * @param fs
-	 * @throws IOException 
-	 */
+public final class POIFSChunkParser {
+
 	public POIFSChunkParser(POIFSFileSystem fs) throws IOException {
 		this.setFileSystem(fs);
 	}
@@ -61,7 +57,6 @@ public class POIFSChunkParser {
 	/**
 	 * Set the POIFileSystem object that this object is using.
 	 * @param fs
-	 * @throws IOException 
 	 */
 	public void setFileSystem(POIFSFileSystem fs) throws IOException {
 		this.fs = fs;
@@ -77,33 +72,32 @@ public class POIFSChunkParser {
 
 	/**
 	 * Reparse the FileSystem object, resetting all the chunks stored in this object
-	 * @throws IOException 
 	 *
 	 */
 	public void reparseFileSystem() throws IOException {
 		// first clear this object of all chunks
 		DirectoryEntry root = this.fs.getRoot();
 		Iterator iter = root.getEntries();
-		
+
 		this.directoryMap = this.processPOIIterator(iter);
 	}
-	
+
 	/**
-	 * Returns a list of the standard chunk types, as 
+	 * Returns a list of the standard chunk types, as
 	 *  appropriate for the chunks we find in the file.
 	 */
 	public Chunks identifyChunks() {
 		return Chunks.getInstance(this.isNewChunkVersion(this.directoryMap));
 	}
-	
+
 	/**
-	 * Returns a list of the standard chunk types, as 
+	 * Returns a list of the standard chunk types, as
 	 *  appropriate for the chunks we find in the file attachment.
 	 */
 	private AttachmentChunks identifyAttachmentChunks(Map attachmentMap) {
 		return AttachmentChunks.getInstance(this.isNewChunkVersion(attachmentMap));
 	}
-	
+
 	/**
 	 * Return chunk version of the map in parameter
 	 */
@@ -113,10 +107,10 @@ public class POIFSChunkParser {
 		boolean hasNewStrings = false;
 		String oldStringEnd = Types.asFileEnding(Types.OLD_STRING);
 		String newStringEnd = Types.asFileEnding(Types.NEW_STRING);
-		
+
 		for(Iterator i = map.keySet().iterator(); i.hasNext();) {
 			String entry = (String)i.next();
-			
+
 			if(entry.endsWith( oldStringEnd )) {
 				hasOldStrings = true;
 			}
@@ -124,7 +118,7 @@ public class POIFSChunkParser {
 				hasNewStrings = true;
 			}
 		}
-		
+
 		if(hasOldStrings && hasNewStrings) {
 			throw new IllegalStateException("Your file contains string chunks of both the old and new types. Giving up");
 		} else if(hasNewStrings) {
@@ -132,18 +126,18 @@ public class POIFSChunkParser {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Pull the chunk data that's stored in this object's hashmap out and return it as a HashMap.
 	 * @param entryName
 	 */
 	public Object getChunk(HashMap dirMap, String entryName) {
-		if(dirMap == null) return null;
-		else {
-			return dirMap.get(entryName);
+		if(dirMap == null) {
+			return null;
 		}
+		return dirMap.get(entryName);
 	}
-	
+
 	/**
 	 * Pull a directory/hashmap out of this hashmap and return it
 	 * @param directoryName
@@ -155,14 +149,14 @@ public class POIFSChunkParser {
 		DirectoryChunkNotFoundException excep = new DirectoryChunkNotFoundException(directoryName);
 		Object obj = getChunk(this.directoryMap, directoryName);
 		if(obj == null || !(obj instanceof HashMap)) throw excep;
-		
+
 		return (HashMap)obj;
 	}
-	
+
 	/**
 	 * Pulls a ByteArrayOutputStream from this objects HashMap, this can be used to read a byte array of the contents of the given chunk.
 	 * @param dirNode
-     * @param chunk
+	 * @param chunk
 	 * @throws ChunkNotFoundException
 	 */
 	public Chunk getDocumentNode(HashMap dirNode, Chunk chunk) throws ChunkNotFoundException {
@@ -170,12 +164,12 @@ public class POIFSChunkParser {
 		ChunkNotFoundException excep = new ChunkNotFoundException(entryName);
 		Object obj = getChunk(dirNode, entryName);
 		if(obj == null || !(obj instanceof ByteArrayOutputStream)) throw excep;
-		
+
 		chunk.setValue((ByteArrayOutputStream)obj);
-		
+
 		return chunk;
 	}
-	
+
 	/**
 	 * Pulls a Chunk out of this objects root Node tree.
 	 * @param chunk
@@ -184,9 +178,9 @@ public class POIFSChunkParser {
 	public Chunk getDocumentNode(Chunk chunk) throws ChunkNotFoundException {
 		return getDocumentNode(this.directoryMap, chunk);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return a map containing attachment name (String) and data (ByteArrayInputStream)
 	 */
 	public Map getAttachmentList() {
@@ -194,12 +188,12 @@ public class POIFSChunkParser {
 		List attachmentList = new ArrayList();
 		for(Iterator i = directoryMap.keySet().iterator(); i.hasNext();) {
 			String entry = (String)i.next();
-			
+
 			if(entry.startsWith(AttachmentChunks.namePrefix)) {
 				String attachmentIdString = entry.replace(AttachmentChunks.namePrefix, "");
 				try {
 					int attachmentId = Integer.parseInt(attachmentIdString);
-					attachmentList.add((HashMap)directoryMap.get(entry));
+					attachmentList.add(directoryMap.get(entry));
 				} catch (NumberFormatException nfe) {
 					System.err.println("Invalid attachment id");
 				}
@@ -218,7 +212,7 @@ public class POIFSChunkParser {
 		}
 		return attachments;
 	}
-	
+
 	/**
 	 * Processes an iterator returned by a POIFS call to getRoot().getEntries()
 	 * @param iter
@@ -226,85 +220,85 @@ public class POIFSChunkParser {
 	 * @throws IOException
 	 */
 	private HashMap processPOIIterator(Iterator iter) throws IOException {
-        HashMap currentNode = new HashMap();
-        
-        while(iter.hasNext()) {
-            Object obj = iter.next();
-            if(obj instanceof DocumentNode) {
-                this.processDocumentNode((DocumentNode)obj, currentNode);
-            } else if(obj instanceof DirectoryNode) {
-                String blockName = ((DirectoryNode)obj).getName();
-                Iterator viewIt = null;
-                if( ((DirectoryNode)obj).preferArray()) {
-                    Object[] arr = ((DirectoryNode)obj).getViewableArray();
-                    ArrayList viewList = new ArrayList(arr.length);
+		HashMap currentNode = new HashMap();
 
-                    for(int i = 0; i < arr.length; i++) {
-                        viewList.add(arr[i]);
-                    }
-                    viewIt = viewList.iterator();
-                } else {
-                        viewIt = ((DirectoryNode)obj).getViewableIterator();
-                }
-                //store the next node on the hashmap
-                currentNode.put(blockName, processPOIIterator(viewIt));
-            } else if(obj instanceof DirectoryProperty) {
-            	//don't do anything with the directory property chunk...
-            } else {
-                    System.err.println("Unknown node: " + obj.toString());
-            }
-        }
-        return currentNode;
-	}	
+		while(iter.hasNext()) {
+			Object obj = iter.next();
+			if(obj instanceof DocumentNode) {
+				this.processDocumentNode((DocumentNode)obj, currentNode);
+			} else if(obj instanceof DirectoryNode) {
+				String blockName = ((DirectoryNode)obj).getName();
+				Iterator viewIt = null;
+				if( ((DirectoryNode)obj).preferArray()) {
+					Object[] arr = ((DirectoryNode)obj).getViewableArray();
+					ArrayList viewList = new ArrayList(arr.length);
+
+					for(int i = 0; i < arr.length; i++) {
+						viewList.add(arr[i]);
+					}
+					viewIt = viewList.iterator();
+				} else {
+						viewIt = ((DirectoryNode)obj).getViewableIterator();
+				}
+				//store the next node on the hashmap
+				currentNode.put(blockName, processPOIIterator(viewIt));
+			} else if(obj instanceof DirectoryProperty) {
+				//don't do anything with the directory property chunk...
+			} else {
+					System.err.println("Unknown node: " + obj.toString());
+			}
+		}
+		return currentNode;
+	}
 
 	/**
-     * Processes a document node and adds it to the current directory HashMap
-     * @param obj 
-     * @throws java.io.IOException 
-     */
-    private void processDocumentNode(DocumentNode obj, HashMap currentObj) throws IOException {
-        String blockName = ((DocumentNode)obj).getName();
-        
-        Iterator viewIt = null;
-        if( ((DocumentNode)obj).preferArray()) {
-            Object[] arr = ((DocumentNode)obj).getViewableArray();
-            ArrayList viewList = new ArrayList(arr.length);
+	 * Processes a document node and adds it to the current directory HashMap
+	 * @param obj
+	 * @throws java.io.IOException
+	 */
+	private void processDocumentNode(DocumentNode obj, HashMap currentObj) throws IOException {
+		String blockName = obj.getName();
 
-            for(int i = 0; i < arr.length; i++) {
-                    viewList.add(arr[i]);
-            }
-            viewIt = viewList.iterator();
-        } else {
-                viewIt = ((DocumentNode)obj).getViewableIterator();
-        }
+		Iterator viewIt = null;
+		if( obj.preferArray()) {
+			Object[] arr = obj.getViewableArray();
+			ArrayList viewList = new ArrayList(arr.length);
 
-        while(viewIt.hasNext()) {
-            Object view = viewIt.next();
+			for(int i = 0; i < arr.length; i++) {
+					viewList.add(arr[i]);
+			}
+			viewIt = viewList.iterator();
+		} else {
+				viewIt = obj.getViewableIterator();
+		}
 
-            if(view instanceof DocumentProperty) {
-                    //we don't care about the properties
-            } else if(view instanceof POIFSDocument) {
-                    //check if our node has blocks or if it can just be read raw.
-                    int blockCount = ((POIFSDocument)view).countBlocks();
-                    //System.out.println("Block Name: " + blockName);
-                    if(blockCount <= 0) {
-                    	ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        
-                        BlockWritable[] bws = ((POIFSDocument)view).getSmallBlocks();
-                        for(int i = 0; i < bws.length; i++) {
-                                bws[i].writeBlocks(out);
-                        }
-                        currentObj.put(blockName, out);		
-                    } else {
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        ((POIFSDocument)view).writeBlocks(out);                    
-                        currentObj.put(blockName, out);
-                    }
-            } else {
-                System.err.println("Unknown View Type: " + view.toString());
-            }
-        }
-    }
+		while(viewIt.hasNext()) {
+			Object view = viewIt.next();
+
+			if(view instanceof DocumentProperty) {
+					//we don't care about the properties
+			} else if(view instanceof POIFSDocument) {
+					//check if our node has blocks or if it can just be read raw.
+					int blockCount = ((POIFSDocument)view).countBlocks();
+					//System.out.println("Block Name: " + blockName);
+					if(blockCount <= 0) {
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+						BlockWritable[] bws = ((POIFSDocument)view).getSmallBlocks();
+						for(int i = 0; i < bws.length; i++) {
+								bws[i].writeBlocks(out);
+						}
+						currentObj.put(blockName, out);
+					} else {
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						((POIFSDocument)view).writeBlocks(out);
+						currentObj.put(blockName, out);
+					}
+			} else {
+				System.err.println("Unknown View Type: " + view.toString());
+			}
+		}
+	}
 
 	/* private instance variables */
 	private static final long serialVersionUID = 1L;

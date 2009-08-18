@@ -423,7 +423,7 @@ public final class ZipPackage extends Package {
 						+ ZipHelper.getZipItemNameFromOPCName(part
 								.getPartName().getName()) + "'");
 				PartMarshaller marshaller = partMarshallers
-						.get(part.contentType);
+						.get(part._contentType);
 				if (marshaller != null) {
 					if (!marshaller.marshall(part, zos)) {
 						throw new OpenXML4JException(

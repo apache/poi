@@ -145,9 +145,8 @@ public class XSSFCellStyle implements CellStyle {
         CTCellAlignment align = cellXf.getAlignment();
         if(align != null && align.isSetHorizontal()) {
             return HorizontalAlignment.values()[align.getHorizontal().intValue()-1];
-        } else {
-            return HorizontalAlignment.GENERAL;
         }
+        return HorizontalAlignment.GENERAL;
     }
 
     /**
@@ -865,7 +864,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public void setDataFormat(short fmt) {
         cellXf.setApplyNumberFormat(true);
-        cellXf.setNumFmtId((long)fmt);
+        cellXf.setNumFmtId(fmt);
     }
 
     /**

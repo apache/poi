@@ -25,10 +25,10 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Font Formatting Block of the Conditional Formatting Rule Record.
- * 
+ *
  * @author Dmitriy Kumshayev
  */
-public final class FontFormatting 
+public final class FontFormatting
 {
 	private byte[] _rawData;
 
@@ -45,7 +45,7 @@ public final class FontFormatting
 	private static final int OFFSET_FONT_WEIGHT_MODIFIED = 100;
 	private static final int OFFSET_NOT_USED1 = 104;
 	private static final int OFFSET_NOT_USED2 = 108;
-	private static final int OFFSET_NOT_USED3 = 112; // for some reason Excel always writes  0x7FFFFFFF at this offset   
+	private static final int OFFSET_NOT_USED3 = 112; // for some reason Excel always writes  0x7FFFFFFF at this offset
 	private static final int OFFSET_FONT_FORMATING_END = 116;
 	private static final int RAW_DATA_SIZE = 118;
 
@@ -71,15 +71,15 @@ public final class FontFormatting
 	public static final short SS_SUPER = 1;
 	/** Escapement type - Subscript */
 	public static final short SS_SUB   = 2;
-	/** Underline type - None */ 
+	/** Underline type - None */
 	public static final byte U_NONE               = 0;
-	/** Underline type - Single */ 
+	/** Underline type - Single */
 	public static final byte U_SINGLE             = 1;
-	/** Underline type - Double */ 
+	/** Underline type - Double */
 	public static final byte U_DOUBLE             = 2;
-	/** Underline type - Single Accounting */ 
+	/** Underline type - Single Accounting */
 	public static final byte U_SINGLE_ACCOUNTING  = 0x21;
-	/** Underline type - Double Accounting */ 
+	/** Underline type - Double Accounting */
 	public static final byte U_DOUBLE_ACCOUNTING  = 0x22;
 	/** Normal boldness (not bold) */
 	private static final short FONT_WEIGHT_NORMAL = 0x190;
@@ -92,7 +92,7 @@ public final class FontFormatting
 	private FontFormatting(byte[] rawData) {
 		_rawData = rawData;
 	}
-	
+
 	public FontFormatting()
 	{
 		this(new byte[RAW_DATA_SIZE]);
@@ -144,7 +144,7 @@ public final class FontFormatting
 	private void setInt(int offset, int value) {
 		LittleEndian.putInt( _rawData, offset, value);
 	}
-	
+
 	public byte[] getRawRecord()
 	{
 		return _rawData;
@@ -152,7 +152,7 @@ public final class FontFormatting
 
 	/**
 	 * sets the height of the font in 1/20th point units
-	 *  
+	 *
 	 *
 	 * @param height  fontheight (in points/20); or -1 to preserve the cell font height
 	 */
@@ -270,7 +270,7 @@ public final class FontFormatting
 	/**
 	 * set the font weight to bold (weight=700) or to normal(weight=400) boldness.
 	 *
-	 * @param bold - set font weight to bold if true; to normal otherwise  
+	 * @param bold - set font weight to bold if true; to normal otherwise
 	 */
 	public void setBold(boolean bold)
 	{
@@ -541,9 +541,9 @@ public final class FontFormatting
 		return buffer.toString();
 	}
 
-	public Object clone() 
+	public Object clone()
 	{
-		byte[] rawData = (byte[]) _rawData.clone();
+		byte[] rawData = _rawData.clone();
 		return new FontFormatting(rawData);
 	}
 }

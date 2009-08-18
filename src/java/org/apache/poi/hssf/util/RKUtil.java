@@ -27,19 +27,16 @@ package org.apache.poi.hssf.util;
  * @see org.apache.poi.hssf.record.MulRKRecord
  * @see org.apache.poi.hssf.record.RKRecord
  */
-public class RKUtil
-{
-    private RKUtil()
-    {
+public final class RKUtil {
+    private RKUtil() {
+        // no instances of this class
     }
 
     /**
      * Do the dirty work of decoding; made a private static method to
      * facilitate testing the algorithm
      */
-
-    public static double decodeNumber(int number)
-    {
+    public static double decodeNumber(int number) {
         long raw_number = number;
 
         // mask off the two low-order bits, 'cause they're not part of
@@ -51,7 +48,7 @@ public class RKUtil
         {
             // ok, it's just a plain ol' int; we can handle this
             // trivially by casting
-            rvalue = ( double ) (raw_number);
+            rvalue = raw_number;
         }
         else
         {
@@ -72,5 +69,4 @@ public class RKUtil
 
         return rvalue;
     }
-
 }

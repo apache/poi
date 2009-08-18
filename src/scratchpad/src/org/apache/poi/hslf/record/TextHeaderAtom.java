@@ -72,7 +72,7 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the type
-		textType = (int)LittleEndian.getInt(source,start+8);
+		textType = LittleEndian.getInt(source,start+8);
 	}
 
 	/**

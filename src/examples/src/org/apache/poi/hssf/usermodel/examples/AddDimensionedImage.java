@@ -238,7 +238,6 @@ public class AddDimensionedImage {
             String imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws FileNotFoundException, IOException,
                                                      IllegalArgumentException  {
-        HSSFRow row = null;
         HSSFClientAnchor anchor = null;
         HSSFPatriarch patriarch = null;
         ClientAnchorDetail rowClientAnchorDetail = null;
@@ -280,7 +279,7 @@ public class AddDimensionedImage {
         // image as the size of the row/column is adjusted. This could easilly
         // become another parameter passed to the method.
         anchor.setAnchorType(HSSFClientAnchor.DONT_MOVE_AND_RESIZE);
-        
+
         // Now, add the picture to the workbook. Note that the type is assumed
         // to be a JPEG/JPG, this could easily (and should) be parameterised
         // however.
@@ -485,7 +484,6 @@ public class AddDimensionedImage {
         double colWidthMM = 0.0D;
         double overlapMM = 0.0D;
         double coordinatePositionsPerMM = 0.0D;
-        int fromNumber = startingColumn;
         int toColumn = startingColumn;
         int inset = 0;
 
@@ -522,7 +520,7 @@ public class AddDimensionedImage {
             // total number of co-ordinate positions to the third paramater
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
-            anchorDetail = new ClientAnchorDetail(startingColumn, 
+            anchorDetail = new ClientAnchorDetail(startingColumn,
                     toColumn, ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS);
         }
         // In this case, the image will overlap part of another column and it is
@@ -706,8 +704,6 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        File file = null;
-        FileInputStream fis = null;
         FileOutputStream fos = null;
         HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
@@ -761,13 +757,13 @@ public class AddDimensionedImage {
      *      * Together, parameter seven and eight determine the column and row
      *      co-ordinates of the cell whose top left hand corner will be aligned
      *      with the images bottom right hand corner.
-     * 
+     *
      * An instance of the ClientAnchorDetail class provides three of the eight
      * parameters, one of the co-ordinates for the images top left hand corner,
-     * one of the co-ordinates for the images bottom right hand corner and 
+     * one of the co-ordinates for the images bottom right hand corner and
      * either how far the image should be inset from the top or the left hand
      * edge of the cell.
-     * 
+     *
      * @author Mark Beardsley [msb at apache.org]
      * @version 1.00 5th August 2009.
      */
@@ -892,7 +888,7 @@ public class AddDimensionedImage {
             int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
                     * UNIT_OFFSET_LENGTH;
             int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-            pixels += Math.round((float) offsetWidthUnits /
+            pixels += Math.round(offsetWidthUnits /
                     ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
             return pixels;
         }
