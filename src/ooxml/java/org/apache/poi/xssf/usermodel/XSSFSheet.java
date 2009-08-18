@@ -434,8 +434,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public XSSFComment getCellComment(int row, int column) {
-        if (sheetComments == null) return null;
-        else return sheetComments.findCellComment(row, column);
+        if (sheetComments == null) {
+            return null;
+        }
+        return sheetComments.findCellComment(row, column);
     }
 
     public XSSFHyperlink getHyperlink(int row, int column) {
@@ -1915,9 +1917,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	}
     	if (endLevel > startLevel) {
     		return endHidden;
-    	} else {
-    		return startHidden;
     	}
+    	return startHidden;
     }
 
     /**
@@ -1925,10 +1926,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     private boolean isRowGroupCollapsed(int row) {
     	int collapseRow = findEndOfRowOutlineGroup(row) + 1;
-    	if (getRow(collapseRow) == null)
-    		return false;
-    	else
-    		return getRow(collapseRow).getCTRow().getCollapsed();
+    	if (getRow(collapseRow) == null) {
+			return false;
+		}
+    	return getRow(collapseRow).getCTRow().getCollapsed();
     }
 
     /**

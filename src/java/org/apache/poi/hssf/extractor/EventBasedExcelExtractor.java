@@ -65,13 +65,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</link>
  */
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
-	private POIFSFileSystem fs;
-	private boolean includeSheetNames = true;
-	private boolean formulasNotResults = false;
+	private POIFSFileSystem _fs;
+	boolean _includeSheetNames = true;
+	boolean _formulasNotResults = false;
 
 	public EventBasedExcelExtractor(POIFSFileSystem fs) {
 		super(null);
-		this.fs = fs;
+		_fs = fs;
 	}
 
 	/**
@@ -94,14 +94,14 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	 * Should sheet names be included? Default is true
 	 */
 	public void setIncludeSheetNames(boolean includeSheetNames) {
-		this.includeSheetNames = includeSheetNames;
+		_includeSheetNames = includeSheetNames;
 	}
 	/**
 	 * Should we return the formula itself, and not
 	 *  the result it produces? Default is false
 	 */
 	public void setFormulasNotResults(boolean formulasNotResults) {
-		this.formulasNotResults = formulasNotResults;
+		_formulasNotResults = formulasNotResults;
 	}
 
 
@@ -113,7 +113,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		try {
 			TextListener tl = triggerExtraction();
 
-			text = tl.text.toString();
+			text = tl._text.toString();
 			if(! text.endsWith("\n")) {
 				text = text + "\n";
 			}
@@ -127,30 +127,33 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 	private TextListener triggerExtraction() throws IOException {
 		TextListener tl = new TextListener();
 		FormatTrackingHSSFListener ft = new FormatTrackingHSSFListener(tl);
-		tl.ft = ft;
+		tl._ft = ft;
 
 		// Register and process
 		HSSFEventFactory factory = new HSSFEventFactory();
 		HSSFRequest request = new HSSFRequest();
 		request.addListenerForAllRecords(ft);
 
-		factory.processWorkbookEvents(request, fs);
+		factory.processWorkbookEvents(request, _fs);
 
 		return tl;
 	}
 
 	private class TextListener implements HSSFListener {
-		private FormatTrackingHSSFListener ft;
+		FormatTrackingHSSFListener _ft;
 		private SSTRecord sstRecord;
 
-		private List sheetNames = new ArrayList();
-		private StringBuffer text = new StringBuffer();
+		private final List<String> sheetNames;
+		final StringBuffer _text = new StringBuffer();
 		private int sheetNum = -1;
 		private int rowNum;
 
 		private boolean outputNextStringValue = false;
 		private int nextRow = -1;
 
+		public TextListener() {
+			sheetNames = new ArrayList<String>();
+		}
 		public void processRecord(Record record) {
 			String thisText = null;
 			int thisRow = -1;
@@ -166,9 +169,9 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 					sheetNum++;
 					rowNum = -1;
 
-					if(includeSheetNames) {
-						if(text.length() > 0) text.append("\n");
-						text.append(sheetNames.get(sheetNum));
+					if(_includeSheetNames) {
+						if(_text.length() > 0) _text.append("\n");
+						_text.append(sheetNames.get(sheetNum));
 					}
 				}
 				break;
@@ -180,7 +183,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 				FormulaRecord frec = (FormulaRecord) record;
 				thisRow = frec.getRow();
 
-				if(formulasNotResults) {
+				if(_formulasNotResults) {
 					thisText = HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, frec.getParsedExpression());
 				} else {
 					if(frec.hasCachedResultString()) {
@@ -232,12 +235,12 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 			if(thisText != null) {
 				if(thisRow != rowNum) {
 					rowNum = thisRow;
-					if(text.length() > 0)
-						text.append("\n");
+					if(_text.length() > 0)
+						_text.append("\n");
 				} else {
-					text.append("\t");
+					_text.append("\t");
 				}
-				text.append(thisText);
+				_text.append(thisText);
 			}
 		}
 
@@ -247,35 +250,33 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		 */
 		private String formatNumberDateCell(CellValueRecordInterface cell, double value) {
 			// Get the built in format, if there is one
-			int formatIndex = ft.getFormatIndex(cell);
-			String formatString = ft.getFormatString(cell);
+			int formatIndex = _ft.getFormatIndex(cell);
+			String formatString = _ft.getFormatString(cell);
 
 			if(formatString == null) {
 				return Double.toString(value);
-			} else {
-				// Is it a date?
-				if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
-						HSSFDateUtil.isValidExcelDate(value)) {
-					// Java wants M not m for month
-					formatString = formatString.replace('m','M');
-					// Change \- into -, if it's there
-					formatString = formatString.replaceAll("\\\\-","-");
-
-					// Format as a date
-					Date d = HSSFDateUtil.getJavaDate(value, false);
-					DateFormat df = new SimpleDateFormat(formatString);
-					return df.format(d);
-				} else {
-					if(formatString == "General") {
-						// Some sort of wierd default
-						return Double.toString(value);
-					}
-
-					// Format as a number
-					DecimalFormat df = new DecimalFormat(formatString);
-					return df.format(value);
-				}
 			}
+			// Is it a date?
+			if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
+					HSSFDateUtil.isValidExcelDate(value)) {
+				// Java wants M not m for month
+				formatString = formatString.replace('m','M');
+				// Change \- into -, if it's there
+				formatString = formatString.replaceAll("\\\\-","-");
+
+				// Format as a date
+				Date d = HSSFDateUtil.getJavaDate(value, false);
+				DateFormat df = new SimpleDateFormat(formatString);
+				return df.format(d);
+			}
+			if(formatString == "General") {
+				// Some sort of wierd default
+				return Double.toString(value);
+			}
+
+			// Format as a number
+			DecimalFormat df = new DecimalFormat(formatString);
+			return df.format(value);
 		}
 	}
 }

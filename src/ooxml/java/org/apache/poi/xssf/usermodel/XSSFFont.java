@@ -42,8 +42,8 @@ public class XSSFFont implements Font {
      */
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 
-    private CTFont ctFont;
-    private short index;
+    private CTFont _ctFont;
+    private short _index;
 
     /**
      * Create a new XSSFFont
@@ -51,20 +51,20 @@ public class XSSFFont implements Font {
      * @param font the underlying CTFont bean
      */
     public XSSFFont(CTFont font) {
-        this.ctFont = font;
-        this.index = 0;
+        _ctFont = font;
+        _index = 0;
     }
 
     public XSSFFont(CTFont font, int index) {
-        this.ctFont = font;
-        this.index = (short)index;
+        _ctFont = font;
+        _index = (short)index;
     }
 
     /**
      * Create a new XSSFont. This method is protected to be used only by XSSFWorkbook
      */
     protected XSSFFont() {
-        this.ctFont = CTFont.Factory.newInstance();
+        this._ctFont = CTFont.Factory.newInstance();
         setFontName(DEFAULT_FONT_NAME);
         setFontHeight((double)DEFAULT_FONT_SIZE);
     }
@@ -73,7 +73,7 @@ public class XSSFFont implements Font {
      * get the underlying CTFont font
      */
     public CTFont getCTFont() {
-        return ctFont;
+        return _ctFont;
     }
 
     /**
@@ -82,7 +82,7 @@ public class XSSFFont implements Font {
      * @return boolean - bold
      */
     public boolean getBold() {
-        CTBooleanProperty bold = ctFont.sizeOfBArray() == 0 ? null : ctFont.getBArray(0);
+        CTBooleanProperty bold = _ctFont.sizeOfBArray() == 0 ? null : _ctFont.getBArray(0);
         return (bold != null && bold.getVal());
     }
 
@@ -93,7 +93,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.ss.usermodel.FontCharset
      */
     public byte getCharSet() {
-        CTIntProperty charset = ctFont.sizeOfCharsetArray() == 0 ? null : ctFont.getCharsetArray(0);
+        CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
         int val = charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
         return (byte)val;
     }
@@ -107,7 +107,7 @@ public class XSSFFont implements Font {
      * @see IndexedColors
      */
     public short getColor() {
-        CTColor color = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        CTColor color = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         if (color == null) return IndexedColors.BLACK.getIndex();
 
         long index = color.getIndexed();
@@ -128,7 +128,7 @@ public class XSSFFont implements Font {
      * @return XSSFColor - rgb color to use
      */
     public XSSFColor getXSSFColor() {
-        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         return ctColor == null ? null : new XSSFColor(ctColor);
     }
 
@@ -140,7 +140,7 @@ public class XSSFFont implements Font {
      * @return short - theme defined to use
      */
     public short getThemeColor() {
-        CTColor color = ctFont.sizeOfColorArray() == 0 ? null : ctFont.getColorArray(0);
+        CTColor color = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         long index = color == null ? 0 : color.getTheme();
         return (short) index;
     }
@@ -151,12 +151,12 @@ public class XSSFFont implements Font {
      * @return short - height in point
      */
     public short getFontHeight() {
-        CTFontSize size = ctFont.sizeOfSzArray() == 0 ? null : ctFont.getSzArray(0);
+        CTFontSize size = _ctFont.sizeOfSzArray() == 0 ? null : _ctFont.getSzArray(0);
         if (size != null) {
             double fontHeight = size.getVal();
             return (short)(fontHeight*20);
-        } else
-            return (short)(DEFAULT_FONT_SIZE*20);
+        }
+        return (short)(DEFAULT_FONT_SIZE*20);
     }
 
     /**
@@ -172,7 +172,7 @@ public class XSSFFont implements Font {
      * @return String - a string representing the name of the font to use
      */
     public String getFontName() {
-        CTFontName name = ctFont.sizeOfNameArray() == 0 ? null : ctFont.getNameArray(0);
+        CTFontName name = _ctFont.sizeOfNameArray() == 0 ? null : _ctFont.getNameArray(0);
         return name == null ? DEFAULT_FONT_NAME : name.getVal();
     }
 
@@ -182,7 +182,7 @@ public class XSSFFont implements Font {
      * @return boolean - value for italic
      */
     public boolean getItalic() {
-        CTBooleanProperty italic = ctFont.sizeOfIArray() == 0 ? null : ctFont.getIArray(0);
+        CTBooleanProperty italic = _ctFont.sizeOfIArray() == 0 ? null : _ctFont.getIArray(0);
         return italic != null && italic.getVal();
     }
 
@@ -192,7 +192,7 @@ public class XSSFFont implements Font {
      * @return boolean - value for strikeout
      */
     public boolean getStrikeout() {
-        CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? null : ctFont.getStrikeArray(0);
+        CTBooleanProperty strike = _ctFont.sizeOfStrikeArray() == 0 ? null : _ctFont.getStrikeArray(0);
         return strike != null && strike.getVal();
     }
 
@@ -205,21 +205,21 @@ public class XSSFFont implements Font {
      * @see Font#SS_SUB
      */
     public short getTypeOffset() {
-        CTVerticalAlignFontProperty vAlign = ctFont.sizeOfVertAlignArray() == 0 ? null : ctFont.getVertAlignArray(0);
-        if (vAlign != null) {
-            int val = vAlign.getVal().intValue();
-            switch (val) {
-                case STVerticalAlignRun.INT_BASELINE:
-                    return Font.SS_NONE;
-                case STVerticalAlignRun.INT_SUBSCRIPT:
-                    return Font.SS_SUB;
-                case STVerticalAlignRun.INT_SUPERSCRIPT:
-                    return Font.SS_SUPER;
-                default:
-                    throw new POIXMLException("Wrong offset value " + val);
-            }
-        } else
+        CTVerticalAlignFontProperty vAlign = _ctFont.sizeOfVertAlignArray() == 0 ? null : _ctFont.getVertAlignArray(0);
+        if (vAlign == null) {
             return Font.SS_NONE;
+        }
+        int val = vAlign.getVal().intValue();
+        switch (val) {
+            case STVerticalAlignRun.INT_BASELINE:
+                return Font.SS_NONE;
+            case STVerticalAlignRun.INT_SUBSCRIPT:
+                return Font.SS_SUB;
+            case STVerticalAlignRun.INT_SUPERSCRIPT:
+                return Font.SS_SUPER;
+            default:
+                throw new POIXMLException("Wrong offset value " + val);
+        }
     }
 
     /**
@@ -229,7 +229,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.ss.usermodel.FontUnderline
      */
     public byte getUnderline() {
-        CTUnderlineProperty underline = ctFont.sizeOfUArray() == 0 ? null : ctFont.getUArray(0);
+        CTUnderlineProperty underline = _ctFont.sizeOfUArray() == 0 ? null : _ctFont.getUArray(0);
         if (underline != null) {
             FontUnderline val = FontUnderline.valueOf(underline.getVal().intValue());
             return val.getByteValue();
@@ -244,10 +244,10 @@ public class XSSFFont implements Font {
      */
     public void setBold(boolean bold) {
         if(bold){
-            CTBooleanProperty ctBold = ctFont.sizeOfBArray() == 0 ? ctFont.addNewB() : ctFont.getBArray(0);
+            CTBooleanProperty ctBold = _ctFont.sizeOfBArray() == 0 ? _ctFont.addNewB() : _ctFont.getBArray(0);
             ctBold.setVal(bold);
         } else {
-            ctFont.setBArray(null);
+            _ctFont.setBArray(null);
         }
     }
 
@@ -275,7 +275,7 @@ public class XSSFFont implements Font {
      * @see FontCharset
      */
     public void setCharSet(byte charset) {
-        CTIntProperty charsetProperty = ctFont.sizeOfCharsetArray() == 0 ? ctFont.addNewCharset() : ctFont.getCharsetArray(0);
+        CTIntProperty charsetProperty = _ctFont.sizeOfCharsetArray() == 0 ? _ctFont.addNewCharset() : _ctFont.getCharsetArray(0);
         switch (charset) {
             case Font.ANSI_CHARSET:
                 charsetProperty.setVal(FontCharset.ANSI.getValue());
@@ -308,7 +308,7 @@ public class XSSFFont implements Font {
      * @see IndexedColors
      */
     public void setColor(short color) {
-        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+        CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
         switch (color) {
             case Font.COLOR_NORMAL: {
                 ctColor.setIndexed(XSSFFont.DEFAULT_FONT_COLOR);
@@ -329,9 +329,9 @@ public class XSSFFont implements Font {
      * @param color - color to use
      */
     public void setColor(XSSFColor color) {
-        if(color == null) ctFont.setColorArray(null);
+        if(color == null) _ctFont.setColorArray(null);
         else {
-            CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+            CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
             ctColor.setRgb(color.getRgb());
         }
     }
@@ -351,7 +351,7 @@ public class XSSFFont implements Font {
      * @param height - height in points
      */
     public void setFontHeight(double height) {
-        CTFontSize fontSize = ctFont.sizeOfSzArray() == 0 ? ctFont.addNewSz() : ctFont.getSzArray(0);
+        CTFontSize fontSize = _ctFont.sizeOfSzArray() == 0 ? _ctFont.addNewSz() : _ctFont.getSzArray(0);
         fontSize.setVal(height);
     }
 
@@ -370,7 +370,7 @@ public class XSSFFont implements Font {
      * @param theme - theme color to use
      */
     public void setThemeColor(short theme) {
-        CTColor ctColor = ctFont.sizeOfColorArray() == 0 ? ctFont.addNewColor() : ctFont.getColorArray(0);
+        CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
         ctColor.setTheme(theme);
     }
 
@@ -386,7 +386,7 @@ public class XSSFFont implements Font {
      * @see #DEFAULT_FONT_NAME
      */
     public void setFontName(String name) {
-        CTFontName fontName = ctFont.sizeOfNameArray() == 0 ? ctFont.addNewName() : ctFont.getNameArray(0);
+        CTFontName fontName = _ctFont.sizeOfNameArray() == 0 ? _ctFont.addNewName() : _ctFont.getNameArray(0);
         fontName.setVal(name == null ? DEFAULT_FONT_NAME : name);
     }
 
@@ -399,10 +399,10 @@ public class XSSFFont implements Font {
      */
     public void setItalic(boolean italic) {
         if(italic){
-            CTBooleanProperty bool = ctFont.sizeOfIArray() == 0 ? ctFont.addNewI() : ctFont.getIArray(0);
+            CTBooleanProperty bool = _ctFont.sizeOfIArray() == 0 ? _ctFont.addNewI() : _ctFont.getIArray(0);
             bool.setVal(italic);
         } else {
-            ctFont.setIArray(null);
+            _ctFont.setIArray(null);
         }
     }
 
@@ -414,9 +414,9 @@ public class XSSFFont implements Font {
      * @param strikeout - value for strikeout or not
      */
     public void setStrikeout(boolean strikeout) {
-        if(!strikeout) ctFont.setStrikeArray(null);
+        if(!strikeout) _ctFont.setStrikeArray(null);
         else {
-            CTBooleanProperty strike = ctFont.sizeOfStrikeArray() == 0 ? ctFont.addNewStrike() : ctFont.getStrikeArray(0);
+            CTBooleanProperty strike = _ctFont.sizeOfStrikeArray() == 0 ? _ctFont.addNewStrike() : _ctFont.getStrikeArray(0);
             strike.setVal(strikeout);
         }
     }
@@ -433,9 +433,9 @@ public class XSSFFont implements Font {
      */
     public void setTypeOffset(short offset) {
         if(offset == Font.SS_NONE){
-            ctFont.setVertAlignArray(null);
+            _ctFont.setVertAlignArray(null);
         } else {
-            CTVerticalAlignFontProperty offsetProperty = ctFont.sizeOfVertAlignArray() == 0 ? ctFont.addNewVertAlign() : ctFont.getVertAlignArray(0);
+            CTVerticalAlignFontProperty offsetProperty = _ctFont.sizeOfVertAlignArray() == 0 ? _ctFont.addNewVertAlign() : _ctFont.getVertAlignArray(0);
             switch (offset) {
                 case Font.SS_NONE:
                     offsetProperty.setVal(STVerticalAlignRun.BASELINE);
@@ -469,10 +469,10 @@ public class XSSFFont implements Font {
      * @param underline - FontUnderline enum value
      */
     public void setUnderline(FontUnderline underline) {
-        if(underline == FontUnderline.NONE && ctFont.sizeOfUArray() > 0){
-            ctFont.setUArray(null);
+        if(underline == FontUnderline.NONE && _ctFont.sizeOfUArray() > 0){
+            _ctFont.setUArray(null);
         } else {
-            CTUnderlineProperty ctUnderline = ctFont.sizeOfUArray() == 0 ? ctFont.addNewU() : ctFont.getUArray(0);
+            CTUnderlineProperty ctUnderline = _ctFont.sizeOfUArray() == 0 ? _ctFont.addNewU() : _ctFont.getUArray(0);
             STUnderlineValues.Enum val = STUnderlineValues.Enum.forInt(underline.getValue());
             ctUnderline.setVal(val);
         }
@@ -480,7 +480,7 @@ public class XSSFFont implements Font {
 
 
     public String toString() {
-        return ctFont.toString();
+        return _ctFont.toString();
     }
 
 
@@ -489,7 +489,7 @@ public class XSSFFont implements Font {
      */
     public long putFont(StylesTable styles) {
         short idx = (short)styles.putFont(this);
-        this.index = idx;
+        this._index = idx;
         return idx;
     }
 
@@ -501,7 +501,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.xssf.model.StylesTable#createDefaultFont()
      */
     public FontScheme getScheme() {
-        CTFontScheme scheme = ctFont.sizeOfSchemeArray() == 0 ? null : ctFont.getSchemeArray(0);
+        CTFontScheme scheme = _ctFont.sizeOfSchemeArray() == 0 ? null : _ctFont.getSchemeArray(0);
         return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal().intValue());
     }
 
@@ -512,7 +512,7 @@ public class XSSFFont implements Font {
      * @see FontScheme
      */
     public void setScheme(FontScheme scheme) {
-        CTFontScheme ctFontScheme = ctFont.sizeOfSchemeArray() == 0 ? ctFont.addNewScheme() : ctFont.getSchemeArray(0);
+        CTFontScheme ctFontScheme = _ctFont.sizeOfSchemeArray() == 0 ? _ctFont.addNewScheme() : _ctFont.getSchemeArray(0);
         STFontScheme.Enum val = STFontScheme.Enum.forInt(scheme.getValue());
         ctFontScheme.setVal(val);
     }
@@ -524,7 +524,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.ss.usermodel.FontFamily
      */
     public int getFamily() {
-        CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
+        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
         return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
     }
 
@@ -537,7 +537,7 @@ public class XSSFFont implements Font {
      * @see FontFamily
      */
     public void setFamily(int value) {
-        CTIntProperty family = ctFont.sizeOfFamilyArray() == 0 ? ctFont.addNewFamily() : ctFont.getFamilyArray(0);
+        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
         family.setVal(value);
     }
 
@@ -560,18 +560,18 @@ public class XSSFFont implements Font {
 
     public short getIndex()
     {
-        return index;
+        return _index;
     }
 
     public int hashCode(){
-        return ctFont.toString().hashCode();
+        return _ctFont.toString().hashCode();
     }
 
     public boolean equals(Object o){
         if(!(o instanceof XSSFFont)) return false;
 
         XSSFFont cf = (XSSFFont)o;
-        return ctFont.toString().equals(cf.getCTFont().toString());
+        return _ctFont.toString().equals(cf.getCTFont().toString());
     }
 
 }

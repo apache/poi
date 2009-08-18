@@ -44,10 +44,10 @@ public class XWPFTableRow {
     }
 
     public XWPFTableCell getCell(int pos) {
-        if (pos >= 0 && pos < ctRow.sizeOfTcArray())
+        if (pos >= 0 && pos < ctRow.sizeOfTcArray()) {
             return new XWPFTableCell(ctRow.getTcArray(pos));
-        else
-            return null;
+        }
+        return null;
     }
 
     /**

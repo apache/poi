@@ -52,14 +52,6 @@ public final class HeaderFooter
   }
   public boolean isEmpty()
   {
-    if(_start - _end == 0)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return _start - _end == 0;
   }
-
 }

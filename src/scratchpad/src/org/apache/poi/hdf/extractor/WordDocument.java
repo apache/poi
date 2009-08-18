@@ -314,34 +314,29 @@ public final class WordDocument {
     {
         throw new IOException("corrupted Word file");
     }
-    else
+    //parse out the text pieces
+    int pieceTableSize = LittleEndian.getInt(tableStream, ++pos);
+    pos += 4;
+    int pieces = (pieceTableSize - 4) / 12;
+    for (int x = 0; x < pieces; x++)
     {
-        //parse out the text pieces
-        int pieceTableSize = LittleEndian.getInt(tableStream, ++pos);
-        pos += 4;
-        int pieces = (pieceTableSize - 4) / 12;
-        for (int x = 0; x < pieces; x++)
+        int filePos = LittleEndian.getInt(tableStream, pos + ((pieces + 1) * 4) + (x * 8) + 2);
+        boolean unicode = false;
+        if ((filePos & 0x40000000) == 0)
         {
-            int filePos = LittleEndian.getInt(tableStream, pos + ((pieces + 1) * 4) + (x * 8) + 2);
-            boolean unicode = false;
-            if ((filePos & 0x40000000) == 0)
-            {
-                unicode = true;
-            }
-            else
-            {
-                unicode = false;
-                filePos &= ~(0x40000000);//gives me FC in doc stream
-                filePos /= 2;
-            }
-            int totLength = LittleEndian.getInt(tableStream, pos + (x + 1) * 4) -
-                            LittleEndian.getInt(tableStream, pos + (x * 4));
-
-            TextPiece piece = new TextPiece(filePos, totLength, unicode);
-            _text.add(piece);
-
+            unicode = true;
         }
+        else
+        {
+            unicode = false;
+            filePos &= ~(0x40000000);//gives me FC in doc stream
+            filePos /= 2;
+        }
+        int totLength = LittleEndian.getInt(tableStream, pos + (x + 1) * 4) -
+                        LittleEndian.getInt(tableStream, pos + (x * 4));
 
+        TextPiece piece = new TextPiece(filePos, totLength, unicode);
+        _text.add(piece);
     }
   }
 
@@ -355,8 +350,7 @@ public final class WordDocument {
    * @param size of the paragraph bin table.
    */
   private void findFormatting(byte[] tableStream, int charOffset,
-                              int charPlcSize, int parOffset, int parPlcSize) throws IOException
-  {
+                              int charPlcSize, int parOffset, int parPlcSize) {
       openDoc();
       createStyleSheet(tableStream);
       createListTables(tableStream);
@@ -1287,7 +1281,7 @@ public final class WordDocument {
   private ArrayList findProperties(int start, int end, BTreeSet.BTreeNode root)
   {
     ArrayList results = new ArrayList();
-    BTreeSet.Entry[] entries = root.entries;
+    BTreeSet.Entry[] entries = root._entries;
 
     for(int x = 0; x < entries.length; x++)
     {
@@ -1366,7 +1360,7 @@ public final class WordDocument {
   private ArrayList findPAPProperties(int start, int end, BTreeSet.BTreeNode root)
   {
     ArrayList results = new ArrayList();
-    BTreeSet.Entry[] entries = root.entries;
+    BTreeSet.Entry[] entries = root._entries;
 
     for(int x = 0; x < entries.length; x++)
     {

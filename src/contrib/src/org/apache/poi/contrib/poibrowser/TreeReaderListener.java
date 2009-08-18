@@ -33,7 +33,7 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
  * <p>Organizes document information in a tree model in order to be
  * e.g. displayed in a Swing {@link javax.swing.JTree}. An instance of this
  * class is created with a root tree node ({@link MutableTreeNode}) and
- * registered as a {@link POIFSReaderListener} with a {@link 
+ * registered as a {@link POIFSReaderListener} with a {@link
  * org.apache.poi.poifs.eventfilesystem.POIFSReader}. While the latter processes
  * a POI filesystem it calls this class' {@link #processPOIFSReaderEvent} for
  * each document it has been registered for. This method appends the document it
@@ -204,20 +204,16 @@ public class TreeReaderListener implements POIFSReaderListener
             }
             return n;
         }
-        else
-        {
-            /* The path is somewhere down in the POI filesystem's
-             * hierarchy. We need the tree node of this path's parent
-             * and attach our new node to it. */
-            final String name = path.getComponent(path.length() - 1);
-            final POIFSDocumentPath parentPath = path.getParent();
-            final MutableTreeNode parentNode =
-                getNode(parentPath, fsName, root);
-            n = new DefaultMutableTreeNode(name);
-            pathToNode.put(path, n);
-            parentNode.insert(n, 0);
-            return n;
-        }
+        /* else - The path is somewhere down in the POI filesystem's
+         * hierarchy. We need the tree node of this path's parent
+         * and attach our new node to it. */
+        final String name = path.getComponent(path.length() - 1);
+        final POIFSDocumentPath parentPath = path.getParent();
+        final MutableTreeNode parentNode =
+            getNode(parentPath, fsName, root);
+        n = new DefaultMutableTreeNode(name);
+        pathToNode.put(path, n);
+        parentNode.insert(n, 0);
+        return n;
     }
-
 }

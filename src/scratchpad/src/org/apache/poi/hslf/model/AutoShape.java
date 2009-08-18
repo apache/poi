@@ -112,10 +112,9 @@ public class AutoShape extends TextShape {
         if(outline == null){
             logger.log(POILogger.WARN, "Outline not found for " + ShapeTypes.typeName(getShapeType()));
             return anchor;
-        } else {
-            java.awt.Shape shape = outline.getOutline(this);
-            return AutoShapes.transform(shape, anchor);
         }
+        java.awt.Shape shape = outline.getOutline(this);
+        return AutoShapes.transform(shape, anchor);
     }
 
 }

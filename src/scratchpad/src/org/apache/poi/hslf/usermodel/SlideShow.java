@@ -262,12 +262,11 @@ public final class SlideShow {
 		if (coreRecordId != null) {
 			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
 			return r;
-		} else {
-			logger.log(POILogger.ERROR,
-					"We tried to look up a reference to a core record, but there was no core ID for reference ID "
-							+ refID);
-			return null;
 		}
+		logger.log(POILogger.ERROR,
+				"We tried to look up a reference to a core record, but there was no core ID for reference ID "
+						+ refID);
+		return null;
 	}
 
 	/**
@@ -989,9 +988,8 @@ public final class SlideShow {
 		}
 		if (ppt2007 && _notes.length > 0) {
 			return new HeadersFooters(hdd, _notes[0], newRecord, ppt2007);
-		} else {
-			return new HeadersFooters(hdd, this, newRecord, ppt2007);
 		}
+		return new HeadersFooters(hdd, this, newRecord, ppt2007);
 	}
 
 	/**

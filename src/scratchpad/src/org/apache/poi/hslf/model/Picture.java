@@ -152,14 +152,14 @@ public class Picture extends SimpleShape {
                	img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
             }
             catch (IOException e){}
-        	catch (NegativeArraySizeException ne) {}
+            catch (NegativeArraySizeException ne) {}
 
             if(img != null) {
-            	// Valid image, set anchor from it
-            	setAnchor(new java.awt.Rectangle(0, 0, img.getWidth()*POINT_DPI/PIXEL_DPI, img.getHeight()*POINT_DPI/PIXEL_DPI));
+                // Valid image, set anchor from it
+                setAnchor(new java.awt.Rectangle(0, 0, img.getWidth()*POINT_DPI/PIXEL_DPI, img.getHeight()*POINT_DPI/PIXEL_DPI));
             } else {
-            	// Invalid image, go with the default metafile size
-            	setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
+                // Invalid image, go with the default metafile size
+                setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
             }
         } else {
             //default size of a metafile picture is 200x200
@@ -204,9 +204,8 @@ public class Picture extends SimpleShape {
         if (idx == 0){
             logger.log(POILogger.DEBUG, "picture index was not found, returning ");
             return null;
-        } else {
-            return (EscherBSERecord)lst.get(idx-1);
         }
+        return (EscherBSERecord)lst.get(idx-1);
     }
 
     /**

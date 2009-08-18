@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.util;
 
 import org.apache.poi.openxml4j.opc.*;
@@ -31,7 +32,7 @@ import java.net.URI;
  *
  * @author Yegor Kozlov
  */
-public class PackageHelper {
+public final class PackageHelper {
 
     /**
      * Clone the specified package.
@@ -74,10 +75,9 @@ public class PackageHelper {
             if (rel.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
                 copyProperties(pkg.getPackageProperties(), dest.getPackageProperties());
                 continue;
-            } else {
-                dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
-                part_tgt = dest.createPart(part.getPartName(), part.getContentType());
             }
+            dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
+            part_tgt = dest.createPart(part.getPartName(), part.getContentType());
 
             OutputStream out = part_tgt.getOutputStream();
             IOUtils.copy(part.getInputStream(), out);
@@ -95,7 +95,7 @@ public class PackageHelper {
     }
 
     /**
-     * Creates an empty file in the default temporary-file directory, 
+     * Creates an empty file in the default temporary-file directory,
      */
     public static File createTempFile() throws IOException {
         File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
@@ -117,18 +117,18 @@ public class PackageHelper {
                 part_tgt.addExternalRelationship(rel.getTargetURI().toString(), rel.getRelationshipType(), rel.getId());
                 //external relations don't have associated package parts
                 continue;
-            } else {
-                URI uri = rel.getTargetURI();
-
-                if(uri.getRawFragment() != null) {
-                    part_tgt.addRelationship(uri, rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
-                    continue;
-                } else {
-                    PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                    p = pkg.getPart(relName);
-                    part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
-                }
             }
+            URI uri = rel.getTargetURI();
+
+            if(uri.getRawFragment() != null) {
+                part_tgt.addRelationship(uri, rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+                continue;
+            }
+            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+            p = pkg.getPart(relName);
+            part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+
+
 
 
             PackagePart dest;

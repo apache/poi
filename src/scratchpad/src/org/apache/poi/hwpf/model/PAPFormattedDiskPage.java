@@ -226,13 +226,12 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
             throw new UnsupportedOperationException(
                   "This Paragraph has no dataStream storage.");
           }
-          else // we have some storage...
-          {
-            // get the size of the existing storage
-            int maxHugeGrpprlSize = LittleEndian.getUShort(_dataStream,
-                hugeGrpprlOffset);
+          // we have some storage...
 
-            if (maxHugeGrpprlSize < grpprl.length-2) // grpprl.length-2 because we don't store the istd
+          // get the size of the existing storage
+          int maxHugeGrpprlSize = LittleEndian.getUShort(_dataStream, hugeGrpprlOffset);
+
+          if (maxHugeGrpprlSize < grpprl.length-2) { // grpprl.length-2 because we don't store the istd
               throw new UnsupportedOperationException(
                   "This Paragraph's dataStream storage is too small.");
           }

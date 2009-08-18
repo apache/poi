@@ -34,7 +34,7 @@ import org.dom4j.Document;
 
 /**
  * Zip implementation of the ContentTypeManager.
- * 
+ *
  * @author Julien Chable
  * @version 1.0
  * @see ContentTypeManager
@@ -44,7 +44,7 @@ public class ZipContentTypeManager extends ContentTypeManager {
 
 	/**
 	 * Delegate constructor to the super constructor.
-	 * 
+	 *
 	 * @param in
 	 *            The input stream to parse to fill internal content type
 	 *            collections.
@@ -78,9 +78,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
 				if (resultRead == -1) {
 					// end of file reached
 					break;
-				} else {
-					zos.write(buff, 0, resultRead);
 				}
+				zos.write(buff, 0, resultRead);
 			}
 			zos.closeEntry();
 		} catch (IOException ioe) {

@@ -26,9 +26,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class HSSFClientAnchor
-        extends HSSFAnchor implements ClientAnchor
-{
+public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     short col1;
     int row1;
     short col2;
@@ -108,10 +106,10 @@ public class HSSFClientAnchor
     private float getRowHeightInPoints(HSSFSheet sheet, int rowNum)
     {
         HSSFRow row = sheet.getRow(rowNum);
-        if (row == null)
+        if (row == null) {
             return sheet.getDefaultRowHeightInPoints();
-        else
-            return row.getHeightInPoints();
+        }
+        return row.getHeightInPoints();
     }
 
     public short getCol1()
@@ -204,10 +202,10 @@ public class HSSFClientAnchor
      */
     public boolean isHorizontallyFlipped()
     {
-        if (col1 == col2)
+        if (col1 == col2) {
             return dx1 > dx2;
-        else
-            return col1 > col2;
+        }
+        return col1 > col2;
     }
 
     /**
@@ -215,10 +213,10 @@ public class HSSFClientAnchor
      */
     public boolean isVerticallyFlipped()
     {
-        if (row1 == row2)
+        if (row1 == row2) {
             return dy1 > dy2;
-        else
-            return row1 > row2;
+        }
+        return row1 > row2;
     }
 
     /**

@@ -146,7 +146,7 @@ public class Section
      * @param src Contains the complete property set stream.
      * @param offset The position in the stream that points to the
      * section's format ID.
-     * 
+     *
      * @exception UnsupportedEncodingException if the section's codepage is not
      * supported.
      */
@@ -183,7 +183,7 @@ public class Section
         /*
          * Read the properties. The offset is positioned at the first
          * entry of the property list. There are two problems:
-         * 
+         *
          * 1. For each property we have to find out its length. In the
          *    property list we find each property's ID and its offset relative
          *    to the section's beginning. Unfortunately the properties in the
@@ -191,8 +191,8 @@ public class Section
          *    possible to calculate the length as
          *    (offset of property(i+1) - offset of property(i)). Before we can
          *    that we first have to sort the property list by ascending offsets.
-         * 
-         * 2. We have to read the property with ID 1 before we read other 
+         *
+         * 2. We have to read the property with ID 1 before we read other
          *    properties, at least before other properties containing strings.
          *    The reason is that property 1 specifies the codepage. If it is
          *    1200, all strings are in Unicode. In other words: Before we can
@@ -205,10 +205,10 @@ public class Section
          *    seconds pass reads the other properties.
          */
         properties = new Property[propertyCount];
-        
+
         /* Pass 1: Read the property list. */
         int pass1Offset = o1;
-        final List propertyList = new ArrayList(propertyCount);
+        final List<PropertyListEntry> propertyList = new ArrayList<PropertyListEntry>(propertyCount);
         PropertyListEntry ple;
         for (int i = 0; i < properties.length; i++)
         {
@@ -232,15 +232,13 @@ public class Section
         /* Calculate the properties' lengths. */
         for (int i = 0; i < propertyCount - 1; i++)
         {
-            final PropertyListEntry ple1 =
-                (PropertyListEntry) propertyList.get(i);
-            final PropertyListEntry ple2 =
-                (PropertyListEntry) propertyList.get(i + 1);
+            PropertyListEntry ple1 = propertyList.get(i);
+            PropertyListEntry ple2 = propertyList.get(i + 1);
             ple1.length = ple2.offset - ple1.offset;
         }
         if (propertyCount > 0)
         {
-            ple = (PropertyListEntry) propertyList.get(propertyCount - 1);
+            ple = propertyList.get(propertyCount - 1);
             ple.length = size - ple.offset;
             if (ple.length <= 0)
             {
@@ -412,10 +410,10 @@ public class Section
     protected boolean getPropertyBooleanValue(final int id)
     {
         final Boolean b = (Boolean) getProperty(id);
-        if (b != null)
-            return b.booleanValue();
-        else
+        if (b == null) {
             return false;
+        }
+        return b.booleanValue();
         }
 
 
@@ -475,23 +473,23 @@ public class Section
     /**
      * <p>Checks whether this section is equal to another object. The result is
      * <code>false</code> if one of the the following conditions holds:</p>
-     * 
+     *
      * <ul>
-     * 
+     *
      * <li><p>The other object is not a {@link Section}.</p></li>
-     * 
+     *
      * <li><p>The format IDs of the two sections are not equal.</p></li>
-     *   
+     *
      * <li><p>The sections have a different number of properties. However,
      * properties with ID 1 (codepage) are not counted.</p></li>
-     * 
+     *
      * <li><p>The other object is not a {@link Section}.</p></li>
-     * 
+     *
      * <li><p>The properties have different values. The order of the properties
      * is irrelevant.</p></li>
-     * 
+     *
      * </ul>
-     * 
+     *
      * @param o The object to compare this section with
      * @return <code>true</code> if the objects are equal, <code>false</code> if
      * not
@@ -504,7 +502,7 @@ public class Section
         if (!s.getFormatID().equals(getFormatID()))
             return false;
 
-        /* Compare all properties except 0 and 1 as they must be handled 
+        /* Compare all properties except 0 and 1 as they must be handled
          * specially. */
         Property[] pa1 = new Property[getProperties().length];
         Property[] pa2 = new Property[s.getProperties().length];
@@ -559,10 +557,10 @@ public class Section
             dictionaryEqual = p10.getValue().equals(p20.getValue());
         else if (p10 != null || p20 != null)
             dictionaryEqual = false;
-        if (!dictionaryEqual)
-            return false;
-        else
+        if (dictionaryEqual) {
             return Util.equals(pa1, pa2);
+        }
+        return false;
     }
 
 
@@ -571,7 +569,7 @@ public class Section
      * <p>Removes a field from a property array. The resulting array is
      * compactified and returned.</p>
      *
-     * @param pa The property array. 
+     * @param pa The property array.
      * @param i The index of the field to be removed.
      * @return the compactified array.
      */

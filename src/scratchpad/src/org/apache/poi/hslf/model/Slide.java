@@ -17,16 +17,22 @@
 
 package org.apache.poi.hslf.model;
 
+import java.awt.Graphics2D;
 import java.util.Vector;
-import java.util.Iterator;
-import java.awt.*;
 
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.Comment2000;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows
@@ -144,8 +150,7 @@ public final class Slide extends Sheet
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
         dgg.setMaxDrawingGroupId(dgId);
 
-        for (Iterator it = dgContainer.getChildContainers().iterator(); it.hasNext(); ) {
-            EscherContainerRecord c = (EscherContainerRecord)it.next();
+        for (EscherContainerRecord c : dgContainer.getChildContainers()) {
             EscherSpRecord spr = null;
             switch(c.getRecordId()){
                 case EscherContainerRecord.SPGR_CONTAINER:
@@ -343,10 +348,10 @@ public final class Slide extends Sheet
      * Background for this slide.
      */
      public Background getBackground() {
-        if(getFollowMasterBackground())
+        if(getFollowMasterBackground()) {
             return getMasterSheet().getBackground();
-        else
-            return super.getBackground();
+        }
+        return super.getBackground();
     }
 
     /**
@@ -449,13 +454,11 @@ public final class Slide extends Sheet
         if(hdd == null && !ppt2007) {
             return getSlideShow().getSlideHeadersFooters();
         }
-        else {
-            if(hdd == null) {
-                hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
-                newRecord = true;
-            }
-            return new HeadersFooters(hdd, this, newRecord, ppt2007);
+        if(hdd == null) {
+            hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
+            newRecord = true;
         }
+        return new HeadersFooters(hdd, this, newRecord, ppt2007);
     }
 
     protected void onAddTextShape(TextShape shape) {

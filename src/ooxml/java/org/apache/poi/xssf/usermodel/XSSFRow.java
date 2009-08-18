@@ -38,18 +38,18 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     /**
      * the xml bean containing all cell definitions for this row
      */
-    private final CTRow row;
+    private final CTRow _row;
 
     /**
      * Cells of this row keyed by their column indexes.
      * The TreeMap ensures that the cells are ordered by columnIndex in the ascending order.
      */
-    private final TreeMap<Integer, Cell> cells;
+    private final TreeMap<Integer, Cell> _cells;
 
     /**
      * the parent sheet
      */
-    private final XSSFSheet sheet;
+    private final XSSFSheet _sheet;
 
     /**
      * Construct a XSSFRow.
@@ -58,12 +58,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param sheet the parent sheet.
      */
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
-        this.row = row;
-        this.sheet = sheet;
-        this.cells = new TreeMap<Integer, Cell>();
+        _row = row;
+        _sheet = sheet;
+        _cells = new TreeMap<Integer, Cell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            cells.put(cell.getColumnIndex(), cell);
+            _cells.put(cell.getColumnIndex(), cell);
             sheet.onReadCell(cell);
         }
     }
@@ -74,7 +74,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return the XSSFSheet that owns this row
      */
     public XSSFSheet getSheet() {
-        return this.sheet;
+        return this._sheet;
     }
 
     /**
@@ -89,7 +89,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return an iterator over cells in this row.
      */
     public Iterator<Cell> cellIterator() {
-        return cells.values().iterator();
+        return _cells.values().iterator();
     }
 
     /**
@@ -164,7 +164,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if (type != Cell.CELL_TYPE_BLANK) {
         	xcell.setCellType(type);
         }
-        cells.put(columnIndex, xcell);
+        _cells.put(columnIndex, xcell);
         return xcell;
     }
 
@@ -175,7 +175,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return the cell at the given (0 based) index
      */
     public XSSFCell getCell(int cellnum) {
-    	return getCell(cellnum, sheet.getWorkbook().getMissingCellPolicy());
+    	return getCell(cellnum, _sheet.getWorkbook().getMissingCellPolicy());
     }
 
     /**
@@ -190,7 +190,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-        XSSFCell cell = (XSSFCell)cells.get(cellnum);
+        XSSFCell cell = (XSSFCell)_cells.get(cellnum);
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
     	}
@@ -217,7 +217,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *  or -1 if the row does not contain any cells.
      */
     public short getFirstCellNum() {
-    	return (short)(cells.size() == 0 ? -1 : cells.firstKey());
+    	return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
     }
 
     /**
@@ -240,7 +240,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *   or -1 if the row does not contain any cells.
      */
     public short getLastCellNum() {
-    	return (short)(cells.size() == 0 ? -1 : (cells.lastKey() + 1));
+    	return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
     }
 
     /**
@@ -261,11 +261,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()
      */
     public float getHeightInPoints() {
-    	if (this.row.isSetHt()) {
-    		return (float) this.row.getHt();
-    	} else {
-            return sheet.getDefaultRowHeightInPoints();
+        if (this._row.isSetHt()) {
+            return (float) this._row.getHt();
         }
+        return _sheet.getDefaultRowHeightInPoints();
     }
 
     /**
@@ -275,11 +274,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     public void setHeight(short height) {
         if (height == -1) {
-            if (row.isSetHt()) row.unsetHt();
-            if (row.isSetCustomHeight()) row.unsetCustomHeight();
+            if (_row.isSetHt()) _row.unsetHt();
+            if (_row.isSetCustomHeight()) _row.unsetCustomHeight();
         } else {
-            row.setHt((double) height / 20);
-            row.setCustomHeight(true);
+            _row.setHt((double) height / 20);
+            _row.setCustomHeight(true);
 
         }
     }
@@ -300,7 +299,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return int representing the number of defined cells in the row.
      */
     public int getPhysicalNumberOfCells() {
-    	return cells.size();
+    	return _cells.size();
     }
 
     /**
@@ -309,7 +308,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return the row number (0 based)
      */
     public int getRowNum() {
-        return (int) (row.getR() - 1);
+        return (int) (_row.getR() - 1);
     }
 
     /**
@@ -321,10 +320,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public void setRowNum(int rowIndex) {
         int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         if (rowIndex < 0 || rowIndex > maxrow) {
-            throw new IllegalArgumentException("Invalid row number (" + rowIndex 
+            throw new IllegalArgumentException("Invalid row number (" + rowIndex
                     + ") outside allowable range (0.." + maxrow + ")");
         }
-        row.setR(rowIndex + 1);
+        _row.setR(rowIndex + 1);
     }
 
     /**
@@ -333,7 +332,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return - height is zero or not.
      */
     public boolean getZeroHeight() {
-    	return this.row.getHidden();
+    	return this._row.getHidden();
     }
 
     /**
@@ -342,7 +341,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param height  height is zero or not.
      */
     public void setZeroHeight(boolean height) {
-    	this.row.setHidden(height);
+    	this._row.setHidden(height);
 
     }
 
@@ -352,7 +351,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param cell the cell to remove
      */
     public void removeCell(Cell cell) {
-    	cells.remove(cell.getColumnIndex());
+    	_cells.remove(cell.getColumnIndex());
     }
 
     /**
@@ -361,7 +360,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return the underlying CTRow xml bean
      */
     public CTRow getCTRow(){
-    	return row;
+    	return _row;
     }
 
     /**
@@ -372,14 +371,14 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#commit()
      */
     protected void onDocumentWrite(){
-        ArrayList<CTCell> cArray = new ArrayList<CTCell>(cells.size());
+        ArrayList<CTCell> cArray = new ArrayList<CTCell>(_cells.size());
         //create array of CTCell objects.
         //TreeMap's value iterator ensures that the cells are ordered by columnIndex in the ascending order
-        for (Cell cell : cells.values()) {
+        for (Cell cell : _cells.values()) {
             XSSFCell c = (XSSFCell)cell;
             cArray.add(c.getCTCell());
         }
-        row.setCArray(cArray.toArray(new CTCell[cArray.size()]));
+        _row.setCArray(cArray.toArray(new CTCell[cArray.size()]));
     }
 
     /**
@@ -387,7 +386,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public String toString(){
-        return row.toString();
+        return _row.toString();
     }
 
     /**
@@ -397,8 +396,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     protected void shift(int n) {
         int rownum = getRowNum() + n;
-        CalculationChain calcChain = sheet.getWorkbook().getCalculationChain();
-        int sheetId = (int)sheet.sheet.getSheetId();
+        CalculationChain calcChain = _sheet.getWorkbook().getCalculationChain();
+        int sheetId = (int)_sheet.sheet.getSheetId();
         for(Cell c : this){
             XSSFCell cell = (XSSFCell)c;
 

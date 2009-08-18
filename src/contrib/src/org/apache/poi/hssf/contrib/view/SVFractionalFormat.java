@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.contrib.view;
 
@@ -196,7 +196,7 @@ public class SVFractionalFormat extends Format {
       toAppendTo.append(format(((Number)obj).doubleValue()));
       return toAppendTo;
     }
-    else throw new IllegalArgumentException("Can only handle Numbers");
+    throw new IllegalArgumentException("Can only handle Numbers");
   }
 
   public Object parseObject(String source,

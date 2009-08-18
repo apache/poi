@@ -42,7 +42,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
 /**
- * 
+ *
  */
 public final class XSSFRelation extends POIXMLRelation {
 
@@ -114,28 +114,28 @@ public final class XSSFRelation extends POIXMLRelation {
 			"/xl/drawings/vmlDrawing#.vml",
 			null
 	);
-	
+
 	public static final XSSFRelation CUSTOM_XML_MAPPINGS = new XSSFRelation(
 			"application/xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps",
 			"/xl/xmlMaps.xml",
 			MapInfo.class
 	);
-	
+
 	public static final XSSFRelation SINGLE_XML_CELLS = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/tableSingleCells",
 			"/tables/tableSingleCells#.xml",
 			SingleXmlCells.class
 	);
-	
+
 	public static final XSSFRelation TABLE = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",
 			"/tables/table#.xml",
 			Table.class
 	);
-	
+
     public static final XSSFRelation IMAGES = new XSSFRelation(
             null,
      		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
@@ -234,7 +234,7 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/calcChain.xml",
             CalculationChain.class
     );
-	
+
 
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
@@ -256,10 +256,9 @@ public final class XSSFRelation extends POIXMLRelation {
             PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
             PackagePart part = corePart.getPackage().getPart(relName);
             return part.getInputStream();
-        } else {
-        	log.log(POILogger.WARN, "No part " + _defaultName + " found");
-        	return null;
         }
+        log.log(POILogger.WARN, "No part " + _defaultName + " found");
+        return null;
 	}
 
 

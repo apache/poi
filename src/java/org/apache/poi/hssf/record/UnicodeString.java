@@ -38,23 +38,23 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class UnicodeString implements Comparable {
+public final class UnicodeString implements Comparable<UnicodeString> {
     private short             field_1_charCount;
     private byte              field_2_optionflags;
     private String            field_3_string;
-    private List field_4_format_runs;
+    private List<FormatRun> field_4_format_runs;
     private byte[] field_5_ext_rst;
     private static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
     private static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
     private static final BitField   richText  = BitFieldFactory.getInstance(0x8);
 
-    public static class FormatRun implements Comparable {
-        short character;
-        short fontIndex;
+    public static class FormatRun implements Comparable<FormatRun> {
+        final short _character;
+        short _fontIndex;
 
         public FormatRun(short character, short fontIndex) {
-            this.character = character;
-            this.fontIndex = fontIndex;
+            this._character = character;
+            this._fontIndex = fontIndex;
         }
 
         public FormatRun(LittleEndianInput in) {
@@ -62,11 +62,11 @@ public final class UnicodeString implements Comparable {
         }
 
         public short getCharacterPos() {
-            return character;
+            return _character;
         }
 
         public short getFontIndex() {
-            return fontIndex;
+            return _fontIndex;
         }
 
         public boolean equals(Object o) {
@@ -75,25 +75,26 @@ public final class UnicodeString implements Comparable {
             }
             FormatRun other = ( FormatRun ) o;
 
-            return character == other.character && fontIndex == other.fontIndex;
+            return _character == other._character && _fontIndex == other._fontIndex;
         }
 
-        public int compareTo(Object obj) {
-            FormatRun r = (FormatRun)obj;
-            if ((character == r.character) && (fontIndex == r.fontIndex))
+        public int compareTo(FormatRun r) {
+            if (_character == r._character && _fontIndex == r._fontIndex) {
                 return 0;
-            if (character == r.character)
-                return fontIndex - r.fontIndex;
-            else return character - r.character;
+            }
+            if (_character == r._character) {
+                return _fontIndex - r._fontIndex;
+            }
+            return _character - r._character;
         }
 
         public String toString() {
-            return "character="+character+",fontIndex="+fontIndex;
+            return "character="+_character+",fontIndex="+_fontIndex;
         }
 
         public void serialize(LittleEndianOutput out) {
-            out.writeShort(character);
-            out.writeShort(fontIndex);
+            out.writeShort(_character);
+            out.writeShort(_fontIndex);
         }
     }
 
@@ -151,8 +152,8 @@ public final class UnicodeString implements Comparable {
           return false;
 
         for (int i=0;i<size;i++) {
-          FormatRun run1 = (FormatRun)field_4_format_runs.get(i);
-          FormatRun run2 = (FormatRun)other.field_4_format_runs.get(i);
+          FormatRun run1 = field_4_format_runs.get(i);
+          FormatRun run2 = other.field_4_format_runs.get(i);
 
           if (!run1.equals(run2))
             return false;
@@ -206,10 +207,10 @@ public final class UnicodeString implements Comparable {
         } else {
             field_3_string = in.readUnicodeLEString(getCharCount());
         }
- 
+
 
         if (isRichText() && (runCount > 0)) {
-          field_4_format_runs = new ArrayList(runCount);
+          field_4_format_runs = new ArrayList<FormatRun>(runCount);
           for (int i=0;i<runCount;i++) {
             field_4_format_runs.add(new FormatRun(in));
           }
@@ -328,20 +329,22 @@ public final class UnicodeString implements Comparable {
     }
 
     public FormatRun getFormatRun(int index) {
-      if (field_4_format_runs == null)
-        return null;
-      if ((index < 0) || (index >= field_4_format_runs.size()))
-        return null;
-      return (FormatRun)field_4_format_runs.get(index);
+      if (field_4_format_runs == null) {
+		return null;
+	}
+      if (index < 0 || index >= field_4_format_runs.size()) {
+		return null;
+	}
+      return field_4_format_runs.get(index);
     }
 
     private int findFormatRunAt(int characterPos) {
       int size = field_4_format_runs.size();
       for (int i=0;i<size;i++) {
-        FormatRun r = (FormatRun)field_4_format_runs.get(i);
-        if (r.character == characterPos)
+        FormatRun r = field_4_format_runs.get(i);
+        if (r._character == characterPos)
           return i;
-        else if (r.character > characterPos)
+        else if (r._character > characterPos)
           return -1;
       }
       return -1;
@@ -353,10 +356,11 @@ public final class UnicodeString implements Comparable {
      *  replaced with the font run to be added.
      */
     public void addFormatRun(FormatRun r) {
-      if (field_4_format_runs == null)
-        field_4_format_runs = new ArrayList();
+      if (field_4_format_runs == null) {
+		field_4_format_runs = new ArrayList<FormatRun>();
+	}
 
-      int index = findFormatRunAt(r.character);
+      int index = findFormatRunAt(r._character);
       if (index != -1)
          field_4_format_runs.remove(index);
 
@@ -369,9 +373,10 @@ public final class UnicodeString implements Comparable {
       field_2_optionflags = richText.setByte(field_2_optionflags);
     }
 
-    public Iterator formatIterator() {
-      if (field_4_format_runs != null)
+    public Iterator<FormatRun> formatIterator() {
+      if (field_4_format_runs != null) {
         return field_4_format_runs.iterator();
+      }
       return null;
     }
 
@@ -398,21 +403,19 @@ public final class UnicodeString implements Comparable {
 
 
     /**
-     * Swaps all use in the string of one font index 
+     * Swaps all use in the string of one font index
      *  for use of a different font index.
      * Normally only called when fonts have been
      *  removed / re-ordered
      */
     public void swapFontUse(short oldFontIndex, short newFontIndex) {
-        Iterator i = field_4_format_runs.iterator();
-        while(i.hasNext()) {
-            FormatRun run = (FormatRun)i.next();
-            if(run.fontIndex == oldFontIndex) {
-                run.fontIndex = newFontIndex;
+        for (FormatRun run : field_4_format_runs) {
+            if(run._fontIndex == oldFontIndex) {
+                run._fontIndex = newFontIndex;
             }
         }
     }
-    
+
     /**
      * unlike the real records we return the same as "getString()" rather than debug info
      * @see #getDebugInfo()
@@ -431,7 +434,6 @@ public final class UnicodeString implements Comparable {
      * @return String of output for biffviewer etc.
      *
      */
-
     public String getDebugInfo()
     {
         StringBuffer buffer = new StringBuffer();
@@ -444,7 +446,7 @@ public final class UnicodeString implements Comparable {
         buffer.append("    .string          = ").append(getString()).append("\n");
         if (field_4_format_runs != null) {
           for (int i = 0; i < field_4_format_runs.size();i++) {
-            FormatRun r = (FormatRun)field_4_format_runs.get(i);
+            FormatRun r = field_4_format_runs.get(i);
             buffer.append("      .format_run"+i+"          = ").append(r.toString()).append("\n");
           }
         }
@@ -464,7 +466,7 @@ public final class UnicodeString implements Comparable {
         if (isExtendedText() && field_5_ext_rst != null) {
             extendedDataSize = field_5_ext_rst.length;
         }
-    
+
         out.writeString(field_3_string, numberOfRichTextRuns, extendedDataSize);
 
         if (numberOfRichTextRuns > 0) {
@@ -474,7 +476,7 @@ public final class UnicodeString implements Comparable {
               if (out.getAvailableSpace() < 4) {
                   out.writeContinue();
               }
-                FormatRun r = (FormatRun)field_4_format_runs.get(i);
+                FormatRun r = field_4_format_runs.get(i);
                 r.serialize(out);
           }
         }
@@ -496,9 +498,7 @@ public final class UnicodeString implements Comparable {
         }
     }
 
-    public int compareTo(Object obj)
-    {
-        UnicodeString str = ( UnicodeString ) obj;
+    public int compareTo(UnicodeString str) {
 
         int result = getString().compareTo(str.getString());
 
@@ -524,8 +524,8 @@ public final class UnicodeString implements Comparable {
           return size - str.field_4_format_runs.size();
 
         for (int i=0;i<size;i++) {
-          FormatRun run1 = (FormatRun)field_4_format_runs.get(i);
-          FormatRun run2 = (FormatRun)str.field_4_format_runs.get(i);
+          FormatRun run1 = field_4_format_runs.get(i);
+          FormatRun run2 = str.field_4_format_runs.get(i);
 
           result = run1.compareTo(run2);
           if (result != 0)
@@ -571,11 +571,9 @@ public final class UnicodeString implements Comparable {
         str.field_2_optionflags = field_2_optionflags;
         str.field_3_string = field_3_string;
         if (field_4_format_runs != null) {
-          str.field_4_format_runs = new ArrayList();
-          int size = field_4_format_runs.size();
-          for (int i = 0; i < size; i++) {
-            FormatRun r = (FormatRun) field_4_format_runs.get(i);
-            str.field_4_format_runs.add(new FormatRun(r.character, r.fontIndex));
+          str.field_4_format_runs = new ArrayList<FormatRun>();
+          for (FormatRun r : field_4_format_runs) {
+            str.field_4_format_runs.add(new FormatRun(r._character, r._fontIndex));
             }
         }
         if (field_5_ext_rst != null) {

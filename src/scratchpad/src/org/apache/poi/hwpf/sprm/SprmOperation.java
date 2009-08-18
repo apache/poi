@@ -152,10 +152,7 @@ public final class SprmOperation
           _gOffset += 2;
           return retVal;
         }
-        else
-        {
-          return (0x000000ff & _grpprl[_gOffset++]) + 3;
-        }
+        return (0x000000ff & _grpprl[_gOffset++]) + 3;
       case 7:
         return 5;
       default:

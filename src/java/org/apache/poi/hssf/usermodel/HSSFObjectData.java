@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -33,17 +34,16 @@ import org.apache.poi.util.HexDump;
  *
  * @author Daniel Noll
  */
-public final class HSSFObjectData
-{
+public final class HSSFObjectData {
     /**
      * Underlying object record ultimately containing a reference to the object.
      */
-    private ObjRecord record;
+    private final ObjRecord _record;
 
     /**
      * Reference to the filesystem, required for retrieving the object data.
      */
-    private POIFSFileSystem poifs;
+    private final POIFSFileSystem _poifs;
 
     /**
      * Constructs object data by wrapping a lower level object record.
@@ -53,10 +53,10 @@ public final class HSSFObjectData
      */
     public HSSFObjectData(ObjRecord record, POIFSFileSystem poifs)
     {
-        this.record = record;
-        this.poifs = poifs;
+        _record = record;
+        _poifs = poifs;
     }
-    
+
     /**
      * Returns the OLE2 Class Name of the object
      */
@@ -77,14 +77,13 @@ public final class HSSFObjectData
         int streamId = subRecord.getStreamId().intValue();
         String streamName = "MBD" + HexDump.toHex(streamId);
 
-        Entry entry = poifs.getRoot().getEntry(streamName);
+        Entry entry = _poifs.getRoot().getEntry(streamName);
         if (entry instanceof DirectoryEntry) {
             return (DirectoryEntry) entry;
-        } else {
-            throw new IOException("Stream " + streamName + " was not an OLE2 directory");
         }
+        throw new IOException("Stream " + streamName + " was not an OLE2 directory");
     }
-    
+
     /**
      * Returns the data portion, for an ObjectData
      *  that doesn't have an associated POIFS Directory
@@ -93,34 +92,34 @@ public final class HSSFObjectData
     public byte[] getObjectData() {
         return findObjectRecord().getObjectData();
     }
-    
+
     /**
-     * Does this ObjectData have an associated POIFS 
+     * Does this ObjectData have an associated POIFS
      *  Directory Entry?
      * (Not all do, those that don't have a data portion)
      */
     public boolean hasDirectoryEntry() {
         EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
-        
+
         // 'stream id' field tells you
         Integer streamId = subRecord.getStreamId();
         return streamId != null && streamId.intValue() != 0;
     }
-    
+
     /**
-     * Finds the EmbeddedObjectRefSubRecord, or throws an 
+     * Finds the EmbeddedObjectRefSubRecord, or throws an
      *  Exception if there wasn't one
      */
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
-        Iterator subRecordIter = record.getSubRecords().iterator();
-        
+        Iterator<SubRecord> subRecordIter = _record.getSubRecords().iterator();
+
         while (subRecordIter.hasNext()) {
             Object subRecord = subRecordIter.next();
             if (subRecord instanceof EmbeddedObjectRefSubRecord) {
                 return (EmbeddedObjectRefSubRecord)subRecord;
             }
         }
-        
+
         throw new IllegalStateException("Object data does not contain a reference to an embedded object OLE2 directory");
     }
 }

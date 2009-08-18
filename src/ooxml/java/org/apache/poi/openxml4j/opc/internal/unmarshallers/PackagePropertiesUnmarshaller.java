@@ -31,7 +31,6 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageProperties;
@@ -44,7 +43,6 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
  * Package properties unmarshaller.
  *
  * @author Julien Chable
- * @version 1.0
  */
 public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 
@@ -110,15 +108,9 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 						.getInputStream(context.getZipEntry());
 			} else if (context.getPackage() != null) {
 				// Try to retrieve the part inputstream from the URI
-				ZipEntry zipEntry;
-				try {
-					zipEntry = ZipHelper
-							.getCorePropertiesZipEntry((ZipPackage) context
-									.getPackage());
-				} catch (OpenXML4JException e) {
-					throw new IOException(
-							"Error while trying to get the part input stream.");
-				}
+				ZipEntry zipEntry = ZipHelper
+						.getCorePropertiesZipEntry((ZipPackage) context
+								.getPackage());
 				in = ((ZipPackage) context.getPackage()).getZipArchive()
 						.getInputStream(zipEntry);
 			} else

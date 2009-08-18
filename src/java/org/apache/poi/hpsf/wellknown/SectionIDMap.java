@@ -70,7 +70,7 @@ public class SectionIDMap extends HashMap {
     };
 
     /**
-     * <p>A property without a known name is described by this string.</p> 
+     * <p>A property without a known name is described by this string.</p>
      */
     public static final String UNDEFINED = "[undefined]";
 
@@ -121,15 +121,13 @@ public class SectionIDMap extends HashMap {
                                       final long pid)
     {
         final PropertyIDMap m = getInstance().get(sectionFormatID);
-        if (m == null)
+        if (m == null) {
             return UNDEFINED;
-        else
-        {
-            final String s = (String) m.get(pid);
-            if (s == null)
-                return UNDEFINED;
-            return s;
         }
+        final String s = (String) m.get(pid);
+        if (s == null)
+            return UNDEFINED;
+        return s;
     }
 
 
@@ -137,7 +135,7 @@ public class SectionIDMap extends HashMap {
     /**
      * <p>Returns the {@link PropertyIDMap} for a given section format
      * ID.</p>
-     * 
+     *
      * @param sectionFormatID the section format ID
      * @return the property ID map
      */
@@ -166,7 +164,7 @@ public class SectionIDMap extends HashMap {
     /**
      * <p>Associates a section format ID with a {@link
      * PropertyIDMap}.</p>
-     * 
+     *
      * @param sectionFormatID the section format ID
      * @param propertyIDMap the property ID map
      * @return as defined by {@link java.util.Map#put}
@@ -183,7 +181,7 @@ public class SectionIDMap extends HashMap {
      * @deprecated Use {@link #put(byte[], PropertyIDMap)} instead!
      *
      * @see #put(byte[], PropertyIDMap)
-     * 
+     *
      * @param key This parameter remains undocumented since the method is
      * deprecated.
      * @param value This parameter remains undocumented since the method is

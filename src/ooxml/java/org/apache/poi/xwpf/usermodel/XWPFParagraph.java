@@ -89,7 +89,7 @@ public class XWPFParagraph {
                     if (o instanceof CTFtnEdnRef) {
                         CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                         footnoteText.append("[").append(ftn.getId()).append(": ");
-                        XWPFFootnote footnote = 
+                        XWPFFootnote footnote =
                                 ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                                         document.getFootnoteByID(ftn.getId().intValue()) :
                                         document.getEndnoteByID(ftn.getId().intValue());
@@ -582,10 +582,10 @@ public class XWPFParagraph {
         CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : null;
         if (ct_pageBreak != null
-                && ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE)
+                && ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
     /**
@@ -934,8 +934,8 @@ public class XWPFParagraph {
             return (wordWrap.getVal() == STOnOff.ON
                     || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
                     : false;
-        } else
-            return false;
+        }
+        return false;
     }
 
     /**

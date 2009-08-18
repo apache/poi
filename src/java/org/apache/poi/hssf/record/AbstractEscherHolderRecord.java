@@ -116,17 +116,14 @@ public abstract class AbstractEscherHolderRecord extends Record {
             System.arraycopy( rawData, 0, data, 4 + offset, rawData.length);
             return rawData.length + 4;
         }
-        else
-        {
-            LittleEndian.putShort(data, 0 + offset, getSid());
-            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+        LittleEndian.putShort(data, 0 + offset, getSid());
+        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-            int pos = offset + 4;
-            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
-            {
-                EscherRecord r = (EscherRecord) iterator.next();
-                pos += r.serialize( pos, data, new NullEscherSerializationListener() );
-            }
+        int pos = offset + 4;
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        {
+            EscherRecord r = (EscherRecord) iterator.next();
+            pos += r.serialize( pos, data, new NullEscherSerializationListener() );
         }
         return getRecordSize();
     }
@@ -172,7 +169,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     {
         escherRecords.clear();
     }
-    
+
     /**
      * If we have a EscherContainerRecord as one of our
      *  children (and most top level escher holders do),
@@ -204,7 +201,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     			return r;
     		}
     	}
-    	
+
     	// Then check our children in turn
     	for(Iterator<EscherRecord> it = records.iterator(); it.hasNext();) {
     		EscherRecord r = it.next();
@@ -215,7 +212,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     			}
     		}
     	}
-    	
+
     	// Not found in this lot
     	return null;
     }

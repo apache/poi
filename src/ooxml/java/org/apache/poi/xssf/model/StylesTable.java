@@ -440,9 +440,9 @@ public class StylesTable extends POIXMLDocumentPart {
 	}
 
 	protected CTDxf getDxf(int idx) {
-		if(dxfs.size()==0)
-		return CTDxf.Factory.newInstance();
-		else
+		if (dxfs.size()==0) {
+			return CTDxf.Factory.newInstance();
+		}
 		return dxfs.get(idx);
 	}
 

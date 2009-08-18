@@ -67,7 +67,7 @@ public final class SprmBuffer
       _buf[grpprlOffset] = operand;
       return;
     }
-    else addSprm(opcode, operand);
+    addSprm(opcode, operand);
   }
 
   public void updateSprm(short opcode, short operand)
@@ -78,7 +78,7 @@ public final class SprmBuffer
       LittleEndian.putShort(_buf, grpprlOffset, operand);
       return;
     }
-    else addSprm(opcode, operand);
+    addSprm(opcode, operand);
   }
 
   public void updateSprm(short opcode, int operand)
@@ -89,7 +89,7 @@ public final class SprmBuffer
       LittleEndian.putInt(_buf, grpprlOffset, operand);
       return;
     }
-    else addSprm(opcode, operand);
+    addSprm(opcode, operand);
   }
 
   public void addSprm(short opcode, byte operand)

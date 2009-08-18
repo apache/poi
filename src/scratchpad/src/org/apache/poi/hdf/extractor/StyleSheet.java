@@ -1279,13 +1279,6 @@ public final class StyleSheet {
   }
   public static boolean getFlag(int x)
   {
-      if(x != 0)
-      {
-          return true;
-      }
-      else
-      {
-          return false;
-      }
+      return x != 0;
   }
 }

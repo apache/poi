@@ -71,25 +71,22 @@ public class ModelFactory implements ERFListener
     }
 
     //ERFListener
-    public boolean processRecord(Record rec)
-    {
-       if (rec.getSid() == BOFRecord.sid) {
-             if (lastEOF != true) {
-              throw new RuntimeException("Not yet handled embedded models");
-             } else {
-              BOFRecord bof = (BOFRecord)rec;
-              switch (bof.getType()) {
-               case BOFRecord.TYPE_WORKBOOK:
-                 currentmodel = new Workbook();
-               break;
-               case BOFRecord.TYPE_WORKSHEET:
-                 currentmodel = Sheet.createSheet();
-               break;
-              default:
+    public boolean processRecord(Record rec) {
+        if (rec.getSid() == BOFRecord.sid) {
+            if (lastEOF != true) {
+                throw new RuntimeException("Not yet handled embedded models");
+            }
+            BOFRecord bof = (BOFRecord)rec;
+            switch (bof.getType()) {
+                case BOFRecord.TYPE_WORKBOOK:
+                    currentmodel = new Workbook();
+                    break;
+                case BOFRecord.TYPE_WORKSHEET:
+                    currentmodel = Sheet.createSheet();
+                    break;
+                default:
                    throw new RuntimeException("Unsupported model type "+bof.getType());
-              }
-
-             }
+            }
         }
 
         if (rec.getSid() == EOFRecord.sid) {
@@ -98,8 +95,6 @@ public class ModelFactory implements ERFListener
         } else {
             lastEOF = false;
         }
-
-
         return true;
     }
 
@@ -115,6 +110,4 @@ public class ModelFactory implements ERFListener
           mfl.process(model);
         }
     }
-
-
 }

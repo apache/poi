@@ -102,8 +102,8 @@ public final class XSSFName implements Name {
      */
     public final static String BUILTIN_SHEET_TITLE = "_xlnm.Sheet_Title";
 
-    private XSSFWorkbook workbook;
-    private CTDefinedName ctName;
+    private XSSFWorkbook _workbook;
+    private CTDefinedName _ctName;
 
     /**
      * Creates an XSSFName object - called internally by XSSFWorkbook.
@@ -113,15 +113,15 @@ public final class XSSFName implements Name {
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createName()
      */
     protected XSSFName(CTDefinedName name, XSSFWorkbook workbook) {
-        this.workbook = workbook;
-        this.ctName = name;
+        _workbook = workbook;
+        _ctName = name;
     }
 
     /**
      * Returns the underlying named range object
      */
     protected CTDefinedName getCTName() {
-        return ctName;
+        return _ctName;
     }
 
     /**
@@ -130,7 +130,7 @@ public final class XSSFName implements Name {
      * @return text name of this defined name
      */
     public String getNameName() {
-        return ctName.getName();
+        return _ctName.getName();
     }
 
     /**
@@ -169,8 +169,8 @@ public final class XSSFName implements Name {
         int sheetIndex = getSheetIndex();
 
         //Check to ensure no other names have the same case-insensitive name
-        for (int i = 0; i < workbook.getNumberOfNames(); i++) {
-            XSSFName nm = workbook.getNameAt(i);
+        for (int i = 0; i < _workbook.getNumberOfNames(); i++) {
+            XSSFName nm = _workbook.getNameAt(i);
             if (nm != this) {
                 if(name.equalsIgnoreCase(nm.getNameName()) && sheetIndex == nm.getSheetIndex()){
                     String msg = "The "+(sheetIndex == -1 ? "workbook" : "sheet")+" already contains this name: " + name;
@@ -178,11 +178,11 @@ public final class XSSFName implements Name {
                }
             }
         }
-        ctName.setName(name);
+        _ctName.setName(name);
     }
 
     public String getRefersToFormula() {
-        String result = ctName.getStringValue();
+        String result = _ctName.getStringValue();
         if (result == null || result.length() < 1) {
             return null;
         }
@@ -190,11 +190,11 @@ public final class XSSFName implements Name {
     }
 
     public void setRefersToFormula(String formulaText) {
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(_workbook);
         //validate through the FormulaParser
         FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
 
-        ctName.setStringValue(formulaText);
+        _ctName.setStringValue(formulaText);
     }
 
     public boolean isDeleted(){
@@ -202,7 +202,7 @@ public final class XSSFName implements Name {
         if (formulaText == null) {
             return false;
         }
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(workbook);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(_workbook);
         Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
         return Ptg.doesFormulaReferToDeletedCell(ptgs);
     }
@@ -213,16 +213,16 @@ public final class XSSFName implements Name {
      * @param index the sheet index this name applies to, -1 unsets this property making the name workbook-global
      */
     public void setSheetIndex(int index) {
-        int lastSheetIx = workbook.getNumberOfSheets() - 1;
+        int lastSheetIx = _workbook.getNumberOfSheets() - 1;
         if (index < -1 || index > lastSheetIx) {
             throw new IllegalArgumentException("Sheet index (" + index +") is out of range" +
                     (lastSheetIx == -1 ? "" : (" (0.." +    lastSheetIx + ")")));
         }
 
         if(index == -1) {
-            if(ctName.isSetLocalSheetId()) ctName.unsetLocalSheetId();
+            if(_ctName.isSetLocalSheetId()) _ctName.unsetLocalSheetId();
         } else {
-            ctName.setLocalSheetId(index);
+            _ctName.setLocalSheetId(index);
         }
     }
 
@@ -232,7 +232,7 @@ public final class XSSFName implements Name {
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
     public int getSheetIndex() {
-        return ctName.isSetLocalSheetId() ? (int) ctName.getLocalSheetId() : -1;
+        return _ctName.isSetLocalSheetId() ? (int) _ctName.getLocalSheetId() : -1;
     }
 
     /**
@@ -242,7 +242,7 @@ public final class XSSFName implements Name {
      * @param value <code>true</code> indicates the name refers to a function.
      */
     public void setFunction(boolean value) {
-        ctName.setFunction(value);
+        _ctName.setFunction(value);
     }
 
     /**
@@ -252,7 +252,7 @@ public final class XSSFName implements Name {
      * @return <code>true</code> indicates the name refers to a function.
      */
     public boolean getFunction() {
-        return ctName.getFunction();
+        return _ctName.getFunction();
     }
 
     /**
@@ -263,7 +263,7 @@ public final class XSSFName implements Name {
      * @param functionGroupId the function group index that defines the general category for the function
      */
     public void setFunctionGroupId(int functionGroupId) {
-        ctName.setFunctionGroupId(functionGroupId);
+        _ctName.setFunctionGroupId(functionGroupId);
     }
 
     /**
@@ -274,7 +274,7 @@ public final class XSSFName implements Name {
      * @return the function group index that defines the general category for the function
      */
     public int getFunctionGroupId() {
-        return (int) ctName.getFunctionGroupId();
+        return (int) _ctName.getFunctionGroupId();
     }
 
     /**
@@ -284,15 +284,14 @@ public final class XSSFName implements Name {
      * Empty string if the referenced sheet name weas not found.
      */
     public String getSheetName() {
-        if (ctName.isSetLocalSheetId()) {
+        if (_ctName.isSetLocalSheetId()) {
             // Given as explicit sheet id
-            int sheetId = (int)ctName.getLocalSheetId();
-            return workbook.getSheetName(sheetId);
-        } else {
-            String ref = getRefersToFormula();
-            AreaReference areaRef = new AreaReference(ref);
-            return areaRef.getFirstCell().getSheetName();
+            int sheetId = (int)_ctName.getLocalSheetId();
+            return _workbook.getSheetName(sheetId);
         }
+        String ref = getRefersToFormula();
+        AreaReference areaRef = new AreaReference(ref);
+        return areaRef.getFirstCell().getSheetName();
     }
 
     /**
@@ -310,7 +309,7 @@ public final class XSSFName implements Name {
      * @return the user comment for this named range
      */
     public String getComment() {
-        return ctName.getComment();
+        return _ctName.getComment();
     }
 
     /**
@@ -319,12 +318,12 @@ public final class XSSFName implements Name {
      * @param comment  the user comment for this named range
      */
     public void setComment(String comment) {
-        ctName.setComment(comment);
+        _ctName.setComment(comment);
     }
 
     @Override
     public int hashCode() {
-        return ctName.toString().hashCode();
+        return _ctName.toString().hashCode();
     }
 
     /**
@@ -343,7 +342,7 @@ public final class XSSFName implements Name {
         if (!(o instanceof XSSFName)) return false;
 
         XSSFName cf = (XSSFName) o;
-        return ctName.toString().equals(cf.getCTName().toString());
+        return _ctName.toString().equals(cf.getCTName().toString());
     }
 
     private static void validateName(String name){

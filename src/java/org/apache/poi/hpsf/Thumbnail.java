@@ -25,8 +25,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Drew Varner (Drew.Varner inOrAround sc.edu)
  * @see SummaryInformation#getThumbnail()
  */
-public class Thumbnail
-{
+public final class Thumbnail {
 
     /**
      * <p>Offset in bytes where the Clipboard Format Tag starts in the
@@ -128,7 +127,7 @@ public class Thumbnail
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link
      * Variant#VT_CF VT_CF}) format.</p>
      */
-    private byte[] thumbnailData = null;
+    private byte[] _thumbnailData = null;
 
 
 
@@ -154,7 +153,7 @@ public class Thumbnail
      */
     public Thumbnail(final byte[] thumbnailData)
     {
-        this.thumbnailData = thumbnailData;
+        this._thumbnailData = thumbnailData;
     }
 
 
@@ -168,7 +167,7 @@ public class Thumbnail
      */
     public byte[] getThumbnail()
     {
-        return thumbnailData;
+        return _thumbnailData;
     }
 
 
@@ -182,7 +181,7 @@ public class Thumbnail
      */
     public void setThumbnail(final byte[] thumbnail)
     {
-        this.thumbnailData = thumbnail;
+        this._thumbnailData = thumbnail;
     }
 
 
@@ -261,21 +260,18 @@ public class Thumbnail
         if (!(getClipboardFormatTag() == CFTAG_WINDOWS))
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
                                     "be CFTAG_WINDOWS.");
-        if (!(getClipboardFormat() == CF_METAFILEPICT))
+        if (!(getClipboardFormat() == CF_METAFILEPICT)) {
             throw new HPSFException("Clipboard Format of Thumbnail must " +
                                     "be CF_METAFILEPICT.");
-        else
-        {
-            byte[] thumbnail = getThumbnail();
-            int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
-            byte[] wmfImage = new byte[wmfImageLength];
-            System.arraycopy(thumbnail,
-                             OFFSET_WMFDATA,
-                             wmfImage,
-                             0,
-                             wmfImageLength);
-            return wmfImage;
         }
+        byte[] thumbnail = getThumbnail();
+        int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
+        byte[] wmfImage = new byte[wmfImageLength];
+        System.arraycopy(thumbnail,
+                         OFFSET_WMFDATA,
+                         wmfImage,
+                         0,
+                         wmfImageLength);
+        return wmfImage;
     }
-
 }
