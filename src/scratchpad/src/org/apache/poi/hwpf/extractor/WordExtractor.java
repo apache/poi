@@ -71,7 +71,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 	 * Create a new Word Extractor
 	 * @param doc The HWPFDocument to extract from
 	 */
-	public WordExtractor(HWPFDocument doc) throws IOException {
+	public WordExtractor(HWPFDocument doc) {
 		super(doc);
 		this.doc = doc;
 	}

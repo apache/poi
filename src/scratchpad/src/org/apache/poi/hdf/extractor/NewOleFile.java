@@ -111,8 +111,7 @@ public final class NewOleFile extends RandomAccessFile
       {
       }
     }
-    protected int[] readChain(int[] blockChain, int startBlock) throws IOException
-    {
+    protected int[] readChain(int[] blockChain, int startBlock) {
 
         int[] tempChain = new int[blockChain.length];
         tempChain[0] = startBlock;

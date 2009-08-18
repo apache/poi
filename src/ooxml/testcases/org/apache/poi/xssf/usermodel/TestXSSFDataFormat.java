@@ -27,14 +27,15 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
  */
 public final class TestXSSFDataFormat extends BaseTestDataFormat {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
-    }
+	@Override
+	protected ITestDataProvider getTestDataProvider() {
+		return XSSFITestDataProvider.getInstance();
+	}
+
 	/**
-     * Test setting and getting boolean values.
-     */
-    public void testBuiltinFormats() throws Exception {
-        baseBuiltinFormats();
-    }
+	 * Test setting and getting boolean values.
+	 */
+	public void testBuiltinFormats() {
+		baseBuiltinFormats();
+	}
 }

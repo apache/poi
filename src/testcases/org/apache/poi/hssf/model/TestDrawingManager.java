@@ -14,16 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 
-public class TestDrawingManager extends TestCase
-{
-    public void testFindFreeSPIDBlock() throws Exception
-    {
+public final class TestDrawingManager extends TestCase {
+    public void testFindFreeSPIDBlock() {
         EscherDggRecord dgg = new EscherDggRecord();
         DrawingManager dm = new DrawingManager( dgg );
         dgg.setShapeIdMax( 1024 );
@@ -34,8 +33,7 @@ public class TestDrawingManager extends TestCase
         assertEquals( 2048, dm.findFreeSPIDBlock() );
     }
 
-    public void testFindNewDrawingGroupId() throws Exception
-    {
+    public void testFindNewDrawingGroupId() {
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 1 );
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{
@@ -48,8 +46,7 @@ public class TestDrawingManager extends TestCase
         assertEquals( 3, dm.findNewDrawingGroupId() );
     }
 
-    public void testDrawingGroupExists() throws Exception
-    {
+    public void testDrawingGroupExists() {
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 1 );
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{
@@ -60,8 +57,7 @@ public class TestDrawingManager extends TestCase
         assertFalse( dm.drawingGroupExists( (short) 3 ) );
     }
 
-    public void testCreateDgRecord() throws Exception
-    {
+    public void testCreateDgRecord() {
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 0 );
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{} );
@@ -76,8 +72,7 @@ public class TestDrawingManager extends TestCase
         assertEquals( 0, dm.getDgg().getFileIdClusters()[0].getNumShapeIdsUsed() );
     }
 
-    public void testAllocateShapeId() throws Exception
-    {
+    public void testAllocateShapeId() {
         EscherDggRecord dgg = new EscherDggRecord();
         dgg.setDrawingsSaved( 0 );
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{} );
@@ -93,5 +88,4 @@ public class TestDrawingManager extends TestCase
         assertEquals( 1024, dg.getLastMSOSPID() );
         assertEquals( 1, dg.getNumShapes() );
     }
-
 }

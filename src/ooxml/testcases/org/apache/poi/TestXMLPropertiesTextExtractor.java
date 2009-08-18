@@ -24,14 +24,14 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 
 import junit.framework.TestCase;
 
-public class TestXMLPropertiesTextExtractor extends TestCase {
+public final class TestXMLPropertiesTextExtractor extends TestCase {
 	private String dirname;
-	
-	protected void setUp() throws Exception {
+
+	protected void setUp() {
 		dirname = System.getProperty("OOXML.testdata.path");
 		assertTrue( (new File(dirname)).exists() );
 	}
-	
+
 	public void testGetFromMainExtractor() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
 				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
@@ -40,15 +40,15 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 
 		XSSFExcelExtractor ext = new XSSFExcelExtractor(wb);
 		POIXMLPropertiesTextExtractor textExt = ext.getMetadataTextExtractor();
-		
+
 		// Check basics
 		assertNotNull(textExt);
 		assertTrue(textExt.getText().length() > 0);
-		
+
 		// Check some of the content
 		String text = textExt.getText();
 		String cText = textExt.getCorePropertiesText();
-		
+
 		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
 		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
 	}
@@ -58,38 +58,38 @@ public class TestXMLPropertiesTextExtractor extends TestCase {
 				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
-		
+
 		POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
 		ext.getText();
-		
+
 		// Now check
 		String text = ext.getText();
 		String cText = ext.getCorePropertiesText();
-		
+
 		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
 		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
 	}
-	
+
 	public void testExtended() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
 				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
-		
+
 		POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
 		ext.getText();
-		
+
 		// Now check
 		String text = ext.getText();
 		String eText = ext.getExtendedPropertiesText();
-		
+
 		assertTrue(text.contains("Application = Microsoft Excel"));
 		assertTrue(text.contains("Company = Mera"));
 		assertTrue(eText.contains("Application = Microsoft Excel"));
 		assertTrue(eText.contains("Company = Mera"));
 	}
-	
-	public void testCustom() throws Exception {
+
+	public void testCustom() {
 		// TODO!
 	}
 }

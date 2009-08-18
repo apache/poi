@@ -38,16 +38,16 @@ public final class TestTextBytesAtom extends TestCase {
 		0x74, 0x65, 0x73, 0x74, 0x20, 0x74, 0x69, 0x74, 0x6C, 0x65 };
 	private String alt_text = "This is a test title";
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		assertEquals(4008l, tba.getRecordType());
 	}
 
-	public void testTextA() throws Exception {
+	public void testTextA() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		assertEquals(data_text, tba.getText());
 	}
-	public void testTextB() throws Exception {
+	public void testTextB() {
 		TextBytesAtom tba = new TextBytesAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tba.getText());
 	}

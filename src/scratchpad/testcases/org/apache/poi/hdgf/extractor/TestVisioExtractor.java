@@ -30,7 +30,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public final class TestVisioExtractor extends TestCase {
 	private String dirname;
 	private String defFilename;
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		dirname = System.getProperty("HDGF.testdata.path");
 		defFilename = dirname + "/Test_Visio-Some_Random_Text.vsd";
 	}

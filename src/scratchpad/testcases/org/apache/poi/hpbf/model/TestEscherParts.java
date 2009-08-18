@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 public final class TestEscherParts extends TestCase {
 	private String dir;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		dir = System.getProperty("HPBF.testdata.path");
 	}
 

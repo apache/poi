@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -37,27 +39,35 @@ public final class TestTextRun extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 	private SlideShow ssRich;
-	private HSLFSlideShow hss;
-	private HSLFSlideShow hssRich;
 
-    protected void setUp() throws Exception {
+	// TODO - use this or similar through rest of hslf tests
+	private static SlideShow openSampleSlideShow(String name) {
 		String dirname = System.getProperty("HSLF.testdata.path");
 
 		// Basic (non rich) test file
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
-		ss = new SlideShow(hss);
-
-		// Rich test file
-		filename = dirname + "/Single_Coloured_Page.ppt";
-		hssRich = new HSLFSlideShow(filename);
-		ssRich = new SlideShow(hssRich);
+		String filename = dirname + "/" + name;
+		HSLFSlideShow x;
+		try {
+			x = new HSLFSlideShow(filename);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return new SlideShow(x);
 	}
 
-    /**
-     * Test to ensure that getting the text works correctly
-     */
-    public void testGetText() throws Exception {
+	protected void setUp() {
+
+		// Basic (non rich) test file
+		ss = openSampleSlideShow("basic_test_ppt_file.ppt");
+
+		// Rich test file
+		ssRich = openSampleSlideShow("Single_Coloured_Page.ppt");
+	}
+
+	/**
+	 * Test to ensure that getting the text works correctly
+	 */
+	public void testGetText() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 
@@ -81,12 +91,12 @@ public final class TestTextRun extends TestCase {
 		assertEquals("This is the subtitle, in bold\nThis bit is blue and italic\nThis bit is red (normal)", textRunsR[1].getText());
 		assertEquals("This is a title, it\u2019s in black", textRunsR[0].getRawText());
 		assertEquals("This is the subtitle, in bold\rThis bit is blue and italic\rThis bit is red (normal)", textRunsR[1].getRawText());
-    }
+	}
 
-    /**
-     * Test to ensure changing non rich text bytes->bytes works correctly
-     */
-    public void testSetText() throws Exception {
+	/**
+	 * Test to ensure changing non rich text bytes->bytes works correctly
+	 */
+	public void testSetText() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		TextRun run = textRuns[0];
@@ -102,13 +112,13 @@ public final class TestTextRun extends TestCase {
 		// Ensure trailing \n's get stripped
 		run.setText(changeTo + "\n");
 		assertEquals(changeTo, run.getText());
-    }
+	}
 
-    /**
-     * Test to ensure that changing non rich text between bytes and
-     *  chars works correctly
-     */
-    public void testAdvancedSetText() throws Exception {
+	/**
+	 * Test to ensure that changing non rich text between bytes and
+	 *  chars works correctly
+	 */
+	public void testAdvancedSetText() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun run = slideOne.getTextRuns()[0];
 
@@ -116,7 +126,7 @@ public final class TestTextRun extends TestCase {
 		TextBytesAtom tba = run._byteAtom;
 		TextCharsAtom tca = run._charAtom;
 
-    	// Bytes -> Bytes
+		// Bytes -> Bytes
 		assertNull(tca);
 		assertNotNull(tba);
 		assertFalse(run._isUnicode);
@@ -132,7 +142,7 @@ public final class TestTextRun extends TestCase {
 		assertNull(tca);
 		assertNotNull(tba);
 
-    	// Bytes -> Chars
+		// Bytes -> Chars
 		assertNull(tca);
 		assertNotNull(tba);
 		assertFalse(run._isUnicode);
@@ -148,7 +158,7 @@ public final class TestTextRun extends TestCase {
 		assertNotNull(tca);
 		assertNull(tba);
 
-    	// Chars -> Chars
+		// Chars -> Chars
 		assertNull(tba);
 		assertNotNull(tca);
 		assertTrue(run._isUnicode);
@@ -163,13 +173,13 @@ public final class TestTextRun extends TestCase {
 		assertTrue(run._isUnicode);
 		assertNotNull(tca);
 		assertNull(tba);
-    }
+	}
 
-    /**
-     * Tests to ensure that non rich text has the right default rich text run
-     *  set up for it
-     */
-    public void testGetRichTextNonRich() throws Exception {
+	/**
+	 * Tests to ensure that non rich text has the right default rich text run
+	 *  set up for it
+	 */
+	public void testGetRichTextNonRich() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 
@@ -191,12 +201,12 @@ public final class TestTextRun extends TestCase {
 		assertNull(rtrA._getRawParagraphStyle());
 		assertNull(rtrB._getRawCharacterStyle());
 		assertNull(rtrB._getRawParagraphStyle());
-    }
+	}
 
-    /**
-     * Tests to ensure that the rich text runs are built up correctly
-     */
-    public void testGetRichText() throws Exception {
+	/**
+	 * Tests to ensure that the rich text runs are built up correctly
+	 */
+	public void testGetRichText() {
 		Slide slideOne = ssRich.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 
@@ -236,13 +246,13 @@ public final class TestTextRun extends TestCase {
 		assertFalse( rtrB._getRawCharacterStyle().equals( rtrC._getRawCharacterStyle() ));
 		assertFalse( rtrB._getRawCharacterStyle().equals( rtrD._getRawCharacterStyle() ));
 		assertFalse( rtrC._getRawCharacterStyle().equals( rtrD._getRawCharacterStyle() ));
-    }
+	}
 
-    /**
-     * Tests to ensure that setting the text where the text isn't rich,
-     *  ensuring that everything stays with the same default styling
-     */
-    public void testSetTextWhereNotRich() throws Exception {
+	/**
+	 * Tests to ensure that setting the text where the text isn't rich,
+	 *  ensuring that everything stays with the same default styling
+	 */
+	public void testSetTextWhereNotRich() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		TextRun trB = textRuns[1];
@@ -260,13 +270,13 @@ public final class TestTextRun extends TestCase {
 		assertEquals("Test Foo Test", rtrB.getText());
 		assertNull(rtrB._getRawCharacterStyle());
 		assertNull(rtrB._getRawParagraphStyle());
-    }
+	}
 
-    /**
-     * Tests to ensure that setting the text where the text is rich
-     *  sets everything to the same styling
-     */
-    public void testSetTextWhereRich() throws Exception {
+	/**
+	 * Tests to ensure that setting the text where the text is rich
+	 *  sets everything to the same styling
+	 */
+	public void testSetTextWhereRich() {
 		Slide slideOne = ssRich.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		TextRun trB = textRuns[1];
@@ -308,13 +318,13 @@ public final class TestTextRun extends TestCase {
 		assertNotNull(rtrB._getRawParagraphStyle());
 		assertEquals( tpBP, rtrB._getRawParagraphStyle() );
 		assertEquals( tpBC, rtrB._getRawCharacterStyle() );
-    }
+	}
 
-    /**
-     * Test to ensure the right stuff happens if we change the text
-     *  in a rich text run, that doesn't happen to actually be rich
-     */
-    public void testChangeTextInRichTextRunNonRich() throws Exception {
+	/**
+	 * Test to ensure the right stuff happens if we change the text
+	 *  in a rich text run, that doesn't happen to actually be rich
+	 */
+	public void testChangeTextInRichTextRunNonRich() {
 		Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		TextRun trB = textRuns[1];
@@ -333,13 +343,13 @@ public final class TestTextRun extends TestCase {
 		// Will now have dummy props
 		assertNotNull(rtrB._getRawCharacterStyle());
 		assertNotNull(rtrB._getRawParagraphStyle());
-    }
+	}
 
-    /**
-     * Tests to ensure changing the text within rich text runs works
-     *  correctly
-     */
-    public void testChangeTextInRichTextRun() throws Exception {
+	/**
+	 * Tests to ensure changing the text within rich text runs works
+	 *  correctly
+	 */
+	public void testChangeTextInRichTextRun() {
 		Slide slideOne = ssRich.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		TextRun trB = textRuns[1];
@@ -409,7 +419,7 @@ public final class TestTextRun extends TestCase {
 		assertEquals(tpBC.getTextPropList(), ntpBC.getTextPropList());
 		assertEquals(tpCC.getTextPropList(), ntpCC.getTextPropList());
 		assertEquals(tpDC.getTextPropList(), ntpDC.getTextPropList());
-    }
+	}
 
 
 	/**
@@ -419,10 +429,10 @@ public final class TestTextRun extends TestCase {
 	 * of the wrong list of potential paragraph properties defined in StyleTextPropAtom.
 	 *
 	 */
-	public void testBug41015() throws Exception {
+	public void testBug41015() {
 		RichTextRun[] rt;
 
-		SlideShow ppt = new SlideShow(new HSLFSlideShow(System.getProperty("HSLF.testdata.path") + "/bug-41015.ppt"));
+		SlideShow ppt = openSampleSlideShow("bug-41015.ppt");
 		Slide sl = ppt.getSlides()[0];
 		TextRun[] txt = sl.getTextRuns();
 		assertEquals(2, txt.length);
@@ -436,61 +446,61 @@ public final class TestTextRun extends TestCase {
 		assertEquals(2, rt.length);
 		assertEquals(0, rt[0].getIndentLevel());
 		assertEquals("Sdfsdfsdf\n" +
-		        "Dfgdfg\n" +
-		        "Dfgdfgdfg\n", rt[0].getText());
+				"Dfgdfg\n" +
+				"Dfgdfgdfg\n", rt[0].getText());
 		assertEquals(1, rt[1].getIndentLevel());
 		assertEquals("Sdfsdfs\n" +
-		        "Sdfsdf\n", rt[1].getText());
+				"Sdfsdf\n", rt[1].getText());
 	}
 
-    /**
-     * Test creation of TextRun objects.
-     */
-    public void testAddTextRun() throws Exception{
-        SlideShow ppt = new SlideShow();
-        Slide slide = ppt.createSlide();
+	/**
+	 * Test creation of TextRun objects.
+	 */
+	public void testAddTextRun() {
+		SlideShow ppt = new SlideShow();
+		Slide slide = ppt.createSlide();
 
-        assertNull(slide.getTextRuns());
+		assertNull(slide.getTextRuns());
 
-        TextBox shape1 = new TextBox();
-        TextRun run1 = shape1.getTextRun();
-        assertSame(run1, shape1.createTextRun());
-        run1.setText("Text 1");
-        slide.addShape(shape1);
+		TextBox shape1 = new TextBox();
+		TextRun run1 = shape1.getTextRun();
+		assertSame(run1, shape1.createTextRun());
+		run1.setText("Text 1");
+		slide.addShape(shape1);
 
-        //The array of Slide's text runs must be updated when new text shapes are added.
-        TextRun[] runs = slide.getTextRuns();
-        assertNotNull(runs);
-        assertSame(run1, runs[0]);
+		//The array of Slide's text runs must be updated when new text shapes are added.
+		TextRun[] runs = slide.getTextRuns();
+		assertNotNull(runs);
+		assertSame(run1, runs[0]);
 
-        TextBox shape2 = new TextBox();
-        TextRun run2 = shape2.getTextRun();
-        assertSame(run2, shape2.createTextRun());
-        run2.setText("Text 2");
-        slide.addShape(shape2);
+		TextBox shape2 = new TextBox();
+		TextRun run2 = shape2.getTextRun();
+		assertSame(run2, shape2.createTextRun());
+		run2.setText("Text 2");
+		slide.addShape(shape2);
 
-        runs = slide.getTextRuns();
-        assertEquals(2, runs.length);
+		runs = slide.getTextRuns();
+		assertEquals(2, runs.length);
 
-        assertSame(run1, runs[0]);
-        assertSame(run2, runs[1]);
+		assertSame(run1, runs[0]);
+		assertSame(run2, runs[1]);
 
-        //as getShapes()
-        Shape[] sh = slide.getShapes();
-        assertEquals(2, sh.length);
-        assertTrue(sh[0] instanceof TextBox);
-        TextBox box1 = (TextBox)sh[0];
-        assertSame(run1, box1.getTextRun());
-        TextBox box2 = (TextBox)sh[1];
-        assertSame(run2, box2.getTextRun());
+		//as getShapes()
+		Shape[] sh = slide.getShapes();
+		assertEquals(2, sh.length);
+		assertTrue(sh[0] instanceof TextBox);
+		TextBox box1 = (TextBox)sh[0];
+		assertSame(run1, box1.getTextRun());
+		TextBox box2 = (TextBox)sh[1];
+		assertSame(run2, box2.getTextRun());
 
-        //test Table - a complex group of shapes containing text objects
-        Slide slide2 = ppt.createSlide();
-        assertNull(slide2.getTextRuns());
-        Table table = new Table(2, 2);
-        slide2.addShape(table);
-        runs = slide2.getTextRuns();
-        assertNotNull(runs);
-        assertEquals(4, runs.length);
-    }
+		//test Table - a complex group of shapes containing text objects
+		Slide slide2 = ppt.createSlide();
+		assertNull(slide2.getTextRuns());
+		Table table = new Table(2, 2);
+		slide2.addShape(table);
+		runs = slide2.getTextRuns();
+		assertNotNull(runs);
+		assertEquals(4, runs.length);
+	}
 }

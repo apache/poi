@@ -35,7 +35,7 @@ public final class TestBackground extends TestCase {
     /**
      * Default background for slide, shape and slide master.
      */
-    public void testDefaults() throws Exception {
+    public void testDefaults() {
         SlideShow ppt = new SlideShow();
 
         assertEquals(Fill.FILL_SOLID, ppt.getSlidesMasters()[0].getBackground().getFill().getFillType());

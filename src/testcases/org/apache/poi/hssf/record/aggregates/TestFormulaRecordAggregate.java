@@ -27,12 +27,12 @@ import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 
 /**
- * 
+ *
  * @author avik
  */
 public final class TestFormulaRecordAggregate extends TestCase {
 
-	public void testBasic() throws Exception {
+	public void testBasic() {
 		FormulaRecord f = new FormulaRecord();
 		f.setCachedResultTypeString();
 		StringRecord s = new StringRecord();
@@ -56,7 +56,7 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		sr.setString("NA");
 		SharedValueManager svm = SharedValueManager.EMPTY;
 		FormulaRecordAggregate fra;
-		
+
 		try {
 			fra = new FormulaRecordAggregate(fr, sr, svm);
 		} catch (RecordFormatException e) {

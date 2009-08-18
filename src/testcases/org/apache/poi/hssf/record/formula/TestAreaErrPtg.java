@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -25,17 +24,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class TestAreaErrPtg extends AbstractPtgTestCase
-{
+public final class TestAreaErrPtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() throws Exception
-    {
+    public void testReading() {
         HSSFWorkbook workbook = loadWorkbook("AreaErrPtg.xls");
         assertEquals("Wrong formula string for area error", "SUM(#REF!)",
                      workbook.getSheetAt(0).getRow(0).getCell(2).getCellFormula());
     }
 }
-
-

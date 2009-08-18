@@ -47,35 +47,35 @@ public final class TestComment2000Atom extends TestCase {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		assertEquals(12001l, ca.getRecordType());
 	}
 
-    public void testGetDate() throws Exception {
+	public void testGetDate() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
-    	// A is 2006-01-24 (2nd day of week) 10:26:15.205
+		// A is 2006-01-24 (2nd day of week) 10:26:15.205
 		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
 		// B is 2006-01-24 (2nd day of week) 21:25:03.725
 		Date exp_b = sdf.parse("2006-01-24 21:25:03.725");
 
 		assertEquals(exp_a, ca.getDate());
 		assertEquals(exp_b, cb.getDate());
-    }
+	}
 
-    public void testGetNums() throws Exception {
+	public void testGetNums() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
-    	// A is number 1
+		// A is number 1
 		assertEquals(1, ca.getNumber());
-    	// B is number 5
+		// B is number 5
 		assertEquals(5, cb.getNumber());
-    }
+	}
 
-    public void testGetPos() throws Exception {
+	public void testGetPos() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -86,7 +86,7 @@ public final class TestComment2000Atom extends TestCase {
 		// B is at 0x0A, 0x0E
 		assertEquals(0x0A, cb.getXOffset());
 		assertEquals(0x0E, cb.getYOffset());
-    }
+	}
 
 	public void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
@@ -101,15 +101,15 @@ public final class TestComment2000Atom extends TestCase {
 	}
 
 	// Create A from scratch
-    public void testCreate() throws Exception {
-    	Comment2000Atom a = new Comment2000Atom();
+	public void testCreate() throws Exception {
+		Comment2000Atom a = new Comment2000Atom();
 
-    	// Set number, x and y
-    	a.setNumber(1);
-    	a.setXOffset(0x92);
-    	a.setYOffset(0x92);
+		// Set number, x and y
+		a.setNumber(1);
+		a.setXOffset(0x92);
+		a.setYOffset(0x92);
 
-    	// Set the date
+		// Set the date
 		Date date_a = sdf.parse("2006-01-24 10:26:15.205");
 		a.setDate(date_a);
 
@@ -122,7 +122,7 @@ public final class TestComment2000Atom extends TestCase {
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
 		}
-    }
+	}
 
 	// Try to turn a into b
 	public void testChange() throws Exception {

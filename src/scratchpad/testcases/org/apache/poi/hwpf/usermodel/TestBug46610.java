@@ -29,7 +29,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 public class TestBug46610 extends TestCase {
   private String dirname;
 
-  protected void setUp() throws Exception {
+  protected void setUp() {
     dirname = System.getProperty("HWPF.testdata.path");
   }
 

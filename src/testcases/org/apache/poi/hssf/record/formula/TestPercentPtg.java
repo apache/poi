@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -26,13 +25,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class TestPercentPtg extends AbstractPtgTestCase
-{
+public final class TestPercentPtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() throws Exception
-    {
+    public void testReading() {
         HSSFWorkbook workbook = loadWorkbook("PercentPtg.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
 
@@ -44,5 +41,3 @@ public class TestPercentPtg extends AbstractPtgTestCase
                      sheet.getRow(1).getCell(0).getCellFormula());
     }
 }
-
-

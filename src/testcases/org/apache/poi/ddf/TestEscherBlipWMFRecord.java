@@ -21,13 +21,11 @@ import junit.framework.TestCase;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
-public class TestEscherBlipWMFRecord extends TestCase
-{
+public final class TestEscherBlipWMFRecord extends TestCase {
     private String dataStr;
     private byte[] data;
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() {
         dataStr = "2C 15 18 F0 34 00 00 00 01 01 01 01 01 01 01 01 " +
                         "01 01 01 01 01 01 01 01 06 00 00 00 03 00 00 00 " +
                         "01 00 00 00 04 00 00 00 02 00 00 00 0A 00 00 00 " +

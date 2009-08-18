@@ -76,7 +76,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("WebLinks!A1", link.getAddress());
     }
 
-    public void testModify() throws Exception {
+    public void testModify() {
         HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
@@ -105,7 +105,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      *  or
      *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
      */
-    public void testCreateDocumentLink() throws Exception {
+    public void testCreateDocumentLink() {
         HSSFWorkbook wb = getTestDataProvider().createWorkbook();
 
         //link to a place in this workbook
@@ -166,7 +166,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
     }
 
-    public void testCreate() throws Exception {
+    public void testCreate() {
         HSSFWorkbook wb = getTestDataProvider().createWorkbook();
 
         HSSFHyperlink link;

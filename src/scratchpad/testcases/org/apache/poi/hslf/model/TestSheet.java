@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import java.io.FileInputStream;
@@ -34,7 +35,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public final class TestSheet extends TestCase{
+public final class TestSheet extends TestCase {
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
@@ -59,7 +60,7 @@ public final class TestSheet extends TestCase{
         }
     }
 
-    private void doSlideShow(SlideShow ppt) throws Exception {
+    private void doSlideShow(SlideShow ppt) {
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             verify(slide[i]);
@@ -89,19 +90,22 @@ public final class TestSheet extends TestCase{
         assertTrue(sheet._getSheetRefId() != 0);
 
         TextRun[] txt = sheet.getTextRuns();
-        assertTrue(txt != null);
+        if (txt == null) {
+            throw new AssertionFailedError("no text runs");
+        }
         for (int i = 0; i < txt.length; i++) {
             assertNotNull(txt[i].getSheet());
         }
 
         Shape[] shape = sheet.getShapes();
-        assertTrue(shape != null);
+        if (shape == null) {
+            throw new AssertionFailedError("no shapes");
+        }
         for (int i = 0; i < shape.length; i++) {
             assertNotNull(shape[i].getSpContainer());
             assertNotNull(shape[i].getSheet());
             assertNotNull(shape[i].getShapeName());
             assertNotNull(shape[i].getAnchor());
         }
-
     }
 }

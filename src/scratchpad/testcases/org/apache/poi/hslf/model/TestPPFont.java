@@ -20,8 +20,6 @@ package org.apache.poi.hslf.model;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
 
-import java.io.IOException;
-
 /**
  * Test adding fonts to the presenataion resources
  *
@@ -29,7 +27,7 @@ import java.io.IOException;
  */
 public final class TestPPFont extends TestCase{
 
-    public void testCreate() throws IOException {
+    public void testCreate() {
         SlideShow ppt = new SlideShow();
         assertEquals(1, ppt.getNumberOfFonts());
         assertEquals("Arial", ppt.getFont(0).getFontName());

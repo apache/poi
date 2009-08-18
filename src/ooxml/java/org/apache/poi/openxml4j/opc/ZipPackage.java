@@ -94,7 +94,7 @@ public final class ZipPackage extends Package {
 	 * @throws InvalidFormatException
 	 *             If the content type part parsing encounters an error.
 	 */
-	ZipPackage(String path, PackageAccess access) throws InvalidFormatException {
+	ZipPackage(String path, PackageAccess access) {
 		super(access);
 
 		ZipFile zipFile = ZipHelper.openZipFile(path);

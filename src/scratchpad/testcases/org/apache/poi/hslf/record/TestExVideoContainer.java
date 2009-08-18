@@ -48,9 +48,9 @@ public final class TestExVideoContainer extends TestCase {
 
 
 
-    public void testRead() throws Exception {
-		ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-		assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
+    public void testRead() {
+        ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
+        assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
 
         ExMediaAtom exMedia = record.getExMediaAtom();
         assertEquals(1, exMedia.getObjectId());
@@ -64,14 +64,14 @@ public final class TestExVideoContainer extends TestCase {
         assertEquals("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg", path.getText());
     }
 
-	public void testWrite() throws Exception {
-		ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
+    public void testWrite() throws Exception {
+        ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        record.writeOut(baos);
+        byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(data, b));
-	}
+        assertTrue(Arrays.equals(data, b));
+    }
 
     public void testNewRecord() throws Exception {
         ExVideoContainer record = new ExVideoContainer();

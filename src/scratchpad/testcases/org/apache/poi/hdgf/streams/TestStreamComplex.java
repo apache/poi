@@ -205,7 +205,7 @@ public final class TestStreamComplex extends StreamTest {
 		assertTrue(s8451.getPointedToStreams()[1] instanceof StringsStream);
 	}
 
-	public void testChunkWithText() throws Exception {
+	public void testChunkWithText() {
 		// Parent ChunkStream is at 0x7194
 		// This is one of the last children of the trailer
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);

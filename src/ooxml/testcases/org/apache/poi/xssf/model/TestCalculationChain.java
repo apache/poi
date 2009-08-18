@@ -24,9 +24,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import junit.framework.TestCase;
 
 
-public class TestCalculationChain extends TestCase {
+public final class TestCalculationChain extends TestCase {
 
-    public void test46535() throws Exception {
+    public void test46535() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46535.xlsx");
 
         CalculationChain chain = wb.getCalculationChain();
@@ -42,7 +42,7 @@ public class TestCalculationChain extends TestCase {
         assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
         cell.setCellFormula(null);
 
-        //the count of items is less by one 
+        //the count of items is less by one
         c = chain.getCTCalcChain().getCArray(0);
         int cnt2 =  chain.getCTCalcChain().getCArray().length;
         assertEquals(cnt - 1, cnt2);

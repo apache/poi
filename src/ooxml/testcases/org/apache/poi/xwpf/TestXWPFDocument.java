@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf;
 
 import java.io.File;
@@ -27,13 +28,13 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
-public class TestXWPFDocument extends TestCase {
+public final class TestXWPFDocument extends TestCase {
 	private File sampleFile;
 	private File complexFile;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		sampleFile = new File(
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "sample.docx"
@@ -42,14 +43,14 @@ public class TestXWPFDocument extends TestCase {
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "IllustrativeCases.docx"
 		);
-		
+
 		assertTrue(sampleFile.exists());
 		assertTrue(complexFile.exists());
 	}
 
 	public void testContainsMainContentType() throws Exception {
 		OPCPackage pack = POIXMLDocument.openPackage(sampleFile.toString());
-		
+
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
 			if(part.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
@@ -63,16 +64,16 @@ public class TestXWPFDocument extends TestCase {
 	public void testOpen() throws Exception {
 		POIXMLDocument.openPackage(sampleFile.toString());
 		POIXMLDocument.openPackage(complexFile.toString());
-		
+
 		new XWPFDocument(
 				POIXMLDocument.openPackage(sampleFile.toString())
 		);
 		new XWPFDocument(
 				POIXMLDocument.openPackage(complexFile.toString())
 		);
-		
+
 		XWPFDocument xml;
-		
+
 		// Simple file
 		xml = new XWPFDocument(
 				POIXMLDocument.openPackage(sampleFile.toString())
@@ -81,7 +82,7 @@ public class TestXWPFDocument extends TestCase {
 		assertNotNull(xml.getDocument());
 		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
-		
+
 		// Complex file
 		xml = new XWPFDocument(
 				POIXMLDocument.openPackage(complexFile.toString())
@@ -90,42 +91,42 @@ public class TestXWPFDocument extends TestCase {
 		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 	}
-	
+
 	public void testMetadataBasics() throws Exception {
 		XWPFDocument xml = new XWPFDocument(
 				POIXMLDocument.openPackage(sampleFile.toString())
 		);
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
-		
+
 		assertEquals("Microsoft Office Word", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
 		assertEquals(1315, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
 		assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
-		
+
 		assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
 		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
-	
+
 	public void testMetadataComplex() throws Exception {
 		XWPFDocument xml = new XWPFDocument(
 				POIXMLDocument.openPackage(complexFile.toString())
 		);
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
-		
+
 		assertEquals("Microsoft Office Outlook", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
 		assertEquals(5184, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
 		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
-		
+
 		assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
 		assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
 
-    public void testWorkbookProperties() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
-        POIXMLProperties props = doc.getProperties();
-        assertNotNull(props);
-        assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
-    }
+	public void testWorkbookProperties() {
+		XWPFDocument doc = new XWPFDocument();
+		POIXMLProperties props = doc.getProperties();
+		assertNotNull(props);
+		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+	}
 
 }

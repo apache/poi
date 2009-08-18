@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -26,18 +25,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class TestRangePtg extends AbstractPtgTestCase
-{
+public final class TestRangePtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() throws Exception
-    {
+    public void testReading() {
         HSSFWorkbook workbook = loadWorkbook("RangePtg.xls");
         HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(1);
         assertEquals("Wrong cell value", 10.0, cell.getNumericCellValue(), 0.0);
         assertEquals("Wrong cell formula", "SUM(pineapple:B2)", cell.getCellFormula());
     }
 }
-
-

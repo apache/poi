@@ -21,8 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
-public class TestEscherChildAnchorRecord extends TestCase
-{
+public final class TestEscherChildAnchorRecord extends TestCase {
     public void testSerialize() {
         EscherChildAnchorRecord r = createRecord();
 
@@ -38,8 +37,7 @@ public class TestEscherChildAnchorRecord extends TestCase
                 "04, 00, 00, 00]", HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    public void testFillFields() {
         String hexData = "01 00 " +
                 "0F F0 " +
                 "10 00 00 00 " +
@@ -73,8 +71,7 @@ public class TestEscherChildAnchorRecord extends TestCase
         assertEquals( expected, createRecord().toString() );
     }
 
-    private static EscherChildAnchorRecord createRecord()
-    {
+    private static EscherChildAnchorRecord createRecord() {
         EscherChildAnchorRecord r = new EscherChildAnchorRecord();
         r.setRecordId( EscherChildAnchorRecord.RECORD_ID );
         r.setOptions( (short) 0x0001 );

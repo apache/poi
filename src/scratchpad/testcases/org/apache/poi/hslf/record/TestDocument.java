@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-
 import junit.framework.TestCase;
 import java.io.*;
 
@@ -25,8 +24,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.*;
 
 /**
- * Tests that Document works properly
- * (Also tests Environment while we're at it)
+ * Tests that Document works properly (Also tests Environment while we're at it)
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
@@ -36,55 +34,49 @@ public final class TestDocument extends TestCase {
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
-    public TestDocument() throws Exception {
+	public TestDocument() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		FileInputStream fis = new FileInputStream(filename);
 		pfs = new POIFSFileSystem(fis);
 		ss = new HSLFSlideShow(pfs);
-    }
-
-    private Document getDocRecord() {
-    	Record[] r = ss.getRecords();
-    	for(int i=(r.length-1); i>=0; i--) {
-    		if(r[i] instanceof Document) {
-    			return (Document)r[i];
-    		}
-    	}
-    	throw new IllegalStateException("No Document record found");
-    }
-
-    public void testRecordType() throws Exception {
-    	Document dr = getDocRecord();
-    	assertEquals(1000, dr.getRecordType());
 	}
 
-    public void testChildRecords() throws Exception {
-    	Document dr = getDocRecord();
-    	assertNotNull(dr.getDocumentAtom());
-    	assertTrue(dr.getDocumentAtom() instanceof DocumentAtom);
+	private Document getDocRecord() {
+		Record[] r = ss.getRecords();
+		for (int i = (r.length - 1); i >= 0; i--) {
+			if (r[i] instanceof Document) {
+				return (Document) r[i];
+			}
+		}
+		throw new IllegalStateException("No Document record found");
+	}
 
-    	assertNotNull(dr.getEnvironment());
-    	assertTrue(dr.getEnvironment() instanceof Environment);
+	public void testRecordType() {
+		Document dr = getDocRecord();
+		assertEquals(1000, dr.getRecordType());
+	}
 
-    	assertNotNull(dr.getSlideListWithTexts());
-    	assertEquals(3, dr.getSlideListWithTexts().length);
-    	assertNotNull(dr.getSlideListWithTexts()[0]);
-    	assertTrue(dr.getSlideListWithTexts()[0] instanceof SlideListWithText);
-    	assertNotNull(dr.getSlideListWithTexts()[1]);
-    	assertTrue(dr.getSlideListWithTexts()[1] instanceof SlideListWithText);
-    	assertNotNull(dr.getSlideListWithTexts()[2]);
-    	assertTrue(dr.getSlideListWithTexts()[2] instanceof SlideListWithText);
-    }
+	public void testChildRecords() {
+		Document dr = getDocRecord();
+		assertNotNull(dr.getDocumentAtom());
 
-    public void testEnvironment() throws Exception {
-    	Document dr = getDocRecord();
-    	Environment env = dr.getEnvironment();
+		assertNotNull(dr.getEnvironment());
 
-    	assertEquals(1010, env.getRecordType());
-    	assertNotNull(env.getFontCollection());
-    	assertTrue(env.getFontCollection() instanceof FontCollection);
-    }
+		assertNotNull(dr.getSlideListWithTexts());
+		assertEquals(3, dr.getSlideListWithTexts().length);
+		assertNotNull(dr.getSlideListWithTexts()[0]);
+		assertNotNull(dr.getSlideListWithTexts()[1]);
+		assertNotNull(dr.getSlideListWithTexts()[2]);
+	}
 
-    // No need to check re-writing - hslf.TestReWrite does all that for us
+	public void testEnvironment() {
+		Document dr = getDocRecord();
+		Environment env = dr.getEnvironment();
+
+		assertEquals(1010, env.getRecordType());
+		assertNotNull(env.getFontCollection());
+	}
+
+	// No need to check re-writing - hslf.TestReWrite does all that for us
 }

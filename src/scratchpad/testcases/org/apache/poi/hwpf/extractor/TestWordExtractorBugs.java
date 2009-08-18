@@ -28,11 +28,11 @@ import junit.framework.TestCase;
  */
 public final class TestWordExtractorBugs extends TestCase {
 	private String dirname;
-    protected void setUp() throws Exception {
+	protected void setUp() {
 		dirname = System.getProperty("HWPF.testdata.path");
-    }
+	}
 
-    public void testProblemMetadata() throws Exception {
+	public void testProblemMetadata() throws Exception {
 		String filename = dirname + "/ProblemExtracting.doc";
 		WordExtractor extractor =
 			new WordExtractor(new FileInputStream(filename));
@@ -41,6 +41,5 @@ public final class TestWordExtractorBugs extends TestCase {
 		extractor.getText();
 		extractor.getParagraphText();
 		extractor.getTextFromPieces();
-    }
-
+	}
 }

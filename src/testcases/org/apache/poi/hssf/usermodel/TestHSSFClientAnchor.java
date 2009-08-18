@@ -27,10 +27,8 @@ import org.apache.poi.hssf.model.ConvertAnchor;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Yegor Kozlov (yegor at apache.org)
  */
-public class TestHSSFClientAnchor extends TestCase
-{
-    public void testGetAnchorHeightInPoints() throws Exception
-    {
+public final class TestHSSFClientAnchor extends TestCase {
+    public void testGetAnchorHeightInPoints() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("test");
         HSSFClientAnchor a = new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short)0,0);
@@ -63,11 +61,10 @@ public class TestHSSFClientAnchor extends TestCase
 
     /**
      * When HSSFClientAnchor is converted into EscherClientAnchorRecord
-     * check that dx1, dx2, dy1 and dy2 are writtem "as is".
-     * (Bug 42999 reported that dx1 ans dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
+     * check that dx1, dx2, dy1 and dy2 are written "as is".
+     * (Bug 42999 reported that dx1 and dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
      */
-    public void testConvertAnchor() throws Exception
-    {
+    public void testConvertAnchor() {
         HSSFClientAnchor[] anchor = {
             new HSSFClientAnchor( 0 , 0 , 0 , 0 ,(short)0, 1,(short)1,3),
             new HSSFClientAnchor( 100 , 0 , 900 , 255 ,(short)0, 1,(short)1,3),
@@ -101,7 +98,5 @@ public class TestHSSFClientAnchor extends TestCase
             float height = anchor[i].getAnchorHeightInPoints(sheet);
             assertEquals(ref[i], height, 0);
         }
-
     }
-
 }

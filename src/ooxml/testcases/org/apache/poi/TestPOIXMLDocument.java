@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,33 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileOutputStream;
-import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import org.apache.poi.util.TempFile;
+import junit.framework.TestCase;
+
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-
-import junit.framework.TestCase;
+import org.apache.poi.util.TempFile;
 
 /**
  * Test recursive read and write of OPC packages
  */
-public class TestPOIXMLDocument extends TestCase
-{
+public final class TestPOIXMLDocument extends TestCase {
     private static class OPCParser extends POIXMLDocument {
 
-        public OPCParser(OPCPackage pkg) throws IOException {
+        public OPCParser(OPCPackage pkg) {
             super(pkg);
         }
 
@@ -49,13 +45,16 @@ public class TestPOIXMLDocument extends TestCase
             throw new RuntimeException("not supported");
         }
 
-        public void parse(POIXMLFactory factory) throws OpenXML4JException, IOException{
+        public void parse(POIXMLFactory factory) throws IOException{
             load(factory);
         }
     }
 
-    private static class TestFactory extends POIXMLFactory  {
+    private static final class TestFactory extends POIXMLFactory {
 
+        public TestFactory() {
+            //
+        }
         public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
             return new POIXMLDocumentPart(part, rel);
         }
@@ -70,16 +69,16 @@ public class TestPOIXMLDocument extends TestCase
      * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
      */
     private static void traverse(POIXMLDocumentPart part, HashMap<String,POIXMLDocumentPart> context) throws IOException{
-    	context.put(part.getPackageRelationship().getTargetURI().toString(), part);
-    	for(POIXMLDocumentPart p : part.getRelations()){
+        context.put(part.getPackageRelationship().getTargetURI().toString(), part);
+        for(POIXMLDocumentPart p : part.getRelations()){
             String uri = p.getPackageRelationship().getTargetURI().toString();
             if (!context.containsKey(uri)) {
-    			traverse(p, context);
-    		} else {
+                traverse(p, context);
+            } else {
                 POIXMLDocumentPart prev = context.get(uri);
                 assertSame("Duplicate POIXMLDocumentPart instance for targetURI=" + uri, prev, p);
             }
-    	}
+        }
     }
 
     public void assertReadWrite(String path) throws Exception {

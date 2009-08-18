@@ -140,7 +140,7 @@ public class TestXSSFComment extends TestCase {
      *  file, save, load, and still see them
      * @throws Exception
      */
-    public void testCreateSave() throws Exception {
+    public void testCreateSave() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet s1 = wb.createSheet();
         Row r1 = s1.createRow(0);

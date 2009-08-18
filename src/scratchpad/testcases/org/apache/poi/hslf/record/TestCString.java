@@ -35,13 +35,13 @@ public final class TestCString extends TestCase {
 		0x43, 00, 0x6F, 00, 0x6D, 00, 0x6D, 00,
 		0x65, 00, 0x6E, 00, 0x74, 00, 0x73, 00 };
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(4026l, ca.getRecordType());
 		CString cb = new CString(data_b, 0, data_a.length);
 		assertEquals(4026l, cb.getRecordType());
 	}
-	public void testCount() throws Exception {
+	public void testCount() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(0, ca.getOptions());
 		CString cb = new CString(data_b, 0, data_a.length);
@@ -51,7 +51,7 @@ public final class TestCString extends TestCase {
 		assertEquals(28, ca.getOptions());
 	}
 
-	public void testText() throws Exception {
+	public void testText() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals("Hogwarts", ca.getText());
 		CString cb = new CString(data_b, 0, data_a.length);

@@ -31,11 +31,11 @@ public final class TestNotesAtom extends TestCase {
 	private byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
 		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(1009l, na.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(0x80000000, na.getSlideID());
 		assertEquals(false, na.getFollowMasterObjects());

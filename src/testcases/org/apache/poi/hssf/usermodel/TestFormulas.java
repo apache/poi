@@ -874,7 +874,7 @@ public final class TestFormulas extends TestCase {
     }
 
     /** MissingArgPtg */
-    public void testMissingArgPtg() throws Exception {
+    public void testMissingArgPtg() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
         cell.setCellFormula("IF(A1=\"A\",1,)");
@@ -929,10 +929,10 @@ public final class TestFormulas extends TestCase {
 
         //check that the formula evaluator returns the correct result
         HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
-        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue());
-        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue());
+        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue(), 0.0);
+        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue(), 0.0);
 
-        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue());
-        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue());
+        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
+        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
     }
 }

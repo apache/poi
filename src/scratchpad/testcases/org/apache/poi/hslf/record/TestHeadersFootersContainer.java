@@ -50,7 +50,7 @@ public final class TestHeadersFootersContainer extends TestCase {
             0x6F, 0x00, 0x6F, 0x00, 0x74, 0x00, 0x65, 0x00, 0x72, 0x00
     };
 
-    public void testReadSlideHeadersFootersContainer() throws Exception {
+    public void testReadSlideHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.SlideHeadersFootersContainer, record.getOptions());
@@ -103,7 +103,7 @@ public final class TestHeadersFootersContainer extends TestCase {
         assertTrue(Arrays.equals(slideData, b));
     }
 
-    public void testReadNotesHeadersFootersContainer() throws Exception {
+    public void testReadNotesHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.NotesHeadersFootersContainer, record.getOptions());

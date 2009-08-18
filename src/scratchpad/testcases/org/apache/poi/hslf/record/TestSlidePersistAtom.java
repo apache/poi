@@ -32,11 +32,11 @@ public final class TestSlidePersistAtom extends TestCase {
 		4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(1011l, spa.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(4, spa.getRefID() );
 		assertEquals(true, spa.getHasShapesOtherThanPlaceholders() );

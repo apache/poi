@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  *  text replacement or textual contents
  */
 public final class TestRange extends TestCase {
-	public void testFieldStripping() throws Exception {
+	public void testFieldStripping() {
 		String exp = "This is some text.";
 
 		String single = "This is some \u0013Blah!\u0015text.";

@@ -71,7 +71,7 @@ public abstract class BaseTestSheet extends TestCase {
         assertTrue(it2.hasNext());
         Row row2_ovrewritten_ref = it2.next();
         assertSame(row2_ovrewritten, row2_ovrewritten_ref);
-        assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue());
+        assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue(), 0.0);
     }
 
 
@@ -91,7 +91,7 @@ public abstract class BaseTestSheet extends TestCase {
         assertEquals(0, sheet1.getFirstRowNum());
         assertEquals(0, sheet1.getLastRowNum());
 
-        Row row1 = sheet1.createRow(1);
+        sheet1.createRow(1);
         Row row2 = sheet1.createRow(2);
         assertEquals(2, sheet1.getPhysicalNumberOfRows());
         assertEquals(1, sheet1.getFirstRowNum());
@@ -175,7 +175,7 @@ public abstract class BaseTestSheet extends TestCase {
     /**
      * Setting landscape and portrait stuff on new sheets
      */
-    public void testPrintSetupLandscapeNew() throws Exception {
+    public void testPrintSetupLandscapeNew() {
         Workbook workbook = getTestDataProvider().createWorkbook();
         Sheet sheetL = workbook.createSheet("LandscapeS");
         Sheet sheetP = workbook.createSheet("LandscapeP");
@@ -244,7 +244,7 @@ public abstract class BaseTestSheet extends TestCase {
             ;
         }
         assertEquals(1, sheet.getNumMergedRegions());
-        
+
     }
 
     /**
@@ -397,21 +397,21 @@ public abstract class BaseTestSheet extends TestCase {
         Sheet sheet = workbook.createSheet();
         sheet.setDefaultRowHeightInPoints(15);
         assertEquals((short) 300, sheet.getDefaultRowHeight());
-        assertEquals((float) 15, sheet.getDefaultRowHeightInPoints());
+        assertEquals(15.0F, sheet.getDefaultRowHeightInPoints(), 0F);
 
         // Set a new default row height in twips and test getting the value in points
         sheet.setDefaultRowHeight((short) 360);
-        assertEquals(18.0f, sheet.getDefaultRowHeightInPoints());
+        assertEquals(18.0f, sheet.getDefaultRowHeightInPoints(), 0F);
         assertEquals((short) 360, sheet.getDefaultRowHeight());
 
         // Test that defaultRowHeight is a truncated short: E.G. 360inPoints -> 18; 361inPoints -> 18
         sheet.setDefaultRowHeight((short) 361);
-        assertEquals((float)361/20, sheet.getDefaultRowHeightInPoints());
+        assertEquals((float)361/20, sheet.getDefaultRowHeightInPoints(), 0F);
         assertEquals((short) 361, sheet.getDefaultRowHeight());
 
         // Set a new default row height in points and test getting the value in twips
         sheet.setDefaultRowHeightInPoints(17.5f);
-        assertEquals(17.5f, sheet.getDefaultRowHeightInPoints());
+        assertEquals(17.5f, sheet.getDefaultRowHeightInPoints(), 0F);
         assertEquals((short)(17.5f*20), sheet.getDefaultRowHeight());
     }
 
@@ -537,19 +537,19 @@ public abstract class BaseTestSheet extends TestCase {
 
         Workbook workbook = getTestDataProvider().createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        assertEquals(marginLeft, sheet.getMargin(Sheet.LeftMargin));
+        assertEquals(marginLeft, sheet.getMargin(Sheet.LeftMargin), 0.0);
         sheet.setMargin(Sheet.LeftMargin, 10.0);
         //left margin is custom, all others are default
-        assertEquals(10.0, sheet.getMargin(Sheet.LeftMargin));
-        assertEquals(marginRight, sheet.getMargin(Sheet.RightMargin));
-        assertEquals(marginTop, sheet.getMargin(Sheet.TopMargin));
-        assertEquals(marginBottom, sheet.getMargin(Sheet.BottomMargin));
+        assertEquals(10.0, sheet.getMargin(Sheet.LeftMargin), 0.0);
+        assertEquals(marginRight, sheet.getMargin(Sheet.RightMargin), 0.0);
+        assertEquals(marginTop, sheet.getMargin(Sheet.TopMargin), 0.0);
+        assertEquals(marginBottom, sheet.getMargin(Sheet.BottomMargin), 0.0);
         sheet.setMargin(Sheet.RightMargin, 11.0);
-        assertEquals(11.0, sheet.getMargin(Sheet.RightMargin));
+        assertEquals(11.0, sheet.getMargin(Sheet.RightMargin), 0.0);
         sheet.setMargin(Sheet.TopMargin, 12.0);
-        assertEquals(12.0, sheet.getMargin(Sheet.TopMargin));
+        assertEquals(12.0, sheet.getMargin(Sheet.TopMargin), 0.0);
         sheet.setMargin(Sheet.BottomMargin, 13.0);
-        assertEquals(13.0, sheet.getMargin(Sheet.BottomMargin));
+        assertEquals(13.0, sheet.getMargin(Sheet.BottomMargin), 0.0);
 
         // incorrect margin constant
         try {
@@ -618,9 +618,9 @@ public abstract class BaseTestSheet extends TestCase {
     public void testGetFirstLastRowNum() {
         Workbook workbook = getTestDataProvider().createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
-        Row row10 = sheet.createRow(9);
-        Row row1 = sheet.createRow(0);
-        Row row2 = sheet.createRow(1);
+        sheet.createRow(9);
+        sheet.createRow(0);
+        sheet.createRow(1);
         assertEquals(0, sheet.getFirstRowNum());
         assertEquals(9, sheet.getLastRowNum());
     }
@@ -639,6 +639,4 @@ public abstract class BaseTestSheet extends TestCase {
         sheet.setColumnHidden(2, true);
         assertTrue(sheet.isColumnHidden(2));
     }
-
-
 }

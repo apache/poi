@@ -34,7 +34,7 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
 	/**
      * Test setting and getting boolean values.
      */
-    public void testBuiltinFormats() throws Exception {
+    public void testBuiltinFormats() {
         baseBuiltinFormats();
     }
 }

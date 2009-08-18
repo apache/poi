@@ -46,9 +46,9 @@ public class TestXSSFCellStyle extends TestCase {
 	@Override
 	protected void setUp() {
 		stylesTable = new StylesTable();
-		
+
 		ctStylesheet = stylesTable.getCTStylesheet();
-		
+
 		ctBorderA = CTBorder.Factory.newInstance();
 		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
 		long borderId = stylesTable.putBorder(borderA);
@@ -71,7 +71,7 @@ public class TestXSSFCellStyle extends TestCase {
 		cellStyleXf.setBorderId(1);
 		cellStyleXf.setFillId(1);
 		cellStyleXf.setFontId(1);
-		
+
 		cellXfs = ctStylesheet.addNewCellXfs();
 		cellXf = cellXfs.addNewXf();
 		cellXf.setXfId(1);
@@ -419,7 +419,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertNull(cellStyle.getFillBackgroundXSSFColor());
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
-	
+
 	public void testDefaultStyles() {
 
 		XSSFWorkbook wb1 = new XSSFWorkbook();
@@ -445,7 +445,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(style2.getBorderRight(), style1.getBorderRight());
         assertEquals(style2.getBorderTop(), style1.getBorderTop());
 	}
-	
+
 
 	public void testGetFillForegroundColor() {
 
@@ -481,7 +481,7 @@ public class TestXSSFCellStyle extends TestCase {
             assertEquals(4, styles.getFills().size());
         }
 	}
-	
+
 	public void testGetFillPattern() {
 
         assertEquals(CellStyle.NO_FILL, cellStyle.getFillPattern());
@@ -585,13 +585,13 @@ public class TestXSSFCellStyle extends TestCase {
 	/**
 	 * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
 	 */
-	public void testCloneStyleSameWB() throws Exception {
+	public void testCloneStyleSameWB() {
 		// TODO
 	}
 	/**
 	 * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
 	 */
-	public void testCloneStyleDiffWB() throws Exception {
+	public void testCloneStyleDiffWB() {
 		// TODO
 	}
 }

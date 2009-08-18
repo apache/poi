@@ -28,9 +28,9 @@ import org.apache.poi.hwpf.model.FileInformationBlock;
  *  use this program.
  */
 public final class HWPFLister {
-	private HWPFDocument doc;
+	private final HWPFDocument _doc;
 	public HWPFLister(HWPFDocument doc) {
-		this.doc = doc;
+		_doc = doc;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -46,8 +46,8 @@ public final class HWPFLister {
 		l.dumpFIB();
 	}
 
-	public void dumpFIB() throws Exception {
-		FileInformationBlock fib = doc.getFileInformationBlock();
+	public void dumpFIB() {
+		FileInformationBlock fib = _doc.getFileInformationBlock();
 		System.out.println(fib.toString());
 	}
 }

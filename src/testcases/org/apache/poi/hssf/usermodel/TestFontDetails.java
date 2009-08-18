@@ -26,37 +26,30 @@ import java.util.Properties;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestFontDetails extends TestCase
-{
+public final class TestFontDetails extends TestCase {
     private Properties properties;
     private FontDetails fontDetails;
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() {
         properties = new Properties();
         properties.setProperty("font.Arial.height", "13");
         properties.setProperty("font.Arial.characters", "a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ");
         properties.setProperty("font.Arial.widths",     "6, 6, 6, 6, 6, 3, 6, 6, 3, 4, 6, 3, 9, 6, 6, 6, 6, 4, 6, 3, 6, 7, 9, 6, 5, 5, 7, 7, 7, 7, 7, 6, 8, 7, 3, 6, 7, 6, 9, 7, 8, 7, 8, 7, 7, 5, 7, 7, 9, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, ");
         fontDetails = FontDetails.create("Arial", properties);
-
     }
 
-    public void testCreate() throws Exception
-    {
+    public void testCreate() {
         assertEquals(13, fontDetails.getHeight());
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(3, fontDetails.getCharWidth('f'));
     }
 
-    public void testGetStringWidth() throws Exception
-    {
+    public void testGetStringWidth() {
         assertEquals(9, fontDetails.getStringWidth("af"));
     }
 
-    public void testGetCharWidth() throws Exception
-    {
+    public void testGetCharWidth() {
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(9, fontDetails.getCharWidth('='));
     }
-
 }

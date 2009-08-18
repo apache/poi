@@ -40,7 +40,7 @@ public final class TestFontCollection extends TestCase {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xDA-256, 0x12, 0x00,
         0x28, 0xDD-256, 0x0D, 0x30, 0x00, 0x00, 0x04, 0x00  };
 
-    public void testFonts() throws Exception {
+    public void testFonts() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 1);
@@ -49,7 +49,7 @@ public final class TestFontCollection extends TestCase {
         assertEquals(fnt.getFontName(), "Times New Roman");
     }
 
-    public void testAddFont() throws Exception {
+    public void testAddFont() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         int idx = fonts.addFont("Times New Roman");
         assertEquals(idx, 0);

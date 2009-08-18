@@ -33,7 +33,7 @@ public final class TestHeadersFootersAtom extends TestCase {
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 00,
             0x00, 0x00, 0x23, 0x00 };
 
-    public void testRead() throws Exception {
+    public void testRead() {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
 
@@ -70,7 +70,7 @@ public final class TestHeadersFootersAtom extends TestCase {
         assertTrue(Arrays.equals(data, b));
     }
 
-    public void testFlags() throws Exception {
+    public void testFlags() {
         HeadersFootersAtom record = new HeadersFootersAtom();
 
         //in a new record all the bits are 0
@@ -87,6 +87,5 @@ public final class TestHeadersFootersAtom extends TestCase {
 
         record.setFlag(HeadersFootersAtom.fHasTodayDate, false);
         assertFalse(record.getFlag(HeadersFootersAtom.fHasTodayDate));
-
     }
 }

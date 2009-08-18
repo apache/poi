@@ -69,23 +69,23 @@ public final class TestExControl extends TestCase {
             0x65, 0x00, 0x63, 0x00, 0x74, 0x00
     };
 
-    public void testRead() throws Exception {
+	public void testRead() {
 		ExControl record = new ExControl(data, 0, data.length);
 		assertEquals(RecordTypes.ExControl.typeID, record.getRecordType());
 
-        assertNotNull(record.getExControlAtom());
-        assertEquals(256, record.getExControlAtom().getSlideId());
+		assertNotNull(record.getExControlAtom());
+		assertEquals(256, record.getExControlAtom().getSlideId());
 
-        ExOleObjAtom oleObj = record.getExOleObjAtom();
-        assertNotNull(oleObj);
-        assertEquals(oleObj.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-        assertEquals(oleObj.getType(), ExOleObjAtom.TYPE_CONTROL);
-        assertEquals(oleObj.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
+		ExOleObjAtom oleObj = record.getExOleObjAtom();
+		assertNotNull(oleObj);
+		assertEquals(oleObj.getDrawAspect(), ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+		assertEquals(oleObj.getType(), ExOleObjAtom.TYPE_CONTROL);
+		assertEquals(oleObj.getSubType(), ExOleObjAtom.SUBTYPE_DEFAULT);
 
-        assertEquals("Shockwave Flash Object", record.getMenuName());
-        assertEquals("ShockwaveFlash.ShockwaveFlash.9", record.getProgId());
-        assertEquals("Shockwave Flash Object", record.getClipboardName());
-    }
+		assertEquals("Shockwave Flash Object", record.getMenuName());
+		assertEquals("ShockwaveFlash.ShockwaveFlash.9", record.getProgId());
+		assertEquals("Shockwave Flash Object", record.getClipboardName());
+	}
 
 	public void testWrite() throws Exception {
 		ExControl record = new ExControl(data, 0, data.length);
@@ -93,32 +93,31 @@ public final class TestExControl extends TestCase {
 		record.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+		assertTrue(Arrays.equals(data, b));
 	}
 
-    public void testNewRecord() throws Exception {
-        ExControl record = new ExControl();
-        ExControlAtom ctrl = record.getExControlAtom();
-        ctrl.setSlideId(256);
+	public void testNewRecord() throws Exception {
+		ExControl record = new ExControl();
+		ExControlAtom ctrl = record.getExControlAtom();
+		ctrl.setSlideId(256);
 
-        ExOleObjAtom oleObj = record.getExOleObjAtom();
-        oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-        oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
-        oleObj.setObjID(1);
-        oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
-        oleObj.setObjStgDataRef(2);
-        oleObj.setOptions(1283584);
+		ExOleObjAtom oleObj = record.getExOleObjAtom();
+		oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+		oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
+		oleObj.setObjID(1);
+		oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
+		oleObj.setObjStgDataRef(2);
+		oleObj.setOptions(1283584);
 
-        record.setMenuName("Shockwave Flash Object");
-        record.setProgId("ShockwaveFlash.ShockwaveFlash.9");
-        record.setClipboardName("Shockwave Flash Object");
+		record.setMenuName("Shockwave Flash Object");
+		record.setProgId("ShockwaveFlash.ShockwaveFlash.9");
+		record.setClipboardName("Shockwave Flash Object");
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        record.writeOut(baos);
-        byte[] b = baos.toByteArray();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		record.writeOut(baos);
+		byte[] b = baos.toByteArray();
 
-        assertEquals(data.length, b.length);
-        assertTrue(Arrays.equals(data, b));
-    }
-
+		assertEquals(data.length, b.length);
+		assertTrue(Arrays.equals(data, b));
+	}
 }

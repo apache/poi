@@ -26,19 +26,19 @@ import junit.framework.TestCase;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestRecordTypes extends TestCase {
-    public void testPPTNameLookups() throws Exception {
+	public void testPPTNameLookups() {
 		assertEquals("MainMaster", RecordTypes.recordName(1016));
 		assertEquals("TextBytesAtom", RecordTypes.recordName(4008));
 		assertEquals("VBAInfo", RecordTypes.recordName(1023));
 	}
 
-    public void testEscherNameLookups() throws Exception {
+	public void testEscherNameLookups() {
 		assertEquals("EscherDggContainer", RecordTypes.recordName(0xf000));
 		assertEquals("EscherClientTextbox", RecordTypes.recordName(0xf00d));
 		assertEquals("EscherSelection", RecordTypes.recordName(0xf119));
 	}
 
-	public void testPPTClassLookups() throws Exception {
+	public void testPPTClassLookups() {
 		assertEquals(Slide.class, RecordTypes.recordHandlingClass(1006));
 		assertEquals(TextCharsAtom.class, RecordTypes.recordHandlingClass(4000));
 		assertEquals(TextBytesAtom.class, RecordTypes.recordHandlingClass(4008));
@@ -49,7 +49,7 @@ public final class TestRecordTypes extends TestCase {
 		assertEquals(UnknownRecordPlaceholder.class, RecordTypes.recordHandlingClass(2019));
 	}
 
-	public void testEscherClassLookups() throws Exception {
+	public void testEscherClassLookups() {
 		// Should all come back with null, as DDF handles them
 		assertEquals(null, RecordTypes.recordHandlingClass(0xf000));
 		assertEquals(null, RecordTypes.recordHandlingClass(0xf001));

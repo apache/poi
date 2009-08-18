@@ -52,17 +52,17 @@ public final class TestStreamBugs extends StreamTest {
 		filesystem.createDocumentInputStream("VisioDocument").read(contents);
 	}
 
-	public void testGetTrailer() throws Exception {
+	public void testGetTrailer() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
 	}
 
-	public void TOIMPLEMENTtestGetCertainChunks() throws Exception {
+	public void TOIMPLEMENTtestGetCertainChunks() {
 		int offsetA = 3708;
 		int offsetB = 3744;
 	}
 
-	public void testGetChildren() throws Exception {
+	public void testGetChildren() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		TrailerStream trailer = (TrailerStream)
 			Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);

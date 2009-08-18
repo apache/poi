@@ -31,13 +31,13 @@ public final class TestRecordCounts extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-    public TestRecordCounts() throws Exception {
+	public TestRecordCounts() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		ss = new HSLFSlideShow(filename);
-    }
+	}
 
-    public void testSheetsCount() throws Exception {
+	public void testSheetsCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
@@ -51,7 +51,7 @@ public final class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
-    public void testNotesCount() throws Exception {
+	public void testNotesCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
@@ -66,7 +66,7 @@ public final class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
-    public void testSlideListWithTextCount() throws Exception {
+	public void testSlideListWithTextCount() {
 		// Second level
 		Record[] rt = ss.getRecords();
 		Record[] r = rt[0].getChildRecords();

@@ -36,30 +36,30 @@ public final class TestRecordSetup extends TestCase {
 	private SlideShow ss;
 	private HSLFSlideShow hss;
 
-    public TestRecordSetup() throws Exception {
+	public TestRecordSetup() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
-
-    public void testHandleParentAwareRecords() throws Exception {
-    	Record[] records = hss.getRecords();
-    	for(int i=0; i<records.length; i++) {
-    		ensureParentAware(records[i],null);
-    	}
 	}
-    private void ensureParentAware(Record r,RecordContainer parent) {
-    	if(r instanceof ParentAwareRecord) {
-    		ParentAwareRecord pr = (ParentAwareRecord)r;
-    		assertEquals(parent, pr.getParentRecord());
-    	}
-    	if(r instanceof RecordContainer) {
-    		RecordContainer rc = (RecordContainer)r;
-    		Record[] children = rc.getChildRecords();
-    		for(int i=0; i<children.length; i++) {
-    			ensureParentAware(children[i], rc);
-    		}
-    	}
-    }
+
+	public void testHandleParentAwareRecords() {
+		Record[] records = hss.getRecords();
+		for(int i=0; i<records.length; i++) {
+			ensureParentAware(records[i],null);
+		}
+	}
+	private void ensureParentAware(Record r,RecordContainer parent) {
+		if(r instanceof ParentAwareRecord) {
+			ParentAwareRecord pr = (ParentAwareRecord)r;
+			assertEquals(parent, pr.getParentRecord());
+		}
+		if(r instanceof RecordContainer) {
+			RecordContainer rc = (RecordContainer)r;
+			Record[] children = rc.getChildRecords();
+			for(int i=0; i<children.length; i++) {
+				ensureParentAware(children[i], rc);
+			}
+		}
+	}
 }
