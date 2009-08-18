@@ -283,7 +283,7 @@ public class EscherGraphics
             excelFont = new Font( font.getName(), font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ));
         }
         FontDetails d = StaticFontMetrics.getFontDetails( excelFont );
-        int width = (int) ( (d.getStringWidth( str ) * 8)  + 12 );
+        int width = d.getStringWidth( str ) * 8  + 12;
         int height = (int) ( ( font.getSize() / verticalPixelsPerPoint ) + 6 ) * 2;
         y -= ( font.getSize() / verticalPixelsPerPoint ) + 2 * verticalPixelsPerPoint;    // we want to draw the shape from the top-left
         HSSFTextbox textbox = escherGroup.createTextbox( new HSSFChildAnchor( x, y, x + width, y + height ) );
@@ -357,13 +357,13 @@ public class EscherGraphics
      * <p>
      * This draws the polygon, with <code>nPoint</code> line segments.
      * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
-     *  drawn between sequential points 
+     *  drawn between sequential points
      *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
-     * The final line segment is a closing one, from the last point to 
+     * The final line segment is a closing one, from the last point to
      *  the first (assuming they are different).
      * <p>
      * The area inside of the polygon is defined by using an
-     *  even-odd fill rule (also known as the alternating rule), and 
+     *  even-odd fill rule (also known as the alternating rule), and
      *  the area inside of it is filled.
      * @param xPoints array of the <code>x</code> coordinates.
      * @param yPoints array of the <code>y</code> coordinates.
@@ -454,7 +454,7 @@ public class EscherGraphics
 
     public void setClip(int x, int y, int width, int height)
     {
-        setClip(((Shape) (new Rectangle(x,y,width,height))));
+        setClip(new Rectangle(x,y,width,height));
     }
 
     public void setClip(Shape shape)

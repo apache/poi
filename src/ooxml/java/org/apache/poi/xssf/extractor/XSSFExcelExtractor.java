@@ -41,7 +41,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 	private boolean formulasNotResults = false;
 	private boolean includeCellComments = false;
 	private boolean includeHeadersFooters = true;
-	
+
 	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(path));
 	}
@@ -52,14 +52,14 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 		super(workbook);
 		this.workbook = workbook;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Use:");
 			System.err.println("  HXFExcelExtractor <filename.xlsx>");
 			System.exit(1);
 		}
-		POIXMLTextExtractor extractor = 
+		POIXMLTextExtractor extractor =
 			new XSSFExcelExtractor(args[0]);
 		System.out.println(extractor.getText());
 	}
@@ -89,19 +89,19 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
     public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
         this.includeHeadersFooters = includeHeadersFooters;
     }
-	
+
 	/**
 	 * Retreives the text contents of the file
 	 */
 	public String getText() {
 		StringBuffer text = new StringBuffer();
-		
+
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
-			XSSFSheet sheet = (XSSFSheet)workbook.getSheetAt(i);
+			XSSFSheet sheet = workbook.getSheetAt(i);
 			if(includeSheetNames) {
 				text.append(workbook.getSheetName(i) + "\n");
 			}
-			
+
 			// Header(s), if present
 			if(includeHeadersFooters) {
 				text.append(
@@ -120,7 +120,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 				Row row = (Row)rawR;
 				for(Iterator<Cell> ri = row.cellIterator(); ri.hasNext();) {
 					Cell cell = ri.next();
-					
+
 					// Is it a formula one?
 					if(cell.getCellType() == Cell.CELL_TYPE_FORMULA && formulasNotResults) {
 						text.append(cell.getCellFormula());
@@ -130,7 +130,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 						XSSFCell xc = (XSSFCell)cell;
 						text.append(xc.getRawValue());
 					}
-					
+
 					// Output the comment, if requested and exists
 				    Comment comment = cell.getCellComment();
 					if(includeCellComments && comment != null) {
@@ -139,13 +139,13 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 					    String commentText = comment.getString().getString().replace('\n', ' ');
 					    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
 					}
-					
+
 					if(ri.hasNext())
 						text.append("\t");
 				}
 				text.append("\n");
 			}
-			
+
 			// Finally footer(s), if present
 			if(includeHeadersFooters) {
 				text.append(
@@ -159,10 +159,10 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 				);
 			}
 		}
-		
+
 		return text.toString();
 	}
-	
+
 	private String extractHeaderFooter(HeaderFooter hf) {
 		return ExcelExtractor._extractHeaderFooter(hf);
 	}

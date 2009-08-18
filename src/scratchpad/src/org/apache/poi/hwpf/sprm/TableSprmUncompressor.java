@@ -39,7 +39,7 @@ public final class TableSprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
 
       //TAPXs are actually PAPXs so we have to make sure we are only trying to
       //uncompress the right type of sprm.

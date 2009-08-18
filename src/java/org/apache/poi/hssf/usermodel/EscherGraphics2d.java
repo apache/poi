@@ -70,14 +70,13 @@ import java.util.Map;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EscherGraphics2d extends Graphics2D
-{
-    private EscherGraphics escherGraphics;
-    private BufferedImage img;
-    private AffineTransform trans;
-    private Stroke stroke;
-    private Paint paint;
-    private Shape deviceclip;
+public final class EscherGraphics2d extends Graphics2D {
+    private EscherGraphics _escherGraphics;
+    private BufferedImage _img;
+    private AffineTransform _trans;
+    private Stroke _stroke;
+    private Paint _paint;
+    private Shape _deviceclip;
     private POILogger logger = POILogFactory.getLogger(getClass());
 
     /**
@@ -87,7 +86,7 @@ public class EscherGraphics2d extends Graphics2D
      */
     public EscherGraphics2d(EscherGraphics escherGraphics)
     {
-        this.escherGraphics = escherGraphics;
+        this._escherGraphics = escherGraphics;
         setImg( new BufferedImage(1, 1, 2) );
         setColor(Color.black);
     }
@@ -130,7 +129,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public Graphics create()
     {
-        EscherGraphics2d g2d = new EscherGraphics2d(escherGraphics);
+        EscherGraphics2d g2d = new EscherGraphics2d(_escherGraphics);
         return g2d;
     }
 
@@ -148,8 +147,8 @@ public class EscherGraphics2d extends Graphics2D
             Line2D shape2d = (Line2D) shape;
 
             int width = 0;
-            if (stroke != null && stroke instanceof BasicStroke) {
-                width = (int) ((BasicStroke)stroke).getLineWidth() * 12700;
+            if (_stroke != null && _stroke instanceof BasicStroke) {
+                width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
             }
 
             drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2(), width);
@@ -223,7 +222,7 @@ public class EscherGraphics2d extends Graphics2D
     public void drawImage(BufferedImage bufferedimage, BufferedImageOp op, int x, int y)
     {
         BufferedImage img = op.filter(bufferedimage, null);
-        drawImage(((Image) (img)), new AffineTransform(1.0F, 0.0F, 0.0F, 1.0F, x, y), null);
+        drawImage(img, new AffineTransform(1.0F, 0.0F, 0.0F, 1.0F, x, y), null);
     }
 
     public void drawLine(int x1, int y1, int x2, int y2, int width)
@@ -234,8 +233,8 @@ public class EscherGraphics2d extends Graphics2D
     public void drawLine(int x1, int y1, int x2, int y2)
     {
         int width = 0;
-        if (stroke != null && stroke instanceof BasicStroke) {
-            width = (int) ((BasicStroke)stroke).getLineWidth() * 12700;
+        if (_stroke != null && _stroke instanceof BasicStroke) {
+            width = (int) ((BasicStroke)_stroke).getLineWidth() * 12700;
         }
         getEscherGraphics().drawLine(x1,y1,x2,y2, width);
 //        draw(new GeneralPath(new java.awt.geom.Line2D.Float(x1, y1, x2, y2)));
@@ -268,7 +267,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public void drawRect(int x, int y, int width, int height)
     {
-        escherGraphics.drawRect(x,y,width,height);
+        _escherGraphics.drawRect(x,y,width,height);
     }
 
     public void drawRenderableImage(RenderableImage renderableimage, AffineTransform affinetransform)
@@ -325,7 +324,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public void fillOval(int x, int y, int width, int height)
     {
-        escherGraphics.fillOval(x,y,width,height);
+        _escherGraphics.fillOval(x,y,width,height);
     }
 
     /**
@@ -334,13 +333,13 @@ public class EscherGraphics2d extends Graphics2D
      * <p>
      * This draws the polygon, with <code>nPoint</code> line segments.
      * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
-     *  drawn between sequential points 
+     *  drawn between sequential points
      *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
-     * The final line segment is a closing one, from the last point to 
+     * The final line segment is a closing one, from the last point to
      *  the first (assuming they are different).
      * <p>
      * The area inside of the polygon is defined by using an
-     *  even-odd fill rule (also known as the alternating rule), and 
+     *  even-odd fill rule (also known as the alternating rule), and
      *  the area inside of it is filled.
      * @param xPoints array of the <code>x</code> coordinates.
      * @param yPoints array of the <code>y</code> coordinates.
@@ -349,7 +348,7 @@ public class EscherGraphics2d extends Graphics2D
      */
     public void fillPolygon(int xPoints[], int yPoints[], int nPoints)
     {
-        escherGraphics.fillPolygon(xPoints, yPoints, nPoints);
+        _escherGraphics.fillPolygon(xPoints, yPoints, nPoints);
     }
 
     public void fillRect(int x, int y, int width, int height)
@@ -382,15 +381,15 @@ public class EscherGraphics2d extends Graphics2D
 
     public Rectangle getClipBounds()
     {
-        if(getDeviceclip() != null)
+        if(getDeviceclip() != null) {
             return getClip().getBounds();
-        else
-            return null;
+        }
+        return null;
     }
 
     public Color getColor()
     {
-        return escherGraphics.getColor();
+        return _escherGraphics.getColor();
     }
 
     public Composite getComposite()
@@ -421,7 +420,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public Paint getPaint()
     {
-        return paint;
+        return _paint;
     }
 
     public Object getRenderingHint(java.awt.RenderingHints.Key key)
@@ -436,7 +435,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public Stroke getStroke()
     {
-        return stroke;
+        return _stroke;
     }
 
     public AffineTransform getTransform()
@@ -474,7 +473,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public void setClip(int i, int j, int k, int l)
     {
-        setClip(((Shape) (new Rectangle(i, j, k, l))));
+        setClip(new Rectangle(i, j, k, l));
     }
 
     public void setClip(Shape shape)
@@ -484,7 +483,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public void setColor(Color c)
     {
-        escherGraphics.setColor(c);
+        _escherGraphics.setColor(c);
     }
 
     public void setComposite(Composite composite)
@@ -501,7 +500,7 @@ public class EscherGraphics2d extends Graphics2D
     {
         if(paint1 != null)
         {
-            paint = paint1;
+            _paint = paint1;
             if(paint1 instanceof Color)
                 setColor( (Color)paint1 );
         }
@@ -524,7 +523,7 @@ public class EscherGraphics2d extends Graphics2D
 
     public void setStroke(Stroke s)
     {
-        stroke = s;
+        _stroke = s;
     }
 
     public void setTransform(AffineTransform affinetransform)
@@ -571,42 +570,42 @@ public class EscherGraphics2d extends Graphics2D
 
     private EscherGraphics getEscherGraphics()
     {
-        return escherGraphics;
+        return _escherGraphics;
     }
 
     private BufferedImage getImg()
     {
-        return img;
+        return _img;
     }
 
     private void setImg( BufferedImage img )
     {
-        this.img = img;
+        this._img = img;
     }
 
     private Graphics2D getG2D()
     {
-        return (Graphics2D) img.getGraphics();
+        return (Graphics2D) _img.getGraphics();
     }
 
     private AffineTransform getTrans()
     {
-        return trans;
+        return _trans;
     }
 
     private void setTrans( AffineTransform trans )
     {
-        this.trans = trans;
+        this._trans = trans;
     }
 
     private Shape getDeviceclip()
     {
-        return deviceclip;
+        return _deviceclip;
     }
 
     private void setDeviceclip( Shape deviceclip )
     {
-        this.deviceclip = deviceclip;
+        this._deviceclip = deviceclip;
     }
 
 }

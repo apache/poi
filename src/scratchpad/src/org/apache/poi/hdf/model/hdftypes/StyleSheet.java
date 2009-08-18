@@ -224,8 +224,8 @@ public final class StyleSheet implements HDFType {
                break;
           case 0x9:
                newCHP.setFSpec(true);
-               newCHP.setFtcSym((short)LittleEndian.getShort(varParam, 0));
-               newCHP.setXchSym((short)LittleEndian.getShort(varParam, 2));
+               newCHP.setFtcSym(LittleEndian.getShort(varParam, 0));
+               newCHP.setXchSym(LittleEndian.getShort(varParam, 2));
                break;
           case 0xa:
                newCHP.setFOle2(getFlag(param));
@@ -517,8 +517,8 @@ public final class StyleSheet implements HDFType {
                doCHPOperation(oldCHP, newCHP, 0x47, param, varParam, grpprl, offset, styleSheet);
                break;
           case 0x4d:
-               float percentage = (float)param/100.0f;
-               int add = (int)((float)percentage * (float)newCHP.getHps());
+               float percentage = param/100.0f;
+               int add = (int)(percentage * newCHP.getHps());
                newCHP.setHps(newCHP.getHps() + add);
                break;
           case 0x4e:
@@ -549,7 +549,7 @@ public final class StyleSheet implements HDFType {
                break;
           case 0x57:
                newCHP.setFPropMark(varParam[0]);
-               newCHP.setIbstPropRMark((short)LittleEndian.getShort(varParam, 1));
+               newCHP.setIbstPropRMark(LittleEndian.getShort(varParam, 1));
                newCHP.setDttmPropRMark(LittleEndian.getInt(varParam, 3));
                break;
           case 0x58:
@@ -577,7 +577,7 @@ public final class StyleSheet implements HDFType {
           case 0x62:
                byte[] xstDispFldRMark = new byte[32];
                newCHP.setFDispFldRMark(varParam[0]);
-               newCHP.setIbstDispFldRMark((short)LittleEndian.getShort(varParam, 1));
+               newCHP.setIbstDispFldRMark(LittleEndian.getShort(varParam, 1));
                newCHP.setDttmDispFldRMark(LittleEndian.getInt(varParam, 3));
                System.arraycopy(varParam, 7, xstDispFldRMark, 0, 32);
                newCHP.setXstDispFldRMark(xstDispFldRMark);
@@ -593,8 +593,8 @@ public final class StyleSheet implements HDFType {
                break;
           case 0x65:
                short[] brc = new short[2];
-               brc[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brc[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brc[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brc[1] = LittleEndian.getShort(grpprl, offset - 2);
                newCHP.setBrc(brc);
                break;
           case 0x66:
@@ -947,33 +947,33 @@ public final class StyleSheet implements HDFType {
                break;
           case 0x24:
                short[] brcTop = newPAP.getBrcTop();
-               brcTop[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcTop[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcTop[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcTop[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x25:
                short[] brcLeft = newPAP.getBrcLeft();
-               brcLeft[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcLeft[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcLeft[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcLeft[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x26:
                short[] brcBottom = newPAP.getBrcBottom();
-               brcBottom[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcBottom[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcBottom[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcBottom[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x27:
                short[] brcRight = newPAP.getBrcRight();
-               brcRight[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcRight[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcRight[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcRight[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x28:
                short[] brcBetween = newPAP.getBrcBetween();
-               brcBetween[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcBetween[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcBetween[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcBetween[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x29:
                short[] brcBar = newPAP.getBrcBar();
-               brcBar[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               brcBar[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               brcBar[0] = LittleEndian.getShort(grpprl, offset - 4);
+               brcBar[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x2a:
                newPAP.setFNoAutoHyph((byte)param);

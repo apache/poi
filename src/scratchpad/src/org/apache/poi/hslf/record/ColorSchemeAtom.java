@@ -30,9 +30,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch
  */
-
-public final class ColorSchemeAtom extends RecordAtom
-{
+public final class ColorSchemeAtom extends RecordAtom {
 	private byte[] _header;
 	private static long _type = 2032l;
 
@@ -108,14 +106,14 @@ public final class ColorSchemeAtom extends RecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the rgb values
-		backgroundColourRGB = (int)LittleEndian.getInt(source,start+8+0);
-		textAndLinesColourRGB = (int)LittleEndian.getInt(source,start+8+4);
-		shadowsColourRGB = (int)LittleEndian.getInt(source,start+8+8);
-		titleTextColourRGB = (int)LittleEndian.getInt(source,start+8+12);
-		fillsColourRGB = (int)LittleEndian.getInt(source,start+8+16);
-		accentColourRGB = (int)LittleEndian.getInt(source,start+8+20);
-		accentAndHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+24);
-		accentAndFollowingHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+28);
+		backgroundColourRGB = LittleEndian.getInt(source,start+8+0);
+		textAndLinesColourRGB = LittleEndian.getInt(source,start+8+4);
+		shadowsColourRGB = LittleEndian.getInt(source,start+8+8);
+		titleTextColourRGB = LittleEndian.getInt(source,start+8+12);
+		fillsColourRGB = LittleEndian.getInt(source,start+8+16);
+		accentColourRGB = LittleEndian.getInt(source,start+8+20);
+		accentAndHyperlinkColourRGB = LittleEndian.getInt(source,start+8+24);
+		accentAndFollowingHyperlinkColourRGB = LittleEndian.getInt(source,start+8+28);
 	}
 
 	/**
@@ -181,7 +179,7 @@ public final class ColorSchemeAtom extends RecordAtom
 		byte[] with_zero = new byte[4];
 		System.arraycopy(rgb,0,with_zero,0,3);
 		with_zero[3] = 0;
-		int ret = (int)LittleEndian.getInt(with_zero,0);
+		int ret = LittleEndian.getInt(with_zero,0);
 		return ret;
 	}
 
@@ -205,16 +203,15 @@ public final class ColorSchemeAtom extends RecordAtom
 		writeLittleEndian(accentAndFollowingHyperlinkColourRGB,out);
 	}
 
-    /**
-     * Returns color by its index
-     *
-     * @param idx 0-based color index
-     * @return color by its index
-     */
-    public int getColor(int idx){
-        int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
-            fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
-        return clr[idx];
-    }
-
+	/**
+	 * Returns color by its index
+	 *
+	 * @param idx 0-based color index
+	 * @return color by its index
+	 */
+	public int getColor(int idx){
+		int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
+				fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
+		return clr[idx];
+	}
 }

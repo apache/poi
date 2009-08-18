@@ -53,10 +53,7 @@ public final class OperandResolver {
 		if (result instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) result);
 		}
-		if (result instanceof ValueEval) {
-			return (ValueEval) result;
-		}
-		throw new RuntimeException("Unexpected eval type (" + result.getClass().getName() + ")");
+		return result;
 	}
 
 	/**

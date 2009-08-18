@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogFactory;
 /**
  * Represents a collection of PackageRelationship elements that are owned by a
  * given PackagePart or the Package.
- * 
+ *
  * @author Julien Chable, CDubettier
  * @version 0.1
  */
@@ -83,11 +83,11 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * This collection will contain only elements from the specified collection
 	 * for which the type is compatible with the specified relationship type
 	 * filter.
-	 * 
+	 *
 	 * @param coll
 	 *            Collection to import.
 	 * @param filter
@@ -112,21 +112,21 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             Throws if the format of the content part is invalid.
-	 * 
+	 *
 	 * @throws InvalidOperationException
 	 *             Throws if the specified part is a relationship part.
 	 */
 	public PackageRelationshipCollection(PackagePart part)
 			throws InvalidFormatException {
-		this(part.container, part);
+		this(part._container, part);
 	}
 
 	/**
 	 * Constructor. Parse the existing package relationship part if one exists.
-	 * 
+	 *
 	 * @param container
 	 *            The parent package.
 	 * @param part
@@ -159,7 +159,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Get the relationship part name of the specified part.
-	 * 
+	 *
 	 * @param part
 	 *            The part .
 	 * @return The relationship part name of the specified part. Be careful,
@@ -181,7 +181,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Add the specified relationship to the collection.
-	 * 
+	 *
 	 * @param relPart
 	 *            The relationship to add.
 	 */
@@ -192,7 +192,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Add a relationship to the collection.
-	 * 
+	 *
 	 * @param targetUri
 	 *            Target URI.
 	 * @param targetMode
@@ -224,7 +224,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Remove a relationship by its ID.
-	 * 
+	 *
 	 * @param id
 	 *            The relationship ID to remove.
 	 */
@@ -240,7 +240,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Remove a relationship by its reference.
-	 * 
+	 *
 	 * @param rel
 	 *            The relationship to delete.
 	 */
@@ -254,7 +254,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Retrieves a relationship by its index in the collection.
-	 * 
+	 *
 	 * @param index
 	 *            Must be a value between [0-relationships_count-1]
 	 */
@@ -273,7 +273,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Retrieves a package relationship based on its id.
-	 * 
+	 *
 	 * @param id
 	 *            ID of the package relationship to retrieve.
 	 * @return The package relationship identified by the specified id.
@@ -291,7 +291,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Parse the relationship part and add all relationship in this collection.
-	 * 
+	 *
 	 * @param relPart
 	 *            The package part to parse.
 	 * @throws InvalidFormatException
@@ -376,7 +376,7 @@ public final class PackageRelationshipCollection implements
 
 	/**
 	 * Retrieves all relations with the specified type.
-	 * 
+	 *
 	 * @param typeFilter
 	 *            Relationship type filter. If <b>null</b> then all
 	 *            relationships are returned.
@@ -398,7 +398,7 @@ public final class PackageRelationshipCollection implements
 	/**
 	 * Get an iterator of a collection with all relationship with the specified
 	 * type.
-	 * 
+	 *
 	 * @param typeFilter
 	 *            Type filter.
 	 * @return An iterator to a collection containing all relationships with the
@@ -429,15 +429,15 @@ public final class PackageRelationshipCollection implements
 		} else {
 			str = relationshipsByID.size() + " relationship(s) = [";
 		}
-		if ((relationshipPart != null) && (relationshipPart.partName != null)) {
-			str = str + "," + relationshipPart.partName;
+		if ((relationshipPart != null) && (relationshipPart._partName != null)) {
+			str = str + "," + relationshipPart._partName;
 		} else {
 			str = str + ",relationshipPart=null";
 		}
 
 		// Source of this relationship
-		if ((sourcePart != null) && (sourcePart.partName != null)) {
-			str = str + "," + sourcePart.partName;
+		if ((sourcePart != null) && (sourcePart._partName != null)) {
+			str = str + "," + sourcePart._partName;
 		} else {
 			str = str + ",sourcePart=null";
 		}

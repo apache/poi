@@ -167,8 +167,8 @@ public final class StyleSheet {
                break;
           case 0x9:
                newCHP._fSpec = true;
-               newCHP._ftcSym = (short)Utils.convertBytesToShort(varParam, 0);
-               newCHP._xchSym = (short)Utils.convertBytesToShort(varParam, 2);
+               newCHP._ftcSym = Utils.convertBytesToShort(varParam, 0);
+               newCHP._xchSym = Utils.convertBytesToShort(varParam, 2);
                break;
           case 0xa:
                newCHP._fOle2 = getFlag(param);
@@ -453,8 +453,8 @@ public final class StyleSheet {
                doCHPOperation(oldCHP, newCHP, 0x47, param, varParam, grpprl, offset, styleSheet);
                break;
           case 0x4d:
-               float percentage = (float)param/100.0f;
-               int add = (int)((float)percentage * (float)newCHP._hps);
+               float percentage = param/100.0f;
+               int add = (int)(percentage * newCHP._hps);
                newCHP._hps += add;
                break;
           case 0x4e:
@@ -485,7 +485,7 @@ public final class StyleSheet {
                break;
           case 0x57:
                newCHP._fPropMark = getFlag(varParam[0]);
-               newCHP._ibstPropRMark = (short)Utils.convertBytesToShort(varParam, 1);
+               newCHP._ibstPropRMark = Utils.convertBytesToShort(varParam, 1);
                newCHP._dttmPropRMark = Utils.convertBytesToInt(varParam, 3);
                break;
           case 0x58:
@@ -512,7 +512,7 @@ public final class StyleSheet {
                break;
           case 0x62:
                newCHP._fDispFldRMark = getFlag(varParam[0]);
-               newCHP._ibstDispFldRMark = (short)Utils.convertBytesToShort(varParam, 1);
+               newCHP._ibstDispFldRMark = Utils.convertBytesToShort(varParam, 1);
                newCHP._dttmDispFldRMark = Utils.convertBytesToInt(varParam, 3);
                System.arraycopy(varParam, 7, newCHP._xstDispFldRMark, 0, 32);
                break;
@@ -524,8 +524,8 @@ public final class StyleSheet {
                newCHP._dttmRMarkDel[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x65:
-               newCHP._brc[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newCHP._brc[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newCHP._brc[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newCHP._brc[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x66:
                newCHP._shd = (short)param;
@@ -834,28 +834,28 @@ public final class StyleSheet {
                newPAP._wr = (byte)param;
                break;
           case 0x24:
-               newPAP._brcTop[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcTop[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcTop[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcTop[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x25:
-               newPAP._brcLeft[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcLeft[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcLeft[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcLeft[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x26:
-               newPAP._brcBottom[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcBottom[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcBottom[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcBottom[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x27:
-               newPAP._brcRight[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcRight[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcRight[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcRight[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x28:
-               newPAP._brcBetween[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcBetween[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcBetween[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcBetween[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x29:
-               newPAP._brcBar[0] = (short)Utils.convertBytesToShort(grpprl, offset - 4);
-               newPAP._brcBar[1] = (short)Utils.convertBytesToShort(grpprl, offset - 2);
+               newPAP._brcBar[0] = Utils.convertBytesToShort(grpprl, offset - 4);
+               newPAP._brcBar[1] = Utils.convertBytesToShort(grpprl, offset - 2);
                break;
           case 0x2a:
                newPAP._fNoAutoHyph = (byte)param;

@@ -27,9 +27,7 @@ import java.io.OutputStream;
  *
  * @author Nick Burch
  */
-
-public final class SlidePersistAtom extends RecordAtom
-{
+public final class SlidePersistAtom extends RecordAtom {
 	private byte[] _header;
 	private static long _type = 1011l;
 
@@ -76,10 +74,10 @@ public final class SlidePersistAtom extends RecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the reference ID
-		refID = (int)LittleEndian.getInt(source,start+8);
+		refID = LittleEndian.getInt(source,start+8);
 
 		// Next up is a set of flags, but only bit 3 is used!
-		int flags = (int)LittleEndian.getInt(source,start+12);
+		int flags = LittleEndian.getInt(source,start+12);
 		if(flags == 4) {
 			hasShapesOtherThanPlaceholders = true;
 		} else {
@@ -87,10 +85,10 @@ public final class SlidePersistAtom extends RecordAtom
 		}
 
 		// Now the number of Placeholder Texts
-		numPlaceholderTexts = (int)LittleEndian.getInt(source,start+16);
+		numPlaceholderTexts = LittleEndian.getInt(source,start+16);
 
 		// Last useful one is the unique slide identifier
-		slideIdentifier = (int)LittleEndian.getInt(source,start+20);
+		slideIdentifier = LittleEndian.getInt(source,start+20);
 
 		// Finally you have typically 4 or 8 bytes of reserved fields,
 		//  all zero running from 24 bytes in to the end

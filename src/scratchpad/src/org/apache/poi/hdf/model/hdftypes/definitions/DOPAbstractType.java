@@ -243,65 +243,63 @@ public abstract class DOPAbstractType
         field_51_nfcEdnRef              = LittleEndian.getShort(data, 0x1ee + offset);
         field_52_hpsZoonFontPag         = LittleEndian.getShort(data, 0x1f0 + offset);
         field_53_dywDispPag             = LittleEndian.getShort(data, 0x1f2 + offset);
-
     }
 
     public void serialize(byte[] data, int offset)
     {
-        data[ 0x0 + offset] = field_1_formatFlags;;
-        data[ 0x1 + offset] = field_2_unused2;;
-        LittleEndian.putShort(data, 0x2 + offset, (short)field_3_footnoteInfo);;
-        data[ 0x4 + offset] = field_4_fOutlineDirtySave;;
-        data[ 0x5 + offset] = field_5_docinfo;;
-        data[ 0x6 + offset] = field_6_docinfo1;;
-        data[ 0x7 + offset] = field_7_docinfo2;;
-        LittleEndian.putShort(data, 0x8 + offset, (short)field_8_docinfo3);;
-        LittleEndian.putShort(data, 0xa + offset, (short)field_9_dxaTab);;
-        LittleEndian.putShort(data, 0xc + offset, (short)field_10_wSpare);;
-        LittleEndian.putShort(data, 0xe + offset, (short)field_11_dxaHotz);;
-        LittleEndian.putShort(data, 0x10 + offset, (short)field_12_cConsexHypLim);;
-        LittleEndian.putShort(data, 0x12 + offset, (short)field_13_wSpare2);;
-        LittleEndian.putInt(data, 0x14 + offset, field_14_dttmCreated);;
-        LittleEndian.putInt(data, 0x18 + offset, field_15_dttmRevised);;
-        LittleEndian.putInt(data, 0x1c + offset, field_16_dttmLastPrint);;
-        LittleEndian.putShort(data, 0x20 + offset, (short)field_17_nRevision);;
-        LittleEndian.putInt(data, 0x22 + offset, field_18_tmEdited);;
-        LittleEndian.putInt(data, 0x26 + offset, field_19_cWords);;
-        LittleEndian.putInt(data, 0x2a + offset, field_20_cCh);;
-        LittleEndian.putShort(data, 0x2e + offset, (short)field_21_cPg);;
-        LittleEndian.putInt(data, 0x30 + offset, field_22_cParas);;
-        LittleEndian.putShort(data, 0x34 + offset, (short)field_23_Edn);;
-        LittleEndian.putShort(data, 0x36 + offset, (short)field_24_Edn1);;
-        LittleEndian.putInt(data, 0x38 + offset, field_25_cLines);;
-        LittleEndian.putInt(data, 0x3c + offset, field_26_cWordsFtnEnd);;
-        LittleEndian.putInt(data, 0x40 + offset, field_27_cChFtnEdn);;
-        LittleEndian.putShort(data, 0x44 + offset, (short)field_28_cPgFtnEdn);;
-        LittleEndian.putInt(data, 0x46 + offset, field_29_cParasFtnEdn);;
-        LittleEndian.putInt(data, 0x4a + offset, field_30_cLinesFtnEdn);;
-        LittleEndian.putInt(data, 0x4e + offset, field_31_lKeyProtDoc);;
-        LittleEndian.putShort(data, 0x52 + offset, (short)field_32_view);;
-        LittleEndian.putInt(data, 0x54 + offset, field_33_docinfo4);;
-        LittleEndian.putShort(data, 0x58 + offset, (short)field_34_adt);;
+        data[ 0x0 + offset] = field_1_formatFlags;
+        data[ 0x1 + offset] = field_2_unused2;
+        LittleEndian.putShort(data, 0x2 + offset, field_3_footnoteInfo);
+        data[ 0x4 + offset] = field_4_fOutlineDirtySave;
+        data[ 0x5 + offset] = field_5_docinfo;
+        data[ 0x6 + offset] = field_6_docinfo1;
+        data[ 0x7 + offset] = field_7_docinfo2;
+        LittleEndian.putShort(data, 0x8 + offset, field_8_docinfo3);
+        LittleEndian.putShort(data, 0xa + offset, (short)field_9_dxaTab);
+        LittleEndian.putShort(data, 0xc + offset, (short)field_10_wSpare);
+        LittleEndian.putShort(data, 0xe + offset, (short)field_11_dxaHotz);
+        LittleEndian.putShort(data, 0x10 + offset, (short)field_12_cConsexHypLim);
+        LittleEndian.putShort(data, 0x12 + offset, (short)field_13_wSpare2);
+        LittleEndian.putInt(data, 0x14 + offset, field_14_dttmCreated);
+        LittleEndian.putInt(data, 0x18 + offset, field_15_dttmRevised);
+        LittleEndian.putInt(data, 0x1c + offset, field_16_dttmLastPrint);
+        LittleEndian.putShort(data, 0x20 + offset, (short)field_17_nRevision);
+        LittleEndian.putInt(data, 0x22 + offset, field_18_tmEdited);
+        LittleEndian.putInt(data, 0x26 + offset, field_19_cWords);
+        LittleEndian.putInt(data, 0x2a + offset, field_20_cCh);
+        LittleEndian.putShort(data, 0x2e + offset, (short)field_21_cPg);
+        LittleEndian.putInt(data, 0x30 + offset, field_22_cParas);
+        LittleEndian.putShort(data, 0x34 + offset, field_23_Edn);
+        LittleEndian.putShort(data, 0x36 + offset, field_24_Edn1);
+        LittleEndian.putInt(data, 0x38 + offset, field_25_cLines);
+        LittleEndian.putInt(data, 0x3c + offset, field_26_cWordsFtnEnd);
+        LittleEndian.putInt(data, 0x40 + offset, field_27_cChFtnEdn);
+        LittleEndian.putShort(data, 0x44 + offset, field_28_cPgFtnEdn);
+        LittleEndian.putInt(data, 0x46 + offset, field_29_cParasFtnEdn);
+        LittleEndian.putInt(data, 0x4a + offset, field_30_cLinesFtnEdn);
+        LittleEndian.putInt(data, 0x4e + offset, field_31_lKeyProtDoc);
+        LittleEndian.putShort(data, 0x52 + offset, field_32_view);
+        LittleEndian.putInt(data, 0x54 + offset, field_33_docinfo4);
+        LittleEndian.putShort(data, 0x58 + offset, field_34_adt);
         ;
         ;
-        LittleEndian.putShort(data, 0x19a + offset, (short)field_37_docinfo5);;
-        LittleEndian.putShort(data, 0x19c + offset, (short)field_38_docinfo6);;
+        LittleEndian.putShort(data, 0x19a + offset, field_37_docinfo5);
+        LittleEndian.putShort(data, 0x19c + offset, field_38_docinfo6);
         ;
-        LittleEndian.putInt(data, 0x1aa + offset, field_40_cChWS);;
-        LittleEndian.putInt(data, 0x1ae + offset, field_41_cChWSFtnEdn);;
-        LittleEndian.putInt(data, 0x1b2 + offset, field_42_grfDocEvents);;
-        LittleEndian.putInt(data, 0x1b6 + offset, field_43_virusinfo);;
+        LittleEndian.putInt(data, 0x1aa + offset, field_40_cChWS);
+        LittleEndian.putInt(data, 0x1ae + offset, field_41_cChWSFtnEdn);
+        LittleEndian.putInt(data, 0x1b2 + offset, field_42_grfDocEvents);
+        LittleEndian.putInt(data, 0x1b6 + offset, field_43_virusinfo);
         ;
-        LittleEndian.putInt(data, 0x1d8 + offset, field_45_reserved1);;
-        LittleEndian.putInt(data, 0x1dc + offset, field_46_reserved2);;
-        LittleEndian.putInt(data, 0x1e0 + offset, field_47_cDBC);;
-        LittleEndian.putInt(data, 0x1e4 + offset, field_48_cDBCFtnEdn);;
-        LittleEndian.putInt(data, 0x1e8 + offset, field_49_reserved);;
-        LittleEndian.putShort(data, 0x1ec + offset, (short)field_50_nfcFtnRef);;
-        LittleEndian.putShort(data, 0x1ee + offset, (short)field_51_nfcEdnRef);;
-        LittleEndian.putShort(data, 0x1f0 + offset, (short)field_52_hpsZoonFontPag);;
-        LittleEndian.putShort(data, 0x1f2 + offset, (short)field_53_dywDispPag);;
-
+        LittleEndian.putInt(data, 0x1d8 + offset, field_45_reserved1);
+        LittleEndian.putInt(data, 0x1dc + offset, field_46_reserved2);
+        LittleEndian.putInt(data, 0x1e0 + offset, field_47_cDBC);
+        LittleEndian.putInt(data, 0x1e4 + offset, field_48_cDBCFtnEdn);
+        LittleEndian.putInt(data, 0x1e8 + offset, field_49_reserved);
+        LittleEndian.putShort(data, 0x1ec + offset, field_50_nfcFtnRef);
+        LittleEndian.putShort(data, 0x1ee + offset, field_51_nfcEdnRef);
+        LittleEndian.putShort(data, 0x1f0 + offset, field_52_hpsZoonFontPag);
+        LittleEndian.putShort(data, 0x1f2 + offset, field_53_dywDispPag);
     }
 
     public String toString()
@@ -311,8 +309,7 @@ public abstract class DOPAbstractType
         buffer.append("[DOP]\n");
 
         buffer.append("    .formatFlags          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getFormatFlags()));
+        buffer.append(HexDump.byteToHex(getFormatFlags()));
         buffer.append(" (").append(getFormatFlags()).append(" )\n");
         buffer.append("         .fFacingPages             = ").append(isFFacingPages()).append('\n');
         buffer.append("         .fWidowControl            = ").append(isFWidowControl()).append('\n');
@@ -322,25 +319,21 @@ public abstract class DOPAbstractType
         buffer.append("         .unused1                  = ").append(isUnused1()).append('\n');
 
         buffer.append("    .unused2              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getUnused2()));
+        buffer.append(HexDump.byteToHex(getUnused2()));
         buffer.append(" (").append(getUnused2()).append(" )\n");
 
         buffer.append("    .footnoteInfo         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getFootnoteInfo()));
+        buffer.append(HexDump.shortToHex(getFootnoteInfo()));
         buffer.append(" (").append(getFootnoteInfo()).append(" )\n");
         buffer.append("         .rncFtn                   = ").append(getRncFtn()).append('\n');
         buffer.append("         .nFtn                     = ").append(getNFtn()).append('\n');
 
         buffer.append("    .fOutlineDirtySave    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getFOutlineDirtySave()));
+        buffer.append(HexDump.byteToHex(getFOutlineDirtySave()));
         buffer.append(" (").append(getFOutlineDirtySave()).append(" )\n");
 
         buffer.append("    .docinfo              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo()));
+        buffer.append(HexDump.byteToHex(getDocinfo()));
         buffer.append(" (").append(getDocinfo()).append(" )\n");
         buffer.append("         .fOnlyMacPics             = ").append(isFOnlyMacPics()).append('\n');
         buffer.append("         .fOnlyWinPics             = ").append(isFOnlyWinPics()).append('\n');
@@ -352,8 +345,7 @@ public abstract class DOPAbstractType
         buffer.append("         .fRevMarking              = ").append(isFRevMarking()).append('\n');
 
         buffer.append("    .docinfo1             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo1()));
+        buffer.append(HexDump.byteToHex(getDocinfo1()));
         buffer.append(" (").append(getDocinfo1()).append(" )\n");
         buffer.append("         .fBackup                  = ").append(isFBackup()).append('\n');
         buffer.append("         .fExactCWords             = ").append(isFExactCWords()).append('\n');
@@ -365,8 +357,7 @@ public abstract class DOPAbstractType
         buffer.append("         .fDfltTrueType            = ").append(isFDfltTrueType()).append('\n');
 
         buffer.append("    .docinfo2             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo2()));
+        buffer.append(HexDump.byteToHex(getDocinfo2()));
         buffer.append(" (").append(getDocinfo2()).append(" )\n");
         buffer.append("         .fPagSupressTopSpacing     = ").append(isFPagSupressTopSpacing()).append('\n');
         buffer.append("         .fProtEnabled             = ").append(isFProtEnabled()).append('\n');
@@ -378,8 +369,7 @@ public abstract class DOPAbstractType
         buffer.append("         .fEmbedFonts              = ").append(isFEmbedFonts()).append('\n');
 
         buffer.append("    .docinfo3             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo3()));
+        buffer.append(HexDump.shortToHex(getDocinfo3()));
         buffer.append(" (").append(getDocinfo3()).append(" )\n");
         buffer.append("         .oldfNoTabForInd          = ").append(isOldfNoTabForInd()).append('\n');
         buffer.append("         .oldfNoSpaceRaiseLower     = ").append(isOldfNoSpaceRaiseLower()).append('\n');
@@ -396,85 +386,69 @@ public abstract class DOPAbstractType
         buffer.append("         .unused5                  = ").append(getUnused5()).append('\n');
 
         buffer.append("    .dxaTab               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDxaTab()));
+        buffer.append(HexDump.intToHex(getDxaTab()));
         buffer.append(" (").append(getDxaTab()).append(" )\n");
 
         buffer.append("    .wSpare               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWSpare()));
+        buffer.append(HexDump.intToHex(getWSpare()));
         buffer.append(" (").append(getWSpare()).append(" )\n");
 
         buffer.append("    .dxaHotz              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDxaHotz()));
+        buffer.append(HexDump.intToHex(getDxaHotz()));
         buffer.append(" (").append(getDxaHotz()).append(" )\n");
 
         buffer.append("    .cConsexHypLim        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCConsexHypLim()));
+        buffer.append(HexDump.intToHex(getCConsexHypLim()));
         buffer.append(" (").append(getCConsexHypLim()).append(" )\n");
 
         buffer.append("    .wSpare2              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWSpare2()));
+        buffer.append(HexDump.intToHex(getWSpare2()));
         buffer.append(" (").append(getWSpare2()).append(" )\n");
 
         buffer.append("    .dttmCreated          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmCreated()));
+        buffer.append(HexDump.intToHex(getDttmCreated()));
         buffer.append(" (").append(getDttmCreated()).append(" )\n");
 
         buffer.append("    .dttmRevised          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmRevised()));
+        buffer.append(HexDump.intToHex(getDttmRevised()));
         buffer.append(" (").append(getDttmRevised()).append(" )\n");
 
         buffer.append("    .dttmLastPrint        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmLastPrint()));
+        buffer.append(HexDump.intToHex(getDttmLastPrint()));
         buffer.append(" (").append(getDttmLastPrint()).append(" )\n");
 
         buffer.append("    .nRevision            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getNRevision()));
+        buffer.append(HexDump.intToHex(getNRevision()));
         buffer.append(" (").append(getNRevision()).append(" )\n");
 
         buffer.append("    .tmEdited             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getTmEdited()));
+        buffer.append(HexDump.intToHex(getTmEdited()));
         buffer.append(" (").append(getTmEdited()).append(" )\n");
 
         buffer.append("    .cWords               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCWords()));
+        buffer.append(HexDump.intToHex(getCWords()));
         buffer.append(" (").append(getCWords()).append(" )\n");
 
         buffer.append("    .cCh                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCCh()));
+        buffer.append(HexDump.intToHex(getCCh()));
         buffer.append(" (").append(getCCh()).append(" )\n");
 
         buffer.append("    .cPg                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCPg()));
+        buffer.append(HexDump.intToHex(getCPg()));
         buffer.append(" (").append(getCPg()).append(" )\n");
 
         buffer.append("    .cParas               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCParas()));
+        buffer.append(HexDump.intToHex(getCParas()));
         buffer.append(" (").append(getCParas()).append(" )\n");
 
         buffer.append("    .Edn                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getEdn()));
+        buffer.append(HexDump.shortToHex(getEdn()));
         buffer.append(" (").append(getEdn()).append(" )\n");
         buffer.append("         .rncEdn                   = ").append(getRncEdn()).append('\n');
         buffer.append("         .nEdn                     = ").append(getNEdn()).append('\n');
 
         buffer.append("    .Edn1                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getEdn1()));
+        buffer.append(HexDump.shortToHex(getEdn1()));
         buffer.append(" (").append(getEdn1()).append(" )\n");
         buffer.append("         .epc                      = ").append(getEpc()).append('\n');
         buffer.append("         .nfcFtnRef1               = ").append(getNfcFtnRef1()).append('\n');
@@ -485,43 +459,35 @@ public abstract class DOPAbstractType
         buffer.append("         .fWCFtnEdn                = ").append(isFWCFtnEdn()).append('\n');
 
         buffer.append("    .cLines               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCLines()));
+        buffer.append(HexDump.intToHex(getCLines()));
         buffer.append(" (").append(getCLines()).append(" )\n");
 
         buffer.append("    .cWordsFtnEnd         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCWordsFtnEnd()));
+        buffer.append(HexDump.intToHex(getCWordsFtnEnd()));
         buffer.append(" (").append(getCWordsFtnEnd()).append(" )\n");
 
         buffer.append("    .cChFtnEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChFtnEdn()));
+        buffer.append(HexDump.intToHex(getCChFtnEdn()));
         buffer.append(" (").append(getCChFtnEdn()).append(" )\n");
 
         buffer.append("    .cPgFtnEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getCPgFtnEdn()));
+        buffer.append(HexDump.shortToHex(getCPgFtnEdn()));
         buffer.append(" (").append(getCPgFtnEdn()).append(" )\n");
 
         buffer.append("    .cParasFtnEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCParasFtnEdn()));
+        buffer.append(HexDump.intToHex(getCParasFtnEdn()));
         buffer.append(" (").append(getCParasFtnEdn()).append(" )\n");
 
         buffer.append("    .cLinesFtnEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCLinesFtnEdn()));
+        buffer.append(HexDump.intToHex(getCLinesFtnEdn()));
         buffer.append(" (").append(getCLinesFtnEdn()).append(" )\n");
 
         buffer.append("    .lKeyProtDoc          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLKeyProtDoc()));
+        buffer.append(HexDump.intToHex(getLKeyProtDoc()));
         buffer.append(" (").append(getLKeyProtDoc()).append(" )\n");
 
         buffer.append("    .view                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getView()));
+        buffer.append(HexDump.shortToHex(getView()));
         buffer.append(" (").append(getView()).append(" )\n");
         buffer.append("         .wvkSaved                 = ").append(getWvkSaved()).append('\n');
         buffer.append("         .wScaleSaved              = ").append(getWScaleSaved()).append('\n');
@@ -530,8 +496,7 @@ public abstract class DOPAbstractType
         buffer.append("         .iGutterPos               = ").append(isIGutterPos()).append('\n');
 
         buffer.append("    .docinfo4             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDocinfo4()));
+        buffer.append(HexDump.intToHex(getDocinfo4()));
         buffer.append(" (").append(getDocinfo4()).append(" )\n");
         buffer.append("         .fNoTabForInd             = ").append(isFNoTabForInd()).append('\n');
         buffer.append("         .fNoSpaceRaiseLower       = ").append(isFNoSpaceRaiseLower()).append('\n');
@@ -552,23 +517,19 @@ public abstract class DOPAbstractType
         buffer.append("         .fMWSmallCaps             = ").append(isFMWSmallCaps()).append('\n');
 
         buffer.append("    .adt                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getAdt()));
+        buffer.append(HexDump.shortToHex(getAdt()));
         buffer.append(" (").append(getAdt()).append(" )\n");
 
         buffer.append("    .doptypography        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getDoptypography()));
+        buffer.append(HexDump.toHex(getDoptypography()));
         buffer.append(" (").append(getDoptypography()).append(" )\n");
 
         buffer.append("    .dogrid               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getDogrid()));
+        buffer.append(HexDump.toHex(getDogrid()));
         buffer.append(" (").append(getDogrid()).append(" )\n");
 
         buffer.append("    .docinfo5             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo5()));
+        buffer.append(HexDump.shortToHex(getDocinfo5()));
         buffer.append(" (").append(getDocinfo5()).append(" )\n");
         buffer.append("         .lvl                      = ").append(getLvl()).append('\n');
         buffer.append("         .fGramAllDone             = ").append(isFGramAllDone()).append('\n');
@@ -583,88 +544,72 @@ public abstract class DOPAbstractType
         buffer.append("         .fMinFontSizePag          = ").append(isFMinFontSizePag()).append('\n');
 
         buffer.append("    .docinfo6             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo6()));
+        buffer.append(HexDump.shortToHex(getDocinfo6()));
         buffer.append(" (").append(getDocinfo6()).append(" )\n");
         buffer.append("         .fHaveVersions            = ").append(isFHaveVersions()).append('\n');
         buffer.append("         .fAutoVersions            = ").append(isFAutoVersions()).append('\n');
 
         buffer.append("    .asumyi               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getAsumyi()));
+        buffer.append(HexDump.toHex(getAsumyi()));
         buffer.append(" (").append(getAsumyi()).append(" )\n");
 
         buffer.append("    .cChWS                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChWS()));
+        buffer.append(HexDump.intToHex(getCChWS()));
         buffer.append(" (").append(getCChWS()).append(" )\n");
 
         buffer.append("    .cChWSFtnEdn          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChWSFtnEdn()));
+        buffer.append(HexDump.intToHex(getCChWSFtnEdn()));
         buffer.append(" (").append(getCChWSFtnEdn()).append(" )\n");
 
         buffer.append("    .grfDocEvents         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getGrfDocEvents()));
+        buffer.append(HexDump.intToHex(getGrfDocEvents()));
         buffer.append(" (").append(getGrfDocEvents()).append(" )\n");
 
         buffer.append("    .virusinfo            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getVirusinfo()));
+        buffer.append(HexDump.intToHex(getVirusinfo()));
         buffer.append(" (").append(getVirusinfo()).append(" )\n");
         buffer.append("         .fVirusPrompted           = ").append(isFVirusPrompted()).append('\n');
         buffer.append("         .fVirusLoadSafe           = ").append(isFVirusLoadSafe()).append('\n');
         buffer.append("         .KeyVirusSession30        = ").append(getKeyVirusSession30()).append('\n');
 
         buffer.append("    .Spare                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getSpare()));
+        buffer.append(HexDump.toHex(getSpare()));
         buffer.append(" (").append(getSpare()).append(" )\n");
 
         buffer.append("    .reserved1            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved1()));
+        buffer.append(HexDump.intToHex(getReserved1()));
         buffer.append(" (").append(getReserved1()).append(" )\n");
 
         buffer.append("    .reserved2            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved2()));
+        buffer.append(HexDump.intToHex(getReserved2()));
         buffer.append(" (").append(getReserved2()).append(" )\n");
 
         buffer.append("    .cDBC                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCDBC()));
+        buffer.append(HexDump.intToHex(getCDBC()));
         buffer.append(" (").append(getCDBC()).append(" )\n");
 
         buffer.append("    .cDBCFtnEdn           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCDBCFtnEdn()));
+        buffer.append(HexDump.intToHex(getCDBCFtnEdn()));
         buffer.append(" (").append(getCDBCFtnEdn()).append(" )\n");
 
         buffer.append("    .reserved             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved()));
+        buffer.append(HexDump.intToHex(getReserved()));
         buffer.append(" (").append(getReserved()).append(" )\n");
 
         buffer.append("    .nfcFtnRef            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getNfcFtnRef()));
+        buffer.append(HexDump.shortToHex(getNfcFtnRef()));
         buffer.append(" (").append(getNfcFtnRef()).append(" )\n");
 
         buffer.append("    .nfcEdnRef            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getNfcEdnRef()));
+        buffer.append(HexDump.shortToHex(getNfcEdnRef()));
         buffer.append(" (").append(getNfcEdnRef()).append(" )\n");
 
         buffer.append("    .hpsZoonFontPag       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getHpsZoonFontPag()));
+        buffer.append(HexDump.shortToHex(getHpsZoonFontPag()));
         buffer.append(" (").append(getHpsZoonFontPag()).append(" )\n");
 
         buffer.append("    .dywDispPag           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDywDispPag()));
+        buffer.append(HexDump.shortToHex(getDywDispPag()));
         buffer.append(" (").append(getDywDispPag()).append(" )\n");
 
         buffer.append("[/DOP]\n");
@@ -1536,8 +1481,6 @@ public abstract class DOPAbstractType
     public void setFFacingPages(boolean value)
     {
         field_1_formatFlags = (byte)fFacingPages.setBoolean(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1547,7 +1490,6 @@ public abstract class DOPAbstractType
     public boolean isFFacingPages()
     {
         return fFacingPages.isSet(field_1_formatFlags);
-
     }
 
     /**
@@ -1557,8 +1499,6 @@ public abstract class DOPAbstractType
     public void setFWidowControl(boolean value)
     {
         field_1_formatFlags = (byte)fWidowControl.setBoolean(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1568,7 +1508,6 @@ public abstract class DOPAbstractType
     public boolean isFWidowControl()
     {
         return fWidowControl.isSet(field_1_formatFlags);
-
     }
 
     /**
@@ -1578,8 +1517,6 @@ public abstract class DOPAbstractType
     public void setFPMHMainDoc(boolean value)
     {
         field_1_formatFlags = (byte)fPMHMainDoc.setBoolean(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1589,7 +1526,6 @@ public abstract class DOPAbstractType
     public boolean isFPMHMainDoc()
     {
         return fPMHMainDoc.isSet(field_1_formatFlags);
-
     }
 
     /**
@@ -1599,8 +1535,6 @@ public abstract class DOPAbstractType
     public void setGrfSupression(byte value)
     {
         field_1_formatFlags = (byte)grfSupression.setValue(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1610,7 +1544,6 @@ public abstract class DOPAbstractType
     public byte getGrfSupression()
     {
         return ( byte )grfSupression.getValue(field_1_formatFlags);
-
     }
 
     /**
@@ -1620,8 +1553,6 @@ public abstract class DOPAbstractType
     public void setFpc(byte value)
     {
         field_1_formatFlags = (byte)fpc.setValue(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1631,7 +1562,6 @@ public abstract class DOPAbstractType
     public byte getFpc()
     {
         return ( byte )fpc.getValue(field_1_formatFlags);
-
     }
 
     /**
@@ -1641,8 +1571,6 @@ public abstract class DOPAbstractType
     public void setUnused1(boolean value)
     {
         field_1_formatFlags = (byte)unused1.setBoolean(field_1_formatFlags, value);
-
-
     }
 
     /**
@@ -1652,7 +1580,6 @@ public abstract class DOPAbstractType
     public boolean isUnused1()
     {
         return unused1.isSet(field_1_formatFlags);
-
     }
 
     /**
@@ -1662,8 +1589,6 @@ public abstract class DOPAbstractType
     public void setRncFtn(byte value)
     {
         field_3_footnoteInfo = (short)rncFtn.setValue(field_3_footnoteInfo, value);
-
-
     }
 
     /**
@@ -1673,7 +1598,6 @@ public abstract class DOPAbstractType
     public byte getRncFtn()
     {
         return ( byte )rncFtn.getValue(field_3_footnoteInfo);
-
     }
 
     /**
@@ -1683,8 +1607,6 @@ public abstract class DOPAbstractType
     public void setNFtn(short value)
     {
         field_3_footnoteInfo = (short)nFtn.setValue(field_3_footnoteInfo, value);
-
-
     }
 
     /**
@@ -1694,7 +1616,6 @@ public abstract class DOPAbstractType
     public short getNFtn()
     {
         return ( short )nFtn.getValue(field_3_footnoteInfo);
-
     }
 
     /**
@@ -1704,8 +1625,6 @@ public abstract class DOPAbstractType
     public void setFOnlyMacPics(boolean value)
     {
         field_5_docinfo = (byte)fOnlyMacPics.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1715,7 +1634,6 @@ public abstract class DOPAbstractType
     public boolean isFOnlyMacPics()
     {
         return fOnlyMacPics.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1725,8 +1643,6 @@ public abstract class DOPAbstractType
     public void setFOnlyWinPics(boolean value)
     {
         field_5_docinfo = (byte)fOnlyWinPics.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1736,7 +1652,6 @@ public abstract class DOPAbstractType
     public boolean isFOnlyWinPics()
     {
         return fOnlyWinPics.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1746,8 +1661,6 @@ public abstract class DOPAbstractType
     public void setFLabelDoc(boolean value)
     {
         field_5_docinfo = (byte)fLabelDoc.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1757,7 +1670,6 @@ public abstract class DOPAbstractType
     public boolean isFLabelDoc()
     {
         return fLabelDoc.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1767,8 +1679,6 @@ public abstract class DOPAbstractType
     public void setFHyphCapitals(boolean value)
     {
         field_5_docinfo = (byte)fHyphCapitals.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1778,7 +1688,6 @@ public abstract class DOPAbstractType
     public boolean isFHyphCapitals()
     {
         return fHyphCapitals.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1788,8 +1697,6 @@ public abstract class DOPAbstractType
     public void setFAutoHyphen(boolean value)
     {
         field_5_docinfo = (byte)fAutoHyphen.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1799,7 +1706,6 @@ public abstract class DOPAbstractType
     public boolean isFAutoHyphen()
     {
         return fAutoHyphen.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1809,8 +1715,6 @@ public abstract class DOPAbstractType
     public void setFFormNoFields(boolean value)
     {
         field_5_docinfo = (byte)fFormNoFields.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1820,7 +1724,6 @@ public abstract class DOPAbstractType
     public boolean isFFormNoFields()
     {
         return fFormNoFields.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1830,8 +1733,6 @@ public abstract class DOPAbstractType
     public void setFLinkStyles(boolean value)
     {
         field_5_docinfo = (byte)fLinkStyles.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1841,7 +1742,6 @@ public abstract class DOPAbstractType
     public boolean isFLinkStyles()
     {
         return fLinkStyles.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1851,8 +1751,6 @@ public abstract class DOPAbstractType
     public void setFRevMarking(boolean value)
     {
         field_5_docinfo = (byte)fRevMarking.setBoolean(field_5_docinfo, value);
-
-
     }
 
     /**
@@ -1862,7 +1760,6 @@ public abstract class DOPAbstractType
     public boolean isFRevMarking()
     {
         return fRevMarking.isSet(field_5_docinfo);
-
     }
 
     /**
@@ -1872,8 +1769,6 @@ public abstract class DOPAbstractType
     public void setFBackup(boolean value)
     {
         field_6_docinfo1 = (byte)fBackup.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1883,7 +1778,6 @@ public abstract class DOPAbstractType
     public boolean isFBackup()
     {
         return fBackup.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1893,8 +1787,6 @@ public abstract class DOPAbstractType
     public void setFExactCWords(boolean value)
     {
         field_6_docinfo1 = (byte)fExactCWords.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1904,7 +1796,6 @@ public abstract class DOPAbstractType
     public boolean isFExactCWords()
     {
         return fExactCWords.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1914,8 +1805,6 @@ public abstract class DOPAbstractType
     public void setFPagHidden(boolean value)
     {
         field_6_docinfo1 = (byte)fPagHidden.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1925,7 +1814,6 @@ public abstract class DOPAbstractType
     public boolean isFPagHidden()
     {
         return fPagHidden.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1935,8 +1823,6 @@ public abstract class DOPAbstractType
     public void setFPagResults(boolean value)
     {
         field_6_docinfo1 = (byte)fPagResults.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1946,7 +1832,6 @@ public abstract class DOPAbstractType
     public boolean isFPagResults()
     {
         return fPagResults.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1956,8 +1841,6 @@ public abstract class DOPAbstractType
     public void setFLockAtn(boolean value)
     {
         field_6_docinfo1 = (byte)fLockAtn.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1967,7 +1850,6 @@ public abstract class DOPAbstractType
     public boolean isFLockAtn()
     {
         return fLockAtn.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1977,8 +1859,6 @@ public abstract class DOPAbstractType
     public void setFMirrorMargins(boolean value)
     {
         field_6_docinfo1 = (byte)fMirrorMargins.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -1988,7 +1868,6 @@ public abstract class DOPAbstractType
     public boolean isFMirrorMargins()
     {
         return fMirrorMargins.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -1998,8 +1877,6 @@ public abstract class DOPAbstractType
     public void setUnused3(boolean value)
     {
         field_6_docinfo1 = (byte)unused3.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -2009,7 +1886,6 @@ public abstract class DOPAbstractType
     public boolean isUnused3()
     {
         return unused3.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -2019,8 +1895,6 @@ public abstract class DOPAbstractType
     public void setFDfltTrueType(boolean value)
     {
         field_6_docinfo1 = (byte)fDfltTrueType.setBoolean(field_6_docinfo1, value);
-
-
     }
 
     /**
@@ -2030,7 +1904,6 @@ public abstract class DOPAbstractType
     public boolean isFDfltTrueType()
     {
         return fDfltTrueType.isSet(field_6_docinfo1);
-
     }
 
     /**
@@ -2040,8 +1913,6 @@ public abstract class DOPAbstractType
     public void setFPagSupressTopSpacing(boolean value)
     {
         field_7_docinfo2 = (byte)fPagSupressTopSpacing.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2051,7 +1922,6 @@ public abstract class DOPAbstractType
     public boolean isFPagSupressTopSpacing()
     {
         return fPagSupressTopSpacing.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2061,8 +1931,6 @@ public abstract class DOPAbstractType
     public void setFProtEnabled(boolean value)
     {
         field_7_docinfo2 = (byte)fProtEnabled.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2072,7 +1940,6 @@ public abstract class DOPAbstractType
     public boolean isFProtEnabled()
     {
         return fProtEnabled.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2082,8 +1949,6 @@ public abstract class DOPAbstractType
     public void setFDispFormFldSel(boolean value)
     {
         field_7_docinfo2 = (byte)fDispFormFldSel.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2093,7 +1958,6 @@ public abstract class DOPAbstractType
     public boolean isFDispFormFldSel()
     {
         return fDispFormFldSel.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2103,8 +1967,6 @@ public abstract class DOPAbstractType
     public void setFRMView(boolean value)
     {
         field_7_docinfo2 = (byte)fRMView.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2114,7 +1976,6 @@ public abstract class DOPAbstractType
     public boolean isFRMView()
     {
         return fRMView.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2124,8 +1985,6 @@ public abstract class DOPAbstractType
     public void setFRMPrint(boolean value)
     {
         field_7_docinfo2 = (byte)fRMPrint.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2135,7 +1994,6 @@ public abstract class DOPAbstractType
     public boolean isFRMPrint()
     {
         return fRMPrint.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2145,8 +2003,6 @@ public abstract class DOPAbstractType
     public void setUnused4(boolean value)
     {
         field_7_docinfo2 = (byte)unused4.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2156,7 +2012,6 @@ public abstract class DOPAbstractType
     public boolean isUnused4()
     {
         return unused4.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2166,8 +2021,6 @@ public abstract class DOPAbstractType
     public void setFLockRev(boolean value)
     {
         field_7_docinfo2 = (byte)fLockRev.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2177,7 +2030,6 @@ public abstract class DOPAbstractType
     public boolean isFLockRev()
     {
         return fLockRev.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2187,8 +2039,6 @@ public abstract class DOPAbstractType
     public void setFEmbedFonts(boolean value)
     {
         field_7_docinfo2 = (byte)fEmbedFonts.setBoolean(field_7_docinfo2, value);
-
-
     }
 
     /**
@@ -2198,7 +2048,6 @@ public abstract class DOPAbstractType
     public boolean isFEmbedFonts()
     {
         return fEmbedFonts.isSet(field_7_docinfo2);
-
     }
 
     /**
@@ -2208,8 +2057,6 @@ public abstract class DOPAbstractType
     public void setOldfNoTabForInd(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoTabForInd.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2219,7 +2066,6 @@ public abstract class DOPAbstractType
     public boolean isOldfNoTabForInd()
     {
         return oldfNoTabForInd.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2229,8 +2075,6 @@ public abstract class DOPAbstractType
     public void setOldfNoSpaceRaiseLower(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoSpaceRaiseLower.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2240,7 +2084,6 @@ public abstract class DOPAbstractType
     public boolean isOldfNoSpaceRaiseLower()
     {
         return oldfNoSpaceRaiseLower.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2250,8 +2093,6 @@ public abstract class DOPAbstractType
     public void setOldfSuppressSpbfAfterPageBreak(boolean value)
     {
         field_8_docinfo3 = (short)oldfSuppressSpbfAfterPageBreak.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2261,7 +2102,6 @@ public abstract class DOPAbstractType
     public boolean isOldfSuppressSpbfAfterPageBreak()
     {
         return oldfSuppressSpbfAfterPageBreak.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2271,8 +2111,6 @@ public abstract class DOPAbstractType
     public void setOldfWrapTrailSpaces(boolean value)
     {
         field_8_docinfo3 = (short)oldfWrapTrailSpaces.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2282,7 +2120,6 @@ public abstract class DOPAbstractType
     public boolean isOldfWrapTrailSpaces()
     {
         return oldfWrapTrailSpaces.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2292,8 +2129,6 @@ public abstract class DOPAbstractType
     public void setOldfMapPrintTextColor(boolean value)
     {
         field_8_docinfo3 = (short)oldfMapPrintTextColor.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2303,7 +2138,6 @@ public abstract class DOPAbstractType
     public boolean isOldfMapPrintTextColor()
     {
         return oldfMapPrintTextColor.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2313,8 +2147,6 @@ public abstract class DOPAbstractType
     public void setOldfNoColumnBalance(boolean value)
     {
         field_8_docinfo3 = (short)oldfNoColumnBalance.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2324,7 +2156,6 @@ public abstract class DOPAbstractType
     public boolean isOldfNoColumnBalance()
     {
         return oldfNoColumnBalance.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2334,8 +2165,6 @@ public abstract class DOPAbstractType
     public void setOldfConvMailMergeEsc(boolean value)
     {
         field_8_docinfo3 = (short)oldfConvMailMergeEsc.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2345,7 +2174,6 @@ public abstract class DOPAbstractType
     public boolean isOldfConvMailMergeEsc()
     {
         return oldfConvMailMergeEsc.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2355,8 +2183,6 @@ public abstract class DOPAbstractType
     public void setOldfSupressTopSpacing(boolean value)
     {
         field_8_docinfo3 = (short)oldfSupressTopSpacing.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2366,7 +2192,6 @@ public abstract class DOPAbstractType
     public boolean isOldfSupressTopSpacing()
     {
         return oldfSupressTopSpacing.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2376,8 +2201,6 @@ public abstract class DOPAbstractType
     public void setOldfOrigWordTableRules(boolean value)
     {
         field_8_docinfo3 = (short)oldfOrigWordTableRules.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2387,7 +2210,6 @@ public abstract class DOPAbstractType
     public boolean isOldfOrigWordTableRules()
     {
         return oldfOrigWordTableRules.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2397,8 +2219,6 @@ public abstract class DOPAbstractType
     public void setOldfTransparentMetafiles(boolean value)
     {
         field_8_docinfo3 = (short)oldfTransparentMetafiles.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2408,7 +2228,6 @@ public abstract class DOPAbstractType
     public boolean isOldfTransparentMetafiles()
     {
         return oldfTransparentMetafiles.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2418,8 +2237,6 @@ public abstract class DOPAbstractType
     public void setOldfShowBreaksInFrames(boolean value)
     {
         field_8_docinfo3 = (short)oldfShowBreaksInFrames.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2429,7 +2246,6 @@ public abstract class DOPAbstractType
     public boolean isOldfShowBreaksInFrames()
     {
         return oldfShowBreaksInFrames.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2439,8 +2255,6 @@ public abstract class DOPAbstractType
     public void setOldfSwapBordersFacingPgs(boolean value)
     {
         field_8_docinfo3 = (short)oldfSwapBordersFacingPgs.setBoolean(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2450,7 +2264,6 @@ public abstract class DOPAbstractType
     public boolean isOldfSwapBordersFacingPgs()
     {
         return oldfSwapBordersFacingPgs.isSet(field_8_docinfo3);
-
     }
 
     /**
@@ -2460,8 +2273,6 @@ public abstract class DOPAbstractType
     public void setUnused5(byte value)
     {
         field_8_docinfo3 = (short)unused5.setValue(field_8_docinfo3, value);
-
-
     }
 
     /**
@@ -2471,7 +2282,6 @@ public abstract class DOPAbstractType
     public byte getUnused5()
     {
         return ( byte )unused5.getValue(field_8_docinfo3);
-
     }
 
     /**
@@ -2481,8 +2291,6 @@ public abstract class DOPAbstractType
     public void setRncEdn(byte value)
     {
         field_23_Edn = (short)rncEdn.setValue(field_23_Edn, value);
-
-
     }
 
     /**
@@ -2492,7 +2300,6 @@ public abstract class DOPAbstractType
     public byte getRncEdn()
     {
         return ( byte )rncEdn.getValue(field_23_Edn);
-
     }
 
     /**
@@ -2502,8 +2309,6 @@ public abstract class DOPAbstractType
     public void setNEdn(short value)
     {
         field_23_Edn = (short)nEdn.setValue(field_23_Edn, value);
-
-
     }
 
     /**
@@ -2513,7 +2318,6 @@ public abstract class DOPAbstractType
     public short getNEdn()
     {
         return ( short )nEdn.getValue(field_23_Edn);
-
     }
 
     /**
@@ -2523,8 +2327,6 @@ public abstract class DOPAbstractType
     public void setEpc(byte value)
     {
         field_24_Edn1 = (short)epc.setValue(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2534,7 +2336,6 @@ public abstract class DOPAbstractType
     public byte getEpc()
     {
         return ( byte )epc.getValue(field_24_Edn1);
-
     }
 
     /**
@@ -2544,8 +2345,6 @@ public abstract class DOPAbstractType
     public void setNfcFtnRef1(byte value)
     {
         field_24_Edn1 = (short)nfcFtnRef1.setValue(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2555,7 +2354,6 @@ public abstract class DOPAbstractType
     public byte getNfcFtnRef1()
     {
         return ( byte )nfcFtnRef1.getValue(field_24_Edn1);
-
     }
 
     /**
@@ -2565,8 +2363,6 @@ public abstract class DOPAbstractType
     public void setNfcEdnRef1(byte value)
     {
         field_24_Edn1 = (short)nfcEdnRef1.setValue(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2576,7 +2372,6 @@ public abstract class DOPAbstractType
     public byte getNfcEdnRef1()
     {
         return ( byte )nfcEdnRef1.getValue(field_24_Edn1);
-
     }
 
     /**
@@ -2586,8 +2381,6 @@ public abstract class DOPAbstractType
     public void setFPrintFormData(boolean value)
     {
         field_24_Edn1 = (short)fPrintFormData.setBoolean(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2597,7 +2390,6 @@ public abstract class DOPAbstractType
     public boolean isFPrintFormData()
     {
         return fPrintFormData.isSet(field_24_Edn1);
-
     }
 
     /**
@@ -2607,8 +2399,6 @@ public abstract class DOPAbstractType
     public void setFSaveFormData(boolean value)
     {
         field_24_Edn1 = (short)fSaveFormData.setBoolean(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2618,7 +2408,6 @@ public abstract class DOPAbstractType
     public boolean isFSaveFormData()
     {
         return fSaveFormData.isSet(field_24_Edn1);
-
     }
 
     /**
@@ -2628,8 +2417,6 @@ public abstract class DOPAbstractType
     public void setFShadeFormData(boolean value)
     {
         field_24_Edn1 = (short)fShadeFormData.setBoolean(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2639,7 +2426,6 @@ public abstract class DOPAbstractType
     public boolean isFShadeFormData()
     {
         return fShadeFormData.isSet(field_24_Edn1);
-
     }
 
     /**
@@ -2649,8 +2435,6 @@ public abstract class DOPAbstractType
     public void setFWCFtnEdn(boolean value)
     {
         field_24_Edn1 = (short)fWCFtnEdn.setBoolean(field_24_Edn1, value);
-
-
     }
 
     /**
@@ -2660,7 +2444,6 @@ public abstract class DOPAbstractType
     public boolean isFWCFtnEdn()
     {
         return fWCFtnEdn.isSet(field_24_Edn1);
-
     }
 
     /**
@@ -2670,8 +2453,6 @@ public abstract class DOPAbstractType
     public void setWvkSaved(byte value)
     {
         field_32_view = (short)wvkSaved.setValue(field_32_view, value);
-
-
     }
 
     /**
@@ -2681,7 +2462,6 @@ public abstract class DOPAbstractType
     public byte getWvkSaved()
     {
         return ( byte )wvkSaved.getValue(field_32_view);
-
     }
 
     /**
@@ -2691,8 +2471,6 @@ public abstract class DOPAbstractType
     public void setWScaleSaved(short value)
     {
         field_32_view = (short)wScaleSaved.setValue(field_32_view, value);
-
-
     }
 
     /**
@@ -2702,7 +2480,6 @@ public abstract class DOPAbstractType
     public short getWScaleSaved()
     {
         return ( short )wScaleSaved.getValue(field_32_view);
-
     }
 
     /**
@@ -2712,8 +2489,6 @@ public abstract class DOPAbstractType
     public void setZkSaved(byte value)
     {
         field_32_view = (short)zkSaved.setValue(field_32_view, value);
-
-
     }
 
     /**
@@ -2723,7 +2498,6 @@ public abstract class DOPAbstractType
     public byte getZkSaved()
     {
         return ( byte )zkSaved.getValue(field_32_view);
-
     }
 
     /**
@@ -2733,8 +2507,6 @@ public abstract class DOPAbstractType
     public void setFRotateFontW6(boolean value)
     {
         field_32_view = (short)fRotateFontW6.setBoolean(field_32_view, value);
-
-
     }
 
     /**
@@ -2744,7 +2516,6 @@ public abstract class DOPAbstractType
     public boolean isFRotateFontW6()
     {
         return fRotateFontW6.isSet(field_32_view);
-
     }
 
     /**
@@ -2754,8 +2525,6 @@ public abstract class DOPAbstractType
     public void setIGutterPos(boolean value)
     {
         field_32_view = (short)iGutterPos.setBoolean(field_32_view, value);
-
-
     }
 
     /**
@@ -2765,7 +2534,6 @@ public abstract class DOPAbstractType
     public boolean isIGutterPos()
     {
         return iGutterPos.isSet(field_32_view);
-
     }
 
     /**
@@ -2774,9 +2542,7 @@ public abstract class DOPAbstractType
      */
     public void setFNoTabForInd(boolean value)
     {
-        field_33_docinfo4 = (int)fNoTabForInd.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fNoTabForInd.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2786,7 +2552,6 @@ public abstract class DOPAbstractType
     public boolean isFNoTabForInd()
     {
         return fNoTabForInd.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2795,9 +2560,7 @@ public abstract class DOPAbstractType
      */
     public void setFNoSpaceRaiseLower(boolean value)
     {
-        field_33_docinfo4 = (int)fNoSpaceRaiseLower.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fNoSpaceRaiseLower.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2807,7 +2570,6 @@ public abstract class DOPAbstractType
     public boolean isFNoSpaceRaiseLower()
     {
         return fNoSpaceRaiseLower.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2816,9 +2578,7 @@ public abstract class DOPAbstractType
      */
     public void setFSupressSpdfAfterPageBreak(boolean value)
     {
-        field_33_docinfo4 = (int)fSupressSpdfAfterPageBreak.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fSupressSpdfAfterPageBreak.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2828,7 +2588,6 @@ public abstract class DOPAbstractType
     public boolean isFSupressSpdfAfterPageBreak()
     {
         return fSupressSpdfAfterPageBreak.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2837,9 +2596,7 @@ public abstract class DOPAbstractType
      */
     public void setFWrapTrailSpaces(boolean value)
     {
-        field_33_docinfo4 = (int)fWrapTrailSpaces.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fWrapTrailSpaces.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2849,7 +2606,6 @@ public abstract class DOPAbstractType
     public boolean isFWrapTrailSpaces()
     {
         return fWrapTrailSpaces.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2858,9 +2614,7 @@ public abstract class DOPAbstractType
      */
     public void setFMapPrintTextColor(boolean value)
     {
-        field_33_docinfo4 = (int)fMapPrintTextColor.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fMapPrintTextColor.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2870,7 +2624,6 @@ public abstract class DOPAbstractType
     public boolean isFMapPrintTextColor()
     {
         return fMapPrintTextColor.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2879,9 +2632,7 @@ public abstract class DOPAbstractType
      */
     public void setFNoColumnBalance(boolean value)
     {
-        field_33_docinfo4 = (int)fNoColumnBalance.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fNoColumnBalance.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2891,7 +2642,6 @@ public abstract class DOPAbstractType
     public boolean isFNoColumnBalance()
     {
         return fNoColumnBalance.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2900,9 +2650,7 @@ public abstract class DOPAbstractType
      */
     public void setFConvMailMergeEsc(boolean value)
     {
-        field_33_docinfo4 = (int)fConvMailMergeEsc.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fConvMailMergeEsc.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2912,7 +2660,6 @@ public abstract class DOPAbstractType
     public boolean isFConvMailMergeEsc()
     {
         return fConvMailMergeEsc.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2921,9 +2668,7 @@ public abstract class DOPAbstractType
      */
     public void setFSupressTopSpacing(boolean value)
     {
-        field_33_docinfo4 = (int)fSupressTopSpacing.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fSupressTopSpacing.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2933,7 +2678,6 @@ public abstract class DOPAbstractType
     public boolean isFSupressTopSpacing()
     {
         return fSupressTopSpacing.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2942,9 +2686,7 @@ public abstract class DOPAbstractType
      */
     public void setFOrigWordTableRules(boolean value)
     {
-        field_33_docinfo4 = (int)fOrigWordTableRules.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fOrigWordTableRules.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2954,7 +2696,6 @@ public abstract class DOPAbstractType
     public boolean isFOrigWordTableRules()
     {
         return fOrigWordTableRules.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2963,9 +2704,7 @@ public abstract class DOPAbstractType
      */
     public void setFTransparentMetafiles(boolean value)
     {
-        field_33_docinfo4 = (int)fTransparentMetafiles.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fTransparentMetafiles.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2975,7 +2714,6 @@ public abstract class DOPAbstractType
     public boolean isFTransparentMetafiles()
     {
         return fTransparentMetafiles.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -2984,9 +2722,7 @@ public abstract class DOPAbstractType
      */
     public void setFShowBreaksInFrames(boolean value)
     {
-        field_33_docinfo4 = (int)fShowBreaksInFrames.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fShowBreaksInFrames.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2996,7 +2732,6 @@ public abstract class DOPAbstractType
     public boolean isFShowBreaksInFrames()
     {
         return fShowBreaksInFrames.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3005,9 +2740,7 @@ public abstract class DOPAbstractType
      */
     public void setFSwapBordersFacingPgs(boolean value)
     {
-        field_33_docinfo4 = (int)fSwapBordersFacingPgs.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fSwapBordersFacingPgs.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3017,7 +2750,6 @@ public abstract class DOPAbstractType
     public boolean isFSwapBordersFacingPgs()
     {
         return fSwapBordersFacingPgs.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3026,9 +2758,7 @@ public abstract class DOPAbstractType
      */
     public void setFSuppressTopSPacingMac5(boolean value)
     {
-        field_33_docinfo4 = (int)fSuppressTopSPacingMac5.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fSuppressTopSPacingMac5.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3038,7 +2768,6 @@ public abstract class DOPAbstractType
     public boolean isFSuppressTopSPacingMac5()
     {
         return fSuppressTopSPacingMac5.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3047,9 +2776,7 @@ public abstract class DOPAbstractType
      */
     public void setFTruncDxaExpand(boolean value)
     {
-        field_33_docinfo4 = (int)fTruncDxaExpand.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fTruncDxaExpand.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3059,7 +2786,6 @@ public abstract class DOPAbstractType
     public boolean isFTruncDxaExpand()
     {
         return fTruncDxaExpand.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3068,9 +2794,7 @@ public abstract class DOPAbstractType
      */
     public void setFPrintBodyBeforeHdr(boolean value)
     {
-        field_33_docinfo4 = (int)fPrintBodyBeforeHdr.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fPrintBodyBeforeHdr.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3080,7 +2804,6 @@ public abstract class DOPAbstractType
     public boolean isFPrintBodyBeforeHdr()
     {
         return fPrintBodyBeforeHdr.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3089,9 +2812,7 @@ public abstract class DOPAbstractType
      */
     public void setFNoLeading(boolean value)
     {
-        field_33_docinfo4 = (int)fNoLeading.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fNoLeading.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3101,7 +2822,6 @@ public abstract class DOPAbstractType
     public boolean isFNoLeading()
     {
         return fNoLeading.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3110,9 +2830,7 @@ public abstract class DOPAbstractType
      */
     public void setFMWSmallCaps(boolean value)
     {
-        field_33_docinfo4 = (int)fMWSmallCaps.setBoolean(field_33_docinfo4, value);
-
-
+        field_33_docinfo4 = fMWSmallCaps.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3122,7 +2840,6 @@ public abstract class DOPAbstractType
     public boolean isFMWSmallCaps()
     {
         return fMWSmallCaps.isSet(field_33_docinfo4);
-
     }
 
     /**
@@ -3132,8 +2849,6 @@ public abstract class DOPAbstractType
     public void setLvl(byte value)
     {
         field_37_docinfo5 = (short)lvl.setValue(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3143,7 +2858,6 @@ public abstract class DOPAbstractType
     public byte getLvl()
     {
         return ( byte )lvl.getValue(field_37_docinfo5);
-
     }
 
     /**
@@ -3153,8 +2867,6 @@ public abstract class DOPAbstractType
     public void setFGramAllDone(boolean value)
     {
         field_37_docinfo5 = (short)fGramAllDone.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3164,7 +2876,6 @@ public abstract class DOPAbstractType
     public boolean isFGramAllDone()
     {
         return fGramAllDone.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3174,8 +2885,6 @@ public abstract class DOPAbstractType
     public void setFGramAllClean(boolean value)
     {
         field_37_docinfo5 = (short)fGramAllClean.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3185,7 +2894,6 @@ public abstract class DOPAbstractType
     public boolean isFGramAllClean()
     {
         return fGramAllClean.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3195,8 +2903,6 @@ public abstract class DOPAbstractType
     public void setFSubsetFonts(boolean value)
     {
         field_37_docinfo5 = (short)fSubsetFonts.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3206,7 +2912,6 @@ public abstract class DOPAbstractType
     public boolean isFSubsetFonts()
     {
         return fSubsetFonts.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3216,8 +2921,6 @@ public abstract class DOPAbstractType
     public void setFHideLastVersion(boolean value)
     {
         field_37_docinfo5 = (short)fHideLastVersion.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3227,7 +2930,6 @@ public abstract class DOPAbstractType
     public boolean isFHideLastVersion()
     {
         return fHideLastVersion.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3237,8 +2939,6 @@ public abstract class DOPAbstractType
     public void setFHtmlDoc(boolean value)
     {
         field_37_docinfo5 = (short)fHtmlDoc.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3248,7 +2948,6 @@ public abstract class DOPAbstractType
     public boolean isFHtmlDoc()
     {
         return fHtmlDoc.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3258,8 +2957,6 @@ public abstract class DOPAbstractType
     public void setFSnapBorder(boolean value)
     {
         field_37_docinfo5 = (short)fSnapBorder.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3269,7 +2966,6 @@ public abstract class DOPAbstractType
     public boolean isFSnapBorder()
     {
         return fSnapBorder.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3279,8 +2975,6 @@ public abstract class DOPAbstractType
     public void setFIncludeHeader(boolean value)
     {
         field_37_docinfo5 = (short)fIncludeHeader.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3290,7 +2984,6 @@ public abstract class DOPAbstractType
     public boolean isFIncludeHeader()
     {
         return fIncludeHeader.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3300,8 +2993,6 @@ public abstract class DOPAbstractType
     public void setFIncludeFooter(boolean value)
     {
         field_37_docinfo5 = (short)fIncludeFooter.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3311,7 +3002,6 @@ public abstract class DOPAbstractType
     public boolean isFIncludeFooter()
     {
         return fIncludeFooter.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3321,8 +3011,6 @@ public abstract class DOPAbstractType
     public void setFForcePageSizePag(boolean value)
     {
         field_37_docinfo5 = (short)fForcePageSizePag.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3332,7 +3020,6 @@ public abstract class DOPAbstractType
     public boolean isFForcePageSizePag()
     {
         return fForcePageSizePag.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3342,8 +3029,6 @@ public abstract class DOPAbstractType
     public void setFMinFontSizePag(boolean value)
     {
         field_37_docinfo5 = (short)fMinFontSizePag.setBoolean(field_37_docinfo5, value);
-
-
     }
 
     /**
@@ -3353,7 +3038,6 @@ public abstract class DOPAbstractType
     public boolean isFMinFontSizePag()
     {
         return fMinFontSizePag.isSet(field_37_docinfo5);
-
     }
 
     /**
@@ -3363,8 +3047,6 @@ public abstract class DOPAbstractType
     public void setFHaveVersions(boolean value)
     {
         field_38_docinfo6 = (short)fHaveVersions.setBoolean(field_38_docinfo6, value);
-
-
     }
 
     /**
@@ -3374,7 +3056,6 @@ public abstract class DOPAbstractType
     public boolean isFHaveVersions()
     {
         return fHaveVersions.isSet(field_38_docinfo6);
-
     }
 
     /**
@@ -3384,8 +3065,6 @@ public abstract class DOPAbstractType
     public void setFAutoVersions(boolean value)
     {
         field_38_docinfo6 = (short)fAutoVersions.setBoolean(field_38_docinfo6, value);
-
-
     }
 
     /**
@@ -3395,7 +3074,6 @@ public abstract class DOPAbstractType
     public boolean isFAutoVersions()
     {
         return fAutoVersions.isSet(field_38_docinfo6);
-
     }
 
     /**
@@ -3404,9 +3082,7 @@ public abstract class DOPAbstractType
      */
     public void setFVirusPrompted(boolean value)
     {
-        field_43_virusinfo = (int)fVirusPrompted.setBoolean(field_43_virusinfo, value);
-
-
+        field_43_virusinfo = fVirusPrompted.setBoolean(field_43_virusinfo, value);
     }
 
     /**
@@ -3416,7 +3092,6 @@ public abstract class DOPAbstractType
     public boolean isFVirusPrompted()
     {
         return fVirusPrompted.isSet(field_43_virusinfo);
-
     }
 
     /**
@@ -3425,9 +3100,7 @@ public abstract class DOPAbstractType
      */
     public void setFVirusLoadSafe(boolean value)
     {
-        field_43_virusinfo = (int)fVirusLoadSafe.setBoolean(field_43_virusinfo, value);
-
-
+        field_43_virusinfo = fVirusLoadSafe.setBoolean(field_43_virusinfo, value);
     }
 
     /**
@@ -3437,7 +3110,6 @@ public abstract class DOPAbstractType
     public boolean isFVirusLoadSafe()
     {
         return fVirusLoadSafe.isSet(field_43_virusinfo);
-
     }
 
     /**
@@ -3446,9 +3118,7 @@ public abstract class DOPAbstractType
      */
     public void setKeyVirusSession30(int value)
     {
-        field_43_virusinfo = (int)KeyVirusSession30.setValue(field_43_virusinfo, value);
-
-
+        field_43_virusinfo = KeyVirusSession30.setValue(field_43_virusinfo, value);
     }
 
     /**
@@ -3457,13 +3127,6 @@ public abstract class DOPAbstractType
      */
     public int getKeyVirusSession30()
     {
-        return ( int )KeyVirusSession30.getValue(field_43_virusinfo);
-
+        return KeyVirusSession30.getValue(field_43_virusinfo);
     }
-
-
-}  // END OF CLASS
-
-
-
-
+}

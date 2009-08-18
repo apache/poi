@@ -55,7 +55,7 @@ public final class HWPFList {
    */
   public HWPFList(boolean numbered, StyleSheet styleSheet)
   {
-    _listData = new ListData((int)(Math.random() * (double)System.currentTimeMillis()), numbered);
+    _listData = new ListData((int)(Math.random() * System.currentTimeMillis()), numbered);
     _override = new ListFormatOverride(_listData.getLsid());
     _styleSheet = styleSheet;
   }

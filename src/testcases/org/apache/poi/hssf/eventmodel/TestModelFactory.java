@@ -50,11 +50,10 @@ public class TestModelFactory extends TestCase {
     {
         ModelFactory mf = new ModelFactory();
         assertTrue("listeners member cannot be null", mf.listeners != null);
-        assertTrue("listeners member must be a List", mf.listeners instanceof List);
         models = new ArrayList(3);
         factory = new ModelFactory();
         book = new HSSFWorkbook();
-        ByteArrayOutputStream stream = (ByteArrayOutputStream)setupRunFile(book);
+        ByteArrayOutputStream stream = setupRunFile(book);
         POIFSFileSystem fs = new POIFSFileSystem(
                                    new ByteArrayInputStream(stream.toByteArray())
                                    );

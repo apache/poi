@@ -24,8 +24,8 @@ import java.io.OutputStream;
 /**
  * A decoder for the crazy LZW implementation used
  *  in Visio.
- * According to VSDump, "it's a slightly perverted version of LZW 
- *  compression, with inverted meaning of flag byte and 0xFEE as an 
+ * According to VSDump, "it's a slightly perverted version of LZW
+ *  compression, with inverted meaning of flag byte and 0xFEE as an
  *  'initial shift'". It uses 12 bit codes
  * (http://www.gnome.ru/projects/vsdump_en.html)
  *
@@ -36,7 +36,7 @@ import java.io.OutputStream;
 public class HDGFLZW {
 
 /**
- * Given an integer, turn it into a java byte, handling 
+ * Given an integer, turn it into a java byte, handling
  *  the wrapping.
  * This is a convenience method
  */
@@ -45,13 +45,15 @@ public static byte fromInt(int b) {
 	return (byte)(b - 256);
 }
 /**
- * Given a java byte, turn it into an integer between 0 
+ * Given a java byte, turn it into an integer between 0
  *  and 255 (i.e. handle the unwrapping).
  * This is a convenience method
  */
 public static int fromByte(byte b) {
-	if(b >= 0) return (int)b;
-	return (int)(b + 256);
+	if(b >= 0) {
+		return b;
+	}
+	return b + 256;
 }
 
 /**
@@ -113,7 +115,7 @@ public void decode(InputStream src, OutputStream res) throws IOException {
 	// It needs to be unsigned, so that bit stuff works
 	int dataI;
 	// The compressed code sequence is held over 2 bytes
-	int dataIPt1, dataIPt2; 
+	int dataIPt1, dataIPt2;
 	// How long a code sequence is, and where in the
 	//  dictionary to start at
 	int len, pntr;
@@ -138,7 +140,7 @@ public void decode(InputStream src, OutputStream res) throws IOException {
 				dataIPt1 = src.read();
 				dataIPt2 = src.read();
 				if(dataIPt1 == -1 || dataIPt2 == -1) break;
-				
+
 				// Build up how long the code sequence is, and
 				//  what position of the code to start at
 				// (The position is the first 12 bits, the
@@ -153,14 +155,14 @@ public void decode(InputStream src, OutputStream res) throws IOException {
 				} else {
 					pntr = pntr + 18;
 				}
-				
+
 				// Loop over the codes, outputting what they correspond to
 				for(int i=0; i<len; i++) {
 					buffer [(pos + i) & 4095] = buffer [(pntr + i) & 4095];
 					dataB = buffer[(pntr + i) & 4095];
 					res.write(new byte[] {dataB});
 				}
-				
+
 				// Record how far along the stream we have moved
 				pos = pos + len;
 			}
@@ -183,14 +185,14 @@ public void compress(InputStream src, OutputStream res) throws IOException {
  * Need our own class to handle keeping track of the
  *  code buffer, pending bytes to write out etc.
  */
-private class Compressor {
+private static final class Compressor {
 	// We use 12 bit codes:
 	// * 0-255 are real bytes
 	// * 256-4095 are the substring codes
 	// Java handily initialises our buffer / dictionary
 	//  to all zeros
 	byte[] dict = new byte[4096];
-	
+
 	// The next block of data to be written out, minus
 	//  its mask byte
 	byte[] buffer = new byte[16];
@@ -198,21 +200,24 @@ private class Compressor {
 	// (Un-compressed codes are 1 byte each, compressed codes
 	//   are two)
 	int bufferLen = 0;
-	
+
 	// The raw length of a code is limited to 4 bits
 	byte[] rawCode = new byte[16];
 	// And how much we're using
 	int rawCodeLen = 0;
-	
+
 	// How far through the input and output streams we are
 	int posInp = 0;
 	int posOut = 0;
-	
+
 	// What the next mask byte to output will be
 	int nextMask = 0;
 	// And how many bits we've already set
 	int maskBitsSet = 0;
-	
+
+	public Compressor() {
+		//
+	}
 /**
  * Returns the last place that the bytes from rawCode are found
  *  at in the buffer, or -1 if they can't be found
@@ -230,7 +235,7 @@ private int findRawCodeInBuffer() {
 				matches = false;
 			}
 		}
-		
+
 		// Was this position a match?
 		if(matches) {
 			return i;
@@ -255,7 +260,7 @@ private void outputCompressed(OutputStream res) throws IOException {
 		}
 		return;
 	}
-	
+
 	// Increment the mask bit count, we've done another code
 	maskBitsSet++;
 	// Add the length+code to the buffer
@@ -263,7 +268,7 @@ private void outputCompressed(OutputStream res) throws IOException {
 	//  length is the last 4 bits)
 	// TODO
 	posOut += 2;
-	
+
 	// If we're now at 8 codes, output
 	if(maskBitsSet == 8) {
 		output8Codes(res);
@@ -273,15 +278,15 @@ private void outputCompressed(OutputStream res) throws IOException {
  * Output the un-compressed byte
  */
 private void outputUncompressed(byte b, OutputStream res) throws IOException {
-	// Set the mask bit for us 
+	// Set the mask bit for us
 	nextMask += (1<<maskBitsSet);
-	
+
 	// And add us to the buffer + dictionary
 	buffer[bufferLen] = fromInt(b);
 	bufferLen++;
 	dict[(posOut&4095)] = fromInt(b);
 	posOut++;
-	
+
 	// If we're now at 8 codes, output
 	if(maskBitsSet == 8) {
 		output8Codes(res);
@@ -296,20 +301,20 @@ private void output8Codes(OutputStream res) throws IOException {
 	// Output the mask and the data
 	res.write(new byte[] { fromInt(nextMask) } );
 	res.write(buffer, 0, bufferLen);
-	
+
 	// Reset things
 	nextMask = 0;
 	maskBitsSet = 0;
 	bufferLen = 0;
 }
-	
+
 /**
  * Does the compression
  */
 private void compress(InputStream src, OutputStream res) throws IOException {
 	// Have we hit the end of the file yet?
 	boolean going = true;
-	
+
 	// This is a byte as looked up in the dictionary
 	// It needs to be signed, as it'll get passed on to
 	//  the output stream
@@ -317,27 +322,27 @@ private void compress(InputStream src, OutputStream res) throws IOException {
 	// This is an unsigned byte read from the stream
 	// It needs to be unsigned, so that bit stuff works
 	int dataI;
-	
+
 	while( going ) {
 		dataI = src.read();
 		posInp++;
 		if(dataI == -1) { going = false; }
 		dataB = fromInt(dataI);
-		
+
 		// If we've run out of data, output anything that's
 		//  pending then finish
 		if(!going && rawCodeLen > 0) {
 			outputCompressed(res);
 			break;
 		}
-	
+
 		// Try adding this new byte onto rawCode, and
 		//  see if all of that is still found in the
 		//  buffer dictionary or not
 		rawCode[rawCodeLen] = dataB;
 		rawCodeLen++;
 		int rawAt = findRawCodeInBuffer();
-		
+
 		// If we found it and are now at 16 bytes,
 		//  we need to output our pending code block
 		if(rawCodeLen == 16 && rawAt > -1) {
@@ -345,24 +350,24 @@ private void compress(InputStream src, OutputStream res) throws IOException {
 			rawCodeLen = 0;
 			continue;
 		}
-		
+
 		// If we did find all of rawCode with our new
 		//  byte added on, we can wait to see what happens
 		//  with the next byte
 		if(rawAt > -1) {
 			continue;
 		}
-		
+
 		// If we get here, then the rawCode + this byte weren't
 		// found in the dictionary
-		
+
 		// If there was something in rawCode before, then that was
 		// found in the dictionary, so output that compressed
 		rawCodeLen--;
 		if(rawCodeLen > 0) {
 			// Output the old rawCode
 			outputCompressed(res);
-			
+
 			// Can this byte start a new rawCode, or does
 			//  it need outputting itself?
 			rawCode[0] = dataB;

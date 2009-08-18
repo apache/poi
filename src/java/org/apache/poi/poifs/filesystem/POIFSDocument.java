@@ -72,7 +72,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	private static DocumentBlock[] convertRawBlocksToBigBlocks(ListManagedBlock[] blocks) throws IOException {
 		DocumentBlock[] result = new DocumentBlock[blocks.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = new DocumentBlock((RawDataBlock)blocks[i]); 
+			result[i] = new DocumentBlock((RawDataBlock)blocks[i]);
 		}
 		return result;
 	}
@@ -127,7 +127,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param stream the InputStream we read data from
 	 */
 	public POIFSDocument(String name, InputStream stream) throws IOException {
-		List blocks = new ArrayList();
+		List<DocumentBlock> blocks = new ArrayList<DocumentBlock>();
 
 		_size = 0;
 		while (true) {
@@ -142,7 +142,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 				break;
 			}
 		}
-		DocumentBlock[] bigBlocks = (DocumentBlock[]) blocks.toArray(new DocumentBlock[blocks.size()]);
+		DocumentBlock[] bigBlocks = blocks.toArray(new DocumentBlock[blocks.size()]);
 
 		_big_store = new BigBlockStore(bigBlocks);
 		_property = new DocumentProperty(name, _size);
@@ -201,7 +201,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		int len = buffer.length;
 
 		DataInputBlock currentBlock = getDataInputBlock(offset);
-		
+
 		int blockAvailable = currentBlock.available();
 		if (blockAvailable > len) {
 			currentBlock.readFully(buffer, 0, len);
@@ -249,9 +249,8 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		}
 		if (_property.shouldUseSmallBlocks()) {
 			return SmallDocumentBlock.getDataInputBlock(_small_store.getBlocks(), offset);
-		} else {
-			return DocumentBlock.getDataInputBlock(_big_store.getBlocks(), offset);
 		}
+		return DocumentBlock.getDataInputBlock(_big_store.getBlocks(), offset);
 	}
 
 	/**
@@ -377,11 +376,11 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 
 	/* **********  END  begin implementation of POIFSViewable ********** */
 	private static final class SmallBlockStore {
-		private SmallDocumentBlock[] smallBlocks;
-		private final POIFSDocumentPath path;
-		private final String name;
-		private final int size;
-		private final POIFSWriterListener writer;
+		private SmallDocumentBlock[] _smallBlocks;
+		private final POIFSDocumentPath _path;
+		private final String _name;
+		private final int _size;
+		private final POIFSWriterListener _writer;
 
 		/**
 		 * Constructor
@@ -389,11 +388,11 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		 * @param blocks blocks to construct the store from
 		 */
 		SmallBlockStore(SmallDocumentBlock[] blocks) {
-			smallBlocks = (SmallDocumentBlock[]) blocks.clone();
-			this.path = null;
-			this.name = null;
-			this.size = -1;
-			this.writer = null;
+			_smallBlocks = blocks.clone();
+			this._path = null;
+			this._name = null;
+			this._size = -1;
+			this._writer = null;
 		}
 
 		/**
@@ -405,41 +404,41 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		 * @param writer the object that will eventually write the document
 		 */
 		SmallBlockStore(POIFSDocumentPath path, String name, int size, POIFSWriterListener writer) {
-			smallBlocks = new SmallDocumentBlock[0];
-			this.path = path;
-			this.name = name;
-			this.size = size;
-			this.writer = writer;
+			_smallBlocks = new SmallDocumentBlock[0];
+			this._path = path;
+			this._name = name;
+			this._size = size;
+			this._writer = writer;
 		}
 
 		/**
 		 * @return <code>true</code> if this store is a valid source of data
 		 */
 		boolean isValid() {
-			return smallBlocks.length > 0 || writer != null;
+			return _smallBlocks.length > 0 || _writer != null;
 		}
 
 		/**
 		 * @return the SmallDocumentBlocks
 		 */
 		SmallDocumentBlock[] getBlocks() {
-			if (isValid() && writer != null) {
-				ByteArrayOutputStream stream = new ByteArrayOutputStream(size);
-				DocumentOutputStream dstream = new DocumentOutputStream(stream, size);
+			if (isValid() && _writer != null) {
+				ByteArrayOutputStream stream = new ByteArrayOutputStream(_size);
+				DocumentOutputStream dstream = new DocumentOutputStream(stream, _size);
 
-				writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, path, name, size));
-				smallBlocks = SmallDocumentBlock.convert(stream.toByteArray(), size);
+				_writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, _path, _name, _size));
+				_smallBlocks = SmallDocumentBlock.convert(stream.toByteArray(), _size);
 			}
-			return smallBlocks;
+			return _smallBlocks;
 		}
 	} // end private class SmallBlockStore
 
 	private static final class BigBlockStore {
 		private DocumentBlock[] bigBlocks;
-		private final POIFSDocumentPath path;
-		private final String name;
-		private final int size;
-		private final POIFSWriterListener writer;
+		private final POIFSDocumentPath _path;
+		private final String _name;
+		private final int _size;
+		private final POIFSWriterListener _writer;
 
 		/**
 		 * Constructor
@@ -447,11 +446,11 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		 * @param blocks the blocks making up the store
 		 */
 		BigBlockStore(DocumentBlock[] blocks) {
-			bigBlocks = (DocumentBlock[]) blocks.clone();
-			this.path = null;
-			this.name = null;
-			this.size = -1;
-			this.writer = null;
+			bigBlocks = blocks.clone();
+			_path = null;
+			_name = null;
+			_size = -1;
+			_writer = null;
 		}
 
 		/**
@@ -464,29 +463,29 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		 */
 		BigBlockStore(POIFSDocumentPath path, String name, int size, POIFSWriterListener writer) {
 			bigBlocks = new DocumentBlock[0];
-			this.path = path;
-			this.name = name;
-			this.size = size;
-			this.writer = writer;
+			_path = path;
+			_name = name;
+			_size = size;
+			_writer = writer;
 		}
 
 		/**
 		 * @return <code>true</code> if this store is a valid source of data
 		 */
 		boolean isValid() {
-			return bigBlocks.length > 0 || writer != null;
+			return bigBlocks.length > 0 || _writer != null;
 		}
 
 		/**
 		 * @return the DocumentBlocks
 		 */
 		DocumentBlock[] getBlocks() {
-			if (isValid() && writer != null) {
-				ByteArrayOutputStream stream = new ByteArrayOutputStream(size);
-				DocumentOutputStream dstream = new DocumentOutputStream(stream, size);
+			if (isValid() && _writer != null) {
+				ByteArrayOutputStream stream = new ByteArrayOutputStream(_size);
+				DocumentOutputStream dstream = new DocumentOutputStream(stream, _size);
 
-				writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, path, name, size));
-				bigBlocks = DocumentBlock.convert(stream.toByteArray(), size);
+				_writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, _path, _name, _size));
+				bigBlocks = DocumentBlock.convert(stream.toByteArray(), _size);
 			}
 			return bigBlocks;
 		}
@@ -498,10 +497,10 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		 */
 		void writeBlocks(OutputStream stream) throws IOException {
 			if (isValid()) {
-				if (writer != null) {
-					DocumentOutputStream dstream = new DocumentOutputStream(stream, size);
+				if (_writer != null) {
+					DocumentOutputStream dstream = new DocumentOutputStream(stream, _size);
 
-					writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, path, name, size));
+					_writer.processPOIFSWriterEvent(new POIFSWriterEvent(dstream, _path, _name, _size));
 					dstream.writeFiller(countBlocks() * POIFSConstants.BIG_BLOCK_SIZE,
 							DocumentBlock.getFillByte());
 				} else {
@@ -518,10 +517,10 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 		int countBlocks() {
 
 			if (isValid()) {
-				if (writer == null) {
+				if (_writer == null) {
 					return bigBlocks.length;
 				}
-				return (size + POIFSConstants.BIG_BLOCK_SIZE - 1)
+				return (_size + POIFSConstants.BIG_BLOCK_SIZE - 1)
 							/ POIFSConstants.BIG_BLOCK_SIZE;
 			}
 			return 0;

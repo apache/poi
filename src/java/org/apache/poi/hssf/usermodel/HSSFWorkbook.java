@@ -524,9 +524,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * Sets the sheet name.
      * Will throw IllegalArgumentException if the name is duplicated or contains /\?*[]
      * Note - Excel allows sheet names up to 31 chars in length but other applications allow more.
-     * Excel does not crash with names longer than 31 chars, but silently truncates such names to 
+     * Excel does not crash with names longer than 31 chars, but silently truncates such names to
      * 31 chars.  POI enforces uniqueness on the first 31 chars.
-     * 
+     *
      * @param sheetIx number (0 based)
      */
     public void setSheetName(int sheetIx, String name) {
@@ -552,7 +552,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public void setHidden(boolean hiddenFlag) {
         workbook.getWindowOne().setHidden(hiddenFlag);
     }
-    
+
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         return workbook.isSheetHidden(sheetIx);
@@ -618,7 +618,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     /**
      * @deprecated for POI internal use only (formula rendering).  This method is likely to
      * be removed in future versions of POI.
-     * 
+     *
      * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
      * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
      * @return the string representation of the defined or external name
@@ -665,10 +665,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         clonedSheet.setActive(false);
 
         String name = getUniqueSheetName(srcName);
-        int newSheetIndex = _sheets.size(); 
+        int newSheetIndex = _sheets.size();
         _sheets.add(clonedSheet);
         workbook.setSheetName(newSheetIndex, name);
-        
+
         // Check this sheet has an autofilter, (which has a built-in NameRecord at workbook level)
         int filterDbNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_FILTER_DB);
         if (filterDbNameIndex >=0) {
@@ -679,7 +679,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             for (int i=0; i< ptgs.length; i++) {
                 Ptg ptg = ptgs[i];
                 ptg = ptg.copy();
-                
+
                 if (ptg instanceof Area3DPtg) {
                     Area3DPtg a3p = (Area3DPtg) ptg;
                     a3p.setExternSheetIndex(newExtSheetIx);
@@ -698,7 +698,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             workbook.cloneDrawings(clonedSheet.getSheet());
         }
         // TODO - maybe same logic required for other/all built-in name records
-        
+
         return clonedSheet;
     }
 
@@ -966,12 +966,12 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             temp.add(new MemFuncPtg(exprsSize));
         }
         if (startColumn >= 0) {
-            Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn, 
+            Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn,
                     false, false, false, false, externSheetIndex);
             temp.add(colArea);
         }
         if (startRow >= 0) {
-            Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN, 
+            Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN,
                     false, false, false, false, externSheetIndex);
             temp.add(rowArea);
         }
@@ -1136,7 +1136,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      */
     public HSSFCellStyle getCellStyleAt(short idx)
     {
-        ExtendedFormatRecord xfr = workbook.getExFormatAt((int)idx);
+        ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
         HSSFCellStyle style = new HSSFCellStyle(idx, xfr, this);
 
         return style;
@@ -1296,7 +1296,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         int result = names.size();
         return result;
     }
-    
+
     public HSSFName getName(String name) {
         int nameIndex = getNameIndex(name);
         if (nameIndex < 0) {
@@ -1311,7 +1311,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             throw new IllegalStateException("There are no defined names in this workbook");
         }
         if (nameIndex < 0 || nameIndex > nNames) {
-            throw new IllegalArgumentException("Specified name index " + nameIndex 
+            throw new IllegalArgumentException("Specified name index " + nameIndex
                     + " is outside the allowable range (0.." + (nNames-1) + ").");
         }
         return (HSSFName) names.get(nameIndex);
@@ -1394,7 +1394,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         if (name == null) {
             return null;
         }
- 
+
         return HSSFFormulaParser.toFormulaString(this, name.getNameDefinition());
     }
 
@@ -1684,7 +1684,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             }
         }
     }
-    
+
     public CreationHelper getCreationHelper() {
         return new HSSFCreationHelper(this);
     }

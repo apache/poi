@@ -546,7 +546,7 @@ public final class CharacterRun
     cp._props.setDttmPropRMark((DateAndTime)_props.getDttmPropRMark().clone());
     cp._props.setDttmDispFldRMark((DateAndTime)_props.getDttmDispFldRMark().
                                   clone());
-    cp._props.setXstDispFldRMark((byte[])_props.getXstDispFldRMark().clone());
+    cp._props.setXstDispFldRMark(_props.getXstDispFldRMark().clone());
     cp._props.setShd((ShadingDescriptor)_props.getShd().clone());
 
     return cp;

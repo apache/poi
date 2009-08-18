@@ -257,7 +257,7 @@ public final class HSLFSlideShow extends POIDocument {
         Record[] rec = new Record[lst.size()];
         for (int i = 0; i < a.length; i++) {
             Integer offset = (Integer)a[i];
-            rec[i] = (Record)Record.buildRecordAtOffset(docstream, offset.intValue());
+            rec[i] = Record.buildRecordAtOffset(docstream, offset.intValue());
             if(rec[i] instanceof PersistRecord) {
                 PersistRecord psr = (PersistRecord)rec[i];
                 Integer id = (Integer)offset2id.get(offset);

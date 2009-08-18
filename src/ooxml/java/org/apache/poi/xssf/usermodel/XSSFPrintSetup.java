@@ -285,7 +285,7 @@ public class XSSFPrintSetup implements PrintSetup {
      * @see PaperSize
      */
     public PaperSize getPaperSizeEnum() {
-        return PaperSize.values()[((int) getPaperSize() - 1)];
+        return PaperSize.values()[getPaperSize() - 1];
     }
 
     /**

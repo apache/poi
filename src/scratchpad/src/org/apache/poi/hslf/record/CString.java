@@ -58,7 +58,7 @@ public final class CString extends RecordAtom {
 	 * The meaning of the count is specific to the type of the parent record
 	 */
 	public int getOptions() {
-		return (int)LittleEndian.getShort(_header);
+		return LittleEndian.getShort(_header);
 	}
 
 	/**

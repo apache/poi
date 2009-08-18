@@ -53,9 +53,7 @@ import org.apache.poi.hslf.model.TextRun;
  *
  * @author Nick Burch
  */
-
-public final class QuickButCruddyTextExtractor
-{
+public final class QuickButCruddyTextExtractor {
 	private POIFSFileSystem fs;
 	private InputStream is;
 	private byte[] pptContents;
@@ -169,7 +167,7 @@ public final class QuickButCruddyTextExtractor
 
 		// If it's a container, step into it and return
 		// (If it's a container, option byte 1 BINARY_AND 0x0f will be 0x0f)
-		int container = (int)opt & 0x0f;
+		int container = opt & 0x0f;
 		if(container == 0x0f) {
 			return (startPos+8);
 		}

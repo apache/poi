@@ -80,16 +80,23 @@ public final class DocumentAtom extends RecordAtom
 
 	/** Was the document saved with True Type fonts embeded? */
 	public boolean getSaveWithFonts() {
-		if(saveWithFonts == 0) { return false; } else { return true; } }
+		return saveWithFonts != 0;
+	}
+
 	/** Have the placeholders on the title slide been omitted? */
 	public boolean getOmitTitlePlace() {
-		if(omitTitlePlace == 0) { return false; } else { return true; } }
+		return omitTitlePlace != 0;
+	}
+
 	/** Is this a Bi-Directional PPT Doc? */
 	public boolean getRightToLeft() {
-		if(rightToLeft == 0) { return false; } else { return true; } }
+		return rightToLeft != 0;
+	}
+
 	/** Are comment shapes visible? */
 	public boolean getShowComments() {
-		if(showComments == 0) { return false; } else { return true; } }
+		return showComments != 0;
+	}
 
 
 	/* *************** record code follows ********************** */
@@ -118,10 +125,10 @@ public final class DocumentAtom extends RecordAtom
 		handoutMasterPersist = LittleEndian.getInt(source,start+28+8);
 
 		// Get the ID of the first slide
-		firstSlideNum = (int)LittleEndian.getShort(source,start+32+8);
+		firstSlideNum = LittleEndian.getShort(source,start+32+8);
 
 		// Get the slide size type
-		slideSizeType = (int)LittleEndian.getShort(source,start+34+8);
+		slideSizeType = LittleEndian.getShort(source,start+34+8);
 
 		// Get the booleans as bytes
 		saveWithFonts = source[start+36+8];

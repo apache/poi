@@ -43,9 +43,8 @@ import org.dom4j.io.SAXReader;
 
 /**
  * Manage package content types ([Content_Types].xml part).
- * 
+ *
  * @author Julien Chable
- * @version 1.0
  */
 public abstract class ContentTypeManager {
 
@@ -90,7 +89,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Constructor. Parses the content of the specified input stream.
-	 * 
+	 *
 	 * @param in
 	 *            If different of <i>null</i> then the content types part is
 	 *            retrieve and parse.
@@ -161,7 +160,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Add an override content type for a specific part.
-	 * 
+	 *
 	 * @param partName
 	 *            Name of the part.
 	 * @param contentType
@@ -176,7 +175,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Add a content type associated with the specified extension.
-	 * 
+	 *
 	 * @param extension
 	 *            The part name extension to bind to a content type.
 	 * @param contentType
@@ -267,7 +266,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Check if the specified content type is already register.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type to check.
 	 * @return <code>true</code> if the specified content type is already
@@ -315,7 +314,7 @@ public abstract class ContentTypeManager {
 	 * @return The content type associated with the URI (in case of an override
 	 *         content type) or the extension (in case of default content type),
 	 *         else <code>null</code>.
-	 * 
+	 *
 	 * @exception OpenXML4JRuntimeException
 	 *                Throws if the content type manager is not able to find the
 	 *                content from an existing part.
@@ -342,9 +341,8 @@ public abstract class ContentTypeManager {
 		if (this.container != null && this.container.getPart(partName) != null) {
 			throw new OpenXML4JRuntimeException(
 					"Rule M2.4 exception : this error should NEVER happen, if so please send a mail to the developers team, thanks !");
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -358,7 +356,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Clear all override content types.
-	 * 
+	 *
 	 */
 	public void clearOverrideContentTypes() {
 		if (this.overrideContentType != null)
@@ -367,7 +365,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Parse the content types part.
-	 * 
+	 *
 	 * @throws InvalidFormatException
 	 *             Throws if the content type doesn't exist or the XML format is
 	 *             invalid.
@@ -414,7 +412,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Save the contents type part.
-	 * 
+	 *
 	 * @param outStream
 	 *            The output stream use to save the XML content of the content
 	 *            types part.
@@ -448,7 +446,7 @@ public abstract class ContentTypeManager {
 
 	/**
 	 * Use to append specific type XML elements, use by the save() method.
-	 * 
+	 *
 	 * @param root
 	 *            XML parent element use to append this override type element.
 	 * @param entry
@@ -459,13 +457,13 @@ public abstract class ContentTypeManager {
 			Entry<PackagePartName, String> entry) {
 		root.addElement(OVERRIDE_TAG_NAME).addAttribute(
 				PART_NAME_ATTRIBUTE_NAME,
-				((PackagePartName) entry.getKey()).getName()).addAttribute(
-				CONTENT_TYPE_ATTRIBUTE_NAME, (String) entry.getValue());
+				entry.getKey().getName()).addAttribute(
+				CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
 	}
 
 	/**
 	 * Use to append default types XML elements, use by the save() metid.
-	 * 
+	 *
 	 * @param root
 	 *            XML parent element use to append this default type element.
 	 * @param entry
@@ -474,16 +472,16 @@ public abstract class ContentTypeManager {
 	 */
 	private void appendDefaultType(Element root, Entry<String, String> entry) {
 		root.addElement(DEFAULT_TAG_NAME).addAttribute(
-				EXTENSION_ATTRIBUTE_NAME, (String) entry.getKey())
+				EXTENSION_ATTRIBUTE_NAME, entry.getKey())
 				.addAttribute(CONTENT_TYPE_ATTRIBUTE_NAME,
-						(String) entry.getValue());
+						entry.getValue());
 
 	}
 
 	/**
 	 * Specific implementation of the save method. Call by the save() method,
 	 * call before exiting.
-	 * 
+	 *
 	 * @param out
 	 *            The output stream use to write the content type XML.
 	 */

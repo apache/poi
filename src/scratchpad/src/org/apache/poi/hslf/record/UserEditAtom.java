@@ -82,30 +82,30 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Get the last viewed slide ID
-		lastViewedSlideID = (int)LittleEndian.getInt(source,start+0+8);
+		lastViewedSlideID = LittleEndian.getInt(source,start+0+8);
 
 		// Get the PPT version
-		pptVersion = (int)LittleEndian.getInt(source,start+4+8);
+		pptVersion = LittleEndian.getInt(source,start+4+8);
 
 		// Get the offset to the previous incremental save's UserEditAtom
 		// This will be the byte offset on disk where the previous one
 		//  starts, or 0 if this is the first one
-		lastUserEditAtomOffset = (int)LittleEndian.getInt(source,start+8+8);
+		lastUserEditAtomOffset = LittleEndian.getInt(source,start+8+8);
 
 		// Get the offset to the persist pointers
 		// This will be the byte offset on disk where the preceding
 		//  PersistPtrFullBlock or PersistPtrIncrementalBlock starts
-		persistPointersOffset = (int)LittleEndian.getInt(source,start+12+8);
+		persistPointersOffset = LittleEndian.getInt(source,start+12+8);
 
 		// Get the persist reference for the document persist object
 		// Normally seems to be 1
-		docPersistRef = (int)LittleEndian.getInt(source,start+16+8);
+		docPersistRef = LittleEndian.getInt(source,start+16+8);
 
 		// Maximum number of persist objects written
-		maxPersistWritten = (int)LittleEndian.getInt(source,start+20+8);
+		maxPersistWritten = LittleEndian.getInt(source,start+20+8);
 
 		// Last view type
-		lastViewType = (short)LittleEndian.getShort(source,start+24+8);
+		lastViewType = LittleEndian.getShort(source,start+24+8);
 
 		// There might be a few more bytes, which are a reserved field
 		reserved = new byte[len-26-8];

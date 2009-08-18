@@ -86,8 +86,8 @@ public final class SlideAtom extends RecordAtom
 		layoutAtom = new SSlideLayoutAtom(SSlideLayoutAtomData);
 
 		// Get the IDs of the master and notes
-		masterID = (int)LittleEndian.getInt(source,start+12+8);
-		notesID = (int)LittleEndian.getInt(source,start+16+8);
+		masterID = LittleEndian.getInt(source,start+12+8);
+		notesID = LittleEndian.getInt(source,start+16+8);
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+20+8);
@@ -214,7 +214,7 @@ public final class SlideAtom extends RecordAtom
 			}
 
 			// Grab out our data
-			geometry = (int)LittleEndian.getInt(data,0);
+			geometry = LittleEndian.getInt(data,0);
 			placeholderIDs = new byte[8];
 			System.arraycopy(data,4,placeholderIDs,0,8);
 		}

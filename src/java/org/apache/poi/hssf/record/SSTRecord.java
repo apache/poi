@@ -68,9 +68,6 @@ public final class SSTRecord extends ContinuableRecord {
     /** Offsets relative the start of the current SST or continue record */
     int[] bucketRelativeOffsets;
 
-    /**
-     * default constructor
-     */
     public SSTRecord()
     {
         field_1_num_strings = 0;
@@ -86,8 +83,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return the index of that string in the table
      */
-
-    public int addString( final UnicodeString string )
+    public int addString(UnicodeString string)
     {
         field_1_num_strings++;
         UnicodeString ucs = ( string == null ) ? EMPTY_STRING
@@ -95,12 +91,9 @@ public final class SSTRecord extends ContinuableRecord {
         int rval;
         int index = field_3_strings.getIndex(ucs);
 
-        if ( index != -1 )
-        {
+        if ( index != -1 ) {
             rval = index;
-        }
-        else
-        {
+        } else {
             // This is a new string -- we didn't see it among the
             // strings we've already collected
             rval = field_3_strings.size();
@@ -113,7 +106,6 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return number of strings
      */
-
     public int getNumStrings()
     {
         return field_1_num_strings;
@@ -122,7 +114,6 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return number of unique strings
      */
-
     public int getNumUniqueStrings()
     {
         return field_2_num_unique_strings;
@@ -136,8 +127,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return the desired string
      */
-
-    public UnicodeString getString( final int id )
+    public UnicodeString getString(int id )
     {
         return (UnicodeString) field_3_strings.get( id );
     }
@@ -148,9 +138,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return string representation
      */
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( "[SST]\n" );
@@ -168,11 +156,7 @@ public final class SSTRecord extends ContinuableRecord {
         return buffer.toString();
     }
 
-    /**
-     * @return sid
-     */
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
@@ -254,9 +238,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @param in the RecordInputstream to read the record from
      */
-
-    public SSTRecord( RecordInputStream in )
-    {
+    public SSTRecord(RecordInputStream in) {
         // this method is ALWAYS called after construction -- using
         // the nontrivial constructor, of course -- so this is where
         // we initialize our fields
@@ -272,7 +254,6 @@ public final class SSTRecord extends ContinuableRecord {
      * @return an iterator of the strings we hold. All instances are
      *         UnicodeStrings
      */
-
     Iterator getStrings()
     {
         return field_3_strings.iterator();
@@ -281,9 +262,7 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return count of the strings we hold.
      */
-
-    int countStrings()
-    {
+    int countStrings() {
         return field_3_strings.size();
     }
 
@@ -294,8 +273,7 @@ public final class SSTRecord extends ContinuableRecord {
         bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
     }
 
-    SSTDeserializer getDeserializer()
-    {
+    SSTDeserializer getDeserializer() {
         return deserializer;
     }
 
@@ -312,15 +290,14 @@ public final class SSTRecord extends ContinuableRecord {
      *                      SST record.
      * @return  The new SST record.
      */
-    public ExtSSTRecord createExtSSTRecord(int sstOffset)
-    {
+    public ExtSSTRecord createExtSSTRecord(int sstOffset) {
         if (bucketAbsoluteOffsets == null || bucketAbsoluteOffsets == null)
             throw new IllegalStateException("SST record has not yet been serialized.");
 
         ExtSSTRecord extSST = new ExtSSTRecord();
         extSST.setNumStringsPerBucket((short)8);
-        int[] absoluteOffsets = (int[]) bucketAbsoluteOffsets.clone();
-        int[] relativeOffsets = (int[]) bucketRelativeOffsets.clone();
+        int[] absoluteOffsets = bucketAbsoluteOffsets.clone();
+        int[] relativeOffsets = bucketRelativeOffsets.clone();
         for ( int i = 0; i < absoluteOffsets.length; i++ )
             absoluteOffsets[i] += sstOffset;
         extSST.setBucketOffsets(absoluteOffsets, relativeOffsets);
@@ -333,8 +310,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return  The size of the ExtSST record in bytes.
      */
-    public int calcExtSSTRecordSize()
-    {
+    public int calcExtSSTRecordSize() {
       return ExtSSTRecord.getRecordSizeForStrings(field_3_strings.size());
     }
 }

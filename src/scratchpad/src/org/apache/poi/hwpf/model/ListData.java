@@ -133,7 +133,7 @@ public final class ListData
 
   int resetListID()
   {
-    _lsid = (int)(Math.random() * (double)System.currentTimeMillis());
+    _lsid = (int)(Math.random() * System.currentTimeMillis());
     return _lsid;
   }
 

@@ -52,7 +52,7 @@ import org.apache.poi.util.POILogFactory;
 
 /**
  * Represents a container that can store multiple data objects.
- * 
+ *
  * @author Julien Chable, CDubet
  * @version 0.1
  */
@@ -125,7 +125,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param access
 	 *            Package access.
 	 */
@@ -166,7 +166,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Open a package with read/write permission.
-	 * 
+	 *
 	 * @param path
 	 *            The document path.
 	 * @return A Package object, else <b>null</b>.
@@ -180,7 +180,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Open a package.
-	 * 
+	 *
 	 * @param path
 	 *            The document path.
 	 * @param access
@@ -206,11 +206,11 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Open a package.
-	 * 
+	 *
 	 * Note - uses quite a bit more memory than {@link #open(String)}, which
 	 * doesn't need to hold the whole zip file in memory, and can take advantage
 	 * of native methods
-	 * 
+	 *
 	 * @param in
 	 *            The InputStream to read the package from
 	 * @return A PackageBase object
@@ -226,7 +226,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Opens a package if it exists, else it creates one.
-	 * 
+	 *
 	 * @param file
 	 *            The file to open or to create.
 	 * @return A newly created package if the specified file does not exist,
@@ -246,7 +246,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Creates a new package.
-	 * 
+	 *
 	 * @param path
 	 *            Path of the document.
 	 * @return A newly created PackageBase ready to use.
@@ -257,7 +257,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Creates a new package.
-	 * 
+	 *
 	 * @param file
 	 *            Path of the document.
 	 * @return A newly created PackageBase ready to use.
@@ -292,7 +292,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Configure the package.
-	 * 
+	 *
 	 * @param pkg
 	 */
 	private static void configurePackage(OPCPackage pkg) {
@@ -324,7 +324,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Flush the package : save all.
-	 * 
+	 *
 	 * @see #close()
 	 */
 	public void flush() {
@@ -339,7 +339,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Close the package and save its content.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If an IO exception occur during the saving process.
 	 */
@@ -391,7 +391,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * Add a thumbnail to the package. This method is provided to make easier
 	 * the addition of a thumbnail in a package. You can do the same work by
 	 * using the traditionnal relationship and part mechanism.
-	 * 
+	 *
 	 * @param path
 	 *            The full path to the image file.
 	 */
@@ -443,7 +443,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Throws an exception if the package access mode is in read only mode
 	 * (PackageAccess.Read).
-	 * 
+	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a writing operation is done on a read only package.
 	 * @see org.apache.poi.openxml4j.opc.PackageAccess
@@ -458,7 +458,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * Throws an exception if the package access mode is in write only mode
 	 * (PackageAccess.Write). This method is call when other methods need write
 	 * right.
-	 * 
+	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a read operation is done on a write only package.
 	 * @see org.apache.poi.openxml4j.opc.PackageAccess
@@ -471,7 +471,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieves or creates if none exists, core package property part.
-	 * 
+	 *
 	 * @return The PackageProperties part of this package.
 	 */
 	public PackageProperties getPackageProperties()
@@ -487,7 +487,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieve a part identified by its name.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name of the part to retrieve.
 	 * @return The part with the specified name, else <code>null</code>.
@@ -511,7 +511,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieve parts by content type.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type criteria.
 	 * @return All part associated to the specified content type.
@@ -527,7 +527,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieve parts by relationship type.
-	 * 
+	 *
 	 * @param relationshipType
 	 *            Relationship type.
 	 * @return All parts which are the target of a relationship with the
@@ -547,7 +547,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Get the target part from the specified relationship.
-	 * 
+	 *
 	 * @param partRel
 	 *            The part relationship uses to retrieve the part.
 	 */
@@ -571,7 +571,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Load the parts of the archive if it has not been done yet The
 	 * relationships of each part are not loaded
-	 * 
+	 *
 	 * @return All this package's parts.
 	 */
 	public ArrayList<PackagePart> getParts() throws InvalidFormatException {
@@ -588,10 +588,10 @@ public abstract class OPCPackage implements RelationshipSource {
 			PackagePart[] parts = this.getPartsImpl();
 			this.partList = new PackagePartCollection();
 			for (PackagePart part : parts) {
-				if (partList.containsKey(part.partName))
+				if (partList.containsKey(part._partName))
 					throw new InvalidFormatException(
 							"A part with the name '"
-									+ part.partName
+									+ part._partName
 									+ "' already exist : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
 
 				// Check OPC compliance rule M4.1
@@ -605,29 +605,29 @@ public abstract class OPCPackage implements RelationshipSource {
 				}
 
 				PartUnmarshaller partUnmarshaller = partUnmarshallers
-						.get(part.contentType);
+						.get(part._contentType);
 
 				if (partUnmarshaller != null) {
 					UnmarshallContext context = new UnmarshallContext(this,
-							part.partName);
+							part._partName);
 					try {
 						PackagePart unmarshallPart = partUnmarshaller
 								.unmarshall(context, part.getInputStream());
-						partList.put(unmarshallPart.partName, unmarshallPart);
+						partList.put(unmarshallPart._partName, unmarshallPart);
 
 						// Core properties case
 						if (unmarshallPart instanceof PackagePropertiesPart)
 							this.packageProperties = (PackagePropertiesPart) unmarshallPart;
 					} catch (IOException ioe) {
 						logger.log(POILogger.WARN, "Unmarshall operation : IOException for "
-								+ part.partName);
+								+ part._partName);
 						continue;
 					} catch (InvalidOperationException invoe) {
 						throw new InvalidFormatException(invoe.getMessage());
 					}
 				} else {
 					try {
-						partList.put(part.partName, part);
+						partList.put(part._partName, part);
 					} catch (InvalidOperationException e) {
 						throw new InvalidFormatException(e.getMessage());
 					}
@@ -640,7 +640,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Create and add a part, with the specified name and content type, to the
 	 * package.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name.
 	 * @param contentType
@@ -650,7 +650,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
-	 * @see #createPartImpl(PackagePartName, String, boolean) 
+	 * @see #createPartImpl(PackagePartName, String, boolean)
 	 */
 	public PackagePart createPart(PackagePartName partName, String contentType) {
 		return this.createPart(partName, contentType, true);
@@ -660,7 +660,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * Create and add a part, with the specified name and content type, to the
 	 * package. For general purpose, prefer the overload version of this method
 	 * without the 'loadRelationships' parameter.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name.
 	 * @param contentType
@@ -721,7 +721,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Add a part to the package.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name of the part to create.
 	 * @param contentType
@@ -730,7 +730,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 *            the contents to add. In order to have faster operation in
 	 *            document merge, the data are stored in memory not on a hard
 	 *            disk
-	 * 
+	 *
 	 * @return The new part.
 	 * @see #createPart(PackagePartName, String)
 	 */
@@ -764,7 +764,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * Add the specified part to the package. If a part already exists in the
 	 * package with the same name as the one specified, then we replace the old
 	 * part by the specified part.
-	 * 
+	 *
 	 * @param part
 	 *            The part to add (or replace).
 	 * @return The part added to the package, the same as the one specified.
@@ -779,20 +779,20 @@ public abstract class OPCPackage implements RelationshipSource {
 			throw new IllegalArgumentException("part");
 		}
 
-		if (partList.containsKey(part.partName)) {
-			if (!partList.get(part.partName).isDeleted()) {
+		if (partList.containsKey(part._partName)) {
+			if (!partList.get(part._partName).isDeleted()) {
 				throw new InvalidOperationException(
 						"A part with the name '"
-								+ part.partName.getName()
+								+ part._partName.getName()
 								+ "' already exists : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
 			}
 			// If the specified partis flagged as deleted, we make it
 			// available
 			part.setDeleted(false);
 			// and delete the old part to replace it thereafeter
-			this.partList.remove(part.partName);
+			this.partList.remove(part._partName);
 		}
-		this.partList.put(part.partName, part);
+		this.partList.put(part._partName, part);
 		this.isDirty = true;
 		return part;
 	}
@@ -800,7 +800,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Remove the specified part in this package. If this part is relationship
 	 * part, then delete all relationships in the source part.
-	 * 
+	 *
 	 * @param part
 	 *            The part to remove. If <code>null</code>, skip the action.
 	 * @see #removePart(PackagePartName)
@@ -814,7 +814,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Remove a part in this package. If this part is relationship part, then
 	 * delete all relationships in the source part.
-	 * 
+	 *
 	 * @param partName
 	 *            The part name of the part to remove.
 	 */
@@ -867,7 +867,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * Remove a part from this package as well as its relationship part, if one
 	 * exists, and all parts listed in the relationship part. Be aware that this
 	 * do not delete relationships which target the specified part.
-	 * 
+	 *
 	 * @param partName
 	 *            The name of the part to delete.
 	 * @throws InvalidFormatException
@@ -893,11 +893,11 @@ public abstract class OPCPackage implements RelationshipSource {
 			}
 
 			// Finally delete its relationship part if one exists
-			this.removePart(relPart.partName);
+			this.removePart(relPart._partName);
 		}
 
 		// Delete the specified part
-		this.removePart(partToRemove.partName);
+		this.removePart(partToRemove._partName);
 	}
 
 	/**
@@ -905,7 +905,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * part if one exists. Prefer the use of this method to delete a part in the
 	 * package, compare to the remove() methods that don't remove associated
 	 * relationships part.
-	 * 
+	 *
 	 * @param partName
 	 *            Name of the part to delete
 	 */
@@ -925,7 +925,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 * apply to all parts in the relationships part of the specified part.
 	 * Prefer the use of this method to delete a part in the package, compare to
 	 * the remove() methods that don't remove associated relationships part.
-	 * 
+	 *
 	 * @param partName
 	 *            Name of the part to delete
 	 */
@@ -961,7 +961,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Check if a part already exists in this package from its name.
-	 * 
+	 *
 	 * @param partName
 	 *            Part name to check.
 	 * @return <i>true</i> if the part is logically added to this package, else
@@ -973,18 +973,18 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Add a relationship to the package (except relationships part).
-	 * 
+	 *
 	 * Check rule M4.1 : The format designer shall specify and the format
 	 * producer shall create at most one core properties relationship for a
 	 * package. A format consumer shall consider more than one core properties
 	 * relationship for a package to be an error. If present, the relationship
 	 * shall target the Core Properties part.
-	 * 
+	 *
 	 * Check rule M1.25: The Relationships part shall not have relationships to
 	 * any other part. Package implementers shall enforce this requirement upon
 	 * the attempt to create such a relationship and shall treat any such
 	 * relationship as invalid.
-	 * 
+	 *
 	 * @param targetPartName
 	 *            Target part name.
 	 * @param targetMode
@@ -1032,7 +1032,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Add a package relationship.
-	 * 
+	 *
 	 * @param targetPartName
 	 *            Target part name.
 	 * @param targetMode
@@ -1049,11 +1049,11 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Adds an external relationship to a part (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not subject to the same
 	 * validity checks that internal ones are, as the contents is potentially
 	 * any file, URL or similar.
-	 * 
+	 *
 	 * @param target
 	 *            External target of the relationship
 	 * @param relationshipType
@@ -1069,11 +1069,11 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Adds an external relationship to a part (except relationships part).
-	 * 
+	 *
 	 * The targets of external relationships are not subject to the same
 	 * validity checks that internal ones are, as the contents is potentially
 	 * any file, URL or similar.
-	 * 
+	 *
 	 * @param target
 	 *            External target of the relationship
 	 * @param relationshipType
@@ -1109,7 +1109,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Delete a relationship from this package.
-	 * 
+	 *
 	 * @param id
 	 *            Id of the relationship to delete.
 	 */
@@ -1122,7 +1122,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieves all package relationships.
-	 * 
+	 *
 	 * @return All package relationships of this package.
 	 * @throws OpenXML4JException
 	 * @see #getRelationshipsHelper(String)
@@ -1133,7 +1133,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Retrieves all relationships with the specified type.
-	 * 
+	 *
 	 * @param relationshipType
 	 *            The filter specifying the relationship type.
 	 * @return All relationships with the specified relationship type.
@@ -1150,7 +1150,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Retrieves all relationships with specified id (normally just ine because
 	 * a relationship id is supposed to be unique).
-	 * 
+	 *
 	 * @param id
 	 *            Id of the wanted relationship.
 	 */
@@ -1214,7 +1214,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Add a marshaller.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type to bind to the specified marshaller.
 	 * @param marshaller
@@ -1231,7 +1231,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Add an unmarshaller.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type to bind to the specified unmarshaller.
 	 * @param unmarshaller
@@ -1250,7 +1250,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Remove a marshaller by its content type.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type associated with the marshaller to remove.
 	 */
@@ -1260,7 +1260,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Remove an unmarshaller by its content type.
-	 * 
+	 *
 	 * @param contentType
 	 *            The content type associated with the unmarshaller to remove.
 	 */
@@ -1272,7 +1272,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Get the package access mode.
-	 * 
+	 *
 	 * @return the packageAccess The current package access.
 	 */
 	public PackageAccess getPackageAccess() {
@@ -1281,7 +1281,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Validates the package compliance with the OPC specifications.
-	 * 
+	 *
 	 * @return <b>true</b> if the package is valid else <b>false</b>
 	 */
 	public boolean validatePackage(OPCPackage pkg) throws InvalidFormatException {
@@ -1290,7 +1290,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Save the document in the specified file.
-	 * 
+	 *
 	 * @param targetFile
 	 *            Destination file.
 	 * @throws IOException
@@ -1313,7 +1313,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Save the document in the specified output stream.
-	 * 
+	 *
 	 * @param outputStream
 	 *            The stream to save the package.
 	 * @see #saveImpl(OutputStream)
@@ -1326,7 +1326,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Core method to create a package part. This method must be implemented by
 	 * the subclass.
-	 * 
+	 *
 	 * @param partName
 	 *            URI of the part to create.
 	 * @param contentType
@@ -1339,7 +1339,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * Core method to delete a package part. This method must be implemented by
 	 * the subclass.
-	 * 
+	 *
 	 * @param partName
 	 *            The URI of the part to delete.
 	 */
@@ -1352,7 +1352,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Close the package and cause a save of the package.
-	 * 
+	 *
 	 */
 	protected abstract void closeImpl() throws IOException;
 
@@ -1364,7 +1364,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Save the package into the specified output stream.
-	 * 
+	 *
 	 * @param outputStream
 	 *            The output stream use to save this package.
 	 */
@@ -1373,7 +1373,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Get the package part mapped to the specified URI.
-	 * 
+	 *
 	 * @param partName
 	 *            The URI of the part to retrieve.
 	 * @return The package part located by the specified URI, else <b>null</b>.
@@ -1382,7 +1382,7 @@ public abstract class OPCPackage implements RelationshipSource {
 
 	/**
 	 * Get all parts link to the package.
-	 * 
+	 *
 	 * @return A list of the part owned by the package.
 	 */
 	protected abstract PackagePart[] getPartsImpl()

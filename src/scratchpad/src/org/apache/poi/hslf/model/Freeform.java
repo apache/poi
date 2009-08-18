@@ -17,13 +17,22 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.ddf.EscherArrayProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * A "Freeform" shape.
@@ -85,8 +94,8 @@ public final class Freeform extends AutoShape {
         Rectangle2D bounds = path.getBounds2D();
         PathIterator it = path.getPathIterator(new AffineTransform());
 
-        ArrayList segInfo = new ArrayList();
-        ArrayList pntInfo = new ArrayList();
+        List<byte[]> segInfo = new ArrayList<byte[]>();
+        List<Point2D.Double> pntInfo = new ArrayList<Point2D.Double>();
         boolean isClosed = false;
         while (!it.isDone()) {
             double[] vals = new double[6];
@@ -135,7 +144,7 @@ public final class Freeform extends AutoShape {
         verticesProp.setNumberOfElementsInMemory(pntInfo.size());
         verticesProp.setSizeOfElements(0xFFF0);
         for (int i = 0; i < pntInfo.size(); i++) {
-            Point2D.Double pnt = (Point2D.Double)pntInfo.get(i);
+            Point2D.Double pnt = pntInfo.get(i);
             byte[] data = new byte[4];
             LittleEndian.putShort(data, 0, (short)((pnt.getX() - bounds.getX())*MASTER_DPI/POINT_DPI));
             LittleEndian.putShort(data, 2, (short)((pnt.getY() - bounds.getY())*MASTER_DPI/POINT_DPI));
@@ -148,7 +157,7 @@ public final class Freeform extends AutoShape {
         segmentsProp.setNumberOfElementsInMemory(segInfo.size());
         segmentsProp.setSizeOfElements(0x2);
         for (int i = 0; i < segInfo.size(); i++) {
-            byte[] seg = (byte[])segInfo.get(i);
+            byte[] seg = segInfo.get(i);
             segmentsProp.setElement(i, seg);
         }
         opt.addEscherProperty(segmentsProp);
@@ -171,10 +180,10 @@ public final class Freeform extends AutoShape {
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
         EscherArrayProperty verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));
-        if(verticesProp == null) verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES));
+        if(verticesProp == null) verticesProp = (EscherArrayProperty)getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
 
         EscherArrayProperty segmentsProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO + 0x4000));
-        if(segmentsProp == null) segmentsProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO));
+        if(segmentsProp == null) segmentsProp = (EscherArrayProperty)getEscherProperty(opt, EscherProperties.GEOMETRY__SEGMENTINFO);
 
         //sanity check
         if(verticesProp == null) {
