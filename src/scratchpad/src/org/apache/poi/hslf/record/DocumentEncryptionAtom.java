@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 import java.io.IOException;
@@ -29,9 +28,7 @@ import java.io.OutputStream;
  *
  * @author Nick Burch
  */
-
-public final class DocumentEncryptionAtom extends RecordAtom
-{
+public final class DocumentEncryptionAtom extends RecordAtom {
 	private byte[] _header;
 	private static long _type = 12052l;
 

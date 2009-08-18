@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.poi.hssf.record.formula.Area3DPtg;
@@ -26,7 +25,6 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -37,6 +35,7 @@ import org.apache.poi.util.LittleEndianOutputStream;
  */
 public abstract class SubRecord {
 	protected SubRecord() {
+		// no fields to initialise
 	}
 
 	public static SubRecord createSubRecord(LittleEndianInput in) {
@@ -78,8 +77,8 @@ public abstract class SubRecord {
 
 	public abstract void serialize(LittleEndianOutput out);
 	public abstract Object clone();
-	
-	
+
+
 	private static final class UnknownSubRecord extends SubRecord {
 
 		private final int _sid;
@@ -118,7 +117,7 @@ public abstract class SubRecord {
 	private static final class LbsDataSubRecord extends SubRecord {
 
 		public static final int sid = 0x0013;
-		
+
 		private int _unknownShort1;
 		private int _unknownInt4;
 		private Ptg _linkPtg;
@@ -137,8 +136,8 @@ public abstract class SubRecord {
 			if (linkSize > 0) {
 				int formulaSize = in.readUShort();
 				_unknownInt4 = in.readInt();
-				
-				
+
+
 				byte[] buf = new byte[formulaSize];
 				in.readFully(buf);
 				_linkPtg = readRefPtg(buf);
@@ -152,7 +151,7 @@ public abstract class SubRecord {
 					default:
 						throw new RecordFormatException("Unexpected leftover bytes");
 				}
-				
+
 			} else {
 				_unknownInt4 = 0;
 				_linkPtg = null;
@@ -165,11 +164,11 @@ public abstract class SubRecord {
 			_comboStyle = in.readUShort();
 			_lineCount = in.readUShort();
 			_unknownShort13 = in.readUShort();
-			
+
 		}
 		protected int getDataSize() {
 			int result = 2; // 2 initial shorts
-			
+
 			// optional link formula
 			if (_linkPtg != null) {
 				result += 2; // encoded Ptg size

@@ -17,49 +17,48 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
+
 	XSSFCreationHelper(XSSFWorkbook wb) {
 		workbook = wb;
 	}
-	
-    /**
-     * Creates a new XSSFRichTextString for you.
-     */
+
+	/**
+	 * Creates a new XSSFRichTextString for you.
+	 */
 	public XSSFRichTextString createRichTextString(String text) {
-        XSSFRichTextString rt = new XSSFRichTextString(text);
-        rt.setStylesTableReference(workbook.getStylesSource());
-        return rt;
+		XSSFRichTextString rt = new XSSFRichTextString(text);
+		rt.setStylesTableReference(workbook.getStylesSource());
+		return rt;
 	}
-	
+
 	public XSSFDataFormat createDataFormat() {
 		return workbook.createDataFormat();
 	}
-	
+
 	public XSSFHyperlink createHyperlink(int type) {
 		return new XSSFHyperlink(type);
 	}
 
-    /**
-     * Creates a XSSFFormulaEvaluator, the object that evaluates formula cells.
-     *
-     * @return a XSSFFormulaEvaluator instance
-     */
-    public XSSFFormulaEvaluator createFormulaEvaluator(){
-        return new XSSFFormulaEvaluator(workbook);
-    }
+	/**
+	 * Creates a XSSFFormulaEvaluator, the object that evaluates formula cells.
+	 *
+	 * @return a XSSFFormulaEvaluator instance
+	 */
+	public XSSFFormulaEvaluator createFormulaEvaluator() {
+		return new XSSFFormulaEvaluator(workbook);
+	}
 
-    /**
-     * Creates a XSSFClientAnchor. Use this object to position drawing object in a sheet
-     *
-     * @return a XSSFClientAnchor instance
-     * @see org.apache.poi.ss.usermodel.Drawing
-     */
-    public XSSFClientAnchor createClientAnchor(){
-        return new XSSFClientAnchor();
-    }
+	/**
+	 * Creates a XSSFClientAnchor. Use this object to position drawing object in
+	 * a sheet
+	 *
+	 * @return a XSSFClientAnchor instance
+	 * @see org.apache.poi.ss.usermodel.Drawing
+	 */
+	public XSSFClientAnchor createClientAnchor() {
+		return new XSSFClientAnchor();
+	}
 }

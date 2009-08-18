@@ -17,9 +17,6 @@
 
 package org.apache.poi.hdf.model.hdftypes;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-
 
 import org.apache.poi.hdf.model.hdftypes.definitions.FIBAbstractType;
 

@@ -19,26 +19,24 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.Arrays;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 /**
  * Tests for <tt>ArrayPtg</tt>
- * 
+ *
  * @author Josh Micich
  */
 public final class TestArrayPtg extends TestCase {
 
 	private static final byte[] ENCODED_PTG_DATA = {
 		0x40,
-		0, 0, 0, 0, 0, 0, 0, 
+		0, 0, 0, 0, 0, 0, 0,
 	};
 	private static final byte[] ENCODED_CONSTANT_DATA = {
 		2,    // 3 columns
@@ -52,28 +50,28 @@ public final class TestArrayPtg extends TestCase {
 	};
 
 	/**
-	 * Lots of problems with ArrayPtg's encoding of 
+	 * Lots of problems with ArrayPtg's encoding of
 	 */
 	public void testReadWriteTokenValueBytes() {
-		
+
 		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
-		
+
 		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 		Object[][] values = ptg.getTokenArrayValues();
 		assertEquals(2, values.length);
-		
-		
+
+
 		assertEquals(Boolean.TRUE, values[0][0]);
 		assertEquals("ABCD", values[0][1]);
 		assertEquals(new Double(0), values[1][0]);
 		assertEquals(Boolean.FALSE, values[1][1]);
 		assertEquals("FG", values[1][2]);
-		
+
 		byte[] outBuf = new byte[ENCODED_CONSTANT_DATA.length];
 		ptg.writeTokenValueBytes(new LittleEndianByteArrayOutputStream(outBuf, 0));
-		
+
 		if(outBuf[0] == 4) {
 			throw new AssertionFailedError("Identified bug 42564b");
 		}
@@ -88,7 +86,7 @@ public final class TestArrayPtg extends TestCase {
 		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
-		
+
 		assertEquals(0, ptg.getValueIndex(0, 0));
 		assertEquals(1, ptg.getValueIndex(1, 0));
 		assertEquals(2, ptg.getValueIndex(2, 0));
@@ -96,7 +94,7 @@ public final class TestArrayPtg extends TestCase {
 		assertEquals(4, ptg.getValueIndex(1, 1));
 		assertEquals(5, ptg.getValueIndex(2, 1));
 	}
-	
+
 	/**
 	 * Test for a bug which was temporarily introduced by the fix for bug 42564.
 	 * A spreadsheet was added to make the ordering clearer.
@@ -104,7 +102,7 @@ public final class TestArrayPtg extends TestCase {
 	public void testElementOrderingInSpreadsheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
 
-		// The formula has an array with 3 rows and 5 columns 
+		// The formula has an array with 3 rows and 5 columns
 		String formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
 		// TODO - These number literals should not have '.0'. Excel has different number rendering rules
 
@@ -116,9 +114,9 @@ public final class TestArrayPtg extends TestCase {
 
 	public void testToFormulaString() {
 		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
-		
+
 		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
-		
+
 		String actualFormula;
 		try {
 			actualFormula = ptg.toFormulaString();
@@ -130,7 +128,7 @@ public final class TestArrayPtg extends TestCase {
 		}
 		assertEquals("{TRUE,\"ABCD\",\"E\";0.0,FALSE,\"FG\"}", actualFormula);
 	}
-	
+
 	/**
 	 * worth checking since AttrPtg.sid=0x20 and Ptg.CLASS_* = (0x00, 0x20, and 0x40)
 	 */
@@ -145,11 +143,11 @@ public final class TestArrayPtg extends TestCase {
 		System.arraycopy(ENCODED_PTG_DATA, 0, fullData, 0, ENCODED_PTG_DATA.length);
 		System.arraycopy(ENCODED_CONSTANT_DATA, 0, fullData, ENCODED_PTG_DATA.length, ENCODED_CONSTANT_DATA.length);
 
-		// Force encoded operand class for tArray 
+		// Force encoded operand class for tArray
 		fullData[0] = (byte) (ArrayPtg.sid + operandClass);
-		
+
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(fullData);
-		
+
 		Ptg[] ptgs = Ptg.readTokens(ENCODED_PTG_DATA.length, in);
 		assertEquals(1, ptgs.length);
 		ArrayPtg aPtg = (ArrayPtg) ptgs[0];

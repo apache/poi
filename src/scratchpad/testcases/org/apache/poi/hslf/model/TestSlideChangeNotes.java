@@ -19,10 +19,10 @@ package org.apache.poi.hslf.model;
 
 
 import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.usermodel.*;
+
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
@@ -33,23 +33,23 @@ public final class TestSlideChangeNotes extends TestCase {
 	// SlideShow primed on the test data
 	private SlideShow ss;
 
-    public TestSlideChangeNotes() throws Exception {
+	public TestSlideChangeNotes() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		HSLFSlideShow hss = new HSLFSlideShow(filename);
 		ss = new SlideShow(hss);
-    }
+	}
 
-    public void testSetToNone() throws Exception {
+	public void testSetToNone() {
 		Slide slideOne = ss.getSlides()[0];
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(null);
 
 		assertEquals(0, sa.getNotesID());
-    }
+	}
 
-    public void testSetToSomething() throws Exception {
+	public void testSetToSomething() {
 		Slide slideOne = ss.getSlides()[0];
 		Notes notesOne = ss.getNotes()[1];
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
@@ -57,5 +57,5 @@ public final class TestSlideChangeNotes extends TestCase {
 		slideOne.setNotes(notesOne);
 
 		assertEquals(notesOne._getSheetNumber(), sa.getNotesID());
-    }
+	}
 }

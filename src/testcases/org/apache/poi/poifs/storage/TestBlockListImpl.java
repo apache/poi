@@ -34,9 +34,17 @@ import org.apache.poi.util.LittleEndianConsts;
  * @author Marc Johnson
  */
 public final class TestBlockListImpl extends TestCase {
+    private static final class BlockListTestImpl extends BlockListImpl {
+        public BlockListTestImpl() {
+            // no extra initialisation
+        }
+    }
+    private static BlockListImpl create() {
+        return new BlockListTestImpl();
+    }
 
     public void testZap() throws IOException {
-        BlockListImpl list = new BlockListImpl();
+        BlockListImpl list = create();
 
         // verify that you can zap anything
         for (int j = -2; j < 10; j++)
@@ -70,8 +78,9 @@ public final class TestBlockListImpl extends TestCase {
         }
     }
 
+
     public void testRemove() throws IOException {
-        BlockListImpl  list   = new BlockListImpl();
+        BlockListImpl  list   = create();
         RawDataBlock[] blocks = new RawDataBlock[ 5 ];
         byte[]         data   = new byte[ 512 * 5 ];
 
@@ -130,7 +139,7 @@ public final class TestBlockListImpl extends TestCase {
     }
 
     public void testSetBAT() throws IOException {
-        BlockListImpl list = new BlockListImpl();
+        BlockListImpl list = create();
 
         list.setBAT(null);
         list.setBAT(new BlockAllocationTableReader());
@@ -158,7 +167,7 @@ public final class TestBlockListImpl extends TestCase {
         // document, one that includes a reserved (BAT) block, one
         // that includes a reserved (XBAT) block, and one that
         // points off into space somewhere
-        BlockListImpl list       = new BlockListImpl();
+        BlockListImpl list       = create();
         List          raw_blocks = new ArrayList();
         byte[]        data       = new byte[ 512 ];
         int           offset     = 0;

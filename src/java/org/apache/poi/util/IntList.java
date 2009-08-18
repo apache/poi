@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
-
-import java.util.*;
 
 /**
  * A List of int's; as full an implementation of the java.util.List
@@ -47,7 +43,6 @@ import java.util.*;
  *
  * @author Marc Johnson
  */
-
 public class IntList
 {
     private int[]            _array;
@@ -62,14 +57,14 @@ public class IntList
     public IntList()
     {
         this(_default_size);
-    }    
+    }
 
     public IntList(final int initialCapacity)
     {
         this(initialCapacity,0);
     }
-    
-    
+
+
     /**
      * create a copy of an existing IntList
      *
@@ -94,17 +89,17 @@ public class IntList
         _array = new int[ initialCapacity ];
         if (fillval != 0) {
             fillval = fillvalue;
-            fillArray(fillval, _array, 0);        
+            fillArray(fillval, _array, 0);
         }
         _limit = 0;
     }
 
     private void fillArray(int val, int[] array, int index) {
       for (int k = index; k < array.length; k++) {
-        array[k] = val;   
+        array[k] = val;
       }
     }
-    
+
     /**
      * add the specfied value at the specified index
      *
@@ -653,11 +648,11 @@ public class IntList
         int   size      = (new_size == _array.length) ? new_size + 1
                                                       : new_size;
         int[] new_array = new int[ size ];
-        
+
         if (fillval != 0) {
-          fillArray(fillval, new_array, _array.length);                
+          fillArray(fillval, new_array, _array.length);
         }
-        
+
         System.arraycopy(_array, 0, new_array, 0, _limit);
         _array = new_array;
     }

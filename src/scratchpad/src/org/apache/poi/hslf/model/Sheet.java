@@ -20,7 +20,6 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;

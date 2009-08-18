@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
@@ -26,7 +24,6 @@ import java.util.Arrays;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
@@ -35,10 +32,7 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class BATBlock
-    extends BigBlock
-{
+public final class BATBlock extends BigBlock {
     private static final int  _entries_per_block      =
         POIFSConstants.BIG_BLOCK_SIZE / LittleEndianConsts.INT_SIZE;
     private static final int  _entries_per_xbat_block = _entries_per_block

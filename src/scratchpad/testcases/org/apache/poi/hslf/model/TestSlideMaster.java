@@ -17,17 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
+
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.awt.*;
+import org.apache.poi.hslf.record.Environment;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Tests for SlideMaster
@@ -37,7 +37,7 @@ import java.awt.*;
 public final class TestSlideMaster extends TestCase{
     String home;
 
-    public void setUp() throws Exception {
+    public void setUp() {
         home = System.getProperty("HSLF.testdata.path");
     }
 

@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.ArrayList;
@@ -40,8 +39,7 @@ import java.util.Arrays;
  *
  * @author Ryan Ackley
  */
-public final class PAPFormattedDiskPage extends FormattedDiskPage
-{
+public final class PAPFormattedDiskPage extends FormattedDiskPage {
 
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;

@@ -28,13 +28,11 @@ import org.apache.poi.util.POILogger;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Arrays;
 
 
 /**

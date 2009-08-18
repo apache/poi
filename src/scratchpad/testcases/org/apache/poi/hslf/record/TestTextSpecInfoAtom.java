@@ -17,18 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.HexDump;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.util.LinkedList;
-import java.util.Arrays;
 
 /**
  * Tests TextSpecInfoAtom
@@ -38,17 +30,17 @@ import java.util.Arrays;
 public final class TestTextSpecInfoAtom extends TestCase {
 
     //from a real file
-	private byte[] data_1 = new byte[] {
+    private byte[] data_1 = new byte[] {
         0x00, 0x00, (byte)0xAA, 0x0F, 0x2C, 0x00, 0x00, 0x00,
         0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x03, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	};
+    };
 
 
-    public void testRead() throws Exception {
-		TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
+    public void testRead() {
+        TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         TextSpecInfoAtom.TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
         assertEquals(5, run.length);
 

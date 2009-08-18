@@ -19,7 +19,6 @@ package org.apache.poi.hslf.model;
 
 import java.util.LinkedList;
 import java.util.Vector;
-import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;

@@ -21,7 +21,6 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
-import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.util.LittleEndian;
 
 public final class CharacterSprmUncompressor

@@ -17,18 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.*;
+import java.awt.Graphics2D;
 
-import java.io.FileOutputStream;
-import java.io.File;
-import java.awt.*;
+import junit.framework.TestCase;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.blip.ImagePainter;
 import org.apache.poi.hslf.blip.BitmapPainter;
-import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.hslf.blip.ImagePainter;
+import org.apache.poi.hslf.usermodel.PictureData;
 
 /**
  * Test Picture shape.
@@ -37,22 +32,23 @@ import org.apache.poi.ddf.EscherBSERecord;
  */
 public final class TestImagePainter extends TestCase {
 
-    private static class CustomImagePainer implements ImagePainter{
+    private static class CustomImagePainter implements ImagePainter {
+        public CustomImagePainter() {
+            // no fields to initialise
+        }
         public void paint(Graphics2D graphics, PictureData pict, Picture parent){
             //do noting
         }
-
     }
 
-    public void testImagePainter() throws Exception {
+    public void testImagePainter() {
 
         ImagePainter pntr = PictureData.getImagePainter(Picture.PNG);
         assertTrue(PictureData.getImagePainter(Picture.PNG) instanceof BitmapPainter);
         assertTrue(PictureData.getImagePainter(Picture.JPEG) instanceof BitmapPainter);
         assertTrue(PictureData.getImagePainter(Picture.DIB) instanceof BitmapPainter);
 
-        PictureData.setImagePainter(Picture.WMF, new CustomImagePainer());
-        assertTrue(PictureData.getImagePainter(Picture.WMF) instanceof CustomImagePainer);
+        PictureData.setImagePainter(Picture.WMF, new CustomImagePainter());
+        assertTrue(PictureData.getImagePainter(Picture.WMF) instanceof CustomImagePainter);
     }
-
 }

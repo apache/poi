@@ -17,14 +17,14 @@
 
 package org.apache.poi.hslf.blip;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.InflaterInputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.LittleEndian;
-
-import java.io.*;
-import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * Represents Macintosh PICT picture data.

@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -59,7 +58,7 @@ public final class SelectionRecord extends StandardRecord {
         field_3_col_active_cell = in.readShort();
         field_4_active_cell_ref_index = in.readShort();
         int field_5_num_refs    = in.readUShort();
-        
+
         field_6_refs = new CellRangeAddress8Bit[field_5_num_refs];
         for (int i = 0; i < field_6_refs.length; i++) {
             field_6_refs[i] = new CellRangeAddress8Bit(in);
@@ -141,7 +140,7 @@ public final class SelectionRecord extends StandardRecord {
         return sb.toString();
     }
     protected int getDataSize() {
-        return 9 // 1 byte + 4 shorts 
+        return 9 // 1 byte + 4 shorts
             + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }
     public void serialize(LittleEndianOutput out) {

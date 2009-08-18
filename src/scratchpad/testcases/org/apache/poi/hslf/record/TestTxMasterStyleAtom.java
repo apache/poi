@@ -17,13 +17,15 @@
 
 package org.apache.poi.hslf.record;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
+
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-
-import java.util.ArrayList;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 
 /**
@@ -36,9 +38,8 @@ import java.util.ArrayList;
 public final class TestTxMasterStyleAtom extends TestCase {
     protected SlideShow _ppt;
 
-    public void setUp() throws Exception{
+    public void setUp() {
         _ppt = new SlideShow();
-
     }
 
     public void testDefaultStyles()  {
@@ -199,23 +200,25 @@ public final class TestTxMasterStyleAtom extends TestCase {
      * There must be a TxMasterStyleAtom per each type of text defined in TextHeaderAtom
      */
     protected TxMasterStyleAtom[] getMasterStyles(){
-        ArrayList lst = new ArrayList();
+        List<TxMasterStyleAtom> lst = new ArrayList<TxMasterStyleAtom>();
 
-        Record[] core = _ppt.getMostRecentCoreRecords();
-        for (int i = 0; i < core.length; i++) {
-            if(core[i].getRecordType() == RecordTypes.MainMaster.typeID){
-                Record[] rec = core[i].getChildRecords();
+        Record[] coreRecs = _ppt.getMostRecentCoreRecords();
+        for (int i = 0; i < coreRecs.length; i++) {
+            Record coreRec = coreRecs[i];
+            if(coreRec.getRecordType() == RecordTypes.MainMaster.typeID){
+                Record[] recs = coreRec.getChildRecords();
                 int cnt = 0;
-                for (int j = 0; j < rec.length; j++) {
-                    if (rec[j] instanceof TxMasterStyleAtom) {
-                        lst.add(rec[j]);
+                for (int j = 0; j < recs.length; j++) {
+                    Record rec = recs[j];
+                    if (rec instanceof TxMasterStyleAtom) {
+                        lst.add((TxMasterStyleAtom) rec);
                         cnt++;
                     }
                 }
                 assertEquals("MainMaster must contain 7 TxMasterStyleAtoms ", 7, cnt);
-            } else if(core[i].getRecordType() == RecordTypes.Document.typeID){
+            } else if(coreRec.getRecordType() == RecordTypes.Document.typeID){
                 TxMasterStyleAtom txstyle = null;
-                Document doc = (Document)core[i];
+                Document doc = (Document)coreRec;
                 Record[] rec = doc.getEnvironment().getChildRecords();
                 for (int j = 0; j < rec.length; j++) {
                     if (rec[j] instanceof TxMasterStyleAtom) {
@@ -223,7 +226,9 @@ public final class TestTxMasterStyleAtom extends TestCase {
                         txstyle = (TxMasterStyleAtom)rec[j];
                     }
                 }
-                assertNotNull("TxMasterStyleAtom not found in Document.Environment", txstyle);
+                if (txstyle == null) {
+                    throw new AssertionFailedError("TxMasterStyleAtom not found in Document.Environment");
+                }
 
                 assertEquals("Document.Environment must contain TxMasterStyleAtom  with type=TextHeaderAtom.OTHER_TYPE",
                         TextHeaderAtom.OTHER_TYPE, txstyle.getTextType());
@@ -231,6 +236,6 @@ public final class TestTxMasterStyleAtom extends TestCase {
             }
         }
 
-        return (TxMasterStyleAtom[])lst.toArray(new TxMasterStyleAtom[lst.size()]);
+        return lst.toArray(new TxMasterStyleAtom[lst.size()]);
     }
 }

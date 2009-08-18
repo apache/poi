@@ -17,16 +17,12 @@
 
 package org.apache.poi.hdf.extractor;
 
-import java.util.*;
-
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-
-public final class StyleSheet
-{
+public final class StyleSheet {
 
   private static final int NIL_STYLE = 4095;
   private static final int PAP_TYPE = 1;

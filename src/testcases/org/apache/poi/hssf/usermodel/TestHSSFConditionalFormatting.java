@@ -23,10 +23,9 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 
 /**
- * 
+ *
  * @author Dmitriy Kumshayev
  */
 public final class TestHSSFConditionalFormatting extends TestCase {
@@ -36,7 +35,7 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		String formula = "7";
 
 		HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-		
+
 		HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(formula);
 		HSSFFontFormatting fontFmt = rule1.createFontFormatting();
 		fontFmt.setFontStyle(true, false);
@@ -50,7 +49,7 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
 		patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
 
-		
+
 		HSSFConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2");
 		HSSFConditionalFormattingRule [] cfRules =
 		{
@@ -84,12 +83,12 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		assertEquals(2, cf.getNumberOfRules());
 
 		rule1 = cf.getRule(0);
-		assertEquals("7",rule1.getFormula1()); 
+		assertEquals("7",rule1.getFormula1());
 		assertNull(rule1.getFormula2());
-		
+
 		HSSFFontFormatting    r1fp = rule1.getFontFormatting();
 		assertNotNull(r1fp);
-		
+
 		assertTrue(r1fp.isItalic());
 		assertFalse(r1fp.isBold());
 
@@ -102,13 +101,13 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 
 		HSSFPatternFormatting r1pf = rule1.getPatternFormatting();
 		assertNotNull(r1pf);
-		assertEquals(HSSFColor.YELLOW.index,r1pf.getFillBackgroundColor());		
+		assertEquals(HSSFColor.YELLOW.index,r1pf.getFillBackgroundColor());
 
 		rule2 = cf.getRule(1);
-		assertEquals("2",rule2.getFormula2()); 
-		assertEquals("1",rule2.getFormula1()); 
+		assertEquals("2",rule2.getFormula2());
+		assertEquals("1",rule2.getFormula1());
 	}
-	
+
 	public void testClone() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -116,7 +115,7 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		String formula = "7";
 
 		HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-		
+
 		HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(formula);
 		HSSFFontFormatting fontFmt = rule1.createFontFormatting();
 		fontFmt.setFontStyle(true, false);
@@ -124,7 +123,7 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
 		patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
 
-		
+
 		HSSFConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2");
 		HSSFConditionalFormattingRule [] cfRules =
 		{
@@ -137,7 +136,7 @@ public final class TestHSSFConditionalFormatting extends TestCase {
 		};
 
 		sheetCF.addConditionalFormatting(regions, cfRules);
-			
+
 		try {
 			wb.cloneSheet(0);
 		} catch (RuntimeException e) {

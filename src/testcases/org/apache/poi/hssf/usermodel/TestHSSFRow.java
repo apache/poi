@@ -18,9 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
@@ -87,8 +85,8 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
         HSSFCell cellB2 = row.createCell(1);
-        HSSFCell cellB3 = row.createCell(2);
-        HSSFCell cellB4 = row.createCell(3);
+        row.createCell(2); // C2
+        row.createCell(3); // D2
 
         assertEquals(1, row.getFirstCellNum());
         assertEquals(4, row.getLastCellNum());

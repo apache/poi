@@ -19,9 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.usermodel.RichTextString;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-
 /**
  * A textbox is a shape that may hold a rich text string.
  *

@@ -34,7 +34,7 @@ public final class ParagraphSprmCompressor
   public static byte[] compressParagraphProperty(ParagraphProperties newPAP,
                                                  ParagraphProperties oldPAP)
   {
-    ArrayList sprmList = new ArrayList();
+    List sprmList = new ArrayList();
     int size = 0;
 
     if (newPAP.getJc() != oldPAP.getJc())

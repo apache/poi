@@ -23,7 +23,6 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import java.awt.*;
 import java.io.*;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * Represents a metafile picture which can be one of the following types: EMF, WMF, or PICT.

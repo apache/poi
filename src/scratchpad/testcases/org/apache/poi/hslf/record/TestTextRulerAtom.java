@@ -17,18 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.HexDump;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.util.LinkedList;
-import java.util.Arrays;
 
 /**
  * Tests TextRulerAtom
@@ -37,53 +29,51 @@ import java.util.Arrays;
  */
 public final class TestTextRulerAtom extends TestCase {
 
-    //from a real file
+	//from a real file
 	private byte[] data_1 = new byte[] {
 		0x00, 0x00, (byte)0xA6, 0x0F, 0x18, 0x00, 0x00, 0x00,
-        (byte)0xF8, 0x1F, 0x00, 0x00, 0x75, 0x00, (byte)0xE2, 0x00, 0x59,
-        0x01, (byte)0xC3, 0x01, 0x1A, 0x03, (byte)0x87, 0x03, (byte)0xF8,
-        0x03, 0x69, 0x04, (byte)0xF6, 0x05, (byte)0xF6, 0x05
+		(byte)0xF8, 0x1F, 0x00, 0x00, 0x75, 0x00, (byte)0xE2, 0x00, 0x59,
+		0x01, (byte)0xC3, 0x01, 0x1A, 0x03, (byte)0x87, 0x03, (byte)0xF8,
+		0x03, 0x69, 0x04, (byte)0xF6, 0x05, (byte)0xF6, 0x05
 	};
 
-    private byte[] data_2 = new byte[] {
-        0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
-        0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
-    };
+	private byte[] data_2 = new byte[] {
+		0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
+		0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
+	};
 
-    public void testReadRuler() throws Exception {
+	public void testReadRuler() {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-        assertEquals(ruler.getNumberOfLevels(), 0);
-        assertEquals(ruler.getDefaultTabSize(), 0);
+		assertEquals(ruler.getNumberOfLevels(), 0);
+		assertEquals(ruler.getDefaultTabSize(), 0);
 
-        int[] tabStops = ruler.getTabStops();
-        assertNull(tabStops);
+		int[] tabStops = ruler.getTabStops();
+		assertNull(tabStops);
 
-        int[] textOffsets = ruler.getTextOffsets();
-        assertTrue(Arrays.equals(new int[]{226, 451, 903, 1129, 1526}, textOffsets));
+		int[] textOffsets = ruler.getTextOffsets();
+		assertTrue(Arrays.equals(new int[]{226, 451, 903, 1129, 1526}, textOffsets));
 
-        int[] bulletOffsets = ruler.getBulletOffsets();
-        assertTrue(Arrays.equals(new int[]{117, 345, 794, 1016, 1526}, bulletOffsets));
+		int[] bulletOffsets = ruler.getBulletOffsets();
+		assertTrue(Arrays.equals(new int[]{117, 345, 794, 1016, 1526}, bulletOffsets));
 
 	}
 
-    public void testWriteRuler() throws Exception {
+	public void testWriteRuler() throws Exception {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ruler.writeOut(out);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ruler.writeOut(out);
 
-        byte[] result = out.toByteArray();
-        assertTrue(Arrays.equals(result, data_1));
+		byte[] result = out.toByteArray();
+		assertTrue(Arrays.equals(result, data_1));
 	}
 
-    public void testRead2() throws Exception {
+	public void testRead2() throws Exception {
 		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
-        ruler.setParagraphIndent((short)249, (short)321);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ruler.writeOut(out);
+		ruler.setParagraphIndent((short)249, (short)321);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ruler.writeOut(out);
 
-        byte[] result = out.toByteArray();
-        assertTrue(Arrays.equals(result, data_2));
-
+		byte[] result = out.toByteArray();
+		assertTrue(Arrays.equals(result, data_2));
 	}
-
 }

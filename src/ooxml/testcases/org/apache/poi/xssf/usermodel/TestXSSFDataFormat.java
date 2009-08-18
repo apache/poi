@@ -17,29 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * Tests for {@link XSSFDataFormat}
  *
  */
 public final class TestXSSFDataFormat extends BaseTestDataFormat {
-    
+
     @Override
     protected ITestDataProvider getTestDataProvider(){
         return XSSFITestDataProvider.getInstance();

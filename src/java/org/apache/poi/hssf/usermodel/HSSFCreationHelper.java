@@ -14,54 +14,50 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Sheet;
 
 public class HSSFCreationHelper implements CreationHelper {
 	private HSSFWorkbook workbook;
-	private HSSFDataFormat dataFormat; 
-	
+	private HSSFDataFormat dataFormat;
+
 	HSSFCreationHelper(HSSFWorkbook wb) {
 		workbook = wb;
-		
+
 		// Create the things we only ever need one of
 		dataFormat = new HSSFDataFormat(workbook.getWorkbook());
 	}
-	
-    /**
-     * Creates a new HSSFRichTextString for you.
-     */
+
 	public HSSFRichTextString createRichTextString(String text) {
 		return new HSSFRichTextString(text);
 	}
-	
+
 	public HSSFDataFormat createDataFormat() {
 		return dataFormat;
 	}
-	
+
 	public HSSFHyperlink createHyperlink(int type) {
 		return new HSSFHyperlink(type);
 	}
 
-    /**
-     * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
-     *
-     * @return a HSSFFormulaEvaluator instance
-     */
-    public HSSFFormulaEvaluator createFormulaEvaluator(){
-        return new HSSFFormulaEvaluator(workbook);
-    }
+	/**
+	 * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
+	 *
+	 * @return a HSSFFormulaEvaluator instance
+	 */
+	public HSSFFormulaEvaluator createFormulaEvaluator(){
+		return new HSSFFormulaEvaluator(workbook);
+	}
 
-    /**
-     * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
-     *
-     * @return a HSSFClientAnchor instance
-     * @see org.apache.poi.ss.usermodel.Drawing
-     */
-    public HSSFClientAnchor createClientAnchor(){
-        return new HSSFClientAnchor();
-    }
-
+	/**
+	 * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
+	 *
+	 * @return a HSSFClientAnchor instance
+	 * @see org.apache.poi.ss.usermodel.Drawing
+	 */
+	public HSSFClientAnchor createClientAnchor(){
+		return new HSSFClientAnchor();
+	}
 }

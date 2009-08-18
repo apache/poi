@@ -17,12 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -38,14 +34,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
 public final class TestXSSFFont extends BaseTestFont{
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
-    }
+	@Override
+	protected XSSFITestDataProvider getTestDataProvider() {
+		return XSSFITestDataProvider.getInstance();
+	}
 
-    public void testDefaultFont() {
-        baseTestDefaultFont("Calibri", (short)220, IndexedColors.BLACK.getIndex());
-    }
+	public void testDefaultFont() {
+		baseTestDefaultFont("Calibri", (short) 220, IndexedColors.BLACK.getIndex());
+	}
 
 	public void testConstructor() {
 		XSSFFont xssfFont=new XSSFFont();
@@ -160,7 +156,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		xssfFont.setUnderline(Font.U_DOUBLE);
 		assertEquals(ctFont.getUArray().length,1);
 		assertEquals(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
-		
+
 		xssfFont.setUnderline(FontUnderline.DOUBLE_ACCOUNTING);
 		assertEquals(ctFont.getUArray().length,1);
 		assertEquals(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());

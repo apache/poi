@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,23 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.LongField;
-import org.apache.poi.util.ShortField;
 
 /**
  * Constants used in reading/writing the Header block
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
 public interface HeaderBlockConstants
 {
     public static final long _signature               = 0xE11AB1A1E011CFD0L;

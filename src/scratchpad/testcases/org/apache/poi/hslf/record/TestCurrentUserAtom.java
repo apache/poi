@@ -22,12 +22,7 @@ import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import javax.imageio.stream.FileImageInputStream;
-
-import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;

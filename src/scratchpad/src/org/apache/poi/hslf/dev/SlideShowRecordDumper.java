@@ -33,7 +33,6 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.Record;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.

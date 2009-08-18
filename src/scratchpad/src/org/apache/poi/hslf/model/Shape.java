@@ -19,7 +19,6 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 

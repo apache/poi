@@ -18,14 +18,8 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.types.PAPAbstractType;
-import org.apache.poi.hwpf.model.StyleDescription;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-
-public final class ParagraphProperties
-  extends PAPAbstractType
-    implements Cloneable
-{
+public final class ParagraphProperties extends PAPAbstractType implements Cloneable {
 
   public ParagraphProperties()
   {
@@ -313,14 +307,14 @@ public final class ParagraphProperties
   {
     ParagraphProperties pp = (ParagraphProperties)super.clone();
     pp.field_21_lspd = (LineSpacingDescriptor)field_21_lspd.clone();
-    pp.field_24_phe = (byte[])field_24_phe.clone();
+    pp.field_24_phe = field_24_phe.clone();
     pp.field_46_brcTop = (BorderCode)field_46_brcTop.clone();
     pp.field_47_brcLeft = (BorderCode)field_47_brcLeft.clone();
     pp.field_48_brcBottom = (BorderCode)field_48_brcBottom.clone();
     pp.field_49_brcRight = (BorderCode)field_49_brcRight.clone();
     pp.field_50_brcBetween = (BorderCode)field_50_brcBetween.clone();
     pp.field_51_brcBar = (BorderCode)field_51_brcBar.clone();
-    pp.field_60_anld = (byte[])field_60_anld.clone();
+    pp.field_60_anld = field_60_anld.clone();
     return pp;
   }
 

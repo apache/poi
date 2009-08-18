@@ -18,8 +18,6 @@
 package org.apache.poi.hwpf.usermodel;
 
 
-import java.util.ArrayList;
-
 public final class TableIterator
 {
   Range _range;
@@ -56,7 +54,6 @@ public final class TableIterator
   public Table next()
   {
     int numParagraphs = _range.numParagraphs();
-    int numRows = 0;
     int startIndex = _index;
     int endIndex = _index;
 

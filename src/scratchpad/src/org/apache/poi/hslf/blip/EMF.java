@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.

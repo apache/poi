@@ -35,132 +35,128 @@ import org.apache.poi.util.LittleEndian;
 public final class TestPictures extends TestCase {
 	private String dirname = System.getProperty("HWPF.testdata.path");
 
-    protected void setUp() throws Exception {
-    }
 
-    /**
-     * two jpegs
-     */
-    public void testTwoImages() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/two_images.doc"));
-    	List pics = doc.getPicturesTable().getAllPictures();
+	/**
+	 * two jpegs
+	 */
+	public void testTwoImages() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/two_images.doc"));
+		List pics = doc.getPicturesTable().getAllPictures();
 
-    	assertNotNull(pics);
-    	assertEquals(pics.size(), 2);
-    	for(int i=0; i<pics.size(); i++) {
-    		Object p = pics.get(i);
-    		assertTrue(p instanceof Picture);
+		assertNotNull(pics);
+		assertEquals(pics.size(), 2);
+		for(int i=0; i<pics.size(); i++) {
+			Object p = pics.get(i);
+			assertTrue(p instanceof Picture);
 
-    		Picture pic = (Picture)p;
-    		assertNotNull(pic.suggestFileExtension());
-    		assertNotNull(pic.suggestFullFileName());
-    	}
+			Picture pic = (Picture)p;
+			assertNotNull(pic.suggestFileExtension());
+			assertNotNull(pic.suggestFullFileName());
+		}
 
-    	Picture picA = (Picture)pics.get(0);
-    	Picture picB = (Picture)pics.get(1);
-    	assertEquals("jpg", picA.suggestFileExtension());
-    	assertEquals("jpg", picA.suggestFileExtension());
-    }
+		Picture picA = (Picture)pics.get(0);
+		Picture picB = (Picture)pics.get(1);
+		assertEquals("jpg", picA.suggestFileExtension());
+		assertEquals("jpg", picA.suggestFileExtension());
+	}
 
-    /**
-     * pngs and jpegs
-     */
-    public void testDifferentImages() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/testPictures.doc"));
-    	List pics = doc.getPicturesTable().getAllPictures();
+	/**
+	 * pngs and jpegs
+	 */
+	public void testDifferentImages() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/testPictures.doc"));
+		List pics = doc.getPicturesTable().getAllPictures();
 
-    	assertNotNull(pics);
-    	assertEquals(7, pics.size());
-    	for(int i=0; i<pics.size(); i++) {
-    		Object p = pics.get(i);
-    		assertTrue(p instanceof Picture);
+		assertNotNull(pics);
+		assertEquals(7, pics.size());
+		for(int i=0; i<pics.size(); i++) {
+			Object p = pics.get(i);
+			assertTrue(p instanceof Picture);
 
-    		Picture pic = (Picture)p;
-    		assertNotNull(pic.suggestFileExtension());
-    		assertNotNull(pic.suggestFullFileName());
-    	}
+			Picture pic = (Picture)p;
+			assertNotNull(pic.suggestFileExtension());
+			assertNotNull(pic.suggestFullFileName());
+		}
 
-    	assertEquals("jpg", ((Picture)pics.get(0)).suggestFileExtension());
-    	assertEquals("jpg", ((Picture)pics.get(1)).suggestFileExtension());
-    	assertEquals("png", ((Picture)pics.get(3)).suggestFileExtension());
-    	assertEquals("png", ((Picture)pics.get(4)).suggestFileExtension());
-    	assertEquals("wmf", ((Picture)pics.get(5)).suggestFileExtension());
-    	assertEquals("jpg", ((Picture)pics.get(6)).suggestFileExtension());
-    }
+		assertEquals("jpg", ((Picture)pics.get(0)).suggestFileExtension());
+		assertEquals("jpg", ((Picture)pics.get(1)).suggestFileExtension());
+		assertEquals("png", ((Picture)pics.get(3)).suggestFileExtension());
+		assertEquals("png", ((Picture)pics.get(4)).suggestFileExtension());
+		assertEquals("wmf", ((Picture)pics.get(5)).suggestFileExtension());
+		assertEquals("jpg", ((Picture)pics.get(6)).suggestFileExtension());
+	}
 
-    /**
-     * emf image, nice and simple
-     */
-    public void testEmfImage() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/vector_image.doc"));
-    	List pics = doc.getPicturesTable().getAllPictures();
+	/**
+	 * emf image, nice and simple
+	 */
+	public void testEmfImage() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/vector_image.doc"));
+		List pics = doc.getPicturesTable().getAllPictures();
 
-    	assertNotNull(pics);
-    	assertEquals(1, pics.size());
+		assertNotNull(pics);
+		assertEquals(1, pics.size());
 
-    	Picture pic = (Picture)pics.get(0);
-    	assertNotNull(pic.suggestFileExtension());
-    	assertNotNull(pic.suggestFullFileName());
-    	assertTrue(pic.getSize() > 128);
+		Picture pic = (Picture)pics.get(0);
+		assertNotNull(pic.suggestFileExtension());
+		assertNotNull(pic.suggestFullFileName());
+		assertTrue(pic.getSize() > 128);
 
-    	// Check right contents
-    	byte[] emf = loadImage("vector_image.emf");
-    	byte[] pemf = pic.getContent();
-    	assertEquals(emf.length, pemf.length);
-    	for(int i=0; i<emf.length; i++) {
-    		assertEquals(emf[i], pemf[i]);
-    	}
-    }
+		// Check right contents
+		byte[] emf = loadImage("vector_image.emf");
+		byte[] pemf = pic.getContent();
+		assertEquals(emf.length, pemf.length);
+		for(int i=0; i<emf.length; i++) {
+			assertEquals(emf[i], pemf[i]);
+		}
+	}
 
-    /**
-     * emf image, with a crazy offset
-     */
-    public void testEmfComplexImage() throws Exception {
-    	/*
+	/**
+	 * emf image, with a crazy offset
+	 */
+	public void disabled_testEmfComplexImage() throws Exception {
 
-    	Commenting out this test case temporarily. The file emf_2003_image does not contain any
-    	pictures. Instead it has an office drawing object. Need to rewrite this test after
-    	revisiting the implementation of office drawing objects.
+		// Commenting out this test case temporarily. The file emf_2003_image does not contain any
+		// pictures. Instead it has an office drawing object. Need to rewrite this test after
+		// revisiting the implementation of office drawing objects.
 
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/emf_2003_image.doc"));
-    	List pics = doc.getPicturesTable().getAllPictures();
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/emf_2003_image.doc"));
+		List pics = doc.getPicturesTable().getAllPictures();
 
-    	assertNotNull(pics);
-    	assertEquals(1, pics.size());
+		assertNotNull(pics);
+		assertEquals(1, pics.size());
 
-    	Picture pic = (Picture)pics.get(0);
-    	assertNotNull(pic.suggestFileExtension());
-    	assertNotNull(pic.suggestFullFileName());
+		Picture pic = (Picture)pics.get(0);
+		assertNotNull(pic.suggestFileExtension());
+		assertNotNull(pic.suggestFullFileName());
 
-    	// This one's tricky
-    	// TODO: Fix once we've sorted bug #41898
-    	assertNotNull(pic.getContent());
-    	assertNotNull(pic.getRawContent());
+		// This one's tricky
+		// TODO: Fix once we've sorted bug #41898
+		assertNotNull(pic.getContent());
+		assertNotNull(pic.getRawContent());
 
-    	// These are probably some sort of offset, need to figure them out
-    	assertEquals(4, pic.getSize());
-    	assertEquals(0x80000000l, LittleEndian.getUInt(pic.getContent()));
-    	assertEquals(0x80000000l, LittleEndian.getUInt(pic.getRawContent()));
-    	*/
-    }
+		// These are probably some sort of offset, need to figure them out
+		assertEquals(4, pic.getSize());
+		assertEquals(0x80000000l, LittleEndian.getUInt(pic.getContent()));
+		assertEquals(0x80000000l, LittleEndian.getUInt(pic.getRawContent()));
+	}
 
-    public void testPicturesWithTable() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "Bug44603.doc")));
+	public void testPicturesWithTable() throws Exception {
+		HWPFDocument doc = new HWPFDocument(new FileInputStream(
+				new File(dirname, "Bug44603.doc")));
 
-    	List pics = doc.getPicturesTable().getAllPictures();
-    	assertEquals(pics.size(), 2);
-    }
+		List pics = doc.getPicturesTable().getAllPictures();
+		assertEquals(pics.size(), 2);
+	}
 
-    private byte[] loadImage(String filename) throws Exception {
-    	ByteArrayOutputStream b = new ByteArrayOutputStream();
-    	FileInputStream fis = new FileInputStream(dirname + "/" + filename);
+	private byte[] loadImage(String filename) throws Exception {
+		ByteArrayOutputStream b = new ByteArrayOutputStream();
+		FileInputStream fis = new FileInputStream(dirname + "/" + filename);
 
-    	byte[] buf = new byte[4096];
-    	int read = 0;
-    	while( (read = fis.read(buf)) > -1 ) {
-    		b.write(buf, 0, read);
-    	}
-    	return b.toByteArray();
-    }
+		byte[] buf = new byte[4096];
+		int read = 0;
+		while( (read = fis.read(buf)) > -1 ) {
+			b.write(buf, 0, read);
+		}
+		return b.toByteArray();
+	}
 }

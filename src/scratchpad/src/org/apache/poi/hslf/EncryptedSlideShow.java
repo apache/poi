@@ -26,9 +26,6 @@ import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * This class provides helper functions for determining if a
@@ -95,7 +92,9 @@ public final class EncryptedSlideShow
 						hss.getUnderlyingBytes(),
 						(int)cua.getCurrentEditOffset()
 				);
-			} catch(ArrayIndexOutOfBoundsException e) {}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
+			}
 			if(r == null) { return null; }
 			if(! (r instanceof UserEditAtom)) { return null; }
 			UserEditAtom uea = (UserEditAtom)r;

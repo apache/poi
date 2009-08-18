@@ -187,13 +187,13 @@ public class TestXSSFPrintSetup extends TestCase {
         pMargins.setHeader(1.5);
         pMargins.setFooter(2);
         XSSFPrintSetup printSetup = new XSSFPrintSetup(worksheet);
-        assertEquals(1.5, printSetup.getHeaderMargin());
-        assertEquals(2.0, printSetup.getFooterMargin());
+        assertEquals(1.5, printSetup.getHeaderMargin(), 0.0);
+        assertEquals(2.0, printSetup.getFooterMargin(), 0.0);
 
         printSetup.setHeaderMargin(5);
         printSetup.setFooterMargin(3.5);
-        assertEquals(5.0, pMargins.getHeader());
-        assertEquals(3.5, pMargins.getFooter());
+        assertEquals(5.0, pMargins.getHeader(), 0.0);
+        assertEquals(3.5, pMargins.getFooter(), 0.0);
     }
 
     public void testSetGetCopies() {

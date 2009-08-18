@@ -17,14 +17,14 @@
 
 package org.apache.poi.hslf.model;
 
+import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
 import junit.framework.TestCase;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
 
 /**
  * Test <code>MovieShape</code> object.
@@ -61,7 +61,5 @@ public final class TestMovieShape extends TestCase {
         shape = (MovieShape)slide.getShapes()[0];
         assertEquals(path, shape.getPath());
         assertFalse(shape.isAutoPlay());
-
     }
-
 }

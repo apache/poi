@@ -17,13 +17,11 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.*;
+import java.awt.Color;
 
-import java.io.FileOutputStream;
-import java.awt.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
 
 /**
  * Test Line shape.
@@ -32,11 +30,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
  */
 public final class TestLine extends TestCase {
 
-    public void setUp() throws Exception {
-
-    }
-
-    public void testCreateLines() throws Exception {
+    public void testCreateLines() {
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
@@ -129,7 +123,5 @@ public final class TestLine extends TestCase {
         line.setLineStyle(Line.LINE_DOUBLE);
         line.setLineWidth(8.0);
         slide.addShape(line);
-
     }
-
 }

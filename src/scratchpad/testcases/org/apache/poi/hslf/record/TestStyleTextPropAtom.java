@@ -17,18 +17,17 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+
+import junit.framework.TestCase;
+
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.HexDump;
-
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.util.LinkedList;
-import java.util.Arrays;
 
 /**
  * Tests that StyleTextPropAtom works properly
@@ -164,7 +163,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(5, stpb.getCharacterStyles().size());
     }
 
-    public void testParagraphStyleCounts() throws Exception {
+    public void testParagraphStyleCounts() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -179,7 +178,7 @@ public final class TestStyleTextPropAtom extends TestCase {
     }
 
 
-    public void testCharacterStyleLengths() throws Exception {
+    public void testCharacterStyleLengths() {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
@@ -209,7 +208,7 @@ public final class TestStyleTextPropAtom extends TestCase {
     }
 
 
-    public void testCharacterPropOrdering() throws Exception {
+    public void testCharacterPropOrdering() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -263,7 +262,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(24, tp_4_3.getValue());
     }
 
-    public void testParagraphProps() throws Exception {
+    public void testParagraphProps() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -315,7 +314,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(80, tp_4_2.getValue());
     }
 
-    public void testCharacterProps() throws Exception {
+    public void testCharacterProps() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
@@ -647,37 +646,41 @@ public final class TestStyleTextPropAtom extends TestCase {
         }
     }
 
-    public void testWriteA() throws Exception {
+    public void testWriteA() {
         doReadWrite(data_a, -1);
     }
 
-    public void testLoadWriteA() throws Exception {
+    public void testLoadWriteA() {
         doReadWrite(data_b, data_b_text_len);
     }
 
 
-    public void testWriteB() throws Exception {
+    public void testWriteB() {
         doReadWrite(data_b, -1);
     }
 
-    public void testLoadWriteB() throws Exception {
+    public void testLoadWriteB() {
         doReadWrite(data_b, data_b_text_len);
     }
 
-    public void testLoadWriteC() throws Exception {
+    public void testLoadWriteC() {
         doReadWrite(data_c, data_c_text_len);
     }
 
-    public void testLoadWriteD() throws Exception {
+    public void testLoadWriteD() {
         doReadWrite(data_d, data_d_text_len);
     }
 
-    protected void doReadWrite(byte[] data, int textlen) throws Exception {
+    protected void doReadWrite(byte[] data, int textlen) {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data, 0,data.length);
         if(textlen != -1) stpb.setParentTextSize(textlen);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        stpb.writeOut(out);
+        try {
+            stpb.writeOut(out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         byte[] bytes = out.toByteArray();
 
         assertEquals(data.length, bytes.length);
@@ -689,7 +692,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         }
     }
 
-    public void testNotEnoughDataProp() throws Exception {
+    public void testNotEnoughDataProp() {
         // We don't have enough data in the record to cover
         //  all the properties the mask says we have
         // Make sure we just do the best we can
@@ -702,7 +705,7 @@ public final class TestStyleTextPropAtom extends TestCase {
     /**
      * Check the test data for Bug 40143.
      */
-    public void testBug40143() throws Exception {
+    public void testBug40143() {
         StyleTextPropAtom atom = new StyleTextPropAtom(data_d, 0, data_d.length);
         atom.setParentTextSize(data_d_text_len);
 
@@ -724,7 +727,7 @@ public final class TestStyleTextPropAtom extends TestCase {
     /**
      * Check the test data for Bug 42677.
      */
-     public void test42677() throws Exception {
+     public void test42677() {
         int length = 18;
         byte[] data = {0x00, 0x00, (byte)0xA1, 0x0F, 0x28, 0x00, 0x00, 0x00,
                        0x13, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , (byte)0xF1 , 0x20 , 0x00, 0x00 , 0x00 , 0x00 ,
@@ -748,7 +751,7 @@ public final class TestStyleTextPropAtom extends TestCase {
      *   00 00 00 01 18 00 00 01 18 01 00 00 00 01 1C 00 00 01 1C
      * </StyleTextPropAtom>
      */
-    public void test45815() throws Exception {
+    public void test45815() {
         int length = 19;
         byte[] data = {
                 0x00, 0x00, (byte)0xA1, 0x0F, 0x5E, 0x00, 0x00, 0x00, 0x14, 0x00,

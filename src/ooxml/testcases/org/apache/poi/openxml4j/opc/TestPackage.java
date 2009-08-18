@@ -17,7 +17,6 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +36,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.util.TempFile;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -64,19 +61,19 @@ public final class TestPackage extends TestCase {
 		//ZipFileAssert.assertEquals(originalFile, targetFile);
 		assertTrue(targetFile.delete());
 	}
-	
+
 	/**
 	 * Test that when we create a new Package, we give it
 	 *  the correct default content types
 	 */
 	public void testCreateGetsContentTypes() throws Exception {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
-		
+
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
-		
+
 		OPCPackage pkg = OPCPackage.create(targetFile);
-		
+
 		// Check it has content types for rels and xml
 		ContentTypeManager ctm = getContentTypeManager(pkg);
 		assertEquals(
@@ -108,7 +105,7 @@ public final class TestPackage extends TestCase {
 
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
-		
+
 		// Create a package
 		OPCPackage pkg = OPCPackage.create(targetFile);
 		PackagePartName corePartName = PackagingURIHelper
@@ -142,7 +139,7 @@ public final class TestPackage extends TestCase {
 		//ZipFileAssert.assertEquals(expectedFile, targetFile);
 		assertTrue(targetFile.delete());
 	}
-	
+
 	/**
 	 * Tests that we can create a new package, add a core
 	 *  document and another part, save and re-load and
@@ -151,7 +148,7 @@ public final class TestPackage extends TestCase {
 	public void testCreatePackageWithCoreDocument() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OPCPackage pkg = OPCPackage.create(baos);
-		
+
 		// Add a core document
         PackagePartName corePartName = PackagingURIHelper.createPartName("/xl/workbook.xml");
         // Create main part relationship
@@ -162,7 +159,7 @@ public final class TestPackage extends TestCase {
         OutputStream coreOut = corePart.getOutputStream();
         coreOut.write("<dummy-xml />".getBytes());
         coreOut.close();
-		
+
 		// And another bit
         PackagePartName sheetPartName = PackagingURIHelper.createPartName("/xl/worksheets/sheet1.xml");
         PackageRelationship rel =
@@ -184,8 +181,8 @@ public final class TestPackage extends TestCase {
         assertEquals("/", coreRel.getSourceURI().toString());
         assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
         assertNotNull(pkg.getPart(coreRel));
-        
-        
+
+
         // Save and re-load
         pkg.close();
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
@@ -290,7 +287,7 @@ public final class TestPackage extends TestCase {
 		//ZipFileAssert.assertEquals(expectedFile, targetFile);
 		assertTrue(targetFile.delete());
 	}
-	
+
 	/**
 	 * Checks that we can write a package to a simple
 	 *  OutputStream, in addition to the normal writing
@@ -318,15 +315,15 @@ public final class TestPackage extends TestCase {
 	 */
 	public void testOpenFromInputStream() throws Exception {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
-		
+
 		FileInputStream finp = new FileInputStream(originalFile);
-		
+
 		OPCPackage p = OPCPackage.open(finp);
-		
+
 		assertNotNull(p);
 		assertNotNull(p.getRelationships());
 		assertEquals(12, p.getParts().size());
-		
+
 		// Check it has the usual bits
 		assertTrue(p.hasRelationships());
 		assertTrue(p.containPart(PackagingURIHelper.createPartName("/_rels/.rels")));
@@ -407,7 +404,7 @@ public final class TestPackage extends TestCase {
 		// Don't save modifications
 		p.revert();
 	}
-	
+
 	public void testDeletePartRecursive() throws InvalidFormatException {
 		TreeMap<PackagePartName, String> expectedValues;
 		TreeMap<PackagePartName, String> values;
@@ -445,7 +442,7 @@ public final class TestPackage extends TestCase {
 		// Don't save modifications
 		p.revert();
 	}
-	
+
 	private static ContentTypeManager getContentTypeManager(OPCPackage pkg) throws Exception {
 		Field f = OPCPackage.class.getDeclaredField("contentTypeManager");
 		f.setAccessible(true);

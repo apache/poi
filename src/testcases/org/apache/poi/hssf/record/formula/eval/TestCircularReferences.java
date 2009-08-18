@@ -27,10 +27,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ErrorConstants;
 /**
  * Tests HSSFFormulaEvaluator for its handling of cell formula circular references.
- * 
+ *
  * @author Josh Micich
  */
 public final class TestCircularReferences extends TestCase {
@@ -53,17 +52,17 @@ public final class TestCircularReferences extends TestCase {
 		assertTrue(cellValue.getCellType() == HSSFCell.CELL_TYPE_ERROR);
 		assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cellValue.getErrorValue());
 	}
-	
-	
+
+
 	/**
-	 * ASF Bugzilla Bug 44413  
-	 * "INDEX() formula cannot contain its own location in the data array range" 
+	 * ASF Bugzilla Bug 44413
+	 * "INDEX() formula cannot contain its own location in the data array range"
 	 */
 	public void testIndexFormula() {
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
-		
+
 		int colB = 1;
 		sheet.createRow(0).createCell(colB).setCellValue(1);
 		sheet.createRow(1).createCell(colB).setCellValue(2);
@@ -73,13 +72,13 @@ public final class TestCircularReferences extends TestCase {
 		// This formula should evaluate to the contents of B2,
 		testCell.setCellFormula("INDEX(A1:B4,2,2)");
 		// However the range A1:B4 also includes the current cell A4.  If the other parameters
-		// were 4 and 1, this would represent a circular reference.  Prior to v3.2 POI would 
+		// were 4 and 1, this would represent a circular reference.  Prior to v3.2 POI would
 		// 'fully' evaluate ref arguments before invoking operators, which raised the possibility of
 		// cycles / StackOverflowErrors.
-		
+
 
 		CellValue cellValue = evaluateWithCycles(wb, testCell);
-		
+
 		assertTrue(cellValue.getCellType() == HSSFCell.CELL_TYPE_NUMERIC);
 		assertEquals(2, cellValue.getNumberValue(), 0);
 	}
@@ -88,16 +87,16 @@ public final class TestCircularReferences extends TestCase {
 	 * Cell A1 has formula "=A1"
 	 */
 	public void testSimpleCircularReference() {
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
-		
+
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell testCell = row.createCell(0);
 		testCell.setCellFormula("A1");
 
 		CellValue cellValue = evaluateWithCycles(wb, testCell);
-		
+
 		confirmCycleErrorCode(cellValue);
 	}
 
@@ -105,10 +104,10 @@ public final class TestCircularReferences extends TestCase {
 	 * A1=B1, B1=C1, C1=D1, D1=A1
 	 */
 	public void testMultiLevelCircularReference() {
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
-		
+
 		HSSFRow row = sheet.createRow(0);
 		row.createCell(0).setCellFormula("B1");
 		row.createCell(1).setCellFormula("C1");
@@ -117,39 +116,39 @@ public final class TestCircularReferences extends TestCase {
 		testCell.setCellFormula("A1");
 
 		CellValue cellValue = evaluateWithCycles(wb, testCell);
-		
+
 		confirmCycleErrorCode(cellValue);
 	}
-	
+
 	public void testIntermediateCircularReferenceResults_bug46898() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
-		
+
 		HSSFRow row = sheet.createRow(0);
-		
+
 		HSSFCell cellA1 = row.createCell(0);
 		HSSFCell cellB1 = row.createCell(1);
 		HSSFCell cellC1 = row.createCell(2);
 		HSSFCell cellD1 = row.createCell(3);
 		HSSFCell cellE1 = row.createCell(4);
-		
+
 		cellA1.setCellFormula("IF(FALSE, 1+B1, 42)");
 		cellB1.setCellFormula("1+C1");
 		cellC1.setCellFormula("1+D1");
 		cellD1.setCellFormula("1+E1");
 		cellE1.setCellFormula("1+A1");
-		
+
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv;
-		
-		// Happy day flow - evaluate A1 first 
+
+		// Happy day flow - evaluate A1 first
 		cv = fe.evaluate(cellA1);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(42.0, cv.getNumberValue(), 0.0);
 		cv = fe.evaluate(cellB1); // no circ-ref-error because A1 result is cached
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(46.0, cv.getNumberValue(), 0.0);
-		
+
 		// Show the bug - evaluate another cell from the loop first
 		fe.clearAllCachedResultValues();
 		cv = fe.evaluate(cellB1);
@@ -164,7 +163,7 @@ public final class TestCircularReferences extends TestCase {
 		cv = fe.evaluate(cellE1);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(43.0, cv.getNumberValue(), 0.0);
-		
-		
+
+
 	}
 }

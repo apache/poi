@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +29,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * A common superclass of all shapes that can hold text.
@@ -88,7 +86,7 @@ public abstract class TextShape extends SimpleShape {
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
-     * 
+     *
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
@@ -230,23 +228,23 @@ public abstract class TextShape extends SimpleShape {
         String fntname = rt.getFontName();
         Font font = new Font(fntname, style, size);
 
-        float width = 0, height = 0, leading = 0;        
-        String[] lines = txt.split("\n");        
+        float width = 0, height = 0, leading = 0;
+        String[] lines = txt.split("\n");
         for (int i = 0; i < lines.length; i++) {
             if(lines[i].length() == 0) continue;
-            
+
             TextLayout layout = new TextLayout(lines[i], font, _frc);
-            
-            leading = Math.max(leading, layout.getLeading());           
+
+            leading = Math.max(leading, layout.getLeading());
             width = Math.max(width, layout.getAdvance());
             height = Math.max(height, (height + (layout.getDescent() + layout.getAscent())));
-        } 	
-    	
+        }
+
         // add one character to width
-        Rectangle2D charBounds = font.getMaxCharBounds(_frc);                
+        Rectangle2D charBounds = font.getMaxCharBounds(_frc);
         width += getMarginLeft() + getMarginRight() + charBounds.getWidth();
-        
-        // add leading to height        
+
+        // add leading to height
         height += getMarginTop() + getMarginBottom() + leading;
 
         Rectangle2D anchor = getAnchor2D();

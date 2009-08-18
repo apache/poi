@@ -25,7 +25,6 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.*;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * Represents a WMF (Windows Metafile) picture data.

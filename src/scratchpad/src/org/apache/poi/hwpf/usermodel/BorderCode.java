@@ -17,13 +17,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
-public final class BorderCode
-  implements Cloneable
-{
+public final class BorderCode implements Cloneable {
   public static final int SIZE = 4;
   private short _info;
   private short _info2;

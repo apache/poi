@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListData;
 import org.apache.poi.hwpf.model.ListFormatOverride;
@@ -43,8 +41,7 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  *
  * @author Ryan Ackley
  */
-public final class HWPFList
-{
+public final class HWPFList {
   private ListData _listData;
   private ListFormatOverride _override;
   private boolean _registered;

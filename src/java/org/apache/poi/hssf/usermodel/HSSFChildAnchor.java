@@ -17,13 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherChildAnchorRecord;
 
-public class HSSFChildAnchor
-        extends HSSFAnchor
-{
+public final class HSSFChildAnchor extends HSSFAnchor {
     public HSSFChildAnchor()
     {
     }
@@ -50,5 +45,4 @@ public class HSSFChildAnchor
     {
         return dy1 > dy2;
     }
-
 }

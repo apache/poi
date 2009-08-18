@@ -17,11 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * A container record that specifies information about a movie stored externally.
@@ -50,5 +45,4 @@ public final class ExAviMovie extends ExMCIMovie {
     public long getRecordType() {
         return RecordTypes.ExAviMovie.typeID;
     }
-
 }

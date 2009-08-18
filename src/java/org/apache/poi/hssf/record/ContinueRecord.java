@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**

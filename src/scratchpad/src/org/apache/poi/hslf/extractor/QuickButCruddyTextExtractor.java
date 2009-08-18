@@ -21,9 +21,7 @@ import java.io.*;
 import java.util.Vector;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hslf.record.CString;

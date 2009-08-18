@@ -18,12 +18,9 @@
 package org.apache.poi.hwpf.model.types;
 
 
-
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.*;
 
@@ -34,9 +31,7 @@ import org.apache.poi.hwpf.usermodel.*;
 
  * @author S. Ryan Ackley
  */
-public abstract class TCAbstractType
-    implements HDFType
-{
+public abstract class TCAbstractType implements HDFType {
 
     protected  short field_1_rgf;
         private static BitField  fFirstMerged = BitFieldFactory.getInstance(0x0001);
