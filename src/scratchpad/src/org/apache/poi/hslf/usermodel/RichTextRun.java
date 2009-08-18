@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogFactory;
  *
  */
 public final class RichTextRun {
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+	protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
 	/** The TextRun we belong to */
 	private TextRun parentRun;
@@ -51,8 +51,8 @@ public final class RichTextRun {
 	/** How long a string (in the parent TextRun) we represent */
 	private int length;
 
-    private String _fontname;
-    /**
+	private String _fontname;
+	/**
 	 * Our paragraph and character style.
 	 * Note - we may share these styles with other RichTextRuns
 	 */
@@ -111,10 +111,10 @@ public final class RichTextRun {
 	 */
 	public void supplySlideShow(SlideShow ss) {
 		slideShow = ss;
-        if (_fontname != null) {
-            setFontName(_fontname);
-            _fontname = null;
-        }
+		if (_fontname != null) {
+			setFontName(_fontname);
+			_fontname = null;
+		}
 	}
 
 	/**
@@ -124,23 +124,23 @@ public final class RichTextRun {
 		return length;
 	}
 
-    /**
-     * The beginning index, inclusive.
-     *
-     * @return the beginning index, inclusive.
-     */
-    public int getStartIndex(){
-        return startPos;
-    }
+	/**
+	 * The beginning index, inclusive.
+	 *
+	 * @return the beginning index, inclusive.
+	 */
+	public int getStartIndex(){
+		return startPos;
+	}
 
-    /**
-     *  The ending index, exclusive.
-     *
-     * @return the ending index, exclusive.
-     */
-    public int getEndIndex(){
-        return startPos + length;
-    }
+	/**
+	 *  The ending index, exclusive.
+	 *
+	 * @return the ending index, exclusive.
+	 */
+	public int getEndIndex(){
+		return startPos + length;
+	}
 
 	/**
 	 * Fetch the text, in output suitable form
@@ -159,17 +159,17 @@ public final class RichTextRun {
 	 * Change the text
 	 */
 	public void setText(String text) {
-        String s = parentRun.normalize(text);
-        setRawText(s);
+		String s = parentRun.normalize(text);
+		setRawText(s);
 	}
 
-    /**
-     * Change the text
-     */
-    public void setRawText(String text) {
-        length = text.length();
-        parentRun.changeTextInRichTextRun(this,text);
-    }
+	/**
+	 * Change the text
+	 */
+	public void setRawText(String text) {
+		length = text.length();
+		parentRun.changeTextInRichTextRun(this,text);
+	}
 
 	/**
 	 * Tells the RichTextRun its new position in the parent TextRun
@@ -191,65 +191,65 @@ public final class RichTextRun {
 		return getFlag(true, index);
 	}
 
-    private boolean getFlag(boolean isCharacter, int index) {
-        TextPropCollection props;
-        String propname;
-        if (isCharacter){
-            props = characterStyle;
-            propname = CharFlagsTextProp.NAME;
-        } else {
-            props = paragraphStyle;
-            propname = ParagraphFlagsTextProp.NAME;
-        }
+	private boolean getFlag(boolean isCharacter, int index) {
+		TextPropCollection props;
+		String propname;
+		if (isCharacter){
+			props = characterStyle;
+			propname = CharFlagsTextProp.NAME;
+		} else {
+			props = paragraphStyle;
+			propname = ParagraphFlagsTextProp.NAME;
+		}
 
-        BitMaskTextProp prop = null;
-        if (props != null){
-            prop = (BitMaskTextProp)props.findByName(propname);
-        }
-        if (prop == null){
-            Sheet sheet = parentRun.getSheet();
-            if(sheet != null){
-                int txtype = parentRun.getRunType();
-                MasterSheet master = sheet.getMasterSheet();
-                if (master != null){
-                    prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
-                }
-            } else {
-                logger.log(POILogger.WARN, "MasterSheet is not available");
-            }
-        }
+		BitMaskTextProp prop = null;
+		if (props != null){
+			prop = (BitMaskTextProp)props.findByName(propname);
+		}
+		if (prop == null){
+			Sheet sheet = parentRun.getSheet();
+			if(sheet != null){
+				int txtype = parentRun.getRunType();
+				MasterSheet master = sheet.getMasterSheet();
+				if (master != null){
+					prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
+				}
+			} else {
+				logger.log(POILogger.WARN, "MasterSheet is not available");
+			}
+		}
 
-        return prop == null ? false : prop.getSubValue(index);
-    }
+		return prop == null ? false : prop.getSubValue(index);
+	}
 
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
 	 *  it if required.
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
-        if(getFlag(true, index) != value) setFlag(true, index, value);
+		if(getFlag(true, index) != value) setFlag(true, index, value);
 	}
 
-    public void setFlag(boolean isCharacter, int index, boolean value) {
-        TextPropCollection props;
-        String propname;
-        if (isCharacter){
-            props = characterStyle;
-            propname = CharFlagsTextProp.NAME;
-        } else {
-            props = paragraphStyle;
-            propname = ParagraphFlagsTextProp.NAME;
-        }
+	public void setFlag(boolean isCharacter, int index, boolean value) {
+		TextPropCollection props;
+		String propname;
+		if (isCharacter){
+			props = characterStyle;
+			propname = CharFlagsTextProp.NAME;
+		} else {
+			props = paragraphStyle;
+			propname = ParagraphFlagsTextProp.NAME;
+		}
 
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(props == null) {
 			parentRun.ensureStyleAtomPresent();
-            props = isCharacter ? characterStyle : paragraphStyle;
+			props = isCharacter ? characterStyle : paragraphStyle;
 		}
 
 		BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(props, propname);
 		prop.setSubValue(value,index);
-    }
+	}
 
 	/**
 	 * Returns the named TextProp, either by fetching it (if it exists) or adding it
@@ -273,18 +273,18 @@ public final class RichTextRun {
 	 *  Master Sheet will apply.
 	 */
 	private int getCharTextPropVal(String propName) {
-        TextProp prop = null;
-        if (characterStyle != null){
-            prop = characterStyle.findByName(propName);
-        }
+		TextProp prop = null;
+		if (characterStyle != null){
+			prop = characterStyle.findByName(propName);
+		}
 
-        if (prop == null){
-            Sheet sheet = parentRun.getSheet();
-            int txtype = parentRun.getRunType();
-            MasterSheet master = sheet.getMasterSheet();
-            if (master != null)
-                prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
-        }
+		if (prop == null){
+			Sheet sheet = parentRun.getSheet();
+			int txtype = parentRun.getRunType();
+			MasterSheet master = sheet.getMasterSheet();
+			if (master != null)
+				prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
+		}
 		return prop == null ? -1 : prop.getValue();
 	}
 	/**
@@ -294,21 +294,21 @@ public final class RichTextRun {
 	 *  Master Sheet will apply.
 	 */
 	private int getParaTextPropVal(String propName) {
-        TextProp prop = null;
-        boolean hardAttribute = false;
-        if (paragraphStyle != null){
-            prop = paragraphStyle.findByName(propName);
+		TextProp prop = null;
+		boolean hardAttribute = false;
+		if (paragraphStyle != null){
+			prop = paragraphStyle.findByName(propName);
 
-            BitMaskTextProp maskProp = (BitMaskTextProp)paragraphStyle.findByName(ParagraphFlagsTextProp.NAME);
-            hardAttribute = maskProp != null && maskProp.getValue() == 0;
-        }
-        if (prop == null && !hardAttribute){
-            Sheet sheet = parentRun.getSheet();
-            int txtype = parentRun.getRunType();
-            MasterSheet master = sheet.getMasterSheet();
-            if (master != null)
-                prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
-        }
+			BitMaskTextProp maskProp = (BitMaskTextProp)paragraphStyle.findByName(ParagraphFlagsTextProp.NAME);
+			hardAttribute = maskProp != null && maskProp.getValue() == 0;
+		}
+		if (prop == null && !hardAttribute){
+			Sheet sheet = parentRun.getSheet();
+			int txtype = parentRun.getRunType();
+			MasterSheet master = sheet.getMasterSheet();
+			if (master != null)
+				prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
+		}
 
 		return prop == null ? -1 : prop.getValue();
 	}
@@ -347,164 +347,163 @@ public final class RichTextRun {
 
 	// --------------- Friendly getters / setters on rich text properties -------
 
-    /**
-     * Is the text bold?
-     */
+	/**
+	 * Is the text bold?
+	 */
 	public boolean isBold() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
 	}
 
-    /**
-     * Is the text bold?
-     */
+	/**
+	 * Is the text bold?
+	 */
 	public void setBold(boolean bold) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
 	}
 
-    /**
-     * Is the text italic?
-     */
+	/**
+	 * Is the text italic?
+	 */
 	public boolean isItalic() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX);
 	}
 
-    /**
-     * Is the text italic?
-     */
+	/**
+	 * Is the text italic?
+	 */
 	public void setItalic(boolean italic) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
 	}
 
-    /**
-     * Is the text underlined?
-     */
+	/**
+	 * Is the text underlined?
+	 */
 	public boolean isUnderlined() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
 	}
 
-    /**
-     * Is the text underlined?
-     */
+	/**
+	 * Is the text underlined?
+	 */
 	public void setUnderlined(boolean underlined) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
 	}
 
-    /**
-     * Does the text have a shadow?
-     */
-    public boolean isShadowed() {
-        return isCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX);
-    }
+	/**
+	 * Does the text have a shadow?
+	 */
+	public boolean isShadowed() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX);
+	}
 
-    /**
-     * Does the text have a shadow?
-     */
-    public void setShadowed(boolean flag) {
-        setCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX, flag);
-    }
+	/**
+	 * Does the text have a shadow?
+	 */
+	public void setShadowed(boolean flag) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.SHADOW_IDX, flag);
+	}
 
-    /**
-     * Is this text embossed?
-     */
-     public boolean isEmbossed() {
-        return isCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX);
-    }
+	/**
+	 * Is this text embossed?
+	 */
+	 public boolean isEmbossed() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX);
+	}
 
-    /**
-     * Is this text embossed?
-     */
-     public void setEmbossed(boolean flag) {
-        setCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX, flag);
-    }
+	/**
+	 * Is this text embossed?
+	 */
+	 public void setEmbossed(boolean flag) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX, flag);
+	}
 
-    /**
-     * Gets the strikethrough flag
-     */
-    public boolean isStrikethrough() {
-        return isCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX);
-    }
+	/**
+	 * Gets the strikethrough flag
+	 */
+	public boolean isStrikethrough() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX);
+	}
 
-    /**
-     * Sets the strikethrough flag
-     */
-    public void setStrikethrough(boolean flag) {
-        setCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX, flag);
-    }
+	/**
+	 * Sets the strikethrough flag
+	 */
+	public void setStrikethrough(boolean flag) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX, flag);
+	}
 
-    /**
-     * Gets the subscript/superscript option
-     *
-     * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
-     */
+	/**
+	 * Gets the subscript/superscript option
+	 *
+	 * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
+	 */
 	public int getSuperscript() {
-        int val = getCharTextPropVal("superscript");
+		int val = getCharTextPropVal("superscript");
 		return val == -1 ? 0 : val;
 	}
 
-    /**
-     * Sets the subscript/superscript option
-     *
-     * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
-     */
+	/**
+	 * Sets the subscript/superscript option
+	 *
+	 * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
+	 */
 	public void setSuperscript(int val) {
 		setCharTextPropVal("superscript", val);
 	}
 
-    /**
-     * Gets the font size
-     */
+	/**
+	 * Gets the font size
+	 */
 	public int getFontSize() {
 		return getCharTextPropVal("font.size");
 	}
 
 
-    /**
-     * Sets the font size
-     */
+	/**
+	 * Sets the font size
+	 */
 	public void setFontSize(int fontSize) {
 		setCharTextPropVal("font.size", fontSize);
 	}
 
-    /**
-     * Gets the font index
-     */
+	/**
+	 * Gets the font index
+	 */
 	public int getFontIndex() {
 		return getCharTextPropVal("font.index");
 	}
 
-    /**
-     * Sets the font index
-     */
+	/**
+	 * Sets the font index
+	 */
 	public void setFontIndex(int idx) {
 		setCharTextPropVal("font.index", idx);
 	}
 
 
-    /**
-     * Sets the font name to use
-     */
+	/**
+	 * Sets the font name to use
+	 */
 	public void setFontName(String fontName) {
-        if (slideShow == null) {
-            //we can't set font since slideshow is not assigned yet
-            _fontname = fontName;
-        } else {
-    		// Get the index for this font (adding if needed)
-	    	int fontIdx = slideShow.getFontCollection().addFont(fontName);
-		    setCharTextPropVal("font.index", fontIdx);
-        }
+		if (slideShow == null) {
+			//we can't set font since slideshow is not assigned yet
+			_fontname = fontName;
+		} else {
+			// Get the index for this font (adding if needed)
+			int fontIdx = slideShow.getFontCollection().addFont(fontName);
+			setCharTextPropVal("font.index", fontIdx);
+		}
 	}
 
-    /**
-     * Gets the font name
-     */
+	/**
+	 * Gets the font name
+	 */
 	public String getFontName() {
-        if (slideShow == null) {
-            return _fontname;
-        } else {
-            int fontIdx = getCharTextPropVal("font.index");
-            if(fontIdx == -1) { return null; }
-            return slideShow.getFontCollection().getFontWithId(fontIdx);
-        }
+		if (slideShow == null) {
+			return _fontname;
+		}
+		int fontIdx = getCharTextPropVal("font.index");
+		if(fontIdx == -1) { return null; }
+		return slideShow.getFontCollection().getFontWithId(fontIdx);
 	}
 
 	/**
@@ -512,15 +511,15 @@ public final class RichTextRun {
 	 * @see java.awt.Color
 	 */
 	public Color getFontColor() {
-        int rgb = getCharTextPropVal("font.color");
+		int rgb = getCharTextPropVal("font.color");
 
-        int cidx = rgb >> 24;
-        if (rgb % 0x1000000 == 0){
-            ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
-            if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
-        }
-        Color tmp = new Color(rgb, true);
-        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+		int cidx = rgb >> 24;
+		if (rgb % 0x1000000 == 0){
+			ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+			if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
+		}
+		Color tmp = new Color(rgb, true);
+		return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
 	}
 
 	/**
@@ -533,241 +532,241 @@ public final class RichTextRun {
 		setCharTextPropVal("font.color", bgr);
 	}
 
-    /**
-     * Sets color of the text, as a java.awt.Color
-     */
-    public void setFontColor(Color color) {
-        // In PowerPont RGB bytes are swapped, as BGR
-        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
-        setFontColor(rgb);
-    }
+	/**
+	 * Sets color of the text, as a java.awt.Color
+	 */
+	public void setFontColor(Color color) {
+		// In PowerPont RGB bytes are swapped, as BGR
+		int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
+		setFontColor(rgb);
+	}
 
-    /**
-     * Sets the type of horizontal alignment for the text.
-     * One of the <code>Align*</code> constants defined in the <code>TextBox</code> class.
-     *
-     * @param align - the type of alignment
-     */
-    public void setAlignment(int align) {
-        setParaTextPropVal("alignment", align);
-    }
-    /**
-     * Returns the type of horizontal alignment for the text.
-     * One of the <code>Align*</code> constants defined in the <code>TextBox</class> class.
-     *
-     * @return the type of alignment
-     */
-    public int getAlignment() {
-        return getParaTextPropVal("alignment");
-    }
+	/**
+	 * Sets the type of horizontal alignment for the text.
+	 * One of the <code>Align*</code> constants defined in the <code>TextBox</code> class.
+	 *
+	 * @param align - the type of alignment
+	 */
+	public void setAlignment(int align) {
+		setParaTextPropVal("alignment", align);
+	}
+	/**
+	 * Returns the type of horizontal alignment for the text.
+	 * One of the <code>Align*</code> constants defined in the <code>TextBox</class> class.
+	 *
+	 * @return the type of alignment
+	 */
+	public int getAlignment() {
+		return getParaTextPropVal("alignment");
+	}
 
-    /**
-     *
-     * @return indentation level
-     */
-    public int getIndentLevel() {
-        return paragraphStyle == null ? 0 : paragraphStyle.getReservedField();
-    }
+	/**
+	 *
+	 * @return indentation level
+	 */
+	public int getIndentLevel() {
+		return paragraphStyle == null ? 0 : paragraphStyle.getReservedField();
+	}
 
-    /**
-     * Sets indentation level
-     *
-     * @param level indentation level. Must be in the range [0, 4]
-     */
-    public void setIndentLevel(int level) {
-        if(paragraphStyle != null ) paragraphStyle.setReservedField((short)level);
-    }
+	/**
+	 * Sets indentation level
+	 *
+	 * @param level indentation level. Must be in the range [0, 4]
+	 */
+	public void setIndentLevel(int level) {
+		if(paragraphStyle != null ) paragraphStyle.setReservedField((short)level);
+	}
 
-    /**
-     * Sets whether this rich text run has bullets
-     */
-    public void setBullet(boolean flag) {
-        setFlag(false, ParagraphFlagsTextProp.BULLET_IDX, flag);
-    }
+	/**
+	 * Sets whether this rich text run has bullets
+	 */
+	public void setBullet(boolean flag) {
+		setFlag(false, ParagraphFlagsTextProp.BULLET_IDX, flag);
+	}
 
-    /**
-     * Returns whether this rich text run has bullets
-     */
-    public boolean isBullet() {
-        return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
-    }
+	/**
+	 * Returns whether this rich text run has bullets
+	 */
+	public boolean isBullet() {
+		return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
+	}
 
-    /**
-     * Returns whether this rich text run has bullets
-     */
-    public boolean isBulletHard() {
-        return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
-    }
+	/**
+	 * Returns whether this rich text run has bullets
+	 */
+	public boolean isBulletHard() {
+		return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
+	}
 
-    /**
-     * Sets the bullet character
-     */
-    public void setBulletChar(char c) {
-        setParaTextPropVal("bullet.char", c);
-    }
+	/**
+	 * Sets the bullet character
+	 */
+	public void setBulletChar(char c) {
+		setParaTextPropVal("bullet.char", c);
+	}
 
-    /**
-     * Returns the bullet character
-     */
-    public char getBulletChar() {
-        return (char)getParaTextPropVal("bullet.char");
-    }
+	/**
+	 * Returns the bullet character
+	 */
+	public char getBulletChar() {
+		return (char)getParaTextPropVal("bullet.char");
+	}
 
-    /**
-     * Sets the bullet offset
-     */
-    public void setBulletOffset(int offset) {
-        setParaTextPropVal("bullet.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
-    }
+	/**
+	 * Sets the bullet offset
+	 */
+	public void setBulletOffset(int offset) {
+		setParaTextPropVal("bullet.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+	}
 
-    /**
-     * Returns the bullet offset
-     */
-    public int getBulletOffset() {
-        return getParaTextPropVal("bullet.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
-    }
+	/**
+	 * Returns the bullet offset
+	 */
+	public int getBulletOffset() {
+		return getParaTextPropVal("bullet.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+	}
 
-    /**
-     * Sets the text offset
-     */
-    public void setTextOffset(int offset) {
-        setParaTextPropVal("text.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
-    }
+	/**
+	 * Sets the text offset
+	 */
+	public void setTextOffset(int offset) {
+		setParaTextPropVal("text.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+	}
 
-    /**
-     * Returns the text offset
-     */
-    public int getTextOffset() {
-        return getParaTextPropVal("text.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
-    }
+	/**
+	 * Returns the text offset
+	 */
+	public int getTextOffset() {
+		return getParaTextPropVal("text.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+	}
 
-    /**
-     * Sets the bullet size
-     */
-    public void setBulletSize(int size) {
-        setParaTextPropVal("bullet.size", size);
-    }
+	/**
+	 * Sets the bullet size
+	 */
+	public void setBulletSize(int size) {
+		setParaTextPropVal("bullet.size", size);
+	}
 
-    /**
-     * Returns the bullet size
-     */
-    public int getBulletSize() {
-        return getParaTextPropVal("bullet.size");
-    }
+	/**
+	 * Returns the bullet size
+	 */
+	public int getBulletSize() {
+		return getParaTextPropVal("bullet.size");
+	}
 
-    /**
-     * Sets the bullet color
-     */
-    public void setBulletColor(Color color) {
-        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
-        setParaTextPropVal("bullet.color", rgb);
-    }
+	/**
+	 * Sets the bullet color
+	 */
+	public void setBulletColor(Color color) {
+		int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
+		setParaTextPropVal("bullet.color", rgb);
+	}
 
-    /**
-     * Returns the bullet color
-     */
-    public Color getBulletColor() {
-        int rgb = getParaTextPropVal("bullet.color");
-        if(rgb == -1) return getFontColor();
+	/**
+	 * Returns the bullet color
+	 */
+	public Color getBulletColor() {
+		int rgb = getParaTextPropVal("bullet.color");
+		if(rgb == -1) return getFontColor();
 
-        int cidx = rgb >> 24;
-        if (rgb % 0x1000000 == 0){
-            ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
-            if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
-        }
-        Color tmp = new Color(rgb, true);
-        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
-    }
+		int cidx = rgb >> 24;
+		if (rgb % 0x1000000 == 0){
+			ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+			if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
+		}
+		Color tmp = new Color(rgb, true);
+		return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+	}
 
-    /**
-     * Sets the bullet font
-     */
-    public void setBulletFont(int idx) {
-        setParaTextPropVal("bullet.font", idx);
-        setFlag(false, ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, true);
-    }
+	/**
+	 * Sets the bullet font
+	 */
+	public void setBulletFont(int idx) {
+		setParaTextPropVal("bullet.font", idx);
+		setFlag(false, ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, true);
+	}
 
-    /**
-     * Returns the bullet font
-     */
-    public int getBulletFont() {
-        return getParaTextPropVal("bullet.font");
-    }
+	/**
+	 * Returns the bullet font
+	 */
+	public int getBulletFont() {
+		return getParaTextPropVal("bullet.font");
+	}
 
-    /**
-     * Sets the line spacing.
-     * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height.
-     * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
-     * </p>
-     */
-    public void setLineSpacing(int val) {
-        setParaTextPropVal("linespacing", val);
-    }
+	/**
+	 * Sets the line spacing.
+	 * <p>
+	 * If linespacing >= 0, then linespacing is a percentage of normal line height.
+	 * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
+	 * </p>
+	 */
+	public void setLineSpacing(int val) {
+		setParaTextPropVal("linespacing", val);
+	}
 
-    /**
-     * Returns the line spacing
-     * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height.
-     * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
-     * </p>
-     *
-     * @return the spacing between lines
-     */
-    public int getLineSpacing() {
-        int val = getParaTextPropVal("linespacing");
-        return val == -1 ? 0 : val;
-    }
+	/**
+	 * Returns the line spacing
+	 * <p>
+	 * If linespacing >= 0, then linespacing is a percentage of normal line height.
+	 * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
+	 * </p>
+	 *
+	 * @return the spacing between lines
+	 */
+	public int getLineSpacing() {
+		int val = getParaTextPropVal("linespacing");
+		return val == -1 ? 0 : val;
+	}
 
-    /**
-     * Sets spacing before a paragraph.
-     * <p>
-     * If spacebefore >= 0, then spacebefore is a percentage of normal line height.
-     * If spacebefore < 0, the absolute value of spacebefore is the spacing in master coordinates.
-     * </p>
-     */
-    public void setSpaceBefore(int val) {
-        setParaTextPropVal("spacebefore", val);
-    }
+	/**
+	 * Sets spacing before a paragraph.
+	 * <p>
+	 * If spacebefore >= 0, then spacebefore is a percentage of normal line height.
+	 * If spacebefore < 0, the absolute value of spacebefore is the spacing in master coordinates.
+	 * </p>
+	 */
+	public void setSpaceBefore(int val) {
+		setParaTextPropVal("spacebefore", val);
+	}
 
-    /**
-     * Returns spacing before a paragraph
-     * <p>
-     * If spacebefore >= 0, then spacebefore is a percentage of normal line height.
-     * If spacebefore < 0, the absolute value of spacebefore is the spacing in master coordinates.
-     * </p>
-     *
-     * @return the spacing before a paragraph
-     */
-    public int getSpaceBefore() {
-        int val = getParaTextPropVal("spacebefore");
-        return val == -1 ? 0 : val;
-    }
+	/**
+	 * Returns spacing before a paragraph
+	 * <p>
+	 * If spacebefore >= 0, then spacebefore is a percentage of normal line height.
+	 * If spacebefore < 0, the absolute value of spacebefore is the spacing in master coordinates.
+	 * </p>
+	 *
+	 * @return the spacing before a paragraph
+	 */
+	public int getSpaceBefore() {
+		int val = getParaTextPropVal("spacebefore");
+		return val == -1 ? 0 : val;
+	}
 
-    /**
-     * Sets spacing after a paragraph.
-     * <p>
-     * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
-     * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
-     * </p>
-     */
-    public void setSpaceAfter(int val) {
-        setParaTextPropVal("spaceafter", val);
-    }
+	/**
+	 * Sets spacing after a paragraph.
+	 * <p>
+	 * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
+	 * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
+	 * </p>
+	 */
+	public void setSpaceAfter(int val) {
+		setParaTextPropVal("spaceafter", val);
+	}
 
-    /**
-     * Returns spacing after a paragraph
-     * <p>
-     * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
-     * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
-     * </p>
-     *
-     * @return the spacing before a paragraph
-     */
-    public int getSpaceAfter() {
-        int val = getParaTextPropVal("spaceafter");
-        return val == -1 ? 0 : val;
-    }
+	/**
+	 * Returns spacing after a paragraph
+	 * <p>
+	 * If spaceafter >= 0, then spaceafter is a percentage of normal line height.
+	 * If spaceafter < 0, the absolute value of spaceafter is the spacing in master coordinates.
+	 * </p>
+	 *
+	 * @return the spacing before a paragraph
+	 */
+	public int getSpaceAfter() {
+		int val = getParaTextPropVal("spaceafter");
+		return val == -1 ? 0 : val;
+	}
 	// --------------- Internal HSLF methods, not intended for end-user use! -------
 
 	/**

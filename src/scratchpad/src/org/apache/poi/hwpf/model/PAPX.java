@@ -112,10 +112,7 @@ public final class PAPX extends BytePropertyNode {
     {
       return 0;
     }
-    else
-    {
       return LittleEndian.getShort(buf);
-    }
   }
 
   public SprmBuffer getSprmBuf()

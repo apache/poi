@@ -136,10 +136,10 @@ public class ExtendableTreeCellRenderer implements TreeCellRenderer
 
         /* The class has no renderer, try the superclass, if any. */
         final Class superclass = c.getSuperclass();
-        if (superclass != null)
+        if (superclass != null) {
             return findRenderer(superclass);
-        else
-            return null;
+        }
+        return null;
     }
 
 }

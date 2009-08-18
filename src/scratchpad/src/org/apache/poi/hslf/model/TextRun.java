@@ -46,7 +46,7 @@ public final class TextRun
     protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
-    private Sheet sheet;
+    private Sheet _sheet;
     private int shapeId;
     private int slwtIndex; //position in the owning SlideListWithText
     /**
@@ -564,9 +564,8 @@ public final class TextRun
 	public String getRawText() {
 		if(_isUnicode) {
 			return _charAtom.getText();
-		} else {
-			return _byteAtom.getText();
 		}
+		return _byteAtom.getText();
 	}
 
 	/**
@@ -610,11 +609,11 @@ public final class TextRun
 	}
 
     public void setSheet(Sheet sheet){
-        this.sheet = sheet;
+        this._sheet = sheet;
     }
 
     public Sheet getSheet(){
-        return this.sheet;
+        return this._sheet;
     }
 
     /**

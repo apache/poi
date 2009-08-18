@@ -49,12 +49,9 @@ public final class ComplexFileTable
     {
       throw new IOException("The text piece table is corrupted");
     }
-    else
-    {
-      int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
-      offset += LittleEndian.INT_SIZE;
-      _tpt = new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
-    }
+    int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
+    offset += LittleEndian.INT_SIZE;
+    _tpt = new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
   }
 
   public TextPieceTable getTextPieceTable()

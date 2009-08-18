@@ -95,11 +95,11 @@ public final class CFRuleRecord extends StandardRecord {
 
 	private short field_6_not_used;
 
-	private FontFormatting fontFormatting;
+	private FontFormatting _fontFormatting;
 
-	private BorderFormatting borderFormatting;
+	private BorderFormatting _borderFormatting;
 
-	private PatternFormatting patternFormatting;
+	private PatternFormatting _patternFormatting;
 
 	private Formula field_17_formula1;
 	private Formula field_18_formula2;
@@ -117,9 +117,9 @@ public final class CFRuleRecord extends StandardRecord {
 		field_5_options = undocumented.clear(field_5_options);
 
 		field_6_not_used = (short)0x8002; // Excel seems to write this value, but it doesn't seem to care what it reads
-		fontFormatting=null;
-		borderFormatting=null;
-		patternFormatting=null;
+		_fontFormatting=null;
+		_borderFormatting=null;
+		_patternFormatting=null;
 		field_17_formula1=Formula.create(Ptg.EMPTY_PTG_ARRAY);
 		field_18_formula2=Formula.create(Ptg.EMPTY_PTG_ARRAY);
 	}
@@ -157,15 +157,15 @@ public final class CFRuleRecord extends StandardRecord {
 		field_6_not_used = in.readShort();
 
 		if (containsFontFormattingBlock()) {
-			fontFormatting = new FontFormatting(in);
+			_fontFormatting = new FontFormatting(in);
 		}
 
 		if (containsBorderFormattingBlock()) {
-			borderFormatting = new BorderFormatting(in);
+			_borderFormatting = new BorderFormatting(in);
 		}
 
 		if (containsPatternFormattingBlock()) {
-			patternFormatting = new PatternFormatting(in);
+			_patternFormatting = new PatternFormatting(in);
 		}
 
 		// "You may not use unions, intersections or array constants in Conditional Formatting criteria"
@@ -184,19 +184,16 @@ public final class CFRuleRecord extends StandardRecord {
 	}
 	public void setFontFormatting(FontFormatting fontFormatting)
 	{
-		this.fontFormatting = fontFormatting;
+		_fontFormatting = fontFormatting;
 		setOptionFlag(fontFormatting != null, font);
 	}
 	public FontFormatting getFontFormatting()
 	{
 		if( containsFontFormattingBlock())
 		{
-			return fontFormatting;
+			return _fontFormatting;
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	public boolean containsAlignFormattingBlock()
@@ -214,19 +211,16 @@ public final class CFRuleRecord extends StandardRecord {
 	}
 	public void setBorderFormatting(BorderFormatting borderFormatting)
 	{
-		this.borderFormatting = borderFormatting;
+		_borderFormatting = borderFormatting;
 		setOptionFlag(borderFormatting != null, bord);
 	}
 	public BorderFormatting getBorderFormatting()
 	{
 		if( containsBorderFormattingBlock())
 		{
-			return borderFormatting;
+			return _borderFormatting;
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	public boolean containsPatternFormattingBlock()
@@ -235,19 +229,16 @@ public final class CFRuleRecord extends StandardRecord {
 	}
 	public void setPatternFormatting(PatternFormatting patternFormatting)
 	{
-		this.patternFormatting = patternFormatting;
+		_patternFormatting = patternFormatting;
 		setOptionFlag(patternFormatting!=null, patt);
 	}
 	public PatternFormatting getPatternFormatting()
 	{
 		if( containsPatternFormattingBlock())
 		{
-			return patternFormatting;
+			return _patternFormatting;
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	public boolean containsProtectionFormattingBlock()
@@ -452,16 +443,16 @@ public final class CFRuleRecord extends StandardRecord {
 		out.writeShort(field_6_not_used);
 
 		if (containsFontFormattingBlock()) {
-			byte[] fontFormattingRawRecord  = fontFormatting.getRawRecord();
+			byte[] fontFormattingRawRecord  = _fontFormatting.getRawRecord();
 			out.write(fontFormattingRawRecord);
 		}
 
 		if (containsBorderFormattingBlock()) {
-			borderFormatting.serialize(out);
+			_borderFormatting.serialize(out);
 		}
 
 		if (containsPatternFormattingBlock()) {
-			patternFormatting.serialize(out);
+			_patternFormatting.serialize(out);
 		}
 
 		field_17_formula1.serializeTokens(out);
@@ -470,7 +461,7 @@ public final class CFRuleRecord extends StandardRecord {
 
 	protected int getDataSize() {
 		return 12 +
-					(containsFontFormattingBlock()?fontFormatting.getRawRecord().length:0)+
+					(containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
 					(containsBorderFormattingBlock()?8:0)+
 					(containsPatternFormattingBlock()?4:0)+
 					getFormulaSize(field_17_formula1)+
@@ -486,13 +477,13 @@ public final class CFRuleRecord extends StandardRecord {
 		buffer.append("    OPTION FLAGS=0x"+Integer.toHexString(getOptions()));
 		if (false) {
 			if (containsFontFormattingBlock()) {
-				buffer.append(fontFormatting.toString());
+				buffer.append(_fontFormatting.toString());
 			}
 			if (containsBorderFormattingBlock()) {
-				buffer.append(borderFormatting.toString());
+				buffer.append(_borderFormatting.toString());
 			}
 			if (containsPatternFormattingBlock()) {
-				buffer.append(patternFormatting.toString());
+				buffer.append(_patternFormatting.toString());
 			}
 			buffer.append("[/CFRULE]\n");
 		}
@@ -504,13 +495,13 @@ public final class CFRuleRecord extends StandardRecord {
 		rec.field_5_options = field_5_options;
 		rec.field_6_not_used = field_6_not_used;
 		if (containsFontFormattingBlock()) {
-			rec.fontFormatting = (FontFormatting) fontFormatting.clone();
+			rec._fontFormatting = (FontFormatting) _fontFormatting.clone();
 		}
 		if (containsBorderFormattingBlock()) {
-			rec.borderFormatting = (BorderFormatting) borderFormatting.clone();
+			rec._borderFormatting = (BorderFormatting) _borderFormatting.clone();
 		}
 		if (containsPatternFormattingBlock()) {
-			rec.patternFormatting = (PatternFormatting) patternFormatting.clone();
+			rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();
 		}
 		rec.field_17_formula1 = field_17_formula1.copy();
 		rec.field_18_formula2 = field_17_formula1.copy();

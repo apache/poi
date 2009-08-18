@@ -43,15 +43,15 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     protected POILogger log = POILogFactory.getLogger(this.getClass());
 
     //The ppt object to write into.
-    private ShapeGroup group;
+    private ShapeGroup _group;
 
-    private AffineTransform transform;
-    private Stroke stroke;
-    private Paint paint;
-    private Font font;
-    private Color foreground;
-    private Color background;
-    private RenderingHints hints;
+    private AffineTransform _transform;
+    private Stroke _stroke;
+    private Paint _paint;
+    private Font _font;
+    private Color _foreground;
+    private Color _background;
+    private RenderingHints _hints;
 
     /**
      * Construct Java Graphics object which translates graphic calls in ppt drawing layer.
@@ -59,22 +59,22 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param group           The shape group to write the graphics calls into.
      */
     public PPGraphics2D(ShapeGroup group){
-        this.group = group;
+        this._group = group;
 
-        transform = new AffineTransform();
-        stroke = new BasicStroke();
-        paint = Color.black;
-        font = new Font("Arial", Font.PLAIN, 12);
-        background = Color.black;
-        foreground = Color.white;
-        hints = new RenderingHints(null);
+        _transform = new AffineTransform();
+        _stroke = new BasicStroke();
+        _paint = Color.black;
+        _font = new Font("Arial", Font.PLAIN, 12);
+        _background = Color.black;
+        _foreground = Color.white;
+        _hints = new RenderingHints(null);
     }
 
     /**
      * @return  the shape group being used for drawing
      */
     public ShapeGroup getShapeGroup(){
-        return group;
+        return _group;
     }
 
     /**
@@ -84,7 +84,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see       java.awt.Graphics#setFont(Font)
      */
     public Font getFont(){
-        return font;
+        return _font;
     }
 
     /**
@@ -98,7 +98,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see     java.awt.Graphics#drawChars(char[], int, int, int, int)
     */
     public void setFont(Font font){
-        this.font = font;
+        this._font = font;
     }
 
     /**
@@ -108,7 +108,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see       java.awt.Graphics#setColor
      */
      public Color getColor(){
-        return foreground;
+        return _foreground;
     }
 
     /**
@@ -131,7 +131,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setStroke
      */
     public Stroke getStroke(){
-        return stroke;
+        return _stroke;
     }
 
     /**
@@ -140,7 +140,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * <code>Shape</code> during the rendering process
      */
     public void setStroke(Stroke s){
-        this.stroke = s;
+        this._stroke = s;
     }
 
     /**
@@ -152,7 +152,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see java.awt.Graphics#setColor
      */
     public Paint getPaint(){
-        return paint;
+        return _paint;
     }
 
     /**
@@ -168,8 +168,8 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      public void setPaint(Paint paint){
         if(paint == null) return;
 
-        this.paint = paint;
-        if (paint instanceof Color) foreground = (Color)paint;
+        this._paint = paint;
+        if (paint instanceof Color) _foreground = (Color)paint;
     }
 
     /**
@@ -177,11 +177,11 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * <code>Graphics2D</code> context.
      * @return the current <code>AffineTransform</code> in the
      *             <code>Graphics2D</code> context.
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      */
     public AffineTransform getTransform(){
-        return new AffineTransform(transform);
+        return new AffineTransform(_transform);
     }
 
     /**
@@ -189,11 +189,11 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * context.
      * @param Tx the <code>AffineTransform</code> object to be used in the
      * rendering process
-     * @see #transform
+     * @see #_transform
      * @see AffineTransform
      */
     public void setTransform(AffineTransform Tx) {
-        transform = new AffineTransform(Tx);
+        _transform = new AffineTransform(Tx);
     }
 
     /**
@@ -206,19 +206,19 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setStroke
      * @see #setPaint
      * @see java.awt.Graphics#setColor
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #clip
      * @see #setClip
      * @see #setComposite
      */
     public void draw(Shape shape){
-        GeneralPath path = new GeneralPath(transform.createTransformedShape(shape));
-        Freeform p = new Freeform(group);
+        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Freeform p = new Freeform(_group);
         p.setPath(path);
         p.getFill().setForegroundColor(null);
         applyStroke(p);
-        group.addShape(p);
+        _group.addShape(p);
     }
 
     /**
@@ -247,18 +247,18 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-        TextBox txt = new TextBox(group);
-        txt.getTextRun().supplySlideShow(group.getSheet().getSlideShow());
-        txt.getTextRun().setSheet(group.getSheet());
+        TextBox txt = new TextBox(_group);
+        txt.getTextRun().supplySlideShow(_group.getSheet().getSlideShow());
+        txt.getTextRun().setSheet(_group.getSheet());
         txt.setText(s);
 
         RichTextRun rt = txt.getTextRun().getRichTextRuns()[0];
-        rt.setFontSize(font.getSize());
-        rt.setFontName(font.getFamily());
+        rt.setFontSize(_font.getSize());
+        rt.setFontName(_font.getFamily());
 
         if (getColor() != null) rt.setFontColor(getColor());
-        if (font.isBold()) rt.setBold(true);
-        if (font.isItalic()) rt.setItalic(true);
+        if (_font.isBold()) rt.setBold(true);
+        if (_font.isItalic()) rt.setItalic(true);
 
         txt.setMarginBottom(0);
         txt.setMarginTop(0);
@@ -269,7 +269,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         txt.setVerticalAlignment(TextBox.AnchorMiddle);
 
 
-        TextLayout layout = new TextLayout(s, font, getFontRenderContext());
+        TextLayout layout = new TextLayout(s, _font, getFontRenderContext());
         float ascent = layout.getAscent();
 
         float width = (float) Math.floor(layout.getAdvance());
@@ -295,7 +295,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         */
         txt.setAnchor(new Rectangle2D.Float(x, y, width, height));
 
-        group.addShape(txt);
+        _group.addShape(txt);
     }
 
     /**
@@ -306,19 +306,19 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param shape the <code>Shape</code> to be filled
      * @see #setPaint
      * @see java.awt.Graphics#setColor
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #setComposite
      * @see #clip
      * @see #setClip
      */
     public void fill(Shape shape){
-        GeneralPath path = new GeneralPath(transform.createTransformedShape(shape));
-        Freeform p = new Freeform(group);
+        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Freeform p = new Freeform(_group);
         p.setPath(path);
         applyPaint(p);
         p.setLineColor(null);   //Fills must be "No Line"
-        group.addShape(p);
+        _group.addShape(p);
     }
 
     /**
@@ -333,7 +333,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param  y   the <i>y</i> coordinate.
      */
     public void translate(int x, int y){
-        transform.translate(x, y);
+        _transform.translate(x, y);
     }
 
     /**
@@ -400,7 +400,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * rendering operations.
      */
     public void scale(double sx, double sy){
-        transform.scale(sx, sy);
+        _transform.scale(sx, sy);
     }
 
     /**
@@ -1055,10 +1055,10 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public Rectangle getClipBounds(){
         Shape c = getClip();
-        if(c==null)
+        if (c==null) {
             return null;
-        else
-            return c.getBounds();
+        }
+        return c.getBounds();
     }
 
     /**
@@ -1143,7 +1143,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param theta the angle of rotation in radians
      */
     public void rotate(double theta){
-        transform.rotate(theta);
+        _transform.rotate(theta);
     }
 
     /**
@@ -1166,7 +1166,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param y y coordinate of the origin of the rotation
      */
     public void rotate(double theta, double x, double y){
-        transform.rotate(theta, x, y);
+        _transform.rotate(theta, x, y);
     }
 
     /**
@@ -1188,7 +1188,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * the positive Y axis direction as a function of their X coordinate
      */
     public void shear(double shx, double shy){
-        transform.shear(shx, shy);
+        _transform.shear(shx, shy);
     }
 
     /**
@@ -1240,7 +1240,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see AffineTransform
      */
     public void transform(AffineTransform Tx) {
-        transform.concatenate(Tx);
+        _transform.concatenate(Tx);
     }
 
     /**
@@ -1258,7 +1258,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param op the filter to be applied to the image before rendering
      * @param x the x coordinate in user space where the image is rendered
      * @param y the y coordinate in user space where the image is rendered
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #setComposite
      * @see #clip
@@ -1292,7 +1292,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         if(color == null)
             return;
 
-        background = color;
+        _background = color;
     }
 
     /**
@@ -1302,7 +1302,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setBackground
      */
     public Color getBackground(){
-        return background;
+        return _background;
     }
 
     /**
@@ -1359,7 +1359,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see RenderingHints
      */
     public Object getRenderingHint(RenderingHints.Key hintKey){
-        return hints.get(hintKey);
+        return _hints.get(hintKey);
     }
 
     /**
@@ -1374,7 +1374,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see RenderingHints
      */
     public void setRenderingHint(RenderingHints.Key hintKey, Object hintValue){
-        hints.put(hintKey, hintValue);
+        _hints.put(hintKey, hintValue);
     }
 
 
@@ -1434,7 +1434,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see RenderingHints
      */
     public void addRenderingHints(Map hints){
-        this.hints.putAll(hints);
+        this._hints.putAll(hints);
     }
 
     /**
@@ -1454,7 +1454,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param ty the distance to translate along the y-axis
      */
     public void translate(double tx, double ty){
-        transform.translate(tx, ty);
+        _transform.translate(tx, ty);
     }
 
     /**
@@ -1510,7 +1510,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setStroke
      * @see #fill(Shape)
      * @see #draw(Shape)
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #clip
      * @see #setClip(Shape)
@@ -1540,7 +1540,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see RenderingHints
      */
     public RenderingHints getRenderingHints(){
-        return hints;
+        return _hints;
     }
 
     /**
@@ -1557,7 +1557,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see RenderingHints
      */
     public void setRenderingHints(Map hints){
-        this.hints = new RenderingHints(hints);
+        this._hints = new RenderingHints(hints);
     }
 
     /**
@@ -1579,7 +1579,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @return <code>true</code> if the <code>Image</code> is
      * fully loaded and completely rendered;
      * <code>false</code> if the <code>Image</code> is still being loaded.
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #setComposite
      * @see #clip
@@ -1713,7 +1713,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param img the image to be rendered. This method does
      *            nothing if <code>img</code> is null.
      * @param xform the transformation from image space into user space
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #setComposite
      * @see #clip
@@ -1739,7 +1739,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param img the image to be rendered. This method does
      *            nothing if <code>img</code> is null.
      * @param xform the transformation from image space into user space
-     * @see #transform
+     * @see #_transform
      * @see #setTransform
      * @see #setComposite
      * @see #clip
@@ -1750,8 +1750,8 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     }
 
     protected void applyStroke(SimpleShape shape) {
-        if (stroke instanceof BasicStroke){
-            BasicStroke bs = (BasicStroke)stroke;
+        if (_stroke instanceof BasicStroke){
+            BasicStroke bs = (BasicStroke)_stroke;
             shape.setLineWidth(bs.getLineWidth());
             float[] dash = bs.getDashArray();
             if (dash != null) {
@@ -1762,8 +1762,8 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     }
 
     protected void applyPaint(SimpleShape shape) {
-        if (paint instanceof Color) {
-            shape.getFill().setForegroundColor((Color)paint);
+        if (_paint instanceof Color) {
+            shape.getFill().setForegroundColor((Color)_paint);
         }
     }
 }

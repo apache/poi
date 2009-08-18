@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -33,11 +31,11 @@ package org.apache.poi.util;
  */
 public class SystemOutLogger extends POILogger
 {
-    private String cat;
+    private String _cat;
 
     public void initialize(final String cat)
     {
-       this.cat=cat;
+       this._cat=cat;
     }
 
     /**
@@ -51,7 +49,7 @@ public class SystemOutLogger extends POILogger
     {
     	log(level, obj1, null);
     }
-    
+
     /**
      * Log a message
      *
@@ -62,7 +60,7 @@ public class SystemOutLogger extends POILogger
     public void log(final int level, final Object obj1,
                     final Throwable exception) {
         if (check(level)) {
-            System.out.println("["+cat+"] "+obj1);
+            System.out.println("["+_cat+"] "+obj1);
             if(exception != null) {
             	exception.printStackTrace(System.out);
             }
@@ -88,10 +86,10 @@ public class SystemOutLogger extends POILogger
             currentLevel = POILogger.DEBUG;
         }
 
-        if (level >= currentLevel)
+        if (level >= currentLevel) {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
 

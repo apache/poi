@@ -50,18 +50,14 @@ public class ConvertAnchor
             anchor.setDy2( (short) a.getDy2() );
             return anchor;
         }
-        else
-        {
-            HSSFChildAnchor a = (HSSFChildAnchor) userAnchor;
-            EscherChildAnchorRecord anchor = new EscherChildAnchorRecord();
-            anchor.setRecordId( EscherChildAnchorRecord.RECORD_ID );
-            anchor.setOptions( (short) 0x0000 );
-            anchor.setDx1( (short) Math.min(a.getDx1(), a.getDx2()) );
-            anchor.setDy1( (short) Math.min(a.getDy1(), a.getDy2()) );
-            anchor.setDx2( (short) Math.max(a.getDx2(), a.getDx1()) );
-            anchor.setDy2( (short) Math.max(a.getDy2(), a.getDy1()) );
-            return anchor;
-        }
+        HSSFChildAnchor a = (HSSFChildAnchor) userAnchor;
+        EscherChildAnchorRecord anchor = new EscherChildAnchorRecord();
+        anchor.setRecordId( EscherChildAnchorRecord.RECORD_ID );
+        anchor.setOptions( (short) 0x0000 );
+        anchor.setDx1( (short) Math.min(a.getDx1(), a.getDx2()) );
+        anchor.setDy1( (short) Math.min(a.getDy1(), a.getDy2()) );
+        anchor.setDx2( (short) Math.max(a.getDx2(), a.getDx1()) );
+        anchor.setDy2( (short) Math.max(a.getDy2(), a.getDy1()) );
+        return anchor;
     }
-
 }

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
@@ -64,7 +64,7 @@ public class POIFSFileSystem
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(POIFSFileSystem.class);
-    
+
     private static final class CloseIgnoringInputStream extends InputStream {
 
         private final InputStream _is;
@@ -81,18 +81,18 @@ public class POIFSFileSystem
             // do nothing
         }
     }
-    
+
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
      */
     public static InputStream createNonClosingInputStream(InputStream is) {
         return new CloseIgnoringInputStream(is);
     }
-    
+
     private PropertyTable _property_table;
     private List          _documents;
     private DirectoryNode _root;
-    
+
     /**
      * What big block size the file uses. Most files
      *  use 512 bytes, but a few use 4096
@@ -112,20 +112,20 @@ public class POIFSFileSystem
     /**
      * Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
      * EOF.  The stream is always closed.<p/>
-     * 
-     * Some streams are usable after reaching EOF (typically those that return <code>true</code> 
-     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream 
+     *
+     * Some streams are usable after reaching EOF (typically those that return <code>true</code>
+     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream
      * <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
      * stream in order to trap the <tt>close()</tt> call.  A convenience method (
      * <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
      * <pre>
      * InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
      * HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
-     * is.reset(); 
-     * doSomethingElse(is); 
+     * is.reset();
+     * doSomethingElse(is);
      * </pre>
      * Note also the special case of <tt>ByteArrayInputStream</tt> for which the <tt>close()</tt>
-     * method does nothing. 
+     * method does nothing.
      * <pre>
      * ByteArrayInputStream bais = ...
      * HSSFWorkbook wb = new HSSFWorkbook(bais); // calls bais.close() !
@@ -150,14 +150,14 @@ public class POIFSFileSystem
             // read the header block from the stream
             header_block_reader = new HeaderBlockReader(stream);
             bigBlockSize = header_block_reader.getBigBlockSize();
-            
+
             // read the rest of the stream into blocks
             data_blocks = new RawDataBlockList(stream, bigBlockSize);
             success = true;
         } finally {
             closeInputStream(stream, success);
         }
-        
+
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
@@ -175,11 +175,11 @@ public class POIFSFileSystem
         // init documents
         processProperties(
         		SmallBlockTableReader.getSmallDocumentBlocks(
-        				data_blocks, properties.getRoot(), 
+        				data_blocks, properties.getRoot(),
         				header_block_reader.getSBATStart()
-        		), 
-        		data_blocks, 
-        		properties.getRoot().getChildren(), 
+        		),
+        		data_blocks,
+        		properties.getRoot().getChildren(),
         		null,
         		header_block_reader.getPropertyStart()
         );
@@ -192,9 +192,9 @@ public class POIFSFileSystem
      * @param success <code>false</code> if an exception is currently being thrown in the calling method
      */
     private void closeInputStream(InputStream stream, boolean success) {
-        
+
         if(stream.markSupported() && !(stream instanceof ByteArrayInputStream)) {
-            String msg = "POIFS is closing the supplied input stream of type (" 
+            String msg = "POIFS is closing the supplied input stream of type ("
                     + stream.getClass().getName() + ") which supports mark/reset.  "
                     + "This will be a problem for the caller if the stream will still be used.  "
                     + "If that is the case the caller should wrap the input stream to avoid this close logic.  "
@@ -207,7 +207,7 @@ public class POIFSFileSystem
             if(success) {
                 throw new RuntimeException(e);
             }
-            // else not success? Try block did not complete normally 
+            // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
             e.printStackTrace();
         }
@@ -215,15 +215,15 @@ public class POIFSFileSystem
 
     /**
      * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream) 
+     *  support mark and reset, or be a PushbackInputStream)
      *  has a POIFS (OLE2) header at the start of it.
      * If your InputStream does not support mark / reset,
      *  then wrap it in a PushBackInputStream, then be
      *  sure to always use that, and not the original!
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream 
+     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 8 bytes 
+        // We want to peek at the first 8 bytes
         inp.mark(8);
 
         byte[] header = new byte[8];
@@ -237,7 +237,7 @@ public class POIFSFileSystem
         } else {
             inp.reset();
         }
-        
+
         // Did it match the signature?
         return (signature.get() == HeaderBlockConstants._signature);
     }
@@ -296,7 +296,7 @@ public class POIFSFileSystem
     {
         return getRoot().createDirectory(name);
     }
-    
+
     /**
      * Write the filesystem out
      *
@@ -520,7 +520,7 @@ public class POIFSFileSystem
 
                 processProperties(
                     small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(), 
+                    (( DirectoryProperty ) property).getChildren(),
                     new_dir, headerPropertiesStartAt);
             }
             else
@@ -532,8 +532,8 @@ public class POIFSFileSystem
                 if (property.shouldUseSmallBlocks())
                 {
                     document =
-                        new POIFSDocument(name, 
-                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt), 
+                        new POIFSDocument(name,
+                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
                                           size);
                 }
                 else
@@ -563,10 +563,7 @@ public class POIFSFileSystem
         {
             return (( POIFSViewable ) getRoot()).getViewableArray();
         }
-        else
-        {
-            return new Object[ 0 ];
-        }
+        return new Object[ 0 ];
     }
 
     /**
@@ -583,10 +580,7 @@ public class POIFSFileSystem
         {
             return (( POIFSViewable ) getRoot()).getViewableIterator();
         }
-        else
-        {
-            return Collections.EMPTY_LIST.iterator();
-        }
+        return Collections.EMPTY_LIST.iterator();
     }
 
     /**
@@ -620,7 +614,7 @@ public class POIFSFileSystem
     public int getBigBlockSize() {
     	return bigBlockSize;
     }
-    
+
     /* **********  END  begin implementation of POIFSViewable ********** */
 }   // end public class POIFSFileSystem
 

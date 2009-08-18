@@ -169,7 +169,7 @@ public class HexDump {
      *            outside the data array's bounds
      * @return output string
      */
-    
+
     public static String dump(final byte [] data, final long offset,
                             final int index) {
         StringBuffer buffer;
@@ -216,10 +216,10 @@ public class HexDump {
             }
             buffer.append(EOL);
             display_offset += chars_read;
-        }                 
+        }
         return buffer.toString();
     }
-    
+
 
     private static String dump(final long value)
     {
@@ -399,10 +399,10 @@ public class HexDump {
             while (bytesRemaining-- > 0)
             {
                 int c = in.read();
-                if (c == -1)
+                if (c == -1) {
                     break;
-                else
-                    buf.write(c);
+                }
+                buf.write(c);
             }
         }
 
@@ -417,13 +417,13 @@ public class HexDump {
         // The return type is char array because most callers will probably append the value to a
         // StringBuffer, or write it to a Stream / Writer so there is no need to create a String;
         char[] result = new char[charPos];
-        
+
         long value = pValue;
         do {
             result[--charPos] = _hexcodes[(int) (value & 0x0F)];
             value >>>= 4;
         } while (charPos > 1);
-    
+
         // Prefix added to avoid ambiguity
         result[0] = '0';
         result[1] = 'x';
@@ -456,7 +456,7 @@ public class HexDump {
 
     public static void main(String[] args) throws Exception {
         File file = new File(args[0]);
-        InputStream in = new BufferedInputStream(new FileInputStream(file)); 
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
         byte[] b = new byte[(int)file.length()];
         in.read(b);
         System.out.println(HexDump.dump(b, 0, 0));

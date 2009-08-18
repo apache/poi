@@ -40,10 +40,8 @@ public final class ShapeFactory {
     public static Shape createShape(EscherContainerRecord spContainer, Shape parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             return createShapeGroup(spContainer, parent);
-        } else {
-            return createSimpeShape(spContainer, parent);
-
         }
+        return createSimpeShape(spContainer, parent);
     }
 
     public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, Shape parent){

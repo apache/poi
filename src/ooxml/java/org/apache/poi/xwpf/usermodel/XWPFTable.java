@@ -155,10 +155,10 @@ public class XWPFTable {
      * @return the row at the position specified or null if no rows is defined or if the position is greather than the max size of rows array
      */
     public XWPFTableRow getRow(int pos) {
-        if (pos >= 0 && pos < ctTbl.sizeOfTrArray())
+        if (pos >= 0 && pos < ctTbl.sizeOfTrArray()) {
             return new XWPFTableRow(ctTbl.getTrArray(pos));
-        else
-            return null;
+        }
+        return null;
     }
 
 

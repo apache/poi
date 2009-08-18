@@ -58,8 +58,7 @@ public final class ZipHelper {
 	 * @throws OpenXML4JException
 	 *             Throws if internal error occurs.
 	 */
-	public static ZipEntry getCorePropertiesZipEntry(ZipPackage pkg)
-			throws OpenXML4JException {
+	public static ZipEntry getCorePropertiesZipEntry(ZipPackage pkg) {
 		PackageRelationship corePropsRel = pkg.getRelationshipsByType(
 				PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0);
 
@@ -96,10 +95,10 @@ public final class ZipHelper {
 	public static String getOPCNameFromZipItemName(String zipItemName) {
 		if (zipItemName == null)
 			throw new IllegalArgumentException("zipItemName");
-		if (zipItemName.startsWith(FORWARD_SLASH))
+		if (zipItemName.startsWith(FORWARD_SLASH)) {
 			return zipItemName;
-		else
-			return FORWARD_SLASH + zipItemName;
+		}
+		return FORWARD_SLASH + zipItemName;
 	}
 
 	/**

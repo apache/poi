@@ -311,7 +311,7 @@ private void output8Codes(OutputStream res) throws IOException {
 /**
  * Does the compression
  */
-private void compress(InputStream src, OutputStream res) throws IOException {
+public void compress(InputStream src, OutputStream res) throws IOException {
 	// Have we hit the end of the file yet?
 	boolean going = true;
 
@@ -375,11 +375,10 @@ private void compress(InputStream src, OutputStream res) throws IOException {
 			if(findRawCodeInBuffer() > -1) {
 				// Fits in, wait for next byte
 				continue;
-			} else {
-				// Doesn't fit, output
-				outputUncompressed(dataB,res);
-				rawCodeLen = 0;
 			}
+			// Doesn't fit, output
+			outputUncompressed(dataB,res);
+			rawCodeLen = 0;
 		} else {
 			// Nothing in rawCode before, so this byte
 			//  isn't in the buffer dictionary

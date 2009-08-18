@@ -32,10 +32,10 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
  * are largely stored as relations of the sheet
  */
 public class XSSFHyperlink implements Hyperlink {
-    private int type;
-    private PackageRelationship externalRel;
-    private CTHyperlink ctHyperlink;
-    private String location;
+    private int _type;
+    private PackageRelationship _externalRel;
+    private CTHyperlink _ctHyperlink;
+    private String _location;
 
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by XSSFCreationHelper
@@ -43,8 +43,8 @@ public class XSSFHyperlink implements Hyperlink {
      * @param type - the type of hyperlink to create
      */
     protected XSSFHyperlink(int type) {
-        this.type = type;
-        this.ctHyperlink = CTHyperlink.Factory.newInstance();
+        _type = type;
+        _ctHyperlink = CTHyperlink.Factory.newInstance();
     }
 
     /**
@@ -54,37 +54,36 @@ public class XSSFHyperlink implements Hyperlink {
      * @param hyperlinkRel the relationship in the underlying OPC package which stores the actual link's address
      */
     protected XSSFHyperlink(CTHyperlink ctHyperlink, PackageRelationship hyperlinkRel) {
-        this.ctHyperlink = ctHyperlink;
-        this.externalRel = hyperlinkRel;
+        _ctHyperlink = ctHyperlink;
+        _externalRel = hyperlinkRel;
 
         // Figure out the Hyperlink type and distination
 
         // If it has a location, it's internal
         if (ctHyperlink.getLocation() != null) {
-            type = Hyperlink.LINK_DOCUMENT;
-            location = ctHyperlink.getLocation();
+            _type = Hyperlink.LINK_DOCUMENT;
+            _location = ctHyperlink.getLocation();
         } else {
             // Otherwise it's somehow external, check
             //  the relation to see how
-            if (externalRel == null) {
+            if (_externalRel == null) {
                 if (ctHyperlink.getId() != null) {
                     throw new IllegalStateException("The hyperlink for cell " + ctHyperlink.getRef() + " references relation " + ctHyperlink.getId() + ", but that didn't exist!");
-                } else {
-                    throw new IllegalStateException("A sheet hyperlink must either have a location, or a relationship. Found:\n" + ctHyperlink);
                 }
+                throw new IllegalStateException("A sheet hyperlink must either have a location, or a relationship. Found:\n" + ctHyperlink);
             }
 
-            URI target = externalRel.getTargetURI();
-            location = target.toString();
+            URI target = _externalRel.getTargetURI();
+            _location = target.toString();
 
             // Try to figure out the type
-            if (location.startsWith("http://") || location.startsWith("https://")
-                    || location.startsWith("ftp://")) {
-                type = Hyperlink.LINK_URL;
-            } else if (location.startsWith("mailto:")) {
-                type = Hyperlink.LINK_EMAIL;
+            if (_location.startsWith("http://") || _location.startsWith("https://")
+                    || _location.startsWith("ftp://")) {
+                _type = Hyperlink.LINK_URL;
+            } else if (_location.startsWith("mailto:")) {
+                _type = Hyperlink.LINK_EMAIL;
             } else {
-                type = Hyperlink.LINK_FILE;
+                _type = Hyperlink.LINK_FILE;
             }
         }
     }
@@ -93,7 +92,7 @@ public class XSSFHyperlink implements Hyperlink {
      * Returns the underlying hyperlink object
      */
     protected CTHyperlink getCTHyperlink() {
-        return ctHyperlink;
+        return _ctHyperlink;
     }
 
     /**
@@ -101,7 +100,7 @@ public class XSSFHyperlink implements Hyperlink {
      * this hyperlink?
      */
     public boolean needsRelationToo() {
-        return (type != Hyperlink.LINK_DOCUMENT);
+        return (_type != Hyperlink.LINK_DOCUMENT);
     }
 
     /**
@@ -111,10 +110,10 @@ public class XSSFHyperlink implements Hyperlink {
         if (needsRelationToo()) {
             // Generate the relation
             PackageRelationship rel =
-                    sheetPart.addExternalRelationship(location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
+                    sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
 
             // Update the r:id
-            ctHyperlink.setId(rel.getId());
+            _ctHyperlink.setId(rel.getId());
         }
     }
 
@@ -124,7 +123,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @return the type of this hyperlink
      */
     public int getType() {
-        return type;
+        return _type;
     }
 
     /**
@@ -132,7 +131,7 @@ public class XSSFHyperlink implements Hyperlink {
      * es A55
      */
     public String getCellRef() {
-        return ctHyperlink.getRef();
+        return _ctHyperlink.getRef();
     }
 
     /**
@@ -141,7 +140,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @return the address of this hyperlink
      */
     public String getAddress() {
-        return location;
+        return _location;
     }
 
     /**
@@ -150,7 +149,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @return text to display
      */
     public String getLabel() {
-        return ctHyperlink.getDisplay();
+        return _ctHyperlink.getDisplay();
     }
 
     /**
@@ -160,7 +159,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @return location
      */
     public String getLocation() {
-        return ctHyperlink.getLocation();
+        return _ctHyperlink.getLocation();
     }
 
     /**
@@ -169,7 +168,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @param label text label for this hyperlink
      */
     public void setLabel(String label) {
-        ctHyperlink.setDisplay(label);
+        _ctHyperlink.setDisplay(label);
     }
 
     /**
@@ -179,7 +178,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @param location - string representing a location of this hyperlink
      */
     public void setLocation(String location) {
-        ctHyperlink.setLocation(location);
+        _ctHyperlink.setLocation(location);
     }
 
     /**
@@ -188,9 +187,9 @@ public class XSSFHyperlink implements Hyperlink {
      * @param address - the address of this hyperlink
      */
     public void setAddress(String address) {
-        location = address;
-        //we must set location for internal hyperlinks 
-        if (type == Hyperlink.LINK_DOCUMENT) {
+        _location = address;
+        //we must set location for internal hyperlinks
+        if (_type == Hyperlink.LINK_DOCUMENT) {
             setLocation(address);
         }
     }
@@ -199,11 +198,11 @@ public class XSSFHyperlink implements Hyperlink {
      * Assigns this hyperlink to the given cell reference
      */
     protected void setCellReference(String ref) {
-        ctHyperlink.setRef(ref);
+        _ctHyperlink.setRef(ref);
     }
 
     private CellReference buildCellReference() {
-        return new CellReference(ctHyperlink.getRef());
+        return new CellReference(_ctHyperlink.getRef());
     }
 
 
@@ -251,7 +250,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
     public void setFirstColumn(int col) {
-        ctHyperlink.setRef(
+        _ctHyperlink.setRef(
                 new CellReference(
                         getFirstRow(), col
                 ).formatAsString()
@@ -273,7 +272,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @param row the 0-based row of the first cell that contains the hyperlink
      */
     public void setFirstRow(int row) {
-        ctHyperlink.setRef(
+        _ctHyperlink.setRef(
                 new CellReference(
                         row, getFirstColumn()
                 ).formatAsString()

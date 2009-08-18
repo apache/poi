@@ -45,7 +45,7 @@ public final class BTreeSet extends AbstractSet
     public BTreeNode root;
     private Comparator comparator = null;
     private int order;
-    private int size = 0;
+    int size = 0;
 
     /*
      *                             Constructors
@@ -172,7 +172,7 @@ public final class BTreeSet extends AbstractSet
     /*
      * Private methods
     */
-    private int compare(Object x, Object y)
+    int compare(Object x, Object y)
     {
         return (comparator == null ? ((Comparable)x).compareTo(y) : comparator.compare(x, y));
     }
@@ -270,20 +270,18 @@ public final class BTreeSet extends AbstractSet
                 }
             }
 
-            else
-            { //Your not a leaf so simply find and return the successor of lastReturned
-                currentNode = currentNode.entries[index].child;
-                parentIndex.push(new Integer(index));
+            // else - You're not a leaf so simply find and return the successor of lastReturned
+            currentNode = currentNode.entries[index].child;
+            parentIndex.push(new Integer(index));
 
-                while (currentNode.entries[0].child != null)
-                {
-                    currentNode = currentNode.entries[0].child;
-                    parentIndex.push(new Integer(0));
-                }
-
-                index = 1;
-                return currentNode.entries[0].element;
+            while (currentNode.entries[0].child != null)
+            {
+                currentNode = currentNode.entries[0].child;
+                parentIndex.push(new Integer(0));
             }
+
+            index = 1;
+            return currentNode.entries[0].element;
         }
     }
 
@@ -329,21 +327,23 @@ public final class BTreeSet extends AbstractSet
                 else
                 { // Promote splitNode
                     parent.insertSplitNode(splitNode, this, rightSibling, parentIndex);
-                    if (BTreeSet.this.compare(x, parent.entries[parentIndex].element) < 0) return insert(x, parentIndex);
-                    else return rightSibling.insert(x, parentIndex + 1);
+                    if (BTreeSet.this.compare(x, parent.entries[parentIndex].element) < 0) {
+                        return insert(x, parentIndex);
+                    }
+                    return rightSibling.insert(x, parentIndex + 1);
                 }
             }
 
             else if (isLeaf())
             { // If leaf, simply insert the non-duplicate element
                 int insertAt = childToInsertAt(x, true);
-                if (insertAt == -1) return false; // Determine if the element already exists
-                else
-                {
-                    insertNewElement(x, insertAt);
-                    BTreeSet.this.size++;
-                    return true;
+                // Determine if the element already exists
+                if (insertAt == -1) {
+                    return false;
                 }
+                insertNewElement(x, insertAt);
+                BTreeSet.this.size++;
+                return true;
             }
 
             else
@@ -388,22 +388,19 @@ public final class BTreeSet extends AbstractSet
                     return true;
                 }
 
-                else
-                { // If leaf and have less than MIN elements, than prepare the BTreeSet for deletion
-                    temp.prepareForDeletion(parentIndex);
-                    temp.deleteElement(x);
-                    BTreeSet.this.size--;
-                    temp.fixAfterDeletion(priorParentIndex);
-                    return true;
-                }
+                // else - If leaf and have less than MIN elements, than prepare the BTreeSet for deletion
+                temp.prepareForDeletion(parentIndex);
+                temp.deleteElement(x);
+                BTreeSet.this.size--;
+                temp.fixAfterDeletion(priorParentIndex);
+                return true;
             }
 
-            else
-            { // Only delete at leaf so first switch with successor than delete
-                temp.switchWithSuccessor(x);
-                parentIndex = temp.childToInsertAt(x, false) + 1;
-                return temp.entries[parentIndex].child.delete(x, parentIndex);
-            }
+            // else - Only delete at leaf so first switch with successor than delete
+            temp.switchWithSuccessor(x);
+            parentIndex = temp.childToInsertAt(x, false) + 1;
+            return temp.entries[parentIndex].child.delete(x, parentIndex);
+
         }
 
 

@@ -324,14 +324,14 @@ public class XSSFRichTextString implements RichTextString {
      * Returns the plain string representation.
      */
     public String getString() {
-        if(st.sizeOfRArray() == 0) return st.getT();
-        else {
-            StringBuffer buf = new StringBuffer();
-            for(CTRElt r : st.getRArray()){
-                buf.append(r.getT());
-            }
-            return buf.toString();
+        if(st.sizeOfRArray() == 0) {
+            return st.getT();
         }
+        StringBuffer buf = new StringBuffer();
+        for(CTRElt r : st.getRArray()){
+            buf.append(r.getT());
+        }
+        return buf.toString();
     }
 
     /**

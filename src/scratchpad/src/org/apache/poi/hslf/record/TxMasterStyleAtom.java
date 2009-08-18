@@ -171,26 +171,26 @@ public final class TxMasterStyleAtom extends RecordAtom {
     protected TextProp[] getParagraphProps(int type, int level){
         if (level != 0 || type >= MAX_INDENT){
             return StyleTextPropAtom.paragraphTextPropTypes;
-        } else {
-            return new TextProp[] {
-                    new ParagraphFlagsTextProp(),
-                    new TextProp(2, 0x80, "bullet.char"),
-                    new TextProp(2, 0x10, "bullet.font"),
-                    new TextProp(2, 0x40, "bullet.size"),
-                    new TextProp(4, 0x20, "bullet.color"),
-                    new TextProp(2, 0xD00, "alignment"),
-                    new TextProp(2, 0x1000, "linespacing"),
-                    new TextProp(2, 0x2000, "spacebefore"),
-                    new TextProp(2, 0x4000, "spaceafter"),
-                    new TextProp(2, 0x8000, "text.offset"),
-                    new TextProp(2, 0x10000, "bullet.offset"),
-                    new TextProp(2, 0x20000, "defaulttab"),
-                    new TextProp(2, 0x40000, "para_unknown_2"),
-                    new TextProp(2, 0x80000, "para_unknown_3"),
-                    new TextProp(2, 0x100000, "para_unknown_4"),
-                    new TextProp(2, 0x200000, "para_unknown_5")
-            };
         }
+        return new TextProp[] {
+                new ParagraphFlagsTextProp(),
+                new TextProp(2, 0x80, "bullet.char"),
+                new TextProp(2, 0x10, "bullet.font"),
+                new TextProp(2, 0x40, "bullet.size"),
+                new TextProp(4, 0x20, "bullet.color"),
+                new TextProp(2, 0xD00, "alignment"),
+                new TextProp(2, 0x1000, "linespacing"),
+                new TextProp(2, 0x2000, "spacebefore"),
+                new TextProp(2, 0x4000, "spaceafter"),
+                new TextProp(2, 0x8000, "text.offset"),
+                new TextProp(2, 0x10000, "bullet.offset"),
+                new TextProp(2, 0x20000, "defaulttab"),
+                new TextProp(2, 0x40000, "para_unknown_2"),
+                new TextProp(2, 0x80000, "para_unknown_3"),
+                new TextProp(2, 0x100000, "para_unknown_4"),
+                new TextProp(2, 0x200000, "para_unknown_5")
+        };
+
     }
 
     /**
@@ -202,16 +202,16 @@ public final class TxMasterStyleAtom extends RecordAtom {
     protected TextProp[] getCharacterProps(int type, int level){
         if (level != 0 || type >= MAX_INDENT){
             return StyleTextPropAtom.characterTextPropTypes;
-        } else
-         return new TextProp[] {
-				new CharFlagsTextProp(),
-				new TextProp(2, 0x10000, "font.index"),
-				new TextProp(2, 0x20000, "char_unknown_1"),
-				new TextProp(4, 0x40000, "char_unknown_2"),
-				new TextProp(2, 0x80000, "font.size"),
-				new TextProp(2, 0x100000, "char_unknown_3"),
-				new TextProp(4, 0x200000, "font.color"),
-				new TextProp(2, 0x800000, "char_unknown_4")
-	    };
+        }
+        return new TextProp[] {
+                new CharFlagsTextProp(),
+                new TextProp(2, 0x10000, "font.index"),
+                new TextProp(2, 0x20000, "char_unknown_1"),
+                new TextProp(4, 0x40000, "char_unknown_2"),
+                new TextProp(2, 0x80000, "font.size"),
+                new TextProp(2, 0x100000, "char_unknown_3"),
+                new TextProp(4, 0x200000, "font.color"),
+                new TextProp(2, 0x800000, "char_unknown_4")
+        };
     }
 }

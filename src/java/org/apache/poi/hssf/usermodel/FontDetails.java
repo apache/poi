@@ -29,9 +29,9 @@ import java.util.StringTokenizer;
  */
 public class FontDetails
 {
-    private String fontName;
-    private int height;
-    private Map charWidths = new HashMap();
+    private String _fontName;
+    private int _height;
+    private final Map<Character, Integer> charWidths = new HashMap<Character, Integer>();
 
     /**
      * Construct the font details with the given name and height.
@@ -41,18 +41,18 @@ public class FontDetails
      */
     public FontDetails( String fontName, int height )
     {
-        this.fontName = fontName;
-        this.height = height;
+        _fontName = fontName;
+        _height = height;
     }
 
     public String getFontName()
     {
-        return fontName;
+        return _fontName;
     }
 
     public int getHeight()
     {
-        return height;
+        return _height;
     }
 
     public void addChar( char c, int width )
@@ -68,10 +68,10 @@ public class FontDetails
     public int getCharWidth( char c )
     {
         Integer widthInteger = (Integer)(charWidths.get(new Character(c)));
-        if (widthInteger == null && c != 'W')
+        if (widthInteger == null && c != 'W') {
             return getCharWidth('W');
-        else
-            return widthInteger.intValue();
+        }
+        return widthInteger.intValue();
     }
 
     public void addChars( char[] characters, int[] widths )
@@ -82,15 +82,15 @@ public class FontDetails
         }
     }
 
-	protected static String buildFontHeightProperty(String fontName) {
-		return "font." + fontName + ".height";
-	}
-	protected static String buildFontWidthsProperty(String fontName) {
-		return "font." + fontName + ".widths";
-	}
-	protected static String buildFontCharactersProperty(String fontName) {
-		return "font." + fontName + ".characters";
-	}
+    protected static String buildFontHeightProperty(String fontName) {
+        return "font." + fontName + ".height";
+    }
+    protected static String buildFontWidthsProperty(String fontName) {
+        return "font." + fontName + ".widths";
+    }
+    protected static String buildFontCharactersProperty(String fontName) {
+        return "font." + fontName + ".characters";
+    }
 
     /**
      * Create an instance of <code>FontDetails</code> by loading them from the
@@ -173,6 +173,4 @@ public class FontDetails
 
         return list;
     }
-
-
 }

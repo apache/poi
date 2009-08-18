@@ -58,24 +58,21 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         {
             return writeData( offset, data, rawData );
         }
-        else
+        byte[] buffer = new byte[getRawDataSize()];
+        int pos = 0;
+        for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
         {
-            byte[] buffer = new byte[getRawDataSize()];
-            int pos = 0;
-            for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
-            {
-                EscherRecord r = (EscherRecord) iterator.next();
-                pos += r.serialize(pos, buffer, new NullEscherSerializationListener() );
-            }
-
-            return writeData( offset, data, buffer );
+            EscherRecord r = (EscherRecord) iterator.next();
+            pos += r.serialize(pos, buffer, new NullEscherSerializationListener() );
         }
+
+        return writeData( offset, data, buffer );
     }
-    
+
     /**
      * Process the bytes into escher records.
      * (Not done by default in case we break things,
-     *  unless you set the "poi.deserialize.escher" 
+     *  unless you set the "poi.deserialize.escher"
      *  system property)
      */
     public void processChildRecords() {
@@ -140,5 +137,4 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         LittleEndian.putShort(data, 0 + offset, ContinueRecord.sid);
         LittleEndian.putShort(data, 2 + offset, (short) sizeExcludingHeader);
     }
-
 }
