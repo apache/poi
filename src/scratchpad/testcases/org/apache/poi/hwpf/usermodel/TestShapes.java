@@ -19,24 +19,23 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  * Test the shapes handling
  */
 public final class TestShapes extends TestCase {
-	private String dirname = System.getProperty("HWPF.testdata.path");
 
 	/**
 	 * two shapes, second is a group
 	 */
 	public void testShapes() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/WithArtShapes.doc"));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("WithArtShapes.doc");
 
 		List shapes = doc.getShapesTable().getAllShapes();
 		List vshapes = doc.getShapesTable().getVisibleShapes();

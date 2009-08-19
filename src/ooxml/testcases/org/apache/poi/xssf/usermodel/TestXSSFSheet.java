@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.File;
-
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -54,13 +52,7 @@ public class TestXSSFSheet extends BaseTestSheet {
     }
 
     public void testExistingHeaderFooter() throws Exception {
-        File xml = new File(
-                System.getProperty("HSSF.testdata.path") +
-                        File.separator + "45540_classic_Header.xlsx"
-        );
-        assertTrue(xml.exists());
-
-        XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx");
         XSSFOddHeader hdr;
         XSSFOddFooter ftr;
 

@@ -200,6 +200,7 @@ under the License.
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/> <!-- ooxml tests use some utilities from main tests -->
+        <pathelement location="${scratchpad.output.test.dir}"/> 
         <pathelement location="${junit.jar1.dir}"/>
     </path>
 
@@ -519,6 +520,7 @@ under the License.
         <path refid="ooxml.classpath"/>
         <pathelement path="${ooxml.output.dir}"/>
         <pathelement path="${main.output.test.dir}"/>
+        <pathelement path="${scratchpad.output.test.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>

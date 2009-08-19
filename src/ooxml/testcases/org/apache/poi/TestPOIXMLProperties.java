@@ -175,7 +175,7 @@ public final class TestPOIXMLProperties extends TestCase {
 
 	public void testGetSetRevision() {
 		String revision = _coreProperties.getRevision();
-		assertTrue("Revision number is 1", new Integer(_coreProperties.getRevision()).intValue() > 1);
+		assertTrue("Revision number is 1", new Integer(revision)> 1);
 		_coreProperties.setRevision("20");
 		assertEquals("20", _coreProperties.getRevision());
 		_coreProperties.setRevision("20xx");

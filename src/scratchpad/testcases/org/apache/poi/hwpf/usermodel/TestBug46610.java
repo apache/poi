@@ -19,34 +19,28 @@ package org.apache.poi.hwpf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.io.FileInputStream;
-
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 public class TestBug46610 extends TestCase {
-  private String dirname;
-
-  protected void setUp() {
-    dirname = System.getProperty("HWPF.testdata.path");
-  }
 
   public void testUtf() throws Exception {
-    HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/Bug46610_1.doc"));
+    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_1.doc");
 
     runExtract(doc);
   }
 
   public void testUtf2() throws Exception {
-    HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/Bug46610_2.doc"));
+    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_2.doc");
 
     runExtract(doc);
   }
 
   public void testExtraction() throws Exception {
-    HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/Bug46610_3.doc"));
+    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_3.doc");
 
     String text = runExtract(doc);
 

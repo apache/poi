@@ -38,6 +38,14 @@ import org.apache.poi.util.TempFile;
  * @author Josh Micich
  */
 public class XSSFTestDataSamples {
+    
+    public static InputStream openSampleFileStream(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+    }
+    public static byte[] getTestDataFileContent(String fileName) {
+        return HSSFTestDataSamples.getTestDataFileContent(fileName);
+    }
+
 	public static final XSSFWorkbook openSampleWorkbook(String sampleName) {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
 		try {

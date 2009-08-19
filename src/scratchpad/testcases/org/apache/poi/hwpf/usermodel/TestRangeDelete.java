@@ -17,11 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PAPX;
 
 /**
@@ -48,10 +47,7 @@ public final class TestRangeDelete extends TestCase {
 	private String illustrativeDocFile;
 
 	protected void setUp() {
-
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		illustrativeDocFile = dirname + "/testRangeDelete.doc";
+		illustrativeDocFile = "testRangeDelete.doc";
 	}
 
 	/**
@@ -59,7 +55,7 @@ public final class TestRangeDelete extends TestCase {
 	 */
 	public void testOpen() throws Exception {
 
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
@@ -67,7 +63,7 @@ public final class TestRangeDelete extends TestCase {
 	 */
 	public void testDocStructure() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 		Range range;
 		Section section;
 		Paragraph para;
@@ -132,7 +128,7 @@ public final class TestRangeDelete extends TestCase {
 	 */
 	public void testRangeDeleteOne() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getOverallRange();
 		assertEquals(1, range.numSections());
@@ -178,7 +174,7 @@ public final class TestRangeDelete extends TestCase {
 	 */
 	public void testRangeDeleteAll() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());

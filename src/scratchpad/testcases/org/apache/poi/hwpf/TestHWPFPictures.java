@@ -17,9 +17,6 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -43,33 +40,32 @@ public final class TestHWPFPictures extends TestCase {
 	private String imgDFile;
 
 	protected void setUp() {
-		String dirname = System.getProperty("HWPF.testdata.path");
 
-		docAFile = dirname + "/testPictures.doc";
-		docBFile = dirname + "/two_images.doc";
-		docCFile = dirname + "/vector_image.doc";
-		docDFile = dirname + "/GaiaTest.doc";
+		docAFile = "testPictures.doc";
+		docBFile = "two_images.doc";
+		docCFile = "vector_image.doc";
+		docDFile = "GaiaTest.doc";
 
-		imgAFile = dirname + "/simple_image.jpg";
-		imgBFile = dirname + "/simple_image.png";
-		imgCFile = dirname + "/vector_image.emf";
-		imgDFile = dirname + "/GaiaTestImg.png";
+		imgAFile = "simple_image.jpg";
+		imgBFile = "simple_image.png";
+		imgCFile = "vector_image.emf";
+		imgDFile = "GaiaTestImg.png";
 	}
 
 	/**
 	 * Test just opening the files
 	 */
 	public void testOpen() throws Exception {
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(docAFile));
-		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
+		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 	}
 
 	/**
 	 * Test that we have the right numbers of images in each file
 	 */
 	public void testImageCount() throws Exception {
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(docAFile));
-		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
+		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 
 		assertNotNull(docA.getPicturesTable());
 		assertNotNull(docB.getPicturesTable());
@@ -88,7 +84,7 @@ public final class TestHWPFPictures extends TestCase {
 	 * Test that we have the right images in at least one file
 	 */
 	public void testImageData() throws Exception {
-		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 		PicturesTable picB = docB.getPicturesTable();
 		List picturesB = picB.getAllPictures();
 
@@ -115,7 +111,7 @@ public final class TestHWPFPictures extends TestCase {
 	 * Test that compressed image data is correctly returned.
 	 */
 	public void testCompressedImageData() throws Exception {
-		HWPFDocument docC = new HWPFDocument(new FileInputStream(docCFile));
+		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
 		PicturesTable picC = docC.getPicturesTable();
 		List picturesC = picC.getAllPictures();
 
@@ -136,7 +132,7 @@ public final class TestHWPFPictures extends TestCase {
 	 *  bug #44937
 	 */
 	public void BROKENtestEscherDrawing() throws Exception {
-		HWPFDocument docD = new HWPFDocument(new FileInputStream(docDFile));
+		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
 		List allPictures = docD.getPicturesTable().getAllPictures();
 
 		assertEquals(1, allPictures.size());
@@ -158,23 +154,6 @@ public final class TestHWPFPictures extends TestCase {
 	}
 
 	private static byte[] readFile(String file) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			byte[] buffer = new byte[1024];
-
-			int read = 0;
-			while(read > -1) {
-				read = fis.read(buffer);
-				if(read > 0) {
-					baos.write(buffer,0,read);
-				}
-			}
-			fis.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		return baos.toByteArray();
+		return HWPFTestDataSamples.getTestDataFileContent(file);
 	}
 }

@@ -17,12 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.StyleSheet;
 
 /**
@@ -32,14 +30,11 @@ import org.apache.poi.hwpf.model.StyleSheet;
  */
 public final class TestProblems extends HWPFTestCase {
 
-	private String dirname = System.getProperty("HWPF.testdata.path");
-
     /**
      * ListEntry passed no ListTable
      */
     public void testListEntryNoListTable() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "ListEntryNoListTable.doc")));
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ListEntryNoListTable.doc");
 
     	Range r = doc.getRange();
     	StyleSheet styleSheet = doc.getStyleSheet();
@@ -56,8 +51,7 @@ public final class TestProblems extends HWPFTestCase {
 	 * AIOOB for TableSprmUncompressor.unCompressTAPOperation
 	 */
 	public void testSprmAIOOB() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "AIOOB-Tap.doc")));
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile("AIOOB-Tap.doc");
 
     	Range r = doc.getRange();
     	StyleSheet styleSheet = doc.getStyleSheet();
@@ -75,8 +69,7 @@ public final class TestProblems extends HWPFTestCase {
 	 * Bugs #45062 and #44292
 	 */
 	public void testTableCellLastParagraph() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "Bug44292.doc")));
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44292.doc");
 		Range r = doc.getRange();
 		assertEquals(6, r.numParagraphs());
 		assertEquals(0, r.getStartOffset());
@@ -115,8 +108,7 @@ public final class TestProblems extends HWPFTestCase {
 	}
 
 	public void testRangeDelete() throws Exception {
-    	HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "Bug28627.doc")));
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug28627.doc");
 
     	Range range = doc.getRange();
 		int numParagraphs = range.numParagraphs();
@@ -155,8 +147,7 @@ public final class TestProblems extends HWPFTestCase {
 	 */
 	public void testEncryptedFile() throws Exception {
 		try {
-			new HWPFDocument(new FileInputStream(
-    			new File(dirname, "PasswordProtected.doc")));
+			HWPFTestDataSamples.openSampleFile("PasswordProtected.doc");
 			fail();
 		} catch(EncryptedDocumentException e) {
 			// Good
@@ -164,8 +155,7 @@ public final class TestProblems extends HWPFTestCase {
 	}
 
 	public void testWriteProperties() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(
-    			new File(dirname, "SampleDoc.doc")));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
 		assertEquals("Nick Burch", doc.getSummaryInformation().getAuthor());
 
 		// Write and read

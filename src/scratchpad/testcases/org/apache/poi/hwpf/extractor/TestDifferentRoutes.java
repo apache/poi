@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import java.io.FileInputStream;
 import java.util.Iterator;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -53,10 +53,7 @@ public final class TestDifferentRoutes extends TestCase {
 	private HWPFDocument doc;
 
     protected void setUp() throws Exception {
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		String filename = dirname + "/test2.doc";
-		doc = new HWPFDocument(new FileInputStream(filename));
+		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
     }
 
     /**

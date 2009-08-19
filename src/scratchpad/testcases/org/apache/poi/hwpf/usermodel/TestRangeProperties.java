@@ -17,11 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PropertyNode;
 
 import junit.framework.TestCase;
@@ -66,16 +65,9 @@ public final class TestRangeProperties extends TestCase {
 	private HWPFDocument u;
 	private HWPFDocument a;
 
-	private String dirname;
-
 	protected void setUp() throws Exception {
-		dirname = System.getProperty("HWPF.testdata.path");
-		u = new HWPFDocument(
-				new FileInputStream(new File(dirname, "HeaderFooterUnicode.doc"))
-		);
-		a = new HWPFDocument(
-				new FileInputStream(new File(dirname, "SampleDoc.doc"))
-		);
+		u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
+		a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
 	}
 
 

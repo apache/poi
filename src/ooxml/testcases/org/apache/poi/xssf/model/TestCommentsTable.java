@@ -19,7 +19,6 @@ package org.apache.poi.xssf.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -120,14 +119,7 @@ public class TestCommentsTable extends TestCase {
 	}
 
 	public void testDontLoostNewLines() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		OPCPackage pkg = OPCPackage.open(xml.toString());
-		XSSFWorkbook wb = new XSSFWorkbook(pkg);
+		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		List<POIXMLDocumentPart> rels = wb.getSheetAt(0).getRelations();
 		CommentsTable ct = null;
 		for(POIXMLDocumentPart p : rels) {
@@ -171,13 +163,7 @@ public class TestCommentsTable extends TestCase {
 	}
 
 	public void testExisting() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		Sheet sheet1 = workbook.getSheetAt(0);
 		Sheet sheet2 = workbook.getSheetAt(1);
 
@@ -207,13 +193,7 @@ public class TestCommentsTable extends TestCase {
 	}
 
 	public void testWriteRead() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
 
@@ -260,13 +240,7 @@ public class TestCommentsTable extends TestCase {
 	}
 
 	public void testReadWriteMultipleAuthors() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithMoreVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
 

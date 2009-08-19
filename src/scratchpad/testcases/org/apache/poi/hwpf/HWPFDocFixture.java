@@ -41,17 +41,8 @@ public final class HWPFDocFixture
   {
     try
     {
-      String filename = System.getProperty("HWPF.testdata.path");
-      if (filename == null)
-      {
-        filename = "c:";
-      }
-
-      filename = filename + "/test.doc";
-
-
-      POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(
-        new File(filename)));
+      POIFSFileSystem filesystem = new POIFSFileSystem(
+              HWPFTestDataSamples.openSampleFileStream("test.doc"));
 
       DocumentEntry documentProps =
         (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");

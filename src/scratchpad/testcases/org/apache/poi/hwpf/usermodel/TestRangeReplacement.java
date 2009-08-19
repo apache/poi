@@ -17,11 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  *	Test to see if Range.replaceText() works even if the Range contains a
@@ -40,21 +39,14 @@ public final class TestRangeReplacement extends TestCase {
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the Apache Software Foundation and all the POI contributors for their assistance in this matter.\r";
 	private String expectedText3 = "Thank you, Apache Software Foundation!\r";
 
-	private String illustrativeDocFile;
-
-	protected void setUp() {
-
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		illustrativeDocFile = dirname + "/testRangeReplacement.doc";
-	}
+	private String illustrativeDocFile = "testRangeReplacement.doc";
 
 	/**
 	 * Test just opening the files
 	 */
 	public void testOpen() throws Exception {
 
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
@@ -62,7 +54,7 @@ public final class TestRangeReplacement extends TestCase {
 	 */
 	public void testDocStructure() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(414, range.text().length());
@@ -91,7 +83,7 @@ public final class TestRangeReplacement extends TestCase {
 	 */
 	public void testRangeReplacementOne() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());
@@ -124,7 +116,7 @@ public final class TestRangeReplacement extends TestCase {
 	 */
 	public void testRangeReplacementAll() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());
