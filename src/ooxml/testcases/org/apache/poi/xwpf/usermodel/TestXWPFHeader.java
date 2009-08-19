@@ -24,6 +24,9 @@ import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
 public class TestXWPFHeader extends TestCase {
 	
@@ -54,7 +57,7 @@ public class TestXWPFHeader extends TestCase {
 	public void testSetHeader() throws IOException {
 		File sampleFile = new File(
 				System.getProperty("HWPF.testdata.path") +
-				File.separator + "sampleDoc.docx"
+				File.separator + "SampleDoc.docx"
 		);
 		assertTrue(sampleFile.exists());
 		XWPFDocument sampleDoc;
@@ -64,10 +67,31 @@ public class TestXWPFHeader extends TestCase {
 		// no header is set (yet)
 		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 		assertNull(policy.getDefaultHeader());
+		assertNull(policy.getFirstPageHeader());
+		assertNull(policy.getDefaultFooter());
+		
+		CTP ctP1 = CTP.Factory.newInstance();
+		CTR ctR1 = ctP1.addNewR();
+		CTText t = ctR1.addNewT();
+		t.set("Paragraph in header");
+		
+		CTP ctP2 = CTP.Factory.newInstance();
+		CTR ctR2 = ctP2.addNewR();
+		CTText t2 = ctR2.addNewT();
+		t2.set("Second paragraph.. for footer");
+		
+		XWPFParagraph p1 = new XWPFParagraph(ctP1);
+		XWPFParagraph[] pars = new XWPFParagraph[1];
+		pars[0] = p1;
+
+		XWPFParagraph p2 = new XWPFParagraph(ctP2);
+		XWPFParagraph[] pars2 = new XWPFParagraph[1];
+		pars2[0] = p2;
+		
 		// set a default header and test it is not null
-		policy.createHeader(policy.DEFAULT);
+		policy.createHeader(policy.DEFAULT, pars);
 		policy.createHeader(policy.FIRST);
-		policy.createFooter(policy.DEFAULT);
+		policy.createFooter(policy.DEFAULT, pars2);
 		
 		assertNotNull(policy.getDefaultHeader());
 		assertNotNull(policy.getFirstPageHeader());
