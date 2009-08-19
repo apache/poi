@@ -25,31 +25,16 @@ import junit.framework.TestCase;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 
 /**
  * Tests for {@link XSSFReader}
  */
 public final class TestXSSFReader extends TestCase {
-	private String dirName;
-
-	@Override
-	protected void setUp() {
-
-		dirName = System.getProperty("HSSF.testdata.path");
-		assertNotNull(dirName);
-		assertTrue( (new File(dirName)).exists() );
-
-		// Use system out logger
-		System.setProperty(
-				"org.apache.poi.util.POILogger",
-				"org.apache.poi.util.SystemOutLogger"
-		);
-	}
 
 	public void testGetBits() throws Exception {
-		File f = new File(dirName, "SampleSS.xlsx");
-		OPCPackage pkg = OPCPackage.open(f.toString());
+		OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -62,8 +47,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testStyles() throws Exception {
-		File f = new File(dirName, "SampleSS.xlsx");
-		OPCPackage pkg = OPCPackage.open(f.toString());
+		OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -72,8 +56,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testStrings() throws Exception {
-		File f = new File(dirName, "SampleSS.xlsx");
-		OPCPackage pkg = OPCPackage.open(f.toString());
+        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -82,8 +65,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testSheets() throws Exception {
-		File f = new File(dirName, "SampleSS.xlsx");
-		OPCPackage pkg = OPCPackage.open(f.toString());
+        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 		byte[] data = new byte[4096];
@@ -115,8 +97,7 @@ public final class TestXSSFReader extends TestCase {
 	 * (as they are defined in the workbook.xml)
 	 */
 	public void testOrderOfSheets() throws Exception {
-		File f = new File(dirName, "reordered_sheets.xlsx");
-		OPCPackage pkg = OPCPackage.open(f.toString());
+        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("reordered_sheets.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 

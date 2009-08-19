@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.extractor;
 import java.io.FileInputStream;
 
 import junit.framework.TestCase;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  * Tests for bugs with the WordExtractor
@@ -27,15 +28,10 @@ import junit.framework.TestCase;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestWordExtractorBugs extends TestCase {
-	private String dirname;
-	protected void setUp() {
-		dirname = System.getProperty("HWPF.testdata.path");
-	}
 
 	public void testProblemMetadata() throws Exception {
-		String filename = dirname + "/ProblemExtracting.doc";
 		WordExtractor extractor =
-			new WordExtractor(new FileInputStream(filename));
+			new WordExtractor(HWPFTestDataSamples.openSampleFileStream("ProblemExtracting.doc"));
 
 		// Check it gives text without error
 		extractor.getText();

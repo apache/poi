@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.model;
 
-import java.io.File;
-
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -26,15 +24,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import junit.framework.TestCase;
 
 public final class TestStylesTable extends TestCase {
-	private File xml;
-
-	protected void setUp() {
-		xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "Formatting.xlsx"
-		);
-		assertTrue(xml.exists());
-	}
+	private String testFile = "Formatting.xlsx";
 
 	public void testCreateNew() {
 		StylesTable st = new StylesTable();
@@ -64,7 +54,7 @@ public final class TestStylesTable extends TestCase {
 	}
 
 	public void testLoadExisting() throws Exception {
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
 		StylesTable st = workbook.getStylesSource();
@@ -72,7 +62,7 @@ public final class TestStylesTable extends TestCase {
 		doTestExisting(st);
 	}
 	public void testLoadSaveLoad() throws Exception {
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
 		StylesTable st = workbook.getStylesSource();
@@ -136,7 +126,7 @@ public final class TestStylesTable extends TestCase {
 	}
 
 	public void testPopulateExisting() throws Exception {
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
 		StylesTable st = workbook.getStylesSource();

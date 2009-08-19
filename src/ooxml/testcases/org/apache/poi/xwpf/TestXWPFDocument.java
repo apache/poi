@@ -29,27 +29,10 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 public final class TestXWPFDocument extends TestCase {
-	private File sampleFile;
-	private File complexFile;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		sampleFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "sample.docx"
-		);
-		complexFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "IllustrativeCases.docx"
-		);
-
-		assertTrue(sampleFile.exists());
-		assertTrue(complexFile.exists());
-	}
 
 	public void testContainsMainContentType() throws Exception {
-		OPCPackage pack = POIXMLDocument.openPackage(sampleFile.toString());
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+        OPCPackage pack = doc.getPackage();
 
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
@@ -62,40 +45,24 @@ public final class TestXWPFDocument extends TestCase {
 	}
 
 	public void testOpen() throws Exception {
-		POIXMLDocument.openPackage(sampleFile.toString());
-		POIXMLDocument.openPackage(complexFile.toString());
-
-		new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
-		new XWPFDocument(
-				POIXMLDocument.openPackage(complexFile.toString())
-		);
-
 		XWPFDocument xml;
 
 		// Simple file
-		xml = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
+		xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
 		// Check it has key parts
 		assertNotNull(xml.getDocument());
 		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 
 		// Complex file
-		xml = new XWPFDocument(
-				POIXMLDocument.openPackage(complexFile.toString())
-		);
+        xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
 		assertNotNull(xml.getDocument());
 		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 	}
 
 	public void testMetadataBasics() throws Exception {
-		XWPFDocument xml = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
+        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
 
@@ -108,9 +75,7 @@ public final class TestXWPFDocument extends TestCase {
 	}
 
 	public void testMetadataComplex() throws Exception {
-		XWPFDocument xml = new XWPFDocument(
-				POIXMLDocument.openPackage(complexFile.toString())
-		);
+		XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
 

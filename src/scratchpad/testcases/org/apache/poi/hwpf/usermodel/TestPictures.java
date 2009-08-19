@@ -17,14 +17,12 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -33,14 +31,12 @@ import org.apache.poi.util.LittleEndian;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestPictures extends TestCase {
-	private String dirname = System.getProperty("HWPF.testdata.path");
-
 
 	/**
 	 * two jpegs
 	 */
 	public void testTwoImages() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/two_images.doc"));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
@@ -64,7 +60,7 @@ public final class TestPictures extends TestCase {
 	 * pngs and jpegs
 	 */
 	public void testDifferentImages() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/testPictures.doc"));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testPictures.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
@@ -90,7 +86,7 @@ public final class TestPictures extends TestCase {
 	 * emf image, nice and simple
 	 */
 	public void testEmfImage() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/vector_image.doc"));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("vector_image.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
@@ -102,7 +98,7 @@ public final class TestPictures extends TestCase {
 		assertTrue(pic.getSize() > 128);
 
 		// Check right contents
-		byte[] emf = loadImage("vector_image.emf");
+		byte[] emf = HWPFTestDataSamples.getTestDataFileContent("vector_image.emf");
 		byte[] pemf = pic.getContent();
 		assertEquals(emf.length, pemf.length);
 		for(int i=0; i<emf.length; i++) {
@@ -119,7 +115,7 @@ public final class TestPictures extends TestCase {
 		// pictures. Instead it has an office drawing object. Need to rewrite this test after
 		// revisiting the implementation of office drawing objects.
 
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/emf_2003_image.doc"));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("emf_2003_image.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
@@ -141,22 +137,10 @@ public final class TestPictures extends TestCase {
 	}
 
 	public void testPicturesWithTable() throws Exception {
-		HWPFDocument doc = new HWPFDocument(new FileInputStream(
-				new File(dirname, "Bug44603.doc")));
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 
 		List pics = doc.getPicturesTable().getAllPictures();
 		assertEquals(pics.size(), 2);
 	}
 
-	private byte[] loadImage(String filename) throws Exception {
-		ByteArrayOutputStream b = new ByteArrayOutputStream();
-		FileInputStream fis = new FileInputStream(dirname + "/" + filename);
-
-		byte[] buf = new byte[4096];
-		int read = 0;
-		while( (read = fis.read(buf)) > -1 ) {
-			b.write(buf, 0, read);
-		}
-		return b.toByteArray();
-	}
 }

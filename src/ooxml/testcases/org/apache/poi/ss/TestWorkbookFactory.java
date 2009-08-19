@@ -17,10 +17,8 @@
 
 package org.apache.poi.ss;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -30,26 +28,14 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import junit.framework.TestCase;
 
 public final class TestWorkbookFactory extends TestCase {
-	private File xls;
-	private File xlsx;
-	private File txt;
+	private String xls;
+	private String xlsx;
+	private String txt;
 
 	protected void setUp() {
-		xls = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "SampleSS.xls"
-		);
-		xlsx = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "SampleSS.xlsx"
-		);
-		txt = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "SampleSS.txt"
-		);
-		assertTrue(xls.exists());
-		assertTrue(xlsx.exists());
-		assertTrue(txt.exists());
+		xls = "SampleSS.xls";
+		xlsx = "SampleSS.xlsx";
+		txt = "SampleSS.txt";
 	}
 
 	public void testCreateNative() throws Exception {
@@ -57,14 +43,15 @@ public final class TestWorkbookFactory extends TestCase {
 
 		// POIFS -> hssf
 		wb = WorkbookFactory.create(
-				new POIFSFileSystem(new FileInputStream(xls))
+				new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls))
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
 
 		// Package -> xssf
 		wb = WorkbookFactory.create(
-				OPCPackage.open(xlsx.toString())
+				OPCPackage.open(
+                        HSSFTestDataSamples.openSampleFileStream(xlsx))
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
@@ -80,20 +67,20 @@ public final class TestWorkbookFactory extends TestCase {
 
 		// InputStream -> either
 		wb = WorkbookFactory.create(
-				new FileInputStream(xls)
+				HSSFTestDataSamples.openSampleFileStream(xls)
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
 
 		wb = WorkbookFactory.create(
-				new FileInputStream(xlsx)
+				HSSFTestDataSamples.openSampleFileStream(xlsx)
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
 
 		try {
 			wb = WorkbookFactory.create(
-					new FileInputStream(txt)
+					HSSFTestDataSamples.openSampleFileStream(txt)
 			);
 			fail();
 		} catch(IllegalArgumentException e) {

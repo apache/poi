@@ -19,19 +19,18 @@ package org.apache.poi.hwpf.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 
 
 public final class TestTextPieceTable extends TestCase {
   private HWPFDocFixture _hWPFDocFixture;
-  private String dirname;
+  //private String dirname;
 
   public void testReadWrite()
     throws Exception
@@ -66,9 +65,7 @@ public final class TestTextPieceTable extends TestCase {
 	 *  working with pure-ascii
 	 */
 	public void testAsciiParts() throws Exception {
-		HWPFDocument doc = new HWPFDocument(
-				new FileInputStream(new File(dirname, "ThreeColHeadFoot.doc"))
-		);
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 		TextPieceTable tbl = doc.getTextTable();
 
 		// All ascii, so stored in one big lump
@@ -101,9 +98,7 @@ public final class TestTextPieceTable extends TestCase {
 	 *  working with a mix ascii, unicode file
 	 */
 	public void testUnicodeParts() throws Exception {
-		HWPFDocument doc = new HWPFDocument(
-				new FileInputStream(new File(dirname, "HeaderFooterUnicode.doc"))
-		);
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		TextPieceTable tbl = doc.getTextTable();
 
 		// In three bits, split every 512 bytes
@@ -177,8 +172,6 @@ public final class TestTextPieceTable extends TestCase {
 
     _hWPFDocFixture = new HWPFDocFixture(this);
     _hWPFDocFixture.setUp();
-
-    dirname = System.getProperty("HWPF.testdata.path");
   }
 
   protected void tearDown()

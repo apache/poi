@@ -17,11 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  *	Test to see if Range.insertBefore() works even if the Range contains a
@@ -40,10 +39,7 @@ public final class TestRangeInsertion extends TestCase {
 	private String illustrativeDocFile;
 
 	protected void setUp() {
-
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		illustrativeDocFile = dirname + "/testRangeInsertion.doc";
+		illustrativeDocFile = "testRangeInsertion.doc";
 	}
 
 	/**
@@ -51,7 +47,7 @@ public final class TestRangeInsertion extends TestCase {
 	 */
 	public void testOpen() throws Exception {
 
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
@@ -59,7 +55,7 @@ public final class TestRangeInsertion extends TestCase {
 	 */
 	public void testDocStructure() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 
@@ -87,7 +83,7 @@ public final class TestRangeInsertion extends TestCase {
 	 */
 	public void testRangeInsertion() throws Exception {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		/*
 			Range range = daDoc.getRange();

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
@@ -31,16 +32,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 public class TestXWPFHeader extends TestCase {
 	
 	public void testSimpleHeader() throws IOException {
-		File sampleFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "headerFooter.docx"
-		);
-		assertTrue(sampleFile.exists());
-		XWPFDocument sampleDoc;
-		sampleDoc = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
-		
+		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerFooter.docx");
+
 		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 		
 		
@@ -55,15 +48,7 @@ public class TestXWPFHeader extends TestCase {
 	}
 	
 	public void testSetHeader() throws IOException {
-		File sampleFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "SampleDoc.docx"
-		);
-		assertTrue(sampleFile.exists());
-		XWPFDocument sampleDoc;
-		sampleDoc = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
+		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
 		// no header is set (yet)
 		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 		assertNull(policy.getDefaultHeader());

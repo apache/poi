@@ -17,13 +17,14 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import java.io.FileInputStream;
 
 /**
  * Test the different routes to extracting text
@@ -47,7 +48,7 @@ public final class TestWordExtractor extends TestCase {
 			"\r\n",
 			"It is otherwise very very boring.\r\n"
 	};
-	private String p_text1_block = new String();
+	private String p_text1_block = "";
 
 	// Well behaved document
 	private WordExtractor extractor;
@@ -64,18 +65,17 @@ public final class TestWordExtractor extends TestCase {
         private String filename6;
 
     protected void setUp() throws Exception {
-		String dirname = System.getProperty("HWPF.testdata.path");
 		String pdirname = System.getProperty("POIFS.testdata.path");
 
-		String filename = dirname + "/test2.doc";
-		String filename2 = dirname + "/test.doc";
+		String filename = "test2.doc";
+		String filename2 = "test.doc";
 		filename3 = pdirname + "/excel_with_embeded.xls";
-		filename4 = dirname + "/ThreeColHeadFoot.doc";
-		filename5 = dirname + "/HeaderFooterUnicode.doc";
-                filename6 = dirname + "/footnote.doc";
+		filename4 = "ThreeColHeadFoot.doc";
+		filename5 = "HeaderFooterUnicode.doc";
+                filename6 = "footnote.doc";
 
-		extractor = new WordExtractor(new FileInputStream(filename));
-		extractor2 = new WordExtractor(new FileInputStream(filename2));
+		extractor = new WordExtractor(HWPFTestDataSamples.openSampleFileStream(filename));
+		extractor2 = new WordExtractor(HWPFTestDataSamples.openSampleFileStream(filename2));
 
 		// Build splat'd out text version
 		for(int i=0; i<p_text1.length; i++) {
@@ -123,7 +123,8 @@ public final class TestWordExtractor extends TestCase {
      * @throws Exception
      */
     public void testExtractFromEmbeded() throws Exception {
-    	POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename3));
+    	POIFSFileSystem fs = new POIFSFileSystem(
+                new FileInputStream(filename3));
     	HWPFDocument doc;
     	WordExtractor extractor3;
 
@@ -164,9 +165,7 @@ public final class TestWordExtractor extends TestCase {
 
     public void testWithHeader() throws Exception {
     	// Non-unicode
-    	HWPFDocument doc = new HWPFDocument(
-    			new FileInputStream(filename4)
-    	);
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename4);
     	extractor = new WordExtractor(doc);
 
     	assertEquals(
@@ -181,9 +180,7 @@ public final class TestWordExtractor extends TestCase {
 
 
     	// Unicode
-    	doc = new HWPFDocument(
-    			new FileInputStream(filename5)
-    	);
+    	doc = HWPFTestDataSamples.openSampleFile(filename5);
     	extractor = new WordExtractor(doc);
 
     	assertEquals(
@@ -198,9 +195,7 @@ public final class TestWordExtractor extends TestCase {
 
     public void testWithFooter() throws Exception {
     	// Non-unicode
-    	HWPFDocument doc = new HWPFDocument(
-    			new FileInputStream(filename4)
-    	);
+    	HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename4);
     	extractor = new WordExtractor(doc);
 
     	assertEquals(
@@ -215,9 +210,7 @@ public final class TestWordExtractor extends TestCase {
 
 
     	// Unicode
-    	doc = new HWPFDocument(
-    			new FileInputStream(filename5)
-    	);
+    	doc = HWPFTestDataSamples.openSampleFile(filename5);
     	extractor = new WordExtractor(doc);
 
     	assertEquals(
@@ -231,9 +224,7 @@ public final class TestWordExtractor extends TestCase {
     }
 
     public void testFootnote() throws Exception {
-        HWPFDocument doc = new HWPFDocument(
-                new FileInputStream(filename6)
-        );
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
         extractor = new WordExtractor(doc);
 
         String[] text = extractor.getFootnoteText();
@@ -246,9 +237,7 @@ public final class TestWordExtractor extends TestCase {
     }
 
     public void testEndnote() throws Exception {
-        HWPFDocument doc = new HWPFDocument(
-                new FileInputStream(filename6)
-        );
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
         extractor = new WordExtractor(doc);
 
         String[] text = extractor.getEndnoteText();
@@ -261,9 +250,7 @@ public final class TestWordExtractor extends TestCase {
     }
 
     public void testComments() throws Exception {
-        HWPFDocument doc = new HWPFDocument(
-                new FileInputStream(filename6)
-        );
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
         extractor = new WordExtractor(doc);
 
         String[] text = extractor.getCommentsText();

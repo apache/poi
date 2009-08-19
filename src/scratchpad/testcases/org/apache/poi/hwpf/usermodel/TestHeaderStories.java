@@ -17,12 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  * Tests for the handling of header stories into headers, footers etc
@@ -38,21 +36,15 @@ public final class TestHeaderStories extends TestCase {
 	private HWPFDocument withFields;
 
 	protected void setUp() throws Exception {
-		String dirname = System.getProperty("HWPF.testdata.path");
 
-		none = new HWPFDocument(new FileInputStream(new File(dirname, "NoHeadFoot.doc")));
-		header = new HWPFDocument(new FileInputStream(new File(dirname, "ThreeColHead.doc")));
-		footer = new HWPFDocument(new FileInputStream(new File(dirname, "ThreeColFoot.doc")));
-		headerFooter = new HWPFDocument(new FileInputStream(new File(dirname,
-				"SimpleHeadThreeColFoot.doc")));
-		oddEven = new HWPFDocument(new FileInputStream(
-				new File(dirname, "PageSpecificHeadFoot.doc")));
-		diffFirst = new HWPFDocument(new FileInputStream(new File(dirname,
-				"DiffFirstPageHeadFoot.doc")));
-		unicode = new HWPFDocument(
-				new FileInputStream(new File(dirname, "HeaderFooterUnicode.doc")));
-		withFields = new HWPFDocument(
-				new FileInputStream(new File(dirname, "HeaderWithMacros.doc")));
+		none = HWPFTestDataSamples.openSampleFile("NoHeadFoot.doc");
+		header = HWPFTestDataSamples.openSampleFile("ThreeColHead.doc");
+		footer = HWPFTestDataSamples.openSampleFile("ThreeColFoot.doc");
+		headerFooter = HWPFTestDataSamples.openSampleFile("SimpleHeadThreeColFoot.doc");
+		oddEven = HWPFTestDataSamples.openSampleFile("PageSpecificHeadFoot.doc");
+		diffFirst = HWPFTestDataSamples.openSampleFile("DiffFirstPageHeadFoot.doc");
+		unicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
+		withFields = HWPFTestDataSamples.openSampleFile("HeaderWithMacros.doc");
 	}
 
 	public void testNone() {

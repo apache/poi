@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 import junit.framework.TestCase;
 
@@ -36,49 +37,13 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		File file;
 
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "NoHeadFoot.docx"
-		);
-		assertTrue(file.exists());
-		noHeader = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "ThreeColHead.docx"
-		);
-		assertTrue(file.exists());
-		header = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "SimpleHeadThreeColFoot.docx"
-		);
-		assertTrue(file.exists());
-		headerFooter = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "FancyFoot.docx"
-		);
-		assertTrue(file.exists());
-		footer = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "PageSpecificHeadFoot.docx"
-		);
-		assertTrue(file.exists());
-		oddEven = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-
-		file = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "DiffFirstPageHeadFoot.docx"
-		);
-		assertTrue(file.exists());
-		diffFirst = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
+		noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
+        header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
+        headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
+        footer = XWPFTestDataSamples.openSampleDocument("FancyFoot.docx");
+        oddEven = XWPFTestDataSamples.openSampleDocument("PageSpecificHeadFoot.docx");
+        diffFirst = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
 	}
 
 	public void testPolicy() {

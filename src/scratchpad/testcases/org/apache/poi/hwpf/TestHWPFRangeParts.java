@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.FileInputStream;
-
 import org.apache.poi.hwpf.usermodel.Range;
 
 import junit.framework.TestCase;
@@ -96,17 +94,8 @@ public final class TestHWPFRangeParts extends TestCase {
 	private HWPFDocument docUnicode;
 
 	public void setUp() throws Exception {
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		String filename = dirname + "/HeaderFooterUnicode.doc";
-		docUnicode = new HWPFDocument(
-				new FileInputStream(filename)
-		);
-
-		filename = dirname + "/ThreeColHeadFoot.doc";
-		docAscii = new HWPFDocument(
-				new FileInputStream(filename)
-		);
+		docUnicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
+		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 	}
 
 	public void testBasics() {

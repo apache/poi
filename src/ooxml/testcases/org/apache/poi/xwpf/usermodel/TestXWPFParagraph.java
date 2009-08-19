@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
@@ -41,26 +42,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
  * Tests for XWPF Paragraphs
  */
 public final class TestXWPFParagraph extends TestCase {
-    /**
-     * A simple file
-     */
-    private XWPFDocument xml;
-
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        File file = new File(
-                System.getProperty("HWPF.testdata.path") +
-                File.separator + "ThreeColHead.docx"
-        );
-        assertTrue(file.exists());
-        xml = new XWPFDocument(POIXMLDocument.openPackage(file.toString()));
-    }
 
     /**
      * Check that we get the right paragraph from the header
      */
     public void disabled_testHeaderParagraph() {
+        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
+
         XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
         assertNotNull(hdr);
 
@@ -77,6 +65,7 @@ public final class TestXWPFParagraph extends TestCase {
      * Check that we get the right paragraphs from the document
      */
     public void disabled_testDocumentParagraph() {
+        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
         XWPFParagraph[] ps = xml.getParagraphs();
         assertEquals(10, ps.length);
 

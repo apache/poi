@@ -39,13 +39,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 	}
 
 	public void testLoadExisting() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithMoreVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		assertEquals(3, workbook.getNumberOfSheets());
 
 		XSSFSheet sheet = workbook.getSheetAt(0);
@@ -56,13 +50,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 	}
 
 	public void testLoadSave() throws Exception {
-		File xml = new File(
-				System.getProperty("HSSF.testdata.path") +
-				File.separator + "WithMoreVariousData.xlsx"
-		);
-		assertTrue(xml.exists());
-
-		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		CreationHelper createHelper = workbook.getCreationHelper();
 		assertEquals(3, workbook.getNumberOfSheets());
 		XSSFSheet sheet = workbook.getSheetAt(0);

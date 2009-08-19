@@ -24,6 +24,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  * Unit test for {@link SavedByTable} and {@link SavedByEntry}.
@@ -33,8 +34,6 @@ import org.apache.poi.hwpf.HWPFDocument;
 public final class TestSavedByTable
   extends TestCase
 {
-  /** Data dir */
-  private File testFile = new File(new File(System.getProperty("HWPF.testdata.path")), "saved-by-table.doc");
 
   /** The expected entries in the test document. */
   private List expected = Arrays.asList(new Object[] {
@@ -62,16 +61,7 @@ public final class TestSavedByTable
     // This document is widely available on the internet as "blair.doc".
     // I tried stripping the content and saving the document but my version
     // of Word (from Office XP) strips this table out.
-    InputStream stream = new BufferedInputStream(new FileInputStream(testFile));
-    HWPFDocument doc;
-    try
-    {
-      doc = new HWPFDocument(stream);
-    }
-    finally
-    {
-      stream.close();
-    }
+    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("saved-by-table.doc");
 
     // Check what we just read.
     assertEquals("List of saved-by entries was not as expected",

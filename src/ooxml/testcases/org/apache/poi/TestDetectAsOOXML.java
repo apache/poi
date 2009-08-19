@@ -22,23 +22,18 @@ package org.apache.poi;
 import junit.framework.TestCase;
 import java.io.*;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+
 /**
  * Class to test that HXF correctly detects OOXML
  *  documents
  */
 public class TestDetectAsOOXML extends TestCase
 {
-	public String dirname;
-
-	public void setUp() {
-		dirname = System.getProperty("HSSF.testdata.path");
-	}
-
 	public void testOpensProperly() throws Exception
 	{
-		File f = new File(dirname + "/sample.xlsx");
-
-		POIXMLDocument.openPackage(f.toString());
+        OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("sample.xlsx"));
 	}
 	
 	public void testDetectAsPOIFS() throws Exception {
@@ -46,19 +41,19 @@ public class TestDetectAsOOXML extends TestCase
 		
 		// ooxml file is
 		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.xlsx"), 10
+				HSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"), 10
 		);
 		assertTrue(POIXMLDocument.hasOOXMLHeader(in));
 		
 		// xls file isn't
 		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.xls"), 10
+				HSSFTestDataSamples.openSampleFileStream("SampleSS.xls"), 10
 		);
 		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
 		
 		// text file isn't
 		in = new PushbackInputStream(
-				new FileInputStream(dirname + "/SampleSS.txt"), 10
+				HSSFTestDataSamples.openSampleFileStream("SampleSS.txt"), 10
 		);
 		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
 	}

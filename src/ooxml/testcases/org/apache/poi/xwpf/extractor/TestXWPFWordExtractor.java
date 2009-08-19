@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 import junit.framework.TestCase;
 
@@ -33,7 +34,7 @@ public class TestXWPFWordExtractor extends TestCase {
      * Get text out of the simple file
      */
     public void testGetSimpleText() throws Exception {
-        XWPFDocument doc = open("sample.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         String text = extractor.getText();
@@ -62,7 +63,7 @@ public class TestXWPFWordExtractor extends TestCase {
      * Tests getting the text out of a complex file
      */
     public void testGetComplexText() throws Exception {
-        XWPFDocument doc = open("IllustrativeCases.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         String text = extractor.getText();
@@ -94,7 +95,7 @@ public class TestXWPFWordExtractor extends TestCase {
     }
 
     public void testGetWithHyperlinks() throws Exception {
-        XWPFDocument doc = open("TestDocument.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         // Now check contents
@@ -119,7 +120,7 @@ public class TestXWPFWordExtractor extends TestCase {
     }
 
     public void testHeadersFooters() throws Exception {
-        XWPFDocument doc = open("ThreeColHeadFoot.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ThreeColHeadFoot.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertEquals(
@@ -138,7 +139,7 @@ public class TestXWPFWordExtractor extends TestCase {
 
         // Now another file, expect multiple headers
         //  and multiple footers
-        doc = open("DiffFirstPageHeadFoot.docx");
+        doc = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
         extractor = new XWPFWordExtractor(doc);
         extractor =
                 new XWPFWordExtractor(doc);
@@ -162,7 +163,7 @@ public class TestXWPFWordExtractor extends TestCase {
     }
 
     public void testFootnotes() throws Exception {
-        XWPFDocument doc = open("footnotes.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("snoska"));
@@ -170,14 +171,14 @@ public class TestXWPFWordExtractor extends TestCase {
 
 
     public void testTableFootnotes() throws Exception {
-        XWPFDocument doc = open("table_footnotes.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("snoska"));
     }
 
     public void testFormFootnotes() throws Exception {
-        XWPFDocument doc = open("form_footnotes.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("form_footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         String text = extractor.getText();
@@ -186,33 +187,18 @@ public class TestXWPFWordExtractor extends TestCase {
     }
 
     public void testEndnotes() throws Exception {
-        XWPFDocument doc = open("endnotes.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("XXX"));
     }
 
     public void testInsertedDeletedText() throws Exception {
-        XWPFDocument doc = open("delins.docx");
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("pendant worn"));
         assertTrue(extractor.getText().contains("extremely well"));
     }
 
-    //TODO use the same logic for opening test files as in HSSFTestDataSamples
-    private XWPFDocument open(String sampleFileName) throws IOException {
-        File file = new File(
-                System.getProperty("HWPF.testdata.path"), sampleFileName);
-
-        try {
-            if(!sampleFileName.equals(file.getCanonicalFile().getName())){
-                throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
-                        + "' but actual file is '" + file.getCanonicalFile().getName() + "'");
-            }
-        } catch (IOException e){
-            throw new RuntimeException(e);
-        }
-        return new XWPFDocument(POIXMLDocument.openPackage(file.getPath()));
-    }
 }
