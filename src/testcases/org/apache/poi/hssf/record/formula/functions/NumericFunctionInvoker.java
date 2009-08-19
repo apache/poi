@@ -21,7 +21,6 @@ import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
-import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
@@ -53,13 +52,7 @@ public final class NumericFunctionInvoker {
 	 * result causes the current junit test to fail.
 	 */
 	public static double invoke(Function f, ValueEval[] args) {
-		try {
-			return invokeInternal(f, args, -1, -1);
-		} catch (NumericEvalEx e) {
-			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName()
-					+ ") failed: " + e.getMessage());
-		}
-
+		return invoke(f, args, -1, -1);
 	}
 	/**
 	 * Invokes the specified operator with the arguments.
@@ -67,30 +60,22 @@ public final class NumericFunctionInvoker {
 	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
 	 * result causes the current junit test to fail.
 	 */
-	public static double invoke(OperationEval f, ValueEval[] args, int srcCellRow, int srcCellCol) {
+	public static double invoke(Function f, ValueEval[] args, int srcCellRow, int srcCellCol) {
 		try {
 			return invokeInternal(f, args, srcCellRow, srcCellCol);
 		} catch (NumericEvalEx e) {
 			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName()
 					+ ") failed: " + e.getMessage());
 		}
-
 	}
 	/**
 	 * Formats nicer error messages for the junit output
 	 */
-	private static double invokeInternal(Object target, ValueEval[] args, int srcCellRow, int srcCellCol)
+	private static double invokeInternal(Function target, ValueEval[] args, int srcCellRow, int srcCellCol)
 				throws NumericEvalEx {
 		ValueEval evalResult;
-		// TODO - make OperationEval extend Function
 		try {
-			if (target instanceof Function) {
-				Function ff = (Function) target;
-				evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
-			} else {
-				OperationEval ff = (OperationEval) target;
-				evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
-			}
+			evalResult = target.evaluate(args, srcCellRow, (short)srcCellCol);
 		} catch (NotImplementedException e) {
 			throw new NumericEvalEx("Not implemented:" + e.getMessage());
 		}

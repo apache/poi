@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.functions.EvalFactory;
+import org.apache.poi.hssf.record.formula.functions.Function;
 
 /**
  * Test for {@link EqualEval}
@@ -28,6 +29,8 @@ import org.apache.poi.hssf.record.formula.functions.EvalFactory;
  * @author Josh Micich
  */
 public final class TestEqualEval extends TestCase {
+	// convenient access to namepace
+	private static final EvalInstances EI = null;
 
 	/**
 	 * Test for bug observable at svn revision 692218 (Sep 2008)<br/>
@@ -40,7 +43,7 @@ public final class TestEqualEval extends TestCase {
 			EvalFactory.createAreaEval("B1:B1", values),
 			BoolEval.FALSE,
 		};
-		ValueEval result = EqualEval.instance.evaluate(args, 10, (short)20);
+		ValueEval result = evaluate(EI.Equal, args, 10, 10);
 		if (result instanceof ErrorEval) {
 			if (result == ErrorEval.VALUE_INVALID) {
 				throw new AssertionFailedError("Identified bug in evaluation of 1x1 area");
@@ -58,7 +61,7 @@ public final class TestEqualEval extends TestCase {
 			new StringEval(""),
 			BlankEval.INSTANCE,
 		};
-		ValueEval result = EqualEval.instance.evaluate(args, 10, (short)20);
+		ValueEval result = evaluate(EI.Equal, args, 10, 10);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
 		if (!be.getBooleanValue()) {
@@ -71,17 +74,17 @@ public final class TestEqualEval extends TestCase {
 	 * Test for bug 46613 (observable at svn r737248)
 	 */
 	public void testStringInsensitive_bug46613() {
-		if (!evalStringCmp("abc", "aBc", EqualEval.instance)) {
+		if (!evalStringCmp("abc", "aBc", EI.Equal)) {
 			throw new AssertionFailedError("Identified bug 46613");
 		}
-		assertTrue(evalStringCmp("abc", "aBc", EqualEval.instance));
-		assertTrue(evalStringCmp("ABC", "azz", LessThanEval.instance));
-		assertTrue(evalStringCmp("abc", "AZZ", LessThanEval.instance));
-		assertTrue(evalStringCmp("ABC", "aaa", GreaterThanEval.instance));
-		assertTrue(evalStringCmp("abc", "AAA", GreaterThanEval.instance));
+		assertTrue(evalStringCmp("abc", "aBc", EI.Equal));
+		assertTrue(evalStringCmp("ABC", "azz", EI.LessThan));
+		assertTrue(evalStringCmp("abc", "AZZ", EI.LessThan));
+		assertTrue(evalStringCmp("ABC", "aaa", EI.GreaterThan));
+		assertTrue(evalStringCmp("abc", "AAA", EI.GreaterThan));
 	}
 
-	private static boolean evalStringCmp(String a, String b, OperationEval cmpOp) {
+	private static boolean evalStringCmp(String a, String b, Function cmpOp) {
 		ValueEval[] args = {
 			new StringEval(a),
 			new StringEval(b),
@@ -103,13 +106,12 @@ public final class TestEqualEval extends TestCase {
 	 */
 	public void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
-		NumberEval mZero = (NumberEval) UnaryMinusEval.instance.evaluate(new ValueEval[] { zero, }, 0,
-				(short) 0);
+		NumberEval mZero = (NumberEval) evaluate(UnaryMinusEval.instance, new ValueEval[] { zero, }, 0, 0);
 		if (Double.doubleToLongBits(mZero.getNumberValue()) == 0x8000000000000000L) {
 			throw new AssertionFailedError("Identified bug 47198: unary minus should convert -0.0 to 0.0");
 		}
 		ValueEval[] args = { zero, mZero, };
-		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
+		BoolEval result = (BoolEval) evaluate(EI.Equal, args, 0, 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
 		}
@@ -124,9 +126,13 @@ public final class TestEqualEval extends TestCase {
 		assertEquals("1.0055", b.getStringValue());
 
 		ValueEval[] args = { a, b, };
-		BoolEval result = (BoolEval) EqualEval.instance.evaluate(args, 0, (short) 0);
+		BoolEval result = (BoolEval) evaluate(EI.Equal, args, 0, 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47598: 1+1.0028-0.9973 != 1.0055");
 		}
+	}
+
+	private static ValueEval evaluate(Function oper, ValueEval[] args, int srcRowIx, int srcColIx) {
+		return oper.evaluate(args, srcRowIx, (short) srcColIx);
 	}
 }

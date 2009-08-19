@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -39,6 +40,8 @@ import org.apache.poi.util.HexDump;
 public final class TestMinusZeroResult extends TestCase {
 	private static final double MINUS_ZERO = -0.0;
 
+	// convenient access to namepace
+	private static final EvalInstances EI = null;
 
 	public void testSimpleOperators() {
 
@@ -46,15 +49,15 @@ public final class TestMinusZeroResult extends TestCase {
 		checkEval(MINUS_ZERO, UnaryPlusEval.instance, MINUS_ZERO);
 
 		// most simple operators convert -0.0 to +0.0
-		checkEval(0.0, UnaryMinusEval.instance, 0.0);
-		checkEval(0.0, PercentEval.instance, MINUS_ZERO);
-		checkEval(0.0, MultiplyEval.instance, MINUS_ZERO, 1.0);
-		checkEval(0.0, DivideEval.instance, MINUS_ZERO, 1.0);
-		checkEval(0.0, PowerEval.instance, MINUS_ZERO, 1.0);
+		checkEval(0.0, EI.UnaryMinus, 0.0);
+		checkEval(0.0, EI.Percent, MINUS_ZERO);
+		checkEval(0.0, EI.Multiply, MINUS_ZERO, 1.0);
+		checkEval(0.0, EI.Divide, MINUS_ZERO, 1.0);
+		checkEval(0.0, EI.Power, MINUS_ZERO, 1.0);
 
 		// but SubtractEval does not convert -0.0, so '-' and '+' work like java
-		checkEval(MINUS_ZERO, SubtractEval.instance, MINUS_ZERO, 0.0); // this is the main point of bug 47198
-		checkEval(0.0, AddEval.instance, MINUS_ZERO, 0.0);
+		checkEval(MINUS_ZERO, EI.Subtract, MINUS_ZERO, 0.0); // this is the main point of bug 47198
+		checkEval(0.0, EI.Add, MINUS_ZERO, 0.0);
 	}
 
 	/**
@@ -62,9 +65,9 @@ public final class TestMinusZeroResult extends TestCase {
 	 * gets to the comparison operator)
 	 */
 	public void testComparisonOperators() {
-		checkEval(false, EqualEval.instance, 0.0, MINUS_ZERO);
-		checkEval(true, GreaterThanEval.instance, 0.0, MINUS_ZERO);
-		checkEval(true, LessThanEval.instance, MINUS_ZERO, 0.0);
+		checkEval(false, EI.Equal, 0.0, MINUS_ZERO);
+		checkEval(true, EI.GreaterThan, 0.0, MINUS_ZERO);
+		checkEval(true, EI.LessThan, MINUS_ZERO, 0.0);
 	}
 
 	public void testTextRendering() {
@@ -78,20 +81,20 @@ public final class TestMinusZeroResult extends TestCase {
 	 */
 	private static void confirmTextRendering(String expRendering, double d) {
 		ValueEval[] args = { StringEval.EMPTY_INSTANCE, new NumberEval(d), };
-		StringEval se = (StringEval) ConcatEval.instance.evaluate(args, -1, (short)-1);
+		StringEval se = (StringEval) EI.Concat.evaluate(args, -1, (short)-1);
 		String result = se.getStringValue();
 		assertEquals(expRendering, result);
 	}
 
-	private static void checkEval(double expectedResult, OperationEval instance, double... dArgs) {
+	private static void checkEval(double expectedResult, Function instance, double... dArgs) {
 		NumberEval result = (NumberEval) evaluate(instance, dArgs);
 		assertDouble(expectedResult, result.getNumberValue());
 	}
-	private static void checkEval(boolean expectedResult, OperationEval instance, double... dArgs) {
+	private static void checkEval(boolean expectedResult, Function instance, double... dArgs) {
 		BoolEval result = (BoolEval) evaluate(instance, dArgs);
 		assertEquals(expectedResult, result.getBooleanValue());
 	}
-	private static ValueEval evaluate(OperationEval instance, double... dArgs) {
+	private static ValueEval evaluate(Function instance, double... dArgs) {
 		ValueEval[] evalArgs;
 		evalArgs = new ValueEval[dArgs.length];
 		for (int i = 0; i < evalArgs.length; i++) {

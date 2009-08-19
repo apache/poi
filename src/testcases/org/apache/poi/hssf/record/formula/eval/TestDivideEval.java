@@ -34,7 +34,7 @@ public final class TestDivideEval extends TestCase {
 			arg0, arg1,
 		};
 
-		double result = NumericFunctionInvoker.invoke(DivideEval.instance, args, 0, 0);
+		double result = NumericFunctionInvoker.invoke(EvalInstances.Divide, args, 0, 0);
 
 		assertEquals(expectedResult, result, 0);
 	}
@@ -56,7 +56,7 @@ public final class TestDivideEval extends TestCase {
 		ValueEval[] args = {
 			new NumberEval(5), NumberEval.ZERO,
 		};
-		ValueEval result = DivideEval.instance.evaluate(args, 0, (short) 0);
+		ValueEval result = EvalInstances.Divide.evaluate(args, 0, (short) 0);
 		assertEquals(ErrorEval.DIV_ZERO, result);
 	}
 }

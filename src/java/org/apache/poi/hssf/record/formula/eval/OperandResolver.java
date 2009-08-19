@@ -40,7 +40,7 @@ public final class OperandResolver {
 	 *  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding
 	 *  EvaluationException is thrown.
 	 */
-	public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, short srcCellCol)
+	public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, int srcCellCol)
 			throws EvaluationException {
 		ValueEval result;
 		if (arg instanceof RefEval) {
@@ -101,8 +101,8 @@ public final class OperandResolver {
 	 *  evaluated cell has an error.
 	 */
 	public static ValueEval chooseSingleElementFromArea(AreaEval ae,
-			int srcCellRow, short srcCellCol) throws EvaluationException {
-		ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol);
+			int srcCellRow, int srcCellCol) throws EvaluationException {
+		ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, (short) srcCellCol);
 		if(result == null) {
 			// This seems to be required because AreaEval.values() array may contain nulls.
 			// perhaps that should not be allowed.
