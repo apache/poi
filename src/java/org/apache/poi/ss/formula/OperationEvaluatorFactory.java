@@ -39,24 +39,17 @@ import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
-import org.apache.poi.hssf.record.formula.eval.AddEval;
 import org.apache.poi.hssf.record.formula.eval.ConcatEval;
-import org.apache.poi.hssf.record.formula.eval.DivideEval;
-import org.apache.poi.hssf.record.formula.eval.EqualEval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterEqualEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterThanEval;
-import org.apache.poi.hssf.record.formula.eval.LessEqualEval;
-import org.apache.poi.hssf.record.formula.eval.LessThanEval;
-import org.apache.poi.hssf.record.formula.eval.MultiplyEval;
-import org.apache.poi.hssf.record.formula.eval.NotEqualEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.PercentEval;
-import org.apache.poi.hssf.record.formula.eval.PowerEval;
 import org.apache.poi.hssf.record.formula.eval.RangeEval;
-import org.apache.poi.hssf.record.formula.eval.SubtractEval;
+import org.apache.poi.hssf.record.formula.eval.RelationalOperationEval;
+import org.apache.poi.hssf.record.formula.eval.TwoOperandNumericOperation;
 import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.Function;
 
 /**
  * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>
@@ -74,26 +67,52 @@ final class OperationEvaluatorFactory {
 
 	private static Map<Class<? extends Ptg>, OperationEval> initialiseInstancesMap() {
 		Map<Class<? extends Ptg>, OperationEval> m = new HashMap<Class<? extends Ptg>, OperationEval>(32);
-		m.put(EqualPtg.class, EqualEval.instance);
 
-		m.put(EqualPtg.class, EqualEval.instance);
-		m.put(GreaterEqualPtg.class, GreaterEqualEval.instance);
-		m.put(GreaterThanPtg.class, GreaterThanEval.instance);
-		m.put(LessEqualPtg.class, LessEqualEval.instance);
-		m.put(LessThanPtg.class, LessThanEval.instance);
-		m.put(NotEqualPtg.class, NotEqualEval.instance);
+		put(m, 2, EqualPtg.class, RelationalOperationEval.EqualEval);
+		put(m, 2, GreaterEqualPtg.class, RelationalOperationEval.GreaterEqualEval);
+		put(m, 2, GreaterThanPtg.class, RelationalOperationEval.GreaterThanEval);
+		put(m, 2, LessEqualPtg.class, RelationalOperationEval.LessEqualEval);
+		put(m, 2, LessThanPtg.class, RelationalOperationEval.LessThanEval);
+		put(m, 2, NotEqualPtg.class, RelationalOperationEval.NotEqualEval);
 
-		m.put(ConcatPtg.class, ConcatEval.instance);
-		m.put(AddPtg.class, AddEval.instance);
-		m.put(DividePtg.class, DivideEval.instance);
-		m.put(MultiplyPtg.class, MultiplyEval.instance);
-		m.put(PercentPtg.class, PercentEval.instance);
-		m.put(PowerPtg.class, PowerEval.instance);
-		m.put(SubtractPtg.class, SubtractEval.instance);
-		m.put(UnaryMinusPtg.class, UnaryMinusEval.instance);
-		m.put(UnaryPlusPtg.class, UnaryPlusEval.instance);
-		m.put(RangePtg.class, RangeEval.instance);
+		put(m, 2, ConcatPtg.class, ConcatEval.instance);
+		put(m, 2, AddPtg.class, TwoOperandNumericOperation.AddEval);
+		put(m, 2, DividePtg.class, TwoOperandNumericOperation.DivideEval);
+		put(m, 2, MultiplyPtg.class, TwoOperandNumericOperation.MultiplyEval);
+		put(m, 1, PercentPtg.class, PercentEval.instance);
+		put(m, 2, PowerPtg.class, TwoOperandNumericOperation.PowerEval);
+		put(m, 2, SubtractPtg.class, TwoOperandNumericOperation.SubtractEval);
+		put(m, 1, UnaryMinusPtg.class, UnaryMinusEval.instance);
+		put(m, 1, UnaryPlusPtg.class, UnaryPlusEval.instance);
+		put(m, 2, RangePtg.class, RangeEval.instance);
 		return m;
+	}
+
+	private static void put(Map<Class<? extends Ptg>, OperationEval> m, int argCount,
+			Class<? extends Ptg> ptgClass, Function instance) {
+		m.put(ptgClass, new OperationFunctionEval(instance, argCount));
+	}
+
+	/**
+	 * Simple adapter from {@link OperationEval} to {@link Function}
+	 */
+	private static final class OperationFunctionEval implements OperationEval {
+
+		private final Function _function;
+		private final int _numberOfOperands;
+
+		public OperationFunctionEval(Function function, int argCount) {
+			_function = function;
+			_numberOfOperands = argCount;
+		}
+
+		public ValueEval evaluate(ValueEval[] args, int rowIndex, short columnIndex) {
+			return _function.evaluate(args, rowIndex, columnIndex);
+		}
+
+		public int getNumberOfOperands() {
+			return _numberOfOperands;
+		}
 	}
 
 	/**

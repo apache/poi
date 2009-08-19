@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
+
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public final class UnaryMinusEval implements OperationEval {
+public final class UnaryMinusEval implements Function {
 
-	public static final OperationEval instance = new UnaryMinusEval();
+	public static final Function instance = new UnaryMinusEval();
 
 	private UnaryMinusEval() {
 		// enforce singleton
@@ -45,9 +47,5 @@ public final class UnaryMinusEval implements OperationEval {
 			return NumberEval.ZERO;
 		}
 		return new NumberEval(-d);
-	}
-
-	public int getNumberOfOperands() {
-		return 1;
 	}
 }

@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
+
 
 /**
  * Implementation of Excel formula token '%'. <p/>
  * @author Josh Micich
  */
-public final class PercentEval implements OperationEval {
+public final class PercentEval implements Function {
 
-	public static final OperationEval instance = new PercentEval();
+	public static final Function instance = new PercentEval();
 
 	private PercentEval() {
 		// enforce singleton
@@ -45,9 +47,5 @@ public final class PercentEval implements OperationEval {
 			return NumberEval.ZERO;
 		}
 		return new NumberEval(d / 100);
-	}
-
-	public int getNumberOfOperands() {
-		return 1;
 	}
 }

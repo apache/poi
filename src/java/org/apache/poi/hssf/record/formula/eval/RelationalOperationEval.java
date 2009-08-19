@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
 import org.apache.poi.ss.util.NumberComparer;
 
 /**
@@ -24,7 +25,7 @@ import org.apache.poi.ss.util.NumberComparer;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public abstract class RelationalOperationEval implements OperationEval {
+public abstract class RelationalOperationEval implements Function {
 
 	/**
 	 * Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
@@ -136,7 +137,34 @@ public abstract class RelationalOperationEval implements OperationEval {
 		throw new IllegalArgumentException("bad value class (" + v.getClass().getName() + ")");
 	}
 
-	public final int getNumberOfOperands() {
-		return 2;
-	}
+	public static final Function EqualEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult == 0;
+		}
+	};
+	public static final Function GreaterEqualEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult >= 0;
+		}
+	};
+	public static final Function GreaterThanEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult > 0;
+		}
+	};
+	public static final Function LessEqualEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult <= 0;
+		}
+	};
+	public static final Function LessThanEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult < 0;
+		}
+	};
+	public static final Function NotEqualEval = new RelationalOperationEval() {
+		protected boolean convertComparisonResult(int cmpResult) {
+			return cmpResult != 0;
+		}
+	};
 }

@@ -17,12 +17,14 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
+
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class ConcatEval implements OperationEval {
+public final class ConcatEval implements Function {
 
-	public static final OperationEval instance = new ConcatEval();
+	public static final Function instance = new ConcatEval();
 
 	private ConcatEval() {
 		// enforce singleton
@@ -52,9 +54,5 @@ public final class ConcatEval implements OperationEval {
 		}
 
 		return new StringEval(sb.toString());
-	}
-
-	public int getNumberOfOperands() {
-		return 2;
 	}
 }

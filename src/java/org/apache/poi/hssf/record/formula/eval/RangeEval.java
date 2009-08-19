@@ -17,20 +17,22 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Function;
+
 
 /**
  *
  * @author Josh Micich
  */
-public final class RangeEval implements OperationEval {
+public final class RangeEval implements Function {
 
-	public static final OperationEval instance = new RangeEval();
+	public static final Function instance = new RangeEval();
 
 	private RangeEval() {
 		// enforces singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
 		if(args.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -71,9 +73,5 @@ public final class RangeEval implements OperationEval {
 			throw new EvaluationException((ErrorEval)arg);
 		}
 		throw new IllegalArgumentException("Unexpected ref arg class (" + arg.getClass().getName() + ")");
-	}
-
-	public int getNumberOfOperands() {
-		return 2;
 	}
 }
