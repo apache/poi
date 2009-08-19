@@ -67,7 +67,7 @@ public class FontDetails
      */
     public int getCharWidth( char c )
     {
-        Integer widthInteger = (Integer)(charWidths.get(new Character(c)));
+        Integer widthInteger = charWidths.get(new Character(c));
         if (widthInteger == null && c != 'W') {
             return getCharWidth('W');
         }

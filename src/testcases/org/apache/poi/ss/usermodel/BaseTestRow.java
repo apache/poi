@@ -287,18 +287,18 @@ public abstract class BaseTestRow extends TestCase {
 
         sheet.setDefaultRowHeightInPoints(20);
         row1.setHeight((short)-1); //reset the row height
-        assertEquals(20.0f, row1.getHeightInPoints());
+        assertEquals(20.0f, row1.getHeightInPoints(), 0F);
         assertEquals(20*20, row1.getHeight());
 
         Row row2 = sheet.createRow(1);
         row2.setHeight((short)310);
         assertEquals(310, row2.getHeight());
-        assertEquals((float)310/20, row2.getHeightInPoints());
+        assertEquals(310F/20, row2.getHeightInPoints(), 0F);
 
         Row row3 = sheet.createRow(2);
         row3.setHeightInPoints(25.5f);
         assertEquals((short)(25.5f*20), row3.getHeight());
-        assertEquals(25.5f, row3.getHeightInPoints());
+        assertEquals(25.5f, row3.getHeightInPoints(), 0F);
 
         Row row4 = sheet.createRow(3);
         assertFalse(row4.getZeroHeight());
@@ -312,14 +312,14 @@ public abstract class BaseTestRow extends TestCase {
         row2 = sheet.getRow(1);
         row3 = sheet.getRow(2);
         row4 = sheet.getRow(3);
-        assertEquals(20.0f, row1.getHeightInPoints());
+        assertEquals(20.0f, row1.getHeightInPoints(), 0F);
         assertEquals(20*20, row1.getHeight());
 
         assertEquals(310, row2.getHeight());
-        assertEquals((float)310/20, row2.getHeightInPoints());
+        assertEquals(310F/20, row2.getHeightInPoints(), 0F);
 
         assertEquals((short)(25.5f*20), row3.getHeight());
-        assertEquals(25.5f, row3.getHeightInPoints());
+        assertEquals(25.5f, row3.getHeightInPoints(), 0F);
 
         assertFalse(row1.getZeroHeight());
         assertFalse(row2.getZeroHeight());
@@ -385,6 +385,4 @@ public abstract class BaseTestRow extends TestCase {
         assertTrue(cell2 == it.next());
         assertEquals(Cell.CELL_TYPE_STRING, cell5.getCellType());
     }
-
-
 }

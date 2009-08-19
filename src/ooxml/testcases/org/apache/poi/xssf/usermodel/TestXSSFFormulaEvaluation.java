@@ -39,11 +39,11 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
 
         Cell c1 = r.createCell(0);
         c1.setCellFormula("1+5");
-        assertEquals(0.0, c1.getNumericCellValue() );
+        assertEquals(0.0, c1.getNumericCellValue(), 0.0);
 
         Cell c2 = r.createCell(1);
         c2.setCellFormula("10/2");
-        assertEquals(0.0, c2.getNumericCellValue() );
+        assertEquals(0.0, c2.getNumericCellValue(), 0.0);
 
         FormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
 
@@ -67,19 +67,19 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
 
         Cell c1 = r.createCell(0);
         c1.setCellFormula("SUM(A1:B1)");
-        assertEquals(0.0, c1.getNumericCellValue() );
+        assertEquals(0.0, c1.getNumericCellValue(), 0.0);
 
         Cell c2 = r.createCell(1);
         c2.setCellFormula("SUM(A1:E1)");
-        assertEquals(0.0, c2.getNumericCellValue() );
+        assertEquals(0.0, c2.getNumericCellValue(), 0.0);
 
         Cell c3 = r.createCell(2);
         c3.setCellFormula("COUNT(A1:A1)");
-        assertEquals(0.0, c3.getNumericCellValue() );
+        assertEquals(0.0, c3.getNumericCellValue(), 0.0);
 
         Cell c4 = r.createCell(3);
         c4.setCellFormula("COUNTA(A1:E1)");
-        assertEquals(0.0, c4.getNumericCellValue() );
+        assertEquals(0.0, c4.getNumericCellValue(), 0.0);
 
 
         // Evaluate and test
@@ -150,11 +150,10 @@ public final class TestXSSFFormulaEvaluation extends TestCase {
         row.createCell(2).setCellFormula("sales_1*3");
 
         XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
-        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue());
-        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue());
+        assertEquals(3.0, evaluator.evaluate(sh1.getRow(0).getCell(1)).getNumberValue(), 0.0);
+        assertEquals(6.0, evaluator.evaluate(sh1.getRow(0).getCell(2)).getNumberValue(), 0.0);
 
-        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue());
-        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue());
+        assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
+        assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
     }
-
 }
