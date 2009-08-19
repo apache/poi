@@ -40,7 +40,7 @@ public abstract class BaseTestDataFormat extends TestCase {
 
         Map<Integer, String> formats = BuiltinFormats.getBuiltinFormats();
         for (int idx : formats.keySet()) {
-            String fmt = formats.get(idx);
+            String fmt = formats.get(new Integer(idx));
             assertEquals(idx, df.getFormat(fmt));
         }
 

@@ -61,9 +61,9 @@ public final class TestColumnHelper extends TestCase {
         count = countColumns(worksheet);
         assertEquals(16375, count);
         // Remember - POI column 0 == OOXML column 1
-        assertEquals((double) 88, helper.getColumn(0, false).getWidth());
+        assertEquals(88.0, helper.getColumn(0, false).getWidth(), 0.0);
         assertTrue(helper.getColumn(0, false).getHidden());
-        assertEquals((double)0, helper.getColumn(1, false).getWidth());
+        assertEquals(0.0, helper.getColumn(1, false).getWidth(), 0.0);
         assertFalse(helper.getColumn(1, false).getHidden());
     }
 
@@ -129,7 +129,7 @@ public final class TestColumnHelper extends TestCase {
         assertEquals(2, newCol.getMin());
         assertEquals(8, newCol.getMax());
         assertTrue(newCol.getHidden());
-        assertEquals(13.4, newCol.getWidth());
+        assertEquals(13.4, newCol.getWidth(), 0.0);
     }
 
     public void testAddCleanColIntoCols() {
@@ -213,8 +213,8 @@ public final class TestColumnHelper extends TestCase {
         ColumnHelper helper = new ColumnHelper(worksheet);
         assertNotNull(helper.getColumn(0, false));
         assertNotNull(helper.getColumn(1, false));
-        assertEquals((double) 88, helper.getColumn(0, false).getWidth());
-        assertEquals((double) 0, helper.getColumn(1, false).getWidth());
+        assertEquals(88.0, helper.getColumn(0, false).getWidth(), 0.0);
+        assertEquals(0.0, helper.getColumn(1, false).getWidth(), 0.0);
         assertTrue(helper.getColumn(0, false).getHidden());
         assertFalse(helper.getColumn(1, false).getHidden());
         assertNull(helper.getColumn(99, false));
@@ -226,12 +226,12 @@ public final class TestColumnHelper extends TestCase {
         col.setWidth(12);
         col.setHidden(true);
         CTCol newCol = CTCol.Factory.newInstance();
-        assertEquals((double) 0, newCol.getWidth());
+        assertEquals(0.0, newCol.getWidth(), 0.0);
         assertFalse(newCol.getHidden());
         ColumnHelper helper = new ColumnHelper(CTWorksheet.Factory
                 .newInstance());
         helper.setColumnAttributes(col, newCol);
-        assertEquals((double) 12, newCol.getWidth());
+        assertEquals(12.0, newCol.getWidth(), 0.0);
         assertTrue(newCol.getHidden());
     }
 
@@ -239,7 +239,7 @@ public final class TestColumnHelper extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
-        
+
         // Check POI 0 based, OOXML 1 based
         CTCol col = columnHelper.getOrCreateColumn1Based(3, false);
         assertNotNull(col);
@@ -255,16 +255,16 @@ public final class TestColumnHelper extends TestCase {
         assertNotNull(columnHelper.getColumn1Based(30, false));
         assertNull(columnHelper.getColumn(30, false));
     }
-    
+
     public void testGetSetColDefaultStyle() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
         ColumnHelper columnHelper = sheet.getColumnHelper();
-        
+
         // POI column 3, OOXML column 4
         CTCol col = columnHelper.getOrCreateColumn1Based(4, false);
-        
+
         assertNotNull(col);
         assertNotNull(columnHelper.getColumn(3, false));
         columnHelper.setColDefaultStyle(3, 2);
