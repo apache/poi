@@ -30,6 +30,7 @@ import org.apache.poi.xwpf.usermodel.XWPFFactory;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -127,15 +128,18 @@ public class XWPFHeaderFooterPolicy {
 		}
 	}
 
-    
     public XWPFHeader createHeader(Enum type) throws IOException {
+    	return createHeader(type, null);
+    }
+    
+    public XWPFHeader createHeader(Enum type, XWPFParagraph[] pars) throws IOException {
     	XWPFRelation relation = XWPFRelation.HEADER;
     	String pStyle = "Header";
     	int i = getRelationIndex(relation);
     	HdrDocument hdrDoc = HdrDocument.Factory.newInstance();
     	XWPFHeader wrapper = (XWPFHeader)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
-    	CTHdrFtr hdr = buildHdr(type, pStyle, wrapper);
+    	CTHdrFtr hdr = buildHdr(type, pStyle, wrapper, pars);
     	
     	OutputStream outputStream = wrapper.getPackagePart().getOutputStream();
     	hdrDoc.setHdr(hdr);
@@ -148,15 +152,18 @@ public class XWPFHeaderFooterPolicy {
     	return wrapper;
     }
 
-    
     public XWPFFooter createFooter(Enum type) throws IOException {
+    	return createFooter(type, null);
+    }
+    
+    public XWPFFooter createFooter(Enum type, XWPFParagraph[] pars) throws IOException {
     	XWPFRelation relation = XWPFRelation.FOOTER;
     	String pStyle = "Footer";
     	int i = getRelationIndex(relation);
     	FtrDocument ftrDoc = FtrDocument.Factory.newInstance();
     	XWPFFooter wrapper = (XWPFFooter)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
-    	CTHdrFtr ftr = buildFtr(type, pStyle, wrapper);
+    	CTHdrFtr ftr = buildFtr(type, pStyle, wrapper, pars);
     	
     	OutputStream outputStream = wrapper.getPackagePart().getOutputStream();
     	ftrDoc.setFtr(ftr);
@@ -183,29 +190,36 @@ public class XWPFHeaderFooterPolicy {
 	}
 
 
-	private CTHdrFtr buildFtr(Enum type, String pStyle, XWPFHeaderFooter wrapper) {
-		CTHdrFtr ftr = buildHdrFtr(pStyle);
+	private CTHdrFtr buildFtr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
+		CTHdrFtr ftr = buildHdrFtr(pStyle, pars);
     	setFooterReference(type, wrapper);
 		return ftr;
 	}
 
 
-	private CTHdrFtr buildHdr(Enum type, String pStyle, XWPFHeaderFooter wrapper) {
-		CTHdrFtr hdr = buildHdrFtr(pStyle);
+	private CTHdrFtr buildHdr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
+		CTHdrFtr hdr = buildHdrFtr(pStyle, pars);
     	setHeaderReference(type, wrapper);
 		return hdr;
 	}
 
-
-	private CTHdrFtr buildHdrFtr(String pStyle) {
+	private CTHdrFtr buildHdrFtr(String pStyle, XWPFParagraph[] paragraphs) {
 		CTHdrFtr ftr = CTHdrFtr.Factory.newInstance();
-		CTP p = ftr.addNewP();
-		byte[] rsidr = doc.getDocument().getBody().getPArray()[0].getRsidR();
-		byte[] rsidrdefault = doc.getDocument().getBody().getPArray()[0].getRsidRDefault();
-		p.setRsidP(rsidr);
-		p.setRsidRDefault(rsidrdefault);
-		CTPPr pPr = p.addNewPPr();
-		pPr.addNewPStyle().setVal(pStyle);
+		if (paragraphs != null) {
+			for (int i = 0 ; i < paragraphs.length ; i++) {
+				CTP p = ftr.addNewP();
+				ftr.setPArray(0, paragraphs[i].getCTP());
+			}
+		}
+		else {
+			CTP p = ftr.addNewP();
+			byte[] rsidr = doc.getDocument().getBody().getPArray()[0].getRsidR();
+			byte[] rsidrdefault = doc.getDocument().getBody().getPArray()[0].getRsidRDefault();
+			p.setRsidP(rsidr);
+			p.setRsidRDefault(rsidrdefault);
+			CTPPr pPr = p.addNewPPr();
+			pPr.addNewPStyle().setVal(pStyle);
+		}
 		return ftr;
 	}
 
