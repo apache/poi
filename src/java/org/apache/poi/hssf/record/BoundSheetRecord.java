@@ -54,10 +54,9 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + len(str)
-	 * 
+	 *
 	 * UNICODE: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + 2 * len(str)
-	 * 
 	 */
 	public BoundSheetRecord(RecordInputStream in) {
 		field_1_position_of_BOF = in.readInt();
@@ -75,9 +74,8 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * set the offset in bytes of the Beginning of File Marker within the HSSF
 	 * Stream part of the POIFS file
-	 * 
-	 * @param pos
-	 *			offset in bytes
+	 *
+	 * @param pos offset in bytes
 	 */
 	public void setPositionOfBof(int pos) {
 		field_1_position_of_BOF = pos;
@@ -86,10 +84,10 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
 	 * @param sheetName the name of the sheet
-	 * @throws IllegalArgumentException if sheet name will cause excel to crash. 
+	 * @throws IllegalArgumentException if sheet name will cause excel to crash.
 	 */
 	public void setSheetname(String sheetName) {
-		
+
 		validateSheetName(sheetName);
 		field_5_sheetname = sheetName;
 		field_4_isMultibyteUnicode = StringUtil.hasMultibyte(sheetName) ?  1 : 0;
@@ -117,10 +115,14 @@ public final class BoundSheetRecord extends StandardRecord {
 					// all other chars OK
 					continue;
 			}
-			throw new IllegalArgumentException("Invalid char (" + ch 
+			throw new IllegalArgumentException("Invalid char (" + ch
 					+ ") found at index (" + i + ") in sheet name '" + sheetName + "'");
 		}
- 	}
+		if (sheetName.charAt(0) == '\'' || sheetName.charAt(len-1) == '\'') {
+			throw new IllegalArgumentException("Invalid sheet name '" + sheetName
+					+ "'. Sheet names must not begin or end with (').");
+		}
+	}
 
 	/**
 	 * get the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
@@ -154,7 +156,7 @@ public final class BoundSheetRecord extends StandardRecord {
 		buffer.append("[/BOUNDSHEET]\n");
 		return buffer.toString();
 	}
-	
+
 	protected int getDataSize() {
 		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
 	}
@@ -179,33 +181,33 @@ public final class BoundSheetRecord extends StandardRecord {
 	}
 
 	/**
-	 * Is the sheet hidden? Different from very hidden 
+	 * Is the sheet hidden? Different from very hidden
 	 */
 	public boolean isHidden() {
 		return hiddenFlag.isSet(field_2_option_flags);
 	}
 
 	/**
-	 * Is the sheet hidden? Different from very hidden 
+	 * Is the sheet hidden? Different from very hidden
 	 */
 	public void setHidden(boolean hidden) {
 		field_2_option_flags = hiddenFlag.setBoolean(field_2_option_flags, hidden);
 	}
 
 	/**
-	 * Is the sheet very hidden? Different from (normal) hidden 
+	 * Is the sheet very hidden? Different from (normal) hidden
 	 */
 	public boolean isVeryHidden() {
 		return veryHiddenFlag.isSet(field_2_option_flags);
 	}
 
 	/**
-	 * Is the sheet very hidden? Different from (normal) hidden 
+	 * Is the sheet very hidden? Different from (normal) hidden
 	 */
 	public void setVeryHidden(boolean veryHidden) {
 		field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
 	}
-	
+
 	/**
 	 * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
 	 * BOFs.
