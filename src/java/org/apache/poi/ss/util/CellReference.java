@@ -32,11 +32,12 @@ public class CellReference {
 	/**
 	 * Used to classify identifiers found in formulas as cell references or not.
 	 */
-	public static final class NameType {
-		public static final int CELL = 1;
-		public static final int NAMED_RANGE = 2;
-		public static final int COLUMN = 3;
-		public static final int BAD_CELL_OR_NAMED_RANGE = -1;
+	public enum NameType {
+		CELL,
+		NAMED_RANGE,
+		COLUMN,
+		ROW,
+		BAD_CELL_OR_NAMED_RANGE;
 	}
 
 	/** The character ($) that signifies a row or column value is absolute instead of relative */
@@ -57,6 +58,11 @@ public class CellReference {
 	 * The text may optionally be prefixed with a single '$'.
 	 */
 	private static final Pattern COLUMN_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)");
+	/**
+	 * Matches a run of one or more digits.  The run of digits is group 1.
+	 * The text may optionally be prefixed with a single '$'.
+	 */
+	private static final Pattern ROW_REF_PATTERN = Pattern.compile("\\$?([0-9]+)");
 	/**
 	 * Named range names must start with a letter or underscore.  Subsequent characters may include
 	 * digits or dot.  (They can even end in dot).
@@ -176,7 +182,7 @@ public class CellReference {
 	 * Classifies an identifier as either a simple (2D) cell reference or a named range name
 	 * @return one of the values from <tt>NameType</tt>
 	 */
-	public static int classifyCellReference(String str, SpreadsheetVersion ssVersion) {
+	public static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
 		int len = str.length();
 		if (len < 1) {
 			throw new IllegalArgumentException("Empty string not allowed");
@@ -188,7 +194,7 @@ public class CellReference {
 			case '_':
 				break;
 			default:
-				if (!Character.isLetter(firstChar)) {
+				if (!Character.isLetter(firstChar) && !Character.isDigit(firstChar)) {
 					throw new IllegalArgumentException("Invalid first char (" + firstChar
 							+ ") of cell reference or named range.  Letter expected");
 				}
@@ -219,12 +225,19 @@ public class CellReference {
 		return NameType.NAMED_RANGE;
 	}
 
-	private static int validateNamedRangeName(String str, SpreadsheetVersion ssVersion) {
+	private static NameType validateNamedRangeName(String str, SpreadsheetVersion ssVersion) {
 		Matcher colMatcher = COLUMN_REF_PATTERN.matcher(str);
 		if (colMatcher.matches()) {
 			String colStr = colMatcher.group(1);
 			if (isColumnWithnRange(colStr, ssVersion)) {
 				return NameType.COLUMN;
+			}
+		}
+		Matcher rowMatcher = ROW_REF_PATTERN.matcher(str);
+		if (rowMatcher.matches()) {
+			String rowStr = rowMatcher.group(1);
+			if (isRowWithnRange(rowStr, ssVersion)) {
+				return NameType.ROW;
 			}
 		}
 		if (!NAMED_RANGE_NAME_PATTERN.matcher(str).matches()) {
@@ -274,18 +287,7 @@ public class CellReference {
 		if (!isColumnWithnRange(colStr, ssVersion)) {
 			return false;
 		}
-
-		int rowNum = Integer.parseInt(rowStr);
-
-		if (rowNum < 0) {
-			throw new IllegalStateException("Invalid rowStr '" + rowStr + "'.");
-		}
-		if (rowNum == 0) {
-			// execution gets here because caller does first pass of discriminating
-			// potential cell references using a simplistic regex pattern.
-			return false;
-		}
-		return rowNum <= ssVersion.getMaxRows();
+		return isRowWithnRange(rowStr, ssVersion);
 	}
 
 	public static boolean isColumnWithnRange(String colStr, SpreadsheetVersion ssVersion) {
@@ -306,6 +308,20 @@ public class CellReference {
 			// no need to check range
 		}
 		return true;
+	}
+
+	public static boolean isRowWithnRange(String rowStr, SpreadsheetVersion ssVersion) {
+		int rowNum = Integer.parseInt(rowStr);
+
+		if (rowNum < 0) {
+			throw new IllegalStateException("Invalid rowStr '" + rowStr + "'.");
+		}
+		if (rowNum == 0) {
+			// execution gets here because caller does first pass of discriminating
+			// potential cell references using a simplistic regex pattern.
+			return false;
+		}
+		return rowNum <= ssVersion.getMaxRows();
 	}
 
 	/**

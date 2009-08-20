@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.util;
 
 
@@ -26,12 +26,12 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 
 public final class TestCellReference extends TestCase {
-    
+
     public void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
-    
+
     public void  testAbsRef2(){
         CellReference cf = new CellReference(4,1,true,true);
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
@@ -41,17 +41,17 @@ public final class TestCellReference extends TestCase {
         CellReference cf = new CellReference("B$5");
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
-    
+
     public void  testAbsRef4(){
         CellReference cf = new CellReference(4,1,true,false);
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
-    
+
     public void  testAbsRef5(){
         CellReference cf = new CellReference("$B5");
         confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
-    
+
     public void  testAbsRef6(){
         CellReference cf = new CellReference(4,1,false,true);
         confirmCell(cf, null, 4, 1, false, true, "$B5");
@@ -61,27 +61,27 @@ public final class TestCellReference extends TestCase {
         CellReference cf = new CellReference("B5");
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }
-    
+
     public void  testAbsRef8(){
         CellReference cf = new CellReference(4,1,false,false);
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }
-    
+
     public void testSpecialSheetNames() {
         CellReference cf;
         cf = new CellReference("'profit + loss'!A1");
         confirmCell(cf, "profit + loss", 0, 0, false, false, "'profit + loss'!A1");
-        
+
         cf = new CellReference("'O''Brien''s Sales'!A1");
         confirmCell(cf, "O'Brien's Sales", 0, 0, false, false, "'O''Brien''s Sales'!A1");
-        
+
         cf = new CellReference("'Amazing!'!A1");
         confirmCell(cf, "Amazing!", 0, 0, false, false, "'Amazing!'!A1");
     }
 
-    /* package */ static void confirmCell(CellReference cf, String expSheetName, int expRow, 
+    /* package */ static void confirmCell(CellReference cf, String expSheetName, int expRow,
             int expCol, boolean expIsRowAbs, boolean expIsColAbs, String expText) {
-        
+
         assertEquals(expSheetName, cf.getSheetName());
         assertEquals("row index is wrong", expRow, cf.getRow());
         assertEquals("col index is wrong", expCol, cf.getCol());
@@ -103,9 +103,19 @@ public final class TestCellReference extends TestCase {
         confirmNameType("A.1", NameType.NAMED_RANGE);
         confirmNameType("A1.", NameType.NAMED_RANGE);
     }
-    
-    private void confirmNameType(String ref, int expectedResult) {
-        int actualResult = CellReference.classifyCellReference(ref, SpreadsheetVersion.EXCEL97);
+
+    public void testClassificationOfRowReferences(){
+        confirmNameType("10", NameType.ROW);
+        confirmNameType("$10", NameType.ROW);
+        confirmNameType("65536", NameType.ROW);
+
+        confirmNameType("65537", NameType.BAD_CELL_OR_NAMED_RANGE);
+        confirmNameType("$100000", NameType.BAD_CELL_OR_NAMED_RANGE);
+        confirmNameType("$1$1", NameType.BAD_CELL_OR_NAMED_RANGE);
+    }
+
+    private void confirmNameType(String ref, NameType expectedResult) {
+        NameType actualResult = CellReference.classifyCellReference(ref, SpreadsheetVersion.EXCEL97);
         assertEquals(expectedResult, actualResult);
     }
 }
