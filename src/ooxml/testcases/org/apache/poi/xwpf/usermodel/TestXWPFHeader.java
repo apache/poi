@@ -17,7 +17,10 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
@@ -81,6 +84,21 @@ public class TestXWPFHeader extends TestCase {
 		assertNotNull(policy.getDefaultHeader());
 		assertNotNull(policy.getFirstPageHeader());
 		assertNotNull(policy.getDefaultFooter());
+	}
+	
+	public void testSetWatermark() throws IOException {
+		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+		// no header is set (yet)
+		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
+		assertNull(policy.getDefaultHeader());
+		assertNull(policy.getFirstPageHeader());
+		assertNull(policy.getDefaultFooter());
+		
+		policy.createWatermark("DRAFT");
+		
+		assertNotNull(policy.getDefaultHeader());
+		assertNotNull(policy.getFirstPageHeader());
+		assertNotNull(policy.getEvenPageHeader());
 	}
 
 }
