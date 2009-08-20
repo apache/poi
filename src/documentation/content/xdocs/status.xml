@@ -33,7 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
-           <action dev="POI-DEVELOPERS" type="add">47668 - Improved parsing of OOXML documents</action>
+           <action dev="POI-DEVELOPERS" type="add">45583 - Avoid exception when reading ClipboardData packet in OLE property sets</action>
            <action dev="POI-DEVELOPERS" type="add">47652 - Added support for reading encrypted workbooks</action>
            <action dev="POI-DEVELOPERS" type="add">47604 - Implementation of an XML to XLSX Importer using Custom XML Mapping</action>
            <action dev="POI-DEVELOPERS" type="fix">47620 - Avoid FormulaParseException in XSSFWorkbook.setRepeatingRowsAndColumns when removing repeated rows and columns</action>

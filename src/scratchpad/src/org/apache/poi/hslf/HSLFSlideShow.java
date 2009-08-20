@@ -146,9 +146,6 @@ public final class HSLFSlideShow extends POIDocument {
 		// Now, build records based on the PowerPoint stream
 		buildRecords();
 
-		// Look for Property Streams:
-		readProperties();
-
 		// Look for any other streams
 		readOtherStreams();
 

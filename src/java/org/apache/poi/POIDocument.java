@@ -47,19 +47,19 @@ import org.apache.poi.util.POILogger;
  */
 public abstract class POIDocument {
 	/** Holds metadata on our document */
-	protected SummaryInformation sInf;
+	private SummaryInformation sInf;
 	/** Holds further metadata on our document */
-	protected DocumentSummaryInformation dsInf;
+	private DocumentSummaryInformation dsInf;
 	/** The open POIFS FileSystem that contains our document */
 	protected POIFSFileSystem filesystem;
 	/**	The directory that our document lives in */
 	protected DirectoryNode directory;
 	
 	/** For our own logging use */
-	protected POILogger logger = POILogFactory.getLogger(this.getClass());
+	private final static POILogger logger = POILogFactory.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
-    protected boolean initialized = false;
+    private boolean initialized = false;
     
 
     protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
@@ -120,7 +120,10 @@ public abstract class POIDocument {
 	 *  if it wasn't found
 	 */
 	protected PropertySet getPropertySet(String setName) {
-		DocumentInputStream dis;
+        //directory can be null when creating new documents
+        if(directory == null) return null;
+        
+        DocumentInputStream dis;
 		try {
 			// Find the entry, and get an input stream for it
 			dis = directory.createDocumentInputStream(setName);
@@ -157,14 +160,16 @@ public abstract class POIDocument {
 	 * @param writtenEntries a list of POIFS entries to add the property names too
 	 */
 	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
-        if(sInf != null) {
-			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME,sInf,outFS);
+        SummaryInformation si = getSummaryInformation();
+        if(si != null) {
+			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
 			if(writtenEntries != null) {
 				writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
 			}
 		}
-		if(dsInf != null) {
-			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME,dsInf,outFS);
+        DocumentSummaryInformation dsi = getDocumentSummaryInformation();
+        if(dsi != null) {
+			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, outFS);
 			if(writtenEntries != null) {
 				writtenEntries.add(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 			}

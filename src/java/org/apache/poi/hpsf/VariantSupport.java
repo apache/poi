@@ -272,9 +272,20 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_CF:
             {
+                if(l1 < 0) {
+                    /**
+                     *  YK: reading the ClipboardData packet (VT_CF) is not quite correct.
+                     *  The size of the data is determined by the first four bytes of the packet
+                     *  while the current implementation calculates it in the Section constructor.
+                     *  Test files in Bugzilla 42726 and 45583 clearly show that this approach does not always work.
+                     *  The workaround below attempts to gracefully handle such cases instead of throwing exceptions.
+                     * 
+                     *  August 20, 2009
+                     */
+                    l1 = LittleEndian.getInt(src, o1); o1 += LittleEndian.INT_SIZE;
+                }
                 final byte[] v = new byte[l1];
-                for (int i = 0; i < l1; i++)
-                    v[i] = src[(o1 + i)];
+                System.arraycopy(src, o1, v, 0, v.length);
                 value = v;
                 break;
             }
@@ -509,7 +520,7 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_CF:
             {
-                final byte[] b = (byte[]) value; 
+                final byte[] b = (byte[]) value;
                 out.write(b);
                 length = b.length;
                 break;
