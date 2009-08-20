@@ -170,7 +170,6 @@ public final class HWPFDocument extends POIDocument
   {
     // Sort out the hpsf properties
 	super(directory, pfilesystem);
-    readProperties();
 
     // read in the main stream.
     DocumentEntry documentProps = (DocumentEntry)

@@ -68,9 +68,6 @@ public final class HDGFDiagram extends POIDocument {
 		_docstream = new byte[docProps.getSize()];
 		dir.createDocumentInputStream("VisioDocument").read(_docstream);
 
-		// Read in the common POI streams
-		readProperties();
-
 		// Check it's really visio
 		String typeString = new String(_docstream, 0, 20);
 		if(! typeString.equals(VISIO_HEADER)) {
