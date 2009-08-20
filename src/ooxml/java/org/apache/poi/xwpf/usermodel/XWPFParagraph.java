@@ -43,7 +43,7 @@ public class XWPFParagraph {
     private StringBuffer footnoteText = new StringBuffer();
 
 
-    protected XWPFParagraph(CTP prgrph) {
+    public XWPFParagraph(CTP prgrph) {
         this(prgrph, null);
     }
 
