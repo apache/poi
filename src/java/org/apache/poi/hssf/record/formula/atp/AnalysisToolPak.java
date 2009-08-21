@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 public final class AnalysisToolPak {
@@ -34,8 +34,7 @@ public final class AnalysisToolPak {
 			_functionName = functionName;
 		}
 
-		public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet,
-				int srcCellRow, int srcCellCol) {
+		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 			throw new NotImplementedException(_functionName);
 		}
 	};

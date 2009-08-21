@@ -51,7 +51,7 @@ public final class TestUnaryPlusEval extends TestCase {
 			EvalFactory.createAreaEval(areaPtg, values),
 		};
 
-		double result = NumericFunctionInvoker.invoke(UnaryPlusEval.instance, args, 10, (short)20);
+		double result = NumericFunctionInvoker.invoke(EvalInstances.UnaryPlus, args, 10, (short)20);
 
 		assertEquals(35, result, 0);
 	}

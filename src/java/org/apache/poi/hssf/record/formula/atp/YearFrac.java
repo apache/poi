@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.usermodel.DateUtil;
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
@@ -58,9 +58,9 @@ final class YearFrac implements FreeRefFunction {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
-			int srcCellCol) {
-
+	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+		int srcCellRow = ec.getRowIndex();
+		int srcCellCol = ec.getColumnIndex();
 		double result;
 		try {
 			int basis = 0; // default

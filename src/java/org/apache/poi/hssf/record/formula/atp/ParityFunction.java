@@ -23,7 +23,7 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 /**
  * Implementation of Excel 'Analysis ToolPak' function ISEVEN() ISODD()<br/>
  *
@@ -39,15 +39,14 @@ final class ParityFunction implements FreeRefFunction {
 		_desiredParity = desiredParity;
 	}
 
-	public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow,
-			int srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
 
 		int val;
 		try {
-			val = evaluateArgParity(args[0], srcCellRow, srcCellCol);
+			val = evaluateArgParity(args[0], ec.getRowIndex(), ec.getColumnIndex());
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

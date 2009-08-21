@@ -27,14 +27,15 @@ final class SheetRefEvaluator {
 
 	private final WorkbookEvaluator _bookEvaluator;
 	private final EvaluationTracker _tracker;
-	private final EvaluationSheet _sheet;
 	private final int _sheetIndex;
+	private EvaluationSheet _sheet;
 
-	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker,
-			EvaluationWorkbook _workbook, int sheetIndex) {
+	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker, int sheetIndex) {
+		if (sheetIndex < 0) {
+			throw new IllegalArgumentException("Invalid sheetIndex: " + sheetIndex + ".");
+		}
 		_bookEvaluator = bookEvaluator;
 		_tracker = tracker;
-		_sheet = _workbook.getSheet(sheetIndex);
 		_sheetIndex = sheetIndex;
 	}
 
@@ -43,6 +44,13 @@ final class SheetRefEvaluator {
 	}
 
 	public ValueEval getEvalForCell(int rowIndex, int columnIndex) {
-		return _bookEvaluator.evaluateReference(_sheet, _sheetIndex, rowIndex, columnIndex, _tracker);
+		return _bookEvaluator.evaluateReference(getSheet(), _sheetIndex, rowIndex, columnIndex, _tracker);
+	}
+
+	private EvaluationSheet getSheet() {
+		if (_sheet == null) {
+			_sheet = _bookEvaluator.getSheet(_sheetIndex);
+		}
+		return _sheet;
 	}
 }

@@ -34,9 +34,15 @@ import java.util.Set;
  * @author Josh Micich
  */
 public final class CollaboratingWorkbooksEnvironment {
-	
+
+	public static final class WorkbookNotFoundException extends Exception {
+		WorkbookNotFoundException(String msg) {
+			super(msg);
+		}
+	}
+
 	public static final CollaboratingWorkbooksEnvironment EMPTY = new CollaboratingWorkbooksEnvironment();
-	
+
 	private final Map<String, WorkbookEvaluator> _evaluatorsByName;
 	private final WorkbookEvaluator[] _evaluators;
 
@@ -48,7 +54,7 @@ public final class CollaboratingWorkbooksEnvironment {
 	public static void setup(String[] workbookNames, WorkbookEvaluator[] evaluators) {
 		int nItems = workbookNames.length;
 		if (evaluators.length != nItems) {
-			throw new IllegalArgumentException("Number of workbook names is " + nItems 
+			throw new IllegalArgumentException("Number of workbook names is " + nItems
 					+ " but number of evaluators is " + evaluators.length);
 		}
 		if (nItems < 1) {
@@ -82,7 +88,7 @@ public final class CollaboratingWorkbooksEnvironment {
 	}
 
 	private static void hookNewEnvironment(WorkbookEvaluator[] evaluators, CollaboratingWorkbooksEnvironment env) {
-		
+
 		// All evaluators will need to share the same cache.
 		// but the cache takes an optional evaluation listener.
 		int nItems = evaluators.length;
@@ -95,12 +101,15 @@ public final class CollaboratingWorkbooksEnvironment {
 			}
 		}
 		EvaluationCache cache = new EvaluationCache(evalListener);
-		
+
 		for(int i=0; i<nItems; i++) {
 			evaluators[i].attachToEnvironment(env, cache, i);
 		}
-		
 	}
+
+	/**
+	 * Completely dismantles all workbook environments that the supplied evaluators are part of
+	 */
 	private void unhookOldEnvironments(WorkbookEvaluator[] evaluators) {
 		Set<CollaboratingWorkbooksEnvironment> oldEnvs = new HashSet<CollaboratingWorkbooksEnvironment>();
 		for(int i=0; i<evaluators.length; i++) {
@@ -114,10 +123,11 @@ public final class CollaboratingWorkbooksEnvironment {
 	}
 
 	/**
-	 * 
+	 * Tell all contained evaluators that this environment should be discarded
 	 */
 	private void unhook() {
 		if (_evaluators.length < 1) {
+			// Never dismantle the EMPTY environment
 			return;
 		}
 		for (int i = 0; i < _evaluators.length; i++) {
@@ -126,7 +136,7 @@ public final class CollaboratingWorkbooksEnvironment {
 		_unhooked = true;
 	}
 
-	public WorkbookEvaluator getWorkbookEvaluator(String workbookName) {
+	public WorkbookEvaluator getWorkbookEvaluator(String workbookName) throws WorkbookNotFoundException {
 		if (_unhooked) {
 			throw new IllegalStateException("This environment has been unhooked");
 		}
@@ -148,7 +158,7 @@ public final class CollaboratingWorkbooksEnvironment {
 				}
 				sb.append(")");
 			}
-			throw new RuntimeException(sb.toString());
+			throw new WorkbookNotFoundException(sb.toString());
 		}
 		return result;
 	}

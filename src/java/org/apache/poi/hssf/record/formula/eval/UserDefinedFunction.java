@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula.eval;
 import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 /**
  *
@@ -36,8 +37,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook,
-			int srcCellSheet, int srcCellRow,int srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {
@@ -49,7 +49,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		if (nameArg instanceof NameEval) {
 			targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);
 		} else if (nameArg instanceof NameXEval) {
-			targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
+			targetFunc = findExternalUserDefinedFunction(ec.getWorkbook(), (NameXEval) nameArg);
 		} else {
 			throw new RuntimeException("First argument should be a NameEval, but got ("
 					+ nameArg.getClass().getName() + ")");
@@ -57,7 +57,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		int nOutGoingArgs = nIncomingArgs -1;
 		ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];
 		System.arraycopy(args, 1, outGoingArgs, 0, nOutGoingArgs);
-		return targetFunc.evaluate(outGoingArgs, workbook, srcCellSheet, srcCellRow, srcCellCol);
+		return targetFunc.evaluate(outGoingArgs, ec);
 	}
 
 	private static FreeRefFunction findExternalUserDefinedFunction(EvaluationWorkbook workbook,

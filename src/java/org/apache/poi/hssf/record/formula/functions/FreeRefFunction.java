@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 
 /**
@@ -28,28 +28,24 @@ import org.apache.poi.ss.formula.EvaluationWorkbook;
  * argument.<br/>
  * Two important functions with this feature are <b>INDIRECT</b> and <b>OFFSET</b><p/>
  *
- * In POI, the <tt>HSSFFormulaEvaluator</tt> evaluates every cell in each reference argument before
- * calling the function.  This means that functions using fixed references do not need access to
- * the rest of the workbook to execute.  Hence the <tt>evaluate()</tt> method on the common
- * interface <tt>Function</tt> does not take a workbook parameter.<p>
+ * When POI evaluates formulas, each reference argument is capable of evaluating any cell inside
+ * its range.  Actually, even cells outside the reference range but on the same sheet can be
+ * evaluated.  This allows <b>OFFSET</b> to be implemented like most other functions - taking only
+ * the arguments, and source cell coordinates.
  *
- * This interface recognises the requirement of some functions to freely create and evaluate
- * references beyond those passed in as arguments.
+ * For the moment this interface only exists to serve the <b>INDIRECT</b> which can decode
+ * arbitrary text into cell references, and evaluate them..
  *
  * @author Josh Micich
  */
 public interface FreeRefFunction {
 	/**
-	 *
 	 * @param args the pre-evaluated arguments for this function. args is never <code>null</code>,
-	 * 		  nor are any of its elements.
-	 * @param srcCellSheet zero based sheet index of the cell containing the currently evaluating formula
-	 * @param srcCellRow zero based row index of the cell containing the currently evaluating formula
-	 * @param srcCellCol zero based column index of the cell containing the currently evaluating formula
-	 * @param workbook is the workbook containing the formula/cell being evaluated
+	 *             nor are any of its elements.
+	 * @param ec primarily used to identify the source cell containing the formula being evaluated.
+	 *             may also be used to dynamically create reference evals.
 	 * @return never <code>null</code>. Possibly an instance of <tt>ErrorEval</tt> in the case of
 	 * a specified Excel error (Exceptions are never thrown to represent Excel errors).
-	 *
 	 */
-	ValueEval evaluate(ValueEval[] args, EvaluationWorkbook workbook, int srcCellSheet, int srcCellRow, int srcCellCol);
+	ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec);
 }

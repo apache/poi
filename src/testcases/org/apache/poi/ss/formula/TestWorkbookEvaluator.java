@@ -42,8 +42,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class TestWorkbookEvaluator extends TestCase {
 
-	private static WorkbookEvaluator createEvaluator() {
-		return new WorkbookEvaluator(null, null);
+	private static ValueEval evaluateFormula(Ptg[] ptgs) {
+		OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
+		return new WorkbookEvaluator(null, null).evaluateFormula(ec, ptgs);
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			AttrPtg.SUM,
 		};
 
-		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = evaluateFormula(ptgs);
 		assertEquals(42, ((NumberEval)result).getNumberValue(), 0.0);
 	}
 
@@ -78,7 +79,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			ptg,
 		};
 
-		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = evaluateFormula(ptgs);
 		assertEquals(ErrorEval.REF_INVALID, result);
 	}
 
@@ -93,7 +94,7 @@ public class TestWorkbookEvaluator extends TestCase {
 			AttrPtg.SUM,
 		};
 
-		ValueEval result = createEvaluator().evaluateFormula(0, 0, 0, ptgs, null);
+		ValueEval result = evaluateFormula(ptgs);
 		assertEquals(42, ((NumberEval)result).getNumberValue(), 0.0);
 	}
 
