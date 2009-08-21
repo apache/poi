@@ -64,7 +64,7 @@ public final class TestRangeEval extends TestCase {
 			createRefEval(refB),
 		};
 		AreaReference ar = new AreaReference(expectedAreaRef);
-		ValueEval result = RangeEval.instance.evaluate(args, 0, (short)0);
+		ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
 		assertTrue(result instanceof AreaEval);
 		AreaEval ae = (AreaEval) result;
 		assertEquals(ar.getFirstCell().getRow(), ae.getFirstRow());

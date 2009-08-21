@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+
 /**
  * Common interface for implementations of Excel formula operations.
  *
@@ -29,11 +31,10 @@ public interface OperationEval {
 	 * @param args the evaluated operation arguments. Elements of this array typically implement
 	 * {@link ValueEval}.  Empty values are represented with {@link BlankEval} or {@link
 	 * MissingArgEval}, never <code>null</code>.
-	 * @param srcRowIndex row index of the cell containing the formula under evaluation
-	 * @param srcColumnIndex column index of the cell containing the formula under evaluation
+	 * @param ec used to identify the current cell under evaluation, and potentially to
+	 * dynamically create references
 	 * @return The evaluated result, possibly an {@link ErrorEval}, never <code>null</code>.
 	 */
-	ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex);
-
+	ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec);
 	int getNumberOfOperands();
 }

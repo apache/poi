@@ -89,7 +89,7 @@ public final class TestEqualEval extends TestCase {
 			new StringEval(a),
 			new StringEval(b),
 		};
-		ValueEval result = cmpOp.evaluate(args, 10, (short)20);
+		ValueEval result = evaluate(cmpOp, args, 10, 20);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
 		return be.getBooleanValue();

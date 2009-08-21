@@ -106,8 +106,8 @@ final class OperationEvaluatorFactory {
 			_numberOfOperands = argCount;
 		}
 
-		public ValueEval evaluate(ValueEval[] args, int rowIndex, short columnIndex) {
-			return _function.evaluate(args, rowIndex, columnIndex);
+		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+			return _function.evaluate(args, ec.getRowIndex(), (short) ec.getColumnIndex());
 		}
 
 		public int getNumberOfOperands() {

@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47721 - Added implementation for INDIRECT()</action>
            <action dev="POI-DEVELOPERS" type="add">45583 - Avoid exception when reading ClipboardData packet in OLE property sets</action>
            <action dev="POI-DEVELOPERS" type="add">47652 - Added support for reading encrypted workbooks</action>
            <action dev="POI-DEVELOPERS" type="add">47604 - Implementation of an XML to XLSX Importer using Custom XML Mapping</action>
@@ -42,7 +43,7 @@
            <action dev="POI-DEVELOPERS" type="fix">47571 - Fixed XWPFWordExtractor to extract inserted/deleted text</action>
            <action dev="POI-DEVELOPERS" type="fix">47548 - Fixed RecordFactoryInputStream to properly read continued DrawingRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">46419 - Fixed compatibility issue with OpenOffice 3.0</action>
-           <action dev="POI-DEVELOPERS" type="fix">47559 - Fixed compatibility issue with Excel 2008 Mac sp2. Please see 
+           <action dev="POI-DEVELOPERS" type="fix">47559 - Fixed compatibility issue with Excel 2008 Mac sp2. Please see
              <link href="./spreadsheet/index.html"> the HSSF+XSSF project page</link> for more information. </action>
            <action dev="POI-DEVELOPERS" type="fix">47540 - Fix for saving custom and extended OOXML properties</action>
            <action dev="POI-DEVELOPERS" type="fix">47535 - Fixed WordExtractor to tolerate files with empty footnote block</action>

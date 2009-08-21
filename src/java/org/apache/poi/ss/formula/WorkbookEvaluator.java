@@ -51,7 +51,6 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.FunctionEval;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
@@ -61,7 +60,7 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -80,10 +79,12 @@ public final class WorkbookEvaluator {
 
 	private final EvaluationWorkbook _workbook;
 	private EvaluationCache _cache;
+	/** part of cache entry key (useful when evaluating multiple workbooks) */
 	private int _workbookIx;
 
 	private final IEvaluationListener _evaluationListener;
 	private final Map<EvaluationSheet, Integer> _sheetIndexesBySheet;
+	private final Map<String, Integer> _sheetIndexesByName;
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 	private final IStabilityClassifier _stabilityClassifier;
 
@@ -96,6 +97,7 @@ public final class WorkbookEvaluator {
 		_evaluationListener = evaluationListener;
 		_cache = new EvaluationCache(evaluationListener);
 		_sheetIndexesBySheet = new IdentityHashMap<EvaluationSheet, Integer>();
+		_sheetIndexesByName = new IdentityHashMap<String, Integer>();
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_workbookIx = 0;
 		_stabilityClassifier = stabilityClassifier;
@@ -106,6 +108,10 @@ public final class WorkbookEvaluator {
 	 */
 	/* package */ String getSheetName(int sheetIndex) {
 		return _workbook.getSheetName(sheetIndex);
+	}
+
+	/* package */ EvaluationSheet getSheet(int sheetIndex) {
+		return _workbook.getSheet(sheetIndex);
 	}
 
 	private static boolean isDebugLogEnabled() {
@@ -125,11 +131,22 @@ public final class WorkbookEvaluator {
 		return _collaboratingWorkbookEnvironment;
 	}
 
+	/**
+	 * Discards the current workbook environment and attaches to the default 'empty' environment.
+	 * Also resets evaluation cache.
+	 */
 	/* package */ void detachFromEnvironment() {
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_cache = new EvaluationCache(_evaluationListener);
 		_workbookIx = 0;
 	}
+	/**
+	 * @return the evaluator for another workbook which is part of the same {@link CollaboratingWorkbooksEnvironment}
+	 */
+	/* package */ WorkbookEvaluator getOtherWorkbookEvaluator(String workbookName) throws WorkbookNotFoundException {
+		return _collaboratingWorkbookEnvironment.getWorkbookEvaluator(workbookName);
+	}
+
 	/* package */ IEvaluationListener getEvaluationListener() {
 		return _evaluationListener;
 	}
@@ -179,6 +196,23 @@ public final class WorkbookEvaluator {
 		return evaluateAny(srcCell, sheetIndex, srcCell.getRowIndex(), srcCell.getColumnIndex(), new EvaluationTracker(_cache));
 	}
 
+	/**
+	 * Case-insensitive.
+	 * @return -1 if sheet with specified name does not exist
+	 */
+	/* package */ int getSheetIndex(String sheetName) {
+		Integer result = _sheetIndexesByName.get(sheetName);
+		if (result == null) {
+			int sheetIndex = _workbook.getSheetIndex(sheetName);
+			if (sheetIndex < 0) {
+				return -1;
+			}
+			result = new Integer(sheetIndex);
+			_sheetIndexesByName.put(sheetName, result);
+		}
+		return result.intValue();
+	}
+
 
 	/**
 	 * @return never <code>null</code>, never {@link BlankEval}
@@ -207,15 +241,16 @@ public final class WorkbookEvaluator {
 			if (!tracker.startEvaluate(cce)) {
 				return ErrorEval.CIRCULAR_REF_ERROR;
 			}
+			OperationEvaluationContext ec = new OperationEvaluationContext(this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
 
 			try {
 
 				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
 				if (evalListener == null) {
-					result = evaluateFormula(sheetIndex, rowIndex, columnIndex, ptgs, tracker);
+					result = evaluateFormula(ec, ptgs);
 				} else {
 					evalListener.onStartEvaluate(srcCell, cce, ptgs);
-					result = evaluateFormula(sheetIndex, rowIndex, columnIndex, ptgs, tracker);
+					result = evaluateFormula(ec, ptgs);
 					evalListener.onEndEvaluate(cce, result);
 				}
 
@@ -286,7 +321,7 @@ public final class WorkbookEvaluator {
 		throw new RuntimeException("Unexpected cell type (" + cellType + ")");
 	}
 	// visibility raised for testing
-	/* package */ ValueEval evaluateFormula(int sheetIndex, int srcRowNum, int srcColNum, Ptg[] ptgs, EvaluationTracker tracker) {
+	/* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
 
 		Stack<ValueEval> stack = new Stack<ValueEval>();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
@@ -329,12 +364,12 @@ public final class WorkbookEvaluator {
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-				opResult = invokeOperation(operation, ops, _workbook, sheetIndex, srcRowNum, srcColNum);
+				opResult = operation.evaluate(ops, ec);
 				if (opResult == MissingArgEval.instance) {
 					opResult = BlankEval.INSTANCE;
 				}
 			} else {
-				opResult = getEvalForPtg(ptg, sheetIndex, tracker);
+				opResult = getEvalForPtg(ptg, ec);
 			}
 			if (opResult == null) {
 				throw new RuntimeException("Evaluation result must not be null");
@@ -347,7 +382,7 @@ public final class WorkbookEvaluator {
 		if (!stack.isEmpty()) {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
-		value = dereferenceValue(value, srcRowNum, srcColNum);
+		value = dereferenceValue(value, ec.getRowIndex(), ec.getColumnIndex());
 		if (value == BlankEval.INSTANCE) {
 			// Note Excel behaviour here. A blank final final value is converted to zero.
 			return NumberEval.ZERO;
@@ -384,31 +419,6 @@ public final class WorkbookEvaluator {
 		return evaluationResult;
 	}
 
-	private static ValueEval invokeOperation(OperationEval operation, ValueEval[] ops,
-			EvaluationWorkbook workbook, int sheetIndex, int srcRowNum, int srcColNum) {
-
-		if(operation instanceof FunctionEval) {
-			FunctionEval fe = (FunctionEval) operation;
-			if(fe.isFreeRefFunction()) {
-				return fe.getFreeRefFunction().evaluate(ops, workbook, sheetIndex, srcRowNum, srcColNum);
-			}
-		}
-		return operation.evaluate(ops, srcRowNum, (short)srcColNum);
-	}
-	private SheetRefEvaluator createExternSheetRefEvaluator(EvaluationTracker tracker,
-			ExternSheetReferenceToken ptg) {
-		int externSheetIndex = ptg.getExternSheetIndex();
-		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
-		if (externalSheet != null) {
-			WorkbookEvaluator otherEvaluator = _collaboratingWorkbookEnvironment.getWorkbookEvaluator(externalSheet.getWorkbookName());
-			EvaluationWorkbook otherBook = otherEvaluator._workbook;
-			int otherSheetIndex = otherBook.getSheetIndex(externalSheet.getSheetName());
-			return new SheetRefEvaluator(otherEvaluator, tracker, otherBook, otherSheetIndex);
-		}
-		int otherSheetIndex = _workbook.convertFromExternSheetIndex(externSheetIndex);
-		return new SheetRefEvaluator(this, tracker, _workbook, otherSheetIndex);
-
-	}
 
 	/**
 	 * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
@@ -416,7 +426,7 @@ public final class WorkbookEvaluator {
 	 * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
 	 * passed here!
 	 */
-	private ValueEval getEvalForPtg(Ptg ptg, int sheetIndex, EvaluationTracker tracker) {
+	private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
 		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
 		if (ptg instanceof NamePtg) {
@@ -427,7 +437,7 @@ public final class WorkbookEvaluator {
 				return new NameEval(nameRecord.getNameText());
 			}
 			if (nameRecord.hasFormula()) {
-				return evaluateNameFormula(nameRecord.getNameDefinition(), sheetIndex, tracker);
+				return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
 			}
 
 			throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
@@ -460,15 +470,15 @@ public final class WorkbookEvaluator {
 		}
 		if (ptg instanceof Ref3DPtg) {
 			Ref3DPtg refPtg = (Ref3DPtg) ptg;
-			SheetRefEvaluator sre = createExternSheetRefEvaluator(tracker, refPtg);
+			SheetRefEvaluator sre = ec.createExternSheetRefEvaluator(refPtg);
 			return new LazyRefEval(refPtg, sre);
 		}
 		if (ptg instanceof Area3DPtg) {
 			Area3DPtg aptg = (Area3DPtg) ptg;
-			SheetRefEvaluator sre = createExternSheetRefEvaluator(tracker, aptg);
+			SheetRefEvaluator sre = ec.createExternSheetRefEvaluator(aptg);
 			return new LazyAreaEval(aptg, sre);
 		}
-		SheetRefEvaluator sre = new SheetRefEvaluator(this, tracker, _workbook, sheetIndex);
+		SheetRefEvaluator sre = ec.getRefEvaluatorForCurrentSheet();
 		if (ptg instanceof RefPtg) {
 			return new LazyRefEval(((RefPtg) ptg), sre);
 		}
@@ -490,11 +500,11 @@ public final class WorkbookEvaluator {
 
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
-	private ValueEval evaluateNameFormula(Ptg[] ptgs, int sheetIndex, EvaluationTracker tracker) {
+	private ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
 		if (ptgs.length > 1) {
 			throw new RuntimeException("Complex name formulas not supported yet");
 		}
-		return getEvalForPtg(ptgs[0], sheetIndex, tracker);
+		return getEvalForPtg(ptgs[0], ec);
 	}
 
 	/**

@@ -34,13 +34,18 @@ final class LazyRefEval extends RefEvalBase {
 
 	private final SheetRefEvaluator _evaluator;
 
-	public LazyRefEval(RefPtg ptg, SheetRefEvaluator sre) {
-		super(ptg.getRow(), ptg.getColumn());
+	public LazyRefEval(int rowIndex, int columnIndex, SheetRefEvaluator sre) {
+		super(rowIndex, columnIndex);
+		if (sre == null) {
+			throw new IllegalArgumentException("sre must not be null");
+		}
 		_evaluator = sre;
 	}
+	public LazyRefEval(RefPtg ptg, SheetRefEvaluator sre) {
+		this(ptg.getRow(), ptg.getColumn(), sre);
+	}
 	public LazyRefEval(Ref3DPtg ptg, SheetRefEvaluator sre) {
-		super(ptg.getRow(), ptg.getColumn());
-		_evaluator = sre;
+		this(ptg.getRow(), ptg.getColumn(), sre);
 	}
 
 	public ValueEval getInnerValueEval() {
