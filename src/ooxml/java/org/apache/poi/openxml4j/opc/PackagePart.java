@@ -444,16 +444,16 @@ public abstract class PackagePart implements RelationshipSource {
 	 *         else returns <b>false</b>
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
-	@SuppressWarnings("finally")
 	public boolean isRelationshipExists(PackageRelationship rel) {
-		try {
-			for (PackageRelationship r : this.getRelationships()) {
-				if (r == rel)
-					return true;
-			}
-		} finally {
-			return false;
-		}
+        try {
+            for (PackageRelationship r : this.getRelationships()) {
+                if (r == rel)
+                    return true;
+            }
+        } catch (InvalidFormatException e){
+            ;
+        }
+        return false;
 	}
 
 	/**

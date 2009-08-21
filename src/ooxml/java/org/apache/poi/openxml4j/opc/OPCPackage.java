@@ -682,7 +682,7 @@ public abstract class OPCPackage implements RelationshipSource {
 			throw new IllegalArgumentException("partName");
 		}
 
-		if (contentType == null || contentType == "") {
+		if (contentType == null || contentType.equals("")) {
 			throw new IllegalArgumentException("contentType");
 		}
 
@@ -703,7 +703,7 @@ public abstract class OPCPackage implements RelationshipSource {
 		// A format consumer shall consider more than one core properties
 		// relationship for a package to be an error. If present, the
 		// relationship shall target the Core Properties part.
-		if (contentType == ContentTypes.CORE_PROPERTIES_PART) {
+		if (contentType.equals(ContentTypes.CORE_PROPERTIES_PART)) {
 			if (this.packageProperties != null)
 				throw new InvalidOperationException(
 						"OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !");
@@ -1200,16 +1200,12 @@ public abstract class OPCPackage implements RelationshipSource {
 	/**
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
-	@SuppressWarnings("finally")
 	public boolean isRelationshipExists(PackageRelationship rel) {
-		try {
-			for (PackageRelationship r : this.getRelationships()) {
-				if (r == rel)
-					return true;
-			}
-		} finally {
-			return false;
-		}
+        for (PackageRelationship r : this.getRelationships()) {
+            if (r == rel)
+                return true;
+        }
+        return false;
 	}
 
 	/**

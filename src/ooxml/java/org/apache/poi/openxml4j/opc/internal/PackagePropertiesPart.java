@@ -574,10 +574,10 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * @param d
 	 *            The Date to convert.
 	 * @return The formated date or null.
-	 * @see java.util.SimpleDateFormat
+	 * @see java.text.SimpleDateFormat
 	 */
 	private String getDateValue(Nullable<Date> d) {
-		if (d == null || d.equals("")) {
+		if (d == null) {
 			return "";
 		}
 		SimpleDateFormat df = new SimpleDateFormat(

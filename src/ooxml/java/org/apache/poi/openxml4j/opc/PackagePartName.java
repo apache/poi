@@ -233,7 +233,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	 */
 	private static void throwExceptionIfPartNameHaveInvalidSegments(URI partUri)
 			throws InvalidFormatException {
-		if (partUri == null || "".equals(partUri)) {
+		if (partUri == null) {
 			throw new IllegalArgumentException("partUri");
 		}
 

@@ -1369,13 +1369,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	}
 
     	boolean styleChanged = style != null
-    	&& ci.getStyle() != style.intValue();
+    	&& ci.getStyle() != style;
     	boolean levelChanged = level != null
-    	&& ci.getOutlineLevel() != level.intValue();
+    	&& ci.getOutlineLevel() != level;
     	boolean hiddenChanged = hidden != null
-    	&& ci.getHidden() != hidden.booleanValue();
+    	&& ci.getHidden() != hidden;
     	boolean collapsedChanged = collapsed != null
-    	&& ci.getCollapsed() != collapsed.booleanValue();
+    	&& ci.getCollapsed() != collapsed;
     	boolean columnChanged = levelChanged || hiddenChanged
     	|| collapsedChanged || styleChanged;
     	if (!columnChanged) {
@@ -1828,11 +1828,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * @param rowIndex the zero based row index to expand
+     * @param rowNumber the zero based row index to expand
      */
     private void expandRow(int rowNumber) {
-    	int idx = rowNumber;
-    	if (idx == -1)
+    	if (rowNumber == -1)
     		return;
     	XSSFRow row = getRow(rowNumber);
     	// If it is already expanded do nothing.
@@ -1840,10 +1839,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     		return;
 
     	// Find the start of the group.
-    	int startIdx = findStartOfRowOutlineGroup(idx);
+    	int startIdx = findStartOfRowOutlineGroup(rowNumber);
 
     	// Find the end of the group.
-    	int endIdx = findEndOfRowOutlineGroup(idx);
+    	int endIdx = findEndOfRowOutlineGroup(rowNumber);
 
     	// expand:
     	// collapsed must be unset
@@ -1856,7 +1855,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	// is the enclosing group
     	// hidden bit only is altered for this outline level. ie. don't
     	// un-collapse contained groups
-    	if (!isRowGroupHiddenByParent(idx)) {
+    	if (!isRowGroupHiddenByParent(rowNumber)) {
     		for (int i = startIdx; i < endIdx; i++) {
     			if (row.getCTRow().getOutlineLevel() == getRow(i).getCTRow()
     					.getOutlineLevel()) {
@@ -1871,7 +1870,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * @param rowIndex the zero based row index to find from
+     * @param row the zero based row index to find from
      */
     public int findEndOfRowOutlineGroup(int row) {
     	int level = getRow(row).getCTRow().getOutlineLevel();
@@ -1886,7 +1885,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * @param rowIndex the zero based row index to find from
+     * @param row the zero based row index to find from
      */
     private boolean isRowGroupHiddenByParent(int row) {
     	// Look out outline details of end
@@ -1922,7 +1921,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * @param rowIndex the zero based row index to find from
+     * @param row the zero based row index to find from
      */
     private boolean isRowGroupCollapsed(int row) {
     	int collapseRow = findEndOfRowOutlineGroup(row) + 1;

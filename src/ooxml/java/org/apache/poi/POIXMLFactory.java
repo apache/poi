@@ -28,7 +28,7 @@ public abstract class POIXMLFactory {
 
     /**
      * Create a POIXMLDocumentPart from existing package part and relation. This method is called
-     * from {@link POIXMLDocumentPart#read(POIXMLFactory)} when parsing a document
+     * from {@link POIXMLDocument#load(POIXMLFactory)} when parsing a document
      *
      * @param rel   the package part relationship
      * @param part  the PackagePart representing the created instance

@@ -113,7 +113,7 @@ public final class ZipHelper {
 		if (opcItemName == null)
 			throw new IllegalArgumentException("opcItemName");
 
-		String retVal = new String(opcItemName);
+		String retVal = opcItemName;
 		while (retVal.startsWith(FORWARD_SLASH))
 			retVal = retVal.substring(1);
 		return retVal;
@@ -131,7 +131,7 @@ public final class ZipHelper {
 		if (opcItemName == null)
 			throw new IllegalArgumentException("opcItemName");
 
-		String retVal = new String(opcItemName);
+		String retVal = opcItemName;
 		while (retVal.startsWith(FORWARD_SLASH))
 			retVal = retVal.substring(1);
 		try {

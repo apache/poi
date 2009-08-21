@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -37,15 +38,7 @@ public final class TestPOIXMLProperties extends TestCase {
 	private CoreProperties _coreProperties;
 
 	public void setUp() throws Exception{
-		File sampleFile = new File(
-				System.getProperty("HWPF.testdata.path") +
-				File.separator + "documentProperties.docx"
-		);
-		assertTrue(sampleFile.exists());
-		XWPFDocument sampleDoc;
-		sampleDoc = new XWPFDocument(
-				POIXMLDocument.openPackage(sampleFile.toString())
-		);
+        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
 		_props = sampleDoc.getProperties();
 		_coreProperties = _props.getCoreProperties();
 		assertNotNull(_props);

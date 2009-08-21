@@ -99,7 +99,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
 			XSSFSheet sheet = workbook.getSheetAt(i);
 			if(includeSheetNames) {
-				text.append(workbook.getSheetName(i) + "\n");
+				text.append(workbook.getSheetName(i)).append("\n");
 			}
 
 			// Header(s), if present
@@ -137,7 +137,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 					    // Replace any newlines with spaces, otherwise it
 					    //  breaks the output
 					    String commentText = comment.getString().getString().replace('\n', ' ');
-					    text.append(" Comment by "+comment.getAuthor()+": "+commentText);
+					    text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
 					}
 
 					if(ri.hasNext())

@@ -311,7 +311,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getBottomBorderColor() {
         XSSFColor clr = getBottomBorderXSSFColor();
-        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
     }
 
     /**
@@ -359,7 +359,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getFillBackgroundColor() {
         XSSFColor clr = getFillBackgroundXSSFColor();
-        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
 
     /**
@@ -391,7 +391,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getFillForegroundColor() {
         XSSFColor clr = getFillForegroundXSSFColor();
-        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
 
     /**
@@ -508,7 +508,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getLeftBorderColor() {
         XSSFColor clr = getLeftBorderXSSFColor();
-        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
     }
 
     /**
@@ -543,7 +543,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getRightBorderColor() {
         XSSFColor clr = getRightBorderXSSFColor();
-        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
     }
     /**
      * Get the color to use for the right border
@@ -586,7 +586,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public short getTopBorderColor() {
         XSSFColor clr = getTopBorderXSSFColor();
-        return clr == null ? IndexedColors.BLACK.getIndex() : (short)clr.getIndexed();
+        return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
     }
 
     /**

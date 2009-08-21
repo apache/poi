@@ -48,7 +48,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	/**
 	 * Returns the core document properties, eg author
 	 */
-	public String getCorePropertiesText() throws IOException, OpenXML4JException, XmlException {
+	public String getCorePropertiesText() {
 		StringBuffer text = new StringBuffer();
 		PackagePropertiesPart props =
 			document.getProperties().getCoreProperties().getUnderlyingProperties();
@@ -79,7 +79,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 * Returns the extended document properties, eg
 	 *  application
 	 */
-	public String getExtendedPropertiesText() throws IOException, OpenXML4JException, XmlException {
+	public String getExtendedPropertiesText() {
 		StringBuffer text = new StringBuffer();
 		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
 			props = document.getProperties().getExtendedProperties().getUnderlyingProperties();
@@ -106,7 +106,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 * Returns the custom document properties, if 
 	 *  there are any
 	 */
-	public String getCustomPropertiesText() throws IOException, OpenXML4JException, XmlException {
+	public String getCustomPropertiesText() {
 		StringBuffer text = new StringBuffer();
 		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
 			props = document.getProperties().getCustomProperties().getUnderlyingProperties();

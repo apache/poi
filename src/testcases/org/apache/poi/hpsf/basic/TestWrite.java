@@ -696,7 +696,6 @@ public class TestWrite extends TestCase
      */
     private void testRecreate(final File f)
     {
-        System.out.println("Recreating file \"" + f + "\"");
         try
         {
             /* Read the POI filesystem's property set streams: */
