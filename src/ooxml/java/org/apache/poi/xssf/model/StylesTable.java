@@ -121,19 +121,14 @@ public class StylesTable extends POIXMLDocumentPart {
 			for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
 				borders.add(new XSSFCellBorder(border));
 			}
-			if(doc.getStyleSheet().getCellXfs() != null)
-			for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
-				xfs.add(xf);
-			}
-			if(doc.getStyleSheet().getCellStyleXfs() != null)
-			for (CTXf xf : doc.getStyleSheet().getCellStyleXfs().getXfArray()) {
-				styleXfs.add(xf);
-			}
-			// dxf
-			if(doc.getStyleSheet().getDxfs() != null)
-			for (CTDxf dxf : doc.getStyleSheet().getDxfs().getDxfArray()) {
-				dxfs.add(dxf);
-			}
+            CTCellXfs cellXfs = doc.getStyleSheet().getCellXfs();
+            if(cellXfs != null) xfs.addAll(Arrays.asList(cellXfs.getXfArray()));
+
+            CTCellStyleXfs cellStyleXfs = doc.getStyleSheet().getCellStyleXfs();
+            if(cellStyleXfs != null) styleXfs.addAll(Arrays.asList(cellStyleXfs.getXfArray()));
+
+            CTDxfs styleDxfs = doc.getStyleSheet().getDxfs();
+			if(styleDxfs != null) dxfs.addAll(Arrays.asList(styleDxfs.getDxfArray()));
 
 		} catch (XmlException e) {
 			throw new IOException(e.getLocalizedMessage());

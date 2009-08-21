@@ -20,8 +20,6 @@ package org.apache.poi.xssf.dev;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import java.io.*;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
@@ -43,9 +41,6 @@ public final class XSSFDump {
     }
 
     public static void dump(ZipFile zip) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-
         String zipname = zip.getName();
         int sep = zipname.lastIndexOf('.');
         File root = new File(zipname.substring(0, sep));

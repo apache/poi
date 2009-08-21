@@ -120,8 +120,8 @@ public final class PackageRelationship {
 			return false;
 		}
 		PackageRelationship rel = (PackageRelationship) obj;
-		return (this.id == rel.id
-				&& this.relationshipType == rel.relationshipType
+		return (this.id.equals(rel.id)
+				&& this.relationshipType.equals(rel.relationshipType)
 				&& (rel.source != null ? rel.source.equals(this.source) : true)
 				&& this.targetMode == rel.targetMode && this.targetUri
 				.equals(rel.targetUri));
@@ -217,7 +217,7 @@ public final class PackageRelationship {
 		sb.append(container == null ? " - container=null" : " - container="
 				+ container.toString());
 		sb.append(relationshipType == null ? " - relationshipType=null"
-				: " - relationshipType=" + relationshipType.toString());
+				: " - relationshipType=" + relationshipType);
 		sb.append(source == null ? " - source=null" : " - source="
 				+ getSourceURI().toASCIIString());
 		sb.append(targetUri == null ? " - target=null" : " - target="

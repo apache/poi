@@ -620,8 +620,8 @@ public final class PackagingURIHelper {
 		if (partName == null)
 			throw new IllegalArgumentException("partName");
 
-		if (PackagingURIHelper.PACKAGE_ROOT_URI.getPath() == partName.getURI()
-				.getPath())
+		if (PackagingURIHelper.PACKAGE_ROOT_URI.getPath().equals(
+                partName.getURI().getPath()) )
 			return PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME;
 
 		if (partName.isRelationshipPartURI())
