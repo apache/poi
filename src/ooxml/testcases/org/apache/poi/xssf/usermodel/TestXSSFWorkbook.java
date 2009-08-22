@@ -168,8 +168,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		short i = workbook.getNumCellStyles();
 		//get default cellStyles
 		assertEquals(1, i);
-		//get wrong value
-		assertNotSame(2, i);
 	}
 
 	public void testLoadSave() {

@@ -14,16 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.extractor;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Tests for HXFWordExtractor
@@ -33,7 +30,7 @@ public class TestXWPFWordExtractor extends TestCase {
     /**
      * Get text out of the simple file
      */
-    public void testGetSimpleText() throws Exception {
+    public void testGetSimpleText() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -62,7 +59,7 @@ public class TestXWPFWordExtractor extends TestCase {
     /**
      * Tests getting the text out of a complex file
      */
-    public void testGetComplexText() throws Exception {
+    public void testGetComplexText() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -94,7 +91,7 @@ public class TestXWPFWordExtractor extends TestCase {
         assertEquals(103, ps);
     }
 
-    public void testGetWithHyperlinks() throws Exception {
+    public void testGetWithHyperlinks() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -119,7 +116,7 @@ public class TestXWPFWordExtractor extends TestCase {
         );
     }
 
-    public void testHeadersFooters() throws Exception {
+    public void testHeadersFooters() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ThreeColHeadFoot.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -162,7 +159,7 @@ public class TestXWPFWordExtractor extends TestCase {
         );
     }
 
-    public void testFootnotes() throws Exception {
+    public void testFootnotes() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -170,14 +167,14 @@ public class TestXWPFWordExtractor extends TestCase {
     }
 
 
-    public void testTableFootnotes() throws Exception {
+    public void testTableFootnotes() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("snoska"));
     }
 
-    public void testFormFootnotes() throws Exception {
+    public void testFormFootnotes() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("form_footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
@@ -186,14 +183,14 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
     }
 
-    public void testEndnotes() throws Exception {
+    public void testEndnotes() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("XXX"));
     }
 
-    public void testInsertedDeletedText() throws Exception {
+    public void testInsertedDeletedText() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 

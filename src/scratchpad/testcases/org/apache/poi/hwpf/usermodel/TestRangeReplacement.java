@@ -44,15 +44,15 @@ public final class TestRangeReplacement extends TestCase {
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() throws Exception {
+	public void testOpen() {
 
-		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+		HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
-	public void testDocStructure() throws Exception {
+	public void testDocStructure() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
@@ -81,7 +81,7 @@ public final class TestRangeReplacement extends TestCase {
 	/**
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
-	public void testRangeReplacementOne() throws Exception {
+	public void testRangeReplacementOne() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
@@ -114,7 +114,7 @@ public final class TestRangeReplacement extends TestCase {
 	/**
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
-	public void testRangeReplacementAll() throws Exception {
+	public void testRangeReplacementAll() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 

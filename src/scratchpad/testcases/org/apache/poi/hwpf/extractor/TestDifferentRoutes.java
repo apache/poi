@@ -52,50 +52,50 @@ public final class TestDifferentRoutes extends TestCase {
 
 	private HWPFDocument doc;
 
-    protected void setUp() throws Exception {
+	protected void setUp() {
 		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
-    }
+	}
 
-    /**
-     * Test model based extraction
-     */
-    public void testExtractFromModel() {
-    	Range r = doc.getRange();
+	/**
+	 * Test model based extraction
+	 */
+	public void testExtractFromModel() {
+		Range r = doc.getRange();
 
-    	String[] text = new String[r.numParagraphs()];
-    	for(int i=0; i < r.numParagraphs(); i++) {
-    		Paragraph p = r.getParagraph(i);
-    		text[i] = p.text();
-    	}
+		String[] text = new String[r.numParagraphs()];
+		for (int i = 0; i < r.numParagraphs(); i++) {
+			Paragraph p = r.getParagraph(i);
+			text[i] = p.text();
+		}
 
-    	assertEquals(p_text.length, text.length);
-    	for(int i=0; i<p_text.length; i++) {
-    		assertEquals(p_text[i], text[i]);
-    	}
-    }
+		assertEquals(p_text.length, text.length);
+		for (int i = 0; i < p_text.length; i++) {
+			assertEquals(p_text[i], text[i]);
+		}
+	}
 
-    /**
-     * Test textPieces based extraction
-     */
-    public void testExtractFromTextPieces() throws Exception {
-    	StringBuffer textBuf = new StringBuffer();
+	/**
+	 * Test textPieces based extraction
+	 */
+	public void testExtractFromTextPieces() throws Exception {
+		StringBuffer textBuf = new StringBuffer();
 
-    	Iterator textPieces = doc.getTextTable().getTextPieces().iterator();
-    	while (textPieces.hasNext()) {
-    		TextPiece piece = (TextPiece) textPieces.next();
+		Iterator textPieces = doc.getTextTable().getTextPieces().iterator();
+		while (textPieces.hasNext()) {
+			TextPiece piece = (TextPiece) textPieces.next();
 
-    		String encoding = "Cp1252";
-    		if (piece.isUnicode()) {
-    			encoding = "UTF-16LE";
-    		}
-    		String text = new String(piece.getRawBytes(), encoding);
-    		textBuf.append(text);
-    	}
+			String encoding = "Cp1252";
+			if (piece.isUnicode()) {
+				encoding = "UTF-16LE";
+			}
+			String text = new String(piece.getRawBytes(), encoding);
+			textBuf.append(text);
+		}
 
-    	StringBuffer exp = new StringBuffer();
-    	for(int i=0; i<p_text.length; i++) {
-    		exp.append(p_text[i]);
-    	}
-    	assertEquals(exp.toString(), textBuf.toString());
-    }
+		StringBuffer exp = new StringBuffer();
+		for (int i = 0; i < p_text.length; i++) {
+			exp.append(p_text[i]);
+		}
+		assertEquals(exp.toString(), textBuf.toString());
+	}
 }

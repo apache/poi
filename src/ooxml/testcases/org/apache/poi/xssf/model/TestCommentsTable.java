@@ -21,21 +21,24 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
 
 public class TestCommentsTable extends TestCase {
@@ -118,7 +121,7 @@ public class TestCommentsTable extends TestCase {
 		assertEquals("Another Author", comment.getAuthor());
 	}
 
-	public void testDontLoostNewLines() throws Exception {
+	public void testDontLoostNewLines() {
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		List<POIXMLDocumentPart> rels = wb.getSheetAt(0).getRelations();
 		CommentsTable ct = null;
@@ -162,8 +165,8 @@ public class TestCommentsTable extends TestCase {
 		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
 	}
 
-	public void testExisting() throws Exception {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
+	public void testExisting() {
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		Sheet sheet1 = workbook.getSheetAt(0);
 		Sheet sheet2 = workbook.getSheetAt(1);
 
@@ -192,8 +195,8 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(2, cc7.getColumn());
 	}
 
-	public void testWriteRead() throws Exception {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
+	public void testWriteRead() {
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
 
@@ -239,8 +242,8 @@ public class TestCommentsTable extends TestCase {
 				sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
 	}
 
-	public void testReadWriteMultipleAuthors() throws Exception {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
+	public void testReadWriteMultipleAuthors() {
+		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
 

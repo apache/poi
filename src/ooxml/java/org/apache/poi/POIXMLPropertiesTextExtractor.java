@@ -14,19 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi;
 
-import java.io.IOException;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
  * A {@link POITextExtractor} for returning the textual
  *  content of the OOXML file properties, eg author
- *  and title. 
+ *  and title.
  */
 public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	/**
@@ -42,17 +39,17 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 *  working on.
 	 */
 	public POIXMLPropertiesTextExtractor(POIXMLTextExtractor otherExtractor) {
-		super(otherExtractor.document);
+		super(otherExtractor.getDocument());
 	}
-	
+
 	/**
 	 * Returns the core document properties, eg author
 	 */
 	public String getCorePropertiesText() {
 		StringBuffer text = new StringBuffer();
 		PackagePropertiesPart props =
-			document.getProperties().getCoreProperties().getUnderlyingProperties();
-		
+			getDocument().getProperties().getCoreProperties().getUnderlyingProperties();
+
 		text.append("Category = " + props.getCategoryProperty().getValue() + "\n");
 		text.append("ContentStatus = " + props.getContentStatusProperty().getValue() + "\n");
 		text.append("ContentType = " + props.getContentTypeProperty().getValue() + "\n");
@@ -82,7 +79,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	public String getExtendedPropertiesText() {
 		StringBuffer text = new StringBuffer();
 		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
-			props = document.getProperties().getExtendedProperties().getUnderlyingProperties();
+			props = getDocument().getProperties().getExtendedProperties().getUnderlyingProperties();
 
 		text.append("Application = " + props.getApplication() + "\n");
 		text.append("AppVersion = " + props.getAppVersion() + "\n");
@@ -99,36 +96,36 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		text.append("PresentationFormat = " + props.getPresentationFormat() + "\n");
 		text.append("Template = " + props.getTemplate() + "\n");
 		text.append("TotalTime = " + props.getTotalTime() + "\n");
-		
+
 		return text.toString();
 	}
 	/**
-	 * Returns the custom document properties, if 
+	 * Returns the custom document properties, if
 	 *  there are any
 	 */
 	public String getCustomPropertiesText() {
 		StringBuffer text = new StringBuffer();
 		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-			props = document.getProperties().getCustomProperties().getUnderlyingProperties();
-		
+			props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
+
 		CTProperty[] properties = props.getPropertyArray();
 		for(int i = 0; i<properties.length; i++) {
 			// TODO - finish off
 			String val = "(not implemented!)";
-			
+
 			text.append(
 					properties[i].getName() +
 					" = " + val + "\n"
 			);
 		}
-		
+
 		return text.toString();
 	}
 
 	public String getText() {
 		try {
-			return 
-				getCorePropertiesText() + 
+			return
+				getCorePropertiesText() +
 				getExtendedPropertiesText() +
 				getCustomPropertiesText();
 		} catch(Exception e) {

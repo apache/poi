@@ -15,10 +15,8 @@
   limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,8 +25,8 @@ import junit.framework.TestCase;
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -37,8 +35,8 @@ public final class TestPOIXMLProperties extends TestCase {
 	private POIXMLProperties _props;
 	private CoreProperties _coreProperties;
 
-	public void setUp() throws Exception{
-        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
+	public void setUp() {
+		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
 		_props = sampleDoc.getProperties();
 		_coreProperties = _props.getCoreProperties();
 		assertNotNull(_props);
@@ -168,7 +166,7 @@ public final class TestPOIXMLProperties extends TestCase {
 
 	public void testGetSetRevision() {
 		String revision = _coreProperties.getRevision();
-		assertTrue("Revision number is 1", new Integer(revision)> 1);
+		assertTrue("Revision number is 1", Integer.parseInt(revision) > 1);
 		_coreProperties.setRevision("20");
 		assertEquals("20", _coreProperties.getRevision());
 		_coreProperties.setRevision("20xx");

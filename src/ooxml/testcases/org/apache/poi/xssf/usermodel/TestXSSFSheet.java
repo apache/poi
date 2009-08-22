@@ -51,7 +51,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         baseTestGetSetMargin(new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3});
     }
 
-    public void testExistingHeaderFooter() throws Exception {
+    public void testExistingHeaderFooter() {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx");
         XSSFOddHeader hdr;
         XSSFOddFooter ftr;

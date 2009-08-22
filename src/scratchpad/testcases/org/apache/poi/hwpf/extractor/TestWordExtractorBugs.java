@@ -17,9 +17,8 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**

@@ -14,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.model;
 
-import java.io.File;
-
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Tests for XWPF Header Footer Stuff
@@ -35,15 +33,14 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 	private XWPFDocument oddEven;
 	private XWPFDocument diffFirst;
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void setUp() {
 
 		noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
-        header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
-        headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
-        footer = XWPFTestDataSamples.openSampleDocument("FancyFoot.docx");
-        oddEven = XWPFTestDataSamples.openSampleDocument("PageSpecificHeadFoot.docx");
-        diffFirst = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
+		header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
+		headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
+		footer = XWPFTestDataSamples.openSampleDocument("FancyFoot.docx");
+		oddEven = XWPFTestDataSamples.openSampleDocument("PageSpecificHeadFoot.docx");
+		diffFirst = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
 	}
 
 	public void testPolicy() {

@@ -53,15 +53,15 @@ public final class TestRangeDelete extends TestCase {
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() throws Exception {
+	public void testOpen() {
 
-		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+		HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
-	public void testDocStructure() throws Exception {
+	public void testDocStructure() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 		Range range;
@@ -126,7 +126,7 @@ public final class TestRangeDelete extends TestCase {
 	/**
 	 * Test that we can delete text (one instance) from our Range with Unicode text.
 	 */
-	public void testRangeDeleteOne() throws Exception {
+	public void testRangeDeleteOne() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
@@ -172,7 +172,7 @@ public final class TestRangeDelete extends TestCase {
 	/**
 	 * Test that we can delete text (all instances of) from our Range with Unicode text.
 	 */
-	public void testRangeDeleteAll() throws Exception {
+	public void testRangeDeleteAll() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
