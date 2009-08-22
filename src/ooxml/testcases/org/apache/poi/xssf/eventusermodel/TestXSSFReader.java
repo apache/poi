@@ -17,16 +17,15 @@
 
 package org.apache.poi.xssf.eventusermodel;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * Tests for {@link XSSFReader}

@@ -17,13 +17,9 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.FileInputStream;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-
-import org.apache.poi.hwpf.model.*;
-import java.io.File;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 
 public final class HWPFDocFixture

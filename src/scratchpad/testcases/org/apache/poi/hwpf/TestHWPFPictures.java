@@ -55,7 +55,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() throws Exception {
+	public void testOpen() {
 		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 	}
@@ -63,7 +63,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test that we have the right numbers of images in each file
 	 */
-	public void testImageCount() throws Exception {
+	public void testImageCount() {
 		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 
@@ -83,7 +83,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test that we have the right images in at least one file
 	 */
-	public void testImageData() throws Exception {
+	public void testImageData() {
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 		PicturesTable picB = docB.getPicturesTable();
 		List picturesB = picB.getAllPictures();
@@ -110,7 +110,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test that compressed image data is correctly returned.
 	 */
-	public void testCompressedImageData() throws Exception {
+	public void testCompressedImageData() {
 		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
 		PicturesTable picC = docC.getPicturesTable();
 		List picturesC = picC.getAllPictures();
@@ -131,7 +131,7 @@ public final class TestHWPFPictures extends TestCase {
 	 * Pending the missing files being uploaded to
 	 *  bug #44937
 	 */
-	public void BROKENtestEscherDrawing() throws Exception {
+	public void BROKENtestEscherDrawing() {
 		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
 		List allPictures = docD.getPicturesTable().getAllPictures();
 

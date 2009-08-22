@@ -45,7 +45,7 @@ public final class TestBlankFileRead extends TestCase {
 	/**
 	 * Check if we can read the body of the blank message, we expect "".
 	 */
-	public void testReadBody() throws Exception {
+	public void testReadBody() {
 		try {
 			mapiMessage.getTextBody();
 		} catch(ChunkNotFoundException exp) {
@@ -102,8 +102,6 @@ public final class TestBlankFileRead extends TestCase {
 
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
-	 *
-	 * @throws Exception
 	 */
 	public void testReadSubject() throws Exception {
 		String obtained = mapiMessage.getSubject();
@@ -113,8 +111,6 @@ public final class TestBlankFileRead extends TestCase {
 
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
-	 *
-	 * @throws Exception
 	 */
 	public void testReadConversationTopic() {
 		try {

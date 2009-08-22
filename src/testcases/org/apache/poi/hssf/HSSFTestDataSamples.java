@@ -19,14 +19,11 @@ package org.apache.poi.hssf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder.
@@ -37,22 +34,22 @@ public final class HSSFTestDataSamples extends POIDataSamples {
 
 	private static final HSSFTestDataSamples _inst = new HSSFTestDataSamples("HSSF.testdata.path", "SampleSS.xls");
 
-    private HSSFTestDataSamples(String dir, String classPathTestFile){
-        super(dir, classPathTestFile);
-    }
+	private HSSFTestDataSamples(String dir, String classPathTestFile){
+		super(dir, classPathTestFile);
+	}
 
-    public static POIDataSamples getInstance(){
-        return _inst;
-    }
+	public static POIDataSamples getInstance(){
+		return _inst;
+	}
 
-    public static InputStream openSampleFileStream(String sampleFileName) {
-        return _inst.openResourceAsStream(sampleFileName);
-    }
-    public static byte[] getTestDataFileContent(String fileName) {
-        return _inst.readFile(fileName);
-    }
+	public static InputStream openSampleFileStream(String sampleFileName) {
+		return _inst.openResourceAsStream(sampleFileName);
+	}
+	public static byte[] getTestDataFileContent(String fileName) {
+		return _inst.readFile(fileName);
+	}
 
-    public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
+	public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
 		try {
 			return new HSSFWorkbook(_inst.openResourceAsStream(sampleFileName));
 		} catch (IOException e) {
@@ -75,5 +72,4 @@ public final class HSSFTestDataSamples extends POIDataSamples {
 			throw new RuntimeException(e);
 		}
 	}
-
 }

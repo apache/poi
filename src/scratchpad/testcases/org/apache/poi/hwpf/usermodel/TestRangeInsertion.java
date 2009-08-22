@@ -45,15 +45,15 @@ public final class TestRangeInsertion extends TestCase {
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() throws Exception {
+	public void testOpen() {
 
-		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+		HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
-	public void testDocStructure() throws Exception {
+	public void testDocStructure() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
@@ -81,11 +81,11 @@ public final class TestRangeInsertion extends TestCase {
 	/**
 	 * Test that we can insert text in our CharacterRun with Unicode text.
 	 */
-	public void testRangeInsertion() throws Exception {
+	public void testRangeInsertion() {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
-		/*
+		if (false) { // TODO - delete or resurrect this code
 			Range range = daDoc.getRange();
 			Section section = range.getSection(0);
 			Paragraph para = section.getParagraph(2);
@@ -93,7 +93,7 @@ public final class TestRangeInsertion extends TestCase {
 			para.getCharacterRun(2).text();
 
 			System.out.println(text);
-		*/
+		}
 
 		Range range = new Range(insertionPoint, (insertionPoint + 2), daDoc);
 		range.insertBefore(textToInsert);
@@ -118,6 +118,5 @@ public final class TestRangeInsertion extends TestCase {
 		// System.out.println(text);
 
 		assertEquals((textToInsert + originalText), text);
-
 	}
 }

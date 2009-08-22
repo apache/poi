@@ -14,59 +14,58 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi;
 
-import java.io.IOException;
-
-import org.apache.poi.POIXMLProperties.*;
-import org.apache.xmlbeans.XmlException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.POIXMLProperties.CustomProperties;
+import org.apache.poi.POIXMLProperties.ExtendedProperties;
 
 public abstract class POIXMLTextExtractor extends POITextExtractor {
 	/** The POIXMLDocument that's open */
-	protected POIXMLDocument document;
+	private final POIXMLDocument _document;
 
 	/**
 	 * Creates a new text extractor for the given document
 	 */
 	public POIXMLTextExtractor(POIXMLDocument document) {
 		super((POIDocument)null);
-		
-		this.document = document;
+
+		_document = document;
 	}
-	
+
 	/**
 	 * Returns the core document properties
 	 */
 	public CoreProperties getCoreProperties() {
-		 return document.getProperties().getCoreProperties();
+		 return _document.getProperties().getCoreProperties();
 	}
 	/**
 	 * Returns the extended document properties
 	 */
 	public ExtendedProperties getExtendedProperties() {
-		return document.getProperties().getExtendedProperties();
+		return _document.getProperties().getExtendedProperties();
 	}
 	/**
 	 * Returns the custom document properties
 	 */
 	public CustomProperties getCustomProperties() {
-		return document.getProperties().getCustomProperties();
+		return _document.getProperties().getCustomProperties();
 	}
 
 	/**
-	 * Returns opened document 
+	 * Returns opened document
 	 */
-	public POIXMLDocument getDocument(){
-	    return document;
+	public final POIXMLDocument getDocument(){
+		return _document;
 	}
-	
-	
+
+
 	/**
-	 * Returns an OOXML properties text extractor for the 
+	 * Returns an OOXML properties text extractor for the
 	 *  document properties metadata, such as title and author.
 	 */
 	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
-		return new POIXMLPropertiesTextExtractor(document);
+		return new POIXMLPropertiesTextExtractor(_document);
 	}
 }

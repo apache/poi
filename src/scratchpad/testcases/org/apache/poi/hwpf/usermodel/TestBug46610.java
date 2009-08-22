@@ -25,42 +25,35 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 
-public class TestBug46610 extends TestCase {
+public final class TestBug46610 extends TestCase {
 
-  public void testUtf() throws Exception {
-    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_1.doc");
+	public void testUtf() {
+		runExtract("Bug46610_1.doc");
+	}
 
-    runExtract(doc);
-  }
+	public void testUtf2() {
+		runExtract("Bug46610_2.doc");
+	}
 
-  public void testUtf2() throws Exception {
-    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_2.doc");
+	public void testExtraction() {
+		String text = runExtract("Bug46610_3.doc");
+		assertTrue(text.contains("\u0421\u0412\u041e\u042e"));
+	}
 
-    runExtract(doc);
-  }
+	private static String runExtract(String sampleName) {
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(sampleName);
+		StringBuffer out = new StringBuffer();
 
-  public void testExtraction() throws Exception {
-    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46610_3.doc");
-
-    String text = runExtract(doc);
-
-    assertTrue(text.contains("\u0421\u0412\u041e\u042e"));
-  }
-
-  private String runExtract(HWPFDocument doc) {
-    StringBuffer out = new StringBuffer();
-
-    Range globalRange = doc.getRange();
-    for (int i = 0; i < globalRange.numParagraphs(); i++) {
-      Paragraph p = globalRange.getParagraph(i);
-      out.append(p.text());
-      out.append("\n");
-      for (int j = 0; j < p.numCharacterRuns(); j++) {
-        CharacterRun characterRun = p.getCharacterRun(j);
-        characterRun.text();
-      }
-    }
-
-    return out.toString();
-  }
+		Range globalRange = doc.getRange();
+		for (int i = 0; i < globalRange.numParagraphs(); i++) {
+			Paragraph p = globalRange.getParagraph(i);
+			out.append(p.text());
+			out.append("\n");
+			for (int j = 0; j < p.numCharacterRuns(); j++) {
+				CharacterRun characterRun = p.getCharacterRun(j);
+				characterRun.text();
+			}
+		}
+		return out.toString();
+	}
 }

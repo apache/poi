@@ -119,12 +119,12 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		assertTrue(fsText.indexOf("TITLE = Titel: \u00c4h") > -1);
 	}
 
-    public void test42726() throws Exception {
-        HPSFPropertiesExtractor ex = new HPSFPropertiesExtractor(HSSFTestDataSamples.openSampleWorkbook("42726.xls"));
-        String txt = ex.getText();
-        assertTrue(txt.indexOf("PID_AUTHOR") != -1);
-        assertTrue(txt.indexOf("PID_EDITTIME") != -1);
-        assertTrue(txt.indexOf("PID_REVNUMBER") != -1);
-        assertTrue(txt.indexOf("PID_THUMBNAIL") != -1);
-    }
+	public void test42726() {
+		HPSFPropertiesExtractor ex = new HPSFPropertiesExtractor(HSSFTestDataSamples.openSampleWorkbook("42726.xls"));
+		String txt = ex.getText();
+		assertTrue(txt.indexOf("PID_AUTHOR") != -1);
+		assertTrue(txt.indexOf("PID_EDITTIME") != -1);
+		assertTrue(txt.indexOf("PID_REVNUMBER") != -1);
+		assertTrue(txt.indexOf("PID_THUMBNAIL") != -1);
+	}
 }

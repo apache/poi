@@ -35,7 +35,7 @@ public final class TestHeaderStories extends TestCase {
 	private HWPFDocument unicode;
 	private HWPFDocument withFields;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 
 		none = HWPFTestDataSamples.openSampleFile("NoHeadFoot.doc");
 		header = HWPFTestDataSamples.openSampleFile("ThreeColHead.doc");

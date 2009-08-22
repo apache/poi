@@ -40,12 +40,12 @@ public final class TestRangeProperties extends TestCase {
 		"The trick with this one is that it contains some Unicode based strings in it.\r" +
 		"Firstly, some currency symbols:\r" +
 		"\tGBP - \u00a3\r" +
-        "\tEUR - \u20ac\r" +
-        "Now, we\u2019ll have some French text, in bold and big:\r" +
-        "\tMoli\u00e8re\r" +
-        "And some normal French text:\r" +
-        "\tL'Avare ou l'\u00c9cole du mensonge\r" +
-        "That\u2019s it for page one\r"
+		"\tEUR - \u20ac\r" +
+		"Now, we\u2019ll have some French text, in bold and big:\r" +
+		"\tMoli\u00e8re\r" +
+		"And some normal French text:\r" +
+		"\tL'Avare ou l'\u00c9cole du mensonge\r" +
+		"That\u2019s it for page one\r"
 	;
 	private static final String u_page_2 =
 		"This is page two. Les Pr\u00e9cieuses ridicules. The end.\r"
@@ -65,7 +65,7 @@ public final class TestRangeProperties extends TestCase {
 	private HWPFDocument u;
 	private HWPFDocument a;
 
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
 	}

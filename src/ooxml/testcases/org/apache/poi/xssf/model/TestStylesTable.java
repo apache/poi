@@ -53,7 +53,7 @@ public final class TestStylesTable extends TestCase {
 		assertEquals(0, st._getNumberFormatSize());
 	}
 
-	public void testLoadExisting() throws Exception {
+	public void testLoadExisting() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
@@ -61,7 +61,7 @@ public final class TestStylesTable extends TestCase {
 
 		doTestExisting(st);
 	}
-	public void testLoadSaveLoad() throws Exception {
+	public void testLoadSaveLoad() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
@@ -125,7 +125,7 @@ public final class TestStylesTable extends TestCase {
 		assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
 	}
 
-	public void testPopulateExisting() throws Exception {
+	public void testPopulateExisting() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
 
@@ -138,7 +138,7 @@ public final class TestStylesTable extends TestCase {
 		int nf2 = st.putNumberFormat("YYYY-mm-DD");
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 
-        st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
+		st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 
 		assertEquals(11, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());

@@ -17,11 +17,8 @@
 
 package org.apache.poi.xwpf;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -32,7 +29,7 @@ public final class TestXWPFDocument extends TestCase {
 
 	public void testContainsMainContentType() throws Exception {
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        OPCPackage pack = doc.getPackage();
+		OPCPackage pack = doc.getPackage();
 
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
@@ -55,14 +52,14 @@ public final class TestXWPFDocument extends TestCase {
 		assertNotNull(xml.getStyle());
 
 		// Complex file
-        xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
+		xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
 		assertNotNull(xml.getDocument());
 		assertNotNull(xml.getDocument().getBody());
 		assertNotNull(xml.getStyle());
 	}
 
-	public void testMetadataBasics() throws Exception {
-        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
+	public void testMetadataBasics() {
+		XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
 
@@ -74,7 +71,7 @@ public final class TestXWPFDocument extends TestCase {
 		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
 	}
 
-	public void testMetadataComplex() throws Exception {
+	public void testMetadataComplex() {
 		XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
@@ -93,5 +90,4 @@ public final class TestXWPFDocument extends TestCase {
 		assertNotNull(props);
 		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
 	}
-
 }

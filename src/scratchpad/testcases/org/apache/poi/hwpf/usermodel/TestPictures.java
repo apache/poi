@@ -35,7 +35,7 @@ public final class TestPictures extends TestCase {
 	/**
 	 * two jpegs
 	 */
-	public void testTwoImages() throws Exception {
+	public void testTwoImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
@@ -59,7 +59,7 @@ public final class TestPictures extends TestCase {
 	/**
 	 * pngs and jpegs
 	 */
-	public void testDifferentImages() throws Exception {
+	public void testDifferentImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testPictures.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
@@ -85,7 +85,7 @@ public final class TestPictures extends TestCase {
 	/**
 	 * emf image, nice and simple
 	 */
-	public void testEmfImage() throws Exception {
+	public void testEmfImage() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("vector_image.doc");
 		List pics = doc.getPicturesTable().getAllPictures();
 
@@ -109,7 +109,7 @@ public final class TestPictures extends TestCase {
 	/**
 	 * emf image, with a crazy offset
 	 */
-	public void disabled_testEmfComplexImage() throws Exception {
+	public void disabled_testEmfComplexImage() {
 
 		// Commenting out this test case temporarily. The file emf_2003_image does not contain any
 		// pictures. Instead it has an office drawing object. Need to rewrite this test after
@@ -136,11 +136,10 @@ public final class TestPictures extends TestCase {
 		assertEquals(0x80000000l, LittleEndian.getUInt(pic.getRawContent()));
 	}
 
-	public void testPicturesWithTable() throws Exception {
+	public void testPicturesWithTable() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 
 		List pics = doc.getPicturesTable().getAllPictures();
 		assertEquals(pics.size(), 2);
 	}
-
 }
