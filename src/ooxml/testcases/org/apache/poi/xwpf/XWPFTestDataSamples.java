@@ -28,7 +28,7 @@ import java.io.*;
 public class XWPFTestDataSamples {
 
     public static XWPFDocument openSampleDocument(String sampleName) {
-        InputStream is = HWPFTestDataSamples.openSampleFileStream(sampleName);
+        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleName);
         try {
             return new XWPFDocument(is);
         } catch (IOException e) {
@@ -46,9 +46,4 @@ public class XWPFTestDataSamples {
             throw new RuntimeException(e);
         }
     }
-
-    public static POIDataSamples getInstance(){
-        return HWPFTestDataSamples.getInstance();
-    }
-
 }

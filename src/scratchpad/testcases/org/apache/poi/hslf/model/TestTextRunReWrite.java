@@ -25,6 +25,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that if we load something up, get a TextRun, set the text
@@ -45,10 +46,9 @@ public final class TestTextRunReWrite extends TestCase {
 	 * Load up a test PPT file with rich data
 	 */
     public void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		String filename = "Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
+		pfs = new POIFSFileSystem(slTests.openResourceAsStream(filename));
 		hss = new HSLFSlideShow(pfs);
 		ss = new SlideShow(hss);
     }

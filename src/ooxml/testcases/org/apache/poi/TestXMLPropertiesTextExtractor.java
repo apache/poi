@@ -21,21 +21,16 @@ import java.io.File;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.util.PackageHelper;
 
 import junit.framework.TestCase;
 
 public final class TestXMLPropertiesTextExtractor extends TestCase {
-	private String dirname;
-
-	protected void setUp() {
-		dirname = System.getProperty("OOXML.testdata.path");
-		assertTrue( (new File(dirname)).exists() );
-	}
+    private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
 	public void testGetFromMainExtractor() throws Exception {
-		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
-		);
+		OPCPackage pkg = PackageHelper.open(_ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm"));
+
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
 		XSSFExcelExtractor ext = new XSSFExcelExtractor(wb);
@@ -54,8 +49,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 	}
 
 	public void testCore() throws Exception {
-		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
+		OPCPackage pkg = PackageHelper.open(
+                _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
@@ -72,7 +67,7 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 
 	public void testExtended() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
-				(new File(dirname, "ExcelWithAttachments.xlsm")).toString()
+                _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
 		);
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 

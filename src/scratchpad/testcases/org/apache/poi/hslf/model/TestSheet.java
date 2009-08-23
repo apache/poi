@@ -20,14 +20,11 @@ package org.apache.poi.hslf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import java.io.FileInputStream;
-import java.io.File;
-
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test common functionality of the <code>Sheet</code> object.
@@ -36,23 +33,16 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestSheet extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
      */
     public void testSheet() throws Exception {
-        File home = new File(System.getProperty("HSLF.testdata.path"));
-        File[] files = home.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            if(!files[i].getName().endsWith(".ppt")) continue;
-            if(files[i].getName().endsWith("PPT95.ppt")) continue;
-
+        String[] tests = {"SampleShow.ppt", "backgrounds.ppt", "text_shapes.ppt", "pictures.ppt"};
+        for (String file : tests) {
             try {
-                FileInputStream is = new FileInputStream(files[i]);
-                HSLFSlideShow hslf = new HSLFSlideShow(is);
-                is.close();
-
-                SlideShow ppt = new SlideShow(hslf);
+                SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
                 doSlideShow(ppt);
             } catch (EncryptedPowerPointFileException e){
                 ; //skip encrypted ppt

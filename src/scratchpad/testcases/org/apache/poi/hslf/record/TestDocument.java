@@ -18,10 +18,10 @@
 package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
-import java.io.*;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that Document works properly (Also tests Environment while we're at it)
@@ -35,10 +35,8 @@ public final class TestDocument extends TestCase {
 	private POIFSFileSystem pfs;
 
 	public TestDocument() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(pfs);
 	}
 

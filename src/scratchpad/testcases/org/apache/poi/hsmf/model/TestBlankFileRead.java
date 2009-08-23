@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
@@ -38,8 +39,8 @@ public final class TestBlankFileRead extends TestCase {
 	 * Initialize this test, load up the blank.msg mapi message.
 	 */
 	public TestBlankFileRead() throws IOException {
-		String dirname = System.getProperty("HSMF.testdata.path");
-		this.mapiMessage = new MAPIMessage(dirname + "/blank.msg");
+        POIDataSamples samples = POIDataSamples.getHSMFInstance();
+		this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("blank.msg"));
 	}
 
 	/**

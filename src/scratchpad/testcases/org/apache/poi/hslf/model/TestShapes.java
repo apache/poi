@@ -22,12 +22,12 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.ddf.*;
+import org.apache.poi.POIDataSamples;
 
 import java.awt.*;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -37,16 +37,15 @@ import java.util.ArrayList;
  * @author Yegor Kozlov
  */
 public final class TestShapes extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+
     private SlideShow ppt;
     private SlideShow pptB;
 
     protected void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/empty.ppt";
-		ppt = new SlideShow(new HSLFSlideShow(filename));
+		ppt = new SlideShow(_slTests.openResourceAsStream("empty.ppt"));
 
-		String filenameB = dirname + "/empty_textbox.ppt";
-		pptB = new SlideShow(new HSLFSlideShow(filenameB));
+		pptB = new SlideShow(_slTests.openResourceAsStream("empty_textbox.ppt"));
     }
 
     public void testGraphics() throws Exception {
@@ -94,9 +93,7 @@ public final class TestShapes extends TestCase {
      * @throws Exception
      */
     public void testTextBoxRead() throws Exception {
-        String dirname = System.getProperty("HSLF.testdata.path");
-        String filename = dirname + "/with_textbox.ppt";
-        ppt = new SlideShow(new HSLFSlideShow(filename));
+        ppt = new SlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
         Slide sl = ppt.getSlides()[0];
         Shape[] sh = sl.getShapes();
         for (int i = 0; i < sh.length; i++) {
@@ -198,17 +195,16 @@ public final class TestShapes extends TestCase {
      * it must be the same as returned by Slide.getTextRuns().
      */
     public void testTextBoxSet() throws Exception {
-        textBoxSet("/with_textbox.ppt");
-        textBoxSet("/basic_test_ppt_file.ppt");
-        textBoxSet("/next_test_ppt_file.ppt");
-        textBoxSet("/Single_Coloured_Page.ppt");
-        textBoxSet("/Single_Coloured_Page_With_Fonts_and_Alignments.ppt");
-        textBoxSet("/incorrect_slide_order.ppt");
+        textBoxSet("with_textbox.ppt");
+        textBoxSet("basic_test_ppt_file.ppt");
+        textBoxSet("next_test_ppt_file.ppt");
+        textBoxSet("Single_Coloured_Page.ppt");
+        textBoxSet("Single_Coloured_Page_With_Fonts_and_Alignments.ppt");
+        textBoxSet("incorrect_slide_order.ppt");
     }
 
     private void textBoxSet(String filename) throws Exception {
-        String dirname = System.getProperty("HSLF.testdata.path");
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(dirname + filename));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(filename));
         Slide[] sl = ppt.getSlides();
         for (int k = 0; k < sl.length; k++) {
             ArrayList lst1 = new ArrayList();
@@ -234,7 +230,6 @@ public final class TestShapes extends TestCase {
      * Test adding shapes to <code>ShapeGroup</code>
      */
     public void testShapeGroup() throws Exception {
-        String cwd = System.getProperty("HSLF.testdata.path");
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
@@ -245,8 +240,7 @@ public final class TestShapes extends TestCase {
         group.setAnchor(new Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight()));
         slide.addShape(group);
 
-        File img = new File(cwd, "clock.jpg");
-        int idx = ppt.addPicture(img, Picture.JPEG);
+        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), Picture.JPEG);
         Picture pict = new Picture(idx, group);
         pict.setAnchor(new Rectangle(0, 0, 200, 200));
         group.addShape(pict);
@@ -287,8 +281,8 @@ public final class TestShapes extends TestCase {
      * Test functionality of Sheet.removeShape(Shape shape)
      */
     public void testRemoveShapes() throws IOException {
-        String file = System.getProperty("HSLF.testdata.path")+ "/with_textbox.ppt";
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(file));
+        String file = "with_textbox.ppt";
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
         Slide sl = ppt.getSlides()[0];
         Shape[] sh = sl.getShapes();
         assertEquals("expected four shaped in " + file, 4, sh.length);

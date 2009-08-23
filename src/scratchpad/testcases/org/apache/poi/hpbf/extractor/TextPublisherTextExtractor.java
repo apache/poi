@@ -21,37 +21,31 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.apache.poi.hpbf.HPBFDocument;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
 public final class TextPublisherTextExtractor extends TestCase {
-	private String dir;
-
-	protected void setUp() {
-		dir = System.getProperty("HPBF.testdata.path");
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
 	public void testBasics() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+				_samples.openResourceAsStream("Sample.pub")
 		);
 
 		PublisherTextExtractor ext =
 			new PublisherTextExtractor(doc);
 		ext.getText();
 
-		f = new File(dir, "Simple.pub");
 		ext = new PublisherTextExtractor(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Simple.pub")
 		);
 		ext.getText();
 	}
 
 	public void testContents() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 
 		PublisherTextExtractor ext =
@@ -87,9 +81,8 @@ public final class TextPublisherTextExtractor extends TestCase {
 		);
 
 		// Now a simpler one
-		f = new File(dir, "Simple.pub");
 		ext = new PublisherTextExtractor(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Simple.pub")
 		);
 		text = ext.getText();
 		assertEquals(
@@ -113,21 +106,18 @@ public final class TextPublisherTextExtractor extends TestCase {
 		File f;
 		HPBFDocument doc;
 
-		f = new File(dir, "Sample.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 		String s2007 = (new PublisherTextExtractor(doc)).getText();
 
-		f = new File(dir, "Sample2000.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample2000.pub")
 		);
 		String s2000 = (new PublisherTextExtractor(doc)).getText();
 
-		f = new File(dir, "Sample98.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample98.pub")
 		);
 		String s98 = (new PublisherTextExtractor(doc)).getText();
 
@@ -141,9 +131,8 @@ public final class TextPublisherTextExtractor extends TestCase {
 	 *  as we can hope it to.
 	 */
 	public void testWithHyperlinks() throws Exception {
-		File f = new File(dir, "LinkAt10.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("LinkAt10.pub")
 		);
 
 		PublisherTextExtractor ext =
@@ -159,8 +148,9 @@ public final class TextPublisherTextExtractor extends TestCase {
 
 
 		// Now a much more complex document
-		f = new File(dir, "Sample.pub");
-		ext = new PublisherTextExtractor(new FileInputStream(f));
+		ext = new PublisherTextExtractor(
+                _samples.openResourceAsStream("Sample.pub")
+        );
 		ext.setHyperlinksByDefault(true);
 		String text = ext.getText();
 

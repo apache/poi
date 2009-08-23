@@ -21,6 +21,7 @@ package org.apache.poi.hslf.record;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that the helper methods on RecordContainer work properly
@@ -147,9 +148,8 @@ public final class TestRecordContainer extends TestCase {
 		super.setUp();
 
 		// Find a real RecordContainer record
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		Record[] r = hss.getRecords();
 		for(int i=0; i<r.length; i++) {

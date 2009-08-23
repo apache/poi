@@ -21,6 +21,7 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow finds the right records as its most recent ones
@@ -34,9 +35,8 @@ public final class TestMostRecentRecords extends TestCase {
 	private SlideShow ss;
 
 	public TestMostRecentRecords() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 	}
 

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test picture support in HWPF
@@ -154,6 +155,6 @@ public final class TestHWPFPictures extends TestCase {
 	}
 
 	private static byte[] readFile(String file) {
-		return HWPFTestDataSamples.getTestDataFileContent(file);
+		return POIDataSamples.getDocumentInstance().readFile(file);
 	}
 }

@@ -76,6 +76,7 @@ under the License.
   <property name="main.lib" location="lib"/>
   <property name="ooxml.lib" location="ooxml-lib"/>
   <property name="main.reports.test" location="build/test-results"/>
+  <property name="poi.test.dir" location="test-data"/>
 
   <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.jar"/>
   <property name="main.commons-logging.url" value="${repository.m2}/maven2/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
@@ -566,12 +567,7 @@ under the License.
       <classpath refid="test.classpath"/>
       <sysproperty key="user.language" value="en"/> 
       <sysproperty key="user.country" value="US"/> 
-      <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/> 
-      <sysproperty key="HSLF.testdata.path" file="${main.src.test}/org/apache/poi/hslf/data"/> 
-      <sysproperty key="HWPF.testdata.path" file="${main.src.test}/org/apache/poi/hwpf/data"/> 
-      <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/> 
-      <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
-      <sysproperty key="DDF.testdata.path" file="${main.src.test}/org/apache/poi/ddf/data"/> 
+      <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain"/>
       <formatter type="xml"/>
@@ -602,10 +598,7 @@ under the License.
       </classpath>
       <sysproperty key="user.language" value="en"/> 
       <sysproperty key="user.country" value="US"/> 
-      <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-      <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-      <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-      <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
+      <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
       <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="plain" usefile="no"/>
       <batchtest todir="${main.reports.test}">
@@ -631,16 +624,8 @@ under the License.
             </classpath>
             <sysproperty key="user.language" value="en"/> 
             <sysproperty key="user.country" value="US"/> 
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-            <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
-            <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-            <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
-            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
-            <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
-                <sysproperty key="java.awt.headless" value="true"/>
+            <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
             <test name="${testcase}"/>
@@ -675,15 +660,7 @@ under the License.
             </classpath>
             <sysproperty key="user.language" value="en"/> 
             <sysproperty key="user.country" value="US"/> 
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
-            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-            <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
-            <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-            <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
-            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
+            <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -714,14 +691,7 @@ under the License.
 	        </classpath>
               <sysproperty key="user.language" value="en"/> 
               <sysproperty key="user.country" value="US"/> 
-              <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
-	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-              <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-              <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
-              <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-              <sysproperty key="HPBF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpbf/data"/>
-              <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/> 
+              <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
 	            <formatter type="plain" usefile="no"/>
@@ -748,8 +718,6 @@ under the License.
             </classpath>
             <sysproperty key="user.language" value="en"/> 
             <sysproperty key="user.country" value="US"/> 
-            <sysproperty key="HSSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -780,14 +748,7 @@ under the License.
             <classpath refid="test.ooxml.classpath" />
             <sysproperty key="user.language" value="en"/> 
             <sysproperty key="user.country" value="US"/> 
-            <sysproperty key="POIFS.testdata.path" file="${main.src.test}/org/apache/poi/poifs/data"/>
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-            <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
-            <sysproperty key="OOXML.testdata.path" file="${ooxml.src.test}/org/apache/poi/ooxml/data"/> 
-            <sysproperty key="openxml4j.compliance.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/compliance/data"/> 
-            <sysproperty key="openxml4j.testdata.input" file="${ooxml.src.test}/org/apache/poi/openxml4j/opc/data"/> 
+            <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
@@ -811,12 +772,7 @@ under the License.
             <classpath refid="test.ooxml.classpath" />
             <sysproperty key="user.language" value="en"/> 
             <sysproperty key="user.country" value="US"/> 
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
-            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-            <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
-            <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>

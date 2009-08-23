@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow can re-order slides properly
@@ -47,18 +48,15 @@ public final class TestReOrderingSlides extends TestCase {
 	 * Create/open the slideshows
 	 */
 	public void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-		String filename = dirname + "/Single_Coloured_Page.ppt";
-		hss_one = new HSLFSlideShow(filename);
+		hss_one = new HSLFSlideShow(slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
 		ss_one = new SlideShow(hss_one);
 
-		filename = dirname + "/basic_test_ppt_file.ppt";
-		hss_two = new HSLFSlideShow(filename);
+		hss_two = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss_two = new SlideShow(hss_two);
 
-		filename = dirname + "/incorrect_slide_order.ppt";
-		hss_three = new HSLFSlideShow(filename);
+		hss_three = new HSLFSlideShow(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
 		ss_three = new SlideShow(hss_three);
 	}
 

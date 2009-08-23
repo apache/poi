@@ -30,17 +30,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Josh Micich
  */
-public final class HSSFTestDataSamples extends POIDataSamples {
+public final class HSSFTestDataSamples {
 
-	private static final HSSFTestDataSamples _inst = new HSSFTestDataSamples("HSSF.testdata.path", "SampleSS.xls");
-
-	private HSSFTestDataSamples(String dir, String classPathTestFile){
-		super(dir, classPathTestFile);
-	}
-
-	public static POIDataSamples getInstance(){
-		return _inst;
-	}
+	private static final POIDataSamples _inst = POIDataSamples.getSpreadSheetInstance();
 
 	public static InputStream openSampleFileStream(String sampleFileName) {
 		return _inst.openResourceAsStream(sampleFileName);

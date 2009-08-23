@@ -21,6 +21,7 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow returns the right number of Sheets and MetaSheets
@@ -32,9 +33,8 @@ public final class TestCounts extends TestCase {
 	private SlideShow ss;
 
 	public TestCounts() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 	}
 

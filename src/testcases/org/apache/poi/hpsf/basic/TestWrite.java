@@ -63,6 +63,7 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests HPSF's writing functionality.</p>
@@ -71,6 +72,7 @@ import org.apache.poi.util.TempFile;
  */
 public class TestWrite extends TestCase
 {
+    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     static final String POI_FS = "TestHPSFWritingFunctionality.doc";
 
@@ -110,10 +112,7 @@ public class TestWrite extends TestCase
      */
     public void testNoFormatID() throws IOException
     {
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
-        final File filename = new File(dataDir, POI_FS);
-        filename.deleteOnExit();
+        final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         /* Create a mutable property set with a section that does not have the
          * formatID set: */
@@ -159,8 +158,7 @@ public class TestWrite extends TestCase
     public void testWriteEmptyPropertySet()
         throws IOException, UnsupportedVariantTypeException
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
 
@@ -202,8 +200,7 @@ public class TestWrite extends TestCase
     {
         final String AUTHOR = "Rainer Klute";
         final String TITLE = "Test Document"; 
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
         final OutputStream out = new FileOutputStream(filename);
@@ -274,8 +271,7 @@ public class TestWrite extends TestCase
         final String SECTION1 = "Section 1";
         final String SECTION2 = "Section 2";
 
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
         final OutputStream out = new FileOutputStream(filename);
@@ -673,8 +669,7 @@ public class TestWrite extends TestCase
      */
     public void testRecreate()
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        final File dataDir = _samples.getFile("");
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
                 public boolean accept(final File f)

@@ -17,9 +17,6 @@
 
 package org.apache.poi.hslf.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -29,17 +26,17 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.POIDataSamples;
 
 public final class TestOleEmbedding extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     /**
      * Tests support for OLE objects.
      *
      * @throws Exception if an error occurs.
      */
     public void testOleEmbedding2003() throws Exception {
-        String dirname = System.getProperty("HSLF.testdata.path");
-        File file = new File(dirname, "ole2-embedding-2003.ppt");
-        HSLFSlideShow slideShow = new HSLFSlideShow(new FileInputStream(file));
+        HSLFSlideShow slideShow = new HSLFSlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
         PictureData[] pictures = slideShow.getPictures();
         assertEquals("Should be two pictures", 2, pictures.length);
@@ -54,11 +51,7 @@ public final class TestOleEmbedding extends TestCase {
     }
 
     public void testOLEShape() throws Exception {
-        String dirname = System.getProperty("HSLF.testdata.path");
-        File file = new File(dirname, "ole2-embedding-2003.ppt");
-        FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
 
         Slide slide = ppt.getSlides()[0];
         Shape[] sh = slide.getShapes();

@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests to verify that we can read attachments from msg file
@@ -42,8 +43,8 @@ public class TestFileWithAttachmentsRead extends TestCase {
 	 * @throws Exception
 	 */
 	public TestFileWithAttachmentsRead() throws IOException {
-		String dirname = System.getProperty("HSMF.testdata.path");
-		this.mapiMessage = new MAPIMessage(dirname + "/attachment_test_msg.msg");
+        POIDataSamples samples = POIDataSamples.getHSMFInstance();
+		this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
 	}
 
 	/**

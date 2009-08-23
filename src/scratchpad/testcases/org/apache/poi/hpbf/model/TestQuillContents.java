@@ -17,29 +17,22 @@
 
 package org.apache.poi.hpbf.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type0;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type4;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type8;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
 public final class TestQuillContents extends TestCase {
-	private String dir;
-
-	protected void setUp() {
-		dir = System.getProperty("HPBF.testdata.path");
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
 	public void testBasics() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+		    _samples.openResourceAsStream("Sample.pub")
 		);
 
 		QuillContents qc = doc.getQuillContents();
@@ -69,9 +62,8 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testText() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 
 		QuillContents qc = doc.getQuillContents();
@@ -84,9 +76,8 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testPLC() throws Exception {
-		File f = new File(dir, "Simple.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Simple.pub")
 		);
 
 		QuillContents qc = doc.getQuillContents();
@@ -145,9 +136,8 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testComplexPLC() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 
 		QuillContents qc = doc.getQuillContents();
@@ -247,9 +237,8 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testNoHyperlinks() throws Exception {
-		File f = new File(dir, "SampleNewsletter.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("SampleNewsletter.pub")
 		);
 
 		QuillContents qc = doc.getQuillContents();
@@ -264,15 +253,13 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testSimpleHyperlink() throws Exception {
-		File f;
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
 
 		// Link at 10
-		f = new File(dir, "LinkAt10.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("LinkAt10.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -285,9 +272,8 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
 
 		// Longer link at 10
-		f = new File(dir, "LinkAt10Longer.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("LinkAt10Longer.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -300,9 +286,8 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("http://poi.apache.org/hpbf/", hlBit.getHyperlink(0));
 
 		// Link at 20
-		f = new File(dir, "LinkAt20.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("LinkAt20.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -316,15 +301,13 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testManyHyperlinks() throws Exception {
-		File f;
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
 
 		// Link at 10
-		f = new File(dir, "LinkAt10.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("LinkAt10.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -339,16 +322,14 @@ public final class TestQuillContents extends TestCase {
 	}
 
 	public void testHyperlinkDifferentVersions() throws Exception {
-		File f;
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBitA;
 		Type12 hlBitB;
 
 		// Latest version
-		f = new File(dir, "Sample.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -375,9 +356,8 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
 
 		// 2000 version
-		f = new File(dir, "Sample2000.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample2000.pub")
 		);
 		qc = doc.getQuillContents();
 
@@ -404,9 +384,8 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
 
 		// 98 version
-		f = new File(dir, "Sample98.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample98.pub")
 		);
 		qc = doc.getQuillContents();
 

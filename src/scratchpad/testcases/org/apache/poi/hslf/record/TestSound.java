@@ -17,14 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
@@ -34,10 +33,9 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  */
 public final class TestSound extends TestCase {
 	public void testRealFile() throws Exception {
-		String cwd = System.getProperty("HSLF.testdata.path");
-		FileInputStream is = new FileInputStream(new File(cwd, "sound.ppt"));
-		SlideShow ppt = new SlideShow(is);
-		is.close();
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+		SlideShow ppt = new SlideShow(slTests.openResourceAsStream("sound.ppt"));
 
 		// Get the document
 		Document doc = ppt.getDocumentRecord();
@@ -71,13 +69,7 @@ public final class TestSound extends TestCase {
 		assertEquals(".WAV", sound.getSoundType());
 		assertNotNull(sound.getSoundData());
 
-		File f = new File(cwd, "ringin.wav");
-		int length = (int) f.length();
-		byte[] ref_data = new byte[length];
-		is = new FileInputStream(f);
-		is.read(ref_data);
-		is.close();
-
+		byte[] ref_data = slTests.readFile("ringin.wav");
 		assertTrue(Arrays.equals(ref_data, sound.getSoundData()));
 	}
 }

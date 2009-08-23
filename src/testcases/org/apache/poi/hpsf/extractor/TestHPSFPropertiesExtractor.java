@@ -27,18 +27,15 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 public final class TestHPSFPropertiesExtractor extends TestCase {
-	private String dir;
-
-	protected void setUp() {
-		dir = System.getProperty("HPSF.testdata.path");
-		assertNotNull("HPSF.testdata.path not set", dir);
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
 	public void testNormalProperties() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(
-				new File(dir, "TestMickey.doc")));
+		POIFSFileSystem fs = new POIFSFileSystem(
+                _samples.openResourceAsStream("TestMickey.doc")
+        );
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 
@@ -60,8 +57,9 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 	}
 
 	public void testNormalUnicodeProperties() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(new File(dir,
-				"TestUnicode.xls")));
+		POIFSFileSystem fs = new POIFSFileSystem(
+                _samples.openResourceAsStream("TestUnicode.xls")
+        );
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 
@@ -83,8 +81,9 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 	}
 
 	public void testCustomProperties() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(
-				new File(dir, "TestMickey.doc")));
+		POIFSFileSystem fs = new POIFSFileSystem(
+                _samples.openResourceAsStream("TestMickey.doc")
+        );
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 
 		// Custom properties are part of the document info stream
@@ -101,7 +100,9 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		POIFSFileSystem fs;
 		HSSFWorkbook wb;
 		try {
-			fs = new POIFSFileSystem(new FileInputStream(new File(dir, "TestUnicode.xls")));
+			fs = new POIFSFileSystem(
+                    _samples.openResourceAsStream("TestUnicode.xls")
+            );
 			wb = new HSSFWorkbook(fs);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

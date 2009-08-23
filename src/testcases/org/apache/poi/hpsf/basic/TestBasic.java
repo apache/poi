@@ -37,6 +37,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests the basic HPSF functionality.</p>
@@ -80,11 +81,10 @@ public final class TestBasic extends TestCase {
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs.
      */
-    public void setUp() throws FileNotFoundException, IOException
+    public void setUp() throws IOException
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
-        final File data = new File(dataDir, POI_FS);
+        POIDataSamples samples = POIDataSamples.getHPSFInstance();
+        final File data = samples.getFile(POI_FS);
         poiFiles = Util.readPOIFiles(data);
     }
 

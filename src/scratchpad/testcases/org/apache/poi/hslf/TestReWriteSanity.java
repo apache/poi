@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -37,10 +38,8 @@ public final class TestReWriteSanity extends TestCase {
 	private POIFSFileSystem pfs;
 
     public TestReWriteSanity() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(pfs);
     }
 

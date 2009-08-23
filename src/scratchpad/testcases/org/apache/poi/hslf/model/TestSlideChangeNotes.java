@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
@@ -34,9 +35,8 @@ public final class TestSlideChangeNotes extends TestCase {
 	private SlideShow ss;
 
 	public TestSlideChangeNotes() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
+        POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 	}
 

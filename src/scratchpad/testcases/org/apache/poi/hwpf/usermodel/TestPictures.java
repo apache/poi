@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test the picture handling
@@ -98,7 +99,7 @@ public final class TestPictures extends TestCase {
 		assertTrue(pic.getSize() > 128);
 
 		// Check right contents
-		byte[] emf = HWPFTestDataSamples.getTestDataFileContent("vector_image.emf");
+		byte[] emf = POIDataSamples.getDocumentInstance().readFile("vector_image.emf");
 		byte[] pemf = pic.getContent();
 		assertEquals(emf.length, pemf.length);
 		for(int i=0; i<emf.length; i++) {

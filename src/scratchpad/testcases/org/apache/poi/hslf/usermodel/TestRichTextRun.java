@@ -19,7 +19,6 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 
 import junit.framework.TestCase;
@@ -30,6 +29,7 @@ import org.apache.poi.hslf.model.TextBox;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test that the friendly getters and setters on RichTextRun
@@ -38,6 +38,8 @@ import org.apache.poi.hslf.record.SlideListWithText;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestRichTextRun extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+
 	// SlideShow primed on the test data
 	private SlideShow ss;
 	private SlideShow ssRichA;
@@ -50,27 +52,23 @@ public final class TestRichTextRun extends TestCase {
 	private static String filenameC;
 
 	protected void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
 
 		// Basic (non rich) test file
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
+        hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 
 		// Rich test file A
-		filename = dirname + "/Single_Coloured_Page.ppt";
-		hssRichA = new HSLFSlideShow(filename);
+		hssRichA = new HSLFSlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
 		ssRichA = new SlideShow(hssRichA);
 
 		// Rich test file B
-		filename = dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
-		hssRichB = new HSLFSlideShow(filename);
+		hssRichB = new HSLFSlideShow(_slTests.openResourceAsStream("Single_Coloured_Page_With_Fonts_and_Alignments.ppt"));
 		ssRichB = new SlideShow(hssRichB);
 
 		// Rich test file C - has paragraph styles that run out before
 		//   the character ones do
-		filenameC = dirname + "/ParagraphStylesShorterThanCharStyles.ppt";
-		hssRichC = new HSLFSlideShow(filenameC);
+		filenameC = "ParagraphStylesShorterThanCharStyles.ppt";
+        hssRichC = new HSLFSlideShow(_slTests.openResourceAsStream(filenameC));
 		ssRichC = new SlideShow(hssRichC);
 	}
 
@@ -375,7 +373,7 @@ public final class TestRichTextRun extends TestCase {
 	 */
 	private void assertMatchesSLTWC(SlideShow s) throws Exception {
 		// Grab a new copy of slideshow C
-		SlideShow refC = new SlideShow(new HSLFSlideShow(filenameC));
+		SlideShow refC = new SlideShow(_slTests.openResourceAsStream(filenameC));
 
 		// Write out the 2nd SLWT in the active document
 		SlideListWithText refSLWT = refC.getDocumentRecord().getSlideListWithTexts()[1];
@@ -449,7 +447,7 @@ if(false) {
 	}
 
 	public void testIndentationLevel() throws Exception {
-		SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(System.getProperty("HSLF.testdata.path"), "ParagraphStylesShorterThanCharStyles.ppt").getPath()));
+		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("ParagraphStylesShorterThanCharStyles.ppt"));
 		Slide[] sl = ppt.getSlides();
 		for (int i = 0; i < sl.length; i++) {
 			TextRun[] txt = sl[i].getTextRuns();
@@ -465,9 +463,7 @@ if(false) {
 	}
 
 	public void testReadParagraphStyles() throws Exception {
-		FileInputStream is = new FileInputStream(new File(System.getProperty("HSLF.testdata.path"), "bullets.ppt"));
-		SlideShow ppt = new SlideShow(is);
-		is.close();
+		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("bullets.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
 		RichTextRun rt;
@@ -560,9 +556,7 @@ if(false) {
 	}
 
 	public void testAddText() throws Exception {
-		FileInputStream is = new FileInputStream(new File(System.getProperty("HSLF.testdata.path"), "bullets.ppt"));
-		SlideShow ppt = new SlideShow(is);
-		is.close();
+		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("bullets.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
 		RichTextRun rt;

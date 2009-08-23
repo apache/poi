@@ -21,6 +21,7 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow returns Sheets which have the right text in them
@@ -32,9 +33,8 @@ public final class TestSheetText extends TestCase {
 	private SlideShow ss;
 
 	public TestSheetText() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 	}
 
@@ -63,9 +63,8 @@ public final class TestSheetText extends TestCase {
 	 * (Make sure we don't screw up / throw an exception etc)
 	 */
 	public void testWithShortTextPropData() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/iisd_report.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("iisd_report.ppt"));
 		SlideShow sss = new SlideShow(hss);
 
 		// Should come out with 10 slides, no notes

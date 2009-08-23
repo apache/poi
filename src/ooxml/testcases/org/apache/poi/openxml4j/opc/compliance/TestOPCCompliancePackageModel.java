@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc.compliance;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -29,6 +30,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test Open Packaging Convention package model compliance.
@@ -70,11 +72,10 @@ public class TestOPCCompliancePackageModel extends TestCase {
 	 * part name derived from another part name by appending segments to it.
 	 * [M1.11]
 	 */
-	public void testPartNameDerivationReadingFailure() {
-		String filepath = System.getProperty("openxml4j.compliance.input")
-				+ File.separator + "OPCCompliance_DerivedPartNameFAIL.docx";
+	public void testPartNameDerivationReadingFailure() throws IOException {
+		String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
 		try {
-			OPCPackage.open(filepath);
+			OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
 		} catch (InvalidFormatException e) {
 			return;
 		}

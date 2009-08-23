@@ -30,11 +30,13 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.PackageHelper;
 
 /**
  * Test recursive read and write of OPC packages
  */
 public final class TestPOIXMLDocument extends TestCase {
+
     private static class OPCParser extends POIXMLDocument {
 
         public OPCParser(OPCPackage pkg) {
@@ -81,9 +83,8 @@ public final class TestPOIXMLDocument extends TestCase {
         }
     }
 
-    public void assertReadWrite(String path) throws Exception {
+    public void assertReadWrite(OPCPackage pkg1) throws Exception {
 
-        OPCPackage pkg1 = OPCPackage.open(path);
         OPCParser doc = new OPCParser(pkg1);
         doc.parse(new TestFactory());
 
@@ -124,17 +125,20 @@ public final class TestPOIXMLDocument extends TestCase {
     }
 
     public void testPPTX() throws Exception {
-        File file = new File(System.getProperty("OOXML.testdata.path"), "PPTWithAttachments.pptm");
-        assertReadWrite(file.getAbsolutePath());
+        assertReadWrite(
+                PackageHelper.open(POIDataSamples.getSlideShowInstance().openResourceAsStream("PPTWithAttachments.pptm"))
+        );
     }
 
     public void testXLSX() throws Exception {
-        File file = new File(System.getProperty("OOXML.testdata.path"), "ExcelWithAttachments.xlsm");
-        assertReadWrite(file.getAbsolutePath());
+        assertReadWrite(
+                PackageHelper.open(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("ExcelWithAttachments.xlsm"))
+                );
     }
 
     public void testDOCX() throws Exception {
-        File file = new File(System.getProperty("OOXML.testdata.path"), "WordWithAttachments.docx");
-        assertReadWrite(file.getAbsolutePath());
+        assertReadWrite(
+                PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"))
+                );
     }
 }

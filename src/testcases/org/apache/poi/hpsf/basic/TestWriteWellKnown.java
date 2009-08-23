@@ -53,6 +53,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests HPSF's high-level writing functionality for the well-known property
@@ -78,8 +79,8 @@ public class TestWriteWellKnown extends TestCase {
 
     /**
      * <p>This test method checks whether DocumentSummary information streams
-     * can be read. This is done by opening all "Test*" files in the directrory
-     * pointed to by the "HPSF.testdata.path" system property, trying to extract
+     * can be read. This is done by opening all "Test*" files in the 'poifs' directrory
+     * pointed to by the "POI.testdata.path" system property, trying to extract
      * the document summary information stream in the root directory and calling
      * its get... methods.</p>
      * @throws IOException 
@@ -93,8 +94,8 @@ public class TestWriteWellKnown extends TestCase {
             NoPropertySetStreamException, MarkUnsupportedException,
             UnexpectedPropertySetTypeException
     {
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
             public boolean accept(final File file)
@@ -205,8 +206,8 @@ public class TestWriteWellKnown extends TestCase {
             NoPropertySetStreamException, MarkUnsupportedException,
             UnexpectedPropertySetTypeException, WritingNotSupportedException
     {
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File doc1 = new File(dataDir, POI_FS);
     
         /* Read a test document <em>doc1</em> into a POI filesystem. */
@@ -625,8 +626,8 @@ public class TestWriteWellKnown extends TestCase {
             }
         };
 
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
             public boolean accept(final File file)

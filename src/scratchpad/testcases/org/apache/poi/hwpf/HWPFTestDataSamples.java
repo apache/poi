@@ -20,29 +20,12 @@ import org.apache.poi.POIDataSamples;
 
 import java.io.*;
 
-public class HWPFTestDataSamples extends POIDataSamples {
-
-    private static final HWPFTestDataSamples _inst = new HWPFTestDataSamples("HWPF.testdata.path", "SampleDoc.doc");
-
-
-    private HWPFTestDataSamples(String dir, String classPathTestFile){
-        super(dir, classPathTestFile);
-    }
-
-    public static POIDataSamples getInstance(){
-        return _inst;
-    }
-
-    public static InputStream openSampleFileStream(String sampleFileName) {
-        return _inst.openResourceAsStream(sampleFileName);
-    }
-    public static byte[] getTestDataFileContent(String fileName) {
-        return _inst.readFile(fileName);
-    }
+public class HWPFTestDataSamples {
 
     public static HWPFDocument openSampleFile(String sampleFileName) {
         try {
-            return new HWPFDocument(_inst.openResourceAsStream(sampleFileName));
+            InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
+            return new HWPFDocument(is);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

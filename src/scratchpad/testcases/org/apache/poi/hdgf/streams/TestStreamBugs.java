@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.streams;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
@@ -25,6 +26,7 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for bugs with streams
@@ -36,13 +38,11 @@ public final class TestStreamBugs extends StreamTest {
 	private POIFSFileSystem filesystem;
 
 	protected void setUp() throws Exception {
-		String dirname = System.getProperty("HDGF.testdata.path");
-		String filename = dirname + "/44594.vsd";
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 
-		FileInputStream fin = new FileInputStream(filename);
-		filesystem = new POIFSFileSystem(fin);
+        InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("44594.vsd");
+        filesystem = new POIFSFileSystem(is);
 
 		DocumentEntry docProps =
 			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");

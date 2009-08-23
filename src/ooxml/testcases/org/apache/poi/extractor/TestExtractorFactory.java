@@ -22,10 +22,13 @@ import java.io.IOException;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
@@ -40,21 +43,18 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
  * Test that the extractor factory plays nicely
  */
 public class TestExtractorFactory extends TestCase {
-	private String excel_dir;
-	private String word_dir;
-	private String powerpoint_dir;
-	private String visio_dir;
-	private String poifs_dir;
-	
+
 	private File txt;
 	
 	private File xls;
 	private File xlsx;
-        private File xltx;
+    private File xltx;
+    private File xlsEmb;
 
 	private File doc;
 	private File docx;
-        private File dotx;
+    private File dotx;
+    private File docEmb;
 
 	private File ppt;
 	private File pptx;
@@ -64,31 +64,25 @@ public class TestExtractorFactory extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		excel_dir = System.getProperty("HSSF.testdata.path");
-		word_dir = System.getProperty("HWPF.testdata.path");
-		powerpoint_dir = System.getProperty("HSLF.testdata.path");
-		visio_dir = System.getProperty("HDGF.testdata.path");
-		poifs_dir = System.getProperty("POIFS.testdata.path");
-		assertNotNull(excel_dir);
-		assertNotNull(word_dir);
-		assertNotNull(powerpoint_dir);
-		assertNotNull(visio_dir);
-		assertNotNull(poifs_dir);
-		
-		txt = new File(powerpoint_dir, "SampleShow.txt");
-		
-		xls = new File(excel_dir, "SampleSS.xls");
-		xlsx = new File(excel_dir, "SampleSS.xlsx");
-                xltx = new File(excel_dir, "test.xltx");
+        POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
+        xls = ssTests.getFile("SampleSS.xls");
+		xlsx = ssTests.getFile("SampleSS.xlsx");
+        xltx = ssTests.getFile("test.xltx");
+        xlsEmb = ssTests.getFile("excel_with_embeded.xls");
 
-		doc = new File(word_dir, "SampleDoc.doc");
-		docx = new File(word_dir, "SampleDoc.docx");
-        dotx = new File(word_dir, "test.dotx");
+        POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
+		doc = wpTests.getFile("SampleDoc.doc");
+		docx = wpTests.getFile("SampleDoc.docx");
+        dotx = wpTests.getFile("test.dotx");
+        docEmb = wpTests.getFile("word_with_embeded.doc");
 
-		ppt = new File(powerpoint_dir, "SampleShow.ppt");
-		pptx = new File(powerpoint_dir, "SampleShow.pptx");
-		
-		vsd = new File(visio_dir, "Test_Visio-Some_Random_Text.vsd");
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		ppt = slTests.getFile("SampleShow.ppt");
+		pptx = slTests.getFile("SampleShow.pptx");
+        txt = slTests.getFile("SampleShow.txt");
+
+        POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
+		vsd = dgTests.getFile("Test_Visio-Some_Random_Text.vsd");
 	}
 
 	public void testFile() throws Exception {
@@ -339,8 +333,7 @@ public class TestExtractorFactory extends TestCase {
 	public void testEmbeded() throws Exception {
 		POIOLE2TextExtractor ext;
 		POITextExtractor[] embeds;
-		File f;
-		
+
 		// No embedings
 		ext = (POIOLE2TextExtractor)
 				ExtractorFactory.createExtractor(xls);
@@ -348,9 +341,8 @@ public class TestExtractorFactory extends TestCase {
 		assertEquals(0, embeds.length);
 		
 		// Excel
-		f = new File(poifs_dir, "excel_with_embeded.xls");
 		ext = (POIOLE2TextExtractor)
-				ExtractorFactory.createExtractor(f);
+				ExtractorFactory.createExtractor(xlsEmb);
 		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
 
 		assertEquals(6, embeds.length);
@@ -367,9 +359,8 @@ public class TestExtractorFactory extends TestCase {
         assertEquals(2, numWord);
 
         // Word
-		f = new File(poifs_dir, "word_with_embeded.doc");
 		ext = (POIOLE2TextExtractor)
-				ExtractorFactory.createExtractor(f);
+				ExtractorFactory.createExtractor(docEmb);
 		embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
 		
         numWord = 0; numXls = 0; numPpt = 0;

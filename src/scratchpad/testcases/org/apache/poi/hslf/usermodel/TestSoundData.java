@@ -17,11 +17,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test reading sound data from a ppt
@@ -29,28 +28,16 @@ import junit.framework.TestCase;
  * @author Yegor Kozlov
  */
 public final class TestSoundData extends TestCase{
-
-    protected File cwd;
-
-    public void setUp() {
-        cwd = new File(System.getProperty("HSLF.testdata.path"));
-    }
+    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Read a reference sound file from disk and compare it from the data extracted from the slide show
      */
     public void testSounds() throws Exception {
         //read the reference sound file
-        File f = new File(cwd, "ringin.wav");
-        int length = (int)f.length();
-        byte[] ref_data = new byte[length];
-        FileInputStream is = new FileInputStream(f);
-        is.read(ref_data);
-        is.close();
+        byte[] ref_data = slTests.readFile("ringin.wav");
 
-        is = new FileInputStream(new File(cwd, "sound.ppt"));
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("sound.ppt"));
 
         SoundData[] sound = ppt.getSoundData();
         assertEquals("Expected 1 sound", 1, sound.length);

@@ -28,6 +28,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
@@ -41,19 +42,15 @@ public final class TestExtractor extends TestCase {
 	private PowerPointExtractor ppe;
 	/** Extractor primed on the 1 page but text-box'd test data */
 	private PowerPointExtractor ppe2;
-	/** Where to go looking for our test files */
-	private String dirname;
 	/** Where our embeded files live */
-	private String pdirname;
+	//private String pdirname;
+    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    //private String pdirname;
 
     protected void setUp() throws Exception {
-		dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		ppe = new PowerPointExtractor(filename);
-		String filename2 = dirname + "/with_textbox.ppt";
-		ppe2 = new PowerPointExtractor(filename2);
-		
-		pdirname = System.getProperty("POIFS.testdata.path");
+
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ppe2 = new PowerPointExtractor(slTests.openResourceAsStream("with_textbox.ppt"));
     }
 
     public void testReadSheetText() {
@@ -114,8 +111,7 @@ public final class TestExtractor extends TestCase {
 	 * @throws Exception
 	 */
 	public void testMissingCoreRecords() throws Exception {
-		String filename = dirname + "/missing_core_records.ppt";
-		ppe = new PowerPointExtractor(filename);
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("missing_core_records.ppt"));
 		
 		String text = ppe.getText(true, false);
 		String nText = ppe.getNotes();
@@ -141,72 +137,67 @@ public final class TestExtractor extends TestCase {
     }
     
     public void testExtractFromEmbeded() throws Exception {
-    	String filename3 = pdirname + "/excel_with_embeded.xls";
-    	POIFSFileSystem fs = new POIFSFileSystem(
-    			new FileInputStream(filename3)
-    	);
-    	HSLFSlideShow ss;
-    	
-    	DirectoryNode dirA = (DirectoryNode)
-    		fs.getRoot().getEntry("MBD0000A3B6");
-		DirectoryNode dirB = (DirectoryNode)
-			fs.getRoot().getEntry("MBD0000A3B3");
-		
-		assertNotNull(dirA.getEntry("PowerPoint Document"));
-		assertNotNull(dirB.getEntry("PowerPoint Document"));
-    	
-		// Check the first file
-    	ss = new HSLFSlideShow(dirA, fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
-				ppe.getText(true, false)
-		);
+         POIFSFileSystem fs = new POIFSFileSystem(
+             POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls")
+         );
+         HSLFSlideShow ss;
 
-		// And the second
-    	ss = new HSLFSlideShow(dirB, fs);
-		ppe = new PowerPointExtractor(ss);
-		assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
-				ppe.getText(true, false)
-		);
-    }
+         DirectoryNode dirA = (DirectoryNode)
+             fs.getRoot().getEntry("MBD0000A3B6");
+         DirectoryNode dirB = (DirectoryNode)
+             fs.getRoot().getEntry("MBD0000A3B3");
 
-    /**
-     * A powerpoint file with embeded powerpoint files
-     */
-    public void testExtractFromOwnEmbeded() throws Exception {
-    	String path = pdirname + "/ppt_with_embeded.ppt";
-		ppe = new PowerPointExtractor(path);
-        List<OLEShape> shapes = ppe.getOLEShapes();
-        assertEquals("Expected 6 ole shapes in " + path, 6, shapes.size());
-        int num_ppt = 0, num_doc = 0, num_xls = 0;
-        for(OLEShape ole : shapes) {
-            String name = ole.getInstanceName();
-            InputStream data = ole.getObjectData().getData();
-            if ("Worksheet".equals(name)) {
-                HSSFWorkbook wb = new HSSFWorkbook(data);
-                num_xls++;
-            } else if ("Document".equals(name)) {
-                HWPFDocument doc = new HWPFDocument(data);
-                num_doc++;
-            } else if ("Presentation".equals(name)) {
-                num_ppt++;
-                SlideShow ppt = new SlideShow(data);
-            }
-        }
-        assertEquals("Expected 2 embedded Word Documents", 2, num_doc);
-        assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
-        assertEquals("Expected 2 embedded PowerPoint Presentations", 2, num_ppt);
-    }
+         assertNotNull(dirA.getEntry("PowerPoint Document"));
+         assertNotNull(dirB.getEntry("PowerPoint Document"));
+
+         // Check the first file
+         ss = new HSLFSlideShow(dirA, fs);
+         ppe = new PowerPointExtractor(ss);
+         assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
+                 ppe.getText(true, false)
+         );
+
+         // And the second
+         ss = new HSLFSlideShow(dirB, fs);
+         ppe = new PowerPointExtractor(ss);
+         assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
+                 ppe.getText(true, false)
+         );
+     }
+
+     /**
+      * A powerpoint file with embeded powerpoint files
+      */
+     public void testExtractFromOwnEmbeded() throws Exception {
+         String path = "ppt_with_embeded.ppt";
+         ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
+         List<OLEShape> shapes = ppe.getOLEShapes();
+         assertEquals("Expected 6 ole shapes in " + path, 6, shapes.size());
+         int num_ppt = 0, num_doc = 0, num_xls = 0;
+         for(OLEShape ole : shapes) {
+             String name = ole.getInstanceName();
+             InputStream data = ole.getObjectData().getData();
+             if ("Worksheet".equals(name)) {
+                 HSSFWorkbook wb = new HSSFWorkbook(data);
+                 num_xls++;
+             } else if ("Document".equals(name)) {
+                 HWPFDocument doc = new HWPFDocument(data);
+                 num_doc++;
+             } else if ("Presentation".equals(name)) {
+                 num_ppt++;
+                 SlideShow ppt = new SlideShow(data);
+             }
+         }
+         assertEquals("Expected 2 embedded Word Documents", 2, num_doc);
+         assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
+         assertEquals("Expected 2 embedded PowerPoint Presentations", 2, num_ppt);
+     }
     
     /**
      * From bug #45543
      */
     public void testWithComments() throws Exception {
-		String filename;
-		
-		// New file
-		filename = dirname + "/WithComments.ppt";
-		ppe = new PowerPointExtractor(filename);
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("WithComments.ppt"));
 
 		String text = ppe.getText();
 		assertFalse("Comments not in by default", contains(text, "This is a test comment"));
@@ -218,8 +209,7 @@ public final class TestExtractor extends TestCase {
 
 		
 		// And another file
-		filename = dirname + "/45543.ppt";
-		ppe = new PowerPointExtractor(filename);
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("45543.ppt"));
 
         text = ppe.getText();
 		assertFalse("Comments not in by default", contains(text, "testdoc"));
@@ -234,11 +224,10 @@ public final class TestExtractor extends TestCase {
      * From bug #45537
      */
     public void testHeaderFooter() throws Exception {
-		String filename, text;
-		
+		String  text;
+
 		// With a header on the notes
-		filename = dirname + "/45537_Header.ppt";
-		HSLFSlideShow hslf = new HSLFSlideShow(new FileInputStream(filename));
+		HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("45537_Header.ppt"));
 		SlideShow ss = new SlideShow(hslf);
 		assertNotNull(ss.getNotesHeadersFooters());
 		assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getHeaderText());
@@ -256,13 +245,12 @@ public final class TestExtractor extends TestCase {
 
         
 		// And with a footer, also on notes
-		filename = dirname + "/45537_Footer.ppt";
-		hslf = new HSLFSlideShow(new FileInputStream(filename));
+		hslf = new HSLFSlideShow(slTests.openResourceAsStream("45537_Footer.ppt"));
 		ss = new SlideShow(hslf);
 		assertNotNull(ss.getNotesHeadersFooters());
 		assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getFooterText());
 		
-		ppe = new PowerPointExtractor(filename);
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("45537_Footer.ppt"));
 
 		text = ppe.getText();
 		assertFalse("Unable to find expected word in text\n" + text, contains(text, "testdoc"));

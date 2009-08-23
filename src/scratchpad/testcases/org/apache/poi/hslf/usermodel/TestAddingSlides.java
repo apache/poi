@@ -30,6 +30,7 @@ import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow adds additional sheets properly
@@ -56,14 +57,12 @@ public final class TestAddingSlides extends TestCase {
 		hss_empty = HSLFSlideShow.create();
 		ss_empty = new SlideShow(hss_empty);
 
-		String dirname = System.getProperty("HSLF.testdata.path");
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-		String filename = dirname + "/Single_Coloured_Page.ppt";
-		hss_one = new HSLFSlideShow(filename);
+		hss_one = new HSLFSlideShow(slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
 		ss_one = new SlideShow(hss_one);
 
-		filename = dirname + "/basic_test_ppt_file.ppt";
-		hss_two = new HSLFSlideShow(filename);
+		hss_two = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss_two = new SlideShow(hss_two);
 	}
 
@@ -274,8 +273,8 @@ public final class TestAddingSlides extends TestCase {
 
 
     public void test47261() throws Exception {
-        File src = new File(System.getProperty("HSLF.testdata.path"), "47261.ppt");
-        SlideShow ppt = new SlideShow(new FileInputStream(src));
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("47261.ppt"));
         Slide[] slides = ppt.getSlides();
         Document doc = ppt.getDocumentRecord();
         assertNotNull(doc.getSlideSlideListWithText());

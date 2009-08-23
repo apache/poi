@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.extractor;
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for bugs with the WordExtractor
@@ -30,7 +31,7 @@ public final class TestWordExtractorBugs extends TestCase {
 
 	public void testProblemMetadata() throws Exception {
 		WordExtractor extractor =
-			new WordExtractor(HWPFTestDataSamples.openSampleFileStream("ProblemExtracting.doc"));
+			new WordExtractor(POIDataSamples.getDocumentInstance().openResourceAsStream("ProblemExtracting.doc"));
 
 		// Check it gives text without error
 		extractor.getText();
