@@ -35,6 +35,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.Variant;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Test case for OLE2 files with empty properties. An empty property's type
@@ -69,9 +70,8 @@ public final class TestEmptyProperties extends TestCase {
      */
     public void setUp() throws FileNotFoundException, IOException
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
-        final File data = new File(dataDir, POI_FS);
+        POIDataSamples samples = POIDataSamples.getHPSFInstance();
+        final File data = samples.getFile(POI_FS);
 
         poiFiles = Util.readPOIFiles(data);
     }

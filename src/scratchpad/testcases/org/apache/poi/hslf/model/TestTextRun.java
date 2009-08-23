@@ -22,13 +22,13 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for TextRuns
@@ -36,32 +36,19 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestTextRun extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+
 	// SlideShow primed on the test data
 	private SlideShow ss;
 	private SlideShow ssRich;
 
-	// TODO - use this or similar through rest of hslf tests
-	private static SlideShow openSampleSlideShow(String name) {
-		String dirname = System.getProperty("HSLF.testdata.path");
+	protected void setUp() throws IOException {
 
 		// Basic (non rich) test file
-		String filename = dirname + "/" + name;
-		HSLFSlideShow x;
-		try {
-			x = new HSLFSlideShow(filename);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return new SlideShow(x);
-	}
-
-	protected void setUp() {
-
-		// Basic (non rich) test file
-		ss = openSampleSlideShow("basic_test_ppt_file.ppt");
+		ss = new SlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		// Rich test file
-		ssRich = openSampleSlideShow("Single_Coloured_Page.ppt");
+		ssRich = new SlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
 	}
 
 	/**
@@ -429,10 +416,10 @@ public final class TestTextRun extends TestCase {
 	 * of the wrong list of potential paragraph properties defined in StyleTextPropAtom.
 	 *
 	 */
-	public void testBug41015() {
+	public void testBug41015() throws IOException {
 		RichTextRun[] rt;
 
-		SlideShow ppt = openSampleSlideShow("bug-41015.ppt");
+		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("bug-41015.ppt"));
 		Slide sl = ppt.getSlides()[0];
 		TextRun[] txt = sl.getTextRuns();
 		assertEquals(2, txt.length);

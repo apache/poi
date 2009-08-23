@@ -19,20 +19,20 @@ package org.apache.poi.hdgf.extractor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.PrintStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 public final class TestVisioExtractor extends TestCase {
-	private String dirname;
+    private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
+
 	private String defFilename;
 	protected void setUp() {
-		dirname = System.getProperty("HDGF.testdata.path");
-		defFilename = dirname + "/Test_Visio-Some_Random_Text.vsd";
+		defFilename = "Test_Visio-Some_Random_Text.vsd";
 	}
 
 	/**
@@ -41,14 +41,14 @@ public final class TestVisioExtractor extends TestCase {
 	public void testCreation() throws Exception {
 		VisioTextExtractor extractor;
 
-		extractor = new VisioTextExtractor(new FileInputStream(defFilename));
+		extractor = new VisioTextExtractor(_dgTests.openResourceAsStream(defFilename));
 		assertNotNull(extractor);
 		assertNotNull(extractor.getAllText());
 		assertEquals(3, extractor.getAllText().length);
 
 		extractor = new VisioTextExtractor(
 				new POIFSFileSystem(
-						new FileInputStream(defFilename)
+						_dgTests.openResourceAsStream(defFilename)
 				)
 		);
 		assertNotNull(extractor);
@@ -58,7 +58,7 @@ public final class TestVisioExtractor extends TestCase {
 		extractor = new VisioTextExtractor(
 			new HDGFDiagram(
 				new POIFSFileSystem(
-						new FileInputStream(defFilename)
+						_dgTests.openResourceAsStream(defFilename)
 				)
 			)
 		);
@@ -69,7 +69,7 @@ public final class TestVisioExtractor extends TestCase {
 
 	public void testExtraction() throws Exception {
 		VisioTextExtractor extractor =
-			new VisioTextExtractor(new FileInputStream(defFilename));
+			new VisioTextExtractor(_dgTests.openResourceAsStream(defFilename));
 
 		// Check the array fetch
 		String[] text = extractor.getAllText();
@@ -86,20 +86,11 @@ public final class TestVisioExtractor extends TestCase {
 	}
 
 	public void testProblemFiles() throws Exception {
-		File a = new File(dirname, "44594.vsd");
-		VisioTextExtractor.main(new String[] {a.toString()});
-
-		File b = new File(dirname, "44594-2.vsd");
-		VisioTextExtractor.main(new String[] {b.toString()});
-
-		File c = new File(dirname, "ShortChunk1.vsd");
-		VisioTextExtractor.main(new String[] {c.toString()});
-
-		File d = new File(dirname, "ShortChunk2.vsd");
-		VisioTextExtractor.main(new String[] {d.toString()});
-
-		File e = new File(dirname, "ShortChunk3.vsd");
-		VisioTextExtractor.main(new String[] {e.toString()});
+		String[] files = {"44594.vsd", "44594-2.vsd", "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd"};
+        for(String file : files){
+            VisioTextExtractor ex = new VisioTextExtractor(_dgTests.openResourceAsStream(file));
+            ex.getText();
+        }
 	}
 
 	public void testMain() throws Exception {
@@ -108,7 +99,8 @@ public final class TestVisioExtractor extends TestCase {
 		PrintStream capture = new PrintStream(baos);
 		System.setOut(capture);
 
-		VisioTextExtractor.main(new String[] {defFilename});
+        String path = _dgTests.getFile(defFilename).getPath();
+        VisioTextExtractor.main(new String[] {path});
 
 		// Put things back
 		System.setOut(oldOut);

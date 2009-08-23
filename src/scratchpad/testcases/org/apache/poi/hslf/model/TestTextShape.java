@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Verify behavior of <code>TextShape</code> and its sub-classes
@@ -32,7 +33,7 @@ import org.apache.poi.hslf.record.TextHeaderAtom;
  * @author Yegor Kozlov
  */
 public final class TestTextShape extends TestCase {
-    protected String cwd = System.getProperty("HSLF.testdata.path");
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     public void testCreateAutoShape(){
         TextShape shape = new AutoShape(ShapeTypes.Trapezoid);
@@ -70,9 +71,7 @@ public final class TestTextShape extends TestCase {
      *  - text in auto-shapes
      */
     public void testRead() throws IOException {
-        FileInputStream is = new FileInputStream(new File(cwd, "text_shapes.ppt"));
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text_shapes.ppt"));
 
         ArrayList lst1 = new ArrayList();
         Slide slide = ppt.getSlides()[0];
@@ -157,9 +156,7 @@ public final class TestTextShape extends TestCase {
     }
 
     public void testMargins() throws IOException {
-        FileInputStream is = new FileInputStream(new File(cwd, "text-margins.ppt"));
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text-margins.ppt"));
 
         Slide slide = ppt.getSlides()[0];
 

@@ -28,23 +28,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.POIDataSamples;
 
 
 public class TestLoadSaveXSSF extends TestCase {
-
-    String filename;
-
-    protected void setUp() {
-
-        System.setProperty("org.apache.poi.util.POILogger", org.apache.poi.util.CommonsLogger.class.getName());
-        filename = System.getProperty("XSSF.testdata.path");
-        if (filename == null) {
-            filename = "src/ooxml/testcases/org/apache/poi/xssf/data";
-        }
-    }
+    private static final POIDataSamples _ssSampels = POIDataSamples.getSpreadSheetInstance();
 
     public void testLoadSample() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "sample.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("sample.xlsx"));
         assertEquals(3, workbook.getNumberOfSheets());
         assertEquals("Sheet1", workbook.getSheetName(0));
         Sheet sheet = workbook.getSheetAt(0);
@@ -58,7 +50,7 @@ public class TestLoadSaveXSSF extends TestCase {
 
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successful.
     public void testLoadStyles() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "styles.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("styles.xlsx"));
         Sheet sheet = workbook.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell((short) 0);
@@ -68,7 +60,7 @@ public class TestLoadSaveXSSF extends TestCase {
 
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successful.
     public void testLoadPictures() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "picture.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("picture.xlsx"));
         List<XSSFPictureData> pictures = workbook.getAllPictures();
         assertEquals(1, pictures.size());
     }

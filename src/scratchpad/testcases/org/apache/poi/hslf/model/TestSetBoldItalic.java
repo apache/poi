@@ -36,10 +36,6 @@ public final class TestSetBoldItalic extends TestCase {
      * and set some of the style attributes
      */
     public void testTextBoxWrite() throws Exception {
-        //String dirname = System.getProperty("HSLF.testdata.path");
-        //String filename = dirname + "/with_textbox.ppt";
-        //new SlideShow(new HSLFSlideShow(filename));
-
         SlideShow ppt = new SlideShow();
         Slide sl = ppt.createSlide();
         RichTextRun rt;

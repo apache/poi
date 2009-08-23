@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
@@ -35,8 +36,8 @@ private MAPIMessage mapiMessage;
 	 * @throws Exception
 	 */
 	public TestOutlook30FileRead() throws IOException {
-		String dirname = System.getProperty("HSMF.testdata.path");
-		this.mapiMessage = new MAPIMessage(dirname + "/outlook_30_msg.msg");
+        POIDataSamples samples = POIDataSamples.getHSMFInstance();
+		this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
 	}
 
 	/**

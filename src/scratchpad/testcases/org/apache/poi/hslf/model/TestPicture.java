@@ -20,13 +20,13 @@ package org.apache.poi.hslf.model;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test Picture shape.
@@ -34,6 +34,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestPicture extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test that the reference count of a blip is incremented every time the picture is inserted.
@@ -41,14 +42,13 @@ public final class TestPicture extends TestCase {
      *
      */
     public void testMultiplePictures() throws Exception {
-        String cwd = System.getProperty("HSLF.testdata.path");
         SlideShow ppt = new SlideShow();
 
         Slide s = ppt.createSlide();
         Slide s2 = ppt.createSlide();
         Slide s3 = ppt.createSlide();
 
-        int idx = ppt.addPicture(new File(cwd, "clock.jpg"), Picture.JPEG);
+        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), Picture.JPEG);
         Picture pict = new Picture(idx);
         Picture pict2 = new Picture(idx);
         Picture pict3 = new Picture(idx);

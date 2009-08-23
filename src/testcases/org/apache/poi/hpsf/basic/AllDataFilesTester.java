@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf.basic;
 
+import org.apache.poi.POIDataSamples;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.logging.Logger;
@@ -30,6 +32,7 @@ import java.util.logging.Logger;
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class AllDataFilesTester {
+    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     /**
      * <p>Interface specifying how to run a test on a single file.</p>
@@ -56,8 +59,8 @@ public class AllDataFilesTester {
      */
     public void runTests(final TestTask task) throws Throwable
     {
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
             public boolean accept(final File file)

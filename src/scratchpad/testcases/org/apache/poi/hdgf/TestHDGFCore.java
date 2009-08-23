@@ -22,18 +22,17 @@ import java.io.FileInputStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
 public final class TestHDGFCore extends TestCase {
+    private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
+
 	private POIFSFileSystem fs;
-	private String dirname;
-	private String filename;
 
 	protected void setUp() throws Exception {
-		dirname = System.getProperty("HDGF.testdata.path");
-		filename = dirname + "/Test_Visio-Some_Random_Text.vsd";
-		fs = new POIFSFileSystem(new FileInputStream(filename));
+		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
 	}
 
 	public void testCreate() throws Exception {
@@ -68,8 +67,7 @@ public final class TestHDGFCore extends TestCase {
 	 *  appears to have a negative chunk length
 	 */
 	public void DISABLEDtestNegativeChunkLength() throws Exception {
-		filename = dirname + "/NegativeChunkLength.vsd";
-		fs = new POIFSFileSystem(new FileInputStream(filename));
+		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
 
 		HDGFDiagram hdgf = new HDGFDiagram(fs);
 		assertNotNull(hdgf);

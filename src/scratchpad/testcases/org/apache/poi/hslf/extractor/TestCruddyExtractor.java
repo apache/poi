@@ -21,6 +21,8 @@ package org.apache.poi.hslf.extractor;
 import junit.framework.TestCase;
 import java.util.Vector;
 
+import org.apache.poi.POIDataSamples;
+
 /**
  * Tests that the QuickButCruddyTextExtractor works correctly
  *
@@ -56,9 +58,8 @@ public final class TestCruddyExtractor extends TestCase {
 	};
 
     public TestCruddyExtractor() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		te = new QuickButCruddyTextExtractor(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		te = new QuickButCruddyTextExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
     }
 
     public void testReadAsVector() {

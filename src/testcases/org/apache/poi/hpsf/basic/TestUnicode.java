@@ -32,6 +32,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests whether Unicode string can be read from a
@@ -57,9 +58,8 @@ public class TestUnicode extends TestCase {
      * @exception IOException if any other I/O exception occurs
      */
     protected void setUp() {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
-        data = new File(dataDir, POI_FS);
+        POIDataSamples samples = POIDataSamples.getHPSFInstance();
+        data = samples.getFile(POI_FS);
     }
 
 

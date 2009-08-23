@@ -26,14 +26,16 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for {@link XSSFReader}
  */
 public final class TestXSSFReader extends TestCase {
+    private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
-	public void testGetBits() throws Exception {
-		OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
+    public void testGetBits() throws Exception {
+		OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -46,7 +48,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testStyles() throws Exception {
-		OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
+		OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -55,7 +57,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testStrings() throws Exception {
-        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 
@@ -64,7 +66,7 @@ public final class TestXSSFReader extends TestCase {
 	}
 
 	public void testSheets() throws Exception {
-        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"));
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 		byte[] data = new byte[4096];
@@ -96,7 +98,7 @@ public final class TestXSSFReader extends TestCase {
 	 * (as they are defined in the workbook.xml)
 	 */
 	public void testOrderOfSheets() throws Exception {
-        OPCPackage pkg = OPCPackage.open(XSSFTestDataSamples.openSampleFileStream("reordered_sheets.xlsx"));
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"));
 
 		XSSFReader r = new XSSFReader(pkg);
 

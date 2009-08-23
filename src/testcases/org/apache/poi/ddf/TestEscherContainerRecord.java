@@ -25,16 +25,13 @@ import junit.framework.TestCase;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for {@link EscherContainerRecord}
  */
 public final class TestEscherContainerRecord extends TestCase {
-	private String ESCHER_DATA_PATH;
-
-	protected void setUp() {
-		ESCHER_DATA_PATH = System.getProperty("DDF.testdata.path");
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
 	public void testFillFields() {
 		EscherRecordFactory f = new DefaultEscherRecordFactory();
@@ -151,11 +148,7 @@ public final class TestEscherContainerRecord extends TestCase {
 	 *  but hopefully we now read the correct size.
 	 */
 	public void testBug44857() throws Exception {
-		File f = new File(ESCHER_DATA_PATH, "Container.dat");
-		assertTrue(f.exists());
-
-		FileInputStream finp = new FileInputStream(f);
-		byte[] data = IOUtils.toByteArray(finp);
+		byte[] data = _samples.readFile("Container.dat");
 
 		// This used to fail with an OutOfMemory
 		EscherContainerRecord record = new EscherContainerRecord();

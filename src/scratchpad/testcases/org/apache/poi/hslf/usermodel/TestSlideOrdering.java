@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that SlideShow returns Sheets in the right order
@@ -27,20 +28,18 @@ import org.apache.poi.hslf.model.*;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestSlideOrdering extends TestCase {
+    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
 	// Simple slideshow, record order matches slide order
 	private SlideShow ssA;
 	// Complex slideshow, record order doesn't match slide order
 	private SlideShow ssB;
 
 	public TestSlideOrdering() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-
-		String filenameA = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hssA = new HSLFSlideShow(filenameA);
+		HSLFSlideShow hssA = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ssA = new SlideShow(hssA);
 
-		String filenameB = dirname + "/incorrect_slide_order.ppt";
-		HSLFSlideShow hssB = new HSLFSlideShow(filenameB);
+		HSLFSlideShow hssB = new HSLFSlideShow(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
 		ssB = new SlideShow(hssB);
 	}
 
@@ -85,7 +84,9 @@ public final class TestSlideOrdering extends TestCase {
 	 *            array of reference slide titles
 	 */
 	protected void assertSlideOrdering(String filename, String[] titles) throws Exception {
-		SlideShow ppt = new SlideShow(new HSLFSlideShow(filename));
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream(filename));
 		Slide[] slide = ppt.getSlides();
 
 		assertEquals(titles.length, slide.length);
@@ -96,25 +97,23 @@ public final class TestSlideOrdering extends TestCase {
 	}
 
 	public void testTitles() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-
-		assertSlideOrdering(dirname + "/basic_test_ppt_file.ppt", new String[] {
+		assertSlideOrdering("basic_test_ppt_file.ppt", new String[] {
 				"This is a test title", "This is the title on page 2" });
 
-		assertSlideOrdering(dirname + "/incorrect_slide_order.ppt", new String[] { "Slide 1",
+		assertSlideOrdering("incorrect_slide_order.ppt", new String[] { "Slide 1",
 				"Slide 2", "Slide 3" });
 
-		assertSlideOrdering(dirname + "/next_test_ppt_file.ppt", new String[] {
+		assertSlideOrdering("next_test_ppt_file.ppt", new String[] {
 				"This is a test title", "This is the title on page 2" });
 
-		assertSlideOrdering(dirname + "/Single_Coloured_Page.ppt",
+		assertSlideOrdering("Single_Coloured_Page.ppt",
 				new String[] { "This is a title, it" + (char) 0x2019 + "s in black" });
 
-		assertSlideOrdering(dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt",
+		assertSlideOrdering("Single_Coloured_Page_With_Fonts_and_Alignments.ppt",
 				new String[] { "This is a title, it" + (char) 0x2019 + "s in black" });
 
 		assertSlideOrdering(
-				dirname + "/ParagraphStylesShorterThanCharStyles.ppt",
+				"ParagraphStylesShorterThanCharStyles.ppt",
 				new String[] {
 						"ROMANCE: AN ANALYSIS",
 						"AGENDA",

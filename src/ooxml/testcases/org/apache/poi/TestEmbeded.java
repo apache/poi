@@ -36,34 +36,24 @@ import junit.framework.TestCase;
  */
 public class TestEmbeded extends TestCase
 {
-	public String dirname;
-
-	public void setUp() {
-		dirname = System.getProperty("OOXML.testdata.path");
-		assertNotNull(dirname);
-	}
-
 	public void testExcel() throws Exception {
-		File f = new File(dirname, "ExcelWithAttachments.xlsm");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XSSFWorkbook(OPCPackage.open(f.toString()));
+		POIXMLDocument doc = new XSSFWorkbook(
+                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("ExcelWithAttachments.xlsm")
+        );
 		test(doc, 4);
 	}
 
 	public void testWord() throws Exception {
-		File f = new File(dirname, "WordWithAttachments.docx");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XWPFDocument(OPCPackage.open(f.toString()));
+		POIXMLDocument doc = new XWPFDocument(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx")
+        );
 		test(doc, 5);
 	}
 
 	public void testPowerPoint() throws Exception {
-		File f = new File(dirname, "PPTWithAttachments.pptm");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(f.toString()));
+		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(
+                POIDataSamples.getSlideShowInstance().openResourceAsStream("PPTWithAttachments.pptm"))
+        );
 		test(doc, 4);
 	}
 	

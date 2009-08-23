@@ -21,20 +21,16 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.apache.poi.hpbf.HPBFDocument;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
 public final class TestEscherParts extends TestCase {
-	private String dir;
-
-	protected void setUp() {
-		dir = System.getProperty("HPBF.testdata.path");
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
 	public void testBasics() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+		    _samples.openResourceAsStream("Sample.pub")
 		);
 
 		EscherStm es = doc.getEscherStm();
@@ -50,9 +46,8 @@ public final class TestEscherParts extends TestCase {
 	}
 
 	public void testComplex() throws Exception {
-		File f = new File(dir, "SampleBrochure.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("SampleBrochure.pub")
 		);
 
 		EscherStm es = doc.getEscherStm();
@@ -68,9 +63,8 @@ public final class TestEscherParts extends TestCase {
 
 
 		// Now do another complex file
-		f = new File(dir, "SampleNewsletter.pub");
 		doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("SampleNewsletter.pub")
 		);
 
 		es = doc.getEscherStm();

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.model;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -137,8 +138,8 @@ public final class TestSlides extends TestCase {
      * Add slides to ppt which already has two slides
      */
     public void testAddSlides2to3() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(dirname + "/basic_test_ppt_file.ppt"));
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
         assertTrue(ppt.getSlides().length == 2);
 

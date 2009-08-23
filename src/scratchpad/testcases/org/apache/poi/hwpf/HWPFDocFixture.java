@@ -20,6 +20,7 @@ package org.apache.poi.hwpf;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 
 public final class HWPFDocFixture
@@ -38,7 +39,7 @@ public final class HWPFDocFixture
     try
     {
       POIFSFileSystem filesystem = new POIFSFileSystem(
-              HWPFTestDataSamples.openSampleFileStream("test.doc"));
+              POIDataSamples.getDocumentInstance().openResourceAsStream("test.doc"));
 
       DocumentEntry documentProps =
         (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");

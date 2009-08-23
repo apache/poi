@@ -17,6 +17,9 @@
 
 package org.apache.poi.openxml4j;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.TempFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,121 +31,31 @@ import java.io.InputStream;
  * @author jmicich
  */
 public final class OpenXML4JTestDataSamples {
-
-	private static final String IN_DIR_PROP_NAME = "openxml4j.testdata.input";
-	private static final String COMP_IN_DIR_PROP_NAME = "openxml4j.compliance.input";
-	
-	private static File _sampleInputDir;
-	private static File _sampleOutputDir;
-	private static File _complianceSampleInputDir;
+    private static final POIDataSamples _samples = POIDataSamples.getOpenXML4JInstance();
 
 	private OpenXML4JTestDataSamples() {
 		// no instances of this class
 	}
-	
+
 	public static InputStream openSampleStream(String sampleFileName) {
-		File f = getSampleFile(sampleFileName);
-		try {
-			return new FileInputStream(f);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+		return _samples.openResourceAsStream(sampleFileName);
 	}
 	public static String getSampleFileName(String sampleFileName) {
-		// TODO - investigate allowing read/write access for package opened on stream
 		return getSampleFile(sampleFileName).getAbsolutePath();
 	}
 	
 	public static File getSampleFile(String sampleFileName) {
-		File dir = getSampleInputDir();
-		File f = new File(dir, sampleFileName);
-		if (!f.exists()) {
-			throw new RuntimeException("Specified sample file '" 
-					+ f.getAbsolutePath() + "' does not exist");
-		}
-		if (f.isDirectory()) {
-			throw new RuntimeException("Specified sample file '" 
-					+ f.getAbsolutePath() + "' is a directory");
-		}
-		return f;
+		return _samples.getFile(sampleFileName);
 	}
 	
 	public static File getOutputFile(String outputFileName) {
-		File dir = getSampleOutputDir();
-		return new File(dir, outputFileName);
+        String suffix = outputFileName.substring(outputFileName.lastIndexOf('.'));
+        return TempFile.createTempFile(outputFileName, suffix);
 	}
 
 
 	public static InputStream openComplianceSampleStream(String sampleFileName) {
-		File f = getComplianceSampleFile(sampleFileName);
-		try {
-			return new FileInputStream(f);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	private static File getComplianceSampleFile(String sampleFileName) {
-		File dir = getComplianceSampleInputDir();
-		File f = new File(dir, sampleFileName);
-		if (!f.exists()) {
-			throw new RuntimeException("Specified sample file '" 
-					+ f.getAbsolutePath() + "' does not exist");
-		}
-		if (f.isDirectory()) {
-			throw new RuntimeException("Specified sample file '" 
-					+ f.getAbsolutePath() + "' is a directory");
-		}
-		return f;
-	}
-	public static String getComplianceSampleFileName(String sampleFileName) {
-		return getComplianceSampleFile(sampleFileName).getAbsolutePath();
-	}
-	private static File getComplianceSampleInputDir() {
-		if (_complianceSampleInputDir == null) {
-			_complianceSampleInputDir = getAndCheckDirByProperty(COMP_IN_DIR_PROP_NAME);
-		}
-		return _complianceSampleInputDir;
-	}
-
-	
-	private static File getSampleInputDir() {
-		if (_sampleInputDir == null) {
-			_sampleInputDir = getAndCheckDirByProperty(IN_DIR_PROP_NAME);
-		}
-		return _sampleInputDir;
-	}
-
-	private static File getAndCheckDirByProperty(String propName) {
-		String dirName = System.getProperty(propName);
-		File dir = new File(dirName);
-		if (!dir.exists()) {
-			throw new RuntimeException("Specified '" + propName + "' directory: '"
-					+ dirName + "' does not exist");
-		}
-		if (!dir.isDirectory()) {
-			throw new RuntimeException("Specified '" + propName + "' directory: '"
-					+ dirName + "' is a not a proper directory");
-		}
-		return dir;
-	}
-
-	private static File getSampleOutputDir() {
-		if (_sampleOutputDir == null) {
-            File dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
-			if (dir.exists()) {
-    			if (!dir.isDirectory()) {
-    				throw new RuntimeException("Specified output directory: '"
-    						+ dir.getAbsolutePath() + "' is a not a proper directory");
-    			}
-			} else {
-				if (!dir.mkdirs()) {
-					throw new RuntimeException("Failed to create directory: '"
-							+ dir.getAbsolutePath() + "'");
-				}
-			}
-			_sampleOutputDir = dir;
-		}
-		return _sampleOutputDir;
+        return _samples.openResourceAsStream(sampleFileName);
 	}
 
 }

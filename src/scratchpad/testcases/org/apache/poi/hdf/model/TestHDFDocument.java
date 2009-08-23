@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Class to test {@link HDFDocument} functionality
@@ -30,17 +31,10 @@ import junit.framework.TestCase;
  * @author Bob Otterberg
  */
 public final class TestHDFDocument extends TestCase {
+    private static final POIDataSamples _samples = POIDataSamples.getDocumentInstance();
+
     public void testStopJUnitComplainintAboutNoTests() {
         // TODO - fix these junits
-    }
-
-    private static InputStream openSample(String sampleFileName) {
-        String fullPathName = System.getProperty("HDF.testdata.path") + "/" + sampleFileName;
-        try {
-            return new FileInputStream(System.getProperty("HDF.testdata.path"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Sample HDF file '" + fullPathName + "' was not found.");
-        }
     }
 
     /**
@@ -50,7 +44,7 @@ public final class TestHDFDocument extends TestCase {
      *             in the document in their known positions.<P>
      */
     public void fixme_testEmpty() throws IOException {
-        InputStream stream = openSample("empty.doc");
+        InputStream stream = _samples.openResourceAsStream("empty.doc");
         new HDFDocument(stream);
     }
 
@@ -61,7 +55,7 @@ public final class TestHDFDocument extends TestCase {
      *             in the document in their known positions.<P>
      */
     public void fixme_testSimple() throws IOException {
-        InputStream stream = openSample("simple.doc");
+        InputStream stream = _samples.openResourceAsStream("simple.doc");
         new HDFDocument(stream);
     }
 
@@ -73,7 +67,7 @@ public final class TestHDFDocument extends TestCase {
      *
      */
     public void fixme_testSimpleList() throws IOException {
-        InputStream stream = openSample("simple-list.doc");
+        InputStream stream = _samples.openResourceAsStream("simple-list.doc");
         new HDFDocument(stream);
     }
 
@@ -84,7 +78,7 @@ public final class TestHDFDocument extends TestCase {
      *             in the document in their known positions.<P>
      */
     public void fixme_testSimpleTable() throws IOException {
-        InputStream stream = openSample("simple-table.doc");
+        InputStream stream = _samples.openResourceAsStream("simple-table.doc");
         new HDFDocument(stream);
     }
 }

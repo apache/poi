@@ -16,9 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
-import java.io.File;
-
-import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 
 import junit.framework.TestCase;
@@ -31,18 +30,12 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 	 * A simple file
 	 */
 	private XSLFSlideShow xmlA;
-	private File fileA;
+	private OPCPackage pkg;
 
 	protected void setUp() throws Exception {
-		super.setUp();
-		
-		fileA = new File(
-				System.getProperty("HSLF.testdata.path") +
-				File.separator + "sample.pptx"
-		);
-		assertTrue(fileA.exists());
-		
-		xmlA = new XSLFSlideShow(fileA.toString());
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		pkg = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
+		xmlA = new XSLFSlideShow(pkg);
 	}
 
 	/**
@@ -50,8 +43,7 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 	 */
 	public void testGetSimpleText() throws Exception {
 		new XSLFPowerPointExtractor(xmlA);
-		new XSLFPowerPointExtractor(
-				POIXMLDocument.openPackage(fileA.toString()));
+		new XSLFPowerPointExtractor(pkg);
 		
 		XSLFPowerPointExtractor extractor = 
 			new XSLFPowerPointExtractor(xmlA);
@@ -110,13 +102,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 	}
 	
 	public void testGetComments() throws Exception {
-		File file = new File(
-				System.getProperty("HSLF.testdata.path") +
-				File.separator + "45545_Comment.pptx"
-		);
-		assertTrue(file.exists());
-		
-		xmlA = new XSLFSlideShow(file.toString());
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		xmlA = new XSLFSlideShow(OPCPackage.open(slTests.openResourceAsStream("45545_Comment.pptx")));
 		XSLFPowerPointExtractor extractor = 
 			new XSLFPowerPointExtractor(xmlA);
 		

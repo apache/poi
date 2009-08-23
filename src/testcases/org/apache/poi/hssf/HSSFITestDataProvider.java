@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.POIDataSamples;
 
 /**
  * @author Yegor Kozlov
@@ -44,7 +45,7 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     }
 
     public byte[] getTestDataFileContent(String fileName) {
-        return HSSFTestDataSamples.getTestDataFileContent(fileName);
+        return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
 
     public SpreadsheetVersion getSpreadsheetVersion(){

@@ -24,6 +24,7 @@ import java.awt.*;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test <code>Fill</code> object.
@@ -31,6 +32,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
  * @author Yegor Kozlov
  */
 public final class TestBackground extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Default background for slide, shape and slide master.
@@ -52,7 +54,7 @@ public final class TestBackground extends TestCase {
      * Read fill information from an reference ppt file
      */
     public void testReadBackground() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(System.getProperty("HSLF.testdata.path") + "/backgrounds.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("backgrounds.ppt"));
         Fill fill;
         Shape shape;
 
@@ -93,7 +95,7 @@ public final class TestBackground extends TestCase {
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
+        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
         fill.setFillType(Fill.FILL_PICTURE);
         fill.setPictureData(idx);
 
@@ -107,7 +109,7 @@ public final class TestBackground extends TestCase {
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
+        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
         fill.setFillType(Fill.FILL_PATTERN);
         fill.setPictureData(idx);
         fill.setBackgroundColor(Color.green);
@@ -123,7 +125,7 @@ public final class TestBackground extends TestCase {
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
+        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
         fill.setFillType(Fill.FILL_TEXTURE);
         fill.setPictureData(idx);
 
@@ -131,7 +133,7 @@ public final class TestBackground extends TestCase {
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(Fill.FILL_PICTURE);
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/clock.jpg"), Picture.JPEG);
+        idx = ppt.addPicture(_slTests.readFile("clock.jpg"), Picture.JPEG);
         fill.setPictureData(idx);
         slide.addShape(shape);
 

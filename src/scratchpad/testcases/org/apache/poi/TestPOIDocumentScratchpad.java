@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import java.io.*;
 
 import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.*;
 
 /**
@@ -41,29 +41,15 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 	// The POI Documents to work on
 	private POIDocument doc;
 	private POIDocument doc2;
-	// POIFS primed on the test (powerpoint and word) data
-	private POIFSFileSystem pfs;
-	private POIFSFileSystem pfs2;
 
 	/**
 	 * Set things up, using a PowerPoint document and
 	 *  a Word Document for our testing
 	 */
 	public void setUp() throws Exception {
-		String dirnameHSLF = System.getProperty("HSLF.testdata.path");
-		String filenameHSLF = dirnameHSLF + "/basic_test_ppt_file.ppt";
-		String dirnameHSSF = System.getProperty("HSSF.testdata.path");
-		String filenameHSSF = dirnameHSLF + "/DateFormats.ppt";
-		String dirnameHWPF = System.getProperty("HWPF.testdata.path");
-		String filenameHWPF = dirnameHWPF + "/test2.doc";
+		doc = new HSLFSlideShow(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
 
-		FileInputStream fisHSLF = new FileInputStream(filenameHSLF);
-		pfs = new POIFSFileSystem(fisHSLF);
-		doc = new HSLFSlideShow(pfs);
-
-		FileInputStream fisHWPF = new FileInputStream(filenameHWPF);
-		pfs2 = new POIFSFileSystem(fisHWPF);
-		doc2 = new HWPFDocument(pfs2);
+		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}
 
 	public void testReadProperties() {

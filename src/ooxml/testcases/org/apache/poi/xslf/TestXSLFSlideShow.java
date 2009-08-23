@@ -16,31 +16,23 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
-import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
 public class TestXSLFSlideShow extends TestCase {
-	private String sampleFile;
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private OPCPackage pack;
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		sampleFile = new File(
-				System.getProperty("HSLF.testdata.path") +
-				File.separator + "sample.pptx"
-		).toString();
+    protected void setUp() throws Exception {
+		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
 	}
 
 	public void testContainsMainContentType() throws Exception {
-		OPCPackage pack = POIXMLDocument.openPackage(sampleFile);
-		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
 			if(part.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
@@ -52,15 +44,11 @@ public class TestXSLFSlideShow extends TestCase {
 	}
 
 	public void testOpen() throws Exception {
-		POIXMLDocument.openPackage(sampleFile);
-		
+
 		XSLFSlideShow xml;
 		
 		// With the finalised uri, should be fine
-		xml = new XSLFSlideShow(
-				POIXMLDocument.openPackage(sampleFile)
-		);
-		
+		xml = new XSLFSlideShow(pack);
 		// Check the core
 		assertNotNull(xml.getPresentation());
 		
@@ -74,7 +62,7 @@ public class TestXSLFSlideShow extends TestCase {
 	}
 	
 	public void testSlideBasics() throws Exception {
-		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		// Should have 1 master
 		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
@@ -108,7 +96,7 @@ public class TestXSLFSlideShow extends TestCase {
 	}
 	
 	public void testMetadataBasics() throws Exception {
-		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());

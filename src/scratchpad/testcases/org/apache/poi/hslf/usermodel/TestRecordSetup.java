@@ -23,6 +23,7 @@ import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.record.ParentAwareRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that the record setup done by SlideShow
@@ -37,9 +38,8 @@ public final class TestRecordSetup extends TestCase {
 	private HSLFSlideShow hss;
 
 	public TestRecordSetup() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new SlideShow(hss);
 	}
 

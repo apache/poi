@@ -38,15 +38,8 @@ import org.apache.poi.util.TempFile;
  * @author Josh Micich
  */
 public class XSSFTestDataSamples {
-    
-    public static InputStream openSampleFileStream(String sampleFileName) {
-        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
-    }
-    public static byte[] getTestDataFileContent(String fileName) {
-        return HSSFTestDataSamples.getTestDataFileContent(fileName);
-    }
 
-	public static final XSSFWorkbook openSampleWorkbook(String sampleName) {
+	public static XSSFWorkbook openSampleWorkbook(String sampleName) {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
 		try {
 			return new XSSFWorkbook(is);
@@ -57,24 +50,17 @@ public class XSSFTestDataSamples {
     public static <R extends Workbook> R writeOutAndReadBack(R wb) {
     	Workbook result;
 		try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+            wb.write(baos);
+            InputStream is = new ByteArrayInputStream(baos.toByteArray());
 	    	if (wb instanceof HSSFWorkbook) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
-                wb.write(baos);
-                InputStream is = new ByteArrayInputStream(baos.toByteArray());
 	    		result = new HSSFWorkbook(is);
 	    	} else if (wb instanceof XSSFWorkbook) {
-                File tmp = TempFile.createTempFile("poi-ooxml-", ".xlsx");
-                FileOutputStream out = new FileOutputStream(tmp);
-                wb.write(out);
-                out.close();
-                OPCPackage pkg = OPCPackage.open(tmp.getAbsolutePath());
-    			result = new XSSFWorkbook(pkg);
+    			result = new XSSFWorkbook(is);
 	    	} else {
-	    		throw new RuntimeException("Unexpected workbook type (" 
+	    		throw new RuntimeException("Unexpected workbook type ("
 	    				+ wb.getClass().getName() + ")");
 	    	}
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

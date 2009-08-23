@@ -18,12 +18,11 @@
 package org.apache.poi.hslf.record;
 
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that ExObjList works properly.
@@ -32,8 +31,8 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  */
 public class TestExObjList extends TestCase {
 	public void testRealFile() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		HSLFSlideShow hss = new HSLFSlideShow(dirname + File.separator + "WithLinks.ppt");
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
 		SlideShow ss = new SlideShow(hss);
 
 		// Get the document

@@ -19,10 +19,8 @@ package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
 
-import java.io.FileInputStream;
-import java.io.File;
-
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test Hyperlink.
@@ -30,12 +28,10 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestHyperlink extends TestCase {
-    protected String cwd = System.getProperty("HSLF.testdata.path");
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     public void testTextRunHyperlinks() throws Exception {
-        FileInputStream is = new FileInputStream(new File(cwd, "WithLinks.ppt"));
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("WithLinks.ppt"));
 
         TextRun[] run;
         Slide slide;

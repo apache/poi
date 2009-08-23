@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -144,11 +145,11 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	 * Test M4.1 rule.
 	 */
 	public void testOnlyOneCorePropertiesPart_AddPart() {
-		String sampleFileName = OpenXML4JTestDataSamples.getComplianceSampleFileName("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
+		String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
 		OPCPackage pkg = null;
 		try {
-			pkg = OPCPackage.open(sampleFileName);
-		} catch (InvalidFormatException e) {
+			pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		

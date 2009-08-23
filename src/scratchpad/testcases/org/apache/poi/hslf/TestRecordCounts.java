@@ -20,6 +20,7 @@ package org.apache.poi.hslf;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that HSLFSlideShow returns the right numbers of key records when
@@ -32,9 +33,8 @@ public final class TestRecordCounts extends TestCase {
 	private HSLFSlideShow ss;
 
 	public TestRecordCounts() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		ss = new HSLFSlideShow(filename);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		ss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 	}
 
 	public void testSheetsCount() {

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.blip.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
 import junit.framework.TestCase;
 
 import java.io.*;
@@ -31,12 +32,9 @@ import java.util.Arrays;
  * @author Yegor Kozlov
  */
 public final class TestPictures extends TestCase{
+    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    protected File cwd;
-
-    public void setUp() {
-        cwd = new File(System.getProperty("HSLF.testdata.path"));
-    }
+    //protected File cwd;
 
     /**
      * Test read/write Macintosh PICT
@@ -45,8 +43,8 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "cow.pict");
-        int idx = ppt.addPicture(img, Picture.PICT);
+        byte[] src_bytes = slTests.readFile("cow.pict");
+        int idx = ppt.addPicture(src_bytes, Picture.PICT);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -73,7 +71,6 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.PICT, pictures[0].getType());
         assertTrue(pictures[0] instanceof PICT);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertEquals(src_bytes.length, ppt_bytes.length);
         //in PICT the first 512 bytes are MAC specific and may not be preserved, ignore them
@@ -91,8 +88,8 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "santa.wmf");
-        int idx = ppt.addPicture(img, Picture.WMF);
+        byte[] src_bytes = slTests.readFile("santa.wmf");
+        int idx = ppt.addPicture(src_bytes, Picture.WMF);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -119,7 +116,6 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.WMF, pictures[0].getType());
         assertTrue(pictures[0] instanceof WMF);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertEquals(src_bytes.length, ppt_bytes.length);
         //in WMF the first 22 bytes - is a metafile header
@@ -137,8 +133,9 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "wrench.emf");
-        int idx = ppt.addPicture(img, Picture.EMF);
+        byte[] src_bytes = slTests.readFile("wrench.emf");
+        int idx = ppt.addPicture(src_bytes, Picture.EMF);
+
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -165,7 +162,6 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.EMF, pictures[0].getType());
         assertTrue(pictures[0] instanceof EMF);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
     }
@@ -177,8 +173,8 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "tomcat.png");
-        int idx = ppt.addPicture(img, Picture.PNG);
+        byte[] src_bytes = slTests.readFile("tomcat.png");
+        int idx = ppt.addPicture(src_bytes, Picture.PNG);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -205,7 +201,6 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.PNG, pictures[0].getType());
         assertTrue(pictures[0] instanceof PNG);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
     }
@@ -217,8 +212,9 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "clock.jpg");
-        int idx = ppt.addPicture(img, Picture.JPEG);
+        byte[] src_bytes = slTests.readFile("clock.jpg");
+        int idx = ppt.addPicture(src_bytes, Picture.JPEG);
+
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -245,7 +241,6 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.JPEG, pictures[0].getType());
         assertTrue(pictures[0] instanceof JPEG);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
     }
@@ -257,13 +252,8 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "sci_cec.dib");
-
-        // Check we can read the test DIB image
-        assertTrue(img.exists());
-
-        // Add the image
-        int idx = ppt.addPicture(img, Picture.DIB);
+        byte[] src_bytes = slTests.readFile("sci_cec.dib");
+        int idx = ppt.addPicture(src_bytes, Picture.DIB);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
         slide.addShape(pict);
@@ -290,20 +280,8 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.DIB, pictures[0].getType());
         assertTrue(pictures[0] instanceof DIB);
         //compare the content of the initial file with what is stored in the PictureData
-        byte[] src_bytes = read(img);
         byte[] ppt_bytes = pictures[0].getData();
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
-    }
-
-    /**
-     * Read file into a byte array
-     */
-    protected byte[] read(File f) throws IOException {
-        byte[] bytes = new byte[(int)f.length()];
-        FileInputStream is = new FileInputStream(f);
-        is.read(bytes);
-        is.close();
-        return bytes;
     }
 
     /**
@@ -315,7 +293,7 @@ public final class TestPictures extends TestCase{
         Picture pict;
         PictureData pdata;
 
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(cwd, "pictures.ppt").getPath()));
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("pictures.ppt"));
         Slide[] slides = ppt.getSlides();
         PictureData[] pictures = ppt.getPictureData();
         assertEquals(5, pictures.length);
@@ -325,7 +303,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pdata instanceof JPEG);
         assertEquals(Picture.JPEG, pdata.getType());
         src_bytes = pdata.getData();
-        ppt_bytes = read(new File(cwd, "clock.jpg"));
+        ppt_bytes = slTests.readFile("clock.jpg");
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
 
         pict = (Picture)slides[1].getShapes()[0]; //the second slide contains PNG
@@ -333,7 +311,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pdata instanceof PNG);
         assertEquals(Picture.PNG, pdata.getType());
         src_bytes = pdata.getData();
-        ppt_bytes = read(new File(cwd, "tomcat.png"));
+        ppt_bytes = slTests.readFile("tomcat.png");
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
 
         pict = (Picture)slides[2].getShapes()[0]; //the third slide contains WMF
@@ -341,7 +319,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pdata instanceof WMF);
         assertEquals(Picture.WMF, pdata.getType());
         src_bytes = pdata.getData();
-        ppt_bytes = read(new File(cwd, "santa.wmf"));
+        ppt_bytes = slTests.readFile("santa.wmf");
         assertEquals(src_bytes.length, ppt_bytes.length);
         //ignore the first 22 bytes - it is a WMF metafile header
         b1 = new byte[src_bytes.length-22];
@@ -355,7 +333,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pdata instanceof PICT);
         assertEquals(Picture.PICT, pdata.getType());
         src_bytes = pdata.getData();
-        ppt_bytes = read(new File(cwd, "cow.pict"));
+        ppt_bytes = slTests.readFile("cow.pict");
         assertEquals(src_bytes.length, ppt_bytes.length);
         //ignore the first 512 bytes - it is a MAC specific crap
         b1 = new byte[src_bytes.length-512];
@@ -369,7 +347,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pdata instanceof EMF);
         assertEquals(Picture.EMF, pdata.getType());
         src_bytes = pdata.getData();
-        ppt_bytes = read(new File(cwd, "wrench.emf"));
+        ppt_bytes = slTests.readFile("wrench.emf");
         assertTrue(Arrays.equals(src_bytes, ppt_bytes));
 
     }
@@ -379,7 +357,7 @@ public final class TestPictures extends TestCase{
 	 *  crazy pictures of type 0, we do our best.
 	 */
 	public void testZeroPictureType() throws Exception {
-		HSLFSlideShow hslf = new HSLFSlideShow(new File(cwd, "PictureTypeZero.ppt").getPath());
+		HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("PictureTypeZero.ppt"));
 
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictures().length);
@@ -409,7 +387,7 @@ public final class TestPictures extends TestCase{
 	}
 
 	public void testZeroPictureLength() throws Exception {
-		HSLFSlideShow hslf = new HSLFSlideShow(new File(cwd, "PictureLengthZero.ppt").getPath());
+		HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("PictureLengthZero.ppt"));
 
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictures().length);
@@ -453,7 +431,7 @@ public final class TestPictures extends TestCase{
     }
 
     public void testGetPictureName() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(cwd, "ppt_with_png.ppt").getPath()));
+        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("ppt_with_png.ppt"));
         Slide slide = ppt.getSlides()[0];
 
         Picture p = (Picture)slide.getShapes()[0]; //the first slide contains JPEG
@@ -464,7 +442,7 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        File img = new File(cwd, "tomcat.png");
+        byte[] img = slTests.readFile("tomcat.png");
         int idx = ppt.addPicture(img, Picture.PNG);
         Picture pict = new Picture(idx);
         pict.setPictureName("tomcat.png");

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.model;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.POIDataSamples;
 
 import java.awt.*;
 import java.awt.Rectangle;
@@ -32,12 +33,11 @@ import java.io.ByteArrayInputStream;
  * @author Yegor Kozlov
  */
 public final class TestPPGraphics2D extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     private SlideShow ppt;
 
     protected void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/empty.ppt";
-		ppt = new SlideShow(new HSLFSlideShow(filename));
+		ppt = new SlideShow(_slTests.openResourceAsStream("empty.ppt"));
     }
 
     public void testGraphics() throws Exception {

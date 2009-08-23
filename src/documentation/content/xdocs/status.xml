@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">moved all test data to a top-level directory</action>
            <action dev="POI-DEVELOPERS" type="add">47721 - Added implementation for INDIRECT()</action>
            <action dev="POI-DEVELOPERS" type="add">45583 - Avoid exception when reading ClipboardData packet in OLE property sets</action>
            <action dev="POI-DEVELOPERS" type="add">47652 - Added support for reading encrypted workbooks</action>

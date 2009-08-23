@@ -19,6 +19,7 @@ package org.apache.poi.hslf.model;
 
 import java.io.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
@@ -28,14 +29,11 @@ import junit.framework.TestCase;
 public final class TestHeadersFooters extends TestCase
 {
 
-    public static final String cwd = System.getProperty("HSLF.testdata.path");
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     public void testRead() throws Exception
     {
-        File file = new File(cwd, "headers_footers.ppt");
-        FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("headers_footers.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertTrue(slideHdd.isFooterVisible());
@@ -79,10 +77,7 @@ public final class TestHeadersFooters extends TestCase
      */
     public void testReadNoHeadersFooters() throws Exception
     {
-        File file = new File(cwd, "basic_test_ppt_file.ppt");
-        FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertFalse(slideHdd.isFooterVisible());
@@ -119,10 +114,7 @@ public final class TestHeadersFooters extends TestCase
      */
     public void testRead2007() throws Exception
     {
-        File file = new File(cwd, "headers_footers_2007.ppt");
-        FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("headers_footers_2007.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertTrue(slideHdd.isFooterVisible());

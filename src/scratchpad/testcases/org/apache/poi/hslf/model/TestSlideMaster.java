@@ -28,6 +28,7 @@ import org.apache.poi.hslf.record.Environment;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for SlideMaster
@@ -35,18 +36,14 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestSlideMaster extends TestCase{
-    String home;
-
-    public void setUp() {
-        home = System.getProperty("HSLF.testdata.path");
-    }
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * The reference ppt has two masters.
      * Check we can read their attributes.
      */
     public void testSlideMaster() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
 
         Environment env = ppt.getDocumentRecord().getEnvironment();
 
@@ -86,7 +83,7 @@ public final class TestSlideMaster extends TestCase{
      * Test we can read default text attributes for a title master sheet
      */
     public void testTitleMasterTextAttributes() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         TitleMaster[] master = ppt.getTitleMasters();
         assertEquals(1, master.length);
 
@@ -107,7 +104,7 @@ public final class TestSlideMaster extends TestCase{
      * Slide 3 has title layout and follows the TitleMaster. Verify that.
      */
     public void testTitleMaster() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         Slide slide = ppt.getSlides()[2];
         MasterSheet masterSheet = slide.getMasterSheet();
         assertTrue(masterSheet instanceof TitleMaster);
@@ -136,7 +133,7 @@ public final class TestSlideMaster extends TestCase{
      * If a style attribute is not set ensure it is read from the master
      */
     public void testMasterAttributes() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         Slide[] slide = ppt.getSlides();
         assertEquals(3, slide.length);
         TextRun[] trun;
@@ -185,7 +182,7 @@ public final class TestSlideMaster extends TestCase{
      * Check we can dynamically assign a slide master to a slide.
      */
     public void testChangeSlideMaster() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         SlideMaster[] master = ppt.getSlidesMasters();
         Slide[] slide = ppt.getSlides();
         int sheetNo;
@@ -219,7 +216,7 @@ public final class TestSlideMaster extends TestCase{
      * (typical for the "bullted body" placeholder)
      */
     public void testIndentation() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         Slide slide = ppt.getSlides()[0];
         TextRun[] trun;
 

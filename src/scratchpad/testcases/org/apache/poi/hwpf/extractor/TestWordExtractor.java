@@ -23,6 +23,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 import java.io.FileInputStream;
 
@@ -65,17 +66,16 @@ public final class TestWordExtractor extends TestCase {
 	private String filename6;
 
 	protected void setUp() throws Exception {
-		String pdirname = System.getProperty("POIFS.testdata.path");
 
 		String filename = "test2.doc";
 		String filename2 = "test.doc";
-		filename3 = pdirname + "/excel_with_embeded.xls";
+		filename3 = "excel_with_embeded.xls";
 		filename4 = "ThreeColHeadFoot.doc";
 		filename5 = "HeaderFooterUnicode.doc";
 		filename6 = "footnote.doc";
-
-		extractor = new WordExtractor(HWPFTestDataSamples.openSampleFileStream(filename));
-		extractor2 = new WordExtractor(HWPFTestDataSamples.openSampleFileStream(filename2));
+        POIDataSamples docTests = POIDataSamples.getDocumentInstance();
+		extractor = new WordExtractor(docTests.openResourceAsStream(filename));
+		extractor2 = new WordExtractor(docTests.openResourceAsStream(filename2));
 
 		// Build splat'd out text version
 		for(int i=0; i<p_text1.length; i++) {
@@ -123,7 +123,7 @@ public final class TestWordExtractor extends TestCase {
 	 * @throws Exception
 	 */
 	public void testExtractFromEmbeded() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename3));
+		POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getSpreadSheetInstance().openResourceAsStream(filename3));
 		HWPFDocument doc;
 		WordExtractor extractor3;
 

@@ -20,11 +20,11 @@ package org.apache.poi.hslf.model;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test <code>MovieShape</code> object.
@@ -33,16 +33,16 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  */
 public final class TestMovieShape extends TestCase {
 
-    protected String cwd = System.getProperty("HSLF.testdata.path");
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     public void testCreate() throws Exception {
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
 
-        String path = cwd + "/test-movie.mpg";
+        String path = "/test-movie.mpg";
         int movieIdx = ppt.addMovie(path, MovieShape.MOVIE_MPEG);
-        int thumbnailIdx = ppt.addPicture(new File(cwd, "tomcat.png"), Picture.PNG);
+        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
 
         MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
         shape.setAnchor(new Rectangle2D.Float(300,225,120,90));

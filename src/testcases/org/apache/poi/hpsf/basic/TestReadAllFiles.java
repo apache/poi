@@ -25,6 +25,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests some HPSF functionality by reading all property sets from all files
@@ -41,8 +42,8 @@ public class TestReadAllFiles extends TestCase {
      */
     public void testReadAllFiles()
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
                 public boolean accept(final File f)

@@ -19,10 +19,14 @@ package org.apache.poi.hslf;
 
 
 import junit.framework.TestCase;
-import java.io.*;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.POIDataSamples;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -41,21 +45,16 @@ public final class TestReWrite extends TestCase {
 	private POIFSFileSystem pfsC;
 
     public void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
 
-		String filenameA = dirname + "/basic_test_ppt_file.ppt";
-		FileInputStream fisA = new FileInputStream(filenameA);
-		pfsA = new POIFSFileSystem(fisA);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        
+		pfsA = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		hssA = new HSLFSlideShow(pfsA);
 
-		String filenameB = dirname + "/ParagraphStylesShorterThanCharStyles.ppt";
-		FileInputStream fisB = new FileInputStream(filenameB);
-		pfsB = new POIFSFileSystem(fisB);
+        pfsB = new POIFSFileSystem(slTests.openResourceAsStream("ParagraphStylesShorterThanCharStyles.ppt"));
 		hssB = new HSLFSlideShow(pfsB);
 
-		String filenameC = dirname + "/WithMacros.ppt";
-		FileInputStream fisC = new FileInputStream(filenameC);
-		pfsC = new POIFSFileSystem(fisC);
+        pfsC = new POIFSFileSystem(slTests.openResourceAsStream("WithMacros.ppt"));
 		hssC = new HSLFSlideShow(pfsC);
     }
 

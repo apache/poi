@@ -21,27 +21,22 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
 
 public final class TestHPBFDocument extends TestCase {
-	private String dir;
-
-	protected void setUp() {
-		dir = System.getProperty("HPBF.testdata.path");
-	}
+    private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
 	public void testOpen() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 
 		assertNotNull(doc);
 	}
 
 	public void testBits() throws Exception {
-		File f = new File(dir, "Sample.pub");
 		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
+                _samples.openResourceAsStream("Sample.pub")
 		);
 
 		assertNotNull(doc.getMainContents());

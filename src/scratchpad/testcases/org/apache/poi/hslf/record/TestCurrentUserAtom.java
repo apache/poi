@@ -20,12 +20,12 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that CurrentUserAtom works properly.
@@ -33,6 +33,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestCurrentUserAtom extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 	/** Not encrypted */
 	private String normalFile;
 	/** Encrypted */
@@ -41,14 +42,13 @@ public final class TestCurrentUserAtom extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		String dirname = System.getProperty("HSLF.testdata.path");
-		normalFile = dirname + "/basic_test_ppt_file.ppt";
-		encFile = dirname + "/Password_Protected-hello.ppt";
+		normalFile = "basic_test_ppt_file.ppt";
+		encFile = "Password_Protected-hello.ppt";
 	}
 
 	public void testReadNormal() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(normalFile)
+				_slTests.openResourceAsStream(normalFile)
 		);
 
 		CurrentUserAtom cu = new CurrentUserAtom(fs);
@@ -68,7 +68,7 @@ public final class TestCurrentUserAtom extends TestCase {
 
 	public void testReadEnc() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(encFile)
+				_slTests.openResourceAsStream(encFile)
 		);
 
 		try {
@@ -82,7 +82,7 @@ public final class TestCurrentUserAtom extends TestCase {
 	public void testWriteNormal() throws Exception {
 		// Get raw contents from a known file
 		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(normalFile)
+				_slTests.openResourceAsStream(normalFile)
 		);
 		DocumentEntry docProps = (DocumentEntry)fs.getRoot().getEntry("Current User");
 		byte[] contents = new byte[docProps.getSize()];

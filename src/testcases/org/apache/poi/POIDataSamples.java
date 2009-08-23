@@ -20,26 +20,89 @@ import java.io.*;
 
 /**
  * Centralises logic for finding/opening sample files
- *
  */
-public abstract class POIDataSamples {
+public final class POIDataSamples {
+
+    /**
+     * Name of the system property that defined path to the test data.
+     */
+    public static final String TEST_PROPERTY = "POI.testdata.path";
+
+    private static POIDataSamples _instSlideshow;
+    private static POIDataSamples _instSpreadsheet;
+    private static POIDataSamples _instDocument;
+    private static POIDataSamples _instDiagram;
+    private static POIDataSamples _instOpenxml4j;
+    private static POIDataSamples _instPOIFS;
+    private static POIDataSamples _instDDF;
+    private static POIDataSamples _instHPSF;
+    private static POIDataSamples _instHPBF;
+    private static POIDataSamples _instHSMF;
 
     private File _resolvedDataDir;
     /** <code>true</code> if standard system propery is not set,
      * but the data is available on the test runtime classpath */
     private boolean _sampleDataIsAvaliableOnClassPath;
-    private String _testDataDir;
+    private String _moduleDir;
 
     /**
      *
-     * @param dir   the name of the system property that defines  path to the test files
-     * @param classPathTestFile the name of the test file to check if resources are available from the classpath
+     * @param moduleDir   the name of the directory containing the test files
      */
-    public POIDataSamples(String dir, String classPathTestFile){
-        _testDataDir = dir;
-        initialise(classPathTestFile);
+    private POIDataSamples(String moduleDir){
+        _moduleDir = moduleDir;
+        initialise();
     }
 
+    public static POIDataSamples getSpreadSheetInstance(){
+        if(_instSpreadsheet == null) _instSpreadsheet = new POIDataSamples("spreadsheet");
+        return _instSpreadsheet;
+    }
+
+    public static POIDataSamples getDocumentInstance(){
+        if(_instDocument == null) _instDocument = new POIDataSamples("document");
+        return _instDocument;
+    }
+
+    public static POIDataSamples getSlideShowInstance(){
+        if(_instSlideshow == null) _instSlideshow = new POIDataSamples("slideshow");
+        return _instSlideshow;
+    }
+
+    public static POIDataSamples getDiagramInstance(){
+        if(_instOpenxml4j == null) _instOpenxml4j = new POIDataSamples("diagram");
+        return _instOpenxml4j;
+    }
+
+    public static POIDataSamples getOpenXML4JInstance(){
+        if(_instDiagram == null) _instDiagram = new POIDataSamples("openxml4j");
+        return _instDiagram;
+    }
+
+    public static POIDataSamples getPOIFSInstance(){
+        if(_instPOIFS == null) _instPOIFS = new POIDataSamples("poifs");
+        return _instPOIFS;
+    }
+
+    public static POIDataSamples getDDFInstance(){
+        if(_instDDF == null) _instDDF = new POIDataSamples("ddf");
+        return _instDDF;
+    }
+
+    public static POIDataSamples getHPSFInstance(){
+        if(_instHPSF == null) _instHPSF = new POIDataSamples("hpsf");
+        return _instHPSF;
+    }
+
+    public static POIDataSamples getPublisherInstance(){
+        if(_instHPBF == null) _instHPBF = new POIDataSamples("publisher");
+        return _instHPBF;
+    }
+
+    public static POIDataSamples getHSMFInstance(){
+        if(_instHSMF == null) _instHSMF = new POIDataSamples("hsmf");
+        return _instHSMF;
+    }
     /**
      * Opens a sample file from the test data directory
      *
@@ -60,24 +123,11 @@ public abstract class POIDataSamples {
         }
         if (_resolvedDataDir == null) {
             throw new RuntimeException("Must set system property '"
-                    + _testDataDir
+                    + TEST_PROPERTY
                     + "' properly before running tests");
         }
 
-        File f = new File(_resolvedDataDir, sampleFileName);
-        if (!f.exists()) {
-            throw new RuntimeException("Sample file '" + sampleFileName
-                    + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
-        }
-        try {
-            if(!sampleFileName.equals(f.getCanonicalFile().getName())){
-                throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
-                        + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
-            }
-        } catch (IOException e){
-            throw new RuntimeException(e);
-        }
-
+        File f = getFile(sampleFileName);
         try {
             return new FileInputStream(f);
         } catch (FileNotFoundException e) {
@@ -87,13 +137,32 @@ public abstract class POIDataSamples {
 
     /**
      *
-     * @param classPathTest test file to check if the resources are avaiable from the classpath
+     * @param sampleFileName    the name of the test file
+     * @return
+     * @throws RuntimeException if the file was not found
      */
-    private void initialise(String classPathTest) {
-        String dataDirName = System.getProperty(_testDataDir);
+    public File getFile(String sampleFileName) {
+        File f = new File(_resolvedDataDir, sampleFileName);
+        if (!f.exists()) {
+            throw new RuntimeException("Sample file '" + sampleFileName
+                    + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
+        }
+        try {
+            if(sampleFileName.length() > 0 && !sampleFileName.equals(f.getCanonicalFile().getName())){
+                throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
+                        + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
+            }
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return f;
+    }
+
+    private void initialise() {
+        String dataDirName = System.getProperty(TEST_PROPERTY);
         if (dataDirName == null) {
             // check to see if we can just get the resources from the classpath
-            InputStream is = openClasspathResource(classPathTest);
+            InputStream is = openClasspathResource("");
             if (is != null) {
                 try {
                     is.close(); // be nice
@@ -104,14 +173,12 @@ public abstract class POIDataSamples {
                 return;
             }
 
-            throw new RuntimeException("Must set system property '"
-                    + _testDataDir + "' before running tests");
+            throw new RuntimeException("Must set system property '" +
+                    TEST_PROPERTY + "' before running tests");
         }
-        File dataDir = new File(dataDirName);
+        File dataDir = new File(dataDirName, _moduleDir);
         if (!dataDir.exists()) {
-            throw new RuntimeException("Data dir '" + dataDirName
-                    + "' specified by system property '" + _testDataDir
-                    + "' does not exist");
+            throw new RuntimeException("Data dir '" + _moduleDir + " does not exist");
         }
         // convert to canonical file, to make any subsequent error messages
         // clearer.
@@ -129,7 +196,7 @@ public abstract class POIDataSamples {
      * @return <code>null</code> if the sample file is not deployed on the classpath.
      */
     private InputStream openClasspathResource(String sampleFileName) {
-        return getClass().getResourceAsStream("data/" + sampleFileName);
+        return getClass().getResourceAsStream("/" + _moduleDir + "/" + sampleFileName);
     }
 
     private static final class NonSeekableInputStream extends InputStream {

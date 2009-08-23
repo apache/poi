@@ -28,6 +28,8 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
+
 /**
  *
  */
@@ -214,11 +216,8 @@ public final class TestExcelExtractor extends TestCase {
 	 * Embded in a non-excel file
 	 */
 	public void testWithEmbeded() throws Exception {
-		// TODO - encapsulate sys prop 'POIFS.testdata.path' similar to HSSFTestDataSamples
-		String pdirname = System.getProperty("POIFS.testdata.path");
-		String filename = pdirname + "/word_with_embeded.doc";
 		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(filename)
+			POIDataSamples.getDocumentInstance().openResourceAsStream("word_with_embeded.doc")
 		);
 
 		DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntry("ObjectPool");
@@ -244,12 +243,10 @@ public final class TestExcelExtractor extends TestCase {
 	 * Excel embeded in excel
 	 */
 	public void testWithEmbededInOwn() throws Exception {
-		// TODO - encapsulate sys prop 'POIFS.testdata.path' similar to HSSFTestDataSamples
-		String pdirname = System.getProperty("POIFS.testdata.path");
-		String filename = pdirname + "/excel_with_embeded.xls";
+        POIDataSamples ssSamples = POIDataSamples.getSpreadSheetInstance();
 		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(filename)
-		);
+                ssSamples.openResourceAsStream("excel_with_embeded.xls")
+        );
 
 		DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B5");
 		DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B4");

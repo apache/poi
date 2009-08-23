@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Test read/serialize of escher blip records
@@ -30,12 +31,12 @@ import junit.framework.TestCase;
  * @author Yegor Kozlov
  */
 public final class TestEscherBlipRecord extends TestCase {
-    protected String cwd = System.getProperty("DDF.testdata.path");
+    private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
     //test reading/serializing of a PNG blip
     public void testReadPNG() {
         //provided in bug-44886
-        byte[] data = read(new File(cwd, "Container.dat"));
+        byte[] data = _samples.readFile("Container.dat");
 
         EscherContainerRecord record = new EscherContainerRecord();
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
@@ -80,7 +81,7 @@ public final class TestEscherBlipRecord extends TestCase {
     //test reading/serializing of a PICT metafile
     public void testReadPICT() {
         //provided in bug-44886
-        byte[] data = read(new File(cwd, "Container.dat"));
+        byte[] data = _samples.readFile("Container.dat");
 
         EscherContainerRecord record = new EscherContainerRecord();
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
@@ -131,7 +132,7 @@ public final class TestEscherBlipRecord extends TestCase {
 
     //integral test: check that the read-write-read round trip is consistent
     public void testContainer() {
-        byte[] data = read(new File(cwd, "Container.dat"));
+        byte[] data = _samples.readFile("Container.dat");
 
         EscherContainerRecord record = new EscherContainerRecord();
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
@@ -156,7 +157,7 @@ public final class TestEscherBlipRecord extends TestCase {
      * The test data was created from pl031405.xls attached to Bugzilla #47143
      */
     public void test47143() {
-        byte[] data = read(new File(cwd, "47143.dat"));
+        byte[] data = _samples.readFile("47143.dat");
         EscherBSERecord bse = new EscherBSERecord();
         bse.fillFields(data, 0, new DefaultEscherRecordFactory());
         bse.toString(); //assert that toString() works

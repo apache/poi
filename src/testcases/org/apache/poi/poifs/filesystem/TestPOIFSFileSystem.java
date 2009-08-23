@@ -26,6 +26,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests for POIFSFileSystem
@@ -134,15 +135,13 @@ public final class TestPOIFSFileSystem extends TestCase {
 		String[] files = new String[] {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"	
 		};
-		String pdirname = System.getProperty("POIFS.testdata.path");
 
-		for(int i=0; i<files.length; i++) {
-			File f = new File(pdirname, files[i]);
-			assertTrue(f.exists());
-			
+        POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+        for(int i=0; i<files.length; i++) {
+
 			// Open the file up
 			POIFSFileSystem fs = new POIFSFileSystem(
-					new FileInputStream(f)
+			    _samples.openResourceAsStream(files[i])
 			);
 			
 			// Write it into a temp output array
