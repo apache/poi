@@ -143,4 +143,12 @@ public final class TestPictures extends TestCase {
 		List pics = doc.getPicturesTable().getAllPictures();
 		assertEquals(pics.size(), 2);
 	}
+
+        public void testPicturesInHeader() {
+                HWPFDocument doc = HWPFTestDataSamples.openSampleFile("header_image.doc");
+
+                List pics = doc.getPicturesTable().getAllPictures();
+                assertEquals(pics.size(), 2);
+        }
+
 }
