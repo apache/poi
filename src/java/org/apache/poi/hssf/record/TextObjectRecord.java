@@ -335,7 +335,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 		if (_linkRefPtg != null) {
 			rec._unknownPreFormulaInt = _unknownPreFormulaInt;
 			rec._linkRefPtg = _linkRefPtg.copy();
-			rec._unknownPostFormulaByte = rec._unknownPostFormulaByte;
+			rec._unknownPostFormulaByte = _unknownPostFormulaByte;
 		}
 		return rec;
 	}
