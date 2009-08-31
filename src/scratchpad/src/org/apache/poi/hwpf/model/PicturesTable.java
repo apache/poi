@@ -189,7 +189,7 @@ public final class PicturesTable
   public List getAllPictures() {
     ArrayList pictures = new ArrayList();
 
-    Range range = _document.getRange();
+    Range range = _document.getOverallRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {
     	CharacterRun run = range.getCharacterRun(i);
     	String text = run.text();
