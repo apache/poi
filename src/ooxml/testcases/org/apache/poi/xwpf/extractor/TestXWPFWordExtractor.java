@@ -198,4 +198,13 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("extremely well"));
     }
 
+    public void testParagraphHeader() {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        assertTrue(extractor.getText().contains("Section 1"));
+        assertTrue(extractor.getText().contains("Section 2"));
+        assertTrue(extractor.getText().contains("Section 3"));
+    }
+
 }

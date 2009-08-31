@@ -83,19 +83,26 @@ public class XWPFHeaderFooterPolicy {
 	private XWPFHeader defaultHeader;
 	private XWPFFooter defaultFooter;
 	
-	
+        /**
+         * Figures out the policy for the given document,
+         *  and creates any header and footer objects
+         *  as required.
+         */
+        public XWPFHeaderFooterPolicy(XWPFDocument doc) throws IOException, XmlException {
+                this(doc, doc.getDocument().getBody().getSectPr());
+        }
+
 	/**
 	 * Figures out the policy for the given document,
 	 *  and creates any header and footer objects
 	 *  as required.
 	 */
-	public XWPFHeaderFooterPolicy(XWPFDocument doc) throws IOException, XmlException {
+	public XWPFHeaderFooterPolicy(XWPFDocument doc, CTSectPr sectPr) throws IOException, XmlException {
 		// Grab what headers and footers have been defined
 		// For now, we don't care about different ranges, as it
 		//  doesn't seem that .docx properly supports that
 		//  feature of the file format yet
 		this.doc = doc;
-		CTSectPr sectPr = doc.getDocument().getBody().getSectPr();
 		for(int i=0; i<sectPr.sizeOfHeaderReferenceArray(); i++) {
 			// Get the header
 			CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
