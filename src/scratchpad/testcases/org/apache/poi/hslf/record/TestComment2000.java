@@ -192,4 +192,32 @@ public final class TestComment2000 extends TestCase {
 			assertEquals(data_b[i],bn[i]);
 		}
 	}
+
+    /**
+     *  A Comment2000 records with missing commentTextAtom
+     */
+    public void testBug44770() {
+		byte[] data = {
+            0x0F, 0x00, (byte)0xE0, 0x2E, 0x3E, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xBA, 0x0F,
+            0x08, 0x00, 0x00, 0x00, 0x4E, 0x00, 0x45, 0x00, 0x53, 0x00, 0x53, 0x00, 0x20,
+            0x00, (byte)0xBA, 0x0F, 0x02, 0x00, 0x00, 0x00, 0x4E, 0x00, 0x00, 0x00, (byte)0xE1, 0x2E,
+            0x1C, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, (byte)0xD9, 0x07, 0x08, 0x00,
+            0x01, 0x00, 0x18, 0x00, 0x10, 0x00, 0x1F, 0x00, 0x05, 0x00, (byte)0x80, 0x03,
+            0x0A, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 00
+        };
+        Comment2000 ca = new Comment2000(data, 0, data.length);
+        Record[] ch = ca.getChildRecords();
+        assertEquals(3, ch.length);
+
+        assertTrue(ch[0] instanceof CString);
+        assertEquals(0, ((CString)ch[0]).getOptions() >> 4);
+        assertTrue(ch[1] instanceof CString);
+        assertEquals(2, ((CString)ch[1]).getOptions() >> 4);
+        assertTrue(ch[2] instanceof Comment2000Atom);
+
+        assertEquals("NESS", ca.getAuthor());
+        assertEquals("N", ca.getAuthorInitials());
+        assertNull(ca.getText()); //commentTextAtom is missing
+    }
+
 }
