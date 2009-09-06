@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents a comment on a slide, in the format used by
@@ -32,10 +33,24 @@ public final class Comment2000 extends RecordContainer {
 	private static long _type = 12000;
 
 	// Links to our more interesting children
-	private CString authorRecord;
-	private CString authorInitialsRecord;
-	private CString commentRecord;
-	private Comment2000Atom commentAtom;
+
+    /**
+     * An optional string that specifies the name of the author of the presentation comment.
+     */
+    private CString authorRecord;
+    /**
+     * An optional string record that specifies the text of the presentation comment
+     */
+    private CString authorInitialsRecord;
+    /**
+     * An optional string record that specifies the initials of the author of the presentation comment
+     */
+    private CString commentRecord;
+
+    /**
+     * A Comment2000Atom record that specifies the settings for displaying the presentation comment
+     */
+    private Comment2000Atom commentAtom;
 
 	/**
 	 * Returns the Comment2000Atom of this Comment
@@ -46,7 +61,7 @@ public final class Comment2000 extends RecordContainer {
 	 * Get the Author of this comment
 	 */
 	public String getAuthor() {
-		return authorRecord.getText();
+		return authorRecord == null ? null : authorRecord.getText();
 	}
 	/**
 	 * Set the Author of this comment
@@ -59,7 +74,7 @@ public final class Comment2000 extends RecordContainer {
 	 * Get the Author's Initials of this comment
 	 */
 	public String getAuthorInitials() {
-		return authorInitialsRecord.getText();
+		return authorInitialsRecord == null ? null : authorInitialsRecord.getText();
 	}
 	/**
 	 * Set the Author's Initials of this comment
@@ -72,7 +87,7 @@ public final class Comment2000 extends RecordContainer {
 	 * Get the text of this comment
 	 */
 	public String getText() {
-		return commentRecord.getText();
+		return commentRecord == null ? null : commentRecord.getText();
 	}
 	/**
 	 * Set the text of this comment
@@ -100,30 +115,23 @@ public final class Comment2000 extends RecordContainer {
 	 *  methods.
 	 */
 	private void findInterestingChildren() {
-		// First child should be the author
-		if(_children[0] instanceof CString) {
-			authorRecord = (CString)_children[0];
-		} else {
-			throw new IllegalStateException("First child record wasn't a CString, was of type " + _children[0].getRecordType());
-		}
-		// Second child should be the text
-		if(_children[1] instanceof CString) {
-			commentRecord = (CString)_children[1];
-		} else {
-			throw new IllegalStateException("Second child record wasn't a CString, was of type " + _children[1].getRecordType());
-		}
-		// Third child should be the author's initials
-		if(_children[2] instanceof CString) {
-			authorInitialsRecord = (CString)_children[2];
-		} else {
-			throw new IllegalStateException("Third child record wasn't a CString, was of type " + _children[2].getRecordType());
-		}
-		// Fourth child should be the comment atom
-		if(_children[3] instanceof Comment2000Atom) {
-			commentAtom = (Comment2000Atom)_children[3];
-		} else {
-			throw new IllegalStateException("Fourth child record wasn't a Comment2000Atom, was of type " + _children[3].getRecordType());
-		}
+
+        for(Record r : _children){
+            if (r instanceof CString){
+                CString cs = (CString)r;
+                int recInstance = cs.getOptions() >> 4;
+                switch(recInstance){
+                    case 0: authorRecord = cs; break;
+                    case 1: commentRecord = cs; break;
+                    case 2: authorInitialsRecord = cs; break;
+                }
+            } else if (r instanceof Comment2000Atom){
+                commentAtom = (Comment2000Atom)r;
+            } else {
+                logger.log(POILogger.WARN, "Unexpected record with type="+r.getRecordType()+" in Comment2000: " + r.getClass().getName());
+            }
+        }
+
 	}
 
 	/**
