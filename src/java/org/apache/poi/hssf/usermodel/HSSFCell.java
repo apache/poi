@@ -540,6 +540,11 @@ public class HSSFCell implements Cell {
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
+
+        if(hvalue.length() > SpreadsheetVersion.EXCEL97.getMaxTextLength()){
+            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+        }
+
         if (_cellType == CELL_TYPE_FORMULA) {
             // Set the 'pre-evaluated result' for the formula
             // note - formulas do not preserve text formatting.

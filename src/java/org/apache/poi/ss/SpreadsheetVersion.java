@@ -36,9 +36,11 @@ public enum SpreadsheetVersion {
 	 * <li>The total number of available rows is 64k (2^16)</li>
 	 * <li>The maximum number of arguments to a function is 30</li>
 	 * <li>Number of conditional format conditions on a cell is 3</li>
+     * <li>Length of text cell contents is unlimited </li>
+     * <li>Length of text cell contents is 32767</li>
 	 * </ul>
 	 */
-	EXCEL97(0x10000, 0x0100, 30, 3),
+	EXCEL97(0x10000, 0x0100, 30, 3, 32767),
 
 	/**
 	 * Excel2007
@@ -49,21 +51,24 @@ public enum SpreadsheetVersion {
 	 * <li>The maximum number of arguments to a function is 255</li>
 	 * <li>Number of conditional format conditions on a cell is unlimited
 	 * (actually limited by available memory in Excel)</li>
+     * <li>Length of text cell contents is unlimited </li>
 	 * <ul>
 	 */
-	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE);
+	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 	private final int _maxRows;
 	private final int _maxColumns;
 	private final int _maxFunctionArgs;
 	private final int _maxCondFormats;
+    private final int _maxTextLength;
 
-	private SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats) {
+	private SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats, int maxText) {
 		_maxRows = maxRows;
 		_maxColumns = maxColumns;
 		_maxFunctionArgs = maxFunctionArgs;
 		_maxCondFormats = maxCondFormats;
-	}
+        _maxTextLength = maxText;
+    }
 
 	/**
 	 * @return the maximum number of usable rows in each spreadsheet
@@ -116,4 +121,12 @@ public enum SpreadsheetVersion {
 	public String getLastColumnName() {
 		return CellReference.convertNumToColString(getLastColumnIndex());
 	}
+
+    /**
+     * @return the maximum length of a text cell
+     */
+    public int getMaxTextLength() {
+        return _maxTextLength;
+    }
+
 }

@@ -218,38 +218,6 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         assertTrue("no errors parsing formula", true);
     }
 
-    /**
-     * HSSFRichTextString.length() returns negative for really
-     *  long strings
-     */
-    public void test46368() {
-        Workbook wb = getTestDataProvider().createWorkbook();
-    	Sheet s = wb.createSheet();
-    	Row r = s.createRow(0);
-    	for(int i=0; i<15; i++) {
-    		int len = 32760 + i;
-    		Cell c = r.createCell(i);
-
-    		StringBuffer sb = new StringBuffer();
-    		for(int j=0; j<len; j++) {
-    			sb.append("x");
-    		}
-    		RichTextString rtr = wb.getCreationHelper().createRichTextString(sb.toString());
-    		assertEquals(len, rtr.length());
-    		c.setCellValue(rtr);
-    	}
-
-    	// Save and reload
-    	wb = getTestDataProvider().writeOutAndReadBack(wb);
-    	s = wb.getSheetAt(0);
-    	r = s.getRow(0);
-    	for(int i=0; i<15; i++) {
-    		int len = 32760 + i;
-    		Cell c = r.getCell(i);
-    		assertEquals(len, c.getRichStringCellValue().length());
-    	}
-    }
-
     public void test18800() {
        Workbook book = getTestDataProvider().createWorkbook();
        book.createSheet("TEST");
