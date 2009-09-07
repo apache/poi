@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.io.FileOutputStream;
 
 import junit.framework.AssertionFailedError;
 
@@ -30,6 +31,8 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
@@ -291,5 +294,34 @@ public final class TestHSSFCell extends BaseTestCell {
 		Record dbcr = recs[index++];
 		assertEquals(DBCellRecord.class, dbcr.getClass());
 	}
+
+    /**
+     *  The maximum length of cell contents (text) is 32,767 characters.
+     */
+    public void testMaxTextLength(){
+        HSSFSheet sheet = new HSSFWorkbook().createSheet();
+        HSSFCell cell = sheet.createRow(0).createCell(0);
+
+        int maxlen = SpreadsheetVersion.EXCEL97.getMaxTextLength();
+        assertEquals(32767, maxlen);
+
+        StringBuffer b = new StringBuffer() ;
+
+        // 32767 is okay
+        for( int i = 0 ; i < maxlen ; i++ )
+        {
+            b.append( "X" ) ;
+        }
+        cell.setCellValue(b.toString());
+
+        b.append("X");
+        // 32768 produces an invalid XLS file
+        try {
+            cell.setCellValue(b.toString());
+            fail("Expected exception");
+        } catch (IllegalArgumentException e){
+            assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
+        }
+    }
 }
 

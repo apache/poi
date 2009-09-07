@@ -38,7 +38,7 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -1494,4 +1494,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(893, wb.getNumberOfNames());
         assertEquals("Matthew\\Matthew11_1\\Matthew2331_1\\Matthew2351_1\\Matthew2361_1___lab", wb.getNameName(300));
     }
+
+    /**
+     * HSSFRichTextString.length() returns negative for really long strings.
+     * The test file was created in OpenOffice 3.0 as Excel does not allow cell text longer than 32,767 characters
+     */
+    public void test46368() {
+        HSSFWorkbook wb = openSample("46368.xls");
+    	HSSFSheet s = wb.getSheetAt(0);
+        HSSFCell cell1 = s.getRow(0).getCell(0);
+        assertEquals(32770, cell1.getStringCellValue().length());
+
+        HSSFCell cell2 = s.getRow(2).getCell(0);
+        assertEquals(32766, cell2.getStringCellValue().length());
+    }
+
 }
