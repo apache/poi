@@ -243,4 +243,15 @@ public final class HSSFName implements Name {
         _definedNameRec.setDescriptionText(comment);
     }
 
+    /**
+     * Indicates that the defined name refers to a user-defined function.
+     * This attribute is used when there is an add-in or other code project associated with the file.
+     *
+     * @param value <code>true</code> indicates the name refers to a function.
+     */
+	public void setFunction(boolean value) {
+		_definedNameRec.setFunction(value);
+		
+	}
+
 }

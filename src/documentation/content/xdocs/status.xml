@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47771 - Added method setFunction(boolean) for defined names</action>
            <action dev="POI-DEVELOPERS" type="add">47768 - Implementation of Excel "Days360" and "Npv" functions</action>
            <action dev="POI-DEVELOPERS" type="fix">47751 - Do not allow HSSF's cell text longer than 32,767 characters</action>
            <action dev="POI-DEVELOPERS" type="add">47757 - Added an example demonstrating how to convert an XLSX workbook to CSV</action>

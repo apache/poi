@@ -34,6 +34,8 @@ import org.apache.poi.util.StringUtil;
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author Glen Stampoultzis (glens at apache.org)
  * @version 1.0-pre
+ *  
+ * Modified 8/31/09 by Petr Udalau - added method setFunction(boolean)
  */
 public final class NameRecord extends StandardRecord {
     public final static short sid = 0x0018;
@@ -236,6 +238,20 @@ public final class NameRecord extends StandardRecord {
 	 */
 	public boolean isFunctionName() {
 		return (field_1_option_flag & Option.OPT_FUNCTION_NAME) != 0;
+	}
+	
+    /**
+     * Indicates that the defined name refers to a user-defined function.
+     * This attribute is used when there is an add-in or other code project associated with the file.
+     *
+     * @param value <code>true</code> indicates the name refers to a function.
+     */
+	public void setFunction(boolean function){
+		if (function) {
+			field_1_option_flag |= Option.OPT_FUNCTION_NAME;
+		} else {
+			field_1_option_flag &= (~Option.OPT_FUNCTION_NAME);
+		}
 	}
 
 	/**
