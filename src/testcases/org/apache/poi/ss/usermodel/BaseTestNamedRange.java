@@ -544,4 +544,19 @@ public abstract class BaseTestNamedRange extends TestCase {
         }
 
     }
+
+    public void testFunctionNames() {
+        Workbook wb = getTestDataProvider().createWorkbook();
+        Name n = wb.createName();
+        assertFalse(n.isFunctionName());
+
+        n.setFunction(false);
+        assertFalse(n.isFunctionName());
+
+        n.setFunction(true);
+        assertTrue(n.isFunctionName());
+
+        n.setFunction(false);
+        assertFalse(n.isFunctionName());
+    }
 }

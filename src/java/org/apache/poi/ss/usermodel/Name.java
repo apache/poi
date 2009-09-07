@@ -49,6 +49,8 @@ package org.apache.poi.ss.usermodel;
  *  name.setRefersToFormula("IF(Loan_Amount*Interest_Rate>0,1,0)");
  *
  * </blockquote></pre>
+ *  
+ * Modified 8/31/09 by Petr Udalau - added method setFunction(boolean)
  */
 public interface Name {
 
@@ -181,4 +183,12 @@ public interface Name {
      * @param comment the user comment for this named range
      */
     public void setComment(String comment);
+
+    /**
+     * Indicates that the defined name refers to a user-defined function.
+     * This attribute is used when there is an add-in or other code project associated with the file.
+     *
+     * @param value <code>true</code> indicates the name refers to a function.
+     */
+    void setFunction(boolean value);
 }
