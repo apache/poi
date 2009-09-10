@@ -30,10 +30,10 @@ import java.util.Map;
  *       2, "0.00"<br/>
  *       3, "#,##0"<br/>
  *       4, "#,##0.00"<br/>
- *       5, "($#,##0_);($#,##0)"<br/>
- *       6, "($#,##0_);[Red]($#,##0)"<br/>
- *       7, "($#,##0.00);($#,##0.00)"<br/>
- *       8, "($#,##0.00_);[Red]($#,##0.00)"<br/>
+ *       5, "$#,##0_);($#,##0)"<br/>
+ *       6, "$#,##0_);[Red]($#,##0)"<br/>
+ *       7, "$#,##0.00);($#,##0.00)"<br/>
+ *       8, "$#,##0.00_);[Red]($#,##0.00)"<br/>
  *       9, "0%"<br/>
  *       0xa, "0.00%"<br/>
  *       0xb, "0.00E+00"<br/>
@@ -50,10 +50,10 @@ import java.util.Map;
  *       0x16, "m/d/yy h:mm"<br/>
  *<p/>
  *       // 0x17 - 0x24 reserved for international and undocumented
- *       0x25, "(#,##0_);(#,##0)"<br/>
- *       0x26, "(#,##0_);[Red](#,##0)"<br/>
- *       0x27, "(#,##0.00_);(#,##0.00)"<br/>
- *       0x28, "(#,##0.00_);[Red](#,##0.00)"<br/>
+ *       0x25, "#,##0_);(#,##0)"<br/>
+ *       0x26, "#,##0_);[Red](#,##0)"<br/>
+ *       0x27, "#,##0.00_);(#,##0.00)"<br/>
+ *       0x28, "#,##0.00_);[Red](#,##0.00)"<br/>
  *       0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)"<br/>
  *       0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)"<br/>
  *       0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)"<br/>
@@ -67,6 +67,9 @@ import java.util.Map;
  * <p/>
  *
  * @author Yegor Kozlov
+ *  
+ * Modified 6/17/09 by Stanislav Shor - positive formats don't need starting '(' 
+ *  
  */
 public final class BuiltinFormats {
 	/**
@@ -83,10 +86,10 @@ public final class BuiltinFormats {
 		putFormat(m, 2, "0.00");
 		putFormat(m, 3, "#,##0");
 		putFormat(m, 4, "#,##0.00");
-		putFormat(m, 5, "($#,##0_);($#,##0)");
-		putFormat(m, 6, "($#,##0_);[Red]($#,##0)");
-		putFormat(m, 7, "($#,##0.00);($#,##0.00)");
-		putFormat(m, 8, "($#,##0.00_);[Red]($#,##0.00)");
+		putFormat(m, 5, "$#,##0_);($#,##0)");
+		putFormat(m, 6, "$#,##0_);[Red]($#,##0)");
+		putFormat(m, 7, "$#,##0.00_);($#,##0.00)");
+		putFormat(m, 8, "$#,##0.00_);[Red]($#,##0.00)");
 		putFormat(m, 9, "0%");
 		putFormat(m, 0xa, "0.00%");
 		putFormat(m, 0xb, "0.00E+00");
@@ -108,10 +111,10 @@ public final class BuiltinFormats {
 			putFormat(m, i, "reserved-0x" + Integer.toHexString(i));
 		}
 
-		putFormat(m, 0x25, "(#,##0_);(#,##0)");
-		putFormat(m, 0x26, "(#,##0_);[Red](#,##0)");
-		putFormat(m, 0x27, "(#,##0.00_);(#,##0.00)");
-		putFormat(m, 0x28, "(#,##0.00_);[Red](#,##0.00)");
+		putFormat(m, 0x25, "#,##0_);(#,##0)");
+		putFormat(m, 0x26, "#,##0_);[Red](#,##0)");
+		putFormat(m, 0x27, "#,##0.00_);(#,##0.00)");
+		putFormat(m, 0x28, "#,##0.00_);[Red](#,##0.00)");
 		putFormat(m, 0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)");
 		putFormat(m, 0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)");
 		putFormat(m, 0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)");
