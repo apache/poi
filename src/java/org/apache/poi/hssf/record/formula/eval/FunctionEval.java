@@ -55,7 +55,6 @@ public final class FunctionEval implements OperationEval {
 		retval[0] = new Count();
 		retval[1] = new If();
 		retval[2] = new IsNa();
-
 		retval[3] = new IsError();
 		retval[ID.SUM] = AggregateFunction.SUM;
 		retval[5] = AggregateFunction.AVERAGE;
@@ -64,7 +63,7 @@ public final class FunctionEval implements OperationEval {
 		retval[8] = new Row(); // ROW
 		retval[9] = new Column();
 		retval[10] = new Na();
-
+		retval[11] = new Npv();
 		retval[12] = AggregateFunction.STDEV;
 		retval[13] = NumericFunction.DOLLAR;
 
@@ -155,6 +154,7 @@ public final class FunctionEval implements OperationEval {
 		retval[212] = NumericFunction.ROUNDUP;
 		retval[213] = NumericFunction.ROUNDDOWN;
 
+        retval[220] = new Days360();
 		retval[221] = new Today();
 
 		retval[227] = AggregateFunction.MEDIAN;
