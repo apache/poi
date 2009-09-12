@@ -781,10 +781,40 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
 
+        onSheetDelete(index);
+
         XSSFSheet sheet = getSheetAt(index);
         removeRelation(sheet);
-        this.sheets.remove(index);
-        this.workbook.getSheets().removeSheet(index);
+        sheets.remove(index);
+    }
+
+    /**
+     * Gracefully remove references to the sheet being deleted
+     *
+     * @param index the 0-based index of the sheet to delete
+     */
+    private void onSheetDelete(int index) {
+        //delete the CTSheet reference from workbook.xml
+        workbook.getSheets().removeSheet(index);
+
+        //calculation chain is auxilary, remove it as it may contain orfan references to deleted cells
+        if(calcChain != null) {
+            removeRelation(calcChain);
+            calcChain = null;
+        }
+
+        //adjust indices of names ranges
+        for (Iterator<XSSFName> it = namedRanges.iterator(); it.hasNext();) {
+            XSSFName nm = it.next();
+            CTDefinedName ct = nm.getCTName();
+            if(!ct.isSetLocalSheetId()) continue;
+            if (ct.getLocalSheetId() == index) {
+                it.remove();
+            } else if (ct.getLocalSheetId() > index){
+                // Bump down by one, so still points at the same sheet
+                ct.setLocalSheetId(ct.getLocalSheetId()-1);
+            }
+        }
     }
 
     /**
