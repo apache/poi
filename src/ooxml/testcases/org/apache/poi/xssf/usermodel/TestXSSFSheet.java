@@ -695,6 +695,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(2, col.getMin());
         assertEquals(2, col.getMax());
         assertEquals(22.0, col.getWidth(), 0.0);
+        assertTrue(col.getCustomWidth());
 
         // Now set another
         sheet.setColumnWidth(3, 33 * 256);
@@ -708,10 +709,12 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(2, col.getMin()); // POI 1
         assertEquals(2, col.getMax());
         assertEquals(22.0, col.getWidth(), 0.0);
+        assertTrue(col.getCustomWidth());
 
         col = cols.getColArray(1);
         assertEquals(4, col.getMin()); // POI 3
         assertEquals(4, col.getMax());
         assertEquals(33.0, col.getWidth(), 0.0);
+        assertTrue(col.getCustomWidth());
     }
 }

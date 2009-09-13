@@ -1675,6 +1675,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
 
         columnHelper.setColWidth(columnIndex, (double)width/256);
+        columnHelper.setCustomWidth(columnIndex, true);
     }
 
     public void setDefaultColumnStyle(int column, CellStyle style) {
