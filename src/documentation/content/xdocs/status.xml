@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.5-beta7" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47543 - added javadoc how to avoid Excel crash when creating too many HSSFRichTextString cells</action>
            <action dev="POI-DEVELOPERS" type="fix">47813 - fixed problems with XSSFWorkbook.removeSheetAt when workbook contains chart</action>
            <action dev="POI-DEVELOPERS" type="fix">47737 - adjust sheet indices of named ranges when deleting sheets</action>
            <action dev="POI-DEVELOPERS" type="fix">47770 - built-in positive formats don't need starting '('</action>
