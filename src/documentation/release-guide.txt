@@ -24,6 +24,17 @@ POI Release Guide
   <property name="version.id" value="3.1-beta1"/>
 {code}
 
+
+  1a Check file permissions in SVN. 
+ There can be  files in the SVN tree marked executable (have the
+ svn:executable property set), but which should not be. Checking them out will cause 
+ the executable bit to be set for them on filesystems which support it. 
+ The flag can be removed in batch using
+ 
+$ svn pd 'svn:executable' $(find -name .svn -prune -or -type f ! -name \*.sh \
+ -print0 | xargs -0 svn pg 'svn:executable' | cut -d ' ' -f 1)
+
+
   2. Tag current version. Include the current revision number in the comment
 
 {code}
