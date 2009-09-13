@@ -28,6 +28,44 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * Rich text unicode string.  These strings can have fonts applied to
  * arbitary parts of the string.
  *
+ * <p>
+ * Note, that in certain cases creating too many HSSFRichTextString cells may cause Excel 2003 and lower to crash
+ * when changing the color of the cells and then saving the Excel file. Compare two snippets that produce equivalent output:
+ *
+ * <p><blockquote><pre>
+ *  HSSFCell hssfCell = row.createCell(idx);
+ *  //rich text consists of two runs
+ *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+ *  richString.applyFont( 0, 6, font1 );
+ *  richString.applyFont( 6, 13, font2 );
+ *  hssfCell.setCellValue( richString );
+ * </pre></blockquote>
+ *
+ * and
+ *
+ * <p><blockquote><pre>
+ *  //create a cell style and assign the first font to it
+ *  HSSFCellStyle style = workbook.createCellStyle();
+ *  style.setFont(font1);
+ *
+ *  HSSFCell hssfCell = row.createCell(idx);
+ *  hssfCell.setCellStyle(style);
+ *
+ *  //rich text consists of one run overriding the cell style
+ *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+ *  richString.applyFont( 6, 13, font2 );
+ *  hssfCell.setCellValue( richString );
+ * </pre></blockquote><p>
+ *
+ * Excel always uses the latter approach: for a reach text containing N runs Excel saves the font of the first run in the cell's
+ * style and subsequent N-1 runs override this font.
+ *
+ * <p> For more information regarding this behavior please consult Bugzilla 47543:
+ *
+ * <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47543">
+ * https://issues.apache.org/bugzilla/show_bug.cgi?id=47543</a>
+ * <p>
+ *
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Jason Height (jheight at apache.org)
  */
