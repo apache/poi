@@ -32,6 +32,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -40,6 +41,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -63,6 +65,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
+ * 
+ * Modified 09/07/09 by Petr Udalau - added methods for work with UDFs of this Workbook. 
  */
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
@@ -129,6 +133,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private List<XSSFPictureData> pictures;
 
     private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
+    
+    /** Map of user defined functions, key - function name, value - instance of FreeRefFunctions */
+	private Map<String, FreeRefFunction> udfFunctions = new HashMap<String, FreeRefFunction>();
 
     /**
      * Create a new SpreadsheetML workbook.
@@ -1345,5 +1352,23 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public MapInfo getMapInfo(){
     	return mapInfo;
     }
+
+    public FreeRefFunction getUserDefinedFunction(String functionName) {
+    	return udfFunctions.get(functionName);
+    }
+    
+    public void registerUserDefinedFunction(String functionName, FreeRefFunction freeRefFunction) {
+    	Name udfDeclaration = getName(functionName);
+        if (udfDeclaration == null) {
+            udfDeclaration = createName();
+        }
+        udfDeclaration.setNameName(functionName);
+        udfDeclaration.setFunction(true);
+        udfFunctions.put(functionName, freeRefFunction);
+    }
+    
+	public List<String> getUserDefinedFunctionNames() {
+		return new ArrayList<String>(udfFunctions.keySet());
+	}
 
 }
