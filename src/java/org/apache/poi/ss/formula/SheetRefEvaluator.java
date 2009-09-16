@@ -22,6 +22,10 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  *
  * @author Josh Micich
+ * 
+ * June 4, 2009: Added method setCellValue for setting values in cells.
+ * 
+ * Modified 09/07/09 by Petr Udalau - added method getEvaluationCell(int rowIndex, int columnIndex).
  */
 final class SheetRefEvaluator {
 
@@ -53,4 +57,13 @@ final class SheetRefEvaluator {
 		}
 		return _sheet;
 	}
+	
+    /**
+     * @param rowIndex Row index.
+     * @param columnIndex Column index.
+     * @return EvaluationCell by row and column.
+     */
+	public EvaluationCell getEvaluationCell(int rowIndex, int columnIndex){
+        return getSheet().getCell(rowIndex, columnIndex);
+    }
 }
