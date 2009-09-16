@@ -42,6 +42,10 @@ public class XSSFCreationHelper implements CreationHelper {
 		return new XSSFHyperlink(type);
 	}
 
+    public XSSFEvaluationWorkbook createEvaluationWorkbook() {
+        return XSSFEvaluationWorkbook.create(workbook);
+    }
+
 	/**
 	 * Creates a XSSFFormulaEvaluator, the object that evaluates formula cells.
 	 *

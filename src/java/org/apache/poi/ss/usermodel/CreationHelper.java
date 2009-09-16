@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.formula.EvaluationWorkbook;
+
 /**
  * An object that handles instantiating concrete
  *  classes of the various instances one needs for 
@@ -27,6 +29,9 @@ package org.apache.poi.ss.usermodel;
  *  a given interface, without you having to worry
  *  about if you're dealing with HSSF or XSSF, despite
  *  Java being quite rubbish.
+ * 
+ * Modified 09/07/09 by Petr Udalau - added method createEvaluationWorkbook().
+ * 
  */
 public interface CreationHelper {
     /**
@@ -44,6 +49,13 @@ public interface CreationHelper {
      * Creates a new Hyperlink, of the given type
      */
     Hyperlink createHyperlink(int type);
+
+    /**
+     * Creates EvaluationWorkbook.
+     *
+     * @return a EvaluationWorkbook instance
+     */
+    EvaluationWorkbook createEvaluationWorkbook();
 
     /**
      * Creates FormulaEvaluator - an object that evaluates formula cells.
