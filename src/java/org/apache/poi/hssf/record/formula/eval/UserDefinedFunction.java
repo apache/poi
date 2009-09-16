@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.apache.poi.hssf.record.formula.toolpack.MainToolPacksHandler;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -28,6 +28,8 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
  * <tt>AbstractFunctionPtg.field_2_fnc_index</tt> == 255)
  *
  * @author Josh Micich
+ * 
+ * Modified 09/07/09 by Petr Udalau - Improved resolving of UDFs through the ToolPacks. 
  */
 final class UserDefinedFunction implements FreeRefFunction {
 
@@ -38,7 +40,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 	}
 
 	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-
+		EvaluationWorkbook workbook = ec.getWorkbook();
 		int nIncomingArgs = args.length;
 		if(nIncomingArgs < 1) {
 			throw new RuntimeException("function name argument missing");
@@ -47,9 +49,9 @@ final class UserDefinedFunction implements FreeRefFunction {
 		ValueEval nameArg = args[0];
 		FreeRefFunction targetFunc;
 		if (nameArg instanceof NameEval) {
-			targetFunc = findInternalUserDefinedFunction((NameEval) nameArg);
+			targetFunc = findInternalUserDefinedFunction(workbook, (NameEval) nameArg);
 		} else if (nameArg instanceof NameXEval) {
-			targetFunc = findExternalUserDefinedFunction(ec.getWorkbook(), (NameXEval) nameArg);
+			targetFunc = findExternalUserDefinedFunction(workbook, (NameXEval) nameArg);
 		} else {
 			throw new RuntimeException("First argument should be a NameEval, but got ("
 					+ nameArg.getClass().getName() + ")");
@@ -67,21 +69,29 @@ final class UserDefinedFunction implements FreeRefFunction {
 		if(false) {
 			System.out.println("received call to external user defined function (" + functionName + ")");
 		}
-		// currently only looking for functions from the 'Analysis TookPak'  e.g. "YEARFRAC" or "ISEVEN"
+		// currently only looking for functions from the 'Analysis TookPak'(contained in MainToolPacksHandler)  e.g. "YEARFRAC" or "ISEVEN"
 		// not sure how much this logic would need to change to support other or multiple add-ins.
-		FreeRefFunction result = AnalysisToolPak.findFunction(functionName);
+		FreeRefFunction result = MainToolPacksHandler.instance().findFunction(functionName);
 		if (result != null) {
 			return result;
 		}
 		throw new NotImplementedException(functionName);
 	}
 
-	private static FreeRefFunction findInternalUserDefinedFunction(NameEval functionNameEval) {
+	private static FreeRefFunction findInternalUserDefinedFunction(EvaluationWorkbook workbook,
+			NameEval functionNameEval) {
 
 		String functionName = functionNameEval.getFunctionName();
 		if(false) {
 			System.out.println("received call to internal user defined function  (" + functionName + ")");
 		}
+		FreeRefFunction functionEvaluator = workbook.findUserDefinedFunction(functionName); 
+		if (functionEvaluator == null) {
+		    functionEvaluator = MainToolPacksHandler.instance().findFunction(functionName);
+		}
+		if (functionEvaluator != null) {
+            return functionEvaluator;
+        }
 		// TODO find the implementation for the user defined function
 
 		throw new NotImplementedException(functionName);

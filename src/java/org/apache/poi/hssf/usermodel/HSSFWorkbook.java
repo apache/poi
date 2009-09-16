@@ -24,9 +24,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.poi.POIDocument;
@@ -62,14 +64,17 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -82,6 +87,8 @@ import org.apache.poi.util.POILogger;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (slaubach at apache dot org)
  *
+ * 
+ * Modified 09/07/09 by Petr Udalau - added methods for work with UDFs of this Workbook. 
  */
 public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
@@ -160,8 +167,9 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
 
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
-
-
+    
+    /** Map of user defined functions, key - function name, value - instance of FreeRefFunctions */
+	private Map<String, FreeRefFunction> udfFunctions;
 
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
@@ -178,6 +186,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         workbook = book;
         _sheets = new ArrayList( INITIAL_CAPACITY );
         names = new ArrayList( INITIAL_CAPACITY );
+        udfFunctions = new HashMap<String, FreeRefFunction>(); 
     }
 
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
@@ -269,6 +278,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         _sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
+        udfFunctions = new HashMap<String, FreeRefFunction>();
 
         // Grab the data from the workbook stream, however
         //  it happens to be spelled.
@@ -1617,6 +1627,25 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             }
         }
     }
+    
+    public FreeRefFunction getUserDefinedFunction(String functionName) {
+    	return udfFunctions.get(functionName);
+    }
+    
+    public void registerUserDefinedFunction(String functionName, FreeRefFunction freeRefFunction) {
+    	Name udfDeclaration = getName(functionName);
+        if (udfDeclaration == null) {
+            udfDeclaration = createName();
+        }
+        udfDeclaration.setNameName(functionName);
+        udfDeclaration.setFunction(true);
+        udfFunctions.put(functionName, freeRefFunction);
+    	
+    }
+
+	public List<String> getUserDefinedFunctionNames() {
+		return new ArrayList<String>(udfFunctions.keySet());
+	}
 
     /**
      * Is the workbook protected with a password (not encrypted)?

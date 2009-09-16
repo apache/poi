@@ -22,61 +22,92 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.apache.poi.hssf.record.formula.toolpack.DefaultToolPack;
+import org.apache.poi.hssf.record.formula.toolpack.MainToolPacksHandler;
+import org.apache.poi.hssf.record.formula.toolpack.ToolPack;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.usermodel.Workbook;
+
 /**
  * 
  * @author Josh Micich
+ * 
+ * Modified 09/14/09 by Petr Udalau - Test of registering UDFs in workbook and
+ * using ToolPacks.
  */
 public final class TestExternalFunction extends TestCase {
 
-	/**
-	 * Checks that an external function can get invoked from the formula evaluator. 
-	 * @throws IOException 
+    private static class MyFunc implements FreeRefFunction {
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+            if (args.length != 1 || !(args[0] instanceof StringEval)) {
+                return ErrorEval.VALUE_INVALID;
+            } else {
+                StringEval input = (StringEval) args[0];
+                return new StringEval(input.getStringValue() + "abc");
+            }
+        }
+    }
 
-	 */
-	public void testInvoke() {
-		
-		HSSFWorkbook wb;
-		HSSFSheet sheet;
-		HSSFCell cell;
-		if (false) {
-			// TODO - this code won't work until we can create user-defined functions directly with POI
-			wb = new HSSFWorkbook();
-			sheet = wb.createSheet();
-			wb.setSheetName(0, "Sheet1");
-			HSSFName hssfName = wb.createName();
-			hssfName.setNameName("myFunc");
-			
-		} else {
-			// This sample spreadsheet already has a VB function called 'myFunc'
-			wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
-			sheet = wb.getSheetAt(0);
-			HSSFRow row = sheet.createRow(0);
-			cell = row.createCell(1);
-		}
-		
-		cell.setCellFormula("myFunc()");
-		String actualFormula=cell.getCellFormula();
-		assertEquals("myFunc()", actualFormula);
-		
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		// Check out what ExternalFunction.evaluate() does:
-		CellValue evalResult;
-		try {
-			evalResult = fe.evaluate(cell);
-		} catch (NotImplementedException e) {
-			assertEquals("Error evaluating cell Sheet1!B1", e.getMessage());
-			assertEquals("myFunc", e.getCause().getMessage());
-			return;
-		}
-		// TODO - make this test assert something more interesting as soon as ExternalFunction works a bit better
-		assertNotNull(evalResult);
-	}
+    private static class MyFunc2 implements FreeRefFunction {
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+            if (args.length != 1 || !(args[0] instanceof StringEval)) {
+                return ErrorEval.VALUE_INVALID;
+            } else {
+                StringEval input = (StringEval) args[0];
+                return new StringEval(input.getStringValue() + "abc2");
+            }
+        }
+    }
+
+    /**
+     * Creates and registers user-defined function "MyFunc()" directly with POI.
+     * This is VB function defined in "testNames.xls". In future there must be
+     * some parser of VBA scripts which will register UDFs.
+     */
+    private void registerMyFunc(Workbook workbook) {
+        workbook.registerUserDefinedFunction("myFunc", new MyFunc());
+    }
+
+    /**
+     * Creates example ToolPack which contains function "MyFunc2()".
+     */
+    private void createExampleToolPack() {
+        ToolPack exampleToolPack = new DefaultToolPack();
+        exampleToolPack.addFunction("myFunc2", new MyFunc2());
+        MainToolPacksHandler.instance().addToolPack(exampleToolPack);
+    }
+
+    /**
+     * Checks that an external function can get invoked from the formula
+     * evaluator.
+     * 
+     * @throws IOException
+     * 
+     */
+    public void testInvoke() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+
+        registerMyFunc(wb);
+        createExampleToolPack();
+
+        HSSFRow row = sheet.getRow(0);
+        HSSFCell myFuncCell = row.getCell(1); //=myFunc("_")
+
+        HSSFCell myFunc2Cell = row.getCell(2); //=myFunc2("_")
+
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        try {
+            assertEquals("_abc", fe.evaluate(myFuncCell).getStringValue());
+            assertEquals("_abc2", fe.evaluate(myFunc2Cell).getStringValue());
+        } catch (Exception e) {
+            assertFalse(true);
+        }
+    }
 }
