@@ -17,19 +17,15 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.ss.formula.EvaluationCell;
-
 /**
  * @author Amol S Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  * RefEval is the super interface for Ref2D and Ref3DEval. Basically a RefEval
  * impl should contain reference to the original ReferencePtg or Ref3DPtg as
  * well as the final "value" resulting from the evaluation of the cell
  * reference. Thus if the HSSFCell has type CELL_TYPE_NUMERIC, the contained
  * value object should be of type NumberEval; if cell type is CELL_TYPE_STRING,
  * contained value object should be of type StringEval
- * 
- * Modified 09/07/09 by Petr Udalau - added method getEvaluationCell().
  */
 public interface RefEval extends ValueEval {
 
@@ -52,9 +48,4 @@ public interface RefEval extends ValueEval {
      * Creates an {@link AreaEval} offset by a relative amount from this RefEval
      */
     AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);
-    
-    /**
-     * @return EvaluationCell referred to by this RefEval
-     */
-    EvaluationCell getEvaluationCell();
 }

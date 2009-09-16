@@ -32,9 +32,7 @@
     </developers>
 
     <changes>
-      <release version="3.5-beta7" date="2009-??-??">
-           <action dev="POI-DEVELOPERS" type="add">47849 - Added possibility to get EvaluationCell from RefEval</action>
-           <action dev="POI-DEVELOPERS" type="add">47848 - Added method createEvaluationWorkbook() to CreationHelper</action>
+        <release version="3.5-beta7" date="2009-??-??">
            <action dev="POI-DEVELOPERS" type="add">47809 - Improved work with user-defined functions</action>
            <action dev="POI-DEVELOPERS" type="fix">47581 - fixed  XSSFSheet.setColumnWidth to produce XML compatible with Mac Excel 2008</action>
            <action dev="POI-DEVELOPERS" type="fix">47734 - removed unnecessary svn:executable flag from files in SVN trunk</action>

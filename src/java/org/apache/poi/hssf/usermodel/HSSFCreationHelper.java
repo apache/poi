@@ -42,10 +42,6 @@ public class HSSFCreationHelper implements CreationHelper {
 		return new HSSFHyperlink(type);
 	}
 
-    public HSSFEvaluationWorkbook createEvaluationWorkbook() {
-        return HSSFEvaluationWorkbook.create(workbook);
-    }
-
 	/**
 	 * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
 	 *

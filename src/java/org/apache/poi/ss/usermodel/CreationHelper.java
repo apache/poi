@@ -16,11 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-
 /**
  * An object that handles instantiating concrete
- *  classes of the various instances one needs for 
+ *  classes of the various instances one needs for
  *  HSSF and XSSF.
  * Works around a major shortcoming in Java, where we
  *  can't have static methods on interfaces or abstract
@@ -29,33 +27,23 @@ import org.apache.poi.ss.formula.EvaluationWorkbook;
  *  a given interface, without you having to worry
  *  about if you're dealing with HSSF or XSSF, despite
  *  Java being quite rubbish.
- * 
- * Modified 09/07/09 by Petr Udalau - added method createEvaluationWorkbook().
- * 
  */
 public interface CreationHelper {
     /**
-     * Creates a new RichTextString instance 
+     * Creates a new RichTextString instance
      * @param text The text to initialise the RichTextString with
      */
     RichTextString createRichTextString(String text);
-    
+
     /**
      * Creates a new DataFormat instance
      */
     DataFormat createDataFormat();
-    
+
     /**
      * Creates a new Hyperlink, of the given type
      */
     Hyperlink createHyperlink(int type);
-
-    /**
-     * Creates EvaluationWorkbook.
-     *
-     * @return a EvaluationWorkbook instance
-     */
-    EvaluationWorkbook createEvaluationWorkbook();
 
     /**
      * Creates FormulaEvaluator - an object that evaluates formula cells.
@@ -63,6 +51,6 @@ public interface CreationHelper {
      * @return a FormulaEvaluator instance
      */
     FormulaEvaluator createFormulaEvaluator();
-    
+
     ClientAnchor createClientAnchor();
 }
