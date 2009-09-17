@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -64,8 +65,26 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 	 * evaluation begins.
 	 */
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
-		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier);
+		this(workbook, stabilityClassifier, null);
 	}
+
+	/**
+	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 */
+	private HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
+	}
+
+	/**
+	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+	 * for the (conservative) assumption that any cell may have its definition changed after
+	 * evaluation begins.
+	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 */
+	public static HSSFFormulaEvaluator create(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		return new HSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
+	}
+
 
 	/**
 	 * Coordinates several formula evaluators together so that formulas that involve external

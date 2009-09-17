@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -47,9 +48,9 @@ public final class ForkedEvaluator {
 	private WorkbookEvaluator _evaluator;
 	private ForkedEvaluationWorkbook _sewb;
 
-	private ForkedEvaluator(EvaluationWorkbook masterWorkbook, IStabilityClassifier stabilityClassifier) {
+	private ForkedEvaluator(EvaluationWorkbook masterWorkbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		_sewb = new ForkedEvaluationWorkbook(masterWorkbook);
-		_evaluator = new WorkbookEvaluator(_sewb, stabilityClassifier);
+		_evaluator = new WorkbookEvaluator(_sewb, stabilityClassifier, udfFinder);
 	}
 	private static EvaluationWorkbook createEvaluationWorkbook(Workbook wb) {
 		if (wb instanceof HSSFWorkbook) {
@@ -61,8 +62,17 @@ public final class ForkedEvaluator {
 //		}
 		throw new IllegalArgumentException("Unexpected workbook type (" + wb.getClass().getName() + ")");
 	}
+	/**
+	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(Workbook, IStabilityClassifier, UDFFinder)}
+	 */
 	public static ForkedEvaluator create(Workbook wb, IStabilityClassifier stabilityClassifier) {
-		return new ForkedEvaluator(createEvaluationWorkbook(wb), stabilityClassifier);
+		return create(wb, stabilityClassifier, null);
+	}
+	/**
+	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 */
+	public static ForkedEvaluator create(Workbook wb, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		return new ForkedEvaluator(createEvaluationWorkbook(wb), stabilityClassifier, udfFinder);
 	}
 
 	/**

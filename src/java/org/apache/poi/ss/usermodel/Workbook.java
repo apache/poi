@@ -21,15 +21,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
- * 
- * Modified 09/07/09 by Petr Udalau - added methods for work with UDFs of this Workbook. 
  */
 public interface Workbook {
 
@@ -189,7 +186,7 @@ public interface Workbook {
      * @param index of the sheet to remove (0-based)
      */
     void removeSheetAt(int index);
-    
+
     /**
      * Sets the repeating rows and columns for a sheet (as found in
      * File->PageSetup->Sheet).  This is function is included in the workbook
@@ -374,7 +371,7 @@ public interface Workbook {
 	 * Sets the policy on what to do when
 	 *  getting missing or blank cells from a row.
      *
-	 * This will then apply to all calls to 
+	 * This will then apply to all calls to
 	 *  {@link Row#getCell(int)} }. See
 	 *  {@link MissingCellPolicy}
 	 */
@@ -467,29 +464,4 @@ public interface Workbook {
      * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
      */
     void setSheetHidden(int sheetIx, int hidden);
-    
-    /**
-	 * Find and return user defined function (UDF) with specified name.
-	 * 
-	 * @param functionName
-	 *            UDF name
-	 * @return instance of FreeRefFunction or null if no UDF with the specified
-	 *         name exists.
-	 */
-	FreeRefFunction getUserDefinedFunction(String functionName);
-	
-	/**
-	 * Add user defined function (UDF) to workbook
-	 * 
-	 * @param name
-	 * @param function
-	 */
-	void registerUserDefinedFunction(String name, FreeRefFunction function);
-
-	/**
-	 * Returns user defined functions (UDF) names
-	 * 
-	 * @return list of UDF names
-	 */
-	List<String> getUserDefinedFunctionNames();
 }

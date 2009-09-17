@@ -15,42 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.toolpack;
+package org.apache.poi.hssf.record.formula.udf;
 
+import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 
 /**
- * Common interface for any new tool pack with executors for functions.
- * 
+ * Common interface for "Add-in" libraries and user defined function libraries.
+ *
  * @author PUdalau
  */
-public interface ToolPack {
+public interface UDFFinder {
+	public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
+
 	/**
-	 * Returns executor by specified name. Returns <code>null</code> if tool
-	 * pack doesn't contains such function.
-	 * 
+	 * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
+	 *
 	 * @param name Name of function.
 	 * @return Function executor.
 	 */
 	FreeRefFunction findFunction(String name);
-
-	/**
-	 * Add new function with executor.
-	 * @param name Name of function.
-	 * @param evaluator Function executor.
-	 */
-	void addFunction(String name, FreeRefFunction evaluator);
-
-	/**
-	 * Returns executor by specified name if it exists.
-	 * @param name Name of function.
-	 */
-	void removeFunction(String name);
-
-	/**
-	 * Checks if such function exists in tool pack. 
-	 * @param name Name of function.
-	 * @return true if tool pack contains such function.
-	 */
-	boolean containsFunction(String name);
 }

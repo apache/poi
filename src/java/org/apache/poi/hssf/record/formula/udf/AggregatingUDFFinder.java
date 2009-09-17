@@ -6,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,37 +15,38 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.toolpack;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.apache.poi.hssf.record.formula.udf;
 
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 
 /**
- * Default tool pack.
- * If you want to add some UDF, but you don't want to create new tool pack, use this.
- * 
+ * Collects add-in libraries and VB macro functions together into one UDF finder
+ *
  * @author PUdalau
  */
-public class DefaultToolPack implements ToolPack {
-    private Map<String, FreeRefFunction> functionsByName = new HashMap<String, FreeRefFunction>();
+public final class AggregatingUDFFinder implements UDFFinder {
 
-    public void addFunction(String name, FreeRefFunction evaluator) {
-        if (evaluator != null){
-            functionsByName.put(name, evaluator);
-        }
-    }
+	private final UDFFinder[] _usedToolPacks;
 
-    public boolean containsFunction(String name) {
-        return functionsByName.containsKey(name);
-    }
+	public AggregatingUDFFinder(UDFFinder ... usedToolPacks) {
+		_usedToolPacks = usedToolPacks.clone();
+	}
 
-    public FreeRefFunction findFunction(String name) {
-        return functionsByName.get(name);
-    }
-
-    public void removeFunction(String name) {
-        functionsByName.remove(name);
-    }
+	/**
+	 * Returns executor by specified name. Returns <code>null</code> if
+	 * function isn't contained by any registered tool pack.
+	 *
+	 * @param name Name of function.
+	 * @return Function executor. <code>null</code> if not found
+	 */
+	public FreeRefFunction findFunction(String name) {
+		FreeRefFunction evaluatorForFunction;
+		for (UDFFinder pack : _usedToolPacks) {
+			evaluatorForFunction = pack.findFunction(name);
+			if (evaluatorForFunction != null) {
+				return evaluatorForFunction;
+			}
+		}
+		return null;
+	}
 }

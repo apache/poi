@@ -20,7 +20,6 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 
 /**
  * Abstracts a workbook for the purpose of formula evaluation.<br/>
@@ -28,8 +27,6 @@ import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
  * For POI internal use only
  *
  * @author Josh Micich
- * 
- * Modified 09/07/09 by Petr Udalau - added methods for searching for UDFs of this Workbook. 
  */
 public interface EvaluationWorkbook {
 	String getSheetName(int sheetIndex);
@@ -53,17 +50,6 @@ public interface EvaluationWorkbook {
 	EvaluationName getName(NamePtg namePtg);
 	String resolveNameXText(NameXPtg ptg);
 	Ptg[] getFormulaTokens(EvaluationCell cell);
-
-	/**
-     * Find and return user defined function (UDF) contained by workbook with
-     * specified name.
-     * 
-     * @param functionName UDF name
-     * @return instance of FreeRefFunction or null if no UDF with the specified
-     *         name exists.
-     */
-	FreeRefFunction findUserDefinedFunction(String functionName);
-
 
 	class ExternalSheet {
 		private final String _workbookName;

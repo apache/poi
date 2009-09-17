@@ -44,7 +44,7 @@ public class TestWorkbookEvaluator extends TestCase {
 
 	private static ValueEval evaluateFormula(Ptg[] ptgs) {
 		OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
-		return new WorkbookEvaluator(null, null).evaluateFormula(ec, ptgs);
+		return new WorkbookEvaluator(null, null, null).evaluateFormula(ec, ptgs);
 	}
 
 	/**
