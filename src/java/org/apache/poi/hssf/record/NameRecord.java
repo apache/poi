@@ -33,9 +33,7 @@ import org.apache.poi.util.StringUtil;
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author Glen Stampoultzis (glens at apache.org)
- * @version 1.0-pre
- *  
- * Modified 8/31/09 by Petr Udalau - added method setFunction(boolean)
+ * @author Petr Udalau - added method setFunction(boolean)
  */
 public final class NameRecord extends StandardRecord {
     public final static short sid = 0x0018;
@@ -135,7 +133,7 @@ public final class NameRecord extends StandardRecord {
 
 	/**
 	 * For named ranges, and built-in names
-	 * @return the 1-based sheet number. 
+	 * @return the 1-based sheet number.
 	 */
 	public int getSheetNumber()
 	{
@@ -239,13 +237,13 @@ public final class NameRecord extends StandardRecord {
 	public boolean isFunctionName() {
 		return (field_1_option_flag & Option.OPT_FUNCTION_NAME) != 0;
 	}
-	
-    /**
-     * Indicates that the defined name refers to a user-defined function.
-     * This attribute is used when there is an add-in or other code project associated with the file.
-     *
-     * @param value <code>true</code> indicates the name refers to a function.
-     */
+
+	/**
+	 * Indicates that the defined name refers to a user-defined function.
+	 * This attribute is used when there is an add-in or other code project associated with the file.
+	 *
+	 * @param value <code>true</code> indicates the name refers to a function.
+	 */
 	public void setFunction(boolean function){
 		if (function) {
 			field_1_option_flag |= Option.OPT_FUNCTION_NAME;
@@ -351,7 +349,7 @@ public final class NameRecord extends StandardRecord {
 		int field_8_length_description_text = field_15_description_text.length();
 		int field_9_length_help_topic_text = field_16_help_topic_text.length();
 		int field_10_length_status_bar_text = field_17_status_bar_text.length();
-		
+
 		// size defined below
 		out.writeShort(getOptionFlag());
 		out.writeByte(getKeyboardShortcut());
@@ -379,7 +377,7 @@ public final class NameRecord extends StandardRecord {
 		}
 		field_13_name_definition.serializeTokens(out);
 		field_13_name_definition.serializeArrayConstantData(out);
-		
+
 		StringUtil.putCompressedUnicode( getCustomMenuText(), out);
 		StringUtil.putCompressedUnicode( getDescriptionText(), out);
 		StringUtil.putCompressedUnicode( getHelpTopicText(), out);
@@ -388,14 +386,14 @@ public final class NameRecord extends StandardRecord {
 	private int getNameRawSize() {
 		if (isBuiltInName()) {
 			return 1;
-		} 
+		}
 		int nChars = field_12_name_text.length();
 		if(field_11_nameIsMultibyte) {
 			return 2 * nChars;
-		} 
+		}
 		return nChars;
 	}
-	
+
 	protected int getDataSize() {
 		return 13 // 3 shorts + 7 bytes
 			+ getNameRawSize()
@@ -456,7 +454,7 @@ public final class NameRecord extends StandardRecord {
 			}
 		}
 
-		int nBytesAvailable = in.available() - (f7_customMenuLen 
+		int nBytesAvailable = in.available() - (f7_customMenuLen
 				+ f8_descriptionTextLen + f9_helpTopicTextLen + f10_statusBarTextLen);
 		field_13_name_definition = Formula.read(field_4_length_name_definition, in, nBytesAvailable);
 

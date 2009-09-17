@@ -49,8 +49,6 @@ package org.apache.poi.ss.usermodel;
  *  name.setRefersToFormula("IF(Loan_Amount*Interest_Rate>0,1,0)");
  *
  * </blockquote></pre>
- *  
- * Modified 8/31/09 by Petr Udalau - added method setFunction(boolean)
  */
 public interface Name {
 
@@ -61,14 +59,14 @@ public interface Name {
      */
     String getSheetName();
 
-    /** 
+    /**
      * Gets the name of the named range
      *
      * @return named range name
      */
     String getNameName();
 
-    /** 
+    /**
      * Sets the name of the named range
      *
      * <p>The following is a list of syntax rules that you need to be aware of when you create and edit names.</p>
@@ -118,7 +116,7 @@ public interface Name {
     void setNameName(String name);
 
     /**
-     * Returns the formula that the name is defined to refer to. 
+     * Returns the formula that the name is defined to refer to.
      *
      * @return the reference for this name, <code>null</code> if it has not been set yet. Never empty string
      * @see #setRefersToFormula(String)

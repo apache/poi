@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
@@ -255,5 +256,9 @@ public final class OperationEvaluationContext {
 			return CellReference.NameType.BAD_CELL_OR_NAMED_RANGE;
 		}
 		return CellReference.classifyCellReference(str, ssVersion);
+	}
+
+	public FreeRefFunction findUserDefinedFunction(String functionName) {
+		return _bookEvaluator.findUserDefinedFunction(functionName);
 	}
 }

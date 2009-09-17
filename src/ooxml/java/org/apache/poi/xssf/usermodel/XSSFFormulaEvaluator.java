@@ -24,6 +24,8 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
@@ -47,16 +49,31 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	private WorkbookEvaluator _bookEvaluator;
 
 	public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
-		this(workbook, null);
+		this(workbook, null, null);
 	}
 	/**
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
-	 * for the (conservative) assumption that any cell may have its definition changed after 
+	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.
+	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(HSSFWorkbook, IStabilityClassifier, UDFFinder)}
 	 */
 	public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
-		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier);
+		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, null);
 	}
+	private XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
+	}
+
+	/**
+	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+	 * for the (conservative) assumption that any cell may have its definition changed after
+	 * evaluation begins.
+	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 */
+	public static XSSFFormulaEvaluator create(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		return new XSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
+	}
+
 
 	/**
 	 * Should be called whenever there are major changes (e.g. moving sheets) to input cells

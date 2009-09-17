@@ -22,14 +22,17 @@ import java.util.Map;
 
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.record.formula.toolpack.ToolPack;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
- * Modified 09/07/09 by Petr Udalau - systematized work of ToolPacks. 
+ * @author Josh Micich
+ * @author Petr Udalau - systematized work of add-in libraries and user defined functions.
  */
-public final class AnalysisToolPak implements ToolPack {
+public final class AnalysisToolPak implements UDFFinder {
+
+	public static final UDFFinder instance = new AnalysisToolPak();
 
 	private static final class NotImplemented implements FreeRefFunction {
 		private final String _functionName;
@@ -42,13 +45,18 @@ public final class AnalysisToolPak implements ToolPack {
 			throw new NotImplementedException(_functionName);
 		}
 	};
-	
-	private Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
+
+	private final Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
+
+
+	private AnalysisToolPak() {
+		// enforce singleton
+	}
 
 	public FreeRefFunction findFunction(String name) {
 		return _functionsByName.get(name);
 	}
-	
+
 	private Map<String, FreeRefFunction> createFunctionsMap() {
 		Map<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(100);
 
@@ -153,16 +161,4 @@ public final class AnalysisToolPak implements ToolPack {
 		FreeRefFunction func = pFunc == null ? new NotImplemented(functionName) : pFunc;
 		m.put(functionName, func);
 	}
-
-    public void addFunction(String name, FreeRefFunction evaluator) {
-        r(_functionsByName, name, evaluator);
-    }
-
-    public boolean containsFunction(String name) {
-        return _functionsByName.containsKey(name);
-    }
-
-    public void removeFunction(String name) {
-        _functionsByName.remove(name);
-    }
 }

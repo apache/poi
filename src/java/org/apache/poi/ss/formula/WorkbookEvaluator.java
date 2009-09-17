@@ -59,6 +59,8 @@ import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -87,12 +89,16 @@ public final class WorkbookEvaluator {
 	private final Map<String, Integer> _sheetIndexesByName;
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 	private final IStabilityClassifier _stabilityClassifier;
+	private final UDFFinder _udfFinder;
 
-	public WorkbookEvaluator(EvaluationWorkbook workbook, IStabilityClassifier stabilityClassifier) {
-		this (workbook, null, stabilityClassifier);
+	/**
+	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+	 */
+	public WorkbookEvaluator(EvaluationWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		this (workbook, null, stabilityClassifier, udfFinder);
 	}
 	/* package */ WorkbookEvaluator(EvaluationWorkbook workbook, IEvaluationListener evaluationListener,
-			IStabilityClassifier stabilityClassifier) {
+			IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		_workbook = workbook;
 		_evaluationListener = evaluationListener;
 		_cache = new EvaluationCache(evaluationListener);
@@ -101,6 +107,7 @@ public final class WorkbookEvaluator {
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_workbookIx = 0;
 		_stabilityClassifier = stabilityClassifier;
+		_udfFinder = udfFinder == null ? UDFFinder.DEFAULT : udfFinder;
 	}
 
 	/**
@@ -515,5 +522,8 @@ public final class WorkbookEvaluator {
 
 		EvaluationCell cell = sheet.getCell(rowIndex, columnIndex);
 		return evaluateAny(cell, sheetIndex, rowIndex, columnIndex, tracker);
+	}
+	public FreeRefFunction findUserDefinedFunction(String functionName) {
+		return _udfFinder.findFunction(functionName);
 	}
 }

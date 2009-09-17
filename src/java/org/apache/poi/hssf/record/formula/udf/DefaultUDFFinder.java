@@ -15,23 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.hssf.record.formula.udf;
 
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 
 /**
- * Allows tests to execute {@link WorkbookEvaluator}s and track the internal workings.
+ * Default UDF finder - for adding your own user defined functions.
  *
- * @author Josh Micich
+ * @author PUdalau
  */
-public final class WorkbookEvaluatorTestHelper {
+public final class DefaultUDFFinder implements UDFFinder {
+	private final Map<String, FreeRefFunction> _functionsByName;
 
-	private WorkbookEvaluatorTestHelper() {
-		// no instances of this class
+	public DefaultUDFFinder(String[] functionNames, FreeRefFunction[] functionImpls) {
+		int nFuncs = functionNames.length;
+		if (functionImpls.length != nFuncs) {
+			throw new IllegalArgumentException(
+					"Mismatch in number of function names and implementations");
+		}
+		HashMap<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(nFuncs * 3 / 2);
+		for (int i = 0; i < functionImpls.length; i++) {
+			m.put(functionNames[i], functionImpls[i]);
+		}
+		_functionsByName = m;
 	}
 
-	public static WorkbookEvaluator createEvaluator(HSSFWorkbook wb, EvaluationListener listener) {
-		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener, null, null);
+	public FreeRefFunction findFunction(String name) {
+		return _functionsByName.get(name);
 	}
 }

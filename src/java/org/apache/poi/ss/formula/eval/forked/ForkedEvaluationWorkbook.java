@@ -36,8 +36,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.
  *
  * @author Josh Micich
- * 
- * Modified 09/07/09 by Petr Udalau - added methods for searching for UDFs of this Workbook. 
  */
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
@@ -144,8 +142,4 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 			return _index - o._index;
 		}
 	}
-
-    public FreeRefFunction findUserDefinedFunction(String functionName) {
-        return _masterBook.findUserDefinedFunction(functionName);
-    }
 }
