@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.RecordInspector;
@@ -119,5 +120,53 @@ public final class TestSharedValueManager extends TestCase {
 			}
 		}
 		assertEquals(2, count);
+	}
+
+	/**
+	 * Tests fix for a bug in the way shared formula cells are associated with shared formula
+	 * records.  Prior to this fix, POI would attempt to use the upper left corner of the
+	 * shared formula range as the locator cell.  The correct cell to use is the 'first cell'
+	 * in the shared formula group which is not always the top left cell.  This is possible
+	 * because shared formula groups may be sparse and may overlap.<br/>
+	 *
+	 * Two existing sample files (15228.xls and ex45046-21984.xls) had similar issues.
+	 * These were not explored fully, but seem to be fixed now.
+	 */
+	public void testRecalculateFormulas47747() {
+
+		/*
+		 * ex47747-sharedFormula.xls is a heavily cut-down version of the spreadsheet from
+		 * the attachment (id=24176) in Bugzilla 47747.  This was done to make the sample
+		 * file smaller, which hopefully allows the special data encoding condition to be
+		 * seen more easily.  Care must be taken when modifying this file since the
+		 * special conditions are easily destroyed (which would make this test useless).
+		 * It seems that removing the worksheet protection has made this more so - if the
+		 * current file is re-saved in Excel(2007) the bug condition disappears.
+		 *
+		 *
+		 * Using BiffViewer, one can see that there are two shared formula groups representing
+		 * the essentially same formula over ~20 cells.  The shared group ranges overlap and
+		 * are A12:Q20 and A20:Q27.  The locator cell ('first cell') for the second group is
+		 * Q20 which is not the top left cell of the enclosing range.  It is this specific
+		 * condition which caused the bug to occur
+		 */
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex47747-sharedFormula.xls");
+
+		// pick out a cell from within the second shared formula group
+		HSSFCell cell = wb.getSheetAt(0).getRow(23).getCell(0);
+		String formulaText;
+		try {
+			formulaText = cell.getCellFormula();
+			// succeeds if the formula record has been associated
+			// with the second shared formula group
+		} catch (RuntimeException e) {
+			// bug occurs if the formula record has been associated
+			// with the first shared formula group
+			if ("Shared Formula Conversion: Coding Error".equals(e.getMessage())) {
+				throw new AssertionFailedError("Identified bug 47747");
+			}
+			throw e;
+		}
+		assertEquals("$AF24*A$7", formulaText);
 	}
 }
