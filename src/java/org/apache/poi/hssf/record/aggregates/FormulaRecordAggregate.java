@@ -58,10 +58,12 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 		} else {
 			// Usually stringRec is null here (in agreement with what the formula rec says).
 			// In the case where an extra StringRecord is erroneously present, Excel (2007)
-			// ignores it (see bug 46213). 
+			// ignores it (see bug 46213).
 			_stringRecord = null;
 		}
 
+		_formulaRecord = formulaRec;
+		_sharedValueManager = svm;
 		if (formulaRec.isSharedFormula()) {
 			CellReference firstCell = formulaRec.getFormula().getExpReference();
 			if (firstCell == null) {
@@ -70,24 +72,22 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 				_sharedFormulaRecord = svm.linkSharedFormulaRecord(firstCell, this);
 			}
 		}
-		_formulaRecord = formulaRec;
-		_sharedValueManager = svm;
 	}
 	/**
 	 * Sometimes the shared formula flag "seems" to be erroneously set (because the corresponding
 	 * {@link SharedFormulaRecord} does not exist). Normally this would leave no way of determining
-	 * the {@link Ptg} tokens for the formula.  However as it turns out in these 
+	 * the {@link Ptg} tokens for the formula.  However as it turns out in these
 	 * cases, Excel encodes the unshared {@link Ptg} tokens in the right place (inside the {@link
 	 * FormulaRecord}).  So the the only thing that needs to be done is to ignore the erroneous
 	 * shared formula flag.<br/>
-	 * 
+	 *
 	 * This method may also be used for setting breakpoints to help diagnose issues regarding the
-	 * abnormally-set 'shared formula' flags. 
+	 * abnormally-set 'shared formula' flags.
 	 * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
 	 */
 	private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
 		// make sure 'unshared' formula is actually available
-		Ptg firstToken = formula.getParsedExpression()[0]; 
+		Ptg firstToken = formula.getParsedExpression()[0];
 		if (firstToken instanceof ExpPtg) {
 			throw new RecordFormatException(
 					"SharedFormulaRecord not found for FormulaRecord with (isSharedFormula=true)");
@@ -138,14 +138,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 
 	public void visitContainedRecords(RecordVisitor rv) {
 		 rv.visitRecord(_formulaRecord);
-		 CellReference sharedFirstCell = _formulaRecord.getFormula().getExpReference();
-		 // perhaps this could be optimised by consulting the (somewhat unreliable) isShared flag
-		 // and/or distinguishing between tExp and tTbl.
-		 if (sharedFirstCell != null) {
-			 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(sharedFirstCell, this);
-			 if (sharedFormulaRecord != null) {
-				 rv.visitRecord(sharedFormulaRecord);
-			 }
+		 Record sharedFormulaRecord = _sharedValueManager.getRecordForFirstCell(this);
+		 if (sharedFormulaRecord != null) {
+			 rv.visitRecord(sharedFormulaRecord);
 		 }
 		 if (_formulaRecord.hasCachedResultString() && _stringRecord != null) {
 			 rv.visitRecord(_stringRecord);
