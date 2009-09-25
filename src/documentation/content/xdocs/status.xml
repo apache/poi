@@ -32,7 +32,9 @@
     </developers>
 
     <changes>
-        <release version="3.5-beta7" date="2009-??-??">
+        <release version="3.6-beta1" date="2009-??-??">
+        </release>
+        <release version="3.5-FINAL" date="2009-09-28">
            <action dev="POI-DEVELOPERS" type="fix">47747 - fixed logic for locating shared formula records</action>
            <action dev="POI-DEVELOPERS" type="add">47809 - Improved work with user-defined functions</action>
            <action dev="POI-DEVELOPERS" type="fix">47581 - fixed XSSFSheet.setColumnWidth to produce XML compatible with Mac Excel 2008</action>

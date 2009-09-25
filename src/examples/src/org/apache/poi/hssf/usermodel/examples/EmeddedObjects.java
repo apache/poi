@@ -59,7 +59,7 @@ public class EmeddedObjects {
                     }
                 } else {
                     // There is no DirectoryEntry
-                    // Recover the object’s data from the HSSFObjectData instance.
+                    // Recover the object's data from the HSSFObjectData instance.
                     byte[] objectData = obj.getObjectData();
                 }
             }

@@ -35,27 +35,27 @@ public class EmbeddedObjects {
         XSSFWorkbook workbook = new XSSFWorkbook(args[0]);
         for (PackagePart pPart : workbook.getAllEmbedds()) {
             String contentType = pPart.getContentType();
-            // Excel Workbook – either binary or OpenXML
+            // Excel Workbook - either binary or OpenXML
             if (contentType.equals("application/vnd.ms-excel")) {
                 HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
             }
-            // Excel Workbook – OpenXML file format
+            // Excel Workbook - OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
                 XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
             }
-            // Word Document – binary (OLE2CDF) file format
+            // Word Document - binary (OLE2CDF) file format
             else if (contentType.equals("application/msword")) {
                 HWPFDocument document = new HWPFDocument(pPart.getInputStream());
             }
-            // Word Document – OpenXML file format
+            // Word Document - OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
                 XWPFDocument document = new XWPFDocument(pPart.getInputStream());
             }
-            // PowerPoint Document – binary file format
+            // PowerPoint Document - binary file format
             else if (contentType.equals("application/vnd.ms-powerpoint")) {
                 HSLFSlideShow slideShow = new HSLFSlideShow(pPart.getInputStream());
             }
-            // PowerPoint Document – OpenXML file format
+            // PowerPoint Document - OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
                 OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
                 XSLFSlideShow slideShow = new XSLFSlideShow(docPackage);
