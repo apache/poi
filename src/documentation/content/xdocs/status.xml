@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47889 - fixed XSSFCell.getStringCellValue() to properly handle cached formula results</action>
         </release>
         <release version="3.5-FINAL" date="2009-09-28">
            <action dev="POI-DEVELOPERS" type="fix">47747 - fixed logic for locating shared formula records</action>
