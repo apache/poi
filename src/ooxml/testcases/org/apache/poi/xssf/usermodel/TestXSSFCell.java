@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 /**
  * @author Yegor Kozlov
@@ -104,5 +105,65 @@ public final class TestXSSFCell extends BaseTestCell {
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
         assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_1.getCellType());
+    }
+
+    public void testFormulaString() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
+
+        cell.setCellFormula("A2");
+        assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        //the value is not set and cell's type='N' which means blank
+        assertEquals(STCellType.N, ctCell.getT());
+
+        //set cached formula value
+        cell.setCellValue("t='str'");
+        //we are still of 'formula' type
+        assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        //cached formula value is set and cell's type='STR'
+        assertEquals(STCellType.STR, ctCell.getT());
+        assertEquals("t='str'", cell.getStringCellValue());
+
+        //now remove the formula, the cached formula result remains
+        cell.setCellFormula(null);
+        assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals(STCellType.STR, ctCell.getT());
+        //the line below failed prior to fix of Bug #47889
+        assertEquals("t='str'", cell.getStringCellValue());
+
+        //revert to a blank cell
+        cell.setCellValue((String)null);
+        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell.getCellType());
+        assertEquals(STCellType.N, ctCell.getT());
+        assertEquals("", cell.getStringCellValue());
+    }
+
+    /**
+     * Bug 47889: problems when calling XSSFCell.getStringCellValue() on a workbook created in Gnumeric
+     */
+    public void test47889() {
+        XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("47889.xlsx");
+        XSSFSheet sh = wb.getSheetAt(0);
+
+        XSSFCell cell;
+
+        //try a string cell
+        cell = sh.getRow(0).getCell(0);
+        assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals("a", cell.getStringCellValue());
+        assertEquals("a", cell.toString());
+        //Gnumeric produces spreadsheets without styles
+        //make sure we return null for that instead of throwing OutOfBounds
+        assertEquals(null, cell.getCellStyle());
+
+        //try a numeric cell
+        cell = sh.getRow(1).getCell(0);
+        assertEquals(XSSFCell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals(1.0, cell.getNumericCellValue());
+        assertEquals("1.0", cell.toString());
+        //Gnumeric produces spreadsheets without styles
+        //make sure we return null for that instead of throwing OutOfBounds
+        assertEquals(null, cell.getCellStyle());
     }
 }

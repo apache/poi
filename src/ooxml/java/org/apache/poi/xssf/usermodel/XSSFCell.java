@@ -249,6 +249,9 @@ public final class XSSFCell implements Cell {
                     } else {
                         rt = new XSSFRichTextString("");
                     }
+                } else if (_cell.getT() == STCellType.STR) {
+                    //cached formula value
+                    rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
                 } else {
                     if (_cell.isSetV()) {
                         int idx = Integer.parseInt(_cell.getV());
@@ -411,12 +414,15 @@ public final class XSSFCell implements Cell {
     /**
      * Return the cell's style.
      *
-     * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
-     * <code>workbook.getCellStyleAt(0)</code>
+     * @return the cell's style.</code>
      */
     public XSSFCellStyle getCellStyle() {
-        long idx = _cell.isSetS() ? _cell.getS() : 0;
-        return _stylesSource.getStyleAt((int)idx);
+        XSSFCellStyle style = null;
+        if(_stylesSource.getNumCellStyles() > 0){
+            long idx = _cell.isSetS() ? _cell.getS() : 0;
+            style = _stylesSource.getStyleAt((int)idx);
+        }
+        return style;
     }
 
     /**
@@ -629,7 +635,7 @@ public final class XSSFCell implements Cell {
     private void setBlank(){
         CTCell blank = CTCell.Factory.newInstance();
         blank.setR(_cell.getR());
-        blank.setS(_cell.getS());
+        if(_cell.isSetS()) blank.setS(_cell.getS());
         _cell.set(blank);
     }
 
