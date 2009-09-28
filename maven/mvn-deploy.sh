@@ -25,24 +25,41 @@
 #      <privateKey>/path/to/private/key</privateKey>
 #    </server>
 #
+#   <profiles>
+#      <profile>
+#      <id>apache-releases</id>
+#      <properties>
+#        <gpg.passphrase><!-- Your GPG passphrase --></gpg.passphrase>
+#      </properties>
+#    </profile>
+#  </profiles>
+#
 #  Usage:
 #   1. ant dist
-#   2. cd dist
+#   2. cd build/dist
 #   3. ./mvn-deploy.sh 
 # @author Yegor Kozlov
 
-M2_REPOSITORY=@REPOSITORY@
+M2_REPOSITORY=scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
+M2_SCP=people.apache.org:/www/people.apache.org/repo/m2-ibiblio-rsync-repository
 
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-@VERSION@-@DSTAMP@.jar -DpomFile=poi-@VERSION@.pom
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+scp poi-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi/@VERSION@/
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-scratchpad-@VERSION@-@DSTAMP@.jar -DpomFile=poi-scratchpad-@VERSION@.pom
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+scp poi-scratchpad-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-scratchpad/@VERSION@/
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-contrib-@VERSION@-@DSTAMP@.jar -DpomFile=poi-contrib-@VERSION@.pom
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases \
+scp poi-contrib-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-contrib/@VERSION@/
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-ooxml-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-@VERSION@.pom
+scp poi-ooxml-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
 
