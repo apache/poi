@@ -78,12 +78,8 @@ poi-src-$TAG-$DATE.zip
 {code}
 
 where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
-  7. Build Mavn POM files
-{code}
-ant maven-dist
-{code}
 
-  8. Signing the release artifacts:
+  7. Signing the release artifacts:
 {code}
 cd build/dist
 for i in *.zip ; do 
@@ -100,7 +96,7 @@ Verify the signatures:
 gpg --multifile --verify *.asc
 {code}
 
-   9. Create MD5 checksums for all artifacts to be published:
+   8. Create MD5 checksums for all artifacts to be published:
 
 {code}
 for i in *.zip ; do 
@@ -111,7 +107,7 @@ for i in *.gz ; do
 done
 {code}
 
-   10. Upload to your area at people.apache.org.
+   9. Upload to your area at people.apache.org.
 There should be two directories:
 main
 maven
@@ -143,10 +139,10 @@ cp *-src-* /www/www.apache.org/dist/poi/release/src
 cp *-bin-* /www/www.apache.org/dist/poi/release/bin
 {code}
 
+copy Maven artifacts
 {code}
-cd ~/POI-3.1-BETA1/maven
-cp -r org.apache.poi /www/people.apache.org/repo/m1-ibiblio-rsync-repository/
-cp -r poi/poms      /www/people.apache.org/repo/m1-ibiblio-rsync-repository/poi
+cd build/dist
+./mvn-deploy.sh
 {code}
 
 2. Make sure that the files are owned by the unix group apcvs and that they are writable by this group. 
