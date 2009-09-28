@@ -371,5 +371,24 @@ public class XWPFDocument extends POIXMLDocument {
     public XWPFTable createTable(int rows, int cols) {
 	return new XWPFTable(this, ctDocument.getBody().addNewTbl(), rows, cols);
     }
+    
+    public void createTOC() {
+    	CTSdtBlock block = this.getDocument().getBody().addNewSdt();
+    	TOC toc = new TOC(block);
+    	int i = 1;
+    	for (Iterator<XWPFParagraph> iterator = getParagraphsIterator() ; iterator.hasNext() ; ) {
+    		XWPFParagraph par = iterator.next();
+    		String parStyle = par.getStyle();
+    		if (parStyle != null && parStyle.substring(0, 7).equals("Heading")) {
+    			try {
+    				int level = new Integer(parStyle.substring("Heading".length()));
+        			toc.addRow(level, par.getText(), 1, "112723803");
+    			}
+    			catch (NumberFormatException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    }
 }
 

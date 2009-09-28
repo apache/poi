@@ -939,6 +939,27 @@ public class XWPFParagraph {
     }
 
     /**
+     * This method provides a style to the paragraph
+     * This is useful when, e.g. an Heading style has to be assigned
+     * @param newStyle
+     */
+    public void setStyle(String newStyle) {
+    	CTPPr pr = getCTPPr();
+    	CTString style = pr.getPStyle() != null ? pr.getPStyle() : pr.addNewPStyle();
+    	style.setVal(newStyle);
+    }
+    
+    /**
+     * Gets the style of the paragraph
+     * @return
+     */
+    public String getStyle() {
+    	CTPPr pr = getCTPPr();
+    	CTString style = pr.isSetPStyle() ? pr.getPStyle() : null;
+    	return style != null ? style.getVal() : null;
+    }
+
+    /**
      * Get a <b>copy</b> of the currently used CTPBrd, if none is used, return
      * a new instance.
      */
