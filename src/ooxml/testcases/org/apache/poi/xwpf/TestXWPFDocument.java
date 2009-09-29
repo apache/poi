@@ -36,7 +36,10 @@ public final class TestXWPFDocument extends TestCase {
 			if(part.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
 				found = true;
 			}
-			System.out.println(part);
+			if (false) {
+				// successful tests should be silent
+				System.out.println(part);
+			}
 		}
 		assertTrue(found);
 	}

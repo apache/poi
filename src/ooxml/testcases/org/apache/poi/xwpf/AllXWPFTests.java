@@ -22,12 +22,15 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.xwpf.extractor.TestXWPFWordExtractor;
 import org.apache.poi.xwpf.model.TestXWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.TestXWPFHeader;
+import org.apache.poi.xwpf.usermodel.TestXWPFHeadings;
 import org.apache.poi.xwpf.usermodel.TestXWPFParagraph;
 import org.apache.poi.xwpf.usermodel.TestXWPFRun;
+import org.apache.poi.xwpf.usermodel.TestXWPFTable;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xwpf</tt> and sub-packages.
- * 
+ *
  * @author Josh Micich
  */
 public final class AllXWPFTests {
@@ -35,10 +38,13 @@ public final class AllXWPFTests {
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllXWPFTests.class.getName());
 		result.addTestSuite(TestXWPFDocument.class);
+		result.addTestSuite(TestXWPFWordExtractor.class);
 		result.addTestSuite(TestXWPFHeaderFooterPolicy.class);
+		result.addTestSuite(TestXWPFHeader.class);
+		result.addTestSuite(TestXWPFHeadings.class);
 		result.addTestSuite(TestXWPFParagraph.class);
 		result.addTestSuite(TestXWPFRun.class);
-		result.addTestSuite(TestXWPFWordExtractor.class);
+		result.addTestSuite(TestXWPFTable.class);
 		return result;
 	}
 }
