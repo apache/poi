@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Represents a sheet being used for forked evaluation.  Initially, objects of this class contain
@@ -65,6 +66,11 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
 		ForkedEvaluationCell result = _sharedCellsByRowCol.get(key);
 		if (result == null) {
 			EvaluationCell mcell = _masterSheet.getCell(rowIndex, columnIndex);
+			if (mcell == null) {
+				CellReference cr = new CellReference(rowIndex, columnIndex);
+				throw new UnsupportedOperationException("Underlying cell '"
+						+ cr.formatAsString() + "' is missing in master sheet.");
+			}
 			result = new ForkedEvaluationCell(this, mcell);
 			_sharedCellsByRowCol.put(key, result);
 		}
