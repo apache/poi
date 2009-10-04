@@ -72,7 +72,7 @@ public class ColumnHelper {
         worksheet.setColsArray(0, newCols);
     }
 
-    public void sortColumns(CTCols newCols) {
+    public static void sortColumns(CTCols newCols) {
         CTCol[] colArray = newCols.getColArray();
         Arrays.sort(colArray, new CTColComparator());
         newCols.setColArray(colArray);
@@ -235,17 +235,17 @@ public class ColumnHelper {
         col.setBestFit(bestFit);
     }
     public void setCustomWidth(long index, boolean bestFit) {
-        CTCol col = getOrCreateColumn1Based(index+1, false);
+        CTCol col = getOrCreateColumn1Based(index+1, true);
         col.setCustomWidth(bestFit);
     }
 
     public void setColWidth(long index, double width) {
-        CTCol col = getOrCreateColumn1Based(index+1, false);
+        CTCol col = getOrCreateColumn1Based(index+1, true);
         col.setWidth(width);
     }
 
     public void setColHidden(long index, boolean hidden) {
-        CTCol col = getOrCreateColumn1Based(index+1, false);
+        CTCol col = getOrCreateColumn1Based(index+1, true);
         col.setHidden(hidden);
     }
 

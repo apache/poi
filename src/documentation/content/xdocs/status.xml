@@ -33,6 +33,9 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47839 - improved API for OOXML custom properties</action>
+           <action dev="POI-DEVELOPERS" type="fix">47862 - fixed XSSFSheet.setColumnWidth to handle columns included in a column span</action>
+           <action dev="POI-DEVELOPERS" type="fix">47804 - fixed XSSFSheet.setColumnHidden to handle columns included in a column span</action>
            <action dev="POI-DEVELOPERS" type="fix">47889 - fixed XSSFCell.getStringCellValue() to properly handle cached formula results</action>
         </release>
         <release version="3.5-FINAL" date="2009-09-28">

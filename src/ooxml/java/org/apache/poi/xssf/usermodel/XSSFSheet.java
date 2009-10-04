@@ -1086,7 +1086,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return hidden - <code>false</code> if the column is visible
      */
     public boolean isColumnHidden(int columnIndex) {
-        return columnHelper.getColumn(columnIndex, false).getHidden();
+        CTCol col = columnHelper.getColumn(columnIndex, false);
+        return col != null && col.getHidden();
     }
 
     /**
