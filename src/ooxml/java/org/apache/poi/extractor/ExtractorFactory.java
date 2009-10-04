@@ -152,7 +152,7 @@ public class ExtractorFactory {
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException {
 		// Find all the embeded directories
-		ArrayList dirs = new ArrayList();
+		ArrayList<Entry> dirs = new ArrayList<Entry>();
 		POIFSFileSystem fs = ext.getFileSystem();
 		if(fs == null) {
 			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");

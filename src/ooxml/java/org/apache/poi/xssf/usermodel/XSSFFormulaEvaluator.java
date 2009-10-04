@@ -55,9 +55,10 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
 	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.
-	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(HSSFWorkbook, IStabilityClassifier, UDFFinder)}
+	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(XSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.hssf.record.formula.udf.UDFFinder)} 
 	 */
-	public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
+    @Deprecated
+    public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
 		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, null);
 	}
 	private XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {

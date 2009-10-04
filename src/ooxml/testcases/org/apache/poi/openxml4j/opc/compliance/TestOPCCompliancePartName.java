@@ -91,7 +91,7 @@ public final class TestOPCCompliancePartName extends TestCase {
 			try {
 				uri = new URI(s);
 			} catch (URISyntaxException e) {
-				assertTrue(s == "[Content_Types].xml");
+				assertTrue(s.equals("[Content_Types].xml"));
 				continue;
 			}
 			assertFalse("This part name SHOULD NOT be valid: " + s,

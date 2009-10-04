@@ -297,7 +297,7 @@ public class XSSFExportToXml implements Comparator<String>{
 		
 			case XSSFCell.CELL_TYPE_STRING: value = cell.getStringCellValue(); break;
 			case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
-			case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();
+			case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
 			case XSSFCell.CELL_TYPE_FORMULA: value = cell.getStringCellValue(); break;
 			case XSSFCell.CELL_TYPE_NUMERIC: value += cell.getRawValue(); break;
 			default: ;
