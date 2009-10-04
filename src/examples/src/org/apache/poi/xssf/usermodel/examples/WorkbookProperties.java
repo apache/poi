@@ -47,24 +47,15 @@ public class WorkbookProperties {
         ext.getUnderlyingProperties().setTemplate("XSSF");
 
         /**
-         * Custom properties enable users to define custom metadata properties
-         * through a set of well-defined data types. For example, a custom
-         * OLE Editor property of type string can be defined as follows:
-         *
-         *  <property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="2" name="Editor">
-         *    <vt:lpwstr>John Smith</vt:lpwstr>
-         *  </property>
+         * Custom properties enable users to define custom metadata properties.
          */
         
         POIXMLProperties.CustomProperties cust =  props.getCustomProperties();
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
-                property = cust.getUnderlyingProperties().addNewProperty();
+        cust.addProperty("Author", "John Smith");
+        cust.addProperty("Year", 2009);
+        cust.addProperty("Price", 45.50);
+        cust.addProperty("Available", true);
 
-        property.setFmtid("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}");
-        property.setPid(2);
-        property.setName("Editor");
-        property.setLpwstr("John Smith");
-        
         FileOutputStream out = new FileOutputStream("workbook.xlsx");
         workbook.write(out);
         out.close();

@@ -27,6 +27,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -85,69 +86,57 @@ public final class TestPOIXMLProperties extends TestCase {
 	}
 
 
-	public void testWorkbookCustomProperties() {
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		POIXMLProperties props = workbook.getProperties();
-		assertNotNull(props);
+    /**
+     * Test usermodel API for setting custom properties
+     */
+    public void testCustomProperties() {
+        POIXMLDocument wb = new XSSFWorkbook();
 
-		org.apache.poi.POIXMLProperties.CustomProperties properties =
-				props.getCustomProperties();
+        POIXMLProperties.CustomProperties customProps = wb.getProperties().getCustomProperties();
+        customProps.addProperty("test-1", "string val");
+        customProps.addProperty("test-2", 1974);
+        customProps.addProperty("test-3", 36.6);
+        //adding a duplicate
+        try {
+            customProps.addProperty("test-3", 36.6);
+            fail("expected exception");
+        } catch(IllegalArgumentException e){
+            assertEquals("A property with this name already exists in the custom properties", e.getMessage());
+        }
+        customProps.addProperty("test-4", true);
 
-		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-				ctProps = properties.getUnderlyingProperties();
+        wb = XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)wb);
+        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties ctProps =
+                wb.getProperties().getCustomProperties().getUnderlyingProperties();
+        assertEquals(4, ctProps.sizeOfPropertyArray());
+        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty p;
 
+        p = ctProps.getPropertyArray(0);
+        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+        assertEquals("test-1", p.getName());
+        assertEquals("string val", p.getLpwstr());
+        assertEquals(2, p.getPid());
 
-		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
-				property = ctProps.addNewProperty();
+        p = ctProps.getPropertyArray(1);
+        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+        assertEquals("test-2", p.getName());
+        assertEquals(1974, p.getI4());
+        assertEquals(3, p.getPid());
 
+        p = ctProps.getPropertyArray(2);
+        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+        assertEquals("test-3", p.getName());
+        assertEquals(36.6, p.getR8());
+        assertEquals(4, p.getPid());
 
-		String fmtid =
-				"{A1A1A1A1A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1-A1A1A1A1A1A1A1A1}";
-		int pId = 1;
-		String name = "testProperty";
-		String stringValue = "testValue";
+        p = ctProps.getPropertyArray(3);
+        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+        assertEquals("test-4", p.getName());
+        assertEquals(true, p.getBool());
+        assertEquals(5, p.getPid());
+    }
 
-
-		property.setFmtid(fmtid);
-		property.setPid(pId);
-		property.setName(name);
-		property.setBstr(stringValue);
-
-
-		property = null;
-		ctProps = null;
-		properties = null;
-		props = null;
-
-		XSSFWorkbook newWorkbook =
-				XSSFTestDataSamples.writeOutAndReadBack(workbook);
-
-		assertTrue(workbook != newWorkbook);
-
-
-		POIXMLProperties newProps = newWorkbook.getProperties();
-		assertNotNull(newProps);
-		org.apache.poi.POIXMLProperties.CustomProperties newProperties =
-				newProps.getCustomProperties();
-
-		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-				newCtProps = newProperties.getUnderlyingProperties();
-
-		assertEquals(1, newCtProps.getPropertyArray().length);
-
-
-		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
-				newpProperty = newCtProps.getPropertyArray()[0];
-
-		assertEquals(fmtid, newpProperty.getFmtid());
-		assertEquals(pId, newpProperty.getPid());
-		assertEquals(name, newpProperty.getName());
-		assertEquals(stringValue, newpProperty.getBstr());
-
-
-	}
-
-	public void testDocumentProperties() {
+    public void testDocumentProperties() {
 		String category = _coreProperties.getCategory();
 		assertEquals("test", category);
 		String contentStatus = "Draft";
