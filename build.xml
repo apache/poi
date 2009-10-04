@@ -27,6 +27,7 @@ under the License.
     Modified by:
 
         Rainer Klute        klute@rainer-klute.de
+        Bruno Girin         brunogirin@gmail.com
 
     This build was tested with ant 1.6.2 although it will probably work with
     other versions.  The following jar files should be available on the 
@@ -109,6 +110,10 @@ under the License.
   <!-- Examples: -->
   <property name="examples.src" location="src/examples/src"/>
   <property name="examples.output.dir" location="build/examples-classes"/>
+
+  <!-- Scratchpad Examples: -->
+  <property name="scratchpad.examples.src" location="src/scratchpad/examples/src"/>
+  <property name="scratchpad.examples.output.dir" location="build/scratchpad-examples-classes"/>
 
   <!-- OOXML support: -->
   <property name="ooxml.src" location="src/ooxml/java"/>
@@ -273,6 +278,7 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
         <mkdir dir="${examples.output.dir}"/>
+        <mkdir dir="${scratchpad.examples.output.dir}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
         <mkdir dir="${contrib.output.test.dir}"/>
@@ -423,8 +429,8 @@ under the License.
 	</target>
 
   <target name="compile" depends="init, compile-main, 
-    compile-scratchpad, compile-contrib, compile-examples"
-    description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
+    compile-scratchpad, compile-contrib, compile-examples, compile-scratchpad-examples"
+    description="Compiles the POI main classes, scratchpad, contrib, examples, and scratchpad examples"/>
 
   <target name="compile-main">
     <copy todir="${main.output.dir}">
@@ -499,6 +505,19 @@ under the License.
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
       failonerror="true" destdir="${examples.output.dir}" debug="on" fork="yes"
       srcdir="${examples.src}">
+      <classpath>
+        <path refid="examples.classpath"/>
+        <path refid="ooxml.classpath"/>
+        <pathelement path="${ooxml.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-scratchpad-examples" depends="init,compile-ooxml">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${scratchpad.examples.output.dir}" debug="on" fork="yes"
+      srcdir="${scratchpad.examples.src}">
       <classpath>
         <path refid="examples.classpath"/>
         <path refid="ooxml.classpath"/>
