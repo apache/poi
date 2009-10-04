@@ -717,4 +717,130 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(33.0, col.getWidth(), 0.0);
         assertTrue(col.getCustomWidth());
     }
+
+    /**
+     * Setting width of a column included in a column span
+     */
+    public void test47862() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47862.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+        //<cols>
+        //  <col min="1" max="5" width="15.77734375" customWidth="1"/>
+        //</cols>
+
+        //a span of columns [1,5]
+        assertEquals(1, cols.sizeOfColArray());
+        CTCol col = cols.getColArray(0);
+        assertEquals(1, col.getMin());
+        assertEquals(5, col.getMax());
+        double swidth = 15.77734375; //width of columns in the span
+        assertEquals(swidth, col.getWidth());
+
+        for (int i = 0; i < 5; i++) {
+            assertEquals((int)(swidth*256), sheet.getColumnWidth(i));
+        }
+
+        int[] cw = new int[]{10, 15, 20, 25, 30};
+        for (int i = 0; i < 5; i++) {
+            sheet.setColumnWidth(i, cw[i]*256);
+        }
+
+        //the check below failed prior to fix of Bug #47862
+        ColumnHelper.sortColumns(cols);
+        //<cols>
+        //  <col min="1" max="1" customWidth="true" width="10.0" />
+        //  <col min="2" max="2" customWidth="true" width="15.0" />
+        //  <col min="3" max="3" customWidth="true" width="20.0" />
+        //  <col min="4" max="4" customWidth="true" width="25.0" />
+        //  <col min="5" max="5" customWidth="true" width="30.0" />
+        //</cols>
+
+        //now the span is splitted into 5 individual columns
+        assertEquals(5, cols.sizeOfColArray());
+        for (int i = 0; i < 5; i++) {
+            assertEquals(cw[i]*256, sheet.getColumnWidth(i));
+            assertEquals((double)cw[i], cols.getColArray(i).getWidth());
+        }
+
+        //serialize and check again 
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        cols = sheet.getCTWorksheet().getColsArray(0);
+        assertEquals(5, cols.sizeOfColArray());
+        for (int i = 0; i < 5; i++) {
+            assertEquals(cw[i]*256, sheet.getColumnWidth(i));
+            assertEquals((double)cw[i], cols.getColArray(i).getWidth());
+        }
+    }
+
+    /**
+     * Hiding a column included in a column span
+     */
+    public void test47804() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47804.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+        assertEquals(2, cols.sizeOfColArray());
+        CTCol col;
+        //<cols>
+        //  <col min="2" max="4" width="12" customWidth="1"/>
+        //  <col min="7" max="7" width="10.85546875" customWidth="1"/>
+        //</cols>
+
+        //a span of columns [2,4]
+        col = cols.getColArray(0);
+        assertEquals(2, col.getMin());
+        assertEquals(4, col.getMax());
+        //individual column
+        col = cols.getColArray(1);
+        assertEquals(7, col.getMin());
+        assertEquals(7, col.getMax());
+
+        sheet.setColumnHidden(2, true); // Column C
+        sheet.setColumnHidden(6, true); // Column G
+
+        assertTrue(sheet.isColumnHidden(2));
+        assertTrue(sheet.isColumnHidden(6));
+
+        //other columns but C and G are not hidden
+        assertFalse(sheet.isColumnHidden(1));
+        assertFalse(sheet.isColumnHidden(3));
+        assertFalse(sheet.isColumnHidden(4));
+        assertFalse(sheet.isColumnHidden(5));
+
+        //the check below failed prior to fix of Bug #47804
+        ColumnHelper.sortColumns(cols);
+        //the span is now splitted into three parts
+        //<cols>
+        //  <col min="2" max="2" customWidth="true" width="12.0" />
+        //  <col min="3" max="3" customWidth="true" width="12.0" hidden="true"/>
+        //  <col min="4" max="4" customWidth="true" width="12.0"/>
+        //  <col min="7" max="7" customWidth="true" width="10.85546875" hidden="true"/>
+        //</cols>
+
+        assertEquals(4, cols.sizeOfColArray());
+        col = cols.getColArray(0);
+        assertEquals(2, col.getMin());
+        assertEquals(2, col.getMax());
+        col = cols.getColArray(1);
+        assertEquals(3, col.getMin());
+        assertEquals(3, col.getMax());
+        col = cols.getColArray(2);
+        assertEquals(4, col.getMin());
+        assertEquals(4, col.getMax());
+        col = cols.getColArray(3);
+        assertEquals(7, col.getMin());
+        assertEquals(7, col.getMax());
+
+        //serialize and check again
+        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        assertTrue(sheet.isColumnHidden(2));
+        assertTrue(sheet.isColumnHidden(6));
+        assertFalse(sheet.isColumnHidden(1));
+        assertFalse(sheet.isColumnHidden(3));
+        assertFalse(sheet.isColumnHidden(4));
+        assertFalse(sheet.isColumnHidden(5));
+    }
 }
