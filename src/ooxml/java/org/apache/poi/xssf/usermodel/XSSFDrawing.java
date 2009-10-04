@@ -97,7 +97,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
                 xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
         */
         if(isNew) xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
         xmlOptions.setSaveSuggestedPrefixes(map);

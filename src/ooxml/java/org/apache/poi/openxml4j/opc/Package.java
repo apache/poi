@@ -37,6 +37,7 @@ import org.apache.poi.util.POILogger;
  * @author Julien Chable, CDubet
  * 
  */
+@Deprecated
 public abstract class Package extends OPCPackage {
 
 	/**
@@ -48,7 +49,8 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage} 
 	 */
-	protected Package(PackageAccess access) {
+    @Deprecated
+    protected Package(PackageAccess access) {
 		super(access);
 	}
 
@@ -56,6 +58,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#open(String)} 
 	 */
+    @Deprecated
 	public static Package open(String path) throws InvalidFormatException {
 		return open(path, defaultPackageAccess);
 	}
@@ -63,6 +66,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#open(String,PackageAccess)} 
 	 */
+    @Deprecated
 	public static Package open(String path, PackageAccess access)
 			throws InvalidFormatException {
 		if (path == null || "".equals(path.trim())
@@ -80,6 +84,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#open(InputStream)} 
 	 */
+    @Deprecated
 	public static Package open(InputStream in) throws InvalidFormatException,
 			IOException {
 		Package pack = new ZipPackage(in, PackageAccess.READ);
@@ -92,6 +97,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#openOrCreate(java.io.File)}  
 	 */
+    @Deprecated
 	public static Package openOrCreate(File file) throws InvalidFormatException {
 		Package retPackage = null;
 		if (file.exists()) {
@@ -105,6 +111,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#create(String)} 
 	 */
+    @Deprecated
 	public static Package create(String path) {
 		return create(new File(path));
 	}
@@ -112,6 +119,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#create(File)} 
 	 */
+    @Deprecated
 	public static Package create(File file) {
 		if (file == null || (file.exists() && file.isDirectory()))
 			throw new IllegalArgumentException("file");
@@ -133,6 +141,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * @deprecated use {@link OPCPackage#create(OutputStream)} 
 	 */
+    @Deprecated
 	public static Package create(OutputStream output) {
 		Package pkg = null;
 		pkg = new ZipPackage();

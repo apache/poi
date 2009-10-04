@@ -326,7 +326,7 @@ public class XWPFDocument extends POIXMLDocument {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDocument1.type.getName().getNamespaceURI(), "document"));
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
         map.put("urn:schemas-microsoft-com:office:office", "o");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
