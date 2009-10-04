@@ -34,6 +34,7 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
  * Wrapper around the two different kinds of OOXML properties 
@@ -150,8 +151,14 @@ public class POIXMLProperties {
             out.close();
         }
         if(custPart != null){
+            XmlOptions xmlOptions = new XmlOptions(POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
+            xmlOptions.setSaveSuggestedPrefixes(map);
+
             OutputStream out = custPart.getOutputStream();
-            cust.props.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            cust.props.save(out, xmlOptions);
             out.close();
         }
 	}
@@ -271,10 +278,16 @@ public class POIXMLProperties {
 	}
 	
 	/**
-	 * Custom document properties
+	 *  Custom document properties
 	 */
 	public class CustomProperties {
-		private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
+        /**
+         *  Each custom property element contains an fmtid attribute
+         *  with the same GUID value ({D5CDD505-2E9C-101B-9397-08002B2CF9AE}).
+         */
+        public static final String FORMAT_ID = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
+
+        private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
 		private CustomProperties(org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props) {
 			this.props = props;
 		}
@@ -282,5 +295,91 @@ public class POIXMLProperties {
 		public org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties getUnderlyingProperties() {
 			return props.getProperties();
 		}
-	}
+
+        /**
+         * Add a new property
+         *
+         * @param name the property name
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        private CTProperty add(String name) {
+            if(contains(name)) {
+                throw new IllegalArgumentException("A property with this name " +
+                        "already exists in the custom properties");
+            }
+
+            CTProperty p = props.getProperties().addNewProperty();
+            int pid = nextPid();
+            p.setPid(pid);
+            p.setFmtid(FORMAT_ID);
+            p.setName(name);
+            return p;
+        }
+
+        /**
+         * Add a new string property
+         *
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+         public void addProperty(String name, String value){
+            CTProperty p = add(name);
+            p.setLpwstr(value);
+        }
+
+        /**
+         * Add a new double property
+         *
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, double value){
+            CTProperty p = add(name);
+            p.setR8(value);
+        }
+
+        /**
+         * Add a new integer property
+         *
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, int value){
+            CTProperty p = add(name);
+            p.setI4(value);
+        }
+
+        /**
+         * Add a new boolean property
+         *
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, boolean value){
+            CTProperty p = add(name);
+            p.setBool(value);
+        }
+
+        /**
+         * Generate next id that uniquely relates a custom property
+         *
+         * @return next property id starting with 2
+         */
+        protected int nextPid(){
+            int propid = 1;
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getPid() > propid) propid = p.getPid();
+            }
+            return propid + 1;
+        }
+
+        /**
+         * Check if a property with this name already exists in the collection of custom properties
+         *
+         * @param name the name to check
+         * @return whether a property with the given name exists in the custom properties
+         */
+        public boolean contains(String name){
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getName().equals(name)) return true;
+            }
+            return false;
+        }
+    }
 }
