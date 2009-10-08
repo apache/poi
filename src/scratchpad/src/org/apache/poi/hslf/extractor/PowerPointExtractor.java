@@ -237,7 +237,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				if (notes == null) {
 					continue;
 				}
-				Integer id = new Integer(notes._getSheetNumber());
+				Integer id = Integer.valueOf(notes._getSheetNumber());
 				if (seenNotes.contains(id)) {
 					continue;
 				}

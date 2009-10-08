@@ -107,7 +107,7 @@ public class TestWrite extends TestCase
     /**
      * <p>Writes an empty property set to a POIFS and reads it back
      * in.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      */
     public void testNoFormatID() throws IOException
@@ -150,7 +150,7 @@ public class TestWrite extends TestCase
     /**
      * <p>Writes an empty property set to a POIFS and reads it back
      * in.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
@@ -190,7 +190,7 @@ public class TestWrite extends TestCase
     /**
      * <p>Writes a simple property set with a SummaryInformation section to a
      * POIFS and reads it back in.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
@@ -199,30 +199,30 @@ public class TestWrite extends TestCase
         throws IOException, UnsupportedVariantTypeException
     {
         final String AUTHOR = "Rainer Klute";
-        final String TITLE = "Test Document"; 
+        final String TITLE = "Test Document";
         final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
         final OutputStream out = new FileOutputStream(filename);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-    
+
         final MutablePropertySet ps = new MutablePropertySet();
         final MutableSection si = new MutableSection();
         si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
         ps.getSections().set(0, si);
-    
+
         final MutableProperty p = new MutableProperty();
         p.setID(PropertyIDMap.PID_AUTHOR);
         p.setType(Variant.VT_LPWSTR);
         p.setValue(AUTHOR);
         si.setProperty(p);
         si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
-    
+
         poiFs.createDocument(ps.toInputStream(),
                              SummaryInformation.DEFAULT_STREAM_NAME);
         poiFs.writeFilesystem(out);
         out.close();
-    
+
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
@@ -240,7 +240,7 @@ public class TestWrite extends TestCase
                         fail(org.apache.poi.hpsf.Util.toString(ex));
                     }
                 }
-    
+
             },
             SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
@@ -259,7 +259,7 @@ public class TestWrite extends TestCase
     /**
      * <p>Writes a simple property set with two sections to a POIFS and reads it
      * back in.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception WritingNotSupportedException if HPSF does not yet support
      * a variant type to be written
@@ -365,7 +365,7 @@ public class TestWrite extends TestCase
     {
         Throwable t = null;
         final int codepage = CODEPAGE_DEFAULT;
-        if (!hasProperDefaultCharset())            
+        if (!hasProperDefaultCharset())
         {
             System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
                 " This testcase is skipped.");
@@ -375,8 +375,8 @@ public class TestWrite extends TestCase
         try
         {
             check(Variant.VT_EMPTY, null, codepage);
-            check(Variant.VT_BOOL, new Boolean(true), codepage);
-            check(Variant.VT_BOOL, new Boolean(false), codepage);
+            check(Variant.VT_BOOL, Boolean.TRUE, codepage);
+            check(Variant.VT_BOOL, Boolean.FALSE, codepage);
             check(Variant.VT_CF, new byte[]{0}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2}, codepage);
@@ -385,11 +385,11 @@ public class TestWrite extends TestCase
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, codepage);
-            check(Variant.VT_I4, new Integer(27), codepage);
-            check(Variant.VT_I8, new Long(28), codepage);
+            check(Variant.VT_I4, Integer.valueOf(27), codepage);
+            check(Variant.VT_I8, Long.valueOf(28), codepage);
             check(Variant.VT_R8, new Double(29.0), codepage);
-            check(Variant.VT_I4, new Integer(-27), codepage);
-            check(Variant.VT_I8, new Long(-28), codepage);
+            check(Variant.VT_I4, Integer.valueOf(-27), codepage);
+            check(Variant.VT_I8, Long.valueOf(-28), codepage);
             check(Variant.VT_R8, new Double(-29.0), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
             check(Variant.VT_I4, new Integer(Integer.MAX_VALUE), codepage);
@@ -460,7 +460,7 @@ public class TestWrite extends TestCase
         for (int i = 0; i < validCodepages.length; i++)
         {
             final int cp = validCodepages[i];
-            if (cp == -1 && !hasProperDefaultCharset())            
+            if (cp == -1 && !hasProperDefaultCharset())
             {
                 System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
                      " This testcase is skipped for the default codepage.");
@@ -590,10 +590,10 @@ public class TestWrite extends TestCase
      * @param codepage The codepage to use for writing and reading.
      * @throws UnsupportedVariantTypeException if the variant is not supported.
      * @throws IOException if an I/O exception occurs.
-     * @throws ReadingNotSupportedException 
-     * @throws UnsupportedEncodingException 
+     * @throws ReadingNotSupportedException
+     * @throws UnsupportedEncodingException
      */
-    private void check(final long variantType, final Object value, 
+    private void check(final long variantType, final Object value,
                        final int codepage)
         throws UnsupportedVariantTypeException, IOException,
                ReadingNotSupportedException, UnsupportedEncodingException
@@ -651,17 +651,17 @@ public class TestWrite extends TestCase
      * <p>This test method does a write and read back test with all POI
      * filesystems in the "data" directory by performing the following
      * actions for each file:</p>
-     * 
+     *
      * <ul>
-     * 
+     *
      * <li><p>Read its property set streams.</p></li>
-     * 
+     *
      * <li><p>Create a new POI filesystem containing the origin file's
      * property set streams.</p></li>
-     * 
+     *
      * <li><p>Read the property set streams from the POI filesystem just
      * created.</p></li>
-     * 
+     *
      * <li><p>Compare each property set stream with the corresponding one from
      * the origin file and check whether they are equal.</p></li>
      *
@@ -731,7 +731,7 @@ public class TestWrite extends TestCase
                 final InputStream in2 = new ByteArrayInputStream(bytes2);
                 final PropertySet ps1 = PropertySetFactory.create(in1);
                 final PropertySet ps2 = PropertySetFactory.create(in2);
-            
+
                 /* Compare the property set stream with the corresponding one
                  * from the origin file and check whether they are equal. */
                 assertEquals("Equality for file " + f.getName(), ps1, ps2);
@@ -761,14 +761,14 @@ public class TestWrite extends TestCase
             final MutablePropertySet ps1 = new MutablePropertySet();
             final MutableSection s = (MutableSection) ps1.getSections().get(0);
             final Map m = new HashMap(3, 1.0f);
-            m.put(new Long(1), "String 1");
-            m.put(new Long(2), "String 2");
-            m.put(new Long(3), "String 3");
+            m.put(Long.valueOf(1), "String 1");
+            m.put(Long.valueOf(2), "String 2");
+            m.put(Long.valueOf(3), "String 3");
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = Constants.CP_UNICODE;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                          new Integer(codepage));
+                          Integer.valueOf(codepage));
             poiFs.createDocument(ps1.toInputStream(), "Test");
             poiFs.writeFilesystem(out);
             out.close();
@@ -813,14 +813,14 @@ public class TestWrite extends TestCase
             final MutablePropertySet ps1 = new MutablePropertySet();
             final MutableSection s = (MutableSection) ps1.getSections().get(0);
             final Map m = new HashMap(3, 1.0f);
-            m.put(new Long(1), "String 1");
-            m.put(new Long(2), "String 2");
-            m.put(new Long(3), "String 3");
+            m.put(Long.valueOf(1), "String 1");
+            m.put(Long.valueOf(2), "String 2");
+            m.put(Long.valueOf(3), "String 3");
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = 12345;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                          new Integer(codepage));
+                          Integer.valueOf(codepage));
             poiFs.createDocument(ps1.toInputStream(), "Test");
             poiFs.writeFilesystem(out);
             out.close();

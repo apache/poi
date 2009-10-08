@@ -179,7 +179,7 @@ public abstract class Record
 			// Grab the right constructor
 			java.lang.reflect.Constructor con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
 			// Instantiate
-			toReturn = (Record)(con.newInstance(new Object[] { b, new Integer(start), new Integer(len) }));
+			toReturn = (Record)(con.newInstance(new Object[] { b, Integer.valueOf(start), Integer.valueOf(len) }));
 		} catch(InstantiationException ie) {
 			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {

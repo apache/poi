@@ -149,7 +149,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
-                new Long(timestart));
+                Long.valueOf(timestart));
         HSSFRow lastrow = null;
 
         // Add every cell to its row
@@ -180,12 +180,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             hrow.createCellFromRecord( cval );
             if (log.check( POILogger.DEBUG ))
                 log.log( DEBUG, "record took ",
-                    new Long( System.currentTimeMillis() - cellstart ) );
+                    Long.valueOf( System.currentTimeMillis() - cellstart ) );
 
         }
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "total sheet cell creation took ",
-                new Long(System.currentTimeMillis() - timestart));
+                Long.valueOf(System.currentTimeMillis() - timestart));
     }
 
     /**
@@ -231,7 +231,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         if (_rows.size() > 0) {
-            Integer key = new Integer(row.getRowNum());
+            Integer key = Integer.valueOf(row.getRowNum());
             HSSFRow removedRow = _rows.remove(key);
             if (removedRow != row) {
                 //should not happen if the input argument is valid
@@ -296,7 +296,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     private void addRow(HSSFRow row, boolean addLow)
     {
-        _rows.put(new Integer(row.getRowNum()), row);
+        _rows.put(Integer.valueOf(row.getRowNum()), row);
         if (addLow)
         {
             _sheet.addRow(row.getRowRecord());
@@ -319,7 +319,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return HSSFRow representing the row number or null if its not defined on the sheet
      */
     public HSSFRow getRow(int rowIndex) {
-        return _rows.get(new Integer(rowIndex));
+        return _rows.get(Integer.valueOf(rowIndex));
     }
 
     /**

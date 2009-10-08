@@ -67,9 +67,9 @@ import java.util.Map;
  * <p/>
  *
  * @author Yegor Kozlov
- *  
- * Modified 6/17/09 by Stanislav Shor - positive formats don't need starting '(' 
- *  
+ *
+ * Modified 6/17/09 by Stanislav Shor - positive formats don't need starting '('
+ *
  */
 public final class BuiltinFormats {
 	/**
@@ -142,7 +142,7 @@ public final class BuiltinFormats {
 	public static Map<Integer, String> getBuiltinFormats() {
 		Map<Integer, String> result = new LinkedHashMap<Integer, String>();
 		for (int i=0; i<_formats.length; i++) {
-			result.put(new Integer(i), _formats[i]);
+			result.put(Integer.valueOf(i), _formats[i]);
 		}
 		return result;
 	}

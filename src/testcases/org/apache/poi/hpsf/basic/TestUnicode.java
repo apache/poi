@@ -53,7 +53,7 @@ public class TestUnicode extends TestCase {
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
-     * 
+     *
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs
      */
@@ -68,7 +68,7 @@ public class TestUnicode extends TestCase {
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property set: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if an HPSF exception occurs
      */
@@ -82,9 +82,9 @@ public class TestUnicode extends TestCase {
         Assert.assertEquals(ps.getSectionCount(), 2);
         Section s = (Section) ps.getSections().get(1);
         Assert.assertEquals(s.getProperty(1),
-                            new Integer(Constants.CP_UTF16));
+                            Integer.valueOf(Constants.CP_UTF16));
         Assert.assertEquals(s.getProperty(2),
-                            new Integer(-96070278));
+                            Integer.valueOf(-96070278));
         Assert.assertEquals(s.getProperty(3),
                             "MCon_Info zu Office bei Schreiner");
         Assert.assertEquals(s.getProperty(4),

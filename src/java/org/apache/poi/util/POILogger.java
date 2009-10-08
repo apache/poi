@@ -601,7 +601,7 @@ public abstract class POILogger {
 
             for (int j = 0; j < array.length; j++)
             {
-                results.add(new Byte(array[ j ]));
+                results.add(Byte.valueOf(array[ j ]));
             }
         }
         if (object instanceof char [])
@@ -619,7 +619,7 @@ public abstract class POILogger {
 
             for (int j = 0; j < array.length; j++)
             {
-                results.add(new Short(array[ j ]));
+                results.add(Short.valueOf(array[ j ]));
             }
         }
         else if (object instanceof int [])
@@ -628,7 +628,7 @@ public abstract class POILogger {
 
             for (int j = 0; j < array.length; j++)
             {
-                results.add(new Integer(array[ j ]));
+                results.add(Integer.valueOf(array[ j ]));
             }
         }
         else if (object instanceof long [])
@@ -637,7 +637,7 @@ public abstract class POILogger {
 
             for (int j = 0; j < array.length; j++)
             {
-                results.add(new Long(array[ j ]));
+                results.add(Long.valueOf(array[ j ]));
             }
         }
         else if (object instanceof float [])

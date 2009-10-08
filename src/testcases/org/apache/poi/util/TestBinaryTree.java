@@ -120,7 +120,7 @@ public final class TestBinaryTree extends TestCase {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
             assertTrue(m.containsKey(nodes[ k ].getKey()));
         }
-        assertTrue(!m.containsKey(new Integer(-1)));
+        assertTrue(!m.containsKey(Integer.valueOf(-1)));
         try
         {
             m.containsKey("foo");
@@ -179,7 +179,7 @@ public final class TestBinaryTree extends TestCase {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
             assertSame(m.get(nodes[ k ].getKey()), nodes[ k ]);
         }
-        assertNull(m.get(new Integer(-1)));
+        assertNull(m.get(Integer.valueOf(-1)));
         try
         {
             m.get("foo");
@@ -270,7 +270,7 @@ public final class TestBinaryTree extends TestCase {
         catch (ClassCastException ignored)
         {
         }
-        assertNull(m.remove(new Integer(-1)));
+        assertNull(m.remove(Integer.valueOf(-1)));
         try
         {
             m.remove("foo");
@@ -450,7 +450,7 @@ public final class TestBinaryTree extends TestCase {
         Collection c1 = new LinkedList();
         Collection c2 = new LinkedList();
 
-        c2.add(new Integer(-99));
+        c2.add(Integer.valueOf(-99));
         for (int k = 0; k < nodes.length; k++)
         {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
@@ -461,7 +461,7 @@ public final class TestBinaryTree extends TestCase {
         assertTrue(!m.keySet().containsAll(c2));
         m  = new BinaryTree();
         c1 = new LinkedList();
-        c1.add(new Integer(-55));
+        c1.add(Integer.valueOf(-55));
         try
         {
             m.keySet().addAll(c1);
@@ -869,7 +869,7 @@ public final class TestBinaryTree extends TestCase {
         }
 
         // reject incompatible values
-        m2.put("2", new Integer(2));
+        m2.put("2", Integer.valueOf(2));
         try
         {
             m = new BinaryTree(m2);
@@ -881,7 +881,7 @@ public final class TestBinaryTree extends TestCase {
 
         // reject incompatible keys
         m2.remove("2");
-        m2.put(new Integer(2), "bad key");
+        m2.put(Integer.valueOf(2), "bad key");
         try
         {
             m = new BinaryTree(m2);
@@ -973,7 +973,7 @@ public final class TestBinaryTree extends TestCase {
         catch (ClassCastException ignored)
         {
         }
-        assertNull(m.remove(new Integer(-1)));
+        assertNull(m.remove(Integer.valueOf(-1)));
         try
         {
             m.removeValue("foo");
@@ -1135,7 +1135,7 @@ public final class TestBinaryTree extends TestCase {
         Collection c1 = new LinkedList();
         Collection c2 = new LinkedList();
 
-        c2.add(new Integer(-99));
+        c2.add(Integer.valueOf(-99));
         for (int k = 0; k < nodes.length; k++)
         {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
@@ -1146,7 +1146,7 @@ public final class TestBinaryTree extends TestCase {
         assertTrue(!m.keySetByValue().containsAll(c2));
         m  = new BinaryTree();
         c1 = new LinkedList();
-        c1.add(new Integer(-55));
+        c1.add(Integer.valueOf(-55));
         try
         {
             m.keySetByValue().addAll(c1);
@@ -1390,7 +1390,7 @@ public final class TestBinaryTree extends TestCase {
         }
         for (int k = 0; k < m.size(); k++)
         {
-            assertTrue(s.contains(new Integer(k)));
+            assertTrue(s.contains(Integer.valueOf(k)));
         }
         int count = 0;
 
@@ -1616,7 +1616,7 @@ public final class TestBinaryTree extends TestCase {
         }
         for (int k = 0; k < m.size(); k++)
         {
-            assertTrue(s.contains(new Integer(k)));
+            assertTrue(s.contains(Integer.valueOf(k)));
         }
         int count = 0;
 

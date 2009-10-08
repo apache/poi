@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -27,18 +26,15 @@ import java.util.*;
  * @author Jason Height (jheight at apache dot org)
  */
 
-public class BitFieldFactory
-{
+public class BitFieldFactory {
     private static Map instances = new HashMap();
-    
-    public static BitField getInstance(final int mask) {
-      BitField f = (BitField)instances.get(new Integer(mask));
+
+    public static BitField getInstance(int mask) {
+      BitField f = (BitField)instances.get(Integer.valueOf(mask));
       if (f == null) {
         f = new BitField(mask);
-        instances.put(new Integer(mask), f);        
+        instances.put(Integer.valueOf(mask), f);
       }
       return f;
     }
-
-}   // end public class BitFieldFactory
-
+}

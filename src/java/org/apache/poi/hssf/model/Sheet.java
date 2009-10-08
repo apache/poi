@@ -1031,7 +1031,7 @@ public final class Sheet implements Model {
     public void setColumnWidth(int column, int width) {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
 
-        setColumn(column, null, new Integer(width), null, null, null);
+        setColumn(column, null, Integer.valueOf(width), null, null, null);
     }
 
     /**
@@ -1059,7 +1059,7 @@ public final class Sheet implements Model {
         setColumn( column, null, null, null, Boolean.valueOf(hidden), null);
     }
     public void setDefaultColumnStyle(int column, int styleIndex) {
-        setColumn(column, new Short((short)styleIndex), null, null, null, null);
+        setColumn(column, Short.valueOf((short)styleIndex), null, null, null, null);
     }
 
     private void setColumn(int column, Short xfStyle, Integer width, Integer level, Boolean hidden, Boolean collapsed) {

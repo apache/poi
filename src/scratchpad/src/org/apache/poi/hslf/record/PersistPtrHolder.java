@@ -98,10 +98,10 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		System.arraycopy(_ptrData,0,newPtrData,0,_ptrData.length);
 
 		// Add to the slide location lookup hash
-		_slideLocations.put(new Integer(slideID), new Integer(posOnDisk));
+		_slideLocations.put(Integer.valueOf(slideID), Integer.valueOf(posOnDisk));
 		// Add to the ptrData offset lookup hash
-		_slideOffsetDataLocation.put(new Integer(slideID),
-				new Integer(_ptrData.length + 4));
+		_slideOffsetDataLocation.put(Integer.valueOf(slideID),
+				Integer.valueOf(_ptrData.length + 4));
 
 		// Build the info block
 		// First 20 bits = offset number = slide ID
@@ -163,8 +163,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 			for(int i=0; i<offset_count; i++) {
 				int sheet_no = offset_no + i;
 				long sheet_offset = LittleEndian.getUInt(_ptrData,pos);
-				_slideLocations.put(new Integer(sheet_no), new Integer((int)sheet_offset));
-				_slideOffsetDataLocation.put(new Integer(sheet_no), new Integer(pos));
+				_slideLocations.put(Integer.valueOf(sheet_no), Integer.valueOf((int)sheet_offset));
+				_slideOffsetDataLocation.put(Integer.valueOf(sheet_no), Integer.valueOf(pos));
 
 				// Wind on by 4 bytes per sheet found
 				pos += 4;
@@ -188,7 +188,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		// Find where they used to live, and where they now live
 		// Then, update the right bit of _ptrData with their new location
 		for(int i=0; i<slideIDs.length; i++) {
-			Integer id = new Integer(slideIDs[i]);
+			Integer id = Integer.valueOf(slideIDs[i]);
 			Integer oldPos = (Integer)_slideLocations.get(id);
 			Integer newPos = (Integer)oldToNewReferencesLookup.get(oldPos);
 

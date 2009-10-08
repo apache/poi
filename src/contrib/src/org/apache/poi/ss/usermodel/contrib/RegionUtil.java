@@ -48,7 +48,7 @@ public final class RegionUtil {
 		public CellPropertySetter(Workbook workbook, String propertyName, int value) {
 			_workbook = workbook;
 			_propertyName = propertyName;
-			_propertyValue = new Short((short) value);
+			_propertyValue = Short.valueOf((short) value);
 		}
 
 

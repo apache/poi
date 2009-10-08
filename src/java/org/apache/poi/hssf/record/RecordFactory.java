@@ -227,7 +227,7 @@ public final class RecordFactory {
 	 * <code>null</code> if the specified record is not interpreted by POI.
 	 */
 	public static Class<? extends Record> getRecordClass(int sid) {
-		I_RecordCreator rc = _recordCreatorsById.get(new Integer(sid));
+		I_RecordCreator rc = _recordCreatorsById.get(Integer.valueOf(sid));
 		if (rc == null) {
 			return null;
 		}
@@ -254,7 +254,7 @@ public final class RecordFactory {
 	}
 
 	public static Record createSingleRecord(RecordInputStream in) {
-		I_RecordCreator constructor = _recordCreatorsById.get(new Integer(in.getSid()));
+		I_RecordCreator constructor = _recordCreatorsById.get(Integer.valueOf(in.getSid()));
 
 		if (constructor == null) {
 			return new UnknownRecord(in);
@@ -346,7 +346,7 @@ public final class RecordFactory {
 				throw new RecordFormatException(
 					"Unable to determine record types");
 			}
-			Integer key = new Integer(sid);
+			Integer key = Integer.valueOf(sid);
 			if (result.containsKey(key)) {
 				Class<?> prevClass = result.get(key).getRecordClass();
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
@@ -354,7 +354,7 @@ public final class RecordFactory {
 			}
 			result.put(key, new ReflectionRecordCreator(constructor));
 		}
-//		result.put(new Integer(0x0406), result.get(new Integer(0x06)));
+//		result.put(Integer.valueOf(0x0406), result.get(Integer.valueOf(0x06)));
 		return result;
 	}
 

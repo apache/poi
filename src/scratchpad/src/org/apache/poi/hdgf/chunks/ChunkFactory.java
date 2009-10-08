@@ -98,7 +98,7 @@ public final class ChunkFactory {
 				defsL.toArray(new CommandDefinition[defsL.size()]);
 
 			// Add to the hashtable
-			chunkCommandDefinitions.put(new Integer(chunkType), defs);
+			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
 		}
 		inp.close();
 		cpd.close();
@@ -171,7 +171,7 @@ public final class ChunkFactory {
 
 		// Feed in the stuff from  chunks_parse_cmds.tbl
 		CommandDefinition[] defs = (CommandDefinition[])
-			chunkCommandDefinitions.get(new Integer(header.getType()));
+			chunkCommandDefinitions.get(Integer.valueOf(header.getType()));
 		if(defs == null) defs = new CommandDefinition[0];
 		chunk.commandDefinitions = defs;
 

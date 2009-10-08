@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -33,7 +32,7 @@ class LocalTestNode
 
     LocalTestNode(final int key)
     {
-        _key   = new Integer(key);
+        _key   = Integer.valueOf(key);
         _value = String.valueOf(key);
     }
 
@@ -118,7 +117,6 @@ class LocalTestNode
     /**
      * @return hash code
      */
-
     public int hashCode()
     {
         return getKey().hashCode() ^ getValue().hashCode();

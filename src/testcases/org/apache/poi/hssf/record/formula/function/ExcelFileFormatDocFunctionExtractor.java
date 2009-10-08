@@ -56,7 +56,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * the file 'functionMetadata.txt'.   There are more than 300 built-in functions in Excel and the
  * intention of this class is to make it easier to maintain the metadata, by extracting it from
  * a reliable source.
- * 
+ *
  * @author Josh Micich
  */
 public final class ExcelFileFormatDocFunctionExtractor {
@@ -65,10 +65,10 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 	/**
 	 * For simplicity, the output file is strictly simple ASCII.
-	 * This method detects any unexpected characters. 
+	 * This method detects any unexpected characters.
 	 */
 	/* package */ static boolean isSimpleAscii(char c) {
-		
+
 		if (c>=0x21 && c<=0x7E) {
 			// everything from '!' to '~' (includes letters, digits, punctuation
 			return true;
@@ -83,8 +83,8 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		}
 		return false;
 	}
-	
-	
+
+
 	private static final class FunctionData {
 		// special characters from the ooo document
 		private static final int CHAR_ELLIPSIS_8230 = 8230;
@@ -148,7 +148,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			return b ? "x" : "";
 		}
 	}
-	
+
 	private static final class FunctionDataCollector {
 
 		private final Map _allFunctionsByIndex;
@@ -156,7 +156,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		private final Set _groupFunctionIndexes;
 		private final Set _groupFunctionNames;
 		private final PrintStream _ps;
-		
+
 		public FunctionDataCollector(PrintStream ps) {
 			_ps = ps;
 			_allFunctionsByIndex = new HashMap();
@@ -168,19 +168,19 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		public void addFuntion(int funcIx, boolean hasFootnote, String funcName, int minParams, int maxParams,
 				String returnClass, String paramClasses, String volatileFlagStr) {
 			boolean isVolatile = volatileFlagStr.length() > 0;
-			
-			Integer funcIxKey = new Integer(funcIx);
+
+			Integer funcIxKey = Integer.valueOf(funcIx);
 			if(!_groupFunctionIndexes.add(funcIxKey)) {
 				throw new RuntimeException("Duplicate function index (" + funcIx + ")");
 			}
 			if(!_groupFunctionNames.add(funcName)) {
 				throw new RuntimeException("Duplicate function name '" + funcName + "'");
 			}
-			
+
 			checkRedefinedFunction(hasFootnote, funcName, funcIxKey);
-			FunctionData fd = new FunctionData(funcIx, hasFootnote, funcName, 
+			FunctionData fd = new FunctionData(funcIx, hasFootnote, funcName,
 					minParams, maxParams, returnClass, paramClasses, isVolatile);
-			
+
 			_allFunctionsByIndex.put(funcIxKey, fd);
 			_allFunctionsByName.put(funcName, fd);
 		}
@@ -195,7 +195,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			fdPrev = (FunctionData) _allFunctionsByIndex.get(funcIxKey);
 			if(fdPrev != null) {
 				if(!fdPrev.hasFootnote() || !hasNote) {
-					throw new RuntimeException("changing function [" 
+					throw new RuntimeException("changing function ["
 							+ funcIxKey + "] definition without foot-note");
 				}
 				_allFunctionsByName.remove(fdPrev.getName());
@@ -204,10 +204,10 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			fdPrev = (FunctionData) _allFunctionsByName.get(funcName);
 			if(fdPrev != null) {
 				if(!fdPrev.hasFootnote() || !hasNote) {
-					throw new RuntimeException("changing function '" 
+					throw new RuntimeException("changing function '"
 							+ funcName + "' definition without foot-note");
 				}
-				_allFunctionsByIndex.remove(new Integer(fdPrev.getIndex()));
+				_allFunctionsByIndex.remove(Integer.valueOf(fdPrev.getIndex()));
 			}
 		}
 
@@ -217,7 +217,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			_groupFunctionIndexes.clear();
 			_groupFunctionNames.clear();
 			Arrays.sort(keys);
-			
+
 			_ps.println("# " + headingText);
 			for (int i = 0; i < keys.length; i++) {
 				FunctionData fd = (FunctionData) _allFunctionsByIndex.get(keys[i]);
@@ -225,25 +225,25 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			}
 		}
 	}
-	
+
 	/**
-	 * To avoid drag-in - parse XML using only JDK. 
+	 * To avoid drag-in - parse XML using only JDK.
 	 */
 	private static class EFFDocHandler implements ContentHandler {
 		private static final String[] HEADING_PATH_NAMES = {
-			"office:document-content", "office:body", "office:text", "text:h",	
+			"office:document-content", "office:body", "office:text", "text:h",
 		};
 		private static final String[] TABLE_BASE_PATH_NAMES = {
-			"office:document-content", "office:body", "office:text", "table:table",	
+			"office:document-content", "office:body", "office:text", "table:table",
 		};
 		private static final String[] TABLE_ROW_RELPATH_NAMES = {
-			"table:table-row",	
+			"table:table-row",
 		};
 		private static final String[] TABLE_CELL_RELPATH_NAMES = {
-			"table:table-row", "table:table-cell", "text:p",	
+			"table:table-row", "table:table-cell", "text:p",
 		};
 		// after May 2008 there was one more style applied to the footnotes
-		private static final String[] NOTE_REF_RELPATH_NAMES_OLD = { 
+		private static final String[] NOTE_REF_RELPATH_NAMES_OLD = {
 			"table:table-row", "table:table-cell", "text:p", "text:span", "text:note-ref",
 		};
 		private static final String[] NOTE_REF_RELPATH_NAMES = {
@@ -255,7 +255,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		/** <code>true</code> only when parsing the target tables */
 		private boolean _isInsideTable;
 
-		private final List _rowData; 
+		private final List _rowData;
 		private final StringBuffer _textNodeBuffer;
 		private final List _rowNoteFlags;
 		private boolean _cellHasNote;
@@ -304,7 +304,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			if(matchesPath(0, HEADING_PATH_NAMES)) {
 				_lastHeadingText = _textNodeBuffer.toString().trim();
 				_textNodeBuffer.setLength(0);
-			}			
+			}
 			if(_isInsideTable) {
 				if(matchesTargetPath()) {
 					_fdc.endTableGroup(_lastHeadingText);
@@ -350,7 +350,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			String returnClass = cellData[i + 4];
 			String paramClasses = cellData[i + 5];
 			String volatileFlagStr = cellData[i + 6];
-			
+
 			_fdc.addFuntion(funcIx, hasFootnote, funcName, minParams, maxParams, returnClass, paramClasses, volatileFlagStr);
 		}
 		private static int parseInt(String valStr) {
@@ -412,7 +412,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 	private static void extractFunctionData(FunctionDataCollector fdc, InputStream is) {
 		XMLReader xr;
-		
+
 		try {
 			// First up, try the default one
 			xr = XMLReaderFactory.createXMLReader();
@@ -460,7 +460,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		public void write(byte[] b, int off, int len) throws IOException {
 			for (int i = 0; i < len; i++) {
 				checkByte(b[i + off]);
-				
+
 			}
 			_os.write(b, off, len);
 		}
@@ -483,7 +483,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		} catch(UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		outputLicenseHeader(ps);
 		Class genClass = ExcelFileFormatDocFunctionExtractor.class;
 		ps.println("# Created by (" + genClass.getName() + ")");
@@ -504,7 +504,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			throw new RuntimeException(e);
 		}
 		ps.close();
-		
+
 		String canonicalOutputFileName;
 		try {
 			canonicalOutputFileName = outFile.getCanonicalPath();
@@ -554,7 +554,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			InputStream is = new FileInputStream(f);
 			while(true) {
 				int bytesRead = is.read(buf);
-				if(bytesRead<1) { 
+				if(bytesRead<1) {
 					break;
 				}
 				m.update(buf, 0, bytesRead);
@@ -563,7 +563,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		return "0x" + new BigInteger(1, m.digest()).toString(16);
 	}
 
@@ -585,7 +585,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			OutputStream os = new FileOutputStream(result);
 			while(true) {
 				int bytesRead = is.read(buf);
-				if(bytesRead<1) { 
+				if(bytesRead<1) {
 					break;
 				}
 				os.write(buf, 0, bytesRead);
@@ -609,7 +609,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			processFile(effDocFile, outFile);
 			return;
 		}
-		
+
 		File tempEFFDocFile = downloadSourceFile();
 		processFile(tempEFFDocFile, outFile);
 		tempEFFDocFile.delete();

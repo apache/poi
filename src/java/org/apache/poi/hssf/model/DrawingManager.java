@@ -48,7 +48,7 @@ public class DrawingManager
         dg.setLastMSOSPID( -1 );
         dgg.addCluster( dgId, 0 );
         dgg.setDrawingsSaved( dgg.getDrawingsSaved() + 1 );
-        dgMap.put( new Short( dgId ), dg );
+        dgMap.put( Short.valueOf( dgId ), dg );
         return dg;
     }
 
@@ -60,7 +60,7 @@ public class DrawingManager
     public int allocateShapeId(short drawingGroupId)
     {
         // Get the last shape id for this drawing group.
-        EscherDgRecord dg = (EscherDgRecord) dgMap.get(new Short(drawingGroupId));
+        EscherDgRecord dg = (EscherDgRecord) dgMap.get(Short.valueOf(drawingGroupId));
         int lastShapeId = dg.getLastMSOSPID();
 
 

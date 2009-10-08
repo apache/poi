@@ -29,10 +29,10 @@ import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * <p>Supports reading and writing of variant data.</p>
- * 
+ *
  * <p><strong>FIXME (3):</strong> Reading and writing should be made more
  * uniform than it is now. The following items should be resolved:
- * 
+ *
  * <ul>
  *
  * <li><p>Reading requires a length parameter that is 4 byte greater than the
@@ -68,7 +68,7 @@ public class VariantSupport extends Variant
      * on or off.</p>
      *
      * @return <code>true</code> if logging is turned on, else
-     * <code>false</code>. 
+     * <code>false</code>.
      */
     public static boolean isLogUnsupportedTypes()
     {
@@ -97,7 +97,7 @@ public class VariantSupport extends Variant
         {
             if (unsupportedMessage == null)
                 unsupportedMessage = new LinkedList();
-            Long vt = new Long(ex.getVariantType());
+            Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))
             {
                 System.err.println(ex.getMessage());
@@ -121,7 +121,7 @@ public class VariantSupport extends Variant
      * <p>Checks whether HPSF supports the specified variant type. Unsupported
      * types should be implemented included in the {@link #SUPPORTED_TYPES}
      * array.</p>
-     * 
+     *
      * @see Variant
      * @param variantType the variant type to check
      * @return <code>true</code> if HPFS supports this type, else
@@ -139,7 +139,7 @@ public class VariantSupport extends Variant
 
     /**
      * <p>Reads a variant type from a byte array.</p>
-     * 
+     *
      * @param src The byte array
      * @param offset The offset in the byte array where the variant starts
      * @param length The length of the variant including the variant type field
@@ -182,7 +182,7 @@ public class VariantSupport extends Variant
                  * Read a short. In Java it is represented as an
                  * Integer object.
                  */
-                value = new Integer(LittleEndian.getShort(src, o1));
+                value = Integer.valueOf(LittleEndian.getShort(src, o1));
                 break;
             }
             case Variant.VT_I4:
@@ -191,7 +191,7 @@ public class VariantSupport extends Variant
                  * Read a word. In Java it is represented as an
                  * Integer object.
                  */
-                value = new Integer(LittleEndian.getInt(src, o1));
+                value = Integer.valueOf(LittleEndian.getInt(src, o1));
                 break;
             }
             case Variant.VT_I8:
@@ -200,7 +200,7 @@ public class VariantSupport extends Variant
                  * Read a double word. In Java it is represented as a
                  * Long object.
                  */
-                value = new Long(LittleEndian.getLong(src, o1));
+                value = Long.valueOf(LittleEndian.getLong(src, o1));
                 break;
             }
             case Variant.VT_R8:
@@ -279,7 +279,7 @@ public class VariantSupport extends Variant
                      *  while the current implementation calculates it in the Section constructor.
                      *  Test files in Bugzilla 42726 and 45583 clearly show that this approach does not always work.
                      *  The workaround below attempts to gracefully handle such cases instead of throwing exceptions.
-                     * 
+                     *
                      *  August 20, 2009
                      */
                     l1 = LittleEndian.getInt(src, o1); o1 += LittleEndian.INT_SIZE;
@@ -318,16 +318,16 @@ public class VariantSupport extends Variant
 
 
     /**
-     * <p>Turns a codepage number into the equivalent character encoding's 
+     * <p>Turns a codepage number into the equivalent character encoding's
      * name.</p>
      *
      * @param codepage The codepage number
-     * 
-     * @return The character encoding's name. If the codepage number is 65001, 
+     *
+     * @return The character encoding's name. If the codepage number is 65001,
      * the encoding name is "UTF-8". All other positive numbers are mapped to
-     * "cp" followed by the number, e.g. if the codepage number is 1252 the 
+     * "cp" followed by the number, e.g. if the codepage number is 1252 the
      * returned character encoding name will be "cp1252".
-     * 
+     *
      * @exception UnsupportedEncodingException if the specified codepage is
      * less than zero.
      */
@@ -500,7 +500,7 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_LPWSTR:
             {
-                final int nrOfChars = ((String) value).length() + 1; 
+                final int nrOfChars = ((String) value).length() + 1;
                 length += TypeWriter.writeUIntToStream(out, nrOfChars);
                 char[] s = Util.pad4((String) value);
                 for (int i = 0; i < s.length; i++)
@@ -546,7 +546,7 @@ public class VariantSupport extends Variant
                             + value.getClass().toString() + ", "
                             + value.toString());
                 }
-                length += TypeWriter.writeToStream(out, 
+                length += TypeWriter.writeToStream(out,
                           ((Integer) value).intValue());
                 break;
             }
@@ -558,7 +558,7 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_R8:
             {
-                length += TypeWriter.writeToStream(out, 
+                length += TypeWriter.writeToStream(out,
                           ((Double) value).doubleValue());
                 break;
             }
@@ -579,7 +579,7 @@ public class VariantSupport extends Variant
                  * is a byte array we can write it nevertheless. */
                 if (value instanceof byte[])
                 {
-                    final byte[] b = (byte[]) value; 
+                    final byte[] b = (byte[]) value;
                     out.write(b);
                     length = b.length;
                     writeUnsupportedTypeMessage
@@ -593,5 +593,4 @@ public class VariantSupport extends Variant
 
         return length;
     }
-
 }

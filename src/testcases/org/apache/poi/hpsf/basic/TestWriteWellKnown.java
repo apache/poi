@@ -58,7 +58,7 @@ import org.apache.poi.POIDataSamples;
 /**
  * <p>Tests HPSF's high-level writing functionality for the well-known property
  * set "SummaryInformation" and "DocumentSummaryInformation".</p>
- * 
+ *
  * @author Rainer Klute
  *     <a href="mailto:klute@rainer-klute.de">klute@rainer-klute.de</a>
  */
@@ -83,11 +83,6 @@ public class TestWriteWellKnown extends TestCase {
      * pointed to by the "POI.testdata.path" system property, trying to extract
      * the document summary information stream in the root directory and calling
      * its get... methods.</p>
-     * @throws IOException 
-     * @throws FileNotFoundException 
-     * @throws MarkUnsupportedException 
-     * @throws NoPropertySetStreamException 
-     * @throws UnexpectedPropertySetTypeException 
      */
     public void testReadDocumentSummaryInformation()
             throws FileNotFoundException, IOException,
@@ -131,7 +126,7 @@ public class TestWriteWellKnown extends TestCase {
                 final DocumentInputStream dis = new DocumentInputStream(dsiEntry);
                 final PropertySet ps = new PropertySet(dis);
                 final DocumentSummaryInformation dsi = new DocumentSummaryInformation(ps);
-                
+
                 /* Execute the get... methods. */
                 dsi.getByteCount();
                 dsi.getByteOrder();
@@ -159,43 +154,43 @@ public class TestWriteWellKnown extends TestCase {
      * <p>This test method test the writing of properties in the well-known
      * property set streams "SummaryInformation" and
      * "DocumentSummaryInformation" by performing the following steps:</p>
-     * 
+     *
      * <ol>
-     * 
+     *
      * <li><p>Read a test document <em>doc1</em> into a POI filesystem.</p></li>
-     * 
+     *
      * <li><p>Read the summary information stream and the document summary
      * information stream from the POI filesystem.</p></li>
-     * 
+     *
      * <li><p>Write all properties supported by HPSF to the summary
      * information (e.g. author, edit date, application name) and to the
      * document summary information (e.g. company, manager).</p></li>
-     * 
+     *
      * <li><p>Write the summary information stream and the document summary
      * information stream to the POI filesystem.</p></li>
-     * 
+     *
      * <li><p>Write the POI filesystem to a (temporary) file <em>doc2</em>
      * and close the latter.</p></li>
-     * 
+     *
      * <li><p>Open <em>doc2</em> for reading and check summary information
      * and document summary information. All properties written before must be
      * found in the property streams of <em>doc2</em> and have the correct
      * values.</p></li>
-     * 
+     *
      * <li><p>Remove all properties supported by HPSF from the summary
      * information (e.g. author, edit date, application name) and from the
      * document summary information (e.g. company, manager).</p></li>
-     * 
+     *
      * <li><p>Write the summary information stream and the document summary
      * information stream to the POI filesystem.</p></li>
-     * 
+     *
      * <li><p>Write the POI filesystem to a (temporary) file <em>doc3</em>
      * and close the latter.</p></li>
-     * 
+     *
      * <li><p>Open <em>doc3</em> for reading and check summary information
      * and document summary information. All properties removed before must not
      * be found in the property streams of <em>doc3</em>.</p></li> </ol>
-     * 
+     *
      * @throws IOException if some I/O error occurred.
      * @throws MarkUnsupportedException
      * @throws NoPropertySetStreamException
@@ -209,17 +204,17 @@ public class TestWriteWellKnown extends TestCase {
         POIDataSamples _samples = POIDataSamples.getHPSFInstance();
         final File dataDir = _samples.getFile("");
         final File doc1 = new File(dataDir, POI_FS);
-    
+
         /* Read a test document <em>doc1</em> into a POI filesystem. */
         POIFSFileSystem poifs = new POIFSFileSystem(new FileInputStream(doc1));
         DirectoryEntry dir = poifs.getRoot();
         DocumentEntry siEntry = (DocumentEntry) dir.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         DocumentEntry dsiEntry = (DocumentEntry) dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-    
+
         /*
          * Read the summary information stream and the document summary
          * information stream from the POI filesystem.
-         * 
+         *
          * Please note that the result consists of SummaryInformation and
          * DocumentSummaryInformation instances which are in memory only. To
          * make them permanent they have to be written to a POI filesystem
@@ -232,7 +227,7 @@ public class TestWriteWellKnown extends TestCase {
         dis = new DocumentInputStream(dsiEntry);
         ps = new PropertySet(dis);
         DocumentSummaryInformation dsi = new DocumentSummaryInformation(ps);
-    
+
         /*
          * Write all properties supported by HPSF to the summary information
          * (e.g. author, edit date, application name) and to the document
@@ -245,7 +240,7 @@ public class TestWriteWellKnown extends TestCase {
         final long time2 = cal.getTimeInMillis();
         cal.set(2002, 8, 8, 8, 8, 8);
         final long time3 = cal.getTimeInMillis();
-    
+
         int nr = 4711;
         final String P_APPLICATION_NAME = "ApplicationName";
         final String P_AUTHOR = "Author";
@@ -265,7 +260,7 @@ public class TestWriteWellKnown extends TestCase {
         // FIXME (byte array properties not yet implemented): final byte[] P_THUMBNAIL = new byte[123];
         final String P_TITLE = "Title";
         final int    P_WORD_COUNT = ++nr;
-    
+
         final int     P_BYTE_COUNT = ++nr;
         final String  P_CATEGORY = "Category";
         final String  P_COMPANY = "Company";
@@ -296,7 +291,7 @@ public class TestWriteWellKnown extends TestCase {
         final Long MIN_LONG = new Long(Long.MIN_VALUE);
         final Double MAX_DOUBLE = new Double(Double.MAX_VALUE);
         final Double MIN_DOUBLE = new Double(Double.MIN_VALUE);
-        
+
         si.setApplicationName(P_APPLICATION_NAME);
         si.setAuthor(P_AUTHOR);
         si.setCharCount(P_CHAR_COUNT);
@@ -315,7 +310,7 @@ public class TestWriteWellKnown extends TestCase {
         // FIXME (byte array properties not yet implemented): si.setThumbnail(P_THUMBNAIL);
         si.setTitle(P_TITLE);
         si.setWordCount(P_WORD_COUNT);
-    
+
         dsi.setByteCount(P_BYTE_COUNT);
         dsi.setCategory(P_CATEGORY);
         dsi.setCompany(P_COMPANY);
@@ -345,7 +340,7 @@ public class TestWriteWellKnown extends TestCase {
         customProperties.put("negative_Integer", NEGATIVE_INTEGER);
         customProperties.put("negative_Long", NEGATIVE_LONG);
         customProperties.put("negative_Double", NEGATIVE_DOUBLE);
-        customProperties.put("Boolean", new Boolean(true));
+        customProperties.put("Boolean", Boolean.TRUE);
         customProperties.put("Date", now);
         customProperties.put("max_Integer", MAX_INTEGER);
         customProperties.put("min_Integer", MIN_INTEGER);
@@ -378,14 +373,14 @@ public class TestWriteWellKnown extends TestCase {
         dir = poifs.getRoot();
         siEntry = (DocumentEntry) dir.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dsiEntry = (DocumentEntry) dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-    
+
         dis = new DocumentInputStream(siEntry);
         ps = new PropertySet(dis);
         si = new SummaryInformation(ps);
         dis = new DocumentInputStream(dsiEntry);
         ps = new PropertySet(dis);
         dsi = new DocumentSummaryInformation(ps);
-    
+
         assertEquals(P_APPLICATION_NAME, si.getApplicationName());
         assertEquals(P_AUTHOR, si.getAuthor());
         assertEquals(P_CHAR_COUNT, si.getCharCount());
@@ -404,7 +399,7 @@ public class TestWriteWellKnown extends TestCase {
         // FIXME (byte array properties not yet implemented): assertEquals(P_THUMBNAIL, si.getThumbnail());
         assertEquals(P_TITLE, si.getTitle());
         assertEquals(P_WORD_COUNT, si.getWordCount());
-    
+
         assertEquals(P_BYTE_COUNT, dsi.getByteCount());
         assertEquals(P_CATEGORY, dsi.getCategory());
         assertEquals(P_COMPANY, dsi.getCompany());
@@ -434,7 +429,7 @@ public class TestWriteWellKnown extends TestCase {
         assertEquals(NEGATIVE_INTEGER, cps.get("negative_Integer"));
         assertEquals(NEGATIVE_LONG, cps.get("negative_Long"));
         assertEquals(NEGATIVE_DOUBLE, cps.get("negative_Double"));
-        assertEquals(new Boolean(true), cps.get("Boolean"));
+        assertEquals(Boolean.TRUE, cps.get("Boolean"));
         assertEquals(now, cps.get("Date"));
         assertEquals(MAX_INTEGER, cps.get("max_Integer"));
         assertEquals(MIN_INTEGER, cps.get("min_Integer"));
@@ -464,7 +459,7 @@ public class TestWriteWellKnown extends TestCase {
         si.removeThumbnail();
         si.removeTitle();
         si.removeWordCount();
-    
+
         dsi.removeByteCount();
         dsi.removeCategory();
         dsi.removeCompany();
@@ -481,14 +476,14 @@ public class TestWriteWellKnown extends TestCase {
         dsi.removePresentationFormat();
         dsi.removeScale();
         dsi.removeSlideCount();
-    
-        /* 
+
+        /*
          * <li><p>Write the summary information stream and the document summary
          * information stream to the POI filesystem. */
         si.write(dir, siEntry.getName());
         dsi.write(dir, dsiEntry.getName());
-    
-        /* 
+
+        /*
          * <li><p>Write the POI filesystem to a (temporary) file <em>doc3</em>
          * and close the latter. */
         final File doc3 = File.createTempFile("POI_HPSF_Test.", ".tmp");
@@ -496,8 +491,8 @@ public class TestWriteWellKnown extends TestCase {
         out = new FileOutputStream(doc3);
         poifs.writeFilesystem(out);
         out.close();
-    
-        /* 
+
+        /*
          * Open <em>doc3</em> for reading and check summary information
          * and document summary information. All properties removed before must not
          * be found in the property streams of <em>doc3</em>.
@@ -506,14 +501,14 @@ public class TestWriteWellKnown extends TestCase {
         dir = poifs.getRoot();
         siEntry = (DocumentEntry) dir.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dsiEntry = (DocumentEntry) dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-    
+
         dis = new DocumentInputStream(siEntry);
         ps = new PropertySet(dis);
         si = new SummaryInformation(ps);
         dis = new DocumentInputStream(dsiEntry);
         ps = new PropertySet(dis);
         dsi = new DocumentSummaryInformation(ps);
-    
+
         assertEquals(null, si.getApplicationName());
         assertEquals(null, si.getAuthor());
         assertEquals(0, si.getCharCount());
@@ -537,7 +532,7 @@ public class TestWriteWellKnown extends TestCase {
         assertEquals(null, si.getTitle());
         assertEquals(0, si.getWordCount());
         assertTrue(si.wasNull());
-    
+
         assertEquals(0, dsi.getByteCount());
         assertTrue(dsi.wasNull());
         assertEquals(null, dsi.getCategory());
@@ -611,7 +606,7 @@ public class TestWriteWellKnown extends TestCase {
                 else
                     dsi = PropertySetFactory.newDocumentSummaryInformation();
                 final CustomProperties cps = dsi.getCustomProperties();
-                
+
                 if (cps == null)
                     /* The document does not have custom properties. */
                     return;
@@ -663,14 +658,14 @@ public class TestWriteWellKnown extends TestCase {
         assertEquals(1, cps.size());
         Object v1 = cps.get(KEY);
         assertEquals(VALUE_1, v1);
-        
+
         /* After adding a custom property with the same name the size must still
          * be one. */
         cps.put(KEY, VALUE_2);
         assertEquals(1, cps.size());
         Object v2 = cps.get(KEY);
         assertEquals(VALUE_2, v2);
-        
+
         /* Removing the custom property must return the remove property and
          * reduce the size to 0. */
         cp = (CustomProperty) cps.remove(KEY);
@@ -715,7 +710,7 @@ public class TestWriteWellKnown extends TestCase {
         p.setType(Variant.VT_LPWSTR);
         p.setValue(VALUE_1);
         s.setProperty(p);
-        dictionary.put(new Long(ID_1), NAME_1);
+        dictionary.put(Long.valueOf(ID_1), NAME_1);
         s.setDictionary(dictionary);
         cps = dsi.getCustomProperties();
         assertEquals(1, cps.size());
@@ -723,7 +718,7 @@ public class TestWriteWellKnown extends TestCase {
 
         /* Add another custom property. */
         s.setProperty(ID_2, Variant.VT_LPWSTR, VALUE_1);
-        dictionary.put(new Long(ID_2), NAME_1);
+        dictionary.put(Long.valueOf(ID_2), NAME_1);
         s.setDictionary(dictionary);
         cps = dsi.getCustomProperties();
         assertEquals(1, cps.size());

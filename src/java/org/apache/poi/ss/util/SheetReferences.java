@@ -34,13 +34,12 @@ public class SheetReferences
     {
       map = new HashMap(5);
     }
- 
-    public void addSheetReference(String sheetName, int number) {
-       map.put(new Integer(number), sheetName);
-    } 
 
-    public String getSheetName(int number) {
-       return (String)map.get(new Integer(number));
+    public void addSheetReference(String sheetName, int number) {
+       map.put(Integer.valueOf(number), sheetName);
     }
 
+    public String getSheetName(int number) {
+       return (String)map.get(Integer.valueOf(number));
+    }
 }

@@ -166,10 +166,10 @@ public final class Chunk {
 			// Types 0->7 = a flat at bit 0->7
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
 				int val = contents[offset] & (1<<type);
-				command.value = new Boolean( (val > 0) );
+				command.value = Boolean.valueOf(val > 0);
 				break;
 			case 8:
-				command.value = new Byte( contents[offset] );
+				command.value = Byte.valueOf(contents[offset]);
 				break;
 			case 9:
 				command.value = new Double(
@@ -195,12 +195,12 @@ public final class Chunk {
 				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
 				break;
 			case 25:
-				command.value = new Short(
+				command.value = Short.valueOf(
 					LittleEndian.getShort(contents, offset)
 				);
 				break;
 			case 26:
-				command.value = new Integer(
+				command.value = Integer.valueOf(
 						LittleEndian.getInt(contents, offset)
 				);
 				break;
@@ -273,7 +273,7 @@ public final class Chunk {
 		}
 		private void setOffset(int offset) {
 			this.offset = offset;
-			value = new Integer(offset);
+			value = Integer.valueOf(offset);
 		}
 	}
 }

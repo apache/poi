@@ -79,6 +79,7 @@ public class HSSFPictureData implements PictureData
 
     /**
     * @see #getFormat
+    * @return 'wmf', 'jpeg' etc depending on the format. never <code>null</code>
     */
     public String suggestFileExtension()
     {

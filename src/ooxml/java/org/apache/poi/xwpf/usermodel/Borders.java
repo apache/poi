@@ -612,12 +612,12 @@ public enum Borders {
     private static Map<Integer, Borders> imap = new HashMap<Integer, Borders>();
     static {
         for (Borders p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(Integer.valueOf(p.getValue()), p);
         }
     }
 
     public static Borders valueOf(int type) {
-        Borders pBorder = imap.get(new Integer(type));
+        Borders pBorder = imap.get(Integer.valueOf(type));
         if (pBorder == null) {
             throw new IllegalArgumentException("Unknown paragraph border: " + type);
         }

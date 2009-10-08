@@ -351,32 +351,32 @@ public class Variant
     /**
      * <p>Denotes a variant type with a length that is unknown to HPSF yet.</p>
      */
-    public static final Integer LENGTH_UNKNOWN = new Integer(-2);
+    public static final Integer LENGTH_UNKNOWN = Integer.valueOf(-2);
 
     /**
      * <p>Denotes a variant type with a variable length.</p>
      */
-    public static final Integer LENGTH_VARIABLE = new Integer(-1);
+    public static final Integer LENGTH_VARIABLE = Integer.valueOf(-1);
 
     /**
      * <p>Denotes a variant type with a length of 0 bytes.</p>
      */
-    public static final Integer LENGTH_0 = new Integer(0);
+    public static final Integer LENGTH_0 = Integer.valueOf(0);
 
     /**
      * <p>Denotes a variant type with a length of 2 bytes.</p>
      */
-    public static final Integer LENGTH_2 = new Integer(2);
+    public static final Integer LENGTH_2 = Integer.valueOf(2);
 
     /**
      * <p>Denotes a variant type with a length of 4 bytes.</p>
      */
-    public static final Integer LENGTH_4 = new Integer(4);
+    public static final Integer LENGTH_4 = Integer.valueOf(4);
 
     /**
      * <p>Denotes a variant type with a length of 8 bytes.</p>
      */
-    public static final Integer LENGTH_8 = new Integer(8);
+    public static final Integer LENGTH_8 = Integer.valueOf(8);
 
 
 
@@ -384,92 +384,92 @@ public class Variant
     {
         /* Initialize the number-to-name map: */
         Map tm1 = new HashMap();
-        tm1.put(new Long(0), "VT_EMPTY");
-        tm1.put(new Long(1), "VT_NULL");
-        tm1.put(new Long(2), "VT_I2");
-        tm1.put(new Long(3), "VT_I4");
-        tm1.put(new Long(4), "VT_R4");
-        tm1.put(new Long(5), "VT_R8");
-        tm1.put(new Long(6), "VT_CY");
-        tm1.put(new Long(7), "VT_DATE");
-        tm1.put(new Long(8), "VT_BSTR");
-        tm1.put(new Long(9), "VT_DISPATCH");
-        tm1.put(new Long(10), "VT_ERROR");
-        tm1.put(new Long(11), "VT_BOOL");
-        tm1.put(new Long(12), "VT_VARIANT");
-        tm1.put(new Long(13), "VT_UNKNOWN");
-        tm1.put(new Long(14), "VT_DECIMAL");
-        tm1.put(new Long(16), "VT_I1");
-        tm1.put(new Long(17), "VT_UI1");
-        tm1.put(new Long(18), "VT_UI2");
-        tm1.put(new Long(19), "VT_UI4");
-        tm1.put(new Long(20), "VT_I8");
-        tm1.put(new Long(21), "VT_UI8");
-        tm1.put(new Long(22), "VT_INT");
-        tm1.put(new Long(23), "VT_UINT");
-        tm1.put(new Long(24), "VT_VOID");
-        tm1.put(new Long(25), "VT_HRESULT");
-        tm1.put(new Long(26), "VT_PTR");
-        tm1.put(new Long(27), "VT_SAFEARRAY");
-        tm1.put(new Long(28), "VT_CARRAY");
-        tm1.put(new Long(29), "VT_USERDEFINED");
-        tm1.put(new Long(30), "VT_LPSTR");
-        tm1.put(new Long(31), "VT_LPWSTR");
-        tm1.put(new Long(64), "VT_FILETIME");
-        tm1.put(new Long(65), "VT_BLOB");
-        tm1.put(new Long(66), "VT_STREAM");
-        tm1.put(new Long(67), "VT_STORAGE");
-        tm1.put(new Long(68), "VT_STREAMED_OBJECT");
-        tm1.put(new Long(69), "VT_STORED_OBJECT");
-        tm1.put(new Long(70), "VT_BLOB_OBJECT");
-        tm1.put(new Long(71), "VT_CF");
-        tm1.put(new Long(72), "VT_CLSID");
+        tm1.put(Long.valueOf(0), "VT_EMPTY");
+        tm1.put(Long.valueOf(1), "VT_NULL");
+        tm1.put(Long.valueOf(2), "VT_I2");
+        tm1.put(Long.valueOf(3), "VT_I4");
+        tm1.put(Long.valueOf(4), "VT_R4");
+        tm1.put(Long.valueOf(5), "VT_R8");
+        tm1.put(Long.valueOf(6), "VT_CY");
+        tm1.put(Long.valueOf(7), "VT_DATE");
+        tm1.put(Long.valueOf(8), "VT_BSTR");
+        tm1.put(Long.valueOf(9), "VT_DISPATCH");
+        tm1.put(Long.valueOf(10), "VT_ERROR");
+        tm1.put(Long.valueOf(11), "VT_BOOL");
+        tm1.put(Long.valueOf(12), "VT_VARIANT");
+        tm1.put(Long.valueOf(13), "VT_UNKNOWN");
+        tm1.put(Long.valueOf(14), "VT_DECIMAL");
+        tm1.put(Long.valueOf(16), "VT_I1");
+        tm1.put(Long.valueOf(17), "VT_UI1");
+        tm1.put(Long.valueOf(18), "VT_UI2");
+        tm1.put(Long.valueOf(19), "VT_UI4");
+        tm1.put(Long.valueOf(20), "VT_I8");
+        tm1.put(Long.valueOf(21), "VT_UI8");
+        tm1.put(Long.valueOf(22), "VT_INT");
+        tm1.put(Long.valueOf(23), "VT_UINT");
+        tm1.put(Long.valueOf(24), "VT_VOID");
+        tm1.put(Long.valueOf(25), "VT_HRESULT");
+        tm1.put(Long.valueOf(26), "VT_PTR");
+        tm1.put(Long.valueOf(27), "VT_SAFEARRAY");
+        tm1.put(Long.valueOf(28), "VT_CARRAY");
+        tm1.put(Long.valueOf(29), "VT_USERDEFINED");
+        tm1.put(Long.valueOf(30), "VT_LPSTR");
+        tm1.put(Long.valueOf(31), "VT_LPWSTR");
+        tm1.put(Long.valueOf(64), "VT_FILETIME");
+        tm1.put(Long.valueOf(65), "VT_BLOB");
+        tm1.put(Long.valueOf(66), "VT_STREAM");
+        tm1.put(Long.valueOf(67), "VT_STORAGE");
+        tm1.put(Long.valueOf(68), "VT_STREAMED_OBJECT");
+        tm1.put(Long.valueOf(69), "VT_STORED_OBJECT");
+        tm1.put(Long.valueOf(70), "VT_BLOB_OBJECT");
+        tm1.put(Long.valueOf(71), "VT_CF");
+        tm1.put(Long.valueOf(72), "VT_CLSID");
         Map tm2 = new HashMap(tm1.size(), 1.0F);
         tm2.putAll(tm1);
         numberToName = Collections.unmodifiableMap(tm2);
 
         /* Initialize the number-to-length map: */
         tm1.clear();
-        tm1.put(new Long(0), LENGTH_0);
-        tm1.put(new Long(1), LENGTH_UNKNOWN);
-        tm1.put(new Long(2), LENGTH_2);
-        tm1.put(new Long(3), LENGTH_4);
-        tm1.put(new Long(4), LENGTH_4);
-        tm1.put(new Long(5), LENGTH_8);
-        tm1.put(new Long(6), LENGTH_UNKNOWN);
-        tm1.put(new Long(7), LENGTH_UNKNOWN);
-        tm1.put(new Long(8), LENGTH_UNKNOWN);
-        tm1.put(new Long(9), LENGTH_UNKNOWN);
-        tm1.put(new Long(10), LENGTH_UNKNOWN);
-        tm1.put(new Long(11), LENGTH_UNKNOWN);
-        tm1.put(new Long(12), LENGTH_UNKNOWN);
-        tm1.put(new Long(13), LENGTH_UNKNOWN);
-        tm1.put(new Long(14), LENGTH_UNKNOWN);
-        tm1.put(new Long(16), LENGTH_UNKNOWN);
-        tm1.put(new Long(17), LENGTH_UNKNOWN);
-        tm1.put(new Long(18), LENGTH_UNKNOWN);
-        tm1.put(new Long(19), LENGTH_UNKNOWN);
-        tm1.put(new Long(20), LENGTH_UNKNOWN);
-        tm1.put(new Long(21), LENGTH_UNKNOWN);
-        tm1.put(new Long(22), LENGTH_UNKNOWN);
-        tm1.put(new Long(23), LENGTH_UNKNOWN);
-        tm1.put(new Long(24), LENGTH_UNKNOWN);
-        tm1.put(new Long(25), LENGTH_UNKNOWN);
-        tm1.put(new Long(26), LENGTH_UNKNOWN);
-        tm1.put(new Long(27), LENGTH_UNKNOWN);
-        tm1.put(new Long(28), LENGTH_UNKNOWN);
-        tm1.put(new Long(29), LENGTH_UNKNOWN);
-        tm1.put(new Long(30), LENGTH_VARIABLE);
-        tm1.put(new Long(31), LENGTH_UNKNOWN);
-        tm1.put(new Long(64), LENGTH_8);
-        tm1.put(new Long(65), LENGTH_UNKNOWN);
-        tm1.put(new Long(66), LENGTH_UNKNOWN);
-        tm1.put(new Long(67), LENGTH_UNKNOWN);
-        tm1.put(new Long(68), LENGTH_UNKNOWN);
-        tm1.put(new Long(69), LENGTH_UNKNOWN);
-        tm1.put(new Long(70), LENGTH_UNKNOWN);
-        tm1.put(new Long(71), LENGTH_UNKNOWN);
-        tm1.put(new Long(72), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(0), LENGTH_0);
+        tm1.put(Long.valueOf(1), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(2), LENGTH_2);
+        tm1.put(Long.valueOf(3), LENGTH_4);
+        tm1.put(Long.valueOf(4), LENGTH_4);
+        tm1.put(Long.valueOf(5), LENGTH_8);
+        tm1.put(Long.valueOf(6), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(7), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(8), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(9), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(10), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(11), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(12), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(13), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(14), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(16), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(17), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(18), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(19), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(20), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(21), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(22), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(23), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(24), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(25), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(26), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(27), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(28), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(29), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(30), LENGTH_VARIABLE);
+        tm1.put(Long.valueOf(31), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(64), LENGTH_8);
+        tm1.put(Long.valueOf(65), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(66), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(67), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(68), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(69), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(70), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(71), LENGTH_UNKNOWN);
+        tm1.put(Long.valueOf(72), LENGTH_UNKNOWN);
         tm2 = new HashMap(tm1.size(), 1.0F);
         tm2.putAll(tm1);
         numberToLength = Collections.unmodifiableMap(tm2);
@@ -486,7 +486,7 @@ public class Variant
      */
     public static String getVariantName(final long variantType)
     {
-        final String name = (String) numberToName.get(new Long(variantType));
+        final String name = (String) numberToName.get(Long.valueOf(variantType));
         return name != null ? name : "unknown variant type";
     }
 
@@ -501,7 +501,7 @@ public class Variant
      */
     public static int getVariantLength(final long variantType)
     {
-        final Long key = new Long((int) variantType);
+        final Long key = Long.valueOf((int) variantType);
         final Long length = (Long) numberToLength.get(key);
         if (length == null)
             return -2;

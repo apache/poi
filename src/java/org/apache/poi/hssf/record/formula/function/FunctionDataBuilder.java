@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Temporarily collects <tt>FunctionMetadata</tt> instances for creation of a
  * <tt>FunctionMetadataRegistry</tt>.
- * 
+ *
  * @author Josh Micich
  */
 final class FunctionDataBuilder {
@@ -46,10 +46,10 @@ final class FunctionDataBuilder {
 			byte returnClassCode, byte[] parameterClassCodes, boolean hasFootnote) {
 		FunctionMetadata fm = new FunctionMetadata(functionIndex, functionName, minParams, maxParams,
 				returnClassCode, parameterClassCodes);
-		
-		Integer indexKey = new Integer(functionIndex);
-		
-		
+
+		Integer indexKey = Integer.valueOf(functionIndex);
+
+
 		if(functionIndex > _maxFunctionIndex) {
 			_maxFunctionIndex = functionIndex;
 		}
@@ -60,7 +60,7 @@ final class FunctionDataBuilder {
 			if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
 				throw new RuntimeException("Multiple entries for function name '" + functionName + "'");
 			}
-			_functionDataByIndex.remove(new Integer(prevFM.getIndex()));
+			_functionDataByIndex.remove(Integer.valueOf(prevFM.getIndex()));
 		}
 		prevFM = (FunctionMetadata) _functionDataByIndex.get(indexKey);
 		if(prevFM != null) {
@@ -85,7 +85,7 @@ final class FunctionDataBuilder {
 			FunctionMetadata fd = jumbledArray[i];
 			fdIndexArray[fd.getIndex()] = fd;
 		}
-		
+
 		return new FunctionMetadataRegistry(fdIndexArray, _functionDataByName);
 	}
 }

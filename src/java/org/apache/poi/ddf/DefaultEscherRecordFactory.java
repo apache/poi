@@ -89,7 +89,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
             return r;
         }
 
-        Constructor<? extends EscherRecord> recordConstructor = recordsMap.get(new Short(header.getRecordId()));
+        Constructor<? extends EscherRecord> recordConstructor = recordsMap.get(Short.valueOf(header.getRecordId()));
         EscherRecord escherRecord = null;
         if (recordConstructor == null) {
             return new UnknownEscherRecord();
@@ -135,7 +135,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
-            result.put(new Short(sid), constructor);
+            result.put(Short.valueOf(sid), constructor);
         }
         return result;
     }

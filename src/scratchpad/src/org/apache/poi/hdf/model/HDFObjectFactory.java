@@ -345,7 +345,7 @@ public final class HDFObjectFactory {
 
                 byte[] chpx = new byte[size];
                 System.arraycopy(fkp, ++chpxOffset, chpx, 0, size);
-                //_papTable.put(new Integer(fcStart), papx);
+                //_papTable.put(Integer.valueOf(fcStart), papx);
                 _characterRuns.add(new ChpxNode(fcStart, fcEnd, chpx));
             }
 

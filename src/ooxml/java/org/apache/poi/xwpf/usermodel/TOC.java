@@ -23,13 +23,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTabTlc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTheme;
 
 public class TOC {
-	
+
 	CTSdtBlock block;
-	
+
 	public TOC() {
 		this(CTSdtBlock.Factory.newInstance());
 	}
-	
+
 	public TOC(CTSdtBlock block) {
 		this.block = block;
 		CTSdtPr sdtPr = block.addNewSdtPr();
@@ -55,11 +55,11 @@ public class TOC {
 		p.addNewPPr().addNewPStyle().setVal("TOCHeading");
 		p.addNewR().addNewT().set("Table of Contents");
 	}
-	
+
 	public CTSdtBlock getBlock() {
 		return this.block;
 	}
-	
+
 	public void addRow(int level, String title, int page, String bookmarkRef) {
 		CTSdtContentBlock contentBlock = this.block.getSdtContent();
 		CTP p = contentBlock.addNewP();
@@ -96,11 +96,9 @@ public class TOC {
 		// page number run
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
-		run.addNewT().set(new Integer(page).toString());
+		run.addNewT().set(Integer.valueOf(page).toString());
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
 		run.addNewFldChar().setFldCharType(STFldCharType.END);
-		
 	}
-
 }

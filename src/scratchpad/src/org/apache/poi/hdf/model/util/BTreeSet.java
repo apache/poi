@@ -235,7 +235,7 @@ public final class BTreeSet extends AbstractSet
             while (temp.entries[0].child != null)
             {
                 temp = temp.entries[0].child;
-                parentIndex.push(new Integer(0));
+                parentIndex.push(Integer.valueOf(0));
             }
 
             return temp;
@@ -272,12 +272,12 @@ public final class BTreeSet extends AbstractSet
 
             // else - You're not a leaf so simply find and return the successor of lastReturned
             currentNode = currentNode.entries[index].child;
-            parentIndex.push(new Integer(index));
+            parentIndex.push(Integer.valueOf(index));
 
             while (currentNode.entries[0].child != null)
             {
                 currentNode = currentNode.entries[0].child;
-                parentIndex.push(new Integer(0));
+                parentIndex.push(Integer.valueOf(0));
             }
 
             index = 1;

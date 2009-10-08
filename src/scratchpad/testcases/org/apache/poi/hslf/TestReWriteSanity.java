@@ -59,16 +59,16 @@ public final class TestReWriteSanity extends TestCase {
 		Record[] r = wss.getRecords();
 		Hashtable pp = new Hashtable();
 		Hashtable ue = new Hashtable();
-		ue.put(new Integer(0),new Integer(0)); // Will show 0 if first
+		ue.put(Integer.valueOf(0),Integer.valueOf(0)); // Will show 0 if first
 		int pos = 0;
 		int lastUEPos = -1;
 
 		for(int i=0; i<r.length; i++) {
 			if(r[i] instanceof PersistPtrHolder) {
-				pp.put(new Integer(pos), r[i]);
+				pp.put(Integer.valueOf(pos), r[i]);
 			}
 			if(r[i] instanceof UserEditAtom) {
-				ue.put(new Integer(pos), r[i]);
+				ue.put(Integer.valueOf(pos), r[i]);
 				lastUEPos = pos;
 			}
 
@@ -84,8 +84,8 @@ public final class TestReWriteSanity extends TestCase {
 				int luPos = uea.getLastUserEditAtomOffset();
 				int ppPos = uea.getPersistPointersOffset();
 
-				assertTrue(pp.containsKey(new Integer(ppPos)));
-				assertTrue(ue.containsKey(new Integer(luPos)));
+				assertTrue(pp.containsKey(Integer.valueOf(ppPos)));
+				assertTrue(ue.containsKey(Integer.valueOf(luPos)));
 			}
 		}
 

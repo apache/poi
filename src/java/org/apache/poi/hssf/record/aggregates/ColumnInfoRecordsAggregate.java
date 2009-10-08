@@ -30,11 +30,11 @@ import org.apache.poi.hssf.record.ColumnInfoRecord;
  */
 public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
-	 * List of {@link ColumnInfoRecord}s assumed to be in order 
+	 * List of {@link ColumnInfoRecord}s assumed to be in order
 	 */
 	private final List records;
-	
-	
+
+
 	private static final class CIRComparator implements Comparator {
 		public static final Comparator instance = new CIRComparator();
 		private CIRComparator() {
@@ -299,7 +299,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 
-	public void setColumn(int targetColumnIx, Short xfIndex, Integer width, 
+	public void setColumn(int targetColumnIx, Short xfIndex, Integer width,
 					Integer level, Boolean hidden, Boolean collapsed) {
 		ColumnInfoRecord ci = null;
 		int k  = 0;
@@ -370,18 +370,18 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 			ColumnInfoRecord ciMid = copyColInfo(ci);
 			ColumnInfoRecord ciEnd = copyColInfo(ci);
 			int lastcolumn = ci.getLastColumn();
-			
+
 			ciStart.setLastColumn(targetColumnIx - 1);
 
 			ciMid.setFirstColumn(targetColumnIx);
 			ciMid.setLastColumn(targetColumnIx);
 			setColumnInfoFields(ciMid, xfIndex, width, level, hidden, collapsed);
 			insertColumn(++k, ciMid);
-			
+
 			ciEnd.setFirstColumn(targetColumnIx+1);
 			ciEnd.setLastColumn(lastcolumn);
 			insertColumn(++k, ciEnd);
-			// no need to attemptMergeColInfoRecords because we 
+			// no need to attemptMergeColInfoRecords because we
 			// know both on each side are different
 		}
 	}
@@ -389,7 +389,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
 	 * Sets all non null fields into the <code>ci</code> parameter.
 	 */
-	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width, 
+	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width,
 				Integer level, Boolean hidden, Boolean collapsed) {
 		if (xfStyle != null) {
 			ci.setXFIndex(xfStyle.shortValue());
@@ -429,13 +429,13 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	/**
-	 * Attempts to merge the col info record at the specified index 
+	 * Attempts to merge the col info record at the specified index
 	 * with either or both of its neighbours
 	 */
 	private void attemptMergeColInfoRecords(int colInfoIx) {
 		int nRecords = records.size();
 		if (colInfoIx < 0 || colInfoIx >= nRecords) {
-			throw new IllegalArgumentException("colInfoIx " + colInfoIx 
+			throw new IllegalArgumentException("colInfoIx " + colInfoIx
 					+ " is out of range (0.." + (nRecords-1) + ")");
 		}
 		ColumnInfoRecord currentCol = getColInfo(colInfoIx);
@@ -466,7 +466,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	 * Creates an outline group for the specified columns, by setting the level
 	 * field for each col info record in the range. {@link ColumnInfoRecord}s
 	 * may be created, split or merged as a result of this operation.
-	 * 
+	 *
 	 * @param fromColumnIx
 	 *            group from this column (inclusive)
 	 * @param toColumnIx
@@ -493,7 +493,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 				level = Math.min(7, level);
 				colInfoSearchStartIdx = Math.max(0, colInfoIdx - 1); // -1 just in case this column is collapsed later.
 			}
-			setColumn(i, null, null, new Integer(level), null, null);
+			setColumn(i, null, null, Integer.valueOf(level), null, null);
 		}
 	}
 	/**

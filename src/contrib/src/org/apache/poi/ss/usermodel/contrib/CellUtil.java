@@ -154,7 +154,7 @@ public final class CellUtil {
 	 * @see CellStyle for alignment options
 	 */
 	public static void setAlignment(Cell cell, Workbook workbook, short align) {
-		setCellStyleProperty(cell, workbook, ALIGNMENT, new Short(align));
+		setCellStyleProperty(cell, workbook, ALIGNMENT, Short.valueOf(align));
 	}
 
 	/**
@@ -311,7 +311,7 @@ public final class CellUtil {
 	 * @param value property value
 	 */
 	private static void putShort(Map<String, Object> properties, String name, short value) {
-		properties.put(name, new Short(value));
+		properties.put(name, Short.valueOf(value));
 	}
 
 	/**
@@ -322,7 +322,7 @@ public final class CellUtil {
 	 * @param value property value
 	 */
 	private static void putBoolean(Map<String, Object> properties, String name, boolean value) {
-		properties.put(name, new Boolean(value));
+		properties.put(name, Boolean.valueOf(value));
 	}
 
 	/**

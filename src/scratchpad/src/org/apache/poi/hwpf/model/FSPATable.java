@@ -48,13 +48,13 @@ public final class FSPATable
             FSPA fspa = new FSPA(property.getBytes(), 0);
 
             _shapes.add(fspa);
-            _shapeIndexesByPropertyStart.put(new Integer(property.getStart()), new Integer(i));
+            _shapeIndexesByPropertyStart.put(Integer.valueOf(property.getStart()), Integer.valueOf(i));
         }
     }
 
     public FSPA getFspaFromCp(int cp)
     {
-        Integer idx = (Integer)_shapeIndexesByPropertyStart.get(new Integer(cp));
+        Integer idx = (Integer)_shapeIndexesByPropertyStart.get(Integer.valueOf(cp));
         if (idx == null) {
             return null;
         }

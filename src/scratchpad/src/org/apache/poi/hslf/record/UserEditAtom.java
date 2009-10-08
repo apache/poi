@@ -124,7 +124,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
 		// Look up the new positions of our preceding UserEditAtomOffset
 		if(lastUserEditAtomOffset != 0) {
-			Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(lastUserEditAtomOffset));
+			Integer newLocation = (Integer)oldToNewReferencesLookup.get(Integer.valueOf(lastUserEditAtomOffset));
 			if(newLocation == null) {
 				throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
 			}
@@ -132,7 +132,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		}
 
 		// Ditto for our PersistPtr
-		Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(persistPointersOffset));
+		Integer newLocation = (Integer)oldToNewReferencesLookup.get(Integer.valueOf(persistPointersOffset));
 		if(newLocation == null) {
 			throw new RuntimeException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
 		}

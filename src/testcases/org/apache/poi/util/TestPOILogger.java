@@ -39,8 +39,8 @@ public final class TestPOILogger extends TestCase {
 
         POILogger log = POILogFactory.getLogger( "foo" );
 
-        log.log( POILogger.WARN, "Test = ", new Integer( 1 ) );
-        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", "2", new Integer( 3 ) );
+        log.log( POILogger.WARN, "Test = ", Integer.valueOf( 1 ) );
+        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", "2", Integer.valueOf( 3 ) );
         log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", new int[]{4, 5} );
         log.logFormatted( POILogger.ERROR,
                 "Test param 1 = %1.1, param 2 = %0.1", new double[]{4, 5.23} );

@@ -434,7 +434,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				{
 					if ( recordId == EscherClientDataRecord.RECORD_ID || recordId == EscherTextboxRecord.RECORD_ID )
 					{
-						spEndingOffsets.add( new Integer( offset ) );
+						spEndingOffsets.add( Integer.valueOf( offset ) );
 						shapes.add( record );
 					}
 				}

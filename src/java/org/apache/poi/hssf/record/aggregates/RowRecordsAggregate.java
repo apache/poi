@@ -114,8 +114,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		_unknownRecords.add(rec);
 	}
 	public void insertRow(RowRecord row) {
-		// Integer integer = new Integer(row.getRowNumber());
-		_rowRecords.put(new Integer(row.getRowNumber()), row);
+		// Integer integer = Integer.valueOf(row.getRowNumber());
+		_rowRecords.put(Integer.valueOf(row.getRowNumber()), row);
 		if ((row.getRowNumber() < _firstrow) || (_firstrow == -1)) {
 			_firstrow = row.getRowNumber();
 		}
@@ -127,7 +127,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	public void removeRow(RowRecord row) {
 		int rowIndex = row.getRowNumber();
 		_valuesAgg.removeAllCellsValuesForRow(rowIndex);
-		Integer key = new Integer(rowIndex);
+		Integer key = Integer.valueOf(rowIndex);
 		RowRecord rr = _rowRecords.remove(key);
 		if (rr == null) {
 			throw new RuntimeException("Invalid row index (" + key.intValue() + ")");
@@ -143,7 +143,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         if (rowIndex < 0 || rowIndex > maxrow) {
 			throw new IllegalArgumentException("The row number must be between 0 and " + maxrow);
 		}
-		return _rowRecords.get(new Integer(rowIndex));
+		return _rowRecords.get(Integer.valueOf(rowIndex));
 	}
 
 	public int getPhysicalNumberOfRows()

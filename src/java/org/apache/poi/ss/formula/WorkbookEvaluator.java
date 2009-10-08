@@ -192,7 +192,7 @@ public final class WorkbookEvaluator {
 			if (sheetIndex < 0) {
 				throw new RuntimeException("Specified sheet from a different book");
 			}
-			result = new Integer(sheetIndex);
+			result = Integer.valueOf(sheetIndex);
 			_sheetIndexesBySheet.put(sheet, result);
 		}
 		return result.intValue();
@@ -214,7 +214,7 @@ public final class WorkbookEvaluator {
 			if (sheetIndex < 0) {
 				return -1;
 			}
-			result = new Integer(sheetIndex);
+			result = Integer.valueOf(sheetIndex);
 			_sheetIndexesByName.put(sheetName, result);
 		}
 		return result.intValue();
