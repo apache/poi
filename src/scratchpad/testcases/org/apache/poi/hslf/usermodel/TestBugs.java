@@ -109,15 +109,15 @@ public final class TestBugs extends TestCase {
 
         //map slide number and starting phrase of its notes
         Map<Integer, String> notesMap = new HashMap<Integer, String>();
-        notesMap.put(new Integer(4), "For  decades before calculators");
-        notesMap.put(new Integer(5), "Several commercial applications");
-        notesMap.put(new Integer(6), "There are three variations of LNS that are discussed here");
-        notesMap.put(new Integer(7), "Although multiply and square root are easier");
-        notesMap.put(new Integer(8), "The bus Z is split into Z_H and Z_L");
+        notesMap.put(Integer.valueOf(4), "For  decades before calculators");
+        notesMap.put(Integer.valueOf(5), "Several commercial applications");
+        notesMap.put(Integer.valueOf(6), "There are three variations of LNS that are discussed here");
+        notesMap.put(Integer.valueOf(7), "Although multiply and square root are easier");
+        notesMap.put(Integer.valueOf(8), "The bus Z is split into Z_H and Z_L");
 
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            Integer slideNumber = new Integer(slide[i].getSlideNumber());
+            Integer slideNumber = Integer.valueOf(slide[i].getSlideNumber());
             Notes notes = slide[i].getNotesSheet();
             if (notesMap.containsKey(slideNumber)){
                 assertNotNull(notes);

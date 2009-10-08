@@ -63,7 +63,7 @@ public class HSSFColor {
         for (int i = 0; i < colors.length; i++) {
             HSSFColor color = colors[i];
 
-            Integer index1 = new Integer(color.getIndex());
+            Integer index1 = Integer.valueOf(color.getIndex());
             if (result.containsKey(index1)) {
                 HSSFColor prevColor = (HSSFColor)result.get(index1);
                 throw new RuntimeException("Dup color index (" + index1
@@ -111,7 +111,7 @@ public class HSSFColor {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        return new Integer(s.intValue());
+        return Integer.valueOf(s.intValue());
     }
 
     private static HSSFColor[] getAllColors() {

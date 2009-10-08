@@ -147,7 +147,7 @@ public class DataFormatter {
         if (format != null) {
             return format;
         }
-        if (formatStr.equals("General") || formatStr.equals("@")) {
+        if ("General".equals(formatStr) || "@".equals(formatStr)) {
             if (DataFormatter.isWholeNumber(cellValue)) {
                 return generalWholeNumFormat;
             }
@@ -257,7 +257,7 @@ public class DataFormatter {
                 if(mIsMonth) {
                     sb.append('M');
                     ms.add(
-                            new Integer(sb.length() -1)
+                            Integer.valueOf(sb.length() -1)
                     );
                 } else {
                     sb.append('m');

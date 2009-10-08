@@ -143,7 +143,7 @@ public abstract class SubRecord {
 				_linkPtg = readRefPtg(buf);
 				switch (linkSize - formulaSize - 6) {
 					case 1:
-						_unknownByte6 = new Byte(in.readByte());
+						_unknownByte6 = Byte.valueOf(in.readByte());
 						break;
 					case 0:
 						_unknownByte6 = null;

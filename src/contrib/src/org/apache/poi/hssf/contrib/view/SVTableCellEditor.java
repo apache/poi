@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.contrib.view;
 
 import java.awt.*;
@@ -33,7 +33,6 @@ import org.apache.poi.hssf.util.HSSFColor;
  * nearly completely consists of overridden methods.
  *
  * @author     Jason Height
- * @since      16 July 2002
  */
 public class SVTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
   private static final Color black = getAWTColor(new HSSFColor.BLACK());
@@ -192,7 +191,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
      *
      */
     private final Color getAWTColor(int index, Color deflt) {
-      HSSFColor clr = (HSSFColor)colors.get(new Integer(index));
+      HSSFColor clr = (HSSFColor)colors.get(Integer.valueOf(index));
       if (clr == null) return deflt;
       return getAWTColor(clr);
     }
@@ -201,5 +200,4 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
       short[] rgb = clr.getTriplet();
       return new Color(rgb[0],rgb[1],rgb[2]);
     }
-
 }

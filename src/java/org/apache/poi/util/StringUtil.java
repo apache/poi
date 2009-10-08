@@ -24,7 +24,7 @@ import java.text.NumberFormat;
 import org.apache.poi.hssf.record.RecordInputStream;
 /**
  *  Title: String Utility Description: Collection of string handling utilities<p/>
- *  
+ *
  * Note - none of the methods in this class deals with {@link org.apache.poi.hssf.record.ContinueRecord}s.  For such
  * functionality, consider using {@link RecordInputStream
 } *
@@ -52,7 +52,7 @@ public class StringUtil {
 	 *                 byte array. it is assumed that string[ offset ] and string[ offset +
 	 *                 1 ] contain the first 16-bit unicode character
      * @param len the length of the final string
-	 * @return                                     the converted string
+	 * @return the converted string, never <code>null</code>.
 	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
 	 *      the byte array (i.e., is negative or is greater than or equal to
 	 *      string.length)
@@ -87,7 +87,7 @@ public class StringUtil {
 	 * { 0x16, 0x00 } -0x16
 	 *
 	 * @param  string  the byte array to be converted
-	 * @return         the converted string
+	 * @return the converted string, never <code>null</code>
 	 */
 	public static String getFromUnicodeLE(byte[] string) {
 		if(string.length == 0) { return ""; }
@@ -132,7 +132,7 @@ public class StringUtil {
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
 	 */
 	public static String readUnicodeString(LittleEndianInput in) {
-		
+
 		int nChars = in.readUShort();
 		byte flag = in.readByte();
 		if ((flag & 0x01) == 0) {
@@ -148,17 +148,17 @@ public class StringUtil {
 	 * </ol>
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
 	 * <br/>
-	 * This method should be used when the nChars field is <em>not</em> stored 
-	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link 
-	 * #readUnicodeString(LittleEndianInput)} can be used. 
+	 * This method should be used when the nChars field is <em>not</em> stored
+	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link
+	 * #readUnicodeString(LittleEndianInput)} can be used.
 	 */
 	public static String readUnicodeString(LittleEndianInput in, int nChars) {
 		byte is16Bit = in.readByte();
 		if ((is16Bit & 0x01) == 0) {
 			return readCompressedUnicode(in, nChars);
 		}
-		return readUnicodeLE(in, nChars);		
-	}	
+		return readUnicodeLE(in, nChars);
+	}
 	/**
 	 * OutputStream <tt>out</tt> will get:
 	 * <ol>
@@ -169,7 +169,7 @@ public class StringUtil {
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
 	 */
 	public static void writeUnicodeString(LittleEndianOutput out, String value) {
-		
+
 		int nChars = value.length();
 		out.writeShort(nChars);
 		boolean is16Bit = hasMultibyte(value);
@@ -188,11 +188,11 @@ public class StringUtil {
 	 * </ol>
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
 	 * <br/>
-	 * This method should be used when the nChars field is <em>not</em> stored 
-	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link 
-	 * #writeUnicodeString(LittleEndianOutput, String)} can be used. 
+	 * This method should be used when the nChars field is <em>not</em> stored
+	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link
+	 * #writeUnicodeString(LittleEndianOutput, String)} can be used.
 	 */
-	public static void writeUnicodeStringFlagAndData(LittleEndianOutput out, String value) {		
+	public static void writeUnicodeStringFlagAndData(LittleEndianOutput out, String value) {
 		boolean is16Bit = hasMultibyte(value);
 		out.writeByte(is16Bit ? 0x01 : 0x00);
 		if (is16Bit) {
@@ -201,7 +201,7 @@ public class StringUtil {
 			putCompressedUnicode(value, out);
 		}
 	}
-	
+
 	/**
 	 * @return the number of bytes that would be written by {@link #writeUnicodeString(LittleEndianOutput, String)}
 	 */
@@ -267,7 +267,7 @@ public class StringUtil {
 		}
 		out.write(bytes);
 	}
-	
+
 	public static String readUnicodeLE(LittleEndianInput in, int nChars) {
 		char[] buf = new char[nChars];
 		for (int i = 0; i < buf.length; i++) {
@@ -360,7 +360,7 @@ public class StringUtil {
 
 	/**
 	 * check the parameter has multibyte character
-	 * 
+	 *
 	 * @param value string to check
 	 * @return boolean result true:string has at least one multibyte character
 	 */
@@ -378,7 +378,7 @@ public class StringUtil {
 
 	/**
 	 * Checks to see if a given String needs to be represented as Unicode
-	 * 
+	 *
 	 * @param value
 	 * @return true if string needs Unicode to be represented.
 	 */

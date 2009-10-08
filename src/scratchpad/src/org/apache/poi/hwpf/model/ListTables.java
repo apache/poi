@@ -58,7 +58,7 @@ public final class ListTables
     for (int x = 0; x < length; x++)
     {
       ListData lst = new ListData(tableStream, lstOffset);
-      _listMap.put(new Integer(lst.getLsid()), lst);
+      _listMap.put(Integer.valueOf(lst.getLsid()), lst);
       lstOffset += LIST_DATA_SIZE;
 
       int num = lst.numLevels();
@@ -96,12 +96,12 @@ public final class ListTables
   public int addList(ListData lst, ListFormatOverride override)
   {
     int lsid = lst.getLsid();
-    while (_listMap.get(new Integer(lsid)) != null)
+    while (_listMap.get(Integer.valueOf(lsid)) != null)
     {
       lsid = lst.resetListID();
       override.setLsid(lsid);
     }
-    _listMap.put(new Integer(lsid), lst);
+    _listMap.put(Integer.valueOf(lsid), lst);
     _overrideList.add(override);
     return lsid;
   }
@@ -190,7 +190,7 @@ public final class ListTables
 
   public ListLevel getLevel(int listID, int level)
   {
-    ListData lst = (ListData)_listMap.get(new Integer(listID));
+    ListData lst = (ListData)_listMap.get(Integer.valueOf(listID));
     if(level < lst.numLevels()) {
     	ListLevel lvl = lst.getLevels()[level];
     	return lvl;
@@ -201,7 +201,7 @@ public final class ListTables
 
   public ListData getListData(int listID)
   {
-    return (ListData) _listMap.get(new Integer(listID));
+    return (ListData) _listMap.get(Integer.valueOf(listID));
   }
 
   public boolean equals(Object obj)

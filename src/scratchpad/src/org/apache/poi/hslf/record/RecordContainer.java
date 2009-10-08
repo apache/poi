@@ -36,7 +36,7 @@ import java.util.ArrayList;
 public abstract class RecordContainer extends Record
 {
 	protected Record[] _children;
-	private Boolean changingChildRecordsLock = new Boolean(true);
+	private Boolean changingChildRecordsLock = Boolean.TRUE;
 
 	/**
 	 * Return any children

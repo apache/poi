@@ -69,7 +69,7 @@ public class IntMapper
     {
       int index = elements.size();
       elements.add(value);
-      valueKeyMap.put(value, new Integer(index));
+      valueKeyMap.put(value, Integer.valueOf(index));
       return true;
     }
 

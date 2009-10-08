@@ -158,7 +158,7 @@ public class EscherOptRecord
             {
                 EscherProperty p1 = (EscherProperty) o1;
                 EscherProperty p2 = (EscherProperty) o2;
-                return new Short( p1.getPropertyNumber() ).compareTo( new Short( p2.getPropertyNumber() ) );
+                return Short.valueOf( p1.getPropertyNumber() ).compareTo( Short.valueOf( p2.getPropertyNumber() ) );
             }
         } );
     }

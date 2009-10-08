@@ -90,7 +90,7 @@ public abstract class PageBreakRecord extends StandardRecord {
         for(int k = 0; k < nBreaks; k++) {
             Break br = new Break(in);
             _breaks.add(br);
-            _breakMap.put(new Integer(br.main), br);
+            _breakMap.put(Integer.valueOf(br.main), br);
         }
 
     }
@@ -160,7 +160,7 @@ public abstract class PageBreakRecord extends StandardRecord {
     */
     public void addBreak(int main, int subFrom, int subTo) {
 
-        Integer key = new Integer(main);
+        Integer key = Integer.valueOf(main);
         Break region = _breakMap.get(key);
         if(region == null) {
             region = new Break(main, subFrom, subTo);
@@ -178,7 +178,7 @@ public abstract class PageBreakRecord extends StandardRecord {
      * @param main (zero-based)
      */
     public final void removeBreak(int main) {
-        Integer rowKey = new Integer(main);
+        Integer rowKey = Integer.valueOf(main);
         Break region = _breakMap.get(rowKey);
         _breaks.remove(region);
         _breakMap.remove(rowKey);
@@ -190,7 +190,7 @@ public abstract class PageBreakRecord extends StandardRecord {
      * @return The Break or null if no break exists at the row/col specified.
      */
     public final Break getBreak(int main) {
-        Integer rowKey = new Integer(main);
+        Integer rowKey = Integer.valueOf(main);
         return _breakMap.get(rowKey);
     }
 

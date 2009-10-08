@@ -400,12 +400,12 @@ public final class ParagraphSprmUncompressor
     HashMap tabMap = new HashMap();
     for (int x = 0; x < tabPositions.length; x++)
     {
-      tabMap.put(new Integer(tabPositions[x]), new Byte(tabDescriptors[x]));
+      tabMap.put(Integer.valueOf(tabPositions[x]), Byte.valueOf(tabDescriptors[x]));
     }
 
     for (int x = 0; x < delSize; x++)
     {
-      tabMap.remove(new Integer(LittleEndian.getShort(grpprl, offset)));
+      tabMap.remove(Integer.valueOf(LittleEndian.getShort(grpprl, offset)));
       offset += LittleEndian.SHORT_SIZE;
     }
 
@@ -413,8 +413,8 @@ public final class ParagraphSprmUncompressor
     int start = offset;
     for (int x = 0; x < addSize; x++)
     {
-      Integer key = new Integer(LittleEndian.getShort(grpprl, offset));
-      Byte val = new Byte(grpprl[start + ((LittleEndian.SHORT_SIZE * addSize) + x)]);
+      Integer key = Integer.valueOf(LittleEndian.getShort(grpprl, offset));
+      Byte val = Byte.valueOf(grpprl[start + ((LittleEndian.SHORT_SIZE * addSize) + x)]);
       tabMap.put(key, val);
       offset += LittleEndian.SHORT_SIZE;
     }
@@ -452,20 +452,20 @@ public final class ParagraphSprmUncompressor
 //    HashMap tabMap = new HashMap();
 //    for (int x = 0; x < tabPositions.length; x++)
 //    {
-//      tabMap.put(new Integer(tabPositions[x]), new Byte(tabDescriptors[x]));
+//      tabMap.put(Integer.valueOf(tabPositions[x]), Byte.valueOf(tabDescriptors[x]));
 //    }
 //
 //    for (int x = 0; x < delSize; x++)
 //    {
-//      tabMap.remove(new Integer(LittleEndian.getInt(grpprl, offset)));
+//      tabMap.remove(Integer.valueOf(LittleEndian.getInt(grpprl, offset)));
 //      offset += LittleEndian.INT_SIZE;;
 //    }
 //
 //    int addSize = grpprl[offset++];
 //    for (int x = 0; x < addSize; x++)
 //    {
-//      Integer key = new Integer(LittleEndian.getInt(grpprl, offset));
-//      Byte val = new Byte(grpprl[(LittleEndian.INT_SIZE * (addSize - x)) + x]);
+//      Integer key = Integer.valueOf(LittleEndian.getInt(grpprl, offset));
+//      Byte val = Byte.valueOf(grpprl[(LittleEndian.INT_SIZE * (addSize - x)) + x]);
 //      tabMap.put(key, val);
 //      offset += LittleEndian.INT_SIZE;
 //    }

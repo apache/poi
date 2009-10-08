@@ -60,11 +60,11 @@ public final class TestStringUtil extends TestCase {
                     (byte) 'r', (byte) 'l', (byte) 'd', (byte) 0xAE
                 };
         String input;
-		try {
-			input = new String( expected_output, StringUtil.getPreferredEncoding() );
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            input = new String( expected_output, StringUtil.getPreferredEncoding() );
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         StringUtil.putCompressedUnicode( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )
@@ -129,57 +129,31 @@ public final class TestStringUtil extends TestCase {
     }
 
     public void testFormat() {
-        assertEquals( "This is a test " + fmt( 1.2345, 2, 2 ),
-                StringUtil.format( "This is a test %2.2", new Object[]
-                {
-                    new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a test " + fmt( 1.2345, -1, 3 ),
-                StringUtil.format( "This is a test %.3", new Object[]
-                {
-                    new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a great test " + fmt( 1.2345, -1, 3 ),
-                StringUtil.format( "This is a % test %.3", new Object[]
-                {
-                    "great", new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a test 1",
-                StringUtil.format( "This is a test %", new Object[]
-                {
-                    new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test 1",
-                StringUtil.format( "This is a test %", new Object[]
-                {
-                    new Integer( 1 ), new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test 1.x",
-                StringUtil.format( "This is a test %1.x", new Object[]
-                {
-                    new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test ?missing data?1.x",
-                StringUtil.format( "This is a test %1.x", new Object[]
-                {
-                } ) );
-        assertEquals( "This is a test %1.x",
-                StringUtil.format( "This is a test \\%1.x", new Object[]
-                {
-                } ) );
+
+        confirm("This is a test " + fmt(1.2345, 2, 2), "This is a test %2.2", new Double(1.2345));
+        confirm("This is a test " + fmt(1.2345, -1, 3), "This is a test %.3", new Double(1.2345));
+        confirm("This is a great test " + fmt(1.2345, -1, 3),
+                "This is a % test %.3", "great", new Double(1.2345));
+        confirm("This is a test 1", "This is a test %", Integer.valueOf(1));
+        confirm("This is a test 1", "This is a test %", Integer.valueOf(1), Integer.valueOf(1));
+        confirm("This is a test 1.x", "This is a test %1.x", Integer.valueOf(1));
+        confirm("This is a test ?missing data?1.x", "This is a test %1.x");
+        confirm("This is a test %1.x", "This is a test \\%1.x");
     }
 
+    private static void confirm(String expectedResult, String fmtString, Object ... params) {
+        String actualResult = StringUtil.format(fmtString, params);
+        assertEquals(expectedResult, actualResult);
+    }
 
     private static String fmt(double num, int minIntDigits, int maxFracDigitis) {
         NumberFormat nf = NumberFormat.getInstance();
 
-        if ( minIntDigits != -1 )
-        {
-            nf.setMinimumIntegerDigits( minIntDigits );
+        if (minIntDigits != -1) {
+            nf.setMinimumIntegerDigits(minIntDigits);
         }
-        if ( maxFracDigitis != -1 )
-        {
-            nf.setMaximumFractionDigits( maxFracDigitis );
+        if (maxFracDigitis != -1) {
+            nf.setMaximumFractionDigits(maxFracDigitis);
         }
 
         return nf.format( num );

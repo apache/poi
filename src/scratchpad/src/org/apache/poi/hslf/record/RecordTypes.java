@@ -217,7 +217,7 @@ public final class RecordTypes {
      * @return name of the record
      */
     public static String recordName(int type) {
-        String name = (String)typeToName.get(new Integer(type));
+        String name = (String)typeToName.get(Integer.valueOf(type));
         if (name == null) name = "Unknown" + type;
         return name;
     }
@@ -232,7 +232,7 @@ public final class RecordTypes {
      * @return class to handle the record, or null if an unknown (eg Escher) record
      */
 	public static Class recordHandlingClass(int type) {
-		Class c = (Class)typeToClass.get(new Integer(type));
+		Class c = (Class)typeToClass.get(Integer.valueOf(type));
 		return c;
 	}
 
@@ -252,7 +252,7 @@ public final class RecordTypes {
 				if (val instanceof Type) {
 					Type t = (Type)val;
 					Class c = t.handlingClass;
-					Integer id = new Integer(t.typeID);
+					Integer id = Integer.valueOf(t.typeID);
 					if(c == null) { c = UnknownRecordPlaceholder.class; }
 
                     typeToName.put(id, f[i].getName());

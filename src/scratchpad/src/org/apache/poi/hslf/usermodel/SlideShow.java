@@ -162,7 +162,7 @@ public final class SlideShow {
 				// PersistPtr, remove their old positions
 				int[] ids = pph.getKnownSlideIDs();
 				for (int j = 0; j < ids.length; j++) {
-					Integer id = new Integer(ids[j]);
+					Integer id = Integer.valueOf(ids[j]);
 					if (mostRecentByBytes.containsKey(id)) {
 						mostRecentByBytes.remove(id);
 					}
@@ -171,7 +171,7 @@ public final class SlideShow {
 				// Now, update the byte level locations with their latest values
 				Hashtable thisSetOfLocations = pph.getSlideLocationsLookup();
 				for (int j = 0; j < ids.length; j++) {
-					Integer id = new Integer(ids[j]);
+					Integer id = Integer.valueOf(ids[j]);
 					mostRecentByBytes.put(id, thisSetOfLocations.get(id));
 				}
 			}
@@ -192,18 +192,18 @@ public final class SlideShow {
 		}
 		Arrays.sort(allIDs);
 		for (int i = 0; i < allIDs.length; i++) {
-			_sheetIdToCoreRecordsLookup.put(new Integer(allIDs[i]), new Integer(i));
+			_sheetIdToCoreRecordsLookup.put(Integer.valueOf(allIDs[i]), Integer.valueOf(i));
 		}
 
 		// Now convert the byte offsets back into record offsets
 		for (int i = 0; i < _records.length; i++) {
 			if (_records[i] instanceof PositionDependentRecord) {
 				PositionDependentRecord pdr = (PositionDependentRecord) _records[i];
-				Integer recordAt = new Integer(pdr.getLastOnDiskOffset());
+				Integer recordAt = Integer.valueOf(pdr.getLastOnDiskOffset());
 
 				// Is it one we care about?
 				for (int j = 0; j < allIDs.length; j++) {
-					Integer thisID = new Integer(allIDs[j]);
+					Integer thisID = Integer.valueOf(allIDs[j]);
 					Integer thatRecordAt = (Integer) mostRecentByBytes.get(thisID);
 
 					if (thatRecordAt.equals(recordAt)) {
@@ -258,7 +258,7 @@ public final class SlideShow {
 	 *            the refID
 	 */
 	private Record getCoreRecordForRefID(int refID) {
-		Integer coreRecordId = (Integer) _sheetIdToCoreRecordsLookup.get(new Integer(refID));
+		Integer coreRecordId = (Integer) _sheetIdToCoreRecordsLookup.get(Integer.valueOf(refID));
 		if (coreRecordId != null) {
 			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
 			return r;
@@ -364,8 +364,8 @@ public final class SlideShow {
 
 					// Record the match between slide id and these notes
 					SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
-					Integer slideId = new Integer(spa.getSlideIdentifier());
-					slideIdToNotes.put(slideId, new Integer(i));
+					Integer slideId = Integer.valueOf(spa.getSlideIdentifier());
+					slideIdToNotes.put(slideId, Integer.valueOf(i));
 				} else {
 					logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i
 							+ " said its record was at refID "
@@ -422,7 +422,7 @@ public final class SlideShow {
 			// 0 if slide has no notes.
 			int noteId = slidesRecords[i].getSlideAtom().getNotesID();
 			if (noteId != 0) {
-				Integer notesPos = (Integer) slideIdToNotes.get(new Integer(noteId));
+				Integer notesPos = (Integer) slideIdToNotes.get(Integer.valueOf(noteId));
 				if (notesPos != null)
 					notes = _notes[notesPos.intValue()];
 				else

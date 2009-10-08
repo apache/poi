@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.contrib.view;
 
 import java.util.*;
@@ -29,7 +29,6 @@ import org.apache.poi.hssf.util.*;
  * SVTableCell Editor and Renderer helper functions.
  *
  * @author     Jason Height
- * @since      16 July 2002
  */
 public class SVTableUtils {
   private final static Hashtable colors = HSSFColor.getIndexHash();
@@ -73,7 +72,7 @@ public class SVTableUtils {
    * @return        The aWTColor value
    */
   public final static Color getAWTColor(int index, Color deflt) {
-    HSSFColor clr = (HSSFColor) colors.get(new Integer(index));
+    HSSFColor clr = (HSSFColor) colors.get(Integer.valueOf(index));
     if (clr == null) {
       return deflt;
     }
@@ -91,5 +90,4 @@ public class SVTableUtils {
     short[] rgb = clr.getTriplet();
     return new Color(rgb[0], rgb[1], rgb[2]);
   }
-
 }

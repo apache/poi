@@ -63,7 +63,7 @@ public final class UserEditAndPersistListing {
 				int[] sheetIDs = pph.getKnownSlideIDs();
 				Hashtable sheetOffsets = pph.getSlideLocationsLookup();
 				for(int j=0; j<sheetIDs.length; j++) {
-					Integer id = new Integer(sheetIDs[j]);
+					Integer id = Integer.valueOf(sheetIDs[j]);
 					Integer offset = (Integer)sheetOffsets.get(id);
 
 					System.out.println("  Knows about sheet " + id);

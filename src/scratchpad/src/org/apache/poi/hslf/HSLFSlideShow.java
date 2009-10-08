@@ -231,11 +231,11 @@ public final class HSLFSlideShow extends POIDocument {
         HashMap offset2id = new HashMap();
         while (usrOffset != 0){
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
-            lst.add(new Integer(usrOffset));
+            lst.add(Integer.valueOf(usrOffset));
             int psrOffset = usr.getPersistPointersOffset();
 
             PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
-            lst.add(new Integer(psrOffset));
+            lst.add(Integer.valueOf(psrOffset));
             Hashtable entries = ptr.getSlideLocationsLookup();
             for (Iterator it = entries.keySet().iterator(); it.hasNext(); ) {
                 Integer id = (Integer)it.next();
@@ -401,7 +401,7 @@ public final class HSLFSlideShow extends POIDocument {
                 int oldPos = pdr.getLastOnDiskOffset();
                 int newPos = baos.size();
                 pdr.setLastOnDiskOffset(newPos);
-                oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
+                oldToNewPositions.put(Integer.valueOf(oldPos),Integer.valueOf(newPos));
                 //System.out.println(oldPos + " -> " + newPos);
             }
 
@@ -438,7 +438,7 @@ public final class HSLFSlideShow extends POIDocument {
 
         // Update and write out the Current User atom
         int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
-        Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(new Integer(oldLastUserEditAtomPos));
+        Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(Integer.valueOf(oldLastUserEditAtomPos));
         if(newLastUserEditAtomPos == null) {
             throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
         }

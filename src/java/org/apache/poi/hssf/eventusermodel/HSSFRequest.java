@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.eventusermodel;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
@@ -37,71 +36,54 @@ import org.apache.poi.hssf.record.RecordFactory;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Carey Sublette (careysub@earthling.net)
  */
+public class HSSFRequest {
+	private final Map<Short, List<HSSFListener>> _records;
 
-public class HSSFRequest
-{
-    private HashMap records;
+	/** Creates a new instance of HSSFRequest */
+	public HSSFRequest() {
+		_records = new HashMap<Short, List<HSSFListener>>(50); // most folks won't listen for too many of these
+	}
 
-    /** Creates a new instance of HSSFRequest */
+	/**
+	 * add an event listener for a particular record type.  The trick is you have to know
+	 * what the records are for or just start with our examples and build on them.  Alternatively,
+	 * you CAN call addListenerForAllRecords and you'll receive ALL record events in one listener,
+	 * but if you like to squeeze every last byte of efficiency out of life you my not like this.
+	 * (its sure as heck what I plan to do)
+	 *
+	 * @see #addListenerForAllRecords(HSSFListener)
+	 *
+	 * @param lsnr for the event
+	 * @param sid identifier for the record type this is the .sid static member on the individual records
+	 *        for example req.addListener(myListener, BOFRecord.sid)
+	 */
+	public void addListener(HSSFListener lsnr, short sid) {
+		List<HSSFListener> list = _records.get(Short.valueOf(sid));
 
-    public HSSFRequest()
-    {
-        records =
-            new HashMap(50);   // most folks won't listen for too many of these
-    }
+		if (list == null) {
+			list = new ArrayList<HSSFListener>(1); // probably most people will use one listener
+			_records.put(Short.valueOf(sid), list);
+		}
+		list.add(lsnr);
+	}
 
-    /**
-     * add an event listener for a particular record type.  The trick is you have to know
-     * what the records are for or just start with our examples and build on them.  Alternatively,
-     * you CAN call addListenerForAllRecords and you'll recieve ALL record events in one listener,
-     * but if you like to squeeze every last byte of efficiency out of life you my not like this.
-     * (its sure as heck what I plan to do)
-     *
-     * @see #addListenerForAllRecords(HSSFListener)
-     *
-     * @param lsnr      for the event
-     * @param sid       identifier for the record type this is the .sid static member on the individual records
-     *        for example req.addListener(myListener, BOFRecord.sid)
-     */
+	/**
+	 * This is the equivalent of calling addListener(myListener, sid) for EVERY
+	 * record in the org.apache.poi.hssf.record package. This is for lazy
+	 * people like me. You can call this more than once with more than one listener, but
+	 * that seems like a bad thing to do from a practice-perspective unless you have a
+	 * compelling reason to do so (like maybe you send the event two places or log it or
+	 * something?).
+	 *
+	 * @param lsnr a single listener to associate with ALL records
+	 */
+	public void addListenerForAllRecords(HSSFListener lsnr) {
+		short[] rectypes = RecordFactory.getAllKnownRecordSIDs();
 
-    public void addListener(HSSFListener lsnr, short sid)
-    {
-        List   list = null;
-        Object obj  = records.get(new Short(sid));
-
-        if (obj != null)
-        {
-            list = ( List ) obj;
-        }
-        else
-        {
-            list = new ArrayList(
-                1);   // probably most people will use one listener
-            list.add(lsnr);
-            records.put(new Short(sid), list);
-        }
-    }
-
-    /**
-     * This is the equivilent of calling addListener(myListener, sid) for EVERY
-     * record in the org.apache.poi.hssf.record package. This is for lazy
-     * people like me. You can call this more than once with more than one listener, but
-     * that seems like a bad thing to do from a practice-perspective unless you have a
-     * compelling reason to do so (like maybe you send the event two places or log it or
-     * something?).
-     *
-     * @param lsnr      a single listener to associate with ALL records
-     */
-
-    public void addListenerForAllRecords(HSSFListener lsnr)
-    {
-        short[] rectypes = RecordFactory.getAllKnownRecordSIDs();
-
-        for (int k = 0; k < rectypes.length; k++)
-        {
-            addListener(lsnr, rectypes[ k ]);
-        }
-    }
+		for (int k = 0; k < rectypes.length; k++) {
+			addListener(lsnr, rectypes[k]);
+		}
+	}
 
 	/**
 	 * Called by HSSFEventFactory, passes the Record to each listener associated with
@@ -112,32 +94,26 @@ public class HSSFRequest
 	 * @return numeric user-specified result code. If zero continue processing.
 	 * @throws HSSFUserException User exception condition
 	 */
+	protected short processRecord(Record rec) throws HSSFUserException {
+		Object obj = _records.get(Short.valueOf(rec.getSid()));
+		short userCode = 0;
 
-    protected short processRecord(Record rec) throws HSSFUserException
-    {
-        Object obj = records.get(new Short(rec.getSid()));
-        short userCode = 0;
+		if (obj != null) {
+			List listeners = (List) obj;
 
-        if (obj != null)
-        {
-            List listeners = ( List ) obj;
-
-            for (int k = 0; k < listeners.size(); k++)
-            {
-                Object listenObj = listeners.get(k);
-                if (listenObj instanceof AbortableHSSFListener)
-                {
-					AbortableHSSFListener listener = ( AbortableHSSFListener ) listenObj;
-                	userCode = listener.abortableProcessRecord(rec);
-                	if (userCode!=0) break;
-				}
-				else
-				{ 
-					HSSFListener listener = ( HSSFListener ) listenObj;
+			for (int k = 0; k < listeners.size(); k++) {
+				Object listenObj = listeners.get(k);
+				if (listenObj instanceof AbortableHSSFListener) {
+					AbortableHSSFListener listener = (AbortableHSSFListener) listenObj;
+					userCode = listener.abortableProcessRecord(rec);
+					if (userCode != 0)
+						break;
+				} else {
+					HSSFListener listener = (HSSFListener) listenObj;
 					listener.processRecord(rec);
 				}
-            }
-        }
-        return userCode;
-    }
+			}
+		}
+		return userCode;
+	}
 }

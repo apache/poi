@@ -38,7 +38,7 @@ public final class CString extends RecordAtom {
 	/** The bytes that make up the text */
 	private byte[] _text;
 
-	/** Grabs the text. */
+	/** Grabs the text. Never <code>null</code> */
 	public String getText() {
 		return StringUtil.getFromUnicodeLE(_text);
 	}

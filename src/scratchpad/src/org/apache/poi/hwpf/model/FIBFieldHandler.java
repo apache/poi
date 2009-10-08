@@ -146,7 +146,7 @@ public final class FIBFieldHandler
       fieldOffset += LittleEndian.INT_SIZE;
       int dsSize = LittleEndian.getInt(mainStream, fieldOffset);
 
-      if (offsetList.contains(new Integer(x)) ^ areKnown)
+      if (offsetList.contains(Integer.valueOf(x)) ^ areKnown)
       {
         if (dsSize > 0)
         {
@@ -160,7 +160,7 @@ public final class FIBFieldHandler
           {
             UnhandledDataStructure unhandled = new UnhandledDataStructure(
               tableStream, dsOffset, dsSize);
-            _unknownMap.put(new Integer(x), unhandled);
+            _unknownMap.put(Integer.valueOf(x), unhandled);
           }
         }
       }
@@ -208,7 +208,7 @@ public final class FIBFieldHandler
 
     for (int x = 0; x < length; x++)
     {
-      UnhandledDataStructure ds = (UnhandledDataStructure)_unknownMap.get(new Integer(x));
+      UnhandledDataStructure ds = (UnhandledDataStructure)_unknownMap.get(Integer.valueOf(x));
       if (ds != null)
       {
         LittleEndian.putInt(mainStream, offset, tableStream.getOffset());

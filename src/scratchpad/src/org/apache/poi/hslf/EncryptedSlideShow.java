@@ -117,7 +117,7 @@ public final class EncryptedSlideShow
 
 			int offset = (
 					(Integer)pph.getSlideLocationsLookup().get(
-							new Integer(maxSlideId)
+							Integer.valueOf(maxSlideId)
 					) ).intValue();
 			Record r3 = Record.buildRecordAtOffset(
 					hss.getUnderlyingBytes(),

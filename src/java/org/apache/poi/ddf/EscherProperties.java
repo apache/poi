@@ -586,20 +586,20 @@ public final class EscherProperties {
 	}
 
 	private static void addProp(Map<Short, EscherPropertyMetaData> m, int s, String propName) {
-		m.put(new Short((short) s), new EscherPropertyMetaData(propName));
+		m.put(Short.valueOf((short) s), new EscherPropertyMetaData(propName));
 	}
 
 	private static void addProp(Map<Short, EscherPropertyMetaData> m, int s, String propName, byte type) {
-		m.put(new Short((short) s), new EscherPropertyMetaData(propName, type));
+		m.put(Short.valueOf((short) s), new EscherPropertyMetaData(propName, type));
 	}
 
 	public static String getPropertyName(short propertyId) {
-		EscherPropertyMetaData o = properties.get(new Short(propertyId));
+		EscherPropertyMetaData o = properties.get(Short.valueOf(propertyId));
 		return o == null ? "unknown" : o.getDescription();
 	}
 
 	public static byte getPropertyType(short propertyId) {
-		EscherPropertyMetaData escherPropertyMetaData = properties.get(new Short(propertyId));
+		EscherPropertyMetaData escherPropertyMetaData = properties.get(Short.valueOf(propertyId));
 		return escherPropertyMetaData == null ? 0 : escherPropertyMetaData.getType();
 	}
 }

@@ -217,7 +217,7 @@ public class Property
             for (int i = 0; i < nrEntries; i++)
             {
                 /* The key. */
-                final Long id = new Long(LittleEndian.getUInt(src, o));
+                final Long id = Long.valueOf(LittleEndian.getUInt(src, o));
                 o += LittleEndian.INT_SIZE;
 
                 /* The value (a string). The length is the either the

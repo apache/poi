@@ -180,7 +180,7 @@ public final class Workbook implements Model {
     public static Workbook createWorkbook(List<Record> recs) {
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Workbook (readfile) created with reclen=",
-                    new Integer(recs.size()));
+                    Integer.valueOf(recs.size()));
         Workbook retval = new Workbook();
         List<Record> records = new ArrayList<Record>(recs.size() / 3);
         retval.records.setRecords(records);
@@ -517,8 +517,8 @@ public final class Workbook implements Model {
 
     public void setSheetBof(int sheetIndex, int pos) {
         if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetIndex),
-                " at pos=", new Integer(pos));
+            log.log(DEBUG, "setting bof for sheetnum =", Integer.valueOf(sheetIndex),
+                " at pos=", Integer.valueOf(pos));
         checkSheets(sheetIndex);
         getBoundSheetRec(sheetIndex)
         .setPositionOfBof(pos);
@@ -757,7 +757,7 @@ public final class Workbook implements Model {
 
     public int getNumSheets() {
         if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "getNumSheets=", new Integer(boundsheets.size()));
+            log.log(DEBUG, "getNumSheets=", Integer.valueOf(boundsheets.size()));
         return boundsheets.size();
     }
 
@@ -769,7 +769,7 @@ public final class Workbook implements Model {
 
     public int getNumExFormats() {
         if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "getXF=", new Integer(numxfs));
+            log.log(DEBUG, "getXF=", Integer.valueOf(numxfs));
         return numxfs;
     }
 
@@ -903,7 +903,7 @@ public final class Workbook implements Model {
         UnicodeString retval = sst.getString(str);
 
         if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "Returning SST for index=", new Integer(str),
+            log.log(DEBUG, "Returning SST for index=", Integer.valueOf(str),
                 " String= ", retval);
         return retval;
     }

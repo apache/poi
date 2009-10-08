@@ -278,7 +278,7 @@ public class Section
                     this.offset + ple.offset,
                     ple.length, codepage);
             if (p.getID() == PropertyIDMap.PID_CODEPAGE)
-                p = new Property(p.getID(), p.getType(), new Integer(codepage));
+                p = new Property(p.getID(), p.getType(), Integer.valueOf(codepage));
             properties[i1++] = p;
         }
 
@@ -450,7 +450,7 @@ public class Section
     {
         String s = null;
         if (dictionary != null)
-            s = (String) dictionary.get(new Long(pid));
+            s = (String) dictionary.get(Long.valueOf(pid));
         if (s == null)
             s = SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
         if (s == null)

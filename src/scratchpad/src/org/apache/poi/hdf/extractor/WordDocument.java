@@ -394,7 +394,7 @@ public final class WordDocument {
 
               byte[] chpx = new byte[size];
               System.arraycopy(fkp, ++chpxOffset, chpx, 0, size);
-              //_papTable.put(new Integer(fcStart), papx);
+              //_papTable.put(Integer.valueOf(fcStart), papx);
               _characterTable.add(new ChpxNode(fcStart, fcEnd, chpx));
           }
 
@@ -734,12 +734,12 @@ public final class WordDocument {
         lineWidth += 10 * tempString.length();//metrics.stringWidth(tempString);
         if(lineWidth > pageWidth)
         {
-          lineHeights.add(new Integer(maxHeight));
+          lineHeights.add(Integer.valueOf(maxHeight));
           maxHeight = 0;
           lineWidth = 0;
         }
       }
-      lineHeights.add(new Integer(maxHeight));
+      lineHeights.add(Integer.valueOf(maxHeight));
     }
     int sum = 0;
     size = lineHeights.size();

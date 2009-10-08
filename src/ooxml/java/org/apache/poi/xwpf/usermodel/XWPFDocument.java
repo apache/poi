@@ -66,7 +66,7 @@ public class XWPFDocument extends POIXMLDocument {
         //build a tree of POIXMLDocumentParts, this document being the root
         load(XWPFFactory.getInstance());
     }
-    
+
     public XWPFDocument(InputStream is) throws IOException {
         super(PackageHelper.open(is));
 
@@ -97,7 +97,7 @@ public class XWPFDocument extends POIXMLDocument {
             initFootnotes();
 
             // filling paragraph list
-            for (CTP p : body.getPArray())	{
+            for (CTP p : body.getPArray())    {
                 paragraphs.add(new XWPFParagraph(p, this));
             }
 
@@ -128,7 +128,7 @@ public class XWPFDocument extends POIXMLDocument {
     private void initHyperlinks(){
         // Get the hyperlinks
         // TODO: make me optional/separated in private function
-        try	{
+        try    {
             Iterator <PackageRelationship> relIter =
                 getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation()).iterator();
             while(relIter.hasNext()) {
@@ -164,7 +164,7 @@ public class XWPFDocument extends POIXMLDocument {
      */
     protected static OPCPackage newPackage() {
         try {
-        	OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
+            OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship
@@ -355,13 +355,13 @@ public class XWPFDocument extends POIXMLDocument {
 
     /**
      * Create an empty table with one row and one column as default.
-     * 
+     *
      * @return a new table
      */
     public XWPFTable createTable(){
         return new XWPFTable(this, ctDocument.getBody().addNewTbl());
     }
-    
+
     /**
      * Create an empty table with a number of rows and cols specified
      * @param rows
@@ -369,26 +369,25 @@ public class XWPFDocument extends POIXMLDocument {
      * @return table
      */
     public XWPFTable createTable(int rows, int cols) {
-	return new XWPFTable(this, ctDocument.getBody().addNewTbl(), rows, cols);
+    return new XWPFTable(this, ctDocument.getBody().addNewTbl(), rows, cols);
     }
-    
+
     public void createTOC() {
-    	CTSdtBlock block = this.getDocument().getBody().addNewSdt();
-    	TOC toc = new TOC(block);
-    	int i = 1;
-    	for (Iterator<XWPFParagraph> iterator = getParagraphsIterator() ; iterator.hasNext() ; ) {
-    		XWPFParagraph par = iterator.next();
-    		String parStyle = par.getStyle();
-    		if (parStyle != null && parStyle.substring(0, 7).equals("Heading")) {
-    			try {
-    				int level = new Integer(parStyle.substring("Heading".length()));
-        			toc.addRow(level, par.getText(), 1, "112723803");
-    			}
-    			catch (NumberFormatException e) {
-    				e.printStackTrace();
-    			}
-    		}
-    	}
+        CTSdtBlock block = this.getDocument().getBody().addNewSdt();
+        TOC toc = new TOC(block);
+        int i = 1;
+        for (Iterator<XWPFParagraph> iterator = getParagraphsIterator() ; iterator.hasNext() ; ) {
+            XWPFParagraph par = iterator.next();
+            String parStyle = par.getStyle();
+            if (parStyle != null && parStyle.substring(0, 7).equals("Heading")) {
+                try {
+                    int level = Integer.valueOf(parStyle.substring("Heading".length()));
+                    toc.addRow(level, par.getText(), 1, "112723803");
+                }
+                catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
-

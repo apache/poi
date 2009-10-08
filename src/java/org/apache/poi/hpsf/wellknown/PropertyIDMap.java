@@ -102,7 +102,7 @@ public class PropertyIDMap extends HashMap {
     /** <p>ID of the property that denotes whether read/write access to the
      * document is allowed or whether is should be opened as read-only. It can
      * have the following values:</p>
-     * 
+     *
      * <table>
      *  <tbody>
      *   <tr>
@@ -133,7 +133,7 @@ public class PropertyIDMap extends HashMap {
      * section of the Document Summary Information property set.
      */
 
-    /** 
+    /**
      * <p>The entry is a dictionary.</p>
      */
     public static final int PID_DICTIONARY = 0;
@@ -143,61 +143,61 @@ public class PropertyIDMap extends HashMap {
      */
     public static final int PID_CODEPAGE = 1;
 
-    /** 
+    /**
      * <p>The entry is a string denoting the category the file belongs
      * to, e.g. review, memo, etc. This is useful to find documents of
      * same type.</p>
      */
     public static final int PID_CATEGORY = 2;
 
-    /** 
+    /**
      * <p>Target format for power point presentation, e.g. 35mm,
      * printer, video etc.</p>
      */
     public static final int PID_PRESFORMAT = 3;
 
-    /** 
+    /**
      * <p>Number of bytes.</p>
      */
     public static final int PID_BYTECOUNT = 4;
 
-    /** 
+    /**
      * <p>Number of lines.</p>
      */
     public static final int PID_LINECOUNT = 5;
 
-    /** 
+    /**
      * <p>Number of paragraphs.</p>
      */
     public static final int PID_PARCOUNT = 6;
 
-    /** 
+    /**
      * <p>Number of slides in a power point presentation.</p>
      */
     public static final int PID_SLIDECOUNT = 7;
 
-    /** 
+    /**
      * <p>Number of slides with notes.</p>
      */
     public static final int PID_NOTECOUNT = 8;
 
-    /** 
+    /**
      * <p>Number of hidden slides.</p>
      */
     public static final int PID_HIDDENCOUNT = 9;
 
-    /** 
+    /**
      * <p>Number of multimedia clips, e.g. sound or video.</p>
      */
     public static final int PID_MMCLIPCOUNT = 10;
 
-    /** 
+    /**
      * <p>This entry is set to -1 when scaling of the thumbnail is
      * desired. Otherwise the thumbnail should be cropped.</p>
      */
     public static final int PID_SCALE = 11;
 
-    /** 
+    /**
      * <p>This entry denotes an internally used property. It is a
      * vector of variants consisting of pairs of a string (VT_LPSTR)
      * and a number (VT_I4). The string is a heading name, and the
@@ -206,29 +206,29 @@ public class PropertyIDMap extends HashMap {
      */
     public static final int PID_HEADINGPAIR = 12;
 
-    /** 
+    /**
      * <p>This entry contains the names of document parts (word: names
      * of the documents in the master document, excel: sheet names,
      * power point: slide titles, binder: document names).</p>
      */
     public static final int PID_DOCPARTS = 13;
 
-    /** 
+    /**
      * <p>This entry contains the name of the project manager.</p>
      */
     public static final int PID_MANAGER = 14;
 
-    /** 
+    /**
      * <p>This entry contains the company name.</p>
      */
     public static final int PID_COMPANY = 15;
 
-    /** 
+    /**
      * <p>If this entry is -1 the links are dirty and should be
      * re-evaluated.</p>
      */
     public static final int PID_LINKSDIRTY = 16;
-    
+
     /**
      * <p>The highest well-known property ID. Applications are free to use higher values for custom purposes.</p>
      */
@@ -254,7 +254,7 @@ public class PropertyIDMap extends HashMap {
 
     /**
      * <p>Creates a {@link PropertyIDMap}.</p>
-     * 
+     *
      * @param initialCapacity The initial capacity as defined for
      * {@link HashMap}
      * @param loadFactor The load factor as defined for {@link HashMap}
@@ -268,7 +268,7 @@ public class PropertyIDMap extends HashMap {
 
     /**
      * <p>Creates a {@link PropertyIDMap} backed by another map.</p>
-     * 
+     *
      * @param map The instance to be created is backed by this map.
      */
     public PropertyIDMap(final Map map)
@@ -291,7 +291,7 @@ public class PropertyIDMap extends HashMap {
      */
     public Object put(final long id, final String idString)
     {
-        return put(new Long(id), idString);
+        return put(Long.valueOf(id), idString);
     }
 
 
@@ -305,7 +305,7 @@ public class PropertyIDMap extends HashMap {
      */
     public Object get(final long id)
     {
-        return get(new Long(id));
+        return get(Long.valueOf(id));
     }
 
 
@@ -392,5 +392,4 @@ public class PropertyIDMap extends HashMap {
         System.out.println("s1: " + s1);
         System.out.println("s2: " + s2);
     }
-
 }

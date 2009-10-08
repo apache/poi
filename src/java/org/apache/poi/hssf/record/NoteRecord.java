@@ -40,7 +40,7 @@ public final class NoteRecord extends StandardRecord {
 	 */
 	public final static short NOTE_VISIBLE = 0x2;
 
-	private static final Byte DEFAULT_PADDING = new Byte((byte)0);
+	private static final Byte DEFAULT_PADDING = Byte.valueOf((byte)0);
 
 	private int field_1_row;
 	private int field_2_col;
@@ -50,9 +50,9 @@ public final class NoteRecord extends StandardRecord {
 	private String field_6_author;
 	/**
 	 * Saves padding byte value to reduce delta during round-trip serialization.<br/>
-	 * 
+	 *
 	 * The documentation is not clear about how padding should work.  In any case
-	 * Excel(2007) does something different. 
+	 * Excel(2007) does something different.
 	 */
 	private Byte field_7_padding;
 
@@ -89,7 +89,7 @@ public final class NoteRecord extends StandardRecord {
 			field_6_author = StringUtil.readCompressedUnicode(in, length);
 		}
  		if (in.available() == 1) {
-			field_7_padding = new Byte(in.readByte());
+			field_7_padding = Byte.valueOf(in.readByte());
 		}
 	}
 

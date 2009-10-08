@@ -567,9 +567,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Gets the custom properties.</p>
-     * 
+     *
      * @return The custom properties.
-     * @since 2006-02-09
      */
     public CustomProperties getCustomProperties()
     {
@@ -589,7 +588,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
                 {
                     propertyCount++;
                     final CustomProperty cp = new CustomProperty(p,
-                            (String) dictionary.get(new Long(id)));
+                            (String) dictionary.get(Long.valueOf(id)));
                     cps.put(cp.getName(), cp);
                 }
             }
@@ -601,9 +600,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the custom properties.</p>
-     * 
+     *
      * @param customProperties The custom properties
-     * @since 2006-02-07
      */
     public void setCustomProperties(final CustomProperties customProperties)
     {
@@ -650,8 +648,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Removes the custom properties.</p>
-     * 
-     * @since 2006-02-08
      */
     public void removeCustomProperties()
     {
@@ -674,5 +670,4 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     {
         throw new UnsupportedOperationException(msg + " is not yet implemented.");
     }
-
 }

@@ -6,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,15 +48,15 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 	private Ptg field_2_refPtg;
 	/** for when the 'formula' doesn't parse properly */
 	private byte[] field_2_unknownFormulaData;
-	/** note- this byte is not present in the encoding if the string length is zero */ 
+	/** note- this byte is not present in the encoding if the string length is zero */
 	private boolean field_3_unicode_flag;  // Flags whether the string is Unicode.
 	private String  field_4_ole_classname; // Classname of the embedded OLE document (e.g. Word.Document.8)
 	/** Formulas often have a single non-zero trailing byte.
 	 * This is in a similar position to he pre-streamId padding
-	 * It is unknown if the value is important (it seems to mirror a value a few bytes earlier) 
+	 * It is unknown if the value is important (it seems to mirror a value a few bytes earlier)
 	 *  */
 	private Byte  field_4_unknownByte;
-	private Integer field_5_stream_id;     // ID of the OLE stream containing the actual data.
+	private Integer field_5_stream_id;	 // ID of the OLE stream containing the actual data.
 	private byte[] field_6_unknown;
 
 
@@ -131,7 +131,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			int b = in.readByte();
 			remaining -= LittleEndian.BYTE_SIZE;
 			if (field_2_refPtg != null && field_4_ole_classname == null) {
-				field_4_unknownByte = new Byte((byte)b);
+				field_4_unknownByte = Byte.valueOf((byte)b);
 			}
 		}
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
@@ -144,7 +144,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
 		// Fetch the stream ID
 		if (dataLenAfterFormula >= 4) {
-			field_5_stream_id = new Integer(in.readInt());
+			field_5_stream_id = Integer.valueOf(in.readInt());
 			remaining -= LittleEndian.INT_SIZE;
 		} else {
 			field_5_stream_id = null;
@@ -158,7 +158,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		switch(ptgSid) {
 			case AreaPtg.sid:   return new AreaPtg(in);
 			case Area3DPtg.sid: return new Area3DPtg(in);
-			case RefPtg.sid:    return new RefPtg(in);
+			case RefPtg.sid:	return new RefPtg(in);
 			case Ref3DPtg.sid:  return new Ref3DPtg(in);
 		}
 		return null;
@@ -175,11 +175,11 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		in.readFully(result);
 		return result;
 	}
-	
+
 	private int getStreamIDOffset(int formulaSize) {
 		int result = 2 + 4; // formulaSize + f2unknown_int
 		result += formulaSize;
-		
+
 		int stringLen;
 		if (field_4_ole_classname == null) {
 			// don't write 0x03, stringLen, flag, text
@@ -198,16 +198,16 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		}
 		// pad to next 2 byte boundary
 		if ((result % 2) != 0) {
-			result ++; 
+			result ++;
 		}
 		return result;
 	}
-	
+
 	private int getDataSize(int idOffset) {
 
 		int result = 2 + idOffset; // 2 for idOffset short field itself
 		if (field_5_stream_id != null) {
-    		result += 4;
+			result += 4;
 		}
 		return result +  field_6_unknown.length;
 	}
@@ -222,7 +222,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int formulaSize = field_2_refPtg == null ? field_2_unknownFormulaData.length : field_2_refPtg.getSize();
 		int idOffset = getStreamIDOffset(formulaSize);
 		int dataSize = getDataSize(idOffset);
-		
+
 
 		out.writeShort(sid);
 		out.writeShort(dataSize);
@@ -238,7 +238,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		} else {
 			field_2_refPtg.write(out);
 		}
-	   	pos += formulaSize;
+		pos += formulaSize;
 
 		int stringLen;
 		if (field_4_ole_classname == null) {
@@ -251,16 +251,16 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			out.writeShort(stringLen);
 			pos+=2;
 			if (stringLen > 0) {
-    			out.writeByte(field_3_unicode_flag ? 0x01 : 0x00);
-    			pos+=1;
-    
-    			if (field_3_unicode_flag) {
-    				StringUtil.putUnicodeLE(field_4_ole_classname, out);
-    				pos += stringLen * 2;
-    			} else {
-    				StringUtil.putCompressedUnicode(field_4_ole_classname, out);
-    				pos += stringLen;
-    			}
+				out.writeByte(field_3_unicode_flag ? 0x01 : 0x00);
+				pos+=1;
+
+				if (field_3_unicode_flag) {
+					StringUtil.putUnicodeLE(field_4_ole_classname, out);
+					pos += stringLen * 2;
+				} else {
+					StringUtil.putCompressedUnicode(field_4_ole_classname, out);
+					pos += stringLen;
+				}
 			}
 		}
 
@@ -272,12 +272,12 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			case 0:
 				break;
 			default:
-				throw new IllegalStateException("Bad padding calculation (" + idOffset + ", " + pos + ")");	
+				throw new IllegalStateException("Bad padding calculation (" + idOffset + ", " + pos + ")");
 		}
 
 		if (field_5_stream_id != null) {
 			out.writeInt(field_5_stream_id.intValue());
-    		pos += 4;
+			pos += 4;
 		}
 		out.write(field_6_unknown);
 	}

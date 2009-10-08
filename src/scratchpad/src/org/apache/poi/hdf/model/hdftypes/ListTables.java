@@ -51,14 +51,14 @@ public final class ListTables implements HDFType
         LFOLVL lfolvl = override._levels[x];
         if(lfolvl._fFormatting)
         {
-          LST lst = (LST)_lists.get(new Integer(override._lsid));
+          LST lst = (LST)_lists.get(Integer.valueOf(override._lsid));
           LVL lvl = lfolvl._override;
           lvl._istd = Utils.convertBytesToShort(lst._rgistd, level * 2);
           return lvl;
         }
         else if(lfolvl._fStartAt)
         {
-          LST lst = (LST)_lists.get(new Integer(override._lsid));
+          LST lst = (LST)_lists.get(Integer.valueOf(override._lsid));
           LVL lvl = lst._levels[level];
           LVL newLvl = (LVL)lvl.clone();
           newLvl._istd = Utils.convertBytesToShort(lst._rgistd, level * 2);
@@ -68,7 +68,7 @@ public final class ListTables implements HDFType
       }
     }
 
-    LST lst = (LST)_lists.get(new Integer(override._lsid));
+    LST lst = (LST)_lists.get(Integer.valueOf(override._lsid));
     LVL lvl = lst._levels[level];
     lvl._istd = Utils.convertBytesToShort(lst._rgistd, level * 2);
     return lvl;
@@ -89,7 +89,7 @@ public final class ListTables implements HDFType
       byte code = plcflst[2 + 26 + (x * 28)];
       lst._fSimpleList = StyleSheet.getFlag(code & 0x01);
       //lstArray[x] = lst;
-      _lists.put(new Integer(lst._lsid), lst);
+      _lists.put(Integer.valueOf(lst._lsid), lst);
 
       if(lst._fSimpleList)
       {

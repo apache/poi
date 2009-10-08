@@ -45,53 +45,52 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * the summary information and in the document summary information. The
  * application reads the name of a POI filesystem from the command line and
  * performs the following actions:</p>
- * 
+ *
  * <ul>
- * 
+ *
  * <li><p>Open the POI filesystem.</p></li>
- * 
+ *
  * <li><p>Read the summary information.</p></li>
- * 
+ *
  * <li><p>Read and print the "author" property.</p></li>
- * 
+ *
  * <li><p>Change the author to "Rainer Klute".</p></li>
- * 
+ *
  * <li><p>Read the document summary information.</p></li>
- * 
+ *
  * <li><p>Read and print the "category" property.</p></li>
- * 
+ *
  * <li><p>Change the category to "POI example".</p></li>
- * 
+ *
  * <li><p>Read the custom properties (if available).</p></li>
- * 
+ *
  * <li><p>Insert a new custom property.</p></li>
- * 
+ *
  * <li><p>Write the custom properties back to the document summary
  * information.</p></li>
- * 
+ *
  * <li><p>Write the summary information to the POI filesystem.</p></li>
- * 
+ *
  * <li><p>Write the document summary information to the POI filesystem.</p></li>
- * 
+ *
  * <li><p>Write the POI filesystem back to the original file.</p></li>
- * 
+ *
  * </ol>
- * 
+ *
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">klute@rainer-klute.de</a>
  */
-public class ModifyDocumentSummaryInformation
-{
+public class ModifyDocumentSummaryInformation {
 
     /**
      * <p>Main method - see class description.</p>
      *
      * @param args The command-line parameters.
-     * @throws IOException 
-     * @throws MarkUnsupportedException 
-     * @throws NoPropertySetStreamException 
-     * @throws UnexpectedPropertySetTypeException 
-     * @throws WritingNotSupportedException 
+     * @throws IOException
+     * @throws MarkUnsupportedException
+     * @throws NoPropertySetStreamException
+     * @throws UnexpectedPropertySetTypeException
+     * @throws WritingNotSupportedException
      */
     public static void main(final String[] args) throws IOException,
             NoPropertySetStreamException, MarkUnsupportedException,
@@ -165,12 +164,12 @@ public class ModifyDocumentSummaryInformation
         CustomProperties customProperties = dsi.getCustomProperties();
         if (customProperties == null)
             customProperties = new CustomProperties();
-        
+
         /* Insert some custom properties into the container. */
         customProperties.put("Key 1", "Value 1");
         customProperties.put("Schl\u00fcssel 2", "Wert 2");
         customProperties.put("Sample Number", new Integer(12345));
-        customProperties.put("Sample Boolean", new Boolean(true));
+        customProperties.put("Sample Boolean", Boolean.TRUE);
         customProperties.put("Sample Date", new Date());
 
         /* Read a custom property. */
@@ -191,6 +190,5 @@ public class ModifyDocumentSummaryInformation
         OutputStream out = new FileOutputStream(poiFilesystem);
         poifs.writeFilesystem(out);
         out.close();
-        }
-
+    }
 }

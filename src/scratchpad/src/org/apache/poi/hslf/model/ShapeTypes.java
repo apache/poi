@@ -34,7 +34,7 @@ public final class ShapeTypes implements org.apache.poi.sl.usermodel.ShapeTypes 
      * @return  the name of the shape
      */
     public static String typeName(int type) {
-        String name = (String)types.get(new Integer(type));
+        String name = (String)types.get(Integer.valueOf(type));
         return name;
     }
 

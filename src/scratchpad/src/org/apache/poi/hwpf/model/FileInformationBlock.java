@@ -58,18 +58,18 @@ public final class FileInformationBlock extends FIBAbstractType
     public void fillVariableFields(byte[] mainDocument, byte[] tableStream)
     {
       HashSet fieldSet = new HashSet();
-      fieldSet.add(new Integer(FIBFieldHandler.STSHF));
-      fieldSet.add(new Integer(FIBFieldHandler.CLX));
-      fieldSet.add(new Integer(FIBFieldHandler.DOP));
-      fieldSet.add(new Integer(FIBFieldHandler.PLCFBTECHPX));
-      fieldSet.add(new Integer(FIBFieldHandler.PLCFBTEPAPX));
-      fieldSet.add(new Integer(FIBFieldHandler.PLCFSED));
-      fieldSet.add(new Integer(FIBFieldHandler.PLCFLST));
-      fieldSet.add(new Integer(FIBFieldHandler.PLFLFO));
-      fieldSet.add(new Integer(FIBFieldHandler.PLCFFLDMOM));
-      fieldSet.add(new Integer(FIBFieldHandler.STTBFFFN));
-      fieldSet.add(new Integer(FIBFieldHandler.STTBSAVEDBY));
-      fieldSet.add(new Integer(FIBFieldHandler.MODIFIED));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.STSHF));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.CLX));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.DOP));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFBTECHPX));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFBTEPAPX));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFSED));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFLST));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLFLFO));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDMOM));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBFFFN));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBSAVEDBY));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.MODIFIED));
 
 
       _shortHandler = new FIBShortHandler(mainDocument);

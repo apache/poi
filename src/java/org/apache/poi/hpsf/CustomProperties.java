@@ -33,7 +33,7 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * name is the key that maps to a typed value. This implementation hides
  * property IDs from the developer and regards the property names as keys to
  * typed values.</p>
- * 
+ *
  * <p>While this class provides a simple API to custom properties, it ignores
  * the fact that not names, but IDs are the real keys to properties. Under the
  * hood this class maintains a 1:1 relationship between IDs and names. Therefore
@@ -41,14 +41,14 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * mapping to the same name or with properties without a name: the result will
  * contain only a subset of the original properties. If you really need to deal
  * such property sets, use HPSF's low-level access methods.</p>
- * 
+ *
  * <p>An application can call the {@link #isPure} method to check whether a
  * property set parsed by {@link CustomProperties} is still pure (i.e.
  * unmodified) or whether one or more properties have been dropped.</p>
- * 
+ *
  * <p>This class is not thread-safe; concurrent access to instances of this
  * class must be synchronized.</p>
- * 
+ *
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
@@ -64,7 +64,7 @@ public class CustomProperties extends HashMap
      * <p>Maps property names to property IDs.</p>
      */
     private Map dictionaryNameToID = new HashMap();
-    
+
     /**
      * <p>Tells whether this object is pure or not.</p>
      */
@@ -96,7 +96,7 @@ public class CustomProperties extends HashMap
                     ") do not match.");
 
         /* Register name and ID in the dictionary. Mapping in both directions is possible. If there is already a  */
-        final Long idKey = new Long(cp.getID());
+        final Long idKey = Long.valueOf(cp.getID());
         final Object oldID = dictionaryNameToID.get(name);
         dictionaryIDToName.remove(oldID);
         dictionaryNameToID.put(name, idKey);
@@ -113,16 +113,16 @@ public class CustomProperties extends HashMap
     /**
      * <p>Puts a {@link CustomProperty} that has not yet a valid ID into this
      * map. The method will allocate a suitable ID for the custom property:</p>
-     * 
+     *
      * <ul>
-     * 
+     *
      * <li><p>If there is already a property with the same name, take the ID
      * of that property.</p></li>
-     * 
+     *
      * <li><p>Otherwise find the highest ID and use its value plus one.</p></li>
-     * 
+     *
      * </ul>
-     * 
+     *
      * @param customProperty
      * @return If the was already a property with the same name, the
      * @throws ClassCastException
@@ -153,7 +153,7 @@ public class CustomProperties extends HashMap
 
     /**
      * <p>Removes a custom property.</p>
-     * @param name The name of the custom property to remove 
+     * @param name The name of the custom property to remove
      * @return The removed property or <code>null</code> if the specified property was not found.
      *
      * @see java.util.HashSet#remove(java.lang.Object)
@@ -170,7 +170,7 @@ public class CustomProperties extends HashMap
 
     /**
      * <p>Adds a named string property.</p>
-     * 
+     *
      * @param name The property's name.
      * @param value The property's value.
      * @return the property that was stored under the specified name before, or
@@ -258,10 +258,10 @@ public class CustomProperties extends HashMap
         return put(cp);
     }
 
-    
+
     /**
      * <p>Gets a named value from the custom properties.</p>
-     * 
+     *
      * @param name the name of the value to get
      * @return the value or <code>null</code> if a value with the specified
      *         name is not found in the custom properties.
@@ -292,18 +292,18 @@ public class CustomProperties extends HashMap
         final CustomProperty cp = new CustomProperty(p, name);
         return put(cp);
     }
-    
+
     /**
      * Returns a set of all the names of our
      *  custom properties
      */
     public Set keySet() {
-    	return dictionaryNameToID.keySet();
-	}
+        return dictionaryNameToID.keySet();
+    }
 
 
 
-	/**
+    /**
      * <p>Sets the codepage.</p>
      *
      * @param codepage the codepage
@@ -313,7 +313,7 @@ public class CustomProperties extends HashMap
         final MutableProperty p = new MutableProperty();
         p.setID(PropertyIDMap.PID_CODEPAGE);
         p.setType(Variant.VT_I2);
-        p.setValue(new Integer(codepage));
+        p.setValue(Integer.valueOf(codepage));
         put(new CustomProperty(p));
     }
 
@@ -322,7 +322,7 @@ public class CustomProperties extends HashMap
     /**
      * <p>Gets the dictionary which contains IDs and names of the named custom
      * properties.
-     * 
+     *
      * @return the dictionary.
      */
     Map getDictionary()
@@ -355,7 +355,7 @@ public class CustomProperties extends HashMap
      * <p>Tells whether this {@link CustomProperties} instance is pure or one or
      * more properties of the underlying low-level property set has been
      * dropped.</p>
-     * 
+     *
      * @return <code>true</code> if the {@link CustomProperties} is pure, else
      *         <code>false</code>.
      */
@@ -373,5 +373,4 @@ public class CustomProperties extends HashMap
     {
         this.isPure = isPure;
     }
-
 }

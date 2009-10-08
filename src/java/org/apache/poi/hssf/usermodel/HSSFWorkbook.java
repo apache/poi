@@ -1081,7 +1081,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         // So we don't confuse users, give them back
         //  the same object every time, but create
         //  them lazily
-        Short sIdx = new Short(idx);
+        Short sIdx = Short.valueOf(idx);
         if(fonts.containsKey(sIdx)) {
             return (HSSFFont)fonts.get(sIdx);
         }

@@ -73,7 +73,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	public void processRecordInternally(Record record) {
 		if (record instanceof FormatRecord) {
 			FormatRecord fr = (FormatRecord) record;
-			_customFormatRecords.put(new Integer(fr.getIndexCode()), fr);
+			_customFormatRecords.put(Integer.valueOf(fr.getIndexCode()), fr);
 		}
 		if (record instanceof ExtendedFormatRecord) {
 			ExtendedFormatRecord xr = (ExtendedFormatRecord) record;
@@ -117,7 +117,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	public String getFormatString(int formatIndex) {
 		String format = null;
 		if (formatIndex >= HSSFDataFormat.getNumberOfBuiltinBuiltinFormats()) {
-			FormatRecord tfr = _customFormatRecords.get(new Integer(formatIndex));
+			FormatRecord tfr = _customFormatRecords.get(Integer.valueOf(formatIndex));
 			if (tfr == null) {
 				System.err.println("Requested format at index " + formatIndex
 						+ ", but it wasn't found");
