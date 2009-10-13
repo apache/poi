@@ -52,6 +52,7 @@ final class PlainCellCache {
 		}
 
 		public boolean equals(Object obj) {
+			assert obj instanceof Loc : "these package-private cache key instances are only compared to themselves";
 			Loc other = (Loc) obj;
 			return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
 		}

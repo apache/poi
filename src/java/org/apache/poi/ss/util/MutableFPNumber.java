@@ -93,14 +93,6 @@ final class MutableFPNumber {
 
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		MutableFPNumber other = (MutableFPNumber) obj;
-		if (_binaryExponent != other._binaryExponent) {
-			return false;
-		}
-		return _significand.equals(other._significand);
-	}
 	public boolean isBelowMaxRep() {
 		int sc = _significand.bitLength() - C_64;
 		return _significand.compareTo(BI_MAX_BASE.shiftLeft(sc)) < 0;

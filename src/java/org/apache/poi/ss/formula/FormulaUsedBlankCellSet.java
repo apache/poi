@@ -25,8 +25,8 @@ import java.util.Map;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
- * Optimisation - compacts many blank cell references used by a single formula. 
- * 
+ * Optimisation - compacts many blank cell references used by a single formula.
+ *
  * @author Josh Micich
  */
 final class FormulaUsedBlankCellSet {
@@ -43,6 +43,7 @@ final class FormulaUsedBlankCellSet {
 			return _bookIndex * 17 + _sheetIndex;
 		}
 		public boolean equals(Object obj) {
+			assert obj instanceof BookSheetKey : "these private cache key instances are only compared to themselves";
 			BookSheetKey other = (BookSheetKey) obj;
 			return _bookIndex == other._bookIndex && _sheetIndex == other._sheetIndex;
 		}

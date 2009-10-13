@@ -111,6 +111,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
 		}
 		@Override
 		public boolean equals(Object obj) {
+			assert obj instanceof RowColKey : "these private cache key instances are only compared to themselves";
 			RowColKey other = (RowColKey) obj;
 			return _rowIndex == other._rowIndex && _columnIndex == other._columnIndex;
 		}
