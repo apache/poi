@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -78,7 +77,7 @@ import org.w3c.dom.NodeList;
 
 
 
-public class TestAbstractXmlSignatureService extends TestCase {
+public final class TestAbstractXmlSignatureService extends TestCase {
 
     private static final Log LOG = LogFactory.getLog(TestAbstractXmlSignatureService.class);
 
@@ -158,6 +157,10 @@ public class TestAbstractXmlSignatureService extends TestCase {
         }
     }
 
+    private XMLSignatureFactory getXMLSignatureFactory() {
+        return XMLSignatureFactory.getInstance("DOM", new org.jcp.xml.dsig.internal.dom.XMLDSigRI());
+    }
+
     public void testSignEnvelopingDocument() throws Exception {
         // setup
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -201,7 +204,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         assertNotNull(digestValueNode);
         String digestValueTextContent = digestValueNode.getTextContent();
         LOG.debug("digest value text content: " + digestValueTextContent);
-        assertFalse(digestValueTextContent.isEmpty());
+        assertTrue(digestValueTextContent.length() > 0);
 
         /*
          * Sign the received XML signature digest value.
@@ -232,7 +235,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         Node signatureNode = signatureNodeList.item(0);
 
         DOMValidateContext domValidateContext = new DOMValidateContext(KeySelector.singletonKeySelector(keyPair.getPublic()), signatureNode);
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = getXMLSignatureFactory();
         XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
         boolean validity = xmlSignature.validate(domValidateContext);
         assertTrue(validity);
@@ -299,7 +302,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         assertNotNull(digestValueNode);
         String digestValueTextContent = digestValueNode.getTextContent();
         LOG.debug("digest value text content: " + digestValueTextContent);
-        assertFalse(digestValueTextContent.isEmpty());
+        assertTrue(digestValueTextContent.length() > 0);
 
         /*
          * Sign the received XML signature digest value.
@@ -331,7 +334,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
 
         DOMValidateContext domValidateContext = new DOMValidateContext(KeySelector.singletonKeySelector(keyPair.getPublic()), signatureNode);
         domValidateContext.setURIDereferencer(uriDereferencer);
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = getXMLSignatureFactory();
         XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
         boolean validity = xmlSignature.validate(domValidateContext);
         assertTrue(validity);
@@ -381,7 +384,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         assertNotNull(digestValueNode);
         String digestValueTextContent = digestValueNode.getTextContent();
         LOG.debug("digest value text content: " + digestValueTextContent);
-        assertFalse(digestValueTextContent.isEmpty());
+        assertTrue(digestValueTextContent.length() > 0);
 
         /*
          * Sign the received XML signature digest value.
@@ -414,7 +417,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         DOMValidateContext domValidateContext = new DOMValidateContext(KeySelector.singletonKeySelector(keyPair.getPublic()), signatureNode);
         URIDereferencer dereferencer = new URITest2Dereferencer();
         domValidateContext.setURIDereferencer(dereferencer);
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = getXMLSignatureFactory();
         XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
         boolean validity = xmlSignature.validate(domValidateContext);
         assertTrue(validity);
@@ -461,7 +464,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         assertNotNull(digestValueNode);
         String digestValueTextContent = digestValueNode.getTextContent();
         LOG.debug("digest value text content: " + digestValueTextContent);
-        assertFalse(digestValueTextContent.isEmpty());
+        assertTrue(digestValueTextContent.length() > 0);
 
         /*
          * Sign the received XML signature digest value.
@@ -494,7 +497,7 @@ public class TestAbstractXmlSignatureService extends TestCase {
         DOMValidateContext domValidateContext = new DOMValidateContext(KeySelector.singletonKeySelector(keyPair.getPublic()), signatureNode);
         URIDereferencer dereferencer = new URITest2Dereferencer();
         domValidateContext.setURIDereferencer(dereferencer);
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = getXMLSignatureFactory();
         XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
         boolean validity = xmlSignature.validate(domValidateContext);
         assertTrue(validity);
@@ -555,6 +558,6 @@ public class TestAbstractXmlSignatureService extends TestCase {
         assertNotNull(digestValueNode);
         String digestValueTextContent = digestValueNode.getTextContent();
         LOG.debug("digest value text content: " + digestValueTextContent);
-        assertFalse(digestValueTextContent.isEmpty());
+        assertTrue(digestValueTextContent.length() > 0);
     }
 }

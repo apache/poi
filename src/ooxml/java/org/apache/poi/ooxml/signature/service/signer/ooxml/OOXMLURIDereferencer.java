@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -61,7 +60,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             throw new IllegalArgumentException("ooxmlUrl is null");
         }
         this.ooxmlUrl = ooxmlUrl;
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = CryptoFactoryFactory.getSignatureFactory();
         this.baseUriDereferencer = xmlSignatureFactory.getURIDereferencer();
     }
 
@@ -105,7 +104,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
                 return part.getInputStream();
             }
         }
-        LOG.info("No part found for URI: " + uri);
+        LOG.debug("No part found for URI: " + uri);
         return null;
     }
 }

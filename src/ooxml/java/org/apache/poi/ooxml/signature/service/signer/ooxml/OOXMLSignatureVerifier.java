@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -66,20 +65,16 @@ import org.xml.sax.SAXException;
 /**
  * Signature verifier util class for Office Open XML file format.
  */
-public class OOXMLSignatureVerifier {
+public final class OOXMLSignatureVerifier {
 
     private static final Log LOG = LogFactory.getLog(OOXMLSignatureVerifier.class);
 
     private OOXMLSignatureVerifier() {
-        super();
+        // no instances of this class;
     }
 
     /**
-     * Checks whether the file referred by the given URL is an OOXML document.
-     * 
-     * @param url
-     * @return
-     * @throws IOException
+     * @return <code>true</code> if the file referred by the given URL is an OOXML document.
      */
     public static boolean isOOXML(URL url) throws IOException {
         ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
@@ -120,7 +115,7 @@ public class OOXMLSignatureVerifier {
             OOXMLURIDereferencer dereferencer = new OOXMLURIDereferencer(url);
             domValidateContext.setURIDereferencer(dereferencer);
 
-            XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+            XMLSignatureFactory xmlSignatureFactory = CryptoFactoryFactory.getSignatureFactory();
             XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
             boolean validity = xmlSignature.validate(domValidateContext);
 
@@ -157,7 +152,7 @@ public class OOXMLSignatureVerifier {
         OOXMLURIDereferencer dereferencer = new OOXMLURIDereferencer(url);
         domValidateContext.setURIDereferencer(dereferencer);
 
-        XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance();
+        XMLSignatureFactory xmlSignatureFactory = CryptoFactoryFactory.getSignatureFactory();
         XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
         return xmlSignature.validate(domValidateContext);
     }
