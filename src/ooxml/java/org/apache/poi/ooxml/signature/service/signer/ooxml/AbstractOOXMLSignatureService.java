@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -120,7 +119,7 @@ public abstract class AbstractOOXMLSignatureService extends AbstractXmlSignature
         /*
          * Add a ds:KeyInfo entry.
          */
-        KeyInfoFactory keyInfoFactory = KeyInfoFactory.getInstance();
+        KeyInfoFactory keyInfoFactory = CryptoFactoryFactory.getKeyInfoFactory();
         List<Object> x509DataObjects = new LinkedList<Object>();
 
         X509Certificate signingCertificate = signingCertificateChain.get(0);
@@ -175,22 +174,18 @@ public abstract class AbstractOOXMLSignatureService extends AbstractXmlSignature
             try {
                 outputSignedOfficeOpenXMLDocument(this.toByteArray());
             } catch (Exception e) {
-                throw new IOException("generic error: " + e.getMessage(), e);
+                throw new IOException(e.getMessage());
             }
         }
     }
 
     /**
-     * The output stream to which to write the signed Office OpenXML file.
-     * 
-     * @return
+     * @return The output stream to which to write the signed Office OpenXML file.
      */
     abstract protected OutputStream getSignedOfficeOpenXMLDocumentOutputStream();
 
     /**
-     * Gives back the URL of the OOXML to be signed.
-     * 
-     * @return
+     * @return the URL of the OOXML to be signed.
      */
     abstract protected URL getOfficeOpenXMLDocumentURL();
 
