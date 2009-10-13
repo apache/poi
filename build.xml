@@ -132,6 +132,21 @@ under the License.
   <property name="ooxml.jsr173.url" value="${repository.m2}/maven2/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar"/>
   <property name="ooxml.schemas.jar" location="${ooxml.lib}/ooxml-schemas-1.0.jar"/>
   <property name="ooxml.schemas.url" value="${repository.m2}/maven2/org/apache/poi/ooxml-schemas/1.0/ooxml-schemas-1.0.jar"/>
+  <property name="ooxml.commons-lang.jar" location="${ooxml.lib}/commons-lang-2.4.jar"/>
+  <property name="ooxml.commons-lang.url" value="${repository.m2}/maven2/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
+  <property name="ooxml.commons-io.jar" location="${ooxml.lib}/commons-io-1.4.jar"/>
+  <property name="ooxml.commons-io.url" value="${repository.m2}/maven2/commons-io/commons-io/1.4/commons-io-1.4.jar"/>
+  <property name="ooxml.xmlsec.jar" location="${ooxml.lib}/xmlsec-1.4.3.jar"/>
+  <property name="ooxml.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/1.4.3/xmlsec-1.4.3.jar"/>
+  <property name="ooxml.xalan.jar" location="${ooxml.lib}/xalan-2.7.1.jar"/>
+  <property name="ooxml.xalan.url" value="${repository.m2}/maven2/xalan/xalan/2.7.1/xalan-2.7.1.jar"/>
+  <property name="ooxml.xalan-serializer.jar" location="${ooxml.lib}/serializer-2.7.1.jar"/>
+  <property name="ooxml.xalan-serializer.url" value="${repository.m2}/maven2/xalan/serializer/2.7.1/serializer-2.7.1.jar"/>
+  <property name="ooxml.joda-time.jar" location="${ooxml.lib}/joda-time-1.6.jar"/>
+  <property name="ooxml.joda-time.url" value="${repository.m2}/maven2/joda-time/joda-time/1.6/joda-time-1.6.jar"/>
+  <!-- BouncyCastle is used only for OOXML Digital Signature tests -->
+  <property name="ooxml.bcprov.jar" location="${ooxml.lib}/bcprov-jdk15-140.jar"/>
+  <property name="ooxml.bcprov.url" value="${repository.m2}/maven2/bouncycastle/bcprov-jdk15/140/bcprov-jdk15-140.jar"/>
 
   <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
   <!-- "Copy these file(s), free of charge" -->
@@ -183,6 +198,9 @@ under the License.
         <pathelement location="${scratchpad.output.test.dir}"/>
         <pathelement location="${contrib.output.dir}"/>
         <pathelement location="${contrib.output.test.dir}"/>
+        <fileset dir="${ooxml.lib}">
+			<include name="*.jar" />
+		</fileset>
     </path>
 
     <path id="ooxml.classpath">
@@ -208,6 +226,7 @@ under the License.
         <pathelement location="${main.output.test.dir}"/> <!-- ooxml tests use some utilities from main tests -->
         <pathelement location="${scratchpad.output.test.dir}"/> 
         <pathelement location="${junit.jar1.dir}"/>
+        <pathelement location="${ooxml.src.test}"/>
     </path>
 
 
@@ -351,6 +370,13 @@ under the License.
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.jsr173.jar}"/>
                     <available file="${ooxml.schemas.jar}"/>
+                    <available file="${ooxml.commons-lang.jar}"/>
+                    <available file="${ooxml.commons-io.jar}"/>
+                    <available file="${ooxml.xmlsec.jar}"/>
+                    <available file="${ooxml.xalan.jar}"/>
+                    <available file="${ooxml.xalan-serializer.jar}"/>
+                    <available file="${ooxml.joda-time.jar}"/>
+                    <available file="${ooxml.bcprov.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -372,6 +398,34 @@ under the License.
       <antcall target="downloadfile">
         <param name="sourcefile" value="${ooxml.schemas.url}"/>
         <param name="destfile" value="${ooxml.schemas.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.commons-lang.url}"/>
+        <param name="destfile" value="${ooxml.commons-lang.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.commons-io.url}"/>
+        <param name="destfile" value="${ooxml.commons-io.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.xmlsec.url}"/>
+        <param name="destfile" value="${ooxml.xmlsec.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.xalan.url}"/>
+        <param name="destfile" value="${ooxml.xalan.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.xalan-serializer.url}"/>
+        <param name="destfile" value="${ooxml.xalan-serializer.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.joda-time.url}"/>
+        <param name="destfile" value="${ooxml.joda-time.jar}"/>
+      </antcall>
+      <antcall target="downloadfile">
+        <param name="sourcefile" value="${ooxml.bcprov.url}"/>
+        <param name="destfile" value="${ooxml.bcprov.jar}"/>
       </antcall>
     </target>
 
