@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -42,13 +41,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ooxml.signature.service.signer.TemporaryDataStorage;
 import org.apache.poi.ooxml.signature.service.signer.ooxml.AbstractOOXMLSignatureService;
 import org.apache.poi.ooxml.signature.service.signer.ooxml.OOXMLProvider;
 import org.apache.poi.ooxml.signature.service.signer.ooxml.OOXMLSignatureVerifier;
 import org.apache.poi.ooxml.signature.service.spi.DigestInfo;
 import org.bouncycastle.asn1.x509.KeyUsage;
-import org.joda.time.DateTime;
 
 
 
@@ -62,35 +59,35 @@ public class TestAbstractOOXMLSignatureService extends TestCase {
 
     private static class OOXMLTestSignatureService extends AbstractOOXMLSignatureService {
 
-        private final URL ooxmlUrl;
+        private final URL _ooxmlUrl;
 
-        private final TemporaryTestDataStorage temporaryDataStorage;
+        private final TemporaryTestDataStorage _temporaryDataStorage;
 
-        private final ByteArrayOutputStream signedOOXMLOutputStream;
+        private final ByteArrayOutputStream _signedOOXMLOutputStream;
 
         public OOXMLTestSignatureService(URL ooxmlUrl) {
-            this.temporaryDataStorage = new TemporaryTestDataStorage();
-            this.signedOOXMLOutputStream = new ByteArrayOutputStream();
-            this.ooxmlUrl = ooxmlUrl;
+            _temporaryDataStorage = new TemporaryTestDataStorage();
+            _signedOOXMLOutputStream = new ByteArrayOutputStream();
+            _ooxmlUrl = ooxmlUrl;
         }
 
         @Override
         protected URL getOfficeOpenXMLDocumentURL() {
-            return this.ooxmlUrl;
+            return _ooxmlUrl;
         }
 
         @Override
         protected OutputStream getSignedOfficeOpenXMLDocumentOutputStream() {
-            return this.signedOOXMLOutputStream;
+            return _signedOOXMLOutputStream;
         }
 
         public byte[] getSignedOfficeOpenXMLDocumentData() {
-            return this.signedOOXMLOutputStream.toByteArray();
+            return _signedOOXMLOutputStream.toByteArray();
         }
 
         @Override
         protected TemporaryDataStorage getTemporaryDataStorage() {
-            return this.temporaryDataStorage;
+            return _temporaryDataStorage;
         }
     }
 
@@ -189,9 +186,7 @@ public class TestAbstractOOXMLSignatureService extends TestCase {
         byte[] digestInfoValue = ArrayUtils.addAll(PkiTestUtils.SHA1_DIGEST_INFO_PREFIX, digestInfo.digestValue);
         byte[] signatureValue = cipher.doFinal(digestInfoValue);
 
-        DateTime notBefore = new DateTime();
-        DateTime notAfter = notBefore.plusYears(1);
-        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), signerDn, notBefore, notAfter, null, keyPair.getPrivate(), true, 0,
+        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), signerDn, null, keyPair.getPrivate(), true, 0,
                                         null, null, new KeyUsage(KeyUsage.nonRepudiation));
 
         // operate: postSign

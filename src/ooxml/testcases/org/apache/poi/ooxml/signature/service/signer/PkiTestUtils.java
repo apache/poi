@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -40,6 +39,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.RSAKeyGenParameterSpec;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,6 +54,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.util.HexRead;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -71,18 +73,18 @@ import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
-import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class PkiTestUtils {
+final class PkiTestUtils {
 
-    public static final byte[] SHA1_DIGEST_INFO_PREFIX = new byte[] { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x04, 0x14 };
+    public static final byte[] SHA1_DIGEST_INFO_PREFIX =
+        HexRead.readFromString( "30 1f 30 07 06 05 2b 0e 03 02 1a 04 14");
 
     private PkiTestUtils() {
-        super();
+        // no instances of this class
     }
 
     static KeyPair generateKeyPair() throws Exception {
@@ -107,17 +109,21 @@ public class PkiTestUtils {
         return new AuthorityKeyIdentifier(info);
     }
 
-    static X509Certificate generateCertificate(PublicKey subjectPublicKey, String subjectDn, DateTime notBefore, DateTime notAfter,
+    public static X509Certificate generateCertificate(PublicKey subjectPublicKey, String subjectDn,
                                     X509Certificate issuerCertificate, PrivateKey issuerPrivateKey, boolean caFlag, int pathLength, String crlUri,
                                     String ocspUri, KeyUsage keyUsage) throws IOException, InvalidKeyException, IllegalStateException,
                                     NoSuchAlgorithmException, SignatureException, CertificateException {
+
+        Date notBefore = makeDate(2010, 1, 1);
+        Date notAfter = makeDate(2011, 1, 1);
+
         String signatureAlgorithm = "SHA1withRSA";
         X509V3CertificateGenerator certificateGenerator = new X509V3CertificateGenerator();
         certificateGenerator.reset();
         certificateGenerator.setPublicKey(subjectPublicKey);
         certificateGenerator.setSignatureAlgorithm(signatureAlgorithm);
-        certificateGenerator.setNotBefore(notBefore.toDate());
-        certificateGenerator.setNotAfter(notAfter.toDate());
+        certificateGenerator.setNotBefore(notBefore);
+        certificateGenerator.setNotAfter(notAfter);
         X509Principal issuerDN;
         if (null != issuerCertificate) {
             issuerDN = new X509Principal(issuerCertificate.getSubjectX500Principal().toString());
@@ -171,6 +177,13 @@ public class PkiTestUtils {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         certificate = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(certificate.getEncoded()));
         return certificate;
+    }
+
+    private static Date makeDate(int year, int month, int day) {
+        Calendar c = Calendar.getInstance();
+        c.set(year, month, day, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
     }
 
     static Document loadDocument(InputStream documentInputStream) throws ParserConfigurationException, SAXException, IOException {
