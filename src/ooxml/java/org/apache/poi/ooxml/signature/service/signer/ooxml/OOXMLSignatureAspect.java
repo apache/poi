@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -29,8 +28,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -57,10 +58,6 @@ import org.apache.poi.ooxml.signature.service.signer.NoCloseInputStream;
 import org.apache.poi.ooxml.signature.service.signer.SignatureAspect;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xpath.XPathAPI;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,19 +70,14 @@ import org.xml.sax.SAXException;
 /**
  * Office OpenXML Signature Aspect implementation.
  */
-public class OOXMLSignatureAspect implements SignatureAspect {
+final class OOXMLSignatureAspect implements SignatureAspect {
 
     private static final Log LOG = LogFactory.getLog(OOXMLSignatureAspect.class);
 
-    private final AbstractOOXMLSignatureService signatureService;
+    private final AbstractOOXMLSignatureService _signatureService;
 
-    /**
-     * Main constructor.
-     * 
-     * @param ooxmlUrl
-     */
     public OOXMLSignatureAspect(AbstractOOXMLSignatureService signatureService) {
-        this.signatureService = signatureService;
+        _signatureService = signatureService;
     }
 
     public void preSign(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references, List<XMLObject> objects)
@@ -98,7 +90,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
 
     private void addManifestObject(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references,
                                     List<XMLObject> objects) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        Manifest manifest = constructManifest(signatureFactory, document);
+        Manifest manifest = constructManifest(signatureFactory);
         String objectId = "idPackageObject"; // really has to be this value.
         List<XMLStructure> objectContent = new LinkedList<XMLStructure>();
         objectContent.add(manifest);
@@ -112,12 +104,12 @@ public class OOXMLSignatureAspect implements SignatureAspect {
         references.add(reference);
     }
 
-    private Manifest constructManifest(XMLSignatureFactory signatureFactory, Document document) throws NoSuchAlgorithmException,
+    private Manifest constructManifest(XMLSignatureFactory signatureFactory) throws NoSuchAlgorithmException,
                                     InvalidAlgorithmParameterException {
         List<Reference> manifestReferences = new LinkedList<Reference>();
 
         try {
-            addRelationshipsReferences(signatureFactory, document, manifestReferences);
+            addRelationshipsReferences(signatureFactory, manifestReferences);
         } catch (Exception e) {
             throw new RuntimeException("error: " + e.getMessage(), e);
         }
@@ -145,7 +137,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
         return manifest;
     }
 
-    private void addSignatureTime(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<XMLStructure> objectContent) {
+    private static void addSignatureTime(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<XMLStructure> objectContent) {
         /*
          * SignatureTime
          */
@@ -155,9 +147,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
         formatElement.setTextContent("YYYY-MM-DDThh:mm:ssTZD");
         signatureTimeElement.appendChild(formatElement);
         Element valueElement = document.createElementNS("http://schemas.openxmlformats.org/package/2006/digital-signature", "mdssi:Value");
-        DateTime dateTime = new DateTime(DateTimeZone.UTC);
-        DateTimeFormatter fmt = ISODateTimeFormat.dateTimeNoMillis();
-        String now = fmt.print(dateTime);
+        String now = formatTimestampAsISO8601(System.currentTimeMillis());
         LOG.debug("now: " + now);
         valueElement.setTextContent(now);
         signatureTimeElement.appendChild(valueElement);
@@ -170,6 +160,34 @@ public class OOXMLSignatureAspect implements SignatureAspect {
         SignatureProperties signatureProperties = signatureFactory.newSignatureProperties(signaturePropertyContent, "id-signature-time-"
                                         + UUID.randomUUID().toString());
         objectContent.add(signatureProperties);
+    }
+
+    /**
+     * @return text formatted "YYYY-MM-DDThh:mm:ssTZD"
+     */
+    static String formatTimestampAsISO8601(long ts) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(ts);
+        c.setTimeZone(TimeZone.getTimeZone("UTC"));
+        char[] buf = "yyyy-mm-ddThh:mm:ssZ".toCharArray();
+        itoa(buf, 0, 4, c.get(Calendar.YEAR));
+        itoa(buf, 5, 2, c.get(Calendar.MONTH)+1);
+        itoa(buf, 8, 2, c.get(Calendar.DAY_OF_MONTH));
+        itoa(buf, 11, 2, c.get(Calendar.HOUR_OF_DAY));
+        itoa(buf, 14, 2, c.get(Calendar.MINUTE));
+        itoa(buf, 17, 2, c.get(Calendar.SECOND));
+        return new String(buf);
+    }
+
+    private static void itoa(char[] buf, int start, int len, int value) {
+        int acc = value;
+        int i=start+len-1;
+        while (i>=start) {
+            int d = acc % 10;
+            acc /= 10;
+            buf[i] = (char) ('0' + d);
+            i--;
+        }
     }
 
     private void addSignatureInfo(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references,
@@ -200,10 +218,10 @@ public class OOXMLSignatureAspect implements SignatureAspect {
         references.add(reference);
     }
 
-    private void addRelationshipsReferences(XMLSignatureFactory signatureFactory, Document document, List<Reference> manifestReferences) throws IOException,
-                                    ParserConfigurationException, SAXException, TransformerException, NoSuchAlgorithmException,
+    private void addRelationshipsReferences(XMLSignatureFactory signatureFactory, List<Reference> manifestReferences) throws IOException,
+                                    ParserConfigurationException, SAXException, NoSuchAlgorithmException,
                                     InvalidAlgorithmParameterException {
-        URL ooxmlUrl = this.signatureService.getOfficeOpenXMLDocumentURL();
+        URL ooxmlUrl = _signatureService.getOfficeOpenXMLDocumentURL();
         InputStream inputStream = ooxmlUrl.openStream();
         ZipInputStream zipInputStream = new ZipInputStream(inputStream);
         ZipEntry zipEntry;
@@ -212,11 +230,11 @@ public class OOXMLSignatureAspect implements SignatureAspect {
                 continue;
             }
             Document relsDocument = loadDocumentNoClose(zipInputStream);
-            addRelationshipsReference(signatureFactory, document, zipEntry.getName(), relsDocument, manifestReferences);
+            addRelationshipsReference(signatureFactory, zipEntry.getName(), relsDocument, manifestReferences);
         }
     }
 
-    private void addRelationshipsReference(XMLSignatureFactory signatureFactory, Document document, String zipEntryName, Document relsDocument,
+    private void addRelationshipsReference(XMLSignatureFactory signatureFactory, String zipEntryName, Document relsDocument,
                                     List<Reference> manifestReferences) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         LOG.debug("relationships: " + zipEntryName);
         RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
@@ -267,7 +285,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
                                     InvalidAlgorithmParameterException {
         List<String> documentResourceNames;
         try {
-            documentResourceNames = getResourceNames(this.signatureService.getOfficeOpenXMLDocumentURL(), contentType);
+            documentResourceNames = getResourceNames(_signatureService.getOfficeOpenXMLDocumentURL(), contentType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -318,7 +336,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     protected Document findDocument(String zipEntryName) throws IOException, ParserConfigurationException, SAXException {
-        URL ooxmlUrl = this.signatureService.getOfficeOpenXMLDocumentURL();
+        URL ooxmlUrl = _signatureService.getOfficeOpenXMLDocumentURL();
         InputStream inputStream = ooxmlUrl.openStream();
         ZipInputStream zipInputStream = new ZipInputStream(inputStream);
         ZipEntry zipEntry;

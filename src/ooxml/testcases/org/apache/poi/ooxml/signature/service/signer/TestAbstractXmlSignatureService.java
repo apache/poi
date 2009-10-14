@@ -69,7 +69,6 @@ import org.apache.xpath.XPathAPI;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.jcp.xml.dsig.internal.dom.DOMReference;
 import org.jcp.xml.dsig.internal.dom.DOMXMLSignature;
-import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -215,9 +214,7 @@ public final class TestAbstractXmlSignatureService extends TestCase {
         byte[] digestInfoValue = ArrayUtils.addAll(PkiTestUtils.SHA1_DIGEST_INFO_PREFIX, digestInfo.digestValue);
         byte[] signatureValue = cipher.doFinal(digestInfoValue);
 
-        DateTime notBefore = new DateTime();
-        DateTime notAfter = notBefore.plusYears(1);
-        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", notBefore, notAfter, null, keyPair.getPrivate(), true,
+        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", null, keyPair.getPrivate(), true,
                                         0, null, null, new KeyUsage(KeyUsage.nonRepudiation));
 
         /*
@@ -313,9 +310,7 @@ public final class TestAbstractXmlSignatureService extends TestCase {
         byte[] digestInfoValue = ArrayUtils.addAll(PkiTestUtils.SHA1_DIGEST_INFO_PREFIX, digestInfo.digestValue);
         byte[] signatureValue = cipher.doFinal(digestInfoValue);
 
-        DateTime notBefore = new DateTime();
-        DateTime notAfter = notBefore.plusYears(1);
-        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", notBefore, notAfter, null, keyPair.getPrivate(), true,
+        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", null, keyPair.getPrivate(), true,
                                         0, null, null, new KeyUsage(KeyUsage.nonRepudiation));
 
         /*
@@ -395,9 +390,7 @@ public final class TestAbstractXmlSignatureService extends TestCase {
         byte[] digestInfoValue = ArrayUtils.addAll(PkiTestUtils.SHA1_DIGEST_INFO_PREFIX, digestInfo.digestValue);
         byte[] signatureValue = cipher.doFinal(digestInfoValue);
 
-        DateTime notBefore = new DateTime();
-        DateTime notAfter = notBefore.plusYears(1);
-        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", notBefore, notAfter, null, keyPair.getPrivate(), true,
+        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", null, keyPair.getPrivate(), true,
                                         0, null, null, new KeyUsage(KeyUsage.nonRepudiation));
 
         /*
@@ -475,9 +468,7 @@ public final class TestAbstractXmlSignatureService extends TestCase {
         byte[] digestInfoValue = ArrayUtils.addAll(PkiTestUtils.SHA1_DIGEST_INFO_PREFIX, digestInfo.digestValue);
         byte[] signatureValue = cipher.doFinal(digestInfoValue);
 
-        DateTime notBefore = new DateTime();
-        DateTime notAfter = notBefore.plusYears(1);
-        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", notBefore, notAfter, null, keyPair.getPrivate(), true,
+        X509Certificate certificate = PkiTestUtils.generateCertificate(keyPair.getPublic(), "CN=Test", null, keyPair.getPrivate(), true,
                                         0, null, null, new KeyUsage(KeyUsage.nonRepudiation));
 
         /*
