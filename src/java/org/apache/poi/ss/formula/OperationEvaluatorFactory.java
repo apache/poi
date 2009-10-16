@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,6 @@ import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
@@ -59,38 +60,44 @@ import org.apache.poi.hssf.record.formula.functions.Function;
  */
 final class OperationEvaluatorFactory {
 
-	private static final Map<Class<? extends Ptg>, OperationEval> _instancesByPtgClass = initialiseInstancesMap();
+	private static final Map<OperationPtg, OperationEval> _instancesByPtgClass = initialiseInstancesMap2();
 
 	private OperationEvaluatorFactory() {
 		// no instances of this class
 	}
 
-	private static Map<Class<? extends Ptg>, OperationEval> initialiseInstancesMap() {
-		Map<Class<? extends Ptg>, OperationEval> m = new HashMap<Class<? extends Ptg>, OperationEval>(32);
+	private static Map<OperationPtg, OperationEval> initialiseInstancesMap2() {
+		Map<OperationPtg, OperationEval> m = new HashMap<OperationPtg, OperationEval>(32);
 
-		put(m, 2, EqualPtg.class, RelationalOperationEval.EqualEval);
-		put(m, 2, GreaterEqualPtg.class, RelationalOperationEval.GreaterEqualEval);
-		put(m, 2, GreaterThanPtg.class, RelationalOperationEval.GreaterThanEval);
-		put(m, 2, LessEqualPtg.class, RelationalOperationEval.LessEqualEval);
-		put(m, 2, LessThanPtg.class, RelationalOperationEval.LessThanEval);
-		put(m, 2, NotEqualPtg.class, RelationalOperationEval.NotEqualEval);
+		put(m, 2, EqualPtg.instance, RelationalOperationEval.EqualEval);
+		put(m, 2, GreaterEqualPtg.instance, RelationalOperationEval.GreaterEqualEval);
+		put(m, 2, GreaterThanPtg.instance, RelationalOperationEval.GreaterThanEval);
+		put(m, 2, LessEqualPtg.instance, RelationalOperationEval.LessEqualEval);
+		put(m, 2, LessThanPtg.instance, RelationalOperationEval.LessThanEval);
+		put(m, 2, NotEqualPtg.instance, RelationalOperationEval.NotEqualEval);
 
-		put(m, 2, ConcatPtg.class, ConcatEval.instance);
-		put(m, 2, AddPtg.class, TwoOperandNumericOperation.AddEval);
-		put(m, 2, DividePtg.class, TwoOperandNumericOperation.DivideEval);
-		put(m, 2, MultiplyPtg.class, TwoOperandNumericOperation.MultiplyEval);
-		put(m, 1, PercentPtg.class, PercentEval.instance);
-		put(m, 2, PowerPtg.class, TwoOperandNumericOperation.PowerEval);
-		put(m, 2, SubtractPtg.class, TwoOperandNumericOperation.SubtractEval);
-		put(m, 1, UnaryMinusPtg.class, UnaryMinusEval.instance);
-		put(m, 1, UnaryPlusPtg.class, UnaryPlusEval.instance);
-		put(m, 2, RangePtg.class, RangeEval.instance);
+		put(m, 2, ConcatPtg.instance, ConcatEval.instance);
+		put(m, 2, AddPtg.instance, TwoOperandNumericOperation.AddEval);
+		put(m, 2, DividePtg.instance, TwoOperandNumericOperation.DivideEval);
+		put(m, 2, MultiplyPtg.instance, TwoOperandNumericOperation.MultiplyEval);
+		put(m, 1, PercentPtg.instance, PercentEval.instance);
+		put(m, 2, PowerPtg.instance, TwoOperandNumericOperation.PowerEval);
+		put(m, 2, SubtractPtg.instance, TwoOperandNumericOperation.SubtractEval);
+		put(m, 1, UnaryMinusPtg.instance, UnaryMinusEval.instance);
+		put(m, 1, UnaryPlusPtg.instance, UnaryPlusEval.instance);
+		put(m, 2, RangePtg.instance, RangeEval.instance);
 		return m;
 	}
 
-	private static void put(Map<Class<? extends Ptg>, OperationEval> m, int argCount,
-			Class<? extends Ptg> ptgClass, Function instance) {
-		m.put(ptgClass, new OperationFunctionEval(instance, argCount));
+	private static void put(Map<OperationPtg, OperationEval> m, int argCount,
+			OperationPtg ptgKey, Function instance) {
+		// make sure ptg has single private constructor because map lookups assume singleton keys
+		Constructor[] cc = ptgKey.getClass().getDeclaredConstructors();
+		if (cc.length > 1 || !Modifier.isPrivate(cc[0].getModifiers())) {
+			throw new RuntimeException("Failed to verify instance ("
+					+ ptgKey.getClass().getName() + ") is a singleton.");
+		}
+		m.put(ptgKey, new OperationFunctionEval(instance, argCount));
 	}
 
 	/**
@@ -123,11 +130,8 @@ final class OperationEvaluatorFactory {
 		if(ptg == null) {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
-		OperationEval result;
+		OperationEval result = _instancesByPtgClass.get(ptg);
 
-		Class<? extends OperationPtg> ptgClass = ptg.getClass();
-
-		result = _instancesByPtgClass.get(ptgClass);
 		if (result != null) {
 			return  result;
 		}
@@ -135,6 +139,6 @@ final class OperationEvaluatorFactory {
 		if (ptg instanceof AbstractFunctionPtg) {
 			return new FunctionEval((AbstractFunctionPtg)ptg);
 		}
-		throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
+		throw new RuntimeException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
 	}
 }
