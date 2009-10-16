@@ -374,9 +374,6 @@ public abstract class OPCPackage implements RelationshipSource {
 
 		// Clear
 		this.contentTypeManager.clearAll();
-
-		// Call the garbage collector
-		Runtime.getRuntime().gc();
 	}
 
 	/**

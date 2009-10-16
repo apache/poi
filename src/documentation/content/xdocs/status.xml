@@ -33,6 +33,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47999 - avoid un-needed call to the JVM Garbage Collector when working on OOXML OPC Packages</action>
            <action dev="POI-DEVELOPERS" type="add">47922 - added example HSMF application that converts a .msg file to text and extracts attachments</action>
            <action dev="POI-DEVELOPERS" type="add">47903 - added Ant target to compile scratchpad examples</action>
            <action dev="POI-DEVELOPERS" type="add">47839 - improved API for OOXML custom properties</action>
