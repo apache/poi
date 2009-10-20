@@ -43,14 +43,14 @@
 			 Users are advised to check the unit tests to see how everything
 			 works. They are also well advised to read the documentation
 			 supplied with 
-			 <link href="http://www.gnome.ru/projects/vsdump_en.html">vsdump</link>
+			 <link href="http://web.archive.org/web/20071212220759/http://www.gnome.ru/projects/vsdump_en.html">vsdump</link>
 			 to get a feel for how Visio files are structured.</p>
 			<p>To get a feel for the contents of a file, and to track down
 			 where data of interest is stored, HDGF comes with
 			 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/src/org/apache/poi/hdgf/dev/">VSDDumper</link>
 			 to print out the contents of the file. Users should also make
 			 use of 
-			 <link href="http://www.gnome.ru/projects/vsdump_en.html">vsdump</link>
+			 <link href="http://web.archive.org/web/20071212220759/http://www.gnome.ru/projects/vsdump_en.html">vsdump</link>
 			 to probe the structure of files.</p>
             <note> 
                 This code currently lives the 
