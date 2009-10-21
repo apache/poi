@@ -33,6 +33,7 @@ import org.apache.poi.hssf.record.formula.ErrPtg;
 import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.MemAreaPtg;
 import org.apache.poi.hssf.record.formula.MemErrPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.MissingArgPtg;
@@ -348,11 +349,13 @@ public final class WorkbookEvaluator {
 				// skip Parentheses, Attr, etc
 				continue;
 			}
-			if (ptg instanceof MemFuncPtg) {
+			if (ptg instanceof MemFuncPtg || ptg instanceof MemAreaPtg) {
 				// can ignore, rest of tokens for this expression are in OK RPN order
 				continue;
 			}
-			if (ptg instanceof MemErrPtg) { continue; }
+			if (ptg instanceof MemErrPtg) {
+				continue;
+			}
 
 			ValueEval opResult;
 			if (ptg instanceof OperationPtg) {

@@ -37,24 +37,24 @@ import org.apache.poi.ss.usermodel.Sheet;
  * This class does not test implementors of <tt>Function</tt> and <tt>OperationEval</tt> in
  * isolation.  Much of the evaluation engine (i.e. <tt>HSSFFormulaEvaluator</tt>, ...) gets
  * exercised as well.  Tests for bug fixes and specific/tricky behaviour can be found in the
- * corresponding test class (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, 
+ * corresponding test class (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor,
  * where execution can be observed more easily.
- * 
+ *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public final class TestFormulasFromSpreadsheet extends TestCase {
-	
+
 	private static final class Result {
 		public static final int SOME_EVALUATIONS_FAILED = -1;
 		public static final int ALL_EVALUATIONS_SUCCEEDED = +1;
 		public static final int NO_EVALUATIONS_FOUND = 0;
 	}
 
-	/** 
+	/**
 	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
 	 */
 	private static final class SS {
-		
+
 		/**
 		 * Name of the test spreadsheet (found in the standard test data folder)
 		 */
@@ -66,31 +66,31 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		/**
 		 * Row (zero-based) in the test spreadsheet where the function examples start.
 		 */
-		public static final int START_FUNCTIONS_ROW_INDEX = 87; // Row '88' 
-		/** 
+		public static final int START_FUNCTIONS_ROW_INDEX = 95; // Row '96'
+		/**
 		 * Index of the column that contains the function names
 		 */
 		public static final int COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
-	
+
 		/**
 		 * Used to indicate when there are no more functions left
 		 */
 		public static final String FUNCTION_NAMES_END_SENTINEL = "<END-OF-FUNCTIONS>";
-	
+
 		/**
 		 * Index of the column where the test values start (for each function)
 		 */
 		public static final short COLUMN_INDEX_FIRST_TEST_VALUE = 3; // Column 'D'
-		
+
 		/**
-		 * Each function takes 4 rows in the test spreadsheet 
+		 * Each function takes 4 rows in the test spreadsheet
 		 */
 		public static final int NUMBER_OF_ROWS_PER_FUNCTION = 4;
 	}
 
 	private HSSFWorkbook workbook;
 	private Sheet sheet;
-	// Note - multiple failures are aggregated before ending.  
+	// Note - multiple failures are aggregated before ending.
 	// If one or more functions fail, a single AssertionFailedError is thrown at the end
 	private int _functionFailureCount;
 	private int _functionSuccessCount;
@@ -112,7 +112,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		if(actual == null) {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
-		
+
 		switch (expected.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
 				assertEquals(msg, Cell.CELL_TYPE_BLANK, actual.getCellType());
@@ -149,17 +149,17 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		_evaluationFailureCount = 0;
 		_evaluationSuccessCount = 0;
 	}
-	
+
 	public void testFunctionsFromTestSpreadsheet() {
-		
+
 		processFunctionGroup(SS.START_OPERATORS_ROW_INDEX, null);
 		processFunctionGroup(SS.START_FUNCTIONS_ROW_INDEX, null);
 		// example for debugging individual functions/operators:
 //		processFunctionGroup(SS.START_OPERATORS_ROW_INDEX, "ConcatEval");
 //		processFunctionGroup(SS.START_FUNCTIONS_ROW_INDEX, "AVERAGE");
-		
+
 		// confirm results
-		String successMsg = "There were " 
+		String successMsg = "There were "
 				+ _evaluationSuccessCount + " successful evaluation(s) and "
 				+ _functionSuccessCount + " function(s) without error";
 		if(_functionFailureCount > 0) {
@@ -173,8 +173,8 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 	/**
-	 * @param startRowIndex row index in the spreadsheet where the first function/operator is found 
-	 * @param testFocusFunctionName name of a single function/operator to test alone. 
+	 * @param startRowIndex row index in the spreadsheet where the first function/operator is found
+	 * @param testFocusFunctionName name of a single function/operator to test alone.
 	 * Typically pass <code>null</code> to test all functions
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
@@ -185,7 +185,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 			Row r = sheet.getRow(rowIndex);
 			String targetFunctionName = getTargetFunctionName(r);
 			if(targetFunctionName == null) {
-				throw new AssertionFailedError("Test spreadsheet cell empty on row (" 
+				throw new AssertionFailedError("Test spreadsheet cell empty on row ("
 						+ (rowIndex+1) + "). Expected function name or '"
 						+ SS.FUNCTION_NAMES_END_SENTINEL + "'");
 			}
@@ -194,13 +194,13 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				break;
 			}
 			if(testFocusFunctionName == null || targetFunctionName.equalsIgnoreCase(testFocusFunctionName)) {
-				
+
 				// expected results are on the row below
 				Row expectedValuesRow = sheet.getRow(rowIndex + 1);
 				if(expectedValuesRow == null) {
 					int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
-					throw new AssertionFailedError("Missing expected values row for function '" 
-							+ targetFunctionName + " (row " + missingRowNum + ")"); 
+					throw new AssertionFailedError("Missing expected values row for function '"
+							+ targetFunctionName + " (row " + missingRowNum + ")");
 				}
 				switch(processFunctionRow(evaluator, targetFunctionName, r, expectedValuesRow)) {
 					case Result.ALL_EVALUATIONS_SUCCEEDED: _functionSuccessCount++; break;
@@ -215,13 +215,13 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a constant from the local Result class denoting whether there were any evaluation
 	 * cases, and whether they all succeeded.
 	 */
-	private int processFunctionRow(HSSFFormulaEvaluator evaluator, String targetFunctionName, 
+	private int processFunctionRow(HSSFFormulaEvaluator evaluator, String targetFunctionName,
 			Row formulasRow, Row expectedValuesRow) {
-		
+
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 		short endcolnum = formulasRow.getLastCellNum();
 
@@ -256,7 +256,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 */
 	private static void printShortStackTrace(PrintStream ps, AssertionFailedError e) {
 		StackTraceElement[] stes = e.getStackTrace();
-		
+
 		int startIx = 0;
 		// skip any top frames inside junit.framework.Assert
 		while(startIx<stes.length) {
@@ -303,7 +303,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
-		
+
 		throw new AssertionFailedError("Bad cell type for 'function name' column: ("
 				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 	}

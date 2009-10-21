@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
 import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
 import org.apache.poi.hssf.record.formula.GreaterThanPtg;
+import org.apache.poi.hssf.record.formula.IntersectionPtg;
 import org.apache.poi.hssf.record.formula.LessEqualPtg;
 import org.apache.poi.hssf.record.formula.LessThanPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
@@ -42,6 +43,7 @@ import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.record.formula.eval.ConcatEval;
 import org.apache.poi.hssf.record.formula.eval.FunctionEval;
+import org.apache.poi.hssf.record.formula.eval.IntersectionEval;
 import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.PercentEval;
 import org.apache.poi.hssf.record.formula.eval.RangeEval;
@@ -86,6 +88,7 @@ final class OperationEvaluatorFactory {
 		put(m, 1, UnaryMinusPtg.instance, UnaryMinusEval.instance);
 		put(m, 1, UnaryPlusPtg.instance, UnaryPlusEval.instance);
 		put(m, 2, RangePtg.instance, RangeEval.instance);
+		put(m, 2, IntersectionPtg.instance, IntersectionEval.instance);
 		return m;
 	}
 
