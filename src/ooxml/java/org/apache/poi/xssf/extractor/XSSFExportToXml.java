@@ -74,441 +74,435 @@ import org.xml.sax.SAXException;
  * <li> no mixed content: an element can't contain simple text and child element(s) together </li>
  * <li> no &lt;substitutionGroup&gt; in complex type/element declaration </li>
  * </ul>
- *
- * @author Roberto Manicardi
  */
 public class XSSFExportToXml implements Comparator<String>{
 
-	private XSSFMap map;
-
-	/**
-	 * Creates a new exporter and sets the mapping to be used when generating the XML output document
-	 *
-	 * @param map the mapping rule to be used
-	 */
-	public XSSFExportToXml(XSSFMap map) {
-		this.map = map;
-	}
-
-	/**
-	 *
-	 * Exports the data in an XML stream
-	 *
-	 * @param os OutputStream in which will contain the output XML
-	 * @param validate if true, validates the XML againts the XML Schema
-	 * @throws SAXException
-	 */
-	public void exportToXML(OutputStream os, boolean validate) throws SAXException{
-		exportToXML(os,"UTF-8", validate);
-	}
-
-	private Document getEmptyDocument() throws ParserConfigurationException{
-
-		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-		Document doc = docBuilder.newDocument();
+    private XSSFMap map;
+
+    /**
+     * Creates a new exporter and sets the mapping to be used when generating the XML output document
+     *
+     * @param map the mapping rule to be used
+     */
+    public XSSFExportToXml(XSSFMap map) {
+        this.map = map;
+    }
+
+    /**
+     *
+     * Exports the data in an XML stream
+     *
+     * @param os OutputStream in which will contain the output XML
+     * @param validate if true, validates the XML againts the XML Schema
+     * @throws SAXException
+     * @throws TransformerException  
+     * @throws ParserConfigurationException 
+     */
+    public void exportToXML(OutputStream os, boolean validate) throws SAXException, ParserConfigurationException, TransformerException {
+        exportToXML(os, "UTF-8", validate);
+    }
+
+    private Document getEmptyDocument() throws ParserConfigurationException{
+
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
+
+        return doc;
+    }
+
+    /**
+     * Exports the data in an XML stream
+     *
+     * @param os OutputStream in which will contain the output XML
+     * @param encoding the output charset encoding
+     * @param validate if true, validates the XML againts the XML Schema
+     * @throws SAXException
+     * @throws ParserConfigurationException 
+     * @throws TransformerException 
+     * @throws InvalidFormatException
+     */
+    public void exportToXML(OutputStream os, String encoding, boolean validate) throws SAXException, ParserConfigurationException, TransformerException{
+        List<XSSFSingleXmlCell> singleXMLCells = map.getRelatedSingleXMLCell();
+        List<Table> tables = map.getRelatedTables();
 
-		return doc;
-	}
+        String rootElement = map.getCtMap().getRootElement();
 
-	/**
-	 * Exports the data in an XML stream
-	 *
-	 * @param os OutputStream in which will contain the output XML
-	 * @param encoding the output charset encoding
-	 * @param validate if true, validates the XML againts the XML Schema
-	 * @throws SAXException
-	 * @throws InvalidFormatException
-	 */
-	public void exportToXML(OutputStream os, String encoding, boolean validate) throws SAXException{
-		List<XSSFSingleXmlCell> singleXMLCells = map.getRelatedSingleXMLCell();
-		List<Table> tables = map.getRelatedTables();
+        Document doc = getEmptyDocument();
 
-		String rootElement = map.getCtMap().getRootElement();
+        Element root = null;
 
-		try{
+        if (isNamespaceDeclared()) {
+            root=doc.createElementNS(getNamespace(),rootElement);
+        } else {
+            root=doc.createElement(rootElement);
+        }
+        doc.appendChild(root);
 
-			Document doc = getEmptyDocument();
 
-			Element root = null;
+        List<String> xpaths = new Vector<String>();
+        Map<String,XSSFSingleXmlCell> singleXmlCellsMappings = new HashMap<String,XSSFSingleXmlCell>();
+        Map<String,Table> tableMappings = new HashMap<String,Table>();
 
-			if (isNamespaceDeclared()) {
-				 root=doc.createElementNS(getNamespace(),rootElement);
-			} else {
-				root=doc.createElement(rootElement);
-			}
-			doc.appendChild(root);
+        for(XSSFSingleXmlCell simpleXmlCell : singleXMLCells) {
+            xpaths.add(simpleXmlCell.getXpath());
+            singleXmlCellsMappings.put(simpleXmlCell.getXpath(), simpleXmlCell);
+        }
+        for(Table table : tables) {
+            String commonXPath = table.getCommonXpath();
+            xpaths.add(commonXPath);
+            tableMappings.put(commonXPath, table);
+        }
 
 
-			List<String> xpaths = new Vector<String>();
-			Map<String,XSSFSingleXmlCell> singleXmlCellsMappings = new HashMap<String,XSSFSingleXmlCell>();
-			Map<String,Table> tableMappings = new HashMap<String,Table>();
+        Collections.sort(xpaths,this);
 
-			for(XSSFSingleXmlCell simpleXmlCell : singleXMLCells) {
-				xpaths.add(simpleXmlCell.getXpath());
-				singleXmlCellsMappings.put(simpleXmlCell.getXpath(), simpleXmlCell);
-			}
-			for(Table table : tables) {
-				String commonXPath = table.getCommonXpath();
-				xpaths.add(commonXPath);
-				tableMappings.put(commonXPath, table);
-			}
+        for(String xpath : xpaths) {
 
+            XSSFSingleXmlCell simpleXmlCell = singleXmlCellsMappings.get(xpath);
+            Table table = tableMappings.get(xpath);
 
-			Collections.sort(xpaths,this);
+            if (!xpath.matches(".*\\[.*")) {
+
+                // Exports elements and attributes mapped with simpleXmlCell
+                if (simpleXmlCell!=null) {
+                    XSSFCell cell = simpleXmlCell.getReferencedCell();
+                    if (cell!=null) {
+                        Node currentNode = getNodeByXPath(xpath,doc.getFirstChild(),doc,false);
+                        STXmlDataType.Enum dataType = simpleXmlCell.getXmlDataType();
+                        mapCellOnNode(cell,currentNode,dataType);
+                    }
+                }
 
-			for(String xpath : xpaths) {
+                // Exports elements and attributes mapped with tables
+                if (table!=null) {
 
-					XSSFSingleXmlCell simpleXmlCell = singleXmlCellsMappings.get(xpath);
-					Table table = tableMappings.get(xpath);
+                    List<XSSFXmlColumnPr> tableColumns = table.getXmlColumnPrs();
 
-					if (!xpath.matches(".*\\[.*")) {
+                    XSSFSheet sheet = table.getXSSFSheet();
 
-						// Exports elements and attributes mapped with simpleXmlCell
-						if (simpleXmlCell!=null) {
-							XSSFCell cell = simpleXmlCell.getReferencedCell();
-							if (cell!=null) {
-								Node currentNode = getNodeByXPath(xpath,doc.getFirstChild(),doc,false);
-								STXmlDataType.Enum dataType = simpleXmlCell.getXmlDataType();
-								mapCellOnNode(cell,currentNode,dataType);
-							}
-						}
+                    int startRow = table.getStartCellReference().getRow();
+                    // In mappings created with Microsoft Excel the first row contains the table header and must be skipped
+                    startRow +=1;
 
-						// Exports elements and attributes mapped with tables
-						if (table!=null) {
+                    int endRow = table.getEndCellReference().getRow();
 
-							List<XSSFXmlColumnPr> tableColumns = table.getXmlColumnPrs();
+                    for(int i = startRow; i<= endRow; i++) {
+                        XSSFRow row = sheet.getRow(i);
 
-							XSSFSheet sheet = table.getXSSFSheet();
+                        Node tableRootNode = getNodeByXPath(table.getCommonXpath(),doc.getFirstChild(),doc,true);
 
-							int startRow = table.getStartCellReference().getRow();
-							// In mappings created with Microsoft Excel the first row contains the table header and must be skipped
-							startRow +=1;
+                        short startColumnIndex = table.getStartCellReference().getCol();
+                        for(int j = startColumnIndex; j<= table.getEndCellReference().getCol();j++) {
+                            XSSFCell cell = row.getCell(j);
+                            if (cell!=null) {
+                                XSSFXmlColumnPr pointer = tableColumns.get(j-startColumnIndex);
+                                String localXPath = pointer.getLocalXPath();
+                                Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
+                                STXmlDataType.Enum dataType = pointer.getXmlDataType();
 
-							int endRow = table.getEndCellReference().getRow();
 
-							for(int i = startRow; i<= endRow; i++) {
-								XSSFRow row = sheet.getRow(i);
+                                mapCellOnNode(cell,currentNode,dataType);
+                            }
 
-								Node tableRootNode = getNodeByXPath(table.getCommonXpath(),doc.getFirstChild(),doc,true);
+                        }
 
-								short startColumnIndex = table.getStartCellReference().getCol();
-								for(int j = startColumnIndex; j<= table.getEndCellReference().getCol();j++) {
-									XSSFCell cell = row.getCell(j);
-									if (cell!=null) {
-										XSSFXmlColumnPr pointer = tableColumns.get(j-startColumnIndex);
-										String localXPath = pointer.getLocalXPath();
-										Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
-										STXmlDataType.Enum dataType = pointer.getXmlDataType();
+                    }
 
 
-										mapCellOnNode(cell,currentNode,dataType);
-									}
 
-								}
+                }
+            } else {
+                // TODO:  implement filtering management in xpath
+            }
+        }
 
-							}
+        boolean isValid = true;
+        if (validate) {
+            isValid =isValid(doc);
+        }
 
 
 
-						}
-					} else {
-						// TODO:  implement filtering management in xpath
-					}
-			}
+        if (isValid) {
 
-			boolean isValid = true;
-			if (validate) {
-				isValid =isValid(doc);
-			}
+            /////////////////
+            //Output the XML
 
+            //set up a transformer
+            TransformerFactory transfac = TransformerFactory.newInstance();
+            Transformer trans = transfac.newTransformer();
+            trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            trans.setOutputProperty(OutputKeys.INDENT, "yes");
+            trans.setOutputProperty(OutputKeys.ENCODING, encoding);
 
+            //create string from xml tree
 
-			if (isValid) {
+            StreamResult result = new StreamResult(os);
+            DOMSource source = new DOMSource(doc);
+            trans.transform(source, result);
 
-				/////////////////
-				//Output the XML
+        }
+    }
 
-				//set up a transformer
-				TransformerFactory transfac = TransformerFactory.newInstance();
-				Transformer trans = transfac.newTransformer();
-				trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-				trans.setOutputProperty(OutputKeys.INDENT, "yes");
-				trans.setOutputProperty(OutputKeys.ENCODING, encoding);
 
-				//create string from xml tree
+    /**
+     * Validate the generated XML against the XML Schema associated with the XSSFMap
+     *
+     * @param xml the XML to validate
+     * @return
+     */
+    private boolean isValid(Document xml) throws SAXException{
+        boolean isValid = false;
+        try{
+            String language = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+            SchemaFactory factory = SchemaFactory.newInstance(language);
 
-				StreamResult result = new StreamResult(os);
-				DOMSource source = new DOMSource(doc);
-				trans.transform(source, result);
+            Source source = new DOMSource(map.getSchema());
+            Schema schema = factory.newSchema(source);
+            Validator validator = schema.newValidator();
+            validator.validate(new DOMSource(xml));
+            //if no exceptions where raised, the document is valid
+            isValid=true;
 
-			}
-		}catch(ParserConfigurationException e) {
-			e.printStackTrace();
-		}catch(TransformerException e) {
-			e.printStackTrace();
-		}
 
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return isValid;
+    }
 
-	}
 
-	/**
-	 * Validate the generated XML against the XML Schema associated with the XSSFMap
-	 *
-	 * @param xml the XML to validate
-	 * @return
-	 */
-	private boolean isValid(Document xml) throws SAXException{
-		boolean isValid = false;
-		try{
-			String language = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-			SchemaFactory factory = SchemaFactory.newInstance(language);
+    private void mapCellOnNode(XSSFCell cell, Node node, STXmlDataType.Enum  outputDataType) {
 
-			Source source = new DOMSource(map.getSchema());
-			Schema schema = factory.newSchema(source);
-			Validator validator = schema.newValidator();
-			validator.validate(new DOMSource(xml));
-			//if no exceptions where raised, the document is valid
-			isValid=true;
+        String value ="";
+        switch (cell.getCellType()) {
 
+        case XSSFCell.CELL_TYPE_STRING: value = cell.getStringCellValue(); break;
+        case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
+        case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
+        case XSSFCell.CELL_TYPE_FORMULA: value = cell.getStringCellValue(); break;
+        case XSSFCell.CELL_TYPE_NUMERIC: value += cell.getRawValue(); break;
+        default: ;
 
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-		return isValid;
-	}
+        }
+        if (node instanceof Element) {
+            Element currentElement = (Element) node;
+            currentElement.setTextContent(value);
+        } else {
+            node.setNodeValue(value);
+        }
+    }
 
+    private String removeNamespace(String elementName) {
+        return elementName.matches(".*:.*")?elementName.split(":")[1]:elementName;
+    }
 
-	private void mapCellOnNode(XSSFCell cell, Node node, STXmlDataType.Enum  outputDataType) {
 
-		String value ="";
-		switch (cell.getCellType()) {
 
-			case XSSFCell.CELL_TYPE_STRING: value = cell.getStringCellValue(); break;
-			case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
-			case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
-			case XSSFCell.CELL_TYPE_FORMULA: value = cell.getStringCellValue(); break;
-			case XSSFCell.CELL_TYPE_NUMERIC: value += cell.getRawValue(); break;
-			default: ;
+    private Node getNodeByXPath(String xpath,Node rootNode,Document doc,boolean createMultipleInstances) {
+        String[] xpathTokens = xpath.split("/");
 
-		}
-		if (node instanceof Element) {
-			Element currentElement = (Element) node;
-			currentElement.setTextContent(value);
-		} else {
-			node.setNodeValue(value);
-		}
-	}
 
-	private String removeNamespace(String elementName) {
-		return elementName.matches(".*:.*")?elementName.split(":")[1]:elementName;
-	}
+        Node currentNode =rootNode;
+        // The first token is empty, the second is the root node
+        for(int i =2; i<xpathTokens.length;i++) {
 
+            String axisName = removeNamespace(xpathTokens[i]);
 
 
-	private Node getNodeByXPath(String xpath,Node rootNode,Document doc,boolean createMultipleInstances) {
-		String[] xpathTokens = xpath.split("/");
+            if (!axisName.startsWith("@")) {
 
+                NodeList list =currentNode.getChildNodes();
 
-		Node currentNode =rootNode;
-		// The first token is empty, the second is the root node
-		for(int i =2; i<xpathTokens.length;i++) {
+                Node selectedNode = null;
+                if (!(createMultipleInstances && i==xpathTokens.length-1) ) {
+                    // select the last child node only if we need to map to a single cell
+                    selectedNode = selectNode(axisName, list);
+                }
+                if (selectedNode==null) {
+                    selectedNode = createElement(doc, currentNode, axisName);
+                }
+                currentNode = selectedNode;
+            } else {
 
-			String axisName = removeNamespace(xpathTokens[i]);
 
+                Node attribute = createAttribute(doc, currentNode, axisName);
 
-			if (!axisName.startsWith("@")) {
+                currentNode = attribute;
+            }
+        }
+        return currentNode;
+    }
 
-				NodeList list =currentNode.getChildNodes();
+    private Node createAttribute(Document doc, Node currentNode, String axisName) {
+        String attributeName = axisName.substring(1);
+        NamedNodeMap attributesMap = currentNode.getAttributes();
+        Node attribute = attributesMap.getNamedItem(attributeName);
+        if (attribute==null) {
+            attribute = doc.createAttribute(attributeName);
+            attributesMap.setNamedItem(attribute);
+        }
+        return attribute;
+    }
 
-				Node selectedNode = null;
-				if (!(createMultipleInstances && i==xpathTokens.length-1) ) {
-					// select the last child node only if we need to map to a single cell
-					selectedNode = selectNode(axisName, list);
-				}
-				if (selectedNode==null) {
-					selectedNode = createElement(doc, currentNode, axisName);
-				}
-				currentNode = selectedNode;
-			} else {
+    private Node createElement(Document doc, Node currentNode, String axisName) {
+        Node selectedNode;
+        if (isNamespaceDeclared()) {
+            selectedNode =doc.createElementNS(getNamespace(),axisName);
+        } else {
+            selectedNode =doc.createElement(axisName);
+        }
+        currentNode.appendChild(selectedNode);
+        return selectedNode;
+    }
 
+    private Node selectNode(String axisName, NodeList list) {
+        Node selectedNode = null;
+        for(int j=0;j<list.getLength();j++) {
+            Node node = list.item(j);
+            if (node.getNodeName().equals(axisName)) {
+                selectedNode=node;
+                break;
+            }
+        }
+        return selectedNode;
+    }
 
-				Node attribute = createAttribute(doc, currentNode, axisName);
 
-				currentNode = attribute;
-			}
-		}
-		return currentNode;
-	}
+    private boolean isNamespaceDeclared() {
+        String schemaNamespace = getNamespace();
+        return schemaNamespace!=null && !schemaNamespace.equals("");
+    }
 
-	private Node createAttribute(Document doc, Node currentNode, String axisName) {
-		String attributeName = axisName.substring(1);
-		NamedNodeMap attributesMap = currentNode.getAttributes();
-		Node attribute = attributesMap.getNamedItem(attributeName);
-		if (attribute==null) {
-			attribute = doc.createAttribute(attributeName);
-			attributesMap.setNamedItem(attribute);
-		}
-		return attribute;
-	}
+    private String getNamespace() {
+        return map.getCTSchema().getNamespace();
+    }
 
-	private Node createElement(Document doc, Node currentNode, String axisName) {
-		Node selectedNode;
-		if (isNamespaceDeclared()) {
-			selectedNode =doc.createElementNS(getNamespace(),axisName);
-		} else {
-			selectedNode =doc.createElement(axisName);
-		}
-		currentNode.appendChild(selectedNode);
-		return selectedNode;
-	}
 
-	private Node selectNode(String axisName, NodeList list) {
-		Node selectedNode = null;
-		for(int j=0;j<list.getLength();j++) {
-			Node node = list.item(j);
-			if (node.getNodeName().equals(axisName)) {
-				selectedNode=node;
-				break;
-			}
-		}
-		return selectedNode;
-	}
+    /**
+     * Compares two xpaths to define an ordering according to the XML Schema
+     *
+     */
+    public int compare(String leftXpath, String rightXpath) {
 
+        int result = 0;
+        Node xmlSchema = map.getSchema();
 
-	private boolean isNamespaceDeclared() {
-		String schemaNamespace = getNamespace();
-		return schemaNamespace!=null && !schemaNamespace.equals("");
-	}
 
-	private String getNamespace() {
-		return map.getCTSchema().getNamespace();
-	}
+        String[] leftTokens = leftXpath.split("/");
+        String[] rightTokens = rightXpath.split("/");
 
-
-	/**
-	 * Compares two xpaths to define an ordering according to the XML Schema
-	 *
-	 */
-	public int compare(String leftXpath, String rightXpath) {
-
-		int result = 0;
-		Node xmlSchema = map.getSchema();
-
-
-		String[] leftTokens = leftXpath.split("/");
-		String[] rightTokens = rightXpath.split("/");
-
-		int minLenght = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
-
-		Node localComplexTypeRootNode = xmlSchema;
-
-
-		for(int i =1;i <minLenght; i++) {
-
-			String leftElementName =leftTokens[i];
-			String rightElementName = rightTokens[i];
-
-			if (leftElementName.equals(rightElementName)) {
-
-
-				Node complexType = getComplexTypeForElement(leftElementName, xmlSchema,localComplexTypeRootNode);
-				localComplexTypeRootNode = complexType;
-			} else {
-				int leftIndex = indexOfElementInComplexType(leftElementName,localComplexTypeRootNode);
-				int rightIndex = indexOfElementInComplexType(rightElementName,localComplexTypeRootNode);
-				if (leftIndex!=-1 && rightIndex!=-1) {
-					if ( leftIndex < rightIndex) {
-						result = -1;
-					}if ( leftIndex > rightIndex) {
-						result = 1;
-					}
-				} else {
-					// NOTE: the xpath doesn't match correctly in the schema
-				}
-			}
-		}
-
-		return result;
-	}
-
-	private int indexOfElementInComplexType(String elementName,Node complexType) {
-
-		NodeList list  = complexType.getChildNodes();
-		int indexOf = -1;
-
-		for(int i=0; i< list.getLength();i++) {
-			Node node = list.item(i);
-			if (node instanceof Element) {
-				if (node.getLocalName().equals("element")) {
-					Node nameAttribute  = node.getAttributes().getNamedItem("name");
-					if (nameAttribute.getNodeValue().equals(removeNamespace(elementName))) {
-						indexOf = i;
-						break;
-					}
-
-				}
-			}
-		}
-		return indexOf;
-	}
-
-	private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
-		Node complexTypeNode = null;
-
-		String elementNameWithoutNamespace = removeNamespace(elementName);
-
-
-		NodeList  list  = localComplexTypeRootNode.getChildNodes();
-		String complexTypeName = "";
-
-
-
-		for(int i=0; i< list.getLength();i++) {
-			Node node = list.item(i);
-			if ( node instanceof Element) {
-				if (node.getLocalName().equals("element")) {
-					Node nameAttribute  = node.getAttributes().getNamedItem("name");
-					if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
-						Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
-						if (complexTypeAttribute!=null) {
-							complexTypeName = complexTypeAttribute.getNodeValue();
-							break;
-						}
-					}
-				}
-			}
-		}
-		// Note: we expect that all the complex types are defined at root level
-		if (!"".equals(complexTypeName)) {
-			NodeList  complexTypeList  = xmlSchema.getChildNodes();
-			for(int i=0; i< complexTypeList.getLength();i++) {
-				Node node = list.item(i);
-				if ( node instanceof Element) {
-					if (node.getLocalName().equals("complexType")) {
-						Node nameAttribute  = node.getAttributes().getNamedItem("name");
-						if (nameAttribute.getNodeValue().equals(complexTypeName)) {
-
-							NodeList complexTypeChildList  =node.getChildNodes();
-							for(int j=0; j<complexTypeChildList.getLength();j++) {
-								Node sequence = complexTypeChildList.item(j);
-
-								if ( sequence instanceof Element) {
-									if (sequence.getLocalName().equals("sequence")) {
-										complexTypeNode = sequence;
-										break;
-									}
-								}
-							}
-							if (complexTypeNode!=null) {
-								break;
-							}
-
-						}
-					}
-				}
-			}
-		}
-		return complexTypeNode;
-	}
+        int minLenght = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
+
+        Node localComplexTypeRootNode = xmlSchema;
+
+
+        for(int i =1;i <minLenght; i++) {
+
+            String leftElementName =leftTokens[i];
+            String rightElementName = rightTokens[i];
+
+            if (leftElementName.equals(rightElementName)) {
+
+
+                Node complexType = getComplexTypeForElement(leftElementName, xmlSchema,localComplexTypeRootNode);
+                localComplexTypeRootNode = complexType;
+            } else {
+                int leftIndex = indexOfElementInComplexType(leftElementName,localComplexTypeRootNode);
+                int rightIndex = indexOfElementInComplexType(rightElementName,localComplexTypeRootNode);
+                if (leftIndex!=-1 && rightIndex!=-1) {
+                    if ( leftIndex < rightIndex) {
+                        result = -1;
+                    }if ( leftIndex > rightIndex) {
+                        result = 1;
+                    }
+                } else {
+                    // NOTE: the xpath doesn't match correctly in the schema
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private int indexOfElementInComplexType(String elementName,Node complexType) {
+
+        NodeList list  = complexType.getChildNodes();
+        int indexOf = -1;
+
+        for(int i=0; i< list.getLength();i++) {
+            Node node = list.item(i);
+            if (node instanceof Element) {
+                if (node.getLocalName().equals("element")) {
+                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    if (nameAttribute.getNodeValue().equals(removeNamespace(elementName))) {
+                        indexOf = i;
+                        break;
+                    }
+
+                }
+            }
+        }
+        return indexOf;
+    }
+
+    private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
+        Node complexTypeNode = null;
+
+        String elementNameWithoutNamespace = removeNamespace(elementName);
+
+
+        NodeList  list  = localComplexTypeRootNode.getChildNodes();
+        String complexTypeName = "";
+
+
+
+        for(int i=0; i< list.getLength();i++) {
+            Node node = list.item(i);
+            if ( node instanceof Element) {
+                if (node.getLocalName().equals("element")) {
+                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
+                        Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
+                        if (complexTypeAttribute!=null) {
+                            complexTypeName = complexTypeAttribute.getNodeValue();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        // Note: we expect that all the complex types are defined at root level
+        if (!"".equals(complexTypeName)) {
+            NodeList  complexTypeList  = xmlSchema.getChildNodes();
+            for(int i=0; i< complexTypeList.getLength();i++) {
+                Node node = list.item(i);
+                if ( node instanceof Element) {
+                    if (node.getLocalName().equals("complexType")) {
+                        Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                        if (nameAttribute.getNodeValue().equals(complexTypeName)) {
+
+                            NodeList complexTypeChildList  =node.getChildNodes();
+                            for(int j=0; j<complexTypeChildList.getLength();j++) {
+                                Node sequence = complexTypeChildList.item(j);
+
+                                if ( sequence instanceof Element) {
+                                    if (sequence.getLocalName().equals("sequence")) {
+                                        complexTypeNode = sequence;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (complexTypeNode!=null) {
+                                break;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return complexTypeNode;
+    }
 }
