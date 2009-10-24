@@ -203,6 +203,7 @@ public final class FunctionEval implements OperationEval {
 
 		retval[345] = new Sumif();
 		retval[346] = new Countif();
+		retval[347] = new Countblank();
 
 		retval[359] = new Hyperlink();
 
