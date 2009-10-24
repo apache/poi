@@ -46,6 +46,34 @@ public final class TestCountFuncs extends TestCase {
 
 	private static final String NULL = null;
 
+	public void testCountBlank() {
+
+		AreaEval range;
+		ValueEval[] values;
+
+		values = new ValueEval[] {
+				new NumberEval(0),
+				new StringEval(""),	// note - does not match blank
+				BoolEval.TRUE,
+				BoolEval.FALSE,
+				ErrorEval.DIV_ZERO,
+				BlankEval.INSTANCE,
+		};
+		range = EvalFactory.createAreaEval("A1:B3", values);
+		confirmCountBlank(1, range);
+
+		values = new ValueEval[] {
+				new NumberEval(0),
+				new StringEval(""),	// note - does not match blank
+				BlankEval.INSTANCE,
+				BoolEval.FALSE,
+				BoolEval.TRUE,
+				BlankEval.INSTANCE,
+		};
+		range = EvalFactory.createAreaEval("A1:B3", values);
+		confirmCountBlank(2, range);
+	}
+
 	public void testCountA() {
 
 		ValueEval[] args;
@@ -194,6 +222,12 @@ public final class TestCountFuncs extends TestCase {
 
 		ValueEval[] args = { range, criteria, };
 		double result = NumericFunctionInvoker.invoke(new Countif(), args);
+		assertEquals(expected, result, 0);
+	}
+	private static void confirmCountBlank(int expected, AreaEval range) {
+
+		ValueEval[] args = { range };
+		double result = NumericFunctionInvoker.invoke(new Countblank(), args);
 		assertEquals(expected, result, 0);
 	}
 
@@ -388,10 +422,14 @@ public final class TestCountFuncs extends TestCase {
 	}
 
 	public void testCountifFromSpreadsheet() {
-		final String FILE_NAME = "countifExamples.xls";
-		final int START_ROW_IX = 1;
-		final int COL_IX_ACTUAL = 2;
-		final int COL_IX_EXPECTED = 3;
+		testCountFunctionFromSpreadsheet("countifExamples.xls", 1, 2, 3, "countif");
+	}
+
+	public void testCountBlankFromSpreadsheet() {
+		testCountFunctionFromSpreadsheet("countblankExamples.xls", 1, 3, 4, "countblank");
+	}
+
+	private static void testCountFunctionFromSpreadsheet(String FILE_NAME, int START_ROW_IX, int COL_IX_ACTUAL, int COL_IX_EXPECTED, String functionName) {
 
 		int failureCount = 0;
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(FILE_NAME);
@@ -415,7 +453,8 @@ public final class TestCountFuncs extends TestCase {
 		}
 
 		if (failureCount > 0) {
-			throw new AssertionFailedError(failureCount + " countif evaluations failed. See stderr for more details");
+			throw new AssertionFailedError(failureCount + " " + functionName
+					+ " evaluations failed. See stderr for more details");
 		}
 	}
 }
