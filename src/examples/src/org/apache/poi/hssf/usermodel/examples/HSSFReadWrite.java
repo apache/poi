@@ -180,7 +180,7 @@ public class HSSFReadWrite
      *
      */
 
-    public HSSF(String infile, String outfile, boolean write)
+    public HSSFReadWrite(String infile, String outfile, boolean write)
         throws IOException
     {
         this.filename = infile;
@@ -223,7 +223,7 @@ public class HSSFReadWrite
 
             try
             {
-                HSSF hssf = new HSSF(args[ 0 ]);
+                HSSFReadWrite hssf = new HSSFReadWrite(args[ 0 ]);
 
                 System.out.println("Data dump:\n");
                 HSSFWorkbook wb = hssf.hssfworkbook;
@@ -288,7 +288,7 @@ public class HSSFReadWrite
                 try
                 {
                     long time = System.currentTimeMillis();
-                    HSSF hssf = new HSSF(args[ 0 ], true);
+                    HSSFReadWrite hssf = new HSSFReadWrite(args[ 0 ], true);
 
                     System.out
                         .println("" + (System.currentTimeMillis() - time)
@@ -304,7 +304,7 @@ public class HSSFReadWrite
                 System.out.println("readwrite test");
                 try
                 {
-                    HSSF             hssf   = new HSSF(args[ 0 ]);
+                    HSSFReadWrite    hssf   = new HSSFReadWrite(args[ 0 ]);
 
                     // HSSFStream       hssfstream = hssf.hssfstream;
                     HSSFWorkbook     wb     = hssf.hssfworkbook;
@@ -329,7 +329,7 @@ public class HSSFReadWrite
         {
             try   // delete row 0-24, row 74 - 99 && change cell 3 on row 39 to string "MODIFIED CELL!!"
             {
-                HSSF             hssf   = new HSSF(args[ 0 ]);
+                HSSFReadWrite    hssf   = new HSSFReadWrite(args[ 0 ]);
 
                 // HSSFStream       hssfstream = hssf.hssfstream;
                 HSSFWorkbook     wb     = hssf.hssfworkbook;
