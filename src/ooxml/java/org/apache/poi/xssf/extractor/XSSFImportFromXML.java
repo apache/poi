@@ -39,16 +39,15 @@ import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
-import org.apache.xml.utils.PrefixResolver;
-import org.apache.xml.utils.PrefixResolverDefault;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * 
  * Imports data from an external XML to an XLSX according to one of the mappings
  * defined.The output XML Schema must respect this limitations:
  * <ul>
@@ -59,21 +58,21 @@ import org.xml.sax.SAXException;
  */
 public class XSSFImportFromXML {
 
-    private XSSFMap map;
+    private final XSSFMap _map;
 
     private static POILogger logger = POILogFactory.getLogger(XSSFImportFromXML.class);
 
     public XSSFImportFromXML(XSSFMap map) {
-        this.map = map;
+        _map = map;
     }
 
     /**
      * Imports an XML into the XLSX using the Custom XML mapping defined
-     * 
+     *
      * @param xmlInputString the XML to import
      * @throws SAXException if error occurs during XML parsing
      * @throws XPathExpressionException if error occurs during XML navigation
-     * @throws ParserConfigurationException if there are problems with XML parser configuration 
+     * @throws ParserConfigurationException if there are problems with XML parser configuration
      * @throws IOException  if there are problems reading the input string
      */
     public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, ParserConfigurationException, IOException {
@@ -84,9 +83,9 @@ public class XSSFImportFromXML {
 
         Document doc = builder.parse(new InputSource(new StringReader(xmlInputString.trim())));
 
-        List<XSSFSingleXmlCell> singleXmlCells = map.getRelatedSingleXMLCell();
+        List<XSSFSingleXmlCell> singleXmlCells = _map.getRelatedSingleXMLCell();
 
-        List<Table> tables = map.getRelatedTables();
+        List<Table> tables = _map.getRelatedTables();
 
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
@@ -94,25 +93,7 @@ public class XSSFImportFromXML {
         // Setting namespace context to XPath
         // Assuming that the namespace prefix in the mapping xpath is the
         // same as the one used in the document
-        final PrefixResolver resolver = new PrefixResolverDefault(doc.getDocumentElement());
-
-        NamespaceContext ctx = new NamespaceContext() {
-
-            public String getNamespaceURI(String prefix) {
-                return resolver.getNamespaceForPrefix(prefix);
-            }
-
-            // Dummy implementation - not used!
-            public Iterator getPrefixes(String val) {
-                return null;
-            }
-
-            // Dummy implemenation - not used!
-            public String getPrefix(String uri) {
-                return null;
-            }
-        };
-        xpath.setNamespaceContext(ctx);
+        xpath.setNamespaceContext(new DefaultNamespaceContext(doc));
 
         for (XSSFSingleXmlCell singleXmlCell : singleXmlCells) {
 
@@ -165,12 +146,83 @@ public class XSSFImportFromXML {
                     logger.log(POILogger.DEBUG, "Setting '" + value + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
                                                     + table.getXSSFSheet().getSheetName());
                     cell.setCellValue(value.trim());
-
                 }
-
             }
+        }
+    }
 
+    private static final class DefaultNamespaceContext implements NamespaceContext {
+        /**
+         * Node from which to start searching for a xmlns attribute that binds a
+         * prefix to a namespace.
+         */
+        private final Element _docElem;
+
+        public DefaultNamespaceContext(Document doc) {
+            _docElem = doc.getDocumentElement();
         }
 
+        public String getNamespaceURI(String prefix) {
+            return getNamespaceForPrefix(prefix);
+        }
+
+        /**
+         * @param prefix Prefix to resolve.
+         * @return uri of Namespace that prefix resolves to, or
+         *         <code>null</code> if specified prefix is not bound.
+         */
+        private String getNamespaceForPrefix(String prefix) {
+
+            // Code adapted from Xalan's org.apache.xml.utils.PrefixResolverDefault.getNamespaceForPrefix()
+
+            if (prefix.equals("xml")) {
+                return "http://www.w3.org/XML/1998/namespace";
+            }
+
+            Node parent = _docElem;
+
+            while (parent != null) {
+
+                int type = parent.getNodeType();
+                if (type == Node.ELEMENT_NODE) {
+                    if (parent.getNodeName().startsWith(prefix + ":")) {
+                        return parent.getNamespaceURI();
+                    }
+                    NamedNodeMap nnm = parent.getAttributes();
+
+                    for (int i = 0; i < nnm.getLength(); i++) {
+                        Node attr = nnm.item(i);
+                        String aname = attr.getNodeName();
+                        boolean isPrefix = aname.startsWith("xmlns:");
+
+                        if (isPrefix || aname.equals("xmlns")) {
+                            int index = aname.indexOf(':');
+                            String p = isPrefix ? aname.substring(index + 1) : "";
+
+                            if (p.equals(prefix)) {
+                                return attr.getNodeValue();
+                            }
+                        }
+                    }
+                } else if (type == Node.ENTITY_REFERENCE_NODE) {
+                    continue;
+                } else {
+                    break;
+                }
+                parent = parent.getParentNode();
+            }
+
+            return null;
+        }
+
+        // Dummy implementation - not used!
+        public Iterator getPrefixes(String val) {
+            return null;
+        }
+
+        // Dummy implementation - not used!
+        public String getPrefix(String uri) {
+            return null;
+        }
     }
 }
