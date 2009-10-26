@@ -283,7 +283,7 @@ method (sheet.removeRow(hssfrow)) and create objects just as you
 would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 <p>An example of this can be seen in
-<link href="http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/hssf/dev/HSSF.java">org.apache.poi.hssf.dev.HSSF</link>.</p>
+<link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/usermodel/examples/HSSFReadWrite.java">org.apache.poi.hssf.usermodel.examples.HSSFReadWrite</link>.</p>
          </section>
         </section>
 
