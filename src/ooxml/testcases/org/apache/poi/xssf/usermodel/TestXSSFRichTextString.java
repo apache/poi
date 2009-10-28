@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import junit.framework.TestCase;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
 
 /**
  * Tests functionality of the XSSFRichTextRun object
@@ -114,5 +115,19 @@ public final class TestXSSFRichTextString extends TestCase {
         XSSFFont font2$ = rt.getFontOfFormattingRun(1);
         assertEquals(font2.getBold(), font2$.getBold());
         assertEquals(font2.getFontName(), font2$.getFontName());
+    }
+
+    /**
+     * make sure we insert xml:space="preserve" attribute
+     * if a string has leading or trailing white spaces
+     */
+    public void testPreserveSpaces() {
+        XSSFRichTextString rt = new XSSFRichTextString("Apache");
+        CTRst ct = rt.getCTRst();
+        STXstring xs = ct.xgetT();
+        assertEquals("<xml-fragment>Apache</xml-fragment>", xs.xmlText());
+        rt.setString("  Apache");
+        assertEquals("<xml-fragment xml:space=\"preserve\">  Apache</xml-fragment>", xs.xmlText());
+
     }
 }
