@@ -20,8 +20,11 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 
@@ -70,15 +73,16 @@ public class XSSFRichTextString implements RichTextString {
     private StylesTable styles;
 
     /**
-     * Create a rich text string and initialize it with empty string
+     * Create a rich text string
      */
     public XSSFRichTextString(String str) {
         st = CTRst.Factory.newInstance();
         st.setT(str);
+        preserveSpaces(st.xgetT());
     }
 
     /**
-     * Create empty rich text string
+     * Create empty rich text string and initialize it with empty string
      */
     public XSSFRichTextString() {
         st = CTRst.Factory.newInstance();
@@ -342,6 +346,7 @@ public class XSSFRichTextString implements RichTextString {
     public void setString(String s){
         clearFormatting();
         st.setT(s);
+        preserveSpaces(st.xgetT());
     }
 
     /**
@@ -460,5 +465,20 @@ public class XSSFRichTextString implements RichTextString {
         if(pr.sizeOfStrikeArray() > 0) ctFont.addNewStrike().setVal(pr.getStrikeArray(0).getVal());
 
         return ctFont;
+    }
+
+    /**
+     * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
+     *
+     * @param xs    the string to check
+     */
+    protected static void preserveSpaces(STXstring xs) {
+        String text = xs.getStringValue();
+        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
+            XmlCursor c = xs.newCursor();
+            c.toNextToken();
+            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+            c.dispose();
+        }
     }
 }
