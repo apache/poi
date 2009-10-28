@@ -76,6 +76,14 @@
        <link href="getinvolved/index.html">Guidelines</link> for more 
        information.</p>
     </section>
+    <section><title>Git access to POI sources </title>
+      <p>
+        Git read-only access to POI sources is now available. 
+        Please see the <link href="http://git.apache.org/">Git at Apache</link> page for details. 
+        Git Clone URL: <link href="git://git.apache.org/poi.git">git://git.apache.org/poi.git</link> 
+        and Http Clone URL:  <link href="http://git.apache.org/poi.git">http://git.apache.org/poi.git</link>.
+      </p>
+    </section>
   </body>
   <footer>
     <legal>
