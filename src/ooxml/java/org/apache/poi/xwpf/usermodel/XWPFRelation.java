@@ -68,7 +68,7 @@ public final class XWPFRelation extends POIXMLRelation {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings",
             "/word/settings.xml",
-            null
+            XWPFSettings.class
     );
     public static final XWPFRelation STYLES = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
