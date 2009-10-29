@@ -23,6 +23,10 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests TestHSSFCellComment.
@@ -214,5 +218,40 @@ public final class TestHSSFComment extends TestCase {
 //        FileOutputStream fout = new FileOutputStream("/tmp/c.xls");
 //        wb.write(fout);
 //        fout.close();
+    }
+
+    /**
+     *  HSSFCell#findCellComment should NOT rely on the order of records
+     * when matching cells and their cell comments. The correct algorithm is to map
+     */
+    public static void test47924() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47924.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFCell cell;
+        HSSFComment comment;
+
+        cell = sheet.getRow(0).getCell(0);
+        comment = cell.getCellComment();
+        assertEquals("a1", comment.getString().getString());
+
+        cell = sheet.getRow(1).getCell(0);
+        comment = cell.getCellComment();
+        assertEquals("a2", comment.getString().getString());
+
+        cell = sheet.getRow(2).getCell(0);
+        comment = cell.getCellComment();
+        assertEquals("a3", comment.getString().getString());
+
+        cell = sheet.getRow(2).getCell(2);
+        comment = cell.getCellComment();
+        assertEquals("c3", comment.getString().getString());
+
+        cell = sheet.getRow(4).getCell(1);
+        comment = cell.getCellComment();
+        assertEquals("b5", comment.getString().getString());
+
+        cell = sheet.getRow(5).getCell(2);
+        comment = cell.getCellComment();
+        assertEquals("c6", comment.getString().getString());
     }
 }
