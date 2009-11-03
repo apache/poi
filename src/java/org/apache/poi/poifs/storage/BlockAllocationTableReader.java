@@ -42,7 +42,20 @@ import org.apache.poi.util.LittleEndianConsts;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class BlockAllocationTableReader {
-    private IntList _entries;
+    
+    /**
+     * Maximum number size (in blocks) of the allocation table as supported by
+     * POI.<br/>
+     *
+     * This constant has been chosen to help POI identify corrupted data in the
+     * header block (rather than crash immediately with {@link OutOfMemoryError}
+     * ). It's not clear if the compound document format actually specifies any
+     * upper limits. For files with 512 byte blocks, having an allocation table
+     * of 65,335 blocks would correspond to a total file size of 4GB. Needless
+     * to say, POI probably cannot handle files anywhere near that size.
+     */
+    private static final int MAX_BLOCK_COUNT = 65535;
+    private final IntList _entries;
 
     /**
      * create a BlockAllocationTableReader for an existing filesystem. Side
@@ -62,20 +75,18 @@ public final class BlockAllocationTableReader {
      * @exception IOException if, in trying to create the table, we
      *            encounter logic errors
      */
-
-    public BlockAllocationTableReader(final int block_count,
-                                      final int [] block_array,
-                                      final int xbat_count,
-                                      final int xbat_index,
-                                      final BlockList raw_block_list)
-        throws IOException
-    {
+    public BlockAllocationTableReader(int block_count, int [] block_array,
+            int xbat_count, int xbat_index, BlockList raw_block_list) throws IOException {
         this();
-        if (block_count <= 0)
-        {
+        if (block_count <= 0) {
             throw new IOException(
                 "Illegal block count; minimum count is 1, got " + block_count
                 + " instead");
+        }
+
+        if (block_count > MAX_BLOCK_COUNT) {
+            throw new IOException("Block count " + block_count 
+                    + " is too high. POI maximum is " + MAX_BLOCK_COUNT + ".");
         }
 
         // acquire raw data blocks containing the BAT block data
@@ -141,17 +152,13 @@ public final class BlockAllocationTableReader {
      *
      * @exception IOException
      */
-
-    BlockAllocationTableReader(final ListManagedBlock [] blocks,
-                               final BlockList raw_block_list)
-        throws IOException
-    {
+    BlockAllocationTableReader(ListManagedBlock[] blocks, BlockList raw_block_list)
+            throws IOException {
         this();
         setEntries(blocks, raw_block_list);
     }
 
-    BlockAllocationTableReader()
-    {
+    BlockAllocationTableReader() {
         _entries = new IntList();
     }
 
@@ -167,11 +174,8 @@ public final class BlockAllocationTableReader {
      *
      * @exception IOException if there is a problem acquiring the blocks
      */
-    ListManagedBlock [] fetchBlocks(final int startBlock,
-                                    final int headerPropertiesStartBlock,
-                                    final BlockList blockList)
-        throws IOException
-    {
+    ListManagedBlock[] fetchBlocks(int startBlock, int headerPropertiesStartBlock,
+            BlockList blockList) throws IOException {
         List<ListManagedBlock> blocks = new ArrayList<ListManagedBlock>();
         int  currentBlock = startBlock;
         boolean firstPass = true;
@@ -182,28 +186,28 @@ public final class BlockAllocationTableReader {
         // Sometimes we have data, header, end
         // For those cases, stop at the header, not the end
         while (currentBlock != POIFSConstants.END_OF_CHAIN) {
-        	try {
-        		// Grab the data at the current block offset
-        		dataBlock = blockList.remove(currentBlock);
-        		blocks.add(dataBlock);
-        		// Now figure out which block we go to next
+            try {
+                // Grab the data at the current block offset
+                dataBlock = blockList.remove(currentBlock);
+                blocks.add(dataBlock);
+                // Now figure out which block we go to next
                 currentBlock = _entries.get(currentBlock);
                 firstPass = false;
-        	} catch(IOException e) {
-        		if(currentBlock == headerPropertiesStartBlock) {
-        			// Special case where things are in the wrong order
-        			System.err.println("Warning, header block comes after data blocks in POIFS block listing");
-        			currentBlock = POIFSConstants.END_OF_CHAIN;
-        		} else if(currentBlock == 0 && firstPass) {
-        			// Special case where the termination isn't done right
-        			//  on an empty set
-        			System.err.println("Warning, incorrectly terminated empty data blocks in POIFS block listing (should end at -2, ended at 0)");
-        			currentBlock = POIFSConstants.END_OF_CHAIN;
-        		} else {
-        			// Ripple up
-        			throw e;
-        		}
-        	}
+            } catch(IOException e) {
+                if(currentBlock == headerPropertiesStartBlock) {
+                    // Special case where things are in the wrong order
+                    System.err.println("Warning, header block comes after data blocks in POIFS block listing");
+                    currentBlock = POIFSConstants.END_OF_CHAIN;
+                } else if(currentBlock == 0 && firstPass) {
+                    // Special case where the termination isn't done right
+                    //  on an empty set
+                    System.err.println("Warning, incorrectly terminated empty data blocks in POIFS block listing (should end at -2, ended at 0)");
+                    currentBlock = POIFSConstants.END_OF_CHAIN;
+                } else {
+                    // Ripple up
+                    throw e;
+                }
+            }
         }
 
         return blocks.toArray(new ListManagedBlock[blocks.size()]);
@@ -218,17 +222,14 @@ public final class BlockAllocationTableReader {
      *
      * @return true if the specific block is used, else false
      */
-    boolean isUsed(final int index)
-    {
-        boolean rval = false;
+    boolean isUsed(int index) {
 
-        try
-        {
-            rval = _entries.get(index) != -1;
+        try {
+            return _entries.get(index) != -1;
         } catch (IndexOutOfBoundsException e) {
             // ignored
+            return false;
         }
-        return rval;
     }
 
     /**
@@ -242,11 +243,8 @@ public final class BlockAllocationTableReader {
      *
      * @exception IOException if the current block is unused
      */
-    int getNextBlockIndex(final int index)
-        throws IOException
-    {
-        if (isUsed(index))
-        {
+    int getNextBlockIndex(int index) throws IOException {
+        if (isUsed(index)) {
             return _entries.get(index);
         }
         throw new IOException("index " + index + " is unused");
@@ -259,10 +257,7 @@ public final class BlockAllocationTableReader {
      * @param raw_blocks the list of blocks being managed. Unused
      *                   blocks will be eliminated from the list
      */
-    private void setEntries(final ListManagedBlock [] blocks,
-                            final BlockList raw_blocks)
-        throws IOException
-    {
+    private void setEntries(ListManagedBlock[] blocks, BlockList raw_blocks) throws IOException {
         int limit = BATBlock.entriesPerBlock();
 
         for (int block_index = 0; block_index < blocks.length; block_index++)

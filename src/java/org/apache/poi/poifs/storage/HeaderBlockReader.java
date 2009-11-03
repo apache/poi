@@ -47,25 +47,25 @@ public final class HeaderBlockReader {
 	 * What big block size the file uses. Most files
 	 *  use 512 bytes, but a few use 4096
 	 */
-	private int bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE;
+	private final int bigBlockSize;
 
 	/** number of big block allocation table blocks (int) */
-	private int _bat_count;
+	private final int _bat_count;
 
 	/** start of the property set block (int index of the property set
 	 * chain's first big block)
 	 */
-	private int _property_start;
+	private final int _property_start;
 
 	/** start of the small block allocation table (int index of small
 	 * block allocation table's first big block)
 	 */
-	private int _sbat_start;
+	private final int _sbat_start;
 
 	/** big block index for extension to the big block allocation table */
-	private int _xbat_start;
-	private int _xbat_count;
-	private byte[] _data;
+	private final int _xbat_start;
+	private final int _xbat_count;
+	private final byte[] _data;
 
 	/**
 	 * create a new HeaderBlockReader from an InputStream
@@ -82,32 +82,19 @@ public final class HeaderBlockReader {
 		byte[] blockStart = new byte[32];
 		int bsCount = IOUtils.readFully(stream, blockStart);
 		if(bsCount != 32) {
-			alertShortRead(bsCount);
-		}
-		
-		// Figure out our block size
-		if(blockStart[30] == 12) {
-			bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE;
-		}
-		_data = new byte[ bigBlockSize ];
-		System.arraycopy(blockStart, 0, _data, 0, blockStart.length);
-		
-		// Now we can read the rest of our header
-		int byte_count = IOUtils.readFully(stream, _data, blockStart.length, _data.length - blockStart.length);
-		if (byte_count+bsCount != bigBlockSize) {
-			alertShortRead(byte_count);
+			throw alertShortRead(bsCount, 32);
 		}
 
 		// verify signature
-		long signature = LittleEndian.getLong(_data, _signature_offset);
+		long signature = LittleEndian.getLong(blockStart, _signature_offset);
 
 		if (signature != _signature) {
 			// Is it one of the usual suspects?
 			byte[] OOXML_FILE_HEADER = POIFSConstants.OOXML_FILE_HEADER;
-			if(_data[0] == OOXML_FILE_HEADER[0] && 
-					_data[1] == OOXML_FILE_HEADER[1] && 
-					_data[2] == OOXML_FILE_HEADER[2] &&
-					_data[3] == OOXML_FILE_HEADER[3]) {
+			if(blockStart[0] == OOXML_FILE_HEADER[0] &&
+				blockStart[1] == OOXML_FILE_HEADER[1] &&
+				blockStart[2] == OOXML_FILE_HEADER[2] &&
+				blockStart[3] == OOXML_FILE_HEADER[3]) {
 				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)");
 			}
 			if ((signature & 0xFF8FFFFFFFFFFFFFL) == 0x0010000200040009L) {
@@ -121,13 +108,34 @@ public final class HeaderBlockReader {
 				                  + longToHex(signature) + ", expected "
 				                  + longToHex(_signature));
 		}
+
+
+		// Figure out our block size
+		switch (blockStart[30]) {
+			case 12:
+				bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE; break;
+			case  9:
+				bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE; break;
+			default:
+				throw new IOException("Unsupported blocksize  (2^"
+						+ blockStart[30] + "). Expected 2^9 or 2^12.");
+		}
+		_data = new byte[ bigBlockSize ];
+		System.arraycopy(blockStart, 0, _data, 0, blockStart.length);
+
+		// Now we can read the rest of our header
+		int byte_count = IOUtils.readFully(stream, _data, blockStart.length, _data.length - blockStart.length);
+		if (byte_count+bsCount != bigBlockSize) {
+			throw alertShortRead(byte_count, bigBlockSize);
+		}
+
 		_bat_count      = getInt(_bat_count_offset, _data);
 		_property_start = getInt(_property_start_offset, _data);
 		_sbat_start     = getInt(_sbat_start_offset, _data);
 		_xbat_start     = getInt(_xbat_start_offset, _data);
 		_xbat_count     = getInt(_xbat_count_offset, _data);
 	}
-	
+
 	private static int getInt(int offset, byte[] data) {
 		return LittleEndian.getInt(data, offset);
 	}
@@ -136,7 +144,7 @@ public final class HeaderBlockReader {
 		return new String(HexDump.longToHex(value));
 	}
 
-	private void alertShortRead(int pRead) throws IOException {
+	private static IOException alertShortRead(int pRead, int expectedReadSize) {
 		int read;
 		if (pRead < 0) {
 			//Can't have -1 bytes read in the error message!
@@ -146,9 +154,9 @@ public final class HeaderBlockReader {
 		}
 		String type = " byte" + (read == 1 ? (""): ("s"));
 
-		throw new IOException("Unable to read entire header; "
+		return new IOException("Unable to read entire header; "
 				+ read + type + " read; expected "
-				+ bigBlockSize + " bytes");
+				+ expectedReadSize + " bytes");
 	}
 
 	/**
@@ -201,7 +209,7 @@ public final class HeaderBlockReader {
 	public int getXBATIndex() {
 		return _xbat_start;
 	}
-	
+
 	/**
 	 * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
 	 */
@@ -209,4 +217,3 @@ public final class HeaderBlockReader {
 		return bigBlockSize;
 	}
 }
-
