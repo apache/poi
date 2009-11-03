@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">When running the "compile-ooxml-xsds" ant task, also generate the source jar for the OOXML Schemas</action>
            <action dev="POI-DEVELOPERS" type="fix">45672 - improve handling by MissingRecordAwareHSSFListener of records that cover multiple cells (MulBlankRecord and MulRKRecord)</action>
            <action dev="POI-DEVELOPERS" type="fix">48096 - relaxed validation check in RecalcIdRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">48085 - improved error checking in BlockAllocationTableReader to trap unreasonable field values</action>
