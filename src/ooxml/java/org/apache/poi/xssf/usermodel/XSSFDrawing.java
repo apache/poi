@@ -17,20 +17,30 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.poi.openxml4j.opc.*;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 /**
  * Represents a SpreadsheetML drawing

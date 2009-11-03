@@ -22,21 +22,28 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.

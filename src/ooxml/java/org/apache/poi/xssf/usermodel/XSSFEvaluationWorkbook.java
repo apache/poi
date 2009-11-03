@@ -20,8 +20,15 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.formula.*;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationName;
+import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.FormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**

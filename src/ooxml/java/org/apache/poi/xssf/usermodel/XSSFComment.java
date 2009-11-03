@@ -18,9 +18,9 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
-import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 

@@ -19,11 +19,13 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.ChartsheetDocument;
 
 /**
  * High level representation of of Sheet Parts that are of type 'chartsheet'.

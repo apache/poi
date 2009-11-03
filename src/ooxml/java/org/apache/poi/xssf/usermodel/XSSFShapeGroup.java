@@ -17,9 +17,18 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShapeNonVisual;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 
 /**
  * This object specifies a group shape that represents many shapes grouped together. This shape is to be treated

@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 
 /**
  * Represents a text box in a SpreadsheetML drawing.

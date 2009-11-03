@@ -22,7 +22,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -50,14 +56,26 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.MapInfo;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users

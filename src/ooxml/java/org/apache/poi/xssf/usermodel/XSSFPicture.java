@@ -17,25 +17,36 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.

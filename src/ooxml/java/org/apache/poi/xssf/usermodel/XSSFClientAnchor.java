@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against

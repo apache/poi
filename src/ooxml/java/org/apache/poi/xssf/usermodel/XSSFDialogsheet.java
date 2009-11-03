@@ -18,7 +18,16 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 //YK: TODO: this is only a prototype
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{

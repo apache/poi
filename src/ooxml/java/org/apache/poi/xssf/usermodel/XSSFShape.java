@@ -17,7 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNoFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 
 /**
  * Represents a shape in a SpreadsheetML drawing.
