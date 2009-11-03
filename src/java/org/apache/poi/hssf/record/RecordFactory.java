@@ -281,7 +281,6 @@ public final class RecordFactory {
 	 * Converts a {@link MulRKRecord} into an equivalent array of {@link NumberRecord}s
 	 */
 	public static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
-
 		NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
 		for (int k = 0; k < mrk.getNumColumns(); k++) {
 			NumberRecord nr = new NumberRecord();
@@ -291,6 +290,22 @@ public final class RecordFactory {
 			nr.setXFIndex(mrk.getXFAt(k));
 			nr.setValue(mrk.getRKNumberAt(k));
 			mulRecs[k] = nr;
+		}
+		return mulRecs;
+	}
+
+	/**
+	 * Converts a {@link MulBlankRecord} into an equivalent array of {@link BlankRecord}s
+	 */
+	public static BlankRecord[] convertBlankRecords(MulBlankRecord mbk) {
+		BlankRecord[] mulRecs = new BlankRecord[mbk.getNumColumns()];
+		for (int k = 0; k < mbk.getNumColumns(); k++) {
+			BlankRecord br = new BlankRecord();
+
+			br.setColumn((short) (k + mbk.getFirstColumn()));
+			br.setRow(mbk.getRow());
+			br.setXFIndex(mbk.getXFAt(k));
+			mulRecs[k] = br;
 		}
 		return mulRecs;
 	}

@@ -21,9 +21,14 @@ import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
 import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 
@@ -62,7 +67,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 	public void processRecord(Record record) {
 		int thisRow;
 		int thisColumn;
-
+		CellValueRecordInterface[] expandedRecords = null;
 
 		if (record instanceof CellValueRecordInterface) {
 			CellValueRecordInterface valueRec = (CellValueRecordInterface) record;
@@ -105,6 +110,19 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 					// - so don't fire off the LastCellOfRowDummyRecord yet
 					childListener.processRecord(record);
 					return;
+				case MulBlankRecord.sid:
+					// These appear in the middle of the cell records, to
+					//  specify that the next bunch are empty but styled
+					// Expand this out into multiple blank cells
+					MulBlankRecord mbr = (MulBlankRecord)record;
+					expandedRecords = RecordFactory.convertBlankRecords(mbr);
+					break;
+				case MulRKRecord.sid:
+					// This is multiple consecutive number cells in one record
+					// Exand this out into multiple regular number cells
+					MulRKRecord mrk = (MulRKRecord)record;
+					expandedRecords = RecordFactory.convertRKRecords(mrk);
+					break;
 				case NoteRecord.sid:
 					NoteRecord nrec = (NoteRecord) record;
 					thisRow = nrec.getRow();
@@ -112,6 +130,13 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 					break;
 			}
 		}
+		
+		// First part of expanded record handling
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			thisRow = expandedRecords[0].getRow();
+			thisColumn = expandedRecords[0].getColumn();
+		}
+		
 		// If we're on cells, and this cell isn't in the same
 		//  row as the last one, then fire the 
 		//  dummy end-of-row records
@@ -148,13 +173,26 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 			}
 		}
 		
+		// Next part of expanded record handling
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			thisColumn = expandedRecords[expandedRecords.length-1].getColumn();
+		}
+
+		
 		// Update cell and row counts as needed
 		if(thisColumn != -1) {
 			lastCellColumn = thisColumn;
 			lastCellRow = thisRow;
 		}
 
-		childListener.processRecord(record);
+		// Pass along the record(s)
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			for(CellValueRecordInterface r : expandedRecords) {
+				childListener.processRecord((Record)r);
+			}
+		} else {
+			childListener.processRecord(record);
+		}
 	}
 
 	private void resetCounts() {
