@@ -25,11 +25,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  This record contains an ID that marks when a worksheet was last
  *               recalculated. It's an optimization Excel uses to determine if it
  *               needs to  recalculate the spreadsheet when it's opened. So far, only
- *               the two values <code>0xC1 0x01 0x00 0x00 0x80 0x38 0x01 0x00</code>
- *               (do not recalculate) and <code>0xC1 0x01 0x00 0x00 0x60 0x69 0x01
- *               0x00</code> have been seen. If the field <code>isNeeded</code> is
- *               set to false (default), then this record is swallowed during the
- *               serialization process<p/>
+ *               the two engine ids <code>0x80 0x38 0x01 0x00</code> 
+ *               and <code>0x60 0x69 0x01 0x00</code> have been seen.<p/>
  * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html<p/>
  * @author Luc Girardin (luc dot girardin at macrofocus dot com)
  *
@@ -41,10 +38,7 @@ public final class RecalcIdRecord extends StandardRecord {
     private final int _engineId;
 
     public RecalcIdRecord(RecordInputStream in) {
-    	int rt = in.readUShort();
-    	if (rt != sid) {
-    		throw new RecordFormatException("expected " + sid + " but got " + rt);
-    	}
+    	in.readUShort(); // field 'rt' should have value 0x01C1, but Excel doesn't care during reading
     	_reserved0 = in.readUShort();
     	_engineId = in.readInt();
     }
@@ -64,7 +58,7 @@ public final class RecalcIdRecord extends StandardRecord {
     }
 
     public void serialize(LittleEndianOutput out) {
-        out.writeShort(sid);
+        out.writeShort(sid); // always write 'rt' field as 0x01C1
         out.writeShort(_reserved0);
         out.writeInt(_engineId);
     }
