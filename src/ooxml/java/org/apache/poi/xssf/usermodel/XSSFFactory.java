@@ -17,16 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLFactory;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackagePart;
-
 import java.lang.reflect.Constructor;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.POIXMLFactory;
+import org.apache.poi.POIXMLRelation;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type

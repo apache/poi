@@ -18,28 +18,28 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLRelation;
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.xssf.model.MapInfo;
-import org.apache.poi.xssf.model.SingleXmlCells;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.Table;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.MapInfo;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SingleXmlCells;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.Table;
 
 /**
  *

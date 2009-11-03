@@ -17,15 +17,20 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlCursor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
 
 
 /**

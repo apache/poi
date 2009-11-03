@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.xssf.model.StylesTable;
 
 /**
