@@ -20,10 +20,13 @@ package org.apache.poi.poifs.storage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -225,6 +228,7 @@ public final class TestBlockAllocationTableReader extends TestCase {
 					small_blocks.remove(j);
 					fail("removing block " + j + " should have failed");
 				} catch (IOException ignored) {
+					// expected during successful test
 				}
 			}
 		}
@@ -370,6 +374,47 @@ public final class TestBlockAllocationTableReader extends TestCase {
 				} else {
 					throw e;
 				}
+			}
+		}
+	}
+
+	/**
+	 * Bugzilla 48085 describes an error where a corrupted Excel file causes POI to throw an
+	 * {@link OutOfMemoryError}.
+	 */
+	public void testBadSectorAllocationTableSize_bug48085() {
+		int BLOCK_SIZE = 512;
+		// 512 bytes take from the start of bugzilla attachment 24444
+		byte[] initData = HexRead.readFromString(
+
+		"D0 CF 11 E0 A1 B1 1A E1 20 20 20 20 20 20 20 20  20 20 20 20 20 20 20 20 3E 20 03 20 FE FF 09 20" +
+		"06 20 20 20 20 20 20 20 20 20 20 20 01 20 20 20  01 20 20 20 20 20 20 20 20 10 20 20 02 20 20 20" +
+		"02 20 20 20 FE FF FF FF 20 20 20 20 20 20 20 20  "
+		);
+		// the rest of the block is 'FF'
+		byte[] data = new byte[BLOCK_SIZE];
+		Arrays.fill(data, (byte)0xFF);
+		System.arraycopy(initData, 0, data, 0, initData.length);
+
+		// similar code to POIFSFileSystem.<init>:
+		InputStream stream = new ByteArrayInputStream(data);
+		HeaderBlockReader hb;
+		RawDataBlockList dataBlocks;
+		try {
+			hb = new HeaderBlockReader(stream);
+			dataBlocks = new RawDataBlockList(stream, BLOCK_SIZE);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		try {
+			new BlockAllocationTableReader(hb.getBATCount(), hb.getBATArray(), hb.getXBATCount(),
+					hb.getXBATIndex(), dataBlocks);
+		} catch (IOException e) {
+			// expected during successful test
+			assertEquals("Block count 538976257 is too high. POI maximum is 65535.", e.getMessage());
+		} catch (OutOfMemoryError e) {
+			if (e.getStackTrace()[1].getMethodName().equals("testBadSectorAllocationTableSize")) {
+				throw new AssertionFailedError("Identified bug 48085");
 			}
 		}
 	}
