@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48096 - relaxed validation check in RecalcIdRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">48085 - improved error checking in BlockAllocationTableReader to trap unreasonable field values</action>
            <action dev="POI-DEVELOPERS" type="fix">47924 - fixed logic for matching cells and comments in HSSFCell.getCellComment()</action>
            <action dev="POI-DEVELOPERS" type="add">47942 - added implementation of protection features to XLSX and DOCX files</action>
