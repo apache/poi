@@ -29,7 +29,9 @@ import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
@@ -421,5 +423,42 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		}
 		assertEquals(1, eorCount);
 		assertEquals(1, sfrCount);
+	}
+	
+	/**
+	 * MulBlank records hold multiple blank cells. Check we
+	 *  can handle them correctly.
+	 */
+	public void testMulBlankHandling() {
+		readRecords("45672.xls");
+		
+		// Check that we don't have any MulBlankRecords, but do
+		//  have lots of BlankRecords
+		Record[] rr = r;
+		int eorCount=0;
+		int mbrCount=0;
+		int brCount=0;
+		for (int i = 0; i < rr.length; i++) {
+			Record record = rr[i];
+			if (record instanceof MulBlankRecord) {
+				mbrCount++;
+			}
+			if (record instanceof BlankRecord) {
+				brCount++;
+			}
+			if (record instanceof LastCellOfRowDummyRecord) {
+				eorCount++;
+			}
+		}
+		if (mbrCount > 0) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		if (brCount < 20) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		if (eorCount != 2) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		assertEquals(2, eorCount);
 	}
 }
