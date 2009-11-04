@@ -207,4 +207,16 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("Section 3"));
     }
 
+    /**
+     * Test that we can open and process .docm
+     *  (macro enabled) docx files (bug #45690)
+     */
+    public void testDOCMFiles() {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        assertTrue(extractor.getText().contains("2004"));
+        assertTrue(extractor.getText().contains("2008"));
+        assertTrue(extractor.getText().contains("(120 "));
+    }
 }
