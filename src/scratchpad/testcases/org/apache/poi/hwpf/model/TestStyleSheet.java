@@ -46,6 +46,21 @@ public final class TestStyleSheet
 
   }
 
+  public void testReadWriteFromNonZeroOffset()
+    throws Exception
+  {
+    HWPFFileSystem fileSys = new HWPFFileSystem();
+    HWPFOutputStream tableOut = fileSys.getStream("1Table");
+
+    tableOut.write(new byte[20]); // 20 bytes of whatever at the front.
+    _styleSheet.writeTo(tableOut);
+
+    byte[] newTableStream = tableOut.toByteArray();
+
+    StyleSheet newStyleSheet = new StyleSheet(newTableStream, 20);
+    assertEquals(newStyleSheet, _styleSheet);
+  }
+
   protected void setUp()
     throws Exception
   {
