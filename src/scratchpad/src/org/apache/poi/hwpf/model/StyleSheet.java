@@ -65,6 +65,7 @@ public final class StyleSheet implements HDFType {
    */
   public StyleSheet(byte[] tableStream, int offset)
   {
+      int startOffset = offset;
       _stshiLength = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
       int stdCount = LittleEndian.getShort(tableStream, offset);
@@ -88,7 +89,7 @@ public final class StyleSheet implements HDFType {
       _rgftc[2] = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
 
-      offset = (LittleEndian.SHORT_SIZE + _stshiLength);
+      offset = startOffset + LittleEndian.SHORT_SIZE + _stshiLength;
       _styleDescriptions = new StyleDescription[stdCount];
       for(int x = 0; x < stdCount; x++)
       {
