@@ -25,14 +25,14 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * <tt>Ptg</tt> represents a syntactic token in a formula.  'PTG' is an acronym for 
- * '<b>p</b>arse <b>t</b>hin<b>g</b>'.  Originally, the name referred to the single 
+ * <tt>Ptg</tt> represents a syntactic token in a formula.  'PTG' is an acronym for
+ * '<b>p</b>arse <b>t</b>hin<b>g</b>'.  Originally, the name referred to the single
  * byte identifier at the start of the token, but in POI, <tt>Ptg</tt> encapsulates
  * the whole formula token (initial byte + value data).
  * <p/>
- * 
+ *
  * <tt>Ptg</tt>s are logically arranged in a tree representing the structure of the
- * parsed formula.  However, in BIFF files <tt>Ptg</tt>s are written/read in 
+ * parsed formula.  However, in BIFF files <tt>Ptg</tt>s are written/read in
  * <em>Reverse-Polish Notation</em> order. The RPN ordering also simplifies formula
  * evaluation logic, so POI mostly accesses <tt>Ptg</tt>s in the same way.
  *
@@ -41,29 +41,29 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public abstract class Ptg implements Cloneable {
-	public static final Ptg[] EMPTY_PTG_ARRAY = { }; 
+	public static final Ptg[] EMPTY_PTG_ARRAY = { };
 
-	
+
 	/**
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
 	 */
 	public static Ptg[] readTokens(int size, LittleEndianInput in) {
-		List temp = new ArrayList(4 + size / 2);
+		List<Ptg> temp = new ArrayList<Ptg>(4 + size / 2);
 		int pos = 0;
-		List arrayPtgs = null;
+		List<Ptg> arrayPtgs = null;
 		while (pos < size) {
 			Ptg ptg = Ptg.createPtg(in);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
-					arrayPtgs = new ArrayList(5);
+					arrayPtgs = new ArrayList<Ptg>(5);
 				}
 				arrayPtgs.add(ptg);
 				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
 			} else {
 				pos += ptg.getSize();
 			}
-			temp.add( ptg );
+			temp.add(ptg);
 		}
 		if(pos != size) {
 			throw new RuntimeException("Ptg array size mismatch");
@@ -79,28 +79,27 @@ public abstract class Ptg implements Cloneable {
 
 	public static Ptg createPtg(LittleEndianInput in) {
 		byte id = in.readByte();
-		
+
 		if (id < 0x20) {
 			return createBasePtg(id, in);
 		}
-		
+
 		Ptg  retval = createClassifiedPtg(id, in);
 
-		if (id >= 0x60) { 
+		if (id >= 0x60) {
 			retval.setClass(CLASS_ARRAY);
 		} else if (id >= 0x40) {
 			retval.setClass(CLASS_VALUE);
 		} else {
 			retval.setClass(CLASS_REF);
 		}
-
 		return retval;
 	}
 
 	private static Ptg createClassifiedPtg(byte id, LittleEndianInput in) {
-		
+
 		int baseId = id & 0x1F | 0x20;
-		
+
 		switch (baseId) {
 			case ArrayPtg.sid:    return new ArrayPtg(in);    // 0x20, 0x40, 0x60
 			case FuncPtg.sid:     return new FuncPtg(in);     // 0x21, 0x41, 0x61
@@ -123,7 +122,7 @@ public abstract class Ptg implements Cloneable {
 			case DeletedArea3DPtg.sid: return  new DeletedArea3DPtg(in); // 0x3d, 0x5d, 0x7d
 		}
 		throw new UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
-				   Integer.toHexString(id) + " (" + ( int ) id + ")");
+					Integer.toHexString(id) + " (" + ( int ) id + ")");
 	}
 
 	private static Ptg createBasePtg(byte id, LittleEndianInput in) {
@@ -153,8 +152,7 @@ public abstract class Ptg implements Cloneable {
 			case MissingArgPtg.sid:   return MissingArgPtg.instance;  // 0x16
 
 			case StringPtg.sid:       return new StringPtg(in);       // 0x17
-			case AttrPtg.sid:                
-			case 0x1a:        return new AttrPtg(in); // 0x19
+			case AttrPtg.sid:         return new AttrPtg(in);         // 0x19
 			case ErrPtg.sid:          return ErrPtg.read(in);         // 0x1c
 			case BoolPtg.sid:         return new BoolPtg(in);         // 0x1d
 			case IntPtg.sid:          return new IntPtg(in);          // 0x1e
@@ -167,7 +165,7 @@ public abstract class Ptg implements Cloneable {
 	 * if the class is immutable.
 	 */
 	public final Ptg copy() {
-		// TODO - all base tokens are logically immutable, but AttrPtg needs some clean-up 
+		// TODO - all base tokens are logically immutable, but AttrPtg needs some clean-up
 		if (this instanceof ValueOperatorPtg) {
 			return this;
 		}
@@ -184,7 +182,7 @@ public abstract class Ptg implements Cloneable {
 			throw new RuntimeException(e);
 		}
 	}
-	private static Ptg[] toPtgArray(List l) {
+	private static Ptg[] toPtgArray(List<Ptg> l) {
 		if (l.isEmpty()) {
 			return EMPTY_PTG_ARRAY;
 		}
@@ -193,9 +191,9 @@ public abstract class Ptg implements Cloneable {
 		return result;
 	}
 	/**
-	 * This method will return the same result as {@link #getEncodedSizeWithoutArrayData(Ptg[])} 
+	 * This method will return the same result as {@link #getEncodedSizeWithoutArrayData(Ptg[])}
 	 * if there are no array tokens present.
-	 * @return the full size taken to encode the specified <tt>Ptg</tt>s 
+	 * @return the full size taken to encode the specified <tt>Ptg</tt>s
 	 */
 	public static int getEncodedSize(Ptg[] ptgs) {
 		int result = 0;
@@ -221,7 +219,7 @@ public abstract class Ptg implements Cloneable {
 		return result;
 	}
 	/**
-	 * Writes the ptgs to the data buffer, starting at the specified offset.  
+	 * Writes the ptgs to the data buffer, starting at the specified offset.
 	 *
 	 * <br/>
 	 * The 2 byte encode length field is <b>not</b> written by this method.
@@ -229,10 +227,10 @@ public abstract class Ptg implements Cloneable {
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
 		int nTokens = ptgs.length;
-		
+
 		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset);
 
-		List arrayPtgs = null;
+		List<Ptg> arrayPtgs = null;
 
 		for (int k = 0; k < nTokens; k++) {
 			Ptg ptg = ptgs[k];
@@ -240,7 +238,7 @@ public abstract class Ptg implements Cloneable {
 			ptg.write(out);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
-					arrayPtgs = new ArrayList(5);
+					arrayPtgs = new ArrayList<Ptg>(5);
 				}
 				arrayPtgs.add(ptg);
 			}
@@ -255,17 +253,12 @@ public abstract class Ptg implements Cloneable {
 	}
 
 	/**
-	 * @return the encoded length of this Ptg, including the initial Ptg type identifier byte. 
+	 * @return the encoded length of this Ptg, including the initial Ptg type identifier byte.
 	 */
 	public abstract int getSize();
-	
-	/**
-	 * //@return the encoded length of this Ptg, not including the initial Ptg type identifier byte. 
-	 */
-//    public abstract int getDataSize();
 
 	public abstract void write(LittleEndianOutput out);
-	
+
 	/**
 	 * return a string representation of this token alone
 	 */
@@ -298,7 +291,7 @@ public abstract class Ptg implements Cloneable {
 	public final byte getPtgClass() {
 		return ptgClass;
 	}
-	
+
 	/**
 	 * Debug / diagnostic method to get this token's 'operand class' type.
 	 * @return 'R' for 'reference', 'V' for 'value', 'A' for 'array' and '.' for base tokens
@@ -348,5 +341,4 @@ public abstract class Ptg implements Cloneable {
 		}
 		return false;
 	}
-
 }
