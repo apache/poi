@@ -27,21 +27,23 @@
     <menu label="Apache POI">
         <menu-item label="Home" href="index.html"/>
         <menu-item label="Download" href="download.html"/>
-        <menu-item label="FAQ" href="faq.html"/>
         <menu-item label="Changes" href="changes.html"/>
+    </menu>
+
+    <menu label="Documentation">
+        <menu-item label="Source" href="subversion.html"/>
+        <menu-item label="Building" href="howtobuild.html"/>
         <menu-item label="Javadocs" href="ext:javadoc"/>
-        <menu-item label="Source Repository" href="subversion.html"/>
+        <menu-item label="Case Studies" href="casestudies.html"/>
+        <menu-item label="FAQ" href="faq.html"/>
         <menu-item label="Mailing Lists" href="mailinglists.html"/>
         <menu-item label="Bug Database" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
-        <menu-item label="How to Build" href="howtobuild.html"/>
-        <menu-item label="Resolutions" href="resolutions/index.html"/>
         <menu-item label="Get Involved" href="getinvolved/index.html"/>
         <menu-item label="Who We Are" href="who.html"/>
         <menu-item label="Legal" href="legal.html"/>
     </menu>
 
     <menu label="Modules">
-        <menu-item label="Overview" href="overview.html"/>
         <menu-item label="Text Extraction" href="text-extraction.html"/>
         <menu-item label="Excel (SS=HSSF+XSSF)" href="spreadsheet/index.html"/>
         <menu-item label="Word (HWPF+XWPF)" href="hwpf/index.html"/>
@@ -52,14 +54,6 @@
         <menu-item label="Outlook (HSMF)" href="hsmf/index.html"/>
         <menu-item label="Visio (HDGF)" href="hdgf/index.html"/>
         <menu-item label="Publisher (HPBF)" href="hpbf/index.html"/>
-    </menu>
-
-    <menu label="Misc">
-        <menu-item label="Case Studies" href="casestudies.html"/>
-        <menu-item label="References" href="references/index.html"/>
-        <menu-item label="POI in the News" href="news.html"/>
-        <menu-item label="Sponsors" href="http://www.apache.org/foundation/thanks.html" />
-        <menu-item label="History and Future" href="historyandfuture.html"/>
     </menu>
 
 </book>
