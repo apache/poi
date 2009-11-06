@@ -35,14 +35,9 @@
       <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
         This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
     </p>
-       <p>A full list of changes is available in the <link href="changes.html">change log</link></p>
-       <p>The source and binaries can be downloaded from your <link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.
-       People interested should also follow the
-       <link href="mailinglists.html">dev list</link> to track progress.</p>
-      <p>
-        The release is also available from the central Maven repository
-        under Group ID "org.apache.poi" and Version "3.5-FINAL".
-      </p>
+    <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+      People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
+     <p>See the <link href="download.html">downloads</link> page for more details.</p>
     </section>
     <section><title>Purpose</title>
       <p>
@@ -150,6 +145,7 @@
 	    information</link>.</p>
         </section>
      <section><title>Component map</title>
+       <anchor id="components"/>
        <p>
          The POI distribution consists of several JAR files. Not all of them are needed in every case. The following table
          shows the relationships between POI components and the JAR files.
@@ -159,61 +155,51 @@
             <th>Component</th>
             <th>JAR</th>
             <th>Maven artifactId</th>
-            <th>Comment</th>
           </tr>
           <tr>
             <td><link href="./poifs/index.html">POIFS</link></td>
             <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./hpsf/index.html">HPSF</link></td>
             <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./spreadsheet/index.html">HSSF</link></td>
             <td>poi-version-yyyymmdd.jar</td>
             <td>poi</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./spreadsheet/index.html">XSSF</link></td>
             <td>poi-ooxml-version-yyyymmdd.jar</td>
             <td>poi-ooxml</td>
-            <td>since 3.5-beta4</td>
           </tr>
           <tr>
             <td><link href="./slideshow/index.html">HLSF</link></td>
             <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./hwpf/index.html">HWPF</link></td>
             <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./hdgf/index.html">HDGF</link></td>
             <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./hpbf/index.html">HPBF</link></td>
             <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
-            <td></td>
           </tr>
           <tr>
             <td><link href="./hsmf/index.html">HSMF</link></td>
             <td>poi-scratchpad-version-yyyymmdd.jar</td>
             <td>poi-scratchpad</td>
-            <td></td>
           </tr>
         </table>
      </section>
@@ -223,9 +209,8 @@
 		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help
 		us on the project in several areas. The first is bug reports and feature requests! The second is documentation -
 		we'll be at your every beck and call if you've got a critique or you'd like to contribute or otherwise improve
-		the documentation. We could especially use some help documenting the HSSF file format! Last, but not least, we
-		could use some binary crunching Java coders to chew through the complexity that characterizes Microsoft's file
-		formats and help us port new ones to a superior Java platform!
+    the documentation. Last, but not least, we could use some binary crunching Java coders to chew through the 
+    complexity that characterizes Microsoft's file formats and help us port new ones to a superior Java platform!
         </p>
         <p>So if you're motivated, ready, and have the time, join the mail lists and we'll be happy to help you get started on the
            project!
