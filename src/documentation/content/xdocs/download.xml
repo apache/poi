@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+  <header>
+    <title>Apache POI - Download</title>
+  </header>
+
+  <body>
+    <section><title>Downloads</title>
+      <p>
+        Use the links below to download Apache POI releases from one of our mirrors. 
+        You should <link href="download.html#verify">verify the integrity</link> 
+        of the files using the signatures and checksums available from this page.
+      </p>
+      <ul>
+          <li>Latest stable release: <link href="download.html#POI-3.5-FINAL">Apache POI 3.5</link></li>
+          <li><link href="download.html#archive">Release Archive</link></li>
+      </ul>
+      <p>
+        Apache POI releases are available under the <link href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</link> 
+        See the NOTICE file contained in each release artifact for applicable copyright attribution notices. 
+    </p>
+    </section>
+    <section><title>28 September 2009 - POI 3.5-FINAL available</title>
+      <anchor id="POI-3.5-FINAL"/>
+      <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
+        This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
+      </p>
+      <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+        People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
+      <p>
+        The POI source release as well as the pre-built binary deployment packages are listed below. 
+        Pre-built versions of all <link href="index.html#components">POI components</link> are available in the central Maven repository
+        under Group ID "org.apache.poi" and Version "3.5-FINAL".
+      </p>
+      <section><title>Binary Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.5-FINAL-20090928.tar.gz">poi-bin-3.5-FINAL-20090928.tar.gz</link> (
+          19MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.5-FINAL-20090928.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: 8cdf715caca82ef55be8de8ed0fc5a13
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.5-FINAL-20090928.zip">poi-bin-3.5-FINAL-20090928.zip</link> (
+          26MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.5-FINAL-20090928.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: a53fa84cb24c7d4750e77c2bbb2b1d8e
+        </li>
+      </ul>
+      </section>
+      <section><title>Source Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.5-FINAL-20090928.tar.gz">poi-src-3.5-FINAL-20090928.tar.gz</link> (
+          41MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.5-FINAL-20090928.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: 0919fe59b96b8fb852cdcf9b6a627d61
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.5-FINAL-20090928.zip">poi-src-3.5-FINAL-20090928.zip</link> (
+          51MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.5-FINAL-20090928.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: 343a78b54d2ed36093cc0870b167b0f8
+        </li>
+      </ul>
+      </section>
+    </section>
+    <section><title>Release Archive</title>
+      <anchor id="archive"/>
+      <p>
+        Only current recommended releases are available on the main distribution site and its mirrors. 
+        Older releases are available from the 
+        <link href="http://archive.apache.org/dist/poi/">archive</link>
+        download site.      
+      </p>
+    </section>
+    <section><title>Verify</title>
+      <anchor id="verify"/>
+      <p>
+        It is essential that you verify the integrity of the downloaded files using the PGP or MD5 signatures. 
+        Please read Verifying Apache HTTP Server Releases for more information on why you should verify our releases.
+      </p>
+      <p>
+        The PGP signatures can be verified using PGP or GPG. First download the KEYS file as well as the .asc signature files 
+        for the relevant release packages. Make sure you get these files from the main distribution directory, 
+        rather than from a mirror. Then verify the signatures using
+      </p>
+      <source>
+      % pgpk -a KEYS
+      % pgpv poi-X.Y.Z.jar.asc        
+      </source>  
+      <p>or</p>
+      <source>
+      % pgp -ka KEYS
+      % pgp poi-X.Y.Z.jar.asc
+      </source>
+      <p>or</p>
+      <source>
+      % gpg --import KEYS
+      % gpg --verify poi-X.Y.Z.jar.asc
+      </source>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+    </legal>
+  </footer>
+</document>
