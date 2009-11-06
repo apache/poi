@@ -802,4 +802,17 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertFalse(cs.getFont(wbComplex).getItalic());
         assertEquals(HSSFFont.BOLDWEIGHT_BOLD, cs.getFont(wbComplex).getBoldweight());
     }
+
+    /**
+     * Tests the arabic setting
+     */
+    public void testArabic() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+
+        assertEquals(false, s.isArabic());
+        s.setArabic(true);
+        assertEquals(true, s.isArabic());
+    }
+
 }
