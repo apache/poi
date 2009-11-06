@@ -32,8 +32,8 @@
       <p>
          Most users of the source code probably don't need to have day to 
          day access to the source code as it changes. For these users we 
-         provide easy to unpack source code downloads via our
-         <link href="ext:download">download pages.</link>
+         provide easy to unpack source code from releases via our
+         <link href="download.html">download page.</link>
       </p>
     </section>
     <section><title>Access the Version Controlled Source Code</title>
@@ -56,11 +56,6 @@
        (the main-line) and not all tags and branches, to avoid filling up 
        your hard-disk and wasting bandwidth.
       </p>
-
-      <p><strong>NOTE</strong>: See this 
-       <link href="http://jakarta.apache.org/commons/svninfo.html">Subversion
-        information</link> page for a brief description of the relationship be
-       tween URL tuples such as <em>trunks-proper</em> and <em>proper</em>.</p>
 
       <ul>
        <li>For read only access to the Apache POI svn, please use

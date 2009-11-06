@@ -33,7 +33,7 @@
       </p>
       <ul>
           <li>Latest stable release: <link href="download.html#POI-3.5-FINAL">Apache POI 3.5</link></li>
-          <li><link href="download.html#archive">Release Archive</link></li>
+          <li><link href="http://archive.apache.org/dist/poi/">Release Archive</link></li>
       </ul>
       <p>
         Apache POI releases are available under the <link href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</link> 
@@ -80,15 +80,6 @@
         </li>
       </ul>
       </section>
-    </section>
-    <section><title>Release Archive</title>
-      <anchor id="archive"/>
-      <p>
-        Only current recommended releases are available on the main distribution site and its mirrors. 
-        Older releases are available from the 
-        <link href="http://archive.apache.org/dist/poi/">archive</link>
-        download site.      
-      </p>
     </section>
     <section><title>Verify</title>
       <anchor id="verify"/>

@@ -22,13 +22,13 @@
 <faqs title="Frequently Asked Questions">
     <faq>
         <question>
-          My code uses some new HSSF feature, compiles fine but fails when live with a "MethodNotFoundException"
+          My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException"
         </question>
 		<answer>
-		 <p>You almost certainly have an older version of POI earlier 
+		 <p>You almost certainly have an older version of POI 
 		 on your classpath. Quite a few runtimes and other packages 
 		 will ship an older version of POI, so this is an easy problem
-		 to hit without realising.</p>
+		 to hit without your realising.</p>
 		 <p>The best way to identify the offending earlier jar file is
 		 with a few lines of java. These will load one of the core POI
 		 classes, and report where it came from.</p>
@@ -46,8 +46,7 @@ System.out.println("Core POI came from " + path);
         </question>
 		<answer>
 		 <p>You almost certainly have an older version earlier on your
-		 classpath. See the answer to the similar question above for
-		 how to track this down.</p>
+		 classpath. See the prior answer.</p>
 		</answer>
 	</faq>
     <faq>
@@ -56,7 +55,7 @@ System.out.println("Core POI came from " + path);
         </question>
         <answer>
           <p>You've probably enabled logging.  Logging is intended only for
-          autopsie style debugging.  Having it enabled will reduce performance
+          autopsy style debugging.  Having it enabled will reduce performance
           by a factor of at least 100.  Logging is helpful for understanding
           why POI can't read some file or developing POI itself.  Important
           errors are thrown as exceptions, which means you probably don't need
@@ -68,10 +67,10 @@ System.out.println("Core POI came from " + path);
           What is the HSSF "eventmodel"?
         </question>
         <answer>
-              <p>The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does
+              <p>The SS eventmodel package is an API for reading Excel files without loading the whole spreadsheet into memory.  It does
               require more knowledge on the part of the user, but reduces memory consumption by more than
               tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
-              access to a given XLS file, this is the best way to do it.</p>
+              access, this is the best way to do it.</p>
         </answer>
 
     </faq>
@@ -89,28 +88,19 @@ System.out.println("Core POI came from " + path);
             Why am I getting an exception each time I attempt to read my spreadsheet?
         </question>
         <answer>
-            <p>It's possible your spreadsheet contains a feature that is not currently supported by HSSF.
-            For example - spreadsheets containing cells with rich text are not currently supported.</p>
+            <p>It's possible your spreadsheet contains a feature that is not currently supported by POI.
+            If you encounter this then please create the simplest file that demonstrates the trouble and submit it to
+	      <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bugzilla.</link></p>
         </answer>
     </faq>
     <faq>
         <question>
-            Does HSSF support protected spreadsheets?
-        </question>
-        <answer>
-            <p>Protecting a spreadsheet encrypts it.  We wont touch encryption because we're not legally educated
-            and don't understand the full implications of trying to implement this.  If you wish to have a go
-            at this feel free to add it as a plugin module.  We wont be hosting it here however.</p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            How do you tell if a field contains a date with HSSF?
+            How do you tell if a spreadsheet cell contains a date?
         </question>
         <answer>
             <p>Excel stores dates as numbers therefore the only way to determine if a cell is
             actually stored as a date is to look at the formatting. There is a helper method
-            in HSSFDateUtil (since the 1.7.0-dev release) that checks for this.
+            in HSSFDateUtil that checks for this.
             Thanks to Jason Hoffman for providing the solution.</p>
             <source>
    case HSSFCell.CELL_TYPE_NUMERIC:
@@ -181,7 +171,7 @@ System.out.println("Core POI came from " + path);
         </question>
         <answer>
             <p>
-	   Yes.  You first need to get a HSSFDataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="spreadsheet/quick-guide.html#DataFormats">here</link>.
+	   Yes.  You first need to get a DataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="spreadsheet/quick-guide.html#DataFormats">here</link>.
             </p>
         </answer>
     </faq>
@@ -191,7 +181,7 @@ System.out.println("Core POI came from " + path);
         </question>
         <answer>
             <p>
-	   Yes.  This is a built-in format for excel that you can get from HSSFDataFormat object using the format string "@".  Also, the string "text" will alias this format.
+	   Yes.  This is a built-in format for excel that you can get from DataFormat object using the format string "@".  Also, the string "text" will alias this format.
             </p>
         </answer>
     </faq>
@@ -202,41 +192,6 @@ System.out.println("Core POI came from " + path);
         <answer>
             <p>Add blank cells around where the cells normally would have been and set the borders individually for each cell.
             We will probably enhance HSSF in the future to make this process easier.</p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            I tried to set cell values and Excel sheet name on my native language,
-            but I failed to do it. :(
-        </question>
-        <answer>
-            <p>By default HSSF uses cell values and sheet names as compressed unicode,
-            so to support localization you should use Unicode.
-            To do it you should set it manually:</p>
-            <source>
-                // for sheet name
-                HSSFWorkbook wb = new HSSFWorkbook();
-                HSSFSheet s = wb.createSheet();
-                wb.setSheetName( 0, "SomeUnicodeName", HSSFWorkbook.ENCODING_UTF_16 );
-
-                // for cell value
-                HSSFRow r = s.createRow( 0 );
-                HSSFCell c = r.createCell( (short)0 );
-                c.setCellType( HSSFCell.CELL_TYPE_STRING );
-                c.setEncoding( HSSFCell.ENCODING_UTF_16 );
-                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" ); </source>
-            <p>
-                Make sure you make the call to setEncoding() before calling setCellValue(), otherwise what you pass in won't be interpreted properly.
-            </p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            I'm having trouble creating a spreadsheet using POI using
-            websphere 3.5.
-        </question>
-        <answer>
-            <p>Make sure you have fix pack 4 installed.</p>
         </answer>
     </faq>
     <faq>
@@ -316,19 +271,5 @@ System.out.println("Core POI came from " + path);
  wb.write(fileOut);
  fileOut.close(); </source>
 	</answer>
-    </faq>
-    <faq>
-        <question>
-            Will POI read any spreadsheet and rewrite it with modifications.
-        </question>
-        <answer>
-            <p>POI is not guanteed to read the contents of any spreadsheet.
-                Certain features may cause spreadsheets to fail to read.  More
-                problematic is rewriting spreadsheets.  POI tried hard to
-                preserve the records of the original spreadsheet but some
-                features may cause problems.  We advise that you limit the
-                formatting of spreadsheets you process so as to not be
-                unpleasantly suprised at a later stage.</p>
-        </answer>
     </faq>
 </faqs>
