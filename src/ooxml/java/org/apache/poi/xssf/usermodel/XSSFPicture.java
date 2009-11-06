@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -277,65 +278,13 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * @return image dimension in pixels
      */
     protected static Dimension getImageDimension(PackagePart part, int type){
-        Dimension size = new Dimension();
-
-        switch (type){
-            //we can calculate the preferred size only for JPEG, PNG and BMP
-            //other formats like WMF, EMF and PICT are not supported in Java
-            case Workbook.PICTURE_TYPE_JPEG:
-            case Workbook.PICTURE_TYPE_PNG:
-            case Workbook.PICTURE_TYPE_DIB:
-                try {
-                    //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( part.getInputStream() );
-                    Iterator i = ImageIO.getImageReaders( iis );
-                    ImageReader r = (ImageReader) i.next();
-                    r.setInput( iis );
-                    BufferedImage img = r.read(0);
-
-                    int[] dpi = getResolution(r);
-
-                    //if DPI is zero then assume standard 96 DPI
-                    //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
-                    if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
-
-                    size.width = img.getWidth()*PIXEL_DPI/dpi[0];
-                    size.height = img.getHeight()*PIXEL_DPI/dpi[1];
-
-                } catch (IOException e){
-                    //silently return if ImageIO failed to read the image
-                    logger.log(POILogger.WARN, e);
-                }
-
-                break;
-            default:
-                logger.log(POILogger.WARN, "Only JPEG, PNG and DIB pictures can be automatically sized");
+        try {
+            return ImageUtils.getImageDimension(part.getInputStream(), type);
+        } catch (IOException e){
+            //return a "singulariry" if ImageIO failed to read the image
+            logger.log(POILogger.WARN, e);
+            return new Dimension();
         }
-        return size;
-    }
-
-    /**
-     * The metadata of PNG and JPEG can contain the width of a pixel in millimeters.
-     * Return the the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
-     * and <code>25.4/VerticalPixelSize</code>.  Where 25.4 is the number of mm in inch.
-     *
-     * @return array of two elements: <code>{horisontalPdi, verticalDpi}</code>.
-     * {96, 96} is the default.
-     */
-    protected static int[] getResolution(ImageReader r) throws IOException {
-        int hdpi = PIXEL_DPI, vdpi = PIXEL_DPI;
-        double mm2inch = 25.4;
-
-        NodeList lst;
-        Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
-        lst = node.getElementsByTagName("HorizontalPixelSize");
-        if(lst != null && lst.getLength() == 1) hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        lst = node.getElementsByTagName("VerticalPixelSize");
-        if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        return new int[]{hdpi, vdpi};
     }
 
     /**
