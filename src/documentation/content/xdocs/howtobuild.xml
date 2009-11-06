@@ -41,11 +41,11 @@
                 The POI build system requires two components to perform a
                 build.
                 <link href="ext:ant.apache.org/">Ant</link> and
-                <link href="ext:xml.apache.org/forrest">forrest</link>.
+                <link href="ext:xml.apache.org/forrest">Forrest</link>.
             </p>
             <p>
                 Specifically the build has been tested to work with Ant version
-                1.5.3 and Forrest 0.4.  To install these products download
+                1.7.1 and Forrest 0.5.  To install these products download
                 the distributions and follow the instructions in their
                 documentation.  Make sure you don't forget to set the
                 environment variables FORREST_HOME and ANT_HOME.  The
@@ -62,19 +62,7 @@
                 </tr>
                 <tr>
                     <td>junit</td>
-                    <td>http://www.ibiblio.org/maven/junit/jars/</td>
-                </tr>
-                <tr>
-                    <td>xerces</td>
-                    <td>http://www.ibiblio.org/maven/xerces/jars/</td>
-                </tr>
-                <tr>
-                    <td>jdepend</td>
-                    <td>http://www.ibiblio.org/maven/jdepend/jars/</td>
-                </tr>
-                <tr>
-                    <td>xalan</td>
-                    <td>http://www.ibiblio.org/maven/xalan/jars/</td>
+                    <td>http://www.junit.org</td>
                 </tr>
             </table>
             <p>
@@ -85,59 +73,6 @@
         </section>
         <section>
             <title>Running the Build</title>
-            <p>
-                On the first run the ant build system will download all
-                the jars required by the project to build ant.  If you're
-                behind a firewall this may cause some problems.  Should you
-                need to it's possible to manually put the jars in the
-                correct directories.  These can be obtained from here:
-            </p>
-            <table>
-                <tr>
-                    <th>JAR</th>
-                    <th>Location</th>
-                </tr>
-                <tr>
-                    <td>/commons-logging/jars/commons-logging-1.0.1.jar</td>
-                    <td>lib</td>
-                </tr>
-                <tr>
-                    <td>/log4j/jars/log4j-1.2.8.jar</td>
-                    <td>lib</td>
-                </tr>
-                <tr>
-                    <td>/commons-beanutils/jars/commons-beanutils-1.6.jar</td>
-                    <td>src/contrib/lib</td>
-                </tr>
-                <tr>
-                    <td>/commons-collections/jars/commons-collections-2.1.jar</td>
-                    <td>src/contrib/lib</td>
-                </tr>
-                <tr>
-                    <td>/commons-lang/jars/commons-lang-1.0-b1.jar</td>
-                    <td>src/contrib/lib</td>
-                </tr>
-                <tr>
-                    <td>/junit/jars/junit-3.8.1.jar</td>
-                    <td>lib</td>
-                </tr>
-                <tr>
-                    <td>/dom4j/jars/dom4j-1.6.1.jar</td>
-                    <td>ooxml-lib</td>
-                </tr>
-                <tr>
-                    <td>/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar</td>
-                    <td>ooxml-lib</td>
-                </tr>
-                <tr>
-                    <td>/xmlbeans/jars/jsr173_1.0_api.jar</td>
-                    <td>ooxml-lib</td>
-                </tr>
-                <tr>
-                    <td>/org.apache.poi/jars/ooxml-schemas-1.0.jar</td>
-                    <td>ooxml-lib</td>
-                </tr>
-            </table>
             <p>
                 The main targets of interest to our users are:
             </p>
@@ -164,25 +99,12 @@
                     <td>Generate all documentation for the system</td>
                 </tr>
                 <tr>
-                    <td>generate-records</td>
-                    <td>Generate records from the XML record defintitions</td>
-                </tr>
-                <tr>
-                    <td>generate-types</td>
-                    <td>Generate types from the XML type definitions (this is
-                        for HWPF).</td>
-                </tr>
-                <tr>
                     <td>jar</td>
                     <td>Produce jar files</td>
                 </tr>
                 <tr>
                     <td>dist</td>
                     <td>Create a distribution.</td>
-                </tr>
-                <tr>
-                    <td>clean-dist</td>
-                    <td>Runs clean before creating the distribution.</td>
                 </tr>
             </table>
         </section>

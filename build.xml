@@ -17,7 +17,6 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<!DOCTYPE project PUBLIC "-//Ant//Project 1.5//EN" "ant.dtd">
 
 <!--
     POI Build System.  Written by:
@@ -35,8 +34,7 @@ under the License.
 
     LIBRARY         LOCATION
     =======         ========
-    junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
-    jdepend         http://www.ibiblio.org/maven/jdepend/jars/
+    junit(3.8+)     http://www.junit.org
 
     The ant jar "optional.jar" should also be available otherwise the
     build will fail.
@@ -58,9 +56,7 @@ under the License.
  -->
 <project name="POI Build" default="help" basedir=".">
 
-  <description>
-    The POI project Ant build.
-  </description>
+  <description>The POI project Ant build.</description>
 
   <property environment="env"/>
 
@@ -149,21 +145,16 @@ under the License.
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
   <property name="junit.report.dir" location="${build.site}/junit"/>
-  <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
-  <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
   <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
   <property name="dist.dir" location="build/dist"/>
   <property name="mavendist.ooxml.dir" location="build/maven-ooxml-dependencies"/>
   <property name="apache.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository"/>
-  <property name="snapshots.repository" value="scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository/"/>
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.6-beta1"/>
   <property name="halt.on.test.failure" value="true"/>
 
-  <property name="jdk.version.source" value="1.5"
-    description="JDK version of source code"/>
-  <property name="jdk.version.class" value="1.5"
-    description="JDK version of generated class files"/>  
+  <property name="jdk.version.source" value="1.5" description="JDK version of source code"/>
+  <property name="jdk.version.class" value="1.5"  description="JDK version of generated class files"/>  
 
     <path id="main.classpath">
         <fileset dir="${main.lib}"> 
@@ -250,31 +241,12 @@ under the License.
     </echo>
   </target>
 
-
-
-    <target name="with.clover" if="clover.present">
-        <taskdef resource="clovertasks"/>
-        <clover-setup initString="mycoverage.db"/>
-    </target>
-
-    <target name="clover.html" depends="with.clover" if="clover.present">
-        <echo>Generating clover report</echo>
-       <clover-report>
-          <current outfile="build/tmp/site/build/site/clover_html">
-             <format type="html"/>
-          </current>
-       </clover-report>
-    </target>
-
     <target name="init" depends="fetch-jars,fetch-ooxml-jars">
 
         <tstamp>
           <format property="tstamp.year" pattern="yyyy"/>
         </tstamp>
 
-        <available resource="clovertasks" property="clover.present"/>
-        <antcall target="with.clover"/>
-        
         <mkdir dir="build"/>
         <mkdir dir="build/non-ant-classes"/>
         <mkdir dir="${main.output.dir}"/>
@@ -292,8 +264,6 @@ under the License.
         <mkdir dir="${contrib.reports.test}"/>
         <mkdir dir="${ooxml.reports.test}"/>
         <mkdir dir="${junit.report.dir}"/>
-        <mkdir dir="${jdepend.report.dir}"/>
-        <mkdir dir="${jdepend.report.out.dir}"/>
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${ooxml.xsds.tmp.dir}" />
         <mkdir dir="${dist.dir}"/>
@@ -837,9 +807,6 @@ FORREST_HOME environment variable!</echo>
         <copy todir="${build.site.src}/src/documentation/content/apidocs">
             <fileset dir="${apidocs.report.dir}"/>
         </copy>
-        <copy
-          tofile="${build.site.src}/src/documentation/content/jdepend.ehtml"
-          file="${jdepend.report.dir}/index.html" failonerror="false"/>
         <mkdir dir="${build.site.src}/src/documentation/content/junit"/>
         <copy todir="${build.site.src}/src/documentation/content/junit">
             <fileset dir="${junit.report.dir}"/>
@@ -861,26 +828,6 @@ FORREST_HOME environment variable!</echo>
         </touch>
     </target>
 
-    <!-- Checks whether reports are required to be run.  If nothing has changed then they dont. -->
-    <target name="-check-reports">
-        <condition property="reports.notRequired">
-            <and>
-                <equals arg1="${main.test.notRequired}" arg2="true"/>
-                <equals arg1="${scratchpad.test.notRequired}" arg2="true"/>
-                <equals arg1="${contrib.test.notRequired}" arg2="true"/>
-            </and>
-        </condition>
-    </target>
-
-
-  <!-- Creates reports and API documentation -->
-  <target name="reports" unless="reports.notRequired" depends="-check-reports,
-    fail-unless-jdepend-is-available, test-ignore-failures, junitreport,
-    jdepend, javadocs, clover.html"
-    description="Creates various reports and the API documentation">
-  </target>
-
-
 
   <!-- Runs all JUnit tests without aborting if one of the tests fails. -->
   <target name="test-ignore-failures" depends="init">
@@ -888,29 +835,6 @@ FORREST_HOME environment variable!</echo>
       <param name="halt.on.test.failure" value="false"/>
     </antcall>
   </target>
-
-
-
-  <!-- Produces a report of the JUnit test results -->
-  <target name="junitreport"
-    depends="test-ignore-failures"
-    description="Produces a report of the JUnit test results">
-    <junitreport todir="${junit.report.dir}">
-      <fileset dir="${main.reports.test}">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <fileset dir="${scratchpad.reports.test}">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <fileset dir="${contrib.reports.test}">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <report format="frames" todir="${junit.report.dir}"/>
-    </junitreport>
-  </target>
-
-
-
   <!-- Generates the API documentation. -->
   <target name="javadocs" depends="init"
     description="Generates the API documentation">
@@ -975,16 +899,15 @@ FORREST_HOME environment variable!</echo>
       </group>
     </javadoc>
 
-    <antcall target="clover.html"/>
   </target>
 
 
     <!-- Generates documentation and reports -->
-    <target name="site" depends="reports, docs"
+    <target name="site" depends="docs"
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-poms" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
+    <target name="maven-poms" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
       <!-- TODO: Decide about source jars, and copy them if we have some -->
 
       <!-- Build the org.apache.poi poms -->
@@ -1145,6 +1068,7 @@ FORREST_HOME environment variable!</echo>
     </zip>
 
     <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
+      longfile="gnu"
       compression="gzip">
       <tarfileset dir="legal/" prefix="${zipdir}" />
       <tarfileset dir="lib/" prefix="${zipdir}/lib" />
@@ -1159,6 +1083,7 @@ FORREST_HOME environment variable!</echo>
     </tar>
 
     <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
+      longfile="gnu"
       compression="gzip">
       <tarfileset dir="legal/" prefix="${zipdir}" />
       <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
@@ -1189,58 +1114,8 @@ FORREST_HOME environment variable!</echo>
   <target name="gump" depends="test, jar"/>
 
 
-
-  <!-- Generates the Ant document type definition (DTD) -->
-  <target name="dtd"
-    description="Generates the Ant document type definition (DTD)">
-    <antstructure output="ant.dtd"/>
-  </target>
-
-  <!-- Abort the build if JDepend is missing. -->
-  <target name="fail-unless-jdepend-is-available" depends="init">
-    <condition property="isAvailable.jdepend">
-      <available classname="jdepend.framework.JDepend"/>
-    </condition>
-    <antcall target="fail-jdepend"/>
-  </target>
-
-  <target name="fail-jdepend" unless="isAvailable.jdepend">
-    <echo>
-      JDepend is not available. You must download JDepend from
-      &lt;http://www.clarkware.com/software/JDepend.html&gt; and include the
-      JAR file in your classpath.
-    </echo> 
-    <fail message="JDepend is not available."/>
-  </target>
-
   <!-- Aborts the build if any of the required tools are missing. -->
-  <target name="fail-unless-tools-are-available"
-    depends="fail-unless-jdepend-is-available"/>
-
-
-
-  <!-- Runs jdepend to produce a report about package dependencies -->
-  <target name="jdepend" depends="fail-unless-jdepend-is-available"
-    description="Runs jdepend to produce a report about package dependencies">
-    <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
-      <classespath>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${contrib.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
-      </classespath>
-      <classpath>
-        <path refid="main.classpath"/>
-        <path refid="contrib.classpath"/>
-        <path refid="scratchpad.classpath"/>
-      </classpath>
-    </jdepend>
-
-    <style basedir="${jdepend.report.dir}"
-      in="${jdepend.report.dir}/jdepend.xml"
-      out="${jdepend.report.out.dir}/index.html"
-      style="jdepend.xsl"/>
-  </target>
-
+  <target name="fail-unless-tools-are-available"/>
 
   <target name="-require-filename" description="Ensure -Dfilename=... was given">
      <fail unless="filename" message="A filename must be supplied with -Dfilename=, eg -Dfilename=test.xls" />
@@ -1272,20 +1147,3 @@ FORREST_HOME environment variable!</echo>
 
 </project>
 
-<!-- Keep this comment at the end of the file
-Local variables:
-mode: xml
-sgml-omittag:nil
-sgml-shorttag:nil
-sgml-namecase-general:nil
-sgml-general-insert-case:lower
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document:nil
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
-End:
--->
