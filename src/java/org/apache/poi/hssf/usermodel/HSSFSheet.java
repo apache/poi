@@ -634,7 +634,24 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return _sheet.getPageSettings().getHCenter().getHCenter();
     }
 
+    /**
+     * Sets the arabic property for this sheet, will make it right to left.
+     * @param value true for arabic, false otherwise.
+     */
+    public void setArabic(boolean value)
+    {
+	    _sheet.getWindowTwo().setArabic(value);
+    }
 
+    /**
+     * Gets the arabic property for this sheet.
+     *
+     * @return whther the arabic mode is set
+     */
+    public boolean isArabic()
+    {
+	    return _sheet.getWindowTwo().getArabic();
+    }
 
     /**
      * removes a merged region of cells (hence letting them free)
