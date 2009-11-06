@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48134 - release system resources when using Picture.resize()</action>
            <action dev="POI-DEVELOPERS" type="fix">48087 - avoid NPE in XSSFChartSheet  when calling methods of the superclass</action>
            <action dev="POI-DEVELOPERS" type="fix">48038 - handle reading HWPF stylesheets from non zero offsets</action>
            <action dev="POI-DEVELOPERS" type="add">When running the "compile-ooxml-xsds" ant task, also generate the source jar for the OOXML Schemas</action>

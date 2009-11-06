@@ -21,6 +21,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.util.ImageUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -209,29 +210,6 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     /**
-     * The metadata of PNG and JPEG can contain the width of a pixel in millimeters.
-     * Return the the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
-     * and <code>25.4/VerticalPixelSize</code>.  Where 25.4 is the number of mm in inch.
-     *
-     * @return array of two elements: <code>{horisontalPdi, verticalDpi}</code>.
-     * {96, 96} is the default.
-     */
-    protected int[] getResolution(ImageReader r) throws IOException {
-        int hdpi=96, vdpi=96;
-        double mm2inch = 25.4;
-
-        NodeList lst;
-        Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
-        lst = node.getElementsByTagName("HorizontalPixelSize");
-        if(lst != null && lst.getLength() == 1) hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        lst = node.getElementsByTagName("VerticalPixelSize");
-        if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        return new int[]{hdpi, vdpi};
-    }
-
-    /**
      * Return the dimension of this image
      *
      * @return image dimension
@@ -240,39 +218,6 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(_pictureIndex);
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
-        Dimension size = new Dimension();
-
-        switch (type){
-            //we can calculate the preferred size only for JPEG and PNG
-            //other formats like WMF, EMF and PICT are not supported in Java
-            case HSSFWorkbook.PICTURE_TYPE_JPEG:
-            case HSSFWorkbook.PICTURE_TYPE_PNG:
-            case HSSFWorkbook.PICTURE_TYPE_DIB:
-                try {
-                    //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream(data) );
-                    Iterator<ImageReader> i = ImageIO.getImageReaders( iis );
-                    ImageReader r = i.next();
-                    r.setInput( iis );
-                    BufferedImage img = r.read(0);
-
-                    int[] dpi = getResolution(r);
-
-                    //if DPI is zero then assume standard 96 DPI
-                    //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = 96;
-                    if (dpi[1] == 0) dpi[1] = 96;
-                    
-                    size.width = img.getWidth()*96/dpi[0];
-                    size.height = img.getHeight()*96/dpi[1];
-
-                } catch (IOException e){
-                    //silently return if ImageIO failed to read the image
-                    log.log(POILogger.WARN, e);
-                }
-
-                break;
-        }
-        return size;
+        return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
     }
 }
