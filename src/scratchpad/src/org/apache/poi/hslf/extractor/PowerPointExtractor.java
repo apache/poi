@@ -45,6 +45,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	private boolean _slidesByDefault = true;
 	private boolean _notesByDefault = false;
 	private boolean _commentsByDefault = false;
+    private boolean _masterByDefault = false;
 
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes
@@ -58,6 +59,8 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 
 		boolean notes = false;
 		boolean comments = false;
+        boolean master = true;
+        
 		String file;
 		if (args.length > 1) {
 			notes = true;
@@ -70,7 +73,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		}
 
 		PowerPointExtractor ppe = new PowerPointExtractor(file);
-		System.out.println(ppe.getText(true, notes, comments));
+		System.out.println(ppe.getText(true, notes, comments, master));
 	}
 
 	/**
@@ -137,12 +140,19 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		this._commentsByDefault = commentsByDefault;
 	}
 
+    /**
+     * Should a call to getText() return text from master? Default is no
+     */
+    public void setMasterByDefault(boolean masterByDefault) {
+        this._masterByDefault = masterByDefault;
+    }
+
 	/**
 	 * Fetches all the slide text from the slideshow, but not the notes, unless
 	 * you've called setSlidesByDefault() and setNotesByDefault() to change this
 	 */
 	public String getText() {
-		return getText(_slidesByDefault, _notesByDefault, _commentsByDefault);
+		return getText(_slidesByDefault, _notesByDefault, _commentsByDefault, _masterByDefault);
 	}
 
 	/**
@@ -178,14 +188,20 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param getNoteText fetch note text
 	 */
 	public String getText(boolean getSlideText, boolean getNoteText) {
-		return getText(getSlideText, getNoteText, _commentsByDefault);
+		return getText(getSlideText, getNoteText, _commentsByDefault, _masterByDefault);
 	}
 
-	public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText) {
+	public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText, boolean getMasterText) {
 		StringBuffer ret = new StringBuffer();
 
 		if (getSlideText) {
-			for (int i = 0; i < _slides.length; i++) {
+            if (getMasterText) {
+                for (SlideMaster master : _show.getSlidesMasters()) {
+                    textRunsToText(ret, master.getTextRuns());
+                }
+            }
+
+            for (int i = 0; i < _slides.length; i++) {
 				Slide slide = _slides[i];
 
 				// Slide header, if set
@@ -195,19 +211,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				}
 
 				// Slide text
-				TextRun[] runs = slide.getTextRuns();
-				for (int j = 0; j < runs.length; j++) {
-					TextRun run = runs[j];
-					if (run != null) {
-						String text = run.getText();
-						ret.append(text);
-						if (!text.endsWith("\n")) {
-							ret.append("\n");
-						}
-					}
-				}
+                textRunsToText(ret, slide.getTextRuns());
 
-				// Slide footer, if set
+                // Slide footer, if set
 				if (hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
 					ret.append(hf.getFooterText() + "\n");
 				}
@@ -249,17 +255,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				}
 
 				// Notes text
-				TextRun[] runs = notes.getTextRuns();
-				if (runs != null && runs.length > 0) {
-					for (int j = 0; j < runs.length; j++) {
-						TextRun run = runs[j];
-						String text = run.getText();
-						ret.append(text);
-						if (!text.endsWith("\n")) {
-							ret.append("\n");
-						}
-					}
-				}
+                textRunsToText(ret, notes.getTextRuns());
 
 				// Repeat the notes footer, if set
 				if (hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
@@ -270,4 +266,21 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 
 		return ret.toString();
 	}
+
+    private void textRunsToText(StringBuffer ret, TextRun[] runs) {
+        if (runs==null) {
+            return;
+        }
+
+        for (int j = 0; j < runs.length; j++) {
+            TextRun run = runs[j];
+            if (run != null) {
+                String text = run.getText();
+                ret.append(text);
+                if (!text.endsWith("\n")) {
+                    ret.append("\n");
+                }
+            }
+        }
+    }
 }
