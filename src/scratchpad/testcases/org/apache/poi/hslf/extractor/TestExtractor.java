@@ -48,7 +48,6 @@ public final class TestExtractor extends TestCase {
     //private String pdirname;
 
     protected void setUp() throws Exception {
-
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ppe2 = new PowerPointExtractor(slTests.openResourceAsStream("with_textbox.ppt"));
     }
@@ -63,7 +62,7 @@ public final class TestExtractor extends TestCase {
 		
 		// 1 page example with text boxes
 		sheetText = ppe2.getText();
-		expectText = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n"; 
+		expectText = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n";
 
 		ensureTwoStringsTheSame(expectText, sheetText);
     }
@@ -112,7 +111,7 @@ public final class TestExtractor extends TestCase {
 	 */
 	public void testMissingCoreRecords() throws Exception {
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("missing_core_records.ppt"));
-		
+
 		String text = ppe.getText(true, false);
 		String nText = ppe.getNotes();
 
@@ -265,4 +264,13 @@ public final class TestExtractor extends TestCase {
 	private static boolean contains(String text, String searchString) {
 		return text.indexOf(searchString) >=0;
 	}
+
+    public void testMasterText() throws Exception {
+		ppe = new PowerPointExtractor(slTests.openResourceAsStream("master_text.ppt"));
+        ppe.setMasterByDefault(true);
+
+		String text = ppe.getText();
+		assertTrue(text.contains("Master Header Text"));
+    }
+
 }
