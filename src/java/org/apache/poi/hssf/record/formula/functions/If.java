@@ -53,7 +53,7 @@ public final class If implements Function {
 		return falseResult;
 	}
 
-	private static boolean evaluateFirstArg(ValueEval arg, int srcCellRow, short srcCellCol)
+	public static boolean evaluateFirstArg(ValueEval arg, int srcCellRow, int srcCellCol)
 			throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		Boolean b = OperandResolver.coerceValueToBoolean(ve, false);

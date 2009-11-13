@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationListener;
@@ -319,6 +320,10 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	 * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
 	 */
 	public void testSlowEvaluate45376() {
+		/*
+		 * Note - to observe behaviour without caching, disable the call to
+		 * updateValue() from FormulaCellCacheEntry.updateFormulaResult().
+		 */
 
 		// Firstly set up a sequence of formula cells where each depends on the  previous multiple
 		// times.  Without caching, each subsequent cell take about 4 times longer to evaluate.
@@ -330,30 +335,39 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			char prevCol = (char) ('A' + i-1);
 			String prevCell = prevCol + "1";
 			// this formula is inspired by the offending formula of the attachment for bug 45376
+			// IF(DATE(YEAR(A1),MONTH(A1)+1,1)<=$D$3,DATE(YEAR(A1),MONTH(A1)+1,1),NA()) etc
 			String formula = "IF(DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1)<=$D$3," +
 					"DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1),NA())";
 			cell.setCellFormula(formula);
-
 		}
 		Calendar cal = new GregorianCalendar(2000, 0, 1, 0, 0, 0);
 		row.createCell(0).setCellValue(cal);
 
-		// Choose cell A9, so that the failing test case doesn't take too long to execute.
+		// Choose cell A9 instead of A10, so that the failing test case doesn't take too long to execute.
 		HSSFCell cell = row.getCell(8);
 		EvalListener evalListener = new EvalListener();
 		WorkbookEvaluator evaluator = WorkbookEvaluatorTestHelper.createEvaluator(wb, evalListener);
-		evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cell));
+		ValueEval ve = evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cell));
 		int evalCount = evalListener.getCountCacheMisses();
 		if (evalCount > 10) {
 			// Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
 			// much time (~3 sec on Core 2 Duo 2.2GHz)
+			// short-circuit-if optimisation cuts this down to 255 evaluations which is still too high
 			System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
 			throw new AssertionFailedError("Identifed bug 45376 - Formula evaluator should cache values");
 		}
-		// With caching, the evaluationCount is 8 which is a big improvement
-		// Note - these expected values may change if the WorkbookEvaluator is
-		// ever optimised to short circuit 'if' functions.
+		// With caching, the evaluationCount is 8 which is exactly the
+		// number of formula cells that needed to be evaluated.
 		assertEquals(8, evalCount);
-		assertEquals(24, evalListener.getCountCacheHits());
+
+		// The cache hits would be 24 if fully evaluating all arguments of the
+		// "IF()" functions (Each of the 8 formulas has 4 refs to formula cells
+		// which result in 1 cache miss and 3 cache hits). However with the
+		// short-circuit-if optimisation, 2 of the cell refs get skipped
+		// reducing this metric 8.
+		assertEquals(8, evalListener.getCountCacheHits());
+
+		// confirm the evaluation result too
+		assertEquals(ErrorEval.NA, ve);
 	}
 }

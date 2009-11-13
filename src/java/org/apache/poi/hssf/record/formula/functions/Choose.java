@@ -23,7 +23,6 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- *
  * @author Josh Micich
  */
 public final class Choose implements Function {
@@ -34,8 +33,7 @@ public final class Choose implements Function {
 		}
 
 		try {
-			ValueEval ev = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
-			int ix = OperandResolver.coerceValueToInt(ev);
+			int ix = evaluateFirstArg(args[0], srcRowIndex, srcColumnIndex);
 			if (ix < 1 || ix >= args.length) {
 				return ErrorEval.VALUE_INVALID;
 			}
@@ -43,5 +41,11 @@ public final class Choose implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
+	}
+
+	public static int evaluateFirstArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex)
+			throws EvaluationException {
+		ValueEval ev = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+		return OperandResolver.coerceValueToInt(ev);
 	}
 }
