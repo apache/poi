@@ -202,7 +202,7 @@ public final class TestFormulaParserIf extends TestCase {
 		assertEquals("Y", y.getValue());
 		assertEquals("N", n.getValue());
 		assertEquals("IF", funif.toFormulaString());
-		assertTrue("Goto ptg exists", goto1.isGoto());
+		assertTrue("tAttrSkip ptg exists", goto1.isSkip());
 	}
 	/**
 	 * Make sure the ptgs are generated properly with two functions embedded
