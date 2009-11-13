@@ -810,9 +810,9 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
-        assertEquals(false, s.isArabic());
-        s.setArabic(true);
-        assertEquals(true, s.isArabic());
+        assertEquals(false, s.isRightToLeft());
+        s.setRightToLeft(true);
+        assertEquals(true, s.isRightToLeft());
     }
 
 }
