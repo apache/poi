@@ -635,20 +635,21 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Sets the arabic property for this sheet, will make it right to left.
-     * @param value true for arabic, false otherwise.
+     * Sets whether the worksheet is displayed from right to left instead of from left to right.
+     * 
+     * @param value true for right to left, false otherwise.
      */
-    public void setArabic(boolean value)
+    public void setRightToLeft(boolean value)
     {
 	    _sheet.getWindowTwo().setArabic(value);
     }
 
     /**
-     * Gets the arabic property for this sheet.
+     * Whether the text is displayed in right-to-left mode in the window
      *
-     * @return whther the arabic mode is set
+     * @return whether the text is displayed in right-to-left mode in the window
      */
-    public boolean isArabic()
+    public boolean isRightToLeft()
     {
 	    return _sheet.getWindowTwo().getArabic();
     }
