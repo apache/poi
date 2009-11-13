@@ -22,6 +22,13 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationListener;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 /**
@@ -166,5 +173,47 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
 		assertEquals(5.33, value.getNumberValue(), 0.0);
+	}
+	private static final class EvalCountListener extends EvaluationListener {
+		private int _evalCount;
+		public EvalCountListener() {
+			_evalCount = 0;
+		}
+		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
+			_evalCount++;
+		}
+		public int getEvalCount() {
+			return _evalCount;
+		}
+	}
+
+	/**
+	 * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
+	 */
+	public void testShortCircuitIfEvaluation() {
+
+		// Set up a simple IF() formula that has measurable evaluation cost for its operands.
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cellA1 = row.createCell(0);
+		cellA1.setCellFormula("if(B1,C1,D1+E1+F1)");
+		// populate cells B1..F1 with simple formulas instead of plain values so we can use
+		// EvaluationListener to check which parts of the first formula get evaluated
+		for (int i=1; i<6; i++) {
+			// formulas are just literal constants "1".."5"
+			row.createCell(i).setCellFormula(String.valueOf(i));
+		}
+
+		EvalCountListener evalListener = new EvalCountListener();
+		WorkbookEvaluator evaluator = WorkbookEvaluatorTestHelper.createEvaluator(wb, evalListener);
+		ValueEval ve = evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cellA1));
+		int evalCount = evalListener.getEvalCount();
+		if (evalCount == 6) {
+			// Without short-circuit-if evaluation, evaluating cell 'A1' takes 3 extra evaluations (for D1,E1,F1)
+			throw new AssertionFailedError("Identifed bug 48195 - Formula evaluator should short-circuit IF() calculations.");
+		}
+		assertEquals(3, evalCount);
+		assertEquals(2.0, ((NumberEval)ve).getNumberValue(), 0D);
 	}
 }

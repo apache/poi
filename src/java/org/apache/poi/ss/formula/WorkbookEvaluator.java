@@ -52,6 +52,7 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
@@ -60,7 +61,9 @@ import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.Choose;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.apache.poi.hssf.record.formula.functions.If;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
@@ -228,7 +231,7 @@ public final class WorkbookEvaluator {
 	private ValueEval evaluateAny(EvaluationCell srcCell, int sheetIndex,
 				int rowIndex, int columnIndex, EvaluationTracker tracker) {
 
-		// avoid tracking dependencies for cells that have constant definition
+		// avoid tracking dependencies to cells that have constant definition
 		boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null ? true
 					: !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
 		if (srcCell == null || srcCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
@@ -344,6 +347,66 @@ public final class WorkbookEvaluator {
 					byte nArgs = 1;  // tAttrSum always has 1 parameter
 					ptg = new FuncVarPtg("SUM", nArgs);
 				}
+				if (attrPtg.isOptimizedChoose()) {
+					ValueEval arg0 = stack.pop();
+					int[] jumpTable = attrPtg.getJumpTable();
+					int dist;
+					int nChoices = jumpTable.length;
+					try {
+						int switchIndex = Choose.evaluateFirstArg(arg0, ec.getRowIndex(), ec.getColumnIndex());
+						if (switchIndex<1 || switchIndex > nChoices) {
+							stack.push(ErrorEval.VALUE_INVALID);
+							dist = attrPtg.getChooseFuncOffset() + 4; // +4 for tFuncFar(CHOOSE)
+						} else {
+							dist = jumpTable[switchIndex-1];
+						}
+					} catch (EvaluationException e) {
+						stack.push(e.getErrorEval());
+						dist = attrPtg.getChooseFuncOffset() + 4; // +4 for tFuncFar(CHOOSE)
+					}
+					// Encoded dist for tAttrChoose includes size of jump table, but
+					// countTokensToBeSkipped() does not (it counts whole tokens).
+					dist -= nChoices*2+2; // subtract jump table size
+					i+= countTokensToBeSkipped(ptgs, i, dist);
+					continue;
+				}
+				if (attrPtg.isOptimizedIf()) {
+					ValueEval arg0 = stack.pop();
+					boolean evaluatedPredicate;
+					try {
+						evaluatedPredicate = If.evaluateFirstArg(arg0, ec.getRowIndex(), ec.getColumnIndex());
+					} catch (EvaluationException e) {
+						stack.push(e.getErrorEval());
+						int dist = attrPtg.getData();
+						i+= countTokensToBeSkipped(ptgs, i, dist);
+						attrPtg = (AttrPtg) ptgs[i];
+						dist = attrPtg.getData()+1;
+						i+= countTokensToBeSkipped(ptgs, i, dist);
+						continue;
+					}
+					if (evaluatedPredicate) {
+						// nothing to skip - true param folows
+					} else {
+						int dist = attrPtg.getData();
+						i+= countTokensToBeSkipped(ptgs, i, dist);
+						Ptg nextPtg = ptgs[i+1];
+						if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg) {
+							// this is an if statement without a false param (as opposed to MissingArgPtg as the false param)
+							i++;
+							stack.push(BoolEval.FALSE);
+						}
+					}
+					continue;
+				}
+				if (attrPtg.isSkip()) {
+					int dist = attrPtg.getData()+1;
+					i+= countTokensToBeSkipped(ptgs, i, dist);
+					if (stack.peek() == MissingArgEval.instance) {
+						stack.pop();
+						stack.push(BlankEval.INSTANCE);
+					}
+					continue;
+				}
 			}
 			if (ptg instanceof ControlPtg) {
 				// skip Parentheses, Attr, etc
@@ -402,6 +465,27 @@ public final class WorkbookEvaluator {
 		return value;
 	}
 
+	/**
+	 * Calculates the number of tokens that the evaluator should skip upon reaching a tAttrSkip.
+	 *
+	 * @return the number of tokens (starting from <tt>startIndex+1</tt>) that need to be skipped
+	 * to achieve the specified <tt>distInBytes</tt> skip distance.
+	 */
+	private static int countTokensToBeSkipped(Ptg[] ptgs, int startIndex, int distInBytes) {
+		int remBytes = distInBytes;
+		int index = startIndex;
+		while (remBytes != 0) {
+			index++;
+			remBytes -= ptgs[index].getSize();
+			if (remBytes < 0) {
+				throw new RuntimeException("Bad skip distance (wrong token size calculation).");
+			}
+			if (index >= ptgs.length) {
+				throw new RuntimeException("Skip distance too far (ran out of formula tokens).");
+			}
+		}
+		return index-startIndex;
+	}
 	/**
 	 * Dereferences a single value from any AreaEval or RefEval evaluation result.
 	 * If the supplied evaluationResult is just a plain value, it is returned as-is.
