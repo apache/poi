@@ -65,7 +65,7 @@ public class FormulaRenderer {
             }
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = ((AttrPtg) ptg);
-                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
+                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isSkip()) {
                     continue;
                 }
                 if (attrPtg.isSpace()) {

@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
  * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
  * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped
  * <tt>Ptg</tt> is non-atomic.
- * 
+ *
  * @author Josh Micich
  */
 final class ParseNode {
@@ -103,58 +103,49 @@ final class ParseNode {
 	/**
 	 * The IF() function gets marked up with two or three tAttr tokens.
 	 * Similar logic will be required for CHOOSE() when it is supported
-	 * 
+	 *
 	 * See excelfileformat.pdf sec 3.10.5 "tAttr (19H)
 	 */
 	private void collectIfPtgs(TokenCollector temp) {
 
 		// condition goes first
 		getChildren()[0].collectPtgs(temp);
-		
+
 		// placeholder for tAttrIf
 		int ifAttrIndex = temp.createPlaceholder();
-		
+
 		// true parameter
 		getChildren()[1].collectPtgs(temp);
-		
+
 		// placeholder for first skip attr
 		int skipAfterTrueParamIndex = temp.createPlaceholder();
 		int trueParamSize = temp.sumTokenSizes(ifAttrIndex+1, skipAfterTrueParamIndex);
 
-		AttrPtg attrIf = new AttrPtg();
-		attrIf.setOptimizedIf(true);
-		AttrPtg attrSkipAfterTrue = new AttrPtg();
-		attrSkipAfterTrue.setGoto(true);
-		
+		AttrPtg attrIf = AttrPtg.createIf(trueParamSize + 4); // distance to start of false parameter/tFuncVar. +4 for tAttrSkip after true
+
 		if (getChildren().length > 2) {
 			// false param present
-			
+
 			// false parameter
 			getChildren()[2].collectPtgs(temp);
-			
+
 			int skipAfterFalseParamIndex = temp.createPlaceholder();
 
-			AttrPtg attrSkipAfterFalse = new AttrPtg();
-			attrSkipAfterFalse.setGoto(true);
-
 			int falseParamSize =  temp.sumTokenSizes(skipAfterTrueParamIndex+1, skipAfterFalseParamIndex);
-			
-			attrIf.setData((short)(trueParamSize + 4)); // distance to start of false parameter. +4 for skip after true
-			attrSkipAfterTrue.setData((short)(falseParamSize + 4 + 4 - 1)); // 1 less than distance to end of if FuncVar(size=4). +4 for attr skip before 
-			attrSkipAfterFalse.setData((short)(4 - 1)); // 1 less than distance to end of if FuncVar(size=4). 
+
+			AttrPtg attrSkipAfterTrue = AttrPtg.createSkip(falseParamSize + 4 + 4 - 1); // 1 less than distance to end of if FuncVar(size=4). +4 for attr skip before
+			AttrPtg attrSkipAfterFalse = AttrPtg.createSkip(4 - 1); // 1 less than distance to end of if FuncVar(size=4).
 
 			temp.setPlaceholder(ifAttrIndex, attrIf);
 			temp.setPlaceholder(skipAfterTrueParamIndex, attrSkipAfterTrue);
 			temp.setPlaceholder(skipAfterFalseParamIndex, attrSkipAfterFalse);
 		} else {
 			// false parameter not present
-			attrIf.setData((short)(trueParamSize + 4)); // distance to start of FuncVar. +4 for skip after true
-			attrSkipAfterTrue.setData((short)(4 - 1)); // 1 less than distance to end of if FuncVar(size=4). 
-			
+			AttrPtg attrSkipAfterTrue = AttrPtg.createSkip(4 - 1); // 1 less than distance to end of if FuncVar(size=4).
+
 			temp.setPlaceholder(ifAttrIndex, attrIf);
 			temp.setPlaceholder(skipAfterTrueParamIndex, attrSkipAfterTrue);
 		}
-		
 		temp.add(_token);
 	}
 

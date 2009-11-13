@@ -33,8 +33,8 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class AttrPtg extends ControlPtg {
     public final static byte sid  = 0x19;
     private final static int  SIZE = 4;
-    private byte              field_1_options;
-    private short             field_2_data;
+    private final byte _options;
+    private final short _data;
 
     /** only used for tAttrChoose: table of offsets to starts of args */
     private final int[] _jumpTable;
@@ -46,8 +46,8 @@ public final class AttrPtg extends ControlPtg {
     private static final BitField semiVolatile = BitFieldFactory.getInstance(0x01);
     private static final BitField optiIf       = BitFieldFactory.getInstance(0x02);
     private static final BitField optiChoose   = BitFieldFactory.getInstance(0x04);
-    private static final BitField optGoto      = BitFieldFactory.getInstance(0x08); // skip
-    private static final BitField sum          = BitFieldFactory.getInstance(0x10);
+    private static final BitField optiSkip     = BitFieldFactory.getInstance(0x08);
+    private static final BitField optiSum      = BitFieldFactory.getInstance(0x10);
     private static final BitField baxcel       = BitFieldFactory.getInstance(0x20); // 'assignment-style formula in a macro sheet'
     private static final BitField space        = BitFieldFactory.getInstance(0x40);
 
@@ -74,16 +74,11 @@ public final class AttrPtg extends ControlPtg {
         public static final int SPACE_AFTER_EQUALITY = 0x06;
     }
 
-    public AttrPtg() {
-        _jumpTable = null;
-        _chooseFuncOffset = -1;
-    }
-
     public AttrPtg(LittleEndianInput in) {
-        field_1_options = in.readByte();
-        field_2_data    = in.readShort();
+        _options = in.readByte();
+        _data    = in.readShort();
         if (isOptimizedChoose()) {
-            int nCases = field_2_data;
+            int nCases = _data;
             int[] jumpTable = new int[nCases];
             for (int i = 0; i < jumpTable.length; i++) {
                 jumpTable[i] = in.readUShort();
@@ -97,8 +92,8 @@ public final class AttrPtg extends ControlPtg {
 
     }
     private AttrPtg(int options, int data, int[] jt, int chooseFuncOffset) {
-        field_1_options = (byte) options;
-        field_2_data = (short) data;
+        _options = (byte) options;
+        _data = (short) data;
         _jumpTable = jt;
         _chooseFuncOffset = chooseFuncOffset;
     }
@@ -112,60 +107,65 @@ public final class AttrPtg extends ControlPtg {
         return new AttrPtg(space.set(0), data, null, -1);
     }
 
+    /**
+     * @param dist distance (in bytes) to start of either <ul><li>false parameter</li>
+     * <li>tFuncVar(IF) token (when false parameter is not present)</li></ul>
+     */
+    public static AttrPtg createIf(int dist) {
+        return new AttrPtg(optiIf.set(0), dist, null, -1);
+    }
+
+    /**
+     * @param dist distance (in bytes) to position behind tFuncVar(IF) token (minus 1)
+     */
+    public static AttrPtg createSkip(int dist) {
+        return new AttrPtg(optiSkip.set(0), dist, null, -1);
+    }
+
     public static AttrPtg getSumSingle() {
-        return new AttrPtg(sum.set(0), 0, null, -1);
+        return new AttrPtg(optiSum.set(0), 0, null, -1);
     }
 
 
     public boolean isSemiVolatile() {
-        return semiVolatile.isSet(field_1_options);
+        return semiVolatile.isSet(_options);
     }
 
     public boolean isOptimizedIf() {
-        return optiIf.isSet(field_1_options);
+        return optiIf.isSet(_options);
     }
 
     public boolean isOptimizedChoose() {
-        return optiChoose.isSet(field_1_options);
-    }
-
-    // lets hope no one uses this anymore
-    public boolean isGoto() {
-        return optGoto.isSet(field_1_options);
+        return optiChoose.isSet(_options);
     }
 
     public boolean isSum() {
-        return sum.isSet(field_1_options);
+        return optiSum.isSet(_options);
     }
-
-    public void setOptimizedIf(boolean bif) {
-        field_1_options=optiIf.setByteBoolean(field_1_options,bif);
-    }
-
-    /**
-     * Flags this ptg as a goto/jump
-     * @param isGoto
-     */
-    public void setGoto(boolean isGoto) {
-        field_1_options=optGoto.setByteBoolean(field_1_options, isGoto);
+    public boolean isSkip() {
+        return optiSkip.isSet(_options);
     }
 
     // lets hope no one uses this anymore
     private boolean isBaxcel() {
-        return baxcel.isSet(field_1_options);
+        return baxcel.isSet(_options);
     }
 
-    // biff3&4 only  shouldn't happen anymore
     public boolean isSpace() {
-        return space.isSet(field_1_options);
-    }
-
-    public void setData(short data) {
-        field_2_data = data;
+        return space.isSet(_options);
     }
 
     public short getData() {
-        return field_2_data;
+        return _data;
+    }
+    public int[] getJumpTable() {
+        return _jumpTable.clone();
+    }
+    public int getChooseFuncOffset() {
+        if (_jumpTable == null) {
+            throw new IllegalStateException("Not tAttrChoose");
+        }
+        return _chooseFuncOffset;
     }
 
     public String toString() {
@@ -176,16 +176,16 @@ public final class AttrPtg extends ControlPtg {
             sb.append("volatile ");
         }
         if(isSpace()) {
-            sb.append("space count=").append((field_2_data >> 8) & 0x00FF);
-            sb.append(" type=").append(field_2_data & 0x00FF).append(" ");
+            sb.append("space count=").append((_data >> 8) & 0x00FF);
+            sb.append(" type=").append(_data & 0x00FF).append(" ");
         }
         // the rest seem to be mutually exclusive
         if(isOptimizedIf()) {
-            sb.append("if dist=").append(getData());
+            sb.append("if dist=").append(_data);
         } else if(isOptimizedChoose()) {
-            sb.append("choose nCases=").append(getData());
-        } else if(isGoto()) {
-            sb.append("skip dist=").append(getData());
+            sb.append("choose nCases=").append(_data);
+        } else if(isSkip()) {
+            sb.append("skip dist=").append(_data);
         } else if(isSum()) {
             sb.append("sum ");
         } else if(isBaxcel()) {
@@ -197,8 +197,8 @@ public final class AttrPtg extends ControlPtg {
 
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
-        out.writeByte(field_1_options);
-        out.writeShort(field_2_data);
+        out.writeByte(_options);
+        out.writeShort(_data);
         int[] jt = _jumpTable;
         if (jt != null) {
             for (int i = 0; i < jt.length; i++) {
@@ -216,11 +216,11 @@ public final class AttrPtg extends ControlPtg {
     }
 
     public String toFormulaString(String[] operands) {
-        if(space.isSet(field_1_options)) {
+        if(space.isSet(_options)) {
             return operands[ 0 ];
-        } else if (optiIf.isSet(field_1_options)) {
+        } else if (optiIf.isSet(_options)) {
             return toFormulaString() + "(" + operands[0] + ")";
-        } else if (optGoto.isSet(field_1_options)) {
+        } else if (optiSkip.isSet(_options)) {
             return toFormulaString() + operands[0];   //goto isn't a real formula element should not show up
         } else {
             return toFormulaString() + "(" + operands[0] + ")";
@@ -237,25 +237,25 @@ public final class AttrPtg extends ControlPtg {
     }
 
    public String toFormulaString() {
-      if(semiVolatile.isSet(field_1_options)) {
+      if(semiVolatile.isSet(_options)) {
         return "ATTR(semiVolatile)";
       }
-      if(optiIf.isSet(field_1_options)) {
+      if(optiIf.isSet(_options)) {
         return "IF";
       }
-      if( optiChoose.isSet(field_1_options)) {
+      if( optiChoose.isSet(_options)) {
         return "CHOOSE";
       }
-      if(optGoto.isSet(field_1_options)) {
+      if(optiSkip.isSet(_options)) {
         return "";
       }
-      if(sum.isSet(field_1_options)) {
+      if(optiSum.isSet(_options)) {
         return "SUM";
       }
-      if(baxcel.isSet(field_1_options)) {
+      if(baxcel.isSet(_options)) {
         return "ATTR(baxcel)";
       }
-      if(space.isSet(field_1_options)) {
+      if(space.isSet(_options)) {
         return "";
       }
       return "UNKNOWN ATTRIBUTE";
@@ -268,6 +268,6 @@ public final class AttrPtg extends ControlPtg {
         } else {
             jt = _jumpTable.clone();
         }
-        return new AttrPtg(field_1_options, field_2_data, jt, _chooseFuncOffset);
+        return new AttrPtg(_options, _data, jt, _chooseFuncOffset);
     }
 }
