@@ -37,45 +37,55 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     /** All external functions have function index 255 */
     private static final short FUNCTION_INDEX_EXTERNAL = 255;
 
-    protected byte returnClass;
-    protected byte[] paramClass;
+    private final byte returnClass;
+    private final byte[] paramClass;
 
-    protected byte field_1_num_args;
-    protected short field_2_fnc_index;
+    private final byte _numberOfArgs;
+    private final short _functionIndex;
 
-    public final boolean isBaseToken() {
-    	return false;
+    protected AbstractFunctionPtg(int functionIndex, int pReturnClass, byte[] paramTypes, int nParams) {
+        _numberOfArgs = (byte) nParams;
+        _functionIndex = (short) functionIndex;
+        returnClass = (byte) pReturnClass;
+        paramClass = paramTypes;
     }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+    public final boolean isBaseToken() {
+        return false;
+    }
+
+    public final String toString() {
+        StringBuilder sb = new StringBuilder(64);
         sb.append(getClass().getName()).append(" [");
-        sb.append(field_2_fnc_index).append(" ").append(field_1_num_args);
+        sb.append(lookupName(_functionIndex));
+        sb.append(" nArgs=").append(_numberOfArgs);
         sb.append("]");
         return sb.toString();
     }
 
-    public short getFunctionIndex() {
-        return field_2_fnc_index;
+    public final short getFunctionIndex() {
+        return _functionIndex;
+    }
+    public final int getNumberOfOperands() {
+        return _numberOfArgs;
     }
 
-    public String getName() {
-        return lookupName(field_2_fnc_index);
+    public final String getName() {
+        return lookupName(_functionIndex);
     }
     /**
      * external functions get some special processing
      * @return <code>true</code> if this is an external function
      */
-    public boolean isExternalFunction() {
-        return field_2_fnc_index == FUNCTION_INDEX_EXTERNAL;
+    public final boolean isExternalFunction() {
+        return _functionIndex == FUNCTION_INDEX_EXTERNAL;
     }
 
-    public String toFormulaString() {
+    public final String toFormulaString() {
         return getName();
     }
 
     public String toFormulaString(String[] operands) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         if(isExternalFunction()) {
             buf.append(operands[0]); // first operand is actually the function name
@@ -87,7 +97,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return buf.toString();
     }
 
-    private static void appendArgs(StringBuffer buf, int firstArgIx, String[] operands) {
+    private static void appendArgs(StringBuilder buf, int firstArgIx, String[] operands) {
         buf.append('(');
         for (int i=firstArgIx;i<operands.length;i++) {
             if (i>firstArgIx) {
@@ -113,7 +123,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return ix >= 0;
     }
 
-    protected String lookupName(short index) {
+    protected final String lookupName(short index) {
         if(index == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
             return "#external#";
         }
@@ -142,10 +152,10 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return returnClass;
     }
 
-    public byte getParameterClass(int index) {
+    public final byte getParameterClass(int index) {
         if (index >= paramClass.length) {
             // For var-arg (and other?) functions, the metadata does not list all the parameter
-            // operand classes.  In these cases, all extra parameters are assumed to have the 
+            // operand classes.  In these cases, all extra parameters are assumed to have the
             // same operand class as the last one specified.
             return paramClass[paramClass.length - 1];
         }

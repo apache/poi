@@ -970,7 +970,7 @@ public final class FormulaParser {
 			ParseNode[] allArgs = new ParseNode[numArgs+1];
 			allArgs[0] = new ParseNode(namePtg);
 			System.arraycopy(args, 0, allArgs, 1, numArgs);
-			return new ParseNode(new FuncVarPtg(name, (byte)(numArgs+1)), allArgs);
+			return new ParseNode(FuncVarPtg.create(name, numArgs+1), allArgs);
 		}
 
 		if (namePtg != null) {
@@ -988,9 +988,9 @@ public final class FormulaParser {
 
 		AbstractFunctionPtg retval;
 		if(isVarArgs) {
-			retval = new FuncVarPtg(name, (byte)numArgs);
+			retval = FuncVarPtg.create(name, numArgs);
 		} else {
-			retval = new FuncPtg(funcIx);
+			retval = FuncPtg.create(funcIx);
 		}
 		return new ParseNode(retval, args);
 	}
@@ -1013,7 +1013,7 @@ public final class FormulaParser {
 				maxArgs = _book.getSpreadsheetVersion().getMaxFunctionArgs();
 			} else {
 				//_book can be omitted by test cases
-				maxArgs = fm.getMaxParams(); // just use BIFF8 
+				maxArgs = fm.getMaxParams(); // just use BIFF8
 			}
 		} else {
 			maxArgs = fm.getMaxParams();
