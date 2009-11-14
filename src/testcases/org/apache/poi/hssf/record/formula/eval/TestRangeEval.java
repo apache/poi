@@ -186,7 +186,7 @@ public final class TestRangeEval extends TestCase {
 				new RefPtg("C1"),
 				new IntPtg(0),
 				new RefPtg("B1"),
-				new FuncVarPtg("OFFSET", (byte)3),
+				FuncVarPtg.create("OFFSET", (byte)3),
 				RangePtg.instance,
 				AttrPtg.SUM,
 			};

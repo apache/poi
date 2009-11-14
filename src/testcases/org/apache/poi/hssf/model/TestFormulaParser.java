@@ -419,7 +419,7 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook book = new HSSFWorkbook();
 
 		Ptg[] ptgs = {
-				new FuncPtg(10),
+				FuncPtg.create(10),
 		};
 		assertEquals("NA()", HSSFFormulaParser.toFormulaString(book, ptgs));
 	}

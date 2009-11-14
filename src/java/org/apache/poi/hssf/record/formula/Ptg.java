@@ -102,8 +102,8 @@ public abstract class Ptg implements Cloneable {
 
 		switch (baseId) {
 			case ArrayPtg.sid:    return new ArrayPtg(in);    // 0x20, 0x40, 0x60
-			case FuncPtg.sid:     return new FuncPtg(in);     // 0x21, 0x41, 0x61
-			case FuncVarPtg.sid:  return new FuncVarPtg(in);  // 0x22, 0x42, 0x62
+			case FuncPtg.sid:     return FuncPtg.create(in);  // 0x21, 0x41, 0x61
+			case FuncVarPtg.sid:  return FuncVarPtg.create(in);//0x22, 0x42, 0x62
 			case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
 			case RefPtg.sid:      return new RefPtg(in);      // 0x24, 0x44, 0x64
 			case AreaPtg.sid:     return new AreaPtg(in);     // 0x25, 0x45, 0x65

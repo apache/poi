@@ -344,8 +344,7 @@ public final class WorkbookEvaluator {
 				if (attrPtg.isSum()) {
 					// Excel prefers to encode 'SUM()' as a tAttr token, but this evaluator
 					// expects the equivalent function token
-					byte nArgs = 1;  // tAttrSum always has 1 parameter
-					ptg = new FuncVarPtg("SUM", nArgs);
+					ptg = FuncVarPtg.SUM;
 				}
 				if (attrPtg.isOptimizedChoose()) {
 					ValueEval arg0 = stack.pop();

@@ -34,15 +34,15 @@ public final class TestFuncPtg extends TestCase {
             0,
         };
 
-        FuncPtg ptg = new FuncPtg(TestcaseRecordInputStream.createLittleEndian(fakeData) );
+        FuncPtg ptg = FuncPtg.create(TestcaseRecordInputStream.createLittleEndian(fakeData) );
         assertEquals( "Len formula index is not 32(20H)", 0x20, ptg.getFunctionIndex() );
         assertEquals( "Number of operands in the len formula", 1, ptg.getNumberOfOperands() );
         assertEquals( "Function Name", "LEN", ptg.getName() );
         assertEquals( "Ptg Size", 3, ptg.getSize() );
     }
-    
+
     public void testClone() {
-        FuncPtg funcPtg = new FuncPtg(27); // ROUND() - takes 2 args
+        FuncPtg funcPtg = FuncPtg.create(27); // ROUND() - takes 2 args
 
         FuncPtg clone = (FuncPtg) funcPtg.clone();
         if (clone.getNumberOfOperands() == 0) {
@@ -52,5 +52,3 @@ public final class TestFuncPtg extends TestCase {
         assertEquals("ROUND", clone.getName());
     }
 }
-
-
