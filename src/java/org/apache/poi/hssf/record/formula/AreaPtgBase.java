@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author  andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public abstract class AreaPtgBase extends OperandPtg implements AreaI {
+public abstract class AreaPtgBase<Z extends AreaPtgBase<Z>> extends OperandPtg<Z> implements AreaI {
 	/**
 	 * TODO - (May-2008) fix subclasses of AreaPtg 'AreaN~' which are used in shared formulas.
 	 * see similar comment in ReferencePtg
@@ -93,17 +93,6 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 			setLastColumn(firstColumn);
 			setFirstColRelative(lastColRelative);
 			setLastColRelative(firstColRelative);
-		}
-	}
-
-	private static void $checkColumnBounds(int colIx) {
-		if((colIx & 0x0FF) != colIx) {
-			throw new IllegalArgumentException("colIx (" + colIx + ") is out of range");
-		}
-	}
-	private static void $checkRowBounds(int rowIx) {
-		if((rowIx & 0x0FFFF) != rowIx) {
-			throw new IllegalArgumentException("rowIx (" + rowIx + ") is out of range");
 		}
 	}
 

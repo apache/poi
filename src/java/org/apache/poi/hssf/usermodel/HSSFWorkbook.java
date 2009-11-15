@@ -676,16 +676,16 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             Ptg[] ptgs = origNameRecord.getNameDefinition();
             for (int i=0; i< ptgs.length; i++) {
                 Ptg ptg = ptgs[i];
-                ptg = ptg.copy();
 
                 if (ptg instanceof Area3DPtg) {
-                    Area3DPtg a3p = (Area3DPtg) ptg;
+                    Area3DPtg a3p = ((Area3DPtg) ptg).copy();
                     a3p.setExternSheetIndex(newExtSheetIx);
+                    ptgs[i] = a3p;
                 } else if (ptg instanceof Ref3DPtg) {
-                    Ref3DPtg r3p = (Ref3DPtg) ptg;
+                    Ref3DPtg r3p = ((Ref3DPtg) ptg).copy();
                     r3p.setExternSheetIndex(newExtSheetIx);
+                    ptgs[i] = r3p;
                 }
-                ptgs[i] = ptg;
             }
             NameRecord newNameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_FILTER_DB, newSheetIndex+1);
             newNameRecord.setNameDefinition(ptgs);

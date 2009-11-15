@@ -40,7 +40,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author avik
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public abstract class Ptg implements Cloneable {
+public abstract class Ptg {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
 
 
@@ -158,28 +158,7 @@ public abstract class Ptg implements Cloneable {
 		}
 		throw new RuntimeException("Unexpected base token id (" + id + ")");
 	}
-	/**
-	 * @return a distinct copy of this <tt>Ptg</tt> if the class is mutable, or the same instance
-	 * if the class is immutable.
-	 */
-	public final Ptg copy() {
-		// TODO - all base tokens are logically immutable, but AttrPtg needs some clean-up
-		if (this instanceof ValueOperatorPtg) {
-			return this;
-		}
-		if (this instanceof ScalarConstantPtg) {
-			return this;
-		}
-		return (Ptg) clone();
-	}
 
-	protected Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	private static Ptg[] toPtgArray(List<Ptg> l) {
 		if (l.isEmpty()) {
 			return EMPTY_PTG_ARRAY;

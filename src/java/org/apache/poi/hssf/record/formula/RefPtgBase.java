@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver@apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public abstract class RefPtgBase extends OperandPtg {
+public abstract class RefPtgBase<Z extends RefPtgBase<Z>> extends OperandPtg<Z> {
 
 	/** The row index - zero based unsigned 16 bit value */
 	private int field_1_row;

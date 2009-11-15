@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.hssf.record.formula.OperandPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.BitField;
@@ -74,13 +75,14 @@ public final class TextObjectRecord extends ContinuableRecord {
 	 */
 	private int _unknownPreFormulaInt;
 	/** expect tRef, tRef3D, tArea, tArea3D or tName */
-	private Ptg _linkRefPtg;
+	private OperandPtg<?> _linkRefPtg;
 	/**
 	 * Not clear if needed .  Excel seems to be OK if this byte is not present.
 	 * Value is often the same as the earlier firstColumn byte. */
 	private Byte _unknownPostFormulaByte;
 
 	public TextObjectRecord() {
+		//
 	}
 
 	public TextObjectRecord(RecordInputStream in) {
@@ -106,7 +108,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 				throw new RecordFormatException("Read " + ptgs.length
 						+ " tokens but expected exactly 1");
 			}
-			_linkRefPtg = ptgs[0];
+			_linkRefPtg = (OperandPtg<?>) ptgs[0];
 			if (in.remaining() > 0) {
 				_unknownPostFormulaByte = Byte.valueOf(in.readByte());
 			} else {

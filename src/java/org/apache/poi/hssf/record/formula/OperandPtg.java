@@ -21,12 +21,21 @@ package org.apache.poi.hssf.record.formula;
 /**
  * @author Josh Micich
  */
-public abstract class OperandPtg extends Ptg {
+public abstract class OperandPtg<Y extends OperandPtg<Y>> extends Ptg implements Cloneable {
 
 	/**
-	 * All Operand <tt>Ptg</tt>s are classifed ('relative', 'value', 'array')  
+	 * All Operand {@link Ptg}s are classified ('relative', 'value', 'array')
 	 */
 	public final boolean isBaseToken() {
 		return false;
+	}
+	public final Y copy() {
+		try {
+			@SuppressWarnings("unchecked")
+			Y result = (Y) clone();
+			return result;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
