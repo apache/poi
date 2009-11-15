@@ -18,9 +18,8 @@
 package org.apache.poi.util;
 
 /**
- * Adapts a plain byte array to {@link LittleEndianInput} 
- * 
- * 
+ * Adapts a plain byte array to {@link LittleEndianInput}
+ *
  * @author Josh Micich
  */
 public final class LittleEndianByteArrayInputStream implements LittleEndianInput {
@@ -60,7 +59,7 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	public int readInt() {
 		checkPosition(4);
 		int i = _readIndex;
-		
+
 		int b0 = _buf[i++] & 0xFF;
 		int b1 = _buf[i++] & 0xFF;
 		int b2 = _buf[i++] & 0xFF;
@@ -71,7 +70,7 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	public long readLong() {
 		checkPosition(8);
 		int i = _readIndex;
-		
+
 		int b0 = _buf[i++] & 0xFF;
 		int b1 = _buf[i++] & 0xFF;
 		int b2 = _buf[i++] & 0xFF;
@@ -100,7 +99,7 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	public int readUShort() {
 		checkPosition(2);
 		int i = _readIndex;
-		
+
 		int b0 = _buf[i++] & 0xFF;
 		int b1 = _buf[i++] & 0xFF;
 		_readIndex = i;
@@ -108,7 +107,7 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	}
 	public void readFully(byte[] buf, int off, int len) {
 		checkPosition(len);
-		System.arraycopy(_buf, _readIndex, _buf, off, len);
+		System.arraycopy(_buf, _readIndex, buf, off, len);
 		_readIndex+=len;
 	}
 	public void readFully(byte[] buf) {
