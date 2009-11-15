@@ -19,7 +19,9 @@ package org.apache.poi.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
@@ -49,5 +51,30 @@ public final class TestLittleEndianStreams extends TestCase {
 		assertEquals(200, lei.readUByte());
 		assertEquals(1234567890123456789L, lei.readLong());
 		assertEquals(123.456, lei.readDouble(), 0.0);
+	}
+
+	/**
+	 * Up until svn r836101 {@link LittleEndianByteArrayInputStream#readFully(byte[], int, int)}
+	 * had an error which resulted in the data being read and written back to the source byte
+	 * array.
+	 */
+	public void testReadFully() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77 66 55 44 33");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
+
+		// do initial read to increment the read index beyond zero
+		assertEquals(0x8899, lei.readUShort());
+
+		byte[] actBuf = new byte[4];
+		lei.readFully(actBuf);
+
+		if (actBuf[0] == 0x00 && srcBuf[0] == 0x77 && srcBuf[3] == 0x44) {
+			throw new AssertionFailedError("Identified bug in readFully() - source buffer was modified");
+		}
+
+		byte[] expBuf = HexRead.readFromString("77 66 55 44");
+		assertTrue(Arrays.equals(actBuf, expBuf));
+		assertEquals(0x33, lei.readUByte());
+		assertEquals(0, lei.available());
 	}
 }
