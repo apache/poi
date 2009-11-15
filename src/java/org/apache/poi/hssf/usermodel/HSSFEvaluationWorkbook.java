@@ -127,7 +127,14 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 			// re-parsing the formula text also works, but is a waste of time
 			// It is useful from time to time to run all unit tests with this code
 			// to make sure that all formulas POI can evaluate can also be parsed.
-			return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
+			try {
+				return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
+			} catch (RuntimeException e) {
+				// Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
+				// IntesectionPtg.  However it is still not capable of parsing it.
+				// So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
+				System.err.println(e.getMessage());
+			}
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
 		return fra.getFormulaTokens();
