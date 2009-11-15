@@ -49,14 +49,16 @@ public final class TestArrayPtg extends TestCase {
 		2, 2, 0, 0, 70, 71, // "FG"
 	};
 
+	private static ArrayPtg create(byte[] initialData, byte[] constantData) {
+		ArrayPtg.Initial ptgInit = new ArrayPtg.Initial(TestcaseRecordInputStream.createLittleEndian(initialData));
+		return ptgInit.finishReading(TestcaseRecordInputStream.createLittleEndian(constantData));
+	}
+
 	/**
-	 * Lots of problems with ArrayPtg's encoding of
+	 * Lots of problems with ArrayPtg's decoding and encoding of the element value data
 	 */
 	public void testReadWriteTokenValueBytes() {
-
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
-
-		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
+		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 		Object[][] values = ptg.getTokenArrayValues();
@@ -78,12 +80,12 @@ public final class TestArrayPtg extends TestCase {
 		assertTrue(Arrays.equals(ENCODED_CONSTANT_DATA, outBuf));
 	}
 
+
 	/**
 	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
 	public void testElementOrdering() {
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
-		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
+		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
 		assertEquals(2, ptg.getRowCount());
 
@@ -113,10 +115,7 @@ public final class TestArrayPtg extends TestCase {
 	}
 
 	public void testToFormulaString() {
-		ArrayPtg ptg = new ArrayPtg(TestcaseRecordInputStream.createLittleEndian(ENCODED_PTG_DATA));
-
-		ptg.readTokenValues(TestcaseRecordInputStream.createLittleEndian(ENCODED_CONSTANT_DATA));
-
+		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		String actualFormula;
 		try {
 			actualFormula = ptg.toFormulaString();
@@ -139,9 +138,7 @@ public final class TestArrayPtg extends TestCase {
 	}
 
 	private static void confirmOperandClassDecoding(byte operandClass) {
-		byte[] fullData = new byte[ENCODED_PTG_DATA.length + ENCODED_CONSTANT_DATA.length];
-		System.arraycopy(ENCODED_PTG_DATA, 0, fullData, 0, ENCODED_PTG_DATA.length);
-		System.arraycopy(ENCODED_CONSTANT_DATA, 0, fullData, ENCODED_PTG_DATA.length, ENCODED_CONSTANT_DATA.length);
+		byte[] fullData = concat(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 
 		// Force encoded operand class for tArray
 		fullData[0] = (byte) (ArrayPtg.sid + operandClass);
@@ -152,5 +149,12 @@ public final class TestArrayPtg extends TestCase {
 		assertEquals(1, ptgs.length);
 		ArrayPtg aPtg = (ArrayPtg) ptgs[0];
 		assertEquals(operandClass, aPtg.getPtgClass());
+	}
+
+	private static byte[] concat(byte[] a, byte[] b) {
+		byte[] result = new byte[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
+		return result;
 	}
 }
