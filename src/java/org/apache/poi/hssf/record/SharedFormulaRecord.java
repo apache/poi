@@ -64,7 +64,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         out.writeShort(field_5_reserved);
         field_7_parsed_expr.serialize(out);
     }
-    
+
     protected int getExtraDataSize() {
         return 2 + field_7_parsed_expr.getEncodedSize();
     }
@@ -98,8 +98,8 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
 
     /**
      * Creates a non shared formula from the shared formula counterpart<br/>
-     * 
-     * Perhaps this functionality could be implemented in terms of the raw 
+     *
+     * Perhaps this functionality could be implemented in terms of the raw
      * byte array inside {@link Formula}.
      */
     public static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
@@ -113,14 +113,15 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
                 originalOperandClass = ptg.getPtgClass();
             }
             if (ptg instanceof RefPtgBase) {
-              RefPtgBase refNPtg = (RefPtgBase)ptg;
-              ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
+                RefPtgBase refNPtg = (RefPtgBase)ptg;
+                ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
                                      fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
+                ptg.setClass(originalOperandClass);
             } else if (ptg instanceof AreaPtgBase) {
-              AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
-              ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
+                AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
+                ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
                                 fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
                                 fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
                                 fixupRelativeColumn(formulaColumn,areaNPtg.getLastColumn(),areaNPtg.isLastColRelative()),
@@ -128,15 +129,13 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
                                 areaNPtg.isLastRowRelative(),
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
-            } else {
-                if (false) {// do we need a ptg clone here?
-                    ptg = ptg.copy();
-                }
-            }
-            if (!ptg.isBaseToken()) {
                 ptg.setClass(originalOperandClass);
+            } else if (ptg instanceof OperandPtg<?>) {
+                // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
+                ptg = ((OperandPtg<?>) ptg).copy();
+            } else {
+            	// all other Ptgs are immutable and can be shared
             }
-
             newPtgStack[k] = ptg;
         }
         return newPtgStack;

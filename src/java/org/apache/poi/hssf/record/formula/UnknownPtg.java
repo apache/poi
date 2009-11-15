@@ -19,8 +19,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- *
- * @author  andy
+ * @author andy
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public class UnknownPtg extends Ptg {
@@ -38,18 +37,14 @@ public class UnknownPtg extends Ptg {
         out.writeByte(_sid);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return size;
     }
 
-    public String toFormulaString()
-    {
+    public String toFormulaString() {
         return "UNKNOWN";
     }
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-      return this;
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_VALUE;
     }
 }

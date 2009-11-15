@@ -260,14 +260,4 @@ public final class AttrPtg extends ControlPtg {
       }
       return "UNKNOWN ATTRIBUTE";
      }
-
-    public Object clone() {
-        int[] jt;
-        if (_jumpTable == null) {
-            jt = null;
-        } else {
-            jt = _jumpTable.clone();
-        }
-        return new AttrPtg(_options, _data, jt, _chooseFuncOffset);
-    }
 }

@@ -28,11 +28,8 @@ import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 public final class TestFuncPtg extends TestCase {
 
     public void testRead() {
-    	// This ptg represents a LEN function extracted from excel
-        byte[] fakeData = {
-            0x20,  //function index
-            0,
-        };
+    	// This function index represents the LEN() function
+        byte[] fakeData = { 0x20, 0x00,};
 
         FuncPtg ptg = FuncPtg.create(TestcaseRecordInputStream.createLittleEndian(fakeData) );
         assertEquals( "Len formula index is not 32(20H)", 0x20, ptg.getFunctionIndex() );
@@ -41,14 +38,9 @@ public final class TestFuncPtg extends TestCase {
         assertEquals( "Ptg Size", 3, ptg.getSize() );
     }
 
-    public void testClone() {
+    public void testNumberOfOperands() {
         FuncPtg funcPtg = FuncPtg.create(27); // ROUND() - takes 2 args
-
-        FuncPtg clone = (FuncPtg) funcPtg.clone();
-        if (clone.getNumberOfOperands() == 0) {
-            fail("clone() did copy field numberOfOperands");
-        }
-        assertEquals(2, clone.getNumberOfOperands());
-        assertEquals("ROUND", clone.getName());
+        assertEquals(2, funcPtg.getNumberOfOperands());
+        assertEquals("ROUND", funcPtg.getName());
     }
 }

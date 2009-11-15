@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
+public final class Ref3DPtg extends RefPtgBase<Ref3DPtg> implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
@@ -42,7 +42,7 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         field_1_index_extern_sheet = in.readShort();
         readCoordinates(in);
     }
-    
+
     public Ref3DPtg(String cellref, int externIdx ) {
         this(new CellReference(cellref), externIdx);
     }
@@ -82,7 +82,7 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     }
 
     /**
-     * @return text representation of this cell reference that can be used in text 
+     * @return text representation of this cell reference that can be used in text
      * formulas. The sheet name will get properly delimited if required.
      */
     public String toFormulaString(FormulaRenderingWorkbook book) {
