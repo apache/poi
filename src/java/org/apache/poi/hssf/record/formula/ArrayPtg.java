@@ -43,22 +43,23 @@ public final class ArrayPtg extends Ptg {
 	 */
 	public static final int PLAIN_TOKEN_SIZE = 1+RESERVED_FIELD_LEN;
 
-	private static final byte[] DEFAULT_RESERVED_DATA = new byte[RESERVED_FIELD_LEN];
-
-	// TODO - fix up field visibility and subclasses
-	private final byte[] field_1_reserved;
+	// 7 bytes of data (stored as an int, short and byte here)
+	private final int _reserved0Int;
+	private final int _reserved1Short;
+	private final int _reserved2Byte;
 
 	// data from these fields comes after the Ptg data of all tokens in current formula
-	private int  token_1_columns;
-	private short token_2_rows;
-	private Object[] token_3_arrayValues;
+	private final int  _nColumns;
+	private final int _nRows;
+	private final Object[] _arrayValues;
 
-	public ArrayPtg(LittleEndianInput in) {
-		field_1_reserved = new byte[RESERVED_FIELD_LEN];
-		// TODO - add readFully method to RecordInputStream
-		for(int i=0; i< RESERVED_FIELD_LEN; i++) {
-			field_1_reserved[i] = in.readByte();
-		}
+	ArrayPtg(int reserved0, int reserved1, int reserved2, int nColumns, int nRows, Object[] arrayValues) {
+		_reserved0Int = reserved0;
+		_reserved1Short = reserved1;
+		_reserved2Byte = reserved2;
+		_nColumns = nColumns;
+		_nRows = nRows;
+		_arrayValues = arrayValues;
 	}
 	/**
 	 * @param values2d array values arranged in rows
@@ -67,10 +68,10 @@ public final class ArrayPtg extends Ptg {
 		int nColumns = values2d[0].length;
 		int nRows = values2d.length;
 		// convert 2-d to 1-d array (row by row according to getValueIndex())
-		token_1_columns = (short) nColumns;
-		token_2_rows = (short) nRows;
+		_nColumns = (short) nColumns;
+		_nRows = (short) nRows;
 
-		Object[] vv = new Object[token_1_columns * token_2_rows];
+		Object[] vv = new Object[_nColumns * _nRows];
 		for (int r=0; r<nRows; r++) {
 			Object[] rowData = values2d[r];
 			for (int c=0; c<nColumns; c++) {
@@ -78,21 +79,23 @@ public final class ArrayPtg extends Ptg {
 			}
 		}
 
-		token_3_arrayValues = vv;
-		field_1_reserved = DEFAULT_RESERVED_DATA;
+		_arrayValues = vv;
+		_reserved0Int = 0;
+		_reserved1Short = 0;
+		_reserved2Byte = 0;
 	}
 	/**
 	 * @return 2-d array (inner index is rowIx, outer index is colIx)
 	 */
 	public Object[][] getTokenArrayValues() {
-		if (token_3_arrayValues == null) {
+		if (_arrayValues == null) {
 			throw new IllegalStateException("array values not read yet");
 		}
-		Object[][] result = new Object[token_2_rows][token_1_columns];
-		for (int r = 0; r < token_2_rows; r++) {
+		Object[][] result = new Object[_nRows][_nColumns];
+		for (int r = 0; r < _nRows; r++) {
 			Object[] rowData = result[r];
-			for (int c = 0; c < token_1_columns; c++) {
-				rowData[c] = token_3_arrayValues[getValueIndex(c, r)];
+			for (int c = 0; c < _nColumns; c++) {
+				rowData[c] = _arrayValues[getValueIndex(c, r)];
 			}
 		}
 		return result;
@@ -102,33 +105,12 @@ public final class ArrayPtg extends Ptg {
 		return false;
 	}
 
-	/**
-	 * Read in the actual token (array) values. This occurs
-	 * AFTER the last Ptg in the expression.
-	 * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
-	 */
-	public void readTokenValues(LittleEndianInput in) {
-		int nColumns = in.readUByte();
-		short nRows = in.readShort();
-		//The token_1_columns and token_2_rows do not follow the documentation.
-		//The number of physical rows and columns is actually +1 of these values.
-		//Which is not explicitly documented.
-		nColumns++;
-		nRows++;
-
-		token_1_columns = nColumns;
-		token_2_rows = nRows;
-
-		int totalCount = nRows * nColumns;
-		token_3_arrayValues = ConstantValueParser.parse(in, totalCount);
-	}
-
 	public String toString() {
 		StringBuffer sb = new StringBuffer("[ArrayPtg]\n");
 
 		sb.append("nRows = ").append(getRowCount()).append("\n");
 		sb.append("nCols = ").append(getColumnCount()).append("\n");
-		if (token_3_arrayValues == null) {
+		if (_arrayValues == null) {
 			sb.append("  #values#uninitialised#\n");
 		} else {
 			sb.append("  ").append(toFormulaString());
@@ -141,36 +123,38 @@ public final class ArrayPtg extends Ptg {
 	 * @return the index into the internal 1D array for the specified column and row
 	 */
 	/* package */ int getValueIndex(int colIx, int rowIx) {
-		if(colIx < 0 || colIx >= token_1_columns) {
+		if(colIx < 0 || colIx >= _nColumns) {
 			throw new IllegalArgumentException("Specified colIx (" + colIx
-					+ ") is outside the allowed range (0.." + (token_1_columns-1) + ")");
+					+ ") is outside the allowed range (0.." + (_nColumns-1) + ")");
 		}
-		if(rowIx < 0 || rowIx >= token_2_rows) {
+		if(rowIx < 0 || rowIx >= _nRows) {
 			throw new IllegalArgumentException("Specified rowIx (" + rowIx
-					+ ") is outside the allowed range (0.." + (token_2_rows-1) + ")");
+					+ ") is outside the allowed range (0.." + (_nRows-1) + ")");
 		}
-		return rowIx * token_1_columns + colIx;
+		return rowIx * _nColumns + colIx;
 	}
 
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
-		out.write(field_1_reserved);
+		out.writeInt(_reserved0Int);
+		out.writeShort(_reserved1Short);
+		out.writeByte(_reserved2Byte);
 	}
 
 	public int writeTokenValueBytes(LittleEndianOutput out) {
 
-		out.writeByte(token_1_columns-1);
-		out.writeShort(token_2_rows-1);
-		ConstantValueParser.encode(out, token_3_arrayValues);
-		return 3 + ConstantValueParser.getEncodedSize(token_3_arrayValues);
+		out.writeByte(_nColumns-1);
+		out.writeShort(_nRows-1);
+		ConstantValueParser.encode(out, _arrayValues);
+		return 3 + ConstantValueParser.getEncodedSize(_arrayValues);
 	}
 
-	public short getRowCount() {
-		return token_2_rows;
+	public int getRowCount() {
+		return _nRows;
 	}
 
-	public short getColumnCount() {
-		return (short)token_1_columns;
+	public int getColumnCount() {
+		return _nColumns;
 	}
 
 	/** This size includes the size of the array Ptg plus the Array Ptg Token value size*/
@@ -178,7 +162,7 @@ public final class ArrayPtg extends Ptg {
 		return PLAIN_TOKEN_SIZE
 			// data written after the all tokens:
 			+ 1 + 2 // column, row
-			+ ConstantValueParser.getEncodedSize(token_3_arrayValues);
+			+ ConstantValueParser.getEncodedSize(_arrayValues);
 	}
 
 	public String toFormulaString() {
@@ -192,7 +176,7 @@ public final class ArrayPtg extends Ptg {
 			  	if (x > 0) {
 					b.append(",");
 				}
-		  		Object o = token_3_arrayValues[getValueIndex(x, y)];
+		  		Object o = _arrayValues[getValueIndex(x, y)];
 		  		b.append(getConstantText(o));
 		  	}
 		  }
@@ -222,5 +206,62 @@ public final class ArrayPtg extends Ptg {
 
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_ARRAY;
+	}
+
+	/**
+	 * Represents the initial plain tArray token (without the constant data that trails the whole
+	 * formula).  Objects of this class are only temporary and cannot be used as {@link Ptg}s.
+	 * These temporary objects get converted to {@link ArrayPtg} by the
+	 * {@link #finishReading(LittleEndianInput)} method.
+	 */
+	static final class Initial extends Ptg {
+		private final int _reserved0;
+		private final int _reserved1;
+		private final int _reserved2;
+
+		public Initial(LittleEndianInput in) {
+			_reserved0 = in.readInt();
+			_reserved1 = in.readUShort();
+			_reserved2 = in.readUByte();
+		}
+		private static RuntimeException invalid() {
+			throw new IllegalStateException("This object is a partially initialised tArray, and cannot be used as a Ptg");
+		}
+		public byte getDefaultOperandClass() {
+			throw invalid();
+		}
+		public int getSize() {
+			return PLAIN_TOKEN_SIZE;
+		}
+		public boolean isBaseToken() {
+			return false;
+		}
+		public String toFormulaString() {
+			throw invalid();
+		}
+		public void write(LittleEndianOutput out) {
+			throw invalid();
+		}
+		/**
+		 * Read in the actual token (array) values. This occurs
+		 * AFTER the last Ptg in the expression.
+		 * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
+		 */
+		public ArrayPtg finishReading(LittleEndianInput in) {
+			int nColumns = in.readUByte();
+			short nRows = in.readShort();
+			//The token_1_columns and token_2_rows do not follow the documentation.
+			//The number of physical rows and columns is actually +1 of these values.
+			//Which is not explicitly documented.
+			nColumns++;
+			nRows++;
+
+			int totalCount = nRows * nColumns;
+			Object[] arrayValues = ConstantValueParser.parse(in, totalCount);
+
+			ArrayPtg result = new ArrayPtg(_reserved0, _reserved1, _reserved2, nColumns, nRows, arrayValues);
+			result.setClass(getPtgClass());
+			return result;
+		}
 	}
 }

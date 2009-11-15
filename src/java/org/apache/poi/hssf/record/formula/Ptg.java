@@ -51,28 +51,26 @@ public abstract class Ptg implements Cloneable {
 	public static Ptg[] readTokens(int size, LittleEndianInput in) {
 		List<Ptg> temp = new ArrayList<Ptg>(4 + size / 2);
 		int pos = 0;
-		List<Ptg> arrayPtgs = null;
+		boolean hasArrayPtgs = false;
 		while (pos < size) {
 			Ptg ptg = Ptg.createPtg(in);
-			if (ptg instanceof ArrayPtg) {
-				if (arrayPtgs == null) {
-					arrayPtgs = new ArrayList<Ptg>(5);
-				}
-				arrayPtgs.add(ptg);
-				pos += ArrayPtg.PLAIN_TOKEN_SIZE;
-			} else {
-				pos += ptg.getSize();
+			if (ptg instanceof ArrayPtg.Initial) {
+				hasArrayPtgs = true;
 			}
+			pos += ptg.getSize();
 			temp.add(ptg);
 		}
 		if(pos != size) {
 			throw new RuntimeException("Ptg array size mismatch");
 		}
-		if (arrayPtgs != null) {
-			for (int i=0;i<arrayPtgs.size();i++) {
-				ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
-				p.readTokenValues(in);
+		if (hasArrayPtgs) {
+			Ptg[] result = toPtgArray(temp);
+			for (int i=0;i<result.length;i++) {
+				if (result[i] instanceof ArrayPtg.Initial) {
+					result[i] = ((ArrayPtg.Initial) result[i]).finishReading(in);
+				}
 			}
+			return result;
 		}
 		return toPtgArray(temp);
 	}
@@ -101,7 +99,7 @@ public abstract class Ptg implements Cloneable {
 		int baseId = id & 0x1F | 0x20;
 
 		switch (baseId) {
-			case ArrayPtg.sid:    return new ArrayPtg(in);    // 0x20, 0x40, 0x60
+			case ArrayPtg.sid:    return new ArrayPtg.Initial(in);//0x20, 0x40, 0x60
 			case FuncPtg.sid:     return FuncPtg.create(in);  // 0x21, 0x41, 0x61
 			case FuncVarPtg.sid:  return FuncVarPtg.create(in);//0x22, 0x42, 0x62
 			case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
