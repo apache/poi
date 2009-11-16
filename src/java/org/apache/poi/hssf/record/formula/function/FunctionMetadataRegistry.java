@@ -31,6 +31,7 @@ public final class FunctionMetadataRegistry {
 	public static final String FUNCTION_NAME_IF = "IF";
 
     public static final short FUNCTION_INDEX_SUM = 4;
+	public static final short FUNCTION_INDEX_INDIRECT = 148;
 	public static final short FUNCTION_INDEX_EXTERNAL = 255;
 	private static FunctionMetadataRegistry _instance;
 

@@ -17,17 +17,15 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.record.formula.functions.*;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class FunctionEval implements OperationEval {
+public final class FunctionEval {
 	/**
 	 * Some function IDs that require special treatment
 	 */
@@ -37,7 +35,7 @@ public final class FunctionEval implements OperationEval {
 		/** 78 */
 		public static final int OFFSET = 78;
 		/** 148 */
-		public static final int INDIRECT = 148;
+		public static final int INDIRECT = FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT;
 		/** 255 */
 		public static final int EXTERNAL_FUNC = FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL;
 	}
@@ -222,33 +220,21 @@ public final class FunctionEval implements OperationEval {
 		}
 		return retval;
 	}
-
-	private AbstractFunctionPtg _delegate;
-
-	public FunctionEval(AbstractFunctionPtg funcPtg) {
-		_delegate = funcPtg;
-	}
-
-	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-		int fidx = _delegate.getFunctionIndex();
+	/**
+	 * @return <code>null</code> if the specified functionIndex is for INDIRECT() or any external (add-in) function.
+	 */
+	public static Function getBasicFunction(int functionIndex) {
 		// check for 'free ref' functions first
-		switch (fidx) {
+		switch (functionIndex) {
 			case FunctionID.INDIRECT:
-				return Indirect.instance.evaluate(args, ec);
 			case FunctionID.EXTERNAL_FUNC:
-				return UserDefinedFunction.instance.evaluate(args, ec);
+				return null;
 		}
 		// else - must be plain function
-		Function f = functions[fidx];
-		if (f == null) {
-			throw new NotImplementedException("FuncIx=" + fidx);
+		Function result = functions[functionIndex];
+		if (result == null) {
+			throw new NotImplementedException("FuncIx=" + functionIndex);
 		}
-		int srcCellRow = ec.getRowIndex();
-		int srcCellCol = ec.getColumnIndex();
-		return f.evaluate(args, srcCellRow, (short) srcCellCol);
-	}
-
-	public int getNumberOfOperands() {
-		return _delegate.getNumberOfOperands();
+		return result;
 	}
 }
