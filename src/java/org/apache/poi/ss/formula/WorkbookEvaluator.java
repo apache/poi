@@ -57,7 +57,6 @@ import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.OperationEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -425,9 +424,8 @@ public final class WorkbookEvaluator {
 
 				if (optg instanceof UnionPtg) { continue; }
 
-				OperationEval operation = OperationEvaluatorFactory.create(optg);
 
-				int numops = operation.getNumberOfOperands();
+				int numops = optg.getNumberOfOperands();
 				ValueEval[] ops = new ValueEval[numops];
 
 				// storing the ops in reverse order since they are popping
@@ -436,7 +434,7 @@ public final class WorkbookEvaluator {
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-				opResult = operation.evaluate(ops, ec);
+				opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
 				if (opResult == MissingArgEval.instance) {
 					opResult = BlankEval.INSTANCE;
 				}
