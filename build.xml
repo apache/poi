@@ -184,8 +184,8 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <fileset dir="${ooxml.lib}">
-			<include name="*.jar" />
-		</fileset>
+			    <include name="*.jar" />
+    		</fileset>
     </path>
 
     <path id="test.classpath">
@@ -408,7 +408,54 @@ under the License.
 			basedir="${ooxml.xsds.src.dir}"
 			destfile="${ooxml.xsds.src.jar}"
 		/>
-	</target>
+  </target>
+
+  <!-- Build a 'lite' version of the ooxml-schemas.jar-->
+  <target name="ooxml-xsds-lite" depends="test-ooxml">
+    <java classname="org.apache.poi.util.OOXMLLite" fork="yes">
+      <classpath refid="test.ooxml.classpath"/>
+      <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
+      <sysproperty key="user.language" value="en"/> 
+      <sysproperty key="user.country" value="US"/> 
+      <arg line="-ooxml ${ooxml.xsds.jar} -test ${ooxml.output.test.dir} -dest build/ooxml-xsds-lite"/>
+    </java>
+    <echo message="Running ooxml tests against the 'lite' classes"/>
+    <antcall target="test-ooxml-lite"/>
+    <jar basedir="build/ooxml-xsds-lite" destfile="build/dist/ooxml-schemas-lite-${version.id}.jar"/>
+  </target>
+
+  <!-- Run ooxml tests against the 'lite' version of the ooxml-schemas.jar-->
+  <target name="test-ooxml-lite">
+      <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
+          <classpath>
+              <path refid="main.classpath"/>
+              <pathelement location="${main.output.dir}"/>
+              <pathelement location="${scratchpad.output.dir}"/>
+              <fileset dir="${ooxml.lib}">
+      			    <include name="*.jar" />
+      			    <exclude name="ooxml-schemas-*.jar" />
+    	      	</fileset>
+              <pathelement location="build/ooxml-xsds-lite"/>
+              <pathelement location="${ooxml.output.dir}"/>
+              <pathelement location="${ooxml.output.test.dir}"/>
+              <pathelement location="${main.output.test.dir}"/> 
+              <pathelement location="${scratchpad.output.test.dir}"/> 
+              <pathelement location="${junit.jar1.dir}"/>
+          </classpath>
+          <sysproperty key="user.language" value="en"/> 
+          <sysproperty key="user.country" value="US"/> 
+          <sysproperty key="POI.testdata.path" file="${poi.test.dir}"/> 
+          <sysproperty key="java.awt.headless" value="true"/>
+          <formatter type="plain"/>
+          <formatter type="xml"/>
+          <batchtest todir="${ooxml.reports.test}">
+              <fileset dir="${ooxml.src.test}">
+                  <include name="**/Test*.java"/>
+                  <exclude name="**/All*Tests.java"/>
+              </fileset>
+          </batchtest>
+      </junit>
+  </target>
 
   <target name="compile" depends="init, compile-main, 
     compile-scratchpad, compile-contrib, compile-examples, compile-scratchpad-examples"
