@@ -66,6 +66,25 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
         assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
 
+        XSSFClientAnchor anchor = new XSSFClientAnchor();
+
+        XSSFConnector c1= drawing.createConnector(anchor);
+        c1.setLineWidth(2.5);
+        c1.setLineStyle(1);
+
+        XSSFShapeGroup c2 = drawing.createGroup(anchor);
+
+        XSSFSimpleShape c3 = drawing.createSimpleShape(anchor);
+        c3.setText(new XSSFRichTextString("Test String"));
+        c3.setFillColor(128, 128, 128);
+
+        XSSFTextBox c4 = drawing.createTextbox(anchor);
+        XSSFRichTextString rt = new XSSFRichTextString("Test String");
+        rt.applyFont(0, 5, wb.createFont());
+        rt.applyFont(5, 6, wb.createFont());
+        c4.setText(rt);
+
+        c4.setNoFill(true);
     }
     public void testMultipleDrawings(){
         XSSFWorkbook wb = new XSSFWorkbook();

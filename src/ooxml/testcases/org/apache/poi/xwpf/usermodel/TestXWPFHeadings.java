@@ -1,19 +1,12 @@
 package org.apache.poi.xwpf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
 /**
  * @author Paolo Mottadelli
@@ -35,7 +28,7 @@ public final class TestXWPFHeadings extends TestCase{
 		assertEquals(HEADING1, p.getCTP().getPPr().getPStyle().getVal());
 
 		doc.createTOC();
-
+        /*
 		// TODO - finish this test
 		if (false) {
 			CTStyles styles = doc.getStyle();
@@ -50,5 +43,6 @@ public final class TestXWPFHeadings extends TestCase{
 			doc.write(out);
 			out.close();
 		}
-	}
+        */
+    }
 }

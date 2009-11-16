@@ -33,85 +33,92 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 public class TestXWPFTable extends TestCase {
 
     protected void setUp() {
-	/*
-        XWPFDocument doc = new XWPFDocument();
-        p = doc.createParagraph();
+        /*
+          XWPFDocument doc = new XWPFDocument();
+          p = doc.createParagraph();
 
-        this.ctRun = CTR.Factory.newInstance();
-	 */
+          this.ctRun = CTR.Factory.newInstance();
+       */
     }
 
     public void testConstructor() {
-	CTTbl ctTable=CTTbl.Factory.newInstance();
-	XWPFTable xtab=new XWPFTable(null, ctTable);
-	assertNotNull(xtab);
-	assertEquals(1,ctTable.sizeOfTrArray());
-	assertEquals(1,ctTable.getTrArray(0).sizeOfTcArray());
-	assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
-	
-	ctTable=CTTbl.Factory.newInstance();
-	xtab=new XWPFTable(null, ctTable, 3,2);
-	assertNotNull(xtab);
-	assertEquals(3,ctTable.sizeOfTrArray());
-	assertEquals(2,ctTable.getTrArray(0).sizeOfTcArray());
-	assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
-    }        
-    
-    
-    public void testGetText(){
-	CTTbl table = CTTbl.Factory.newInstance();
-	CTRow row=table.addNewTr();
-	CTTc cell=row.addNewTc();
-	CTP paragraph=cell.addNewP();
-	CTR run=paragraph.addNewR();
-	CTText text=run.addNewT();
-	text.setStringValue("finally I can write!");
-	
-	XWPFTable xtab=new XWPFTable(null, table);
-    	assertEquals("finally I can write!\n",xtab.getText());
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable xtab = new XWPFTable(null, ctTable);
+        assertNotNull(xtab);
+        assertEquals(1, ctTable.sizeOfTrArray());
+        assertEquals(1, ctTable.getTrArray(0).sizeOfTcArray());
+        assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
+
+        ctTable = CTTbl.Factory.newInstance();
+        xtab = new XWPFTable(null, ctTable, 3, 2);
+        assertNotNull(xtab);
+        assertEquals(3, ctTable.sizeOfTrArray());
+        assertEquals(2, ctTable.getTrArray(0).sizeOfTcArray());
+        assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
     }
-    
-    
-    public void testCreateRow(){
-	CTTbl table = CTTbl.Factory.newInstance();
-	CTRow r1=table.addNewTr();
-	r1.addNewTc().addNewP();
-	r1.addNewTc().addNewP();
-	CTRow r2=table.addNewTr();
-	r2.addNewTc().addNewP();
-	r2.addNewTc().addNewP();
-	CTRow r3=table.addNewTr();
-	r3.addNewTc().addNewP();
-	r3.addNewTc().addNewP();
-	
-	XWPFTable xtab=new XWPFTable(null, table);
-    	assertEquals(3,xtab.getNumberOfRows());
-    	assertNotNull(xtab.getRow(2));
-    	
-    	//add a new row
-    	xtab.createRow();
-    	
-    	//check number of cols
-    	assertEquals(2,table.getTrArray(0).sizeOfTcArray());
-    	    	
-    	//check creation of first row
-	xtab=new XWPFTable(null, CTTbl.Factory.newInstance());
-    	assertEquals(1,xtab.getCTTbl().getTrArray(0).sizeOfTcArray());
+
+
+    public void testGetText() {
+        CTTbl table = CTTbl.Factory.newInstance();
+        CTRow row = table.addNewTr();
+        CTTc cell = row.addNewTc();
+        CTP paragraph = cell.addNewP();
+        CTR run = paragraph.addNewR();
+        CTText text = run.addNewT();
+        text.setStringValue("finally I can write!");
+
+        XWPFTable xtab = new XWPFTable(null, table);
+        assertEquals("finally I can write!\n", xtab.getText());
     }
-    
-    
-    public void testSetGetWidth(){
-	CTTbl table = CTTbl.Factory.newInstance();
-	table.addNewTblPr().addNewTblW().setW(new BigInteger("1000"));
-	
-	XWPFTable xtab=new XWPFTable(null, table);
-	
-	assertEquals(1000,xtab.getWidth());
-	
-	xtab.setWidth(100);
-	assertEquals(100,table.getTblPr().getTblW().getW().intValue());
+
+
+    public void testCreateRow() {
+        CTTbl table = CTTbl.Factory.newInstance();
+        CTRow r1 = table.addNewTr();
+        r1.addNewTc().addNewP();
+        r1.addNewTc().addNewP();
+        CTRow r2 = table.addNewTr();
+        r2.addNewTc().addNewP();
+        r2.addNewTc().addNewP();
+        CTRow r3 = table.addNewTr();
+        r3.addNewTc().addNewP();
+        r3.addNewTc().addNewP();
+
+        XWPFTable xtab = new XWPFTable(null, table);
+        assertEquals(3, xtab.getNumberOfRows());
+        assertNotNull(xtab.getRow(2));
+
+        //add a new row
+        xtab.createRow();
+
+        //check number of cols
+        assertEquals(2, table.getTrArray(0).sizeOfTcArray());
+
+        //check creation of first row
+        xtab = new XWPFTable(null, CTTbl.Factory.newInstance());
+        assertEquals(1, xtab.getCTTbl().getTrArray(0).sizeOfTcArray());
     }
-    
-    
+
+
+    public void testSetGetWidth() {
+        CTTbl table = CTTbl.Factory.newInstance();
+        table.addNewTblPr().addNewTblW().setW(new BigInteger("1000"));
+
+        XWPFTable xtab = new XWPFTable(null, table);
+
+        assertEquals(1000, xtab.getWidth());
+
+        xtab.setWidth(100);
+        assertEquals(100, table.getTblPr().getTblW().getW().intValue());
+    }
+
+    public void testSetGetHeight() {
+        CTTbl table = CTTbl.Factory.newInstance();
+
+        XWPFTable xtab = new XWPFTable(null, table);
+        XWPFTableRow row = xtab.createRow();
+        row.setHeight(20);
+        assertEquals(20, row.getHeight());
+    }
 
 }

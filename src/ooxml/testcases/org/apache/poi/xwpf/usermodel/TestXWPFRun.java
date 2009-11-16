@@ -187,7 +187,7 @@ public class TestXWPFRun extends TestCase {
         run.setText("TEXT1");
         run.addBreak();
         run.setText("TEXT2");
-        run.addBreak();
+        run.addBreak(BreakType.TEXT_WRAPPING);
         assertEquals(2, run.getCTR().sizeOfBrArray());
     }
     
