@@ -25,13 +25,15 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 public final class TestPackageCoreProperties extends TestCase {
+    private static final POILogger logger = POILogFactory.getLogger(TestPackageCoreProperties.class);
 
 	/**
 	 * Test package core properties getters.
@@ -43,7 +45,7 @@ public final class TestPackageCoreProperties extends TestCase {
 			compareProperties(p);
 			p.revert();
 		} catch (OpenXML4JException e) {
-			Logger.getLogger("org.apache.poi.openxml4j.demo").debug(e.getMessage());
+			logger.log(POILogger.DEBUG, e.getMessage());
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

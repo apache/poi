@@ -171,6 +171,7 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
             for (int i = 0; i < str.getCTRst().sizeOfRArray(); i++) {
                 CTRElt lt = str.getCTRst().getRArray(i);
                 CTRPrElt ltPr = lt.getRPr();
+                if(ltPr == null) ltPr = lt.addNewRPr();
 
                 CTRegularTextRun r = p.addNewR();
                 CTTextCharacterProperties rPr = r.addNewRPr();

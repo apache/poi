@@ -30,12 +30,13 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -44,7 +45,7 @@ import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 
 public final class TestPackage extends TestCase {
-	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
+    private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
 
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
@@ -393,7 +394,7 @@ public final class TestPackage extends TestCase {
 
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			logger.debug(part.getPartName());
+			logger.log(POILogger.DEBUG, part.getPartName());
 		}
 
 		// Compare expected values with values return by the package
@@ -431,7 +432,7 @@ public final class TestPackage extends TestCase {
 
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			logger.debug(part.getPartName());
+			logger.log(POILogger.DEBUG, part.getPartName());
 		}
 
 		// Compare expected values with values return by the package

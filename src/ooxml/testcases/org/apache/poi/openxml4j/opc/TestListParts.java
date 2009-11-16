@@ -23,12 +23,13 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 public final class TestListParts extends TestCase {
-	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
+    private static final POILogger logger = POILogFactory.getLogger(TestListParts.class);
 
 	private TreeMap<PackagePartName, String> expectedValues;
 
@@ -91,7 +92,7 @@ public final class TestListParts extends TestCase {
 		}
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
-			logger.debug(part.getPartName());
+			logger.log(POILogger.DEBUG, part.getPartName());
 		}
 
 		// Compare expected values with values return by the package

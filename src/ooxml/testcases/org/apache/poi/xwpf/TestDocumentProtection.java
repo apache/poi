@@ -82,7 +82,7 @@ public class TestDocumentProtection extends TestCase {
     }
 
     public void testShouldEnforceForFillingForms() throws Exception {
-        XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedFillingFormsProtection());
 
         document.enforceFillingFormsProtection();
@@ -91,7 +91,7 @@ public class TestDocumentProtection extends TestCase {
     }
 
     public void testShouldEnforceForComments() throws Exception {
-        XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedCommentsProtection());
 
         document.enforceCommentsProtection();
@@ -100,7 +100,7 @@ public class TestDocumentProtection extends TestCase {
     }
 
     public void testShouldEnforceForTrackedChanges() throws Exception {
-        XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedTrackedChangesProtection());
 
         document.enforceTrackedChangesProtection();
@@ -109,7 +109,7 @@ public class TestDocumentProtection extends TestCase {
     }
 
     public void testShouldUnsetEnforcement() throws Exception {
-        XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_readonly_no_password.docx");
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_readonly_no_password.docx");
         assertTrue(document.isEnforcedReadonlyProtection());
 
         document.removeProtectionEnforcement();
@@ -137,17 +137,6 @@ public class TestDocumentProtection extends TestCase {
         inputStream.close();
 
         assertTrue(document.isEnforcedCommentsProtection());
-    }
-
-    private XWPFDocument createDocumentFromSampleFile(String fileName) throws FileNotFoundException, IOException {
-        File file = new File(fileName);
-        FileInputStream in = new FileInputStream(file);
-        byte[] bytes = new byte[(int) file.length()];
-        in.read(bytes);
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        XWPFDocument document = new XWPFDocument(inputStream);
-        return document;
     }
 
 }

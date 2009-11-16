@@ -21,8 +21,9 @@ import java.io.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 
 public class TestRelationships extends TestCase {
@@ -33,7 +34,7 @@ public class TestRelationships extends TestCase {
 	private static final String SHEET_WITH_COMMENTS =
 		"/xl/worksheets/sheet1.xml";
 
-	private static Logger logger = Logger.getLogger("org.apache.poi.openxml4j.test");
+    private static final POILogger logger = POILogFactory.getLogger(TestPackageCoreProperties.class);
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
@@ -44,7 +45,7 @@ public class TestRelationships extends TestCase {
     public void testLoadRelationships() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
         OPCPackage pkg = OPCPackage.open(is);
-        logger.debug("1: " + pkg);
+        logger.log(POILogger.DEBUG, "1: " + pkg);
         PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         PackageRelationship coreDocRelationship = rels.getRelationship(0);
         PackagePart corePart = pkg.getPart(coreDocRelationship);

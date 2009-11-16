@@ -246,8 +246,7 @@ public final class ZipPackage extends Package {
 			return new MemoryPackagePart(this, partName, contentType,
 					loadRelationships);
 		} catch (InvalidFormatException e) {
-			// TODO - don't use system.err.  Is it valid to return null when this exception occurs?
-			System.err.println(e);
+			logger.log(POILogger.WARN, e);
 			return null;
 		}
 	}
