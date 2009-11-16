@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">47757 - fixed XLSX2CSV to avoid exception when processing cells with multiple "t" elements</action>
            <action dev="POI-DEVELOPERS" type="add">48195 - short-circuit evaluation of IF() and CHOOSE()</action>
            <action dev="POI-DEVELOPERS" type="add">48161 - support for text extraction from PPT master slides</action>
            <action dev="POI-DEVELOPERS" type="add">47970 - added a method to set arabic mode in HSSFSheet</action>

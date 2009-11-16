@@ -34,6 +34,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -60,7 +61,12 @@ import org.xml.sax.helpers.DefaultHandler;
  * (read-only) class is used for the shared string table
  * because the standard POI SharedStringsTable grows very
  * quickly with the number of unique strings.
- *
+ * <p/>
+ * Thanks to Eric Smith for a patch that fixes a problem
+ * triggered by cells with multiple "t" elements, which is
+ * how Excel represents different formats (e.g., one word
+ * plain and one word bold).
+ * 
  * @author Chris Lott
  */
 public class XLSX2CSV {
@@ -78,6 +84,43 @@ public class XLSX2CSV {
         NUMBER,
     }
 
+    /**
+     * Each cell is enclosed in "si".  Each cell can have multiple "t" elements.
+     * Example input
+     * 
+     * <pre>
+ 	&lt;?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+	&lt;sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
+	  &lt;si>
+	    &lt;r>
+	      &lt;rPr>
+	        &lt;b />
+	        &lt;sz val="11" />
+	        &lt;color theme="1" />
+  	        &lt;rFont val="Calibri" />
+  	        &lt;family val="2" />
+  	        &lt;scheme val="minor" />
+  	      &lt;/rPr>
+  	      &lt;t>This:&lt;/t>
+  	    &lt;/r>
+	    &lt;r>
+	      &lt;rPr>
+  	        &lt;sz val="11" />
+	        &lt;color theme="1" />
+  	        &lt;rFont val="Calibri" />
+  	        &lt;family val="2" />
+  	        &lt;scheme val="minor" />
+  	      &lt;/rPr>
+  	      &lt;t xml:space="preserve">Causes Problems&lt;/t>
+  	    &lt;/r>
+  	  &lt;/si>
+	  &lt;si>
+  	    &lt;t>This does not&lt;/t>
+  	  &lt;/si>
+  	&lt;/sst>
+  	 * </pre>
+     *
+     */
     static class ReadonlySharedStringsTable extends DefaultHandler {
 
         /**
@@ -192,8 +235,9 @@ public class XLSX2CSV {
                 this.strings = new String[this.uniqueCount];
                 index = 0;
                 characters = new StringBuffer();
-            } else if ("t".equals(name)) {
+            } else if ("si".equals(name)) {
                 characters.setLength(0);
+            } else if ("t".equals(name)) {
                 tIsOpen = true;
             }
         }
@@ -204,9 +248,11 @@ public class XLSX2CSV {
        */
         public void endElement(String uri, String localName, String name)
                 throws SAXException {
-            if ("t".equals(name)) {
-                strings[index] = characters.toString();
+            if ("si".equals(name)) {
+                strings[index] = characters.toString();            	
                 ++index;
+            } else if ("t".equals(name)) {
+            	tIsOpen = false;
             }
         }
 
