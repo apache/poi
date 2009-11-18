@@ -89,7 +89,9 @@ public final class Area3DPtg extends AreaPtgBase<Area3DPtg> implements WorkbookD
 	public void setExternSheetIndex(int index) {
 		field_1_index_extern_sheet = index;
 	}
-
+	public String format2DRefAsString() {
+		return formatReferenceAsString();
+	}
 	/**
 	 * @return text representation of this area reference that can be used in text
 	 *  formulas. The sheet name will get properly delimited if required.
