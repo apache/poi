@@ -80,7 +80,9 @@ public final class Ref3DPtg extends RefPtgBase<Ref3DPtg> implements WorkbookDepe
     public void setExternSheetIndex(int index) {
         field_1_index_extern_sheet = index;
     }
-
+    public String format2DRefAsString() {
+        return formatReferenceAsString();
+    }
     /**
      * @return text representation of this cell reference that can be used in text
      * formulas. The sheet name will get properly delimited if required.
