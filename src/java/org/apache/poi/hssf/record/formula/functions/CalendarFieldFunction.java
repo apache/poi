@@ -48,7 +48,7 @@ public final class CalendarFieldFunction implements Function {
 		_needsOneBaseAdjustment = needsOneBaseAdjustment;
 	}
 
-	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, int srcCellCol) {
 		if (operands.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

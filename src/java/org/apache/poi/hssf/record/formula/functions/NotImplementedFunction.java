@@ -38,7 +38,7 @@ public final class NotImplementedFunction implements Function {
 		_functionName = name;
 	}
 
-	public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
 		throw new NotImplementedException(_functionName);
 	}
 	public String getFunctionName() {

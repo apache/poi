@@ -39,7 +39,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Replace extends TextFunction {
 
-	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, short srcCellCol)
+	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
 		throws EvaluationException {
 		if (args.length != 4) {
 			return ErrorEval.VALUE_INVALID;

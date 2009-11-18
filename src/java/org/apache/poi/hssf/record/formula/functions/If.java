@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class If implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		ValueEval falseResult;
 		switch (args.length) {
 			case 3:

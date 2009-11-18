@@ -41,7 +41,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Hyperlink implements Function {
 
-	public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
 		int lastArgIx = operands.length - 1;
 		if (lastArgIx < 0 || lastArgIx > 1) {
 			return ErrorEval.VALUE_INVALID;

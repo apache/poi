@@ -400,7 +400,7 @@ public final class Countif implements Function {
 		}
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex) {
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		switch(args.length) {
 			case 2:
 				// expected

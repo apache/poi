@@ -45,7 +45,7 @@ public abstract class LogicalFunction implements Function {
 		return retval;
 	}
 
-	public final ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] operands, int srcCellRow, int srcCellCol) {
 		if (operands.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

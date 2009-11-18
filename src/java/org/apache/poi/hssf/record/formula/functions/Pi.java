@@ -29,7 +29,7 @@ public final class Pi implements Function {
 
     private static final NumberEval PI_EVAL = new NumberEval(Math.PI);
 
-    public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
+    public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
         ValueEval retval;
         switch (operands.length) {
         default:

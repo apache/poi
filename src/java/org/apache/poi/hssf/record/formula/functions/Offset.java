@@ -163,7 +163,7 @@ public final class Offset implements Function {
 		}
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -223,7 +223,7 @@ public final class Offset implements Function {
 	/**
 	 * OFFSET's numeric arguments (2..5) have similar processing rules
 	 */
-	private static int evaluateIntArg(ValueEval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static int evaluateIntArg(ValueEval eval, int srcCellRow, int srcCellCol) throws EvaluationException {
 
 		double d = evaluateDoubleArg(eval, srcCellRow, srcCellCol);
 		return convertDoubleToInt(d);
@@ -239,7 +239,7 @@ public final class Offset implements Function {
 		return (int)Math.floor(d);
 	}
 
-	private static double evaluateDoubleArg(ValueEval eval, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static double evaluateDoubleArg(ValueEval eval, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcCellRow, srcCellCol);
 
 		if (ve instanceof NumericValueEval) {

@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class True implements Function {
 
-    public ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
+    public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
         ValueEval retval;
         switch (operands.length) {
         default:

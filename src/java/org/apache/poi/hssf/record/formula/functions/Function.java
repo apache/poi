@@ -39,5 +39,5 @@ public interface Function {
 	 * numeric functions evaluate to {@link Double#NaN} be sure to translate the result to {@link
 	 * ErrorEval#NUM_ERROR}.
 	 */
-	ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex);
+	ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex);
 }

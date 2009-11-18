@@ -29,7 +29,7 @@ public abstract class TwoOperandNumericOperation implements Function {
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		double result;
 		try {
 			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
