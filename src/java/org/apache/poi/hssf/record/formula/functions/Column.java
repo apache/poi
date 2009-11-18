@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 public final class Column implements Function {
-    public ValueEval evaluate(ValueEval[] evals, int srcCellRow, short srcCellCol) {
+    public ValueEval evaluate(ValueEval[] evals, int srcCellRow, int srcCellCol) {
         ValueEval retval = null;
         int cnum = -1;
 

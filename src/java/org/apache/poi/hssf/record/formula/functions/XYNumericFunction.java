@@ -96,7 +96,7 @@ public abstract class XYNumericFunction implements Function {
 	 */
 	protected abstract Accumulator createAccumulator();
 
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if (args.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}

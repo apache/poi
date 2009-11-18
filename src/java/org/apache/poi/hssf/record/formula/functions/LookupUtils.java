@@ -385,7 +385,7 @@ final class LookupUtils {
 	 * @return
 	 * @throws EvaluationException
 	 */
-	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		if(rangeLookupArg == null) {
 			// range_lookup arg not provided
 			return true; // default is TRUE

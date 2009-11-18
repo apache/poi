@@ -38,7 +38,7 @@ import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
  */
 public final class Countblank implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, short srcColumnIndex) {
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		if (args.length != 1) {
 			// TODO - it doesn't seem to be possible to enter COUNTBLANK() into Excel with the wrong arg count
 			// perhaps this should be an exception

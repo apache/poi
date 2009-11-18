@@ -46,7 +46,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Index implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		int nArgs = args.length;
 		if(nArgs < 2) {
 			// too few arguments
@@ -179,7 +179,7 @@ public final class Index implements Function {
 	 * @return the resolved 1-based index. Zero if the arg was missing or blank
 	 * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
 	 */
-	private static int resolveIndexArg(ValueEval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static int resolveIndexArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 
 		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		if (ev == MissingArgEval.instance) {

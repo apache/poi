@@ -82,7 +82,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 
 	private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
 
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 
 		double d;
 		try {

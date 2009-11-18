@@ -31,7 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  */
 public final class Now implements Function {
 
-	public ValueEval evaluate(ValueEval[] evals, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] evals, int srcCellRow, int srcCellCol) {
 		if (evals.length > 0) {
 			return ErrorEval.VALUE_INVALID;
 		}

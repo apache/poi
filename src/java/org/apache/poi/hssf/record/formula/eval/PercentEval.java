@@ -32,7 +32,7 @@ public final class PercentEval implements Function {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcRow, int srcCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

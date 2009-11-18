@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 public final class T implements Function {
 
-    public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+    public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
         switch (args.length) {
             default:
                 return ErrorEval.VALUE_INVALID;

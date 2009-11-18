@@ -37,7 +37,7 @@ public final class Time implements Function {
 	private static final int SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR;
 
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if (args.length != 3) {
 			return ErrorEval.VALUE_INVALID;
 		}

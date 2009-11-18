@@ -30,7 +30,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Isblank implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if(args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

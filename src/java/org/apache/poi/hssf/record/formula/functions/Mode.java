@@ -73,7 +73,7 @@ public final class Mode implements Function {
 
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		double result;
 		try {
 			List<Double> temp = new ArrayList<Double>();

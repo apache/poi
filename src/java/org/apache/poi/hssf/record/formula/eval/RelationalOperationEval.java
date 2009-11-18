@@ -55,7 +55,7 @@ public abstract class RelationalOperationEval implements Function {
 	 * Blank < Positive numbers
 	 * </pre>
 	 */
-	public final ValueEval evaluate(ValueEval[] operands, int srcRow, short srcCol) {
+	public final ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
 		if (operands.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}

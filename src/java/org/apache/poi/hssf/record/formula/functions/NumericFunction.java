@@ -32,7 +32,7 @@ public abstract class NumericFunction implements Function {
 	static final double TEN = 10.0;
 	static final double LOG_10_TO_BASE_e = Math.log(TEN);
 
-	protected static final double singleOperandEvaluate(ValueEval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	protected static final double singleOperandEvaluate(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		double result = OperandResolver.coerceValueToDouble(ve);
 		checkValue(result);
@@ -45,7 +45,7 @@ public abstract class NumericFunction implements Function {
 		}
 	}
 
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		double result;
 		try {
 			result = eval(args, srcCellRow, srcCellCol);
@@ -56,7 +56,7 @@ public abstract class NumericFunction implements Function {
 		return new NumberEval(result);
 	}
 
-	protected abstract double eval(ValueEval[] args, int srcCellRow, short srcCellCol) throws EvaluationException;
+	protected abstract double eval(ValueEval[] args, int srcCellRow, int srcCellCol) throws EvaluationException;
 
 	/* -------------------------------------------------------------------------- */
 	// intermediate sub-classes (one-arg, two-arg and multi-arg)
@@ -65,7 +65,7 @@ public abstract class NumericFunction implements Function {
 		protected OneArg() {
 			// no fields to initialise
 		}
-		protected final double eval(ValueEval[] args, int srcCellRow, short srcCellCol) throws EvaluationException {
+		protected final double eval(ValueEval[] args, int srcCellRow, int srcCellCol) throws EvaluationException {
 			if (args.length != 1) {
 				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
@@ -79,7 +79,7 @@ public abstract class NumericFunction implements Function {
 		protected TwoArg() {
 			// no fields to initialise
 		}
-		protected final double eval(ValueEval[] args, int srcCellRow, short srcCellCol) throws EvaluationException {
+		protected final double eval(ValueEval[] args, int srcCellRow, int srcCellCol) throws EvaluationException {
 			if (args.length != 2) {
 				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
@@ -97,7 +97,7 @@ public abstract class NumericFunction implements Function {
 			_minArgs = minArgs;
 			_maxArgs = maxArgs;
 		}
-		protected final double eval(ValueEval[] args, int srcCellRow, short srcCellCol) throws EvaluationException {
+		protected final double eval(ValueEval[] args, int srcCellRow, int srcCellCol) throws EvaluationException {
 			int nArgs = args.length;
 			if (nArgs < _minArgs || nArgs > _maxArgs) {
 				throw new EvaluationException(ErrorEval.VALUE_INVALID);

@@ -38,7 +38,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  */
 public final class IsNa implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if(args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

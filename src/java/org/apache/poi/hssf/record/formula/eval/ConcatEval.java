@@ -30,7 +30,7 @@ public final class ConcatEval implements Function {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRow, short srcCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcRow, int srcCol) {
 		if(args.length != 2) {
 			return ErrorEval.VALUE_INVALID;
 		}

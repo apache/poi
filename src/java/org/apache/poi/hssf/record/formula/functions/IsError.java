@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class IsError implements Function {
 
-	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, int srcCellCol) {
 		if (operands.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}

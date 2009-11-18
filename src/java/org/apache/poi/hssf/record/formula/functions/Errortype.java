@@ -52,7 +52,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  */
 public final class Errortype implements Function {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 
 		try {
 			OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);

@@ -41,7 +41,7 @@ public final class Value implements Function {
 	private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
 	private static final Double ZERO = new Double(0.0);
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, short srcCellCol) {
+	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if (args.length != 1) {
 			return ErrorEval.VALUE_INVALID;
 		}
