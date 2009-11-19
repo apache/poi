@@ -21,54 +21,70 @@
 
 <document>
   <header>
-    <title>Apache POI - Java API To Access Microsoft Format Files</title>
+    <title>Apache POI - the Java API for Microsoft Documents</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="user@poi.apache.org"/>
       <person id="AS" name="Avik Sengupta" email="user@poi.apache.org"/>
       <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
+      <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
     </authors>
   </header>
 
   <body>
-    <section><title>28 September 2009 - POI 3.5-FINAL available</title>
+    <section><title>28 September 2009 - POI 3.5-FINAL is now available</title>
       <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
         This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
     </p>
     <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
-      People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
+      People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
      <p>See the <link href="download.html">downloads</link> page for more details.</p>
     </section>
-    <section><title>Purpose</title>
+    <section><title>Mission Statement</title>
       <p>
-      The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format, and Office OpenXML format, using
-      pure Java.  In short, you can read and write MS Excel files using Java. In addition,
-      you can read and write MS Word and MS PowerPoint files using Java.  POI is your Java Excel
-      solution (for Excel 97-2007). However, we have a complete API for porting other OLE 2
-      Compound Document formats and welcome others to participate.
+      The Apache POI Project's mission is to create and maintain Java APIs for manipulating various file formats
+      based upon the Office Open XML standards (OOXML) and Microsoft's OLE 2 Compound Document format (OLE2).
+      In short, you can read and write MS Excel files using Java.
+      In addition, you can read and write MS Word and MS PowerPoint files using Java.  Apache POI is your Java Excel
+      solution (for Excel 97-2008). We have a complete API for porting other OOXML and OLE2 formats and welcome others to participate.
       </p>
       <p>
-      OLE 2 Compound Document Format based files include most Microsoft Office
-      files such as XLS and DOC as well as MFC serialization API based file formats.
+      OLE2 files include most Microsoft Office files such as XLS, DOC, and PPT as well as MFC serialization API based file formats.
+      The project provides APIs for the <link href="poifs/index.html">OLE2 Filesystem (POIFS)</link> and
+      <link href="hpsf/index.html">OLE2 Document Properties (HPSF)</link>.
       </p>
       <p>
-      Office OpenXML Format based files include the new (2007+) xml based file formats,
-      including Microsoft office files such as XLSX, DOCX and PPTX.
+      Office OpenXML Format is the new standards based XML file format found in Microsoft Office 2007 and 2008.
+      This includes XLSX, DOCX and PPTX. The project provides a low level API to support the Open Packaging Conventions
+      using <link href="oxml4j/index.html">openxml4j</link>.
       </p>
       <p>
-         As a general policy we try to collaborate as much as possible with other projects to
+	For each MS Office application there exists a component module that attempts to provide a common high level Java api to both OLE2 and OOXML
+	document formats. This is most developed for <link href="spreadsheet/index.html">Excel workbooks (SS=HSSF+XSSF)</link>.
+	Work is progressing for <link href="hwpf/index.html">Word documents (HWPF+XWPF)</link> and
+	<link href="slideshow/index.html">PowerPoint presentations (HSLF+XSLF)</link>.
+      </p>
+      <p>
+	The project has recently added support for <link href="hsmf/index.html">Outlook (HSMF)</link>. Microsoft opened the specifications
+	to this format in October 2007. We would welcome contributions.
+      </p>
+      <p>
+	There are also projects for <link href="hdgf/index.html">Visio (HDGF)</link> and <link href="hpbf/index.html">Publisher (HPBF)</link>.
+      </p>
+      <p>
+         As a general policy we collaborate as much as possible with other projects to
          provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
          which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
          XLS format; and <link href="http://lucene.apache.org/">Lucene</link>
          for which we provide format interpretors.  When practical, we donate
-         components directly to those projects for POI-enabling them.
+         components directly to those projects for POI-enabling them. 
       </p>
-      <section><title>Why/when would I use POI?</title>
-        <p>
- 		We'll tackle this on a component level. POI refers to the whole project.
-        </p>
+      <section><title>Why should I use Apache POI?</title>
+      <p>
+	A major use of the Apache POI api is for <link href="text-extraction.html">Text Extraction</link> applications
+	such as web spiders, index builders, and content management systems.
+      </p>
         <p>
 		So why should you use POIFS, HSSF or XSSF?
         </p>
@@ -85,136 +101,26 @@
         using Java.
         </p>
       </section>
+      <section><title>Components</title>
+	<p>
+	  The Apache POI Project provides several component modules some of which may not be of interest to you.
+	  Use the information on our <link href="overview.html#components">Components</link> page to determine which
+	  jar files to include in your classpath.
+	</p>
+      </section>
     </section>
 
-
-    <section><title>Components To Date</title>
-        <section><title>Overview</title>
-	<p>The following are components of the entire POI project and a brief
-	  summary of their purpose.</p>
-        </section>
-        <section><title>POIFS for OLE 2 Documents</title>
-             <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
-             pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by
-             definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
-        </section>
-        <section><title>HSSF and XSSF for Excel Documents</title>
-             <p>HSSF is our port of the Microsoft Excel 97(-2007) file format (BIFF8) to pure
-              Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
-              pure Java. They both supports read and write capability. Please see
-              <link href="./spreadsheet/index.html">the HSSF+XSSF project page</link> for more
-              information.</p>
-        </section>
-        <section><title>HWPF for Word Documents</title>
-	<p>HWPF is our port of the Microsoft Word 97 file format to pure
-	  Java.  It supports read, and limited write capabilities. Please see <link
-	    href="./hwpf/index.html">the HWPF project page for more
-	    information</link>.  This component is in the early stages of
-	  development. It can already read and write simple files.</p>
-	<p>Presently we are looking for a contributor to foster the HWPF
-	  development. Jump in!</p>
-        </section>
-        <section><title>HSLF for PowerPoint Documents</title>
-	<p>HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
-	  Java. It supports read and write capabilities. Please see <link
-	    href="./slideshow/index.html">the HSLF project page for more
-	    information</link>.</p>
-        </section>
-        <section><title>HPSF for Document Properties</title>
-	<p>HPSF is our port of the OLE 2 property set format to pure
-	  Java. Property sets are mostly use to store a document's properties
-	  (title, author, date of last modification etc.), but they can be used
-	  for application-specific purposes as well.</p>
-
-	<p>HPSF supports both reading and writing of properties.</p>
-	<p>Please see <link href="./hpsf/index.html">the HPSF project
-	    page</link> for more information.</p>
-        </section>
-        <section><title>HDGF for Visio Documents</title>
-	<p>HDGF is our port of the Microsoft Viso 97(-2003) file format to pure
-	  Java. It currently only supports reading at a very low level, and
-      simple text extraction. Please see <link
-	    href="./hdgf/index.html">the HDGF project page for more
-	    information</link>.</p>
-        </section>
-        <section><title>HPBF for Publisher Documents</title>
-	<p>HPBF is our port of the Microsoft Publisher 98(-2007) file format to pure
-	  Java. It currently only supports reading at a low level for around
-      half of the file parts, and simple text extraction.  Please see <link
-	    href="./hpbf/index.html">the HPBF project page for more
-	    information</link>.</p>
-        </section>
-     <section><title>Component map</title>
-       <anchor id="components"/>
-       <p>
-         The POI distribution consists of several JAR files. Not all of them are needed in every case. The following table
-         shows the relationships between POI components and the JAR files.
-       </p>
-        <table>
-          <tr>
-            <th>Component</th>
-            <th>JAR</th>
-            <th>Maven artifactId</th>
-          </tr>
-          <tr>
-            <td><link href="./poifs/index.html">POIFS</link></td>
-            <td>poi-version-yyyymmdd.jar</td>
-            <td>poi</td>
-          </tr>
-          <tr>
-            <td><link href="./hpsf/index.html">HPSF</link></td>
-            <td>poi-version-yyyymmdd.jar</td>
-            <td>poi</td>
-          </tr>
-          <tr>
-            <td><link href="./spreadsheet/index.html">HSSF</link></td>
-            <td>poi-version-yyyymmdd.jar</td>
-            <td>poi</td>
-          </tr>
-          <tr>
-            <td><link href="./spreadsheet/index.html">XSSF</link></td>
-            <td>poi-ooxml-version-yyyymmdd.jar</td>
-            <td>poi-ooxml</td>
-          </tr>
-          <tr>
-            <td><link href="./slideshow/index.html">HLSF</link></td>
-            <td>poi-scratchpad-version-yyyymmdd.jar</td>
-            <td>poi-scratchpad</td>
-          </tr>
-          <tr>
-            <td><link href="./hwpf/index.html">HWPF</link></td>
-            <td>poi-scratchpad-version-yyyymmdd.jar</td>
-            <td>poi-scratchpad</td>
-          </tr>
-          <tr>
-            <td><link href="./hdgf/index.html">HDGF</link></td>
-            <td>poi-scratchpad-version-yyyymmdd.jar</td>
-            <td>poi-scratchpad</td>
-          </tr>
-          <tr>
-            <td><link href="./hpbf/index.html">HPBF</link></td>
-            <td>poi-scratchpad-version-yyyymmdd.jar</td>
-            <td>poi-scratchpad</td>
-          </tr>
-          <tr>
-            <td><link href="./hsmf/index.html">HSMF</link></td>
-            <td>poi-scratchpad-version-yyyymmdd.jar</td>
-            <td>poi-scratchpad</td>
-          </tr>
-        </table>
-     </section>
-     </section>
     <section><title>Contributing </title>
         <p>
 		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help
-		us on the project in several areas. The first is bug reports and feature requests! The second is documentation -
-		we'll be at your every beck and call if you've got a critique or you'd like to contribute or otherwise improve
-    the documentation. Last, but not least, we could use some binary crunching Java coders to chew through the 
-    complexity that characterizes Microsoft's file formats and help us port new ones to a superior Java platform!
+		us on the project. So if you're motivated, ready, and have the time time download the source from the
+		<link href="subversion.html">Subversion Repository</link>, <link href="howtobuild.html">build the code</link>,
+		join the <link href="mailinglists.html">mailing lists</link> and we'll be happy to help you get started on the project!
         </p>
-        <p>So if you're motivated, ready, and have the time, join the mail lists and we'll be happy to help you get started on the
-           project!
-        </p>
+      <p>
+	Please read our <link href="guidelines.html">Contribution Guidelines</link>. When your contribution is ready
+	submit a patch to our <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.
+      </p>
 
 
     </section>

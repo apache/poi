@@ -21,7 +21,7 @@
 
 <document>
   <header>
-    <title>POI Text Extraction</title>
+    <title>Apache POI - Text Extraction</title>
     <authors>
       <person id="NB" name="Nick Burch" email="nick@apache.org"/>
     </authors>
@@ -29,7 +29,7 @@
   
   <body>
     <section><title>Overview</title>
-      <p>POI provides text extraction for all the supported file
+      <p>Apache POI provides text extraction for all the supported file
        formats. In addition, it provides access to the metadata
        associated with a given file, such as title and author.</p>
       <p>In addition to providing direct text extraction classes,
@@ -108,50 +108,53 @@
         if one of these objects is embedded into a worksheet, the ExtractorFactory class can be used to recover an extractor for it.     
       </p>
       <source>
-  FileInputStream fis = new FileInputStream(inputFile);
-  POIFSFileSystem fileSystem = new POIFSFileSystem(fis);
-  // Firstly, get an extractor for the Workbook
-  POIOLE2TextExtractor oleTextExtractor = ExtractorFactory.createExtractor(fileSystem);
-  // Then a List of extractors for any embedded Excel, Word, PowerPoint
-  // or Visio objects embedded into it.
-  POITextExtractor[] embeddedExtractors = ExtractorFactory.getEmbededDocsTextExtractors(oleTextExtractor);
-  for (POITextExtractor textExtractor : embeddedExtractors) {
-      // If the embedded object was an Excel spreadsheet.
-      if (textExtractor instanceof ExcelExtractor) {
-          ExcelExtractor excelExtractor = (ExcelExtractor) textExtractor;
-          System.out.println(excelExtractor.getText());
+FileInputStream fis = new FileInputStream(inputFile);
+POIFSFileSystem fileSystem = new POIFSFileSystem(fis);
+// Firstly, get an extractor for the Workbook
+POIOLE2TextExtractor oleTextExtractor = 
+   ExtractorFactory.createExtractor(fileSystem);
+// Then a List of extractors for any embedded Excel, Word, PowerPoint
+// or Visio objects embedded into it.
+POITextExtractor[] embeddedExtractors =
+   ExtractorFactory.getEmbededDocsTextExtractors(oleTextExtractor);
+for (POITextExtractor textExtractor : embeddedExtractors) {
+   // If the embedded object was an Excel spreadsheet.
+   if (textExtractor instanceof ExcelExtractor) {
+      ExcelExtractor excelExtractor = (ExcelExtractor) textExtractor;
+      System.out.println(excelExtractor.getText());
+   }
+   // A Word Document
+   else if (textExtractor instanceof WordExtractor) {
+      WordExtractor wordExtractor = (WordExtractor) textExtractor;
+      String[] paragraphText = wordExtractor.getParagraphText();
+      for (String paragraph : paragraphText) {
+         System.out.println(paragraph);
       }
-      // A Word Document
-      else if (textExtractor instanceof WordExtractor) {
-          WordExtractor wordExtractor = (WordExtractor) textExtractor;
-          String[] paragraphText = wordExtractor.getParagraphText();
-          for (String paragraph : paragraphText) {
-              System.out.println(paragraph);
-          }
-          // Display the document's header and footer text
-          System.out.println("Footer text: " + wordExtractor.getFooterText());
-          System.out.println("Header text: " + wordExtractor.getHeaderText());
-      }
-      // PowerPoint Presentation.
-      else if (textExtractor instanceof PowerPointExtractor) {
-          PowerPointExtractor powerPointExtractor = (PowerPointExtractor) textExtractor;
-          System.out.println("Text: " + powerPointExtractor.getText());
-          System.out.println("Notes: " + powerPointExtractor.getNotes());
-      }
-      // Visio Drawing
-      else if (textExtractor instanceof VisioTextExtractor) {
-          VisioTextExtractor visioTextExtractor = (VisioTextExtractor) textExtractor;
-          System.out.println("Text: " + visioTextExtractor.getText());
-      }
-  }
+      // Display the document's header and footer text
+      System.out.println("Footer text: " + wordExtractor.getFooterText());
+      System.out.println("Header text: " + wordExtractor.getHeaderText());
+   }
+   // PowerPoint Presentation.
+   else if (textExtractor instanceof PowerPointExtractor) {
+      PowerPointExtractor powerPointExtractor =
+         (PowerPointExtractor) textExtractor;
+      System.out.println("Text: " + powerPointExtractor.getText());
+      System.out.println("Notes: " + powerPointExtractor.getNotes());
+   }
+   // Visio Drawing
+   else if (textExtractor instanceof VisioTextExtractor) {
+      VisioTextExtractor visioTextExtractor = 
+         (VisioTextExtractor) textExtractor;
+      System.out.println("Text: " + visioTextExtractor.getText());
+   }
+}
       </source>
     </section>
   </body>
 
   <footer>
     <legal>
-      Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
-      $Revision: 639487 $ $Date: 2008-03-20 22:31:15 +0000 (Thu, 20 Mar 2008) $
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
     </legal>
   </footer>
 </document>

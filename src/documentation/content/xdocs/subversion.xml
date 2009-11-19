@@ -21,7 +21,7 @@
 
 <document>
   <header>
-    <title>Source Code Repository</title>
+    <title>Apache POI - Source Code Repository</title>
     <authors>
       <person id="NB" name="Nick Burch" email="nick@apache.org"/>
     </authors>
@@ -42,9 +42,11 @@
          see the 
          <link href="http://www.apache.org/dev/version-control.html">version control page.</link>
       </p>
-
-      <p>Subversion is an open-source version control system. The root url
-       of the ASF Subversion repository is 
+      <p>Subversion is an open-source version control system. It has been contributed to the Apache Software Foundation and is
+	now available <link href="http://incubator.apache.org/projects/subversion.html">here</link>.
+      </p>
+      <p>
+	The root url of the ASF Subversion repository is 
        <link href="http://svn.apache.org/repos/asf/">http://svn.apache.org/repos/asf/</link>
        for non-committers and 
        <link href="https://svn.apache.org/repos/asf/">https://svn.apache.org/repos/asf/</link> 
@@ -82,8 +84,7 @@
   </body>
   <footer>
     <legal>
-      Copyright 2007 The Apache Software Foundation or its licensors, as applicable.
-      $Revision: 496536 $ $Date: 2007-01-15 23:11:09 +0000 (Mon, 15 Jan 2007) $
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
     </legal>
   </footer>
 </document>

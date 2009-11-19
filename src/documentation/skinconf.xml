@@ -83,15 +83,16 @@ be used to configure the chosen Forrest skin.
   <disable-print-link>false</disable-print-link>  
   <!-- Do we want to disable the PDF link? -->
   <disable-pdf-link>false</disable-pdf-link>
-  <!-- Do we want to disable the xml source link? -->
+  <!-- Do we want to disable the xml source link? yes, it avoids disclosing author emails -->
   <disable-xml-link>true</disable-xml-link>
   <!-- Do we want to disable w3c compliance links? -->
   <disable-compliance-links>false</disable-compliance-links>
-  <!-- Whether to render mailto: links unrecognisable by spam harvesters -->
-  <obfuscate-mail-links>true</obfuscate-mail-links>
+  <!-- Whether to render mailto: links unrecognisable by spam harvesters
+    if we turn this on then mailinglists.html is broken.-->
+  <obfuscate-mail-links>false</obfuscate-mail-links>
 
   <searchsite-domain>poi.apache.org</searchsite-domain>
-  <searchsite-name>poi</searchsite-name>
+  <searchsite-name>Apache POI</searchsite-name>
 
   <!-- mandatory project logo
        skin: forrest-site renders it at the top -->
@@ -129,8 +130,8 @@ be used to configure the chosen Forrest skin.
   <credits>
     <credit>
       <name>Built with Apache Forrest</name>
-      <url>http://xml.apache.org/forrest/</url>
-      <image>images/built-with-forrest-button.png</image>
+      <url>http://forrest.apache.org/</url>
+      <image>skin/images/built-with-forrest-button.png</image>
       <width>88</width>
       <height>31</height>
     </credit>

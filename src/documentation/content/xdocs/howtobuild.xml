@@ -21,69 +21,72 @@
 
 <document>
     <header>
-        <title>How To Build POI</title>
+        <title>Apache POI - How To Build</title>
         <authors>
             <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GS"/>
             <person email="tetsuya@apache.org" name="Tetsuya Kitahata" id="TK"/>
+            <person email="dfisher@jmlafferty.com" name="David Fisher" id="DF"/>
         </authors>
     </header>
     <body>
         <section>
-          <title>JDK</title>
+          <title>JDK Version</title>
           <p>
             POI 3.5 and later requires the JDK version 1.5 or later.
             Versions prior to 3.5 require JDK 1.4+
           </p>
         </section>
         <section>
-            <title>Installing Ant</title>
+            <title>Install Apache Ant</title>
             <p>
-                The POI build system requires two components to perform a
-                build.
-                <link href="ext:ant.apache.org/">Ant</link> and
-                <link href="ext:xml.apache.org/forrest">Forrest</link>.
+                The POI build system requires <link href="http://ant.apache.org/bindownload.cgi">Apache Ant</link>
             </p>
             <p>
                 Specifically the build has been tested to work with Ant version
-                1.7.1 and Forrest 0.5.  To install these products download
-                the distributions and follow the instructions in their
-                documentation.  Make sure you don't forget to set the
-                environment variables FORREST_HOME and ANT_HOME.  The
-                ANT_HOME/bin directory should be in the path.
-            </p>
-            <p>
-                One these products are installed you will also need to
-                download some extra jar files required by the build.
-            </p>
-            <table>
-                <tr>
-                    <th>Library</th>
-                    <th>Location</th>
-                </tr>
-                <tr>
-                    <td>junit</td>
-                    <td>http://www.junit.org</td>
-                </tr>
-            </table>
-            <p>
-                Just pick the latest versions of these jars and place
-                them in ANT_HOME/lib and make sure that optional.jar is
-                in ANT_HOME/lib .
+                1.7.1.  To install the product download the distribution and follow the instructions.
+	    </p>
+	    <p>
+	        Remember to set the ANT_HOME environment variable and add ANT_HOME/bin
+                to your shell's PATH.
             </p>
         </section>
         <section>
-            <title>Running the Build</title>
+            <title>Install JUnit</title>
+            <p>
+                Running unit tests and building a distribution requires <link href="http://www.junit.org/">JUnit</link>.
+            </p>
+            <p>
+                Just pick the latest versions of the jars from 
+		<link href="http://sourceforge.net/projects/junit/files/junit/">SourceForge</link> and place
+                them in ANT_HOME/lib. Make sure that optional.jar is in ANT_HOME/lib.
+            </p>
+        </section>
+        <section>
+            <title>Install Apache Forrest</title>
+            <p>
+                The POI build system requires <link href="http://forrest.apache.org/">Apache Forrest</link> to build the documentation.
+            </p>
+            <p>
+                Specifically the build has been tested to work with Forrest 0.5. This is an old release which is available
+		<link href="http://archive.apache.org/dist/forrest/pre-0.6/">here</link>.
+	    </p>
+	    <p>
+	        Remember to set the FORREST_HOME environment variable.
+            </p>
+        </section>
+        <section>
+            <title>Building Targets with Ant</title>
             <p>
                 The main targets of interest to our users are:
             </p>
             <table>
                 <tr>
-                    <th>Target</th>
+                    <th>Ant Target</th>
                     <th>Description</th>
                 </tr>
                 <tr>
                     <td>clean</td>
-                    <td>Erase all build work products (ie, everything in the
+                    <td>Erase all build work products (ie. everything in the
                         build directory</td>
                 </tr>
                 <tr>
@@ -92,23 +95,28 @@
                 </tr>
                 <tr>
                     <td>test</td>
-                    <td>Run all unit tests from main, contrib and scratchpad</td>
-                </tr>
-                <tr>
-                    <td>docs</td>
-                    <td>Generate all documentation for the system</td>
+                    <td>Run all unit tests from main, contrib and scratchpad (Requires JUnit)</td>
                 </tr>
                 <tr>
                     <td>jar</td>
                     <td>Produce jar files</td>
                 </tr>
                 <tr>
+                    <td>docs</td>
+                    <td>Generate all documentation (Requires Apache Forrest)</td>
+                </tr>
+                <tr>
                     <td>dist</td>
-                    <td>Create a distribution.</td>
+                    <td>Create a distribution (Requires JUnit and Apache Forrest)</td>
                 </tr>
             </table>
         </section>
     </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+    </legal>
+  </footer>
 </document>
 
 

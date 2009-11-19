@@ -56,7 +56,7 @@ under the License.
  -->
 <project name="POI Build" default="help" basedir=".">
 
-  <description>The POI project Ant build.</description>
+  <description>The Apache POI project Ant build.</description>
 
   <property environment="env"/>
 
@@ -214,7 +214,7 @@ under the License.
 
 
   <!-- Prints POI's Ant usage help -->
-  <target name="help" description="Prints POI's Ant usage help">
+  <target name="help" description="Prints Apache POI's Ant usage help">
     <echo>
       - Execute "ant -projecthelp" to view a listing of the main build
         targets.
@@ -836,7 +836,7 @@ under the License.
 
     <target name="-check-forrest-installed" unless="env.FORREST_HOME">
         <echo>Please install Apache Forrest (see
-&lt;http://xml.apache.org/forrest/index.html&gt;) and set the
+&lt;http://forrest.apache.org/index.html&gt;) and set the
 FORREST_HOME environment variable!</echo>
         <fail message="Apache Forrest is not installed."/>
     </target>
