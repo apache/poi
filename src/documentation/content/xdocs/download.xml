@@ -21,27 +21,28 @@
 
 <document>
   <header>
-    <title>Apache POI - Download</title>
+    <title>Apache POI - Download Release Artifacts</title>
   </header>
 
   <body>
-    <section><title>Downloads</title>
+    <section><title>Available Downloads</title>
       <p>
-        Use the links below to download Apache POI releases from one of our mirrors. 
-        You should <link href="download.html#verify">verify the integrity</link> 
-        of the files using the signatures and checksums available from this page.
+       This page provides instructions on how to download and verify Apache POI release artifacts.
       </p>
       <ul>
-          <li>Latest stable release: <link href="download.html#POI-3.5-FINAL">Apache POI 3.5</link></li>
-          <li><link href="http://archive.apache.org/dist/poi/">Release Archive</link></li>
+          <li><link href="download.html#POI-3.5-FINAL">The latest stable release is Apache POI 3.5</link></li>
+          <li><link href="download.html#archive">Archives of all prior releases</link></li>
       </ul>
       <p>
         Apache POI releases are available under the <link href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</link> 
         See the NOTICE file contained in each release artifact for applicable copyright attribution notices. 
-    </p>
+      </p>
+      <p>
+        To insure that you have downloaded the true release you should <link href="download.html#verify">verify the integrity</link> 
+        of the files using the signatures and checksums available from this page.
+      </p>
     </section>
-    <section><title>28 September 2009 - POI 3.5-FINAL available</title>
-      <anchor id="POI-3.5-FINAL"/>
+    <section id="POI-3.5-FINAL"><title>28 September 2009 - POI 3.5-FINAL available</title>
       <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
         This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
       </p>
@@ -81,11 +82,11 @@
       </ul>
       </section>
     </section>
-    <section><title>Verify</title>
-      <anchor id="verify"/>
+    <section id="verify"><title>Verify</title>
       <p>
         It is essential that you verify the integrity of the downloaded files using the PGP or MD5 signatures. 
-        Please read Verifying Apache HTTP Server Releases for more information on why you should verify our releases.
+        Please read <link href="http://httpd.apache.org/dev/verification.html">Verifying Apache HTTP Server Releases</link>
+	for more information on why you should verify our releases. This page provides detailed instructions which you can use for POI artifacts.
       </p>
       <p>
         The PGP signatures can be verified using PGP or GPG. First download the KEYS file as well as the .asc signature files 
@@ -93,19 +94,54 @@
         rather than from a mirror. Then verify the signatures using
       </p>
       <source>
-      % pgpk -a KEYS
-      % pgpv poi-X.Y.Z.jar.asc        
+% pgpk -a KEYS
+% pgpv poi-X.Y.Z.jar.asc        
       </source>  
       <p>or</p>
       <source>
-      % pgp -ka KEYS
-      % pgp poi-X.Y.Z.jar.asc
+% pgp -ka KEYS
+% pgp poi-X.Y.Z.jar.asc
       </source>
       <p>or</p>
       <source>
-      % gpg --import KEYS
-      % gpg --verify poi-X.Y.Z.jar.asc
+% gpg --import KEYS
+% gpg --verify poi-X.Y.Z.jar.asc
       </source>
+      <p>Sample verification of poi-bin-3.5-FINAL-20090928.tar.gz</p>
+      <source>
+% gpg --import KEYS
+gpg: key 12DAE9BE: "Glen Stampoultzis &lt;glens at apache dot org&gt;" not changed
+gpg: key 4CEED75F: "Nick Burch &lt;nick at gagravarr dot org&gt;" not changed
+gpg: key 84B5A42E: "Rainer Klute &lt;rainer.klute at gmx dot de&gt;" not changed
+gpg: key F5BB52CD: "Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;" not changed
+gpg: Total number processed: 4
+gpg:              unchanged: 4
+% gpg --verify poi-bin-3.5-FINAL-20090928.tar.gz.asc
+gpg: Signature made Mon Sep 28 10:28:25 2009 PDT using DSA key ID F5BB52CD
+gpg: Good signature from "Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;"
+gpg:                 aka "Yegor Kozlov &lt;yegor at dinom dot ru&gt;"
+gpg:                 aka "Yegor Kozlov &lt;yegor at apache dot org&gt;"
+Primary key fingerprint: 7D77 0C77 6CE7 754E E6AF  23AA 6934 0A02 F5BB 52CD
+% gpg --fingerprint F5BB52CD
+pub   1024D/F5BB52CD 2007-06-18 [expires: 2012-06-16]
+       Key fingerprint = 7D77 0C77 6CE7 754E E6AF  23AA 6934 0A02 F5BB 52CD
+uid                  Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;
+uid                  Yegor Kozlov &lt;yegor at dinom dot ru&gt;
+uid                  Yegor Kozlov &lt;yegor at apache dot org&gt;
+sub   4096g/7B45A98A 2007-06-18 [expires: 2012-06-16]
+      </source>
+    </section>
+    <section id="archive"><title>Release Archives</title>
+      <p>
+	Apache POI became a top level project in June 2007 and POI 3.0 aritfacts were re-released.
+	Prior to that date POI was a sub-project of <link href="http://jakarta.apache.org/">Apache Jakarta.</link>
+      </p>
+      <ul>
+          <li><link href="http://archive.apache.org/dist/poi/release/bin/">Binary Artifacts</link></li>
+          <li><link href="http://archive.apache.org/dist/poi/release/src/">Source Artifacts</link></li>
+          <li><link href="http://archive.apache.org/dist/poi/">Keys</link></li>
+          <li><link href="http://archive.apache.org/dist/jakarta/poi/release/">Artifacts from prior to 3.0</link></li>
+      </ul>
     </section>
   </body>
   <footer>

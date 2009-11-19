@@ -90,8 +90,7 @@
   </body>
   <footer>
     <legal>
-      Copyright 2007 The Apache Software Foundation or its licensors, as applicable.
-      $Revision: 496536 $ $Date: 2007-01-15 23:11:09 +0000 (Mon, 15 Jan 2007) $
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
     </legal>
   </footer>
 </document>

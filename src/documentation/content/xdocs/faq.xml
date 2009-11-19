@@ -20,89 +20,90 @@
 <!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "./dtd/faq-v11.dtd">
 
 <faqs title="Frequently Asked Questions">
-    <faq>
-        <question>
-          My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException"
-        </question>
-		<answer>
-		 <p>You almost certainly have an older version of POI 
-		 on your classpath. Quite a few runtimes and other packages 
-		 will ship an older version of POI, so this is an easy problem
-		 to hit without your realising.</p>
-		 <p>The best way to identify the offending earlier jar file is
-		 with a few lines of java. These will load one of the core POI
-		 classes, and report where it came from.</p>
-		 <source>
-ClassLoader classloader = org.apache.poi.poifs.filesystem.POIFSFileSystem.class.getClassLoader();
-URL res = classloader.getResource("org/apache/poi/poifs/filesystem/POIFSFileSystem.class">
+  <faq>
+    <question>
+      My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException"
+    </question>
+    <answer>
+      <p>You almost certainly have an older version of POI 
+	on your classpath. Quite a few runtimes and other packages 
+	will ship an older version of POI, so this is an easy problem
+	to hit without your realising.</p>
+      <p>The best way to identify the offending earlier jar file is
+	with a few lines of java. These will load one of the core POI
+	classes, and report where it came from.</p>
+      <source>
+ClassLoader classloader =
+   org.apache.poi.poifs.filesystem.POIFSFileSystem.class.getClassLoader();
+URL res = classloader.getResource(
+             "org/apache/poi/poifs/filesystem/POIFSFileSystem.class");
 String path = res.getPath();
 System.out.println("Core POI came from " + path);
-		 </source>
-		</answer>
-	</faq>
-    <faq>
-        <question>
-          My code uses the scratchpad, compiles fine but fails to run with a "MethodNotFoundException"
-        </question>
-		<answer>
-		 <p>You almost certainly have an older version earlier on your
-		 classpath. See the prior answer.</p>
-		</answer>
-	</faq>
-    <faq>
-        <question>
-          Why is reading a simple sheet taking so long?
-        </question>
-        <answer>
-          <p>You've probably enabled logging.  Logging is intended only for
-          autopsy style debugging.  Having it enabled will reduce performance
-          by a factor of at least 100.  Logging is helpful for understanding
-          why POI can't read some file or developing POI itself.  Important
-          errors are thrown as exceptions, which means you probably don't need
-          logging.</p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-          What is the HSSF "eventmodel"?
-        </question>
-        <answer>
-              <p>The SS eventmodel package is an API for reading Excel files without loading the whole spreadsheet into memory.  It does
-              require more knowledge on the part of the user, but reduces memory consumption by more than
-              tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
-              access, this is the best way to do it.</p>
-        </answer>
-
-    </faq>
-    <faq>
-        <question>
-          Why can't read the document I created using Star Office 5.1?
-        </question>
-        <answer>
-              <p>Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
-              with POI which supports only BIFF8.</p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            Why am I getting an exception each time I attempt to read my spreadsheet?
-        </question>
-        <answer>
-            <p>It's possible your spreadsheet contains a feature that is not currently supported by POI.
-            If you encounter this then please create the simplest file that demonstrates the trouble and submit it to
-	      <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bugzilla.</link></p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            How do you tell if a spreadsheet cell contains a date?
-        </question>
-        <answer>
-            <p>Excel stores dates as numbers therefore the only way to determine if a cell is
-            actually stored as a date is to look at the formatting. There is a helper method
-            in HSSFDateUtil that checks for this.
-            Thanks to Jason Hoffman for providing the solution.</p>
-            <source>
+      </source>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      My code uses the scratchpad, compiles fine but fails to run with a "MethodNotFoundException"
+    </question>
+    <answer>
+      <p>You almost certainly have an older version earlier on your
+	classpath. See the prior answer.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      Why is reading a simple sheet taking so long?
+    </question>
+    <answer>
+      <p>You've probably enabled logging.  Logging is intended only for
+        autopsy style debugging.  Having it enabled will reduce performance
+        by a factor of at least 100.  Logging is helpful for understanding
+        why POI can't read some file or developing POI itself.  Important
+        errors are thrown as exceptions, which means you probably don't need
+        logging.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      What is the HSSF "eventmodel"?
+    </question>
+    <answer>
+      <p>The SS eventmodel package is an API for reading Excel files without loading the whole spreadsheet into memory.  It does
+        require more knowledge on the part of the user, but reduces memory consumption by more than
+        tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
+        access, this is the best way to do it.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      Why can't read the document I created using Star Office 5.1?
+    </question>
+    <answer>
+      <p>Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
+        with POI which supports only BIFF8.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      Why am I getting an exception each time I attempt to read my spreadsheet?
+    </question>
+    <answer>
+      <p>It's possible your spreadsheet contains a feature that is not currently supported by POI.
+        If you encounter this then please create the simplest file that demonstrates the trouble and submit it to
+	<link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bugzilla.</link></p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      How do you tell if a spreadsheet cell contains a date?
+    </question>
+    <answer>
+      <p>Excel stores dates as numbers therefore the only way to determine if a cell is
+        actually stored as a date is to look at the formatting. There is a helper method
+        in HSSFDateUtil that checks for this.
+        Thanks to Jason Hoffman for providing the solution.</p>
+      <source>
    case HSSFCell.CELL_TYPE_NUMERIC:
          double d = cell.getNumericCellValue();
          // test if a date!
@@ -114,94 +115,93 @@ System.out.println("Core POI came from " + path);
            cellText = cal.get(Calendar.MONTH)+1 + "/" +
                       cal.get(Calendar.DAY_OF_MONTH) + "/" +
                       cellText;
-         } </source>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            I'm trying to stream an XLS file from a servlet and I'm having some trouble.  What's the problem?
-        </question>
-        <answer>
-            <p>
-            The problem usually manifests itself as the junk characters being shown on
-            screen. The problem persists even though you have set the correct mime type.
-            </p>
-            <p>
-            The short answer is, don't depend on IE to display a binary file type properly if you stream it via a
-            servlet. Every minor version of IE has different bugs on this issue.
-            </p>
-            <p>
-            The problem in most versions of IE is that it does not use the mime type on
-            the HTTP response to determine the file type; rather it uses the file extension
-            on the request. Thus you might want to add a
-                <strong>.xls</strong> to your request
-            string. For example
-                <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
-            easily accomplished through URL mapping in any servlet container. Sometimes
-            a request like
-                <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
-            known to work.
-
-            </p>
-            <p>
-            To guarantee opening the file properly in Excel from IE, write out your file to a
-            temporary file under your web root from your servelet. Then send an http response
-            to the browser to do a client side redirection to your temp file. (Note that using a 
-            server side redirect using RequestDispatcher will not be effective in this case)
-            </p>
-            <p>
-            Note also that when you request a document that is opened with an
-            external handler, IE sometimes makes two requests to the webserver. So if your
-            generating process is heavy, it makes sense to write out to a temporary file, so that multiple
-            requests happen for a static file.
-            </p>
-            <p>
-            None of this is particular to Excel. The same problem arises when you try to
-            generate any binary file dynamically to an IE client. For example, if you generate
-            pdf files using
-                <link href="http://xml.apache.org/fop">FOP</link>, you will come across many of the same issues.
-
-            </p>
-            <!-- Thanks to Avik for the answer -->
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            I want to set a cell format (Data format of a cell) of a excel sheet as ###,###,###.#### or ###,###,###.0000.    Is it possible using POI ?
-        </question>
-        <answer>
-            <p>
-	   Yes.  You first need to get a DataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="spreadsheet/quick-guide.html#DataFormats">here</link>.
-            </p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            I want to set a cell format (Data format of a cell) of a excel sheet as text.    Is it possible using POI ?
-        </question>
-        <answer>
-            <p>
-	   Yes.  This is a built-in format for excel that you can get from DataFormat object using the format string "@".  Also, the string "text" will alias this format.
-            </p>
-        </answer>
-    </faq>
-    <faq>
-        <question>
-            How do I add a border around a merged cell?
-        </question>
-        <answer>
-            <p>Add blank cells around where the cells normally would have been and set the borders individually for each cell.
-            We will probably enhance HSSF in the future to make this process easier.</p>
-        </answer>
-    </faq>
-    <faq>
-	<question>
-        I am using styles when creating a workbook in POI, but Excel refuses to open the file, complaining about "Too Many Styles".
-	</question>
-	<answer>
-	<p>You just create the styles OUTSIDE of the loop in which you create cells.</p>
-	<p>GOOD:</p>
-	<source>
+         }
+      </source>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      I'm trying to stream an XLS file from a servlet and I'm having some trouble.  What's the problem?
+    </question>
+    <answer>
+      <p>
+        The problem usually manifests itself as the junk characters being shown on
+        screen. The problem persists even though you have set the correct mime type.
+      </p>
+      <p>
+        The short answer is, don't depend on IE to display a binary file type properly if you stream it via a
+        servlet. Every minor version of IE has different bugs on this issue.
+      </p>
+      <p>
+        The problem in most versions of IE is that it does not use the mime type on
+        the HTTP response to determine the file type; rather it uses the file extension
+        on the request. Thus you might want to add a
+        <strong>.xls</strong> to your request
+        string. For example
+        <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
+        easily accomplished through URL mapping in any servlet container. Sometimes
+        a request like
+        <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
+        known to work.
+      </p>
+      <p>
+        To guarantee opening the file properly in Excel from IE, write out your file to a
+        temporary file under your web root from your servelet. Then send an http response
+        to the browser to do a client side redirection to your temp file. (Note that using a 
+        server side redirect using RequestDispatcher will not be effective in this case)
+      </p>
+      <p>
+        Note also that when you request a document that is opened with an
+        external handler, IE sometimes makes two requests to the webserver. So if your
+        generating process is heavy, it makes sense to write out to a temporary file, so that multiple
+        requests happen for a static file.
+      </p>
+      <p>
+        None of this is particular to Excel. The same problem arises when you try to
+        generate any binary file dynamically to an IE client. For example, if you generate
+        pdf files using
+        <link href="http://xml.apache.org/fop">FOP</link>, you will come across many of the same issues.
+      </p>
+      <!-- Thanks to Avik for the answer -->
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      I want to set a cell format (Data format of a cell) of a excel sheet as ###,###,###.#### or ###,###,###.0000.    Is it possible using POI ?
+    </question>
+    <answer>
+      <p>
+	Yes.  You first need to get a DataFormat object from the workbook and call getFormat with the desired format.  Some examples are <link href="spreadsheet/quick-guide.html#DataFormats">here</link>.
+      </p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      I want to set a cell format (Data format of a cell) of a excel sheet as text.    Is it possible using POI ?
+    </question>
+    <answer>
+      <p>
+	Yes.  This is a built-in format for excel that you can get from DataFormat object using the format string "@".  Also, the string "text" will alias this format.
+      </p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      How do I add a border around a merged cell?
+    </question>
+    <answer>
+      <p>Add blank cells around where the cells normally would have been and set the borders individually for each cell.
+        We will probably enhance HSSF in the future to make this process easier.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      I am using styles when creating a workbook in POI, but Excel refuses to open the file, complaining about "Too Many Styles".
+    </question>
+    <answer>
+      <p>You just create the styles OUTSIDE of the loop in which you create cells.</p>
+      <p>GOOD:</p>
+      <source>
  HSSFWorkbook wb = new HSSFWorkbook();
  HSSFSheet sheet = wb.createSheet("new sheet");
  HSSFRow row = null;
@@ -214,7 +214,8 @@ System.out.println("Core POI came from " + path);
  cell.setCellValue("X");
  cell.setCellStyle(style);
 
- // Orange "foreground", foreground being the fill foreground not the font color.
+ // Orange "foreground",
+ //     foreground being the fill foreground not the font color.
  style = wb.createCellStyle();
  style.setFillForegroundColor(HSSFColor.ORANGE.index);
  style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -234,42 +235,44 @@ System.out.println("Core POI came from " + path);
  // Write the output to a file
  FileOutputStream fileOut = new FileOutputStream("workbook.xls");
  wb.write(fileOut);
- fileOut.close(); </source>
-
-	<p>BAD:</p>
-	<source>
+ fileOut.close();
+      </source>
+      <p>BAD:</p>
+      <source>
  HSSFWorkbook wb = new HSSFWorkbook();
  HSSFSheet sheet = wb.createSheet("new sheet");
  HSSFRow row = null;
 
  for (int x = 0; x &lt; 1000; x++) {
-	 // Aqua background
-	 HSSFCellStyle style = wb.createCellStyle();
-	 style.setFillBackgroundColor(HSSFColor.AQUA.index);
-	 style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
-	 HSSFCell cell = row.createCell((short) 1);
-	 cell.setCellValue("X");
-	 cell.setCellStyle(style);
+    // Aqua background
+    HSSFCellStyle style = wb.createCellStyle();
+    style.setFillBackgroundColor(HSSFColor.AQUA.index);
+    style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+    HSSFCell cell = row.createCell((short) 1);
+    cell.setCellValue("X");
+    cell.setCellStyle(style);
 
-	 // Orange "foreground", foreground being the fill foreground not the font color.
-	 style = wb.createCellStyle();
-	 style.setFillForegroundColor(HSSFColor.ORANGE.index);
-	 style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+    // Orange "foreground",
+    //       foreground being the fill foreground not the font color.
+    style = wb.createCellStyle();
+    style.setFillForegroundColor(HSSFColor.ORANGE.index);
+    style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
-	 // Create a row and put some cells in it. Rows are 0 based.
-	 row = sheet.createRow((short) k);
+    // Create a row and put some cells in it. Rows are 0 based.
+    row = sheet.createRow((short) k);
 
-	 for (int y = 0; y &lt; 100; y++) {
-		 cell = row.createCell((short) k);
-		 cell.setCellValue("X");
-		 cell.setCellStyle(style);
-	 }
+    for (int y = 0; y &lt; 100; y++) {
+       cell = row.createCell((short) k);
+       cell.setCellValue("X");
+       cell.setCellStyle(style);
+    }
  }
 
  // Write the output to a file
  FileOutputStream fileOut = new FileOutputStream("workbook.xls");
  wb.write(fileOut);
- fileOut.close(); </source>
-	</answer>
-    </faq>
+ fileOut.close();
+      </source>
+    </answer>
+  </faq>
 </faqs>

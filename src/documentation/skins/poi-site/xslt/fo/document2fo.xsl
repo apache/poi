@@ -24,6 +24,9 @@
 
 <xsl:import href="../../../common/xslt/fo/document2fo.xsl"/>
 
+  <xsl:template match="legal">
+  </xsl:template>
+
 </xsl:stylesheet>
 
 

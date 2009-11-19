@@ -97,7 +97,7 @@ and tabs (tab2menu.xsl) to generate the final HTML.
    <xsl:template match="section">
 
 	 <xsl:variable name = "level" select = "count(ancestor::section)+1" />
-
+	 <xsl:apply-templates select="@id"/>
 	 <xsl:choose>
 	 	<xsl:when test="$level=1">
 	 	  <div class="h3"><h3><xsl:value-of select="title"/></h3></div>

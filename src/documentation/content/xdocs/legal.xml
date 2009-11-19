@@ -24,28 +24,34 @@
     <title>Apache POI - Legal Stuff</title>
     <authors>
       <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
+      <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
     </authors>
   </header>
 
   <body>
-    <section><title>Apache POI - Legal Stuff</title>
+    <section><title>License and Notice</title>
+<p>
+  Apache POI releases are available under the <link href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</link> 
+  See the NOTICE file contained in each release artifact for applicable copyright attribution notices. Release artifacts are available
+  from the <link href="download.html">Download</link> page.
+</p>
+</section>
+    <section><title>Copyrights and Trademarks</title>
 <p>
 All material on this website is Copyright &#169; 2002-2009, The Apache
-Software Foundation
+Software Foundation.
 </p>
-
 <p>
 Sun, Sun Microsystems, Solaris, Java, JavaServer Web Development Kit,
 and JavaServer Pages are trademarks or registered trademarks of Sun
 Microsystems, Inc. UNIX is a registered trademark in the United States
 and other countries, exclusively licensed through 'The Open Group'.
-Microsoft, Windows, WindowsNT, Excel, Word, PowerPoint and Win32 are
-registered trademarks of
-Microsoft Corporation. Linux is a registered trademark of Linus Torvalds.
+Microsoft, Windows, WindowsNT, Excel, Word, PowerPoint, Viso, Publisher, Outlook,
+and Win32 are registered trademarks of Microsoft Corporation.
+Linux is a registered trademark of Linus Torvalds.
 All other product names mentioned herein and throughout the entire
 web site are trademarks of their respective owners.
 </p>
-
   <section><title>Cryptography Notice</title>
   <p>
    This distribution includes cryptographic software.  The country in 

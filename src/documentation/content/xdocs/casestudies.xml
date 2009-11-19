@@ -25,6 +25,7 @@
         <authors>
             <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
             <person id="CR" name="Cameron Riley" email="crileyNO@SPAMekmail.com"/>
+	    <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
         </authors>
     </header>
 
@@ -196,6 +197,22 @@ format,
                     <p>It is obvious that Microsoft Excel files are also supported.
                         POI has been used to successfully implement this support in ETL4ALL.</p>
             </section>
+	    <section>
+	        <title>JM Lafferty Associates, Inc.</title>
+		<p>
+		   On its <link href="http://www.forecastworks.com/public/">ForecastWorks</link> website
+		   <link href="http://www.jmlafferty.com/">JM Lafferty Associates, Inc.</link> produces dynamic on demand
+		   financial analyses of companies and institutional funds. The pages produced are selected and exported
+		   in several file formats including PPT and XLS.
+		</p>
+		<ul>
+		  <li>The PPT files produced are of high quality which is on a par with similar PDF files.</li>
+		  <li>The XLS files produced contain a complex forecasting model built from a template with a VBA Macro.</li>
+		</ul>
+                <p>
+                    David Fisher (dfisher@jmlafferty.com)
+                </p>
+	    </section>
 
         </section>
     </body>

@@ -24,33 +24,37 @@
     copyright="@year@ POI Project"
     xmlns:xlink="http://www.w3.org/1999/xlink">
 
-    <menu label="Apache POI">
+    <menu label="Overview">
         <menu-item label="Home" href="index.html"/>
         <menu-item label="Download" href="download.html"/>
-        <menu-item label="Changes" href="changes.html"/>
-    </menu>
-
-    <menu label="Documentation">
-        <menu-item label="Source" href="subversion.html"/>
-        <menu-item label="Building" href="howtobuild.html"/>
-        <menu-item label="Javadocs" href="ext:javadoc"/>
+        <menu-item label="Components" href="overview.html"/>
+        <menu-item label="Text Extraction" href="text-extraction.html"/>
         <menu-item label="Case Studies" href="casestudies.html"/>
-        <menu-item label="FAQ" href="faq.html"/>
-        <menu-item label="Mailing Lists" href="mailinglists.html"/>
-        <menu-item label="Bug Database" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
-        <menu-item label="Get Involved" href="getinvolved/index.html"/>
-        <menu-item label="Who We Are" href="who.html"/>
         <menu-item label="Legal" href="legal.html"/>
     </menu>
 
-    <menu label="Modules">
-        <menu-item label="Text Extraction" href="text-extraction.html"/>
+    <menu label="Help">
+        <menu-item label="Javadocs" href="ext:javadoc"/>
+        <menu-item label="FAQ" href="faq.html"/>
+        <menu-item label="Mailing Lists" href="mailinglists.html"/>
+        <menu-item label="Bug Database" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
+        <menu-item label="Changes Log" href="changes.html"/>
+    </menu>
+
+    <menu label="Getting Involved">
+        <menu-item label="Subversion Repository" href="subversion.html"/>
+        <menu-item label="How To Build" href="howtobuild.html"/>
+        <menu-item label="Contribution Guidelines" href="guidelines.html"/>
+        <menu-item label="Who We Are" href="who.html"/>
+    </menu>
+
+    <menu label="Component APIs">
         <menu-item label="Excel (SS=HSSF+XSSF)" href="spreadsheet/index.html"/>
         <menu-item label="Word (HWPF+XWPF)" href="hwpf/index.html"/>
         <menu-item label="PowerPoint (HSLF+XSLF)" href="slideshow/index.html"/>
+        <menu-item label="OpenXML4J (OOXML)" href="oxml4j/index.html"/>
         <menu-item label="OLE2 Filesystem (POIFS)" href="poifs/index.html"/>
-        <menu-item label="OLE2 Properties (HPSF)" href="hpsf/index.html"/>
-        <menu-item label="OpenXML4J" href="oxml4j/index.html"/>
+        <menu-item label="OLE2 Document Props (HPSF)" href="hpsf/index.html"/>
         <menu-item label="Outlook (HSMF)" href="hsmf/index.html"/>
         <menu-item label="Visio (HDGF)" href="hdgf/index.html"/>
         <menu-item label="Publisher (HPBF)" href="hpbf/index.html"/>

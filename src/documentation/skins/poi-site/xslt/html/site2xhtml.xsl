@@ -63,7 +63,7 @@ footer, searchbar, css etc.  As input, it takes XML of the form:
           <tr>
             <xsl:comment>================= start Group Logo ==================</xsl:comment>
             <xsl:if test="$config/group-name">
-            <td align="left">
+            <td align="left" width="50%">
               <div class="groupLogo">
                 <xsl:call-template name="renderlogo">
                   <xsl:with-param name="name" select="$config/group-name"/>
@@ -76,8 +76,8 @@ footer, searchbar, css etc.  As input, it takes XML of the form:
             </xsl:if>
             <xsl:comment>================= end Group Logo ==================</xsl:comment>
             <xsl:comment>================= start Project Logo ==================</xsl:comment>
-            <td align="right">
-              <div class="projectLogo">
+            <td align="right" width="50%">
+              <div class="projectLogo" align="right">
                 <xsl:call-template name="renderlogo">
                   <xsl:with-param name="name" select="$config/project-name"/>
                   <xsl:with-param name="url" select="$config/project-url"/>
@@ -140,12 +140,12 @@ footer, searchbar, css etc.  As input, it takes XML of the form:
                     <tr>
                       <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
                       <td nowrap="nowrap">
+                          Search <xsl:value-of select="$config/searchsite-name"/>
+                        <br />
                         <input type="hidden" name="sitesearch" value="{$config/searchsite-domain}"/>
                         <input type="text" id="query" name="q" size="10"/>
                         <img class="spacer" src="{$spacer}" alt="" width="5" height="1" />
                         <input type="submit" value="GO" name="Search"/>
-                        <br />
-                          Search <xsl:value-of select="$config/searchsite-name"/>
                           <!-- setting search options off for the moment -->
                           <!--
                           <input type="radio" name="web" value="web"/>web site&#160;&#160;<input type="radio" name="mail" value="mail"/>mail lists
