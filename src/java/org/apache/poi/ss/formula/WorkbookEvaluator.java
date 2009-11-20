@@ -560,21 +560,20 @@ public final class WorkbookEvaluator {
 				return ErrorEval.REF_INVALID;
 		}
 		if (ptg instanceof Ref3DPtg) {
-			Ref3DPtg refPtg = (Ref3DPtg) ptg;
-			SheetRefEvaluator sre = ec.createExternSheetRefEvaluator(refPtg);
-			return new LazyRefEval(refPtg, sre);
+			Ref3DPtg rptg = (Ref3DPtg) ptg;
+			return ec.getRef3DEval(rptg.getRow(), rptg.getColumn(), rptg.getExternSheetIndex());
 		}
 		if (ptg instanceof Area3DPtg) {
 			Area3DPtg aptg = (Area3DPtg) ptg;
-			SheetRefEvaluator sre = ec.createExternSheetRefEvaluator(aptg);
-			return new LazyAreaEval(aptg, sre);
+			return ec.getArea3DEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn(), aptg.getExternSheetIndex());
 		}
-		SheetRefEvaluator sre = ec.getRefEvaluatorForCurrentSheet();
 		if (ptg instanceof RefPtg) {
-			return new LazyRefEval(((RefPtg) ptg), sre);
+			RefPtg rptg = (RefPtg) ptg;
+			return ec.getRefEval(rptg.getRow(), rptg.getColumn());
 		}
 		if (ptg instanceof AreaPtg) {
-			return new LazyAreaEval(((AreaPtg) ptg), sre);
+			AreaPtg aptg = (AreaPtg) ptg;
+			return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
 		}
 
 		if (ptg instanceof UnknownPtg) {

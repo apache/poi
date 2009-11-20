@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
@@ -68,8 +67,10 @@ public final class OperationEvaluationContext {
 		return _columnIndex;
 	}
 
-	/* package */ SheetRefEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
-		int externSheetIndex = ptg.getExternSheetIndex();
+	SheetRefEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
+		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
+	}
+	SheetRefEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
 		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
 		WorkbookEvaluator targetEvaluator;
 		int otherSheetIndex;
@@ -212,7 +213,7 @@ public final class OperationEvaluationContext {
 			default:
 				throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
 		}
-		return new LazyAreaEval(new AI(firstRow, firstCol, lastRow, lastCol), sre);
+		return new LazyAreaEval(firstRow, firstCol, lastRow, lastCol, sre);
 	}
 
 	private static int parseRowRef(String refStrPart) {
@@ -221,33 +222,6 @@ public final class OperationEvaluationContext {
 
 	private static int parseColRef(String refStrPart) {
 		return Integer.parseInt(refStrPart) - 1;
-	}
-
-	private static final class AI implements AreaI {
-
-		private final int _fr;
-		private final int _lr;
-		private final int _fc;
-		private final int _lc;
-
-		public AI(int fr, int fc, int lr, int lc) {
-			_fr = Math.min(fr, lr);
-			_lr = Math.max(fr, lr);
-			_fc = Math.min(fc, lc);
-			_lc = Math.max(fc, lc);
-		}
-		public int getFirstColumn() {
-			return _fc;
-		}
-		public int getFirstRow() {
-			return _fr;
-		}
-		public int getLastColumn() {
-			return _lc;
-		}
-		public int getLastRow() {
-			return _lr;
-		}
 	}
 
 	private static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
@@ -260,5 +234,24 @@ public final class OperationEvaluationContext {
 
 	public FreeRefFunction findUserDefinedFunction(String functionName) {
 		return _bookEvaluator.findUserDefinedFunction(functionName);
+	}
+
+	public ValueEval getRefEval(int rowIndex, int columnIndex) {
+		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
+		return new LazyRefEval(rowIndex, columnIndex, sre);
+	}
+	public ValueEval getRef3DEval(int rowIndex, int columnIndex, int extSheetIndex) {
+		SheetRefEvaluator sre = createExternSheetRefEvaluator(extSheetIndex);
+		return new LazyRefEval(rowIndex, columnIndex, sre);
+	}
+	public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
+			int lastRowIndex, int lastColumnIndex) {
+		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
+		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
+	}
+	public ValueEval getArea3DEval(int firstRowIndex, int firstColumnIndex,
+			int lastRowIndex, int lastColumnIndex, int extSheetIndex) {
+		SheetRefEvaluator sre = createExternSheetRefEvaluator(extSheetIndex);
+		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
 	}
 }
