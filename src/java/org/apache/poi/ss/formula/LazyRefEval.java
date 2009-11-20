@@ -18,8 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
@@ -40,12 +38,6 @@ final class LazyRefEval extends RefEvalBase {
 			throw new IllegalArgumentException("sre must not be null");
 		}
 		_evaluator = sre;
-	}
-	public LazyRefEval(RefPtg ptg, SheetRefEvaluator sre) {
-		this(ptg.getRow(), ptg.getColumn(), sre);
-	}
-	public LazyRefEval(Ref3DPtg ptg, SheetRefEvaluator sre) {
-		this(ptg.getRow(), ptg.getColumn(), sre);
 	}
 
 	public ValueEval getInnerValueEval() {

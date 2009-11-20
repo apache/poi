@@ -26,22 +26,28 @@ import org.apache.poi.hssf.util.CellReference;
 
 /**
  *
- * @author Josh Micich 
+ * @author Josh Micich
  */
 final class LazyAreaEval extends AreaEvalBase {
 
 	private final SheetRefEvaluator _evaluator;
 
-	public LazyAreaEval(AreaI ptg, SheetRefEvaluator evaluator) {
+	LazyAreaEval(AreaI ptg, SheetRefEvaluator evaluator) {
 		super(ptg);
 		_evaluator = evaluator;
 	}
 
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) { 
-		
+	public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
+			int lastColumnIndex, SheetRefEvaluator evaluator) {
+		super(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+		_evaluator = evaluator;
+	}
+
+	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+
 		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
 		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
-		
+
 		return _evaluator.getEvalForCell(rowIx, colIx);
 	}
 
