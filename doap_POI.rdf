@@ -11,13 +11,20 @@
     <name>Apache POI</name>
     <homepage rdf:resource="http://poi.apache.org" />
     <asfext:pmc rdf:resource="http://poi.apache.org" />
-    <shortdesc>Java API To Access Microsoft Format Files</shortdesc>
-    <description>APIs for manipulating various file formats based upon Microsoft's OLE 2 Compound Document format using pure Java. POI is your Java Excel solution as well as your Java Word solution. However, we have a complete API for porting other OLE 2 Compound Document formats and welcome others to participate.</description>
+    <shortdesc>Java API To Access Microsoft Document File Formats</shortdesc>
+    <description>APIs for manipulating various file formats based upon Open Office XML (ECMA-376) and Microsoft's OLE 2 Compound Document formats using pure Java. Apache POI is your Java Excel, Word and PowerPoint solution. We have a complete API for porting other OOXML and OLE 2 Compound Document formats and welcome others to participate.</description>
     <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=POI" />
     <mailing-list rdf:resource="http://poi.apache.org/mailinglists.html" />
     <download-page rdf:resource="http://www.apache.org/dyn/closer.cgi/poi/" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/library" />
+    <release>
+      <Version>
+        <name>Apache POI 3.5</name>
+        <created>2009-09-28</created>
+        <revision>3.5</revision>
+      </Version>
+    </release>
     <release>
       <Version>
         <name>Apache POI 3.2</name>
