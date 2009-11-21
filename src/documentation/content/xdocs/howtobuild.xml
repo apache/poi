@@ -95,11 +95,15 @@
                 </tr>
                 <tr>
                     <td>test</td>
-                    <td>Run all unit tests from main, contrib and scratchpad (Requires JUnit)</td>
+                    <td>Run all unit tests from main, ooxml, contrib and scratchpad</td>
                 </tr>
                 <tr>
                     <td>jar</td>
                     <td>Produce jar files</td>
+                </tr>
+                <tr>
+                    <td>assemble</td>
+                    <td>Produce .zip and tar.gz distribution packages</td>
                 </tr>
                 <tr>
                     <td>docs</td>
@@ -107,7 +111,7 @@
                 </tr>
                 <tr>
                     <td>dist</td>
-                    <td>Create a distribution (Requires JUnit and Apache Forrest)</td>
+                    <td>Create a distribution (Apache Forrest)</td>
                 </tr>
             </table>
         </section>

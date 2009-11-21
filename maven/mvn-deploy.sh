@@ -47,19 +47,33 @@ mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-@VERSION@-@DSTAMP@.jar -DpomFile=poi-@VERSION@.pom
 scp poi-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi/@VERSION@/
+scp poi-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi/@VERSION@/
 
 mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-scratchpad-@VERSION@-@DSTAMP@.jar -DpomFile=poi-scratchpad-@VERSION@.pom
 scp poi-scratchpad-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-scratchpad/@VERSION@/
+scp poi-scratchpad-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-scratchpad/@VERSION@/
 
 mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-contrib-@VERSION@-@DSTAMP@.jar -DpomFile=poi-contrib-@VERSION@.pom
 scp poi-contrib-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-contrib/@VERSION@/
+scp poi-contrib-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-contrib/@VERSION@/
 
 mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
   -Dfile=poi-ooxml-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-@VERSION@.pom
 scp poi-ooxml-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
+scp poi-ooxml-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
+  -Durl=$M2_REPOSITORY \
+  -Dfile=poi-ooxml-schemas-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-schemas-@VERSION@.pom
+scp poi-ooxml-schemas-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml-schemas/@VERSION@/
+
+mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
+  -Durl=$M2_REPOSITORY \
+  -Dfile=poi-examples-@VERSION@-@DSTAMP@.jar -DpomFile=poi-examples-@VERSION@.pom
+scp poi-examples-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
 

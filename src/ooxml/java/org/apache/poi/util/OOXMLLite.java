@@ -82,7 +82,7 @@ public final class OOXMLLite {
 
         List<String> lst = new ArrayList<String>();
         //collect unit tests
-        System.out.println("Collecting unit tests");
+        System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+?\\.Test.+?\\.class$");
 
         TestSuite suite = new TestSuite();
@@ -100,11 +100,10 @@ public final class OOXMLLite {
         }
 
         //run tests
-        System.out.println("Running tests");
         TestRunner.run(suite);
 
         //see what classes from the ooxml-schemas.jar are loaded
-        System.out.println("Copying classes");
+        System.out.println("Copying classes to " + _destDest);
         Map<String, Class<?>> classes = getLoadedClasses(_ooxmlJar.getName());
         for (Class<?> cls : classes.values()) {
             String className = cls.getName();

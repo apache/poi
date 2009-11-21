@@ -24,7 +24,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi</groupId>
-	<artifactId>poi-ooxml</artifactId>
+	<artifactId>poi-ooxml-schemas</artifactId>
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
@@ -60,19 +60,9 @@
 
   <dependencies>
     <dependency>
-       <groupId>org.apache.poi</groupId>
-       <artifactId>poi</artifactId>
-       <version>@VERSION@</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml-schemas</artifactId>
-      <version>@VERSION@</version>
-    </dependency>
-    <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>1.6.1</version>
+      <groupId>org.apache.xmlbeans</groupId>
+      <artifactId>xmlbeans</artifactId>
+      <version>2.3.0</version>
     </dependency>
   </dependencies>
 </project>
