@@ -431,7 +431,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 65536 (the maximum column width in Excel)
+     * @throws IllegalArgumentException if width > 65280 (the maximum column width in Excel)
      */
     public void setColumnWidth(int columnIndex, int width) {
         _sheet.setColumnWidth(columnIndex, width);
