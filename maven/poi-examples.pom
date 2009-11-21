@@ -24,12 +24,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi</groupId>
-	<artifactId>poi-ooxml</artifactId>
+	<artifactId>poi-examples</artifactId>
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
 	<url>http://poi.apache.org/</url>
-	<description>Apache POI - Java API To Access Microsoft Format Files</description>
+	<description>Apache POI Examples</description>
 
   <mailingLists>
     <mailingList>
@@ -66,13 +66,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml-schemas</artifactId>
+      <artifactId>poi-scratchpad</artifactId>
       <version>@VERSION@</version>
     </dependency>
     <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>1.6.1</version>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>@VERSION@</version>
     </dependency>
   </dependencies>
 </project>

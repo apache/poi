@@ -17,7 +17,6 @@
 package org.apache.poi.xwpf;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.POIDataSamples;
 
 import java.io.*;
