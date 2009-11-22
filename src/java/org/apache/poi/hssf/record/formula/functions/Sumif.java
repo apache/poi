@@ -63,7 +63,7 @@ public final class Sumif implements Function {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], srcRowIndex, srcRowIndex);
+		I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], srcRowIndex, srcColumnIndex);
 		double result = sumMatchingCells(aeRange, mp, aeSum);
 		return new NumberEval(result);
 	}

@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Test helper class for creating mock <code>Eval</code> objects
- * 
+ *
  * @author Josh Micich
  */
 public final class EvalFactory {
@@ -39,7 +39,7 @@ public final class EvalFactory {
 	}
 
 	/**
-	 * Creates a dummy AreaEval 
+	 * Creates a dummy AreaEval
 	 * @param values empty (<code>null</code>) entries in this array will be converted to NumberEval.ZERO
 	 */
 	public static AreaEval createAreaEval(String areaRefStr, ValueEval[] values) {
@@ -48,7 +48,7 @@ public final class EvalFactory {
 	}
 
 	/**
-	 * Creates a dummy AreaEval 
+	 * Creates a dummy AreaEval
 	 * @param values empty (<code>null</code>) entries in this array will be converted to NumberEval.ZERO
 	 */
 	public static AreaEval createAreaEval(AreaPtg areaPtg, ValueEval[] values) {
@@ -75,7 +75,7 @@ public final class EvalFactory {
 	public static RefEval createRefEval(String refStr, ValueEval value) {
 		return new MockRefEval(new RefPtg(refStr), value);
 	}
-	
+
 	private static final class MockAreaEval extends AreaEvalBase {
 		private final ValueEval[] _values;
 		public MockAreaEval(AreaPtg areaPtg, ValueEval[] values) {
@@ -94,10 +94,14 @@ public final class EvalFactory {
 			return _values[oneDimensionalIndex];
 		}
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+			if (relFirstRowIx == 0 && relFirstColIx == 0
+					&& relLastRowIx == getHeight()-1 && relLastColIx == getWidth()-1) {
+				return this;
+			}
 			throw new RuntimeException("Operation not implemented on this mock object");
 		}
 	}
-	
+
 	private static final class MockRefEval extends RefEvalBase {
 		private final ValueEval _value;
 		public MockRefEval(RefPtg ptg, ValueEval value) {
@@ -115,5 +119,4 @@ public final class EvalFactory {
 			throw new RuntimeException("Operation not implemented on this mock object");
 		}
 	}
-	
 }
