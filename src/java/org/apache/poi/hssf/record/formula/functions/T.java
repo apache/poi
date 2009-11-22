@@ -30,16 +30,10 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * cause an empty string result.  If the argument is an area, the first (top-left) cell is used
  * (regardless of the coordinates of the evaluating formula cell).
  */
-public final class T implements Function {
+public final class T extends Fixed1ArgFunction {
 
-    public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-        switch (args.length) {
-            default:
-                return ErrorEval.VALUE_INVALID;
-            case 1:
-                 break;
-        }
-        ValueEval arg = args[0];
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+        ValueEval arg = arg0;
         if (arg instanceof RefEval) {
             arg = ((RefEval) arg).getInnerValueEval();
         } else if (arg instanceof AreaEval) {

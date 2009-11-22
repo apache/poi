@@ -50,12 +50,12 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  *
  * @author Josh Micich
  */
-public final class Errortype implements Function {
+public final class Errortype extends Fixed1ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
 		try {
-			OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
+			OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 			return ErrorEval.NA;
 		} catch (EvaluationException e) {
 			int result = translateErrorCodeToErrorTypeValue(e.getErrorEval().getErrorCode());

@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * Based on POI org.apache.hssf.record.formula.DateFunc.java
  */
-public final class Time implements Function {
+public final class Time extends Fixed3ArgFunction {
 
 	private static final int SECONDS_PER_MINUTE = 60;
 	private static final int SECONDS_PER_HOUR = 3600;
@@ -37,25 +37,23 @@ public final class Time implements Function {
 	private static final int SECONDS_PER_DAY = HOURS_PER_DAY * SECONDS_PER_HOUR;
 
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if (args.length != 3) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
 		double result;
-
 		try {
-			result = evaluate(evalArg(args[0]), evalArg(args[1]), evalArg(args[2]));
+			result = evaluate(evalArg(arg0, srcRowIndex, srcColumnIndex), evalArg(arg1, srcRowIndex, srcColumnIndex), evalArg(arg2, srcRowIndex, srcColumnIndex));
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 		return new NumberEval(result);
 	}
-	private static int evalArg(ValueEval arg) throws EvaluationException {
+	private static int evalArg(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
 		if (arg == MissingArgEval.instance) {
 			return 0;
 		}
+		ValueEval ev = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
 		// Excel silently truncates double values to integers
-		return OperandResolver.coerceValueToInt(arg);
+		return OperandResolver.coerceValueToInt(ev);
 	}
 	/**
 	 * Converts the supplied hours, minutes and seconds to an Excel time value.

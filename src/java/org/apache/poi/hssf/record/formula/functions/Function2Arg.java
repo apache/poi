@@ -17,29 +17,16 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel COLUMNS function.
+ * Implemented by all functions that can be called with two arguments
  *
  * @author Josh Micich
  */
-public final class Columns extends Fixed1ArgFunction {
-
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-
-		int result;
-		if (arg0 instanceof AreaEval) {
-			result = ((AreaEval) arg0).getWidth();
-		} else if (arg0 instanceof RefEval) {
-			result = 1;
-		} else { // anything else is not valid argument
-			return ErrorEval.VALUE_INVALID;
-		}
-		return new NumberEval(result);
-	}
+public interface Function2Arg extends Function {
+	/**
+	 * see {@link Function#evaluate(ValueEval[], int, int)}
+	 */
+	ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1);
 }

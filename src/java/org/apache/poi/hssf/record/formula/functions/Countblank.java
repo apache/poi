@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -36,17 +35,11 @@ import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
  *
  * @author Mads Mohr Christensen
  */
-public final class Countblank implements Function {
+public final class Countblank extends Fixed1ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		if (args.length != 1) {
-			// TODO - it doesn't seem to be possible to enter COUNTBLANK() into Excel with the wrong arg count
-			// perhaps this should be an exception
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
 		double result;
-		ValueEval arg0 = args[0];
 		if (arg0 instanceof RefEval) {
 			result = CountUtils.countMatchingCell((RefEval) arg0, predicate);
 		} else if (arg0 instanceof AreaEval) {

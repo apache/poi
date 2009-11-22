@@ -27,9 +27,8 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  */
-public abstract class XYNumericFunction implements Function {
+public abstract class XYNumericFunction extends Fixed2ArgFunction {
 
 	private static abstract class ValueArray implements ValueVector {
 		private final int _size;
@@ -96,15 +95,12 @@ public abstract class XYNumericFunction implements Function {
 	 */
 	protected abstract Accumulator createAccumulator();
 
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if (args.length != 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		double result;
 		try {
-			ValueVector vvX = createValueVector(args[0]);
-			ValueVector vvY = createValueVector(args[1]);
+			ValueVector vvX = createValueVector(arg0);
+			ValueVector vvY = createValueVector(arg1);
 			int size = vvX.getSize();
 			if (size == 0 || vvY.getSize() != size) {
 				return ErrorEval.NA;

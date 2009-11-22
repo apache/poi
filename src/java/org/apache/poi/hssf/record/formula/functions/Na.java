@@ -25,10 +25,9 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * @author Josh Micich
  */
-public final class Na implements Function {
+public final class Na extends Fixed0ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+	public ValueEval evaluate(int srcCellRow, int srcCellCol) {
 		return ErrorEval.NA;
 	}
-
 }

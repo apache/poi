@@ -23,39 +23,33 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-public final class Row implements Function {
+public final class Row implements Function0Arg, Function1Arg {
 
-    public ValueEval evaluate(ValueEval[] evals, int srcCellRow, int srcCellCol) {
-        ValueEval retval = null;
-        int rnum = -1;
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
+        return new NumberEval(srcRowIndex+1);
+    }
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+        int rnum;
 
-        switch (evals.length) {
-        default:
-            retval = ErrorEval.VALUE_INVALID;
-        case 1:
-            if (evals[0] instanceof AreaEval) {
-                AreaEval ae = (AreaEval) evals[0];
-                rnum = ae.getFirstRow();
-            }
-            else if (evals[0] instanceof RefEval) {
-                RefEval re = (RefEval) evals[0];
-                rnum = re.getRow();
-            }
-            else { // anything else is not valid argument
-                retval = ErrorEval.VALUE_INVALID;
-            }
-            break;
-        case 0:
-            rnum = srcCellRow;
+        if (arg0 instanceof AreaEval) {
+            rnum = ((AreaEval) arg0).getFirstRow();
+        } else if (arg0 instanceof RefEval) {
+            rnum = ((RefEval) arg0).getRow();
+        } else {
+            // anything else is not valid argument
+            return ErrorEval.VALUE_INVALID;
         }
 
-        if (retval == null) {
-            retval = (rnum >= 0)
-                    ? new NumberEval(rnum + 1) // +1 since excel rownums are 1 based
-                    : (ValueEval) ErrorEval.VALUE_INVALID;
+        return new NumberEval(rnum + 1);
+    }
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        switch (args.length) {
+            case 1:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0]);
+            case 0:
+              return new NumberEval(srcRowIndex+1);
         }
-
-        return retval;
+        return ErrorEval.VALUE_INVALID;
     }
 
 }

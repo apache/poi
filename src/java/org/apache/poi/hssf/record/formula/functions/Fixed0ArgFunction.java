@@ -17,29 +17,19 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel COLUMNS function.
+ * Convenience base class for functions that only take zero arguments.
  *
  * @author Josh Micich
  */
-public final class Columns extends Fixed1ArgFunction {
-
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-
-		int result;
-		if (arg0 instanceof AreaEval) {
-			result = ((AreaEval) arg0).getWidth();
-		} else if (arg0 instanceof RefEval) {
-			result = 1;
-		} else { // anything else is not valid argument
+public abstract class Fixed0ArgFunction implements Function0Arg {
+	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		if (args.length != 0) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		return new NumberEval(result);
+		return evaluate(srcRowIndex, srcColumnIndex);
 	}
 }

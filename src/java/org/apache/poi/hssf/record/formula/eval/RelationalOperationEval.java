@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.hssf.record.formula.functions.Function;
 import org.apache.poi.ss.util.NumberComparer;
 
@@ -25,7 +26,7 @@ import org.apache.poi.ss.util.NumberComparer;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public abstract class RelationalOperationEval implements Function {
+public abstract class RelationalOperationEval extends Fixed2ArgFunction {
 
 	/**
 	 * Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
@@ -55,16 +56,13 @@ public abstract class RelationalOperationEval implements Function {
 	 * Blank < Positive numbers
 	 * </pre>
 	 */
-	public final ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
-		if (operands.length != 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		ValueEval vA;
 		ValueEval vB;
 		try {
-			vA = OperandResolver.getSingleValue(operands[0], srcRow, srcCol);
-			vB = OperandResolver.getSingleValue(operands[1], srcRow, srcCol);
+			vA = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+			vB = OperandResolver.getSingleValue(arg1, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

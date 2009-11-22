@@ -17,14 +17,13 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction;
 import org.apache.poi.hssf.record.formula.functions.Function;
-
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  */
-public final class UnaryMinusEval implements Function {
+public final class UnaryMinusEval extends Fixed1ArgFunction {
 
 	public static final Function instance = new UnaryMinusEval();
 
@@ -32,13 +31,10 @@ public final class UnaryMinusEval implements Function {
 		// enforce singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRow, int srcCol) {
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		double d;
 		try {
-			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRow, srcCol);
+			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 			d = OperandResolver.coerceValueToDouble(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();

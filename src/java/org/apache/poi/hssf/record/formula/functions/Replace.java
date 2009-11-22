@@ -37,18 +37,23 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
-public final class Replace extends TextFunction {
+public final class Replace extends Fixed4ArgFunction {
 
-	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-		throws EvaluationException {
-		if (args.length != 4) {
-			return ErrorEval.VALUE_INVALID;
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3) {
+
+		String oldStr;
+		int startNum;
+		int numChars;
+		String newStr;
+		try {
+			oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+			startNum = TextFunction.evaluateIntArg(arg1, srcRowIndex, srcColumnIndex);
+			numChars = TextFunction.evaluateIntArg(arg2, srcRowIndex, srcColumnIndex);
+			newStr = TextFunction.evaluateStringArg(arg3, srcRowIndex, srcColumnIndex);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
-
-		String oldStr = evaluateStringArg(args[0], srcCellRow, srcCellCol);
-		int startNum = evaluateIntArg(args[1], srcCellRow, srcCellCol);
-		int numChars = evaluateIntArg(args[2], srcCellRow, srcCellCol);
-		String newStr = evaluateStringArg(args[3], srcCellRow, srcCellCol);
 
 		if (startNum < 1 || numChars < 0) {
 			return ErrorEval.VALUE_INVALID;
