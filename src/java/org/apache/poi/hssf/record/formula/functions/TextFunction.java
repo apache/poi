@@ -190,4 +190,72 @@ public abstract class TextFunction implements Function {
 			return BoolEval.valueOf(s0.equals(s1));
 		}
 	};
+
+	private static final class SearchFind extends Var2or3ArgFunction {
+
+		private final boolean _isCaseSensitive;
+
+		public SearchFind(boolean isCaseSensitive) {
+			_isCaseSensitive = isCaseSensitive;
+		}
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+			try {
+				String needle = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+				String haystack = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+				return eval(haystack, needle, 0);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+		}
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+				ValueEval arg2) {
+			try {
+				String needle = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+				String haystack = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+				// evaluate third arg and convert from 1-based to 0-based index
+				int startpos = TextFunction.evaluateIntArg(arg2, srcRowIndex, srcColumnIndex) - 1;
+				if (startpos < 0) {
+					return ErrorEval.VALUE_INVALID;
+				}
+				return eval(haystack, needle, startpos);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+		}
+		private ValueEval eval(String haystack, String needle, int startIndex) {
+			int result;
+			if (_isCaseSensitive) {
+				result = haystack.indexOf(needle, startIndex);
+			} else {
+				result = haystack.toUpperCase().indexOf(needle.toUpperCase(), startIndex);
+			}
+			if (result == -1) {
+				return ErrorEval.VALUE_INVALID;
+			}
+			return new NumberEval(result + 1);
+		}
+	}
+	/**
+	 * Implementation of the FIND() function.<p/>
+	 *
+	 * <b>Syntax</b>:<br/>
+	 * <b>FIND</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p/>
+	 *
+	 * FIND returns the character position of the first (case sensitive) occurrence of
+	 * <tt>find_text</tt> inside <tt>within_text</tt>.  The third parameter,
+	 * <tt>start_num</tt>, is optional (default=1) and specifies where to start searching
+	 * from.  Character positions are 1-based.<p/>
+	 *
+	 * @author Torstein Tauno Svendsen (torstei@officenet.no)
+	 */
+	public static final Function FIND = new SearchFind(true);
+	/**
+	 * Implementation of the FIND() function.<p/>
+	 *
+	 * <b>Syntax</b>:<br/>
+	 * <b>SEARCH</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p/>
+	 *
+	 * SEARCH is a case-insensitive version of FIND()
+	 */
+	public static final Function SEARCH = new SearchFind(false);
 }

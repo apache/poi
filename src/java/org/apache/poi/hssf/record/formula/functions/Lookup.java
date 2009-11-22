@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -38,24 +37,19 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
  *
  * @author Josh Micich
  */
-public final class Lookup implements Function {
+public final class Lookup extends Var2or3ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		switch(args.length) {
-			case 3:
-				break;
-			case 2:
-				// complex rules to choose lookupVector and resultVector from the single area ref
-				throw new RuntimeException("Two arg version of LOOKUP not supported yet");
-			default:
-				return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+		// complex rules to choose lookupVector and resultVector from the single area ref
+		throw new RuntimeException("Two arg version of LOOKUP not supported yet");
+	}
 
-
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
 		try {
-			ValueEval lookupValue = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
-			AreaEval aeLookupVector = LookupUtils.resolveTableArrayArg(args[1]);
-			AreaEval aeResultVector = LookupUtils.resolveTableArrayArg(args[2]);
+			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+			AreaEval aeLookupVector = LookupUtils.resolveTableArrayArg(arg1);
+			AreaEval aeResultVector = LookupUtils.resolveTableArrayArg(arg2);
 
 			ValueVector lookupVector = createVector(aeLookupVector);
 			ValueVector resultVector = createVector(aeResultVector);
