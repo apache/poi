@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.formula.functions;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -30,12 +29,9 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  *
  * @author Frank Taffelt
  */
-public final class Today implements Function {
+public final class Today extends Fixed0ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] evals, int srcCellRow, int srcCellCol) {
-		if (evals.length > 0) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
 
 		Calendar now = new GregorianCalendar();
 		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
@@ -43,4 +39,3 @@ public final class Today implements Function {
 		return new NumberEval(HSSFDateUtil.getExcelDate(now.getTime()));
 	}
 }
-

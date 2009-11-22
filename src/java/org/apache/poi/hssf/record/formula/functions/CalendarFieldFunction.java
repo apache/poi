@@ -34,7 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  *
  * @author Guenter Kickinger g.kickinger@gmx.net
  */
-public final class CalendarFieldFunction implements Function {
+public final class CalendarFieldFunction extends Fixed1ArgFunction {
 
 	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR, false);
 	public static final Function MONTH = new CalendarFieldFunction(Calendar.MONTH, true);
@@ -48,14 +48,10 @@ public final class CalendarFieldFunction implements Function {
 		_needsOneBaseAdjustment = needsOneBaseAdjustment;
 	}
 
-	public ValueEval evaluate(ValueEval[] operands, int srcCellRow, int srcCellCol) {
-		if (operands.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-
+	public final ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		int val;
 		try {
-			ValueEval ve = OperandResolver.getSingleValue(operands[0], srcCellRow, srcCellCol);
+			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 			val = OperandResolver.coerceValueToInt(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();

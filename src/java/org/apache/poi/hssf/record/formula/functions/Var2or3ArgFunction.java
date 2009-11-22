@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * @author Josh Micich
  */
-abstract class Var2or3ArgFunction implements Function {
+abstract class Var2or3ArgFunction implements Function2Arg, Function3Arg {
 
 	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		switch (args.length) {
@@ -37,10 +37,4 @@ abstract class Var2or3ArgFunction implements Function {
 		}
 		return ErrorEval.VALUE_INVALID;
 	}
-
-	public abstract ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
-			ValueEval arg1, ValueEval arg2);
-
-	public abstract ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
-			ValueEval arg1);
 }

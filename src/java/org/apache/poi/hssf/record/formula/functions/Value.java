@@ -35,19 +35,16 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * @author Josh Micich
  */
-public final class Value implements Function {
+public final class Value extends Fixed1ArgFunction {
 
 	/** "1,0000" is valid, "1,00" is not */
 	private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
 	private static final Double ZERO = new Double(0.0);
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if (args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		ValueEval veText;
 		try {
-			veText = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
+			veText = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

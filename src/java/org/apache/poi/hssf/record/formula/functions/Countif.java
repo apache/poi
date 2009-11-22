@@ -44,7 +44,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  *
  * @author Josh Micich
  */
-public final class Countif implements Function {
+public final class Countif extends Fixed2ArgFunction {
 
 	private static final class CmpOp {
 		public static final int NONE = 0;
@@ -400,23 +400,14 @@ public final class Countif implements Function {
 		}
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		switch(args.length) {
-			case 2:
-				// expected
-				break;
-			default:
-				// TODO - it doesn't seem to be possible to enter COUNTIF() into Excel with the wrong arg count
-				// perhaps this should be an exception
-				return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
-		I_MatchPredicate mp = createCriteriaPredicate(args[1], srcRowIndex, srcColumnIndex);
+		I_MatchPredicate mp = createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
 		if(mp == null) {
 			// If the criteria arg is a reference to a blank cell, countif always returns zero.
 			return NumberEval.ZERO;
 		}
-		double result = countMatchingCellsInArea(args[0], mp);
+		double result = countMatchingCellsInArea(arg0, mp);
 		return new NumberEval(result);
 	}
 	/**

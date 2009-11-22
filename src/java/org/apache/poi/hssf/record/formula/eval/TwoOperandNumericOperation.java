@@ -17,23 +17,23 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.hssf.record.formula.functions.Function;
 
 /**
  * @author Josh Micich
  */
-public abstract class TwoOperandNumericOperation implements Function {
+public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction {
 
 	protected final double singleOperandEvaluate(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
 	}
-
-	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		double result;
 		try {
-			double d0 = singleOperandEvaluate(args[0], srcCellRow, srcCellCol);
-			double d1 = singleOperandEvaluate(args[1], srcCellRow, srcCellCol);
+			double d0 = singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+			double d1 = singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
 			result = evaluate(d0, d1);
 			if (result == 0.0) { // this '==' matches +0.0 and -0.0
 				// Excel converts -0.0 to +0.0 for '*', '/', '%', '+' and '^'
@@ -49,6 +49,7 @@ public abstract class TwoOperandNumericOperation implements Function {
 		}
 		return new NumberEval(result);
 	}
+
 	protected abstract double evaluate(double d0, double d1) throws EvaluationException;
 
 	public static final Function AddEval = new TwoOperandNumericOperation() {

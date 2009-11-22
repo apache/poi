@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import java.util.Date;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -29,13 +28,9 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
  *
  * @author Frank Taffelt
  */
-public final class Now implements Function {
+public final class Now extends Fixed0ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] evals, int srcCellRow, int srcCellCol) {
-		if (evals.length > 0) {
-			return ErrorEval.VALUE_INVALID;
-		}
-
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
 		Date now = new Date(System.currentTimeMillis());
 		return new NumberEval(HSSFDateUtil.getExcelDate(now));
 	}

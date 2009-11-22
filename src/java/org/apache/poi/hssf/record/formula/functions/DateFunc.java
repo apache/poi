@@ -22,23 +22,37 @@ import java.util.GregorianCalendar;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+
 
 /**
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
-public final class DateFunc extends NumericFunction.MultiArg {
+public final class DateFunc extends Fixed3ArgFunction {
 
 	public static final Function instance = new DateFunc();
 
 	private DateFunc() {
-		super(3,3);
+		// no fields to initialise
+	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
+		double result;
+		try {
+			double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+			double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
+			double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
+			result = evaluate(getYear(d0), (int) (d1 - 1), (int) d2);
+			NumericFunction.checkValue(result);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		return new NumberEval(result);
 	}
 
-	protected double evaluate(double[] ds) throws EvaluationException {
-		int year = getYear(ds[0]);
-		int month = (int) ds[1] - 1;
-		int day = (int) ds[2];
+	private static double evaluate(int year, int month, int day) throws EvaluationException {
 
 		if (year < 0 || month < 0 || day < 0) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);

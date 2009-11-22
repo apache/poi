@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.hssf.record.formula.functions.Function;
 
 
@@ -24,7 +25,7 @@ import org.apache.poi.hssf.record.formula.functions.Function;
  *
  * @author Josh Micich
  */
-public final class RangeEval implements Function {
+public final class RangeEval extends Fixed2ArgFunction {
 
 	public static final Function instance = new RangeEval();
 
@@ -32,14 +33,11 @@ public final class RangeEval implements Function {
 		// enforces singleton
 	}
 
-	public ValueEval evaluate(ValueEval[] args, int srcRow, int srcCol) {
-		if(args.length != 2) {
-			return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		try {
-			AreaEval reA = evaluateRef(args[0]);
-			AreaEval reB = evaluateRef(args[1]);
+			AreaEval reA = evaluateRef(arg0);
+			AreaEval reB = evaluateRef(arg1);
 			return resolveRange(reA, reB);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
