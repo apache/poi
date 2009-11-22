@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -111,5 +112,21 @@ public final class TestTFunc extends TestCase {
 
 		eval = invokeTWithReference(ErrorEval.NAME_INVALID);
 		assertTrue(eval == ErrorEval.NAME_INVALID);
+	}
+
+	public void testAreaArg() {
+		ValueEval[] areaValues = new ValueEval[] {
+			new StringEval("abc"), new StringEval("def"),
+			new StringEval("ghi"), new StringEval("jkl"),
+		};
+		AreaEval ae = EvalFactory.createAreaEval("C10:D11", areaValues);
+
+		ValueEval ve;
+		ve = invokeT(ae);
+		confirmString(ve, "abc");
+
+		areaValues[0] = new NumberEval(5.0);
+		ve = invokeT(ae);
+		confirmString(ve, "");
 	}
 }
