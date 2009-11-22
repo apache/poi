@@ -17,12 +17,15 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
@@ -77,8 +80,11 @@ public final class TestDate extends TestCase {
     private void confirm(String formulaText, double expectedResult) {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
-        double actualValue = evaluator.evaluate(cell11).getNumberValue();
+        CellValue cv = evaluator.evaluate(cell11);
+        if (cv.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+            throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
+        }
+        double actualValue = cv.getNumberValue();
         assertEquals(expectedResult, actualValue, 0);
     }
 }
-

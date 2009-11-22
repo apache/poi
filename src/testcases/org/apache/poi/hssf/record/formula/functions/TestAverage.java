@@ -86,9 +86,7 @@ public final class TestAverage extends TestCase {
 
 	}
 
-	// currently disabled because MultiOperandNumericFunction.getNumberArray(Eval[], int, short)
-	// does not handle error values properly yet
-	public void XtestErrors() {
+	public void testErrors() {
 		ValueEval[] values = {
 				new NumberEval(1),
 				ErrorEval.NAME_INVALID,
@@ -96,6 +94,5 @@ public final class TestAverage extends TestCase {
 				ErrorEval.DIV_ZERO,
 		};
 		confirmAverage(values, ErrorEval.NAME_INVALID);
-
 	}
 }
