@@ -109,6 +109,7 @@ public final class FunctionEval {
 		retval[76] = new Rows();
 		retval[77] = new Columns();
 		retval[ID.OFFSET] = new Offset();
+		retval[82] = TextFunction.SEARCH;
 
 		retval[97] = NumericFunction.ATAN2;
 		retval[98] = NumericFunction.ASIN;
@@ -131,7 +132,7 @@ public final class FunctionEval {
 		retval[119] = new Replace();
 		retval[120] = new Substitute();
 
-		retval[124] = new Find();
+		retval[124] = TextFunction.FIND;
 
 		retval[127] = LogicalFunction.IsText;
 		retval[128] = LogicalFunction.IsNumber;

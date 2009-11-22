@@ -18,39 +18,34 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  */
-public final class If implements Function {
+public final class If extends Var2or3ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		ValueEval falseResult;
-		switch (args.length) {
-			case 3:
-				falseResult = args[2];
-				break;
-			case 2:
-				falseResult = BoolEval.FALSE;
-				break;
-			default:
-				return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		boolean b;
 		try {
-			b = evaluateFirstArg(args[0], srcCellRow, srcCellCol);
+			b = evaluateFirstArg(arg0, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		if (b) {
-			return args[1];
+		return b ? arg1 : BoolEval.FALSE;
+	}
+
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
+		boolean b;
+		try {
+			b = evaluateFirstArg(arg0, srcRowIndex, srcColumnIndex);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
-		return falseResult;
+		return b ? arg1 : arg2;
 	}
 
 	public static boolean evaluateFirstArg(ValueEval arg, int srcCellRow, int srcCellCol)
