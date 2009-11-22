@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 
 /**
  * Direct tests for all implementors of <code>Function</code>.
- * 
+ *
  * @author Josh Micich
  */
 public final class AllIndividualFunctionEvaluationTests {
@@ -32,6 +32,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestAverage.class);
 		result.addTestSuite(TestCountFuncs.class);
 		result.addTestSuite(TestDate.class);
+		result.addTestSuite(TestDays360.class);
 		result.addTestSuite(TestFind.class);
 		result.addTestSuite(TestFinanceLib.class);
 		result.addTestSuite(TestIndex.class);
@@ -47,6 +48,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestPmt.class);
 		result.addTestSuite(TestOffset.class);
 		result.addTestSuite(TestRowCol.class);
+		result.addTestSuite(TestSumif.class);
 		result.addTestSuite(TestSumproduct.class);
 		result.addTestSuite(TestStatsLib.class);
 		result.addTestSuite(TestTFunc.class);
