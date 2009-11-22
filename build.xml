@@ -185,6 +185,7 @@ under the License.
     </path>
 
     <path id="ooxml.classpath">
+        <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.schemas.jar}"/>
