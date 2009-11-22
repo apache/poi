@@ -17,11 +17,19 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
+/**
+ * Implementation of Excel T() function
+ * <p/>
+ * If the argument is a text or error value it is returned unmodified.  All other argument types
+ * cause an empty string result.  If the argument is an area, the first (top-left) cell is used
+ * (regardless of the coordinates of the evaluating formula cell).
+ */
 public final class T implements Function {
 
     public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
@@ -33,8 +41,10 @@ public final class T implements Function {
         }
         ValueEval arg = args[0];
         if (arg instanceof RefEval) {
-            RefEval re = (RefEval) arg;
-            arg = re.getInnerValueEval();
+            arg = ((RefEval) arg).getInnerValueEval();
+        } else if (arg instanceof AreaEval) {
+            // when the arg is an area, choose the top left cell
+            arg = ((AreaEval) arg).getRelativeValue(0, 0);
         }
 
         if (arg instanceof StringEval) {
