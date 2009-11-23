@@ -311,7 +311,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		public void onCacheHit(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
 			_countCacheHits++;
 		}
-		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
+		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
 			_countCacheMisses++;
 		}
 	}

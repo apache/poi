@@ -17,43 +17,42 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br/>
- * 
+ *
  * Default method implementations all do nothing
- * 
+ *
  * @author Josh Micich
  */
 public abstract class EvaluationListener implements IEvaluationListener {
 	public void onCacheHit(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {
-		// do nothing 
+		// do nothing
 	}
 	public void onReadPlainValue(int sheetIndex, int rowIndex, int columnIndex, ICacheEntry entry) {
-		// do nothing 
+		// do nothing
 	}
-	public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
-		// do nothing 
+	public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
+		// do nothing
 	}
 	public void onEndEvaluate(ICacheEntry entry, ValueEval result) {
-		// do nothing 
+		// do nothing
 	}
 	public void onClearWholeCache() {
-		// do nothing 
+		// do nothing
 	}
 	public void onClearCachedValue(ICacheEntry entry) {
-		// do nothing 
+		// do nothing
 	}
 	public void onChangeFromBlankValue(int sheetIndex, int rowIndex, int columnIndex,
 			EvaluationCell cell, ICacheEntry entry) {
-		// do nothing 
+		// do nothing
 	}
 	public void sortDependentCachedValues(ICacheEntry[] entries) {
-		// do nothing 
+		// do nothing
 	}
 	public void onClearDependentCachedValue(ICacheEntry entry, int depth) {
-		// do nothing 
+		// do nothing
 	}
 }

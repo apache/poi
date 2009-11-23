@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.EvaluationCell;
@@ -179,7 +178,7 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		public EvalCountListener() {
 			_evalCount = 0;
 		}
-		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry, Ptg[] ptgs) {
+		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
 			_evalCount++;
 		}
 		public int getEvalCount() {
