@@ -17,17 +17,58 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * Super class for all Evals for financial function evaluation.
- *
  */
-public abstract class FinanceFunction extends NumericFunction.MultiArg {
+public abstract class FinanceFunction implements Function3Arg, Function4Arg {
+	private static final ValueEval DEFAULT_ARG3 = NumberEval.ZERO;
+	private static final ValueEval DEFAULT_ARG4 = BoolEval.FALSE;
+
 
 	protected FinanceFunction() {
-		super (3, 5);
+		// no instance fields
+	}
+
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
+		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
+	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3) {
+		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, arg3, DEFAULT_ARG4);
+	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3, ValueEval arg4) {
+		double result;
+		try {
+			double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+			double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
+			double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
+			double d3 = NumericFunction.singleOperandEvaluate(arg3, srcRowIndex, srcColumnIndex);
+			double d4 = NumericFunction.singleOperandEvaluate(arg4, srcRowIndex, srcColumnIndex);
+			result = evaluate(d0, d1, d2, d3, d4 != 0.0);
+			NumericFunction.checkValue(result);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		return new NumberEval(result);
+	}
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		switch (args.length) {
+			case 3:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], DEFAULT_ARG3, DEFAULT_ARG4);
+			case 4:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3], DEFAULT_ARG4);
+			case 5:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3], args[4]);
+		}
+		return ErrorEval.VALUE_INVALID;
 	}
 
 	protected double evaluate(double[] ds) throws EvaluationException {

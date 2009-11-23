@@ -101,4 +101,46 @@ public abstract class BooleanFunction implements Function {
 
 	protected abstract boolean getInitialResultValue();
 	protected abstract boolean partialEvaluate(boolean cumulativeResult, boolean currentValue);
+
+
+	public static final Function AND = new BooleanFunction() {
+		protected boolean getInitialResultValue() {
+			return true;
+		}
+		protected boolean partialEvaluate(boolean cumulativeResult, boolean currentValue) {
+			return cumulativeResult && currentValue;
+		}
+	};
+	public static final Function OR = new BooleanFunction() {
+		protected boolean getInitialResultValue() {
+			return false;
+		}
+		protected boolean partialEvaluate(boolean cumulativeResult, boolean currentValue) {
+			return cumulativeResult || currentValue;
+		}
+	};
+	public static final Function FALSE = new Fixed0ArgFunction() {
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
+			return BoolEval.FALSE;
+		}
+	};
+	public static final Function TRUE = new Fixed0ArgFunction() {
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
+			return BoolEval.TRUE;
+		}
+	};
+	public static final Function NOT = new Fixed1ArgFunction() {
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+			boolean boolArgVal;
+			try {
+				ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+				Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
+				boolArgVal = b == null ? false : b.booleanValue();
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+
+			return BoolEval.valueOf(!boolArgVal);
+		}
+	};
 }

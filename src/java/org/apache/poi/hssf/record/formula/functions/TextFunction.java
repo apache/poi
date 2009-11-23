@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * @author Josh Micich
  */
 public abstract class TextFunction implements Function {
 
@@ -54,17 +54,18 @@ public abstract class TextFunction implements Function {
 
 	/* ---------------------------------------------------------------------- */
 
-	private static abstract class SingleArgTextFunc extends TextFunction {
+	private static abstract class SingleArgTextFunc extends Fixed1ArgFunction {
 
 		protected SingleArgTextFunc() {
 			// no fields to initialise
 		}
-		protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws EvaluationException {
-			if (args.length != 1) {
-				return ErrorEval.VALUE_INVALID;
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+			String arg;
+			try {
+				arg = evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
 			}
-			String arg = evaluateStringArg(args[0], srcCellRow, srcCellCol);
 			return evaluate(arg);
 		}
 		protected abstract ValueEval evaluate(String arg);
@@ -107,17 +108,20 @@ public abstract class TextFunction implements Function {
 	 *
 	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
 	 */
-	public static final Function MID = new TextFunction() {
+	public static final Function MID = new Fixed3ArgFunction() {
 
-		protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws EvaluationException {
-			if (args.length != 3) {
-				return ErrorEval.VALUE_INVALID;
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
+				ValueEval arg1, ValueEval arg2) {
+			String text;
+			int startCharNum;
+			int numChars;
+			try {
+				text = evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+				startCharNum = evaluateIntArg(arg1, srcRowIndex, srcColumnIndex);
+				numChars = evaluateIntArg(arg2, srcRowIndex, srcColumnIndex);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
 			}
-
-			String text = evaluateStringArg(args[0], srcCellRow, srcCellCol);
-			int startCharNum = evaluateIntArg(args[1], srcCellRow, srcCellCol);
-			int numChars = evaluateIntArg(args[2], srcCellRow, srcCellCol);
 			int startIx = startCharNum - 1; // convert to zero-based
 
 			// Note - for start_num arg, blank/zero causes error(#VALUE!),
@@ -138,19 +142,25 @@ public abstract class TextFunction implements Function {
 		}
 	};
 
-	private static final class LeftRight extends TextFunction {
-
+	private static final class LeftRight extends Var1or2ArgFunction {
+		private static final ValueEval DEFAULT_ARG1 = new NumberEval(1.0);
 		private final boolean _isLeft;
 		protected LeftRight(boolean isLeft) {
 			_isLeft = isLeft;
 		}
-		protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws EvaluationException {
-			if (args.length != 2) {
-				return ErrorEval.VALUE_INVALID;
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+			return evaluate(srcRowIndex, srcColumnIndex, arg0, DEFAULT_ARG1);
+		}
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
+				ValueEval arg1) {
+			String arg;
+			int index;
+			try {
+				arg = evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+				index = evaluateIntArg(arg1, srcRowIndex, srcColumnIndex);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
 			}
-			String arg = evaluateStringArg(args[0], srcCellRow, srcCellCol);
-			int index = evaluateIntArg(args[1], srcCellRow, srcCellCol);
 
 			String result;
 			if (_isLeft) {
@@ -165,28 +175,33 @@ public abstract class TextFunction implements Function {
 	public static final Function LEFT = new LeftRight(true);
 	public static final Function RIGHT = new LeftRight(false);
 
-	public static final Function CONCATENATE = new TextFunction() {
+	public static final Function CONCATENATE = new Function() {
 
-		protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws EvaluationException {
-			StringBuffer sb = new StringBuffer();
+		public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+			StringBuilder sb = new StringBuilder();
 			for (int i=0, iSize=args.length; i<iSize; i++) {
-				sb.append(evaluateStringArg(args[i], srcCellRow, srcCellCol));
+				try {
+					sb.append(evaluateStringArg(args[i], srcRowIndex, srcColumnIndex));
+				} catch (EvaluationException e) {
+					return e.getErrorEval();
+				}
 			}
 			return new StringEval(sb.toString());
 		}
 	};
 
-	public static final Function EXACT = new TextFunction() {
+	public static final Function EXACT = new Fixed2ArgFunction() {
 
-		protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-				throws EvaluationException {
-			if (args.length != 2) {
-				return ErrorEval.VALUE_INVALID;
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
+				ValueEval arg1) {
+			String s0;
+			String s1;
+			try {
+				s0 = evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+				s1 = evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
 			}
-
-			String s0 = evaluateStringArg(args[0], srcCellRow, srcCellCol);
-			String s1 = evaluateStringArg(args[1], srcCellRow, srcCellCol);
 			return BoolEval.valueOf(s0.equals(s1));
 		}
 	};

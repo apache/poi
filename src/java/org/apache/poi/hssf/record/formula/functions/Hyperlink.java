@@ -17,9 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
@@ -36,21 +33,17 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * <b>friendly_name</b> (optional) the value to display<p/>
  *
  *  Returns last argument.  Leaves type unchanged (does not convert to {@link StringEval}).
-
+ *
  * @author Wayne Clingingsmith
  */
-public final class Hyperlink implements Function {
+public final class Hyperlink extends Var1or2ArgFunction {
 
-	public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
-		int lastArgIx = operands.length - 1;
-		if (lastArgIx < 0 || lastArgIx > 1) {
-			return ErrorEval.VALUE_INVALID;
-		}
-
-		try {
-			return OperandResolver.getSingleValue(operands[lastArgIx], srcRow, srcCol);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+		return arg0;
+	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+		// note - if last arg is MissingArgEval, result will be NumberEval.ZERO,
+		// but WorkbookEvaluator does that translation
+		return arg1;
 	}
 }

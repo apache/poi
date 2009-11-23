@@ -44,56 +44,71 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *
  * @author Josh Micich
  */
-public final class Index implements Function {
+public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		int nArgs = args.length;
-		if(nArgs < 2) {
-			// too few arguments
-			return ErrorEval.VALUE_INVALID;
-		}
-		ValueEval firstArg = args[0];
-		if (firstArg instanceof RefEval) {
-			// convert to area ref for simpler code in getValueFromArea()
-			firstArg = ((RefEval)firstArg).offset(0, 0, 0, 0);
-		}
-		if(!(firstArg instanceof AreaEval)) {
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+		AreaEval reference = convertFirstArg(arg0);
 
-			// else the other variation of this function takes an array as the first argument
-			// it seems like interface 'ArrayEval' does not even exist yet
-			throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
-					+ firstArg.getClass().getName() + ")");
-		}
-		AreaEval reference = (AreaEval) firstArg;
-
-		int rowIx = 0;
-		int columnIx = 0;
 		boolean colArgWasPassed = false;
+		int columnIx = 0;
 		try {
-			switch(nArgs) {
-				case 4:
-					throw new RuntimeException("Incomplete code" +
-							" - don't know how to support the 'area_num' parameter yet)");
-					// Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
-					// In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
-					// Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
-					// The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
-
-				case 3:
-					columnIx = resolveIndexArg(args[2], srcCellRow, srcCellCol);
-					colArgWasPassed = true;
-				case 2:
-					rowIx = resolveIndexArg(args[1], srcCellRow, srcCellCol);
-					break;
-				default:
-					// too many arguments
-					return ErrorEval.VALUE_INVALID;
-			}
-			return getValueFromArea(reference, rowIx, columnIx, colArgWasPassed, srcCellRow, srcCellCol);
+			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+			return getValueFromArea(reference, rowIx, columnIx, colArgWasPassed, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
+		AreaEval reference = convertFirstArg(arg0);
+
+		boolean colArgWasPassed = true;
+		try {
+			int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
+			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+			return getValueFromArea(reference, rowIx, columnIx, colArgWasPassed, srcRowIndex, srcColumnIndex);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+	}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3) {
+		throw new RuntimeException("Incomplete code"
+				+ " - don't know how to support the 'area_num' parameter yet)");
+		// Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
+		// In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
+		// Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
+		// The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
+	}
+
+	private static AreaEval convertFirstArg(ValueEval arg0) {
+		ValueEval firstArg = arg0;
+		if (firstArg instanceof RefEval) {
+			// convert to area ref for simpler code in getValueFromArea()
+			return ((RefEval)firstArg).offset(0, 0, 0, 0);
+		}
+		if((firstArg instanceof AreaEval)) {
+			return (AreaEval) firstArg;
+		}
+		// else the other variation of this function takes an array as the first argument
+		// it seems like interface 'ArrayEval' does not even exist yet
+		throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
+				+ firstArg.getClass().getName() + ")");
+
+	}
+
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		switch (args.length) {
+			case 2:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+			case 3:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+			case 4:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
+		}
+		return ErrorEval.VALUE_INVALID;
+	}
+
 
 	/**
 	 * @param colArgWasPassed <code>false</code> if the INDEX argument list had just 2 items
