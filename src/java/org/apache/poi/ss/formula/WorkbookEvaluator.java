@@ -259,7 +259,7 @@ public final class WorkbookEvaluator {
 				if (evalListener == null) {
 					result = evaluateFormula(ec, ptgs);
 				} else {
-					evalListener.onStartEvaluate(srcCell, cce, ptgs);
+					evalListener.onStartEvaluate(srcCell, cce);
 					result = evaluateFormula(ec, ptgs);
 					evalListener.onEndEvaluate(cce, result);
 				}
