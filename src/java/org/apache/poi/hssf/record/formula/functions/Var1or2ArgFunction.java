@@ -17,31 +17,24 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * Convenience base class for any function which must take two or three
+ * arguments
  *
+ * @author Josh Micich
  */
-public final class Isblank implements Function {
+abstract class Var1or2ArgFunction implements Function1Arg, Function2Arg {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if(args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
+	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		switch (args.length) {
+			case 1:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0]);
+			case 2:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
 		}
-		ValueEval arg = args[0];
-
-		ValueEval singleCellValue;
-		try {
-			singleCellValue = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		} catch (EvaluationException e) {
-			return BoolEval.FALSE;
-		}
-		return BoolEval.valueOf(singleCellValue instanceof BlankEval);
+		return ErrorEval.VALUE_INVALID;
 	}
 }

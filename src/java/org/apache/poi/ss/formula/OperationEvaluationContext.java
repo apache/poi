@@ -37,7 +37,7 @@ import org.apache.poi.ss.util.CellReference.NameType;
  * @author Josh Micich
  */
 public final class OperationEvaluationContext {
-
+	public static final FreeRefFunction UDF = UserDefinedFunction.instance;
 	private final EvaluationWorkbook _workbook;
 	private final int _sheetIndex;
 	private final int _rowIndex;

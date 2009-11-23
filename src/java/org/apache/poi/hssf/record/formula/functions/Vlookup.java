@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -39,27 +39,24 @@ import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
  *
  * @author Josh Micich
  */
-public final class Vlookup implements Function {
+public final class Vlookup extends Var3or4ArgFunction {
+	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		ValueEval arg3 = null;
-		switch(args.length) {
-			case 4:
-				arg3 = args[3]; // important: assumed array element is never null
-			case 3:
-				break;
-			default:
-				// wrong number of arguments
-				return ErrorEval.VALUE_INVALID;
-		}
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
+		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
+	}
+
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3) {
 		try {
 			// Evaluation order:
 			// arg0 lookup_value, arg1 table_array, arg3 range_lookup, find lookup value, arg2 col_index, fetch result
-			ValueEval lookupValue = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
-			AreaEval tableArray = LookupUtils.resolveTableArrayArg(args[1]);
-			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcCellRow, srcCellCol);
+			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+			AreaEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
+			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
-			int colIndex = LookupUtils.resolveRowOrColIndexArg(args[2], srcCellRow, srcCellCol);
+			int colIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
 			return resultCol.getItem(rowIndex);
 		} catch (EvaluationException e) {

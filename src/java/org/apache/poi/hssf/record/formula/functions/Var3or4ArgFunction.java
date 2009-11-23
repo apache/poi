@@ -17,40 +17,24 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
- * Implementation for Excel ISNA() function.<p/>
- *
- * <b>Syntax</b>:<br/>
- * <b>ISNA</b>(<b>value</b>)<p/>
- *
- * <b>value</b>  The value to be tested<br/>
- * <br/>
- * Returns <tt>TRUE</tt> if the specified value is '#N/A', <tt>FALSE</tt> otherwise.
+ * Convenience base class for any function which must take three or four
+ * arguments
  *
  * @author Josh Micich
  */
-public final class IsNa implements Function {
+abstract class Var3or4ArgFunction implements Function3Arg, Function4Arg {
 
-	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if(args.length != 1) {
-			return ErrorEval.VALUE_INVALID;
+	public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		switch (args.length) {
+			case 3:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+			case 4:
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
 		}
-		ValueEval arg = args[0];
-
-		try {
-			OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		} catch (EvaluationException e) {
-			if (e.getErrorEval().getErrorCode() == ErrorConstants.ERROR_NA) {
-				return BoolEval.TRUE;
-			}
-		}
-		return BoolEval.FALSE;
+		return ErrorEval.VALUE_INVALID;
 	}
 }

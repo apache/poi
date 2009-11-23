@@ -379,17 +379,10 @@ final class LookupUtils {
 
 	/**
 	 * Resolves the last (optional) parameter (<b>range_lookup</b>) to the VLOOKUP and HLOOKUP functions.
-	 * @param rangeLookupArg
-	 * @param srcCellRow
-	 * @param srcCellCol
-	 * @return
-	 * @throws EvaluationException
+	 * @param rangeLookupArg must not be <code>null</code>
 	 */
 	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, int srcCellCol) throws EvaluationException {
-		if(rangeLookupArg == null) {
-			// range_lookup arg not provided
-			return true; // default is TRUE
-		}
+
 		ValueEval valEval = OperandResolver.getSingleValue(rangeLookupArg, srcCellRow, srcCellCol);
 		if(valEval instanceof BlankEval) {
 			// Tricky:

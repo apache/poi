@@ -27,31 +27,38 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * Substitutes text in a text string with new text, some number of times.
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
-public final class Substitute extends TextFunction {
+public final class Substitute extends Var3or4ArgFunction {
 
-	protected ValueEval evaluateFunc(ValueEval[] args, int srcCellRow, int srcCellCol)
-			throws EvaluationException {
-		if (args.length < 3 || args.length > 4) {
-			return ErrorEval.VALUE_INVALID;
-		}
-
-		String oldStr = evaluateStringArg(args[0], srcCellRow, srcCellCol);
-		String searchStr = evaluateStringArg(args[1], srcCellRow, srcCellCol);
-		String newStr = evaluateStringArg(args[2], srcCellRow, srcCellCol);
-
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2) {
 		String result;
-		switch (args.length) {
-			default:
-				throw new IllegalStateException("Cannot happen");
-			case 4:
-				int instanceNumber = evaluateIntArg(args[3], srcCellRow, srcCellCol);
-				if (instanceNumber < 1) {
-					return ErrorEval.VALUE_INVALID;
-				}
-				result = replaceOneOccurrence(oldStr, searchStr, newStr, instanceNumber);
-				break;
-			case 3:
-				result = replaceAllOccurrences(oldStr, searchStr, newStr);
+		try {
+			String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+			String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+			String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
+
+			result = replaceAllOccurrences(oldStr, searchStr, newStr);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+		return new StringEval(result);
+	}
+
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+			ValueEval arg2, ValueEval arg3) {
+		String result;
+		try {
+			String oldStr = TextFunction.evaluateStringArg(arg0, srcRowIndex, srcColumnIndex);
+			String searchStr = TextFunction.evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
+			String newStr = TextFunction.evaluateStringArg(arg2, srcRowIndex, srcColumnIndex);
+
+			int instanceNumber = TextFunction.evaluateIntArg(arg3, srcRowIndex, srcColumnIndex);
+			if (instanceNumber < 1) {
+				return ErrorEval.VALUE_INVALID;
+			}
+			result = replaceOneOccurrence(oldStr, searchStr, newStr, instanceNumber);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
 		return new StringEval(result);
 	}

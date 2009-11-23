@@ -52,8 +52,8 @@ public final class FunctionEval {
 
 		retval[0] = new Count();
 		retval[1] = new If();
-		retval[2] = new IsNa();
-		retval[3] = new IsError();
+		retval[2] = LogicalFunction.ISNA;
+		retval[3] = LogicalFunction.ISERROR;
 		retval[ID.SUM] = AggregateFunction.SUM;
 		retval[5] = AggregateFunction.AVERAGE;
 		retval[6] = AggregateFunction.MIN;
@@ -69,7 +69,7 @@ public final class FunctionEval {
 		retval[16] = NumericFunction.COS;
 		retval[17] = NumericFunction.TAN;
 		retval[18] = NumericFunction.ATAN;
-		retval[19] = new Pi();
+		retval[19] = NumericFunction.PI;
 		retval[20] = NumericFunction.SQRT;
 		retval[21] = NumericFunction.EXP;
 		retval[22] = NumericFunction.LN;
@@ -84,11 +84,11 @@ public final class FunctionEval {
 		retval[31] = TextFunction.MID;
 		retval[32] = TextFunction.LEN;
 		retval[33] = new Value();
-		retval[34] = new True();
-		retval[35] = new False();
-		retval[36] = new And();
-		retval[37] = new Or();
-		retval[38] = new Not();
+		retval[34] = BooleanFunction.TRUE;
+		retval[35] = BooleanFunction.FALSE;
+		retval[36] = BooleanFunction.AND;
+		retval[37] = BooleanFunction.OR;
+		retval[38] = BooleanFunction.NOT;
 		retval[39] = NumericFunction.MOD;
 
 		retval[56] = FinanceFunction.PV;
@@ -96,7 +96,7 @@ public final class FunctionEval {
 		retval[58] = FinanceFunction.NPER;
 		retval[59] = FinanceFunction.PMT;
 
-		retval[63] = new Rand();
+		retval[63] = NumericFunction.RAND;
 		retval[64] = new Match();
 		retval[65] = DateFunc.instance;
 		retval[66] = new Time();
@@ -108,6 +108,7 @@ public final class FunctionEval {
 
 		retval[76] = new Rows();
 		retval[77] = new Columns();
+		retval[82] = TextFunction.SEARCH;
 		retval[ID.OFFSET] = new Offset();
 		retval[82] = TextFunction.SEARCH;
 
@@ -118,7 +119,7 @@ public final class FunctionEval {
 		retval[101] = new Hlookup();
 		retval[102] = new Vlookup();
 
-		retval[105] = new Isref();
+		retval[105] = LogicalFunction.ISREF;
 
 		retval[109] = NumericFunction.LOG;
 
@@ -134,9 +135,9 @@ public final class FunctionEval {
 
 		retval[124] = TextFunction.FIND;
 
-		retval[127] = LogicalFunction.IsText;
-		retval[128] = LogicalFunction.IsNumber;
-		retval[129] = new Isblank();
+		retval[127] = LogicalFunction.ISTEXT;
+		retval[128] = LogicalFunction.ISNUMBER;
+		retval[129] = LogicalFunction.ISBLANK;
 		retval[130] = new T();
 
 		retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
@@ -146,9 +147,9 @@ public final class FunctionEval {
 		retval[183] = AggregateFunction.PRODUCT;
 		retval[184] = NumericFunction.FACT;
 
-		retval[190] = LogicalFunction.IsNonText;
+		retval[190] = LogicalFunction.ISNONTEXT;
 
-		retval[198] = LogicalFunction.IsLogical;
+		retval[198] = LogicalFunction.ISLOGICAL;
 
 		retval[212] = NumericFunction.ROUNDUP;
 		retval[213] = NumericFunction.ROUNDDOWN;
