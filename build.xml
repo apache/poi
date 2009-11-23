@@ -152,13 +152,10 @@ under the License.
 
     <!-- build and distro settings -->
     <property name="jar.name" value="poi"/>
-    <property name="repository.m2" value="http://repo1.maven.org"/>
     <property name="build.site" location="build/tmp/site/build/site"/>
     <property name="build.site.src" location="build/tmp/site"/>
     <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
     <property name="dist.dir" location="build/dist"/>
-    <property name="apache.repository"
-              value="scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <propertyset id="junit.properties">
@@ -215,6 +212,7 @@ under the License.
     </path>
 
     <path id="ooxml-lite.classpath">
+        <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-schemas.jar use the filtered classes-->
@@ -237,28 +235,17 @@ under the License.
 
     <!-- Prints POI's Ant usage help -->
     <target name="help" description="Prints Apache POI's Ant usage help">
-        <echo>
-            - Execute "ant -projecthelp" to view a listing of the main build
-            targets.
-            - Execute "ant help-properties" to view a listing of some properties
-            controlling the build process.
-        </echo>
-    </target>
-
-
-    <target name="help-properties"
-            description="Prints a listing of build controlling properties">
-        <echo>
-            The following properties control the build process:
-
-            -Ddisconnected="true": Do not execute any targets that require an online
-            connection to the Internet.
-            -Dtestcase=org.apache.poi.xxx.xxx : for the single-test target, specify
-            the test to run
-            -Dfilename=xxxx.xls : for the command line task targets, specify the
-            file to run against
-
-            WARNING: This list is not exhaustive.
+      <echo>
+  This is POI ${version.id}
+  Java Version ${ant.java.version}      
+  Timestamp ${DSTAMP}
+  The main targets of interest are:
+    - clean       Erase all build work products (ie. everything in the build directory)
+    - compile     Compile all files from main, ooxml, contrib and scratchpad
+    - test        Run all unit tests from main, ooxml, contrib and scratchpad
+    - jar         Produce jar files
+    - site        Generate all documentation (Requires Apache Forrest)
+    - dist        Create a distribution (Requires Apache Forrest)
         </echo>
     </target>
 
@@ -282,6 +269,7 @@ under the License.
         <mkdir dir="${ooxml.reports.test}"/>
         <mkdir dir="${examples.output.dir}"/>
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.site}"/>
     </target>
 
     <target name="clean">
@@ -424,8 +412,10 @@ under the License.
     </target>
 
     <target name="compile" depends="init, compile-main,
-    compile-scratchpad, compile-contrib, compile-examples, compile-ooxml-lite"
+    compile-scratchpad, compile-contrib, compile-examples"
             description="Compiles the POI main classes, scratchpad, contrib and examples"/>
+
+    <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
     <target name="compile-main">
         <javac target="${jdk.version.class}"
@@ -559,8 +549,9 @@ under the License.
         <delete file="${version.java}"/>
     </target>
 
-    <target name="test" depends="compile,test-main,test-scratchpad,test-contrib,test-ooxml,test-ooxml-lite"
+    <target name="test" depends="compile,test-main,test-scratchpad,test-contrib,test-ooxml"
             description="Tests main, contrib, scratchpad and ooxml"/>
+    <target name="test-all" depends="test,test-ooxml-lite"/>
 
     <target name="-test-main-check">
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
@@ -705,8 +696,8 @@ under the License.
     </target>
 
     <target name="test-ooxml-lite">
-        <echo message="Running ooxml tests against the 'lite' classes"/>
         <delete file="${ooxml.testokfile}"/>
+        <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
         <ooxml-test-runner classpath="ooxml-lite.classpath"/>
     </target>
     
@@ -863,15 +854,16 @@ under the License.
         <copy file="maven/mvn-deploy.sh" todir="${dist.dir}">
             <filterchain>
                 <replacetokens>
-                    <token key="REPOSITORY" value="${apache.repository}"/>
                     <token key="VERSION" value="${version.id}"/>
                     <token key="DSTAMP" value="${DSTAMP}"/>
                 </replacetokens>
             </filterchain>
         </copy>
+        <echo>Maven POMs are located in ${dist.dir}</echo>
+        <echo>Use mvn-deploy.sh to deploy the artifacts in the remote repository</echo>
     </target>
 
-    <target name="jar" depends="compile, compile-version" description="Creates jar files for distribution">
+    <target name="jar" depends="compile-all, compile-version" description="Creates jar files for distribution">
         <manifest file="build/poi-manifest.mf">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Specification-Title" value="Apache POI"/>
@@ -943,7 +935,33 @@ under the License.
     </target>
 
     <target name="assemble" depends="jar,jar-src">
+         <!-- jars to include in binary assemblies -->         
+         <patternset id="bin.dist.jars">
+            <include name="${jar.name}-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-examples-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar"/>
+         </patternset>  
 
+        <!-- patterns to exclude from source assemblies -->         
+        <patternset id="src.dist.patterns"
+            excludes="build/**,
+                      maven/**,
+                      lib/**,
+                      ooxml-lib/**,
+                      scripts/**,
+                      TEST*,
+                      *.ipr,
+                      *.iml,
+                      *.iws,
+                      *.lnk,
+                      *.rdf,
+                      *.swp,
+                      .classpath,
+                      .project"/>
+         
         <property name="zipdir" value="${jar.name}-${version.id}"/>
 
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
@@ -951,35 +969,20 @@ under the License.
             <zipfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
             <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
+              <include name="geronimo-stax-*.jar"/>
               <include name="xmlbeans-*.jar"/>
             </zipfileset>
+            <zipfileset dir="${dist.dir}" prefix="${zipdir}">
+                <patternset refid="bin.dist.jars"/>
+            </zipfileset>
             <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
-            <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <zipfileset file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <zipfileset file="${dist.dir}/${jar.name}-examples-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <zipfileset file="${dist.dir}/${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
         </zip>
 
         <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
-            <zipfileset dir="legal/" prefix="${zipdir}"/>
+            <zipfileset dir="legal/" prefix="${zipdir}" />
             <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <zipfileset dir="." prefix="${zipdir}">
-                <exclude name="build/**"/>
-                <exclude name="maven/**"/>
-                <exclude name="lib/**"/>
-                <exclude name="ooxml-lib/**"/>
-                <exclude name="scripts/**"/>
-                <exclude name="TEST*"/>
-                <exclude name="*.ipr"/>
-                <exclude name="*.iml"/>
-                <exclude name="*.iws"/>
-                <exclude name="*.lnk"/>
-                <exclude name="*.rdf"/>
-                <exclude name="*.swp"/>
-                <exclude name=".classpath"/>
-                <exclude name=".project"/>
+                <patternset refid="src.dist.patterns"/>
             </zipfileset>
         </zip>
         
@@ -990,43 +993,27 @@ under the License.
             <tarfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
+              <include name="geronimo-stax-*.jar"/>
               <include name="xmlbeans-*.jar"/>
             </tarfileset>
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
-            <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <tarfileset file="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <tarfileset file="${dist.dir}/${jar.name}-examples-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
-            <tarfileset file="${dist.dir}/${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar" prefix="${zipdir}"/>
+            <tarfileset dir="${dist.dir}" prefix="${zipdir}">
+                <patternset refid="bin.dist.jars"/>
+            </tarfileset>
         </tar>
 
         <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
              longfile="gnu"
              compression="gzip">
-            <tarfileset dir="legal/" prefix="${zipdir}"/>
+            <tarfileset dir="legal/" prefix="${zipdir}" />
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <tarfileset dir="." prefix="${zipdir}">
-                <exclude name="build/**"/>
-                <exclude name="maven/**"/>
-                <exclude name="lib/**"/>
-                <exclude name="ooxml-lib/**"/>
-                <exclude name="scripts/**"/>
-                <exclude name="TEST*"/>
-                <exclude name="*.ipr"/>
-                <exclude name="*.iml"/>
-                <exclude name="*.iws"/>
-                <exclude name="*.lnk"/>
-                <exclude name="*.rdf"/>
-                <exclude name="*.swp"/>
-                <exclude name=".classpath"/>
-                <exclude name=".project"/>
+                <patternset refid="src.dist.patterns"/>
             </tarfileset>
         </tar>
       
         <echo>Creating Maven POMs</echo>
         <antcall target="maven-poms"/>
-
 
         <echo>Generating MD5 Checksums</echo>
 
@@ -1034,43 +1021,14 @@ under the License.
             <fileset dir="${dist.dir}" includes="*.pom,*.gz,*.zip"/>
         </checksum>
         
-        <echo>Distribution located in build/dist</echo>
+        <echo>Distribution located in ${dist.dir}</echo>
     </target>
 
-    <target name="dist" depends="clean, compile, test, site, jar, assemble"
+    <target name="dist" depends="clean, compile-all, test-all, site, jar, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
-    <target name="gump" depends="test, jar"/>
-
-
-    <target name="-require-filename" description="Ensure -Dfilename=... was given">
-        <fail unless="filename" message="A filename must be supplied with -Dfilename=, eg -Dfilename=test.xls"/>
-    </target>
-
-    <!-- These tasks make it easy to run our command line tools, -->
-    <!--  without you needing to worry about classpaths etc -->
-    <target name="POIFSViewer" depends="compile-main,-require-filename"
-            description="Runs poifs.dev.POIFSViewer against the supplied file">
-        <java classname="org.apache.poi.poifs.dev.POIFSViewer">
-            <arg line="${filename}"/>
-            <classpath refid="test.classpath"/>
-        </java>
-    </target>
-    <target name="OOXMLLister" depends="compile-ooxml,-require-filename"
-            description="Runs dev.OOXMLLister against the supplied file">
-        <java classname="org.apache.poi.dev.OOXMLLister">
-            <arg line="${filename}"/>
-            <classpath refid="test.ooxml.classpath"/>
-        </java>
-    </target>
-    <target name="BiffViewer" depends="compile-main,-require-filename"
-            description="Runs hssf.dev.BiffViewer against the supplied file">
-        <java classname="org.apache.poi.hssf.dev.BiffViewer">
-            <arg line="${filename}"/>
-            <classpath refid="test.classpath"/>
-        </java>
-    </target>
+    <target name="gump" depends="compile-all, test-all, jar"/>
 
 </project>
 

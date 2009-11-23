@@ -69,11 +69,13 @@ scp poi-ooxml-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
 
 mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
-  -Dfile=poi-ooxml-schemas-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-schemas-@VERSION@.pom
-scp poi-ooxml-schemas-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml-schemas/@VERSION@/
+  -Dfile=poi-examples-@VERSION@-@DSTAMP@.jar -DpomFile=poi-examples-@VERSION@.pom
+scp poi-examples-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
+scp poi-examples-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
 
 mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
   -Durl=$M2_REPOSITORY \
-  -Dfile=poi-examples-@VERSION@-@DSTAMP@.jar -DpomFile=poi-examples-@VERSION@.pom
-scp poi-examples-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
+  -Dfile=poi-ooxml-schemas-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-schemas-@VERSION@.pom
+scp poi-ooxml-schemas-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml-schemas/@VERSION@/
+
 
