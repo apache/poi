@@ -844,6 +844,13 @@ under the License.
                 </replacetokens>
             </filterchain>
         </copy>
+        <copy file="maven/poi-examples.pom" tofile="${dist.dir}/poi-examples-${version.id}.pom">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="${version.id}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
         <copy file="maven/poi-ooxml-schemas.pom" tofile="${dist.dir}/poi-ooxml-schemas-${version.id}.pom">
             <filterchain>
                 <replacetokens>
@@ -1011,17 +1018,15 @@ under the License.
                 <patternset refid="src.dist.patterns"/>
             </tarfileset>
         </tar>
-      
+         
+        <!-- script to create signatures and hashes -->
+        <copy file="maven/multisign.sh" todir="${dist.dir}"/>
+
         <echo>Creating Maven POMs</echo>
         <antcall target="maven-poms"/>
 
-        <echo>Generating MD5 Checksums</echo>
-
-        <checksum fileext=".md5">
-            <fileset dir="${dist.dir}" includes="*.pom,*.gz,*.zip"/>
-        </checksum>
-        
         <echo>Distribution located in ${dist.dir}</echo>
+        <echo>Use ${dist.dir}/multisign.sh to create md5 checksums and GPG signatures</echo>
     </target>
 
     <target name="dist" depends="clean, compile-all, test-all, site, jar, assemble"
