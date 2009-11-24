@@ -59,22 +59,11 @@ $ svn merge https://svn.apache.org/repos/asf/poi/tags/$TAG \
 https://svn.apache.org/repos/asf/poi/trunk
 {code}
 
-  5. Start a new section in sites.xml and status.xml. 
+  5. Start a new section in status.xml. 
 
   6. Build as if the vote had passed. The build date must be +7 days from current.
 {code}
 ant build
-{code}
-After build you should have the following files in the build/dist:
-
-{code}
-poi-$TAG-$DATE.jar
-poi-bin-$TAG-$DATE.tar.gz
-poi-bin-$TAG-$DATE.zip
-poi-contrib-$TAG-$DATE.jar
-poi-scratchpad-$TAG-$DATE.jar
-poi-src-$TAG-$DATE.tar.gz
-poi-src-$TAG-$DATE.zip
 {code}
 
 where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
@@ -82,35 +71,9 @@ where $TAG is the release tag specified in build.xml in the version.id property,
   7. Signing the release artifacts:
 {code}
 cd build/dist
-for i in *.zip ; do 
-  gpg --armor --output $i.asc --detach-sig $i; 
-done
-for i in *.gz ; do 
-  gpg --armor --output $i.asc --detach-sig $i; 
-done
-{code}
+./multisign.sh
 
-Verify the signatures:
-
-{code}
-gpg --multifile --verify *.asc
-{code}
-
-   8. Create MD5 checksums for all artifacts to be published:
-
-{code}
-for i in *.zip ; do 
-  openssl md5 < $i > $i.md5
-done
-for i in *.gz ; do 
-  openssl md5 < $i > $i.md5
-done
-{code}
-
-   9. Upload to your area at people.apache.org.
-There should be two directories:
-main
-maven
+   8. Upload to your area at people.apache.org, e.g. public_html/poi
 
 Make sure that the all files have read permission. 
 
@@ -139,7 +102,7 @@ cp *-src-* /www/www.apache.org/dist/poi/release/src
 cp *-bin-* /www/www.apache.org/dist/poi/release/bin
 {code}
 
-copy Maven artifacts
+deploy Maven artifacts
 {code}
 cd build/dist
 ./mvn-deploy.sh

@@ -43,39 +43,21 @@
 M2_REPOSITORY=scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
 M2_SCP=people.apache.org:/www/people.apache.org/repo/m2-ibiblio-rsync-repository
 
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-@VERSION@-@DSTAMP@.jar -DpomFile=poi-@VERSION@.pom
-scp poi-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi/@VERSION@/
-scp poi-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi/@VERSION@/
+VERSION=@VERSION@
+DSTAMP=@DSTAMP@
 
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-scratchpad-@VERSION@-@DSTAMP@.jar -DpomFile=poi-scratchpad-@VERSION@.pom
-scp poi-scratchpad-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-scratchpad/@VERSION@/
-scp poi-scratchpad-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-scratchpad/@VERSION@/
+for artifactId in poi poi-scratchpad poi-contrib poi-ooxml poi-examples poi-ooxml-schemas
+do
+  mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
+    -Durl=$M2_REPOSITORY \
+    -Dfile=$artifactId-$VERSION-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
+  #The maven sign-and-deploy-file command does NOT sign POM files, so we have to upload the POM's .asc manually
+  scp $artifactId-$VERSION.pom.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/
 
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-contrib-@VERSION@-@DSTAMP@.jar -DpomFile=poi-contrib-@VERSION@.pom
-scp poi-contrib-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-contrib/@VERSION@/
-scp poi-contrib-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-contrib/@VERSION@/
-
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-ooxml-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-@VERSION@.pom
-scp poi-ooxml-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
-scp poi-ooxml-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-ooxml/@VERSION@/
-
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-examples-@VERSION@-@DSTAMP@.jar -DpomFile=poi-examples-@VERSION@.pom
-scp poi-examples-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
-scp poi-examples-@VERSION@-sources.* $M2_SCP/org/apache/poi/poi-examples/@VERSION@/
-
-mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-  -Durl=$M2_REPOSITORY \
-  -Dfile=poi-ooxml-schemas-@VERSION@-@DSTAMP@.jar -DpomFile=poi-ooxml-schemas-@VERSION@.pom
-scp poi-ooxml-schemas-@VERSION@.pom.asc $M2_SCP/org/apache/poi/poi-ooxml-schemas/@VERSION@/
-
-
+  if [ -r $artifactId-$VERSION-sources.jar ]; then
+    mvn deploy:deploy-file -DrepositoryId=apache-releases -P apache-releases \
+      -Durl=$M2_REPOSITORY -DgeneratePom=false -Dpackaging=java-source \
+      -Dfile=$artifactId-$VERSION-sources.jar -DpomFile=$artifactId-$VERSION.pom
+    scp $artifactId-$VERSION-sources.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/
+  fi
+done
