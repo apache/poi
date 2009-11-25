@@ -166,4 +166,18 @@ public final class TestXSSFCell extends BaseTestCell {
         //make sure we return null for that instead of throwing OutOfBounds
         assertEquals(null, cell.getCellStyle());
     }
+    
+    /**
+     * Cell with the formula that returns error must return error code(There was
+     * an problem that cell could not return error value form formula cell).
+     */
+    public void testGetErrorCellValueFromFormulaCell() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell cell = row.createCell(0);
+        cell.setCellFormula("SQRT(-1)");
+        wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
+        assertEquals(36, cell.getErrorCellValue());
+    }
 }

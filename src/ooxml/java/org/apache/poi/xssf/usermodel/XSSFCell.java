@@ -576,7 +576,7 @@ public final class XSSFCell implements Cell {
      * @see FormulaError
      */
     public String getErrorCellString() {
-        int cellType = getCellType();
+        int cellType = getBaseCellType(true);
         if(cellType != CELL_TYPE_ERROR) throw typeMismatch(CELL_TYPE_ERROR, cellType, false);
 
         return _cell.getV();
