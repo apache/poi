@@ -98,16 +98,30 @@ public final class HSSFPalette {
      * @return  The closest color or null if there are no custom
      *          colors currently defined.
      */
-    public HSSFColor findSimilarColor(byte red, byte green, byte blue)
-    {
+    public HSSFColor findSimilarColor(byte red, byte green, byte blue) {
+    	return findSimilarColor(unsignedInt(red), unsignedInt(green), unsignedInt(blue));
+    }
+    /**
+     * Finds the closest matching color in the custom palette.  The
+     * method for finding the distance between the colors is fairly
+     * primative.
+     *
+     * @param red   The red component of the color to match.
+     * @param green The green component of the color to match.
+     * @param blue  The blue component of the color to match.
+     * @return  The closest color or null if there are no custom
+     *          colors currently defined.
+     */
+    public HSSFColor findSimilarColor(int red, int green, int blue) {
         HSSFColor result = null;
         int minColorDistance = Integer.MAX_VALUE;
         byte[] b = _palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
         for (short i = PaletteRecord.FIRST_COLOR_INDEX; b != null;
             b = _palette.getColor(++i))
         {
-            int colorDistance = Math.abs(red - b[0]) +
-            	Math.abs(green - b[1]) + Math.abs(blue - b[2]);
+            int colorDistance = Math.abs(red - unsignedInt(b[0])) +
+            	Math.abs(green - unsignedInt(b[1])) +
+            	Math.abs(blue - unsignedInt(b[2]));
             if (colorDistance < minColorDistance)
             {
                 minColorDistance = colorDistance;
@@ -115,6 +129,14 @@ public final class HSSFPalette {
             }
         }
         return result;
+    }
+    
+    /**
+     * Turn a byte of between -127 and 127 into something between
+     *  0 and 255, so distance calculations work as expected.
+     */
+    private int unsignedInt(byte b) {
+    	return 0xFF & ((int) b);
     }
 
     /**
