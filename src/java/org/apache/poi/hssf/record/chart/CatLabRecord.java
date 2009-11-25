@@ -35,7 +35,7 @@ public final class CatLabRecord extends StandardRecord {
 	private short wOffset;
 	private short at;
 	private short grbit;
-	private short unused;
+	private Short unused;
 	
 	public CatLabRecord(RecordInputStream in) {
 		rt = in.readShort();
@@ -43,12 +43,18 @@ public final class CatLabRecord extends StandardRecord {
 		wOffset = in.readShort();
 		at = in.readShort();
 		grbit = in.readShort();
-		unused = in.readShort();
+		
+		// Often, but not always has an unused short at the end
+		if(in.available() == 0) {
+			unused = null;
+		} else {
+			unused = in.readShort();
+		}
 	}
 	
 	@Override
 	protected int getDataSize() {
-		return 2 + 2 + 2 + 2 + 2 + 2;
+		return 2 + 2 + 2 + 2 + 2 + (unused==null? 0:2);
 	}
 
 	@Override
@@ -58,13 +64,13 @@ public final class CatLabRecord extends StandardRecord {
 
 	@Override
 	public void serialize(LittleEndianOutput out) {
-		
 		out.writeShort(rt);
 		out.writeShort(grbitFrt);
 		out.writeShort(wOffset);
 		out.writeShort(at);
 		out.writeShort(grbit);
-		out.writeShort(unused);
+		if(unused != null)
+			out.writeShort(unused);
 	}
 
 	@Override

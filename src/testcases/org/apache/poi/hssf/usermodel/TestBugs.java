@@ -1509,4 +1509,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(32766, cell2.getStringCellValue().length());
     }
 
+    /**
+     * Short records on certain sheets with charts in them
+     */
+    public void test48180() {
+        HSSFWorkbook wb = openSample("48180.xls");
+        
+    	HSSFSheet s = wb.getSheetAt(0);
+        HSSFCell cell1 = s.getRow(0).getCell(0);
+        assertEquals("test ", cell1.getStringCellValue().toString());
+
+        HSSFCell cell2 = s.getRow(0).getCell(1);
+        assertEquals(1.0, cell2.getNumericCellValue());
+    }
 }
