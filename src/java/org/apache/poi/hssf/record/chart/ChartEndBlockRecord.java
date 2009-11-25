@@ -40,13 +40,18 @@ public final class ChartEndBlockRecord extends StandardRecord {
 		grbitFrt = in.readShort();
 		iObjectKind = in.readShort();
 
-		unused = new byte[6];
-		in.readFully(unused);
+		// Often, but not always has 6 unused bytes at the end
+		if(in.available() == 0) {
+			unused = new byte[0];
+		} else {
+			unused = new byte[6];
+			in.readFully(unused);
+		}
 	}
 
 	@Override
 	protected int getDataSize() {
-		return 2 + 2 + 2 + 6;
+		return 2 + 2 + 2 + unused.length;
 	}
 
 	@Override
