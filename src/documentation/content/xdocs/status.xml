@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Add support for creating SummaryInformation and DocumentSummaryInformation properties on POIDocuments that don't have them, via POIDocument.createInformationProperties()</action>
            <action dev="POI-DEVELOPERS" type="fix">48180 - be more forgiving of short chart records, which skip some unused fields</action>
            <action dev="POI-DEVELOPERS" type="fix">48274 - fix erronious wrapping of byte colours in HSSFPalette.findSimilarColor</action>
            <action dev="POI-DEVELOPERS" type="fix">48269 - fix fetching of error codes from XSSF formula cells</action>
