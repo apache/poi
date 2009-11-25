@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
@@ -137,6 +139,49 @@ public final class TestHSSFPalette extends TestCase {
     public void testFindSimilar() {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFPalette p = book.getCustomPalette();
+        
+        /* first test the defaults */
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 255, (short) 255, (short) 0}, // not [204, 255, 255]
+        				p.findSimilarColor((byte) 204, (byte) 255, (byte) 0).getTriplet()
+        		)
+        );
+
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 153, (short) 204, (short) 0}, // not [128, 0, 0]
+        				p.findSimilarColor((byte) 128, (byte) 255, (byte) 0).getTriplet()
+        		)
+        );
+
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 0, (short) 255, (short) 0}, // not [0, 51, 102]
+        				p.findSimilarColor((byte) 0, (byte) 255, (byte) 102).getTriplet()
+        		)
+        );
+
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 0, (short) 102, (short) 204}, // not [255, 102, 0]
+        				p.findSimilarColor((byte) 0, (byte) 102, (byte) 255).getTriplet()
+        		)
+        );
+
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 255, (short) 0, (short) 255}, // not [128, 0, 0]
+        				p.findSimilarColor((byte) 128, (byte) 0, (byte) 255).getTriplet()
+        		)
+        );
+
+        assertTrue(
+        		Arrays.equals(
+        				new short[] {(short) 255, (short) 0, (short) 255}, // not [255, 255, 153]
+        				p.findSimilarColor((byte) 255, (byte) 0, (byte) 153).getTriplet()
+        		)
+        );
 
 
         // Add a few edge colours in
@@ -175,8 +220,18 @@ public final class TestHSSFPalette extends TestCase {
                 p.getColor((short)12).getHexString(),
                 p.findSimilarColor((byte)-1, (byte)2, (byte)10).getHexString()
         );
+        
+        // And with ints not bytes
+        assertEquals(
+                p.getColor((short)11).getHexString(),
+                p.findSimilarColor(255, 2, 1).getHexString()
+        );
+        assertEquals(
+                p.getColor((short)12).getHexString(),
+                p.findSimilarColor(255, 2, 10).getHexString()
+        );
     }
-
+    
     /**
      * Verifies that the generated gnumeric-format string values match the
      * hardcoded values in the HSSFColor default color palette
