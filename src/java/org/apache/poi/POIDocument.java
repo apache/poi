@@ -85,6 +85,25 @@ public abstract class POIDocument {
         if(!initialized) readProperties();
         return sInf;
     }
+	
+	/**
+	 * Will create whichever of SummaryInformation
+	 *  and DocumentSummaryInformation (HPSF) properties
+	 *  are not already part of your document.
+	 * This is normally useful when creating a new
+	 *  document from scratch.
+	 * If the information properties are already there,
+	 *  then nothing will happen.
+	 */
+	public void createInformationProperties() {
+        if(!initialized) readProperties();
+		if(sInf == null) {
+			sInf = PropertySetFactory.newSummaryInformation();
+		}
+		if(dsInf == null) {
+			dsInf = PropertySetFactory.newDocumentSummaryInformation();
+		}
+	}
 
 	/**
 	 * Find, and create objects for, the standard
