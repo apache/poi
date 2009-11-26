@@ -435,9 +435,6 @@ public final class WorkbookEvaluator {
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
 				opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
-				if (opResult == MissingArgEval.instance) {
-					opResult = BlankEval.INSTANCE;
-				}
 			} else {
 				opResult = getEvalForPtg(ptg, ec);
 			}
