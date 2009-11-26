@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -27,13 +28,17 @@ import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefErrorPtg;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Tests {@link WorkbookEvaluator}.
@@ -158,5 +163,43 @@ public class TestWorkbookEvaluator extends TestCase {
 			String expectedFormula) {
 		HSSFCell cell = wb.getSheetAt(sheetIndex).getRow(rowIndex).getCell(columnIndex);
 		assertEquals(expectedFormula, cell.getCellFormula());
+	}
+
+	/**
+	 * This test makes sure that any {@link MissingArgEval} that propagates to
+	 * the result of a function gets translated to {@link BlankEval}.
+	 */
+	public void testMissingArg() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell(0);
+		cell.setCellFormula("1+IF(1,,)");
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		CellValue cv;
+		try {
+			cv = fe.evaluate(cell);
+		} catch (RuntimeException e) {
+			throw new AssertionFailedError("Missing arg result not being handled correctly.");
+		}
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		// adding blank to 1.0 gives 1.0
+		assertEquals(1.0, cv.getNumberValue(), 0.0);
+
+		// check with string operand
+		cell.setCellFormula("\"abc\"&IF(1,,)");
+		fe.notifySetFormula(cell);
+		cv = fe.evaluate(cell);
+		assertEquals(HSSFCell.CELL_TYPE_STRING, cv.getCellType());
+		// adding blank to "abc" gives "abc"
+		assertEquals("abc", cv.getStringValue());
+		
+		// check CHOOSE()
+		cell.setCellFormula("\"abc\"&CHOOSE(2,5,,9)");
+		fe.notifySetFormula(cell);
+		cv = fe.evaluate(cell);
+		assertEquals(HSSFCell.CELL_TYPE_STRING, cv.getCellType());
+		// adding blank to "abc" gives "abc"
+		assertEquals("abc", cv.getStringValue());
 	}
 }
