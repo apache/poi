@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
@@ -37,7 +39,11 @@ public final class Choose implements Function {
 			if (ix < 1 || ix >= args.length) {
 				return ErrorEval.VALUE_INVALID;
 			}
-			return OperandResolver.getSingleValue(args[ix], srcRowIndex, srcColumnIndex);
+			ValueEval result = OperandResolver.getSingleValue(args[ix], srcRowIndex, srcColumnIndex);
+			if (result == MissingArgEval.instance) {
+				return BlankEval.INSTANCE;
+			}
+			return result;
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
@@ -34,7 +36,13 @@ public final class If extends Var2or3ArgFunction {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		return b ? arg1 : BoolEval.FALSE;
+		if (b) {
+			if (arg1 == MissingArgEval.instance) {
+				return BlankEval.INSTANCE;
+			}
+			return arg1;
+		}
+		return BoolEval.FALSE;
 	}
 
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
@@ -45,7 +53,16 @@ public final class If extends Var2or3ArgFunction {
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		return b ? arg1 : arg2;
+		if (b) {
+			if (arg1 == MissingArgEval.instance) {
+				return BlankEval.INSTANCE;
+			}
+			return arg1;
+		}
+		if (arg2 == MissingArgEval.instance) {
+			return BlankEval.INSTANCE;
+		}
+		return arg2;
 	}
 
 	public static boolean evaluateFirstArg(ValueEval arg, int srcCellRow, int srcCellCol)
