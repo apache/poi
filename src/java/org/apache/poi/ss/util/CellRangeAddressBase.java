@@ -6,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +18,14 @@
 package org.apache.poi.ss.util;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
 
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
- * 
+ *
  * Common subclass of 8-bit and 16-bit versions
- * 
+ *
  * @author Josh Micich
  */
 public abstract class CellRangeAddressBase {
@@ -41,44 +42,44 @@ public abstract class CellRangeAddressBase {
 		_lastCol = lastCol;
 	}
 
-    /**
-     * Validate the range limits against the supplied version of Excel
-     *
-     * @param ssVersion the version of Excel to validate against
-     * @throws IllegalArgumentException if the range limits are outside of the allowed range
-     */
-    public void validate(SpreadsheetVersion ssVersion) {
-        validateRow(_firstRow, ssVersion);
+	/**
+	 * Validate the range limits against the supplied version of Excel
+	 *
+	 * @param ssVersion the version of Excel to validate against
+	 * @throws IllegalArgumentException if the range limits are outside of the allowed range
+	 */
+	public void validate(SpreadsheetVersion ssVersion) {
+		validateRow(_firstRow, ssVersion);
 		validateRow(_lastRow, ssVersion);
-        validateColumn(_firstCol, ssVersion);
+		validateColumn(_firstCol, ssVersion);
 		validateColumn(_lastCol, ssVersion);
 	}
-    /**
-     * Runs a bounds check for row numbers
-     * @param row
-     */
-    private static void validateRow(int row, SpreadsheetVersion ssVersion) {
-        int maxrow = ssVersion.getLastRowIndex();
-        if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
-        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
-    }
+	/**
+	 * Runs a bounds check for row numbers
+	 * @param row
+	 */
+	private static void validateRow(int row, SpreadsheetVersion ssVersion) {
+		int maxrow = ssVersion.getLastRowIndex();
+		if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
+		if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+	}
 
-    /**
-     * Runs a bounds check for column numbers
-     * @param column
-     */
-    private static void validateColumn(int column, SpreadsheetVersion ssVersion) {
-        int maxcol = ssVersion.getLastColumnIndex();
-        if (column > maxcol) throw new IllegalArgumentException("Maximum column number is " + maxcol);
-        if (column < 0)    throw new IllegalArgumentException("Minimum column number is 0");
-    }
+	/**
+	 * Runs a bounds check for column numbers
+	 * @param column
+	 */
+	private static void validateColumn(int column, SpreadsheetVersion ssVersion) {
+		int maxcol = ssVersion.getLastColumnIndex();
+		if (column > maxcol) throw new IllegalArgumentException("Maximum column number is " + maxcol);
+		if (column < 0)	throw new IllegalArgumentException("Minimum column number is 0");
+	}
 
 
-    //TODO use the correct SpreadsheetVersion
-    public final boolean isFullColumnRange() {
+	//TODO use the correct SpreadsheetVersion
+	public final boolean isFullColumnRange() {
 		return _firstRow == 0 && _lastRow == SpreadsheetVersion.EXCEL97.getLastRowIndex();
 	}
-    //TODO use the correct SpreadsheetVersion
+	//TODO use the correct SpreadsheetVersion
 	public final boolean isFullRowRange() {
 		return _firstCol == 0 && _lastCol == SpreadsheetVersion.EXCEL97.getLastColumnIndex();
 	}
@@ -111,6 +112,11 @@ public abstract class CellRangeAddressBase {
 		return _lastRow;
 	}
 
+	public boolean isInRange(int rowInd, int colInd) {
+		return _firstRow <= rowInd  &&  rowInd <= _lastRow &&
+				_firstCol <= colInd && colInd <= _lastCol;
+	}
+
 	/**
 	 * @param firstCol column number for the upper left hand corner
 	 */
@@ -138,12 +144,12 @@ public abstract class CellRangeAddressBase {
 	public final void setLastRow(int lastRow) {
 		_lastRow = lastRow;
 	}
-    /**
-     * @return the size of the range (number of cells in the area).
-     */
-    public int getNumberOfCells() {
-        return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
-    }
+	/**
+	 * @return the size of the range (number of cells in the area).
+	 */
+	public int getNumberOfCells() {
+		return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
+	}
 
 	public final String toString() {
 		CellReference crA = new CellReference(_firstRow, _firstCol);

@@ -30,13 +30,17 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class ExpPtg extends ControlPtg {
     private final static int  SIZE = 5;
     public final static short sid  = 0x1;
-    private final short            field_1_first_row;
-    private final short            field_2_first_col;
+    private final int field_1_first_row;
+    private final int field_2_first_col;
 
-    public ExpPtg(LittleEndianInput in) 
-    {
+    public ExpPtg(LittleEndianInput in) {
       field_1_first_row = in.readShort();
       field_2_first_col = in.readShort();
+    }
+
+    public ExpPtg(int firstRow, int firstCol) {
+      this.field_1_first_row = firstRow;
+      this.field_2_first_col = firstCol;
     }
 
     public void write(LittleEndianOutput out) {
@@ -45,26 +49,23 @@ public final class ExpPtg extends ControlPtg {
         out.writeShort(field_2_first_col);
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
-    public short getRow() {
+    public int getRow() {
       return field_1_first_row;
     }
 
-    public short getColumn() {
+    public int getColumn() {
       return field_2_first_col;
     }
 
-    public String toFormulaString()
-    {
+    public String toFormulaString() {
         throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer("[Array Formula or Shared Formula]\n");
         buffer.append("row = ").append(getRow()).append("\n");
         buffer.append("col = ").append(getColumn()).append("\n");
