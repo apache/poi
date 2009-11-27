@@ -30,10 +30,14 @@ public final class FunctionEval {
 	 * Some function IDs that require special treatment
 	 */
 	private static final class FunctionID {
+		/** 1 */
+		public static final int IF = FunctionMetadataRegistry.FUNCTION_INDEX_IF;
 		/** 4 */
 		public static final int SUM = FunctionMetadataRegistry.FUNCTION_INDEX_SUM;
 		/** 78 */
 		public static final int OFFSET = 78;
+		/** 100 */
+		public static final int CHOOSE = FunctionMetadataRegistry.FUNCTION_INDEX_CHOOSE;
 		/** 148 */
 		public static final int INDIRECT = FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT;
 		/** 255 */
@@ -51,7 +55,7 @@ public final class FunctionEval {
 		Function[] retval = new Function[368];
 
 		retval[0] = new Count();
-		retval[1] = new If();
+		retval[ID.IF] = new If();
 		retval[2] = LogicalFunction.ISNA;
 		retval[3] = LogicalFunction.ISERROR;
 		retval[ID.SUM] = AggregateFunction.SUM;
@@ -115,7 +119,7 @@ public final class FunctionEval {
 		retval[97] = NumericFunction.ATAN2;
 		retval[98] = NumericFunction.ASIN;
 		retval[99] = NumericFunction.ACOS;
-		retval[100] = new Choose();
+		retval[ID.CHOOSE] = new Choose();
 		retval[101] = new Hlookup();
 		retval[102] = new Vlookup();
 
