@@ -20,6 +20,7 @@ package org.apache.poi.hssf.model;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -41,17 +42,18 @@ public final class HSSFFormulaParser {
 	}
 
 	/**
-	 * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int)}
+	 * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int, int)}
 	 */
-	public static Ptg[] parse(String formula, HSSFWorkbook workbook) {
+	public static Ptg[] parse(String formula, HSSFWorkbook workbook) throws FormulaParseException {
 		return parse(formula, workbook, FormulaType.CELL);
 	}
 
 	/**
 	 * @param formulaType a constant from {@link FormulaType}
 	 * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
 	 */
-	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
+	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) throws FormulaParseException {
 		return parse(formula, workbook, formulaType, -1);
 	}
 
@@ -64,8 +66,9 @@ public final class HSSFFormulaParser {
 	 * the scope of the name will be ignored and  the parser will match named ranges only by name
 	 *
 	 * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
 	 */
-	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) {
+	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) throws FormulaParseException {
 		return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex);
 	}
 

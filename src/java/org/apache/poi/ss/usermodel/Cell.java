@@ -20,6 +20,8 @@ package org.apache.poi.ss.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.poi.ss.formula.FormulaParseException;
+
 /**
  * High level representation of a cell in a row of a spreadsheet.
  * <p>
@@ -76,7 +78,7 @@ public interface Cell {
      * @see #getCellType()
      */
     public final static int CELL_TYPE_ERROR = 5;
-    
+
     /**
      * Returns column index of this cell
      *
@@ -158,7 +160,7 @@ public interface Cell {
      * data type is now something besides {@link Cell#CELL_TYPE_NUMERIC}.  POI
      * does not attempt to replicate this behaviour.  To make a numeric cell
      * display as a date, use {@link #setCellStyle(CellStyle)} etc.
-     * 
+     *
      * @param value the numeric value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numerics cell and set its value.
@@ -203,6 +205,7 @@ public interface Cell {
      */
     void setCellValue(String value);
 
+
     /**
      * Sets formula for this cell.
      * <p>
@@ -210,11 +213,11 @@ public interface Cell {
      * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
      * </p>
      *
-     * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
+     * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
-     * @throws IllegalArgumentException if the formula is unparsable
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
-    void setCellFormula(String formula);
+    void setCellFormula(String formula) throws FormulaParseException;
 
     /**
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>

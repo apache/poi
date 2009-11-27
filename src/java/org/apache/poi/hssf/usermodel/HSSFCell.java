@@ -81,7 +81,7 @@ public class HSSFCell implements Cell {
      */
     public static final int LAST_COLUMN_NUMBER  = SpreadsheetVersion.EXCEL97.getLastColumnIndex(); // 2^8 - 1
     private static final String LAST_COLUMN_NAME  = SpreadsheetVersion.EXCEL97.getLastColumnName();
-    
+
     public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
@@ -507,7 +507,7 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * set a string value for the cell. 
+     * set a string value for the cell.
      *
      * @param value value to set the cell to.  For formulas we'll set the formula
      * cached string result, for String cells we'll set its value. For other types we will
@@ -573,17 +573,6 @@ public class HSSFCell implements Cell {
         _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
     }
 
-    /**
-     * Sets formula for this cell.
-     * <p>
-     * Note, this method only sets the formula string and does not calculate the formula value.
-     * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
-     * </p>
-     *
-     * @param formula the formula to set, e.g. <code>SUM(C4:E4)</code>.
-     *  If the argument is <code>null</code> then the current formula is removed.
-     * @throws IllegalArgumentException if the formula is unparsable
-     */
     public void setCellFormula(String formula) {
         int row=_record.getRow();
         short col=_record.getColumn();
@@ -918,8 +907,8 @@ public class HSSFCell implements Cell {
      */
     private static void checkBounds(int cellIndex) {
         if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {
-            throw new IllegalArgumentException("Invalid column index (" + cellIndex 
-                    + ").  Allowable column range for " + FILE_FORMAT_NAME + " is (0.." 
+            throw new IllegalArgumentException("Invalid column index (" + cellIndex
+                    + ").  Allowable column range for " + FILE_FORMAT_NAME + " is (0.."
                     + LAST_COLUMN_NUMBER + ") or ('A'..'" + LAST_COLUMN_NAME + "')");
         }
     }

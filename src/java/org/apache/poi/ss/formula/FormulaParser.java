@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.hssf.record.formula.ValueOperatorPtg;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -42,6 +41,10 @@ import org.apache.poi.ss.SpreadsheetVersion;
  * <term> ::= <factor>  [ <mulop> <factor> ]*
  * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
  * <function> ::= <functionName> ([expression [, expression]*])
+ * <p/>
+ * For POI internal use only
+ * <p/>
+ *
  *
  *  @author Avik Sengupta <avik at apache dot org>
  *  @author Andrew C. oliver (acoliver at apache dot org)
@@ -111,20 +114,6 @@ public final class FormulaParser {
 		}
 	}
 
-	/**
-	 * Specific exception thrown when a supplied formula does not parse properly.<br/>
-	 * Primarily used by test cases when testing for specific parsing exceptions.</p>
-	 *
-	 */
-	static final class FormulaParseException extends RuntimeException {
-		// This class was given package scope until it would become clear that it is useful to
-		// general client code.
-		public FormulaParseException(String msg) {
-			super(msg);
-		}
-	}
-
-
 	private final String _formulaString;
 	private final int _formulaLength;
 	/** points at the next character to be read (after the {@link #look} char) */
@@ -141,7 +130,7 @@ public final class FormulaParser {
 	private char look;
 
 	private FormulaParsingWorkbook _book;
-    private SpreadsheetVersion _ssVersion;
+	private SpreadsheetVersion _ssVersion;
 
 	private int _sheetIndex;
 
@@ -162,17 +151,9 @@ public final class FormulaParser {
 		_formulaString = formula;
 		_pointer=0;
 		_book = book;
-        _ssVersion = book == null ? SpreadsheetVersion.EXCEL97 : book.getSpreadsheetVersion();
-        _formulaLength = _formulaString.length();
+		_ssVersion = book == null ? SpreadsheetVersion.EXCEL97 : book.getSpreadsheetVersion();
+		_formulaLength = _formulaString.length();
 		_sheetIndex = sheetIndex;
-	}
-
-	public static Ptg[] parse(String formula, FormulaParsingWorkbook book) {
-		return parse(formula, book, FormulaType.CELL);
-	}
-
-	public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType) {
-		return parse(formula, workbook, formulaType, -1);
 	}
 
 	/**
@@ -186,7 +167,7 @@ public final class FormulaParser {
 	 * the scope of the name will be ignored and  the parser will match names only by name
 	 *
 	 * @return array of parsed tokens
-	 * @throws FormulaParseException if the formula is unparsable
+	 * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
 	 */
 	public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
 		FormulaParser fp = new FormulaParser(formula, workbook, sheetIndex);
@@ -702,7 +683,7 @@ public final class FormulaParser {
 			if (!isValidCellReference(rep)) {
 				return null;
 			}
-        } else if (hasLetters) {
+		} else if (hasLetters) {
 			if (!CellReference.isColumnWithnRange(rep.replace("$", ""), _ssVersion)) {
 				return null;
 			}
@@ -881,29 +862,29 @@ public final class FormulaParser {
 	 * @return <code>true</code> if the specified name is a valid cell reference
 	 */
 	private boolean isValidCellReference(String str) {
-        //check range bounds against grid max
-        boolean result = CellReference.classifyCellReference(str, _ssVersion) == NameType.CELL;
+		//check range bounds against grid max
+		boolean result = CellReference.classifyCellReference(str, _ssVersion) == NameType.CELL;
 
-        if(result){
-            /**
-             * Check if the argument is a function. Certain names can be either a cell reference or a function name
-             * depending on the contenxt. Compare the following examples in Excel 2007:
-             * (a) LOG10(100) + 1
-             * (b) LOG10 + 1
-             * In (a) LOG10 is a name of a built-in function. In (b) LOG10 is a cell reference
-             */
-            boolean isFunc = FunctionMetadataRegistry.getFunctionByName(str.toUpperCase()) != null;
-            if(isFunc){
-                int savePointer = _pointer;
-                resetPointer(_pointer + str.length());
-                SkipWhite();
-                // open bracket indicates that the argument is a function,
-                // the returning value should be false, i.e. "not a valid cell reference"
-                result = look != '(';
-                resetPointer(savePointer);
-            }
-        }
-        return result;
+		if(result){
+			/**
+			 * Check if the argument is a function. Certain names can be either a cell reference or a function name
+			 * depending on the contenxt. Compare the following examples in Excel 2007:
+			 * (a) LOG10(100) + 1
+			 * (b) LOG10 + 1
+			 * In (a) LOG10 is a name of a built-in function. In (b) LOG10 is a cell reference
+			 */
+			boolean isFunc = FunctionMetadataRegistry.getFunctionByName(str.toUpperCase()) != null;
+			if(isFunc){
+				int savePointer = _pointer;
+				resetPointer(_pointer + str.length());
+				SkipWhite();
+				// open bracket indicates that the argument is a function,
+				// the returning value should be false, i.e. "not a valid cell reference"
+				result = look != '(';
+				resetPointer(savePointer);
+			}
+		}
+		return result;
 	}
 
 

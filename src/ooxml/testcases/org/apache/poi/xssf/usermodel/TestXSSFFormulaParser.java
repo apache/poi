@@ -23,55 +23,53 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.FuncPtg;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 
 public final class TestXSSFFormulaParser extends TestCase {
 
+	private static Ptg[] parse(XSSFEvaluationWorkbook fpb, String fmla) {
+		return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
+	}
+
 
     public void testParse() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        String fmla;
         Ptg[] ptgs;
 
-        fmla = "ABC10";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "ABC10");
         assertEquals(1, ptgs.length);
-        assertTrue("",(ptgs[0] instanceof RefPtg));
+        assertTrue("", ptgs[0] instanceof RefPtg);
 
-        fmla = "A500000";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "A500000");
         assertEquals(1, ptgs.length);
-        assertTrue("",(ptgs[0] instanceof RefPtg));
+        assertTrue("", ptgs[0] instanceof RefPtg);
 
-        fmla = "ABC500000";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "ABC500000");
         assertEquals(1, ptgs.length);
-        assertTrue("",(ptgs[0] instanceof RefPtg));
+        assertTrue("", ptgs[0] instanceof RefPtg);
 
         //highest allowed rows and column (XFD and 0x100000)
-        fmla = "XFD1048576";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "XFD1048576");
         assertEquals(1, ptgs.length);
-        assertTrue("",(ptgs[0] instanceof RefPtg));
+        assertTrue("", ptgs[0] instanceof RefPtg);
 
 
         //column greater than XFD
-        fmla = "XFE10";
         try {
-            ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+            ptgs = parse(fpb, "XFE10");
             fail("expected exception");
-        } catch (Exception e){
+        } catch (FormulaParseException e){
             assertEquals("Specified named range 'XFE10' does not exist in the current workbook.", e.getMessage());
         }
 
         //row greater than 0x100000
-        fmla = "XFD1048577";
         try {
-            ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+            ptgs = parse(fpb, "XFD1048577");
             fail("expected exception");
-        } catch (Exception e){
+        } catch (FormulaParseException e){
             assertEquals("Specified named range 'XFD1048577' does not exist in the current workbook.", e.getMessage());
         }
     }
@@ -79,19 +77,15 @@ public final class TestXSSFFormulaParser extends TestCase {
     public void testBuiltInFormulas() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        String fmla;
         Ptg[] ptgs;
 
-        fmla = "LOG10";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "LOG10");
         assertEquals(1, ptgs.length);
         assertTrue("",(ptgs[0] instanceof RefPtg));
 
-        fmla = "LOG10(100)";
-        ptgs = FormulaParser.parse(fmla, fpb, FormulaType.CELL);
+        ptgs = parse(fpb, "LOG10(100)");
         assertEquals(2, ptgs.length);
-        assertTrue("",(ptgs[0] instanceof IntPtg));
-        assertTrue("",(ptgs[1] instanceof FuncPtg));
-
+        assertTrue("", ptgs[0] instanceof IntPtg);
+        assertTrue("", ptgs[1] instanceof FuncPtg);
     }
 }
