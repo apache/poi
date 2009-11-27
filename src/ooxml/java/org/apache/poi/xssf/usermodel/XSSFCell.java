@@ -888,7 +888,7 @@ public final class XSSFCell implements Cell {
                 int sstIndex = Integer.parseInt(_cell.getV());
                 XSSFRichTextString rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(sstIndex));
                 String text = rt.getString();
-                return Boolean.valueOf(text);
+                return Boolean.parseBoolean(text);
             case CELL_TYPE_NUMERIC:
                 return Double.parseDouble(_cell.getV()) != 0;
 
