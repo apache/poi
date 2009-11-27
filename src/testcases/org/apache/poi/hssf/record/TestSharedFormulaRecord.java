@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -101,7 +102,7 @@ public final class TestSharedFormulaRecord extends TestCase {
         HSSFEvaluationWorkbook fpb = HSSFEvaluationWorkbook.create(wb);
         Ptg[] sharedFormula, convertedFormula;
 
-        sharedFormula = FormulaParser.parse("A2", fpb);
+        sharedFormula = FormulaParser.parse("A2", fpb, FormulaType.CELL, -1);
         convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         //conversion relative to [0,0] should return the original formula
@@ -117,7 +118,7 @@ public final class TestSharedFormulaRecord extends TestCase {
         //one row down and one cell right
         assertEquals("B3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb);
+        sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb, FormulaType.CELL, -1);
         convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         assertEquals("SUM(A1:C1)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
@@ -139,22 +140,22 @@ public final class TestSharedFormulaRecord extends TestCase {
 		HSSFSheet sheet;
 		HSSFCell cellB32769;
 		HSSFCell cellC32769;
-		
+
 		// Reading directly from XLS file
 		wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
 		sheet = wb.getSheetAt(0);
 		cellB32769 = sheet.getRow(32768).getCell(1);
 		cellC32769 = sheet.getRow(32768).getCell(2);
-		// check reading of formulas which are shared (two cells from a 1R x 8C range) 
-		assertEquals("B32770*2", cellB32769.getCellFormula()); 
+		// check reading of formulas which are shared (two cells from a 1R x 8C range)
+		assertEquals("B32770*2", cellB32769.getCellFormula());
 		assertEquals("C32770*2", cellC32769.getCellFormula());
 		confirmCellEvaluation(wb, cellB32769, 4);
 		confirmCellEvaluation(wb, cellC32769, 6);
 		// Confirm this example really does have SharedFormulas.
 		// there are 3 others besides the one at A32769:H32769
-		assertEquals(4, countSharedFormulas(sheet)); 
-		
-		
+		assertEquals(4, countSharedFormulas(sheet));
+
+
 		// Re-serialize and check again
 		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		sheet = wb.getSheetAt(0);
@@ -164,18 +165,18 @@ public final class TestSharedFormulaRecord extends TestCase {
 		confirmCellEvaluation(wb, cellB32769, 4);
 		assertEquals(4, countSharedFormulas(sheet));
 	}
-	
+
 	public void testUnshareFormulaDueToChangeFormula() {
 		HSSFWorkbook wb;
 		HSSFSheet sheet;
 		HSSFCell cellB32769;
 		HSSFCell cellC32769;
-		
+
 		wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
 		sheet = wb.getSheetAt(0);
 		cellB32769 = sheet.getRow(32768).getCell(1);
 		cellC32769 = sheet.getRow(32768).getCell(2);
-		
+
 		// Updating cell formula, causing it to become unshared
 		cellB32769.setCellFormula("1+1");
 		confirmCellEvaluation(wb, cellB32769, 2);
@@ -194,25 +195,25 @@ public final class TestSharedFormulaRecord extends TestCase {
 		// changing shared formula cell to blank
 		wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
 		sheet = wb.getSheetAt(0);
-	
+
 		assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
 		cell = sheet.getRow(ROW_IX).getCell(1);
 		cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
 		assertEquals(3, countSharedFormulas(sheet));
-		
+
 		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		sheet = wb.getSheetAt(0);
 		assertEquals("A$1*2", sheet.getRow(ROW_IX+1).getCell(1).getCellFormula());
-		
+
 		// deleting shared formula cell
 		wb = HSSFTestDataSamples.openSampleWorkbook(SHARED_FORMULA_TEST_XLS);
 		sheet = wb.getSheetAt(0);
-	
+
 		assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
 		cell = sheet.getRow(ROW_IX).getCell(1);
 		sheet.getRow(ROW_IX).removeCell(cell);
 		assertEquals(3, countSharedFormulas(sheet));
-		
+
 		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		sheet = wb.getSheetAt(0);
 		assertEquals("A$1*2", sheet.getRow(ROW_IX+1).getCell(1).getCellFormula());

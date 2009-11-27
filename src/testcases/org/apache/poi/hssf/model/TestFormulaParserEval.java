@@ -29,12 +29,12 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.FormulaParserTestHelper;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Test the low level formula parser functionality,
- *  but using parts which need to use 
+ *  but using parts which need to use
  *  HSSFFormulaEvaluator.
  */
 public final class TestFormulaParserEval extends TestCase {
@@ -56,11 +56,11 @@ public final class TestFormulaParserEval extends TestCase {
 		// Now make it a single cell
 		name.setRefersToFormula("C3");
 		confirmParseFormula(workbook);
-		
+
 		// And make it non-contiguous
 		// using area unions
 		name.setRefersToFormula("A1:A2,C3");
-		
+
 		confirmParseFormula(workbook);
 	}
 
@@ -75,11 +75,11 @@ public final class TestFormulaParserEval extends TestCase {
 	}
 
 	public void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
 		wb.setSheetName(0, "Sheet1");
-		
+
 		HSSFRow row = sheet.createRow(0);
 		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("SUM(A32769:A32770)");
@@ -87,13 +87,12 @@ public final class TestFormulaParserEval extends TestCase {
 		// put some values in the cells to make the evaluation more interesting
 		sheet.createRow(32768).createCell(0).setCellValue(31);
 		sheet.createRow(32769).createCell(0).setCellValue(11);
-		
+
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue result;
 		try {
 			result = fe.evaluate(cell);
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e);
+		} catch (FormulaParseException e) {
 			if (!e.getMessage().equals("Found reference to named range \"A\", but that named range wasn't defined!")) {
 				throw new AssertionFailedError("Identifed bug 44539");
 			}

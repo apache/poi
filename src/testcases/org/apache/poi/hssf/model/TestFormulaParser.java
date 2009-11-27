@@ -65,8 +65,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFName;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaParserTestHelper;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Name;
 
@@ -684,9 +685,9 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			parseFormula(formula);
 			throw new AssertionFailedError("expected parse exception");
-		} catch (RuntimeException e) {
+		} catch (FormulaParseException e) {
 			// expected during successful test
-			FormulaParserTestHelper.confirmParseException(e);
+			assertNotNull(e.getMessage());
 		}
 	}
 
@@ -782,8 +783,8 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			HSSFFormulaParser.parse(formula, book);
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, expectedMessage);
+		} catch (FormulaParseException e) {
+			confirmParseException(e, expectedMessage);
 		}
 	}
 
@@ -792,16 +793,16 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			parseFormula("round(3.14;2)");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e,
+		} catch (FormulaParseException e) {
+			confirmParseException(e,
 					"Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'");
 		}
 
 		try {
 			parseFormula(" =2+2");
 			throw new AssertionFailedError("Didn't get parse exception as expected");
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e,
+		} catch (FormulaParseException e) {
+			confirmParseException(e,
 					"The specified formula ' =2+2' starts with an equals sign which is not allowed.");
 		}
 	}
@@ -853,8 +854,8 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			cell.setCellFormula("count(pf1)");
 			throw new AssertionFailedError("Expected formula parse execption");
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e,
+		} catch (FormulaParseException e) {
+			confirmParseException(e,
 					"Specified named range 'pf1' does not exist in the current workbook.");
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
@@ -962,7 +963,7 @@ public final class TestFormulaParser extends TestCase {
 		String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
-		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
+		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
 		Class<?>[] expectedClasses = {
 				// TODO - AttrPtg.class, // Excel prepends this
@@ -985,7 +986,7 @@ public final class TestFormulaParser extends TestCase {
 		String formula = "Sheet1!A1:Sheet1!B3";
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
-		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb));
+		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
 		if (ptgs.length == 3) {
 			confirmTokenClasses(ptgs, new Class[] { Ref3DPtg.class, Ref3DPtg.class, RangePtg.class,});
@@ -1195,8 +1196,8 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			HSSFFormulaParser.parse(formula, wb);
 			throw new AssertionFailedError("Expected formula parse execption");
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, expectedMessage);
+		} catch (FormulaParseException e) {
+			confirmParseException(e, expectedMessage);
 		}
 	}
 
@@ -1220,8 +1221,7 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] result;
 		try {
 			result = HSSFFormulaParser.parse("1+foo", wb);
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e);
+		} catch (FormulaParseException e) {
 			if (e.getMessage().equals("Specified name 'foo' is not a range as expected.")) {
 				throw new AssertionFailedError("Identified bug 47078c");
 			}
@@ -1247,9 +1247,9 @@ public final class TestFormulaParser extends TestCase {
 			HSSFFormulaParser.parse(badCellRef, wb);
 			throw new AssertionFailedError("Identified bug 47312b - Shouldn't be able to parse cell ref '"
 					+ badCellRef + "'.");
-		} catch (RuntimeException e) {
+		} catch (FormulaParseException e) {
 			// expected during successful test
-			FormulaParserTestHelper.confirmParseException(e, "Specified named range '"
+			confirmParseException(e, "Specified named range '"
 					+ badCellRef + "' does not exist in the current workbook.");
 		}
 
@@ -1257,8 +1257,8 @@ public final class TestFormulaParser extends TestCase {
 		try {
 			ptgs = HSSFFormulaParser.parse(leadingZeroCellRef, wb);
 			assertEquals("B1", ((RefPtg) ptgs[0]).toFormulaString());
-		} catch (RuntimeException e) {
-			FormulaParserTestHelper.confirmParseException(e, "Specified named range '"
+		} catch (FormulaParseException e) {
+			confirmParseException(e, "Specified named range '"
 					+ leadingZeroCellRef + "' does not exist in the current workbook.");
 			// close but no cigar
 			throw new AssertionFailedError("Identified bug 47312c - '"
@@ -1271,5 +1271,9 @@ public final class TestFormulaParser extends TestCase {
 		n.setRefersToFormula("1+1");
 		ptgs = HSSFFormulaParser.parse("B0", wb);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
+	}
+
+	private static void confirmParseException(FormulaParseException e, String expMsg) {
+		assertEquals(expMsg, e.getMessage());
 	}
 }

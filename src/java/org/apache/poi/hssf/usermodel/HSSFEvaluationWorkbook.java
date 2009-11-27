@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
@@ -129,7 +130,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 			// to make sure that all formulas POI can evaluate can also be parsed.
 			try {
 				return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
-			} catch (RuntimeException e) {
+			} catch (FormulaParseException e) {
 				// Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
 				// IntesectionPtg.  However it is still not capable of parsing it.
 				// So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
