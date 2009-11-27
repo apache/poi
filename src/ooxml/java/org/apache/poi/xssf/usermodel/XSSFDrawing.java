@@ -241,9 +241,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      *                  to the sheet.
      * @return  the newly created comment.
      */
-    @Override
-    public XSSFComment createCellComment(ClientAnchor anchor)
-    {
+    public XSSFComment createCellComment(ClientAnchor anchor) {
         XSSFClientAnchor ca = (XSSFClientAnchor)anchor;
         XSSFSheet sheet = (XSSFSheet)getParent();
 

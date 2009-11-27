@@ -157,8 +157,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return shape;
     }
 
-    @Override
-    public HSSFComment createCellComment(ClientAnchor anchor){
+    public HSSFComment createCellComment(ClientAnchor anchor) {
         return createComment((HSSFAnchor)anchor);
     }
 
@@ -258,7 +257,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     }
 
     /**
-     * Returns the aggregate escher record we're bound to 
+     * Returns the aggregate escher record we're bound to
      */
     protected EscherAggregate _getBoundAggregate() {
         return _boundAggregate;
