@@ -21,4 +21,6 @@ package org.apache.poi.ss.usermodel;
  */
 public interface Drawing {
     Picture createPicture(ClientAnchor anchor, int pictureIndex);
+
+    Comment createCellComment(ClientAnchor anchor);
 }

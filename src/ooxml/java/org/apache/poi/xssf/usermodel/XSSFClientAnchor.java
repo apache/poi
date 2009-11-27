@@ -217,4 +217,8 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         return anchorType;
     }
 
+    public boolean isSet(){
+        return !(cell1.getCol() == 0 && cell2.getCol() == 0 &&
+                 cell1.getRow() == 0 && cell2.getRow() == 0);
+    }
 }

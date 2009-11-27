@@ -25,10 +25,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -47,32 +44,24 @@ public class TestCommentsTable extends TestCase {
 	private static final String TEST_A1_TEXT = "test A1 text";
 	private static final String TEST_AUTHOR = "test author";
 
-	public void testfindAuthor() throws Exception {
-		CommentsDocument doc = CommentsDocument.Factory.newInstance();
-		doc.setComments(CTComments.Factory.newInstance());
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+	public void testFindAuthor() throws Exception {
 		CommentsTable sheetComments = new CommentsTable();
-		sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
+        assertEquals(1, sheetComments.getNumberOfAuthors());
+        assertEquals(0, sheetComments.findAuthor(""));
+        assertEquals("", sheetComments.getAuthor(0));
 
-		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
-		assertEquals(1, sheetComments.findAuthor("another author"));
-		assertEquals(0, sheetComments.findAuthor(TEST_AUTHOR));
-		assertEquals(2, sheetComments.findAuthor("YAA"));
-		assertEquals(1, sheetComments.findAuthor("another author"));
+        assertEquals(1, sheetComments.findAuthor(TEST_AUTHOR));
+		assertEquals(2, sheetComments.findAuthor("another author"));
+		assertEquals(1, sheetComments.findAuthor(TEST_AUTHOR));
+		assertEquals(3, sheetComments.findAuthor("YAA"));
+		assertEquals(2, sheetComments.findAuthor("another author"));
 	}
 
 	public void testGetCellComment() throws Exception {
-		CommentsDocument doc = CommentsDocument.Factory.newInstance();
-		doc.setComments(CTComments.Factory.newInstance());
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 		CommentsTable sheetComments = new CommentsTable();
-		sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
-
 
 		CTComments comments = sheetComments.getCTComments();
-		CTCommentList commentList = comments.addNewCommentList();
+		CTCommentList commentList = comments.getCommentList();
 
 		// Create 2 comments for A1 and A" cells
 		CTComment comment0 = commentList.insertNewComment(0);
@@ -87,86 +76,14 @@ public class TestCommentsTable extends TestCase {
 		comment1.setText(ctrst1);
 
 		// test finding the right comment for a cell
-		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment("A1").getString().getString());
-		assertEquals(TEST_A1_TEXT, sheetComments.findCellComment(0, 0).getString().getString());
-		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment("A2").getString().getString());
-		assertEquals(TEST_A2_TEXT, sheetComments.findCellComment(1, 0).getString().getString());
-		assertNull(sheetComments.findCellComment("A3"));
-		assertNull(sheetComments.findCellComment(2, 0));
+		assertSame(comment0, sheetComments.getCTComment("A1"));
+		assertSame(comment1, sheetComments.getCTComment("A2"));
+		assertNull(sheetComments.getCTComment("A3"));
 	}
 
-	public void testAddCellComment() throws Exception {
-		CommentsDocument doc = CommentsDocument.Factory.newInstance();
-		doc.setComments(CTComments.Factory.newInstance());
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		doc.save(out, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
-		CommentsTable sheetComments = new CommentsTable();
-		sheetComments.readFrom(new ByteArrayInputStream(out.toByteArray()));
-
-		CTCommentList commentList = sheetComments.getCTComments().addNewCommentList();
-		assertEquals(0, commentList.sizeOfCommentArray());
-
-		XSSFComment comment = sheetComments.addComment();
-		comment.setAuthor("test A1 author");
-		comment.setRow(0);
-		comment.setColumn((short)0);
-
-		assertEquals(1, commentList.sizeOfCommentArray());
-		assertEquals("test A1 author", sheetComments.getAuthor(commentList.getCommentArray(0).getAuthorId()));
-		assertEquals("test A1 author", comment.getAuthor());
-
-		// Change the author, check it updates
-		comment.setAuthor("Another Author");
-		assertEquals(1, commentList.sizeOfCommentArray());
-		assertEquals("Another Author", comment.getAuthor());
-	}
-
-	public void testDontLoostNewLines() {
-		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
-		List<POIXMLDocumentPart> rels = wb.getSheetAt(0).getRelations();
-		CommentsTable ct = null;
-		for(POIXMLDocumentPart p : rels) {
-			if(p instanceof CommentsTable){
-				ct = (CommentsTable)p;
-				break;
-			}
-		}
-		if (ct == null) {
-			throw new AssertionFailedError("didn't find comments table");
-		}
-		assertEquals(2, ct.getNumberOfComments());
-		assertEquals(1, ct.getNumberOfAuthors());
-
-		XSSFComment comment = ct.findCellComment("C5");
-
-		assertEquals("Nick Burch", comment.getAuthor());
-		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
-
-		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-		rels = wb.getSheetAt(0).getRelations();
-		ct = null;
-		for(POIXMLDocumentPart p : rels) {
-			if(p instanceof CommentsTable){
-				ct = (CommentsTable)p;
-				break;
-			}
-		}
-		if (ct == null) {
-			throw new AssertionFailedError("didn't find comments table");
-		}
-
-		assertEquals(2, ct.getNumberOfComments());
-		assertEquals(1, ct.getNumberOfAuthors());
-
-		comment = ct.findCellComment("C5");
-
-		assertEquals("Nick Burch", comment.getAuthor());
-
-		assertEquals("Nick Burch:\nThis is a comment", comment.getString().getString());
-	}
 
 	public void testExisting() {
-		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
+		Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		Sheet sheet1 = workbook.getSheetAt(0);
 		Sheet sheet2 = workbook.getSheetAt(1);
 
@@ -238,7 +155,7 @@ public class TestCommentsTable extends TestCase {
 		assertEquals("Also POI",
 				sheet2.getRow(2).getCell(1).getCellComment().getAuthor());
 
-		assertEquals("Nick Burch:\nThis is a comment",
+		assertEquals("Hello!",
 				sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
 	}
 
@@ -276,4 +193,37 @@ public class TestCommentsTable extends TestCase {
 
 		// Todo - check text too, once bug fixed
 	}
+
+    public void testRemoveComment() throws Exception {
+        CommentsTable sheetComments = new CommentsTable();
+        CTComment a1 = sheetComments.newComment();
+        a1.setRef("A1");
+        CTComment a2 = sheetComments.newComment();
+        a2.setRef("A2");
+        CTComment a3 = sheetComments.newComment();
+        a3.setRef("A3");
+
+        assertSame(a1, sheetComments.getCTComment("A1"));
+        assertSame(a2, sheetComments.getCTComment("A2"));
+        assertSame(a3, sheetComments.getCTComment("A3"));
+        assertEquals(3, sheetComments.getNumberOfComments());
+
+        assertTrue(sheetComments.removeComment("A1"));
+        assertEquals(2, sheetComments.getNumberOfComments());
+        assertNull(sheetComments.getCTComment("A1"));
+        assertSame(a2, sheetComments.getCTComment("A2"));
+        assertSame(a3, sheetComments.getCTComment("A3"));
+
+        assertTrue(sheetComments.removeComment("A2"));
+        assertEquals(1, sheetComments.getNumberOfComments());
+        assertNull(sheetComments.getCTComment("A1"));
+        assertNull(sheetComments.getCTComment("A2"));
+        assertSame(a3, sheetComments.getCTComment("A3"));
+
+        assertTrue(sheetComments.removeComment("A3"));
+        assertEquals(0, sheetComments.getNumberOfComments());
+        assertNull(sheetComments.getCTComment("A1"));
+        assertNull(sheetComments.getCTComment("A2"));
+        assertNull(sheetComments.getCTComment("A3"));
+    }
 }

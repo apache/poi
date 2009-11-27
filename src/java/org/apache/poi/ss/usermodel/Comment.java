@@ -59,7 +59,7 @@ public interface Comment {
      *
      * @param col the 0-based column of the cell that contains the comment
      */
-    void setColumn(short col);
+    void setColumn(int col);
 
     /**
      * Name of the original comment author

@@ -16,208 +16,45 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestCellComment;
 
 /**
  * Tests TestHSSFCellComment.
  *
  * @author  Yegor Kozlov
  */
-public final class TestHSSFComment extends TestCase {
+public final class TestHSSFComment extends BaseTestCellComment {
 
-    /**
-     * Test that we can create cells and add comments to it.
-     */
-    public static void testWriteComments() throws Exception {
-        String cellText = "Hello, World";
-        String commentText = "We can set comments in POI";
-        String commentAuthor = "Apache Software Foundation";
-        int cellRow = 3;
-        int cellColumn = 1;
+    @Override
+    protected HSSFITestDataProvider getTestDataProvider(){
+        return HSSFITestDataProvider.getInstance();
+    }
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-
-        HSSFSheet sheet = wb.createSheet();
-
-        HSSFCell cell = sheet.createRow(cellRow).createCell(cellColumn);
-        cell.setCellValue(new HSSFRichTextString(cellText));
-        assertNull(cell.getCellComment());
-
-        HSSFPatriarch patr = sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor = new HSSFClientAnchor();
-        anchor.setAnchor( (short)4, 2, 0, 0, (short) 6, 5, 0, 0);
-        HSSFComment comment = patr.createComment(anchor);
-        HSSFRichTextString string1 = new HSSFRichTextString(commentText);
-        comment.setString(string1);
-        comment.setAuthor(commentAuthor);
-        cell.setCellComment(comment);
-        if (false) {
-            // TODO - the following line should break this test, but it doesn't
-            cell.removeCellComment();
-        }
-
-        //verify our settings
+    public static void testDefaultShapeType() throws Exception {
+        HSSFComment comment = new HSSFComment((HSSFShape)null, (HSSFAnchor)null);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
-        assertEquals(commentAuthor, comment.getAuthor());
-        assertEquals(commentText, comment.getString().getString());
-        assertEquals(cellRow, comment.getRow());
-        assertEquals(cellColumn, comment.getColumn());
-
-        //serialize the workbook and read it again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-        sheet = wb.getSheetAt(0);
-        cell = sheet.getRow(cellRow).getCell(cellColumn);
-        comment = cell.getCellComment();
-
-        assertNotNull(comment);
-        assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
-        assertEquals(commentAuthor, comment.getAuthor());
-        assertEquals(commentText, comment.getString().getString());
-        assertEquals(cellRow, comment.getRow());
-        assertEquals(cellColumn, comment.getColumn());
-
-
-        // Change slightly, and re-test
-        comment.setString(new HSSFRichTextString("New Comment Text"));
-
-        out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-        sheet = wb.getSheetAt(0);
-        cell = sheet.getRow(cellRow).getCell(cellColumn);
-        comment = cell.getCellComment();
-
-        assertNotNull(comment);
-        assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
-        assertEquals(commentAuthor, comment.getAuthor());
-        assertEquals("New Comment Text", comment.getString().getString());
-        assertEquals(cellRow, comment.getRow());
-        assertEquals(cellColumn, comment.getColumn());
     }
 
     /**
      * test that we can read cell comments from an existing workbook.
      */
-    public static void testReadComments() {
-
-         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
-
-         HSSFSheet sheet = wb.getSheetAt(0);
-
-         HSSFCell cell;
-         HSSFRow row;
-         HSSFComment comment;
-
-         for (int rownum = 0; rownum < 3; rownum++) {
-             row = sheet.getRow(rownum);
-             cell = row.getCell(0);
-             comment = cell.getCellComment();
-             assertNull("Cells in the first column are not commented", comment);
-             assertNull(sheet.getCellComment(rownum, 0));
-         }
-
-         for (int rownum = 0; rownum < 3; rownum++) {
-             row = sheet.getRow(rownum);
-             cell = row.getCell(1);
-             comment = cell.getCellComment();
-             assertNotNull("Cells in the second column have comments", comment);
-             assertNotNull("Cells in the second column have comments", sheet.getCellComment(rownum, 1));
-
-             assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
-             assertEquals("Yegor Kozlov", comment.getAuthor());
-             assertFalse("cells in the second column have not empyy notes",
-                     "".equals(comment.getString().getString()));
-             assertEquals(rownum, comment.getRow());
-             assertEquals(cell.getColumnIndex(), comment.getColumn());
-         }
-     }
+    public void testReadComments() {
+        readComments("SimpleWithComments.xls");
+    }
 
     /**
      * test that we can modify existing cell comments
      */
-    public static void testModifyComments() throws IOException {
-
-         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
-
-         HSSFSheet sheet = wb.getSheetAt(0);
-
-         HSSFCell cell;
-         HSSFRow row;
-         HSSFComment comment;
-
-         for (int rownum = 0; rownum < 3; rownum++) {
-             row = sheet.getRow(rownum);
-             cell = row.getCell(1);
-             comment = cell.getCellComment();
-             comment.setAuthor("Mofified["+rownum+"] by Yegor");
-             comment.setString(new HSSFRichTextString("Modified comment at row " + rownum));
-         }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-        sheet = wb.getSheetAt(0);
-
-        for (int rownum = 0; rownum < 3; rownum++) {
-            row = sheet.getRow(rownum);
-            cell = row.getCell(1);
-            comment = cell.getCellComment();
-
-            assertEquals("Mofified["+rownum+"] by Yegor", comment.getAuthor());
-            assertEquals("Modified comment at row " + rownum, comment.getString().getString());
-        }
-
-     }
+    public void testModifyComments() throws IOException {
+        modifyComments("SimpleWithComments.xls");
+    }
 
     public void testDeleteComments() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithComments.xls");
-        HSSFSheet sheet = wb.getSheetAt(0);
-
-        // Zap from rows 1 and 3
-        assertNotNull(sheet.getRow(0).getCell(1).getCellComment());
-        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
-        assertNotNull(sheet.getRow(2).getCell(1).getCellComment());
-
-        sheet.getRow(0).getCell(1).removeCellComment();
-        sheet.getRow(2).getCell(1).setCellComment(null);
-
-        // Check gone so far
-        assertNull(sheet.getRow(0).getCell(1).getCellComment());
-        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
-        assertNull(sheet.getRow(2).getCell(1).getCellComment());
-
-        // Save and re-load
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-
-        // Check
-        assertNull(sheet.getRow(0).getCell(1).getCellComment());
-        assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
-        assertNull(sheet.getRow(2).getCell(1).getCellComment());
-
-//        FileOutputStream fout = new FileOutputStream("/tmp/c.xls");
-//        wb.write(fout);
-//        fout.close();
+        deleteComments("SimpleWithComments.xls");
     }
 
     /**
