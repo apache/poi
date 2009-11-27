@@ -54,38 +54,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -352,6 +321,48 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Get VML drawing for this sheet (aka 'legacy' drawig)
+     *
+     * @param autoCreate if true, then a new VML drawing part is created
+     *
+     * @return the VML drawing of <code>null</code> if the drawing was not found and autoCreate=false
+     */
+    protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
+        XSSFVMLDrawing drawing = null;
+        CTLegacyDrawing ctDrawing = worksheet.getLegacyDrawing();
+        if(ctDrawing == null) {
+            if(autoCreate) {
+                //drawingNumber = #drawings.size() + 1
+                int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size() + 1;
+                drawing = (XSSFVMLDrawing)createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
+                String relId = drawing.getPackageRelationship().getId();
+
+                //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
+                //The relationship Id references the part containing the drawing definitions.
+                ctDrawing = worksheet.addNewLegacyDrawing();
+                ctDrawing.setId(relId);
+            }
+        } else {
+            //search the referenced drawing in the list of the sheet's relations
+            for(POIXMLDocumentPart p : getRelations()){
+                if(p instanceof XSSFVMLDrawing) {
+                    XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
+                    String drId = dr.getPackageRelationship().getId();
+                    if(drId.equals(ctDrawing.getId())){
+                        drawing = dr;
+                        break;
+                    }
+                    break;
+                }
+            }
+            if(drawing == null){
+                logger.log(POILogger.ERROR, "Can't find VML drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
+            }
+        }
+        return drawing;
+    }
+
+    /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit	  Horizonatal position of split.
      * @param rowSplit	  Vertical position of split.
@@ -392,12 +403,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Creates a new comment for this sheet. You still
      *  need to assign it to a cell though
+     *
+     * @deprecated since Nov 2009 this method is not compatible with the common SS interfaces,
+     * use {@link org.apache.poi.xssf.usermodel.XSSFDrawing#createCellComment
+     *  (org.apache.poi.ss.usermodel.ClientAnchor)} instead
      */
+    @Deprecated
     public XSSFComment createComment() {
-        if (sheetComments == null) {
-            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
-        }
-        return sheetComments.addComment();
+        return createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
     }
 
     /**
@@ -438,7 +451,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (sheetComments == null) {
             return null;
         }
-        return sheetComments.findCellComment(row, column);
+
+        String ref = new CellReference(row, column).formatAsString();
+        CTComment ctComment = sheetComments.getCTComment(ref);
+        if(ctComment == null) return null;
+
+        XSSFVMLDrawing vml = getVMLDrawing(false);
+        return new XSSFComment(sheetComments, ctComment,
+                vml == null ? null : vml.findCommentShape(row, column));
     }
 
     public XSSFHyperlink getHyperlink(int row, int column) {
@@ -2161,8 +2181,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param cellRef cell region
      * @param comment the comment to assign
+     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.apache.poi.ss.usermodel.Comment)} instead
      */
-    public void setCellComment(String cellRef, XSSFComment comment) {
+    @Deprecated
+    public static void setCellComment(String cellRef, XSSFComment comment) {
         CellReference cellReference = new CellReference(cellRef);
 
         comment.setRow(cellReference.getRow());
@@ -2234,8 +2256,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Returns the sheet's comments object if there is one,
      *  or null if not
+     *
+     * @param create create a new comments table if it does not exist
      */
-    protected CommentsTable getCommentsTable() {
+    protected CommentsTable getCommentsTable(boolean create) {
+        if(sheetComments == null && create){
+            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
+        }
         return sheetComments;
     }
 

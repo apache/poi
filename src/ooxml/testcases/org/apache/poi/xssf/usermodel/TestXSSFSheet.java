@@ -177,7 +177,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         XSSFComment comment = sheet.createComment();
 
         Cell cell = sheet.createRow(0).createCell((short) 0);
-        CommentsTable comments = sheet.getCommentsTable();
+        CommentsTable comments = sheet.getCommentsTable(false);
         CTComments ctComments = comments.getCTComments();
 
         sheet.setCellComment("A1", comment);
@@ -843,4 +843,42 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertFalse(sheet.isColumnHidden(4));
         assertFalse(sheet.isColumnHidden(5));
     }
+
+    public void testCommentsTable() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet1 = workbook.createSheet();
+        CommentsTable comment1 = sheet1.getCommentsTable(false);
+        assertNull(comment1);
+
+        comment1 = sheet1.getCommentsTable(true);
+        assertNotNull(comment1);
+        assertEquals("/xl/comments1.xml", comment1.getPackageRelationship().getTargetURI().toString());
+
+        assertSame(comment1, sheet1.getCommentsTable(true));
+
+        //second sheet
+        XSSFSheet sheet2 = workbook.createSheet();
+        CommentsTable comment2 = sheet2.getCommentsTable(false);
+        assertNull(comment2);
+
+        comment2 = sheet2.getCommentsTable(true);
+        assertNotNull(comment2);
+
+        assertSame(comment2, sheet2.getCommentsTable(true));
+        assertEquals("/xl/comments2.xml", comment2.getPackageRelationship().getTargetURI().toString());
+
+        //comment1 and  comment2 are different objects 
+        assertNotSame(comment1, comment2);
+
+        //now test against a workbook containing cell comments
+        workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
+        sheet1 = workbook.getSheetAt(0);
+        comment1 = sheet1.getCommentsTable(true);
+        assertNotNull(comment1);
+        assertEquals("/xl/comments1.xml", comment1.getPackageRelationship().getTargetURI().toString());
+        assertSame(comment1, sheet1.getCommentsTable(true));
+
+
+    }
+
 }

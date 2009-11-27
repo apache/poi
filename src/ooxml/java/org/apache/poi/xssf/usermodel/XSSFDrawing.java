@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -230,6 +231,35 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 
         XSSFShapeGroup shape = new XSSFShapeGroup(this, ctGroup);
         shape.anchor = anchor;
+        return shape;
+    }
+
+    /**
+     * Creates a cell comment.
+     *
+     * @param anchor    the client anchor describes how this comment is attached
+     *                  to the sheet.
+     * @return  the newly created comment.
+     */
+    @Override
+    public XSSFComment createCellComment(ClientAnchor anchor)
+    {
+        XSSFClientAnchor ca = (XSSFClientAnchor)anchor;
+        XSSFSheet sheet = (XSSFSheet)getParent();
+
+        //create comments and vmlDrawing parts if they don't exist
+        CommentsTable comments = sheet.getCommentsTable(true);
+        XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
+        schemasMicrosoftComVml.CTShape vmlShape = vml.newCommentShape();
+        if(ca.isSet()){
+            String position =
+                    ca.getCol1() + ", 0, " + ca.getRow1() + ", 0, " +
+                    ca.getCol2() + ", 0, " + ca.getRow2() + ", 0";
+            vmlShape.getClientDataArray(0).setAnchorArray(0, position);
+        }
+        XSSFComment shape = new XSSFComment(comments, comments.newComment(), vmlShape);
+        shape.setColumn(ca.getCol1());
+        shape.setRow(ca.getRow1());
         return shape;
     }
 

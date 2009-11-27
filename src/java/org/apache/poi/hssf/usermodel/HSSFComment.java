@@ -127,11 +127,18 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      *
      * @param col the 0-based column of the cell that contains the comment
      */
-    public void setColumn(short col) {
+    public void setColumn(int col) {
         if(_note != null) {
 		    _note.setColumn(col);
         }
         _col = col;
+    }
+    /**
+     * @deprecated (Nov 2009) use {@link HSSFComment#setColumn(int)} }
+     */
+    @Deprecated
+    public void setColumn(short col) {
+        setColumn((int)col);
     }
 
     /**

@@ -118,7 +118,7 @@ public final class XSSFRelation extends POIXMLRelation {
 			"application/vnd.openxmlformats-officedocument.vmlDrawing",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
 			"/xl/drawings/vmlDrawing#.vml",
-			null
+			XSSFVMLDrawing.class
 	);
 
 	public static final XSSFRelation CUSTOM_XML_MAPPINGS = new XSSFRelation(

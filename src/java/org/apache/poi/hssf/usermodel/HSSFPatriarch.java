@@ -157,6 +157,11 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return shape;
     }
 
+    @Override
+    public HSSFComment createCellComment(ClientAnchor anchor){
+        return createComment((HSSFAnchor)anchor);
+    }
+
     /**
      * Returns a list of all shapes contained by the patriarch.
      */

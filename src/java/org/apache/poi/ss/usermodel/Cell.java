@@ -352,6 +352,11 @@ public interface Cell {
     Comment getCellComment();
 
     /**
+     * Removes the comment for this cell, if there is one.
+     */
+    void removeCellComment();
+
+    /**
      * Returns hyperlink associated with this cell
      *
      * @return hyperlink associated with this cell or <code>null</code> if not found

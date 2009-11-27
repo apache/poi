@@ -807,11 +807,29 @@ public final class XSSFCell implements Cell {
      * Assign a comment to this cell. If the supplied comment is null,
      * the comment for this cell will be removed.
      *
-     * @param comment comment associated with this cell
+     * @param comment the XSSFComment associated with this cell
      */
     public void setCellComment(Comment comment) {
-        String cellRef = new CellReference(_row.getRowNum(), getColumnIndex()).formatAsString();
-        getSheet().setCellComment(cellRef, (XSSFComment)comment);
+        if(comment == null) {
+            removeCellComment();
+            return;
+        }
+
+        comment.setRow(getRowIndex());
+        comment.setColumn(getColumnIndex());
+    }
+
+    /**
+     * Removes the comment for this cell, if there is one.
+    */
+    public void removeCellComment() {
+        XSSFComment comment = getCellComment();
+        if(comment != null){
+            String ref = _cell.getR();
+            XSSFSheet sh = getSheet();
+            sh.getCommentsTable(false).removeComment(ref);
+            sh.getVMLDrawing(false).removeCommentShape(getRowIndex(), getColumnIndex());
+        }
     }
 
     /**

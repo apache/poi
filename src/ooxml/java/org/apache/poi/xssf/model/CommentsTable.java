@@ -24,7 +24,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -33,11 +32,13 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 public class CommentsTable extends POIXMLDocumentPart {
-    protected CTComments comments;
+    private CTComments comments;
 
     public CommentsTable() {
         super();
         comments = CTComments.Factory.newInstance();
+        comments.addNewCommentList();
+        comments.addNewAuthors().addAuthor("");
     }
 
     public CommentsTable(PackagePart part, PackageRelationship rel) throws IOException {
@@ -70,62 +71,60 @@ public class CommentsTable extends POIXMLDocumentPart {
     public int getNumberOfComments() {
         return comments.getCommentList().sizeOfCommentArray();
     }
+
     public int getNumberOfAuthors() {
-        return getCommentsAuthors().sizeOfAuthorArray();
+        return comments.getAuthors().sizeOfAuthorArray();
     }
 
     public String getAuthor(long authorId) {
-        return getCommentsAuthors().getAuthorArray((int)authorId);
+        return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
     public int findAuthor(String author) {
-        for (int i = 0 ; i < getCommentsAuthors().sizeOfAuthorArray() ; i++) {
-            if (getCommentsAuthors().getAuthorArray(i).equals(author)) {
+        for (int i = 0 ; i < comments.getAuthors().sizeOfAuthorArray() ; i++) {
+            if (comments.getAuthors().getAuthorArray(i).equals(author)) {
                 return i;
             }
         }
         return addNewAuthor(author);
     }
 
-    public XSSFComment findCellComment(int row, int column) {
-        return findCellComment(
-                (new CellReference(row, column)).formatAsString() );
+    public XSSFComment findCellComment(String cellRef) {
+        CTComment ct = getCTComment(cellRef);
+        return ct == null ? null : new XSSFComment(this, ct, null);
     }
 
-    public XSSFComment findCellComment(String cellRef) {
-        for (CTComment comment : getCommentsList().getCommentArray()) {
+    public CTComment getCTComment(String cellRef) {
+        for (CTComment comment : comments.getCommentList().getCommentArray()) {
             if (cellRef.equals(comment.getRef())) {
-                return new XSSFComment(this, comment);
+                return comment;
             }
         }
         return null;
     }
 
-    /**
-     * Generates a new XSSFComment, associated with the
-     *  current comments list.
-     */
-    public XSSFComment addComment() {
-        return new XSSFComment(this, getCommentsList().addNewComment());
+    public CTComment newComment() {
+        CTComment ct = comments.getCommentList().addNewComment();
+        ct.setRef("A1");
+        ct.setAuthorId(0);
+        return ct;
     }
 
-    private CTCommentList getCommentsList() {
-        if (comments.getCommentList() == null) {
-            comments.addNewCommentList();
+    public boolean removeComment(String cellRef) {
+        CTCommentList lst = comments.getCommentList();
+        if(lst != null) for(int i=0; i < lst.sizeOfCommentArray(); i++) {
+            CTComment comment = lst.getCommentArray(i);
+            if (cellRef.equals(comment.getRef())) {
+                lst.removeComment(i);
+                return true;
+            }
         }
-        return comments.getCommentList();
-    }
-
-    private CTAuthors getCommentsAuthors() {
-        if (comments.getAuthors() == null) {
-            comments.addNewAuthors();
-        }
-        return comments.getAuthors();
+        return false;
     }
 
     private int addNewAuthor(String author) {
-        int index = getCommentsAuthors().sizeOfAuthorArray();
-        getCommentsAuthors().insertAuthor(index, author);
+        int index = comments.getAuthors().sizeOfAuthorArray();
+        comments.getAuthors().insertAuthor(index, author);
         return index;
     }
 

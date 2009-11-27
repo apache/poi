@@ -20,84 +20,149 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import schemasMicrosoftComVml.CTShape;
+
+import java.math.BigInteger;
 
 public class XSSFComment implements Comment {
 	
-	private CTComment comment;
-	private CommentsTable comments;
+	private final CTComment _comment;
+	private final CommentsTable _comments;
+    private final CTShape _vmlShape;
 
-	/**
+    /**
+     * cached reference to the string with the comment text
+     */
+    private XSSFRichTextString _str;
+
+    /**
 	 * Creates a new XSSFComment, associated with a given
 	 *  low level comment object.
-	 * If, as an end user, you want a new XSSFComment
-	 *  object, the please ask your sheet for one.
 	 */
-	public XSSFComment(CommentsTable comments, CTComment comment) {
-		this.comment = comment;
-		this.comments = comments;
+	public XSSFComment(CommentsTable comments, CTComment comment, CTShape vmlShape) {
+		_comment = comment;
+		_comments = comments;
+        _vmlShape = vmlShape;
 	}
 
-	public String getAuthor() {
-		return comments.getAuthor((int)comment.getAuthorId());
+    /**
+     *
+     * @return Name of the original comment author. Default value is blank.
+     */
+    public String getAuthor() {
+		return _comments.getAuthor((int) _comment.getAuthorId());
 	}
 
+    /**
+     * Name of the original comment author. Default value is blank.
+     *
+     * @param author the name of the original author of the comment
+     */
+    public void setAuthor(String author) {
+        _comment.setAuthorId(
+                _comments.findAuthor(author)
+        );
+    }
+
+    /**
+     * @return the 0-based column of the cell that the comment is associated with.
+     */
 	public int getColumn() {
-		return (new CellReference(comment.getRef())).getCol();
+		return new CellReference(_comment.getRef()).getCol();
 	}
 
+    /**
+     * @return the 0-based row index of the cell that the comment is associated with.
+     */
 	public int getRow() {
-		return (new CellReference(comment.getRef())).getRow();
+		return new CellReference(_comment.getRef()).getRow();
 	}
 
-	public boolean isVisible() {
-		// TODO Auto-generated method stub
-		return true;
+    /**
+     * @return whether the comment is visible
+     */
+    public boolean isVisible() {
+        boolean visible = false;
+        if(_vmlShape != null){
+            String style = _vmlShape.getStyle();
+            visible = style != null && style.indexOf("visibility:visible") != -1;
+        }
+		return visible;
 	}
 
-	public void setAuthor(String author) {
-		comment.setAuthorId(
-				comments.findAuthor(author)
-		);
+    /**
+     * @param visible whether the comment is visible
+     */
+    public void setVisible(boolean visible) {
+        if(_vmlShape != null){
+            String style;
+            if(visible) style = "position:absolute;visibility:visible";
+            else style = "position:absolute;visibility:hidden";
+            _vmlShape.setStyle(style);
+        }
+    }
+
+    /**
+     * Set the column of the cell that contains the comment
+     *
+     * @param col the 0-based column of the cell that contains the comment
+     */
+    public void setColumn(int col) {
+        CellReference ref = new CellReference(getRow(), col);
+		_comment.setRef(ref.formatAsString());
+        if(_vmlShape != null) _vmlShape.getClientDataArray(0).setColumnArray(0, new BigInteger(String.valueOf(col)));
 	}
 
-	public void setColumn(short col) {
-		initializeRef();
-		String newRef = 
-			(new CellReference(getRow(), col)).formatAsString();
-		comment.setRef(newRef);
-	}
-
-	private void initializeRef() {
-		if (comment.getRef() == null) {
-			comment.setRef("A1");
-		}
-	}
-
+    /**
+     * Set the row of the cell that contains the comment
+     *
+     * @param row the 0-based row of the cell that contains the comment
+     */
 	public void setRow(int row) {
-		initializeRef();
 		String newRef =
 			(new CellReference(row, getColumn())).formatAsString();
-		comment.setRef(newRef);
-	}
+		_comment.setRef(newRef);
+        if(_vmlShape != null) _vmlShape.getClientDataArray(0).setRowArray(0, new BigInteger(String.valueOf(row)));
+    }
 	
-	public RichTextString getString() {
-		return RichTextStringHelper.convertFromRst(comment.getText());
+    /**
+     * @return the rich text string of the comment
+     */
+	public XSSFRichTextString getString() {
+		if(_str == null) {
+            CTRst rst = _comment.getText();
+            if(rst != null) _str = new XSSFRichTextString(_comment.getText());
+        }
+        return _str;
 	}
 
+    /**
+     * Sets the rich text string used by this comment.
+     *
+     * @param string  the XSSFRichTextString used by this object.
+     */
 	public void setString(RichTextString string) {
-		CTRst text = comment.addNewText();
-		RichTextStringHelper.convertToRst(string, text);
+        if(!(string instanceof XSSFRichTextString)){
+            throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
+        }
+        _str = (XSSFRichTextString)string;
+        _comment.setText(_str.getCTRst());
 	}
 	
 	public void setString(String string) {
-		RichTextString richTextString = new XSSFRichTextString(string);
-		setString(richTextString);
+		setString(new XSSFRichTextString(string));
 	}
 
-	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * @return the xml bean holding this comment's properties
+     */
+    protected CTComment getCTComment(){
+        return _comment;
+    }
+
+    protected CTShape getCTShape(){
+        return _vmlShape;
+    }
 }
