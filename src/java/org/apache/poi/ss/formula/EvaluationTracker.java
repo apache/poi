@@ -84,7 +84,7 @@ final class EvaluationTracker {
 		if (result == ErrorEval.CIRCULAR_REF_ERROR && nFrames > 1) {
 			// Don't cache a circular ref error result if this cell is not the top evaluated cell.
 			// A true circular ref error will propagate all the way around the loop.  However, it's
-			// possible to have parts of the formula tree (/ parts of the loop) to evaluate to 
+			// possible to have parts of the formula tree (/ parts of the loop) to evaluate to
 			// CIRCULAR_REF_ERROR, and that value not get used in the final cell result (see the
 			// unit tests for a simple example). Thus, the only CIRCULAR_REF_ERROR result that can
 			// safely be cached is that of the top evaluated cell.
@@ -140,7 +140,7 @@ final class EvaluationTracker {
 			// Top level frame, there is no 'cell' above this frame that is using the current cell
 		} else {
 			CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
-			if (value == BlankEval.INSTANCE) {
+			if (value == BlankEval.instance) {
 				consumingFrame.addUsedBlankCell(bookIndex, sheetIndex, rowIndex, columnIndex);
 			} else {
 				PlainValueCellCacheEntry cce = _cache.getPlainValueEntry(bookIndex, sheetIndex,

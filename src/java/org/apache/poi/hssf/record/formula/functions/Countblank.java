@@ -54,7 +54,7 @@ public final class Countblank extends Fixed1ArgFunction {
 
 		public boolean matches(ValueEval valueEval) {
 			// Note - only BlankEval counts
-			return valueEval == BlankEval.INSTANCE;
+			return valueEval == BlankEval.instance;
 		}
 	};
 }

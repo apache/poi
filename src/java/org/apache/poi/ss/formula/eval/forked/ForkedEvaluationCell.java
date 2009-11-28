@@ -49,7 +49,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		_sheet = sheet;
 		_masterCell = masterCell;
 		// start with value blank, but expect construction to be immediately
-		setValue(BlankEval.INSTANCE); // followed by a proper call to setValue()
+		setValue(BlankEval.instance); // followed by a proper call to setValue()
 	}
 
 	public Object getIdentityKey() {

@@ -94,7 +94,7 @@ public final class TestTFunc extends TestCase {
 	public void testOtherValues() {
 		confirmOther(new NumberEval(2));
 		confirmOther(BoolEval.FALSE);
-		confirmOther(BlankEval.INSTANCE);  // can this particular case be verified?
+		confirmOther(BlankEval.instance);  // can this particular case be verified?
 	}
 
 	public void testRefValues() {

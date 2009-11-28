@@ -75,11 +75,11 @@ public final class TestMid extends TestCase {
 		RefEval reNumChars = EvalFactory.createRefEval("B1", new NumberEval(3));
 		confirmMid(new StringEval("galactic"), aeStart, reNumChars, "ala");
 
-		confirmMid(new StringEval("galactic"), new NumberEval(3.1), BlankEval.INSTANCE, "");
+		confirmMid(new StringEval("galactic"), new NumberEval(3.1), BlankEval.instance, "");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.FALSE, "");
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.TRUE, "l");
-		confirmMid(BlankEval.INSTANCE, new NumberEval(3), BoolEval.TRUE, "");
+		confirmMid(BlankEval.instance, new NumberEval(3), BoolEval.TRUE, "");
 
 	}
 
@@ -102,7 +102,7 @@ public final class TestMid extends TestCase {
 		confirmMid(new StringEval("galactic"), new NumberEval(3), ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), ErrorEval.DIV_ZERO, ErrorEval.NAME_INVALID, ErrorEval.DIV_ZERO);
 
-		confirmMid(new StringEval("galactic"), BlankEval.INSTANCE, new NumberEval(3.1), ErrorEval.VALUE_INVALID);
+		confirmMid(new StringEval("galactic"), BlankEval.instance, new NumberEval(3.1), ErrorEval.VALUE_INVALID);
 
 		confirmMid(new StringEval("galactic"), new NumberEval(0), new NumberEval(4), ErrorEval.VALUE_INVALID);
 		confirmMid(new StringEval("galactic"), new NumberEval(1), new NumberEval(-1), ErrorEval.VALUE_INVALID);

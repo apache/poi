@@ -30,10 +30,10 @@ import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
  */
 abstract class CellCacheEntry implements ICacheEntry {
 	public static final CellCacheEntry[] EMPTY_ARRAY = { };
-	
+
 	private final FormulaCellCacheEntrySet _consumingCells;
 	private ValueEval _value;
-	
+
 
 	protected CellCacheEntry() {
 		_consumingCells = new FormulaCellCacheEntrySet();
@@ -53,7 +53,7 @@ abstract class CellCacheEntry implements ICacheEntry {
 	public final ValueEval getValue() {
 		return _value;
 	}
-	
+
 	private static boolean areValuesEqual(ValueEval a, ValueEval b) {
 		if (a == null) {
 			return false;
@@ -63,7 +63,7 @@ abstract class CellCacheEntry implements ICacheEntry {
 			// value type is changing
 			return false;
 		}
-		if (a == BlankEval.INSTANCE) {
+		if (a == BlankEval.instance) {
 			return b == a;
 		}
 		if (cls == NumberEval.class) {
@@ -83,7 +83,7 @@ abstract class CellCacheEntry implements ICacheEntry {
 
 	public final void addConsumingCell(FormulaCellCacheEntry cellLoc) {
 		_consumingCells.add(cellLoc);
-		
+
 	}
 	public final FormulaCellCacheEntry[] getConsumingCells() {
 		return _consumingCells.toArray();
@@ -102,23 +102,23 @@ abstract class CellCacheEntry implements ICacheEntry {
 			recurseClearCachedFormulaResults(listener, 1);
 		}
 	}
-	
+
 	/**
-	 * Calls formulaCell.setFormulaResult(null, null) recursively all the way up the tree of 
+	 * Calls formulaCell.setFormulaResult(null, null) recursively all the way up the tree of
 	 * dependencies. Calls usedCell.clearConsumingCell(fc) for each child of a cell that is
 	 * cleared along the way.
 	 * @param formulaCells
 	 */
 	protected final void recurseClearCachedFormulaResults() {
 		FormulaCellCacheEntry[] formulaCells = getConsumingCells();
-		
+
 		for (int i = 0; i < formulaCells.length; i++) {
 			FormulaCellCacheEntry fc = formulaCells[i];
 			fc.clearFormulaEntry();
 			fc.recurseClearCachedFormulaResults();
 		}
 	}
-	
+
 	/**
 	 * Identical to {@link #recurseClearCachedFormulaResults()} except for the listener call-backs
 	 */
@@ -133,5 +133,4 @@ abstract class CellCacheEntry implements ICacheEntry {
 			fc.recurseClearCachedFormulaResults(listener, depth+1);
 		}
 	}
-	
 }

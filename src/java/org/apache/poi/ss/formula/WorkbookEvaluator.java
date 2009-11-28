@@ -313,7 +313,7 @@ public final class WorkbookEvaluator {
 	 */
 	/* package */ static ValueEval getValueFromNonFormulaCell(EvaluationCell cell) {
 		if (cell == null) {
-			return BlankEval.INSTANCE;
+			return BlankEval.instance;
 		}
 		int cellType = cell.getCellType();
 		switch (cellType) {
@@ -324,7 +324,7 @@ public final class WorkbookEvaluator {
 			case Cell.CELL_TYPE_BOOLEAN:
 				return BoolEval.valueOf(cell.getBooleanCellValue());
 			case Cell.CELL_TYPE_BLANK:
-				return BlankEval.INSTANCE;
+				return BlankEval.instance;
 			case Cell.CELL_TYPE_ERROR:
 				return ErrorEval.valueOf(cell.getErrorCellValue());
 		}
@@ -401,7 +401,7 @@ public final class WorkbookEvaluator {
 					i+= countTokensToBeSkipped(ptgs, i, dist);
 					if (stack.peek() == MissingArgEval.instance) {
 						stack.pop();
-						stack.push(BlankEval.INSTANCE);
+						stack.push(BlankEval.instance);
 					}
 					continue;
 				}
@@ -450,7 +450,7 @@ public final class WorkbookEvaluator {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
 		value = dereferenceValue(value, ec.getRowIndex(), ec.getColumnIndex());
-		if (value == BlankEval.INSTANCE) {
+		if (value == BlankEval.instance) {
 			// Note Excel behaviour here. A blank final final value is converted to zero.
 			return NumberEval.ZERO;
 			// Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to

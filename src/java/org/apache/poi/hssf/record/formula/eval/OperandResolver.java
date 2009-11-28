@@ -106,7 +106,7 @@ public final class OperandResolver {
 		if(result == null) {
 			// This seems to be required because AreaEval.values() array may contain nulls.
 			// perhaps that should not be allowed.
-			result = BlankEval.INSTANCE;
+			result = BlankEval.instance;
 		}
 		if (result instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) result);
@@ -179,7 +179,7 @@ public final class OperandResolver {
 	 *
 	 */
 	public static int coerceValueToInt(ValueEval ev) throws EvaluationException {
-		if (ev == BlankEval.INSTANCE) {
+		if (ev == BlankEval.instance) {
 			return 0;
 		}
 		double d = coerceValueToDouble(ev);
@@ -201,7 +201,7 @@ public final class OperandResolver {
 	 */
 	public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
 
-		if (ev == BlankEval.INSTANCE) {
+		if (ev == BlankEval.instance) {
 			return 0.0;
 		}
 		if (ev instanceof NumericValueEval) {
@@ -268,7 +268,7 @@ public final class OperandResolver {
 			StringValueEval sve = (StringValueEval) ve;
 			return sve.getStringValue();
 		}
-		if (ve == BlankEval.INSTANCE) {
+		if (ve == BlankEval.instance) {
 			return "";
 		}
 		throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
@@ -280,7 +280,7 @@ public final class OperandResolver {
 	 */
 	public static Boolean coerceValueToBoolean(ValueEval ve, boolean stringsAreBlanks) throws EvaluationException {
 
-		if (ve == null || ve == BlankEval.INSTANCE) {
+		if (ve == null || ve == BlankEval.instance) {
 			// TODO - remove 've == null' condition once AreaEval is fixed
 			return null;
 		}
@@ -288,7 +288,7 @@ public final class OperandResolver {
 			return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
 		}
 
-		if (ve == BlankEval.INSTANCE) {
+		if (ve == BlankEval.instance) {
 			return null;
 		}
 

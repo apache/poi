@@ -59,7 +59,7 @@ public final class TestEqualEval extends TestCase {
 
 		ValueEval[] args = {
 			new StringEval(""),
-			BlankEval.INSTANCE,
+			BlankEval.instance,
 		};
 		ValueEval result = evaluate(EI.Equal, args, 10, 10);
 		assertEquals(BoolEval.class, result.getClass());

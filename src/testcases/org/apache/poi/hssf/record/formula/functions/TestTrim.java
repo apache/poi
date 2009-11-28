@@ -69,7 +69,7 @@ public final class TestTrim extends TestCase {
 		confirmTrim(new NumberEval(123456), "123456");
 		confirmTrim(BoolEval.FALSE, "FALSE");
 		confirmTrim(BoolEval.TRUE, "TRUE");
-		confirmTrim(BlankEval.INSTANCE, "");
+		confirmTrim(BlankEval.instance, "");
 	}
 
 	public void testErrors() {

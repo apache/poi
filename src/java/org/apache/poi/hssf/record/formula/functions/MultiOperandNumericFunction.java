@@ -185,7 +185,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 			}
 			return;
 		}
-		if (ve == BlankEval.INSTANCE) {
+		if (ve == BlankEval.instance) {
 			if (_isBlankCounted) {
 				temp.add(0.0);
 			}

@@ -178,7 +178,7 @@ public class TestEvaluationCache extends TestCase {
 				BoolEval be = (BoolEval) value;
 				return be.getStringValue();
 			}
-			if (value == BlankEval.INSTANCE) {
+			if (value == BlankEval.instance) {
 				return "#BLANK#";
 			}
 			if (value instanceof ErrorEval) {

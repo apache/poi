@@ -80,7 +80,7 @@ public final class Indirect implements FreeRefFunction {
 			throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, ec.getRowIndex(), ec.getColumnIndex());
 
-		if (ve == BlankEval.INSTANCE || ve == MissingArgEval.instance) {
+		if (ve == BlankEval.instance || ve == MissingArgEval.instance) {
 			return false;
 		}
 		// numeric quantities follow standard boolean conversion rules
