@@ -23,7 +23,11 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public final class BlankEval implements ValueEval {
 
-	public static BlankEval INSTANCE = new BlankEval();
+	public static final BlankEval instance = new BlankEval();
+	/**
+	 * @deprecated (Nov 2009) use {@link #instance}
+	 */
+	public static final BlankEval INSTANCE = instance;
 
 	private BlankEval() {
 		// enforce singleton

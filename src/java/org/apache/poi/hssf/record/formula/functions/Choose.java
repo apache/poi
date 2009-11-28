@@ -41,7 +41,7 @@ public final class Choose implements Function {
 			}
 			ValueEval result = OperandResolver.getSingleValue(args[ix], srcRowIndex, srcColumnIndex);
 			if (result == MissingArgEval.instance) {
-				return BlankEval.INSTANCE;
+				return BlankEval.instance;
 			}
 			return result;
 		} catch (EvaluationException e) {

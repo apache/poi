@@ -61,11 +61,11 @@ public final class TestAverage extends TestCase {
 		values = new ValueEval[] {
 				new NumberEval(1),
 				new NumberEval(2),
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 				new NumberEval(3),
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 				new NumberEval(4),
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 		};
 
 		confirmAverage(values, 2.5);

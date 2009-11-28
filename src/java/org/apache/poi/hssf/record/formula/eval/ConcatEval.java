@@ -51,7 +51,7 @@ public final class ConcatEval  extends Fixed2ArgFunction {
 			StringValueEval sve = (StringValueEval) ve;
 			return sve.getStringValue();
 		}
-		if (ve == BlankEval.INSTANCE) {
+		if (ve == BlankEval.instance) {
 			return "";
 		}
 		throw new IllegalAccessError("Unexpected value type ("

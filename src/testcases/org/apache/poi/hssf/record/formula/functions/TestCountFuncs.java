@@ -57,7 +57,7 @@ public final class TestCountFuncs extends TestCase {
 				BoolEval.TRUE,
 				BoolEval.FALSE,
 				ErrorEval.DIV_ZERO,
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 		};
 		range = EvalFactory.createAreaEval("A1:B3", values);
 		confirmCountBlank(1, range);
@@ -65,10 +65,10 @@ public final class TestCountFuncs extends TestCase {
 		values = new ValueEval[] {
 				new NumberEval(0),
 				new StringEval(""),	// note - does not match blank
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 				BoolEval.FALSE,
 				BoolEval.TRUE,
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 		};
 		range = EvalFactory.createAreaEval("A1:B3", values);
 		confirmCountBlank(2, range);
@@ -116,7 +116,7 @@ public final class TestCountFuncs extends TestCase {
 				BoolEval.TRUE,
 				BoolEval.FALSE,
 				BoolEval.TRUE,
-				BlankEval.INSTANCE,
+				BlankEval.instance,
 		};
 		range = EvalFactory.createAreaEval("A1:B3", values);
 		confirmCountIf(2, range, BoolEval.TRUE);
@@ -414,7 +414,7 @@ public final class TestCountFuncs extends TestCase {
 		assertEquals(expectedResult, matchPredicate.matches(new NumberEval(value)));
 	}
 	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, String value) {
-		ValueEval ev = value == null ? BlankEval.INSTANCE : new StringEval(value);
+		ValueEval ev = value == null ? BlankEval.instance : new StringEval(value);
 		assertEquals(expectedResult, matchPredicate.matches(ev));
 	}
 	private static void confirmPredicate(boolean expectedResult, I_MatchPredicate matchPredicate, ErrorEval value) {

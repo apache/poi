@@ -38,7 +38,7 @@ public final class If extends Var2or3ArgFunction {
 		}
 		if (b) {
 			if (arg1 == MissingArgEval.instance) {
-				return BlankEval.INSTANCE;
+				return BlankEval.instance;
 			}
 			return arg1;
 		}
@@ -55,12 +55,12 @@ public final class If extends Var2or3ArgFunction {
 		}
 		if (b) {
 			if (arg1 == MissingArgEval.instance) {
-				return BlankEval.INSTANCE;
+				return BlankEval.instance;
 			}
 			return arg1;
 		}
 		if (arg2 == MissingArgEval.instance) {
-			return BlankEval.INSTANCE;
+			return BlankEval.instance;
 		}
 		return arg2;
 	}

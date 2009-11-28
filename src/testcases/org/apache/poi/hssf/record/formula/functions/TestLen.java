@@ -63,7 +63,7 @@ public final class TestLen extends TestCase {
 		confirmLen(new NumberEval(123456), 6);
 		confirmLen(BoolEval.FALSE, 5);
 		confirmLen(BoolEval.TRUE, 4);
-		confirmLen(BlankEval.INSTANCE, 0);
+		confirmLen(BlankEval.instance, 0);
 	}
 
 	public void testErrors() {
