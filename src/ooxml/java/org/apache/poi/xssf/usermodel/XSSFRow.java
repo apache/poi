@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * High level representation of a row of a spreadsheet.
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFRow.class);
+    private static final POILogger _logger = POILogFactory.getLogger(XSSFRow.class);
 
     /**
      * the xml bean containing all cell definitions for this row
@@ -46,7 +46,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Cells of this row keyed by their column indexes.
      * The TreeMap ensures that the cells are ordered by columnIndex in the ascending order.
      */
-    private final TreeMap<Integer, Cell> _cells;
+    private final TreeMap<Integer, XSSFCell> _cells;
 
     /**
      * the parent sheet
@@ -62,7 +62,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
         _row = row;
         _sheet = sheet;
-        _cells = new TreeMap<Integer, Cell>();
+        _cells = new TreeMap<Integer, XSSFCell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
             _cells.put(cell.getColumnIndex(), cell);
@@ -91,7 +91,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return an iterator over cells in this row.
      */
     public Iterator<Cell> cellIterator() {
-        return _cells.values().iterator();
+        return (Iterator<Cell>)(Iterator<? extends Cell>)_cells.values().iterator();
     }
 
     /**
@@ -160,8 +160,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see Cell#CELL_TYPE_STRING
      */
     public XSSFCell createCell(int columnIndex, int type) {
-        CTCell ctcell = CTCell.Factory.newInstance();
-        XSSFCell xcell = new XSSFCell(this, ctcell);
+        CTCell ctCell;
+        XSSFCell prev = _cells.get(columnIndex);
+        if(prev != null){
+            ctCell = prev.getCTCell();
+            ctCell.set(CTCell.Factory.newInstance());
+        } else {
+            ctCell = _row.addNewC();
+        }
+        XSSFCell xcell = new XSSFCell(this, ctCell);
         xcell.setCellNum(columnIndex);
         if (type != Cell.CELL_TYPE_BLANK) {
         	xcell.setCellType(type);
