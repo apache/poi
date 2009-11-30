@@ -149,6 +149,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
+     * cached instance of XSSFCreationHelper for this workbook
+     * @see {@link #getCreationHelper()}
+     */
+    private XSSFCreationHelper _creationHelper;
+
+    /**
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
@@ -1191,7 +1197,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  classes of the various instances for XSSF.
      */
     public XSSFCreationHelper getCreationHelper() {
-        return new XSSFCreationHelper(this);
+        if(_creationHelper == null) _creationHelper = new XSSFCreationHelper(this);
+        return _creationHelper;
     }
 
     /**

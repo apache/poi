@@ -877,8 +877,23 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertNotNull(comment1);
         assertEquals("/xl/comments1.xml", comment1.getPackageRelationship().getTargetURI().toString());
         assertSame(comment1, sheet1.getCommentsTable(true));
-
-
     }
 
+    public void testCreateRow(){
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CTWorksheet wsh = sheet.getCTWorksheet();
+        assertEquals(0, wsh.getSheetData().sizeOfRowArray());
+        XSSFRow row1 = sheet.createRow(1);
+        row1.createCell(1);
+        row1.createCell(2);
+        assertEquals(1, wsh.getSheetData().sizeOfRowArray());
+        assertEquals(2, wsh.getSheetData().getRowArray(0).sizeOfCArray());
+
+        //re-creating a row does NOT add extra data to the parent   
+        sheet.createRow(1);
+        assertEquals(1, wsh.getSheetData().sizeOfRowArray());
+        //existing cells are invalidated
+        assertEquals(0, wsh.getSheetData().getRowArray(0).sizeOfCArray());
+    }
 }

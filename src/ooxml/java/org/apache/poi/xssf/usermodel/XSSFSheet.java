@@ -69,8 +69,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
+    //TODO make the two variable below private!
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
+
     private TreeMap<Integer, XSSFRow> rows;
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
@@ -422,10 +424,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @see #removeRow(org.apache.poi.ss.usermodel.Row)
      */
     public XSSFRow createRow(int rownum) {
-        CTRow ctRow = CTRow.Factory.newInstance();
+        CTRow ctRow;
+        XSSFRow prev = rows.get(rownum);
+        if(prev != null){
+            ctRow = prev.getCTRow();
+            ctRow.set(CTRow.Factory.newInstance());
+        } else {
+            ctRow = worksheet.getSheetData().addNewRow();
+        }
         XSSFRow r = new XSSFRow(ctRow, this);
         r.setRowNum(rownum);
-        rows.put(r.getRowNum(), r);
+        rows.put(rownum, r);
         return r;
     }
 

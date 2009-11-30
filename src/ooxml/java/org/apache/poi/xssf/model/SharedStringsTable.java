@@ -84,8 +84,12 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     private int uniqueCount;
 
+    private SstDocument _sstDoc;
+
     public SharedStringsTable() {
         super();
+        _sstDoc = SstDocument.Factory.newInstance();
+        _sstDoc.addNewSst();
     }
 
     public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
@@ -102,7 +106,8 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     public void readFrom(InputStream is) throws IOException {
         try {
             int cnt = 0;
-            CTSst sst = SstDocument.Factory.parse(is).getSst();
+            _sstDoc = SstDocument.Factory.parse(is);
+            CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
             for (CTRst st : sst.getSiArray()) {
@@ -163,10 +168,14 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         if (stmap.containsKey(s)) {
             return stmap.get(s);
         }
+
         uniqueCount++;
+        //create a CTRst bean attached to this SstDocument and copy the argument CTRst into it
+        CTRst newSt = _sstDoc.getSst().addNewSi();
+        newSt.set(st);
         int idx = strings.size();
         stmap.put(s, idx);
-        strings.add(st);
+        strings.add(newSt);
         return idx;
     }
     /**
@@ -188,14 +197,11 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
 
         //re-create the sst table every time saving a workbook
-        SstDocument doc = SstDocument.Factory.newInstance();
-        CTSst sst = doc.addNewSst();
+        CTSst sst = _sstDoc.getSst();
         sst.setCount(count);
         sst.setUniqueCount(uniqueCount);
 
-        CTRst[] ctr = strings.toArray(new CTRst[strings.size()]);
-        sst.setSiArray(ctr);
-        doc.save(out, options);
+        _sstDoc.save(out, options);
     }
 
     @Override
