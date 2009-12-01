@@ -28,7 +28,7 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public final class MissingArgEval implements ValueEval {
 
-	public static MissingArgEval instance = new MissingArgEval();
+	public static final MissingArgEval instance = new MissingArgEval();
 
 	private MissingArgEval() {
 		// enforce singleton

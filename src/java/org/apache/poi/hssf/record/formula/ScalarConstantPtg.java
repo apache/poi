@@ -19,10 +19,12 @@ package org.apache.poi.hssf.record.formula;
 
 
 /**
+ * Common superclass of all {@link Ptg}s that represent simple constant values.
+ *
  * @author Josh Micich
  */
-abstract class ScalarConstantPtg extends Ptg {
-	public boolean isBaseToken() {
+public abstract class ScalarConstantPtg extends Ptg {
+	public final boolean isBaseToken() {
 		return true;
 	}
 
