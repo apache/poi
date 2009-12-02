@@ -49,6 +49,30 @@ public final class TestColumnInfoRecord extends TestCase {
 	}
 
 	/**
+	 * Some applications skip the last reserved field when writing {@link ColumnInfoRecord}s
+	 * The attached file was apparently created by "SoftArtisans OfficeWriter for Excel".
+	 * Excel reads that file OK and assumes zero for the value of the reserved field.
+	 */
+	public void testZeroResevedBytes_bug48332() {
+		// Taken from bugzilla attachment 24661 (offset 0x1E73)
+		byte[] inpData = HexRead.readFromString("7D 00 0A 00 00 00 00 00 D5 19 0F 00 02 00");
+		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 D5 19 0F 00 02 00 00 00");
+
+		RecordInputStream in = TestcaseRecordInputStream.create(inpData);
+		ColumnInfoRecord cir;
+		try {
+			cir = new ColumnInfoRecord(in);
+		} catch (RuntimeException e) {
+			if (e.getMessage().equals("Unusual record size remaining=(0)")) {
+				throw new AssertionFailedError("Identified bug 48332");
+			}
+			throw e;
+		}
+		assertEquals(0, in.remaining());
+		assertTrue(Arrays.equals(outData, cir.serialize()));
+	}
+
+	/**
 	 * Some sample files have just one reserved byte (field 6):
 	 * OddStyleRecord.xls, NoGutsRecords.xls, WORKBOOK_in_capitals.xls
 	 * but this seems to cause no problem to Excel
