@@ -78,20 +78,24 @@ public final class ObjRecord extends Record {
 			subrecords = null;
 			return;
 		}
-		if (subRecordData.length % 2 != 0) {
+
+        //YK: files produced by OO violate the condition below
+        /*
+        if (subRecordData.length % 2 != 0) {
 			String msg = "Unexpected length of subRecordData : " + HexDump.toHex(subRecordData);
 			throw new RecordFormatException(msg);
 		}
-
-//		System.out.println(HexDump.toHex(subRecordData));
+        */
 
 		subrecords = new ArrayList<SubRecord>();
 		ByteArrayInputStream bais = new ByteArrayInputStream(subRecordData);
 		LittleEndianInputStream subRecStream = new LittleEndianInputStream(bais);
-		while (true) {
-			SubRecord subRecord = SubRecord.createSubRecord(subRecStream);
+		CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)SubRecord.createSubRecord(subRecStream, 0);
+        subrecords.add(cmo);
+        while (true) {
+			SubRecord subRecord = SubRecord.createSubRecord(subRecStream, cmo.getObjectType());
 			subrecords.add(subRecord);
-			if (subRecord instanceof EndSubRecord) {
+			if (subRecord.isTerminating()) {
 				break;
 			}
 		}
@@ -107,7 +111,8 @@ public final class ObjRecord extends Record {
 				}
 				_isPaddedToQuadByteMultiple = false;
 			}
-		} else {
+
+        } else {
 			_isPaddedToQuadByteMultiple = false;
 		}
 		_uninterpretedData = null;
@@ -123,11 +128,7 @@ public final class ObjRecord extends Record {
 	 * to the its proper size.  POI does the same.
 	 */
 	private static boolean canPaddingBeDiscarded(byte[] data, int nRemainingBytes) {
-		if (data.length < 0x1FEE) {
-			// this looks like a different problem
-			return false;
-		}
-		// make sure none of the padding looks important
+        // make sure none of the padding looks important
 		for(int i=data.length-nRemainingBytes; i<data.length; i++) {
 			if (data[i] != 0x00) {
 				return false;
