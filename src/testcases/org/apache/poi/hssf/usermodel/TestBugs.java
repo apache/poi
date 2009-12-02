@@ -1522,4 +1522,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFCell cell2 = s.getRow(0).getCell(1);
         assertEquals(1.0, cell2.getNumericCellValue());
     }
+
+    /**
+     * POI 3.5 beta 7 can not read excel file contain list box (Form Control)  
+     */
+    public void test47701() {
+        openSample("47701.xls");
+    }
+    
 }

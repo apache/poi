@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.6-beta1" date="2009-??-??">
+          <action dev="POI-DEVELOPERS" type="fix">47701 - fixed RecordFormatException when reading list subrecords (LbsDataSubRecord)</action> 
           <action dev="POI-DEVELOPERS" type="add"> memory usage optimization in XSSF - avoid creating parentless xml beans</action> 
           <action dev="POI-DEVELOPERS" type="fix">47188 - avoid corruption of workbook when adding cell comments </action> 
           <action dev="POI-DEVELOPERS" type="fix">48106 - improved work with cell comments in XSSF</action> 

@@ -46,6 +46,11 @@ public final class EndSubRecord extends SubRecord {
         }
     }
 
+    @Override
+    public boolean isTerminating(){
+        return true;
+    }
+
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
