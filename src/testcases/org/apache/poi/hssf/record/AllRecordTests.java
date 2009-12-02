@@ -50,6 +50,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestCellRange.class);
 		result.addTestSuite(TestCFHeaderRecord.class);
 		result.addTestSuite(TestCFRuleRecord.class);
+		result.addTestSuite(TestColumnInfoRecord.class);
 		result.addTestSuite(TestCommonObjectDataSubRecord.class);
 		result.addTestSuite(TestConstantValueParser.class);
 		result.addTestSuite(TestDrawingGroupRecord.class);
