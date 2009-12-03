@@ -18,24 +18,12 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
+import java.io.File;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * Tests for XWPF Paragraphs
@@ -224,5 +212,15 @@ public final class TestXWPFParagraph extends TestCase {
 
         p.setPageBreak(true);
         assertEquals(STOnOff.TRUE, ppr.getPageBreakBefore().getVal());
+    }
+
+    public void testBookmarks() {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bookmarks.docx");
+        XWPFParagraph paragraph = doc.getParagraphs()[0];
+        assertEquals("Sample Word Document", paragraph.getText());
+        assertEquals(1, paragraph.getCTP().sizeOfBookmarkStartArray());
+        assertEquals(0, paragraph.getCTP().sizeOfBookmarkEndArray());
+        CTBookmark ctBookmark = paragraph.getCTP().getBookmarkStartArray(0);
+        assertEquals("poi", ctBookmark.getName());
     }
 }
