@@ -102,27 +102,24 @@ public abstract class BaseTestCell extends TestCase {
 				switch (type) {
 					case Cell.CELL_TYPE_NUMERIC:
 						cell.getNumericCellValue();
-						fail();
 						break;
 					case Cell.CELL_TYPE_STRING:
 						cell.getStringCellValue();
-						fail();
 						break;
 					case Cell.CELL_TYPE_BOOLEAN:
 						cell.getBooleanCellValue();
-						fail();
 						break;
 					case Cell.CELL_TYPE_FORMULA:
 						cell.getCellFormula();
-						fail();
 						break;
 					case Cell.CELL_TYPE_ERROR:
 						cell.getErrorCellValue();
-						fail();
 						break;
 				}
+				fail("Should get exception when reading cell type (" + type + ").");
 			} catch (IllegalStateException e){
-				;
+				// expected during successful test
+				assertTrue(e.getMessage().startsWith("Cannot get a"));
 			}
 		}
 	}
@@ -344,6 +341,73 @@ public abstract class BaseTestCell extends TestCase {
 			throw e;
 		}
 		assertEquals(true, cell.getBooleanCellValue());
+	}
+
+	/**
+	 * Test for a bug observed around svn r886733 when using
+	 * {@link FormulaEvaluator#evaluateInCell(Cell)} with a
+	 * string result type.
+	 */
+	public final void testConvertStringFormulaCell() {
+		Cell cellA1 = createACell();
+		cellA1.setCellFormula("\"abc\"");
+
+		// default cached formula result is numeric zero
+		assertEquals(0.0, cellA1.getNumericCellValue(), 0.0);
+
+		FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+
+		fe.evaluateFormulaCell(cellA1);
+		assertEquals("abc", cellA1.getStringCellValue());
+
+		fe.evaluateInCell(cellA1);
+		if (cellA1.getStringCellValue().equals("")) {
+			throw new AssertionFailedError("Identified bug with writing back formula result of type string");
+		}
+		assertEquals("abc", cellA1.getStringCellValue());
+	}
+	/**
+	 * similar to {@link #testConvertStringFormulaCell()} but  checks at a
+	 * lower level that {#link {@link Cell#setCellType(int)} works properly
+	 */
+	public final void testSetTypeStringOnFormulaCell() {
+		Cell cellA1 = createACell();
+		FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+
+		cellA1.setCellFormula("\"DEF\"");
+		fe.clearAllCachedResultValues();
+		fe.evaluateFormulaCell(cellA1);
+		assertEquals("DEF", cellA1.getStringCellValue());
+		cellA1.setCellType(Cell.CELL_TYPE_STRING);
+		assertEquals("DEF", cellA1.getStringCellValue());
+
+		cellA1.setCellFormula("25.061");
+		fe.clearAllCachedResultValues();
+		fe.evaluateFormulaCell(cellA1);
+		confirmCannotReadString(cellA1);
+		assertEquals(25.061, cellA1.getNumericCellValue(), 0.0);
+		cellA1.setCellType(Cell.CELL_TYPE_STRING);
+		assertEquals("25.061", cellA1.getStringCellValue());
+
+		cellA1.setCellFormula("TRUE");
+		fe.clearAllCachedResultValues();
+		fe.evaluateFormulaCell(cellA1);
+		confirmCannotReadString(cellA1);
+		assertEquals(true, cellA1.getBooleanCellValue());
+		cellA1.setCellType(Cell.CELL_TYPE_STRING);
+		assertEquals("TRUE", cellA1.getStringCellValue());
+
+		cellA1.setCellFormula("#NAME?");
+		fe.clearAllCachedResultValues();
+		fe.evaluateFormulaCell(cellA1);
+		confirmCannotReadString(cellA1);
+		assertEquals(ErrorConstants.ERROR_NAME, cellA1.getErrorCellValue());
+		cellA1.setCellType(Cell.CELL_TYPE_STRING);
+		assertEquals("#NAME?", cellA1.getStringCellValue());
+	}
+
+	private static void confirmCannotReadString(Cell cell) {
+		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_STRING);
 	}
 
 	/**

@@ -50,6 +50,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogger;
@@ -811,14 +812,29 @@ public class HSSFCell implements Cell {
                 int sstIndex = ((LabelSSTRecord)_record).getSSTIndex();
                 return _book.getWorkbook().getSSTString(sstIndex).getString();
             case CELL_TYPE_NUMERIC:
-                return String.valueOf(((NumberRecord)_record).getValue());
+                return NumberToTextConverter.toText(((NumberRecord)_record).getValue());
             case CELL_TYPE_ERROR:
                    return HSSFErrorConstants.getText(((BoolErrRecord) _record).getErrorValue());
             case CELL_TYPE_FORMULA:
                 // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
-                return "";
+                // just use cached formula result instead
+                break;
+            default:
+                throw new IllegalStateException("Unexpected cell type (" + _cellType + ")");
         }
-        throw new RuntimeException("Unexpected cell type (" + _cellType + ")");
+        FormulaRecordAggregate fra = ((FormulaRecordAggregate)_record);
+        FormulaRecord fr = fra.getFormulaRecord();
+        switch (fr.getCachedResultType()) {
+            case CELL_TYPE_BOOLEAN:
+                return fr.getCachedBooleanValue() ? "TRUE" : "FALSE";
+            case CELL_TYPE_STRING:
+                return fra.getStringValue();
+            case CELL_TYPE_NUMERIC:
+                return NumberToTextConverter.toText(fr.getValue());
+            case CELL_TYPE_ERROR:
+                   return HSSFErrorConstants.getText(fr.getCachedErrorValue());
+        }
+        throw new IllegalStateException("Unexpected formula result type (" + _cellType + ")");
     }
 
     /**
