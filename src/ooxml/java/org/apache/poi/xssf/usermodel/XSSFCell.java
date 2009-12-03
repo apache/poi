@@ -271,6 +271,7 @@ public final class XSSFCell implements Cell {
                 }
                 break;
             case CELL_TYPE_FORMULA:
+                checkFormulaCachedValueType(CELL_TYPE_STRING, getBaseCellType(false));
                 rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
                 break;
             default:
@@ -280,7 +281,13 @@ public final class XSSFCell implements Cell {
         return rt;
     }
 
-    /**
+    private static void checkFormulaCachedValueType(int expectedTypeCode, int cachedValueType) {
+        if (cachedValueType != expectedTypeCode) {
+            throw typeMismatch(expectedTypeCode, cachedValueType, true);
+        }
+	}
+
+	/**
      * Set a string value for the cell.
      *
      * @param str value to set the cell to.  For formulas we'll set the formula
@@ -697,6 +704,9 @@ public final class XSSFCell implements Cell {
             default:
                 throw new IllegalArgumentException("Illegal cell type: " + cellType);
         }
+        if (cellType != CELL_TYPE_FORMULA && _cell.isSetF()) {
+			_cell.unsetF();
+		}
     }
 
     /**
@@ -903,14 +913,32 @@ public final class XSSFCell implements Cell {
                 XSSFRichTextString rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(sstIndex));
                 return rt.getString();
             case CELL_TYPE_NUMERIC:
-                return String.valueOf(Double.parseDouble(_cell.getV()));
             case CELL_TYPE_ERROR:
-                   return _cell.getV();
+                return _cell.getV();
             case CELL_TYPE_FORMULA:
                 // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
-                return "";
+                // just use cached formula result instead
+                break;
+            default:
+                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
         }
-        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+        cellType = getBaseCellType(false);
+        String textValue = _cell.getV();
+        switch (cellType) {
+            case CELL_TYPE_BOOLEAN:
+                if (TRUE_AS_STRING.equals(textValue)) {
+                    return "TRUE";
+                }
+                if (FALSE_AS_STRING.equals(textValue)) {
+                    return "FALSE";
+                }
+                throw new IllegalStateException("Unexpected boolean cached formula value '"
+                    + textValue + "'.");
+            case CELL_TYPE_STRING:
+            case CELL_TYPE_NUMERIC:
+            case CELL_TYPE_ERROR:
+                return textValue;
+        }
+        throw new IllegalStateException("Unexpected formula result type (" + cellType + ")");
     }
-
 }
