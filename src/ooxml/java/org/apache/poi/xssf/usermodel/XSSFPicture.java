@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -141,6 +142,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * @return the underlying CTPicture bean
      */
+    @Internal
     public CTPicture getCTPicture(){
         return ctPicture;
     }

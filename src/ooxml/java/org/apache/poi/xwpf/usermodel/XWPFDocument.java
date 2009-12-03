@@ -43,6 +43,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -231,6 +232,7 @@ public class XWPFDocument extends POIXMLDocument {
     /**
      * Returns the low level document base object
      */
+    @Internal
     public CTDocument1 getDocument() {
         return ctDocument;
     }
@@ -321,6 +323,7 @@ public class XWPFDocument extends POIXMLDocument {
     /**
      * Returns the styles object used
      */
+    @Internal
     public CTStyles getStyle() throws XmlException, IOException {
         PackagePart[] parts;
         try {

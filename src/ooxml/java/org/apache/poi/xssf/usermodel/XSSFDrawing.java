@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -93,6 +94,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      *
      * @return the underlying CTDrawing bean
      */
+    @Internal
     public CTDrawing getCTDrawing(){
         return drawing;
     }

@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 /**
@@ -175,6 +176,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      *
      * @return starting anchor point
      */
+    @Internal
     public CTMarker getFrom(){
         return cell1;
     }
@@ -188,6 +190,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      *
      * @return ending anchor point
      */
+    @Internal
     public CTMarker getTo(){
         return cell2;
     }

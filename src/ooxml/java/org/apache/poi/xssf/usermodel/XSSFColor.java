@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a color in SpreadsheetML
@@ -197,6 +198,7 @@ public class XSSFColor {
      *
      * @return the underlying XML bean
      */
+    @Internal
     public CTColor getCTColor(){
         return ctColor;
     }

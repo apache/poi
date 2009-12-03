@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -416,6 +417,7 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Return the underlying xml bean
      */
+    @Internal
     public CTRst getCTRst() {
         return st;
     }

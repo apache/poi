@@ -42,6 +42,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
@@ -126,6 +127,7 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
         return prototype;
     }
 
+    @Internal
     public CTShape getCTShape(){
         return ctShape;
     }

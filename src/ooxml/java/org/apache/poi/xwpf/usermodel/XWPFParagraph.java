@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
@@ -149,6 +150,7 @@ public class XWPFParagraph {
         }
     }
 
+    @Internal
     public CTP getCTP() {
         return paragraph;
     }

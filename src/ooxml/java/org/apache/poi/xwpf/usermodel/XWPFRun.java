@@ -33,6 +33,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+import org.apache.poi.util.Internal;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -56,6 +57,7 @@ public class XWPFRun {
      * Get the currently used CTR object
      * @return ctr object
      */
+    @Internal
     public CTR getCTR() {
         return run;
     }
