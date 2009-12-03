@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 
@@ -35,12 +36,14 @@ public class XSLFSlide extends XSLFSheet implements Slide {
 	/**
 	 * While developing only!
 	 */
+    @Internal
 	public CTSlide _getCTSlide() {
 		return slide;
 	}
 	/**
 	 * While developing only!
 	 */
+    @Internal
 	public CTSlideIdListEntry _getCTSlideId() {
 		return slideId;
 	}

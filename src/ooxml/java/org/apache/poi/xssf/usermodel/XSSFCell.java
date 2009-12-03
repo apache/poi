@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -851,6 +852,7 @@ public final class XSSFCell implements Cell {
      *
      * @return the xml bean containing information about this cell
      */
+    @Internal
     public CTCell getCTCell(){
         return _cell;
     }

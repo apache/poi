@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.apache.poi.util.Internal;
 
 
 public class XWPFTableCell {
@@ -34,6 +35,7 @@ public class XWPFTableCell {
     }
 
 
+    @Internal
     public CTTc getCTTc() {
         return ctTc;
     }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SingleXmlCells;
 import org.apache.poi.xssf.model.Table;
@@ -53,11 +54,13 @@ public class XSSFMap {
     }
 
 
+    @Internal
     public CTMap getCtMap() {
         return ctMap;
     }
 
 
+    @Internal
     public CTSchema getCTSchema() {
         String schemaId = ctMap.getSchemaID();
         return mapInfo.getCTSchemaById(schemaId);

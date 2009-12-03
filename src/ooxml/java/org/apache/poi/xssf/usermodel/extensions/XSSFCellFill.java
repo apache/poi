@@ -21,6 +21,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.util.Internal;
 
 /**
  * This element specifies fill formatting.
@@ -147,6 +148,7 @@ public final class XSSFCellFill {
      *
      * @return CTFill
      */
+    @Internal
     public CTFill getCTFill() {
         return _fill;
     }

@@ -27,6 +27,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
+import org.apache.poi.util.Internal;
 
 /**
  * Sketch of XWPFTable class. Only table's text is being hold.
@@ -109,6 +110,7 @@ public class XWPFTable {
     /**
      * @return ctTbl object
      */
+    @Internal
     public CTTbl getCTTbl() {
         return ctTbl;
     }

@@ -29,6 +29,7 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
@@ -74,6 +75,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Used so that StylesSource can figure out our location
      */
+    @Internal
     public CTXf getCoreXf() {
         return _cellXf;
     }
@@ -81,6 +83,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Used so that StylesSource can figure out our location
      */
+    @Internal
     public CTXf getStyleXf() {
         return _cellStyleXf;
     }

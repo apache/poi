@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.apache.poi.util.Internal;
 
 /**
  * @author Yegor Kozlov
@@ -44,6 +45,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
         this.t2d = t2d;
     }
 
+    @Internal
     public CTTransform2D getCTTransform2D() {
         return t2d;
     }

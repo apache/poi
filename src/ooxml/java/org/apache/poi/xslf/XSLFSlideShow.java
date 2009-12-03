@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.util.Internal;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -93,6 +94,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	/**
 	 * Returns the low level presentation base object
 	 */
+    @Internal
 	public CTPresentation getPresentation() {
 		return presentationDoc.getPresentation();
 	}
@@ -103,6 +105,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * You'll need these to figure out the slide ordering,
 	 *  and to get at the actual slides themselves
 	 */
+    @Internal
 	public CTSlideIdList getSlideReferences() {
 		return getPresentation().getSldIdLst();
 	}
@@ -112,6 +115,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * You'll need these to get at the actual slide 
 	 *  masters themselves
 	 */
+    @Internal
 	public CTSlideMasterIdList getSlideMasterReferences() {
 		return getPresentation().getSldMasterIdLst();
 	}
@@ -129,6 +133,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * Returns the low level slide master object from
 	 *  the supplied slide master reference
 	 */
+    @Internal
 	public CTSlideMaster getSlideMaster(CTSlideMasterIdListEntry master) throws IOException, XmlException {
 		PackagePart masterPart = getSlideMasterPart(master);
 		SldMasterDocument masterDoc =
@@ -149,6 +154,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * Returns the low level slide object from
 	 *  the supplied slide reference
 	 */
+    @Internal
 	public CTSlide getSlide(CTSlideIdListEntry slide) throws IOException, XmlException {
 		PackagePart slidePart = getSlidePart(slide);
 		SldDocument slideDoc =
@@ -188,6 +194,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * Returns the low level notes object for the given
 	 *  slide, as found from the supplied slide reference
 	 */
+    @Internal
 	public CTNotesSlide getNotes(CTSlideIdListEntry slide) throws IOException, XmlException {
 		PackagePart notesPart = getNodesPart(slide);
 		if(notesPart == null)
@@ -202,6 +209,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	/**
 	 * Returns all the comments for the given slide
 	 */
+    @Internal
 	public CTCommentList getSlideComments(CTSlideIdListEntry slide) throws IOException, XmlException {
 		PackageRelationshipCollection commentRels;
 		PackagePart slidePart = getSlidePart(slide);

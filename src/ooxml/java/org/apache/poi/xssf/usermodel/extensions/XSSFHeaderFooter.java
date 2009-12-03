@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.xssf.usermodel.helpers.HeaderFooterHelper;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 /**
@@ -140,6 +141,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	 *
 	 * @return the underlying CTHeaderFooter xml bean
 	 */
+    @Internal
 	public CTHeaderFooter getHeaderFooter() {
 		return this.headerFooter;
 	}

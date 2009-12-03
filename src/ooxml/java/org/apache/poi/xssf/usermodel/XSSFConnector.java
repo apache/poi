@@ -32,6 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnectorNonVisual;
+import org.apache.poi.util.Internal;
 
 /**
  * A connection shape drawing element. A connection shape is a line, etc.
@@ -104,6 +105,7 @@ public final class XSSFConnector extends XSSFShape {
         return prototype;
     }
 
+    @Internal
     public CTConnector getCTConnector(){
         return ctShape;
     }

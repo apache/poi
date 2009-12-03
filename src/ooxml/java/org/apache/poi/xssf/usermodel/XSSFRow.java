@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
@@ -368,6 +369,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the underlying CTRow xml bean
      */
+    @Internal
     public CTRow getCTRow(){
     	return _row;
     }

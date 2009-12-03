@@ -21,6 +21,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Internal;
 
 
 /**
@@ -160,6 +161,7 @@ public class XSSFCellAlignment {
     /**
      * Access to low-level data
      */
+    @Internal
     public CTCellAlignment getCTCellAlignment() {
         return cellAlignement;
     }

@@ -49,6 +49,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
@@ -218,6 +219,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return the CTWorksheet bean holding this sheet's data
      */
+    @Internal
     public CTWorksheet getCTWorksheet() {
         return this.worksheet;
     }

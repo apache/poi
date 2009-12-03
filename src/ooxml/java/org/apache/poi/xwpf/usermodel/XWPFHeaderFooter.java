@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.util.Internal;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
@@ -40,6 +41,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart{
 		super(part, rel);
 	}
 	
+    @Internal
 	public CTHdrFtr _getHdrFtr() {
 		return headerFooter;
 	}

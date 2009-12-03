@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
+import org.apache.poi.util.Internal;
 
 
 /**
@@ -34,6 +35,7 @@ public class XWPFTableRow {
         this.ctRow = row;
     }
 
+    @Internal
     public CTRow getCtRow() {
         return ctRow;
     }

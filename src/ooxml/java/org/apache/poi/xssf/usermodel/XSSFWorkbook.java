@@ -51,10 +51,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -290,6 +287,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the underlying CTWorkbook bean
      */
+    @Internal
     public CTWorkbook getCTWorkbook() {
         return this.workbook;
     }
@@ -1180,6 +1178,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the shared string table
      */
+    @Internal
     public SharedStringsTable getSharedStringSource() {
         return this.sharedStringSource;
     }
@@ -1351,6 +1350,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the <code>CalculationChain</code> object or <code>null</code> if not defined
      */
+    @Internal
     public CalculationChain getCalculationChain(){
         return calcChain;
     }
@@ -1367,6 +1367,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the helper class used to query the custom XML mapping defined in this workbook
      */
+    @Internal
     public MapInfo getMapInfo(){
     	return mapInfo;
     }
