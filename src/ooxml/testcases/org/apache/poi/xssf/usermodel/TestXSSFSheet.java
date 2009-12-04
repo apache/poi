@@ -17,9 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BaseTestSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -158,6 +156,24 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertTrue(col.getBestFit());
     }
 
+    /**
+     * XSSFSheet autoSizeColumn() on empty RichTextString fails
+     */
+    public void test48325() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("Test");
+        CreationHelper factory = wb.getCreationHelper();
+
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell cell = row.createCell(0);
+
+        XSSFFont font = wb.createFont();
+        RichTextString rts = factory.createRichTextString("");
+        rts.applyFont(font);
+        cell.setCellValue(rts);
+
+        sheet.autoSizeColumn(0);
+    }
 
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
