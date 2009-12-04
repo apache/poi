@@ -130,9 +130,9 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
                 ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof OperandPtg<?>) {
+            } else if (ptg instanceof OperandPtg) {
                 // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
-                ptg = ((OperandPtg<?>) ptg).copy();
+                ptg = ((OperandPtg) ptg).copy();
             } else {
             	// all other Ptgs are immutable and can be shared
             }

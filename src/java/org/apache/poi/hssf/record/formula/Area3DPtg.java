@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author avik
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class Area3DPtg extends AreaPtgBase<Area3DPtg> implements WorkbookDependentFormula, ExternSheetReferenceToken {
+public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
 
