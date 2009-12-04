@@ -45,6 +45,7 @@ import org.apache.poi.hssf.record.formula.MissingArgPtg;
 import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
+import org.apache.poi.hssf.record.formula.ParenthesisPtg;
 import org.apache.poi.hssf.record.formula.PercentPtg;
 import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -90,16 +91,11 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testSimpleFormula() {
-		Ptg[] ptgs = parseFormula("2+2");
-		assertEquals(3, ptgs.length);
+		confirmTokenClasses("2+2",IntPtg.class, IntPtg.class, AddPtg.class);
 	}
 
 	public void testFormulaWithSpace1() {
-		Ptg[] ptgs = parseFormula(" 2 + 2 ");
-		assertEquals(3, ptgs.length);
-		assertTrue("",(ptgs[0] instanceof IntPtg));
-		assertTrue("",(ptgs[1] instanceof IntPtg));
-		assertTrue("",(ptgs[2] instanceof AddPtg));
+		confirmTokenClasses(" 2 + 2 ",IntPtg.class, IntPtg.class, AddPtg.class);
 	}
 
 	public void testFormulaWithSpace2() {
@@ -135,14 +131,9 @@ public final class TestFormulaParser extends TestCase {
 	 *
 	 */
 	public void testNonAlphaFormula() {
-		String currencyCell = "F3";
-		Ptg[] ptgs = parseFormula("\"TOTAL[\"&"+currencyCell+"&\"]\"");
-		assertEquals(5, ptgs.length);
-		assertTrue ("Ptg[0] is a string", (ptgs[0] instanceof StringPtg));
-		StringPtg firstString = (StringPtg)ptgs[0];
-
-		assertEquals("TOTAL[", firstString.getValue());
-		//the PTG order isn't 100% correct but it still works - dmui
+		Ptg[] ptgs = parseFormula("\"TOTAL[\"&F3&\"]\"");
+		confirmTokenClasses(ptgs, StringPtg.class, RefPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class);
+		assertEquals("TOTAL[", ((StringPtg)ptgs[0]).getValue());
 	}
 
 	public void testMacroFunction() {
@@ -162,15 +153,13 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testEmbeddedSlash() {
-		Ptg[] ptgs = parseFormula("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\")");
-		assertTrue("first ptg is string", ptgs[0] instanceof StringPtg);
-		assertTrue("second ptg is string", ptgs[1] instanceof StringPtg);
+		confirmTokenClasses("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\")",
+						StringPtg.class, StringPtg.class, FuncVarPtg.class);
 	}
 
 	public void testConcatenate() {
-		Ptg[] ptgs = parseFormula("CONCATENATE(\"first\",\"second\")");
-		assertTrue("first ptg is string", ptgs[0] instanceof StringPtg);
-		assertTrue("second ptg is string", ptgs[1] instanceof StringPtg);
+		confirmTokenClasses("CONCATENATE(\"first\",\"second\")",
+				StringPtg.class, StringPtg.class, FuncVarPtg.class);
 	}
 
 	public void testWorksheetReferences() {
@@ -191,56 +180,39 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testUnaryMinus() {
-		Ptg[] ptgs = parseFormula("-A1");
-		assertEquals(2, ptgs.length);
-		assertTrue("first ptg is reference",ptgs[0] instanceof RefPtg);
-		assertTrue("second ptg is Minus",ptgs[1] instanceof UnaryMinusPtg);
+		confirmTokenClasses("-A1", RefPtg.class, UnaryMinusPtg.class);
 	}
 
 	public void testUnaryPlus() {
-		Ptg[] ptgs = parseFormula("+A1");
-		assertEquals(2, ptgs.length);
-		assertTrue("first ptg is reference",ptgs[0] instanceof RefPtg);
-		assertTrue("second ptg is Plus",ptgs[1] instanceof UnaryPlusPtg);
+		confirmTokenClasses("+A1", RefPtg.class, UnaryPlusPtg.class);
 	}
 
 	public void testLeadingSpaceInString() {
 		String value = "  hi  ";
 		Ptg[] ptgs = parseFormula("\"" + value + "\"");
-
-		assertEquals(1, ptgs.length);
-		assertTrue("ptg0 is a StringPtg", ptgs[0] instanceof StringPtg);
+		confirmTokenClasses(ptgs, StringPtg.class);
 		assertTrue("ptg0 contains exact value", ((StringPtg)ptgs[0]).getValue().equals(value));
 	}
 
 	public void testLookupAndMatchFunctionArgs() {
 		Ptg[] ptgs = parseFormula("lookup(A1, A3:A52, B3:B52)");
-
-		assertEquals(4, ptgs.length);
+		confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, AreaPtg.class, FuncVarPtg.class);
 		assertTrue("ptg0 has Value class", ptgs[0].getPtgClass() == Ptg.CLASS_VALUE);
 
 		ptgs = parseFormula("match(A1, A3:A52)");
-
-		assertEquals(3, ptgs.length);
+		confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, FuncVarPtg.class);
 		assertTrue("ptg0 has Value class", ptgs[0].getPtgClass() == Ptg.CLASS_VALUE);
 	}
 
 	/** bug 33160*/
 	public void testLargeInt() {
-		Ptg[] ptgs = parseFormula("40");
-		assertTrue("ptg is Int, is "+ptgs[0].getClass(),ptgs[0] instanceof IntPtg);
-
-		ptgs = parseFormula("40000");
-		assertTrue("ptg should be  IntPtg, is "+ptgs[0].getClass(), ptgs[0] instanceof IntPtg);
+		confirmTokenClasses("40", IntPtg.class);
+		confirmTokenClasses("40000", IntPtg.class);
 	}
 
 	/** bug 33160, testcase by Amol Deshmukh*/
 	public void testSimpleLongFormula() {
-		Ptg[] ptgs = parseFormula("40000/2");
-		assertEquals(3, ptgs.length);
-		assertTrue("IntPtg", (ptgs[0] instanceof IntPtg));
-		assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
-		assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
+		confirmTokenClasses("40000/2", IntPtg.class, IntPtg.class, DividePtg.class);
 	}
 
 	/** bug 35027, underscore in sheet name */
@@ -259,24 +231,9 @@ public final class TestFormulaParser extends TestCase {
 
 	// bug 38396 : Formula with exponential numbers not parsed correctly.
 	public void testExponentialParsing() {
-		Ptg[] ptgs;
-		ptgs = parseFormula("1.3E21/2");
-		assertEquals(3, ptgs.length);
-		assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
-		assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
-		assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
-
-		ptgs = parseFormula("1322E21/2");
-		assertEquals(3, ptgs.length);
-		assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
-		assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
-		assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
-
-		ptgs = parseFormula("1.3E1/2");
-		assertEquals(3, ptgs.length);
-		assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
-		assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
-		assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
+		confirmTokenClasses("1.3E21/2",  NumberPtg.class, IntPtg.class, DividePtg.class);
+		confirmTokenClasses("1322E21/2", NumberPtg.class, IntPtg.class, DividePtg.class);
+		confirmTokenClasses("1.3E1/2",   NumberPtg.class, IntPtg.class, DividePtg.class);
 	}
 
 	public void testExponentialInSheet() {
@@ -426,58 +383,26 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testPercent() {
-		Ptg[] ptgs;
-		ptgs = parseFormula("5%");
-		assertEquals(2, ptgs.length);
-		assertEquals(ptgs[0].getClass(), IntPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
 
+		confirmTokenClasses("5%", IntPtg.class, PercentPtg.class);
 		// spaces OK
-		ptgs = parseFormula(" 250 % ");
-		assertEquals(2, ptgs.length);
-		assertEquals(ptgs[0].getClass(), IntPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
-
-
+		confirmTokenClasses(" 250 % ", IntPtg.class, PercentPtg.class);
 		// double percent OK
-		ptgs = parseFormula("12345.678%%");
-		assertEquals(3, ptgs.length);
-		assertEquals(ptgs[0].getClass(), NumberPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
-		assertEquals(ptgs[2].getClass(), PercentPtg.class);
+		confirmTokenClasses("12345.678%%", NumberPtg.class, PercentPtg.class, PercentPtg.class);
 
 		// percent of a bracketed expression
-		ptgs = parseFormula("(A1+35)%*B1%");
-		assertEquals(8, ptgs.length);
-		assertEquals(ptgs[4].getClass(), PercentPtg.class);
-		assertEquals(ptgs[6].getClass(), PercentPtg.class);
+		confirmTokenClasses("(A1+35)%*B1%", RefPtg.class, IntPtg.class, AddPtg.class, ParenthesisPtg.class,
+				PercentPtg.class, RefPtg.class, PercentPtg.class, MultiplyPtg.class);
 
 		// percent of a text quantity
-		ptgs = parseFormula("\"8.75\"%");
-		assertEquals(2, ptgs.length);
-		assertEquals(ptgs[0].getClass(), StringPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
+		confirmTokenClasses("\"8.75\"%", StringPtg.class, PercentPtg.class);
 
 		// percent to the power of
-		ptgs = parseFormula("50%^3");
-		assertEquals(4, ptgs.length);
-		assertEquals(ptgs[0].getClass(), IntPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
-		assertEquals(ptgs[2].getClass(), IntPtg.class);
-		assertEquals(ptgs[3].getClass(), PowerPtg.class);
+		confirmTokenClasses("50%^3", IntPtg.class, PercentPtg.class, IntPtg.class, PowerPtg.class);
 
-		//
 		// things that parse OK but would *evaluate* to an error
-
-		ptgs = parseFormula("\"abc\"%");
-		assertEquals(2, ptgs.length);
-		assertEquals(ptgs[0].getClass(), StringPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
-
-		ptgs = parseFormula("#N/A%");
-		assertEquals(2, ptgs.length);
-		assertEquals(ptgs[0].getClass(), ErrPtg.class);
-		assertEquals(ptgs[1].getClass(), PercentPtg.class);
+		confirmTokenClasses("\"abc\"%", StringPtg.class, PercentPtg.class);
+		confirmTokenClasses("#N/A%", ErrPtg.class, PercentPtg.class);
 	}
 
 	/**
@@ -485,46 +410,37 @@ public final class TestFormulaParser extends TestCase {
 	 */
 	public void testPrecedenceAndAssociativity() {
 
-		Class<?>[] expClss;
-
 		// TRUE=TRUE=2=2  evaluates to FALSE
-		expClss = new Class[] { BoolPtg.class, BoolPtg.class, EqualPtg.class,
-				IntPtg.class, EqualPtg.class, IntPtg.class, EqualPtg.class,  };
-		confirmTokenClasses("TRUE=TRUE=2=2", expClss);
-
+		confirmTokenClasses("TRUE=TRUE=2=2", BoolPtg.class, BoolPtg.class, EqualPtg.class,
+				IntPtg.class, EqualPtg.class, IntPtg.class, EqualPtg.class);
 
 		//  2^3^2	evaluates to 64 not 512
-		expClss = new Class[] { IntPtg.class, IntPtg.class, PowerPtg.class,
-				IntPtg.class, PowerPtg.class, };
-		confirmTokenClasses("2^3^2", expClss);
+		confirmTokenClasses("2^3^2", IntPtg.class, IntPtg.class, PowerPtg.class,
+				IntPtg.class, PowerPtg.class);
 
 		// "abc" & 2 + 3 & "def"   evaluates to "abc5def"
-		expClss = new Class[] { StringPtg.class, IntPtg.class, IntPtg.class,
-				AddPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class, };
-		confirmTokenClasses("\"abc\"&2+3&\"def\"", expClss);
-
+		confirmTokenClasses("\"abc\"&2+3&\"def\"", StringPtg.class, IntPtg.class, IntPtg.class,
+				AddPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class);
 
 		//  (1 / 2) - (3 * 4)
-		expClss = new Class[] { IntPtg.class, IntPtg.class, DividePtg.class,
-				IntPtg.class, IntPtg.class, MultiplyPtg.class, SubtractPtg.class, };
-		confirmTokenClasses("1/2-3*4", expClss);
+		confirmTokenClasses("1/2-3*4", IntPtg.class, IntPtg.class, DividePtg.class,
+				IntPtg.class, IntPtg.class, MultiplyPtg.class, SubtractPtg.class);
 
 		// 2 * (2^2)
-		expClss = new Class[] { IntPtg.class, IntPtg.class, IntPtg.class, PowerPtg.class, MultiplyPtg.class, };
 		// NOT: (2 *2) ^ 2 -> int int multiply int power
-		confirmTokenClasses("2*2^2", expClss);
+		confirmTokenClasses("2*2^2", IntPtg.class, IntPtg.class, IntPtg.class, PowerPtg.class, MultiplyPtg.class);
 
 		//  2^200% -> 2 not 1.6E58
-		expClss = new Class[] { IntPtg.class, IntPtg.class, PercentPtg.class, PowerPtg.class, };
-		confirmTokenClasses("2^200%", expClss);
+		confirmTokenClasses("2^200%", IntPtg.class, IntPtg.class, PercentPtg.class, PowerPtg.class);
 	}
 
-	/* package */ static Ptg[] confirmTokenClasses(String formula, Class<?>[] expectedClasses) {
+	/* package */ static Ptg[] confirmTokenClasses(String formula, Class<?>...expectedClasses) {
 		Ptg[] ptgs = parseFormula(formula);
 		confirmTokenClasses(ptgs, expectedClasses);
 		return ptgs;
 	}
-	private static void confirmTokenClasses(Ptg[] ptgs, Class<?>[] expectedClasses) {
+
+	private static void confirmTokenClasses(Ptg[] ptgs, Class<?>...expectedClasses) {
 		assertEquals(expectedClasses.length, ptgs.length);
 		for (int i = 0; i < expectedClasses.length; i++) {
 			if(expectedClasses[i] != ptgs[i].getClass()) {
@@ -536,7 +452,7 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	public void testPower() {
-		confirmTokenClasses("2^5", new Class[] { IntPtg.class, IntPtg.class, PowerPtg.class, });
+		confirmTokenClasses("2^5", IntPtg.class, IntPtg.class, PowerPtg.class);
 	}
 
 	private static Ptg parseSingleToken(String formula, Class<? extends Ptg> ptgClass) {
@@ -568,23 +484,18 @@ public final class TestFormulaParser extends TestCase {
 
 	public void testMissingArgs() {
 
-		Class<?>[] expClss;
-
-		expClss = new Class[] {
+		confirmTokenClasses("if(A1, ,C1)",
 				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 				MissingArgPtg.class,
 				AttrPtg.class, // tAttrSkip
 				RefPtg.class,
 				AttrPtg.class, // tAttrSkip
-				FuncVarPtg.class,
-		};
+				FuncVarPtg.class
+		);
 
-		confirmTokenClasses("if(A1, ,C1)", expClss);
-
-		expClss = new Class[] { MissingArgPtg.class, AreaPtg.class, MissingArgPtg.class,
-				FuncVarPtg.class, };
-		confirmTokenClasses("counta( , A1:B2, )", expClss);
+		confirmTokenClasses("counta( , A1:B2, )", MissingArgPtg.class, AreaPtg.class, MissingArgPtg.class,
+				FuncVarPtg.class);
 	}
 
 	public void testParseErrorLiterals() {
@@ -759,16 +670,14 @@ public final class TestFormulaParser extends TestCase {
 	 */
 	public void testFuncPtgSelection() {
 
-		Ptg[] ptgs;
-		ptgs = parseFormula("countif(A1:A2, 1)");
+		Ptg[] ptgs = parseFormula("countif(A1:A2, 1)");
 		assertEquals(3, ptgs.length);
-		if(FuncVarPtg.class == ptgs[2].getClass()) {
+		if(ptgs[2] instanceof FuncVarPtg) {
 			throw new AssertionFailedError("Identified bug 44675");
 		}
-		assertEquals(FuncPtg.class, ptgs[2].getClass());
-		ptgs = parseFormula("sin(1)");
-		assertEquals(2, ptgs.length);
-		assertEquals(FuncPtg.class, ptgs[1].getClass());
+		confirmTokenClasses(ptgs, AreaPtg.class, IntPtg.class, FuncPtg.class);
+
+		confirmTokenClasses("sin(1)", IntPtg.class, FuncPtg.class);
 	}
 
 	public void testWrongNumberOfFunctionArgs() {
@@ -815,18 +724,14 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs;
 		try {
 			ptgs = parseFormula("error.type(A1)");
-
-
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Invalid Formula cell reference: 'error'")) {
 				throw new AssertionFailedError("Identified bug 45334");
 			}
 			throw e;
 		}
-		assertEquals(2, ptgs.length);
-		assertEquals(FuncPtg.class, ptgs[1].getClass());
-		FuncPtg funcPtg = (FuncPtg) ptgs[1];
-		assertEquals("ERROR.TYPE", funcPtg.getName());
+		confirmTokenClasses(ptgs, RefPtg.class, FuncPtg.class);
+		assertEquals("ERROR.TYPE", ((FuncPtg) ptgs[1]).getName());
 	}
 
 	public void testNamedRangeThatLooksLikeCell() {
@@ -845,8 +750,7 @@ public final class TestFormulaParser extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals(2, ptgs.length);
-		assertEquals(NamePtg.class, ptgs[0].getClass());
+		confirmTokenClasses(ptgs, NamePtg.class, FuncVarPtg.class);
 
 		HSSFCell cell = sheet.createRow(0).createCell(0);
 		cell.setCellFormula("count(pfy1)");
@@ -888,12 +792,10 @@ public final class TestFormulaParser extends TestCase {
 	public void testParseArray()  {
 		Ptg[] ptgs;
 		ptgs = parseFormula("mode({1,2,2,#REF!;FALSE,3,3,2})");
-		assertEquals(2, ptgs.length);
-		Ptg ptg0 = ptgs[0];
-		assertEquals(ArrayPtg.class, ptg0.getClass());
-		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptg0.toFormulaString());
+		confirmTokenClasses(ptgs, ArrayPtg.class, FuncVarPtg.class);
+		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptgs[0].toFormulaString());
 
-		ArrayPtg aptg = (ArrayPtg) ptg0;
+		ArrayPtg aptg = (ArrayPtg) ptgs[0];
 		Object[][] values = aptg.getTokenArrayValues();
 		assertEquals(ErrorConstant.valueOf(HSSFErrorConstants.ERROR_REF), values[0][3]);
 		assertEquals(Boolean.FALSE, values[1][0]);
@@ -955,7 +857,7 @@ public final class TestFormulaParser extends TestCase {
 	private static void confirmSingle3DRef(Ptg[] ptgs, int expectedExternSheetIndex) {
 		assertEquals(1, ptgs.length);
 		Ptg ptg0 = ptgs[0];
-		assertEquals(Ref3DPtg.class, ptg0.getClass());
+		assertTrue(ptg0 instanceof Ref3DPtg);
 		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
 	}
 
@@ -965,7 +867,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.createSheet("Sheet1");
 		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
-		Class<?>[] expectedClasses = {
+		confirmTokenClasses(ptgs,
 				// TODO - AttrPtg.class, // Excel prepends this
 				MemFuncPtg.class,
 				Area3DPtg.class,
@@ -975,9 +877,8 @@ public final class TestFormulaParser extends TestCase {
 				FuncVarPtg.class,
 				UnionPtg.class,
 				Ref3DPtg.class,
-				UnionPtg.class,
-		};
-		confirmTokenClasses(ptgs, expectedClasses);
+				UnionPtg.class
+		);
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(45, mf.getLenRefSubexpression());
 	}
@@ -989,17 +890,16 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
 		if (ptgs.length == 3) {
-			confirmTokenClasses(ptgs, new Class[] { Ref3DPtg.class, Ref3DPtg.class, RangePtg.class,});
+			confirmTokenClasses(ptgs, Ref3DPtg.class, Ref3DPtg.class, RangePtg.class);
 			throw new AssertionFailedError("Identified bug 46643");
 		}
 
-		Class<?> [] expectedClasses = {
+		confirmTokenClasses(ptgs,
 				MemFuncPtg.class,
 				Ref3DPtg.class,
 				Ref3DPtg.class,
-				RangePtg.class,
-		};
-		confirmTokenClasses(ptgs, expectedClasses);
+				RangePtg.class
+		);
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(15, mf.getLenRefSubexpression());
 	}
@@ -1051,7 +951,7 @@ public final class TestFormulaParser extends TestCase {
 			}
 			throw e;
 		}
-		confirmTokenClasses(ptgs, new Class[] {
+		confirmTokenClasses(ptgs,
 			MemFuncPtg.class, // [len=23]
 			RefPtg.class, // [C1]
 			RefPtg.class, // [C1]
@@ -1059,8 +959,8 @@ public final class TestFormulaParser extends TestCase {
 			RefPtg.class, // [B1]
 			FuncVarPtg.class, // [OFFSET nArgs=3]
 			RangePtg.class, //
-			AttrPtg.class, // [sum ]
-		});
+			AttrPtg.class // [sum ]
+		);
 
 	}
 
@@ -1068,41 +968,35 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs;
 		ptgs = parseFormula("3:4");
 		ptgs = parseFormula("$Z:$AC");
-		confirmTokenClasses(ptgs, new Class[] {
-				AreaPtg.class,
-		});
+		confirmTokenClasses(ptgs, AreaPtg.class);
 		ptgs = parseFormula("B:B");
 
 		ptgs = parseFormula("$11:$13");
-		confirmTokenClasses(ptgs, new Class[] {
-				AreaPtg.class,
-		});
+		confirmTokenClasses(ptgs, AreaPtg.class);
 
 		ptgs = parseFormula("$A:$A,$1:$4");
-		confirmTokenClasses(ptgs, new Class[] {
-				MemAreaPtg.class,
+		confirmTokenClasses(ptgs, MemAreaPtg.class,
 				AreaPtg.class,
 				AreaPtg.class,
-				UnionPtg.class,
-		});
+				UnionPtg.class
+		);
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
 		ptgs = HSSFFormulaParser.parse("Sheet1!$A:$A,Sheet1!$1:$4", wb);
-		confirmTokenClasses(ptgs, new Class[] {
-				MemFuncPtg.class,
+		confirmTokenClasses(ptgs, MemFuncPtg.class,
 				Area3DPtg.class,
 				Area3DPtg.class,
-				UnionPtg.class,
-		});
+				UnionPtg.class
+		);
 
 		ptgs = HSSFFormulaParser.parse("'Sheet1'!$A:$A,'Sheet1'!$1:$4", wb);
-		confirmTokenClasses(ptgs, new Class[] {
+		confirmTokenClasses(ptgs,
 				MemFuncPtg.class,
 				Area3DPtg.class,
 				Area3DPtg.class,
-				UnionPtg.class,
-		});
+				UnionPtg.class
+		);
 	}
 
 
@@ -1110,16 +1004,15 @@ public final class TestFormulaParser extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
 		Ptg[] ptgs = HSSFFormulaParser.parse("Sheet1!F1:Sheet1!G2", wb);
-		confirmTokenClasses(ptgs, new Class[] {
+		confirmTokenClasses(ptgs,
 				MemFuncPtg.class,
 				Ref3DPtg.class,
 				Ref3DPtg.class,
-				RangePtg.class,
-		});
+				RangePtg.class
+		);
 		MemFuncPtg mf;
 		mf = (MemFuncPtg)ptgs[0];
 		assertEquals(15, mf.getLenRefSubexpression());
-
 	}
 
 	/**
@@ -1130,7 +1023,7 @@ public final class TestFormulaParser extends TestCase {
 
 		Ptg[] ptgs;
 		ptgs = parseFormula("SUM(OFFSET(A1,0,0):B2:C3:D4:E5:OFFSET(F6,1,1):G7)");
-		confirmTokenClasses(ptgs, new Class[] {
+		confirmTokenClasses(ptgs,
 			// AttrPtg.class, // [volatile ] // POI doesn't do this yet (Apr 2009)
 			MemFuncPtg.class, // len 57
 			RefPtg.class, // [A1]
@@ -1148,8 +1041,8 @@ public final class TestFormulaParser extends TestCase {
 			RangePtg.class,
 			RefPtg.class, // [G7]
 			RangePtg.class,
-			AttrPtg.class, // [sum ]
-		});
+			AttrPtg.class // [sum ]
+		);
 
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(57, mf.getLenRefSubexpression());
@@ -1157,14 +1050,14 @@ public final class TestFormulaParser extends TestCase {
 		assertTrue(((AttrPtg)ptgs[16]).isSum());
 
 		ptgs = parseFormula("SUM(A1:B2:C3:D4)");
-		confirmTokenClasses(ptgs, new Class[] {
+		confirmTokenClasses(ptgs,
 			// AttrPtg.class, // [volatile ] // POI doesn't do this yet (Apr 2009)
 				MemAreaPtg.class, // len 19
 				AreaPtg.class, // [A1:B2]
 				AreaPtg.class, // [C3:D4]
 				RangePtg.class,
-				AttrPtg.class, // [sum ]
-		});
+				AttrPtg.class // [sum ]
+		);
 		MemAreaPtg ma = (MemAreaPtg)ptgs[0];
 		assertEquals(19, ma.getLenRefSubexpression());
 	}
@@ -1227,8 +1120,7 @@ public final class TestFormulaParser extends TestCase {
 			}
 			throw e;
 		}
-		assertNotNull("Ptg array should not be null", result);
-		confirmTokenClasses(result, new Class[] { IntPtg.class, NamePtg.class, AddPtg.class,});
+		confirmTokenClasses(result, IntPtg.class, NamePtg.class, AddPtg.class);
 	}
 
 	/**
@@ -1270,7 +1162,7 @@ public final class TestFormulaParser extends TestCase {
 		n.setNameName("B0");
 		n.setRefersToFormula("1+1");
 		ptgs = HSSFFormulaParser.parse("B0", wb);
-		assertEquals(NamePtg.class, ptgs[0].getClass());
+		confirmTokenClasses(ptgs, NamePtg.class);
 	}
 
 	private static void confirmParseException(FormulaParseException e, String expMsg) {
