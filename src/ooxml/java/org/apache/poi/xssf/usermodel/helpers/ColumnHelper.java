@@ -366,8 +366,10 @@ public class ColumnHelper {
                             XSSFFont fnt = rt.getFontOfFormattingRun(j);
                             if (fnt != null) {
                                 int len = rt.getLengthOfFormattingRun(j);
-                                copyAttributes(fnt, str, pos, pos + len);
-                                pos += len;
+                                if(len > 0) { //ignore degenerate zero-length runs
+                                    copyAttributes(fnt, str, pos, pos + len);
+                                    pos += len;
+                                }
                             }
                         }
                     }
