@@ -1091,10 +1091,10 @@ public final class FormulaParser {
 				return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));
 			case '-':
 				Match('-');
-				return new ParseNode(UnaryMinusPtg.instance, powerFactor());
+				return parseUnary(false);
 			case '+':
 				Match('+');
-				return new ParseNode(UnaryPlusPtg.instance, powerFactor());
+				return parseUnary(true);
 			case '(':
 				Match('(');
 				ParseNode inside = comparisonExpression();
@@ -1117,6 +1117,35 @@ public final class FormulaParser {
 		throw expected("cell ref or constant literal");
 	}
 
+
+	private ParseNode parseUnary(boolean isPlus) {
+
+		boolean numberFollows = IsDigit(look) || look=='.';
+		ParseNode factor = powerFactor();
+
+		if (numberFollows) {
+			// + or - directly next to a number is parsed with the number
+
+			Ptg token = factor.getToken();
+			if (token instanceof NumberPtg) {
+				if (isPlus) {
+					return factor;
+				}
+				token = new NumberPtg(-((NumberPtg)token).getValue());
+				return new ParseNode(token);
+			}
+			if (token instanceof IntPtg) {
+				if (isPlus) {
+					return factor;
+				}
+				int intVal = ((IntPtg)token).getValue();
+				// note - cannot use IntPtg for negatives
+				token = new NumberPtg(-intVal);
+				return new ParseNode(token);
+			}
+		}
+		return new ParseNode(isPlus ? UnaryPlusPtg.instance : UnaryMinusPtg.instance, factor);
+	}
 
 	private ParseNode parseArray() {
 		List<Object[]> rowsData = new ArrayList<Object[]>();

@@ -187,6 +187,43 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("+A1", RefPtg.class, UnaryPlusPtg.class);
 	}
 
+	/**
+	 * There may be multiple ways to encode an expression involving {@link UnaryPlusPtg}
+	 * or {@link UnaryMinusPtg}.  These may be perfectly equivalent from a formula
+	 * evaluation perspective, or formula rendering.  However, differences in the way
+	 * POI encodes formulas may cause unnecessary confusion.  These non-critical tests
+	 * check that POI follows the same encoding rules as Excel.
+	 */
+	public void testExactEncodingOfUnaryPlusAndMinus() {
+		// as tested in Excel:
+		confirmUnary("-3", -3, NumberPtg.class);
+		confirmUnary("--4", -4, NumberPtg.class, UnaryMinusPtg.class);
+		confirmUnary("+++5", 5, IntPtg.class, UnaryPlusPtg.class, UnaryPlusPtg.class);
+		confirmUnary("++-6", -6, NumberPtg.class, UnaryPlusPtg.class, UnaryPlusPtg.class);
+
+		// Spaces muck things up a bit.  It would be clearer why the following cases are
+		// reasonable if POI encoded tAttrSpace in the right places.
+		// Otherwise these differences look capricious.
+		confirmUnary("+ 12", 12, IntPtg.class, UnaryPlusPtg.class);
+		confirmUnary("- 13", 13, IntPtg.class, UnaryMinusPtg.class);
+	}
+
+	private static void confirmUnary(String formulaText, double val, Class<?>...expectedTokenTypes) {
+		Ptg[] ptgs = parseFormula(formulaText);
+		confirmTokenClasses(ptgs, expectedTokenTypes);
+		Ptg ptg0 = ptgs[0];
+		if (ptg0 instanceof IntPtg) {
+			IntPtg intPtg = (IntPtg) ptg0;
+			assertEquals((int)val, intPtg.getValue());
+		} else if (ptg0 instanceof NumberPtg) {
+			NumberPtg numberPtg = (NumberPtg) ptg0;
+			assertEquals(val, numberPtg.getValue(), 0.0);
+		} else {
+			fail("bad ptg0 " + ptg0);
+		}
+	}
+
+
 	public void testLeadingSpaceInString() {
 		String value = "  hi  ";
 		Ptg[] ptgs = parseFormula("\"" + value + "\"");
@@ -325,7 +362,7 @@ public final class TestFormulaParser extends TestCase {
 
 		cell.setCellFormula("+.1");
 		formula = cell.getCellFormula();
-		assertEquals("+0.1", formula);
+		assertEquals("0.1", formula);
 
 		cell.setCellFormula("-.1");
 		formula = cell.getCellFormula();
