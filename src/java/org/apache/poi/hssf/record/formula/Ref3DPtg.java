@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class Ref3DPtg extends RefPtgBase<Ref3DPtg> implements WorkbookDependentFormula, ExternSheetReferenceToken {
+public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg

@@ -58,6 +58,7 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.OperandPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.SheetNameFormatter;
@@ -678,11 +679,11 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                 Ptg ptg = ptgs[i];
 
                 if (ptg instanceof Area3DPtg) {
-                    Area3DPtg a3p = ((Area3DPtg) ptg).copy();
+                    Area3DPtg a3p = (Area3DPtg) ((OperandPtg) ptg).copy();
                     a3p.setExternSheetIndex(newExtSheetIx);
                     ptgs[i] = a3p;
                 } else if (ptg instanceof Ref3DPtg) {
-                    Ref3DPtg r3p = ((Ref3DPtg) ptg).copy();
+                    Ref3DPtg r3p = (Ref3DPtg) ((OperandPtg) ptg).copy();
                     r3p.setExternSheetIndex(newExtSheetIx);
                     ptgs[i] = r3p;
                 }

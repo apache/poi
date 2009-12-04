@@ -75,7 +75,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 	 */
 	private int _unknownPreFormulaInt;
 	/** expect tRef, tRef3D, tArea, tArea3D or tName */
-	private OperandPtg<?> _linkRefPtg;
+	private OperandPtg _linkRefPtg;
 	/**
 	 * Not clear if needed .  Excel seems to be OK if this byte is not present.
 	 * Value is often the same as the earlier firstColumn byte. */
@@ -108,7 +108,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 				throw new RecordFormatException("Read " + ptgs.length
 						+ " tokens but expected exactly 1");
 			}
-			_linkRefPtg = (OperandPtg<?>) ptgs[0];
+			_linkRefPtg = (OperandPtg) ptgs[0];
 			if (in.remaining() > 0) {
 				_unknownPostFormulaByte = Byte.valueOf(in.readByte());
 			} else {
