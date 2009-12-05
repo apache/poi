@@ -551,7 +551,7 @@ public final class FormulaParser {
 			return function(name);
 		}
 		if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
-			return  new ParseNode(new BoolPtg(name.toUpperCase()));
+			return  new ParseNode(BoolPtg.valueOf(name.equalsIgnoreCase("TRUE")));
 		}
 		if (_book == null) {
 			// Only test cases omit the book (expecting it not to be needed)

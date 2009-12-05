@@ -152,7 +152,7 @@ public abstract class Ptg {
 			case StringPtg.sid:       return new StringPtg(in);       // 0x17
 			case AttrPtg.sid:         return new AttrPtg(in);         // 0x19
 			case ErrPtg.sid:          return ErrPtg.read(in);         // 0x1c
-			case BoolPtg.sid:         return new BoolPtg(in);         // 0x1d
+			case BoolPtg.sid:         return BoolPtg.read(in);        // 0x1d
 			case IntPtg.sid:          return new IntPtg(in);          // 0x1e
 			case NumberPtg.sid:       return new NumberPtg(in);       // 0x1f
 		}
