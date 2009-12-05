@@ -22,22 +22,29 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Boolean (boolean) Stores a (java) boolean value in a formula.
- * 
+ *
  * @author Paul Krause (pkrause at soundbite dot com)
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class BoolPtg extends ScalarConstantPtg {
-	public final static int SIZE = 2;
-	public final static byte sid = 0x1D;
+	public static final int SIZE = 2;
+	public static final byte sid = 0x1D;
+
+	private static final BoolPtg FALSE = new BoolPtg(false);
+	private static final BoolPtg TRUE = new BoolPtg(true);
+
 	private final boolean _value;
 
-	public BoolPtg(LittleEndianInput in)  {
-		_value = (in.readByte() == 1);
+	private BoolPtg(boolean b) {
+		_value = b;
 	}
 
-	public BoolPtg(String formulaToken) {
-		_value = (formulaToken.equalsIgnoreCase("TRUE"));
+	public static BoolPtg valueOf(boolean b) {
+		return b ? TRUE : FALSE;
+	}
+	public static BoolPtg read(LittleEndianInput in)  {
+		return valueOf(in.readByte() == 1);
 	}
 
 	public boolean getValue() {
