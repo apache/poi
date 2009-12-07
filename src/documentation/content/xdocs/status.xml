@@ -33,7 +33,9 @@
     </developers>
 
     <changes>
-        <release version="3.6-beta1" date="2009-??-??">
+        <release version="3.7-SNAPSHOT" date="2010-??-??">
+        </release>
+        <release version="3.6" date="2009-12-14">
            <action dev="POI-DEVELOPERS" type="fix">48332 - fixed XSSFSheet autoSizeColumn() to tolerate empty RichTextString</action>
            <action dev="POI-DEVELOPERS" type="fix">48332 - fixed ColumnInfoRecord to tolerate missing reserved field</action>
            <action dev="POI-DEVELOPERS" type="fix">47701 - fixed RecordFormatException when reading list subrecords (LbsDataSubRecord)</action>

@@ -54,10 +54,10 @@ do
   #The maven sign-and-deploy-file command does NOT sign POM files, so we have to upload the POM's .asc manually
   scp $artifactId-$VERSION.pom.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/
 
-  if [ -r $artifactId-$VERSION-sources.jar ]; then
+  if [ -r $artifactId-$VERSION-sources-$DSTAMP.jar ]; then
     mvn deploy:deploy-file -DrepositoryId=apache-releases -P apache-releases \
       -Durl=$M2_REPOSITORY -DgeneratePom=false -Dpackaging=java-source \
-      -Dfile=$artifactId-$VERSION-sources.jar -DpomFile=$artifactId-$VERSION.pom
-    scp $artifactId-$VERSION-sources.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/
+      -Dfile=$artifactId-$VERSION-sources-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
+    scp $artifactId-$VERSION-sources-$DSTAMP.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/$artifactId-$VERSION-sources.jar.asc
   fi
 done
