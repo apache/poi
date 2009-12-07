@@ -914,27 +914,27 @@ under the License.
     </target>
 
     <target name="jar-src" description="Sources for Maven">
-        <jar destfile="${dist.dir}/${jar.name}-${version.id}-sources.jar"
+        <jar destfile="${dist.dir}/${jar.name}-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${main.src}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-sources.jar"
+        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${scratchpad.src}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-sources.jar"
+        <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${contrib.src}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-sources.jar"
+        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${ooxml.src}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-sources.jar"
+        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${examples.src}"/>
             <metainf dir="legal/"/>
