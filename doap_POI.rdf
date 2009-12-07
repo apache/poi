@@ -20,16 +20,9 @@
     <category rdf:resource="http://projects.apache.org/category/library" />
     <release>
       <Version>
-        <name>Apache POI 3.5</name>
-        <created>2009-09-28</created>
-        <revision>3.5</revision>
-      </Version>
-    </release>
-    <release>
-      <Version>
-        <name>Apache POI 3.2</name>
-        <created>2008-10-19</created>
-        <revision>3.2</revision>
+        <name>Apache POI 3.6</name>
+        <created>2009-12-14</created>
+        <revision>3.6</revision>
       </Version>
     </release>
     <repository>
