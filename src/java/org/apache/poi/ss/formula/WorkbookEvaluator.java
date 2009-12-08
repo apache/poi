@@ -497,10 +497,10 @@ public final class WorkbookEvaluator {
 				if(ae.isColumn()) {
 					return ae.getRelativeValue(0, 0);
 				}
-				return ae.getValueAt(ae.getFirstRow(), srcColNum);
+				return ae.getAbsoluteValue(ae.getFirstRow(), srcColNum);
 			}
 			if (ae.isColumn()) {
-				return ae.getValueAt(srcRowNum, ae.getFirstColumn());
+				return ae.getAbsoluteValue(srcRowNum, ae.getFirstColumn());
 			}
 			return ErrorEval.VALUE_INVALID;
 		}

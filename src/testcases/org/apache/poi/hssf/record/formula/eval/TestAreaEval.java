@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.formula.functions.EvalFactory;
 
 /**
  * Tests for <tt>AreaEval</tt>
- *  
+ *
  * @author Josh Micich
  */
 public final class TestAreaEval extends TestCase {
@@ -35,15 +35,15 @@ public final class TestAreaEval extends TestCase {
 		AreaPtg ptg = new AreaPtg("B2:D3");
 		NumberEval one = new NumberEval(1);
 		ValueEval[] values = {
-				one,	
-				new NumberEval(2),	
-				new NumberEval(3),	
-				new NumberEval(4),	
-				new NumberEval(5),	
-				new NumberEval(6),	
+				one,
+				new NumberEval(2),
+				new NumberEval(3),
+				new NumberEval(4),
+				new NumberEval(5),
+				new NumberEval(6),
 		};
 		AreaEval ae = EvalFactory.createAreaEval(ptg, values);
-		if (one == ae.getValueAt(1, 2)) {
+		if (one == ae.getAbsoluteValue(1, 2)) {
 			throw new AssertionFailedError("Identified bug 44950 a");
 		}
 		confirm(1, ae, 1, 1);
@@ -52,12 +52,11 @@ public final class TestAreaEval extends TestCase {
 		confirm(4, ae, 2, 1);
 		confirm(5, ae, 2, 2);
 		confirm(6, ae, 2, 3);
-		
+
 	}
 
 	private static void confirm(int expectedValue, AreaEval ae, int row, int col) {
-		NumberEval v = (NumberEval) ae.getValueAt(row, col);
+		NumberEval v = (NumberEval) ae.getAbsoluteValue(row, col);
 		assertEquals(expectedValue, v.getNumberValue(), 0.0);
 	}
-
 }

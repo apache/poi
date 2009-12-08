@@ -67,7 +67,7 @@ public abstract class AreaEvalBase implements AreaEval {
 		return _lastRow;
 	}
 
-	public final ValueEval getValueAt(int row, int col) {
+	public final ValueEval getAbsoluteValue(int row, int col) {
 		int rowOffsetIx = row - _firstRow;
 		int colOffsetIx = col - _firstColumn;
 
