@@ -1,0 +1,83 @@
+package org.apache.poi.hssf.record.formula.functions;
+
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+
+/**
+ * Implementation for the Excel function SUBTOTAL<p>
+ *
+ * <b>Syntax :</b> <br/>
+ *  SUBTOTAL ( <b>functionCode</b>, <b>ref1</b>, ref2 ... ) <br/>
+ *    <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *      <tr><td><b>functionCode</b></td><td>(1-11) Selects the underlying aggregate function to be used (see table below)</td></tr>
+ *      <tr><td><b>ref1</b>, ref2 ...</td><td>Arguments to be passed to the underlying aggregate function</td></tr>
+ *    </table><br/>
+ * </p>
+ *
+ *  <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *      <tr><th>functionCode</th><th>Aggregate Function</th></tr>
+ *      <tr align='center'><td>1</td><td>AVERAGE</td></tr>
+ *      <tr align='center'><td>2</td><td>COUNT</td></tr>
+ *      <tr align='center'><td>3</td><td>COUNTA</td></tr>
+ *      <tr align='center'><td>4</td><td>MAX</td></tr>
+ *      <tr align='center'><td>5</td><td>MIN</td></tr>
+ *      <tr align='center'><td>6</td><td>PRODUCT</td></tr>
+ *      <tr align='center'><td>7</td><td>STDEV</td></tr>
+ *      <tr align='center'><td>8</td><td>STDEVP *</td></tr>
+ *      <tr align='center'><td>9</td><td>AVERAGE</td></tr>
+ *      <tr align='center'><td>10</td><td>VAR *</td></tr>
+ *      <tr align='center'><td>11</td><td>VARP *</td></tr>
+ *      <tr align='center'><td>101-111</td><td>*</td></tr>
+ *  </table><br/>
+ * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
+ * the option 'ignore hidden values'.
+ * <p/>
+ *
+ * @author Paul Tomlin &lt; pault at bulk sms dot com &gt;
+ */
+public class Subtotal implements Function {
+
+	private static Function findFunction(int functionCode) throws EvaluationException {
+		switch (functionCode) {
+			case 1: return AggregateFunction.AVERAGE;
+			case 2: return new Count();
+			case 3: return new Counta();
+			case 4: return AggregateFunction.MAX;
+			case 5: return AggregateFunction.MIN;
+			case 6: return AggregateFunction.PRODUCT;
+			case 7: return AggregateFunction.STDEV;
+			case 8: throw new NotImplementedException("STDEVP");
+			case 9: return AggregateFunction.SUM;
+			case 10: throw new NotImplementedException("VAR");
+			case 11: throw new NotImplementedException("VARP");
+		}
+		if (functionCode > 100 && functionCode < 112) {
+			throw new NotImplementedException("SUBTOTAL - with 'exclude hidden values' option");
+		}
+		throw EvaluationException.invalidValue();
+	}
+
+	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		int nInnerArgs = args.length-1; // -1: first arg is used to select from a basic aggregate function
+		if (nInnerArgs < 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+
+		Function innerFunc;
+		try {
+			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
+			int functionCode = OperandResolver.coerceValueToInt(ve);
+			innerFunc = findFunction(functionCode);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+
+		ValueEval[] innerArgs = new ValueEval[nInnerArgs];
+		System.arraycopy(args, 1, innerArgs, 0, nInnerArgs);
+
+		return innerFunc.evaluate(innerArgs, srcRowIndex, srcColumnIndex);
+	}
+}

@@ -48,6 +48,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestPmt.class);
 		result.addTestSuite(TestOffset.class);
 		result.addTestSuite(TestRowCol.class);
+		result.addTestSuite(TestSubtotal.class);
 		result.addTestSuite(TestSumif.class);
 		result.addTestSuite(TestSumproduct.class);
 		result.addTestSuite(TestStatsLib.class);

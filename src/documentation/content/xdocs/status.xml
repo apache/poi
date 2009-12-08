@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">48343 - added implementation of SUBTOTAL function</action>
         </release>
         <release version="3.6" date="2009-12-14">
            <action dev="POI-DEVELOPERS" type="fix">48332 - fixed XSSFSheet autoSizeColumn() to tolerate empty RichTextString</action>
