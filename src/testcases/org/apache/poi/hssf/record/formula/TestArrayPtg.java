@@ -106,12 +106,11 @@ public final class TestArrayPtg extends TestCase {
 
 		// The formula has an array with 3 rows and 5 columns
 		String formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
-		// TODO - These number literals should not have '.0'. Excel has different number rendering rules
 
-		if (formula.equals("SUM({1.0,6.0,11.0;2.0,7.0,12.0;3.0,8.0,13.0;4.0,9.0,14.0;5.0,10.0,15.0})")) {
+		if (formula.equals("SUM({1,6,11;2,7,12;3,8,13;4,9,14;5,10,15})")) {
 			throw new AssertionFailedError("Identified bug 42564 b");
 		}
-		assertEquals("SUM({1.0,2.0,3.0,4.0,5.0;6.0,7.0,8.0,9.0,10.0;11.0,12.0,13.0,14.0,15.0})", formula);
+		assertEquals("SUM({1,2,3,4,5;6,7,8,9,10;11,12,13,14,15})", formula);
 	}
 
 	public void testToFormulaString() {
@@ -125,7 +124,7 @@ public final class TestArrayPtg extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals("{TRUE,\"ABCD\",\"E\";0.0,FALSE,\"FG\"}", actualFormula);
+		assertEquals("{TRUE,\"ABCD\",\"E\";0,FALSE,\"FG\"}", actualFormula);
 	}
 
 	/**

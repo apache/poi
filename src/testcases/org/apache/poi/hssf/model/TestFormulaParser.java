@@ -17,11 +17,14 @@
 
 package org.apache.poi.hssf.model;
 
+import java.util.Arrays;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
@@ -71,6 +74,8 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
@@ -830,12 +835,40 @@ public final class TestFormulaParser extends TestCase {
 		Ptg[] ptgs;
 		ptgs = parseFormula("mode({1,2,2,#REF!;FALSE,3,3,2})");
 		confirmTokenClasses(ptgs, ArrayPtg.class, FuncVarPtg.class);
-		assertEquals("{1.0,2.0,2.0,#REF!;FALSE,3.0,3.0,2.0}", ptgs[0].toFormulaString());
+		assertEquals("{1,2,2,#REF!;FALSE,3,3,2}", ptgs[0].toFormulaString());
 
 		ArrayPtg aptg = (ArrayPtg) ptgs[0];
 		Object[][] values = aptg.getTokenArrayValues();
 		assertEquals(ErrorConstant.valueOf(HSSFErrorConstants.ERROR_REF), values[0][3]);
 		assertEquals(Boolean.FALSE, values[1][0]);
+	}
+
+	public void testParseStringElementInArray() {
+		Ptg[] ptgs;
+		ptgs = parseFormula("MAX({\"5\"},3)");
+		confirmTokenClasses(ptgs, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);
+		Object element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
+		if (element instanceof UnicodeString) {
+			// this would cause ClassCastException below
+			throw new AssertionFailedError("Wrong encoding of array element value");
+		}
+		assertEquals(String.class, element.getClass());
+
+		// make sure the formula encodes OK
+		int encSize = Ptg.getEncodedSize(ptgs);
+		byte[] data = new byte[encSize];
+		Ptg.serializePtgs(ptgs, data, 0);
+		byte[] expData = HexRead.readFromString(
+				"20 00 00 00 00 00 00 00 " // tArray
+				+ "1E 03 00 "      // tInt(3)
+				+ "42 02 07 00 "   // tFuncVar(MAX) 2-arg
+				+ "00 00 00 "      // Array data: 1 col, 1 row
+				+ "02 01 00 00 35" // elem (type=string, len=1, "5")
+		);
+		assertTrue(Arrays.equals(expData, data));
+		int initSize = Ptg.getEncodedSizeWithoutArrayData(ptgs);
+		Ptg[] ptgs2 = Ptg.readTokens(initSize, new LittleEndianByteArrayInputStream(data));
+		confirmTokenClasses(ptgs2, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);
 	}
 
 	public void testRangeOperator() {

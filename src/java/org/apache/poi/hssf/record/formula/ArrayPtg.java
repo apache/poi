@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.record.constant.ConstantValueParser;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -193,7 +194,7 @@ public final class ArrayPtg extends Ptg {
 			return "\"" + (String)o + "\"";
 		}
 		if (o instanceof Double) {
-			return ((Double)o).toString();
+			return NumberToTextConverter.toText(((Double)o).doubleValue());
 		}
 		if (o instanceof Boolean) {
 			return ((Boolean)o).booleanValue() ? "TRUE" : "FALSE";
