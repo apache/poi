@@ -205,6 +205,7 @@ public final class FunctionEval {
 		retval[342] = NumericFunction.RADIANS;
 		retval[343] = NumericFunction.DEGREES;
 
+		retval[344] = new Subtotal();
 		retval[345] = new Sumif();
 		retval[346] = new Countif();
 		retval[347] = new Countblank();
