@@ -21,16 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
 import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
-import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -1205,7 +1204,7 @@ public final class FormulaParser {
 	private Object parseArrayItem() {
 		SkipWhite();
 		switch(look) {
-			case '"': return new UnicodeString(parseStringLiteral());
+			case '"': return parseStringLiteral();
 			case '#': return ErrorConstant.valueOf(parseErrorLiteral());
 			case 'F': case 'f':
 			case 'T': case 't':
