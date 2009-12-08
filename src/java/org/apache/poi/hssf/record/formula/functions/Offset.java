@@ -18,13 +18,10 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * Implementation for Excel function OFFSET()<p/>
@@ -223,43 +220,8 @@ public final class Offset implements Function {
 	/**
 	 * OFFSET's numeric arguments (2..5) have similar processing rules
 	 */
-	private static int evaluateIntArg(ValueEval eval, int srcCellRow, int srcCellCol) throws EvaluationException {
-
-		double d = evaluateDoubleArg(eval, srcCellRow, srcCellCol);
-		return convertDoubleToInt(d);
-	}
-
-	/**
-	 * Fractional values are silently truncated by Excel.
-	 * Truncation is toward negative infinity.
-	 */
-	/* package */ static int convertDoubleToInt(double d) {
-		// Note - the standard java type conversion from double to int truncates toward zero.
-		// but Math.floor() truncates toward negative infinity
-		return (int)Math.floor(d);
-	}
-
-	private static double evaluateDoubleArg(ValueEval eval, int srcCellRow, int srcCellCol) throws EvaluationException {
+	static int evaluateIntArg(ValueEval eval, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcCellRow, srcCellCol);
-
-		if (ve instanceof NumericValueEval) {
-			return ((NumericValueEval) ve).getNumberValue();
-		}
-		if (ve instanceof StringEval) {
-			StringEval se = (StringEval) ve;
-			Double d = OperandResolver.parseDouble(se.getStringValue());
-			if(d == null) {
-				throw new EvaluationException(ErrorEval.VALUE_INVALID);
-			}
-			return d.doubleValue();
-		}
-		if (ve instanceof BoolEval) {
-			// in the context of OFFSET, booleans resolve to 0 and 1.
-			if(((BoolEval) ve).getBooleanValue()) {
-				return 1;
-			}
-			return 0;
-		}
-		throw new RuntimeException("Unexpected eval type (" + ve.getClass().getName() + ")");
+		return OperandResolver.coerceValueToInt(ve);
 	}
 }
