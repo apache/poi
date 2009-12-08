@@ -95,6 +95,37 @@ public final class TestEqualEval extends TestCase {
 		return be.getBooleanValue();
 	}
 
+	public void testBooleanCompares() {
+		confirmCompares(BoolEval.TRUE, new StringEval("TRUE"), +1);
+		confirmCompares(BoolEval.TRUE, new NumberEval(1.0), +1);
+		confirmCompares(BoolEval.TRUE, BoolEval.TRUE, 0);
+		confirmCompares(BoolEval.TRUE, BoolEval.FALSE, +1);
+
+		confirmCompares(BoolEval.FALSE, new StringEval("TRUE"), +1);
+		confirmCompares(BoolEval.FALSE, new StringEval("FALSE"), +1);
+		confirmCompares(BoolEval.FALSE, new NumberEval(0.0), +1);
+		confirmCompares(BoolEval.FALSE, BoolEval.FALSE, 0);
+	}
+	private static void confirmCompares(ValueEval a, ValueEval b, int expRes) {
+		confirm(a, b, expRes>0,  EI.GreaterThan);
+		confirm(a, b, expRes>=0, EI.GreaterEqual);
+		confirm(a, b, expRes==0, EI.Equal);
+		confirm(a, b, expRes<=0, EI.LessEqual);
+		confirm(a, b, expRes<0,  EI.LessThan);
+
+		confirm(b, a, expRes<0,  EI.GreaterThan);
+		confirm(b, a, expRes<=0, EI.GreaterEqual);
+		confirm(b, a, expRes==0, EI.Equal);
+		confirm(b, a, expRes>=0, EI.LessEqual);
+		confirm(b, a, expRes>0,  EI.LessThan);
+	}
+	private static void confirm(ValueEval a, ValueEval b, boolean expectedResult, Function cmpOp) {
+		ValueEval[] args = { a, b, };
+		ValueEval result = evaluate(cmpOp, args, 10, 20);
+		assertEquals(BoolEval.class, result.getClass());
+		assertEquals(expectedResult, ((BoolEval) result).getBooleanValue());
+	}
+
 	/**
 	 * Bug 47198 involved a formula "-A1=0" where cell A1 was 0.0.
 	 * Excel evaluates "-A1=0" to TRUE, not because it thinks -0.0==0.0

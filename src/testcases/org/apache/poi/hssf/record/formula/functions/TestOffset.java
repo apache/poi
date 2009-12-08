@@ -17,32 +17,41 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.Offset.LinearOffsetRange;
 
 /**
  * Tests for OFFSET function implementation
- * 
+ *
  * @author Josh Micich
  */
 public final class TestOffset extends TestCase {
 
-	
 	private static void confirmDoubleConvert(double doubleVal, int expected) {
-		assertEquals(expected, Offset.convertDoubleToInt(doubleVal));
+		try {
+			assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
+		} catch (EvaluationException e) {
+			throw new AssertionFailedError("Unexpected error '" + e.getErrorEval().toString() + "'.");
+		}
 	}
 	/**
 	 * Excel's double to int conversion (for function 'OFFSET()') behaves more like Math.floor().
 	 * Note - negative values are not symmetrical
+	 * Fractional values are silently truncated.
+	 * Truncation is toward negative infinity.
 	 */
 	public void testDoubleConversion() {
-		
+
 		confirmDoubleConvert(100.09, 100);
 		confirmDoubleConvert(100.01, 100);
 		confirmDoubleConvert(100.00, 100);
 		confirmDoubleConvert(99.99, 99);
-		
+
 		confirmDoubleConvert(+2.01, +2);
 		confirmDoubleConvert(+2.00, +2);
 		confirmDoubleConvert(+1.99, +1);
@@ -62,25 +71,25 @@ public final class TestOffset extends TestCase {
 
 	public void testLinearOffsetRange() {
 		LinearOffsetRange lor;
-		
+
 		lor = new LinearOffsetRange(3, 2);
 		assertEquals(3, lor.getFirstIndex());
 		assertEquals(4, lor.getLastIndex());
 		lor = lor.normaliseAndTranslate(0); // expected no change
 		assertEquals(3, lor.getFirstIndex());
 		assertEquals(4, lor.getLastIndex());
-		
+
 		lor = lor.normaliseAndTranslate(5);
 		assertEquals(8, lor.getFirstIndex());
 		assertEquals(9, lor.getLastIndex());
-		
+
 		// negative length
-		
+
 		lor = new LinearOffsetRange(6, -4).normaliseAndTranslate(0);
 		assertEquals(3, lor.getFirstIndex());
 		assertEquals(6, lor.getLastIndex());
-		
-		
+
+
 		// bounds checking
 		lor = new LinearOffsetRange(0, 100);
 		assertFalse(lor.isOutOfBounds(0, 16383));
@@ -88,5 +97,4 @@ public final class TestOffset extends TestCase {
 		assertTrue(lor.isOutOfBounds(0, 16383));
 		assertFalse(lor.isOutOfBounds(0, 65535));
 	}
-	
 }
