@@ -151,19 +151,19 @@ public final class OperandResolver {
 			if(!ae.containsRow(srcCellRow)) {
 				throw EvaluationException.invalidValue();
 			}
-			return ae.getValueAt(srcCellRow, ae.getFirstColumn());
+			return ae.getAbsoluteValue(srcCellRow, ae.getFirstColumn());
 		}
 		if(!ae.isRow()) {
 			// multi-column, multi-row area
 			if(ae.containsRow(srcCellRow) && ae.containsColumn(srcCellCol)) {
-				return ae.getValueAt(ae.getFirstRow(), ae.getFirstColumn());
+				return ae.getAbsoluteValue(ae.getFirstRow(), ae.getFirstColumn());
 			}
 			throw EvaluationException.invalidValue();
 		}
 		if(!ae.containsColumn(srcCellCol)) {
 			throw EvaluationException.invalidValue();
 		}
-		return ae.getValueAt(ae.getFirstRow(), srcCellCol);
+		return ae.getAbsoluteValue(ae.getFirstRow(), srcCellCol);
 	}
 
 	/**

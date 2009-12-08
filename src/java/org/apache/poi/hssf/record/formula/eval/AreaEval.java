@@ -62,11 +62,11 @@ public interface AreaEval extends ValueEval {
     boolean isColumn();
 
     /**
-     * @return the ValueEval from within this area at the specified row and col index. Never 
-     * <code>null</code> (possibly {@link BlankEval}).  The specified indexes should be absolute 
-     * indexes in the sheet and not relative indexes within the area.  
+     * @return the ValueEval from within this area at the specified row and col index. Never
+     * <code>null</code> (possibly {@link BlankEval}).  The specified indexes should be absolute
+     * indexes in the sheet and not relative indexes within the area.
      */
-    ValueEval getValueAt(int row, int col);
+    ValueEval getAbsoluteValue(int row, int col);
 
     /**
      * returns true if the cell at row and col specified
@@ -92,9 +92,9 @@ public interface AreaEval extends ValueEval {
     int getWidth();
     int getHeight();
     /**
-     * @return the ValueEval from within this area at the specified relativeRowIndex and 
+     * @return the ValueEval from within this area at the specified relativeRowIndex and
      * relativeColumnIndex. Never <code>null</code> (possibly {@link BlankEval}). The
-     * specified indexes should relative to the top left corner of this area.  
+     * specified indexes should relative to the top left corner of this area.
      */
     ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
 
