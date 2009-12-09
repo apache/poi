@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -27,6 +26,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -134,13 +134,13 @@ public abstract class MultiOperandNumericFunction implements Function {
 	 */
 	private void collectValues(ValueEval operand, DoubleList temp) throws EvaluationException {
 
-		if (operand instanceof AreaEval) {
-			AreaEval ae = (AreaEval) operand;
+		if (operand instanceof TwoDEval) {
+			TwoDEval ae = (TwoDEval) operand;
 			int width = ae.getWidth();
 			int height = ae.getHeight();
 			for (int rrIx=0; rrIx<height; rrIx++) {
 				for (int rcIx=0; rcIx<width; rcIx++) {
-					ValueEval ve = ae.getRelativeValue(rrIx, rcIx);
+					ValueEval ve = ae.getValue(rrIx, rcIx);
 					collectValue(ve, true, temp);
 				}
 			}
