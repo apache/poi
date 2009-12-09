@@ -17,25 +17,21 @@
 
 package org.apache.poi.hpsf.extractor;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
 
 public final class TestHPSFPropertiesExtractor extends TestCase {
-    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+	private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
 	public void testNormalProperties() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-                _samples.openResourceAsStream("TestMickey.doc")
-        );
+		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestMickey.doc"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 
@@ -57,9 +53,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 	}
 
 	public void testNormalUnicodeProperties() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-                _samples.openResourceAsStream("TestUnicode.xls")
-        );
+		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		ext.getText();
 
@@ -82,8 +76,8 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 
 	public void testCustomProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
-                _samples.openResourceAsStream("TestMickey.doc")
-        );
+				_samples.openResourceAsStream("TestMickey.doc")
+		);
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 
 		// Custom properties are part of the document info stream
@@ -100,9 +94,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		POIFSFileSystem fs;
 		HSSFWorkbook wb;
 		try {
-			fs = new POIFSFileSystem(
-                    _samples.openResourceAsStream("TestUnicode.xls")
-            );
+			fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
 			wb = new HSSFWorkbook(fs);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

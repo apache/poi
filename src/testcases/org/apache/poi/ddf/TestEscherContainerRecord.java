@@ -17,15 +17,13 @@
 
 package org.apache.poi.ddf;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IOUtils;
+
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests for {@link EscherContainerRecord}

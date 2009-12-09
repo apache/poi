@@ -18,7 +18,6 @@
 package org.apache.poi.ss.util;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
 
 
 /**

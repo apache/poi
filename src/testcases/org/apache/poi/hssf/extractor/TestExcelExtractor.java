@@ -17,18 +17,17 @@
 
 package org.apache.poi.hssf.extractor;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
 
 /**
  *
@@ -243,10 +242,10 @@ public final class TestExcelExtractor extends TestCase {
 	 * Excel embeded in excel
 	 */
 	public void testWithEmbededInOwn() throws Exception {
-        POIDataSamples ssSamples = POIDataSamples.getSpreadSheetInstance();
+		POIDataSamples ssSamples = POIDataSamples.getSpreadSheetInstance();
 		POIFSFileSystem fs = new POIFSFileSystem(
-                ssSamples.openResourceAsStream("excel_with_embeded.xls")
-        );
+				ssSamples.openResourceAsStream("excel_with_embeded.xls")
+		);
 
 		DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B5");
 		DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B4");

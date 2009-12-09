@@ -17,22 +17,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
+
 import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Iterator;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
@@ -64,8 +56,6 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private int _pictureIndex;
     HSSFPatriarch _patriarch;  // TODO make private
-
-    private static final POILogger log = POILogFactory.getLogger(HSSFPicture.class);
 
     /**
      * Constructs a picture object.
