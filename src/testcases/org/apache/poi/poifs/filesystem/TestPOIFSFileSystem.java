@@ -18,19 +18,17 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Tests for POIFSFileSystem
- * 
+ *
  * @author Josh Micich
  */
 public final class TestPOIFSFileSystem extends TestCase {
@@ -45,7 +43,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	}
 	/**
 	 * Helps facilitate testing. Keeps track of whether close() was called.
-	 * Also can throw an exception at a specific point in the stream. 
+	 * Also can throw an exception at a specific point in the stream.
 	 */
 	private static final class TestIS extends InputStream {
 
@@ -88,15 +86,15 @@ public final class TestPOIFSFileSystem extends TestCase {
 			return _isClosed;
 		}
 	}
-	
+
 	/**
 	 * Test for undesired behaviour observable as of svn revision 618865 (5-Feb-2008).
 	 * POIFSFileSystem was not closing the input stream.
 	 */
 	public void testAlwaysClose() {
-		
+
 		TestIS testIS;
-	
+
 		// Normal case - read until EOF and close
 		testIS = new TestIS(openSampleStream("13224.xls"), -1);
 		try {
@@ -105,7 +103,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 			throw new RuntimeException(e);
 		}
 		assertTrue("input stream was not closed", testIS.isClosed());
-		
+
 		// intended to crash after reading 10000 bytes
 		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
 		try {
@@ -117,14 +115,13 @@ public final class TestPOIFSFileSystem extends TestCase {
 			// expected
 		}
 		assertTrue("input stream was not closed", testIS.isClosed()); // but still should close
-		
 	}
-	
+
 	/**
 	 * Test for bug # 48898 - problem opening an OLE2
 	 *  file where the last block is short (i.e. not a full
 	 *  multiple of 512 bytes)
-	 *  
+	 *
 	 * As yet, this problem remains. One school of thought is
 	 *  not not issue an EOF when we discover the last block
 	 *  is short, but this seems a bit wrong.
@@ -133,21 +130,21 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 */
 	public void testShortLastBlock() throws Exception {
 		String[] files = new String[] {
-			"ShortLastBlock.qwp", "ShortLastBlock.wps"	
+			"ShortLastBlock.qwp", "ShortLastBlock.wps"
 		};
 
-        POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-        for(int i=0; i<files.length; i++) {
+		POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+		for(int i=0; i<files.length; i++) {
 
 			// Open the file up
 			POIFSFileSystem fs = new POIFSFileSystem(
 			    _samples.openResourceAsStream(files[i])
 			);
-			
+
 			// Write it into a temp output array
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			fs.writeFilesystem(baos);
-			
+
 			// Check sizes
 		}
 	}

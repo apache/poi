@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.io.FileOutputStream;
 
 import junit.framework.AssertionFailedError;
 
@@ -29,10 +28,9 @@ import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
@@ -42,9 +40,9 @@ import org.apache.poi.ss.SpreadsheetVersion;
  * @author Alex Jacoby (ajacoby at gmail.com)
  */
 public final class TestHSSFCell extends BaseTestCell {
-	
+
 	private static final HSSFITestDataProvider _hssfDP = HSSFITestDataProvider.getInstance();
-	
+
 	public TestHSSFCell() {
 		super(HSSFITestDataProvider.getInstance());
 	}
@@ -64,7 +62,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
 				sheet.getRow(0).getCell(0).getDateCellValue().getTime());
-		 
+
 		// now check a file with 1904 Date Windowing
 		workbook = _hssfDP.openSampleWorkbook("1904DateWindowing.xls");
 		sheet	= workbook.getSheetAt(0);
@@ -89,17 +87,17 @@ public final class TestHSSFCell extends BaseTestCell {
 		// first check a file with 1900 Date Windowing
 		HSSFWorkbook wb;
 		wb = _hssfDP.openSampleWorkbook("1900DateWindowing.xls");
-		  
+
 		setCell(wb, 0, 1, date);
 		wb = _hssfDP.writeOutAndReadBack(wb);
-		  
+
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
 				readCell(wb, 0, 1).getTime());
-		  
+
 		// now check a file with 1904 Date Windowing
 		wb = _hssfDP.openSampleWorkbook("1904DateWindowing.xls");
-		setCell(wb, 0, 1, date);		  
+		setCell(wb, 0, 1, date);
 		wb = _hssfDP.writeOutAndReadBack(wb);
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
@@ -110,27 +108,27 @@ public final class TestHSSFCell extends BaseTestCell {
 		HSSFSheet sheet = workbook.getSheetAt(0);
 		HSSFRow row = sheet.getRow(rowIdx);
 		HSSFCell cell = row.getCell(colIdx);
-		  
+
 		if (cell == null) {
 			cell = row.createCell(colIdx);
 		}
 		cell.setCellValue(date);
 	}
-	  
+
 	private static Date readCell(HSSFWorkbook workbook, int rowIdx, int colIdx) {
 		HSSFSheet sheet = workbook.getSheetAt(0);
 		HSSFRow row = sheet.getRow(rowIdx);
 		HSSFCell cell = row.getCell(colIdx);
 		return cell.getDateCellValue();
 	}
-	  
+
 	/**
 	 * Tests that the active cell can be correctly read and set
 	 */
 	public void testActiveCell() {
 		//read in sample
 		HSSFWorkbook book = _hssfDP.openSampleWorkbook("Simple.xls");
-		
+
 		//check initial position
 		HSSFSheet umSheet = book.getSheetAt(0);
 		Sheet s = umSheet.getSheet();
@@ -138,7 +136,7 @@ public final class TestHSSFCell extends BaseTestCell {
 			(short) 0, s.getActiveCellCol());
 		assertEquals("Initial active cell should be on row 1",
 			1, s.getActiveCellRow());
-		
+
 		//modify position through HSSFCell
 		HSSFCell cell = umSheet.createRow(3).createCell(2);
 		cell.setAsActiveCell();
@@ -146,13 +144,13 @@ public final class TestHSSFCell extends BaseTestCell {
 			(short) 2, s.getActiveCellCol());
 		assertEquals("After modify, active cell should be on row 3",
 			3, s.getActiveCellRow());
-		
+
 		//write book to temp file; read and verify that position is serialized
 		book = _hssfDP.writeOutAndReadBack(book);
 
 		umSheet = book.getSheetAt(0);
 		s = umSheet.getSheet();
-		
+
 		assertEquals("After serialize, active cell should be in col 2",
 			(short) 2, s.getActiveCellCol());
 		assertEquals("After serialize, active cell should be on row 3",
@@ -176,14 +174,14 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals(4, link.getFirstRow());
 		assertEquals(0, link.getFirstColumn());
 	}
-	
+
 	/**
 	 * Test reading hyperlinks
 	 */
 	public void testWithTwoHyperlinks() {
 
 		HSSFWorkbook wb = _hssfDP.openSampleWorkbook("WithTwoHyperLinks.xls");
-		
+
 		HSSFSheet sheet = wb.getSheetAt(0);
 
 		HSSFCell cell1 = sheet.getRow(4).getCell(0);
@@ -250,7 +248,7 @@ public final class TestHSSFCell extends BaseTestCell {
 
 	/**
 	 * Test for small bug observable around r736460 (prior to version 3.5).  POI fails to remove
-	 * the {@link StringRecord} following the {@link FormulaRecord} after the result type had been 
+	 * the {@link StringRecord} following the {@link FormulaRecord} after the result type had been
 	 * changed to number/boolean/error.  Excel silently ignores the extra record, but some POI
 	 * versions (prior to bug 46213 / r717883) crash instead.
 	 */
@@ -266,13 +264,13 @@ public final class TestHSSFCell extends BaseTestCell {
 			throw new AssertionFailedError("Identified bug - leftover StringRecord");
 		}
 		confirmStringRecord(sheet, false);
-		
+
 		// string to error code
 		cell.setCellValue("abc");
 		confirmStringRecord(sheet, true);
 		cell.setCellErrorValue((byte)ErrorConstants.ERROR_REF);
 		confirmStringRecord(sheet, false);
-		
+
 		// string to boolean
 		cell.setCellValue("abc");
 		confirmStringRecord(sheet, true);
@@ -295,33 +293,32 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals(DBCellRecord.class, dbcr.getClass());
 	}
 
-    /**
-     *  The maximum length of cell contents (text) is 32,767 characters.
-     */
-    public void testMaxTextLength(){
-        HSSFSheet sheet = new HSSFWorkbook().createSheet();
-        HSSFCell cell = sheet.createRow(0).createCell(0);
+	/**
+	 *  The maximum length of cell contents (text) is 32,767 characters.
+	 */
+	public void testMaxTextLength(){
+		HSSFSheet sheet = new HSSFWorkbook().createSheet();
+		HSSFCell cell = sheet.createRow(0).createCell(0);
 
-        int maxlen = SpreadsheetVersion.EXCEL97.getMaxTextLength();
-        assertEquals(32767, maxlen);
+		int maxlen = SpreadsheetVersion.EXCEL97.getMaxTextLength();
+		assertEquals(32767, maxlen);
 
-        StringBuffer b = new StringBuffer() ;
+		StringBuffer b = new StringBuffer() ;
 
-        // 32767 is okay
-        for( int i = 0 ; i < maxlen ; i++ )
-        {
-            b.append( "X" ) ;
-        }
-        cell.setCellValue(b.toString());
+		// 32767 is okay
+		for( int i = 0 ; i < maxlen ; i++ )
+		{
+			b.append( "X" ) ;
+		}
+		cell.setCellValue(b.toString());
 
-        b.append("X");
-        // 32768 produces an invalid XLS file
-        try {
-            cell.setCellValue(b.toString());
-            fail("Expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
-        }
-    }
+		b.append("X");
+		// 32768 produces an invalid XLS file
+		try {
+			cell.setCellValue(b.toString());
+			fail("Expected exception");
+		} catch (IllegalArgumentException e){
+			assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
+		}
+	}
 }
-

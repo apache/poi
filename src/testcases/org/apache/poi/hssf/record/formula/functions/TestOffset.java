@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.Offset.LinearOffsetRange;
 
 /**

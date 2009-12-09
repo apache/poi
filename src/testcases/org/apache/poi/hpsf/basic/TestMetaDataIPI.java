@@ -29,12 +29,9 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -605,9 +602,9 @@ public final class TestMetaDataIPI extends TestCase{
 	}
 
 
-   /**
+	/**
 	 * Iterative testing of the unicode test
-	 * 
+	 *
 	 */
 	public void testSix() {
 		for (int i = 1; i < 100; i++) {

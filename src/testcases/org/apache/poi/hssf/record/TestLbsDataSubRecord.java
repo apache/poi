@@ -18,19 +18,17 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
-
-import java.util.Arrays;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.hssf.record.formula.Ptg;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
  * Tests the serialization and deserialization of the LbsDataSubRecord class works correctly.
