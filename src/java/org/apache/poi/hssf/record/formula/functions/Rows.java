@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for Excel ROWS function.
@@ -33,8 +33,8 @@ public final class Rows extends Fixed1ArgFunction {
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 
 		int result;
-		if (arg0 instanceof AreaEval) {
-			result = ((AreaEval) arg0).getHeight();
+		if (arg0 instanceof TwoDEval) {
+			result = ((TwoDEval) arg0).getHeight();
 		} else if (arg0 instanceof RefEval) {
 			result = 1;
 		} else { // anything else is not valid argument

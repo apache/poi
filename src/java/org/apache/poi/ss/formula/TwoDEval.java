@@ -15,31 +15,37 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.formula.functions;
+package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
- * Implementation for Excel COLUMNS function.
+ * Common interface of {@link AreaEval} and {@link ArrayEval}
  *
  * @author Josh Micich
  */
-public final class Columns extends Fixed1ArgFunction {
+public interface TwoDEval extends ValueEval {
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+	/**
+	 * @param row relative row index (zero based)
+	 * @param col relative column index (zero based)
+	 * @return element at the specified row and col position
+	 */
+	public ValueEval getValue(int row, int col);
 
-		int result;
-		if (arg0 instanceof TwoDEval) {
-			result = ((TwoDEval) arg0).getWidth();
-		} else if (arg0 instanceof RefEval) {
-			result = 1;
-		} else { // anything else is not valid argument
-			return ErrorEval.VALUE_INVALID;
-		}
-		return new NumberEval(result);
-	}
+	int getWidth();
+	int getHeight();
+
+	/**
+	 * @return <code>true</code> if the area has just a single row, this also includes
+	 * the trivial case when the area has just a single cell.
+	 */
+	boolean isRow();
+
+	/**
+	 * @return <code>true</code> if the area has just a single column, this also includes
+	 * the trivial case when the area has just a single cell.
+	 */
+	boolean isColumn();
 }

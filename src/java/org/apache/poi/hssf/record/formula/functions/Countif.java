@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.formula.functions;
 
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -30,6 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
@@ -417,8 +417,8 @@ public final class Countif extends Fixed2ArgFunction {
 
 		if (rangeArg instanceof RefEval) {
 			return CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
-		} else if (rangeArg instanceof AreaEval) {
-			return CountUtils.countMatchingCellsInArea((AreaEval) rangeArg, criteriaPredicate);
+		} else if (rangeArg instanceof TwoDEval) {
+			return CountUtils.countMatchingCellsInArea((TwoDEval) rangeArg, criteriaPredicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
 		}

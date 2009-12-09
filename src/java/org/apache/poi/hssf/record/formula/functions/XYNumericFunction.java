@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -71,10 +71,10 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 	}
 
 	private static final class AreaValueArray extends ValueArray {
-		private final AreaEval _ae;
+		private final TwoDEval _ae;
 		private final int _width;
 
-		public AreaValueArray(AreaEval ae) {
+		public AreaValueArray(TwoDEval ae) {
 			super(ae.getWidth() * ae.getHeight());
 			_ae = ae;
 			_width = ae.getWidth();
@@ -82,7 +82,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 		protected ValueEval getItemInternal(int index) {
 			int rowIx = index / _width;
 			int colIx = index % _width;
-			return _ae.getRelativeValue(rowIx, colIx);
+			return _ae.getValue(rowIx, colIx);
 		}
 	}
 
@@ -166,8 +166,8 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 		if (arg instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) arg);
 		}
-		if (arg instanceof AreaEval) {
-			return new AreaValueArray((AreaEval) arg);
+		if (arg instanceof TwoDEval) {
+			return new AreaValueArray((TwoDEval) arg);
 		}
 		if (arg instanceof RefEval) {
 			return new RefValueArray((RefEval) arg);

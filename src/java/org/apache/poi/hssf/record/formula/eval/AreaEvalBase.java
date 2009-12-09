@@ -66,7 +66,6 @@ public abstract class AreaEvalBase implements AreaEval {
 	public final int getLastRow() {
 		return _lastRow;
 	}
-
 	public final ValueEval getAbsoluteValue(int row, int col) {
 		int rowOffsetIx = row - _firstRow;
 		int colOffsetIx = col - _firstColumn;
@@ -104,6 +103,10 @@ public abstract class AreaEvalBase implements AreaEval {
 	}
 	public int getHeight() {
 		return _lastRow-_firstRow+1;
+	}
+
+	public final ValueEval getValue(int row, int col) {
+		return getRelativeValue(row, col);
 	}
 
 	public abstract ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);

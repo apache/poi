@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Here are the general rules concerning Boolean functions:
@@ -61,13 +61,13 @@ public abstract class BooleanFunction implements Function {
 		 */
 		for (int i=0, iSize=args.length; i<iSize; i++) {
 			ValueEval arg = args[i];
-			if (arg instanceof AreaEval) {
-				AreaEval ae = (AreaEval) arg;
+			if (arg instanceof TwoDEval) {
+				TwoDEval ae = (TwoDEval) arg;
 				int height = ae.getHeight();
 				int width = ae.getWidth();
 				for (int rrIx=0; rrIx<height; rrIx++) {
 					for (int rcIx=0; rcIx<width; rcIx++) {
-						ValueEval ve = ae.getRelativeValue(rrIx, rcIx);
+						ValueEval ve = ae.getValue(rrIx, rcIx);
 						Boolean tempVe = OperandResolver.coerceValueToBoolean(ve, true);
 						if (tempVe != null) {
 							result = partialEvaluate(result, tempVe.booleanValue());

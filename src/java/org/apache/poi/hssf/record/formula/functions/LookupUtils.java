@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -28,6 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
@@ -47,15 +47,14 @@ final class LookupUtils {
 
 	private static final class RowVector implements ValueVector {
 
-		private final AreaEval _tableArray;
+		private final TwoDEval _tableArray;
 		private final int _size;
 		private final int _rowIndex;
 
-		public RowVector(AreaEval tableArray, int rowIndex) {
+		public RowVector(TwoDEval tableArray, int rowIndex) {
 			_rowIndex = rowIndex;
-			int _rowAbsoluteIndex = tableArray.getFirstRow() + rowIndex;
-			if(!tableArray.containsRow(_rowAbsoluteIndex)) {
-				int lastRowIx =  tableArray.getLastRow() -  tableArray.getFirstRow();
+			int lastRowIx =  tableArray.getHeight() - 1;
+			if(rowIndex < 0 || rowIndex > lastRowIx) {
 				throw new IllegalArgumentException("Specified row index (" + rowIndex
 						+ ") is outside the allowed range (0.." + lastRowIx + ")");
 			}
@@ -68,7 +67,7 @@ final class LookupUtils {
 				throw new ArrayIndexOutOfBoundsException("Specified index (" + index
 						+ ") is outside the allowed range (0.." + (_size-1) + ")");
 			}
-			return _tableArray.getRelativeValue(_rowIndex, index);
+			return _tableArray.getValue(_rowIndex, index);
 		}
 		public int getSize() {
 			return _size;
@@ -77,15 +76,14 @@ final class LookupUtils {
 
 	private static final class ColumnVector implements ValueVector {
 
-		private final AreaEval _tableArray;
+		private final TwoDEval _tableArray;
 		private final int _size;
 		private final int _columnIndex;
 
-		public ColumnVector(AreaEval tableArray, int columnIndex) {
+		public ColumnVector(TwoDEval tableArray, int columnIndex) {
 			_columnIndex = columnIndex;
-			int _columnAbsoluteIndex = tableArray.getFirstColumn() + columnIndex;
-			if(!tableArray.containsColumn((short)_columnAbsoluteIndex)) {
-				int lastColIx =  tableArray.getLastColumn() -  tableArray.getFirstColumn();
+			int lastColIx =  tableArray.getWidth()-1;
+			if(columnIndex < 0 || columnIndex > lastColIx) {
 				throw new IllegalArgumentException("Specified column index (" + columnIndex
 						+ ") is outside the allowed range (0.." + lastColIx + ")");
 			}
@@ -98,23 +96,23 @@ final class LookupUtils {
 				throw new ArrayIndexOutOfBoundsException("Specified index (" + index
 						+ ") is outside the allowed range (0.." + (_size-1) + ")");
 			}
-			return _tableArray.getRelativeValue(index, _columnIndex);
+			return _tableArray.getValue(index, _columnIndex);
 		}
 		public int getSize() {
 			return _size;
 		}
 	}
 
-	public static ValueVector createRowVector(AreaEval tableArray, int relativeRowIndex) {
+	public static ValueVector createRowVector(TwoDEval tableArray, int relativeRowIndex) {
 		return new RowVector(tableArray, relativeRowIndex);
 	}
-	public static ValueVector createColumnVector(AreaEval tableArray, int relativeColumnIndex) {
+	public static ValueVector createColumnVector(TwoDEval tableArray, int relativeColumnIndex) {
 		return new ColumnVector(tableArray, relativeColumnIndex);
 	}
 	/**
 	 * @return <code>null</code> if the supplied area is neither a single row nor a single colum
 	 */
-	public static ValueVector createVector(AreaEval ae) {
+	public static ValueVector createVector(TwoDEval ae) {
 		if (ae.isColumn()) {
 			return createColumnVector(ae, 0);
 		}
@@ -361,9 +359,9 @@ final class LookupUtils {
 	 * The second argument (table_array) should be an area ref, but can actually be a cell ref, in
 	 * which case it is interpreted as a 1x1 area ref.  Other scalar values cause #VALUE! error.
 	 */
-	public static AreaEval resolveTableArrayArg(ValueEval eval) throws EvaluationException {
-		if (eval instanceof AreaEval) {
-			return (AreaEval) eval;
+	public static TwoDEval resolveTableArrayArg(ValueEval eval) throws EvaluationException {
+		if (eval instanceof TwoDEval) {
+			return (TwoDEval) eval;
 		}
 
 		if(eval instanceof RefEval) {
