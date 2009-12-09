@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for the function COUNTBLANK
@@ -42,8 +42,8 @@ public final class Countblank extends Fixed1ArgFunction {
 		double result;
 		if (arg0 instanceof RefEval) {
 			result = CountUtils.countMatchingCell((RefEval) arg0, predicate);
-		} else if (arg0 instanceof AreaEval) {
-			result = CountUtils.countMatchingCellsInArea((AreaEval) arg0, predicate);
+		} else if (arg0 instanceof TwoDEval) {
+			result = CountUtils.countMatchingCellsInArea((TwoDEval) arg0, predicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + arg0.getClass().getName() + ")");
 		}

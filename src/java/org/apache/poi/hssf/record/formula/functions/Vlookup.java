@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
+import org.apache.poi.ss.formula.TwoDEval;
 /**
  * Implementation of the VLOOKUP() function.<p/>
  *
@@ -53,7 +53,7 @@ public final class Vlookup extends Var3or4ArgFunction {
 			// Evaluation order:
 			// arg0 lookup_value, arg1 table_array, arg3 range_lookup, find lookup value, arg2 col_index, fetch result
 			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			AreaEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
+			TwoDEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
 			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
 			int colIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
@@ -72,7 +72,7 @@ public final class Vlookup extends Var3or4ArgFunction {
 	 *
 	 * @throws EvaluationException (#REF!) if colIndex is too high
 	 */
-	private ValueVector createResultColumnVector(AreaEval tableArray, int colIndex) throws EvaluationException {
+	private ValueVector createResultColumnVector(TwoDEval tableArray, int colIndex) throws EvaluationException {
 		if(colIndex >= tableArray.getWidth()) {
 			throw EvaluationException.invalidRef();
 		}

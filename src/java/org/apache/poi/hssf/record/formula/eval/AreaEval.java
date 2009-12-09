@@ -17,11 +17,12 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import org.apache.poi.ss.formula.TwoDEval;
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public interface AreaEval extends ValueEval {
+public interface AreaEval extends TwoDEval {
 
     /**
      * returns the 0-based index of the first row in
@@ -46,20 +47,6 @@ public interface AreaEval extends ValueEval {
      * this area.
      */
     int getLastColumn();
-
-    /**
-     * returns true if the Area's start and end row indexes
-     * are same. This result of this method should agree
-     * with getFirstRow() == getLastRow().
-     */
-    boolean isRow();
-
-    /**
-     * returns true if the Area's start and end col indexes
-     * are same. This result of this method should agree
-     * with getFirstColumn() == getLastColumn().
-     */
-    boolean isColumn();
 
     /**
      * @return the ValueEval from within this area at the specified row and col index. Never

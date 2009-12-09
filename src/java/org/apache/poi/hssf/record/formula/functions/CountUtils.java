@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Common logic for COUNT, COUNTA and COUNTIF
@@ -41,14 +41,14 @@ final class CountUtils {
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
-	public static int countMatchingCellsInArea(AreaEval areaEval, I_MatchPredicate criteriaPredicate) {
+	public static int countMatchingCellsInArea(TwoDEval areaEval, I_MatchPredicate criteriaPredicate) {
 		int result = 0;
 
 		int height = areaEval.getHeight();
 		int width = areaEval.getWidth();
 		for (int rrIx=0; rrIx<height; rrIx++) {
 			for (int rcIx=0; rcIx<width; rcIx++) {
-				ValueEval ve = areaEval.getRelativeValue(rrIx, rcIx);
+				ValueEval ve = areaEval.getValue(rrIx, rcIx);
 				if(criteriaPredicate.matches(ve)) {
 					result++;
 				}
@@ -69,8 +69,8 @@ final class CountUtils {
 		if (eval == null) {
 			throw new IllegalArgumentException("eval must not be null");
 		}
-		if (eval instanceof AreaEval) {
-			return CountUtils.countMatchingCellsInArea((AreaEval) eval, criteriaPredicate);
+		if (eval instanceof TwoDEval) {
+			return countMatchingCellsInArea((TwoDEval) eval, criteriaPredicate);
 		}
 		if (eval instanceof RefEval) {
 			return CountUtils.countMatchingCell((RefEval) eval, criteriaPredicate);

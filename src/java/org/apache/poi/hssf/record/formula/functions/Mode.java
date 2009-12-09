@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -30,6 +29,7 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -92,13 +92,13 @@ public final class Mode implements Function {
 	}
 
 	private static void collectValues(ValueEval arg, List<Double> temp) throws EvaluationException {
-		if (arg instanceof AreaEval) {
-			AreaEval ae = (AreaEval) arg;
+		if (arg instanceof TwoDEval) {
+			TwoDEval ae = (TwoDEval) arg;
 			int width = ae.getWidth();
 			int height = ae.getHeight();
 			for (int rrIx = 0; rrIx < height; rrIx++) {
 				for (int rcIx = 0; rcIx < width; rcIx++) {
-					ValueEval ve1 = ae.getRelativeValue(rrIx, rcIx);
+					ValueEval ve1 = ae.getValue(rrIx, rcIx);
 					collectValue(ve1, temp, false);
 				}
 			}

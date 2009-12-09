@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.LookupUtils.ValueVector;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation of Excel function LOOKUP.<p/>
@@ -48,8 +48,8 @@ public final class Lookup extends Var2or3ArgFunction {
 			ValueEval arg2) {
 		try {
 			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			AreaEval aeLookupVector = LookupUtils.resolveTableArrayArg(arg1);
-			AreaEval aeResultVector = LookupUtils.resolveTableArrayArg(arg2);
+			TwoDEval aeLookupVector = LookupUtils.resolveTableArrayArg(arg1);
+			TwoDEval aeResultVector = LookupUtils.resolveTableArrayArg(arg2);
 
 			ValueVector lookupVector = createVector(aeLookupVector);
 			ValueVector resultVector = createVector(aeResultVector);
@@ -65,7 +65,7 @@ public final class Lookup extends Var2or3ArgFunction {
 		}
 	}
 
-	private static ValueVector createVector(AreaEval ae) {
+	private static ValueVector createVector(TwoDEval ae) {
 		ValueVector result = LookupUtils.createVector(ae);
 		if (result != null) {
 			return result;

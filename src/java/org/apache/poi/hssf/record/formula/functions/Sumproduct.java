@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 
 /**
@@ -68,8 +69,8 @@ public final class Sumproduct implements Function {
 			if(firstArg instanceof RefEval) {
 				return evaluateSingleProduct(args);
 			}
-			if(firstArg instanceof AreaEval) {
-				AreaEval ae = (AreaEval) firstArg;
+			if (firstArg instanceof TwoDEval) {
+				TwoDEval ae = (TwoDEval) firstArg;
 				if(ae.isRow() && ae.isColumn()) {
 					return evaluateSingleProduct(args);
 				}
@@ -120,7 +121,7 @@ public final class Sumproduct implements Function {
 
 	private static ValueEval evaluateAreaSumProduct(ValueEval[] evalArgs) throws EvaluationException {
 		int maxN = evalArgs.length;
-		AreaEval[] args = new AreaEval[maxN];
+		TwoDEval[] args = new TwoDEval[maxN];
 		try {
 			System.arraycopy(evalArgs, 0, args, 0, maxN);
 		} catch (ArrayStoreException e) {
@@ -129,7 +130,7 @@ public final class Sumproduct implements Function {
 		}
 
 
-		AreaEval firstArg = args[0];
+		TwoDEval firstArg = args[0];
 
 		int height = firstArg.getHeight();
 		int width = firstArg.getWidth(); // TODO - junit
@@ -150,7 +151,7 @@ public final class Sumproduct implements Function {
 			for (int rcIx=0; rcIx<width; rcIx++) {
 				double term = 1D;
 				for(int n=0; n<maxN; n++) {
-					double val = getProductTerm(args[n].getRelativeValue(rrIx, rcIx), false);
+					double val = getProductTerm(args[n].getValue(rrIx, rcIx), false);
 					term *= val;
 				}
 				acc += term;
@@ -160,12 +161,12 @@ public final class Sumproduct implements Function {
 		return new NumberEval(acc);
 	}
 
-	private static void throwFirstError(AreaEval areaEval) throws EvaluationException {
+	private static void throwFirstError(TwoDEval areaEval) throws EvaluationException {
 		int height = areaEval.getHeight();
 		int width = areaEval.getWidth();
 		for (int rrIx=0; rrIx<height; rrIx++) {
 			for (int rcIx=0; rcIx<width; rcIx++) {
-				ValueEval ve = areaEval.getRelativeValue(rrIx, rcIx);
+				ValueEval ve = areaEval.getValue(rrIx, rcIx);
 				if (ve instanceof ErrorEval) {
 					throw new EvaluationException((ErrorEval) ve);
 				}
@@ -173,9 +174,9 @@ public final class Sumproduct implements Function {
 		}
 	}
 
-	private static boolean areasAllSameSize(AreaEval[] args, int height, int width) {
+	private static boolean areasAllSameSize(TwoDEval[] args, int height, int width) {
 		for (int i = 0; i < args.length; i++) {
-			AreaEval areaEval = args[i];
+			TwoDEval areaEval = args[i];
 			// check that height and width match
 			if(areaEval.getHeight() != height) {
 				return false;
