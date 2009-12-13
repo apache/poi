@@ -109,10 +109,6 @@
                     <td>docs</td>
                     <td>Generate all documentation (Requires Apache Forrest)</td>
                 </tr>
-                <tr>
-                    <td>dist</td>
-                    <td>Create a distribution (Apache Forrest)</td>
-                </tr>
             </table>
         </section>
     </body>
