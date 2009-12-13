@@ -206,7 +206,7 @@
         <tr>
           <td><link href="./oxml4j/index.html">OpenXML4J</link></td>
 	  <td>OOXML</td>
-          <td>poi-ooxml, ooxml-schemas</td>
+          <td>poi-ooxml-schemas, ooxml-schemas</td>
         </tr>
       </table>
       <p>
@@ -216,28 +216,46 @@
       <table>
         <tr>
           <th>Maven artifactId</th>
+          <th>Prerequisites</th>
           <th>JAR</th>
         </tr>
         <tr>
           <td>poi</td>
+	  <td>commons-logging, log4j</td>
           <td>poi-version-yyyymmdd.jar</td>
         </tr>
         <tr>
           <td>poi-scratchpad</td>
+	  <td>poi</td>
           <td>poi-scratchpad-version-yyyymmdd.jar</td>
         </tr>
         <tr>
           <td>poi-ooxml</td>
+	  <td>poi, poi-ooxml-schemas, dom4j</td>
           <td>poi-ooxml-version-yyyymmdd.jar</td>
         </tr>
         <tr>
+          <td>poi-ooxml-schemas (*)</td>
+	  <td>xmlbeans, geronimo-stax-api_1.0_spec</td>
+          <td>poi-ooxml-schemas-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
+          <td>poi-examples (*)</td>
+	  <td>poi, poi-scratchpad, poi-ooxml</td>
+          <td>poi-examples-version-yyyymmdd.jar</td>
+        </tr>
+        <tr>
           <td>ooxml-schemas</td>
+	  <td>xmlbeans</td>
           <td>ooxml-schemas-1.0.jar</td>
         </tr>
       </table>
       <p>
-	OOXML file formats (poi-ooxml) also require ooxml-schemas-1.0.jar. This jar is large and we are experimenting with smaller versions.
-	Details are available on the dev mailing list.
+	(*) starting with 3.6-beta1-20091124.
+      </p>
+      <p>
+	poi-ooxml requires poi-ooxml-schemas. This is a substantially smaller version of the ooxml-schemas-1.0.jar.
+	The larger ooxml-schemas jar is only required for development.
       </p>
     </section>
     <section><title>Examples</title>
@@ -247,6 +265,9 @@
         studying the source code you might want to have a look at the
         "Examples" section of the <link href="apidocs/overview-summary.html">POI API
           documentation</link>.
+      </p>
+      <p>
+	Also note that we now include all of the examples in the distribution.
       </p>
     </section>
     <section><title>Contributed Software</title>
