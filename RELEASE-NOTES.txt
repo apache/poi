@@ -1,0 +1,80 @@
+The Apache POI is pleased to announce the release of POI 3.6. Featured are significant performance improvements and numerous bug fixes.
+
+See the downloads page for binary and source distributions: http://poi.apache.org/download.html
+
+Release Notes 
+
+Changes
+------------
+The most notable changes in this release are:
+
+*  A "lite" version of ooxml-schemas-1.0.jar called poi-ooxml-schemas-3.6-20091214.jar is included in the binary distribution. 
+This jar replaces the big ooxml-schemas-1.0.jar in the binary distributions and Maven POMs. The poi-ooxml-schemas jar is 10 MB smaller!
+
+* Significant memory improvements in XSSF module. When generating data, new code consumes 200% less memory than POI-3.5. 
+
+* Full support for cell comments in XSSF.
+
+* Formula performance and coverage.
+Lazy evaluation of formulas has been implemented which provides for improvements of 700% in some cases. Your results may vary.
+
+* Examples are now included. 
+ poi-examples-3.6-20091214.jar includes all of the examples from the poi, poi-scratchpad and poi-ooxml modules.
+ Users have requested this several times.  These examples provide excellent templates for POI based applications. 
+ Several convertors are included: XLSX2CSV, XLS2CSVmra, BigGridDemo, PPT2PNG, Word2Forrest, and msg2txt.
+ 
+* Maven distribution now includes sources.
+Each individual JAR is accompanied by a -sources.jar. Two new maven modules were added poi-ooxml-schemas and poi-examples.
+
+* Program elements intended for POI internal use only are annotated @Internal. 
+These may be removed or access changed from 'public' to 'default' or less in future versions of POI.
+
+A full list of changes is available in the change log: http://poi.apache.org/changes.html. 
+People interested should also follow the dev mailing list to track further progress.
+
+Release Contents
+----------------
+
+This release comes in two forms:
+ - pre-built binaries containing compiled versions of all Apache POI components and documentation 
+   (poi-bin-3.6-20091214.zip or poi-bin-3.6-20091214.tar.gz)
+ - source archive you can build POI from (poi-src-3.6-20091214.zip or poi-src-3.6-20091214.tar.gz)
+  Unpack the archive and use  the following command to build all POI components with Apache Ant 1.6+ and JDK 1.5 or higher:
+
+  ant jar
+
+ Pre-built versions of all POI components are also available in the central Maven repository 
+ under Group ID "org.apache.poi" and Version "3.6"
+
+All release artifacts are accompanied by MD5 checksums and a PGP signatures 
+that you can use to verify the authenticity of your download.
+The public key used for the PGP signature can be found at 
+http://svn.apache.org/repos/asf/poi/tags/REL_3_6/KEYS
+
+Contributors
+------------
+
+The following people have contributed to this release by submitting bug
+reports or by participating in the issue resolution process (in strict alphabetical order).
+
+Bernhard Schwager         Ian Beaumont                Maxim Valyanskiy
+Bob Stox                  Jeremy Michelson            Paul Tomlin
+Bruno Girin               Jeff Lamb                   Petr Udalau
+Chris Lott                Joubert Nel                 Robert Longson
+Dale Monti                Karl Eilebrecht             Robin Salkeld
+Daniel Noll (Trejkaz)     Leonhard Wimmer             Thang Nguyen       
+David Agnew               Mads Mohr Christensen       Vinu Kumar
+David Horwitz             Markus Herven      
+Davor Cubranic            Marcus Thiesen     
+Eric Smith                Martin Poelman       
+                               
+Thank you all very much! Contributions are always welcome, come join the project.
+
+About Apache POI
+-----------------------
+
+Apache POI is well-known in the Java field as a library for reading and
+writing Microsoft Office file formats, such as Excel, PowerPoint, Visio and
+Word. Since POI 3.5, the new OOXML (Office Open XML) formats introduced in Office 2007 have been supported.
+See http://poi.apache.org/ for more details
+
