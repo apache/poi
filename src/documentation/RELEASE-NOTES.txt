@@ -1,0 +1,52 @@
+The Apache POI is pleased to announce the release of POI @VERSION@. Featured are significant performance improvements and numerous bug fixes.
+
+See the downloads page for binary and source distributions: http://poi.apache.org/download.html
+
+Release Notes 
+
+Changes
+------------
+The most notable changes in this release are:
+
+@List changes here@
+
+A full list of changes is available in the change log: http://poi.apache.org/changes.html. 
+People interested should also follow the dev mailing list to track further progress.
+
+Release Contents
+----------------
+
+This release comes in two forms:
+ - pre-built binaries containing compiled versions of all Apache POI components and documentation 
+   (poi-bin-@VERSION@.zip or poi-bin-@VERSION@.tar.gz)
+ - source archive you can build POI from (poi-src-@VERSION@.zip or poi-src-@VERSION@.tar.gz)
+  Unpack the archive and use  the following command to build all POI components with Apache Ant 1.6+ and JDK 1.5 or higher:
+
+  ant jar
+
+ Pre-built versions of all POI components are also available in the central Maven repository 
+ under Group ID "org.apache.poi" and Version "@VERSION@"
+
+All release artifacts are accompanied by MD5 checksums and a PGP signatures 
+that you can use to verify the authenticity of your download.
+The public key used for the PGP signature can be found at 
+http://svn.apache.org/repos/asf/poi/tags/@RELEASE_TAG@/KEYS
+
+Contributors
+------------
+
+The following people have contributed to this release by submitting bug
+reports or by participating in the issue resolution process (in strict alphabetical order).
+
+@List contributors here@
+                               
+Thank you all very much! Contributions are always welcome, come join the project.
+
+About Apache POI
+-----------------------
+
+Apache POI is well-known in the Java field as a library for reading and
+writing Microsoft Office file formats, such as Excel, PowerPoint, Visio and
+Word. Since POI 3.5, the new OOXML (Office Open XML) formats introduced in Office 2007 have been supported.
+See http://poi.apache.org/ for more details
+
