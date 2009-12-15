@@ -32,9 +32,9 @@
   </header>
 
   <body>
-    <section><title>28 September 2009 - POI 3.5-FINAL is now available</title>
-      <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
-        This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
+    <section><title>15 December 2009 - POI 3.6 is now available</title>
+      <p>The Apache POI team is pleased to announce the release of 3.6. 
+        Featured are significant performance improvements and numerous bug fixes.
     </p>
     <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
       People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>

@@ -211,7 +211,7 @@
       </table>
       <p>
 	This table maps artifacts into the jar file name. "version-yyyymmdd" is the POI version stamp. For the latest release it is
-	3.5-FINAL-20090928.
+	3.6-20091214.
       </p>
       <table>
         <tr>

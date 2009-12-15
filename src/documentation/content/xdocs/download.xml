@@ -30,7 +30,7 @@
        This page provides instructions on how to download and verify Apache POI release artifacts.
       </p>
       <ul>
-          <li><link href="download.html#POI-3.5-FINAL">The latest stable release is Apache POI 3.5</link></li>
+          <li><link href="download.html#POI-3.6">The latest stable release is Apache POI 3.6</link></li>
           <li><link href="download.html#archive">Archives of all prior releases</link></li>
       </ul>
       <p>
@@ -42,42 +42,43 @@
         of the files using the signatures and checksums available from this page.
       </p>
     </section>
-    <section id="POI-3.5-FINAL"><title>28 September 2009 - POI 3.5-FINAL available</title>
-      <p>The Apache POI team is pleased to announce the release of 3.5 FINAL. 
-        This release brings many improvements including support for the new OOXML formats introduced in Office 2007, such as XLSX and DOCX.
+    <section id="POI-3.6"><title>15 December 2009 - POI 3.6 available</title>
+      <p>The Apache POI team is pleased to announce the release of 3.6. 
+        Featured are significant performance improvements and numerous bug fixes. See the 
+        <link href="http://www.apache.org/dist/poi/release/bin/RELEASE-NOTES.txt">full release notes</link> for more details.
       </p>
       <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
         People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
       <p>
         The POI source release as well as the pre-built binary deployment packages are listed below. 
         Pre-built versions of all <link href="index.html#components">POI components</link> are available in the central Maven repository
-        under Group ID "org.apache.poi" and Version "3.5-FINAL".
+        under Group ID "org.apache.poi" and Version "3.6".
       </p>
       <section><title>Binary Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.5-FINAL-20090928.tar.gz">poi-bin-3.5-FINAL-20090928.tar.gz</link> (
-          19MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.5-FINAL-20090928.tar.gz.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.6-20091214.tar.gz">poi-bin-3.6-20091214.tar.gz</link> (
+          12MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.6-20091214.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 8cdf715caca82ef55be8de8ed0fc5a13
+          MD5 checksum: 8e7b014fd37fba98bebc975ca4c7e44a          
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.5-FINAL-20090928.zip">poi-bin-3.5-FINAL-20090928.zip</link> (
-          26MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.5-FINAL-20090928.zip.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.6-20091214.zip">poi-bin-3.6-20091214.zip</link> (
+          17MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.6-20091214.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: a53fa84cb24c7d4750e77c2bbb2b1d8e
+          MD5 checksum: d6223426c16e7f5c4e99a3b0552caeca
         </li>
       </ul>
       </section>
       <section><title>Source Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.5-FINAL-20090928.tar.gz">poi-src-3.5-FINAL-20090928.tar.gz</link> (
-          41MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.5-FINAL-20090928.tar.gz.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.6-20091214.tar.gz">poi-src-3.6-20091214.tar.gz</link> (
+          28MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.6-20091214.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 0919fe59b96b8fb852cdcf9b6a627d61
+          MD5 checksum: f9c49be9c8228d1dd70509673ddac820
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.5-FINAL-20090928.zip">poi-src-3.5-FINAL-20090928.zip</link> (
-          51MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.5-FINAL-20090928.zip.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.6-20091214.zip">poi-src-3.6-20091214.zip</link> (
+          35MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.6-20091214.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: 343a78b54d2ed36093cc0870b167b0f8
+          MD5 checksum: 5dd2c3964fd7d7ec7c7d8de49c91788d
         </li>
       </ul>
       </section>
