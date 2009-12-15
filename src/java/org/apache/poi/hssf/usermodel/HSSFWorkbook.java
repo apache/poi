@@ -1175,11 +1175,15 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             //  out correctly shortly, so don't include the old one
             excepts.add("WORKBOOK");
 
+            POIFSFileSystem srcFs = this.filesystem;
             // Copy over all the other nodes to our new poifs
-            copyNodes(this.filesystem,fs,excepts);
+            copyNodes(srcFs, fs, excepts);
+
+            // YK: preserve StorageClsid, it is important for embedded workbooks,
+            // see Bugzilla 47920
+            fs.getRoot().setStorageClsid(srcFs.getRoot().getStorageClsid());
         }
         fs.writeFilesystem(stream);
-        //poifs.writeFilesystem(stream);
     }
 
     /**

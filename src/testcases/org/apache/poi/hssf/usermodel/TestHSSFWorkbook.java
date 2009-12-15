@@ -17,9 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -37,6 +35,9 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.ClassID;
 
 /**
  * Tests for {@link HSSFWorkbook}
@@ -504,5 +505,22 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(3, wb.getWorkbook().getNumNames());
         nr = wb.getWorkbook().getNameRecord(2);
         assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // E:F,9:12
+    }
+
+    /**
+     * Test that the storage clsid property is preserved
+     */
+    public void test47920() throws IOException {
+        POIFSFileSystem fs1 = new POIFSFileSystem(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("47920.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(fs1);
+        ClassID clsid1 = fs1.getRoot().getStorageClsid();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+        wb.write(out);
+        byte[] bytes = out.toByteArray();
+        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
+        ClassID clsid2 = fs2.getRoot().getStorageClsid();
+
+        assertTrue(clsid1.equals(clsid2));
     }
 }
