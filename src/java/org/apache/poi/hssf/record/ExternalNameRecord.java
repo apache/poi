@@ -34,15 +34,14 @@ public final class ExternalNameRecord extends StandardRecord {
 	private static final int OPT_BUILTIN_NAME          = 0x0001;
 	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise
 	private static final int OPT_PICTURE_LINK          = 0x0004;
-	private static final int OPT_STD_DOCUMENT_NAME     = 0x0008;
-	private static final int OPT_OLE_LINK              = 0x0010;
+	private static final int OPT_STD_DOCUMENT_NAME     = 0x0008; //fOle
+	private static final int OPT_OLE_LINK              = 0x0010; //fOleLink
 //	private static final int OPT_CLIP_FORMAT_MASK      = 0x7FE0;
 	private static final int OPT_ICONIFIED_PICTURE_LINK= 0x8000;
 
 
 	private short  field_1_option_flag;
-	private short  field_2_index;
-	private short  field_3_not_used;
+	private int  field_2_not_used;
 	private String field_4_name;
 	private Formula  field_5_name_definition;
 
@@ -99,109 +98,67 @@ public final class ExternalNameRecord extends StandardRecord {
 	}
 
 	protected int getDataSize(){
-		int result = 3 * 2  // 3 short fields
-			+ 2 + field_4_name.length(); // nameLen and name
-		if(hasFormula()) {
-			result += field_5_name_definition.getEncodedSize();
-		} else {
-			if (_ddeValues != null) {
-				result += 3; // byte, short
-				result += ConstantValueParser.getEncodedSize(_ddeValues);
-			}
-		}
+		int result = 2 + 4;  // short and int
+        result += StringUtil.getEncodedSize(field_4_name) - 1; //size is byte, not short 
+
+        if(!isOLELink() && !isStdDocumentNameIdentifier()){
+            if(isAutomaticLink()){
+                result += 3; // byte, short
+                result += ConstantValueParser.getEncodedSize(_ddeValues);
+            } else {
+                result += field_5_name_definition.getEncodedSize();
+            }
+        }
 		return result;
 	}
 
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(field_1_option_flag);
-		out.writeShort(field_2_index);
-		out.writeShort(field_3_not_used);
-		int nameLen = field_4_name.length();
-		out.writeShort(nameLen);
-		StringUtil.putCompressedUnicode(field_4_name, out);
-		if (hasFormula()) {
-			field_5_name_definition.serialize(out);
-		} else {
-			if (_ddeValues != null) {
-				out.writeByte(_nColumns-1);
-				out.writeShort(_nRows-1);
-				ConstantValueParser.encode(out, _ddeValues);
-			}
-		}
+		out.writeInt(field_2_not_used);
+
+        out.writeByte(field_4_name.length());
+        StringUtil.writeUnicodeStringFlagAndData(out, field_4_name);
+
+        if(!isOLELink() && !isStdDocumentNameIdentifier()){
+            if(isAutomaticLink()){
+                out.writeByte(_nColumns-1);
+                out.writeShort(_nRows-1);
+                ConstantValueParser.encode(out, _ddeValues);
+            } else {
+                field_5_name_definition.serialize(out);
+            }
+        }
 	}
 
 
 	public ExternalNameRecord(RecordInputStream in) {
 		field_1_option_flag = in.readShort();
-		field_2_index       = in.readShort();
-		field_3_not_used    = in.readShort();
-		int nameLength = in.readUByte();
-		int multibyteFlag = in.readUByte();
-		if (multibyteFlag == 0) {
-			field_4_name = in.readCompressedUnicode(nameLength);
-		} else {
-			field_4_name = in.readUnicodeLEString(nameLength);
-		}
-		if(!hasFormula()) {
-			if (!isStdDocumentNameIdentifier() && !isOLELink() && isAutomaticLink()) {
-				// both need to be incremented
-				int nColumns = in.readUByte() + 1;
-				int nRows = in.readShort() + 1;
+		field_2_not_used    = in.readInt();
 
-				int totalCount = nRows * nColumns;
-				_ddeValues = ConstantValueParser.parse(in, totalCount);
-				_nColumns = nColumns;
-				_nRows = nRows;
-			}
-			if(in.remaining() > 0) {
-				throw readFail("Some unread data (is formula present?)");
-			}
-			field_5_name_definition = null;
-			return;
-		}
-		int nBytesRemaining = in.available();
-		if(nBytesRemaining <= 0) {
-			throw readFail("Ran out of record data trying to read formula.");
-		}
-		int formulaLen = in.readUShort();
-		nBytesRemaining -=2;
-		field_5_name_definition = Formula.read(formulaLen, in, nBytesRemaining);
-	}
-	/*
-	 * Makes better error messages (while hasFormula() is not reliable)
-	 * Remove this when hasFormula() is stable.
-	 */
-	private RuntimeException readFail(String msg) {
-		String fullMsg = msg + " fields: (option=" + field_1_option_flag + " index=" + field_2_index
-		+ " not_used=" + field_3_not_used + " name='" + field_4_name + "')";
-		return new RecordFormatException(fullMsg);
-	}
+        int numChars = in.readUByte();
+        field_4_name = StringUtil.readUnicodeString(in, numChars);
 
-	private boolean hasFormula() {
-		// TODO - determine exact conditions when formula is present
-		if (false) {
-			// "Microsoft Office Excel 97-2007 Binary File Format (.xls) Specification"
-			// m$'s document suggests logic like this, but bugzilla 44774 att 21790 seems to disagree
-			if (isStdDocumentNameIdentifier()) {
-				if (isOLELink()) {
-					// seems to be not possible according to m$ document
-					throw new IllegalStateException(
-							"flags (std-doc-name and ole-link) cannot be true at the same time");
-				}
-				return false;
-			}
-			if (isOLELink()) {
-				return false;
-			}
-			return true;
-		}
+        // the record body can take different forms.
+        // The form is dictated by the values of 3-th and 4-th bits in field_1_option_flag
+        if(!isOLELink() && !isStdDocumentNameIdentifier()){
+            // another switch: the fWantAdvise bit specifies whether the body describes
+            // an external defined name or a DDE data item
+            if(isAutomaticLink()){
+                //body specifies DDE data item
+                int nColumns = in.readUByte() + 1;
+                int nRows = in.readShort() + 1;
 
-		// This was derived by trial and error, but doesn't seem quite right
-		if (isAutomaticLink()) {
-			return false;
-		}
-		return true;
-	}
+                int totalCount = nRows * nColumns;
+                _ddeValues = ConstantValueParser.parse(in, totalCount);
+                _nColumns = nColumns;
+                _nRows = nRows;
+            } else {
+                //body specifies an external defined name
+                int formulaLen = in.readUShort();
+                field_5_name_definition = Formula.read(formulaLen, in);
+            }
+        }
+    }
 
 	public short getSid() {
 		return sid;
@@ -211,7 +168,7 @@ public final class ExternalNameRecord extends StandardRecord {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append(" [EXTERNALNAME ");
 		sb.append(" ").append(field_4_name);
-		sb.append(" ix=").append(field_2_index);
+		sb.append(" ix=").append(field_2_not_used);
 		sb.append("]");
 		return sb.toString();
 	}
