@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.HexDump;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -156,5 +157,19 @@ public final class TestExternalNameRecord extends TestCase {
 			throw e;
 		}
 		assertEquals("\u0159azen\u00ED_Billa", enr.getText());
+        byte[] ser = enr.serialize();
+        assertEquals(HexDump.toHex(dataUN), HexDump.toHex(ser));
 	}
+
+    public void test48339() {
+        // data taken from bugzilla 48339
+        byte[] data = HexRead.readFromString(
+                "23 00 09 00" +
+                "F4, FF, 14, 2D, 61, 01, 01, 00, 27");
+
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+        ExternalNameRecord enr = new ExternalNameRecord(in);
+        byte[] ser = enr.serialize();
+        assertEquals(HexDump.toHex(data), HexDump.toHex(ser));
+    }
 }
