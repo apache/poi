@@ -57,6 +57,7 @@ import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NameEval;
 import org.apache.poi.hssf.record.formula.eval.NameXEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -449,14 +450,7 @@ public final class WorkbookEvaluator {
 		if (!stack.isEmpty()) {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
-		value = dereferenceValue(value, ec.getRowIndex(), ec.getColumnIndex());
-		if (value == BlankEval.instance) {
-			// Note Excel behaviour here. A blank final final value is converted to zero.
-			return NumberEval.ZERO;
-			// Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
-			// blank, the actual value is empty string. This can be verified with ISBLANK().
-		}
-		return value;
+		return dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
 	}
 
 	/**
@@ -480,31 +474,30 @@ public final class WorkbookEvaluator {
 		}
 		return index-startIndex;
 	}
+
 	/**
-	 * Dereferences a single value from any AreaEval or RefEval evaluation result.
-	 * If the supplied evaluationResult is just a plain value, it is returned as-is.
-	 * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>,
-	 *  <tt>BlankEval</tt> or <tt>ErrorEval</tt>. Never <code>null</code>.
+	 * Dereferences a single value from any AreaEval or RefEval evaluation
+	 * result. If the supplied evaluationResult is just a plain value, it is
+	 * returned as-is.
+	 *
+	 * @return a {@link NumberEval}, {@link StringEval}, {@link BoolEval}, or
+	 *         {@link ErrorEval}. Never <code>null</code>. {@link BlankEval} is
+	 *         converted to {@link NumberEval#ZERO}
 	 */
-	private static ValueEval dereferenceValue(ValueEval evaluationResult, int srcRowNum, int srcColNum) {
-		if (evaluationResult instanceof RefEval) {
-			RefEval rv = (RefEval) evaluationResult;
-			return rv.getInnerValueEval();
+	public static ValueEval dereferenceResult(ValueEval evaluationResult, int srcRowNum, int srcColNum) {
+		ValueEval value;
+		try {
+			value = OperandResolver.getSingleValue(evaluationResult, srcRowNum, srcColNum);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
-		if (evaluationResult instanceof AreaEval) {
-			AreaEval ae = (AreaEval) evaluationResult;
-			if (ae.isRow()) {
-				if(ae.isColumn()) {
-					return ae.getRelativeValue(0, 0);
-				}
-				return ae.getAbsoluteValue(ae.getFirstRow(), srcColNum);
-			}
-			if (ae.isColumn()) {
-				return ae.getAbsoluteValue(srcRowNum, ae.getFirstColumn());
-			}
-			return ErrorEval.VALUE_INVALID;
+		if (value == BlankEval.instance) {
+			// Note Excel behaviour here. A blank final final value is converted to zero.
+			return NumberEval.ZERO;
+			// Formulas _never_ evaluate to blank.  If a formula appears to have evaluated to
+			// blank, the actual value is empty string. This can be verified with ISBLANK().
 		}
-		return evaluationResult;
+		return value;
 	}
 
 

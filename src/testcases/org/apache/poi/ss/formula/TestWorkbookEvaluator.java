@@ -38,7 +38,11 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Tests {@link WorkbookEvaluator}.
@@ -193,7 +197,7 @@ public class TestWorkbookEvaluator extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_STRING, cv.getCellType());
 		// adding blank to "abc" gives "abc"
 		assertEquals("abc", cv.getStringValue());
-		
+
 		// check CHOOSE()
 		cell.setCellFormula("\"abc\"&CHOOSE(2,5,,9)");
 		fe.notifySetFormula(cell);
@@ -201,5 +205,34 @@ public class TestWorkbookEvaluator extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_STRING, cv.getCellType());
 		// adding blank to "abc" gives "abc"
 		assertEquals("abc", cv.getStringValue());
+	}
+
+	/**
+	 * Functions like IF, INDIRECT, INDEX, OFFSET etc can return AreaEvals which
+	 * should be dereferenced by the evaluator
+	 */
+	public void testResultOutsideRange() {
+		Workbook wb = new HSSFWorkbook();
+		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+		cell.setCellFormula("D2:D5"); // IF(TRUE,D2:D5,D2) or  OFFSET(D2:D5,0,0) would work too
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+		CellValue cv;
+		try {
+			cv = fe.evaluate(cell);
+		} catch (IllegalArgumentException e) {
+			if ("Specified row index (0) is outside the allowed range (1..4)".equals(e.getMessage())) {
+				throw new AssertionFailedError("Identified bug in result dereferencing");
+			}
+			throw new RuntimeException(e);
+		}
+		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
+		assertEquals(ErrorConstants.ERROR_VALUE, cv.getErrorValue());
+
+		// verify circular refs are still detected properly
+		fe.clearAllCachedResultValues();
+		cell.setCellFormula("OFFSET(A1,0,0)");
+		cv = fe.evaluate(cell);
+		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
+		assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
 	}
 }
