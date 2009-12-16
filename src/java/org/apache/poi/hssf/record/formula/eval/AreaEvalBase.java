@@ -87,11 +87,11 @@ public abstract class AreaEvalBase implements AreaEval {
 	}
 
 	public final boolean containsRow(int row) {
-		return (_firstRow <= row) && (_lastRow >= row);
+		return _firstRow <= row && _lastRow >= row;
 	}
 
-	public final boolean containsColumn(short col) {
-		return (_firstColumn <= col) && (_lastColumn >= col);
+	public final boolean containsColumn(int col) {
+		return _firstColumn <= col && _lastColumn >= col;
 	}
 
 	public final boolean isColumn() {
