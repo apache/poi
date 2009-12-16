@@ -102,7 +102,7 @@ public final class OperandResolver {
 	 */
 	public static ValueEval chooseSingleElementFromArea(AreaEval ae,
 			int srcCellRow, int srcCellCol) throws EvaluationException {
-		ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, (short) srcCellCol);
+		ValueEval result = chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol);
 		if(result == null) {
 			// This seems to be required because AreaEval.values() array may contain nulls.
 			// perhaps that should not be allowed.
@@ -119,7 +119,7 @@ public final class OperandResolver {
 	 * @return possibly <tt>ErrorEval</tt>, and <code>null</code>
 	 */
 	private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae,
-			int srcCellRow, short srcCellCol) throws EvaluationException {
+			int srcCellRow, int srcCellCol) throws EvaluationException {
 
 		if(false) {
 			// this is too simplistic

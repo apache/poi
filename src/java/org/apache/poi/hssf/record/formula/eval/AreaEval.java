@@ -68,7 +68,7 @@ public interface AreaEval extends TwoDEval {
      * returns true if the specified col is in range
      * @param col
      */
-    boolean containsColumn(short col);
+    boolean containsColumn(int col);
 
     /**
      * returns true if the specified row is in range
