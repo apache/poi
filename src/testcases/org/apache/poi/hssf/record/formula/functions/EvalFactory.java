@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
@@ -78,8 +79,12 @@ public final class EvalFactory {
 
 	private static final class MockAreaEval extends AreaEvalBase {
 		private final ValueEval[] _values;
-		public MockAreaEval(AreaPtg areaPtg, ValueEval[] values) {
+		public MockAreaEval(AreaI areaPtg, ValueEval[] values) {
 			super(areaPtg);
+			_values = values;
+		}
+		private MockAreaEval(int firstRow, int firstColumn, int lastRow, int lastColumn, ValueEval[] values) {
+			super(firstRow, firstColumn, lastRow, lastColumn);
 			_values = values;
 		}
 		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
@@ -94,11 +99,35 @@ public final class EvalFactory {
 			return _values[oneDimensionalIndex];
 		}
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+			if (relFirstRowIx < 0 || relFirstColIx < 0
+					|| relLastRowIx >= getHeight() || relLastColIx >= getWidth()) {
+				throw new RuntimeException("Operation not implemented on this mock object");
+			}
+
 			if (relFirstRowIx == 0 && relFirstColIx == 0
 					&& relLastRowIx == getHeight()-1 && relLastColIx == getWidth()-1) {
 				return this;
 			}
-			throw new RuntimeException("Operation not implemented on this mock object");
+			ValueEval[] values = transpose(_values, getWidth(), relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
+			return new MockAreaEval(getFirstRow() + relFirstRowIx, getFirstColumn() + relFirstColIx,
+					getFirstRow() + relLastRowIx, getFirstColumn() + relLastColIx, values);
+		}
+		private static ValueEval[] transpose(ValueEval[] srcValues, int srcWidth,
+				int relFirstRowIx, int relLastRowIx,
+				int relFirstColIx, int relLastColIx) {
+			int height = relLastRowIx - relFirstRowIx + 1;
+			int width = relLastColIx - relFirstColIx + 1;
+			ValueEval[] result = new ValueEval[height * width];
+			for (int r=0; r<height; r++) {
+				int srcRowIx = r + relFirstRowIx; 
+				for (int c=0; c<width; c++) {
+					int srcColIx = c + relFirstColIx;
+					int destIx = r * width + c;
+					int srcIx = srcRowIx * srcWidth + srcColIx;
+					result[destIx] = srcValues[srcIx];
+				}
+			}
+			return result;
 		}
 	}
 

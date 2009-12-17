@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import java.util.Arrays;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -24,6 +26,8 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.MissingArgEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Tests for the INDEX() function.</p>
@@ -83,8 +87,15 @@ public final class TestIndex extends TestCase {
 			args = new ValueEval[] { arg0, new NumberEval(rowNum), };
 		}
 
-		double actual = NumericFunctionInvoker.invoke(FUNC_INST, args);
+		double actual = invokeAndDereference(args);
 		assertEquals(expectedResult, actual, 0D);
+	}
+
+	private static double invokeAndDereference(ValueEval[] args) {
+		ValueEval ve = FUNC_INST.evaluate(args, -1, -1);
+		ve = WorkbookEvaluator.dereferenceResult(ve, -1, -1);
+		assertEquals(NumberEval.class, ve.getClass());
+		return ((NumberEval)ve).getNumberValue();
 	}
 
 	/**
@@ -101,14 +112,46 @@ public final class TestIndex extends TestCase {
 		ValueEval[] args = new ValueEval[] { arg0, MissingArgEval.instance, new NumberEval(2), };
 		ValueEval actualResult;
 		try {
-			actualResult = FUNC_INST.evaluate(args, 1, (short)1);
+			actualResult = FUNC_INST.evaluate(args, -1, -1);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Unexpected arg eval type (org.apache.poi.hssf.record.formula.eval.MissingArgEval")) {
 				throw new AssertionFailedError("Identified bug 47048b - INDEX() should support missing-arg");
 			}
 			throw e;
 		}
+		// result should be an area eval "B10:B10"
+		AreaEval ae = confirmAreaEval("B10:B10", actualResult);
+		actualResult = ae.getValue(0, 0);
 		assertEquals(NumberEval.class, actualResult.getClass());
 		assertEquals(26.0, ((NumberEval)actualResult).getNumberValue(), 0.0);
+	}
+
+	/**
+	 * When the argument to INDEX is a reference, the result should be a reference
+	 * A formula like "OFFSET(INDEX(A1:B2,2,1),1,1,1,1)" should return the value of cell B3.
+	 * This works because the INDEX() function returns a reference to A2 (not the value of A2)
+	 */
+	public void testReferenceResult() {
+		ValueEval[] values = new ValueEval[4];
+		Arrays.fill(values, NumberEval.ZERO);
+		AreaEval arg0 = EvalFactory.createAreaEval("A1:B2", values);
+		ValueEval[] args = new ValueEval[] { arg0, new NumberEval(2), new NumberEval(1), };
+		ValueEval ve = FUNC_INST.evaluate(args, -1, -1);
+		confirmAreaEval("A2:A2", ve);
+	}
+
+	/**
+	 * Confirms that the result is an area ref with the specified coordinates
+	 * @return <tt>ve</tt> cast to {@link AreaEval} if it is valid
+	 */
+	private static AreaEval confirmAreaEval(String refText, ValueEval ve) {
+		CellRangeAddress cra = CellRangeAddress.valueOf(refText);
+		assertTrue(ve instanceof AreaEval);
+		AreaEval ae = (AreaEval) ve;
+		assertEquals(cra.getFirstRow(), ae.getFirstRow());
+		assertEquals(cra.getFirstColumn(), ae.getFirstColumn());
+		assertEquals(cra.getLastRow(), ae.getLastRow());
+		assertEquals(cra.getLastColumn(), ae.getLastColumn());
+		return ae;
 	}
 }
