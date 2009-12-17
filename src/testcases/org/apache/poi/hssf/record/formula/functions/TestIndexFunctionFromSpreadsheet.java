@@ -92,7 +92,7 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 			case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case HSSFCell.CELL_TYPE_NUMERIC:
-				assertEquals(expected.getNumericCellValue(), actual.getNumberValue(), 0.0);
+				assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), 0.0);
 				break;
 			case HSSFCell.CELL_TYPE_STRING:
 				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
@@ -181,11 +181,11 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 			if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 				continue;
 			}
-			CellValue actualValue = evaluator.evaluate(c);
 			HSSFCell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
 
 			String msgPrefix = formatTestCaseDetails(sheetName, r.getRowNum(), c);
 			try {
+				CellValue actualValue = evaluator.evaluate(c);
 				confirmExpectedResult(msgPrefix, expectedValueCell, actualValue);
 				_evaluationSuccessCount ++;
 				if(result != Result.SOME_EVALUATIONS_FAILED) {
@@ -193,14 +193,13 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 				}
 			} catch (RuntimeException e) {
 				_evaluationFailureCount ++;
-				printShortStackTrace(System.err, e);
+				printShortStackTrace(System.err, e, msgPrefix);
 				result = Result.SOME_EVALUATIONS_FAILED;
 			} catch (AssertionFailedError e) {
 				_evaluationFailureCount ++;
-				printShortStackTrace(System.err, e);
+				printShortStackTrace(System.err, e, msgPrefix);
 				result = Result.SOME_EVALUATIONS_FAILED;
 			}
-
 		}
 	}
 
@@ -210,14 +209,15 @@ public final class TestIndexFunctionFromSpreadsheet extends TestCase {
 		StringBuffer sb = new StringBuffer();
 		CellReference cr = new CellReference(sheetName, rowIndex, c.getColumnIndex(), false, false);
 		sb.append(cr.formatAsString());
-		sb.append(" {=").append(c.getCellFormula()).append("}");
+		sb.append(" [formula: ").append(c.getCellFormula()).append(" ]");
 		return sb.toString();
 	}
 
 	/**
 	 * Useful to keep output concise when expecting many failures to be reported by this test case
 	 */
-	private static void printShortStackTrace(PrintStream ps, Throwable e) {
+	private static void printShortStackTrace(PrintStream ps, Throwable e, String msgPrefix) {
+		System.err.println("Problem with " + msgPrefix);
 		StackTraceElement[] stes = e.getStackTrace();
 
 		int startIx = 0;
