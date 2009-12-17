@@ -17,19 +17,10 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import java.lang.reflect.Field;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -37,7 +28,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -122,18 +112,7 @@ public final class TestRangeEval extends TestCase {
 		row.createCell(4).setCellValue(9.0); // E1
 
 
-		try {
-			cellA1.setCellFormula("SUM(C1:OFFSET(C1,0,B1))");
-		} catch (RuntimeException e) {
-			// TODO fix formula parser to handle ':' as a proper operator
-			if (!e.getClass().getName().startsWith(FormulaParser.class.getName())) {
-				throw e;
-			}
-			// FormulaParseException is expected until the parser is fixed up
-			// Poke the formula in directly:
-			pokeInOffsetFormula(cellA1);
-		}
-
+		cellA1.setCellFormula("SUM(C1:OFFSET(C1,0,B1))");
 
 		cellB1.setCellValue(1.0); // range will be C1:D1
 
@@ -159,37 +138,5 @@ public final class TestRangeEval extends TestCase {
 		fe.notifyUpdateCell(cellB1);
 		cv = fe.evaluate(cellA1);
 		assertEquals(5.0, cv.getNumberValue(), 0.0);
-	}
-
-	/**
-	 * Directly sets the formula "SUM(C1:OFFSET(C1,0,B1))" in the specified cell.
-	 * This hack can be removed when the formula parser can handle functions as
-	 * operands to the range (:) operator.
-	 *
-	 */
-	private static void pokeInOffsetFormula(HSSFCell cell) {
-		cell.setCellFormula("1");
-		FormulaRecordAggregate fr;
-		try {
-			Field field = HSSFCell.class.getDeclaredField("_record");
-			field.setAccessible(true);
-			fr = (FormulaRecordAggregate) field.get(cell);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		}
-		Ptg[] ptgs = {
-				new RefPtg("C1"),
-				new RefPtg("C1"),
-				new IntPtg(0),
-				new RefPtg("B1"),
-				FuncVarPtg.create("OFFSET", (byte)3),
-				RangePtg.instance,
-				AttrPtg.SUM,
-			};
-		fr.setParsedExpression(ptgs);
 	}
 }
