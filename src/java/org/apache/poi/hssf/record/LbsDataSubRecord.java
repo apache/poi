@@ -243,7 +243,7 @@ public class LbsDataSubRecord extends SubRecord {
         sb.append("[ftLbsData]\n");
         sb.append("    .unknownShort1 =").append(HexDump.shortToHex(_cbFContinued)).append("\n");
         sb.append("    .formula        = ").append('\n');
-        sb.append(_linkPtg.toString()).append(_linkPtg.getRVAType()).append('\n');
+        if(_linkPtg != null) sb.append(_linkPtg.toString()).append(_linkPtg.getRVAType()).append('\n');
         sb.append("    .nEntryCount   =").append(HexDump.shortToHex(_cLines)).append("\n");
         sb.append("    .selEntryIx    =").append(HexDump.shortToHex(_iSel)).append("\n");
         sb.append("    .style         =").append(HexDump.shortToHex(_flags)).append("\n");
