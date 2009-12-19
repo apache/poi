@@ -32,7 +32,7 @@ import java.lang.annotation.Documented;
  * @since POI-3.6
  */
 @Documented
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Internal {
-
+    String value() default "";    
 }
