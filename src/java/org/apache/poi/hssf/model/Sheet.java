@@ -221,6 +221,9 @@ public final class Sheet implements Model {
                     // one or more PSB records found after some intervening non-PSB records
                     _psBlock.addLateRecords(rs);
                 }
+                // YK: in some cases records can be moved to the preceding
+                // CustomViewSettingsRecordAggregate blocks
+                _psBlock.positionRecords(records);
                 continue;
             }
 

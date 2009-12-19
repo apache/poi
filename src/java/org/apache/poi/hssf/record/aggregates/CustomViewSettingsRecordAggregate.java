@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 
 /**
  * Manages the all the records associated with a 'Custom View Settings' sub-stream.<br/>
@@ -43,11 +41,11 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 
 	public CustomViewSettingsRecordAggregate(RecordStream rs) {
 		_begin = rs.getNext();
-		if (_begin.getSid() != UnknownRecord.USERSVIEWBEGIN_01AA) {
+		if (_begin.getSid() != UserSViewBegin.sid) {
 			throw new IllegalStateException("Bad begin record");
 		}
 		List<RecordBase> temp = new ArrayList<RecordBase>();
-		while (rs.peekNextSid() != UnknownRecord.USERSVIEWEND_01AB) {
+		while (rs.peekNextSid() != UserSViewEnd.sid) {
 			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
 				if (_psBlock != null) {
 					throw new IllegalStateException(
@@ -61,7 +59,7 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 		}
 		_recs = temp;
 		_end = rs.getNext(); // no need to save EOF in field
-		if (_end.getSid() != UnknownRecord.USERSVIEWEND_01AB) {
+		if (_end.getSid() != UserSViewEnd.sid) {
 			throw new IllegalStateException("Bad custom view settings end record");
 		}
 	}
@@ -83,6 +81,10 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 	}
 
 	public static boolean isBeginRecord(int sid) {
-		return sid == UnknownRecord.USERSVIEWBEGIN_01AA;
+		return sid == UserSViewBegin.sid;
 	}
+
+    public void append(RecordBase r){
+        _recs.add(r);    
+    }
 }
