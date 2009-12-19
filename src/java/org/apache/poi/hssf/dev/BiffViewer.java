@@ -176,6 +176,7 @@ public final class BiffViewer {
 			case GutsRecord.sid:           return new GutsRecord(in);
 			case HCenterRecord.sid:        return new HCenterRecord(in);
 			case HeaderRecord.sid:         return new HeaderRecord(in);
+            case HeaderFooterRecord.sid:   return new HeaderFooterRecord(in);
 			case HideObjRecord.sid:        return new HideObjRecord(in);
 			case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
 			case HyperlinkRecord.sid:      return new HyperlinkRecord(in);
@@ -238,6 +239,7 @@ public final class BiffViewer {
 			case TopMarginRecord.sid:      return new TopMarginRecord(in);
 			case UnitsRecord.sid:          return new UnitsRecord(in);
 			case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
+            case UserSViewBegin.sid:       return new UserSViewBegin(in);
 			case VCenterRecord.sid:        return new VCenterRecord(in);
 			case ValueRangeRecord.sid:     return new ValueRangeRecord(in);
 			case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
@@ -274,14 +276,16 @@ public final class BiffViewer {
 		private final boolean _noint;
 		private final boolean _out;
 		private final boolean _rawhex;
+        private final boolean _noHeader;
 		private final File _file;
 
-		private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, File file) {
+		private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, boolean noHeader, File file) {
 			_biffhex = biffhex;
 			_noint = noint;
 			_out = out;
 			_rawhex = rawhex;
 			_file = file;
+            _noHeader = noHeader;
 		}
 
 		public static CommandArgs parse(String[] args) throws CommandParseException {
@@ -290,6 +294,7 @@ public final class BiffViewer {
 			boolean noint = false;
 			boolean out = false;
 			boolean rawhex = false;
+            boolean header = false;
 			File file = null;
 			for (int i=0; i<nArgs; i++) {
 				String arg = args[i];
@@ -304,6 +309,8 @@ public final class BiffViewer {
 						System.setProperty("poi.deserialize.escher", "true");
 					} else if ("--rawhex".equals(arg)) {
 						rawhex = true;
+                    } else if ("--noheader".equals(arg)) {
+                        header = true;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}
@@ -320,7 +327,7 @@ public final class BiffViewer {
 			if (file == null) {
 				throw new CommandParseException("Biff viewer needs a filename");
 			}
-			return new CommandArgs(biffhex, noint, out, rawhex, file);
+			return new CommandArgs(biffhex, noint, out, rawhex, header, file);
 		}
 		public boolean shouldDumpBiffHex() {
 			return _biffhex;
@@ -334,6 +341,9 @@ public final class BiffViewer {
 		public boolean shouldOutputRawHexOnly() {
 			return _rawhex;
 		}
+        public boolean suppressHeader() {
+            return _noHeader;
+        }
 		public File getFile() {
 			return _file;
 		}
@@ -360,6 +370,7 @@ public final class BiffViewer {
 	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
 	 * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
      * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
+     * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
 	 * </table>
 	 *
 	 */
@@ -396,7 +407,7 @@ public final class BiffViewer {
 				boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
 				boolean dumpHex = cmdArgs.shouldDumpBiffHex();
 				boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump);
+				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump, cmdArgs.suppressHeader());
 				is = new BiffDumpingStream(is, recListener);
 				createRecords(is, ps, recListener, dumpInterpretedRecords);
 			}
@@ -410,16 +421,18 @@ public final class BiffViewer {
 		private final Writer _hexDumpWriter;
 		private final List<String> _headers;
 		private final boolean _zeroAlignEachRecord;
-		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord) {
+        private final boolean _noHeader;
+		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
 			_hexDumpWriter = hexDumpWriter;
 			_zeroAlignEachRecord = zeroAlignEachRecord;
-			_headers = new ArrayList<String>();
+            _noHeader = noHeader;
+            _headers = new ArrayList<String>();
 		}
 
 		public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
 				byte[] data) {
 			String header = formatRecordDetails(globalOffset, sid, dataSize, recordCounter);
-			_headers.add(header);
+			if(!_noHeader) _headers.add(header);
 			Writer w = _hexDumpWriter;
 			if (w != null) {
 				try {
