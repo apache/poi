@@ -25,21 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BottomMarginRecord;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.FooterRecord;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.HeaderRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -86,14 +72,14 @@ public final class TestPageSettingsBlock extends TestCase {
 				BOFRecord.createSheetBOF(),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
-				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
+				new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00")),
 				new DimensionsRecord(),
 				new WindowTwoRecord(),
-				ur(UnknownRecord.USERSVIEWBEGIN_01AA, "ED 77 3B 86 BC 3F 37 4C A9 58 60 23 43 68 54 4B 01 00 00 00 64 00 00 00 40 00 00 00 02 00 00 00 3D 80 04 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 3F FF FF 01 00"),
+				new UserSViewBegin(HexRead.readFromString("ED 77 3B 86 BC 3F 37 4C A9 58 60 23 43 68 54 4B 01 00 00 00 64 00 00 00 40 00 00 00 02 00 00 00 3D 80 04 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F0 3F FF FF 01 00")),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
-				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
-				ur(UnknownRecord.USERSVIEWEND_01AB, "01, 00"),
+				new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00")),
+				new UserSViewEnd(HexRead.readFromString("01, 00")),
 
 				EOFRecord.instance,
 		};
@@ -132,7 +118,7 @@ public final class TestPageSettingsBlock extends TestCase {
 				new FooterRecord("&LJanuary"),
 				new DimensionsRecord(),
 				new WindowTwoRecord(),
-				ur(UnknownRecord.HEADER_FOOTER_089C, "9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00"),
+				new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 C4 60 00 00 00 00 00 00 00 00")),
 				EOFRecord.instance,
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
@@ -150,7 +136,7 @@ public final class TestPageSettingsBlock extends TestCase {
 		assertEquals(IndexRecord.class, outRecs[1].getClass());
 		assertEquals(HeaderRecord.class, outRecs[2].getClass());
 		assertEquals(FooterRecord.class, outRecs[3].getClass());
-		assertEquals(UnknownRecord.HEADER_FOOTER_089C, outRecs[4].getSid());
+		assertEquals(HeaderFooterRecord.class, outRecs[4].getClass());
 		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
 		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
 		assertEquals(EOFRecord.instance, outRecs[7]);
@@ -315,4 +301,81 @@ public final class TestPageSettingsBlock extends TestCase {
 		// records were assembled in standard order, so this simple check is OK
 		assertTrue(Arrays.equals(recs, outRecs));
 	}
+
+    public void testDuplicateHeaderFooter_bug48026() {
+
+        Record[] recs = {
+                BOFRecord.createSheetBOF(),
+                new IndexRecord(),
+
+                //PageSettingsBlock
+                new HeaderRecord("&LDecember"),
+                new FooterRecord("&LJanuary"),
+                new DimensionsRecord(),
+
+                new WindowTwoRecord(),
+
+                //CustomViewSettingsRecordAggregate
+                new UserSViewBegin(HexRead.readFromString("53 CE BD CC DE 38 44 45 97 C1 5C 89 F9 37 32 1B 01 00 00 00 64 00 00 00 40 00 00 00 03 00 00 00 7D 00 00 20 00 00 34 00 00 00 18 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF")),
+                new SelectionRecord(0, 0),
+                new UserSViewEnd(HexRead.readFromString("01 00")),
+
+                // two HeaderFooterRecord records, the first one has zero GUID (16 bytes at offset 12) and belongs to the PSB,
+                // the other is matched with a CustomViewSettingsRecordAggregate having UserSViewBegin with the same GUID
+                new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 34 33 00 00 00 00 00 00 00 00")),
+                new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 53 CE BD CC DE 38 44 45 97 C1 5C 89 F9 37 32 1B 34 33 00 00 00 00 00 00 00 00")),
+
+                EOFRecord.instance,
+        };
+        RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+        Sheet sheet;
+        try {
+            sheet = Sheet.createSheet(rs);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x89c)")) {
+                throw new AssertionFailedError("Identified bug 48026");
+            }
+            throw e;
+        }
+
+        RecordCollector rv = new RecordCollector();
+        sheet.visitContainedRecords(rv, 0);
+        Record[] outRecs = rv.getRecords();
+
+        assertEquals(recs.length, outRecs.length);
+        //expected order of records:
+        Record[] expectedRecs = {
+                recs[0],  //BOFRecord
+                recs[1],  //IndexRecord
+
+                //PageSettingsBlock
+                recs[2],  //HeaderRecord
+                recs[3],  //FooterRecord
+                recs[9],  //HeaderFooterRecord
+                recs[4],  // DimensionsRecord
+                recs[5],  // WindowTwoRecord
+
+                //CustomViewSettingsRecordAggregate
+                recs[6],  // UserSViewBegin
+                recs[7],  // SelectionRecord
+                recs[10], // HeaderFooterRecord
+                recs[8],  // UserSViewEnd
+
+                recs[11],  //EOFRecord
+        };
+        for(int i=0; i < expectedRecs.length; i++){
+            assertEquals("Record mismatch at index " + i,  expectedRecs[i].getClass(), outRecs[i].getClass());
+        }
+        HeaderFooterRecord hd1 = (HeaderFooterRecord)expectedRecs[4];
+        //GUID is zero
+        assertTrue(Arrays.equals(new byte[16], hd1.getGuid()));
+        assertTrue(hd1.isCurrentSheet());
+
+        UserSViewBegin svb = (UserSViewBegin)expectedRecs[7];
+        HeaderFooterRecord hd2 = (HeaderFooterRecord)expectedRecs[9];
+        assertFalse(hd2.isCurrentSheet());
+        //GUIDs of HeaderFooterRecord and UserSViewBegin must be the same
+        assertTrue(Arrays.equals(svb.getGuid(), hd2.getGuid()));
+    }
+
 }

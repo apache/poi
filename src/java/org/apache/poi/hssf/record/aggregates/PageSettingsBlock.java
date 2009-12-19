@@ -20,26 +20,11 @@ package org.apache.poi.hssf.record.aggregates;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.BottomMarginRecord;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.FooterRecord;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.HeaderRecord;
-import org.apache.poi.hssf.record.HorizontalPageBreakRecord;
-import org.apache.poi.hssf.record.LeftMarginRecord;
-import org.apache.poi.hssf.record.Margin;
-import org.apache.poi.hssf.record.PageBreakRecord;
-import org.apache.poi.hssf.record.PrintSetupRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.RightMarginRecord;
-import org.apache.poi.hssf.record.TopMarginRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.VerticalPageBreakRecord;
+import org.apache.poi.hssf.record.*;
 
 /**
  * Groups the page settings records for a worksheet.<p/>
@@ -102,8 +87,14 @@ public final class PageSettingsBlock extends RecordAggregate {
 	private final List<PLSAggregate> _plsRecords;
 	private PrintSetupRecord _printSetup;
 	private Record _bitmap;
-	private Record _headerFooter;
-	private Record _printSize;
+	private HeaderFooterRecord _headerFooter;
+    /**
+     * HeaderFooterRecord records belonging to preceding CustomViewSettingsRecordAggregates.
+     * The indicator of such records is a non-zero GUID,
+     *  see {@link  org.apache.poi.hssf.record.HeaderFooterRecord#getGuid()}
+     */
+    private List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<HeaderFooterRecord>();
+    private Record _printSize;
 
 	public PageSettingsBlock(RecordStream rs) {
 		_plsRecords = new ArrayList<PLSAggregate>();
@@ -126,7 +117,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 		_hCenter = createHCenter();
 		_vCenter = createVCenter();
 		_printSetup = createPrintSetup();
-	}
+    }
 
 	/**
 	 * @return <code>true</code> if the specified Record sid is one belonging to the
@@ -148,7 +139,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 			case PrintSetupRecord.sid:
 			case UnknownRecord.BITMAP_00E9:
 			case UnknownRecord.PRINTSIZE_0033:
-			case UnknownRecord.HEADER_FOOTER_089C: // extra header/footer settings supported by Excel 2007
+			case HeaderFooterRecord.sid: // extra header/footer settings supported by Excel 2007
 				return true;
 		}
 		return false;
@@ -211,10 +202,14 @@ public final class PageSettingsBlock extends RecordAggregate {
 				checkNotPresent(_printSize);
 				_printSize = rs.getNext();
 				break;
-			case UnknownRecord.HEADER_FOOTER_089C:
-				checkNotPresent(_headerFooter);
-				_headerFooter = rs.getNext();
-				break;
+			case HeaderFooterRecord.sid:
+				//there can be multiple HeaderFooterRecord records belonging to different sheet views
+				HeaderFooterRecord hf = (HeaderFooterRecord)rs.getNext();
+                if(hf.isCurrentSheet()) _headerFooter = hf;
+                else {
+                    _sviewHeaderFooters.add(hf);
+                }
+                break;
 			default:
 				// all other record types are not part of the PageSettingsBlock
 				return false;
@@ -596,11 +591,11 @@ public final class PageSettingsBlock extends RecordAggregate {
 	 * HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
 	 * the {@link PageSettingsBlock} where it belongs.
 	 */
-	public void addLateHeaderFooter(Record rec) {
+	public void addLateHeaderFooter(HeaderFooterRecord rec) {
 		if (_headerFooter != null) {
 			throw new IllegalStateException("This page settings block already has a header/footer record");
 		}
-		if (rec.getSid() != UnknownRecord.HEADER_FOOTER_089C) {
+		if (rec.getSid() != HeaderFooterRecord.sid) {
 			throw new RecordFormatException("Unexpected header-footer record sid: 0x" + Integer.toHexString(rec.getSid()));
 		}
 		_headerFooter = rec;
@@ -641,4 +636,40 @@ public final class PageSettingsBlock extends RecordAggregate {
 			}
 		}
 	}
+
+    /**
+     * Some apps can define multiple HeaderFooterRecord records for a sheet.
+     * When saving such a file Excel 2007 re-positiones them according to the followig rules:
+     *  - take a HeaderFooterRecord and read 16-byte GUID at offset 12. If it is zero,
+     *    it means the current sheet and the given HeaderFooterRecord belongs to this PageSettingsBlock
+     *  - If GUID is not zero then search in preceding CustomViewSettingsRecordAggregates.
+     *    Compare first 16 bytes of UserSViewBegin with the HeaderFooterRecord's GUID. If match,
+     *    then append the HeaderFooterRecord to this CustomViewSettingsRecordAggregates
+     *
+     * @param sheetRecords the list of sheet records read so far
+     */
+    public void positionRecords(List<RecordBase> sheetRecords) {
+        // loop through HeaderFooterRecord records having not-empty GUID and match them with
+        // CustomViewSettingsRecordAggregate blocks having UserSViewBegin with the same GUID
+        for (final Iterator<HeaderFooterRecord> it = _sviewHeaderFooters.iterator(); it.hasNext(); ) {
+            final HeaderFooterRecord hf = it.next();
+            for (RecordBase rb : sheetRecords) {
+                if (rb instanceof CustomViewSettingsRecordAggregate) {
+                    final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
+                    cv.visitContainedRecords(new RecordVisitor() {
+                        public void visitRecord(Record r) {
+                            if (r.getSid() == UserSViewBegin.sid) {
+                                byte[] guid1 = ((UserSViewBegin) r).getGuid();
+                                byte[] guid2 = hf.getGuid();
+                                if (Arrays.equals(guid1, guid2)) {
+                                    cv.append(hf);
+                                    it.remove();
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
 }

@@ -21,11 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 
 /**
  * Manages the all the records associated with a chart sub-stream.<br/>
@@ -48,9 +44,9 @@ public final class ChartSubstreamRecordAggregate extends RecordAggregate {
 		while (rs.peekNextClass() != EOFRecord.class) {
 			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
 				if (_psBlock != null) {
-					if (rs.peekNextSid() == UnknownRecord.HEADER_FOOTER_089C) {
+					if (rs.peekNextSid() == HeaderFooterRecord.sid) {
 						// test samples: 45538_classic_Footer.xls, 45538_classic_Header.xls
-						_psBlock.addLateHeaderFooter(rs.getNext());
+						_psBlock.addLateHeaderFooter((HeaderFooterRecord)rs.getNext());
 						continue;
 					}
 					throw new IllegalStateException(
