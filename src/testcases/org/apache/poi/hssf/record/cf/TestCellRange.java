@@ -184,4 +184,12 @@ public final class TestCellRange extends TestCase
 		assertEquals(100, box9x9.getNumberOfCells());
 		assertEquals(121, box10to20c.getNumberOfCells());
 	}
+
+    public void testMergeCellRanges() {
+        CellRangeAddress cr1 = CellRangeAddress.valueOf("A1:B1");
+        CellRangeAddress cr2 = CellRangeAddress.valueOf("A2:B2");
+        CellRangeAddress[] cr3 = CellRangeUtil.mergeCellRanges(new CellRangeAddress[]{cr1, cr2});
+        assertEquals(1, cr3.length);
+        assertEquals("A1:B2", cr3[0].formatAsString());
+    }
 }

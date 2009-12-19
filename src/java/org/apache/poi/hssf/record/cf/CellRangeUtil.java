@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.cf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -96,7 +95,10 @@ public final class CellRangeUtil
 		if(cellRanges.length < 1) {
 			return cellRanges;
 		}
-		List temp = mergeCellRanges(Arrays.asList(cellRanges));
+
+        List<CellRangeAddress> lst = new ArrayList<CellRangeAddress>();
+        for(CellRangeAddress cr : cellRanges) lst.add(cr);
+        List temp = mergeCellRanges(lst);
 		return toArray(temp);
 	}
 	private static List mergeCellRanges(List cellRangeList)
