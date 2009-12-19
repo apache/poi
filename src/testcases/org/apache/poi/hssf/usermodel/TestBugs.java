@@ -1530,4 +1530,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         openSample("47701.xls");
     }
     
+    public void test48026() {
+        openSample("48026.xls");
+    }
 }
