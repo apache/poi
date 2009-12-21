@@ -23,7 +23,12 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-public final class Row implements Function0Arg, Function1Arg {
+/**
+ * Implementation for the Excel function ROW
+ *
+ * @author Josh Micich
+ */
+public final class RowFunc implements Function0Arg, Function1Arg {
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
         return new NumberEval(srcRowIndex+1);
@@ -51,5 +56,4 @@ public final class Row implements Function0Arg, Function1Arg {
         }
         return ErrorEval.VALUE_INVALID;
     }
-
 }

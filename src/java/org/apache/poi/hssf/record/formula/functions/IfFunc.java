@@ -25,9 +25,11 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
+ * Implementation for the Excel function IF
+ *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class If extends Var2or3ArgFunction {
+public final class IfFunc extends Var2or3ArgFunction {
 
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		boolean b;

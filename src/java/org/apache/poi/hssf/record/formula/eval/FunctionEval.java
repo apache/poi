@@ -55,14 +55,14 @@ public final class FunctionEval {
 		Function[] retval = new Function[368];
 
 		retval[0] = new Count();
-		retval[ID.IF] = new If();
+		retval[ID.IF] = new IfFunc();
 		retval[2] = LogicalFunction.ISNA;
 		retval[3] = LogicalFunction.ISERROR;
 		retval[ID.SUM] = AggregateFunction.SUM;
 		retval[5] = AggregateFunction.AVERAGE;
 		retval[6] = AggregateFunction.MIN;
 		retval[7] = AggregateFunction.MAX;
-		retval[8] = new Row(); // ROW
+		retval[8] = new RowFunc(); // ROW
 		retval[9] = new Column();
 		retval[10] = new Na();
 		retval[11] = new Npv();
@@ -103,7 +103,7 @@ public final class FunctionEval {
 		retval[63] = NumericFunction.RAND;
 		retval[64] = new Match();
 		retval[65] = DateFunc.instance;
-		retval[66] = new Time();
+		retval[66] = new TimeFunc();
 		retval[67] = CalendarFieldFunction.DAY;
 		retval[68] = CalendarFieldFunction.MONTH;
 		retval[69] = CalendarFieldFunction.YEAR;

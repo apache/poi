@@ -28,6 +28,8 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
 
 /**
+ * Implementation for the Excel function DATE
+ *
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 public final class DateFunc extends Fixed3ArgFunction {
@@ -52,16 +54,17 @@ public final class DateFunc extends Fixed3ArgFunction {
 		return new NumberEval(result);
 	}
 
-	private static double evaluate(int year, int month, int day) throws EvaluationException {
+	private static double evaluate(int year, int month, int pDay) throws EvaluationException {
 
-		if (year < 0 || month < 0 || day < 0) {
+		if (year < 0 || month < 0 || pDay < 0) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
 
-		if (year == 1900 && month == Calendar.FEBRUARY && day == 29) {
+		if (year == 1900 && month == Calendar.FEBRUARY && pDay == 29) {
 			return 60.0;
 		}
 
+		int day = pDay;
 		if (year == 1900) {
 			if ((month == Calendar.JANUARY && day >= 60) ||
 					(month == Calendar.FEBRUARY && day >= 30)) {

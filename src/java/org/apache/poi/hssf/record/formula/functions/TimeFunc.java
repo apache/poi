@@ -25,11 +25,13 @@ import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
+ * Implementation for the Excel function TIME
+ *
  * @author Steven Butler (sebutler @ gmail dot com)
  *
- * Based on POI org.apache.hssf.record.formula.DateFunc.java
+ * Based on POI {@link DateFunc}
  */
-public final class Time extends Fixed3ArgFunction {
+public final class TimeFunc extends Fixed3ArgFunction {
 
 	private static final int SECONDS_PER_MINUTE = 60;
 	private static final int SECONDS_PER_HOUR = 3600;
