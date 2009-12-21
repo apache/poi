@@ -176,7 +176,6 @@ public final class BiffViewer {
 			case GutsRecord.sid:           return new GutsRecord(in);
 			case HCenterRecord.sid:        return new HCenterRecord(in);
 			case HeaderRecord.sid:         return new HeaderRecord(in);
-            case HeaderFooterRecord.sid:   return new HeaderFooterRecord(in);
 			case HideObjRecord.sid:        return new HideObjRecord(in);
 			case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
 			case HyperlinkRecord.sid:      return new HyperlinkRecord(in);
@@ -239,7 +238,6 @@ public final class BiffViewer {
 			case TopMarginRecord.sid:      return new TopMarginRecord(in);
 			case UnitsRecord.sid:          return new UnitsRecord(in);
 			case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
-            case UserSViewBegin.sid:       return new UserSViewBegin(in);
 			case VCenterRecord.sid:        return new VCenterRecord(in);
 			case ValueRangeRecord.sid:     return new ValueRangeRecord(in);
 			case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
@@ -294,7 +292,7 @@ public final class BiffViewer {
 			boolean noint = false;
 			boolean out = false;
 			boolean rawhex = false;
-            boolean header = true;
+            boolean noheader = false;
 			File file = null;
 			for (int i=0; i<nArgs; i++) {
 				String arg = args[i];
@@ -310,7 +308,7 @@ public final class BiffViewer {
 					} else if ("--rawhex".equals(arg)) {
 						rawhex = true;
                     } else if ("--noheader".equals(arg)) {
-                        header = true;
+                        noheader = false;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}
@@ -327,7 +325,7 @@ public final class BiffViewer {
 			if (file == null) {
 				throw new CommandParseException("Biff viewer needs a filename");
 			}
-			return new CommandArgs(biffhex, noint, out, rawhex, header, file);
+			return new CommandArgs(biffhex, noint, out, rawhex, noheader, file);
 		}
 		public boolean shouldDumpBiffHex() {
 			return _biffhex;
