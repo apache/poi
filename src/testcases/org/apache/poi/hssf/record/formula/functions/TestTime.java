@@ -30,8 +30,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * Tests for {@link Time}
- * 
+ * Tests for {@link TimeFunc}
+ *
  * @author @author Steven Butler (sebutler @ gmail dot com)
  */
 public final class TestTime extends TestCase {
@@ -106,13 +106,13 @@ public final class TestTime extends TestCase {
 		int expH = Integer.parseInt(parts[0]);
 		int expM = Integer.parseInt(parts[1]);
 		int expS = Integer.parseInt(parts[2]);
-		
+
 		double expectedValue = (expH*SECONDS_PER_HOUR + expM*SECONDS_PER_MINUTE + expS)/SECONDS_PER_DAY;
 
 		cell11.setCellFormula(formulaText);
 		cell11.setCellStyle(style);
 		evaluator.clearAllCachedResultValues();
-		
+
 		double actualValue = evaluator.evaluate(cell11).getNumberValue();
 		assertEquals(expectedValue, actualValue, 0.0);
 

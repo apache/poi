@@ -63,7 +63,7 @@ import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 import org.apache.poi.hssf.record.formula.functions.Choose;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
-import org.apache.poi.hssf.record.formula.functions.If;
+import org.apache.poi.hssf.record.formula.functions.IfFunc;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
@@ -373,7 +373,7 @@ public final class WorkbookEvaluator {
 					ValueEval arg0 = stack.pop();
 					boolean evaluatedPredicate;
 					try {
-						evaluatedPredicate = If.evaluateFirstArg(arg0, ec.getRowIndex(), ec.getColumnIndex());
+						evaluatedPredicate = IfFunc.evaluateFirstArg(arg0, ec.getRowIndex(), ec.getColumnIndex());
 					} catch (EvaluationException e) {
 						stack.push(e.getErrorEval());
 						int dist = attrPtg.getData();

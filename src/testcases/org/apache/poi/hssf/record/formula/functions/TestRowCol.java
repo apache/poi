@@ -43,7 +43,7 @@ public final class TestRowCol extends TestCase {
 	}
 
 	public void testRow() {
-		Function target = new Row();
+		Function target = new RowFunc();
 		{
 			ValueEval[] args = { EvalFactory.createRefEval("C5"), };
 			double actual = NumericFunctionInvoker.invoke(target, args);
