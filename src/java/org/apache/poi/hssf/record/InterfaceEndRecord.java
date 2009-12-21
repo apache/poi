@@ -18,6 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Title: Interface End Record (0x00E2)<P>
@@ -28,17 +31,23 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 2.0-pre
  */
 public final class InterfaceEndRecord extends StandardRecord {
+    private static POILogger logger = POILogFactory.getLogger(InterfaceEndRecord.class);
+
     public final static short sid = 0x00E2;
+
+    private byte[] _unknownData;
 
     public InterfaceEndRecord()
     {
     }
 
-    /**
-     * @param in unused (since this record has no data)
-     */
     public InterfaceEndRecord(RecordInputStream in)
     {
+        if(in.available() > 0){
+            _unknownData = in.readRemainder();
+            logger.log(POILogger.WARN, "encountered unexpected " + 
+                    _unknownData.length + " bytes in InterfaceEndRecord");
+        }
     }
 
     public String toString()
@@ -46,15 +55,19 @@ public final class InterfaceEndRecord extends StandardRecord {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[INTERFACEEND]\n");
+        buffer.append("  unknownData=").append(HexDump.toHex(_unknownData)).append("\n");
         buffer.append("[/INTERFACEEND]\n");
         return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
+        if(_unknownData != null) out.write(_unknownData);
     }
 
     protected int getDataSize() {
-        return 0;
+        int size = 0;
+        if(_unknownData != null) size += _unknownData.length;
+        return size;
     }
 
     public short getSid()
