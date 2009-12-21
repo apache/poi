@@ -294,7 +294,7 @@ public final class BiffViewer {
 			boolean noint = false;
 			boolean out = false;
 			boolean rawhex = false;
-            boolean header = false;
+            boolean header = true;
 			File file = null;
 			for (int i=0; i<nArgs; i++) {
 				String arg = args[i];
