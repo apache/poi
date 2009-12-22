@@ -128,13 +128,13 @@ public final class Workbook {
     /**
      * this contains the Worksheet record objects
      */
-    private final WorkbookRecordList records     = new WorkbookRecordList();
+    private final WorkbookRecordList records;
 
     /**
      * this contains a reference to the SSTRecord so that new stings can be added
      * to it.
      */
-    protected SSTRecord        sst         = null;
+    protected SSTRecord sst;
 
 
     private LinkTable linkTable; // optionally occurs if there are  references in the document. (4.10.3)
@@ -143,26 +143,36 @@ public final class Workbook {
      * holds the "boundsheet" records (aka bundlesheet) so that they can have their
      * reference to their "BOF" marker
      */
-    private final List<BoundSheetRecord> boundsheets = new ArrayList<BoundSheetRecord>();
-    private final List<FormatRecord> formats = new ArrayList<FormatRecord>();
-    private final List<HyperlinkRecord> hyperlinks = new ArrayList<HyperlinkRecord>();
+    private final List<BoundSheetRecord> boundsheets;
+    private final List<FormatRecord> formats;
+    private final List<HyperlinkRecord> hyperlinks;
 
-    protected int              numxfs      = 0;   // hold the number of extended format records
-    protected int              numfonts    = 0;   // hold the number of font records
-    private int                maxformatid  = -1;  // holds the max format id
-    private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
-    private DrawingManager2    drawingManager;
-    private List<EscherBSERecord> escherBSERecords = new ArrayList<EscherBSERecord>();
+    /** the number of extended format records */
+	private int numxfs;
+    /** the number of font records */
+	private int numfonts;
+    /** holds the max format id */
+	private int maxformatid;
+    /** whether 1904 date windowing is being used */
+    private boolean uses1904datewindowing;
+    private DrawingManager2 drawingManager;
+    private List<EscherBSERecord> escherBSERecords;
     private WindowOneRecord windowOne;
     private FileSharingRecord fileShare;
     private WriteAccessRecord writeAccess;
     private WriteProtectRecord writeProtect;
 
-    /**
-     * Creates new Workbook with no intitialization --useless right now
-     * @see #createWorkbook(List)
-     */
-    public Workbook() {
+    private Workbook() {
+    	records     = new WorkbookRecordList();
+
+		boundsheets = new ArrayList<BoundSheetRecord>();
+		formats = new ArrayList<FormatRecord>();
+		hyperlinks = new ArrayList<HyperlinkRecord>();
+		numxfs = 0;
+		numfonts = 0;
+		maxformatid = -1;
+		uses1904datewindowing = false;
+		escherBSERecords = new ArrayList<EscherBSERecord>();
     }
 
     /**
