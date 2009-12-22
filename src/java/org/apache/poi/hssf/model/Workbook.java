@@ -108,7 +108,7 @@ import org.apache.poi.util.POILogger;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  */
-public final class Workbook implements Model {
+public final class Workbook {
     /**
      * Excel silently truncates long sheet names to 31 chars.
      * This constant is used to ensure uniqueness in the first 31 chars

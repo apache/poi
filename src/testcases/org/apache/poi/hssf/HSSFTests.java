@@ -21,7 +21,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
-import org.apache.poi.hssf.eventmodel.TestModelFactory;
 import org.apache.poi.hssf.eventusermodel.AllEventUserModelTests;
 import org.apache.poi.hssf.extractor.TestExcelExtractor;
 import org.apache.poi.hssf.model.AllModelTests;
@@ -33,9 +32,7 @@ import org.apache.poi.ss.util.AllSSUtilTests;
 
 /**
  * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
- * 
- * Mostly this is for my convenience.
- * 
+ *
  * @author Andrew C. Oliver acoliver@apache.org
  */
 public final class HSSFTests {
@@ -50,7 +47,6 @@ public final class HSSFTests {
         suite.addTest(AllHSSFUtilTests.suite());
         suite.addTest(new TestSuite(TestExcelExtractor.class));
         suite.addTest(new TestSuite(TestEventRecordFactory.class));
-        suite.addTest(new TestSuite(TestModelFactory.class));
         suite.addTest(AllSSFormulaTests.suite());
         suite.addTest(AllSSUtilTests.suite());
         return suite;
