@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -90,6 +91,9 @@ public final class TestRangeEval extends TestCase {
 		public MockAreaEval(AreaI ptg) {
 			super(ptg);
 		}
+		private MockAreaEval(int firstRow, int firstColumn, int lastRow, int lastColumn) {
+			super(firstRow, firstColumn, lastRow, lastColumn);
+		}
 		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 			throw new RuntimeException("not expected to be called during this test");
 		}
@@ -99,6 +103,20 @@ public final class TestRangeEval extends TestCase {
 					relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 			return new MockAreaEval(area);
+		}
+		public TwoDEval getRow(int rowIndex) {
+			if (rowIndex >= getHeight()) {
+				throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
+						+ ".  Allowable range is (0.." + getHeight() + ").");
+			}
+			return new MockAreaEval(rowIndex, getFirstColumn(), rowIndex, getLastColumn());
+		}
+		public TwoDEval getColumn(int columnIndex) {
+			if (columnIndex >= getWidth()) {
+				throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
+						+ ".  Allowable range is (0.." + getWidth() + ").");
+			}
+			return new MockAreaEval(getFirstRow(), columnIndex, getLastRow(), columnIndex);
 		}
 	}
 

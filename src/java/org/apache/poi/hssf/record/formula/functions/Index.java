@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
@@ -53,7 +52,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 		int columnIx = 0;
 		try {
 			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
-			
+
 			if (!reference.isColumn()) {
 				if (!reference.isRow()) {
 					// always an error with 2-D area refs
@@ -65,7 +64,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 				columnIx = rowIx;
 				rowIx = 0;
 			}
- 
+
 			return getValueFromArea(reference, rowIx, columnIx);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
@@ -125,45 +124,27 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 			throws EvaluationException {
 		assert pRowIx >= 0;
 		assert pColumnIx >= 0;
-	
-		int width = ae.getWidth();
-		int height = ae.getHeight();
-		
-		int relFirstRowIx;
-		int relLastRowIx;
 
-		if ((pRowIx == 0)) {
-			relFirstRowIx = 0;
-			relLastRowIx = height-1;
-		} else {
+		TwoDEval result = ae;
+
+		if (pRowIx != 0) {
 			// Slightly irregular logic for bounds checking errors
-			if (pRowIx > height) {
+			if (pRowIx > ae.getHeight()) {
 				// high bounds check fail gives #REF! if arg was explicitly passed
 				throw new EvaluationException(ErrorEval.REF_INVALID);
 			}
-			int rowIx = pRowIx-1;
-			relFirstRowIx = rowIx;
-			relLastRowIx = rowIx;
+			result = result.getRow(pRowIx-1);
 		}
 
-		int relFirstColIx;
-		int relLastColIx;
-		if ((pColumnIx == 0)) {
-			relFirstColIx = 0;
-			relLastColIx = width-1;
-		} else {
+		if (pColumnIx != 0) {
 			// Slightly irregular logic for bounds checking errors
-			if (pColumnIx > width) {
+			if (pColumnIx > ae.getWidth()) {
 				// high bounds check fail gives #REF! if arg was explicitly passed
 				throw new EvaluationException(ErrorEval.REF_INVALID);
 			}
-			int columnIx = pColumnIx-1;
-			relFirstColIx = columnIx;
-			relLastColIx = columnIx;
+			result = result.getColumn(pColumnIx-1);
 		}
-
-		AreaEval x = ((AreaEval) ae);
-		return x.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
+		return result;
 	}
 
 
