@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Class TestHSSFDateUtil
@@ -239,6 +240,10 @@ public final class TestHSSFDateUtil extends TestCase {
                 "DD-MM-YY", "DD-mm-YYYY",
                 "dd\\-mm\\-yy", // Sometimes escaped
                 "dd.mm.yyyy", "dd\\.mm\\.yyyy",
+                "dd\\ mm\\.yyyy AM", "dd\\ mm\\.yyyy pm",
+                 "dd\\ mm\\.yyyy\\-dd", "[h]:mm:ss",
+
+                //YK: TODO "mm:ss.0" is a built-in date format which is not recognized by DateUtil.isInternalDateFormat
 
                 // These crazy ones are valid
                 "yyyy-mm-dd;@", "yyyy/mm/dd;@",
