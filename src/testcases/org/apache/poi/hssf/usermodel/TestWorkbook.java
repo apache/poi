@@ -25,7 +25,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
@@ -449,7 +449,7 @@ public final class TestWorkbook extends TestCase {
     public void testBackupRecord() {
         HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet();
-		Workbook workbook = wb.getWorkbook();
+		InternalWorkbook workbook = wb.getWorkbook();
         BackupRecord record   = workbook.getBackupRecord();
 
         assertEquals(0, record.getBackup());

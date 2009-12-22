@@ -17,14 +17,13 @@
 
 package org.apache.poi.hssf.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
@@ -36,10 +35,11 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 /**
- * 
+ *
  */
 public final class TestAreaReference extends TestCase {
 
@@ -52,70 +52,60 @@ public final class TestAreaReference extends TestCase {
         assertTrue("row is abs",cf.isRowAbsolute());
         assertTrue("col is abs",cf.isColAbsolute());
         assertTrue("string is $A$1",cf.formatAsString().equals("$A$1"));
-        
+
         cf = ar.getLastCell();
         assertTrue("row is 4",cf.getRow()==1);
         assertTrue("col is 1",cf.getCol()==1);
         assertTrue("row is abs",cf.isRowAbsolute());
         assertTrue("col is abs",cf.isColAbsolute());
         assertTrue("string is $B$2",cf.formatAsString().equals("$B$2"));
-        
+
         CellReference[] refs = ar.getAllReferencedCells();
         assertEquals(4, refs.length);
-        
+
         assertEquals(0, refs[0].getRow());
         assertEquals(0, refs[0].getCol());
         assertNull(refs[0].getSheetName());
-        
+
         assertEquals(0, refs[1].getRow());
         assertEquals(1, refs[1].getCol());
         assertNull(refs[1].getSheetName());
-        
+
         assertEquals(1, refs[2].getRow());
         assertEquals(0, refs[2].getCol());
         assertNull(refs[2].getSheetName());
-        
+
         assertEquals(1, refs[3].getRow());
         assertEquals(1, refs[3].getCol());
         assertNull(refs[3].getSheetName());
     }
-    
+
     /**
      * References failed when sheet names were being used
      * Reported by Arne.Clauss@gedas.de
      */
     public void testReferenceWithSheet() {
         AreaReference ar;
-        
+
         ar = new AreaReference("Tabelle1!B5:B5");
         assertTrue(ar.isSingleCell());
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, false, false, "Tabelle1!B5");
-        
+
         assertEquals(1, ar.getAllReferencedCells().length);
-        
-        
+
+
         ar = new AreaReference("Tabelle1!$B$5:$B$7");
         assertFalse(ar.isSingleCell());
-        
+
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, true, true, "Tabelle1!$B$5");
         TestCellReference.confirmCell(ar.getLastCell(), "Tabelle1", 6, 1, true, true, "Tabelle1!$B$7");
-        
+
         // And all that make it up
         CellReference[] allCells = ar.getAllReferencedCells();
         assertEquals(3, allCells.length);
         TestCellReference.confirmCell(allCells[0], "Tabelle1", 4, 1, true, true, "Tabelle1!$B$5");
         TestCellReference.confirmCell(allCells[1], "Tabelle1", 5, 1, true, true, "Tabelle1!$B$6");
         TestCellReference.confirmCell(allCells[2], "Tabelle1", 6, 1, true, true, "Tabelle1!$B$7");
-    }
-
-    // TODO - remove this sub-class
-    private static final class HSSFWB extends HSSFWorkbook {
-        public HSSFWB(InputStream in) throws IOException {
-            super(in);
-        }
-        public Workbook getWorkbook() {
-            return super.getWorkbook();
-        }
     }
 
     public void testContiguousReferences() {
@@ -138,15 +128,21 @@ public final class TestAreaReference extends TestCase {
         try {
             new AreaReference(refDCSimple);
             fail();
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException e) {
+        	// expected during successful test
+        }
         try {
             new AreaReference(refDC2D);
             fail();
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException e) {
+        	// expected during successful test
+        }
         try {
             new AreaReference(refDC3D);
             fail();
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException e) {
+        	// expected during successful test
+        }
 
         // Test that we split as expected
         AreaReference[] refs;
@@ -193,8 +189,8 @@ public final class TestAreaReference extends TestCase {
 
     public void testDiscontinousReference() throws Exception {
         InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
-        HSSFWB wb = new HSSFWB(is);
-        Workbook workbook = wb.getWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook(is);
+        InternalWorkbook workbook = TestHSSFWorkbook.getInternalWorkbook(wb);
         HSSFEvaluationWorkbook eb = HSSFEvaluationWorkbook.create(wb);
 
         assertEquals(1, wb.getNumberOfNames());
@@ -252,18 +248,18 @@ public final class TestAreaReference extends TestCase {
         HSSFCell c = r.getCell((int)cref.getCol());
         assertNotNull(c);
     }
-    
+
     public void testSpecialSheetNames() {
         AreaReference ar;
         ar = new AreaReference("'Sheet A'!A1:A1");
         confirmAreaSheetName(ar, "Sheet A", "'Sheet A'!A1");
-        
+
         ar = new AreaReference("'Hey! Look Here!'!A1:A1");
         confirmAreaSheetName(ar, "Hey! Look Here!", "'Hey! Look Here!'!A1");
-        
+
         ar = new AreaReference("'O''Toole'!A1:B2");
         confirmAreaSheetName(ar, "O'Toole", "'O''Toole'!A1:B2");
-        
+
         ar = new AreaReference("'one:many'!A1:B2");
         confirmAreaSheetName(ar, "one:many", "'one:many'!A1:B2");
     }
@@ -273,25 +269,24 @@ public final class TestAreaReference extends TestCase {
         assertEquals(sheetName, cells[0].getSheetName());
         assertEquals(expectedFullText, ar.formatAsString());
     }
-    
+
     public void testWholeColumnRefs() {
-		confirmWholeColumnRef("A:A", 0, 0, false, false);
-		confirmWholeColumnRef("$C:D", 2, 3, true, false);
-		confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
-		
-	}
+        confirmWholeColumnRef("A:A", 0, 0, false, false);
+        confirmWholeColumnRef("$C:D", 2, 3, true, false);
+        confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
+    }
 
-	private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
-		AreaReference ar = new AreaReference(ref);
-		confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
-		confirmCell(ar.getLastCell(), 0xFFFF, lastCol, true, lastIsAbs);
-	}
+    private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
+        AreaReference ar = new AreaReference(ref);
+        confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
+        confirmCell(ar.getLastCell(), 0xFFFF, lastCol, true, lastIsAbs);
+    }
 
-	private static void confirmCell(CellReference cell, int row, int col, boolean isRowAbs,
-			boolean isColAbs) {
-		assertEquals(row, cell.getRow());
-		assertEquals(col, cell.getCol());
-		assertEquals(isRowAbs, cell.isRowAbsolute());
-		assertEquals(isColAbs, cell.isColAbsolute());
-	}
+    private static void confirmCell(CellReference cell, int row, int col, boolean isRowAbs,
+            boolean isColAbs) {
+        assertEquals(row, cell.getRow());
+        assertEquals(col, cell.getCol());
+        assertEquals(isRowAbs, cell.isRowAbsolute());
+        assertEquals(isColAbs, cell.isColAbsolute());
+    }
 }

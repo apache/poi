@@ -38,7 +38,7 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
@@ -78,13 +78,13 @@ import org.apache.poi.util.POILogger;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  *
- * @see org.apache.poi.hssf.model.Workbook
+ * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (slaubach at apache dot org)
  */
-public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
+public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final int MAX_ROW = 0xFFFF;
     private static final short MAX_COLUMN = (short)0x00FF;
@@ -104,7 +104,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * this is the reference to the low level Workbook object
      */
 
-    private Workbook workbook;
+    private InternalWorkbook workbook;
 
     /**
      * this holds the HSSFSheet objects attached to this workbook
@@ -162,25 +162,26 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
+    public static HSSFWorkbook create(InternalWorkbook book) {
+    	return new HSSFWorkbook(book);
+    }
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
      *
      */
-    public HSSFWorkbook()
-    {
-        this(Workbook.createWorkbook());
+    public HSSFWorkbook() {
+        this(InternalWorkbook.createWorkbook());
     }
 
-    protected HSSFWorkbook( Workbook book )
-    {
-        super(null, null);
-        workbook = book;
-        _sheets = new ArrayList( INITIAL_CAPACITY );
-        names = new ArrayList( INITIAL_CAPACITY );
-    }
+	private HSSFWorkbook(InternalWorkbook book) {
+		super(null, null);
+		workbook = book;
+		_sheets = new ArrayList(INITIAL_CAPACITY);
+		names = new ArrayList(INITIAL_CAPACITY);
+	}
 
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
-      this(fs,true);
+        this(fs,true);
     }
 
     /**
@@ -275,7 +276,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 
         List records = RecordFactory.createRecords(stream);
 
-        workbook = Workbook.createWorkbook(records);
+        workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
         int recOffset = workbook.getNumRecords();
         int sheetNum = 0;
@@ -321,7 +322,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * used internally to set the workbook properties.
      */
 
-    private void setPropertiesFromWorkbook(Workbook book)
+    private void setPropertiesFromWorkbook(InternalWorkbook book)
     {
         this.workbook = book;
 
@@ -1225,7 +1226,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
      * @return byte[] array containing the binary representation of this workbook and all contained
      *         sheets, rows, cells, etc.
      *
-     * @see org.apache.poi.hssf.model.Workbook
+     * @see org.apache.poi.hssf.model.InternalWorkbook
      * @see org.apache.poi.hssf.model.Sheet
      */
     public byte[] getBytes() {
@@ -1290,8 +1291,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         return workbook.getSSTString(index).getString();
     }
 
-    protected Workbook getWorkbook()
-    {
+    InternalWorkbook getWorkbook() {
         return workbook;
     }
 

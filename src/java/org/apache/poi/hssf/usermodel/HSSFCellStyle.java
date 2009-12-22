@@ -18,7 +18,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.StyleRecord;
@@ -38,7 +38,7 @@ import org.apache.poi.ss.usermodel.Font;
 public final class HSSFCellStyle implements CellStyle {
     private ExtendedFormatRecord _format                     = null;
     private short                _index                      = 0;
-    private Workbook             _workbook                   = null;
+    private InternalWorkbook             _workbook                   = null;
 
 
     /** Creates new HSSFCellStyle why would you want to do this?? */
@@ -46,7 +46,7 @@ public final class HSSFCellStyle implements CellStyle {
     {
     	this(index, rec, workbook.getWorkbook());
     }
-    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, Workbook workbook)
+    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, InternalWorkbook workbook)
     {
         _workbook = workbook;
         _index = index;
@@ -125,7 +125,7 @@ public final class HSSFCellStyle implements CellStyle {
      *  the DataFormat against the supplied low level workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
-    public String getDataFormatString(org.apache.poi.hssf.model.Workbook workbook) {
+    public String getDataFormatString(org.apache.poi.hssf.model.InternalWorkbook workbook) {
     	HSSFDataFormat format = new HSSFDataFormat( workbook );
 
         return format.getFormat(getDataFormat());

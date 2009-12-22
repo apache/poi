@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.NamePtg;
@@ -42,7 +42,7 @@ import org.apache.poi.ss.formula.FormulaType;
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
 	private final HSSFWorkbook _uBook;
-	private final Workbook _iBook;
+	private final InternalWorkbook _iBook;
 
 	public static HSSFEvaluationWorkbook create(HSSFWorkbook book) {
 		if (book == null) {

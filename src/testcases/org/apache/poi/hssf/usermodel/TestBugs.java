@@ -31,7 +31,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
@@ -171,7 +171,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test15375_2() {
         baseTest15375(6000);
     }
-    
+
     /**Double byte strings*/
     public void test15556() {
 
@@ -844,7 +844,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Check all names fit within range, and use
         //  DeletedArea3DPtg
-        Workbook w = wb.getWorkbook();
+        InternalWorkbook w = wb.getWorkbook();
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
             assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
@@ -1249,7 +1249,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * The resolution for bug 45777 assumed that the maximum text length in a header / footer
      * record was 256 bytes.  This assumption appears to be wrong.  Since the fix for bug 47244,
-     * POI now supports header / footer text lengths beyond 256 bytes.  
+     * POI now supports header / footer text lengths beyond 256 bytes.
      */
     public void test45777() {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -1375,7 +1375,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFWorkbook wb = openSample("45290.xls");
         assertEquals(1, wb.getNumberOfSheets());
     }
-    
+
     /**
      * In POI-2.5 user reported exception when parsing a name with a custom VBA function:
      *  =MY_VBA_FUNCTION("lskdjflsk")
@@ -1455,7 +1455,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb.write(out);
         out.close();
         int size1 = out.size();
-        
+
         out = new ByteArrayOutputStream();
         wb.write(out);
         out.close();
@@ -1469,7 +1469,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(size2, size3);
 
     }
-    
+
     /**
      * java.io.IOException: block[ 0 ] already removed
      * (is an excel 95 file though)
@@ -1484,7 +1484,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             ));
         }
     }
-    
+
     /**
      * java.lang.NegativeArraySizeException reading long
      *  non-unicode data for a name record
@@ -1514,7 +1514,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     public void test48180() {
         HSSFWorkbook wb = openSample("48180.xls");
-        
+
     	HSSFSheet s = wb.getSheetAt(0);
         HSSFCell cell1 = s.getRow(0).getCell(0);
         assertEquals("test ", cell1.getStringCellValue().toString());
@@ -1524,12 +1524,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * POI 3.5 beta 7 can not read excel file contain list box (Form Control)  
+     * POI 3.5 beta 7 can not read excel file contain list box (Form Control)
      */
     public void test47701() {
         openSample("47701.xls");
     }
-    
+
     public void test48026() {
         openSample("48026.xls");
     }
