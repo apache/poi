@@ -26,7 +26,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
@@ -356,7 +356,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     public void testSheetSerializeSizeMismatch_bug45066() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1").getSheet();
+        InternalSheet sheet = wb.createSheet("Sheet1").getSheet();
         List<RecordBase> sheetRecords = sheet.getRecords();
         // one way (of many) to cause the discrepancy is with a badly behaved record:
         sheetRecords.add(new BadlyBehavedRecord());

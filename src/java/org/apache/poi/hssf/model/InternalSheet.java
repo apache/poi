@@ -70,6 +70,7 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -94,13 +95,14 @@ import org.apache.poi.util.POILogger;
  * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  */
-public final class Sheet {
+@Internal
+public final class InternalSheet {
     public static final short   LeftMargin = 0;
     public static final short   RightMargin = 1;
     public static final short   TopMargin = 2;
     public static final short   BottomMargin = 3;
 
-    private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
+    private static POILogger            log              = POILogFactory.getLogger(InternalSheet.class);
 
     private List<RecordBase>             _records;
     protected PrintGridlinesRecord       printGridlines    =     null;
@@ -154,10 +156,10 @@ public final class Sheet {
      * @see org.apache.poi.hssf.model.InternalWorkbook
      * @see org.apache.poi.hssf.record.Record
      */
-    public static Sheet createSheet(RecordStream rs) {
-        return new Sheet(rs);
+    public static InternalSheet createSheet(RecordStream rs) {
+        return new InternalSheet(rs);
     }
-    private Sheet(RecordStream rs) {
+    private InternalSheet(RecordStream rs) {
         _mergedCellsTable = new MergedCellsTable();
         RowRecordsAggregate rra = null;
 
@@ -367,7 +369,7 @@ public final class Sheet {
      * When adding a new record, implement a public clone method if and only if the record
      * belongs to a sheet.
      */
-    public Sheet cloneSheet() {
+    public InternalSheet cloneSheet() {
         List<RecordBase> clonedRecords = new ArrayList<RecordBase>(_records.size());
         for (int i = 0; i < _records.size(); i++) {
             RecordBase rb = _records.get(i);
@@ -388,10 +390,10 @@ public final class Sheet {
      *
      * @return Sheet object with all values set to defaults
      */
-    public static Sheet createSheet() {
-        return new Sheet();
+    public static InternalSheet createSheet() {
+        return new InternalSheet();
     }
-    private Sheet() {
+    private InternalSheet() {
         _mergedCellsTable = new MergedCellsTable();
         List<RecordBase> records = new ArrayList<RecordBase>(32);
 

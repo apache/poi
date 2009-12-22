@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -84,9 +84,9 @@ public final class TestPageSettingsBlock extends TestCase {
 				EOFRecord.instance,
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-		Sheet sheet;
+		InternalSheet sheet;
 		try {
-			sheet = Sheet.createSheet(rs);
+			sheet = InternalSheet.createSheet(rs);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
 				throw new AssertionFailedError("Identified bug 46480");
@@ -122,7 +122,7 @@ public final class TestPageSettingsBlock extends TestCase {
 				EOFRecord.instance,
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-		Sheet sheet = Sheet.createSheet(rs);
+		InternalSheet sheet = InternalSheet.createSheet(rs);
 
 		RecordCollector rv = new RecordCollector();
 		sheet.visitContainedRecords(rv, 0);
@@ -166,9 +166,9 @@ public final class TestPageSettingsBlock extends TestCase {
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 
-		Sheet sheet;
+		InternalSheet sheet;
 		try {
-			sheet = Sheet.createSheet(rs);
+			sheet = InternalSheet.createSheet(rs);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
 				throw new AssertionFailedError("Identified bug 47199a - failed to process late margings records");
@@ -328,9 +328,9 @@ public final class TestPageSettingsBlock extends TestCase {
                 EOFRecord.instance,
         };
         RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-        Sheet sheet;
+        InternalSheet sheet;
         try {
-            sheet = Sheet.createSheet(rs);
+            sheet = InternalSheet.createSheet(rs);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x89c)")) {
                 throw new AssertionFailedError("Identified bug 48026");

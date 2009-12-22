@@ -55,16 +55,16 @@ import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * Unit test for the {@link Sheet} class.
+ * Unit test for the {@link InternalSheet} class.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSheet extends TestCase {
-	private static Sheet createSheet(List<Record> inRecs) {
-		return Sheet.createSheet(new RecordStream(inRecs, 0));
+	private static InternalSheet createSheet(List<Record> inRecs) {
+		return InternalSheet.createSheet(new RecordStream(inRecs, 0));
 	}
 
-	private static Record[] getSheetRecords(Sheet s, int offset) {
+	private static Record[] getSheetRecords(InternalSheet s, int offset) {
 		RecordCollector rc = new RecordCollector();
 		s.visitContainedRecords(rc, offset);
 		return rc.getRecords();
@@ -77,7 +77,7 @@ public final class TestSheet extends TestCase {
 		records.add( new DimensionsRecord() );
 		records.add(createWindow2Record());
 		records.add(EOFRecord.instance);
-		Sheet sheet = createSheet(records);
+		InternalSheet sheet = createSheet(records);
 		Record[] outRecs = getSheetRecords(sheet, 0);
 
 		int pos = 0;
@@ -116,7 +116,7 @@ public final class TestSheet extends TestCase {
 	}
 
 	public void testAddMergedRegion() {
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 		int regionsToAdd = 4096;
 
 		//simple test that adds a load of regions
@@ -156,7 +156,7 @@ public final class TestSheet extends TestCase {
 	}
 
 	public void testRemoveMergedRegion() {
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 		int regionsToAdd = 4096;
 
 		for (int n = 0; n < regionsToAdd; n++) {
@@ -201,7 +201,7 @@ public final class TestSheet extends TestCase {
 		records.add(EOFRecord.instance);
 		records.add(merged);
 
-		Sheet sheet = createSheet(records);
+		InternalSheet sheet = createSheet(records);
 		sheet.getRecords().remove(0); // TODO - what does this line do?
 
 		//stub object to throw off list INDEX operations
@@ -224,7 +224,7 @@ public final class TestSheet extends TestCase {
 	public void testRowAggregation() {
 		List<Record> records = new ArrayList<Record>();
 
-		records.add(Sheet.createBOF());
+		records.add(InternalSheet.createBOF());
 		records.add(new DimensionsRecord());
 		records.add(new RowRecord(0));
 		records.add(new RowRecord(1));
@@ -236,7 +236,7 @@ public final class TestSheet extends TestCase {
 		records.add(createWindow2Record());
 		records.add(EOFRecord.instance);
 
-		Sheet sheet = createSheet(records);
+		InternalSheet sheet = createSheet(records);
 		assertNotNull("Row [2] was skipped", sheet.getRow(2));
 	}
 
@@ -248,7 +248,7 @@ public final class TestSheet extends TestCase {
 		short colFrom = 0;
 		short colTo = 255;
 
-		Sheet worksheet = Sheet.createSheet();
+		InternalSheet worksheet = InternalSheet.createSheet();
 		PageSettingsBlock sheet = worksheet.getPageSettings();
 		sheet.setRowBreak(0, colFrom, colTo);
 
@@ -304,7 +304,7 @@ public final class TestSheet extends TestCase {
 		short rowFrom = 0;
 		short rowTo = (short)65535;
 
-		Sheet worksheet = Sheet.createSheet();
+		InternalSheet worksheet = InternalSheet.createSheet();
 		PageSettingsBlock sheet = worksheet.getPageSettings();
 		sheet.setColumnBreak((short)0, rowFrom, rowTo);
 
@@ -365,7 +365,7 @@ public final class TestSheet extends TestCase {
 		final short TEST_IDX = 10;
 		final short DEFAULT_IDX = 0xF; // 15
 		short xfindex = Short.MIN_VALUE;
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 
 		// without ColumnInfoRecord
 		xfindex = sheet.getXFIndexForColAt((short) 0);
@@ -460,7 +460,7 @@ public final class TestSheet extends TestCase {
 		records.add(new DimensionsRecord());
 		records.add(createWindow2Record());
 		records.add(EOFRecord.instance);
-		Sheet sheet = createSheet(records);
+		InternalSheet sheet = createSheet(records);
 
 		// The original bug was due to different logic for collecting records for sizing and
 		// serialization. The code has since been refactored into a single method for visiting
@@ -479,7 +479,7 @@ public final class TestSheet extends TestCase {
 	 */
 	public void testRowValueAggregatesOrder_bug45145() {
 
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 
 		RowRecord rr = new RowRecord(5);
 		sheet.addRow(rr);
@@ -510,7 +510,7 @@ public final class TestSheet extends TestCase {
 	 * @return the value calculated for the position of the first DBCELL record for this sheet.
 	 * That value is found on the IndexRecord.
 	 */
-	private static int getDbCellRecordPos(Sheet sheet) {
+	private static int getDbCellRecordPos(InternalSheet sheet) {
 
 		MyIndexRecordListener myIndexListener = new MyIndexRecordListener();
 		sheet.visitContainedRecords(myIndexListener, 0);
@@ -544,7 +544,7 @@ public final class TestSheet extends TestCase {
 	 */
 	public void testGutsRecord_bug45640() {
 
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 		sheet.addRow(new RowRecord(0));
 		sheet.addRow(new RowRecord(1));
 		sheet.groupRowRange( 0, 1, true );
@@ -611,7 +611,7 @@ public final class TestSheet extends TestCase {
 		inRecs.add(nr);
 		inRecs.add(createWindow2Record());
 		inRecs.add(EOFRecord.instance);
-		Sheet sheet;
+		InternalSheet sheet;
 		try {
 			sheet = createSheet(inRecs);
 		} catch (RuntimeException e) {
@@ -641,7 +641,7 @@ public final class TestSheet extends TestCase {
 	 */
 	public void testShiftFormulasAddCondFormat_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 
 		List<RecordBase> sheetRecs = sheet.getRecords();
 		assertEquals(23, sheetRecs.size());
@@ -659,7 +659,7 @@ public final class TestSheet extends TestCase {
 	 */
 	public void testAddCondFormatAfterDataValidation_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
-		Sheet sheet = Sheet.createSheet();
+		InternalSheet sheet = InternalSheet.createSheet();
 		sheet.getOrCreateDataValidityTable();
 
 		ConditionalFormattingTable cft;
@@ -675,7 +675,7 @@ public final class TestSheet extends TestCase {
 
 	public void testCloneMulBlank_bug46776() {
 		Record[]  recs = {
-				Sheet.createBOF(),
+				InternalSheet.createBOF(),
 				new DimensionsRecord(),
 				new RowRecord(1),
 				new MulBlankRecord(1, 3, new short[] { 0x0F, 0x0F, 0x0F, } ),
@@ -684,9 +684,9 @@ public final class TestSheet extends TestCase {
 				EOFRecord.instance,
 		};
 
-		Sheet sheet = createSheet(Arrays.asList(recs));
+		InternalSheet sheet = createSheet(Arrays.asList(recs));
 
-		Sheet sheet2;
+		InternalSheet sheet2;
 		try {
 			sheet2 = sheet.cloneSheet();
 		} catch (RuntimeException e) {
