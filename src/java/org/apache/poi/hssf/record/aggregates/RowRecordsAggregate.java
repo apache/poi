@@ -56,9 +56,12 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
 	/** Creates a new instance of ValueRecordsAggregate */
 	public RowRecordsAggregate() {
-		this(SharedValueManager.EMPTY);
+		this(SharedValueManager.createEmpty());
 	}
 	private RowRecordsAggregate(SharedValueManager svm) {
+		if (svm == null) {
+			throw new IllegalArgumentException("SharedValueManager must be provided.");
+		}
 		_rowRecords = new TreeMap<Integer, RowRecord>();
 		_valuesAgg = new ValueRecordsAggregate();
 		_unknownRecords = new ArrayList<Record>();
@@ -68,6 +71,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	/**
 	 * @param rs record stream with all {@link SharedFormulaRecord}
 	 * {@link ArrayRecord}, {@link TableRecord} {@link MergeCellsRecord} Records removed
+	 * @param svm an initialised {@link SharedValueManager} (from the shared formula, array
+	 * and table records of the current sheet).  Never <code>null</code>.
 	 */
 	public RowRecordsAggregate(RecordStream rs, SharedValueManager svm) {
 		this(svm);

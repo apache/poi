@@ -109,8 +109,14 @@ public final class SharedValueManager {
 		}
 	}
 
-	public static final SharedValueManager EMPTY = new SharedValueManager(
+	/**
+	 * @return a new empty {@link SharedValueManager}.
+	 */
+	public static final SharedValueManager createEmpty() {
+		// Note - must create distinct instances because they are assumed to be mutable.
+		return new SharedValueManager(
 			new SharedFormulaRecord[0], new CellReference[0], new ArrayRecord[0], new TableRecord[0]);
+	}
 	private final ArrayRecord[] _arrayRecords;
 	private final TableRecord[] _tableRecords;
 	private final Map<SharedFormulaRecord, SharedFormulaGroup> _groupsBySharedFormulaRecord;
@@ -144,7 +150,7 @@ public final class SharedValueManager {
 	public static SharedValueManager create(SharedFormulaRecord[] sharedFormulaRecords,
 			CellReference[] firstCells, ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {
 		if (sharedFormulaRecords.length + firstCells.length + arrayRecords.length + tableRecords.length < 1) {
-			return EMPTY;
+			return createEmpty();
 		}
 		return new SharedValueManager(sharedFormulaRecords, firstCells, arrayRecords, tableRecords);
 	}

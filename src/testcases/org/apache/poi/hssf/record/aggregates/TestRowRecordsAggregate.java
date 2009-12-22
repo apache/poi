@@ -63,24 +63,24 @@ public final class TestRowRecordsAggregate extends TestCase {
 
 	/**
 	 * Prior to Aug 2008, POI would re-serialize spreadsheets with {@link ArrayRecord}s or
-	 * {@link TableRecord}s with those records out of order.  Similar to 
+	 * {@link TableRecord}s with those records out of order.  Similar to
 	 * {@link SharedFormulaRecord}s, these records should appear immediately after the first
 	 * {@link FormulaRecord}s that they apply to (and only once).<br/>
 	 */
 	public void testArraysAndTables() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testArraysAndTables.xls");
 		Record[] sheetRecs = RecordInspector.getRecords(wb.getSheetAt(0), 0);
-		
+
 		int countArrayFormulas = verifySharedValues(sheetRecs, ArrayRecord.class);
 		assertEquals(5, countArrayFormulas);
 		int countTableFormulas = verifySharedValues(sheetRecs, TableRecord.class);
 		assertEquals(3, countTableFormulas);
 
 		// Note - SharedFormulaRecords are currently not re-serialized by POI (each is extracted
-		// into many non-shared formulas), but if they ever were, the same rules would apply. 
+		// into many non-shared formulas), but if they ever were, the same rules would apply.
 		int countSharedFormulas = verifySharedValues(sheetRecs, SharedFormulaRecord.class);
 		assertEquals(0, countSharedFormulas);
-		
+
 
 		if (false) { // set true to observe re-serialized file
 			File f = new File(System.getProperty("java.io.tmpdir") + "/testArraysAndTables-out.xls");
@@ -96,7 +96,7 @@ public final class TestRowRecordsAggregate extends TestCase {
 	}
 
 	private static int verifySharedValues(Record[] recs, Class shfClass) {
-		
+
 		int result =0;
 		for(int i=0; i<recs.length; i++) {
 			Record rec = recs[i];
@@ -105,7 +105,7 @@ public final class TestRowRecordsAggregate extends TestCase {
 				Record prevRec = recs[i-1];
 				if (!(prevRec instanceof FormulaRecord)) {
 					throw new AssertionFailedError("Bad record order at index "
-							+ i + ": Formula record expected but got (" 
+							+ i + ": Formula record expected but got ("
 							+ prevRec.getClass().getName() + ")");
 				}
 				verifySharedFormula((FormulaRecord) prevRec, rec);
@@ -127,7 +127,7 @@ public final class TestRowRecordsAggregate extends TestCase {
 	 * The functionality change being tested here is actually not critical to the overall fix
 	 * for bug 46280, since the fix involved making sure the that offending <i>PivotTable</i>
 	 * records do not get into {@link RowRecordsAggregate}.<br/>
-	 * This fix in {@link RowRecordsAggregate} was implemented anyway since any {@link 
+	 * This fix in {@link RowRecordsAggregate} was implemented anyway since any {@link
 	 * UnknownRecord} has the potential of being 'continued'.
 	 */
 	public void testUnknownContinue_bug46280() {
@@ -140,7 +140,7 @@ public final class TestRowRecordsAggregate extends TestCase {
 		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
 		RowRecordsAggregate rra;
 		try {
-			rra = new RowRecordsAggregate(rs, SharedValueManager.EMPTY);
+			rra = new RowRecordsAggregate(rs, SharedValueManager.createEmpty());
 		} catch (RuntimeException e) {
 			if (e.getMessage().startsWith("Unexpected record type")) {
 				throw new AssertionFailedError("Identified bug 46280a");

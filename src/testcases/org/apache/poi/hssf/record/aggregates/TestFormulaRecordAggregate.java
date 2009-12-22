@@ -37,7 +37,7 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		f.setCachedResultTypeString();
 		StringRecord s = new StringRecord();
 		s.setString("abc");
-		FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.EMPTY);
+		FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.createEmpty());
 		assertEquals("abc", fagg.getStringValue());
 	}
 
@@ -54,7 +54,7 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		fr.setValue(2.0);
 		StringRecord sr = new StringRecord();
 		sr.setString("NA");
-		SharedValueManager svm = SharedValueManager.EMPTY;
+		SharedValueManager svm = SharedValueManager.createEmpty();
 		FormulaRecordAggregate fra;
 
 		try {
