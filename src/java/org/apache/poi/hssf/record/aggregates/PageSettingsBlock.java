@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.*;
 
 /**
@@ -404,10 +404,10 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 	private Margin getMarginRec(int marginIndex) {
 		switch (marginIndex) {
-			case Sheet.LeftMargin:   return _leftMargin;
-			case Sheet.RightMargin:  return _rightMargin;
-			case Sheet.TopMargin:    return _topMargin;
-			case Sheet.BottomMargin: return _bottomMargin;
+			case InternalSheet.LeftMargin:   return _leftMargin;
+			case InternalSheet.RightMargin:  return _rightMargin;
+			case InternalSheet.TopMargin:    return _topMargin;
+			case InternalSheet.BottomMargin: return _bottomMargin;
 		}
 		throw new IllegalArgumentException( "Unknown margin constant:  " + marginIndex );
 	}
@@ -424,10 +424,10 @@ public final class PageSettingsBlock extends RecordAggregate {
 			return m.getMargin();
 		}
 		switch (margin) {
-			case Sheet.LeftMargin:   return .75;
-			case Sheet.RightMargin:  return .75;
-			case Sheet.TopMargin:    return 1.0;
-			case Sheet.BottomMargin: return 1.0;
+			case InternalSheet.LeftMargin:   return .75;
+			case InternalSheet.RightMargin:  return .75;
+			case InternalSheet.TopMargin:    return 1.0;
+			case InternalSheet.BottomMargin: return 1.0;
 		}
 		throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
 	}
@@ -441,19 +441,19 @@ public final class PageSettingsBlock extends RecordAggregate {
 		Margin m = getMarginRec(margin);
 		if (m  == null) {
 			switch (margin) {
-				case Sheet.LeftMargin:
+				case InternalSheet.LeftMargin:
 					_leftMargin = new LeftMarginRecord();
 					m = _leftMargin;
 					break;
-				case Sheet.RightMargin:
+				case InternalSheet.RightMargin:
 					_rightMargin = new RightMarginRecord();
 					m = _rightMargin;
 					break;
-				case Sheet.TopMargin:
+				case InternalSheet.TopMargin:
 					_topMargin = new TopMarginRecord();
 					m = _topMargin;
 					break;
-				case Sheet.BottomMargin:
+				case InternalSheet.BottomMargin:
 					_bottomMargin = new BottomMarginRecord();
 					m = _bottomMargin;
 					break;

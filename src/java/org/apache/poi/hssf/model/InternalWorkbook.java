@@ -2274,7 +2274,7 @@ public final class InternalWorkbook {
      *
      * @param sheet the cloned sheet
      */
-    public void cloneDrawings(Sheet sheet){
+    public void cloneDrawings(InternalSheet sheet){
 
         findDrawingGroup();
 

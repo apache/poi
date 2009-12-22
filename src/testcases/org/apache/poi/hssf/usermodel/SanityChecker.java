@@ -20,7 +20,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.Assert;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
@@ -218,8 +218,7 @@ public class SanityChecker
 //        checkRecordsTogether(records, workbookRecords);
     }
 
-    private void checkSheetRecords(Sheet sheet)
-    {
+    private void checkSheetRecords(InternalSheet sheet) {
         List records = sheet.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);

@@ -37,7 +37,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
@@ -285,7 +285,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         convertLabelRecords(records, recOffset);
         RecordStream rs = new RecordStream(records, recOffset);
         while (rs.hasNext()) {
-            Sheet sheet = Sheet.createSheet(rs);
+            InternalSheet sheet = InternalSheet.createSheet(rs);
             _sheets.add(new HSSFSheet(this, sheet));
         }
 
@@ -1225,9 +1225,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @return byte[] array containing the binary representation of this workbook and all contained
      *         sheets, rows, cells, etc.
-     *
-     * @see org.apache.poi.hssf.model.InternalWorkbook
-     * @see org.apache.poi.hssf.model.Sheet
      */
     public byte[] getBytes() {
         if (log.check( POILogger.DEBUG )) {

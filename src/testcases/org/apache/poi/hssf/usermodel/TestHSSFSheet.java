@@ -23,17 +23,27 @@ import java.io.FileOutputStream;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.GridsetRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.ObjectProtectRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.ScenarioProtectRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.usermodel.BaseTestSheet;
-import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -60,11 +70,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public void testBackupRecord() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
-        Sheet sheet = s.getSheet();
-
-        assertEquals(true, sheet.getGridsetRecord().getGridset());
+        GridsetRecord gridsetRec = s.getSheet().getGridsetRecord();
+		assertEquals(true, gridsetRec.getGridset());
         s.setGridsPrinted(true);
-        assertEquals(false, sheet.getGridsetRecord().getGridset());
+        assertEquals(false, gridsetRec.getGridset());
     }
 
     /**
@@ -73,8 +82,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public void testVerticallyCenter() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
-        Sheet sheet = s.getSheet();
-        VCenterRecord record = sheet.getPageSettings().getVCenter();
+        VCenterRecord record = s.getSheet().getPageSettings().getVCenter();
 
         assertEquals(false, record.getVCenter());
         s.setVerticallyCenter(true);
@@ -89,8 +97,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public void testHorizontallyCenter() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
-        Sheet sheet = s.getSheet();
-        HCenterRecord record = sheet.getPageSettings().getHCenter();
+        HCenterRecord record = s.getSheet().getPageSettings().getHCenter();
 
         assertEquals(false, record.getHCenter());
         s.setHorizontallyCenter(true);
@@ -104,9 +111,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public void testWSBool() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
-        Sheet sheet = s.getSheet();
         WSBoolRecord record =
-                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) s.getSheet().findFirstRecordBySid(WSBoolRecord.sid);
 
         // Check defaults
         assertEquals(true, record.getAlternateExpression());

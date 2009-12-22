@@ -23,7 +23,7 @@ import java.util.GregorianCalendar;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
@@ -131,7 +131,7 @@ public final class TestHSSFCell extends BaseTestCell {
 
 		//check initial position
 		HSSFSheet umSheet = book.getSheetAt(0);
-		Sheet s = umSheet.getSheet();
+		InternalSheet s = umSheet.getSheet();
 		assertEquals("Initial active cell should be in col 0",
 			(short) 0, s.getActiveCellCol());
 		assertEquals("Initial active cell should be on row 1",

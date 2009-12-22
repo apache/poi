@@ -23,7 +23,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 
@@ -49,7 +49,7 @@ public final class TestReadWriteChart extends TestCase {
         HSSFCell cell = row.createCell(1);
 
         cell.setCellValue(22);
-        Sheet newSheet = workbook.getSheetAt(0).getSheet();
+        InternalSheet newSheet = workbook.getSheetAt(0).getSheet();
         List  records  = newSheet.getRecords();
 
         assertTrue(records.get(0) instanceof BOFRecord);
