@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -37,15 +37,15 @@ import org.apache.poi.ss.usermodel.DataFormat;
 /**
  * Identifies both built-in and user defined formats within a workbook.<p/>
  * See {@link BuiltinFormats} for a list of supported built-in formats.<p/>
- * 
+ *
  * <b>International Formats</b><br/>
- * Since version 2003 Excel has supported international formats.  These are denoted 
+ * Since version 2003 Excel has supported international formats.  These are denoted
  * with a prefix "[$-xxx]" (where xxx is a 1-7 digit hexadecimal number).
- * See the Microsoft article 
+ * See the Microsoft article
  * <a href="http://office.microsoft.com/assistance/hfws.aspx?AssetID=HA010346351033&CTT=6&Origin=EC010272491033">
  *   Creating international number formats
  * </a> for more details on these codes.
- * 
+ *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Shawn M. Laubach (slaubach at apache dot org)
  */
@@ -53,7 +53,7 @@ public final class HSSFDataFormat implements DataFormat {
 	private static final String[] _builtinFormats = BuiltinFormats.getAll();
 
 	private final Vector<String> _formats = new Vector<String>();
-	private final Workbook _workbook;
+	private final InternalWorkbook _workbook;
 	private boolean _movedBuiltins = false;  // Flag to see if need to
 	// check the built in list
 	// or if the regular list
@@ -64,7 +64,7 @@ public final class HSSFDataFormat implements DataFormat {
 	 * access to the workbooks format records.
 	 * @param workbook the workbook the formats are tied to.
 	 */
-	public HSSFDataFormat(Workbook workbook) {
+	HSSFDataFormat(InternalWorkbook workbook) {
 		_workbook = workbook;
 
 		@SuppressWarnings("unchecked")

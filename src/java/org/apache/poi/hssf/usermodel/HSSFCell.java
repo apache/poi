@@ -23,7 +23,7 @@ import java.util.*;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -229,7 +229,7 @@ public class HSSFCell implements Cell {
     /**
      * Returns the Workbook that this Cell is bound to
      */
-    protected Workbook getBoundWorkbook() {
+    protected InternalWorkbook getBoundWorkbook() {
         return _book.getWorkbook();
     }
 

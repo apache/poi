@@ -58,7 +58,7 @@ public final class FormatRecord extends StandardRecord {
      * get the format index code (for built in formats)
      *
      * @return the format index code
-     * @see org.apache.poi.hssf.model.Workbook
+     * @see org.apache.poi.hssf.model.InternalWorkbook
      */
     public int getIndexCode() {
         return field_1_index_code;

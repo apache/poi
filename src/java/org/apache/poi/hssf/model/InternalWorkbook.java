@@ -82,6 +82,7 @@ import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -108,7 +109,8 @@ import org.apache.poi.util.POILogger;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  */
-public final class Workbook {
+@Internal
+public final class InternalWorkbook {
     /**
      * Excel silently truncates long sheet names to 31 chars.
      * This constant is used to ensure uniqueness in the first 31 chars
@@ -116,7 +118,7 @@ public final class Workbook {
     private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
 
 
-    private static final POILogger log = POILogFactory.getLogger(Workbook.class);
+    private static final POILogger log = POILogFactory.getLogger(InternalWorkbook.class);
     private static final int DEBUG = POILogger.DEBUG;
 
     /**
@@ -162,7 +164,7 @@ public final class Workbook {
     private WriteAccessRecord writeAccess;
     private WriteProtectRecord writeProtect;
 
-    private Workbook() {
+    private InternalWorkbook() {
     	records     = new WorkbookRecordList();
 
 		boundsheets = new ArrayList<BoundSheetRecord>();
@@ -187,11 +189,11 @@ public final class Workbook {
      * @param recs an array of Record objects
      * @return Workbook object
      */
-    public static Workbook createWorkbook(List<Record> recs) {
+    public static InternalWorkbook createWorkbook(List<Record> recs) {
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Workbook (readfile) created with reclen=",
                     Integer.valueOf(recs.size()));
-        Workbook retval = new Workbook();
+        InternalWorkbook retval = new InternalWorkbook();
         List<Record> records = new ArrayList<Record>(recs.size() / 3);
         retval.records.setRecords(records);
 
@@ -329,11 +331,11 @@ public final class Workbook {
      * Creates an empty workbook object with three blank sheets and all the empty
      * fields.  Use this to create a workbook from scratch.
      */
-    public static Workbook createWorkbook()
+    public static InternalWorkbook createWorkbook()
     {
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "creating new workbook from scratch" );
-        Workbook retval = new Workbook();
+        InternalWorkbook retval = new InternalWorkbook();
         List<Record> records = new ArrayList<Record>( 30 );
         retval.records.setRecords(records);
         List<FormatRecord> formats = retval.formats;

@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -41,13 +41,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public final class TestEventWorkbookBuilder extends TestCase {
 	private MockHSSFListener mockListen;
 	private SheetRecordCollectingListener listener;
-	
+
 	public void setUp() {
 		HSSFRequest req = new HSSFRequest();
 		mockListen = new MockHSSFListener();
 		listener = new SheetRecordCollectingListener(mockListen);
 		req.addListenerForAllRecords(listener);
-		
+
 		HSSFEventFactory factory = new HSSFEventFactory();
 		try {
 			InputStream is = HSSFTestDataSamples.openSampleFileStream("3dFormulas.xls");
@@ -56,94 +56,94 @@ public final class TestEventWorkbookBuilder extends TestCase {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	} 
-	
+	}
+
 	public void testBasics() {
 		assertNotNull(listener.getSSTRecord());
 		assertNotNull(listener.getBoundSheetRecords());
 		assertNotNull(listener.getExternSheetRecords());
 	}
-	
+
 	public void testGetStubWorkbooks() {
 		assertNotNull(listener.getStubWorkbook());
 		assertNotNull(listener.getStubHSSFWorkbook());
 	}
-	
+
 	public void testContents() {
 		assertEquals(2, listener.getSSTRecord().getNumStrings());
 		assertEquals(3, listener.getBoundSheetRecords().length);
 		assertEquals(1, listener.getExternSheetRecords().length);
-		
+
 		assertEquals(3, listener.getStubWorkbook().getNumSheets());
-		
-		Workbook ref = listener.getStubWorkbook();
+
+		InternalWorkbook ref = listener.getStubWorkbook();
 		assertEquals("Sh3", ref.findSheetNameFromExternSheet(0));
 		assertEquals("Sheet1", ref.findSheetNameFromExternSheet(1));
 		assertEquals("S2", ref.findSheetNameFromExternSheet(2));
 	}
-	
+
 	public void testFormulas() {
-		
+
 		FormulaRecord[] fRecs = mockListen.getFormulaRecords();
-		
+
 		// Check our formula records
 		assertEquals(6, fRecs.length);
-		
-		Workbook stubWB = listener.getStubWorkbook();
+
+		InternalWorkbook stubWB = listener.getStubWorkbook();
 		assertNotNull(stubWB);
 		HSSFWorkbook stubHSSF = listener.getStubHSSFWorkbook();
 		assertNotNull(stubHSSF);
-		
+
 		// Check these stubs have the right stuff on them
 		assertEquals("Sheet1", stubWB.getSheetName(0));
 		assertEquals("S2", stubWB.getSheetName(1));
 		assertEquals("Sh3", stubWB.getSheetName(2));
-		
+
 		// Check we can get the formula without breaking
 		for(int i=0; i<fRecs.length; i++) {
 			HSSFFormulaParser.toFormulaString(stubHSSF, fRecs[i].getParsedExpression());
 		}
-		
+
 		// Peer into just one formula, and check that
 		//  all the ptgs give back the right things
 		Ptg[] ptgs = fRecs[0].getParsedExpression();
 		assertEquals(1, ptgs.length);
 		assertTrue(ptgs[0] instanceof Ref3DPtg);
-		
+
 		Ref3DPtg ptg = (Ref3DPtg)ptgs[0];
 		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(stubHSSF);
 		assertEquals("Sheet1!A1", ptg.toFormulaString(book));
-		
-		
+
+
 		// Now check we get the right formula back for
 		//  a few sample ones
 		FormulaRecord fr;
-		
+
 		// Sheet 1 A2 is on same sheet
 		fr = fRecs[0];
 		assertEquals(1, fr.getRow());
 		assertEquals(0, fr.getColumn());
 		assertEquals("Sheet1!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
-		
+
 		// Sheet 1 A5 is to another sheet
 		fr = fRecs[3];
 		assertEquals(4, fr.getRow());
 		assertEquals(0, fr.getColumn());
 		assertEquals("'S2'!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
-		
+
 		// Sheet 1 A7 is to another sheet, range
 		fr = fRecs[5];
 		assertEquals(6, fr.getRow());
 		assertEquals(0, fr.getColumn());
 		assertEquals("SUM(Sh3!A1:A4)", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
-		
-		
+
+
 		// Now, load via Usermodel and re-check
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("3dFormulas.xls");
 		assertEquals("Sheet1!A1", wb.getSheetAt(0).getRow(1).getCell(0).getCellFormula());
 		assertEquals("SUM(Sh3!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
 	}
-	
+
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
 		private final List _records = new ArrayList();

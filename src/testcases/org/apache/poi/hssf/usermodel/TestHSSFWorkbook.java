@@ -25,6 +25,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
@@ -46,6 +47,13 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Override
     protected HSSFITestDataProvider getTestDataProvider(){
         return HSSFITestDataProvider.getInstance();
+    }
+
+    /**
+     * gives test code access to the {@link InternalWorkbook} within {@link HSSFWorkbook}
+     */
+    public static InternalWorkbook getInternalWorkbook(HSSFWorkbook wb) {
+    	return wb.getWorkbook();
     }
 
     public void testSetRepeatingRowsAndColumns() {

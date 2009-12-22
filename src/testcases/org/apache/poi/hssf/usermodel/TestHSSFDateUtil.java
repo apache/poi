@@ -25,7 +25,7 @@ import java.util.TimeZone;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
  * Class TestHSSFDateUtil
@@ -306,7 +306,7 @@ public final class TestHSSFDateUtil extends TestCase {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
-        Workbook wb           = workbook.getWorkbook();
+        InternalWorkbook wb           = workbook.getWorkbook();
 
         HSSFRow  row;
         HSSFCell cell;

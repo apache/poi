@@ -19,7 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.ss.usermodel.Font;
@@ -74,7 +74,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     public static final short NO_FONT = 0;
 
     private UnicodeString _string;
-    private Workbook _book;
+    private InternalWorkbook _book;
     private LabelSSTRecord _record;
 
     public HSSFRichTextString()
@@ -90,7 +90,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
         }
     }
 
-    HSSFRichTextString(Workbook book, LabelSSTRecord record) {
+    HSSFRichTextString(InternalWorkbook book, LabelSSTRecord record) {
       setWorkbookReferences(book, record);
 
       _string = book.getSSTString(record.getSSTIndex());
@@ -99,7 +99,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /** This must be called to setup the internal work book references whenever
      * a RichTextString is added to a cell
      */
-    void setWorkbookReferences(Workbook book, LabelSSTRecord record) {
+    void setWorkbookReferences(InternalWorkbook book, LabelSSTRecord record) {
       _book = book;
       _record = record;
     }

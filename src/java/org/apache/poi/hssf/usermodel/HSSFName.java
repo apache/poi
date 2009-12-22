@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
@@ -114,7 +114,7 @@ public final class HSSFName implements Name {
     public void setNameName(String nameName){
         validateName(nameName);
 
-        Workbook wb = _book.getWorkbook();
+        InternalWorkbook wb = _book.getWorkbook();
         _definedNameRec.setNameText(nameName);
 
         int sheetNumber = _definedNameRec.getSheetNumber();
@@ -135,7 +135,7 @@ public final class HSSFName implements Name {
 
     private static void validateName(String name){
         if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
-        
+
         char c = name.charAt(0);
         if(!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
             throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
@@ -249,9 +249,7 @@ public final class HSSFName implements Name {
      *
      * @param value <code>true</code> indicates the name refers to a function.
      */
-	public void setFunction(boolean value) {
-		_definedNameRec.setFunction(value);
-		
-	}
-
+    public void setFunction(boolean value) {
+        _definedNameRec.setFunction(value);
+    }
 }

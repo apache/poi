@@ -32,7 +32,7 @@ import java.util.TreeMap;
 
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -82,7 +82,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     private final Sheet _sheet;
     /** stores rows by zero-based row number */
     private final TreeMap<Integer, HSSFRow> _rows;
-    protected final Workbook _book;
+    protected final InternalWorkbook _book;
     protected final HSSFWorkbook _workbook;
     private int _firstrow;
     private int _lastrow;
@@ -636,7 +636,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Sets whether the worksheet is displayed from right to left instead of from left to right.
-     * 
+     *
      * @param value true for right to left, false otherwise.
      */
     public void setRightToLeft(boolean value)
@@ -1693,7 +1693,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
-        HSSFWorkbook wb = new HSSFWorkbook(_book);
+        HSSFWorkbook wb = HSSFWorkbook.create(_book); // TODO - is it important to not use _workbook?
         HSSFFont defaultFont = wb.getFontAt((short) 0);
 
         str = new AttributedString("" + defaultChar);

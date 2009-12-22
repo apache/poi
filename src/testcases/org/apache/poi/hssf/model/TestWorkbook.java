@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.model;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 
 /**
  * Unit test for the Workbook class.
@@ -29,7 +30,7 @@ import junit.framework.TestCase;
  */
 public final class TestWorkbook extends TestCase {
 	public void testFontStuff() {
-		Workbook wb = (new HW()).getWorkbook();
+		InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(new HSSFWorkbook());
 
 		assertEquals(4, wb.getNumberOfFontRecords());
 		assertEquals(68, wb.getRecords().size());
@@ -81,14 +82,5 @@ public final class TestWorkbook extends TestCase {
 		assertEquals(6, wb.getNumberOfFontRecords());
 		assertEquals(6, wb.getFontIndex(n7));
 		assertEquals(n7, wb.getFontRecordAt(6));
-	}
-
-	private static final class HW extends HSSFWorkbook {
-		public HW() {
-			super();
-		}
-		protected Workbook getWorkbook() {
-			return super.getWorkbook();
-		}
 	}
 }

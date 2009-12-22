@@ -25,12 +25,10 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  This record contains an ID that marks when a worksheet was last
  *               recalculated. It's an optimization Excel uses to determine if it
  *               needs to  recalculate the spreadsheet when it's opened. So far, only
- *               the two engine ids <code>0x80 0x38 0x01 0x00</code> 
+ *               the two engine ids <code>0x80 0x38 0x01 0x00</code>
  *               and <code>0x60 0x69 0x01 0x00</code> have been seen.<p/>
  * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html<p/>
  * @author Luc Girardin (luc dot girardin at macrofocus dot com)
- *
- * @see org.apache.poi.hssf.model.Workbook
  */
 public final class RecalcIdRecord extends StandardRecord {
     public final static short sid = 0x01C1;

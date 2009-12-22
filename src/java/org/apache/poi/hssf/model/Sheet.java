@@ -91,7 +91,7 @@ import org.apache.poi.util.POILogger;
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little)
  *
- * @see org.apache.poi.hssf.model.Workbook
+ * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  */
 public final class Sheet {
@@ -151,7 +151,7 @@ public final class Sheet {
      *
      * @return Sheet object with all values set to those read from the file
      *
-     * @see org.apache.poi.hssf.model.Workbook
+     * @see org.apache.poi.hssf.model.InternalWorkbook
      * @see org.apache.poi.hssf.record.Record
      */
     public static Sheet createSheet(RecordStream rs) {

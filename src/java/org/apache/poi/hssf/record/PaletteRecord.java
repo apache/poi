@@ -34,35 +34,32 @@ public final class PaletteRecord extends StandardRecord {
     public final static byte STANDARD_PALETTE_SIZE = (byte) 56;
     /** The byte index of the first color */
     public final static short FIRST_COLOR_INDEX = (short) 0x8;
-    
-    private List<PColor>  field_2_colors;
 
-    public PaletteRecord()
-    {
+    private final List<PColor>  _colors;
+
+    public PaletteRecord() {
       PColor[] defaultPalette = createDefaultPalette();
-      field_2_colors    = new ArrayList<PColor>(defaultPalette.length);
+      _colors    = new ArrayList<PColor>(defaultPalette.length);
       for (int i = 0; i < defaultPalette.length; i++) {
-        field_2_colors.add(defaultPalette[i]);
+        _colors.add(defaultPalette[i]);
       }
     }
 
-    public PaletteRecord(RecordInputStream in)
-    {
+    public PaletteRecord(RecordInputStream in) {
        int field_1_numcolors = in.readShort();
-       field_2_colors    = new ArrayList<PColor>(field_1_numcolors);
+       _colors    = new ArrayList<PColor>(field_1_numcolors);
        for (int k = 0; k < field_1_numcolors; k++) {
-           field_2_colors.add(new PColor(in));
-       } 
+           _colors.add(new PColor(in));
+       }
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PALETTE]\n");
-        buffer.append("  numcolors     = ").append(field_2_colors.size()).append('\n');
-        for (int i = 0; i < field_2_colors.size(); i++) {
-            PColor c = field_2_colors.get(i);
+        buffer.append("  numcolors     = ").append(_colors.size()).append('\n');
+        for (int i = 0; i < _colors.size(); i++) {
+            PColor c = _colors.get(i);
             buffer.append("* colornum      = ").append(i).append('\n');
             buffer.append(c.toString());
             buffer.append("/*colornum      = ").append(i).append('\n');
@@ -71,20 +68,18 @@ public final class PaletteRecord extends StandardRecord {
         return buffer.toString();
     }
 
-    public void serialize(LittleEndianOutput out)
-    {
-        out.writeShort(field_2_colors.size());
-        for (int i = 0; i < field_2_colors.size(); i++) {
-          field_2_colors.get(i).serialize(out);
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(_colors.size());
+        for (int i = 0; i < _colors.size(); i++) {
+          _colors.get(i).serialize(out);
         }
     }
 
     protected int getDataSize() {
-        return 2 + field_2_colors.size() * PColor.ENCODED_SIZE;
+        return 2 + _colors.size() * PColor.ENCODED_SIZE;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
@@ -94,16 +89,14 @@ public final class PaletteRecord extends StandardRecord {
      * @return the RGB triplet for the color, or <code>null</code> if the specified index
      * does not exist
      */
-    public byte[] getColor(short byteIndex) {
+    public byte[] getColor(int byteIndex) {
         int i = byteIndex - FIRST_COLOR_INDEX;
-        if (i < 0 || i >= field_2_colors.size())
-        {
+        if (i < 0 || i >= _colors.size()) {
             return null;
         }
-        PColor color =  field_2_colors.get(i);
-        return new byte[] { color.red, color.green, color.blue };
+        return _colors.get(i).getTriplet();
     }
-    
+
     /**
      * Sets the color value at a given index
      *
@@ -120,18 +113,16 @@ public final class PaletteRecord extends StandardRecord {
         {
             return;
         }
-        // may need to grow - fill intervening pallette entries with black
-        while (field_2_colors.size() <= i) {
-            field_2_colors.add(new PColor(0, 0, 0));
+        // may need to grow - fill intervening palette entries with black
+        while (_colors.size() <= i) {
+            _colors.add(new PColor(0, 0, 0));
         }
         PColor custColor = new PColor(red, green, blue);
-        field_2_colors.set(i, custColor);
+        _colors.set(i, custColor);
     }
-    
+
     /**
      * Creates the default palette as PaletteRecord binary data
-     *
-     * @see org.apache.poi.hssf.model.Workbook#createPalette
      */
     private static PColor[] createDefaultPalette()
     {
@@ -199,41 +190,45 @@ public final class PaletteRecord extends StandardRecord {
         return new PColor(r, g, b);
     }
 
-/**
- * PColor - element in the list of colors - consider it a "struct"
- */
-private static final class PColor {
-  public static final short ENCODED_SIZE = 4;
-  public byte red;
-  public byte green;
-  public byte blue;
+    /**
+     * PColor - element in the list of colors
+     */
+    private static final class PColor {
+        public static final short ENCODED_SIZE = 4;
+        private int _red;
+        private int _green;
+        private int _blue;
 
-  public PColor(int red, int green, int blue) {
-    this.red=(byte) red;
-    this.green=(byte) green;
-    this.blue=(byte) blue;
-  }
+        public PColor(int red, int green, int blue) {
+            _red = red;
+            _green = green;
+            _blue = blue;
+        }
 
-  public PColor(RecordInputStream in) {
-    red=in.readByte();
-    green=in.readByte();
-    blue=in.readByte();
-    in.readByte(); // unused
-  }
+        public byte[] getTriplet() {
+            return new byte[] { (byte) _red, (byte) _green, (byte) _blue };
+        }
 
-  public void serialize(LittleEndianOutput out) {
-      out.writeByte(red);
-      out.writeByte(green);
-      out.writeByte(blue);
-      out.writeByte(0);
-  }
+        public PColor(RecordInputStream in) {
+            _red = in.readByte();
+            _green = in.readByte();
+            _blue = in.readByte();
+            in.readByte(); // unused
+        }
 
-  public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("  red           = ").append(red & 0xff).append('\n');
-        buffer.append("  green         = ").append(green & 0xff).append('\n');
-        buffer.append("  blue          = ").append(blue & 0xff).append('\n');
-        return buffer.toString();
-  }
-}
+        public void serialize(LittleEndianOutput out) {
+            out.writeByte(_red);
+            out.writeByte(_green);
+            out.writeByte(_blue);
+            out.writeByte(0);
+        }
+
+        public String toString() {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("  red   = ").append(_red & 0xff).append('\n');
+            buffer.append("  green = ").append(_green & 0xff).append('\n');
+            buffer.append("  blue  = ").append(_blue & 0xff).append('\n');
+            return buffer.toString();
+        }
+    }
 }
