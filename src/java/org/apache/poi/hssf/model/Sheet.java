@@ -94,7 +94,7 @@ import org.apache.poi.util.POILogger;
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  */
-public final class Sheet implements Model {
+public final class Sheet {
     public static final short   LeftMargin = 0;
     public static final short   RightMargin = 1;
     public static final short   TopMargin = 2;
