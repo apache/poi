@@ -57,6 +57,23 @@ final class LazyAreaEval extends AreaEvalBase {
 
 		return new LazyAreaEval(area, _evaluator);
 	}
+	public LazyAreaEval getRow(int rowIndex) {
+		if (rowIndex >= getHeight()) {
+			throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
+					+ ".  Allowable range is (0.." + getHeight() + ").");
+		}
+		int absRowIx = getFirstRow() + rowIndex;
+		return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
+	}
+	public LazyAreaEval getColumn(int columnIndex) {
+		if (columnIndex >= getWidth()) {
+			throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
+					+ ".  Allowable range is (0.." + getWidth() + ").");
+		}
+		int absColIx = getFirstColumn() + columnIndex;
+		return new LazyAreaEval(getFirstRow(), absColIx, getLastRow(), absColIx, _evaluator);
+	}
+
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());

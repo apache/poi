@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Test helper class for creating mock <code>Eval</code> objects
@@ -119,7 +120,7 @@ public final class EvalFactory {
 			int width = relLastColIx - relFirstColIx + 1;
 			ValueEval[] result = new ValueEval[height * width];
 			for (int r=0; r<height; r++) {
-				int srcRowIx = r + relFirstRowIx; 
+				int srcRowIx = r + relFirstRowIx;
 				for (int c=0; c<width; c++) {
 					int srcColIx = c + relFirstColIx;
 					int destIx = r * width + c;
@@ -128,6 +129,28 @@ public final class EvalFactory {
 				}
 			}
 			return result;
+		}
+		public TwoDEval getRow(int rowIndex) {
+			if (rowIndex >= getHeight()) {
+				throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
+						+ ".  Allowable range is (0.." + getHeight() + ").");
+			}
+			ValueEval[] values = new ValueEval[getWidth()];
+			for (int i = 0; i < values.length; i++) {
+				values[i] = getRelativeValue(rowIndex, i);
+			}
+			return new MockAreaEval(rowIndex, getFirstColumn(), rowIndex, getLastColumn(), values);
+		}
+		public TwoDEval getColumn(int columnIndex) {
+			if (columnIndex >= getWidth()) {
+				throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
+						+ ".  Allowable range is (0.." + getWidth() + ").");
+			}
+			ValueEval[] values = new ValueEval[getHeight()];
+			for (int i = 0; i < values.length; i++) {
+				values[i] = getRelativeValue(i, columnIndex);
+			}
+			return new MockAreaEval(getFirstRow(), columnIndex, getLastRow(), columnIndex, values);
 		}
 	}
 
