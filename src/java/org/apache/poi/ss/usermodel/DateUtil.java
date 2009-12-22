@@ -48,6 +48,13 @@ public class DateUtil {
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
 
     /**
+     * The following patterns are used in {@link #isADateFormat(int, String)}
+     */
+    private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
+    private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
+    private static final Pattern date_ptrn3 = Pattern.compile("^[yYmMdDhHsS\\-/,. :\\\\]+[ampAMP/]*$");
+
+    /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
      *
@@ -181,6 +188,7 @@ public class DateUtil {
         calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
     }
 
+
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
@@ -206,36 +214,62 @@ public class DateUtil {
         }
 
         String fs = formatString;
+        /*
+            Normalize the format string. The code below is equivalent
+            to the following consecutive regexp replacements:
 
-        // Translate \- into just -, before matching
-        fs = fs.replaceAll("\\\\-","-");
-        // And \, into ,
-        fs = fs.replaceAll("\\\\,",",");
-        // And \. into .
-        fs = fs.replaceAll("\\\\.",".");
-        // And '\ ' into ' '
-        fs = fs.replaceAll("\\\\ "," ");
+             // Translate \- into just -, before matching
+             fs = fs.replaceAll("\\\\-","-");
+             // And \, into ,
+             fs = fs.replaceAll("\\\\,",",");
+             // And \. into .
+             fs = fs.replaceAll("\\\\\\.",".");
+             // And '\ ' into ' '
+             fs = fs.replaceAll("\\\\ "," ");
 
-        // If it end in ;@, that's some crazy dd/mm vs mm/dd
-        //  switching stuff, which we can ignore
-        fs = fs.replaceAll(";@", "");
+             // If it end in ;@, that's some crazy dd/mm vs mm/dd
+             //  switching stuff, which we can ignore
+             fs = fs.replaceAll(";@", "");
+
+             The code above was reworked as suggested in bug 48425:
+             simple loop is more efficient than consecutive regexp replacements.
+         */
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < fs.length(); i++){
+            char c = fs.charAt(i);
+            if(i < fs.length() - 1){
+                char nc = fs.charAt(i + 1);
+                if(c == '\\'){
+                    switch (nc){
+                        case '-':
+                        case ',':
+                        case '.':
+                        case ' ':
+                        case '\\':
+                            //skip current '\' and continue to the next char
+                            continue;
+                    }
+                } else if (c == ';' && nc == '@'){
+                    i++;
+                    //skip ";@" duplets
+                    continue;
+                }
+            }
+            sb.append(c);
+        }
+        fs = sb.toString();
 
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
-        fs = fs.replaceAll("^\\[\\$\\-.*?\\]", "");
-
+        fs = date_ptrn1.matcher(fs).replaceAll("");
         // If it starts with something like [Black] or [Yellow],
         //  then it could be a date
-        fs = fs.replaceAll("^\\[[a-zA-Z]+\\]", "");
+        fs = date_ptrn2.matcher(fs).replaceAll("");
 
         // Otherwise, check it's only made up, in any case, of:
-        //  y m d h s - / , . :
+        //  y m d h s - \ / , . :
         // optionally followed by AM/PM
-        if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP/]*$")) {
-            return true;
-        }
-
-        return false;
+        return date_ptrn3.matcher(fs).matches();
     }
 
     /**
