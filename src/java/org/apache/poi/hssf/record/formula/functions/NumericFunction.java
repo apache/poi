@@ -34,6 +34,9 @@ public abstract class NumericFunction implements Function {
 	static final double LOG_10_TO_BASE_e = Math.log(TEN);
 
 	protected static final double singleOperandEvaluate(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
+		if (arg == null) {
+			throw new IllegalArgumentException("arg must not be null");
+		}
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
 		double result = OperandResolver.coerceValueToDouble(ve);
 		checkValue(result);
