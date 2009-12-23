@@ -62,6 +62,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestFontRecord.class);
 		result.addTestSuite(TestFormulaRecord.class);
 		result.addTestSuite(TestHyperlinkRecord.class);
+		result.addTestSuite(TestInterfaceEndRecord.class);
 		result.addTestSuite(TestLabelRecord.class);
 		result.addTestSuite(TestMergeCellsRecord.class);
 		result.addTestSuite(TestNameRecord.class);

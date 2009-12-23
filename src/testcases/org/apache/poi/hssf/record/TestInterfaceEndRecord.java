@@ -34,13 +34,14 @@ import java.io.ByteArrayInputStream;
 public final class TestInterfaceEndRecord extends TestCase {
 
     public void testCreate() {
-        InterfaceEndRecord record = new InterfaceEndRecord();
+        InterfaceEndRecord record = InterfaceEndRecord.instance;
         assertEquals(0, record.getDataSize());
     }
 
     /**
      * Silently swallow unexpected contents in InterfaceEndRecord.
-     * Although it violates the spec, Excel silently reads such files. 
+     * Although it violates the spec, Excel silently converts this
+     * data to an {@link InterfaceHdrRecord}.
      */
     public void testUnexpectedBytes_bug47251(){
         String hex = "" +
@@ -50,7 +51,9 @@ public final class TestInterfaceEndRecord extends TestCase {
         byte[] data = HexRead.readFromString(hex);
         List<Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
         assertEquals(3, records.size());
-        InterfaceEndRecord r = (InterfaceEndRecord)records.get(1);
-        assertEquals("[E2, 00, 02, 00, B0, 04]", HexDump.toHex(r.serialize()));
+        Record rec1 = records.get(1);
+        assertEquals(InterfaceHdrRecord.class, rec1.getClass());
+        InterfaceHdrRecord r = (InterfaceHdrRecord)rec1;
+        assertEquals("[E1, 00, 02, 00, B0, 04]", HexDump.toHex(r.serialize()));
     }
 }

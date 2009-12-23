@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -44,10 +45,10 @@ public final class RecordFactory {
 
 		Class<? extends Record> getRecordClass();
 	}
-	private static final class ReflectionRecordCreator implements I_RecordCreator {
+	private static final class ReflectionConstructorRecordCreator implements I_RecordCreator {
 
 		private final Constructor<? extends Record> _c;
-		public ReflectionRecordCreator(Constructor<? extends Record> c) {
+		public ReflectionConstructorRecordCreator(Constructor<? extends Record> c) {
 			_c = c;
 		}
 		public Record create(RecordInputStream in) {
@@ -66,6 +67,33 @@ public final class RecordFactory {
 		}
 		public Class<? extends Record> getRecordClass() {
 			return _c.getDeclaringClass();
+		}
+	}
+	/**
+	 * A "create" method is used instead of the usual constructor if the created record might
+	 * be of a different class to the declaring class.
+	 */
+	private static final class ReflectionMethodRecordCreator implements I_RecordCreator {
+
+		private final Method _m;
+		public ReflectionMethodRecordCreator(Method m) {
+			_m = m;
+		}
+		public Record create(RecordInputStream in) {
+			Object[] args = { in, };
+			try {
+				return (Record) _m.invoke(null, args);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} catch (InvocationTargetException e) {
+				throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
+			}
+		}
+		@SuppressWarnings("unchecked")
+		public Class<? extends Record> getRecordClass() {
+			return (Class<? extends Record>) _m.getDeclaringClass();
 		}
 	}
 
@@ -355,11 +383,9 @@ public final class RecordFactory {
 				throw new RuntimeException("duplicate record class (" + recClass.getName() + ")");
 			}
 
-			short sid;
-			Constructor<? extends Record> constructor;
+			int sid;
 			try {
 				sid = recClass.getField("sid").getShort(null);
-				constructor = recClass.getConstructor(CONSTRUCTOR_ARGS);
 			} catch (Exception illegalArgumentException) {
 				throw new RecordFormatException(
 					"Unable to determine record types");
@@ -370,12 +396,27 @@ public final class RecordFactory {
 				throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
 						+ " for classes (" + recClass.getName() + ") and (" + prevClass.getName() + ")");
 			}
-			result.put(key, new ReflectionRecordCreator(constructor));
+			result.put(key, getRecordCreator(recClass));
 		}
 //		result.put(Integer.valueOf(0x0406), result.get(Integer.valueOf(0x06)));
 		return result;
 	}
 
+	private static I_RecordCreator getRecordCreator(Class<? extends Record> recClass) {
+		try {
+			Constructor<? extends Record> constructor;
+			constructor = recClass.getConstructor(CONSTRUCTOR_ARGS);
+			return new ReflectionConstructorRecordCreator(constructor);
+		} catch (NoSuchMethodException e) {
+			// fall through and look for other construction methods
+		}
+		try {
+			Method m = recClass.getDeclaredMethod("create", CONSTRUCTOR_ARGS);
+			return new ReflectionMethodRecordCreator(m);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException("Failed to find constructor or create method for (" + recClass.getName() + ").");
+		}
+	}
 	/**
 	 * Create an array of records from an input stream
 	 *
