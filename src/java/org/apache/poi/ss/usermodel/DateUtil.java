@@ -170,8 +170,8 @@ public class DateUtil {
         Calendar calendar = new GregorianCalendar(); // using default time-zone
         setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
         return calendar.getTime();
-    }        
-    public static void setCalendar(Calendar calendar, int wholeDays, 
+    }
+    public static void setCalendar(Calendar calendar, int wholeDays,
             int millisecondsInDay, boolean use1904windowing) {
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
@@ -214,9 +214,9 @@ public class DateUtil {
         }
 
         String fs = formatString;
-        /*
-            Normalize the format string. The code below is equivalent
-            to the following consecutive regexp replacements:
+        if (false) {
+            // Normalize the format string. The code below is equivalent
+            // to the following consecutive regexp replacements:
 
              // Translate \- into just -, before matching
              fs = fs.replaceAll("\\\\-","-");
@@ -231,27 +231,27 @@ public class DateUtil {
              //  switching stuff, which we can ignore
              fs = fs.replaceAll(";@", "");
 
-             The code above was reworked as suggested in bug 48425:
-             simple loop is more efficient than consecutive regexp replacements.
-         */
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < fs.length(); i++){
+             // The code above was reworked as suggested in bug 48425:
+             // simple loop is more efficient than consecutive regexp replacements.
+        }
+        StringBuilder sb = new StringBuilder(fs.length());
+        for (int i = 0; i < fs.length(); i++) {
             char c = fs.charAt(i);
-            if(i < fs.length() - 1){
+            if (i < fs.length() - 1) {
                 char nc = fs.charAt(i + 1);
-                if(c == '\\'){
-                    switch (nc){
+                if (c == '\\') {
+                    switch (nc) {
                         case '-':
                         case ',':
                         case '.':
                         case ' ':
                         case '\\':
-                            //skip current '\' and continue to the next char
+                            // skip current '\' and continue to the next char
                             continue;
                     }
-                } else if (c == ';' && nc == '@'){
+                } else if (c == ';' && nc == '@') {
                     i++;
-                    //skip ";@" duplets
+                    // skip ";@" duplets
                     continue;
                 }
             }
