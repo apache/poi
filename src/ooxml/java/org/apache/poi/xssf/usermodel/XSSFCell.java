@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -344,7 +345,11 @@ public final class XSSFCell implements Cell {
         if(cellType != CELL_TYPE_FORMULA) throw typeMismatch(CELL_TYPE_FORMULA, cellType, false);
 
         CTCellFormula f = _cell.getF();
-        if(f.getT() == STCellFormulaType.SHARED){
+        if (isPartOfArrayFormulaGroup() && f == null) {
+            XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
+            return cell.getCellFormula();
+        }
+        if (f.getT() == STCellFormulaType.SHARED) {
             return convertSharedFormula((int)f.getSi());
         }
         return f.getStringValue();
@@ -370,7 +375,29 @@ public final class XSSFCell implements Cell {
         return FormulaRenderer.toFormulaString(fpb, fmla);
     }
 
+    /**
+     * Sets formula for this cell.
+     * <p>
+     * Note, this method only sets the formula string and does not calculate the formula value.
+     * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
+     * </p>
+     *
+     * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
+     *  If the argument is <code>null</code> then the current formula is removed.
+     * @throws org.apache.poi.ss.formula.FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
     public void setCellFormula(String formula) {
+        setFormula(formula, FormulaType.CELL);
+    }
+
+    /* package */ void setCellArrayFormula(String formula, CellRangeAddress range) {
+        setFormula(formula, FormulaType.ARRAY);
+        CTCellFormula cellFormula = _cell.getF();
+        cellFormula.setT(STCellFormulaType.ARRAY);
+        cellFormula.setRef(range.formatAsString());
+    }
+
+    private void setFormula(String formula, int formulaType) {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
             wb.onDeleteFormula(this);
@@ -461,7 +488,7 @@ public final class XSSFCell implements Cell {
      */
     public int getCellType() {
 
-        if (_cell.getF() != null) {
+        if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
             return CELL_TYPE_FORMULA;
         }
 
@@ -940,5 +967,32 @@ public final class XSSFCell implements Cell {
                 return textValue;
         }
         throw new IllegalStateException("Unexpected formula result type (" + cellType + ")");
+    }
+
+    /**
+     * If this cell is part of an array formula, returns a CellRangeAddress object
+     * that represents the entire array. 
+     *
+     * @return the range of the array formula group that this cell belongs to.
+     * @throws IllegalStateException if this cell is not part of an array formula
+     * @see #isPartOfArrayFormulaGroup()
+     */
+    public CellRangeAddress getArrayFormulaRange() {
+        XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
+        if (cell == null) {
+            throw new IllegalStateException("Cell " + _cell.getR() + " is not part of an array formula");
+        }
+        String formulaRef = cell._cell.getF().getRef();
+        return CellRangeAddress.valueOf(formulaRef);
+    }
+
+    /**
+     * Test if this cell is included in an array formula
+     *
+     * @return true if this cell is part of an array formula
+     * @see #getArrayFormulaRange()
+     */
+    public boolean isPartOfArrayFormulaGroup() {
+        return getSheet().isCellInArrayFormulaContext(this);
     }
 }

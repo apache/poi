@@ -82,10 +82,21 @@ public class CellRangeAddress extends CellRangeAddressBase {
         return sb.toString();
     }
 
+    /**
+     * @param ref usually a standard area ref (e.g. "B1:D8").  May be a single cell
+     *            ref (e.g. "B5") in which case the result is a 1 x 1 cell range.
+     */
     public static CellRangeAddress valueOf(String ref) {
         int sep = ref.indexOf(":");
-        CellReference cellFrom = new CellReference(ref.substring(0, sep));
-        CellReference cellTo = new CellReference(ref.substring(sep + 1));
-        return new CellRangeAddress(cellFrom.getRow(), cellTo.getRow(), cellFrom.getCol(), cellTo.getCol());
+        CellReference a;
+        CellReference b;
+        if (sep == -1) {
+            a = new CellReference(ref);
+            b = a;
+        } else {
+            a = new CellReference(ref.substring(0, sep));
+            b = new CellReference(ref.substring(sep + 1));
+        }
+        return new CellRangeAddress(a.getRow(), b.getRow(), a.getCol(), b.getCol());
     }
 }
