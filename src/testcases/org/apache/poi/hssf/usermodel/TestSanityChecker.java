@@ -39,15 +39,15 @@ import org.apache.poi.hssf.usermodel.SanityChecker.CheckRecord;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSanityChecker extends TestCase {
-
+	private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);
 	private static BoundSheetRecord createBoundSheetRec() {
 		return new BoundSheetRecord("Sheet1");
 	}
 	public void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
-		List records = new ArrayList();
+		List<Record> records = new ArrayList<Record>();
 		records.add(new BOFRecord());
-		records.add(new InterfaceHdrRecord());
+		records.add(INTERFACEHDR);
 		records.add(createBoundSheetRec());
 		records.add(EOFRecord.instance);
 		CheckRecord[] check = {
@@ -71,15 +71,15 @@ public final class TestSanityChecker extends TestCase {
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
@@ -92,19 +92,19 @@ public final class TestSanityChecker extends TestCase {
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
 				new BOFRecord(),
 				EOFRecord.instance,
@@ -113,7 +113,7 @@ public final class TestSanityChecker extends TestCase {
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 	}

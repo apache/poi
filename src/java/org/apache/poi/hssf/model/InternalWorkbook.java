@@ -340,35 +340,35 @@ public final class InternalWorkbook {
         retval.records.setRecords(records);
         List<FormatRecord> formats = retval.formats;
 
-        records.add(retval.createBOF());
-        records.add(retval.createInterfaceHdr());
-        records.add(retval.createMMS());
-        records.add(retval.createInterfaceEnd());
-        records.add(retval.createWriteAccess());
-        records.add(retval.createCodepage());
-        records.add(retval.createDSF());
-        records.add(retval.createTabId());
+        records.add(createBOF());
+        records.add(new InterfaceHdrRecord(CODEPAGE));
+        records.add(createMMS());
+        records.add(InterfaceEndRecord.instance);
+        records.add(createWriteAccess());
+        records.add(createCodepage());
+        records.add(createDSF());
+        records.add(createTabId());
         retval.records.setTabpos(records.size() - 1);
-        records.add(retval.createFnGroupCount());
+        records.add(createFnGroupCount());
         records.add(createWindowProtect());
         records.add(createProtect());
         retval.records.setProtpos(records.size() - 1);
         records.add(createPassword());
         records.add(createProtectionRev4());
-        records.add(retval.createPasswordRev4());
+        records.add(createPasswordRev4());
         retval.windowOne = createWindowOne();
         records.add(retval.windowOne);
-        records.add(retval.createBackup());
+        records.add(createBackup());
         retval.records.setBackuppos(records.size() - 1);
-        records.add(retval.createHideObj());
-        records.add(retval.createDateWindow1904());
-        records.add(retval.createPrecision());
+        records.add(createHideObj());
+        records.add(createDateWindow1904());
+        records.add(createPrecision());
         records.add(createRefreshAll());
-        records.add(retval.createBookBool());
-        records.add(retval.createFont());
-        records.add(retval.createFont());
-        records.add(retval.createFont());
-        records.add(retval.createFont());
+        records.add(createBookBool());
+        records.add(createFont());
+        records.add(createFont());
+        records.add(createFont());
+        records.add(createFont());
         retval.records.setFontpos( records.size() - 1 );   // last font record position
         retval.numfonts = 4;
 
@@ -1054,12 +1054,6 @@ public final class InternalWorkbook {
         return retval;
     }
 
-    private static InterfaceHdrRecord createInterfaceHdr() {
-        InterfaceHdrRecord retval = new InterfaceHdrRecord();
-
-        retval.setCodepage(CODEPAGE);
-        return retval;
-    }
 
     private static MMSRecord createMMS() {
         MMSRecord retval = new MMSRecord();
@@ -1067,10 +1061,6 @@ public final class InternalWorkbook {
         retval.setAddMenuCount(( byte ) 0);
         retval.setDelMenuCount(( byte ) 0);
         return retval;
-    }
-
-    private static InterfaceEndRecord createInterfaceEnd() {
-        return new InterfaceEndRecord();
     }
 
     /**

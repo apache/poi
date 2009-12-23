@@ -180,7 +180,7 @@ public final class BiffViewer {
 			case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
 			case HyperlinkRecord.sid:      return new HyperlinkRecord(in);
 			case IndexRecord.sid:          return new IndexRecord(in);
-			case InterfaceEndRecord.sid:   return new InterfaceEndRecord(in);
+			case InterfaceEndRecord.sid:   return InterfaceEndRecord.create(in);
 			case InterfaceHdrRecord.sid:   return new InterfaceHdrRecord(in);
 			case IterationRecord.sid:      return new IterationRecord(in);
 			case LabelRecord.sid:          return new LabelRecord(in);
@@ -367,13 +367,13 @@ public final class BiffViewer {
 	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
 	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
 	 * <tr><td>--rawhex</td><td>output raw hex dump of whole workbook stream</td></tr>
-     * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
-     * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
+	 * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
+	 * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
 	 * </table>
 	 *
 	 */
 	public static void main(String[] args) {
-
+		// args = new String[] { "--out", "", };
 		CommandArgs cmdArgs;
 		try {
 			cmdArgs = CommandArgs.parse(args);
@@ -419,12 +419,12 @@ public final class BiffViewer {
 		private final Writer _hexDumpWriter;
 		private final List<String> _headers;
 		private final boolean _zeroAlignEachRecord;
-        private final boolean _noHeader;
+		private final boolean _noHeader;
 		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
 			_hexDumpWriter = hexDumpWriter;
 			_zeroAlignEachRecord = zeroAlignEachRecord;
-            _noHeader = noHeader;
-            _headers = new ArrayList<String>();
+			_noHeader = noHeader;
+			_headers = new ArrayList<String>();
 		}
 
 		public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,

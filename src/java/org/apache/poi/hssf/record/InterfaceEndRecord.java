@@ -18,9 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
 
 /**
  * Title: Interface End Record (0x00E2)<P>
@@ -28,50 +25,39 @@ import org.apache.poi.util.POILogFactory;
  *  (has no fields)<P>
  * REFERENCE:  PG 324 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
 public final class InterfaceEndRecord extends StandardRecord {
-    private static POILogger logger = POILogFactory.getLogger(InterfaceEndRecord.class);
 
-    public final static short sid = 0x00E2;
+    public static final short sid = 0x00E2;
+    public static final InterfaceEndRecord instance = new InterfaceEndRecord();
 
-    private byte[] _unknownData;
-
-    public InterfaceEndRecord()
-    {
+    private InterfaceEndRecord() {
+        // enforce singleton
     }
 
-    public InterfaceEndRecord(RecordInputStream in)
-    {
-        if(in.available() > 0){
-            _unknownData = in.readRemainder();
-            logger.log(POILogger.WARN, "encountered unexpected " + 
-                    _unknownData.length + " bytes in InterfaceEndRecord");
+    public static Record create(RecordInputStream in) {
+        switch (in.remaining()) {
+            case 0:
+                return instance;
+            case 2:
+                return new InterfaceHdrRecord(in);
         }
+        throw new RecordFormatException("Invalid record data size: " + in.remaining());
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[INTERFACEEND]\n");
-        buffer.append("  unknownData=").append(HexDump.toHex(_unknownData)).append("\n");
-        buffer.append("[/INTERFACEEND]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[INTERFACEEND/]\n";
     }
 
     public void serialize(LittleEndianOutput out) {
-        if(_unknownData != null) out.write(_unknownData);
+        // no instance data
     }
 
     protected int getDataSize() {
-        int size = 0;
-        if(_unknownData != null) size += _unknownData.length;
-        return size;
+        return 0;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }
