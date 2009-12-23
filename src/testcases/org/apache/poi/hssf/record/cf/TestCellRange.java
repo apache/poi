@@ -192,4 +192,18 @@ public final class TestCellRange extends TestCase
         assertEquals(1, cr3.length);
         assertEquals("A1:B2", cr3[0].formatAsString());
     }
+
+    public void testValueOf() {
+        CellRangeAddress cr1 = CellRangeAddress.valueOf("A1:B1");
+        assertEquals(0, cr1.getFirstColumn());
+        assertEquals(0, cr1.getFirstRow());
+        assertEquals(1, cr1.getLastColumn());
+        assertEquals(0, cr1.getLastRow());
+
+        CellRangeAddress cr2 = CellRangeAddress.valueOf("B1");
+        assertEquals(1, cr2.getFirstColumn());
+        assertEquals(0, cr2.getFirstRow());
+        assertEquals(1, cr2.getLastColumn());
+        assertEquals(0, cr2.getLastRow());
+    }
 }

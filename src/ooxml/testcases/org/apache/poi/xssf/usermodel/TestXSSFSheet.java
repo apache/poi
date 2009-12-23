@@ -32,6 +32,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
+import java.util.Arrays;
+
 
 public class TestXSSFSheet extends BaseTestSheet {
 
@@ -911,5 +913,154 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(1, wsh.getSheetData().sizeOfRowArray());
         //existing cells are invalidated
         assertEquals(0, wsh.getSheetData().getRowArray(0).sizeOfCArray());
+    }
+
+    public void testSetArrayFormula_File() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook("D:\\java\\apache\\apache-poi\\bugzilla\\array-formulas\\template.xlsx");
+        XSSFSheet sheet1 = workbook.getSheetAt(0);
+        sheet1.setArrayFormula("SUM(C1:C2*D1:D2)", CellRangeAddress.valueOf("B1"));
+        sheet1.setArrayFormula("MAX(C1:C2-D1:D2)", CellRangeAddress.valueOf("B2"));
+
+        XSSFSheet sheet2 = workbook.getSheetAt(1);
+        sheet2.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+
+        java.io.FileOutputStream out = new java.io.FileOutputStream("D:\\java\\apache\\apache-poi\\bugzilla\\array-formulas\\poi-template.xlsx");
+        workbook.write(out);
+        out.close();
+    }
+
+    public void testSetArrayFormula() throws Exception {
+        XSSFCell[] cells;
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        XSSFCell cell = sheet.createRow(0).createCell(0);
+        assertFalse(cell.isPartOfArrayFormulaGroup());
+        assertFalse(sheet.isCellInArrayFormulaContext(cell));
+        try {
+            CellRangeAddress range = cell.getArrayFormulaRange();
+            fail("expected exception");
+        } catch (IllegalStateException e){
+            assertEquals("Cell A1 is not part of an array formula", e.getMessage());
+        }
+
+        // 1. single-cell formula
+
+        // row 3 does not yet exist
+        assertNull(sheet.getRow(2));
+        CellRangeAddress range = new CellRangeAddress(2, 2, 2, 2);
+        cells = sheet.setArrayFormula("SUM(C11:C12*D11:D12)", range);
+        assertEquals(1, cells.length);
+        // sheet.setArrayFormula creates rows and cells for the designated range
+        assertNotNull(sheet.getRow(2));
+        cell = sheet.getRow(2).getCell(2);
+        assertNotNull(cell);
+
+        assertTrue(cell.isPartOfArrayFormulaGroup());
+        assertSame(cells[0], sheet.getFirstCellInArrayFormula(cells[0]));
+        //retrieve the range and check it is the same
+        assertEquals(range.formatAsString(), cell.getArrayFormulaRange().formatAsString());
+
+        // 2. multi-cell formula
+        //rows 3-5 don't exist yet
+        assertNull(sheet.getRow(3));
+        assertNull(sheet.getRow(4));
+        assertNull(sheet.getRow(5));
+
+        range = new CellRangeAddress(3, 5, 2, 2);
+        assertEquals("C4:C6", range.formatAsString());
+        cells = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range);
+        assertEquals(3, cells.length);
+
+        // sheet.setArrayFormula creates rows and cells for the designated range
+        assertEquals("C4", cells[0].getCTCell().getR());
+        assertEquals("C5", cells[1].getCTCell().getR());
+        assertEquals("C6", cells[2].getCTCell().getR());
+        assertSame(cells[0], sheet.getFirstCellInArrayFormula(cells[0]));
+
+        /*
+         * For a multi-cell formula, the c elements for all cells except the top-left
+         * cell in that range shall not have an f element;
+         */
+        assertEquals("SUM(A1:A3*B1:B3)", cells[0].getCTCell().getF().getStringValue());
+        assertNull(cells[1].getCTCell().getF());
+        assertNull(cells[2].getCTCell().getF());
+
+        for(XSSFCell acell : cells){
+            assertTrue(acell.isPartOfArrayFormulaGroup());
+            assertEquals(Cell.CELL_TYPE_FORMULA, acell.getCellType());
+            assertEquals("SUM(A1:A3*B1:B3)", acell.getCellFormula());
+            //retrieve the range and check it is the same
+            assertEquals(range.formatAsString(), acell.getArrayFormulaRange().formatAsString());
+        }
+    }
+
+    public void testRemoveArrayFormula() throws Exception {
+        XSSFCell[] cells;
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+
+        CellRangeAddress range = new CellRangeAddress(3, 5, 2, 2);
+        assertEquals("C4:C6", range.formatAsString());
+        cells = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range);
+        assertEquals(3, cells.length);
+
+        // remove the formula cells in C4:C6
+        XSSFCell[] dcells = sheet.removeArrayFormula(cells[0]);
+        // removeArrayFormula should return the same cells as setArrayFormula
+        assertTrue(Arrays.equals(cells, dcells));
+
+        for(XSSFCell acell : cells){
+            assertFalse(acell.isPartOfArrayFormulaGroup());
+            assertEquals(Cell.CELL_TYPE_BLANK, acell.getCellType());
+        }
+
+        //invocation on a not-array-formula cell throws IllegalStateException
+        try {
+            sheet.removeArrayFormula(cells[0]);
+            fail("expected exception");
+        } catch (IllegalArgumentException e){
+            assertEquals("Cell C4 is not part of an array formula", e.getMessage());
+        }
+    }
+
+    public void testReadArrayFormula() throws Exception {
+        XSSFCell[] cells;
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet1 = workbook.createSheet();
+        cells = sheet1.setArrayFormula("SUM(A1:A3*B1:B3)", CellRangeAddress.valueOf("C4:C6"));
+        assertEquals(3, cells.length);
+
+        cells = sheet1.setArrayFormula("MAX(A1:A3*B1:B3)", CellRangeAddress.valueOf("A4:A6"));
+        assertEquals(3, cells.length);
+
+        XSSFSheet sheet2 = workbook.createSheet();
+        cells = sheet2.setArrayFormula("MIN(A1:A3*B1:B3)", CellRangeAddress.valueOf("D2:D4"));
+        assertEquals(3, cells.length);
+
+        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        sheet1 = workbook.getSheetAt(0);
+        for(int rownum=3; rownum <= 5; rownum++) {
+            XSSFCell cell1 = sheet1.getRow(rownum).getCell(2);
+            assertTrue( sheet1.isCellInArrayFormulaContext(cell1));
+            assertTrue( cell1.isPartOfArrayFormulaGroup());
+
+            XSSFCell cell2 = sheet1.getRow(rownum).getCell(0);
+            assertTrue( sheet1.isCellInArrayFormulaContext(cell2));
+            assertTrue( cell2.isPartOfArrayFormulaGroup());
+        }
+
+        sheet2 = workbook.getSheetAt(1);
+        for(int rownum=1; rownum <= 3; rownum++) {
+            XSSFCell cell1 = sheet2.getRow(rownum).getCell(3);
+            assertTrue( sheet2.isCellInArrayFormulaContext(cell1));
+            assertTrue( cell1.isPartOfArrayFormulaGroup());
+        }
+        XSSFCell acnhorCell = sheet2.getRow(1).getCell(3);
+        XSSFCell fmlaCell = sheet2.getRow(2).getCell(3);
+        assertSame(acnhorCell, sheet2.getFirstCellInArrayFormula(fmlaCell));
+        assertSame(acnhorCell, sheet2.getFirstCellInArrayFormula(acnhorCell));
     }
 }
