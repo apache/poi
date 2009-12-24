@@ -915,20 +915,6 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(0, wsh.getSheetData().getRowArray(0).sizeOfCArray());
     }
 
-    public void testSetArrayFormula_File() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook("D:\\java\\apache\\apache-poi\\bugzilla\\array-formulas\\template.xlsx");
-        XSSFSheet sheet1 = workbook.getSheetAt(0);
-        sheet1.setArrayFormula("SUM(C1:C2*D1:D2)", CellRangeAddress.valueOf("B1"));
-        sheet1.setArrayFormula("MAX(C1:C2-D1:D2)", CellRangeAddress.valueOf("B2"));
-
-        XSSFSheet sheet2 = workbook.getSheetAt(1);
-        sheet2.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
-
-        java.io.FileOutputStream out = new java.io.FileOutputStream("D:\\java\\apache\\apache-poi\\bugzilla\\array-formulas\\poi-template.xlsx");
-        workbook.write(out);
-        out.close();
-    }
-
     public void testSetArrayFormula() throws Exception {
         XSSFCell[] cells;
 
