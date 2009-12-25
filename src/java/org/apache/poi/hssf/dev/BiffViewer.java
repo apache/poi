@@ -308,7 +308,7 @@ public final class BiffViewer {
 					} else if ("--rawhex".equals(arg)) {
 						rawhex = true;
                     } else if ("--noheader".equals(arg)) {
-                        noheader = false;
+                        noheader = true;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}
