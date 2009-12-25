@@ -871,6 +871,28 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses(ptgs2, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);
 	}
 
+	public void testParseArrayNegativeElement() {
+		Ptg[] ptgs;
+		try {
+			ptgs = parseFormula("{-42}");
+		} catch (FormulaParseException e) {
+			if (e.getMessage().equals("Parse error near char 1 '-' in specified formula '{-42}'. Expected Integer")) {
+				throw new AssertionFailedError("Identified bug - failed to parse negative array element.");
+			}
+			throw e;
+		}
+		confirmTokenClasses(ptgs, ArrayPtg.class);
+		Object element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
+
+		assertEquals(-42.0, ((Double)element).doubleValue(), 0.0);
+
+		// Should be able to handle whitespace between unary minus and digits (Excel
+		// accepts this formula after presenting the user with a confirmation dialog).
+		ptgs = parseFormula("{- 5}");
+		element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
+		assertEquals(-5.0, ((Double)element).doubleValue(), 0.0);
+	}
+
 	public void testRangeOperator() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();

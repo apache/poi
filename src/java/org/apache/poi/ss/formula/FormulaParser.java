@@ -1209,9 +1209,13 @@ public final class FormulaParser {
 			case 'F': case 'f':
 			case 'T': case 't':
 				return parseBooleanLiteral();
+			case '-':
+				Match('-');
+				SkipWhite();
+				return convertArrayNumber(parseNumber(), false);
 		}
 		// else assume number
-		return convertArrayNumber(parseNumber());
+		return convertArrayNumber(parseNumber(), true);
 	}
 
 	private Boolean parseBooleanLiteral() {
@@ -1225,14 +1229,19 @@ public final class FormulaParser {
 		throw expected("'TRUE' or 'FALSE'");
 	}
 
-	private static Double convertArrayNumber(Ptg ptg) {
+	private static Double convertArrayNumber(Ptg ptg, boolean isPositive) {
+		double value;
 		if (ptg instanceof IntPtg) {
-			return new Double(((IntPtg)ptg).getValue());
+			value = ((IntPtg)ptg).getValue();
+		} else  if (ptg instanceof NumberPtg) {
+			value = ((NumberPtg)ptg).getValue();
+		} else {
+			throw new RuntimeException("Unexpected ptg (" + ptg.getClass().getName() + ")");
 		}
-		if (ptg instanceof NumberPtg) {
-			return new Double(((NumberPtg)ptg).getValue());
+		if (!isPositive) {
+			value = -value;
 		}
-		throw new RuntimeException("Unexpected ptg (" + ptg.getClass().getName() + ")");
+		return new Double(value);
 	}
 
 	private Ptg parseNumber() {
