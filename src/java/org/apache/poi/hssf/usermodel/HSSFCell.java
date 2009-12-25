@@ -43,6 +43,7 @@ import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
@@ -50,7 +51,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogger;
@@ -1159,5 +1162,32 @@ public class HSSFCell implements Cell {
             throw new IllegalStateException("Only formula cells have cached results");
         }
         return ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultType();
+    }
+
+    void setCellArrayFormula(CellRangeAddress range) {
+        int row = _record.getRow();
+        short col = _record.getColumn();
+        short styleIndex = _record.getXFIndex();
+        setCellType(CELL_TYPE_FORMULA, false, row, col, styleIndex);
+
+        // Billet for formula in rec
+        Ptg[] ptgsForCell = {new ExpPtg(range.getFirstRow(), range.getFirstColumn())};
+        FormulaRecordAggregate agg = (FormulaRecordAggregate) _record;
+        agg.setParsedExpression(ptgsForCell);
+    }
+
+    public CellRangeAddress getArrayFormulaRange() {
+        if (_cellType != CELL_TYPE_FORMULA) {
+            String ref = new CellReference(this).formatAsString();
+            throw new IllegalStateException("Cell "+ref+" is not part of an array formula");
+        }
+        return ((FormulaRecordAggregate)_record).getArrayFormulaRange();
+    }
+
+    public boolean isPartOfArrayFormulaGroup() {
+        if (_cellType != CELL_TYPE_FORMULA) {
+            return false;
+        }
+        return ((FormulaRecordAggregate)_record).isPartOfArrayFormula();
     }
 }

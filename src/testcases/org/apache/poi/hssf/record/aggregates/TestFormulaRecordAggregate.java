@@ -24,7 +24,13 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *
@@ -39,7 +45,8 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		s.setString("abc");
 		FormulaRecordAggregate fagg = new FormulaRecordAggregate(f, s, SharedValueManager.createEmpty());
 		assertEquals("abc", fagg.getStringValue());
-	}
+        assertFalse(fagg.isPartOfArrayFormula());
+    }
 
 	/**
 	 * Sometimes a {@link StringRecord} appears after a {@link FormulaRecord} even though the
@@ -71,4 +78,27 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		assertEquals(1, vraRecs.length);
 		assertEquals(fr, vraRecs[0]);
 	}
+
+    public void testArrayFormulas() {
+        int rownum = 4;
+        int colnum = 4;
+
+        FormulaRecord fr = new FormulaRecord();
+        fr.setRow(rownum);
+        fr.setColumn((short)colnum);
+
+        FormulaRecordAggregate agg = new FormulaRecordAggregate(fr, null, SharedValueManager.createEmpty());
+        Ptg[] ptgsForCell = {new ExpPtg(rownum, colnum)};
+        agg.setParsedExpression(ptgsForCell);
+
+        String formula = "SUM(A1:A3*B1:B3)";
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, null, FormulaType.ARRAY, 0);
+        agg.setArrayFormula(new CellRangeAddress(rownum, rownum, colnum, colnum), ptgs);
+
+        assertTrue(agg.isPartOfArrayFormula());
+        assertEquals("E5", agg.getArrayFormulaRange().formatAsString());
+        Ptg[] ptg = agg.getFormulaTokens();
+        String fmlaSer = FormulaRenderer.toFormulaString(null, ptg);
+        assertEquals(formula, fmlaSer);
+    }
 }
