@@ -17,44 +17,71 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 
-import java.util.Iterator;
-import java.util.Arrays;
-
 /**
- * Common superclass for testing usermodel API for array formulas
+ * Common superclass for testing usermodel API for array formulas.<br/>
+ * Formula evaluation is not tested here.
  *
  * @author Yegor Kozlov
+ * @author Josh Micich
  */
-public abstract class BaseTestArrayFormulas extends TestCase {
+public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
+    protected final ITestDataProvider _testDataProvider;
 
-    /**
-     * @return an object that provides test data in HSSF / XSSF specific way
-     */
-    protected abstract ITestDataProvider getTestDataProvider();
+    protected BaseTestSheetUpdateArrayFormulas(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
+    public final void testAutoCreateOtherCells() {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet1");
 
+        Row row1 = sheet.createRow(0);
+        Cell cellA1 = row1.createCell(0);
+        Cell cellB1 = row1.createCell(1);
+        String formula = "42";
+        sheet.setArrayFormula(formula, CellRangeAddress.valueOf("A1:B2"));
+
+        assertEquals(formula, cellA1.getCellFormula());
+        assertEquals(formula, cellB1.getCellFormula());
+        Row row2 = sheet.getRow(1);
+        assertNotNull(row2);
+        assertEquals(formula, row2.getCell(0).getCellFormula());
+        assertEquals(formula, row2.getCell(1).getCellFormula());
+    }
     /**
      *  Set single-cell array formula
      */
-    public void testSetArrayFormula_singleCell() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testSetArrayFormula_singleCell() {
+        Cell[] cells;
+
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
+        Cell cell = sheet.createRow(0).createCell(0);
+        assertFalse(cell.isPartOfArrayFormulaGroup());
+        try {
+            cell.getArrayFormulaRange();
+            fail("expected exception");
+        } catch (IllegalStateException e){
+            assertEquals("Cell A1 is not part of an array formula.", e.getMessage());
+        }
 
         // row 3 does not yet exist
         assertNull(sheet.getRow(2));
         CellRangeAddress range = new CellRangeAddress(2, 2, 2, 2);
-        Cell[] cells = sheet.setArrayFormula("SUM(C11:C12*D11:D12)", range);
+        cells = sheet.setArrayFormula("SUM(C11:C12*D11:D12)", range).getFlattenedCells();
         assertEquals(1, cells.length);
         // sheet.setArrayFormula creates rows and cells for the designated range
         assertNotNull(sheet.getRow(2));
-        Cell cell = sheet.getRow(2).getCell(2);
+        cell = sheet.getRow(2).getCell(2);
         assertNotNull(cell);
 
         assertTrue(cell.isPartOfArrayFormulaGroup());
@@ -67,8 +94,8 @@ public abstract class BaseTestArrayFormulas extends TestCase {
     /**
      * Set multi-cell array formula
      */
-    public void testSetArrayFormula_multiCell() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testSetArrayFormula_multiCell() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
         // multi-cell formula
@@ -77,9 +104,8 @@ public abstract class BaseTestArrayFormulas extends TestCase {
         assertNull(sheet.getRow(4));
         assertNull(sheet.getRow(5));
 
-        CellRangeAddress range = new CellRangeAddress(3, 5, 2, 2);
-        assertEquals("C4:C6", range.formatAsString());
-        Cell[] cells = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range);
+        CellRangeAddress range = CellRangeAddress.valueOf("C4:C6");
+        Cell[] cells = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range).getFlattenedCells();
         assertEquals(3, cells.length);
 
         // sheet.setArrayFormula creates rows and cells for the designated range
@@ -100,8 +126,8 @@ public abstract class BaseTestArrayFormulas extends TestCase {
      * Passing an incorrect formula to sheet.setArrayFormula
      *  should throw FormulaParseException
      */
-    public void testSetArrayFormula_incorrectFormula() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testSetArrayFormula_incorrectFormula() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
         try {
@@ -117,58 +143,58 @@ public abstract class BaseTestArrayFormulas extends TestCase {
      * Calls of cell.getArrayFormulaRange and sheet.removeArrayFormula
      * on a not-array-formula cell throw IllegalStateException
      */
-    public void testArrayFormulas_illegalCalls() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testArrayFormulas_illegalCalls() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
         Cell cell = sheet.createRow(0).createCell(0);
         assertFalse(cell.isPartOfArrayFormulaGroup());
         try {
-            CellRangeAddress range = cell.getArrayFormulaRange();
+            cell.getArrayFormulaRange();
             fail("expected exception");
         } catch (IllegalStateException e){
-            assertEquals("Cell A1 is not part of an array formula", e.getMessage());
+            assertEquals("Cell A1 is not part of an array formula.", e.getMessage());
         }
 
         try {
             sheet.removeArrayFormula(cell);
             fail("expected exception");
         } catch (IllegalArgumentException e){
-            assertEquals("Cell A1 is not part of an array formula", e.getMessage());
+            assertEquals("Cell A1 is not part of an array formula.", e.getMessage());
         }
     }
 
     /**
      * create and remove array formulas
      */
-    public void testRemoveArrayFormula() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testRemoveArrayFormula() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
         CellRangeAddress range = new CellRangeAddress(3, 5, 2, 2);
         assertEquals("C4:C6", range.formatAsString());
-        Cell[] cells = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range);
-        assertEquals(3, cells.length);
+        CellRange<?> cr = sheet.setArrayFormula("SUM(A1:A3*B1:B3)", range);
+        assertEquals(3, cr.size());
 
         // remove the formula cells in C4:C6
-        Cell[] dcells = sheet.removeArrayFormula(cells[0]);
+        CellRange<?> dcells = sheet.removeArrayFormula(cr.getTopLeftCell());
         // removeArrayFormula should return the same cells as setArrayFormula
-        assertTrue(Arrays.equals(cells, dcells));
+        assertTrue(Arrays.equals(cr.getFlattenedCells(), dcells.getFlattenedCells()));
 
-        for(Cell acell : cells){
+        for(Cell acell : cr){
             assertFalse(acell.isPartOfArrayFormulaGroup());
             assertEquals(Cell.CELL_TYPE_BLANK, acell.getCellType());
         }
 
         // cells C4:C6 are not included in array formula,
         // invocation of sheet.removeArrayFormula on any of them throws IllegalArgumentException
-        for(Cell acell : cells){
+        for(Cell acell : cr){
             try {
                 sheet.removeArrayFormula(acell);
                 fail("expected exception");
             } catch (IllegalArgumentException e){
                 String ref = new CellReference(acell).formatAsString();
-                assertEquals("Cell "+ref+" is not part of an array formula", e.getMessage());
+                assertEquals("Cell "+ref+" is not part of an array formula.", e.getMessage());
             }
         }
     }
@@ -176,22 +202,22 @@ public abstract class BaseTestArrayFormulas extends TestCase {
     /**
      * Test that when reading a workbook from input stream, array formulas are recognized
      */
-    public void testReadArrayFormula() {
+    public final void testReadArrayFormula() {
         Cell[] cells;
 
-        Workbook workbook = getTestDataProvider().createWorkbook();
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet();
-        cells = sheet1.setArrayFormula("SUM(A1:A3*B1:B3)", CellRangeAddress.valueOf("C4:C6"));
+        cells = sheet1.setArrayFormula("SUM(A1:A3*B1:B3)", CellRangeAddress.valueOf("C4:C6")).getFlattenedCells();
         assertEquals(3, cells.length);
 
-        cells = sheet1.setArrayFormula("MAX(A1:A3*B1:B3)", CellRangeAddress.valueOf("A4:A6"));
+        cells = sheet1.setArrayFormula("MAX(A1:A3*B1:B3)", CellRangeAddress.valueOf("A4:A6")).getFlattenedCells();
         assertEquals(3, cells.length);
 
         Sheet sheet2 = workbook.createSheet();
-        cells = sheet2.setArrayFormula("MIN(A1:A3*B1:B3)", CellRangeAddress.valueOf("D2:D4"));
+        cells = sheet2.setArrayFormula("MIN(A1:A3*B1:B3)", CellRangeAddress.valueOf("D2:D4")).getFlattenedCells();
         assertEquals(3, cells.length);
 
-        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
         sheet1 = workbook.getSheetAt(0);
         for(int rownum=3; rownum <= 5; rownum++) {
             Cell cell1 = sheet1.getRow(rownum).getCell(2);

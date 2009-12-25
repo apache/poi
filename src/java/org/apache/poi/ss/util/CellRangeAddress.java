@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
- * 
+ *
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
@@ -51,7 +51,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
 		out.writeShort(getFirstColumn());
 		out.writeShort(getLastColumn());
 	}
-	
+
 	public CellRangeAddress(RecordInputStream in) {
 		super(readUShortAndCheck(in), in.readUShort(), in.readUShort(), in.readUShort());
 	}
@@ -72,6 +72,10 @@ public class CellRangeAddress extends CellRangeAddressBase {
 		return numberOfItems * ENCODED_SIZE;
 	}
 
+    /**
+     * @return the text format of this range.  Single cell ranges are formatted
+     *         like single cell references (e.g. 'A1' instead of 'A1:A1').
+     */
     public String formatAsString() {
         StringBuffer sb = new StringBuffer();
         CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn());

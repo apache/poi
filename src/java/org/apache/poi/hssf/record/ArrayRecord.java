@@ -17,9 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.AreaPtgBase;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
@@ -31,7 +29,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * Treated in a similar way to SharedFormulaRecord
  *
  * @author Josh Micich
- * @author Vladimirs Abramovs(Vladimirs.Abramovs at exigenservices.com) - Array Formula support
  */
 public final class ArrayRecord extends SharedValueRecordBase {
 
@@ -52,7 +49,7 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		_formula = Formula.read(formulaTokenLen, in, totalFormulaLen);
 	}
 
-	public ArrayRecord(Formula formula, CellRangeAddress8Bit range ) {
+	public ArrayRecord(Formula formula, CellRangeAddress8Bit range) {
 		super(range);
 		_options = 0; //YK: Excel 2007 leaves this field unset
 		_field3notUsed = 0;
@@ -66,13 +63,12 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		return (_options & OPT_CALCULATE_ON_OPEN) != 0;
 	}
 
-    public void setOptions(int val){
-        _options = val;
-    }
+	public Ptg[] getFormulaTokens() {
+		return _formula.getTokens();
+	}
 
-    protected int getExtraDataSize() {
-		return 2 + 4
-			+ _formula.getEncodedSize();
+	protected int getExtraDataSize() {
+		return 2 + 4 + _formula.getEncodedSize();
 	}
 	protected void serializeExtraData(LittleEndianOutput out) {
 		out.writeShort(_options);
@@ -99,42 +95,4 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		sb.append("]");
 		return sb.toString();
 	}
-
-	/**
-	 * @return the equivalent {@link Ptg} array that the formula would have,
-	 *         were it not shared.
-	 */
-    public Ptg[] getFormulaTokens() {
-        return _formula.getTokens();
-        /*
-        YK: I don't understand all t
-
-        int formulaRow = this.getFirstRow();
-        int formulaColumn = this.getLastColumn();
-
-        // Use SharedFormulaRecord static method to convert formula
-
-        Ptg[] ptgs = _formula.getTokens();
-
-        // Convert from relative addressing to absolute
-        // because all formulas in array need to be referenced to the same
-        // ref/range
-        for (int i = 0; i < ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
-            if (ptg instanceof AreaPtgBase) {
-                AreaPtgBase aptg = (AreaPtgBase) ptg;
-                aptg.setFirstRowRelative(false);
-                aptg.setLastRowRelative(false);
-                aptg.setFirstColRelative(false);
-                aptg.setLastColRelative(false);
-
-            } else if (ptg instanceof RefPtgBase) {
-                RefPtgBase rptg = (RefPtgBase) ptg;
-                rptg.setRowRelative(false);
-                rptg.setColRelative(false);
-            }
-        }
-        return SharedFormulaRecord.convertSharedFormulas(ptgs, formulaRow, formulaColumn);
-        */
-    }
 }

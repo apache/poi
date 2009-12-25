@@ -120,7 +120,7 @@ public final class SharedValueManager {
 		return new SharedValueManager(
 			new SharedFormulaRecord[0], new CellReference[0], new ArrayRecord[0], new TableRecord[0]);
 	}
-    private final List<ArrayRecord> _arrayRecords;
+	private final List<ArrayRecord> _arrayRecords;
 	private final TableRecord[] _tableRecords;
 	private final Map<SharedFormulaRecord, SharedFormulaGroup> _groupsBySharedFormulaRecord;
 	/** cached for optimization purposes */
@@ -132,8 +132,7 @@ public final class SharedValueManager {
 		if (nShF != firstCells.length) {
 			throw new IllegalArgumentException("array sizes don't match: " + nShF + "!=" + firstCells.length + ".");
 		}
-		_arrayRecords = new ArrayList<ArrayRecord>();
-        _arrayRecords.addAll(Arrays.asList(arrayRecords));
+		_arrayRecords = toList(arrayRecords);
 		_tableRecords = tableRecords;
 		Map<SharedFormulaRecord, SharedFormulaGroup> m = new HashMap<SharedFormulaRecord, SharedFormulaGroup>(nShF * 3 / 2);
 		for (int i = 0; i < nShF; i++) {
@@ -143,6 +142,25 @@ public final class SharedValueManager {
 		_groupsBySharedFormulaRecord = m;
 	}
 
+	/**
+	 * @return a modifiable list, independent of the supplied array
+	 */
+	private static <Z> List<Z> toList(Z[] zz) {
+		List<Z> result = new ArrayList<Z>(zz.length);
+		for (int i = 0; i < zz.length; i++) {
+			result.add(zz[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * @param firstCells
+	 * @param recs list of sheet records (possibly contains records for other parts of the Excel file)
+	 * @param startIx index of first row/cell record for current sheet
+	 * @param endIx one past index of last row/cell record for current sheet.  It is important
+	 * that this code does not inadvertently collect <tt>SharedFormulaRecord</tt>s from any other
+	 * sheet (which could happen if endIx is chosen poorly).  (see bug 44449)
+	 */
 	public static SharedValueManager create(SharedFormulaRecord[] sharedFormulaRecords,
 			CellReference[] firstCells, ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {
 		if (sharedFormulaRecords.length + firstCells.length + arrayRecords.length + tableRecords.length < 1) {
@@ -250,8 +268,7 @@ public final class SharedValueManager {
 		// The first cell will be the top left in the range.  So we can match the
 		// ARRAY/TABLE record directly.
 
-		for (int i = 0; i < _tableRecords.length; i++) {
-			TableRecord tr = _tableRecords[i];
+		for (TableRecord tr : _tableRecords) {
 			if (tr.isFirstCell(row, column)) {
 				return tr;
 			}
@@ -270,46 +287,47 @@ public final class SharedValueManager {
 	 */
 	public void unlink(SharedFormulaRecord sharedFormulaRecord) {
 		SharedFormulaGroup svg = _groupsBySharedFormulaRecord.remove(sharedFormulaRecord);
-		_groups = null; // be sure to reset cached value
 		if (svg == null) {
 			throw new IllegalStateException("Failed to find formulas for shared formula");
 		}
+		_groups = null; // be sure to reset cached value
 		svg.unlinkSharedFormulas();
 	}
 
-    /**
-     * Add specified Array Record.
-     */
-    public void addArrayRecord(ArrayRecord ar) {
-        // could do a check here to make sure none of the ranges overlap
-        _arrayRecords.add(ar);
-    }
+	/**
+	 * Add specified Array Record.
+	 */
+	public void addArrayRecord(ArrayRecord ar) {
+		// could do a check here to make sure none of the ranges overlap
+		_arrayRecords.add(ar);
+	}
 
-    /**
-     * Removes the {@link ArrayRecord} for the cell group containing the specified cell.
-     * The caller should clear (set blank) all cells in the returned range.
-     * @return the range of the array formula which was just removed. Never <code>null</code>.
-     */
-    public CellRangeAddress8Bit removeArrayFormula(int rowIndex, int columnIndex) {
-        for (ArrayRecord ar : _arrayRecords) {
-            if (ar.isInRange(rowIndex, columnIndex)) {
-                _arrayRecords.remove(ar);
-                return ar.getRange();
-            }
-        }
-        throw new IllegalArgumentException("Specified cell is not part of an array formula.");
-    }
+	/**
+	 * Removes the {@link ArrayRecord} for the cell group containing the specified cell.
+	 * The caller should clear (set blank) all cells in the returned range.
+	 * @return the range of the array formula which was just removed. Never <code>null</code>.
+	 */
+	public CellRangeAddress8Bit removeArrayFormula(int rowIndex, int columnIndex) {
+		for (ArrayRecord ar : _arrayRecords) {
+			if (ar.isInRange(rowIndex, columnIndex)) {
+				_arrayRecords.remove(ar);
+				return ar.getRange();
+			}
+		}
+		String ref = new CellReference(rowIndex, columnIndex, false, false).formatAsString();
+		throw new IllegalArgumentException("Specified cell " + ref
+				+ " is not part of an array formula.");
+	}
 
-    /**
-     * @return the shared ArrayRecord identified by (firstRow, firstColumn). never <code>null</code>.
-     */
-    public ArrayRecord getArrayRecord(int firstRow, int firstColumn) {
-        for(ArrayRecord ar : _arrayRecords) {
-            if(ar.isFirstCell(firstRow, firstColumn)) {
-                return ar;
-            }
-        }
-        return null;
-    }
-    
+	/**
+	 * @return the shared ArrayRecord identified by (firstRow, firstColumn). never <code>null</code>.
+	 */
+	public ArrayRecord getArrayRecord(int firstRow, int firstColumn) {
+		for(ArrayRecord ar : _arrayRecords) {
+			if(ar.isFirstCell(firstRow, firstColumn)) {
+				return ar;
+			}
+		}
+		return null;
+	}
 }

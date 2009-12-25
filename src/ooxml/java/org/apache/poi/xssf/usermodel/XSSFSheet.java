@@ -40,6 +40,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
@@ -47,9 +48,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.SSCellRange;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
@@ -2323,7 +2325,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
-    }
+        }
     }
 
     @Override
@@ -2701,85 +2703,57 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Sets array formula to the specified range of cells.
-     * <p>
-     *  Note, that this method silently creates cells in the
-     *  specified range if they don't exist.
-     * </p>
-     * Example:
-     * <blockquote><pre>
-     *  Workbook workbook = new XSSFWorkbook();
-     *  Sheet sheet = workbook.createSheet();
-     *  CellRangeAddress range = CellRangeAddress.valueOf("C1:C3");
-     *  Cell[] cells = sheet.setArrayFormula("A1:A3*B1:B3", range);
-     * </pre></blockquote>
-     *  Three cells in the C1:C3 range are created and returned.
-     *
-     * @param formula the formula to set
-     * @param range Region of array formula for result.
-     * @return the array of cells that represent the entire formula array
-     * @throws org.apache.poi.ss.formula.FormulaParseException if
-     *   the formula has incorrect syntax or is otherwise invalid
+     * Also creates cells if they don't exist
      */
-     public XSSFCell[] setArrayFormula(String formula, CellRangeAddress range) {
-        XSSFRow row = getRow(range.getFirstRow());
-        if (row == null) {
-            row = createRow(range.getFirstRow());
-        }
-        XSSFCell mainArrayFormulaCell = row.getCell(range.getFirstColumn());
-        if (mainArrayFormulaCell == null) {
-            mainArrayFormulaCell = row.createCell(range.getFirstColumn());
-        }
-        mainArrayFormulaCell.setCellArrayFormula(formula, range);
-        arrayFormulas.add(range);
-
-        XSSFCell[] cells = new XSSFCell[range.getNumberOfCells()];
-        int k = 0;
-        for (int rowIndex = range.getFirstRow(); rowIndex <= range.getLastRow(); rowIndex++) {
-            row = getRow(rowIndex);
-            if (row == null) {
-                row = createRow(rowIndex);
-            }
-            for (int columnIndex = range.getFirstColumn(); columnIndex <= range.getLastColumn(); columnIndex++) {
-                XSSFCell arrayFormulaCell = row.getCell(columnIndex);
-                if (arrayFormulaCell == null) {
-                    arrayFormulaCell = row.createCell(columnIndex);
+    private CellRange<XSSFCell> getCellRange(CellRangeAddress range) {
+        int firstRow = range.getFirstRow();
+        int firstColumn = range.getFirstColumn();
+        int lastRow = range.getLastRow();
+        int lastColumn = range.getLastColumn();
+        int height = lastRow - firstRow + 1;
+        int width = lastColumn - firstColumn + 1;
+        List<XSSFCell> temp = new ArrayList<XSSFCell>(height*width);
+        for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
+                XSSFRow row = getRow(rowIn);
+                if (row == null) {
+                    row = createRow(rowIn);
                 }
-                cells[k++] = arrayFormulaCell;
+                XSSFCell cell = row.getCell(colIn);
+                if (cell == null) {
+                    cell = row.createCell(colIn);
+                }
+                temp.add(cell);
             }
         }
-        return cells;
+        return SSCellRange.create(firstRow, firstColumn, height, width, temp, XSSFCell.class);
     }
 
-    /**
-     * Remove an Array Formula from this sheet.
-     * <p>
-     * All cells contained in the Array Formula range are removed as well
-     * </p>
-     *
-     * @param cell   any cell within Array Formula range
-     * @return the array of affected cells.
-     * @throws IllegalArgumentException if the specified cell is not part of an array formula
-     */
-    public XSSFCell[] removeArrayFormula(Cell cell) {
-        ArrayList<XSSFCell> lst = new ArrayList<XSSFCell>();
+    public CellRange<XSSFCell> setArrayFormula(String formula, CellRangeAddress range) {
+
+        CellRange<XSSFCell> cr = getCellRange(range);
+
+        XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
+        mainArrayFormulaCell.setCellArrayFormula(formula, range);
+        arrayFormulas.add(range);
+        return cr;
+    }
+
+    public CellRange<XSSFCell> removeArrayFormula(Cell cell) {
+        if (cell.getSheet() != this) {
+            throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
+        }
         for (CellRangeAddress range : arrayFormulas) {
             if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
                 arrayFormulas.remove(range);
-                for (int rowIndex = range.getFirstRow(); rowIndex <= range.getLastRow(); rowIndex++) {
-                    XSSFRow row = getRow(rowIndex);
-                    for (int columnIndex = range.getFirstColumn(); columnIndex <= range.getLastColumn(); columnIndex++) {
-                        XSSFCell arrayFormulaCell = row.getCell(columnIndex);
-                        if (arrayFormulaCell != null) {
-                            arrayFormulaCell.setCellType(Cell.CELL_TYPE_BLANK);
-                            lst.add(arrayFormulaCell);
-                        }
-                    }
+                CellRange<XSSFCell> cr = getCellRange(range);
+                for (XSSFCell c : cr) {
+                    c.setCellType(Cell.CELL_TYPE_BLANK);
                 }
-                return lst.toArray(new XSSFCell[lst.size()]);
+                return cr;
             }
         }
         String ref = ((XSSFCell)cell).getCTCell().getR();
-        throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula");
+        throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
     }
 }

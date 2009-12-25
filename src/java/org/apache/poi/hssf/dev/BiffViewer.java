@@ -307,8 +307,8 @@ public final class BiffViewer {
 						System.setProperty("poi.deserialize.escher", "true");
 					} else if ("--rawhex".equals(arg)) {
 						rawhex = true;
-                    } else if ("--noheader".equals(arg)) {
-                        noheader = true;
+					} else if ("--noheader".equals(arg)) {
+						noheader = true;
 					} else {
 						throw new CommandParseException("Unexpected option '" + arg + "'");
 					}

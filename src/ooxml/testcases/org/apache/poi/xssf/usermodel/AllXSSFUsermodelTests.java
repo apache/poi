@@ -28,7 +28,7 @@ import org.apache.poi.xssf.usermodel.helpers.TestHeaderFooterHelper;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xssf.usermodel</tt> and sub-packages.
- * 
+ *
  * @author Josh Micich
  */
 public final class AllXSSFUsermodelTests {
@@ -54,12 +54,13 @@ public final class AllXSSFUsermodelTests {
 		result.addTestSuite(TestXSSFRichTextString.class);
 		result.addTestSuite(TestXSSFRow.class);
 		result.addTestSuite(TestXSSFSheet.class);
+		result.addTestSuite(TestXSSFSheetUpdateArrayFormulas.class);
 		result.addTestSuite(TestXSSFWorkbook.class);
 
 		result.addTestSuite(TestXSSFBorder.class);
 		result.addTestSuite(TestXSSFCellFill.class);
 		result.addTestSuite(TestXSSFSheetComments.class);
-		
+
 		result.addTestSuite(TestColumnHelper.class);
 		result.addTestSuite(TestHeaderFooterHelper.class);
 

@@ -72,10 +72,10 @@ final class OperandClassTransformer {
 			case FormulaType.CELL:
 				rootNodeOperandClass = Ptg.CLASS_VALUE;
 				break;
-            case FormulaType.ARRAY:
-                rootNodeOperandClass = Ptg.CLASS_ARRAY;
-                break;
-            case FormulaType.NAMEDRANGE:
+			case FormulaType.ARRAY:
+				rootNodeOperandClass = Ptg.CLASS_ARRAY;
+				break;
+			case FormulaType.NAMEDRANGE:
 			case FormulaType.DATAVALIDATION_LIST:
 				rootNodeOperandClass = Ptg.CLASS_REF;
 				break;

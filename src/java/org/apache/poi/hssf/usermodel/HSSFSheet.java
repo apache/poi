@@ -53,10 +53,12 @@ import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -69,6 +71,8 @@ import org.apache.poi.util.POILogger;
  * @author  Shawn Laubach (slaubach at apache dot org) (Just a little)
  * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little, too)
  * @author  Yegor Kozlov (yegor at apache.org) (Autosizing columns)
+ * @author  Josh Micich
+ * @author  Petr Udalau(Petr.Udalau at exigenservices.com) - set/remove array formulas
  */
 public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     private static final POILogger log = POILogFactory.getLogger(HSSFSheet.class);
@@ -646,7 +650,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public void setRightToLeft(boolean value)
     {
-	    _sheet.getWindowTwo().setArabic(value);
+        _sheet.getWindowTwo().setArabic(value);
     }
 
     /**
@@ -656,7 +660,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public boolean isRightToLeft()
     {
-	    return _sheet.getWindowTwo().getArabic();
+        return _sheet.getWindowTwo().getArabic();
     }
 
     /**
@@ -1875,17 +1879,19 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return wb.getSheetName(idx);
     }
 
-    public HSSFCell[] setArrayFormula(String formula, CellRangeAddress range) {
-        HSSFCell[] cells = new HSSFCell[range.getNumberOfCells()];
-        int k = 0;
-
-        // make sure the formula parses OK first
-        int sheetIndex = _workbook.getSheetIndex(this);
-        Ptg[] ptgs = HSSFFormulaParser.parse(formula, _workbook, FormulaType.ARRAY, sheetIndex);
+    /**
+     * Also creates cells if they don't exist
+     */
+    private CellRange<HSSFCell> getCellRange(CellRangeAddress range) {
         int firstRow = range.getFirstRow();
         int firstColumn = range.getFirstColumn();
-        for (int rowIn = firstRow; rowIn <= range.getLastRow(); rowIn++) {
-            for (int colIn = firstColumn; colIn <= range.getLastColumn(); colIn++) {
+        int lastRow = range.getLastRow();
+        int lastColumn = range.getLastColumn();
+        int height = lastRow - firstRow + 1;
+        int width = lastColumn - firstColumn + 1;
+        List<HSSFCell> temp = new ArrayList<HSSFCell>(height*width);
+        for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
                 HSSFRow row = getRow(rowIn);
                 if (row == null) {
                     row = createRow(rowIn);
@@ -1894,38 +1900,45 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 if (cell == null) {
                     cell = row.createCell(colIn);
                 }
-                cell.setCellArrayFormula(range);
-                cells[k++] = cell;
+                temp.add(cell);
             }
         }
-        HSSFCell mainArrayFormulaCell = getRow(firstRow).getCell(firstColumn);
+        return SSCellRange.create(firstRow, firstColumn, height, width, temp, HSSFCell.class);
+    }
+
+    public CellRange<HSSFCell> setArrayFormula(String formula, CellRangeAddress range) {
+        // make sure the formula parses OK first
+        int sheetIndex = _workbook.getSheetIndex(this);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, _workbook, FormulaType.ARRAY, sheetIndex);
+        CellRange<HSSFCell> cells = getCellRange(range);
+
+        for (HSSFCell c : cells) {
+            c.setCellArrayFormula(range);
+        }
+        HSSFCell mainArrayFormulaCell = cells.getTopLeftCell();
         FormulaRecordAggregate agg = (FormulaRecordAggregate)mainArrayFormulaCell.getCellValueRecord();
         agg.setArrayFormula(range, ptgs);
         return cells;
     }
 
 
-    public HSSFCell[] removeArrayFormula(Cell cell) {
-        ArrayList<HSSFCell> lst = new ArrayList<HSSFCell>();
+    public CellRange<HSSFCell> removeArrayFormula(Cell cell) {
+        if (cell.getSheet() != this) {
+            throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
+        }
         CellValueRecordInterface rec = ((HSSFCell) cell).getCellValueRecord();
         if (!(rec instanceof FormulaRecordAggregate)) {
             String ref = new CellReference(cell).formatAsString();
-            throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula");
+            throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
         }
         FormulaRecordAggregate fra = (FormulaRecordAggregate) rec;
         CellRangeAddress range = fra.removeArrayFormula(cell.getRowIndex(), cell.getColumnIndex());
-        if (range == null) {
-            String ref = new CellReference(cell).formatAsString();
-            throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula");
-        }
+
+        CellRange<HSSFCell> result = getCellRange(range);
         // clear all cells in the range
-        for (int rowIn = range.getFirstRow(); rowIn <= range.getLastRow(); rowIn++) {
-            for (int colIn = range.getFirstColumn(); colIn <= range.getLastColumn(); colIn++) {
-                HSSFCell rCell = getRow(rowIn).getCell(colIn);
-                rCell.setCellType(Cell.CELL_TYPE_BLANK);
-                lst.add(rCell);
-             }
+        for (Cell c : result) {
+            c.setCellType(Cell.CELL_TYPE_BLANK);
         }
-        return lst.toArray(new HSSFCell[lst.size()]);
+        return result;
     }
 }

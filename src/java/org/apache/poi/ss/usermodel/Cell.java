@@ -361,19 +361,16 @@ public interface Cell {
     void removeCellComment();
 
     /**
-     * Returns hyperlink associated with this cell
-     *
      * @return hyperlink associated with this cell or <code>null</code> if not found
      */
     Hyperlink getHyperlink();
 
     /**
-     * Assign a hypelrink to this cell
+     * Assign a hyperlink to this cell
      *
-     * @param link hypelrink associated with this cell
+     * @param link hyperlink associated with this cell
      */
     void setHyperlink(Hyperlink link);
-
 
     /**
      * Only valid for array formula cells
@@ -386,5 +383,4 @@ public interface Cell {
      * @return <code>true</code> if this cell is part of group of cells having a common array formula.
      */
     boolean isPartOfArrayFormulaGroup();
-
 }

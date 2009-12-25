@@ -785,16 +785,17 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Sets array formula to specified region for result.
      *
-     * @param formula Formula
-     * @param range   Region of array formula for result.
+     * @param formula text representation of the formula
+     * @param range Region of array formula for result.
+     * @return the {@link CellRange} of cells affected by this change
      */
-    Cell[] setArrayFormula(String formula, CellRangeAddress range);
+    CellRange<? extends Cell> setArrayFormula(String formula, CellRangeAddress range);
 
     /**
      * Remove a Array Formula from this sheet.  All cells contained in the Array Formula range are removed as well
      *
-     * @param cell any cell within Array Formula range
+     * @param cell   any cell within Array Formula range
+     * @return the {@link CellRange} of cells affected by this change
      */
-    Cell[] removeArrayFormula(Cell cell);
-
+    CellRange<? extends Cell> removeArrayFormula(Cell cell);
 }

@@ -186,9 +186,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 	}
 
 	public Ptg[] getFormulaTokens() {
-        if (_sharedFormulaRecord != null) {
-            return _sharedFormulaRecord.getFormulaTokens(_formulaRecord);
-        }
+		if (_sharedFormulaRecord != null) {
+			return _sharedFormulaRecord.getFormulaTokens(_formulaRecord);
+		}
 		CellReference expRef = _formulaRecord.getFormula().getExpReference();
 		if (expRef != null) {
 			ArrayRecord arec = _sharedValueManager.getArrayRecord(expRef.getRow(), expRef.getCol());
@@ -226,15 +226,14 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 			_sharedValueManager.unlink(_sharedFormulaRecord);
 		}
 	}
+	public boolean isPartOfArrayFormula() {
+		if (_sharedFormulaRecord != null) {
+			return false;
+		}
+		return _formulaRecord.getFormula().getExpReference() != null;
+	}
 
-    public boolean isPartOfArrayFormula() {
-        if (_sharedFormulaRecord != null) {
-            return false;
-        }
-        return _formulaRecord.getFormula().getExpReference() != null;
-    }
-
-    public CellRangeAddress getArrayFormulaRange() {
+	public CellRangeAddress getArrayFormulaRange() {
 		if (_sharedFormulaRecord != null) {
 			throw new IllegalStateException("not an array formula cell.");
 		}
@@ -243,14 +242,14 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 			throw new IllegalStateException("not an array formula cell.");
 		}
 		ArrayRecord arec = _sharedValueManager.getArrayRecord(expRef.getRow(), expRef.getCol());
-        if (arec == null) {
-            throw new IllegalStateException("ArrayRecord was not found for the locator " + expRef.formatAsString());
-        }
+		if (arec == null) {
+			throw new IllegalStateException("ArrayRecord was not found for the locator " + expRef.formatAsString());
+		}
 		CellRangeAddress8Bit a = arec.getRange();
 		return new CellRangeAddress(a.getFirstRow(), a.getLastRow(), a.getFirstColumn(),a.getLastColumn());
 	}
-    
-    public void setArrayFormula(CellRangeAddress r, Ptg[] ptgs) {
+
+	public void setArrayFormula(CellRangeAddress r, Ptg[] ptgs) {
 
 		ArrayRecord arr = new ArrayRecord(Formula.create(ptgs), new CellRangeAddress8Bit(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn()));
 		_sharedValueManager.addArrayRecord(arr);
