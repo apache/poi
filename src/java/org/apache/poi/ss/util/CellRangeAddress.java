@@ -77,8 +77,11 @@ public class CellRangeAddress extends CellRangeAddressBase {
         CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn());
         CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn());
         sb.append(cellRefFrom.formatAsString());
-        sb.append(':');
-        sb.append(cellRefTo.formatAsString());
+        //for a single-cell reference return A1 instead of A1:A1
+        if(!cellRefFrom.equals(cellRefTo)){
+            sb.append(':');
+            sb.append(cellRefTo.formatAsString());
+        }
         return sb.toString();
     }
 

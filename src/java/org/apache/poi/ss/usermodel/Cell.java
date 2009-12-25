@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -372,4 +373,18 @@ public interface Cell {
      * @param link hypelrink associated with this cell
      */
     void setHyperlink(Hyperlink link);
+
+
+    /**
+     * Only valid for array formula cells
+     *
+     * @return range of the array formula group that the cell belongs to.
+     */
+    CellRangeAddress getArrayFormulaRange();
+
+    /**
+     * @return <code>true</code> if this cell is part of group of cells having a common array formula.
+     */
+    boolean isPartOfArrayFormulaGroup();
+
 }

@@ -17,9 +17,11 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.record.ArrayRecord;
@@ -41,6 +43,7 @@ import org.apache.poi.ss.util.CellReference;
  * </ul>
  *
  * @author Josh Micich
+ * @author Vladimirs Abramovs(Vladimirs.Abramovs at exigenservices.com) - handling of ArrayRecords
  */
 public final class SharedValueManager {
 
@@ -112,12 +115,12 @@ public final class SharedValueManager {
 	/**
 	 * @return a new empty {@link SharedValueManager}.
 	 */
-	public static final SharedValueManager createEmpty() {
+	public static SharedValueManager createEmpty() {
 		// Note - must create distinct instances because they are assumed to be mutable.
 		return new SharedValueManager(
 			new SharedFormulaRecord[0], new CellReference[0], new ArrayRecord[0], new TableRecord[0]);
 	}
-	private final ArrayRecord[] _arrayRecords;
+    private final List<ArrayRecord> _arrayRecords;
 	private final TableRecord[] _tableRecords;
 	private final Map<SharedFormulaRecord, SharedFormulaGroup> _groupsBySharedFormulaRecord;
 	/** cached for optimization purposes */
@@ -129,7 +132,8 @@ public final class SharedValueManager {
 		if (nShF != firstCells.length) {
 			throw new IllegalArgumentException("array sizes don't match: " + nShF + "!=" + firstCells.length + ".");
 		}
-		_arrayRecords = arrayRecords;
+		_arrayRecords = new ArrayList<ArrayRecord>();
+        _arrayRecords.addAll(Arrays.asList(arrayRecords));
 		_tableRecords = tableRecords;
 		Map<SharedFormulaRecord, SharedFormulaGroup> m = new HashMap<SharedFormulaRecord, SharedFormulaGroup>(nShF * 3 / 2);
 		for (int i = 0; i < nShF; i++) {
@@ -139,14 +143,6 @@ public final class SharedValueManager {
 		_groupsBySharedFormulaRecord = m;
 	}
 
-	/**
-	 * @param firstCells
-	 * @param recs list of sheet records (possibly contains records for other parts of the Excel file)
-	 * @param startIx index of first row/cell record for current sheet
-	 * @param endIx one past index of last row/cell record for current sheet.  It is important
-	 * that this code does not inadvertently collect <tt>SharedFormulaRecord</tt>s from any other
-	 * sheet (which could happen if endIx is chosen poorly).  (see bug 44449)
-	 */
 	public static SharedValueManager create(SharedFormulaRecord[] sharedFormulaRecords,
 			CellReference[] firstCells, ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {
 		if (sharedFormulaRecords.length + firstCells.length + arrayRecords.length + tableRecords.length < 1) {
@@ -260,8 +256,7 @@ public final class SharedValueManager {
 				return tr;
 			}
 		}
-		for (int i = 0; i < _arrayRecords.length; i++) {
-			ArrayRecord ar = _arrayRecords[i];
+		for (ArrayRecord ar : _arrayRecords) {
 			if (ar.isFirstCell(row, column)) {
 				return ar;
 			}
@@ -281,4 +276,40 @@ public final class SharedValueManager {
 		}
 		svg.unlinkSharedFormulas();
 	}
+
+    /**
+     * Add specified Array Record.
+     */
+    public void addArrayRecord(ArrayRecord ar) {
+        // could do a check here to make sure none of the ranges overlap
+        _arrayRecords.add(ar);
+    }
+
+    /**
+     * Removes the {@link ArrayRecord} for the cell group containing the specified cell.
+     * The caller should clear (set blank) all cells in the returned range.
+     * @return the range of the array formula which was just removed. Never <code>null</code>.
+     */
+    public CellRangeAddress8Bit removeArrayFormula(int rowIndex, int columnIndex) {
+        for (ArrayRecord ar : _arrayRecords) {
+            if (ar.isInRange(rowIndex, columnIndex)) {
+                _arrayRecords.remove(ar);
+                return ar.getRange();
+            }
+        }
+        throw new IllegalArgumentException("Specified cell is not part of an array formula.");
+    }
+
+    /**
+     * @return the shared ArrayRecord identified by (firstRow, firstColumn). never <code>null</code>.
+     */
+    public ArrayRecord getArrayRecord(int firstRow, int firstColumn) {
+        for(ArrayRecord ar : _arrayRecords) {
+            if(ar.isFirstCell(firstRow, firstColumn)) {
+                return ar;
+            }
+        }
+        return null;
+    }
+    
 }

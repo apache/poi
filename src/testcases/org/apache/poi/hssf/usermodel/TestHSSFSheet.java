@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 
@@ -42,6 +43,9 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.TempFile;
@@ -820,5 +824,4 @@ public final class TestHSSFSheet extends BaseTestSheet {
         s.setRightToLeft(true);
         assertEquals(true, s.isRightToLeft());
     }
-
 }

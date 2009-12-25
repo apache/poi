@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -44,14 +45,18 @@ import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1870,4 +1875,57 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return wb.getSheetName(idx);
     }
 
+    public HSSFCell[] setArrayFormula(String formula, CellRangeAddress range) {
+        HSSFCell[] cells = new HSSFCell[range.getNumberOfCells()];
+        int k = 0;
+
+        // make sure the formula parses OK first
+        int sheetIndex = _workbook.getSheetIndex(this);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formula, _workbook, FormulaType.ARRAY, sheetIndex);
+        int firstRow = range.getFirstRow();
+        int firstColumn = range.getFirstColumn();
+        for (int rowIn = firstRow; rowIn <= range.getLastRow(); rowIn++) {
+            for (int colIn = firstColumn; colIn <= range.getLastColumn(); colIn++) {
+                HSSFRow row = getRow(rowIn);
+                if (row == null) {
+                    row = createRow(rowIn);
+                }
+                HSSFCell cell = row.getCell(colIn);
+                if (cell == null) {
+                    cell = row.createCell(colIn);
+                }
+                cell.setCellArrayFormula(range);
+                cells[k++] = cell;
+            }
+        }
+        HSSFCell mainArrayFormulaCell = getRow(firstRow).getCell(firstColumn);
+        FormulaRecordAggregate agg = (FormulaRecordAggregate)mainArrayFormulaCell.getCellValueRecord();
+        agg.setArrayFormula(range, ptgs);
+        return cells;
+    }
+
+
+    public HSSFCell[] removeArrayFormula(Cell cell) {
+        ArrayList<HSSFCell> lst = new ArrayList<HSSFCell>();
+        CellValueRecordInterface rec = ((HSSFCell) cell).getCellValueRecord();
+        if (!(rec instanceof FormulaRecordAggregate)) {
+            String ref = new CellReference(cell).formatAsString();
+            throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula");
+        }
+        FormulaRecordAggregate fra = (FormulaRecordAggregate) rec;
+        CellRangeAddress range = fra.removeArrayFormula(cell.getRowIndex(), cell.getColumnIndex());
+        if (range == null) {
+            String ref = new CellReference(cell).formatAsString();
+            throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula");
+        }
+        // clear all cells in the range
+        for (int rowIn = range.getFirstRow(); rowIn <= range.getLastRow(); rowIn++) {
+            for (int colIn = range.getFirstColumn(); colIn <= range.getLastColumn(); colIn++) {
+                HSSFCell rCell = getRow(rowIn).getCell(colIn);
+                rCell.setCellType(Cell.CELL_TYPE_BLANK);
+                lst.add(rCell);
+             }
+        }
+        return lst.toArray(new HSSFCell[lst.size()]);
+    }
 }

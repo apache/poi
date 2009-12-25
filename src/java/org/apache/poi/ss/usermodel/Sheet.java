@@ -781,4 +781,20 @@ public interface Sheet extends Iterable<Row> {
      */
     boolean isSelected();
 
+
+    /**
+     * Sets array formula to specified region for result.
+     *
+     * @param formula Formula
+     * @param range   Region of array formula for result.
+     */
+    Cell[] setArrayFormula(String formula, CellRangeAddress range);
+
+    /**
+     * Remove a Array Formula from this sheet.  All cells contained in the Array Formula range are removed as well
+     *
+     * @param cell any cell within Array Formula range
+     */
+    Cell[] removeArrayFormula(Cell cell);
+
 }
