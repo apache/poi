@@ -114,10 +114,10 @@ public class CellReference {
 	public CellReference(int pRow, short pCol) {
 		this(pRow, pCol & 0xFFFF, false, false);
 	}
-    
-    public CellReference(Cell cell) {
-        this(cell.getRowIndex(), cell.getColumnIndex(), false, false);
-    }
+
+	public CellReference(Cell cell) {
+		this(cell.getRowIndex(), cell.getColumnIndex(), false, false);
+	}
 
 	public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
 		this(null, pRow, pCol, pAbsRow, pAbsCol);
@@ -489,21 +489,22 @@ public class CellReference {
 		sb.append(_rowIndex+1);
 	}
 
-    /**
-     * Checks whether this cell reference is equal to another object.
-     * <p>
-     *  Two cells references are assumed to be equal if their string representations
-     *  ({@link #formatAsString()}  are equal.
-     * </p>
-     */
-    @Override
-    public boolean equals(Object o){
-        if(o == null || !(o instanceof CellReference)) {
-            return false;
-        }
-
-        String me = formatAsString();
-        String anotherRef = ((CellReference)o).formatAsString();
-        return me.equals(anotherRef);
-    }
+	/**
+	 * Checks whether this cell reference is equal to another object.
+	 * <p>
+	 *  Two cells references are assumed to be equal if their string representations
+	 *  ({@link #formatAsString()}  are equal.
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object o){
+		if(!(o instanceof CellReference)) {
+			return false;
+		}
+		CellReference cr = (CellReference) o;
+		return _rowIndex == cr._rowIndex
+			&& _colIndex == cr._colIndex
+			&& _isRowAbs == cr._isColAbs
+			&& _isColAbs == cr._isColAbs;
+	}
 }

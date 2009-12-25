@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -168,5 +169,27 @@ public final class TestSharedValueManager extends TestCase {
 			throw e;
 		}
 		assertEquals("$AF24*A$7", formulaText);
+	}
+
+	/**
+	 * Convenience test method for digging the {@link SharedValueManager} out of a
+	 * {@link RowRecordsAggregate}.
+	 */
+	public static SharedValueManager extractFromRRA(RowRecordsAggregate rra) {
+		Field f;
+		try {
+			f = RowRecordsAggregate.class.getDeclaredField("_sharedValueManager");
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+
+		f.setAccessible(true);
+		try {
+			return (SharedValueManager) f.get(rra);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

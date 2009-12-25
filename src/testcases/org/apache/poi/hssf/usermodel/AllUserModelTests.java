@@ -22,14 +22,14 @@ import junit.framework.TestSuite;
 
 /**
  * Collects all tests for the <tt>org.apache.poi.hssf.usermodel</tt> package.
- * 
+ *
  * @author Josh Micich
  */
 public class AllUserModelTests {
-	
+
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllUserModelTests.class.getName());
-		
+
 		result.addTestSuite(TestBugs.class);
 		result.addTestSuite(TestCellStyle.class);
 		result.addTestSuite(TestCloneSheet.class);
@@ -57,6 +57,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFRichTextString.class);
 		result.addTestSuite(TestHSSFRow.class);
 		result.addTestSuite(TestHSSFSheet.class);
+		result.addTestSuite(TestHSSFSheetUpdateArrayFormulas.class);
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
 		result.addTestSuite(TestHSSFName.class);
@@ -71,8 +72,8 @@ public class AllUserModelTests {
 		}
 		result.addTestSuite(TestUnicodeWorkbook.class);
 		result.addTestSuite(TestUppercaseWorkbook.class);
-		result.addTestSuite(TestWorkbook.class);		
-		
+		result.addTestSuite(TestWorkbook.class);
+
 		return result;
 	}
 }

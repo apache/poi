@@ -969,29 +969,16 @@ public final class XSSFCell implements Cell {
         throw new IllegalStateException("Unexpected formula result type (" + cellType + ")");
     }
 
-    /**
-     * If this cell is part of an array formula, returns a CellRangeAddress object
-     * that represents the entire array. 
-     *
-     * @return the range of the array formula group that this cell belongs to.
-     * @throws IllegalStateException if this cell is not part of an array formula
-     * @see #isPartOfArrayFormulaGroup()
-     */
     public CellRangeAddress getArrayFormulaRange() {
         XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
         if (cell == null) {
-            throw new IllegalStateException("Cell " + _cell.getR() + " is not part of an array formula");
+            throw new IllegalStateException("Cell " + _cell.getR()
+                    + " is not part of an array formula.");
         }
         String formulaRef = cell._cell.getF().getRef();
         return CellRangeAddress.valueOf(formulaRef);
     }
 
-    /**
-     * Test if this cell is included in an array formula
-     *
-     * @return true if this cell is part of an array formula
-     * @see #getArrayFormulaRange()
-     */
     public boolean isPartOfArrayFormulaGroup() {
         return getSheet().isCellInArrayFormulaContext(this);
     }
