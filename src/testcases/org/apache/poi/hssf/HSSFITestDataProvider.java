@@ -17,44 +17,43 @@
 
 package org.apache.poi.hssf;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.POIDataSamples;
 
 /**
  * @author Yegor Kozlov
  */
 public final class HSSFITestDataProvider implements ITestDataProvider {
+    public static final HSSFITestDataProvider instance = new HSSFITestDataProvider();
 
+    private HSSFITestDataProvider(){
+        // enforce singleton
+    }
+    public static HSSFITestDataProvider getInstance(){
+        return instance;
+    }
     public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
-		return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
-	}
-
-	public HSSFWorkbook writeOutAndReadBack(Workbook original) {
+        return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
+    public HSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof HSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of HSSFWorkbook");
         }
-
         return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)original);
-	}
-
+    }
     public HSSFWorkbook createWorkbook(){
         return new HSSFWorkbook();
     }
-
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
-
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
     }
-
-    private HSSFITestDataProvider(){}
-    private static HSSFITestDataProvider inst = new HSSFITestDataProvider();
-    public static HSSFITestDataProvider getInstance(){
-        return inst;
+    public String getStandardFileNameExtension() {
+        return "xls";
     }
 }
