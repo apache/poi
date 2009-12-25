@@ -17,47 +17,43 @@
 
 package org.apache.poi.xssf;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.POIDataSamples;
 
 /**
  * @author Yegor Kozlov
  */
 public final class XSSFITestDataProvider implements ITestDataProvider {
-
-    public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
-        return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
-    }
-
-    public XSSFWorkbook writeOutAndReadBack(Workbook original) {
-        if(!(original instanceof XSSFWorkbook)) {
-            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
-        }
-
-        return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
-    }
-
-    public XSSFWorkbook createWorkbook(){
-        return new XSSFWorkbook();
-    }
-
-    public byte[] getTestDataFileContent(String fileName) {
-        return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
-    }
-
-    public SpreadsheetVersion getSpreadsheetVersion(){
-        return SpreadsheetVersion.EXCEL2007;
-    }
+    public static final XSSFITestDataProvider instance = new XSSFITestDataProvider();
 
     private XSSFITestDataProvider() {
         // enforce singleton
     }
-    private static XSSFITestDataProvider inst = new XSSFITestDataProvider();
     public static XSSFITestDataProvider getInstance(){
-        return inst;
+        return instance;
+    }
+    public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
+        return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
+    public XSSFWorkbook writeOutAndReadBack(Workbook original) {
+        if(!(original instanceof XSSFWorkbook)) {
+            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
+        }
+        return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
+    }
+    public XSSFWorkbook createWorkbook(){
+        return new XSSFWorkbook();
+    }
+    public byte[] getTestDataFileContent(String fileName) {
+        return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
+    }
+    public SpreadsheetVersion getSpreadsheetVersion(){
+        return SpreadsheetVersion.EXCEL2007;
+    }
+    public String getStandardFileNameExtension() {
+        return "xlsx";
     }
 }

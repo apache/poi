@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public interface ITestDataProvider {
     /**
-     * Override to provide HSSF / XSSF specific way for re-serialising a workbook
+     * Provides HSSF / XSSF specific way for re-serialising a workbook
      *
      * @param wb the workbook to re-serialize
      * @return the re-serialized workbook
@@ -32,7 +32,7 @@ public interface ITestDataProvider {
     Workbook writeOutAndReadBack(Workbook wb);
 
     /**
-     * Override to provide way of loading HSSF / XSSF sample workbooks
+     * Provides way of loading HSSF / XSSF sample workbooks
      *
      * @param sampleFileName the file name to load
      * @return an instance of Workbook loaded from the supplied file name
@@ -40,7 +40,7 @@ public interface ITestDataProvider {
     Workbook openSampleWorkbook(String sampleFileName);
 
     /**
-     * Override to provide way of creating HSSF / XSSF workbooks
+     * Provides way of creating HSSF / XSSF workbooks
      * @return an instance of Workbook
      */
     Workbook createWorkbook();
@@ -53,4 +53,9 @@ public interface ITestDataProvider {
     byte[] getTestDataFileContent(String fileName);
 
     SpreadsheetVersion getSpreadsheetVersion();
+
+    /**
+     * @return "xls" or "xlsx"
+     */
+    String getStandardFileNameExtension();
 }
