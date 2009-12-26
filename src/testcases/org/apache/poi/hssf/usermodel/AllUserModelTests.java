@@ -66,7 +66,7 @@ public class AllUserModelTests {
 		result.addTestSuite(TestReadWriteChart.class);
 		result.addTestSuite(TestSanityChecker.class);
 		result.addTestSuite(TestSheetHiding.class);
-		result.addTestSuite(TestSheetShiftRows.class);
+		result.addTestSuite(TestHSSFSheetShiftRows.class);
 		if (false) { // deliberately avoiding this one
 			result.addTestSuite(TestUnfixedBugs.class);
 		}
