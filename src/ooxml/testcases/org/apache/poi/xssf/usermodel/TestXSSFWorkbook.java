@@ -36,11 +36,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 
 public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
-	@Override
-	protected XSSFITestDataProvider getTestDataProvider(){
-		return XSSFITestDataProvider.getInstance();
+	public TestXSSFWorkbook() {
+		super(XSSFITestDataProvider.instance);
 	}
-
 
 	/**
 	 * Tests that we can save, and then re-load a new document
@@ -232,14 +230,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
 	public void testIncrementSheetId() {
-		XSSFWorkbook wb = getTestDataProvider().createWorkbook();
+		XSSFWorkbook wb = new XSSFWorkbook();
 		int sheetId = (int)wb.createSheet().sheet.getSheetId();
 		assertEquals(1, sheetId);
 		sheetId = (int)wb.createSheet().sheet.getSheetId();
 		assertEquals(2, sheetId);
 
 		//test file with gaps in the sheetId sequence
-		wb = getTestDataProvider().openSampleWorkbook("47089.xlsm");
+		wb = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm");
 		int lastSheetId = (int)wb.getSheetAt(wb.getNumberOfSheets() - 1).sheet.getSheetId();
 		sheetId = (int)wb.createSheet().sheet.getSheetId();
 		assertEquals(lastSheetId+1, sheetId);
@@ -305,55 +303,55 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals(crc0.getValue(), crc1.getValue());
 	}
 
-    /**
-     * When deleting a sheet make sure that we adjust sheet indices of named ranges
-     */
-    public void testBug47737() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47737.xlsx");
-        assertEquals(2, wb.getNumberOfNames());
-        assertNotNull(wb.getCalculationChain());
+	/**
+	 * When deleting a sheet make sure that we adjust sheet indices of named ranges
+	 */
+	public void testBug47737() {
+		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47737.xlsx");
+		assertEquals(2, wb.getNumberOfNames());
+		assertNotNull(wb.getCalculationChain());
 
-        XSSFName nm0 = wb.getNameAt(0);
-        assertTrue(nm0.getCTName().isSetLocalSheetId());
-        assertEquals(0, nm0.getCTName().getLocalSheetId());
-        
-        XSSFName nm1 = wb.getNameAt(1);
-        assertTrue(nm1.getCTName().isSetLocalSheetId());
-        assertEquals(1, nm1.getCTName().getLocalSheetId());
+		XSSFName nm0 = wb.getNameAt(0);
+		assertTrue(nm0.getCTName().isSetLocalSheetId());
+		assertEquals(0, nm0.getCTName().getLocalSheetId());
 
-        wb.removeSheetAt(0);
-        assertEquals(1, wb.getNumberOfNames());
-        XSSFName nm2 = wb.getNameAt(0);
-        assertTrue(nm2.getCTName().isSetLocalSheetId());
-        assertEquals(0, nm2.getCTName().getLocalSheetId());
-        //calculation chain is removed as well
-        assertNull(wb.getCalculationChain());
+		XSSFName nm1 = wb.getNameAt(1);
+		assertTrue(nm1.getCTName().isSetLocalSheetId());
+		assertEquals(1, nm1.getCTName().getLocalSheetId());
 
-    }
+		wb.removeSheetAt(0);
+		assertEquals(1, wb.getNumberOfNames());
+		XSSFName nm2 = wb.getNameAt(0);
+		assertTrue(nm2.getCTName().isSetLocalSheetId());
+		assertEquals(0, nm2.getCTName().getLocalSheetId());
+		//calculation chain is removed as well
+		assertNull(wb.getCalculationChain());
 
-    /**
-     * Problems with XSSFWorkbook.removeSheetAt when workbook contains chart
-     */
-    public void testBug47813() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");
-        assertEquals(3, wb.getNumberOfSheets());
-        assertNotNull(wb.getCalculationChain());
+	}
 
-        assertEquals("Numbers", wb.getSheetName(0));
-        //the second sheet is of type 'chartsheet'
-        assertEquals("Chart", wb.getSheetName(1));
-        assertTrue(wb.getSheetAt(1) instanceof XSSFChartSheet);
-        assertEquals("SomeJunk", wb.getSheetName(2));
+	/**
+	 * Problems with XSSFWorkbook.removeSheetAt when workbook contains chart
+	 */
+	public void testBug47813() {
+		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");
+		assertEquals(3, wb.getNumberOfSheets());
+		assertNotNull(wb.getCalculationChain());
 
-        wb.removeSheetAt(2);
-        assertEquals(2, wb.getNumberOfSheets());
-        assertNull(wb.getCalculationChain());
+		assertEquals("Numbers", wb.getSheetName(0));
+		//the second sheet is of type 'chartsheet'
+		assertEquals("Chart", wb.getSheetName(1));
+		assertTrue(wb.getSheetAt(1) instanceof XSSFChartSheet);
+		assertEquals("SomeJunk", wb.getSheetName(2));
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(2, wb.getNumberOfSheets());
-        assertNull(wb.getCalculationChain());
+		wb.removeSheetAt(2);
+		assertEquals(2, wb.getNumberOfSheets());
+		assertNull(wb.getCalculationChain());
 
-        assertEquals("Numbers", wb.getSheetName(0));
-        assertEquals("Chart", wb.getSheetName(1));
-    }
+		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		assertEquals(2, wb.getNumberOfSheets());
+		assertNull(wb.getCalculationChain());
+
+		assertEquals("Numbers", wb.getSheetName(0));
+		assertEquals("Chart", wb.getSheetName(1));
+	}
 }

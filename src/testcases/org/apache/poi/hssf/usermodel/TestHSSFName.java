@@ -45,7 +45,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * For manipulating the internals of {@link HSSFName} during testing.<br/>
      * Some tests need a {@link NameRecord} with unusual state, not normally producible by POI.
      * This method achieves the aims at low cost without augmenting the POI usermodel api.
-     * @return a reference to the wrapped {@link NameRecord} 
+     * @return a reference to the wrapped {@link NameRecord}
      */
     public static NameRecord getNameRecord(HSSFName definedName) {
 
@@ -63,11 +63,10 @@ public final class TestHSSFName extends BaseTestNamedRange {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        }
+    }
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFName() {
+        super(HSSFITestDataProvider.instance);
     }
 
     public void testRepeatingRowsAndColumsNames() {
@@ -128,7 +127,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      }
 
     public void testNamedRange() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("Simple.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
         //Creating new Named Range
         HSSFName newNamedRange = wb.createName();
@@ -162,7 +161,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9632" target="_bug">#9632</a>
      */
     public void testNamedRead() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("namedinput.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         //Get index of the named range with the name = "NamedRangeName" , which was defined in input.xls as A1:D10
         int NamedRangeIndex     = wb.getNameIndex("NamedRangeName");
@@ -188,7 +187,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16411" target="_bug">#16411</a>
      */
     public void testNamedReadModify() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("namedinput.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         HSSFName name = wb.getNameAt(0);
         String sheetName = wb.getSheetName(0);
@@ -206,7 +205,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
       * Test to see if the print area can be retrieved from an excel created file
       */
      public void testPrintAreaFileRead() {
-         HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("SimpleWithPrintArea.xls");
+         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPrintArea.xls");
 
         String sheetName = workbook.getSheetName(0);
         String reference = sheetName+"!$A$1:$C$5";

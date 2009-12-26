@@ -26,16 +26,15 @@ import org.apache.poi.ss.usermodel.BaseTestNamedRange;
  */
 public final class TestXSSFName extends BaseTestNamedRange {
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+    public TestXSSFName() {
+        super(XSSFITestDataProvider.instance);
     }
 
     //TODO combine testRepeatingRowsAndColums() for HSSF and XSSF
     public void testRepeatingRowsAndColums() {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
-        XSSFWorkbook wb = getTestDataProvider().createWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet("First Sheet");
 
         wb.setRepeatingRowsAndColumns(0, -1, -1, -1, -1);

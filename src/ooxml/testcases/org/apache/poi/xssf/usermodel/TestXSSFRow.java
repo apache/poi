@@ -26,9 +26,8 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
  */
 public final class TestXSSFRow extends BaseTestRow {
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+    public TestXSSFRow() {
+        super(XSSFITestDataProvider.instance);
     }
 
     public void testRowBounds() {

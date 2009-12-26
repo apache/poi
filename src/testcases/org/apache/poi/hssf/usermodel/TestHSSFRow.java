@@ -32,9 +32,8 @@ import org.apache.poi.ss.SpreadsheetVersion;
  */
 public final class TestHSSFRow extends BaseTestRow {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFRow() {
+        super(HSSFITestDataProvider.instance);
     }
 
     public void testRowBounds() {
@@ -56,7 +55,7 @@ public final class TestHSSFRow extends BaseTestRow {
 
         BlankRecord br = new BlankRecord();
         br.setRow(ROW_IX);
-		br.setColumn((short)COL_IX);
+        br.setColumn((short)COL_IX);
 
         sheet.getSheet().addValueRecord(ROW_IX, br);
         HSSFRow row = new HSSFRow(workbook, sheet, rowRec);

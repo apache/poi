@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 
@@ -43,9 +42,6 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.TempFile;
@@ -59,9 +55,8 @@ import org.apache.poi.util.TempFile;
  */
 public final class TestHSSFSheet extends BaseTestSheet {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFSheet() {
+        super(HSSFITestDataProvider.instance);
     }
 
     public void testTestGetSetMargin() {
@@ -161,7 +156,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Setting landscape and portrait stuff on existing sheets
      */
     public void testPrintSetupLandscapeExisting() {
-        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         assertEquals(3, workbook.getNumberOfSheets());
 
@@ -242,7 +237,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     public void testGroupRowsExisting() {
-        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("NoGutsRecords.xls");
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("NoGutsRecords.xls");
 
         HSSFSheet s = workbook.getSheetAt(0);
         HSSFRow r1 = s.getRow(0);
@@ -293,8 +288,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     public void testGetDrawings() {
-        HSSFWorkbook wb1c = getTestDataProvider().openSampleWorkbook("WithChart.xls");
-        HSSFWorkbook wb2c = getTestDataProvider().openSampleWorkbook("WithTwoCharts.xls");
+        HSSFWorkbook wb1c = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
+        HSSFWorkbook wb2c = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
 
         // 1 chart sheet -> data on 1st, chart on 2nd
         assertNotNull(wb1c.getSheetAt(0).getDrawingPatriarch());
@@ -438,7 +433,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      *
      */
     public void testPageBreakFiles() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
         assertNotNull(sheet);
@@ -466,7 +461,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     public void testDBCSName () {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("DBCSSheetName.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DBCSSheetName.xls");
         wb.getSheetAt(1);
         assertEquals ("DBCS Sheet Name 2", wb.getSheetName(1),"\u090f\u0915" );
         assertEquals("DBCS Sheet Name 1", wb.getSheetName(0),"\u091c\u093e");
@@ -478,7 +473,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * of the sheet when it is first opened.
      */
     public void testTopRow() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("SimpleWithPageBreaks.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPageBreaks.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
         assertNotNull(sheet);
@@ -519,7 +514,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
 
         //try adding empty rows in an existing worksheet
-        workbook = getTestDataProvider().openSampleWorkbook("Simple.xls");
+        workbook = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
         sheet = workbook.getSheetAt(0);
         for (int i = 3; i < 10; i++) sheet.createRow(i);
@@ -528,7 +523,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     public void testAutoSizeColumn() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("43902.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("43902.xls");
         String sheetName = "my sheet";
         HSSFSheet sheet = wb.getSheet(sheetName);
 
@@ -572,7 +567,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
      * Setting ForceFormulaRecalculation on sheets
      */
     public void testForceRecalculation() throws Exception {
-        HSSFWorkbook workbook = getTestDataProvider().openSampleWorkbook("UncalcedRecord.xls");
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("UncalcedRecord.xls");
 
         HSSFSheet sheet = workbook.getSheetAt(0);
         HSSFSheet sheet2 = workbook.getSheetAt(0);
@@ -640,7 +635,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
     public void testColumnWidth() {
         //check we can correctly read column widths from a reference workbook
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("colwidth.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("colwidth.xls");
 
         //reference values
         int[] ref = {365, 548, 731, 914, 1097, 1280, 1462, 1645, 1828, 2011, 2194, 2377, 2560, 2742, 2925, 3108, 3291, 3474, 3657};

@@ -32,9 +32,6 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     private HSSFITestDataProvider(){
         // enforce singleton
     }
-    public static HSSFITestDataProvider getInstance(){
-        return instance;
-    }
     public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }

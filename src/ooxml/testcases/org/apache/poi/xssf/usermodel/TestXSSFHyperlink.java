@@ -26,9 +26,8 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
-	@Override
-	protected XSSFITestDataProvider getTestDataProvider() {
-		return XSSFITestDataProvider.getInstance();
+	public TestXSSFHyperlink() {
+		super(XSSFITestDataProvider.instance);
 	}
 
 	@Override
@@ -123,7 +122,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 	/**
 	 * Only for WithMoreVariousData.xlsx !
 	 */
-	private void doTestHyperlinkContents(XSSFSheet sheet) {
+	private static void doTestHyperlinkContents(XSSFSheet sheet) {
 		assertNotNull(sheet.getRow(3).getCell(2).getHyperlink());
 		assertNotNull(sheet.getRow(14).getCell(2).getHyperlink());
 		assertNotNull(sheet.getRow(15).getCell(2).getHyperlink());

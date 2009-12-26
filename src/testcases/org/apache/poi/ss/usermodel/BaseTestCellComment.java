@@ -22,15 +22,19 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
- * Common superclass for testing implementatiosn of
+ * Common superclass for testing implementations of
  * {@link Comment}
  */
 public abstract class BaseTestCellComment extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
+
+    protected BaseTestCellComment(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
     public final void testFind() {
-        Workbook book = getTestDataProvider().createWorkbook();
+        Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet();
         assertNull(sheet.getCellComment(0, 0));
 
@@ -40,14 +44,14 @@ public abstract class BaseTestCellComment extends TestCase {
         assertNull(cell.getCellComment());
     }
 
-    public final void testCreate() throws Exception {
+    public final void testCreate() {
         String cellText = "Hello, World";
         String commentText = "We can set comments in POI";
         String commentAuthor = "Apache Software Foundation";
         int cellRow = 3;
         int cellColumn = 1;
 
-        Workbook wb = getTestDataProvider().createWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper factory = wb.getCreationHelper();
 
         Sheet sheet = wb.createSheet();
@@ -81,7 +85,7 @@ public abstract class BaseTestCellComment extends TestCase {
         assertEquals(cellRow, comment.getRow());
         assertEquals(cellColumn, comment.getColumn());
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         cell = sheet.getRow(cellRow).getCell(cellColumn);
         comment = cell.getCellComment();
@@ -97,7 +101,7 @@ public abstract class BaseTestCellComment extends TestCase {
         comment.setString(factory.createRichTextString("New Comment Text"));
         comment.setVisible(false);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
 
         sheet = wb.getSheetAt(0);
         cell = sheet.getRow(cellRow).getCell(cellColumn);
@@ -114,9 +118,9 @@ public abstract class BaseTestCellComment extends TestCase {
     /**
      * test that we can read cell comments from an existing workbook.
      */
-    public void readComments(String sampleFile) {
+    public final void testReadComments() {
 
-        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleFile);
+        Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
 
         Sheet sheet = wb.getSheetAt(0);
 
@@ -150,9 +154,9 @@ public abstract class BaseTestCellComment extends TestCase {
     /**
      * test that we can modify existing cell comments
      */
-    public void modifyComments(String sampleFile) {
+    public final void testModifyComments() {
 
-        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleFile);
+        Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
         CreationHelper factory = wb.getCreationHelper();
 
         Sheet sheet = wb.getSheetAt(0);
@@ -169,7 +173,7 @@ public abstract class BaseTestCellComment extends TestCase {
             comment.setString(factory.createRichTextString("Modified comment at row " + rownum));
         }
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
 
         for (int rownum = 0; rownum < 3; rownum++) {
@@ -180,11 +184,10 @@ public abstract class BaseTestCellComment extends TestCase {
             assertEquals("Mofified[" + rownum + "] by Yegor", comment.getAuthor());
             assertEquals("Modified comment at row " + rownum, comment.getString().getString());
         }
-
     }
 
-    public void deleteComments(String sampleFile) throws Exception {
-        Workbook wb = getTestDataProvider().openSampleWorkbook(sampleFile);
+    public final void testDeleteComments() {
+        Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
         Sheet sheet = wb.getSheetAt(0);
 
         // Zap from rows 1 and 3
@@ -201,20 +204,19 @@ public abstract class BaseTestCellComment extends TestCase {
         assertNull(sheet.getRow(2).getCell(1).getCellComment());
 
         // Save and re-load
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         // Check
         assertNull(sheet.getRow(0).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
         assertNull(sheet.getRow(2).getCell(1).getCellComment());
-
     }
 
     /**
      * code from the quick guide
      */
     public void testQuickGuide(){
-        Workbook wb = getTestDataProvider().createWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
 
         CreationHelper factory = wb.getCreationHelper();
 
@@ -233,7 +235,7 @@ public abstract class BaseTestCellComment extends TestCase {
         //assign the comment to the cell
         cell.setCellComment(comment);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         cell = sheet.getRow(3).getCell(5);
         comment = cell.getCellComment();

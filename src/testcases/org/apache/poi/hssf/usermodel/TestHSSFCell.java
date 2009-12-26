@@ -23,6 +23,7 @@ import java.util.GregorianCalendar;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -41,10 +42,8 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  */
 public final class TestHSSFCell extends BaseTestCell {
 
-	private static final HSSFITestDataProvider _hssfDP = HSSFITestDataProvider.getInstance();
-
 	public TestHSSFCell() {
-		super(HSSFITestDataProvider.getInstance());
+		super(HSSFITestDataProvider.instance);
 	}
 	/**
 	 * Checks that the recognition of files using 1904 date windowing
@@ -56,7 +55,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		Date date = cal.getTime();
 
 		// first check a file with 1900 Date Windowing
-		HSSFWorkbook workbook = _hssfDP.openSampleWorkbook("1900DateWindowing.xls");
+		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
 		HSSFSheet sheet = workbook.getSheetAt(0);
 
 		assertEquals("Date from file using 1900 Date Windowing",
@@ -64,7 +63,7 @@ public final class TestHSSFCell extends BaseTestCell {
 				sheet.getRow(0).getCell(0).getDateCellValue().getTime());
 
 		// now check a file with 1904 Date Windowing
-		workbook = _hssfDP.openSampleWorkbook("1904DateWindowing.xls");
+		workbook = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
 		sheet	= workbook.getSheetAt(0);
 
 		assertEquals("Date from file using 1904 Date Windowing",
@@ -86,19 +85,19 @@ public final class TestHSSFCell extends BaseTestCell {
 
 		// first check a file with 1900 Date Windowing
 		HSSFWorkbook wb;
-		wb = _hssfDP.openSampleWorkbook("1900DateWindowing.xls");
+		wb = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
 
 		setCell(wb, 0, 1, date);
-		wb = _hssfDP.writeOutAndReadBack(wb);
+		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
 				readCell(wb, 0, 1).getTime());
 
 		// now check a file with 1904 Date Windowing
-		wb = _hssfDP.openSampleWorkbook("1904DateWindowing.xls");
+		wb = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
 		setCell(wb, 0, 1, date);
-		wb = _hssfDP.writeOutAndReadBack(wb);
+		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
 				readCell(wb, 0, 1).getTime());
@@ -127,7 +126,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 */
 	public void testActiveCell() {
 		//read in sample
-		HSSFWorkbook book = _hssfDP.openSampleWorkbook("Simple.xls");
+		HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
 		//check initial position
 		HSSFSheet umSheet = book.getSheetAt(0);
@@ -146,7 +145,7 @@ public final class TestHSSFCell extends BaseTestCell {
 			3, s.getActiveCellRow());
 
 		//write book to temp file; read and verify that position is serialized
-		book = _hssfDP.writeOutAndReadBack(book);
+		book = HSSFTestDataSamples.writeOutAndReadBack(book);
 
 		umSheet = book.getSheetAt(0);
 		s = umSheet.getSheet();
@@ -162,7 +161,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 */
 	public void testWithHyperlink() {
 
-		HSSFWorkbook wb = _hssfDP.openSampleWorkbook("WithHyperlink.xls");
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithHyperlink.xls");
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFCell cell = sheet.getRow(4).getCell(0);
@@ -180,7 +179,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 */
 	public void testWithTwoHyperlinks() {
 
-		HSSFWorkbook wb = _hssfDP.openSampleWorkbook("WithTwoHyperLinks.xls");
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoHyperLinks.xls");
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 

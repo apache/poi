@@ -17,10 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.ss.ITestDataProvider;
-
 import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.ss.ITestDataProvider;
 
 /**
  * A base class for testing implementations of
@@ -28,14 +29,14 @@ import java.util.Iterator;
  */
 public abstract class BaseTestRow extends TestCase {
 
-    /**
-     * @return an object that provides test data in  / XSSF specific way
-     */
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
 
+    protected BaseTestRow(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
-    public void testLastAndFirstColumns() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testLastAndFirstColumns() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row row = sheet.createRow(0);
         assertEquals(-1, row.getFirstCellNum());
@@ -62,8 +63,8 @@ public abstract class BaseTestRow extends TestCase {
      * Make sure that there is no cross-talk between rows especially with getFirstCellNum and getLastCellNum
      * This test was added in response to bug report 44987.
      */
-    public void testBoundsInMultipleRows() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testBoundsInMultipleRows() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row rowA = sheet.createRow(0);
 
@@ -86,8 +87,8 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(31, rowB.getLastCellNum());
     }
 
-    public void testRemoveCell() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testRemoveCell() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row row = sheet.createRow(0);
 
@@ -112,7 +113,7 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(-1, row.getFirstCellNum());
         assertEquals(0, row.getPhysicalNumberOfCells());
 
-        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
         row = sheet.getRow(0);
         assertEquals(-1, row.getLastCellNum());
@@ -121,7 +122,7 @@ public abstract class BaseTestRow extends TestCase {
     }
 
     public void baseTestRowBounds(int maxRowNum) {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         //Test low row bound
         sheet.createRow(0);
@@ -147,13 +148,13 @@ public abstract class BaseTestRow extends TestCase {
     }
 
     public void baseTestCellBounds(int maxCellNum) {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
         Row row = sheet.createRow(0);
         //Test low cell bound
         try {
-            Cell cell = row.createCell(-1);
+            row.createCell(-1);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             // expected during successful test
@@ -162,17 +163,17 @@ public abstract class BaseTestRow extends TestCase {
 
         //Test high cell bound
         try {
-            Cell cell = row.createCell(maxCellNum + 1);
+            row.createCell(maxCellNum + 1);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             // expected during successful test
             assertTrue(e.getMessage().startsWith("Invalid column index ("+(maxCellNum+1)+")"));
         }
         for(int i=0; i < maxCellNum; i++){
-            Cell cell = row.createCell(i);
+            row.createCell(i);
         }
         assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
-        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
         row = sheet.getRow(0);
         assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
@@ -187,8 +188,8 @@ public abstract class BaseTestRow extends TestCase {
      * Prior to patch 43901, POI was producing files with the wrong last-column
      * number on the row
      */
-    public void testLastCellNumIsCorrectAfterAddCell_bug43901(){
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testLastCellNumIsCorrectAfterAddCell_bug43901(){
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row = sheet.createRow(0);
 
@@ -209,8 +210,8 @@ public abstract class BaseTestRow extends TestCase {
     /**
      * Tests for the missing/blank cell policy stuff
      */
-    public void testGetCellPolicy() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testGetCellPolicy() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row = sheet.createRow(0);
 
@@ -278,8 +279,8 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
     }
 
-    public void testRowHeight() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testRowHeight() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row row1 = sheet.createRow(0);
 
@@ -305,7 +306,7 @@ public abstract class BaseTestRow extends TestCase {
         row4.setZeroHeight(true);
         assertTrue(row4.getZeroHeight());
 
-        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
 
         row1 = sheet.getRow(0);
@@ -330,8 +331,8 @@ public abstract class BaseTestRow extends TestCase {
     /**
      * Test adding cells to a row in various places and see if we can find them again.
      */
-    public void testCellIterator() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testCellIterator() {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
 

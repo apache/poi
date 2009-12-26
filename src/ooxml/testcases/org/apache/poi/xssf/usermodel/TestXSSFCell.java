@@ -28,9 +28,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
  */
 public final class TestXSSFCell extends BaseTestCell {
 
-	public TestXSSFCell() {
-		super(XSSFITestDataProvider.getInstance());
-	}
+    public TestXSSFCell() {
+        super(XSSFITestDataProvider.instance);
+    }
 
     /**
      * Bug 47026: trouble changing cell type when workbook doesn't contain
@@ -166,7 +166,7 @@ public final class TestXSSFCell extends BaseTestCell {
         //make sure we return null for that instead of throwing OutOfBounds
         assertEquals(null, cell.getCellStyle());
     }
-    
+
     /**
      * Cell with the formula that returns error must return error code(There was
      * an problem that cell could not return error value form formula cell).

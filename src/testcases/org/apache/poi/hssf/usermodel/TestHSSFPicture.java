@@ -28,9 +28,8 @@ import org.apache.poi.ss.usermodel.BaseTestPicture;
  */
 public final class TestHSSFPicture extends BaseTestPicture {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFPicture() {
+        super(HSSFITestDataProvider.instance);
     }
 
     public void testResize() {

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -29,23 +30,26 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public abstract class BaseTestBugzillaIssues extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
+
+    protected BaseTestBugzillaIssues(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
     /**
-     *
      * Test writing a hyperlink
      * Open resulting sheet in Excel and check that A1 contains a hyperlink
      *
      * Also tests bug 15353 (problems with hyperlinks to Google)
      */
-    public void test23094() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void test23094() {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
         r.createCell(0).setCellFormula("HYPERLINK(\"http://jakarta.apache.org\",\"Jakarta\")");
         r.createCell(1).setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         r = wb.getSheetAt(0).getRow(0);
 
         Cell cell_0 = r.getCell(0);
@@ -60,7 +64,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
      * @param  num the number of strings to generate
      */
     public void baseTest15375(int num) {
-        Workbook wb = getTestDataProvider().createWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
 
@@ -82,7 +86,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
             cell = row.createCell(2);
             cell.setCellValue(factory.createRichTextString(tmp3));
         }
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         for (int i = 0; i < num; i++) {
             tmp1 = "Test1" + i;
             tmp2 = "Test2" + i;
@@ -99,8 +103,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
     /**
      * Merged regions were being removed from the parent in cloned sheets
      */
-    public void test22720() {
-       Workbook workBook = getTestDataProvider().createWorkbook();
+    public final void test22720() {
+       Workbook workBook = _testDataProvider.createWorkbook();
        workBook.createSheet("TEST");
        Sheet template = workBook.getSheetAt(0);
 
@@ -126,8 +130,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
 
     }
 
-    public void test28031() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void test28031() {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
 
@@ -138,7 +142,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         cell.setCellFormula(formulaText);
 
         assertEquals(formulaText, cell.getCellFormula());
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         cell = wb.getSheetAt(0).getRow(0).getCell(0);
         assertEquals("IF(ROUND(A2*B2*C2,2)>ROUND(B2*D2,2),ROUND(A2*B2*C2,2),ROUND(B2*D2,2))", cell.getCellFormula());
     }
@@ -148,24 +152,24 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
      * that contains macros and this formula:
      * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
      */
-    public void test21334() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void test21334() {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Cell cell = sh.createRow(0).createCell(0);
         String formula = "SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),\"\"))>0,1))";
         cell.setCellFormula(formula);
 
-        Workbook wb_sv = getTestDataProvider().writeOutAndReadBack(wb);
+        Workbook wb_sv = _testDataProvider.writeOutAndReadBack(wb);
         Cell cell_sv = wb_sv.getSheetAt(0).getRow(0).getCell(0);
         assertEquals(formula, cell_sv.getCellFormula());
     }
 
     /** another test for the number of unique strings issue
      *test opening the resulting file in Excel*/
-    public void test22568() {
+    public final void test22568() {
         int r=2000;int c=3;
 
-        Workbook wb = getTestDataProvider().createWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("ExcelTest") ;
 
         int col_cnt=0, rw_cnt=0 ;
@@ -191,7 +195,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
 
         sheet.setDefaultColumnWidth(18) ;
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         rw = sheet.getRow(0);
         //Header row
@@ -211,21 +215,21 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
     /**
      * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
      */
-    public void test42448(){
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void test42448(){
+        Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet().createRow(0).createCell(0);
         cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
         assertTrue("no errors parsing formula", true);
     }
 
-    public void test18800() {
-       Workbook book = getTestDataProvider().createWorkbook();
+    public final void test18800() {
+       Workbook book = _testDataProvider.createWorkbook();
        book.createSheet("TEST");
        Sheet sheet = book.cloneSheet(0);
        book.setSheetName(1,"CLONE");
        sheet.createRow(0).createCell(0).setCellValue("Test");
 
-       book = getTestDataProvider().writeOutAndReadBack(book);
+       book = _testDataProvider.writeOutAndReadBack(book);
        sheet = book.getSheet("CLONE");
        Row row = sheet.getRow(0);
        Cell cell = row.getCell(0);
@@ -246,8 +250,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         }
     }
 
-    public void testBug43093() {
-        Workbook xlw = getTestDataProvider().createWorkbook();
+    public final void testBug43093() {
+        Workbook xlw = _testDataProvider.createWorkbook();
 
         addNewSheetWithCellsA1toD4(xlw, 1);
         addNewSheetWithCellsA1toD4(xlw, 2);
@@ -265,11 +269,11 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         assertEquals(d, (311+312+321+322), 0.0000001);
     }
 
-    public void testMaxFunctionArguments_bug46729(){
+    public final void testMaxFunctionArguments_bug46729(){
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
-        SpreadsheetVersion ssVersion = getTestDataProvider().getSpreadsheetVersion();
-        Workbook wb = getTestDataProvider().createWorkbook();
+        SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
+        Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet().createRow(0).createCell(0);
 
         String fmla;
@@ -291,7 +295,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         }
     }
 
-    private String createFunction(String name, int maxArgs){
+    private static String createFunction(String name, int maxArgs){
         StringBuffer fmla = new StringBuffer();
         fmla.append(name);
         fmla.append("(");

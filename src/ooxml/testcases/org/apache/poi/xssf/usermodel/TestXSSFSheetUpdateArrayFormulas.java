@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateArrayFormulas {
 
     public TestXSSFSheetUpdateArrayFormulas() {
-        super(XSSFITestDataProvider.getInstance());
+        super(XSSFITestDataProvider.instance);
     }
 
     // Test methods common with HSSF are in superclass

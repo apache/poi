@@ -26,11 +26,15 @@ import org.apache.poi.ss.ITestDataProvider;
  */
 public abstract class BaseTestFont extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
 
-    public void baseTestDefaultFont(String defaultName, short defaultSize, short defaultColor){
+    protected BaseTestFont(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
+
+    protected final void baseTestDefaultFont(String defaultName, short defaultSize, short defaultColor){
         //get default font and check against default value
-        Workbook workbook = getTestDataProvider().createWorkbook();
+        Workbook workbook = _testDataProvider.createWorkbook();
         Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, defaultColor, defaultSize, defaultName, false, false, Font.SS_NONE, Font.U_NONE);
         assertNotNull(fontFind);
 
@@ -47,8 +51,8 @@ public abstract class BaseTestFont extends TestCase {
         assertNotNull(fontFind);
     }
 
-    public void testGetNumberOfFonts(){
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testGetNumberOfFonts(){
+        Workbook wb = _testDataProvider.createWorkbook();
         int num0 = wb.getNumberOfFonts();
 
         Font f1=wb.createFont();
@@ -76,8 +80,8 @@ public abstract class BaseTestFont extends TestCase {
      * Tests that we can define fonts to a new
      *  file, save, load, and still see them
      */
-    public void testCreateSave() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testCreateSave() {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet s1 = wb.createSheet();
         Row r1 = s1.createRow(0);
         Cell r1c1 = r1.createCell(0);
@@ -99,7 +103,7 @@ public abstract class BaseTestFont extends TestCase {
         r1c1.setCellStyle(cellStyleTitle);
 
         // Save and re-load
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         s1 = wb.getSheetAt(0);
 
         assertEquals(num0 + 1, wb.getNumberOfFonts());
@@ -118,7 +122,7 @@ public abstract class BaseTestFont extends TestCase {
         assertEquals(num0 + 2, wb.getNumberOfFonts());
 
         // Save and re-load
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         s1 = wb.getSheetAt(0);
 
         assertEquals(num0 + 2, wb.getNumberOfFonts());
@@ -134,8 +138,8 @@ public abstract class BaseTestFont extends TestCase {
      *
      * @see org.apache.poi.hssf.usermodel.TestBugs#test45338()
      */
-    public void test45338() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void test45338() {
+        Workbook wb = _testDataProvider.createWorkbook();
         int num0 = wb.getNumberOfFonts();
 
         Sheet s = wb.createSheet();

@@ -28,9 +28,8 @@ import org.apache.poi.ss.usermodel.Font;
  */
 public final class TestHSSFFont extends BaseTestFont {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFFont() {
+        super(HSSFITestDataProvider.instance);
     }
 
     public void testDefaultFont() {

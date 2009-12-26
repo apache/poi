@@ -44,16 +44,15 @@ import org.apache.poi.hpsf.ClassID;
  * Tests for {@link HSSFWorkbook}
  */
 public final class TestHSSFWorkbook extends BaseTestWorkbook {
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFWorkbook() {
+        super(HSSFITestDataProvider.instance);
     }
 
     /**
      * gives test code access to the {@link InternalWorkbook} within {@link HSSFWorkbook}
      */
     public static InternalWorkbook getInternalWorkbook(HSSFWorkbook wb) {
-    	return wb.getWorkbook();
+        return wb.getWorkbook();
     }
 
     public void testSetRepeatingRowsAndColumns() {
@@ -81,28 +80,28 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * Tests for {@link HSSFWorkbook#isHidden()} etc
      */
     public void testHidden() {
-    	HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook();
 
-    	WindowOneRecord w1 = wb.getWorkbook().getWindowOne();
+        WindowOneRecord w1 = wb.getWorkbook().getWindowOne();
 
-    	assertEquals(false, wb.isHidden());
-    	assertEquals(false, w1.getHidden());
+        assertEquals(false, wb.isHidden());
+        assertEquals(false, w1.getHidden());
 
-    	wb.setHidden(true);
-    	assertEquals(true, wb.isHidden());
-    	assertEquals(true, w1.getHidden());
+        wb.setHidden(true);
+        assertEquals(true, wb.isHidden());
+        assertEquals(true, w1.getHidden());
 
-    	wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-    	w1 = wb.getWorkbook().getWindowOne();
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        w1 = wb.getWorkbook().getWindowOne();
 
-    	wb.setHidden(true);
-    	assertEquals(true, wb.isHidden());
-    	assertEquals(true, w1.getHidden());
+        wb.setHidden(true);
+        assertEquals(true, wb.isHidden());
+        assertEquals(true, w1.getHidden());
 
-    	wb.setHidden(false);
-    	assertEquals(false, wb.isHidden());
-    	assertEquals(false, w1.getHidden());
-	}
+        wb.setHidden(false);
+        assertEquals(false, wb.isHidden());
+        assertEquals(false, w1.getHidden());
+    }
 
     public void testSheetClone() {
         // First up, try a simple file
@@ -116,7 +115,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(3, b.getNumberOfSheets());
 
         // Now try a problem one with drawing records in it
-        b = getTestDataProvider().openSampleWorkbook("SheetWithDrawing.xls");
+        b = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
         assertEquals(1, b.getNumberOfSheets());
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
@@ -127,7 +126,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         HSSFSheet s;
 
         // Single chart, two sheets
-        b = getTestDataProvider().openSampleWorkbook("44010-SingleChart.xls");
+        b = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
         assertEquals(2, b.getNumberOfSheets());
         assertEquals("Graph2", b.getSheetName(1));
         s = b.getSheetAt(1);
@@ -143,9 +142,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = getTestDataProvider().openSampleWorkbook("44010-SingleChart.xls");
+        b = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
 
-        b = getTestDataProvider().writeOutAndReadBack(b);
+        b = HSSFTestDataSamples.writeOutAndReadBack(b);
         assertEquals(2, b.getNumberOfSheets());
         s = b.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
@@ -153,7 +152,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
 
         // Two charts, three sheets
-        b = getTestDataProvider().openSampleWorkbook("44010-TwoCharts.xls");
+        b = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
         assertEquals(3, b.getNumberOfSheets());
 
         s = b.getSheetAt(1);
@@ -173,9 +172,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = getTestDataProvider().openSampleWorkbook("44010-TwoCharts.xls");
+        b = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
 
-        b = getTestDataProvider().writeOutAndReadBack(b);
+        b = HSSFTestDataSamples.writeOutAndReadBack(b);
         assertEquals(3, b.getNumberOfSheets());
 
         s = b.getSheetAt(1);
@@ -375,7 +374,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      *  that point to deleted sheets
      */
     public void testNamesToDeleteSheets() {
-        HSSFWorkbook b = getTestDataProvider().openSampleWorkbook("30978-deleted.xls");
+        HSSFWorkbook b = HSSFTestDataSamples.openSampleWorkbook("30978-deleted.xls");
         assertEquals(3, b.getNumberOfNames());
 
         // Sheet 2 is deleted

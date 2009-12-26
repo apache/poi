@@ -40,7 +40,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateArrayFormulas {
 
     public TestHSSFSheetUpdateArrayFormulas() {
-        super(HSSFITestDataProvider.getInstance());
+        super(HSSFITestDataProvider.instance);
     }
 
     // Test methods common with XSSF are in superclass

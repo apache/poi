@@ -53,17 +53,16 @@ import org.apache.poi.util.TempFile;
  */
 public final class TestBugs extends BaseTestBugzillaIssues {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestBugs() {
+        super(HSSFITestDataProvider.instance);
     }
 
-    private HSSFWorkbook openSample(String sampleFileName) {
-        return getTestDataProvider().openSampleWorkbook(sampleFileName);
+    private static HSSFWorkbook openSample(String sampleFileName) {
+        return HSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
     }
 
-    private HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-        return getTestDataProvider().writeOutAndReadBack(original);
+    private static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
+        return HSSFITestDataProvider.instance.writeOutAndReadBack(original);
     }
 
     private static void writeTestOutputFileForViewing(HSSFWorkbook wb, String simpleFileName) {
@@ -1520,7 +1519,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals("test ", cell1.getStringCellValue().toString());
 
         HSSFCell cell2 = s.getRow(0).getCell(1);
-        assertEquals(1.0, cell2.getNumericCellValue());
+        assertEquals(1.0, cell2.getNumericCellValue(), 0.0);
     }
 
     /**
