@@ -143,6 +143,8 @@ public final class RecordFactory {
 		ExternalNameRecord.class,
 		ExternSheetRecord.class,
 		ExtSSTRecord.class,
+		FeatRecord.class,
+		FeatHdrRecord.class,
 		FilePassRecord.class,
 		FileSharingRecord.class,
 		FnGroupCountRecord.class,

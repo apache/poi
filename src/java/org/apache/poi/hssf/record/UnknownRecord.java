@@ -56,7 +56,6 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int QUICKTIP_0800        = 0x0800;
 	public static final int SHEETEXT_0862        = 0x0862; // OOO calls this SHEETLAYOUT
 	public static final int SHEETPROTECTION_0867 = 0x0867;
-	public static final int RANGEPROTECTION_0868 = 0x0868;
 	public static final int HEADER_FOOTER_089C   = 0x089C;
 
 	private int _sid;
@@ -173,7 +172,6 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0863: return "BOOKEXT";
 			case 0x0864: return "SXADDL";    // Pivot Table Additional Info
 			case SHEETPROTECTION_0867: return "SHEETPROTECTION";
-			case RANGEPROTECTION_0868: return "RANGEPROTECTION";
 			case 0x086B: return "DATALABEXTCONTENTS";
 			case 0x086C: return "CELLWATCH";
 			case 0x0874: return "DROPDOWNOBJIDS";

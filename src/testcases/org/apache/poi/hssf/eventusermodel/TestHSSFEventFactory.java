@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FeatHdrRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
@@ -86,9 +87,10 @@ public final class TestHSSFEventFactory extends TestCase {
 		// Check that the last few records are as we expect
 		// (Makes sure we don't accidently skip the end ones)
 		int numRec = recs.length;
-		assertEquals(DVALRecord.class, recs[numRec-3].getClass());
-		assertEquals(DVRecord.class,  recs[numRec-2].getClass());
-		assertEquals(EOFRecord.class, recs[numRec-1].getClass());
+		assertEquals(DVALRecord.class,    recs[numRec-4].getClass());
+		assertEquals(DVRecord.class,      recs[numRec-3].getClass());
+		assertEquals(FeatHdrRecord.class, recs[numRec-2].getClass());
+		assertEquals(EOFRecord.class,     recs[numRec-1].getClass());
 	}
 
 	/**
@@ -110,7 +112,7 @@ public final class TestHSSFEventFactory extends TestCase {
 	}
 
 	private static class MockHSSFListener implements HSSFListener {
-		private final List records = new ArrayList();
+		private final List<Record> records = new ArrayList<Record>();
 
 		public MockHSSFListener() {}
 		public Record[] getRecords() {
