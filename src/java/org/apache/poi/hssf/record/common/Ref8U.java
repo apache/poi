@@ -58,7 +58,35 @@ public final class Ref8U {
 		out.writeShort(lastCol);
 	}
 
-	protected int getDataSize() {
+	public static int getDataSize() {
 		return 8;
+	}
+
+	public short getFirstRow() {
+		return firstRow;
+	}
+	public void setFirstRow(short firstRow) {
+		this.firstRow = firstRow;
+	}
+
+	public short getLastRow() {
+		return lastRow;
+	}
+	public void setLastRow(short lastRow) {
+		this.lastRow = lastRow;
+	}
+
+	public short getFirstCol() {
+		return firstCol;
+	}
+	public void setFirstCol(short firstCol) {
+		this.firstCol = firstCol;
+	}
+
+	public short getLastCol() {
+		return lastCol;
+	}
+	public void setLastCol(short lastCol) {
+		this.lastCol = lastCol;
 	}
 }
