@@ -162,6 +162,8 @@ public final class BiffViewer {
 			case ExtSSTRecord.sid:         return new ExtSSTRecord(in);
 			case ExtendedFormatRecord.sid: return new ExtendedFormatRecord(in);
 			case ExternSheetRecord.sid:    return new ExternSheetRecord(in);
+			case FeatRecord.sid:           return new FeatRecord(in);
+			case FeatHdrRecord.sid:        return new FeatHdrRecord(in);
 			case FilePassRecord.sid:       return new FilePassRecord(in);
 			case FileSharingRecord.sid:    return new FileSharingRecord(in);
 			case FnGroupCountRecord.sid:   return new FnGroupCountRecord(in);

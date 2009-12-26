@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -51,7 +52,8 @@ public final class FeatHdrRecord extends StandardRecord  {
 
 	
 	public final static short sid = 0x0867;
-	
+
+	private FtrHeader futureHeader;
 	private int isf_sharedFeatureType; // See SHAREDFEATURES_
 	private byte reserved; // Should always be one
 	/** 
@@ -63,6 +65,8 @@ public final class FeatHdrRecord extends StandardRecord  {
 	private byte[] rgbHdrData;
 
 	public FeatHdrRecord() {
+		futureHeader = new FtrHeader();
+		futureHeader.setRecordType(sid);
 	}
 
 	public short getSid() {
@@ -70,9 +74,11 @@ public final class FeatHdrRecord extends StandardRecord  {
 	}
 
 	public FeatHdrRecord(RecordInputStream in) {
+		futureHeader = new FtrHeader(in);
+		
 		isf_sharedFeatureType = in.readShort();
 		reserved = in.readByte();
-		cbHdrData = in.readLong();
+		cbHdrData = in.readInt();
 		// Don't process this just yet, need the BOFRecord
 		rgbHdrData = in.readRemainder();
 	}
@@ -88,13 +94,15 @@ public final class FeatHdrRecord extends StandardRecord  {
 	}
 
 	public void serialize(LittleEndianOutput out) {
+		futureHeader.serialize(out);
+		
 		out.writeShort(isf_sharedFeatureType);
 		out.writeByte(reserved);
-		out.writeLong(cbHdrData);
+		out.writeInt((int)cbHdrData);
 		out.write(rgbHdrData);
 	}
 
 	protected int getDataSize() {
-		return 2+1+4+rgbHdrData.length;
+		return 12 + 2+1+4+rgbHdrData.length;
 	}
 }

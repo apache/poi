@@ -234,12 +234,18 @@ public final class RecordInputStream implements LittleEndianInput {
 		return _dataInput.readShort();
 	}
 
+	/**
+	 * Reads a 32 bit, signed value 
+	 */
 	public int readInt() {
 		checkRecordPosition(LittleEndian.INT_SIZE);
 		_currentDataOffset += LittleEndian.INT_SIZE;
 		return _dataInput.readInt();
 	}
 
+	/**
+	 * Reads a 64 bit, signed value
+	 */
 	public long readLong() {
 		checkRecordPosition(LittleEndian.LONG_SIZE);
 		_currentDataOffset += LittleEndian.LONG_SIZE;

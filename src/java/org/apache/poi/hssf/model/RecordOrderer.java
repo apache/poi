@@ -34,6 +34,7 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.DrawingSelectionRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FeatRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
@@ -341,7 +342,7 @@ final class RecordOrderer {
 		switch(sid) {
 			case UnknownRecord.SHEETEXT_0862:
 			case UnknownRecord.SHEETPROTECTION_0867:
-			case UnknownRecord.RANGEPROTECTION_0868:
+			case FeatRecord.sid:
 			case EOFRecord.sid:
 				return true;
 		}

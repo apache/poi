@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.Ref8U;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -29,14 +30,14 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class FeatRecord extends StandardRecord  {
 	public final static short sid = 0x0868;
 	
+	private FtrHeader futureHeader;
+	
 	/**
 	 * See SHAREDFEATURES_* on {@link FeatHdrRecord}
 	 */
 	private int isf_sharedFeatureType; 
 	private byte reserved1; // Should always be zero
 	private long reserved2; // Should always be zero
-	/** The number of refs */
-	private int cref;
 	/** Only matters if type is ISFFEC2 */
 	private long cbFeatData;
 	private int reserved3; // Should always be zero
@@ -45,6 +46,8 @@ public final class FeatRecord extends StandardRecord  {
 	private byte[] rgbFeat; 
 	
 	public FeatRecord() {
+		futureHeader = new FtrHeader();
+		futureHeader.setRecordType(sid);
 	}
 
 	public short getSid() {
@@ -52,11 +55,13 @@ public final class FeatRecord extends StandardRecord  {
 	}
 
 	public FeatRecord(RecordInputStream in) {
+		futureHeader = new FtrHeader(in);
+		
 		isf_sharedFeatureType = in.readShort();
 		reserved1 = in.readByte();
-		reserved2 = in.readLong();
-		cref = in.readUShort();
-		cbFeatData = in.readLong();
+		reserved2 = in.readInt();
+		int cref = in.readUShort();
+		cbFeatData = in.readInt();
 		reserved3 = in.readShort();
 
 		cellRefs = new Ref8U[cref];
@@ -69,7 +74,7 @@ public final class FeatRecord extends StandardRecord  {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("[SHARDED FEATURE]\n");
+		buffer.append("[SHARED FEATURE]\n");
 		
 		// TODO ...
 		
@@ -78,13 +83,23 @@ public final class FeatRecord extends StandardRecord  {
 	}
 
 	public void serialize(LittleEndianOutput out) {
+		futureHeader.serialize(out);
+		
 		out.writeShort(isf_sharedFeatureType);
+		out.writeByte(reserved1);
+		out.writeInt((int)reserved2);
+		out.writeShort(cellRefs.length);
+		out.writeInt((int)cbFeatData);
+		out.writeShort(reserved3);
 		
-		// TODO ...
+		for(int i=0; i<cellRefs.length; i++) {
+			cellRefs[i].serialize(out);
+		}
 		
+		out.write(rgbFeat);
 	}
 
 	protected int getDataSize() {
-		return -1; // TODO
+		return 12 + 2+1+4+2+4+2+Ref8U.getDataSize()+rgbFeat.length;
 	}
 }
