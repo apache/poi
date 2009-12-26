@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -28,10 +29,14 @@ import org.apache.poi.ss.ITestDataProvider;
  */
 public abstract class BaseTestHyperlink extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
 
-    public void testBasicTypes(){
-        Workbook wb = getTestDataProvider().createWorkbook();
+    protected BaseTestHyperlink(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
+
+    public final void testBasicTypes(){
+        Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
 
         Cell cell;
@@ -72,7 +77,7 @@ public abstract class BaseTestHyperlink extends TestCase {
         link.setAddress("'Target Sheet'!A1");
         cell.setHyperlink(link);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
 
         sheet = wb.getSheetAt(0);
         link = sheet.getRow(0).getCell(0).getHyperlink();
@@ -84,5 +89,5 @@ public abstract class BaseTestHyperlink extends TestCase {
         assertEquals("mailto:poi@apache.org?subject=Hyperlinks", link.getAddress());
         link = sheet.getRow(3).getCell(0).getHyperlink();
         assertEquals("'Target Sheet'!A1", link.getAddress());
-	}
+    }
 }

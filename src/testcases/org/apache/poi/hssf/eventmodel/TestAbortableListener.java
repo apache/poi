@@ -14,9 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.eventmodel;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -29,69 +31,77 @@ import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public class TestAbortableListener extends TestCase {
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
-    }
-    
+/**
+ * Tests for {@link AbortableHSSFListener}
+ */
+public final class TestAbortableListener extends TestCase {
+
+	private POIFSFileSystem openSample() {
+		ByteArrayInputStream is = new ByteArrayInputStream(HSSFITestDataProvider.instance
+				.getTestDataFileContent("SimpleWithColours.xls"));
+		try {
+			return new POIFSFileSystem(is);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void testAbortingBasics() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1000);
-		
+
 		HSSFRequest req = new HSSFRequest();
 		req.addListenerForAllRecords(l);
-		
+
 		HSSFEventFactory f = new HSSFEventFactory();
-		
-		assertEquals(0, l.seen);
-		assertEquals(null, l.lastseen);
-		
-		POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(
-				getTestDataProvider().getTestDataFileContent("SimpleWithColours.xls")
-		));
+
+		assertEquals(0, l.countSeen);
+		assertEquals(null, l.lastRecordSeen);
+
+		POIFSFileSystem fs = openSample();
 		short res = f.abortableProcessWorkbookEvents(req, fs);
-		
+
 		assertEquals(0, res);
-		assertEquals(175, l.seen);
-		assertEquals(EOFRecord.sid, l.lastseen.getSid());
+		assertEquals(175, l.countSeen);
+		assertEquals(EOFRecord.sid, l.lastRecordSeen.getSid());
 	}
-	
+
+
 	public void testAbortStops() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1);
-		
+
 		HSSFRequest req = new HSSFRequest();
 		req.addListenerForAllRecords(l);
-		
+
 		HSSFEventFactory f = new HSSFEventFactory();
-		
-		assertEquals(0, l.seen);
-		assertEquals(null, l.lastseen);
-		
-		POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(
-				getTestDataProvider().getTestDataFileContent("SimpleWithColours.xls")
-		));
+
+		assertEquals(0, l.countSeen);
+		assertEquals(null, l.lastRecordSeen);
+
+		POIFSFileSystem fs = openSample();
 		short res = f.abortableProcessWorkbookEvents(req, fs);
-		
+
 		assertEquals(1234, res);
-		assertEquals(1, l.seen);
-		assertEquals(BOFRecord.sid, l.lastseen.getSid());
+		assertEquals(1, l.countSeen);
+		assertEquals(BOFRecord.sid, l.lastRecordSeen.getSid());
 	}
-	
-	public static class AbortableCountingListener extends AbortableHSSFListener {
-		private int abortAfter;
-		private int seen;
-		private Record lastseen;
-		
+
+	private static final class AbortableCountingListener extends AbortableHSSFListener {
+		private int abortAfterIndex;
+		public int countSeen;
+		public Record lastRecordSeen;
+
 		public AbortableCountingListener(int abortAfter) {
-			this.abortAfter = abortAfter;
-			this.seen = 0;
-			this.lastseen = null;
+			abortAfterIndex = abortAfter;
+			countSeen = 0;
+			lastRecordSeen = null;
 		}
 		public short abortableProcessRecord(Record record) {
-			seen++;
-			lastseen = record;
-			
-			if(seen == abortAfter)
+			countSeen++;
+			lastRecordSeen = record;
+
+			if(countSeen == abortAfterIndex) {
 				return 1234;
+			}
 			return 0;
 		}
 	}

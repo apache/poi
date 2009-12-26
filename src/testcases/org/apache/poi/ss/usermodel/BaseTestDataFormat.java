@@ -17,9 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import java.util.Map;
-
 import junit.framework.TestCase;
+
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -28,19 +27,20 @@ import org.apache.poi.ss.ITestDataProvider;
  */
 public abstract class BaseTestDataFormat extends TestCase {
 
-    /**
-     * @return an object that provides test data in HSSF / XSSF specific way
-     */
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
 
-    public void baseBuiltinFormats() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    protected BaseTestDataFormat(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
+
+    public final void testBuiltinFormats() {
+        Workbook wb = _testDataProvider.createWorkbook();
 
         DataFormat df = wb.createDataFormat();
 
-        Map<Integer, String> formats = BuiltinFormats.getBuiltinFormats();
-        for (int idx : formats.keySet()) {
-            String fmt = formats.get(Integer.valueOf(idx));
+        String[] formats = BuiltinFormats.getAll();
+        for (int idx = 0; idx < formats.length; idx++) {
+            String fmt = formats[idx];
             assertEquals(idx, df.getFormat(fmt));
         }
 

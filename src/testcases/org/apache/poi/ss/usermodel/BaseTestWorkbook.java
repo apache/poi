@@ -17,8 +17,9 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -27,10 +28,14 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public abstract class BaseTestWorkbook extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
 
-    public void testCreateSheet() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    protected BaseTestWorkbook(ITestDataProvider testDataProvider) {
+    _testDataProvider = testDataProvider;
+    }
+
+    public final void testCreateSheet() {
+        Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(0, wb.getNumberOfSheets());
 
         //getting a sheet by invalid index or non-existing name
@@ -87,7 +92,7 @@ public abstract class BaseTestWorkbook extends TestCase {
             wb.setSheetName(1, "[I'm invalid]");
             fail("should have thrown exceptiuon due to invalid sheet name");
         } catch (IllegalArgumentException e) {
-            ; // expected during successful test
+            // expected during successful test
         }
 
         //check
@@ -101,15 +106,15 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertNull(wb.getSheet("unknown"));
 
         //serialize and read again
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
         assertEquals(3, wb.getNumberOfSheets());
         assertEquals(0, wb.getSheetIndex("sheet0"));
         assertEquals(1, wb.getSheetIndex("sheet1"));
         assertEquals(2, wb.getSheetIndex("I changed!"));
     }
 
-    public void testRemoveSheetAt() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testRemoveSheetAt() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("sheet1");
         workbook.createSheet("sheet2");
         workbook.createSheet("sheet3");
@@ -130,16 +135,16 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(3, workbook.getNumberOfSheets());
     }
 
-    public void testDefaultValues() {
-        Workbook b = getTestDataProvider().createWorkbook();
+    public final void testDefaultValues() {
+        Workbook b = _testDataProvider.createWorkbook();
         assertEquals(0, b.getActiveSheetIndex());
         assertEquals(0, b.getFirstVisibleTab());
         assertEquals(0, b.getNumberOfNames());
         assertEquals(0, b.getNumberOfSheets());
     }
 
-    public void testSheetSelection() {
-        Workbook b = getTestDataProvider().createWorkbook();
+    public final void testSheetSelection() {
+        Workbook b = _testDataProvider.createWorkbook();
         b.createSheet("Sheet One");
         b.createSheet("Sheet Two");
         b.setActiveSheet(1);
@@ -149,8 +154,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(1, b.getFirstVisibleTab());
     }
 
-    public void testPrintArea() {
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testPrintArea() {
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet("Test Print Area");
         String sheetName1 = sheet1.getSheetName();
 
@@ -168,8 +173,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertNull(workbook.getPrintArea(0));
     }
 
-    public void testGetSetActiveSheet(){
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testGetSetActiveSheet(){
+        Workbook workbook = _testDataProvider.createWorkbook();
         assertEquals(0, workbook.getActiveSheetIndex());
 
         workbook.createSheet("sheet1");
@@ -185,8 +190,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(0, workbook.getActiveSheetIndex());
     }
 
-    public void testSetSheetOrder() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testSetSheetOrder() {
+        Workbook wb = _testDataProvider.createWorkbook();
 
         for (int i=0; i < 10; i++) {
             wb.createSheet("Sheet " + i);
@@ -221,7 +226,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(8, wb.getSheetIndex("Sheet 9"));
         assertEquals(9, wb.getSheetIndex("Sheet 1"));
 
-        Workbook wbr = getTestDataProvider().writeOutAndReadBack(wb);
+        Workbook wbr = _testDataProvider.writeOutAndReadBack(wb);
 
         assertEquals(0, wbr.getSheetIndex("Sheet 6"));
         assertEquals(1, wbr.getSheetIndex("Sheet 0"));
@@ -241,8 +246,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         }
     }
 
-    public void testCloneSheet() {
-        Workbook book = getTestDataProvider().createWorkbook();
+    public final void testCloneSheet() {
+        Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet("TEST");
         sheet.createRow(0).createCell(0).setCellValue("Test");
         sheet.createRow(1).createCell(0).setCellValue(36.6);
@@ -269,8 +274,8 @@ public abstract class BaseTestWorkbook extends TestCase {
 
     }
 
-    public void testParentReferences(){
-        Workbook workbook = getTestDataProvider().createWorkbook();
+    public final void testParentReferences(){
+        Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertSame(workbook, sheet.getWorkbook());
 
@@ -281,7 +286,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(sheet, cell.getSheet());
         assertSame(row, cell.getRow());
 
-        workbook = getTestDataProvider().writeOutAndReadBack(workbook);
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
         assertSame(workbook, sheet.getWorkbook());
 
@@ -293,8 +298,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(row, cell.getRow());
     }
 
-    public void testSetRepeatingRowsAnsColumns(){
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testSetRepeatingRowsAnsColumns(){
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
 
@@ -306,8 +311,8 @@ public abstract class BaseTestWorkbook extends TestCase {
     /**
      * Tests that all of the unicode capable string fields can be set, written and then read back
      */
-    public void testUnicodeInAll() {
-        Workbook wb = getTestDataProvider().createWorkbook();
+    public final void testUnicodeInAll() {
+        Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper factory = wb.getCreationHelper();
         //Create a unicode dataformat (contains euro symbol)
         DataFormat df = wb.createDataFormat();
@@ -341,7 +346,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         String formulaString = "TEXT(12.34,\"\u20ac###,##\")";
         c3.setCellFormula(formulaString);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = _testDataProvider.writeOutAndReadBack(wb);
 
         //Test the sheetname
         s = wb.getSheet("\u20ac");

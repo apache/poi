@@ -34,9 +34,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
 public final class TestXSSFFont extends BaseTestFont{
 
-	@Override
-	protected XSSFITestDataProvider getTestDataProvider() {
-		return XSSFITestDataProvider.getInstance();
+	public TestXSSFFont() {
+		super(XSSFITestDataProvider.instance);
 	}
 
 	public void testDefaultFont() {

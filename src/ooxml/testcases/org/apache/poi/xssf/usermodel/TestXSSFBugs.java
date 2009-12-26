@@ -28,9 +28,9 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+
+    public TestXSSFBugs() {
+        super(XSSFITestDataProvider.instance);
     }
 
     /**
@@ -46,7 +46,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  the wrong sheet name
      */
     public void test45430() {
-        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("45430.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("45430.xlsx");
         assertFalse(wb.isMacroEnabled());
         assertEquals(3, wb.getNumberOfNames());
 
@@ -75,7 +75,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * We should carry vba macros over after save
      */
     public void test45431() throws Exception {
-        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("45431.xlsm");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("45431.xlsm");
         OPCPackage pkg = wb.getPackage();
         assertTrue(wb.isMacroEnabled());
 
@@ -119,8 +119,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
         assertNotNull(drw);
     }
+
     public void test47504() {
-        XSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("47504.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47504.xlsx");
         assertEquals(1, wb.getNumberOfSheets());
         XSSFSheet sh = wb.getSheetAt(0);
         XSSFDrawing drawing = sh.createDrawingPatriarch();
@@ -136,7 +137,5 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         rels = drawing.getRelations();
         assertEquals(1, rels.size());
         assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
-
     }
-
 }

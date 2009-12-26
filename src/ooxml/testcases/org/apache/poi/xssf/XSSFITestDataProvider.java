@@ -32,9 +32,6 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
     private XSSFITestDataProvider() {
         // enforce singleton
     }
-    public static XSSFITestDataProvider getInstance(){
-        return instance;
-    }
     public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }

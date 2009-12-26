@@ -28,16 +28,15 @@ import org.apache.poi.ss.usermodel.BaseTestHyperlink;
  */
 public final class TestHSSFHyperlink extends BaseTestHyperlink {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFHyperlink() {
+        super(HSSFITestDataProvider.instance);
     }
     /**
      * Test that we can read hyperlinks.
      */
     public void testRead() {
 
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("HyperlinksOnManySheets.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -77,7 +76,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     }
 
     public void testModify() {
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("HyperlinksOnManySheets.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
         HSSFSheet sheet;
         HSSFCell cell;
@@ -89,7 +88,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         //modify the link
         link.setAddress("www.apache.org");
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheet("WebLinks");
         cell = sheet.getRow(4).getCell(0);
         link = cell.getHyperlink();
@@ -106,7 +105,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
      */
     public void testCreateDocumentLink() {
-        HSSFWorkbook wb = getTestDataProvider().createWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook();
 
         //link to a place in this workbook
         HSSFHyperlink link;
@@ -131,7 +130,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         link.setAddress("'Hyperlinks'!A1");
         cell.setHyperlink(link);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheet("Hyperlinks");
 
         cell = sheet.getRow(0).getCell(0);
@@ -167,7 +166,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     }
 
     public void testCreate() {
-        HSSFWorkbook wb = getTestDataProvider().createWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFHyperlink link;
         HSSFCell cell;
@@ -179,7 +178,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         link.setAddress("testfolder\\test.PDF");
         cell.setHyperlink(link);
 
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheet("Hyperlinks");
 
         cell = sheet.getRow(1).getCell(0);
@@ -193,7 +192,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      * see bugs #46445 and #29957
      */
     public void testShiftRows(){
-        HSSFWorkbook wb = getTestDataProvider().openSampleWorkbook("46445.xls");
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("46445.xls");
 
 
         HSSFSheet sheet = wb.getSheetAt(0);

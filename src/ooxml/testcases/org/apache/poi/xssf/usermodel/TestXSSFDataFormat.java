@@ -17,25 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
  * Tests for {@link XSSFDataFormat}
- *
  */
 public final class TestXSSFDataFormat extends BaseTestDataFormat {
 
-	@Override
-	protected ITestDataProvider getTestDataProvider() {
-		return XSSFITestDataProvider.getInstance();
-	}
-
-	/**
-	 * Test setting and getting boolean values.
-	 */
-	public void testBuiltinFormats() {
-		baseBuiltinFormats();
+	public TestXSSFDataFormat() {
+		super(XSSFITestDataProvider.instance);
 	}
 }

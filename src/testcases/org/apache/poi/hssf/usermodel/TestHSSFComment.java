@@ -16,10 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
-
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
 
 /**
@@ -29,39 +27,20 @@ import org.apache.poi.ss.usermodel.BaseTestCellComment;
  */
 public final class TestHSSFComment extends BaseTestCellComment {
 
-    @Override
-    protected HSSFITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
+    public TestHSSFComment() {
+        super(HSSFITestDataProvider.instance);
     }
 
-    public static void testDefaultShapeType() throws Exception {
+    public void testDefaultShapeType() {
         HSSFComment comment = new HSSFComment((HSSFShape)null, (HSSFAnchor)null);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
-    }
-
-    /**
-     * test that we can read cell comments from an existing workbook.
-     */
-    public void testReadComments() {
-        readComments("SimpleWithComments.xls");
-    }
-
-    /**
-     * test that we can modify existing cell comments
-     */
-    public void testModifyComments() throws IOException {
-        modifyComments("SimpleWithComments.xls");
-    }
-
-    public void testDeleteComments() throws Exception {
-        deleteComments("SimpleWithComments.xls");
     }
 
     /**
      *  HSSFCell#findCellComment should NOT rely on the order of records
      * when matching cells and their cell comments. The correct algorithm is to map
      */
-    public static void test47924() {
+    public void test47924() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47924.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFCell cell;

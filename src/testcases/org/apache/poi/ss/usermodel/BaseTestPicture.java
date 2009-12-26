@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -25,15 +26,19 @@ import org.apache.poi.ss.ITestDataProvider;
  */
 public abstract class BaseTestPicture extends TestCase {
 
-    protected abstract ITestDataProvider getTestDataProvider();
+    private final ITestDataProvider _testDataProvider;
+
+    protected BaseTestPicture(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
 
     public void baseTestResize(ClientAnchor referenceAnchor) {
-        Workbook wb = getTestDataProvider().createWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh1 = wb.createSheet();
         Drawing  p1 = sh1.createDrawingPatriarch();
         CreationHelper factory = wb.getCreationHelper();
 
-        byte[] pictureData = getTestDataProvider().getTestDataFileContent("logoKarmokar4.png");
+        byte[] pictureData = _testDataProvider.getTestDataFileContent("logoKarmokar4.png");
         int idx1 = wb.addPicture( pictureData, Workbook.PICTURE_TYPE_PNG );
         Picture picture = p1.createPicture(factory.createClientAnchor(), idx1);
         picture.resize();

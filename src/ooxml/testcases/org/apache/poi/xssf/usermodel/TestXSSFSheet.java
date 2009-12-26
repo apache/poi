@@ -33,11 +33,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
-public class TestXSSFSheet extends BaseTestSheet {
+public final class TestXSSFSheet extends BaseTestSheet {
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider() {
-        return XSSFITestDataProvider.getInstance();
+    public TestXSSFSheet() {
+        super(XSSFITestDataProvider.instance);
     }
 
     //TODO column styles are not yet supported by XSSF
@@ -106,7 +105,7 @@ public class TestXSSFSheet extends BaseTestSheet {
     }
 
     public void testGetAllHeadersFooters() {
-        XSSFWorkbook workbook = getTestDataProvider().createWorkbook();
+        XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
         assertNotNull(sheet.getOddFooter());
         assertNotNull(sheet.getEvenFooter());
@@ -780,7 +779,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         }
 
         //serialize and check again
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(5, cols.sizeOfColArray());
@@ -850,7 +849,7 @@ public class TestXSSFSheet extends BaseTestSheet {
         assertEquals(7, col.getMax());
 
         //serialize and check again
-        wb = getTestDataProvider().writeOutAndReadBack(wb);
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
         assertTrue(sheet.isColumnHidden(2));
         assertTrue(sheet.isColumnHidden(6));

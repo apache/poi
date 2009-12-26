@@ -18,23 +18,14 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 
 /**
  * Tests for {@link HSSFDataFormat}
- *
  */
 public final class TestHSSFDataFormat extends BaseTestDataFormat {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return HSSFITestDataProvider.getInstance();
-    }
-	/**
-     * Test setting and getting boolean values.
-     */
-    public void testBuiltinFormats() {
-        baseBuiltinFormats();
+    public TestHSSFDataFormat() {
+        super(HSSFITestDataProvider.instance);
     }
 }

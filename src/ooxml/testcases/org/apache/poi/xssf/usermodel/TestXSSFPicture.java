@@ -31,9 +31,8 @@ import java.util.Arrays;
  */
 public final class TestXSSFPicture extends BaseTestPicture {
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
+    public TestXSSFPicture() {
+        super(XSSFITestDataProvider.instance);
     }
 
     public void testResize() {

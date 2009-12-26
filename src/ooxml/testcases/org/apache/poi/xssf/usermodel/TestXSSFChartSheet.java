@@ -17,31 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BaseTestSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Workbook;
+import junit.framework.TestCase;
+
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
-
-public class TestXSSFChartSheet extends BaseTestSheet {
-
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider() {
-        return XSSFITestDataProvider.getInstance();
-    }
+public final class TestXSSFChartSheet extends TestCase {
 
     public void testXSSFFactory() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx");
@@ -57,6 +38,7 @@ public class TestXSSFChartSheet extends BaseTestSheet {
     public void testGetAccessors() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx");
         XSSFChartSheet sheet = (XSSFChartSheet)wb.getSheetAt(2);
+
         for(Row row : sheet) {
             fail("Row iterator for chart sheets should return zero rows");
         }
@@ -72,13 +54,5 @@ public class TestXSSFChartSheet extends BaseTestSheet {
         assertEquals(null, sheet.getCellComment(0, 0));
         assertEquals(0, sheet.getColumnBreaks().length);
         assertEquals(true, sheet.getRowSumsBelow());
-    }
-
-    /**
-     * YK: disable failing test from the superclass 
-     */
-    @Override
-    public void testDefaultColumnStyle() {
-
     }
 }

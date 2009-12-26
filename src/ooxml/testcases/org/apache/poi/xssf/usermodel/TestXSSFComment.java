@@ -18,51 +18,26 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestCellComment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 
 import schemasMicrosoftComVml.CTShape;
 
-
-public class TestXSSFComment extends BaseTestCellComment  {
+/**
+ * @author Yegor Kozlov
+ */
+public final class TestXSSFComment extends BaseTestCellComment  {
 
     private static final String TEST_RICHTEXTSTRING = "test richtextstring";
 
-    @Override
-    protected XSSFITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
-    }
-
-    /**
-     * test that we can read cell comments from an existing workbook.
-     */
-    public void testReadComments() {
-        readComments("SimpleWithComments.xlsx");
-    }
-
-    /**
-     * test that we can modify existing cell comments
-     */
-    public void testModifyComments() throws IOException {
-        modifyComments("SimpleWithComments.xlsx");
-    }
-
-    public void testDeleteComments() throws Exception {
-        deleteComments("SimpleWithComments.xlsx");
+    public TestXSSFComment() {
+        super(XSSFITestDataProvider.instance);
     }
 
     /**
@@ -132,7 +107,7 @@ public class TestXSSFComment extends BaseTestCellComment  {
             comment.setString(new HSSFRichTextString(TEST_RICHTEXTSTRING));
             fail("expected exception");
         } catch (IllegalArgumentException e){
-            ;
+            assertEquals("Only XSSFRichTextString argument is supported", e.getMessage());
         }
 
         //simple string argument
@@ -189,6 +164,4 @@ public class TestXSSFComment extends BaseTestCellComment  {
         assertEquals("", comment.getAuthor());
         assertEquals(2, sheetComments.getNumberOfAuthors());
     }
-
-   
 }
