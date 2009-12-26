@@ -15,49 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
-import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
  * @author Yegor Kozlov
  */
-public final class TestSheetShiftRows  extends BaseTestSheetShiftRows {
+public final class TestHSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
-    @Override
-    protected ITestDataProvider getTestDataProvider(){
-        return XSSFITestDataProvider.getInstance();
-    }
-
-    public void testShiftRows() {
-        baseTestShiftRows("SimpleMultiCell.xlsx");
-    }
-
-    public void testShiftRow() {
-        baseTestShiftRow();
-    }
-
-    public void testShiftNames() {
-        baseTestShiftWithNames();
-    }
-
-    //TODO support shifting of page breaks
-    public void $testShiftRowBreaks() {
-        baseTestShiftRowBreaks();
-    }
-
-    //TODO support shifting of comments.
-    public void $testShiftWithComments() {
-        baseTestShiftWithComments("comments.xlsx");
-    }
-
-    public void testShiftWithFormulas() {
-        baseTestShiftWithFormulas("ForShifting.xlsx");
-    }
-
-    public void testShiftWithMergedRegions() {
-        baseTestShiftWithMergedRegions();
+    public TestHSSFSheetShiftRows() {
+        super(HSSFITestDataProvider.instance);
     }
 }
