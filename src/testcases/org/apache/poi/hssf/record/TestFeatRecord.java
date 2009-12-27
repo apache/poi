@@ -18,7 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -34,8 +36,12 @@ public final class TestFeatRecord extends TestCase {
 			HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls");
 		InternalWorkbook wb = HSSFTestHelper.getWorkbookForTest(hssf);
 		
+		assertEquals(1, hssf.getNumberOfSheets());
+		
 		int countFR = 0;
 		int countFRH = 0;
+		
+		// Check on the workbook, but shouldn't be there!
 		for(Record r : wb.getRecords()) {
 			if(r instanceof FeatRecord) {
 				countFR++;
@@ -51,19 +57,41 @@ public final class TestFeatRecord extends TestCase {
 		
 		assertEquals(0, countFR);
 		assertEquals(0, countFRH);
+		
+		// Now check on the sheet
+		HSSFSheet s = hssf.getSheetAt(0);
+		InternalSheet sheet = HSSFTestHelper.getSheetForTest(s);
+		
+		for(RecordBase rb : sheet.getRecords()) {
+			if(rb instanceof Record) {
+				Record r = (Record)rb;
+				if(r instanceof FeatRecord) {
+					countFR++;
+				} else if (r.getSid() == FeatRecord.sid) {
+					countFR++;
+				}
+				if(r instanceof FeatHdrRecord) {
+					countFRH++;
+				} else if (r.getSid() == FeatHdrRecord.sid) {
+					countFRH++;
+				}
+			}
+		}
+		
+		assertEquals(0, countFR);
+		assertEquals(0, countFRH);
 	}
 
-	/**
-	 * TODO - make this work!
-	 * (Need to have the Internal Workbook capture it or something)
-	 */
-	public void DISABLEDtestReadFeatRecord() throws Exception {
+	public void testReadFeatRecord() throws Exception {
 		HSSFWorkbook hssf = 
 			HSSFTestDataSamples.openSampleWorkbook("46136-NoWarnings.xls");
 		InternalWorkbook wb = HSSFTestHelper.getWorkbookForTest(hssf);
 		
 		FeatRecord fr = null;
 		
+		assertEquals(1, hssf.getNumberOfSheets());
+		
+		// First check it isn't on the Workbook
 		int countFR = 0;
 		int countFRH = 0;
 		for(Record r : wb.getRecords()) {
@@ -77,6 +105,30 @@ public final class TestFeatRecord extends TestCase {
 				countFRH++;
 			} else if (r.getSid() == FeatHdrRecord.sid) {
 				fail("FeatHdrRecord SID found but not created correctly!");
+			}
+		}
+		
+		assertEquals(0, countFR);
+		assertEquals(0, countFRH);
+		
+		// Now find it on our sheet
+		HSSFSheet s = hssf.getSheetAt(0);
+		InternalSheet sheet = HSSFTestHelper.getSheetForTest(s);
+		
+		for(RecordBase rb : sheet.getRecords()) {
+			if(rb instanceof Record) {
+				Record r = (Record)rb;
+				if(r instanceof FeatRecord) {
+					fr = (FeatRecord)r;
+					countFR++;
+				} else if (r.getSid() == FeatRecord.sid) {
+					countFR++;
+				}
+				if(r instanceof FeatHdrRecord) {
+					countFRH++;
+				} else if (r.getSid() == FeatHdrRecord.sid) {
+					countFRH++;
+				}
 			}
 		}
 		

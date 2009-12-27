@@ -35,6 +35,8 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.FeatHdrRecord;
+import org.apache.poi.hssf.record.FeatRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.IndexRecord;
@@ -265,6 +267,12 @@ public final class InternalSheet {
                 continue;
             }
 
+            if (recSid == FeatRecord.sid ||
+            		recSid == FeatHdrRecord.sid) {
+                records.add(rec);
+                continue;
+            }
+            
             if (recSid == EOFRecord.sid) {
                 records.add(rec);
                 break;
