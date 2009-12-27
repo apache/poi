@@ -15,16 +15,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.common;
+package org.apache.poi.ss.util;
 
 import java.io.ByteArrayOutputStream;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutputStream;
 
 import junit.framework.TestCase;
 
-public final class TestRef8U extends TestCase {
+public final class TestCellRangeAddress extends TestCase {
  byte[] data = new byte[] {
      (byte)0x02,(byte)0x00, 
      (byte)0x04,(byte)0x00, 
@@ -33,20 +34,20 @@ public final class TestRef8U extends TestCase {
  };
 
  public void testLoad() {
-    Ref8U ref = new Ref8U(
+	 CellRangeAddress ref = new CellRangeAddress(
           TestcaseRecordInputStream.create(0x000, data)
     );
     assertEquals(2, ref.getFirstRow());
     assertEquals(4, ref.getLastRow());
-    assertEquals(0, ref.getFirstCol());
-    assertEquals(3, ref.getLastCol());
+    assertEquals(0, ref.getFirstColumn());
+    assertEquals(3, ref.getLastColumn());
   
-    assertEquals( 8, Ref8U.getDataSize() );
+    assertEquals( 8, CellRangeAddress.ENCODED_SIZE );
  }
 
  public void testStore()
  {
-	Ref8U ref = new Ref8U();
+	 CellRangeAddress ref = new CellRangeAddress(0,0,0,0);
 	
 	byte[] recordBytes;
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -63,8 +64,8 @@ public final class TestRef8U extends TestCase {
 	// Now set the flags
     ref.setFirstRow((short)2);
     ref.setLastRow((short)4);
-    ref.setFirstCol((short)0);
-    ref.setLastCol((short)3);
+    ref.setFirstColumn((short)0);
+    ref.setLastColumn((short)3);
 	
 	// Re-test
     baos.reset();
