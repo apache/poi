@@ -24,6 +24,9 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
+ * 
+ * <p>In the Microsoft documentation, this is also known as a 
+ *  Ref8U - see page 831 of version 1.0 of the documentation.
  *
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)

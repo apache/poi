@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.common.FtrHeader;
-import org.apache.poi.hssf.record.common.Ref8U;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -41,7 +41,7 @@ public final class FeatRecord extends StandardRecord  {
 	/** Only matters if type is ISFFEC2 */
 	private long cbFeatData;
 	private int reserved3; // Should always be zero
-	private Ref8U[] cellRefs;
+	private CellRangeAddress[] cellRefs;
 
 	private byte[] rgbFeat; 
 	
@@ -64,9 +64,9 @@ public final class FeatRecord extends StandardRecord  {
 		cbFeatData = in.readInt();
 		reserved3 = in.readShort();
 
-		cellRefs = new Ref8U[cref];
+		cellRefs = new CellRangeAddress[cref];
 		for(int i=0; i<cellRefs.length; i++) {
-			cellRefs[i] = new Ref8U(in);
+			cellRefs[i] = new CellRangeAddress(in);
 		}
 		
 		rgbFeat = in.readRemainder();
@@ -100,6 +100,8 @@ public final class FeatRecord extends StandardRecord  {
 	}
 
 	protected int getDataSize() {
-		return 12 + 2+1+4+2+4+2+Ref8U.getDataSize()+rgbFeat.length;
+		return 12 + 2+1+4+2+4+2+
+			(cellRefs.length * CellRangeAddress.ENCODED_SIZE)
+			+rgbFeat.length;
 	}
 }
