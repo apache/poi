@@ -16,6 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
@@ -29,5 +30,8 @@ public class HSSFTestHelper {
 	 */
 	public static InternalWorkbook getWorkbookForTest(HSSFWorkbook wb) {
 		return wb.getWorkbook();
+	}
+	public static InternalSheet getSheetForTest(HSSFSheet sheet) {
+		return sheet.getSheet();
 	}
 }
