@@ -104,4 +104,38 @@ public final class FeatRecord extends StandardRecord  {
 			(cellRefs.length * CellRangeAddress.ENCODED_SIZE)
 			+rgbFeat.length;
 	}
+
+	public int getIsf_sharedFeatureType() {
+		return isf_sharedFeatureType;
+	}
+	public void setIsf_sharedFeatureType(int isfSharedFeatureType) {
+		isf_sharedFeatureType = isfSharedFeatureType;
+	}
+
+	public long getCbFeatData() {
+		return cbFeatData;
+	}
+	public void setCbFeatData(long cbFeatData) {
+		this.cbFeatData = cbFeatData;
+	}
+
+	public CellRangeAddress[] getCellRefs() {
+		return cellRefs;
+	}
+	public void setCellRefs(CellRangeAddress[] cellRefs) {
+		this.cellRefs = cellRefs;
+	}
+
+	public byte[] getRgbFeat() {
+		return rgbFeat;
+	}
+	public void setRgbFeat(byte[] rgbFeat) {
+		this.rgbFeat = rgbFeat;
+		
+		if(isf_sharedFeatureType == FeatHdrRecord.SHAREDFEATURES_ISFFEC2) {
+			cbFeatData = rgbFeat.length;
+		} else {
+			cbFeatData = 0;
+		}
+	}
 }
