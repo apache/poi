@@ -198,11 +198,11 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	  //an iterator and use that instance throughout, rather than recreating one and
 	  //having to move it to the right position.
 	  int startIndex = block * DBCellRecord.BLOCK_SIZE;
-	  Iterator rowIter = _rowRecords.values().iterator();
+	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
 	  RowRecord row = null;
 	  //Position the iterator at the start of the block
 	  for (int i=0; i<=startIndex;i++) {
-		row = (RowRecord)rowIter.next();
+		row = rowIter.next();
 	  }
 	  if (row == null) {
 		  throw new RuntimeException("Did not find start row for block " + block);
@@ -217,10 +217,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	  if (endIndex >= _rowRecords.size())
 		endIndex = _rowRecords.size()-1;
 
-	  Iterator rowIter = _rowRecords.values().iterator();
+	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
 	  RowRecord row = null;
 	  for (int i=0; i<=endIndex;i++) {
-		row = (RowRecord)rowIter.next();
+		row = rowIter.next();
 	  }
 	  if (row == null) {
 		  throw new RuntimeException("Did not find start row for block " + block);
@@ -232,7 +232,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		final int startIndex = blockIndex*DBCellRecord.BLOCK_SIZE;
 		final int endIndex = startIndex + DBCellRecord.BLOCK_SIZE;
 
-		Iterator rowIterator = _rowRecords.values().iterator();
+		Iterator<RowRecord> rowIterator = _rowRecords.values().iterator();
 
 		//Given that we basically iterate through the rows in order,
 		//For a performance improvement, it would be better to return an instance of
@@ -289,7 +289,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		}
 	}
 
-	public Iterator getIterator() {
+	public Iterator<RowRecord> getIterator() {
 		return _rowRecords.values().iterator();
 	}
 

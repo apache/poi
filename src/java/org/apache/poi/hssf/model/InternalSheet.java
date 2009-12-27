@@ -129,11 +129,11 @@ public final class InternalSheet {
     /** the DimensionsRecord is always present */
     private DimensionsRecord             _dimensions;
     /** always present */
-    protected final RowRecordsAggregate        _rowsAggregate;
+    protected final RowRecordsAggregate  _rowsAggregate;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
 
-    private   Iterator                   rowRecIterator    =     null;
+    private   Iterator<RowRecord>        rowRecIterator    =     null;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
     protected boolean _isUncalced = false;
@@ -762,7 +762,7 @@ public final class InternalSheet {
         {
             return null;
         }
-        return ( RowRecord ) rowRecIterator.next();
+        return rowRecIterator.next();
     }
 
     /**
