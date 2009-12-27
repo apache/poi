@@ -88,6 +88,7 @@ public final class TestFeatRecord extends TestCase {
 		InternalWorkbook wb = HSSFTestHelper.getWorkbookForTest(hssf);
 		
 		FeatRecord fr = null;
+		FeatHdrRecord fhr = null;
 		
 		assertEquals(1, hssf.getNumberOfSheets());
 		
@@ -125,6 +126,7 @@ public final class TestFeatRecord extends TestCase {
 					countFR++;
 				}
 				if(r instanceof FeatHdrRecord) {
+					fhr = (FeatHdrRecord)r;
 					countFRH++;
 				} else if (r.getSid() == FeatHdrRecord.sid) {
 					countFRH++;
@@ -135,7 +137,23 @@ public final class TestFeatRecord extends TestCase {
 		assertEquals(1, countFR);
 		assertEquals(1, countFRH);
 		assertNotNull(fr);
+		assertNotNull(fhr);
 		
 		// Now check the contents are as expected
+		assertEquals(
+				FeatHdrRecord.SHAREDFEATURES_ISFFEC2,
+				fr.getIsf_sharedFeatureType()
+		);
+		
+		// Applies to one cell only
+		assertEquals(1, fr.getCellRefs().length);
+		assertEquals(0, fr.getCellRefs()[0].getFirstRow());
+		assertEquals(0, fr.getCellRefs()[0].getLastRow());
+		assertEquals(0, fr.getCellRefs()[0].getFirstColumn());
+		assertEquals(0, fr.getCellRefs()[0].getLastColumn());
+		
+		// TODO - more checking of shared features stuff
+		assertEquals(4, fr.getCbFeatData());
+		assertEquals(4, fr.getRgbFeat().length);
 	}
 }
