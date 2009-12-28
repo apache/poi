@@ -33,17 +33,13 @@ import org.apache.poi.POIDataSamples;
 public final class TestHDFDocument extends TestCase {
     private static final POIDataSamples _samples = POIDataSamples.getDocumentInstance();
 
-    public void testStopJUnitComplainintAboutNoTests() {
-        // TODO - fix these junits
-    }
-
     /**
      * OBJECTIVE:  Test that HDF can read an empty document (empty.doc).<P>
      * SUCCESS:    HDF reads the document.  Matches values in their particular positions.<P>
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
      */
-    public void fixme_testEmpty() throws IOException {
+    public void testEmpty() throws IOException {
         InputStream stream = _samples.openResourceAsStream("empty.doc");
         new HDFDocument(stream);
     }
@@ -54,7 +50,7 @@ public final class TestHDFDocument extends TestCase {
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
      */
-    public void fixme_testSimple() throws IOException {
+    public void testSimple() throws IOException {
         InputStream stream = _samples.openResourceAsStream("simple.doc");
         new HDFDocument(stream);
     }
@@ -66,7 +62,7 @@ public final class TestHDFDocument extends TestCase {
      *             in the document in their known positions.<P>
      *
      */
-    public void fixme_testSimpleList() throws IOException {
+    public void testSimpleList() throws IOException {
         InputStream stream = _samples.openResourceAsStream("simple-list.doc");
         new HDFDocument(stream);
     }
@@ -77,7 +73,7 @@ public final class TestHDFDocument extends TestCase {
      * FAILURE:    HDF does not read the document or excepts.  HDF cannot identify values
      *             in the document in their known positions.<P>
      */
-    public void fixme_testSimpleTable() throws IOException {
+    public void testSimpleTable() throws IOException {
         InputStream stream = _samples.openResourceAsStream("simple-table.doc");
         new HDFDocument(stream);
     }
