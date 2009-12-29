@@ -19,8 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
-import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -106,4 +105,5 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
             assertEquals(STCellFormulaType.ARRAY, f.getT());
         }
     }
+
 }

@@ -27,8 +27,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.SharedValueManager;
 import org.apache.poi.hssf.record.aggregates.TestSharedValueManager;
-import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
-import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**

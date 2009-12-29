@@ -233,4 +233,264 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertTrue( cell1.isPartOfArrayFormulaGroup());
         }
     }
+
+    /**
+     * Test that we can set pre-calculated formula result for array formulas
+     */
+    public void testModifyArrayCells_setFormulaResult(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        //single-cell array formula
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+        Cell scell = srange.getTopLeftCell();
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+        assertEquals(0.0, scell.getNumericCellValue());
+        scell.setCellValue(1.1);
+        assertEquals(1.1, scell.getNumericCellValue());
+
+        //multi-cell array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        for(Cell mcell : mrange){
+            assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+            assertEquals(0.0, mcell.getNumericCellValue());
+            double fmlaResult = 1.2;
+            mcell.setCellValue(fmlaResult);
+            assertEquals(fmlaResult, mcell.getNumericCellValue());
+        }
+    }
+
+    public void testModifyArrayCells_setCellType(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        // single-cell array formulas behave just like normal cells -
+        // changing cell type removes the array formula and associated cached result
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+        Cell scell = srange.getTopLeftCell();
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+        assertEquals(0.0, scell.getNumericCellValue());
+        scell.setCellType(Cell.CELL_TYPE_STRING);
+        assertEquals(Cell.CELL_TYPE_STRING, scell.getCellType());
+        scell.setCellValue("string cell");
+        assertEquals("string cell", scell.getStringCellValue());
+
+        //once you create a multi-cell array formula, you cannot change the type of its cells
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        for(Cell mcell : mrange){
+            try {
+                assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+                mcell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                fail("expected exception");
+            } catch (IllegalStateException e){
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+            }
+            // a failed invocation of Cell.setCellType leaves the cell
+            // in the state that it was in prior to the invocation
+            assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+            assertTrue(mcell.isPartOfArrayFormulaGroup());
+        }
+    }
+
+    public void testModifyArrayCells_setCellFormula(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+        Cell scell = srange.getTopLeftCell();
+        assertEquals("SUM(A4:A6,B4:B6)", scell.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+        assertTrue(scell.isPartOfArrayFormulaGroup());
+        scell.setCellFormula("SUM(A4,A6)");
+        //we are now a normal formula cell
+        assertEquals("SUM(A4,A6)", scell.getCellFormula());
+        assertFalse(scell.isPartOfArrayFormulaGroup());
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+        //check that setting formula result works
+        assertEquals(0.0, scell.getNumericCellValue());
+        scell.setCellValue(33.0);
+        assertEquals(33.0, scell.getNumericCellValue());
+
+        //multi-cell array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        for(Cell mcell : mrange){
+            //we cannot set individual formulas for cells included in an array formula
+            try {
+                assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
+                mcell.setCellFormula("A1+A2");
+                fail("expected exception");
+            } catch (IllegalStateException e){
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+            }
+            // a failed invocation of Cell.setCellFormula leaves the cell
+            // in the state that it was in prior to the invocation
+            assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
+            assertTrue(mcell.isPartOfArrayFormulaGroup());
+        }
+    }
+
+    public void testModifyArrayCells_removeCell(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        //single-cell array formulas behave just like normal cells
+        CellRangeAddress cra = CellRangeAddress.valueOf("B5");
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", cra);
+        Cell scell = srange.getTopLeftCell();
+
+        Row srow = sheet.getRow(cra.getFirstRow());
+        assertSame(srow, scell.getRow());
+        srow.removeCell(scell);
+        assertNull(srow.getCell(cra.getFirstColumn()));
+
+        //re-create the removed cell
+        scell = srow.createCell(cra.getFirstColumn());
+        assertEquals(Cell.CELL_TYPE_BLANK, scell.getCellType());
+        assertFalse(scell.isPartOfArrayFormulaGroup());
+
+        //we cannot remove cells included in a multi-cell array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        for(Cell mcell : mrange){
+            int columnIndex = mcell.getColumnIndex();
+            Row mrow = mcell.getRow();
+            try {
+                mrow.removeCell(mcell);
+                fail("expected exception");
+            } catch (IllegalStateException e){
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+            }
+            // a failed invocation of Row.removeCell leaves the row
+            // in the state that it was in prior to the invocation
+            assertSame(mcell, mrow.getCell(columnIndex));
+            assertTrue(mcell.isPartOfArrayFormulaGroup());
+            assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+        }
+    }
+
+    public void testModifyArrayCells_removeRow(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        //single-cell array formulas behave just like normal cells
+        CellRangeAddress cra = CellRangeAddress.valueOf("B5");
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", cra);
+        Cell scell = srange.getTopLeftCell();
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+
+        Row srow = scell.getRow();
+        assertSame(srow, sheet.getRow(cra.getFirstRow()));
+        sheet.removeRow(srow);
+        assertNull(sheet.getRow(cra.getFirstRow()));
+
+        //re-create the removed row and cell
+        scell = sheet.createRow(cra.getFirstRow()).createCell(cra.getFirstColumn());
+        assertEquals(Cell.CELL_TYPE_BLANK, scell.getCellType());
+        assertFalse(scell.isPartOfArrayFormulaGroup());
+
+        //we cannot remove rows with cells included in a multi-cell array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        for(Cell mcell : mrange){
+            int columnIndex = mcell.getColumnIndex();
+            Row mrow = mcell.getRow();
+            try {
+                sheet.removeRow(mrow);
+                fail("expected exception");
+            } catch (IllegalStateException e){
+                String msg = "Row[rownum="+mrow.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+            }
+            // a failed invocation of Row.removeCell leaves the row
+            // in the state that it was in prior to the invocation
+            assertSame(mrow, sheet.getRow(mrow.getRowNum()));
+            assertSame(mcell, mrow.getCell(columnIndex));
+            assertTrue(mcell.isPartOfArrayFormulaGroup());
+            assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+        }
+    }
+
+    public void testModifyArrayCells_mergeCells(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        assertEquals(0, sheet.getNumMergedRegions());
+
+        //single-cell array formulas behave just like normal cells
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+        Cell scell = srange.getTopLeftCell();
+        sheet.addMergedRegion(CellRangeAddress.valueOf("B5:C6"));
+        //we are still an array formula
+        assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
+        assertTrue(scell.isPartOfArrayFormulaGroup());
+        assertEquals(1, sheet.getNumMergedRegions());
+
+        //we cannot merge cells included in an array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        CellRangeAddress cra = CellRangeAddress.valueOf("C1:C3");
+        try {
+            sheet.addMergedRegion(cra);
+            fail("expected exception");
+        } catch (IllegalStateException e){
+            String msg = "The range "+cra.formatAsString()+" intersects with a multi-cell array formula. You cannot merge cells of an array.";
+            assertEquals(msg, e.getMessage());
+        }
+        //the number of merged regions remains the same
+        assertEquals(1, sheet.getNumMergedRegions());
+    }
+
+    public void testModifyArrayCells_shiftRows(){
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        //single-cell array formulas behave just like normal cells - we can change the cell type
+        CellRange<? extends Cell> srange =
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+        Cell scell = srange.getTopLeftCell();
+        assertEquals("SUM(A4:A6,B4:B6)", scell.getCellFormula());
+        sheet.shiftRows(0, 0, 1);
+        sheet.shiftRows(0, 1, 1);
+
+        //we cannot set individual formulas for cells included in an array formula
+        CellRange<? extends Cell> mrange =
+                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+
+        try {
+            sheet.shiftRows(0, 0, 1);
+            fail("expected exception");
+        } catch (IllegalStateException e){
+            String msg = "Row[rownum=0] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+            assertEquals(msg, e.getMessage());
+        }
+        /*
+         TODO: enable shifting the whole array
+
+        sheet.shiftRows(0, 2, 1);
+        //the array C1:C3 is now C2:C4
+        CellRangeAddress cra = CellRangeAddress.valueOf("C2:C4");
+        for(Cell mcell : mrange){
+            //TODO define equals and hashcode for CellRangeAddress
+            assertEquals(cra.formatAsString(), mcell.getArrayFormulaRange().formatAsString());
+            assertEquals("A2:A4*B2:B4", mcell.getCellFormula());
+            assertTrue(mcell.isPartOfArrayFormulaGroup());
+            assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
+        }
+
+        */
+    }
 }

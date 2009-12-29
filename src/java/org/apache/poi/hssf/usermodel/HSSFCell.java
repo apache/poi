@@ -284,6 +284,9 @@ public class HSSFCell implements Cell {
      */
     public void setCellType(int cellType) {
         notifyFormulaChanging();
+        if(isPartOfArrayFormulaGroup()){
+            notifyArrayFormulaChanging();
+        }
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
@@ -578,6 +581,10 @@ public class HSSFCell implements Cell {
     }
 
     public void setCellFormula(String formula) {
+        if(isPartOfArrayFormulaGroup()){
+            notifyArrayFormulaChanging();
+        }
+
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
@@ -1191,4 +1198,40 @@ public class HSSFCell implements Cell {
         }
         return ((FormulaRecordAggregate)_record).isPartOfArrayFormula();
     }
+
+    /**
+     * The purpose of this method is to validate the cell state prior to modification
+     *
+     * @see #notifyArrayFormulaChanging()
+     */
+    void notifyArrayFormulaChanging(String msg){
+        CellRangeAddress cra = getArrayFormulaRange();
+        if(cra.getNumberOfCells() > 1) {
+            throw new IllegalStateException(msg);
+        }
+        //un-register the single-cell array formula from the parent XSSFSheet
+        getRow().getSheet().removeArrayFormula(this);
+    }
+
+    /**
+     * Called when this cell is modified.
+     * <p>
+     * The purpose of this method is to validate the cell state prior to modification.
+     * </p>
+     *
+     * @see #setCellType(int)
+     * @see #setCellFormula(String)
+     * @see HSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
+     * @throws IllegalStateException if modification is not allowed
+     */
+    void notifyArrayFormulaChanging(){
+        CellReference ref = new CellReference(this);
+        String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        notifyArrayFormulaChanging(msg);
+    }
+
 }

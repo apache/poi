@@ -238,6 +238,13 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         if (row.getSheet() != this) {
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
+        for(Cell cell : row) {
+            HSSFCell xcell = (HSSFCell)cell;
+            if(xcell.isPartOfArrayFormulaGroup()){
+                String msg = "Row[rownum="+row.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+                xcell.notifyArrayFormulaChanging(msg);
+            }
+        }
 
         if (_rows.size() > 0) {
             Integer key = Integer.valueOf(row.getRowNum());
@@ -571,10 +578,43 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public int addMergedRegion(CellRangeAddress region)
     {
         region.validate(SpreadsheetVersion.EXCEL97);
+
+        // throw IllegalStateException if the argument CellRangeAddress intersects with
+        // a multi-cell array formula defined in this sheet
+        validateArrayFormulas(region);
+
         return _sheet.addMergedRegion( region.getFirstRow(),
                 region.getFirstColumn(),
                 region.getLastRow(),
                 region.getLastColumn());
+    }
+
+    private void validateArrayFormulas(CellRangeAddress region){
+        int firstRow = region.getFirstRow();
+        int firstColumn = region.getFirstColumn();
+        int lastRow = region.getLastRow();
+        int lastColumn = region.getLastColumn();
+        for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
+                HSSFRow row = getRow(rowIn);
+                if (row == null) continue;
+
+                HSSFCell cell = row.getCell(colIn);
+                if(cell == null) continue;
+
+                if(cell.isPartOfArrayFormulaGroup()){
+                    CellRangeAddress arrayRange = cell.getArrayFormulaRange();
+                    if (arrayRange.getNumberOfCells() > 1 &&
+                            ( arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()) ||
+                              arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()))  ){
+                        String msg = "The range " + region.formatAsString() + " intersects with a multi-cell array formula. " +
+                                "You cannot merge cells of an array.";
+                        throw new IllegalStateException(msg);
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -1214,6 +1254,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc ) {
             HSSFRow row = getRow( rowNum );
+            // notify all cells in this row that we are going to shift them,
+            // it can throw IllegalStateException if the operation is not allowed, for example,
+            // if the row contains cells included in a multi-cell array formula
+            if(row != null) notifyRowShifting(row);
+
             HSSFRow row2Replace = getRow( rowNum + n );
             if ( row2Replace == null )
                 row2Replace = createRow( rowNum + n );
@@ -1299,6 +1344,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     protected void insertChartRecords(List<Record> records) {
         int window2Loc = _sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
         _sheet.getRecords().addAll(window2Loc, records);
+    }
+
+    private void notifyRowShifting(HSSFRow row){
+        String msg = "Row[rownum="+row.getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        for(Cell cell : row){
+            HSSFCell hcell = (HSSFCell)cell;
+            if(hcell.isPartOfArrayFormulaGroup()){
+                hcell.notifyArrayFormulaChanging(msg);
+            }
+        }
     }
 
     /**
