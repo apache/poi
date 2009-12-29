@@ -100,5 +100,8 @@ public final class TestFormulaRecordAggregate extends TestCase {
 		Ptg[] ptg = agg.getFormulaTokens();
 		String fmlaSer = FormulaRenderer.toFormulaString(null, ptg);
 		assertEquals(formula, fmlaSer);
-	}
+
+        agg.removeArrayFormula(rownum, colnum);
+        assertFalse(agg.isPartOfArrayFormula());
+    }
 }

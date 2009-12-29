@@ -244,16 +244,48 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Adds a merged region of cells (hence those cells form one).
      *
-     * @param cra (rowfrom/colfrom-rowto/colto) to merge
+     * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
      */
-    public int addMergedRegion(CellRangeAddress cra) {
-        cra.validate(SpreadsheetVersion.EXCEL2007);
+    public int addMergedRegion(CellRangeAddress region) {
+        region.validate(SpreadsheetVersion.EXCEL2007);
+
+        // throw IllegalStateException if the argument CellRangeAddress intersects with
+        // a multi-cell array formula defined in this sheet
+        validateArrayFormulas(region);
 
         CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
         CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
-        ctMergeCell.setRef(cra.formatAsString());
+        ctMergeCell.setRef(region.formatAsString());
         return ctMergeCells.sizeOfMergeCellArray();
+    }
+
+    private void validateArrayFormulas(CellRangeAddress region){
+        int firstRow = region.getFirstRow();
+        int firstColumn = region.getFirstColumn();
+        int lastRow = region.getLastRow();
+        int lastColumn = region.getLastColumn();
+        for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
+                XSSFRow row = getRow(rowIn);
+                if (row == null) continue;
+
+                XSSFCell cell = row.getCell(colIn);
+                if(cell == null) continue;
+
+                if(cell.isPartOfArrayFormulaGroup()){
+                    CellRangeAddress arrayRange = cell.getArrayFormulaRange();
+                    if (arrayRange.getNumberOfCells() > 1 &&
+                            ( arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()) ||
+                              arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()))  ){
+                        String msg = "The range " + region.formatAsString() + " intersects with a multi-cell array formula. " +
+                                "You cannot merge cells of an array.";
+                        throw new IllegalStateException(msg);
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -1279,7 +1311,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (row.getSheet() != this) {
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
-
+        for(Cell cell : row) {
+            XSSFCell xcell = (XSSFCell)cell;
+            String msg = "Row[rownum="+row.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+            if(xcell.isPartOfArrayFormulaGroup()){
+                xcell.notifyArrayFormulaChanging(msg);
+            }
+        }
         rows.remove(row.getRowNum());
     }
 

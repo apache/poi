@@ -361,7 +361,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param cell the cell to remove
      */
     public void removeCell(Cell cell) {
-    	_cells.remove(cell.getColumnIndex());
+        if (cell.getRow() != this) {
+            throw new IllegalArgumentException("Specified cell does not belong to this row");
+        }
+
+        XSSFCell xcell = (XSSFCell)cell;
+        if(xcell.isPartOfArrayFormulaGroup()){
+            xcell.notifyArrayFormulaChanging();
+        }
+        _cells.remove(cell.getColumnIndex());
     }
 
     /**
@@ -409,8 +417,13 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         int rownum = getRowNum() + n;
         CalculationChain calcChain = _sheet.getWorkbook().getCalculationChain();
         int sheetId = (int)_sheet.sheet.getSheetId();
+        String msg = "Row[rownum="+getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
+                "You cannot change part of an array.";
         for(Cell c : this){
             XSSFCell cell = (XSSFCell)c;
+            if(cell.isPartOfArrayFormulaGroup()){
+                cell.notifyArrayFormulaChanging(msg);
+            }
 
             //remove the reference in the calculation chain
             if(calcChain != null) calcChain.removeItem(sheetId, cell.getReference());

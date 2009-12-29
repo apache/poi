@@ -385,8 +385,13 @@ public final class XSSFCell implements Cell {
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
      * @throws org.apache.poi.ss.formula.FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     * @throws IllegalStateException if the operation is not allowed, for example,
+     *  when the cell is a part of a multi-cell array formula
      */
     public void setCellFormula(String formula) {
+        if(isPartOfArrayFormulaGroup()){
+            notifyArrayFormulaChanging();
+        }
         setFormula(formula, FormulaType.CELL);
     }
 
@@ -694,6 +699,10 @@ public final class XSSFCell implements Cell {
      * @see #CELL_TYPE_ERROR
      */
     public void setCellType(int cellType) {
+        if(isPartOfArrayFormulaGroup()){
+            notifyArrayFormulaChanging();
+        }
+
         int prevType = getCellType();
         switch (cellType) {
             case CELL_TYPE_BLANK:
@@ -981,5 +990,42 @@ public final class XSSFCell implements Cell {
 
     public boolean isPartOfArrayFormulaGroup() {
         return getSheet().isCellInArrayFormulaContext(this);
+    }
+
+    /**
+     * The purpose of this method is to validate the cell state prior to modification
+     *
+     * @see #notifyArrayFormulaChanging()
+     */
+    void notifyArrayFormulaChanging(String msg){
+        if(isPartOfArrayFormulaGroup()){
+            CellRangeAddress cra = getArrayFormulaRange();
+            if(cra.getNumberOfCells() > 1) {
+                throw new IllegalStateException(msg);
+            }
+            //un-register the single-cell array formula from the parent XSSFSheet
+            getRow().getSheet().removeArrayFormula(this);
+        }
+    }
+
+    /**
+     * Called when this cell is modified.
+     * <p>
+     * The purpose of this method is to validate the cell state prior to modification.
+     * </p>
+     *
+     * @see #setCellType(int)
+     * @see #setCellFormula(String)
+     * @see XSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#shiftRows(int, int, int)
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
+     * @throws IllegalStateException if modification is not allowed
+     */
+    void notifyArrayFormulaChanging(){
+        CellReference ref = new CellReference(this);
+        String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        notifyArrayFormulaChanging(msg);
     }
 }

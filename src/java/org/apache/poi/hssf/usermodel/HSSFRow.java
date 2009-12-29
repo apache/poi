@@ -163,6 +163,10 @@ public final class HSSFRow implements Row {
         if(column >= cells.length || cell != cells[column]) {
             throw new RuntimeException("Specified cell is not from this row");
         }
+        if(cell.isPartOfArrayFormulaGroup()){
+            cell.notifyArrayFormulaChanging();
+        }
+
         cells[column]=null;
 
         if(alsoRemoveRecords) {

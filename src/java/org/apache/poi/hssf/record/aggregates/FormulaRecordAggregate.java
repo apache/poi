@@ -230,7 +230,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 		if (_sharedFormulaRecord != null) {
 			return false;
 		}
-		return _formulaRecord.getFormula().getExpReference() != null;
+        CellReference expRef = _formulaRecord.getFormula().getExpReference();
+        ArrayRecord arec = expRef == null ? null : _sharedValueManager.getArrayRecord(expRef.getRow(), expRef.getCol());
+		return arec != null;
 	}
 
 	public CellRangeAddress getArrayFormulaRange() {
@@ -260,6 +262,8 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 	 */
 	public CellRangeAddress removeArrayFormula(int rowIndex, int columnIndex) {
 		CellRangeAddress8Bit a = _sharedValueManager.removeArrayFormula(rowIndex, columnIndex);
-		return new CellRangeAddress(a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn());
+        // at this point FormulaRecordAggregate#isPartOfArrayFormula() should return false
+        _formulaRecord.setParsedExpression(null);
+        return new CellRangeAddress(a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn());
 	}
 }
