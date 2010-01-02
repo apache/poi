@@ -43,6 +43,12 @@ public final class FeatRecord extends StandardRecord  {
 	private int reserved3; // Should always be zero
 	private CellRangeAddress[] cellRefs;
 
+	/**
+	 * Contents depends on isf_sharedFeatureType :
+	 *  ISFPROTECTION -> FeatProtection 
+	 *  ISFFEC2       -> FeatFormulaErr2
+	 *  ISFFACTOID    -> FeatSmartTag
+	 */
 	private byte[] rgbFeat; 
 	
 	public FeatRecord() {
