@@ -123,8 +123,8 @@ public class ExtractorFactory {
 	public static POIOLE2TextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
 		// Look for certain entries in the stream, to figure it
 		//  out from
-		for(Iterator entries = poifsDir.getEntries(); entries.hasNext(); ) {
-			Entry entry = (Entry)entries.next();
+		for(Iterator<Entry> entries = poifsDir.getEntries(); entries.hasNext(); ) {
+			Entry entry = entries.next();
 			
 			if(entry.getName().equals("Workbook")) {
 				return new ExcelExtractor(poifsDir, fs);
@@ -160,9 +160,9 @@ public class ExtractorFactory {
 		
 		if(ext instanceof ExcelExtractor) {
 			// These are in MBD... under the root
-			Iterator it = fs.getRoot().getEntries();
+			Iterator<Entry> it = fs.getRoot().getEntries();
 			while(it.hasNext()) {
-				Entry entry = (Entry)it.next();
+				Entry entry = it.next();
 				if(entry.getName().startsWith("MBD")) {
 					dirs.add(entry);
 				}
@@ -172,9 +172,9 @@ public class ExtractorFactory {
 			try {
 				DirectoryEntry op = (DirectoryEntry)
 					fs.getRoot().getEntry("ObjectPool");
-				Iterator it = op.getEntries();
+				Iterator<Entry> it = op.getEntries();
 				while(it.hasNext()) {
-					Entry entry = (Entry)it.next();
+					Entry entry = it.next();
 					if(entry.getName().startsWith("_")) {
 						dirs.add(entry);
 					}
