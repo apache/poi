@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.common.FeatFormulaErr2;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -152,8 +153,21 @@ public final class TestFeatRecord extends TestCase {
 		assertEquals(0, fr.getCellRefs()[0].getFirstColumn());
 		assertEquals(0, fr.getCellRefs()[0].getLastColumn());
 		
-		// TODO - more checking of shared features stuff
+		// More checking of shared features stuff
 		assertEquals(4, fr.getCbFeatData());
-		assertEquals(4, fr.getRgbFeat().length);
+		assertEquals(4, fr.getSharedFeature().getDataSize());
+		assertEquals(FeatFormulaErr2.class, fr.getSharedFeature().getClass());
+		
+		FeatFormulaErr2 fferr2 = (FeatFormulaErr2)fr.getSharedFeature();
+		assertEquals(0x04, fferr2._getRawErrorCheckValue());
+		
+		assertFalse(fferr2.getCheckCalculationErrors());
+		assertFalse(fferr2.getCheckDateTimeFormats());
+		assertFalse(fferr2.getCheckEmptyCellRef());
+		assertFalse(fferr2.getCheckInconsistentFormulas());
+		assertFalse(fferr2.getCheckInconsistentRanges());
+		assertTrue(fferr2.getCheckNumbersAsText());
+		assertFalse(fferr2.getCheckUnprotectedFormulas());
+		assertFalse(fferr2.getPerformDataValidation());
 	}
 }
