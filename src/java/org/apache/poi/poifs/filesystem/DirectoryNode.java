@@ -41,7 +41,7 @@ public class DirectoryNode
 {
 
     // Map of Entry instances, keyed by their names
-    private Map               _entries;
+    private Map<String,Entry> _entries;
 
     // the POIFSFileSystem we belong to
     private POIFSFileSystem   _filesystem;
@@ -75,12 +75,12 @@ public class DirectoryNode
             });
         }
         _filesystem = filesystem;
-        _entries    = new HashMap();
-        Iterator iter = property.getChildren();
+        _entries    = new HashMap<String, Entry>();
+        Iterator<Property> iter = property.getChildren();
 
         while (iter.hasNext())
         {
-            Property child     = ( Property ) iter.next();
+            Property child     = iter.next();
             Entry    childNode = null;
 
             if (child.isDirectory())
@@ -215,7 +215,7 @@ public class DirectoryNode
      *         implementations of Entry.
      */
 
-    public Iterator getEntries()
+    public Iterator<Entry> getEntries()
     {
         return _entries.values().iterator();
     }
@@ -263,7 +263,7 @@ public class DirectoryNode
 
         if (name != null)
         {
-            rval = ( Entry ) _entries.get(name);
+            rval = _entries.get(name);
         }
         if (rval == null)
         {
@@ -416,8 +416,9 @@ public class DirectoryNode
         List components = new ArrayList();
 
         components.add(getProperty());
-        SortedMap sortedEntries = new TreeMap(_entries);
-        Iterator  iter          = sortedEntries.values().iterator();
+        SortedMap<String,Entry> sortedEntries = 
+        	new TreeMap<String,Entry>(_entries);
+        Iterator<Entry> iter = sortedEntries.values().iterator();
 
         while (iter.hasNext())
         {

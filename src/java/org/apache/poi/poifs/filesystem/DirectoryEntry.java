@@ -47,7 +47,7 @@ public interface DirectoryEntry
      *         implementations of Entry.
      */
 
-    public Iterator getEntries();
+    public Iterator<Entry> getEntries();
 
     /**
      * is this DirectoryEntry empty?
