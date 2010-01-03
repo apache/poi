@@ -130,6 +130,8 @@ public class StringUtil {
 	 * <li>byte[]/char[] characterData</li>
 	 * </ol>
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
+	 * 
+	 * This structure is also known as a XLUnicodeString.
 	 */
 	public static String readUnicodeString(LittleEndianInput in) {
 

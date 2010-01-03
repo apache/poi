@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.common.FeatFormulaErr2;
+import org.apache.poi.hssf.record.common.FeatProtection;
+import org.apache.poi.hssf.record.common.FeatSmartTag;
 import org.apache.poi.hssf.record.common.FtrHeader;
+import org.apache.poi.hssf.record.common.SharedFeature;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -49,7 +53,7 @@ public final class FeatRecord extends StandardRecord  {
 	 *  ISFFEC2       -> FeatFormulaErr2
 	 *  ISFFACTOID    -> FeatSmartTag
 	 */
-	private byte[] rgbFeat; 
+	private SharedFeature sharedFeature; 
 	
 	public FeatRecord() {
 		futureHeader = new FtrHeader();
@@ -75,7 +79,19 @@ public final class FeatRecord extends StandardRecord  {
 			cellRefs[i] = new CellRangeAddress(in);
 		}
 		
-		rgbFeat = in.readRemainder();
+		switch(isf_sharedFeatureType) {
+		case FeatHdrRecord.SHAREDFEATURES_ISFPROTECTION:
+			sharedFeature = new FeatProtection(in);
+			break;
+		case FeatHdrRecord.SHAREDFEATURES_ISFFEC2:
+			sharedFeature = new FeatFormulaErr2(in);
+			break;
+		case FeatHdrRecord.SHAREDFEATURES_ISFFACTOID:
+			sharedFeature = new FeatSmartTag(in);
+			break;
+		default:
+			System.err.println("Unknown Shared Feature " + isf_sharedFeatureType + " found!");
+		}
 	}
 
 	public String toString() {
@@ -102,20 +118,17 @@ public final class FeatRecord extends StandardRecord  {
 			cellRefs[i].serialize(out);
 		}
 		
-		out.write(rgbFeat);
+		sharedFeature.serialize(out);
 	}
 
 	protected int getDataSize() {
 		return 12 + 2+1+4+2+4+2+
 			(cellRefs.length * CellRangeAddress.ENCODED_SIZE)
-			+rgbFeat.length;
+			+sharedFeature.getDataSize();
 	}
 
 	public int getIsf_sharedFeatureType() {
 		return isf_sharedFeatureType;
-	}
-	public void setIsf_sharedFeatureType(int isfSharedFeatureType) {
-		isf_sharedFeatureType = isfSharedFeatureType;
 	}
 
 	public long getCbFeatData() {
@@ -132,14 +145,24 @@ public final class FeatRecord extends StandardRecord  {
 		this.cellRefs = cellRefs;
 	}
 
-	public byte[] getRgbFeat() {
-		return rgbFeat;
+	public SharedFeature getSharedFeature() {
+		return sharedFeature;
 	}
-	public void setRgbFeat(byte[] rgbFeat) {
-		this.rgbFeat = rgbFeat;
+	public void setSharedFeature(SharedFeature feature) {
+		this.sharedFeature = feature;
+		
+		if(feature instanceof FeatProtection) {
+			isf_sharedFeatureType = FeatHdrRecord.SHAREDFEATURES_ISFPROTECTION;
+		}
+		if(feature instanceof FeatFormulaErr2) {
+			isf_sharedFeatureType = FeatHdrRecord.SHAREDFEATURES_ISFFEC2;
+		}
+		if(feature instanceof FeatSmartTag) {
+			isf_sharedFeatureType = FeatHdrRecord.SHAREDFEATURES_ISFFACTOID;
+		}
 		
 		if(isf_sharedFeatureType == FeatHdrRecord.SHAREDFEATURES_ISFFEC2) {
-			cbFeatData = rgbFeat.length;
+			cbFeatData = sharedFeature.getDataSize();
 		} else {
 			cbFeatData = 0;
 		}
