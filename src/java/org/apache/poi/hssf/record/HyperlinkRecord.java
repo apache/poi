@@ -675,6 +675,27 @@ public final class HyperlinkRecord extends StandardRecord {
     }
 
     /**
+     * Based on the link options, is this a url?
+     */
+    public boolean isUrlLink() {
+       return (_linkOpts & HLINK_URL) > 0 
+           && (_linkOpts & HLINK_ABS) > 0;
+    }
+    /**
+     * Based on the link options, is this a file?
+     */
+    public boolean isFileLink() {
+       return (_linkOpts & HLINK_URL) > 0 
+           && (_linkOpts & HLINK_ABS) == 0;
+    }
+    /**
+     * Based on the link options, is this a document?
+     */
+    public boolean isDocumentLink() {
+       return (_linkOpts & HLINK_PLACE) > 0; 
+    }
+    
+    /**
      * Initialize a new url link
      */
     public void newUrlLink() {
