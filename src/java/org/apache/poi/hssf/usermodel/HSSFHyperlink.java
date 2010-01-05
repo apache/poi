@@ -87,6 +87,20 @@ public class HSSFHyperlink implements Hyperlink {
     protected HSSFHyperlink( HyperlinkRecord record )
     {
         this.record = record;
+        
+        // Figure out the type
+        if(record.isFileLink()) {
+           link_type = LINK_FILE;
+        } else if(record.isDocumentLink()) {
+           link_type = LINK_DOCUMENT;
+        } else {
+           if(record.getAddress() != null &&
+                 record.getAddress().startsWith("mailto:")) {
+              link_type = LINK_EMAIL;
+           } else {
+              link_type = LINK_URL;
+           }
+        }
     }
 
     /**
