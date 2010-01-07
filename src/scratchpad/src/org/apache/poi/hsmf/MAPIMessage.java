@@ -21,10 +21,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Map;
 
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.Chunk;
+import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.NameIdChunks;
+import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
@@ -36,9 +41,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Travis Ferguson
  */
 public class MAPIMessage {
-	private POIFSChunkParser chunkParser;
 	private POIFSFileSystem fs;
-	private Chunks chunks;
+	
+	private Chunks mainChunks;
+	private NameIdChunks nameIdChunks;
+	private RecipientChunks recipientChunks;
+	private AttachmentChunks[] attachmentChunks;
 
 	/**
 	 * Constructor for creating new files.
@@ -64,35 +72,59 @@ public class MAPIMessage {
 	 * @throws IOException
 	 */
 	public MAPIMessage(InputStream in) throws IOException {
-		this.fs = new POIFSFileSystem(in);
-		chunkParser = new POIFSChunkParser(this.fs);
-
-		// Figure out the right string type, based on
-		//  the chunks present
-		chunks = chunkParser.identifyChunks();
+	   this(new POIFSFileSystem(in));
+	}
+   /**
+    * Constructor for reading MSG Files from an input stream.
+    * @param in
+    * @throws IOException
+    */
+   public MAPIMessage(POIFSFileSystem fs) throws IOException {
+		this.fs = fs;
+		
+		// Grab all the chunks
+		ChunkGroup[] chunkGroups = POIFSChunkParser.parse(this.fs);
+		
+		// Grab interesting bits
+		ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
+		for(ChunkGroup group : chunkGroups) {
+		   // Should only ever be one of these
+		   if(group instanceof Chunks) {
+		      mainChunks = (Chunks)group;
+		   } else if(group instanceof NameIdChunks) {
+		      nameIdChunks = (NameIdChunks)group;
+		   } else if(group instanceof RecipientChunks) {
+		      recipientChunks = (RecipientChunks)group;
+		   }
+		   
+		   // Add to list(s)
+		   if(group instanceof AttachmentChunks) {
+		      attachments.add((AttachmentChunks)group);
+		   }
+		}
+		attachmentChunks = attachments.toArray(new AttachmentChunks[attachments.size()]);
 	}
 
 
 	/**
 	 * Gets a string value based on the passed chunk.
-	 * @param chunk
-	 * @throws ChunkNotFoundException
+	 * @throws ChunkNotFoundException if the chunk isn't there
 	 */
 	public String getStringFromChunk(StringChunk chunk) throws ChunkNotFoundException {
-		Chunk out = this.chunkParser.getDocumentNode(chunk);
-		StringChunk strchunk = (StringChunk)out;
-		return strchunk.toString();
+	   if(chunk == null) {
+	      throw new ChunkNotFoundException();
+	   }
+	   return chunk.getValue();
 	}
 
 
 	/**
 	 * Gets the plain text body of this Outlook Message
 	 * @return The string representation of the 'text' version of the body, if available.
-	 * @throws IOException
 	 * @throws ChunkNotFoundException
 	 */
 	public String getTextBody() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.textBodyChunk);
+		return getStringFromChunk(mainChunks.textBodyChunk);
 	}
 
 	/**
@@ -100,9 +132,8 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getSubject() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.subjectChunk);
+		return getStringFromChunk(mainChunks.subjectChunk);
 	}
-
 
 	/**
 	 * Gets the display value of the "TO" line of the outlook message
@@ -110,7 +141,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayTo() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.displayToChunk);
+		return getStringFromChunk(mainChunks.displayToChunk);
 	}
 
 	/**
@@ -119,7 +150,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayFrom() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.displayFromChunk);
+		return getStringFromChunk(mainChunks.displayFromChunk);
 	}
 
 	/**
@@ -128,7 +159,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayCC() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.displayCCChunk);
+		return getStringFromChunk(mainChunks.displayCCChunk);
 	}
 
 	/**
@@ -137,7 +168,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getDisplayBCC() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.displayBCCChunk);
+		return getStringFromChunk(mainChunks.displayBCCChunk);
 	}
 
 
@@ -147,7 +178,7 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getConversationTopic() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.conversationTopic);
+		return getStringFromChunk(mainChunks.conversationTopic);
 	}
 
 	/**
@@ -158,15 +189,13 @@ public class MAPIMessage {
 	 * @throws ChunkNotFoundException
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {
-		return getStringFromChunk(chunks.messageClass);
+		return getStringFromChunk(mainChunks.messageClass);
 	}
 
 	/**
 	 * Gets the message attachments.
-	 *
-	 * @return a map containing attachment name (String) and data (ByteArrayInputStream)
 	 */
-	public Map getAttachmentFiles() {
-		return this.chunkParser.getAttachmentList();
+	public AttachmentChunks[] getAttachmentFiles() {
+		return attachmentChunks;
 	}
 }

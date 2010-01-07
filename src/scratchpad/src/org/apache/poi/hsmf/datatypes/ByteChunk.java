@@ -16,27 +16,24 @@
 ==================================================================== */
 package org.apache.poi.hsmf.datatypes;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.poi.util.IOUtils;
 
 /**
  * A Chunk made up of a ByteArrayOutputStream.
  */
 
 public class ByteChunk extends Chunk {
-
-	private ByteArrayOutputStream value;
+	private byte[] value;
 	
 	/**
-	 * Creates a Byte Chunk, for either the old
-	 *  or new style of string chunk types.
+	 * Creates a Byte Chunk.
 	 */
-	public ByteChunk(int chunkId, boolean newStyleString) {
-		this(chunkId, getStringType(newStyleString));
-	}
-	private static int getStringType(boolean newStyleString) {
-		if(newStyleString)
-			return Types.NEW_STRING;
-		return Types.OLD_STRING;
+	public ByteChunk(String entryName) {
+		super(entryName);
 	}
 	
 	/**
@@ -44,17 +41,21 @@ public class ByteChunk extends Chunk {
 	 *  type.
 	 */
 	public ByteChunk(int chunkId, int type) {
-		this.chunkId = chunkId;
-		this.type = type;
-	}
-	
-	public ByteArrayOutputStream getValueByteArray() {
-		return this.value;
+	   super(chunkId, type);
 	}
 
-	public void setValue(ByteArrayOutputStream value) {
-		this.value = value;
-	}
+   public void readValue(InputStream value) throws IOException {
+      this.value = IOUtils.toByteArray(value);
+   }
 
-	
+   public void writeValue(OutputStream out) throws IOException {
+      out.write(value);
+   }
+
+   public byte[] getValue() {
+      return value;
+   }
+   public void setValue(byte[] value) {
+      this.value = value;
+   }
 }

@@ -17,12 +17,33 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 abstract public class Chunk {
+   public static final String DEFAULT_NAME_PREFIX = "__substg1.0_";
+   
 	protected int chunkId;
 	protected int type;
-	protected String namePrefix = "__substg1.0_";
+	protected String namePrefix;
+	
+	protected Chunk(String entryName) {
+	   int splitAt = entryName.lastIndexOf('_');
+	   if(splitAt == -1 || splitAt > (entryName.length()-8)) {
+	      throw new IllegalArgumentException("Invalid chunk name " + entryName);
+	   }
+	   
+	   namePrefix = entryName.substring(0, splitAt+1);
+	   String ids = entryName.substring(splitAt+1);
+	   chunkId = Integer.parseInt(ids.substring(0, 4), 16);
+      type    = Integer.parseInt(ids.substring(4, 8), 16);
+	}
+	protected Chunk(int chunkId, int type) {
+	   namePrefix = DEFAULT_NAME_PREFIX;
+	   this.chunkId = chunkId;
+	   this.type = type;
+	}
 
 	/**
 	 * Gets the id of this chunk
@@ -52,13 +73,12 @@ abstract public class Chunk {
 	}
 
 	/**
-	 * Gets a reference to a ByteArrayOutputStream that contains the value of this chunk.
+	 * Writes the value of this chunk back out again.
 	 */
-	public abstract ByteArrayOutputStream getValueByteArray();
+	public abstract void writeValue(OutputStream out) throws IOException;
 
 	/**
-	 * Sets the value of this chunk using a OutputStream
-	 * @param value
+	 * Reads the value of this chunk using an InputStream
 	 */
-	public abstract void setValue(ByteArrayOutputStream value);
+	public abstract void readValue(InputStream value) throws IOException;
 }
