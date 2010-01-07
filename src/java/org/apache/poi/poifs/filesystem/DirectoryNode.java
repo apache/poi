@@ -410,14 +410,14 @@ public class DirectoryNode
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-
+    @SuppressWarnings("unchecked")
     public Iterator getViewableIterator()
     {
         List components = new ArrayList();
 
         components.add(getProperty());
         SortedMap<String,Entry> sortedEntries = 
-        	new TreeMap<String,Entry>(_entries);
+        	   new TreeMap<String,Entry>(_entries);
         Iterator<Entry> iter = sortedEntries.values().iterator();
 
         while (iter.hasNext())
