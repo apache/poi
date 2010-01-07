@@ -15,32 +15,42 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.model;
+package org.apache.poi.hsmf.parsers;
 
-import org.apache.poi.hsmf.datatypes.Types;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
 /**
- * Verifies that the Types class is behaving properly.
- * Also check that no changes have been made that will
- *  break the library.
+ * Tests to verify that the chunk parser works properly
  */
-public final class TestTypes extends TestCase {
-   public void testTypeIds() {
-      assertEquals(0x1e, Types.ASCII_STRING);
-      assertEquals(0x1f, Types.UNICODE_STRING);
+public final class TestPOIFSChunkParser extends TestCase {
+   private POIDataSamples samples;
+
+	public TestPOIFSChunkParser() throws IOException {
+        samples = POIDataSamples.getHSMFInstance();
+	}
+	
+   public void testFindsRecips() throws IOException {
       
-      assertEquals(0x0102, Types.BINARY);
-      assertEquals(0x000B, Types.BOOLEAN);
-      assertEquals(0x0003, Types.LONG);
-      assertEquals(0x0040, Types.TIME);
    }
    
-   public void testTypeFormatting() {
-      assertEquals("0000", Types.asFileEnding(0x0000));
-      assertEquals("0020", Types.asFileEnding(0x0020));
-      assertEquals("0102", Types.asFileEnding(0x0102));
-      assertEquals("FEDC", Types.asFileEnding(0xfedc));
-   }
+	public void testFindsAttachments() throws IOException {
+	   POIFSFileSystem with = new POIFSFileSystem(
+	         new FileInputStream(samples.getFile("attachment_test_msg.msg"))
+	   );
+      POIFSFileSystem without = new POIFSFileSystem(
+            new FileInputStream(samples.getFile("simple_test_msg.msg"))
+      );
+      
+      // Check details on the one with
+	      
+	   // One with, from the top
+	   
+	   // One without, from the top
+	}
 }

@@ -37,15 +37,29 @@ public class AttachmentChunks implements ChunkGroup {
    public StringChunk attachFileName;
    public StringChunk attachLongFileName;
    public StringChunk attachMimeTag;
+   
+   /**
+    * What the POIFS name of this attachment is.
+    */
+   private String poifsName;
 
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
 
+   
+   public AttachmentChunks(String poifsName) {
+      this.poifsName = poifsName;
+   }
+   
    public Chunk[] getAll() {
       return allChunks.toArray(new Chunk[allChunks.size()]);
    }
    public Chunk[] getChunks() {
       return getAll();
+   }
+   
+   public String getPOIFSName() {
+      return poifsName;
    }
    
    /**

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.model;
+package org.apache.poi.hsmf;
 
 import java.io.IOException;
 

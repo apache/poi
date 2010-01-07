@@ -15,28 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf;
+package org.apache.poi.hsmf.datatypes;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.poi.hsmf.datatypes.Types;
 
-import org.apache.poi.hsmf.datatypes.*;
-import org.apache.poi.hsmf.parsers.*;
+import junit.framework.TestCase;
 
-public final class AllHSMFTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllHSMFTests.class.getName());
-		suite.addTestSuite(TestBlankFileRead.class);
-		suite.addTestSuite(TestSimpleFileRead.class);
-		suite.addTestSuite(TestOutlook30FileRead.class);
-		suite.addTestSuite(TestFileWithAttachmentsRead.class);
-		
-      suite.addTestSuite(TestChunkData.class);
-      suite.addTestSuite(TestTypes.class);
-
-      suite.addTestSuite(TestPOIFSChunkParser.class);
+/**
+ * Verifies that the Types class is behaving properly.
+ * Also check that no changes have been made that will
+ *  break the library.
+ */
+public final class TestTypes extends TestCase {
+   public void testTypeIds() {
+      assertEquals(0x1e, Types.ASCII_STRING);
+      assertEquals(0x1f, Types.UNICODE_STRING);
       
-		return suite;
-	}
+      assertEquals(0x0102, Types.BINARY);
+      assertEquals(0x000B, Types.BOOLEAN);
+      assertEquals(0x0003, Types.LONG);
+      assertEquals(0x0040, Types.TIME);
+   }
+   
+   public void testTypeFormatting() {
+      assertEquals("0000", Types.asFileEnding(0x0000));
+      assertEquals("0020", Types.asFileEnding(0x0020));
+      assertEquals("0102", Types.asFileEnding(0x0102));
+      assertEquals("FEDC", Types.asFileEnding(0xfedc));
+   }
 }
