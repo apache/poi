@@ -20,6 +20,7 @@ package org.apache.poi.hsmf.model;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
+import org.apache.poi.hsmf.datatypes.Types;
 
 import junit.framework.TestCase;
 
@@ -31,47 +32,54 @@ import junit.framework.TestCase;
  *
  */
 public final class TestChunkData extends TestCase {
-	private Chunks chunks = Chunks.getInstance(false);
-
 	public void testChunkCreate() {
-		StringChunk chunk = new StringChunk(0x0200, false);
-		TestCase.assertEquals("__substg1.0_0200001E", chunk.getEntryName());
+	   Chunk chunk;
+	   
+		chunk = new StringChunk(0x0200, 0x001E);
+		assertEquals("__substg1.0_0200001E", chunk.getEntryName());
+		assertEquals(0x0200, chunk.getChunkId());
+		assertEquals(0x001E, chunk.getType());
 
+      chunk = new StringChunk("__substg1.0_0200001E");
+      assertEquals("__substg1.0_0200001E", chunk.getEntryName());
+      assertEquals(0x0200, chunk.getChunkId());
+      assertEquals(0x001E, chunk.getType());
+      
 		/* test the lower and upper limits of the chunk ids */
-		chunk = new StringChunk(0x0000, false);
-		TestCase.assertEquals("__substg1.0_0000001E", chunk.getEntryName());
+		chunk = new StringChunk(0x0000, 0x001E);
+		assertEquals("__substg1.0_0000001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, false);
-		TestCase.assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
+		chunk = new StringChunk(0xFFFF, 0x001E);
+		assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, true);
-		TestCase.assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
+		chunk = new StringChunk(0xFFFF, 0x001F);
+		assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
 	}
 
 	public void testTextBodyChunk() {
-		StringChunk chunk = new StringChunk(0x1000, false);
-		TestCase.assertEquals(chunk.getEntryName(), chunks.textBodyChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
+		assertEquals(chunk.getChunkId(), Chunks.TEXT_BODY);
 	}
 
 	public void testDisplayToChunk() {
-		StringChunk chunk = new StringChunk(0x0E04, false);
-		TestCase.assertEquals(chunk.getEntryName(), chunks.displayToChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_TO);
 	}
 
 
 	public void testDisplayCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E03, false);
-		TestCase.assertEquals(chunk.getEntryName(), chunks.displayCCChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_CC);
 	}
 
 	public void testDisplayBCCChunk() {
-		StringChunk chunk = new StringChunk(0x0E02, false);
-		TestCase.assertEquals(chunk.getEntryName(), chunks.displayBCCChunk.getEntryName());
+		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_BCC);
 	}
 
 	public void testSubjectChunk() {
-		Chunk chunk = new StringChunk(0x0037, false);
-		TestCase.assertEquals(chunk.getEntryName(), chunks.subjectChunk.getEntryName());
+		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
+      assertEquals(chunk.getChunkId(), Chunks.SUBJECT);
 	}
 
 }

@@ -14,30 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Collection of convenence chunks for standard parts of the MSG file attachment.
+ * Collection of convenience chunks for the
+ *  Recip(ient) part of an outlook file
  */
-public class AttachmentChunks implements ChunkGroup {
-   public static final String PREFIX = "__attach_version1.0_#";
+public final class RecipientChunks implements ChunkGroup {
+   public static final String PREFIX = "__recip_version1.0_#";
    
-   /* String parts of Outlook Messages Attachments that are currently known */
-   public static final int ATTACH_DATA          = 0x3701;
-   public static final int ATTACH_EXTENSION     = 0x3703;
-   public static final int ATTACH_FILENAME      = 0x3704;
-   public static final int ATTACH_LONG_FILENAME = 0x3707;
-   public static final int ATTACH_MIME_TAG      = 0x370E;
-
-   public ByteChunk attachData;
-   public StringChunk attachExtension;
-   public StringChunk attachFileName;
-   public StringChunk attachLongFileName;
-   public StringChunk attachMimeTag;
-
+   public static final int RECIPIENT_SEARCH = 0x300B;
+   public static final int RECIPIENT_EMAIL  = 0x39FE;
+   
+   /** TODO */
+   public StringChunk recipientSearchChunk; 
+   /** TODO */
+   public StringChunk recipientEmailChunk;
+   
+   
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
 
@@ -47,26 +46,17 @@ public class AttachmentChunks implements ChunkGroup {
    public Chunk[] getChunks() {
       return getAll();
    }
-   
+	
    /**
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
       switch(chunk.getChunkId()) {
-      case ATTACH_DATA:
-         attachData = (ByteChunk)chunk;
+      case RECIPIENT_SEARCH:
+         recipientSearchChunk = (StringChunk)chunk;
          break;
-      case ATTACH_EXTENSION:
-         attachExtension = (StringChunk)chunk;
-         break;
-      case ATTACH_FILENAME:
-         attachFileName = (StringChunk)chunk;
-         break;
-      case ATTACH_LONG_FILENAME:
-         attachLongFileName = (StringChunk)chunk;
-         break;
-      case ATTACH_MIME_TAG:
-         attachMimeTag = (StringChunk)chunk;
+      case RECIPIENT_EMAIL:
+         recipientEmailChunk = (StringChunk)chunk;
          break;
       }
 

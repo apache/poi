@@ -15,15 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.exceptions;
+package org.apache.poi.hsmf.datatypes;
 
-public final class ChunkNotFoundException extends Exception {
-	private static final long serialVersionUID = 1L;
-
-	public ChunkNotFoundException() {
-	   super("Chunk not found");
-	}
-	public ChunkNotFoundException(String chunkName) {
-		super(chunkName + " was named, but not found in POIFS object");
-	}
+/**
+ * A group of chunks, that are at the same point in the
+ *  file structure.
+ */
+public interface ChunkGroup {
+   /**
+    * Returns the chunks that make up the group.
+    * Should certainly contain all the interesting Chunks,
+    *  but needn't always contain all of the Chunks.
+    */
+	public Chunk[] getChunks();
+	
+	/**
+	 * Called by the parser whenever a chunk is found.
+	 */
+	public void record(Chunk chunk);
 }

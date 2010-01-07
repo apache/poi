@@ -37,7 +37,7 @@ import org.apache.poi.poifs.property.Property;
 
 public class DirectoryNode
     extends EntryNode
-    implements DirectoryEntry, POIFSViewable
+    implements DirectoryEntry, POIFSViewable, Iterable<Entry>
 {
 
     // Map of Entry instances, keyed by their names
@@ -450,6 +450,13 @@ public class DirectoryNode
     public String getShortDescription()
     {
         return getName();
+    }
+
+    /**
+     * Returns an Iterator over all the entries
+     */
+    public Iterator<Entry> iterator() {
+        return getEntries(); 
     }
 
     /* **********  END  begin implementation of POIFSViewable ********** */

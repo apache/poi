@@ -15,15 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.exceptions;
+package org.apache.poi.hsmf.model;
 
-public final class ChunkNotFoundException extends Exception {
-	private static final long serialVersionUID = 1L;
+import org.apache.poi.hsmf.datatypes.Types;
 
-	public ChunkNotFoundException() {
-	   super("Chunk not found");
-	}
-	public ChunkNotFoundException(String chunkName) {
-		super(chunkName + " was named, but not found in POIFS object");
-	}
+import junit.framework.TestCase;
+
+/**
+ * Verifies that the Types class is behaving properly.
+ * Also check that no changes have been made that will
+ *  break the library.
+ */
+public final class TestTypes extends TestCase {
+   public void testTypeIds() {
+      assertEquals(0x1e, Types.ASCII_STRING);
+      assertEquals(0x1f, Types.UNICODE_STRING);
+      
+      assertEquals(0x0102, Types.BINARY);
+      assertEquals(0x000B, Types.BOOLEAN);
+      assertEquals(0x0003, Types.LONG);
+      assertEquals(0x0040, Types.TIME);
+   }
+   
+   public void testTypeFormatting() {
+      assertEquals("0000", Types.asFileEnding(0x0000));
+      assertEquals("0020", Types.asFileEnding(0x0020));
+      assertEquals("0102", Types.asFileEnding(0x0102));
+      assertEquals("FEDC", Types.asFileEnding(0xfedc));
+   }
 }

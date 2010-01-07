@@ -17,30 +17,27 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A Chunk made up of a single string.
- * @author Travis Ferguson
  */
 public class StringChunk extends Chunk {
 
 	private String value;
 
 	/**
-	 * Creates a String Chunk, for either the old
-	 *  or new style of string chunk types.
+	 * Creates a String Chunk.
 	 */
-	public StringChunk(int chunkId, boolean newStyleString) {
-		this(chunkId, getStringType(newStyleString));
-	}
-	private static int getStringType(boolean newStyleString) {
-		if(newStyleString)
-			return Types.NEW_STRING;
-		return Types.OLD_STRING;
+	public StringChunk(String entryName) {
+		super(entryName);
 	}
 	
 	/**
@@ -48,39 +45,57 @@ public class StringChunk extends Chunk {
 	 *  type.
 	 */
 	public StringChunk(int chunkId, int type) {
-		this.chunkId = chunkId;
-		this.type = type;
+	   super(chunkId, type);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hsmf.Chunk.Chunk#getValueByteArray()
-	 */
-	public ByteArrayOutputStream getValueByteArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hsmf.Chunk.Chunk#setValue(java.io.ByteArrayOutputStream)
-	 */
-	public void setValue(ByteArrayOutputStream value) {
-		String tmpValue;
-		if (type == Types.NEW_STRING) {
-			try {
-				tmpValue = new String(value.toByteArray(), "UTF-16LE");
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException("Core encoding not found, JVM broken?", e);
-			}
-		} else {
-			try {
-				tmpValue = new String(value.toByteArray(), "CP1252");
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException("Core encoding not found, JVM broken?", e);
-			}
-		}
+	public void readValue(InputStream value) throws IOException {
+      String tmpValue;
+      byte[] data = IOUtils.toByteArray(value);
+      
+	   switch(type) {
+	   case Types.ASCII_STRING:
+         try {
+            tmpValue = new String(data, "UTF-16LE");
+         } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Core encoding not found, JVM broken?", e);
+         }
+         break;
+	   case Types.UNICODE_STRING:
+	      tmpValue = StringUtil.getFromUnicodeLE(data);
+	      break;
+	   default:
+	      throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
+	   }
+	   
+	   // Clean up
 		this.value = tmpValue.replace("\0", "");
 	}
+	
+	public void writeValue(OutputStream out) throws IOException {
+	   byte[] data;
+	   
+      switch(type) {
+      case Types.ASCII_STRING:
+         try {
+            data = value.getBytes("UTF-16LE");
+         } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Core encoding not found, JVM broken?", e);
+         }
+         break;
+      case Types.UNICODE_STRING:
+         data = new byte[value.length()*2];
+         StringUtil.putUnicodeLE(value, data, 0);
+         break;
+      default:
+         throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
+      }
+      
+      out.write(data);
+	}
 
+   public String getValue() {
+      return this.value;
+   }
 	public String toString() {
 		return this.value;
 	}

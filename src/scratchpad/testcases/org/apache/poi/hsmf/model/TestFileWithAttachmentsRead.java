@@ -26,6 +26,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.POIDataSamples;
 
@@ -55,8 +56,8 @@ public class TestFileWithAttachmentsRead extends TestCase {
 	 */
 	// public void testReadDisplayCC() throws ChunkNotFoundException {
 	public void testRetrieveAttachments() {
-		Map attachmentsMap = mapiMessage.getAttachmentFiles();
-		int obtained = attachmentsMap.size();
+		AttachmentChunks[] attachments = mapiMessage.getAttachmentFiles();
+		int obtained = attachments.length;
 		int expected = 2;
 
 		TestCase.assertEquals(obtained, expected);
@@ -69,19 +70,16 @@ public class TestFileWithAttachmentsRead extends TestCase {
 	 * 
 	 */
 	public void testReadAttachments() throws IOException {
-		Map attachmentsMap = mapiMessage.getAttachmentFiles();
+      AttachmentChunks[] attachments = mapiMessage.getAttachmentFiles();
 
-		for (Iterator iterator = attachmentsMap.keySet().iterator(); iterator.hasNext();) {
-			String fileName = (String) iterator.next();
-			ByteArrayInputStream fileStream = (ByteArrayInputStream) attachmentsMap.get(fileName);
-			ByteArrayOutputStream fileContent = new ByteArrayOutputStream();
-			
-			while (fileStream.available() > 0) {
-				fileContent.write(fileStream.read());
-			}
-			String obtained = new String(fileContent.toByteArray(), "UTF-8");
-			assertTrue(obtained.trim().length() > 0);
+		for (AttachmentChunks attachment : attachments) {
+		   assertTrue(attachment.attachFileName.getValue().length() > 0);
+         assertTrue(attachment.attachLongFileName.getValue().length() > 0);
+         assertTrue(attachment.attachExtension.getValue().length() > 0);
+         assertTrue(attachment.attachMimeTag.getValue().length() > 0);
 		}
+		
+		// TODO better checking
 	}
 
 }

@@ -15,15 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.exceptions;
+package org.apache.poi.hsmf.datatypes;
 
-public final class ChunkNotFoundException extends Exception {
-	private static final long serialVersionUID = 1L;
+import java.util.ArrayList;
+import java.util.List;
 
-	public ChunkNotFoundException() {
-	   super("Chunk not found");
-	}
-	public ChunkNotFoundException(String chunkName) {
-		super(chunkName + " was named, but not found in POIFS object");
-	}
+
+/**
+ * Collection of convenience chunks for the
+ *  NameID part of an outlook file
+ */
+public final class NameIdChunks implements ChunkGroup {
+   public static final String PREFIX = "__nameid_version1.0";
+   
+   /** Holds all the chunks that were found. */
+   private List<Chunk> allChunks = new ArrayList<Chunk>();
+   
+   public Chunk[] getAll() {
+      return allChunks.toArray(new Chunk[allChunks.size()]);
+   }
+   public Chunk[] getChunks() {
+      return getAll();
+   }
+	
+   /**
+    * Called by the parser whenever a chunk is found.
+    */
+   public void record(Chunk chunk) {
+      allChunks.add(chunk);
+   }
 }
