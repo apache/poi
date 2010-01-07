@@ -44,17 +44,30 @@ public final class Chunks {
 	public StringChunk conversationTopic;
 	/** Type of server that the message originated from (SMTP, etc). */
 	public StringChunk sentByServerType;
+	/** TODO */
+	public StringChunk dateChunk; 
+	/** TODO */
+	public StringChunk emailFromChunk; 
+	/** TODO */
+	public StringChunk recipientSearchChunk; 
+	/** TODO */
+	public StringChunk recipientEmailChunk; 
 
 	private Chunks(boolean newStringType) {
-		messageClass = new StringChunk(0x001A, newStringType);
-		textBodyChunk = new StringChunk(0x1000, newStringType);
-		subjectChunk = new StringChunk(0x0037, newStringType);
-		displayToChunk = new StringChunk(0x0E04, newStringType);
-		displayFromChunk = new StringChunk(0x0C1A, newStringType);
-		displayCCChunk = new StringChunk(0x0E03, newStringType);
-		displayBCCChunk = new StringChunk(0x0E02, newStringType);
+		messageClass      = new StringChunk(0x001A, newStringType);
+		subjectChunk      = new StringChunk(0x0037, newStringType);
+		dateChunk         = new StringChunk(0x0047, newStringType);
 		conversationTopic = new StringChunk(0x0070, newStringType);
-		sentByServerType = new StringChunk(0x0075, newStringType);
+		sentByServerType =  new StringChunk(0x0075, newStringType);
+		// RECEIVEDEMAIL = 76
+		displayToChunk    = new StringChunk(0x0E04, newStringType);
+		displayFromChunk  = new StringChunk(0x0C1A, newStringType);
+		emailFromChunk    = new StringChunk(0x0C1F, newStringType);
+		displayCCChunk    = new StringChunk(0x0E03, newStringType);
+		displayBCCChunk   = new StringChunk(0x0E02, newStringType);
+		recipientSearchChunk = new StringChunk(0x300B, newStringType);
+		recipientEmailChunk = new StringChunk(0x39FE, newStringType);
+		textBodyChunk     = new StringChunk(0x1000, newStringType);
 	}
 
 	public static Chunks getInstance(boolean newStringType) {

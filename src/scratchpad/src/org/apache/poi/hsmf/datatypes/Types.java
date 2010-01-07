@@ -20,10 +20,14 @@ package org.apache.poi.hsmf.datatypes;
 public final class Types {
 	public static int BINARY = 0x0102;
 
-	/** A string, until Outlook 3.0 */
-	public static int OLD_STRING = 0x001E;
-	/** A string, from Outlook 3.0 onwards */
-	public static int NEW_STRING = 0x001F;
+	/** 
+	 * An 8-bit string, probably in US-ASCII, but don't quote us...
+	 * Normally used for everything before Outlook 3.0, and some
+	 *  fields in Outlook 3.0  
+	 */
+	public static int ASCII_STRING = 0x001E;
+	/** A string, from Outlook 3.0 onwards. Normally unicode */
+	public static int UNICODE_STRING = 0x001F;
 
 	public static int LONG = 0x0003;
 	public static int TIME = 0x0040;
