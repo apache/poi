@@ -60,7 +60,7 @@ public final class POIFSChunkParser {
             
             // Do we know what to do with it?
             if(dir.getName().startsWith(AttachmentChunks.PREFIX)) {
-               group = new AttachmentChunks();
+               group = new AttachmentChunks(dir.getName());
             }
             if(dir.getName().startsWith(NameIdChunks.PREFIX)) {
                group = new NameIdChunks();
