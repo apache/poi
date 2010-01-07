@@ -35,6 +35,7 @@ import org.apache.poi.hsmf.exceptions.DirectoryChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.DirectoryProperty;
@@ -77,7 +78,7 @@ public final class POIFSChunkParser {
 	public void reparseFileSystem() throws IOException {
 		// first clear this object of all chunks
 		DirectoryEntry root = this.fs.getRoot();
-		Iterator iter = root.getEntries();
+		Iterator<Entry> iter = root.getEntries();
 
 		this.directoryMap = this.processPOIIterator(iter);
 	}
@@ -219,33 +220,24 @@ public final class POIFSChunkParser {
 	 * @return
 	 * @throws IOException
 	 */
-	private HashMap processPOIIterator(Iterator iter) throws IOException {
-		HashMap currentNode = new HashMap();
+	private HashMap<String, HashMap<?,?>> processPOIIterator(Iterator<Entry> iter) throws IOException {
+		HashMap<String, HashMap<?,?>> currentNode = new HashMap<String, HashMap<?,?>>();
 
 		while(iter.hasNext()) {
-			Object obj = iter.next();
-			if(obj instanceof DocumentNode) {
-				this.processDocumentNode((DocumentNode)obj, currentNode);
-			} else if(obj instanceof DirectoryNode) {
-				String blockName = ((DirectoryNode)obj).getName();
-				Iterator viewIt = null;
-				if( ((DirectoryNode)obj).preferArray()) {
-					Object[] arr = ((DirectoryNode)obj).getViewableArray();
-					ArrayList viewList = new ArrayList(arr.length);
-
-					for(int i = 0; i < arr.length; i++) {
-						viewList.add(arr[i]);
-					}
-					viewIt = viewList.iterator();
-				} else {
-						viewIt = ((DirectoryNode)obj).getViewableIterator();
-				}
-				//store the next node on the hashmap
-				currentNode.put(blockName, processPOIIterator(viewIt));
-			} else if(obj instanceof DirectoryProperty) {
+			Entry entry = iter.next();
+			if(entry instanceof DocumentNode) {
+				this.processDocumentNode((DocumentNode)entry, currentNode);
+			} else if(entry instanceof DirectoryNode) {
+			   DirectoryNode dir = (DirectoryNode)entry;
+			   
+				String blockName = dir.getName();
+				
+				// Recurse down, storing on the hashmap
+				currentNode.put(blockName, processPOIIterator(dir.getEntries()));
+			} else if(entry instanceof DirectoryProperty) {
 				//don't do anything with the directory property chunk...
 			} else {
-					System.err.println("Unknown node: " + obj.toString());
+					System.err.println("Unknown node: " + entry.toString());
 			}
 		}
 		return currentNode;
