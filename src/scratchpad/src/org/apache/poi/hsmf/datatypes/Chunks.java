@@ -86,6 +86,7 @@ public final class Chunks implements ChunkGroup {
          subjectChunk = (StringChunk)chunk;
          break;
       case DATE:
+         // TODO - parse
          dateChunk = (ByteChunk)chunk;
          break;
       case CONVERSATION_TOPIC:

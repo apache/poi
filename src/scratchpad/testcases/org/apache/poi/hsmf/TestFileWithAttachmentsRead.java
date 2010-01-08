@@ -17,18 +17,13 @@
 
 package org.apache.poi.hsmf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Tests to verify that we can read attachments from msg file
@@ -36,50 +31,63 @@ import org.apache.poi.POIDataSamples;
  * @author Nicolas Bureau
  */
 public class TestFileWithAttachmentsRead extends TestCase {
-	private MAPIMessage mapiMessage;
+   private MAPIMessage mapiMessage;
 
-	/**
-	 * Initialize this test, load up the attachment_test_msg.msg mapi message.
-	 * 
-	 * @throws Exception
-	 */
-	public TestFileWithAttachmentsRead() throws IOException {
-        POIDataSamples samples = POIDataSamples.getHSMFInstance();
-		this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
-	}
+   /**
+    * Initialize this test, load up the attachment_test_msg.msg mapi message.
+    * 
+    * @throws Exception
+    */
+   public TestFileWithAttachmentsRead() throws IOException {
+      POIDataSamples samples = POIDataSamples.getHSMFInstance();
+      this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
+   }
 
-	/**
-	 * Test to see if we can retrieve attachments.
-	 * 
-	 * @throws ChunkNotFoundException
-	 * 
-	 */
-	// public void testReadDisplayCC() throws ChunkNotFoundException {
-	public void testRetrieveAttachments() {
-		AttachmentChunks[] attachments = mapiMessage.getAttachmentFiles();
-		int obtained = attachments.length;
-		int expected = 2;
+   /**
+    * Test to see if we can retrieve attachments.
+    * 
+    * @throws ChunkNotFoundException
+    * 
+    */
+   public void testRetrieveAttachments() {
+      AttachmentChunks[] attachments = mapiMessage.getAttachmentFiles();
+      int obtained = attachments.length;
+      int expected = 2;
 
-		TestCase.assertEquals(obtained, expected);
-	}
+      TestCase.assertEquals(obtained, expected);
+   }
 
-	/**
-	 * Test to see if attachments are not empty.
-	 * 
-	 * @throws ChunkNotFoundException
-	 * 
-	 */
-	public void testReadAttachments() throws IOException {
+   /**
+    * Test to see if attachments are not empty.
+    */
+   public void testReadAttachments() throws IOException {
       AttachmentChunks[] attachments = mapiMessage.getAttachmentFiles();
 
-		for (AttachmentChunks attachment : attachments) {
-		   assertTrue(attachment.attachFileName.getValue().length() > 0);
+      // Basic checks
+      for (AttachmentChunks attachment : attachments) {
+         assertTrue(attachment.attachFileName.getValue().length() > 0);
          assertTrue(attachment.attachLongFileName.getValue().length() > 0);
          assertTrue(attachment.attachExtension.getValue().length() > 0);
-         assertTrue(attachment.attachMimeTag.getValue().length() > 0);
-		}
-		
-		// TODO better checking
-	}
+         if(attachment.attachMimeTag != null) {
+            assertTrue(attachment.attachMimeTag.getValue().length() > 0);
+         }
+      }
 
+      AttachmentChunks attachment;
+
+      // Now check in detail
+      attachment = mapiMessage.getAttachmentFiles()[0];
+      assertEquals("TEST-U~1.DOC", attachment.attachFileName.toString());
+      assertEquals("test-unicode.doc", attachment.attachLongFileName.toString());
+      assertEquals(".doc", attachment.attachExtension.getValue());
+      assertEquals(null, attachment.attachMimeTag);
+      assertEquals(24064, attachment.attachData.getValue().length);
+
+      attachment = mapiMessage.getAttachmentFiles()[1];
+      assertEquals("pj1.txt", attachment.attachFileName.toString());
+      assertEquals("pj1.txt", attachment.attachLongFileName.toString());
+      assertEquals(".txt", attachment.attachExtension.getValue());
+      assertEquals(null, attachment.attachMimeTag);
+      assertEquals(89, attachment.attachData.getValue().length);
+   }
 }
