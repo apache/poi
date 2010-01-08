@@ -28,21 +28,13 @@ abstract public class Chunk {
 	protected int type;
 	protected String namePrefix;
 	
-	protected Chunk(String entryName) {
-	   int splitAt = entryName.lastIndexOf('_');
-	   if(splitAt == -1 || splitAt > (entryName.length()-8)) {
-	      throw new IllegalArgumentException("Invalid chunk name " + entryName);
-	   }
-	   
-	   namePrefix = entryName.substring(0, splitAt+1);
-	   String ids = entryName.substring(splitAt+1);
-	   chunkId = Integer.parseInt(ids.substring(0, 4), 16);
-      type    = Integer.parseInt(ids.substring(4, 8), 16);
-	}
+   protected Chunk(String namePrefix, int chunkId, int type) {
+      this.namePrefix = namePrefix;
+      this.chunkId = chunkId;
+      this.type = type;
+   }
 	protected Chunk(int chunkId, int type) {
-	   namePrefix = DEFAULT_NAME_PREFIX;
-	   this.chunkId = chunkId;
-	   this.type = type;
+	   this(DEFAULT_NAME_PREFIX, chunkId, type);
 	}
 
 	/**

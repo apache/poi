@@ -44,8 +44,8 @@ public class MessageSubmissionChunk extends Chunk {
 	/**
 	 * Creates a Byte Chunk.
 	 */
-	public MessageSubmissionChunk(String entryName) {
-		super(entryName);
+	public MessageSubmissionChunk(String namePrefix, int chunkId, int type) {
+		super(namePrefix, chunkId, type);
 	}
 	
 	/**

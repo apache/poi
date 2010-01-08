@@ -36,8 +36,8 @@ public class StringChunk extends Chunk {
 	/**
 	 * Creates a String Chunk.
 	 */
-	public StringChunk(String entryName) {
-		super(entryName);
+	public StringChunk(String namePrefix, int chunkId, int type) {
+		super(namePrefix, chunkId, type);
 	}
 	
 	/**

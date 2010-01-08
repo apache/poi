@@ -102,39 +102,47 @@ public final class POIFSChunkParser {
     * Creates a chunk, and gives it to its parent group 
     */
    protected static void process(DocumentNode entry, ChunkGroup grouping) {
-      if(entry.getName().length() < 9) {
+      String entryName = entry.getName();
+      
+      if(entryName.length() < 9) {
          // Name in the wrong format
          return;
       }
-      if(entry.getName().indexOf('_') == -1) {
+      if(entryName.indexOf('_') == -1) {
          // Name in the wrong format
          return;
       }
       
-      // See if we can get a type for it
-      String idType = entry.getName().substring(entry.getName().length()-8);
-      String idS = idType.substring(0, 4);
-      String typeS = idType.substring(4); 
+      // Split it into its parts
+      int splitAt = entryName.lastIndexOf('_');
+      if(splitAt == -1 || splitAt > (entryName.length()-8)) {
+         throw new IllegalArgumentException("Invalid chunk name " + entryName);
+      }
+      
+      // Now try to turn it into id + type
+      String namePrefix = entryName.substring(0, splitAt+1);
+      String ids = entryName.substring(splitAt+1);
       try {
-         int id = Integer.parseInt(idS, 16);
-         int type = Integer.parseInt(typeS, 16);
+         int chunkId = Integer.parseInt(ids.substring(0, 4), 16);
+         int type    = Integer.parseInt(ids.substring(4, 8), 16);
+         
          Chunk chunk = null;
          
          // Special cases based on the ID
-         switch(id) {
+         switch(chunkId) {
          case Chunks.SUBMISSION_ID_DATE:
-            chunk = new MessageSubmissionChunk(entry.getName());
+            chunk = new MessageSubmissionChunk(namePrefix, chunkId, type);
             break;
          default:
             // Nothing special about this ID
             // So, do the usual thing which is by type
             switch(type) {
             case Types.BINARY:
-               chunk = new ByteChunk(entry.getName());
+               chunk = new ByteChunk(namePrefix, chunkId, type);
                break;
             case Types.ASCII_STRING:
             case Types.UNICODE_STRING:
-               chunk = new StringChunk(entry.getName());
+               chunk = new StringChunk(namePrefix, chunkId, type);
                break;
             }
          }
