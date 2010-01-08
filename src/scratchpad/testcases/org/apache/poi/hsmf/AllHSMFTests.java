@@ -24,19 +24,19 @@ import org.apache.poi.hsmf.datatypes.*;
 import org.apache.poi.hsmf.parsers.*;
 
 public final class AllHSMFTests {
+   public static Test suite() {
+      TestSuite suite = new TestSuite(AllHSMFTests.class.getName());
+      suite.addTestSuite(TestBasics.class);
+      suite.addTestSuite(TestBlankFileRead.class);
+      suite.addTestSuite(TestSimpleFileRead.class);
+      suite.addTestSuite(TestOutlook30FileRead.class);
+      suite.addTestSuite(TestFileWithAttachmentsRead.class);
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllHSMFTests.class.getName());
-		suite.addTestSuite(TestBlankFileRead.class);
-		suite.addTestSuite(TestSimpleFileRead.class);
-		suite.addTestSuite(TestOutlook30FileRead.class);
-		suite.addTestSuite(TestFileWithAttachmentsRead.class);
-		
       suite.addTestSuite(TestChunkData.class);
       suite.addTestSuite(TestTypes.class);
 
       suite.addTestSuite(TestPOIFSChunkParser.class);
-      
-		return suite;
-	}
+
+      return suite;
+   }
 }

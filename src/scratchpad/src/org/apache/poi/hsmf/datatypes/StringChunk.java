@@ -54,11 +54,7 @@ public class StringChunk extends Chunk {
       
 	   switch(type) {
 	   case Types.ASCII_STRING:
-         try {
-            tmpValue = new String(data, "CP1252");
-         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Core encoding not found, JVM broken?", e);
-         }
+	      tmpValue = parseAs7BitData(data);
          break;
 	   case Types.UNICODE_STRING:
 	      tmpValue = StringUtil.getFromUnicodeLE(data);
@@ -92,11 +88,23 @@ public class StringChunk extends Chunk {
       
       out.write(data);
 	}
-
+	
    public String getValue() {
       return this.value;
    }
 	public String toString() {
 		return this.value;
 	}
+
+   /**
+    * Parses as non-unicode, supposedly 7 bit CP1252 data
+    *  and returns the string that that yields.
+    */
+   protected static String parseAs7BitData(byte[] data) {
+      try {
+         return new String(data, "CP1252");
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("Core encoding not found, JVM broken?", e);
+      }
+   }
 }

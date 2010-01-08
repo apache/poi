@@ -61,4 +61,16 @@ public class ByteChunk extends Chunk {
    public void setValue(byte[] value) {
       this.value = value;
    }
+   
+   /**
+    * Returns the data, formatted as a string assuming it
+    *  was a non-unicode string.
+    * If your data isn't in fact stored as basically
+    *  ASCII, don't expect this to return much of any
+    *  sense.... 
+    * @return
+    */
+   public String getAs7bitString() {
+      return StringChunk.parseAs7BitData(value);
+   }
 }
