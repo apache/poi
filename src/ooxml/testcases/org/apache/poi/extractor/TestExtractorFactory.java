@@ -59,6 +59,8 @@ public class TestExtractorFactory extends TestCase {
    private File pptx;
 
    private File msg;
+   private File msgEmb;
+   
    private File vsd;
 
    protected void setUp() throws Exception {
@@ -86,6 +88,7 @@ public class TestExtractorFactory extends TestCase {
       
       POIDataSamples olTests = POIDataSamples.getHSMFInstance();
       msg = olTests.getFile("quick.msg");
+      msgEmb = olTests.getFile("attachment_test_msg.msg");
    }
 
    public void testFile() throws Exception {
@@ -404,9 +407,25 @@ public class TestExtractorFactory extends TestCase {
       assertEquals(1, numPpt);
       assertEquals(2, numXls);
       assertEquals(1, numWord);
+      
+      // Outlook
+      ext = (OutlookTextExtactor)
+      ExtractorFactory.createExtractor(msgEmb);
+      embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+
+      numWord = 0; numXls = 0; numPpt = 0;
+      assertEquals(1, embeds.length);
+      for(int i=0; i<embeds.length; i++) {
+         assertTrue(embeds[i].getText().length() > 20);
+         if(embeds[i] instanceof PowerPointExtractor) numPpt++;
+         else if(embeds[i] instanceof ExcelExtractor) numXls++;
+         else if(embeds[i] instanceof WordExtractor) numWord++;
+      }
+      assertEquals(0, numPpt);
+      assertEquals(0, numXls);
+      assertEquals(1, numWord);
 
       // TODO - PowerPoint
       // TODO - Visio
-      // TODO - Outlook
    }
 }
