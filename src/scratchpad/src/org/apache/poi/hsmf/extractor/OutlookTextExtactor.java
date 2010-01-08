@@ -26,17 +26,21 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public class HSMFTextExtactor extends POIOLE2TextExtractor {
-   public HSMFTextExtactor(MAPIMessage msg) {
+/**
+ * A text extractor for HSMF (Outlook) .msg files.
+ * Outputs in a format somewhat like a plain text email.
+ */
+public class OutlookTextExtactor extends POIOLE2TextExtractor {
+   public OutlookTextExtactor(MAPIMessage msg) {
       super(msg);
    }
-   public HSMFTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+   public OutlookTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(poifsDir, fs));
    }
-   public HSMFTextExtactor(POIFSFileSystem fs) throws IOException {
+   public OutlookTextExtactor(POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
    }
-   public HSMFTextExtactor(InputStream inp) throws IOException {
+   public OutlookTextExtactor(InputStream inp) throws IOException {
       this(new MAPIMessage(inp));
    }
 
@@ -74,5 +78,4 @@ public class HSMFTextExtactor extends POIOLE2TextExtractor {
       
       return s.toString();
    }
-
 }

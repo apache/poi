@@ -31,7 +31,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
-import org.apache.poi.hsmf.extractor.HSMFTextExtactor;
+import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -142,7 +142,7 @@ public class ExtractorFactory {
 			if(entry.getName().equals("__substg1.0_1000001E") ||
 			      entry.getName().equals("__substg1.0_0047001E") ||
 			      entry.getName().equals("__substg1.0_0037001E")) {
-			   return new HSMFTextExtactor(poifsDir, fs);
+			   return new OutlookTextExtactor(poifsDir, fs);
 			}
 		}
 		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
