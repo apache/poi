@@ -45,6 +45,13 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    }
 
    /**
+    * Returns the underlying MAPI message
+    */
+   public MAPIMessage getMAPIMessage() {
+      return (MAPIMessage)document;
+   }
+   
+   /**
     * Outputs something a little like a RFC822 email
     */
    public String getText() {

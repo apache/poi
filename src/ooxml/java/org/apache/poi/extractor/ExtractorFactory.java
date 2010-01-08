@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +32,8 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
+import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -139,9 +142,14 @@ public class ExtractorFactory {
 			if(entry.getName().equals("VisioDocument")) {
 				return new VisioTextExtractor(poifsDir, fs);
 			}
-			if(entry.getName().equals("__substg1.0_1000001E") ||
+			if(
+			      entry.getName().equals("__substg1.0_1000001E") ||
+               entry.getName().equals("__substg1.0_1000001F") ||
 			      entry.getName().equals("__substg1.0_0047001E") ||
-			      entry.getName().equals("__substg1.0_0037001E")) {
+               entry.getName().equals("__substg1.0_0047001F") ||
+			      entry.getName().equals("__substg1.0_0037001E") ||
+               entry.getName().equals("__substg1.0_0037001F")
+			) {
 			   return new OutlookTextExtactor(poifsDir, fs);
 			}
 		}
@@ -157,8 +165,12 @@ public class ExtractorFactory {
 	 *  {@link POITextExtractor} for each embeded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException {
-		// Find all the embeded directories
+	   // All the embded directories we spotted
 		ArrayList<Entry> dirs = new ArrayList<Entry>();
+		// For anything else not directly held in as a POIFS directory
+		ArrayList<InputStream> nonPOIFS = new ArrayList<InputStream>();
+		
+      // Find all the embeded directories
 		POIFSFileSystem fs = ext.getFileSystem();
 		if(fs == null) {
 			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
@@ -189,20 +201,44 @@ public class ExtractorFactory {
 		} else if(ext instanceof PowerPointExtractor) {
 			// Tricky, not stored directly in poifs
 			// TODO
+		} else if(ext instanceof OutlookTextExtactor) {
+		   // Stored in the Attachment blocks
+		   MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
+		   for(AttachmentChunks attachment : msg.getAttachmentFiles()) {
+		      if(attachment.attachData != null) {
+   		      byte[] data = attachment.attachData.getValue();
+   		      nonPOIFS.add( new ByteArrayInputStream(data) );
+		      }
+		   }
 		}
 		
 		// Create the extractors
-		if(dirs == null || dirs.size() == 0) {
+		if(
+		      (dirs == null || dirs.size() == 0) &&
+		      (nonPOIFS == null || nonPOIFS.size() == 0)
+		){
 			return new POITextExtractor[0];
 		}
 		
-		POITextExtractor[] te = new POITextExtractor[dirs.size()];
-		for(int i=0; i<te.length; i++) {
-			te[i] = createExtractor(
+		ArrayList<POITextExtractor> e = new ArrayList<POITextExtractor>();
+		for(int i=0; i<dirs.size(); i++) {
+			e.add( createExtractor(
 					(DirectoryNode)dirs.get(i), ext.getFileSystem()
-			);
+			) );
 		}
-		return te;
+		for(int i=0; i<nonPOIFS.size(); i++) {
+		   try {
+		      e.add( createExtractor(nonPOIFS.get(i)) );
+         } catch(IllegalArgumentException ie) {
+            // Ignore, just means it didn't contain
+            //  a format we support as yet
+		   } catch(XmlException xe) {
+		      throw new IOException(xe.getMessage());
+		   } catch(OpenXML4JException oe) {
+		      throw new IOException(oe.getMessage());
+		   }
+		}
+		return e.toArray(new POITextExtractor[e.size()]);
 	}
 
 	/**
