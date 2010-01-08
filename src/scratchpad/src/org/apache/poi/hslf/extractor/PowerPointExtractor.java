@@ -235,7 +235,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			// Not currently using _notes, as that can have the notes of
 			// master sheets in. Grab Slide list, then work from there,
 			// but ensure no duplicates
-			HashSet seenNotes = new HashSet();
+			HashSet<Integer> seenNotes = new HashSet<Integer>();
 			HeadersFooters hf = _show.getNotesHeadersFooters();
 
 			for (int i = 0; i < _slides.length; i++) {
