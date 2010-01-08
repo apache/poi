@@ -190,6 +190,27 @@ public class MAPIMessage {
 		return getStringFromChunk(mainChunks.messageClass);
 	}
 
+	
+	/**
+	 * Gets the main, core details chunks
+	 */
+	public Chunks getMainChunks() {
+	   return mainChunks;
+	}
+	/**
+	 * Gets the recipient details chunks, or
+	 *  null if there aren't any
+	 */
+	public RecipientChunks getRecipientDetailsChunks() {
+	   return recipientChunks;
+	}
+	/**
+	 * Gets the Name ID chunks, or
+    *  null if there aren't any
+	 */
+	public NameIdChunks getNameIdChunks() {
+	   return nameIdChunks;
+	}
 	/**
 	 * Gets the message attachments.
 	 */
