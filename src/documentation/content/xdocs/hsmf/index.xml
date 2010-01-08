@@ -34,17 +34,21 @@
             <title>Overview</title>
 
             <p>HSMF is the POI Project's pure Java implementation of the Outlook MSG format.</p>
-			<p>At this time, it provides simple read access to some of the
-			   textual content of MSG files. Further support and documentation
-			   is expected over the comming weeks and months. For now, users
-			   are advised to consult the unit tests for example use.</p>
+            <p>At this time, it provides low-level read access to all of the file, along
+			    with a user-facing way to get at the common textual content of MSG files.
+             to all</p>
+            <p>There is an example MSG textual renderer, which shows how to access the
+             common parts such as sender, subject, message body and examples. This is
+             in the 
+                <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/examples/src/org/apache/poi/hsmf/examples/">HSMF examples area</link> 
+             of SVN. You may also wish to look at the unit tests for more use guides.</p>
+
             <note> 
                 This code currently lives the 
                 <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
                 of the POI SVN repository. 
-				Ensure that you have the scratchpad jar or the scratchpad 
-                build area in your
-				classpath before experimenting with this code.
+                Ensure that you have the scratchpad jar or the scratchpad 
+                build area in your classpath before experimenting with this code.
 			</note>
         </section>
     </body>
