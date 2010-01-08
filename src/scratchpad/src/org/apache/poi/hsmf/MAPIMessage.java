@@ -172,6 +172,23 @@ public class MAPIMessage {
 	public String getDisplayBCC() throws ChunkNotFoundException {
 		return getStringFromChunk(mainChunks.displayBCCChunk);
 	}
+	
+	
+	/**
+	 * Returns the recipient's email address, checking all the
+	 *  likely chunks in search of it.
+	 */
+	public String getRecipientEmailAddress() throws ChunkNotFoundException {
+	   if(recipientChunks == null) {
+	      throw new ChunkNotFoundException("No recipients section present");
+	   }
+	   String email = recipientChunks.getRecipientEmailAddress();
+	   if(email != null) {
+	      return email;
+	   } else {
+	      throw new ChunkNotFoundException();
+	   }
+	}
 
 
 	/**

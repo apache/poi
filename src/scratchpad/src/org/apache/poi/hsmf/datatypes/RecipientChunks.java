@@ -28,14 +28,61 @@ import java.util.List;
 public final class RecipientChunks implements ChunkGroup {
    public static final String PREFIX = "__recip_version1.0_#";
    
+   public static final int RECIPIENT_NAME   = 0x3001;
+   public static final int DELIVERY_TYPE    = 0x3002;
    public static final int RECIPIENT_SEARCH = 0x300B;
    public static final int RECIPIENT_EMAIL  = 0x39FE;
    
    /** TODO */
-   public ByteChunk recipientSearchChunk; 
-   /** TODO */
+   public ByteChunk recipientSearchChunk;
+   /**
+    * The "name", which could be their name if an
+    *  internal person, or their email address
+    *  if an external person
+    */
+   public StringChunk recipientNameChunk;
+   /** 
+    * The email address of the recipient, but
+    *  isn't always present...
+    */
    public StringChunk recipientEmailChunk;
+   /**
+    * Normally EX or SMTP. Will generally affect
+    *  where the email address ends up.
+    */
+   public StringChunk deliveryTypeChunk;
    
+   
+   /**
+    * Tries to find their email address, in
+    *  whichever chunk holds it given the
+    *  delivery type.
+    */
+   public String getRecipientEmailAddress() {
+      if(recipientEmailChunk != null) {
+         return recipientEmailChunk.getValue();
+      }
+      // Probably in the name field
+      if(recipientNameChunk != null) {
+         String name = recipientNameChunk.getValue();
+         if(name.indexOf('@') > -1) {
+            // Strip leading and trailing quotes if needed
+            if(name.startsWith("'") && name.endsWith("'")) {
+               return name.substring(1, name.length()-1);
+            }
+            return name;
+         }
+      }
+      // Check the search chunk
+      if(recipientSearchChunk != null) {
+         String search = recipientSearchChunk.getAs7bitString();
+         if(search.indexOf("SMTP:") != -1) {
+            return search.substring(search.indexOf("SMTP:") + 5);
+         }
+      }
+      // Can't find it
+      return null;
+   }
    
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
@@ -56,8 +103,14 @@ public final class RecipientChunks implements ChunkGroup {
          // TODO - parse
          recipientSearchChunk = (ByteChunk)chunk;
          break;
+      case RECIPIENT_NAME:
+         recipientNameChunk = (StringChunk)chunk;
+         break;
       case RECIPIENT_EMAIL:
          recipientEmailChunk = (StringChunk)chunk;
+         break;
+      case DELIVERY_TYPE:
+         deliveryTypeChunk = (StringChunk)chunk;
          break;
       }
 

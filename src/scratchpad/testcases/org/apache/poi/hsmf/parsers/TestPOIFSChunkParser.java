@@ -105,6 +105,18 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertNotNull(msg.getRecipientDetailsChunks());
       
       assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks().recipientEmailChunk.getValue());
+      
+      
+      // Try both SMTP and EX files for recipient
+      assertEquals("EX", msg.getRecipientDetailsChunks().deliveryTypeChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks().recipientEmailChunk.getValue());
+      
+      msg = new MAPIMessage(new POIFSFileSystem(
+            new FileInputStream(samples.getFile("simple_test_msg.msg"))
+      ));
+      assertEquals("SMTP", msg.getRecipientDetailsChunks().deliveryTypeChunk.getValue());
+      assertEquals(null, msg.getRecipientDetailsChunks().recipientEmailChunk);
+      assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks().recipientNameChunk.getValue());
    }
    
    public void testFindsNameId() throws IOException {
