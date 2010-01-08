@@ -27,9 +27,13 @@ public class AttachmentChunks implements ChunkGroup {
    
    /* String parts of Outlook Messages Attachments that are currently known */
    public static final int ATTACH_DATA          = 0x3701;
+   // 0x3702 might be "attach encoding"
    public static final int ATTACH_EXTENSION     = 0x3703;
    public static final int ATTACH_FILENAME      = 0x3704;
+   // 0x3705 might be "attach method"
    public static final int ATTACH_LONG_FILENAME = 0x3707;
+   public static final int ATTACH_RENDERING_WMF = 0x3709;
+   // 0x370B might be "rendering position"
    public static final int ATTACH_MIME_TAG      = 0x370E;
 
    public ByteChunk attachData;
@@ -37,6 +41,12 @@ public class AttachmentChunks implements ChunkGroup {
    public StringChunk attachFileName;
    public StringChunk attachLongFileName;
    public StringChunk attachMimeTag;
+   /** 
+    * This is in WMF Format. You'll probably want to pass it
+    *  to Apache Batik to turn it into a SVG that you can
+    *  then display. 
+    */
+   public ByteChunk attachRenderingWMF;
    
    /**
     * What the POIFS name of this attachment is.
@@ -82,6 +92,8 @@ public class AttachmentChunks implements ChunkGroup {
       case ATTACH_MIME_TAG:
          attachMimeTag = (StringChunk)chunk;
          break;
+      case ATTACH_RENDERING_WMF:
+         attachRenderingWMF = (ByteChunk)chunk;
       }
 
       // And add to the main list

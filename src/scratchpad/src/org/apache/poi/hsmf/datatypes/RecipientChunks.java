@@ -53,6 +53,7 @@ public final class RecipientChunks implements ChunkGroup {
    public void record(Chunk chunk) {
       switch(chunk.getChunkId()) {
       case RECIPIENT_SEARCH:
+         // TODO - parse
          recipientSearchChunk = (ByteChunk)chunk;
          break;
       case RECIPIENT_EMAIL:

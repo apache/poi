@@ -35,8 +35,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
- *
- * @author Travis Ferguson
+ * 
+ * If you want to develop with HSMF, you might find it worth getting
+ *  some of the microsoft public documentation, such as:
+ *  
+ * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
 public class MAPIMessage {
 	private POIFSFileSystem fs;
