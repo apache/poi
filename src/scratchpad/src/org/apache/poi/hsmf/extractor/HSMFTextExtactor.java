@@ -23,11 +23,15 @@ import java.text.SimpleDateFormat;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class HSMFTextExtactor extends POIOLE2TextExtractor {
    public HSMFTextExtactor(MAPIMessage msg) {
       super(msg);
+   }
+   public HSMFTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+      this(new MAPIMessage(poifsDir, fs));
    }
    public HSMFTextExtactor(POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
