@@ -36,10 +36,9 @@ public class ByteChunk extends Chunk {
 	/**
 	 * Creates a Byte Chunk.
 	 */
-	public ByteChunk(String entryName) {
-		super(entryName);
-	}
-	
+   public ByteChunk(String namePrefix, int chunkId, int type) {
+      super(namePrefix, chunkId, type);
+   }
 	/**
 	 * Create a Byte Chunk, with the specified
 	 *  type.

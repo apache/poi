@@ -40,7 +40,7 @@ public final class TestChunkData extends TestCase {
 		assertEquals(0x0200, chunk.getChunkId());
 		assertEquals(0x001E, chunk.getType());
 
-      chunk = new StringChunk("__substg1.0_0200001E");
+      chunk = new StringChunk("__substg1.0_", 0x0200, 0x001E);
       assertEquals("__substg1.0_0200001E", chunk.getEntryName());
       assertEquals(0x0200, chunk.getChunkId());
       assertEquals(0x001E, chunk.getType());
