@@ -25,7 +25,7 @@ import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
-import org.apache.poi.hsmf.extractor.HSMFTextExtactor;
+import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -169,7 +169,7 @@ public class TestExtractorFactory extends TestCase {
       // Outlook msg
       assertTrue(
             ExtractorFactory.createExtractor(msg)
-            instanceof HSMFTextExtactor
+            instanceof OutlookTextExtactor
       );
       assertTrue(
             ExtractorFactory.createExtractor(msg).getText().length() > 50
@@ -248,7 +248,7 @@ public class TestExtractorFactory extends TestCase {
 		// Outlook msg
       assertTrue(
             ExtractorFactory.createExtractor(new FileInputStream(msg))
-            instanceof HSMFTextExtactor
+            instanceof OutlookTextExtactor
       );
       assertTrue(
             ExtractorFactory.createExtractor(new FileInputStream(msg)).getText().length() > 50
@@ -303,7 +303,7 @@ public class TestExtractorFactory extends TestCase {
       // Outlook msg
       assertTrue(
             ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(msg)))
-            instanceof HSMFTextExtactor
+            instanceof OutlookTextExtactor
       );
       assertTrue(
             ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(msg))).getText().length() > 50

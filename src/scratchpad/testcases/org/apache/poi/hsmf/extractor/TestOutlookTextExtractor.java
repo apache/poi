@@ -29,10 +29,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests to verify that the text extractor works
  */
-public final class TestHSMFTextExtractor extends TestCase {
+public final class TestOutlookTextExtractor extends TestCase {
    private POIDataSamples samples;
 
-	public TestHSMFTextExtractor() throws IOException {
+	public TestOutlookTextExtractor() throws IOException {
         samples = POIDataSamples.getHSMFInstance();
 	}
 	
@@ -49,7 +49,7 @@ public final class TestHSMFTextExtractor extends TestCase {
       );
       MAPIMessage msg = new MAPIMessage(simple);
       
-      HSMFTextExtactor ext = new HSMFTextExtactor(msg);
+      OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();
       
       assertContains(text, "From: Kevin Roast\n");
@@ -66,7 +66,7 @@ public final class TestHSMFTextExtractor extends TestCase {
             new FileInputStream(samples.getFile("simple_test_msg.msg"))
       ));
       
-      HSMFTextExtactor ext = new HSMFTextExtactor(msg);
+      OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();
       
       assertContains(text, "From: Travis Ferguson\n");
@@ -79,13 +79,13 @@ public final class TestHSMFTextExtractor extends TestCase {
    }
 
    public void testConstructors() throws Exception {
-      String inp = (new HSMFTextExtactor(new FileInputStream(
+      String inp = (new OutlookTextExtactor(new FileInputStream(
             samples.getFile("simple_test_msg.msg")
       )).getText());
-      String poifs = (new HSMFTextExtactor(new POIFSFileSystem(new FileInputStream(
+      String poifs = (new OutlookTextExtactor(new POIFSFileSystem(new FileInputStream(
             samples.getFile("simple_test_msg.msg")
       ))).getText());
-      String mapi = (new HSMFTextExtactor(new MAPIMessage(new FileInputStream(
+      String mapi = (new OutlookTextExtactor(new MAPIMessage(new FileInputStream(
             samples.getFile("simple_test_msg.msg")
       ))).getText());
       
