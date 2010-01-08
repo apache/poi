@@ -34,6 +34,7 @@ import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -78,15 +79,24 @@ public class MAPIMessage extends POIDocument {
 	   this(new POIFSFileSystem(in));
 	}
    /**
-    * Constructor for reading MSG Files from an input stream.
+    * Constructor for reading MSG Files from a POIFS filesystem
     * @param in
     * @throws IOException
     */
    public MAPIMessage(POIFSFileSystem fs) throws IOException {
-		super(fs);
-		
+		this(fs.getRoot(), fs);
+   }
+   /**
+    * Constructor for reading MSG Files from a certain
+    *  point within a POIFS filesystem
+    * @param in
+    * @throws IOException
+    */
+   public MAPIMessage(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+      super(poifsDir, fs);
+      
 		// Grab all the chunks
-		ChunkGroup[] chunkGroups = POIFSChunkParser.parse(fs);
+		ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 		
 		// Grab interesting bits
 		ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
