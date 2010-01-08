@@ -55,7 +55,7 @@ public class StringChunk extends Chunk {
 	   switch(type) {
 	   case Types.ASCII_STRING:
          try {
-            tmpValue = new String(data, "UTF-16LE");
+            tmpValue = new String(data, "CP1252");
          } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Core encoding not found, JVM broken?", e);
          }
@@ -77,7 +77,7 @@ public class StringChunk extends Chunk {
       switch(type) {
       case Types.ASCII_STRING:
          try {
-            data = value.getBytes("UTF-16LE");
+            data = value.getBytes("CP1252");
          } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Core encoding not found, JVM broken?", e);
          }

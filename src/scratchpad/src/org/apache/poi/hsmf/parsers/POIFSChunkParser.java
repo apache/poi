@@ -55,7 +55,7 @@ public final class POIFSChunkParser {
       //  there doesn't seem to be any use of that in Outlook
       for(Entry entry : node) {
          if(entry instanceof DirectoryNode) {
-            DirectoryNode dir = (DirectoryNode)node;
+            DirectoryNode dir = (DirectoryNode)entry;
             ChunkGroup group = null;
             
             // Do we know what to do with it?
@@ -66,7 +66,7 @@ public final class POIFSChunkParser {
                group = new NameIdChunks();
             }
             if(dir.getName().startsWith(RecipientChunks.PREFIX)) {
-               group = new NameIdChunks();
+               group = new RecipientChunks();
             }
             
             if(group != null) {

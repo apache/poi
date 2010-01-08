@@ -32,7 +32,7 @@ public final class RecipientChunks implements ChunkGroup {
    public static final int RECIPIENT_EMAIL  = 0x39FE;
    
    /** TODO */
-   public StringChunk recipientSearchChunk; 
+   public ByteChunk recipientSearchChunk; 
    /** TODO */
    public StringChunk recipientEmailChunk;
    
@@ -53,7 +53,7 @@ public final class RecipientChunks implements ChunkGroup {
    public void record(Chunk chunk) {
       switch(chunk.getChunkId()) {
       case RECIPIENT_SEARCH:
-         recipientSearchChunk = (StringChunk)chunk;
+         recipientSearchChunk = (ByteChunk)chunk;
          break;
       case RECIPIENT_EMAIL:
          recipientEmailChunk = (StringChunk)chunk;

@@ -63,7 +63,7 @@ public final class Chunks implements ChunkGroup {
    /** Type of server that the message originated from (SMTP, etc). */
    public StringChunk sentByServerType;
    /** TODO */
-   public StringChunk dateChunk; 
+   public ByteChunk dateChunk; 
    /** TODO */
    public StringChunk emailFromChunk; 
 
@@ -86,7 +86,7 @@ public final class Chunks implements ChunkGroup {
          subjectChunk = (StringChunk)chunk;
          break;
       case DATE:
-         dateChunk = (StringChunk)chunk;
+         dateChunk = (ByteChunk)chunk;
          break;
       case CONVERSATION_TOPIC:
          conversationTopic = (StringChunk)chunk;
