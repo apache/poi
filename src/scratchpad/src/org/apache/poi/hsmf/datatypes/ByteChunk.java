@@ -23,7 +23,11 @@ import java.io.OutputStream;
 import org.apache.poi.util.IOUtils;
 
 /**
- * A Chunk made up of a ByteArrayOutputStream.
+ * A Chunk that holds binary data, normally
+ *  unparsed.
+ * Generally as we know how to make sense of the
+ *  contents, we create a new Chunk class and add
+ *  a special case in the parser for them.
  */
 
 public class ByteChunk extends Chunk {
