@@ -17,16 +17,14 @@
 
 package org.apache.poi.hsmf.examples;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 
 /**
@@ -35,7 +33,6 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
  * attachments.
  * 
  * @author Bruno Girin
- *
  */
 public class Msg2txt {
 	
@@ -105,17 +102,13 @@ public class Msg2txt {
 			} catch (ChunkNotFoundException e) {
 				System.err.println("No message body");
 			}
-			Map attachmentMap = msg.getAttachmentFiles();
-			if(attachmentMap.size() > 0) {
+			
+			AttachmentChunks[] attachments = msg.getAttachmentFiles();
+			if(attachments.length > 0) {
 				File d = new File(attDirName);
 				if(d.mkdir()) {
-					for(
-							Iterator ii = attachmentMap.entrySet().iterator();
-							ii.hasNext();
-							) {
-						Map.Entry entry = (Map.Entry)ii.next();
-						processAttachment(d, entry.getKey().toString(),
-								(ByteArrayInputStream)entry.getValue());
+					for(AttachmentChunks attachment : attachments) {
+						processAttachment(attachment, d);
 					}
 				} else {
 					System.err.println("Can't create directory "+attDirName);
@@ -131,33 +124,26 @@ public class Msg2txt {
 	/**
 	 * Processes a single attachment: reads it from the Outlook MSG file and
 	 * writes it to disk as an individual file.
-	 * 
+	 *
+	 * @param attachment the chunk group describing the attachment
 	 * @param dir the directory in which to write the attachment file
-	 * @param fileName the name of the attachment file
-	 * @param fileIn the input stream that contains the attachment's data
 	 * @throws IOException when any of the file operations fails
 	 */
-	public void processAttachment(File dir, String fileName,
-			ByteArrayInputStream fileIn) throws IOException {
+	public void processAttachment(AttachmentChunks attachment, 
+	      File dir) throws IOException {
+	   String fileName = attachment.attachFileName.toString();
+	   if(attachment.attachLongFileName != null) {
+	      fileName = attachment.attachLongFileName.toString();
+	   }
+	   
 		File f = new File(dir, fileName);
 		OutputStream fileOut = null;
 		try {
 			fileOut = new FileOutputStream(f);
-			byte[] buffer = new byte[2048];
-			int bNum = fileIn.read(buffer);
-			while(bNum > 0) {
-				fileOut.write(buffer);
-				bNum = fileIn.read(buffer);
-			}
+			fileOut.write(attachment.attachData.getValue());
 		} finally {
-			try {
-				if(fileIn != null) {
-					fileIn.close();
-				}
-			} finally {
-				if(fileOut != null) {
-					fileOut.close();
-				}
+			if(fileOut != null) {
+				fileOut.close();
 			}
 		}
 	}
