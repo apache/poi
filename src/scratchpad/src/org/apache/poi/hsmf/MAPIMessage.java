@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
@@ -191,6 +192,17 @@ public class MAPIMessage {
 	 */
 	public String getMessageClass() throws ChunkNotFoundException {
 		return getStringFromChunk(mainChunks.messageClass);
+	}
+	
+	/**
+	 * Gets the date that the message was accepted by the
+	 *  server on.
+	 */
+	public Calendar getMessageDate() throws ChunkNotFoundException {
+	   if(mainChunks.submissionChunk != null) {
+	      return mainChunks.submissionChunk.getAcceptedAtTime();
+	   }
+	   throw new ChunkNotFoundException();
 	}
 
 	

@@ -20,6 +20,8 @@ package org.apache.poi.hsmf.parsers;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -64,6 +66,16 @@ public final class TestPOIFSChunkParser extends TestCase {
          assertEquals("Kevin Roast", msg.getDisplayTo());
          assertEquals("Kevin Roast", msg.getDisplayFrom());
          assertEquals("Test the content transformer", msg.getSubject());
+      } catch(ChunkNotFoundException e) {
+         fail();
+      }
+      
+      // Check date too
+      try {
+         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+         
+         Calendar c = msg.getMessageDate();
+         assertEquals( "2007-06-14 09:42:55", f.format(c.getTime()) );
       } catch(ChunkNotFoundException e) {
          fail();
       }

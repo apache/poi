@@ -25,6 +25,7 @@ import org.apache.poi.hsmf.datatypes.ByteChunk;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.MessageSubmissionChunk;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
@@ -111,19 +112,31 @@ public final class POIFSChunkParser {
       }
       
       // See if we can get a type for it
-      String ending = entry.getName().substring(entry.getName().length()-4);
+      String idType = entry.getName().substring(entry.getName().length()-8);
+      String idS = idType.substring(0, 4);
+      String typeS = idType.substring(4); 
       try {
-         int type = Integer.parseInt(ending, 16);
+         int id = Integer.parseInt(idS, 16);
+         int type = Integer.parseInt(typeS, 16);
          Chunk chunk = null;
          
-         switch(type) {
-         case Types.BINARY:
-            chunk = new ByteChunk(entry.getName());
+         // Special cases based on the ID
+         switch(id) {
+         case Chunks.SUBMISSION_ID_DATE:
+            chunk = new MessageSubmissionChunk(entry.getName());
             break;
-         case Types.ASCII_STRING:
-         case Types.UNICODE_STRING:
-            chunk = new StringChunk(entry.getName());
-            break;
+         default:
+            // Nothing special about this ID
+            // So, do the usual thing which is by type
+            switch(type) {
+            case Types.BINARY:
+               chunk = new ByteChunk(entry.getName());
+               break;
+            case Types.ASCII_STRING:
+            case Types.UNICODE_STRING:
+               chunk = new StringChunk(entry.getName());
+               break;
+            }
          }
          
          if(chunk != null) {

@@ -30,7 +30,9 @@ public final class Chunks implements ChunkGroup {
    /* String parts of Outlook Messages that are currently known */
    public static final int MESSAGE_CLASS       = 0x001A;
    public static final int SUBJECT             = 0x0037;
-   public static final int DATE                = 0x0047;
+   // "PidTagMessageSubmissionId" as given by accepting server
+   public static final int SUBMISSION_ID_DATE  = 0x0047;
+   // 0x0050 -> 0x006F seem to be routing info or similar
    public static final int CONVERSATION_TOPIC  = 0x0070;
    public static final int SENT_BY_SERVER_TYPE = 0x0075;
    // RECEIVEDEMAIL = 76
@@ -39,7 +41,9 @@ public final class Chunks implements ChunkGroup {
    public static final int EMAIL_FROM          = 0x0C1F;
    public static final int DISPLAY_CC          = 0x0E03;
    public static final int DISPLAY_BCC         = 0x0E02;
+   // 0x0E1D seems a duplicate of 0x0070 !
    public static final int TEXT_BODY           = 0x1000;
+   public static final int MESSAGE_ID          = 0x1035;
    
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
@@ -63,9 +67,11 @@ public final class Chunks implements ChunkGroup {
    /** Type of server that the message originated from (SMTP, etc). */
    public StringChunk sentByServerType;
    /** TODO */
-   public ByteChunk dateChunk; 
+   public MessageSubmissionChunk submissionChunk; 
    /** TODO */
    public StringChunk emailFromChunk; 
+   /** The message ID */
+   public StringChunk messageId;
 
    public Chunk[] getAll() {
       return allChunks.toArray(new Chunk[allChunks.size()]);
@@ -82,12 +88,15 @@ public final class Chunks implements ChunkGroup {
       case MESSAGE_CLASS:
          messageClass = (StringChunk)chunk;
          break;
+      case MESSAGE_ID:
+         messageId = (StringChunk)chunk;
+         break;
       case SUBJECT:
          subjectChunk = (StringChunk)chunk;
          break;
-      case DATE:
+      case SUBMISSION_ID_DATE:
          // TODO - parse
-         dateChunk = (ByteChunk)chunk;
+         submissionChunk = (MessageSubmissionChunk)chunk;
          break;
       case CONVERSATION_TOPIC:
          conversationTopic = (StringChunk)chunk;
