@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
@@ -42,9 +44,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
-public class MAPIMessage {
-	private POIFSFileSystem fs;
-	
+public class MAPIMessage extends POIDocument {
 	private Chunks mainChunks;
 	private NameIdChunks nameIdChunks;
 	private RecipientChunks recipientChunks;
@@ -55,7 +55,8 @@ public class MAPIMessage {
 	 *
 	 */
 	public MAPIMessage() {
-		//TODO make writing possible
+	   // TODO - make writing possible
+	   super(new POIFSFileSystem());
 	}
 
 
@@ -82,10 +83,10 @@ public class MAPIMessage {
     * @throws IOException
     */
    public MAPIMessage(POIFSFileSystem fs) throws IOException {
-		this.fs = fs;
+		super(fs);
 		
 		// Grab all the chunks
-		ChunkGroup[] chunkGroups = POIFSChunkParser.parse(this.fs);
+		ChunkGroup[] chunkGroups = POIFSChunkParser.parse(fs);
 		
 		// Grab interesting bits
 		ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
@@ -249,4 +250,12 @@ public class MAPIMessage {
 	public AttachmentChunks[] getAttachmentFiles() {
 		return attachmentChunks;
 	}
+
+
+   /**
+    * Note - not yet supported, sorry.
+    */
+   public void write(OutputStream out) throws IOException {
+      throw new UnsupportedOperationException("Writing isn't yet supported for HSMF, sorry");
+   }
 }

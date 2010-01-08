@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Add a text extractor to HSMF for simpler extraction of text from .msg files</action>
            <action dev="POI-DEVELOPERS" type="fix">Some improvements to HSMF parsing of .msg files</action>
            <action dev="POI-DEVELOPERS" type="fix">Initialise the link type of HSSFHyperLink, so that getType() on it works</action>
            <action dev="POI-DEVELOPERS" type="fix">48425 - improved performance of DateUtil.isCellDateFormatted()  </action>
