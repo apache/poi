@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">Some improvements to HSMF parsing of .msg files</action>
            <action dev="POI-DEVELOPERS" type="fix">Initialise the link type of HSSFHyperLink, so that getType() on it works</action>
            <action dev="POI-DEVELOPERS" type="fix">48425 - improved performance of DateUtil.isCellDateFormatted()  </action>
            <action dev="POI-DEVELOPERS" type="fix">47215 - fixed InterfaceEndRecord to tolerate unexpected record contents </action>
