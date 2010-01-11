@@ -50,6 +50,8 @@ public class MAPIMessage extends POIDocument {
 	private NameIdChunks nameIdChunks;
 	private RecipientChunks recipientChunks;
 	private AttachmentChunks[] attachmentChunks;
+	
+	private boolean returnNullOnMissingChunk = false;
 
 	/**
 	 * Constructor for creating new files.
@@ -125,7 +127,11 @@ public class MAPIMessage extends POIDocument {
 	 */
 	public String getStringFromChunk(StringChunk chunk) throws ChunkNotFoundException {
 	   if(chunk == null) {
-	      throw new ChunkNotFoundException();
+	      if(returnNullOnMissingChunk) {
+	         return null;
+	      } else {
+	         throw new ChunkNotFoundException();
+	      }
 	   }
 	   return chunk.getValue();
 	}
@@ -230,6 +236,8 @@ public class MAPIMessage extends POIDocument {
 	   if(mainChunks.submissionChunk != null) {
 	      return mainChunks.submissionChunk.getAcceptedAtTime();
 	   }
+	   if(returnNullOnMissingChunk)
+	      return null;
 	   throw new ChunkNotFoundException();
 	}
 
@@ -268,4 +276,25 @@ public class MAPIMessage extends POIDocument {
    public void write(OutputStream out) throws IOException {
       throw new UnsupportedOperationException("Writing isn't yet supported for HSMF, sorry");
    }
+
+
+   /**
+    * Will you get a null on a missing chunk, or a 
+    *  {@link ChunkNotFoundException} (default is the
+    *  exception).
+    */
+   public boolean isReturnNullOnMissingChunk() {
+      return returnNullOnMissingChunk;
+   }
+
+   /**
+    * Sets whether on asking for a missing chunk,
+    *  you get back null or a {@link ChunkNotFoundException}
+    *  (default is the exception). 
+    */
+   public void setReturnNullOnMissingChunk(boolean returnNullOnMissingChunk) {
+      this.returnNullOnMissingChunk = returnNullOnMissingChunk;
+   }
+   
+   
 }
