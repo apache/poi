@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Add PublisherTextExtractor support to ExtractorFactory</action>
            <action dev="POI-DEVELOPERS" type="add">Add XSLF support for text extraction from tables</action>
            <action dev="POI-DEVELOPERS" type="add">Support attachments as embeded documents within the new OutlookTextExtractor</action>
            <action dev="POI-DEVELOPERS" type="add">Add a text extractor (OutlookTextExtractor) to HSMF for simpler extraction of text from .msg files</action>

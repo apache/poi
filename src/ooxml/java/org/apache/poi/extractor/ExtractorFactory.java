@@ -31,6 +31,7 @@ import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
+import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -142,6 +143,9 @@ public class ExtractorFactory {
 			if(entry.getName().equals("VisioDocument")) {
 				return new VisioTextExtractor(poifsDir, fs);
 			}
+         if(entry.getName().equals("Quill")) {
+            return new PublisherTextExtractor(poifsDir, fs);
+         }
 			if(
 			      entry.getName().equals("__substg1.0_1000001E") ||
                entry.getName().equals("__substg1.0_1000001F") ||
