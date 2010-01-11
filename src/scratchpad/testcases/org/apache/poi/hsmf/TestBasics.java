@@ -22,6 +22,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 
 /**
  * Tests to verify that we can perform basic opperations on 
@@ -73,5 +74,32 @@ public final class TestBasics extends TestCase {
       assertEquals(0, quick.getAttachmentFiles().length);
       assertEquals(0, outlook30.getAttachmentFiles().length);
       assertEquals(2, attachments.getAttachmentFiles().length);
+	}
+	
+	/**
+	 * Test missing chunks
+	 */
+	public void testMissingChunks() throws Exception {
+	   assertEquals(false, attachments.isReturnNullOnMissingChunk());
+
+	   try {
+	      attachments.getMessageDate();
+	      fail();
+	   } catch(ChunkNotFoundException e) {
+	      // Good
+	   }
+	   
+	   attachments.setReturnNullOnMissingChunk(true);
+	   
+	   assertEquals(null, attachments.getMessageDate());
+	   
+      attachments.setReturnNullOnMissingChunk(false);
+      
+      try {
+         attachments.getMessageDate();
+         fail();
+      } catch(ChunkNotFoundException e) {
+         // Good
+      }
 	}
 }
