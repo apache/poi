@@ -26,11 +26,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 public class XSLFSlide extends XSLFSheet implements Slide {
 	private CTSlide slide;
 	private CTSlideIdListEntry slideId;
+    private XSLFCommonSlideData data;
 	
 	public XSLFSlide(CTSlide slide, CTSlideIdListEntry slideId, SlideShow parent) {
 		super(parent);
 		this.slide = slide;
 		this.slideId = slideId;
+        this.data = new XSLFCommonSlideData(slide.getCSld());
 	}
 	
 	/**
@@ -88,4 +90,8 @@ public class XSLFSlide extends XSLFSheet implements Slide {
 		// TODO Auto-generated method stub
 
 	}
+
+    public XSLFCommonSlideData getCommonSlideData() {
+        return data;
+    }
 }

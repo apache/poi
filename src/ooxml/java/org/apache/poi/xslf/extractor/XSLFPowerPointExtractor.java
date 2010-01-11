@@ -16,28 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
-import java.io.IOException;
-
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlCursor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
+
+import java.io.IOException;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	private XMLSlideShow slideshow;
@@ -110,7 +100,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 					slideshow._getXSLFSlideShow().getSlideComments(slideId);
 				
 				if(slideText) {
-					extractText(rawSlide.getCSld().getSpTree(), text);
+					extractText(slides[i].getCommonSlideData(), text);
 					
 					// Comments too for the slide
 					if(comments != null) {
@@ -123,8 +113,9 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 						}
 					}
 				}
+
 				if(notesText && notes != null) {
-					extractText(notes.getCSld().getSpTree(), text);
+					extractText(new XSLFCommonSlideData(notes.getCSld()), text);
 				}
 			} catch(Exception e) {
 				throw new RuntimeException(e);
@@ -134,31 +125,10 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 		return text.toString();
 	}
 	
-	private void extractText(CTGroupShape gs, StringBuffer text) {
-		CTShape[] shapes = gs.getSpArray();
-		for (int i = 0; i < shapes.length; i++) {
-			CTTextBody textBody =
-				shapes[i].getTxBody();
-			if(textBody != null) {
-				CTTextParagraph[] paras = 
-					textBody.getPArray();
-				for (int j = 0; j < paras.length; j++) {
-                    XmlCursor c = paras[j].newCursor();
-                    c.selectPath("./*");
-                    while (c.toNextSelection()) {
-                        XmlObject o = c.getObject();
-                        if(o instanceof CTRegularTextRun){
-                            CTRegularTextRun txrun = (CTRegularTextRun)o;
-                            text.append( txrun.getT() );
-                        } else if (o instanceof CTTextLineBreak){
-                            text.append('\n');
-                        }
-                    }
-                    
-					// End each paragraph with a new line
-					text.append("\n");
-				}
-			}
-		}
-	}
+	private void extractText(XSLFCommonSlideData data, StringBuffer text) {
+        for (DrawingParagraph p : data.getText()) {
+            text.append(p.getText());
+            text.append("\n");
+        }
+    }
 }
