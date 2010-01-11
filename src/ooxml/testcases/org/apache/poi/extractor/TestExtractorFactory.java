@@ -24,6 +24,7 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
+import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -62,6 +63,8 @@ public class TestExtractorFactory extends TestCase {
    private File msgEmb;
    
    private File vsd;
+   
+   private File pub;
 
    protected void setUp() throws Exception {
       super.setUp();
@@ -85,6 +88,9 @@ public class TestExtractorFactory extends TestCase {
 
       POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
       vsd = dgTests.getFile("Test_Visio-Some_Random_Text.vsd");
+      
+      POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
+      pub = pubTests.getFile("Simple.pub");
       
       POIDataSamples olTests = POIDataSamples.getHSMFInstance();
       msg = olTests.getFile("quick.msg");
@@ -169,6 +175,15 @@ public class TestExtractorFactory extends TestCase {
             ExtractorFactory.createExtractor(vsd).getText().length() > 50
       );
       
+      // Publisher
+      assertTrue(
+            ExtractorFactory.createExtractor(pub)
+            instanceof PublisherTextExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(pub).getText().length() > 50
+      );
+      
       // Outlook msg
       assertTrue(
             ExtractorFactory.createExtractor(msg)
@@ -248,6 +263,15 @@ public class TestExtractorFactory extends TestCase {
 				ExtractorFactory.createExtractor(new FileInputStream(vsd)).getText().length() > 50
 		);
 		
+      // Publisher
+      assertTrue(
+            ExtractorFactory.createExtractor(new FileInputStream(pub))
+            instanceof PublisherTextExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(new FileInputStream(pub)).getText().length() > 50
+      );
+      
 		// Outlook msg
       assertTrue(
             ExtractorFactory.createExtractor(new FileInputStream(msg))
@@ -302,6 +326,15 @@ public class TestExtractorFactory extends TestCase {
 		assertTrue(
 				ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(vsd))).getText().length() > 50
 		);
+      
+      // Publisher
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(pub)))
+            instanceof PublisherTextExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(pub))).getText().length() > 50
+      );
 		
       // Outlook msg
       assertTrue(
@@ -426,6 +459,7 @@ public class TestExtractorFactory extends TestCase {
       assertEquals(1, numWord);
 
       // TODO - PowerPoint
+      // TODO - Publisher
       // TODO - Visio
    }
 }
