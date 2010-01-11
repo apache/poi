@@ -113,4 +113,17 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 		// Check comments are there
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
 	}
+
+    public void testTable() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        xmlA = new XSLFSlideShow(OPCPackage.open(slTests.openResourceAsStream("present1.pptx")));
+        XSLFPowerPointExtractor extractor =
+            new XSLFPowerPointExtractor(xmlA);
+
+        String text = extractor.getText();
+        assertTrue(text.length() > 0);
+
+        // Check comments are there
+        assertTrue("Unable to find expected word in text\n" + text, text.contains("TEST"));
+    }
 }
