@@ -17,6 +17,7 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -98,5 +99,15 @@ public class AttachmentChunks implements ChunkGroup {
 
       // And add to the main list
       allChunks.add(chunk);
+   }
+   
+   /**
+    * Orders by the attachment number.
+    */
+   public static class AttachmentChunksSorter implements Comparator<AttachmentChunks> {
+      @Override
+      public int compare(AttachmentChunks a, AttachmentChunks b) {
+         return a.poifsName.compareTo(b.poifsName);
+      }
    }
 }

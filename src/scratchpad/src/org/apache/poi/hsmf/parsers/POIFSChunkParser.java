@@ -67,7 +67,7 @@ public final class POIFSChunkParser {
                group = new NameIdChunks();
             }
             if(dir.getName().startsWith(RecipientChunks.PREFIX)) {
-               group = new RecipientChunks();
+               group = new RecipientChunks(dir.getName());
             }
             
             if(group != null) {

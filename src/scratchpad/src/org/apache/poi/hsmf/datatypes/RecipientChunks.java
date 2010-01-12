@@ -18,20 +18,29 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
 /**
  * Collection of convenience chunks for the
- *  Recip(ient) part of an outlook file
+ *  Recip(ient) part of an outlook file.
+ * 
+ * If a message has multiple recipients, there will be
+ *  several of these.
  */
 public final class RecipientChunks implements ChunkGroup {
    public static final String PREFIX = "__recip_version1.0_#";
    
    public static final int RECIPIENT_NAME   = 0x3001;
    public static final int DELIVERY_TYPE    = 0x3002;
-   public static final int RECIPIENT_SEARCH = 0x300B;
-   public static final int RECIPIENT_EMAIL  = 0x39FE;
+   public static final int RECIPIENT_EMAIL_ADDRESS = 0x3003;
+   public static final int RECIPIENT_SEARCH        = 0x300B;
+   public static final int RECIPIENT_SMTP_ADDRESS  = 0x39FE;
+   public static final int RECIPIENT_DISPLAY_NAME  = 0x5FF6;
+   
+   /** Our 0 based position in the list of recipients */
+   public int recipientNumber;
    
    /** TODO */
    public ByteChunk recipientSearchChunk;
@@ -42,16 +51,57 @@ public final class RecipientChunks implements ChunkGroup {
     */
    public StringChunk recipientNameChunk;
    /** 
-    * The email address of the recipient, but
+    * The email address of the recipient, which
+    *  could be in SMTP or SEARCH format, but
     *  isn't always present...
     */
    public StringChunk recipientEmailChunk;
+   /** 
+    * The smtp destination email address of
+    *  the recipient, but isn't always present...
+    */
+   public StringChunk recipientSMTPChunk;
    /**
     * Normally EX or SMTP. Will generally affect
     *  where the email address ends up.
     */
    public StringChunk deliveryTypeChunk;
+   /**
+    * The display name of the recipient.
+    * Normally seems to hold the same value
+    *  as in recipientNameChunk
+    */
+   public StringChunk recipientDisplayNameChunk;
    
+   
+   public RecipientChunks(String name) {
+      recipientNumber = -1;
+      int splitAt = name.lastIndexOf('#');
+      if(splitAt > -1) {
+         String number = name.substring(splitAt+1);
+         try {
+            recipientNumber = Integer.parseInt(number, 16);
+         } catch(NumberFormatException e) {
+            System.err.println("Invalid recipient number in name " + name);
+         }
+      }
+   }
+   
+   /**
+    * Tries to find their name,
+    *  in whichever chunk holds it.
+    */
+   public String getRecipientName() {
+      if(recipientNameChunk != null) {
+         return recipientNameChunk.getValue();
+      }
+      if(recipientDisplayNameChunk != null) {
+         return recipientDisplayNameChunk.getValue();
+      }
+      
+      // Can't find it
+      return null;
+   }
    
    /**
     * Tries to find their email address, in
@@ -59,10 +109,26 @@ public final class RecipientChunks implements ChunkGroup {
     *  delivery type.
     */
    public String getRecipientEmailAddress() {
-      if(recipientEmailChunk != null) {
-         return recipientEmailChunk.getValue();
+      // If we have this, it really has the email 
+      if(recipientSMTPChunk != null) {
+         return recipientSMTPChunk.getValue();
       }
-      // Probably in the name field
+      
+      // This might be a real email, or might be
+      //  in CN=... format
+      if(recipientEmailChunk != null) {
+         String email = recipientEmailChunk.getValue();
+         int cne = email.indexOf("/CN="); 
+         if(cne == -1) {
+            // Normal smtp address
+            return email;
+         } else {
+            // /O=..../CN=em@ail
+            return email.substring(cne+4);
+         }
+      }
+      
+      // Might be in the name field, check there
       if(recipientNameChunk != null) {
          String name = recipientNameChunk.getValue();
          if(name.indexOf('@') > -1) {
@@ -73,13 +139,16 @@ public final class RecipientChunks implements ChunkGroup {
             return name;
          }
       }
-      // Check the search chunk
+      
+      // Check the search chunk, see if it's 
+      //  encoded as a SMTP destination in there.
       if(recipientSearchChunk != null) {
          String search = recipientSearchChunk.getAs7bitString();
          if(search.indexOf("SMTP:") != -1) {
             return search.substring(search.indexOf("SMTP:") + 5);
          }
       }
+      
       // Can't find it
       return null;
    }
@@ -104,10 +173,16 @@ public final class RecipientChunks implements ChunkGroup {
          recipientSearchChunk = (ByteChunk)chunk;
          break;
       case RECIPIENT_NAME:
+         recipientDisplayNameChunk = (StringChunk)chunk;
+         break;
+      case RECIPIENT_DISPLAY_NAME:
          recipientNameChunk = (StringChunk)chunk;
          break;
-      case RECIPIENT_EMAIL:
+      case RECIPIENT_EMAIL_ADDRESS:
          recipientEmailChunk = (StringChunk)chunk;
+         break;
+      case RECIPIENT_SMTP_ADDRESS:
+         recipientSMTPChunk = (StringChunk)chunk;
          break;
       case DELIVERY_TYPE:
          deliveryTypeChunk = (StringChunk)chunk;
@@ -116,5 +191,19 @@ public final class RecipientChunks implements ChunkGroup {
 
       // And add to the main list
       allChunks.add(chunk);
+   }
+   
+   /**
+    * Orders by the recipient number.
+    */
+   public static class RecipientChunksSorter implements Comparator<RecipientChunks> {
+      @Override
+      public int compare(RecipientChunks a, RecipientChunks b) {
+         if(a.recipientNumber < b.recipientNumber)
+            return -1;
+         if(a.recipientNumber > b.recipientNumber)
+            return +1;
+         return 0;
+      }
    }
 }

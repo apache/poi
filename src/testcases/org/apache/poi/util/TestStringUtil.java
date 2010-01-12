@@ -20,6 +20,8 @@ package org.apache.poi.util;
 import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
 
+import org.apache.poi.util.StringUtil.StringsIterator;
+
 import junit.framework.TestCase;
 
 /**
@@ -157,6 +159,44 @@ public final class TestStringUtil extends TestCase {
         }
 
         return nf.format( num );
+    }
+    
+    public void testStringsIterator() {
+       StringsIterator i;
+
+       
+       i = new StringsIterator(new String[0]);
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
+
+       
+       i = new StringsIterator(new String[] {"1"});
+       assertTrue(i.hasNext());
+       assertEquals("1", i.next());
+       
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
+
+       
+       i = new StringsIterator(new String[] {"1","2","3"});
+       assertTrue(i.hasNext());
+       assertEquals("1", i.next());
+       assertTrue(i.hasNext());
+       assertEquals("2", i.next());
+       assertTrue(i.hasNext());
+       assertEquals("3", i.next());
+       
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
     }
 }
 

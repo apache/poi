@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import org.apache.poi.hsmf.MAPIMessage;
@@ -29,6 +30,7 @@ import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
+import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
@@ -81,7 +83,7 @@ public final class TestPOIFSChunkParser extends TestCase {
       }
    }
    
-   public void testFindsRecips() throws IOException {
+   public void testFindsRecips() throws IOException, ChunkNotFoundException {
       POIFSFileSystem simple = new POIFSFileSystem(
             new FileInputStream(samples.getFile("quick.msg"))
       );
@@ -95,7 +97,9 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertTrue(groups[2] instanceof NameIdChunks);
       
       RecipientChunks recips = (RecipientChunks)groups[1];
-      assertEquals("kevin.roast@alfresco.org", recips.recipientEmailChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", recips.recipientSMTPChunk.getValue());
+      assertEquals("/O=HOSTEDSERVICE2/OU=FIRST ADMINISTRATIVE GROUP/CN=RECIPIENTS/CN=Kevin.roast@ben", 
+            recips.recipientEmailChunk.getValue());
       
       String search = new String(recips.recipientSearchChunk.getValue(), "ASCII");
       assertEquals("CN=KEVIN.ROAST@BEN\0", search.substring(search.length()-19));
@@ -103,20 +107,123 @@ public final class TestPOIFSChunkParser extends TestCase {
       // Now via MAPIMessage
       MAPIMessage msg = new MAPIMessage(simple);
       assertNotNull(msg.getRecipientDetailsChunks());
+      assertEquals(1, msg.getRecipientDetailsChunks().length);
       
-      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks().recipientEmailChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].recipientSMTPChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].getRecipientEmailAddress());
+      assertEquals("Kevin Roast", msg.getRecipientDetailsChunks()[0].getRecipientName());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientEmailAddress());
       
       
       // Try both SMTP and EX files for recipient
-      assertEquals("EX", msg.getRecipientDetailsChunks().deliveryTypeChunk.getValue());
-      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks().recipientEmailChunk.getValue());
+      assertEquals("EX", msg.getRecipientDetailsChunks()[0].deliveryTypeChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].recipientSMTPChunk.getValue());
+      assertEquals("/O=HOSTEDSERVICE2/OU=FIRST ADMINISTRATIVE GROUP/CN=RECIPIENTS/CN=Kevin.roast@ben", 
+            msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
       
+      // Now look at another message
       msg = new MAPIMessage(new POIFSFileSystem(
             new FileInputStream(samples.getFile("simple_test_msg.msg"))
       ));
-      assertEquals("SMTP", msg.getRecipientDetailsChunks().deliveryTypeChunk.getValue());
-      assertEquals(null, msg.getRecipientDetailsChunks().recipientEmailChunk);
-      assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks().recipientNameChunk.getValue());
+      assertNotNull(msg.getRecipientDetailsChunks());
+      assertEquals(1, msg.getRecipientDetailsChunks().length);
+      
+      assertEquals("SMTP", msg.getRecipientDetailsChunks()[0].deliveryTypeChunk.getValue());
+      assertEquals(null, msg.getRecipientDetailsChunks()[0].recipientSMTPChunk);
+      assertEquals(null, msg.getRecipientDetailsChunks()[0].recipientNameChunk);
+      assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
+      assertEquals("travis@overwrittenstack.com", msg.getRecipientEmailAddress());
+   }
+   
+   public void testFindsMultipleRecipients() throws IOException, ChunkNotFoundException {
+      POIFSFileSystem multiple = new POIFSFileSystem(
+            new FileInputStream(samples.getFile("example_received_unicode.msg"))
+      );
+      
+      multiple.getRoot().getEntry("__recip_version1.0_#00000000");
+      multiple.getRoot().getEntry("__recip_version1.0_#00000001");
+      multiple.getRoot().getEntry("__recip_version1.0_#00000002");
+      multiple.getRoot().getEntry("__recip_version1.0_#00000003");
+      multiple.getRoot().getEntry("__recip_version1.0_#00000004");
+      multiple.getRoot().getEntry("__recip_version1.0_#00000005");
+      
+      ChunkGroup[] groups = POIFSChunkParser.parse(multiple.getRoot());
+      assertEquals(9, groups.length);
+      assertTrue(groups[0] instanceof Chunks);
+      assertTrue(groups[1] instanceof RecipientChunks);
+      assertTrue(groups[2] instanceof AttachmentChunks);
+      assertTrue(groups[3] instanceof RecipientChunks);
+      assertTrue(groups[4] instanceof RecipientChunks);
+      assertTrue(groups[5] instanceof RecipientChunks);
+      assertTrue(groups[6] instanceof RecipientChunks);
+      assertTrue(groups[7] instanceof RecipientChunks);
+      assertTrue(groups[8] instanceof NameIdChunks);
+      
+      // In FS order initially
+      RecipientChunks[] chunks = new RecipientChunks[] {
+            (RecipientChunks)groups[1],
+            (RecipientChunks)groups[3],
+            (RecipientChunks)groups[4],
+            (RecipientChunks)groups[5],
+            (RecipientChunks)groups[6],
+            (RecipientChunks)groups[7],
+      };
+      assertEquals(6, chunks.length);
+      assertEquals(0, chunks[0].recipientNumber);
+      assertEquals(4, chunks[1].recipientNumber);
+      assertEquals(3, chunks[2].recipientNumber);
+      assertEquals(2, chunks[3].recipientNumber);
+      assertEquals(1, chunks[4].recipientNumber);
+      assertEquals(5, chunks[5].recipientNumber);
+      
+      // Check
+      assertEquals("'Ashutosh Dandavate'", chunks[0].getRecipientName());
+      assertEquals("ashutosh.dandavate@alfresco.com", chunks[0].getRecipientEmailAddress());
+      assertEquals("nick.burch@alfresco.com", chunks[1].getRecipientName());
+      assertEquals("nick.burch@alfresco.com", chunks[1].getRecipientEmailAddress());
+      assertEquals("nickb@alfresco.com", chunks[2].getRecipientName());
+      assertEquals("nickb@alfresco.com", chunks[2].getRecipientEmailAddress());
+      assertEquals("'Mike Farman'", chunks[3].getRecipientName());
+      assertEquals("mikef@alfresco.com", chunks[3].getRecipientEmailAddress());
+      assertEquals("'Paul Holmes-Higgin'", chunks[4].getRecipientName());
+      assertEquals("paul.hh@alfresco.com", chunks[4].getRecipientEmailAddress());
+      assertEquals("'Roy Wetherall'", chunks[5].getRecipientName());
+      assertEquals("roy.wetherall@alfresco.com", chunks[5].getRecipientEmailAddress());
+      
+      // Now sort, and re-check
+      Arrays.sort(chunks, new RecipientChunksSorter());
+      
+      assertEquals("'Ashutosh Dandavate'", chunks[0].getRecipientName());
+      assertEquals("ashutosh.dandavate@alfresco.com", chunks[0].getRecipientEmailAddress());
+      assertEquals("'Paul Holmes-Higgin'", chunks[1].getRecipientName());
+      assertEquals("paul.hh@alfresco.com", chunks[1].getRecipientEmailAddress());
+      assertEquals("'Mike Farman'", chunks[2].getRecipientName());
+      assertEquals("mikef@alfresco.com", chunks[2].getRecipientEmailAddress());
+      assertEquals("nickb@alfresco.com", chunks[3].getRecipientName());
+      assertEquals("nickb@alfresco.com", chunks[3].getRecipientEmailAddress());
+      assertEquals("nick.burch@alfresco.com", chunks[4].getRecipientName());
+      assertEquals("nick.burch@alfresco.com", chunks[4].getRecipientEmailAddress());
+      assertEquals("'Roy Wetherall'", chunks[5].getRecipientName());
+      assertEquals("roy.wetherall@alfresco.com", chunks[5].getRecipientEmailAddress());
+      
+      // Finally check on message
+      MAPIMessage msg = new MAPIMessage(multiple);
+      assertEquals(6, msg.getRecipientEmailAddressList().length);
+      assertEquals(6, msg.getRecipientNamesList().length);
+      
+      assertEquals("'Ashutosh Dandavate'", msg.getRecipientNamesList()[0]);
+      assertEquals("'Paul Holmes-Higgin'", msg.getRecipientNamesList()[1]);
+      assertEquals("'Mike Farman'",        msg.getRecipientNamesList()[2]);
+      assertEquals("nickb@alfresco.com",   msg.getRecipientNamesList()[3]);
+      assertEquals("nick.burch@alfresco.com", msg.getRecipientNamesList()[4]);
+      assertEquals("'Roy Wetherall'",      msg.getRecipientNamesList()[5]);
+      
+      assertEquals("ashutosh.dandavate@alfresco.com", msg.getRecipientEmailAddressList()[0]);
+      assertEquals("paul.hh@alfresco.com",            msg.getRecipientEmailAddressList()[1]);
+      assertEquals("mikef@alfresco.com",              msg.getRecipientEmailAddressList()[2]);
+      assertEquals("nickb@alfresco.com",              msg.getRecipientEmailAddressList()[3]);
+      assertEquals("nick.burch@alfresco.com",         msg.getRecipientEmailAddressList()[4]);
+      assertEquals("roy.wetherall@alfresco.com",      msg.getRecipientEmailAddressList()[5]);
    }
    
    public void testFindsNameId() throws IOException {
