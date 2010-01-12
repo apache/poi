@@ -25,6 +25,7 @@ import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.StringUtil.StringsIterator;
 
 /**
  * A text extractor for HSMF (Outlook) .msg files.
@@ -50,7 +51,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public MAPIMessage getMAPIMessage() {
       return (MAPIMessage)document;
    }
-   
+      
    /**
     * Outputs something a little like a RFC822 email
     */
@@ -58,20 +59,33 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       MAPIMessage msg = (MAPIMessage)document;
       StringBuffer s = new StringBuffer();
       
+      StringsIterator emails;
+      try {
+         emails = new StringsIterator(
+               msg.getRecipientEmailAddressList()
+         );
+      } catch(ChunkNotFoundException e) {
+         emails = new StringsIterator(new String[0]);
+      }
+      
       try {
          s.append("From: " + msg.getDisplayFrom() + "\n");
       } catch(ChunkNotFoundException e) {}
+      
+      // For To, CC and BCC, try to match the names
+      //  up with their email addresses. Relies on the
+      //  Recipient Chunks being in the same order as
+      //  people in To + CC + BCC.
       try {
-         s.append("To: " + msg.getDisplayTo() + "\n");
+         handleEmails(s, "To", msg.getDisplayTo(), emails);
       } catch(ChunkNotFoundException e) {}
       try {
-         if(msg.getDisplayCC().length() > 0)
-            s.append("CC: " + msg.getDisplayCC() + "\n");
+         handleEmails(s, "CC", msg.getDisplayCC(), emails);
       } catch(ChunkNotFoundException e) {}
       try {
-         if(msg.getDisplayBCC().length() > 0)
-            s.append("BCC: " + msg.getDisplayBCC() + "\n");
+         handleEmails(s, "BCC", msg.getDisplayBCC(), emails);
       } catch(ChunkNotFoundException e) {}
+      
       try {
          SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
          s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
@@ -84,5 +98,39 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       } catch(ChunkNotFoundException e) {}
       
       return s.toString();
+   }
+   
+   /**
+    * Takes a Display focused string, eg "Nick; Jim" and an iterator
+    *  of emails, and does its best to return something like
+    *  "Nick <nick@example.com>; Jim <jim@example.com>"
+    */
+   protected void handleEmails(StringBuffer s, String type, String displayText, StringsIterator emails) {
+      if(displayText == null || displayText.length() == 0) {
+         return;
+      }
+      
+      String[] names = displayText.split(";\\s*");
+      boolean first = true;
+      
+      s.append(type + ": ");
+      for(String name : names) {
+         if(first) {
+            first = false;
+         } else {
+            s.append("; ");
+         }
+         
+         s.append(name);
+         if(emails.hasNext()) {
+            String email = emails.next();
+            // Append the email address in <>, assuming
+            //  the name wasn't already the email address
+            if(! email.equals(name)) {
+               s.append( " <" + email + ">");
+            }
+         }
+      }
+      s.append("\n");
    }
 }

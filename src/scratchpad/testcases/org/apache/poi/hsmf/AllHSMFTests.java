@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.poi.hsmf.datatypes.*;
+import org.apache.poi.hsmf.extractor.TestOutlookTextExtractor;
 import org.apache.poi.hsmf.parsers.*;
 
 public final class AllHSMFTests {
@@ -34,7 +35,10 @@ public final class AllHSMFTests {
 
       suite.addTestSuite(TestChunkData.class);
       suite.addTestSuite(TestTypes.class);
+      suite.addTestSuite(TestSorters.class);
 
+      suite.addTestSuite(TestOutlookTextExtractor.class);
+      
       suite.addTestSuite(TestPOIFSChunkParser.class);
 
       return suite;

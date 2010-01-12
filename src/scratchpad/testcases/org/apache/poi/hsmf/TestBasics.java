@@ -52,8 +52,17 @@ public final class TestBasics extends TestCase {
 	public void testRecipientEmail() throws Exception {
       assertEquals("travis@overwrittenstack.com", simple.getRecipientEmailAddress());
       assertEquals("kevin.roast@alfresco.org", quick.getRecipientEmailAddress());
-      assertEquals("randall.scarberry@pnl.gov", outlook30.getRecipientEmailAddress());
       assertEquals("nicolas1.23456@free.fr", attachments.getRecipientEmailAddress());
+      
+      // This one has lots...
+      assertEquals(18, outlook30.getRecipientEmailAddressList().length);
+      assertEquals("shawn.bohn@pnl.gov; gus.calapristi@pnl.gov; Richard.Carter@pnl.gov; " +
+      		"barb.cheney@pnl.gov; nick.cramer@pnl.gov; vern.crow@pnl.gov; Laura.Curtis@pnl.gov; " +
+      		"julie.dunkle@pnl.gov; david.gillen@pnl.gov; michelle@pnl.gov; Jereme.Haack@pnl.gov; " +
+      		"Michelle.Hart@pnl.gov; ranata.johnson@pnl.gov; grant.nakamura@pnl.gov; " +
+      		"debbie.payne@pnl.gov; stuart.rose@pnl.gov; randall.scarberry@pnl.gov; Leigh.Williams@pnl.gov", 
+            outlook30.getRecipientEmailAddress()
+      );
 	}
 	
 	/**

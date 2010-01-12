@@ -53,7 +53,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       String text = ext.getText();
       
       assertContains(text, "From: Kevin Roast\n");
-      assertContains(text, "To: Kevin Roast\n");
+      assertContains(text, "To: Kevin Roast <kevin.roast@alfresco.org>\n");
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: Test the content transformer\n");
@@ -91,5 +91,78 @@ public final class TestOutlookTextExtractor extends TestCase {
       
       assertEquals(inp, poifs);
       assertEquals(inp, mapi);
+   }
+   
+   /**
+    * Test that we correctly handle multiple To+CC+BCC
+    *  recipients in an email we sent.
+    */
+   public void testSentWithMulipleRecipients() throws Exception {
+      // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
+      //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
+      //   'Mike Farman' <mikef@alfresco.com>
+      // Cc: nickb@alfresco.com, nick.burch@alfresco.com,
+      //   'Roy Wetherall' <roy.wetherall@alfresco.com>
+      // Bcc: 'David Caruana' <dave.caruana@alfresco.com>,
+      //   'Vonka Jan' <roy.wetherall@alfresco.com>
+      
+      String[] files = new String[] {
+            "example_sent_regular.msg", "example_sent_unicode.msg"
+      };
+      for(String file : files) {
+         MAPIMessage msg = new MAPIMessage(new POIFSFileSystem(
+               new FileInputStream(samples.getFile(file))
+         ));
+         
+         OutlookTextExtactor ext = new OutlookTextExtactor(msg);
+         String text = ext.getText();
+         
+         assertContains(text, "From: Mike Farman\n");
+         assertContains(text, "To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>; " +
+         		"'Paul Holmes-Higgin' <paul.hh@alfresco.com>; 'Mike Farman' <mikef@alfresco.com>\n");
+         assertContains(text, "CC: 'nickb@alfresco.com' <nickb@alfresco.com>; " +
+         		"'nick.burch@alfresco.com' <nick.burch@alfresco.com>; 'Roy Wetherall' <roy.wetherall@alfresco.com>\n");
+         assertContains(text, "BCC: 'David Caruana' <dave.caruana@alfresco.com>; " +
+         		"'Vonka Jan' <jan.vonka@alfresco.com>\n");
+         assertContains(text, "Subject: This is a test message please ignore\n");
+         assertEquals(-1, text.indexOf("Date:"));
+         assertContains(text, "The quick brown fox jumps over the lazy dog");
+      }
+   }
+   
+   /**
+    * Test that we correctly handle multiple To+CC
+    *  recipients in an email we received.
+    */
+   public void testReceivedWithMultipleRecipients() throws Exception {
+      // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
+      //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
+      //   'Mike Farman' <mikef@alfresco.com>
+      // Cc: nickb@alfresco.com, nick.burch@alfresco.com,
+      //   'Roy Wetherall' <roy.wetherall@alfresco.com>
+      // (No BCC shown) 
+      
+      
+      String[] files = new String[] {
+            "example_received_regular.msg", "example_received_unicode.msg"
+      };
+      for(String file : files) {
+         MAPIMessage msg = new MAPIMessage(new POIFSFileSystem(
+               new FileInputStream(samples.getFile(file))
+         ));
+         
+         OutlookTextExtactor ext = new OutlookTextExtactor(msg);
+         String text = ext.getText();
+         
+         assertContains(text, "From: Mike Farman\n");
+         assertContains(text, "To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>; " +
+               "'Paul Holmes-Higgin' <paul.hh@alfresco.com>; 'Mike Farman' <mikef@alfresco.com>\n");
+         assertContains(text, "CC: nickb@alfresco.com; " +
+               "nick.burch@alfresco.com; 'Roy Wetherall' <roy.wetherall@alfresco.com>\n");
+         assertEquals(-1, text.indexOf("BCC:"));
+         assertContains(text, "Subject: This is a test message please ignore\n");
+         assertEquals(-1, text.indexOf("Date:"));
+         assertContains(text, "The quick brown fox jumps over the lazy dog");
+      }
    }
 }

@@ -20,6 +20,7 @@ package org.apache.poi.util;
 import java.io.UnsupportedEncodingException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 /**
@@ -392,4 +393,30 @@ public class StringUtil {
 			return true;
 		}
 	}
+	
+   /**
+    * An Iterator over an array of Strings.
+    */
+   public static class StringsIterator implements Iterator<String> {
+      private String[] strings;
+      private int position = 0;
+      public StringsIterator(String[] strings) {
+         if(strings != null) {
+            this.strings = strings;
+         } else {
+            this.strings = new String[0];
+         }
+      }
+
+      public boolean hasNext() {
+         return position < strings.length;
+      }
+      public String next() {
+         int ourPos = position++;
+         if(ourPos >= strings.length)
+            throw new ArrayIndexOutOfBoundsException(ourPos);
+         return strings[ourPos];
+      }
+      public void remove() {}
+   }
 }
