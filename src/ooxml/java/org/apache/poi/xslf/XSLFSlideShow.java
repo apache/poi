@@ -57,6 +57,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
  */
 public class XSLFSlideShow extends POIXMLDocument {
 	public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml";
+        public static final String MACRO_CONTENT_TYPE = "application/vnd.ms-powerpoint.slideshow.macroEnabled.main+xml";
+        public static final String MACRO_TEMPLATE_CONTENT_TYPE = "application/vnd.ms-powerpoint.template.macroEnabled.main+xml";
+        public static final String PRESENTATIONML_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.slideshow.main+xml";
+        public static final String PRESENTATIONML_TEMPLATE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.template.main+xml";
+        public static final String PRESENTATION_MACRO_CONTENT_TYPE = "application/vnd.ms-powerpoint.presentation.macroEnabled.main+xml";
 	public static final String NOTES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml";
 	public static final String SLIDE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.slide+xml";
 	public static final String SLIDE_LAYOUT_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout";
