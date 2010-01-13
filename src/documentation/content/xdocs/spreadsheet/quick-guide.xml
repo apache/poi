@@ -266,24 +266,14 @@
 				and Sheet provides a <em>rowIterator()</em> method to
 				give an iterator over all the rows.</p>
 				<p>Alternately, Sheet and Row both implement java.lang.Iterable,
-                so if you're using Java 1.5, you can simply take advantage
+                so using Java 1.5 you can simply take advantage
                 of the built in "foreach" support - see below.</p>
 				<source>
 	Sheet sheet = wb.getSheetAt(0);
-	for (Iterator rit = sheet.rowIterator(); rit.hasNext(); ) {
-		Row row = (Row)rit.next();
-		for (Iterator cit = row.cellIterator(); cit.hasNext(); ) {
-			Cell cell = (Cell)cit.next();
-			// Do something here
-		}
-	}
-				</source>
-				<source>
-	HSSFSheet sheet = wb.getSheetAt(0);
-	for (Iterator&lt;HSSFRow&gt; rit = (Iterator&lt;HSSFRow&gt;)sheet.rowIterator(); rit.hasNext(); ) {
-		HSSFRow row = rit.next();
-		for (Iterator&lt;HSSFCell&gt; cit = (Iterator&lt;HSSFCell&gt;)row.cellIterator(); cit.hasNext(); ) {
-			HSSFCell cell = cit.next();
+	for (Iterator&lt;Row&gt; rit = sheet.rowIterator(); rit.hasNext(); ) {
+		Row row = rit.next();
+		for (Iterator&lt;Cell&gt; cit = row.cellIterator(); cit.hasNext(); ) {
+			Cell cell = cit.next();
 			// Do something here
 		}
 	}
