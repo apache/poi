@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Avoid creating temporary files when opening OPC packages from input stream</action>
            <action dev="POI-DEVELOPERS" type="add">Improved how HSMF handles multiple recipients</action>
            <action dev="POI-DEVELOPERS" type="add">Add PublisherTextExtractor support to ExtractorFactory</action>
            <action dev="POI-DEVELOPERS" type="add">Add XSLF support for text extraction from tables</action>

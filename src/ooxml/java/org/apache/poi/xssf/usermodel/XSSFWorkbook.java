@@ -166,7 +166,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param pkg the OpenXML4J <code>Package</code> object.
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
-        super(ensureWriteAccess(pkg));
+        super(pkg);
 
         //build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
@@ -174,7 +174,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     public XSSFWorkbook(InputStream is) throws IOException {
         super(PackageHelper.open(is));
-
+        
         //build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
     }

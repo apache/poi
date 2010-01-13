@@ -34,23 +34,9 @@ import java.net.URI;
  */
 public final class PackageHelper {
 
-    /**
-     * Clone the specified package.
-     *
-     * @param   pkg   the package to clone
-     * @return  the cloned package
-     */
-    public static OPCPackage clone(OPCPackage pkg) throws OpenXML4JException, IOException {
-        return clone(pkg, createTempFile());
-    }
-
     public static OPCPackage open(InputStream is) throws IOException {
-        File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
-        FileOutputStream out = new FileOutputStream(file);
-        IOUtils.copy(is, out);
-        out.close();
         try {
-            return OPCPackage.open(file.getAbsolutePath());
+            return OPCPackage.open(is);
         } catch (InvalidFormatException e){
             throw new POIXMLException(e);
         }

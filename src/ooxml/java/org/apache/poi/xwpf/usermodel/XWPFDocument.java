@@ -88,7 +88,7 @@ public class XWPFDocument extends POIXMLDocument {
     private XWPFHeaderFooterPolicy headerFooterPolicy;
 
     public XWPFDocument(OPCPackage pkg) throws IOException {
-        super(ensureWriteAccess(pkg));
+        super(pkg);
 
         //build a tree of POIXMLDocumentParts, this document being the root
         load(XWPFFactory.getInstance());

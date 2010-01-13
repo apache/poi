@@ -173,23 +173,6 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      */
     public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
 
-    /**
-     * YK: current implementation of OpenXML4J is funny.
-     * Packages opened by Package.open(InputStream is) are read-only,
-     * there is no way to change or even save such an instance in a OutputStream.
-     * The workaround is to create a copy via a temp file
-     */
-    protected static OPCPackage ensureWriteAccess(OPCPackage pkg) throws IOException {
-        if(pkg.getPackageAccess() == PackageAccess.READ){
-            try {
-                return PackageHelper.clone(pkg);
-            } catch (OpenXML4JException e){
-                throw new POIXMLException(e);
-            }
-        }
-        return pkg;
-    }
-
     protected final void load(POIXMLFactory factory) throws IOException {
     	Map<PackagePart, POIXMLDocumentPart> context = new HashMap<PackagePart, POIXMLDocumentPart>();
         try {
