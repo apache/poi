@@ -577,7 +577,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         {
             cps = new CustomProperties();
             final Section section = (Section) getSections().get(1);
-            final Map dictionary = section.getDictionary();
+            final Map<Long,String> dictionary = section.getDictionary();
             final Property[] properties = section.getProperties();
             int propertyCount = 0;
             for (int i = 0; i < properties.length; i++)
@@ -588,7 +588,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
                 {
                     propertyCount++;
                     final CustomProperty cp = new CustomProperty(p,
-                            (String) dictionary.get(Long.valueOf(id)));
+                            dictionary.get(Long.valueOf(id)));
                     cps.put(cp.getName(), cp);
                 }
             }
@@ -607,7 +607,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     {
         ensureSection2();
         final MutableSection section = (MutableSection) getSections().get(1);
-        final Map dictionary = customProperties.getDictionary();
+        final Map<Long,String> dictionary = customProperties.getDictionary();
         section.clear();
 
         /* Set the codepage. If both custom properties and section have a
@@ -621,9 +621,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         customProperties.setCodepage(cpCodepage);
         section.setCodepage(cpCodepage);
         section.setDictionary(dictionary);
-        for (final Iterator i = customProperties.values().iterator(); i.hasNext();)
+        for (final Iterator<CustomProperty> i = customProperties.values().iterator(); i.hasNext();)
         {
-            final Property p = (Property) i.next();
+            final Property p = i.next();
             section.setProperty(p);
         }
     }
