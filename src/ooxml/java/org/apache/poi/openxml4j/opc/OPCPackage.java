@@ -217,7 +217,7 @@ public abstract class OPCPackage implements RelationshipSource {
 	 */
 	public static OPCPackage open(InputStream in) throws InvalidFormatException,
 			IOException {
-		OPCPackage pack = new ZipPackage(in, PackageAccess.READ);
+		OPCPackage pack = new ZipPackage(in, PackageAccess.READ_WRITE);
 		if (pack.partList == null) {
 			pack.getParts();
 		}
