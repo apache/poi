@@ -1569,10 +1569,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @return the list of pictures (a list of {@link HSSFPictureData} objects.)
      */
-    public List<PictureData> getAllPictures()
+    public List<HSSFPictureData> getAllPictures()
     {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
-        List<PictureData> pictures = new ArrayList<PictureData>();
+        List<HSSFPictureData> pictures = new ArrayList<HSSFPictureData>();
         Iterator<Record> recordIter = workbook.getRecords().iterator();
         while (recordIter.hasNext())
         {
@@ -1593,7 +1593,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List<PictureData> pictures)
+    private void searchForPictures(List escherRecords, List<HSSFPictureData> pictures)
     {
         Iterator recordIter = escherRecords.iterator();
         while (recordIter.hasNext())
