@@ -49,21 +49,26 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>This class is not thread-safe; concurrent access to instances of this
  * class must be synchronized.</p>
  *
+ * <p>While this class is roughly HashMap<Long,CustomProperty>, that's the
+ *  internal representation. To external calls, it should appear as
+ *  HashMap<String,Object> mapping between Names and Custom Property Values.</p>
+ *
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
-public class CustomProperties extends HashMap
+@SuppressWarnings("serial")
+public class CustomProperties extends HashMap<Object,CustomProperty>
 {
 
     /**
      * <p>Maps property IDs to property names.</p>
      */
-    private Map dictionaryIDToName = new HashMap();
+    private Map<Long,String> dictionaryIDToName = new HashMap<Long,String>();
 
     /**
      * <p>Maps property names to property IDs.</p>
      */
-    private Map dictionaryNameToID = new HashMap();
+    private Map<String,Long> dictionaryNameToID = new HashMap<String,Long>();
 
     /**
      * <p>Tells whether this object is pure or not.</p>
@@ -71,25 +76,19 @@ public class CustomProperties extends HashMap
     private boolean isPure = true;
 
 
-
     /**
      * <p>Puts a {@link CustomProperty} into this map. It is assumed that the
      * {@link CustomProperty} already has a valid ID. Otherwise use
      * {@link #put(CustomProperty)}.</p>
      */
-    public Object put(final Object name, final Object customProperty) throws ClassCastException
+    public CustomProperty put(final String name, final CustomProperty cp)
     {
-        final CustomProperty cp = (CustomProperty) customProperty;
         if (name == null)
         {
             /* Ignoring a property without a name. */
             isPure = false;
             return null;
         }
-        if (!(name instanceof String))
-            throw new ClassCastException("The name of a custom property must " +
-                    "be a java.lang.String, but it is a " +
-                    name.getClass().getName());
         if (!(name.equals(cp.getName())))
             throw new IllegalArgumentException("Parameter \"name\" (" + name +
                     ") and custom property's name (" + cp.getName() +
@@ -97,13 +96,13 @@ public class CustomProperties extends HashMap
 
         /* Register name and ID in the dictionary. Mapping in both directions is possible. If there is already a  */
         final Long idKey = Long.valueOf(cp.getID());
-        final Object oldID = dictionaryNameToID.get(name);
+        final Long oldID = dictionaryNameToID.get(name);
         dictionaryIDToName.remove(oldID);
         dictionaryNameToID.put(name, idKey);
         dictionaryIDToName.put(idKey, name);
 
         /* Put the custom property into this map. */
-        final Object oldCp = super.remove(oldID);
+        final CustomProperty oldCp = super.remove(oldID);
         super.put(idKey, cp);
         return oldCp;
     }
@@ -138,9 +137,9 @@ public class CustomProperties extends HashMap
         else
         {
             long max = 1;
-            for (final Iterator i = dictionaryIDToName.keySet().iterator(); i.hasNext();)
+            for (final Iterator<Long> i = dictionaryIDToName.keySet().iterator(); i.hasNext();)
             {
-                final long id = ((Long) i.next()).longValue();
+                final long id = i.next().longValue();
                 if (id > max)
                     max = id;
             }
@@ -295,12 +294,28 @@ public class CustomProperties extends HashMap
 
     /**
      * Returns a set of all the names of our
-     *  custom properties
+     *  custom properties. Equivalent to 
+     *  {@link #nameSet()}
      */
     public Set keySet() {
         return dictionaryNameToID.keySet();
     }
 
+    /**
+     * Returns a set of all the names of our
+     *  custom properties
+     */
+    public Set<String> nameSet() {
+        return dictionaryNameToID.keySet();
+    }
+
+    /**
+     * Returns a set of all the IDs of our
+     *  custom properties
+     */
+    public Set<String> idSet() {
+        return dictionaryNameToID.keySet();
+    }
 
 
     /**
@@ -325,14 +340,44 @@ public class CustomProperties extends HashMap
      *
      * @return the dictionary.
      */
-    Map getDictionary()
+    Map<Long,String> getDictionary()
     {
         return dictionaryIDToName;
     }
 
 
-
     /**
+     * Checks against both String Name and Long ID
+     */
+   public boolean containsKey(Object key) {
+      if(key instanceof Long) {
+         return super.containsKey((Long)key);
+      }
+      if(key instanceof String) {
+         return super.containsKey((Long)dictionaryNameToID.get(key));
+      }
+      return false;
+   }
+
+   /**
+    * Checks against both the property, and its values. 
+    */
+   public boolean containsValue(Object value) {
+      if(value instanceof CustomProperty) {
+         return super.containsValue((CustomProperty)value);
+      } else {
+         for(CustomProperty cp : super.values()) {
+            if(cp.getValue() == value) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+
+
+   /**
      * <p>Gets the codepage.</p>
      *
      * @return the codepage or -1 if the codepage is undefined.
@@ -340,9 +385,9 @@ public class CustomProperties extends HashMap
     public int getCodepage()
     {
         int codepage = -1;
-        for (final Iterator i = this.values().iterator(); codepage == -1 && i.hasNext();)
+        for (final Iterator<CustomProperty> i = this.values().iterator(); codepage == -1 && i.hasNext();)
         {
-            final CustomProperty cp = (CustomProperty) i.next();
+            final CustomProperty cp = i.next();
             if (cp.getID() == PropertyIDMap.PID_CODEPAGE)
                 codepage = ((Integer) cp.getValue()).intValue();
         }

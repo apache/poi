@@ -42,7 +42,7 @@ public class Section
      * <p>Maps property IDs to section-private PID strings. These
      * strings can be found in the property with ID 0.</p>
      */
-    protected Map dictionary;
+    protected Map<Long,String> dictionary;
 
     /**
      * <p>The section's format ID, {@link #getFormatID}.</p>
@@ -244,10 +244,10 @@ public class Section
 
         /* Look for the codepage. */
         int codepage = -1;
-        for (final Iterator i = propertyList.iterator();
+        for (final Iterator<PropertyListEntry> i = propertyList.iterator();
              codepage == -1 && i.hasNext();)
         {
-            ple = (PropertyListEntry) i.next();
+            ple = i.next();
 
             /* Read the codepage if the property ID is 1. */
             if (ple.id == PropertyIDMap.PID_CODEPAGE)
@@ -271,9 +271,9 @@ public class Section
         /* Pass 2: Read all properties - including the codepage property,
          * if available. */
         int i1 = 0;
-        for (final Iterator i = propertyList.iterator(); i.hasNext();)
+        for (final Iterator<PropertyListEntry> i = propertyList.iterator(); i.hasNext();)
         {
-            ple = (PropertyListEntry) i.next();
+            ple = i.next();
             Property p = new Property(ple.id, src,
                     this.offset + ple.offset,
                     ple.length, codepage);
@@ -294,7 +294,7 @@ public class Section
      * <p>Represents an entry in the property list and holds a property's ID and
      * its offset from the section's beginning.</p>
      */
-    class PropertyListEntry implements Comparable
+    class PropertyListEntry implements Comparable<PropertyListEntry>
     {
         int id;
         int offset;
@@ -307,11 +307,9 @@ public class Section
          *
          * @see Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(final Object o)
+        public int compareTo(final PropertyListEntry o)
         {
-            if (!(o instanceof PropertyListEntry))
-                throw new ClassCastException(o.toString());
-            final int otherOffset = ((PropertyListEntry) o).offset;
+            final int otherOffset = o.offset;
             if (offset < otherOffset)
                 return -1;
             else if (offset == otherOffset)
@@ -630,7 +628,7 @@ public class Section
      * @return the dictionary or <code>null</code> if the section does not have
      * a dictionary.
      */
-    public Map getDictionary()
+    public Map<Long,String> getDictionary()
     {
         return dictionary;
     }

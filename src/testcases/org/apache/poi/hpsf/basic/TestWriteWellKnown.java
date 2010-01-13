@@ -348,8 +348,25 @@ public class TestWriteWellKnown extends TestCase {
         customProperties.put("min_Long", MIN_LONG);
         customProperties.put("max_Double", MAX_DOUBLE);
         customProperties.put("min_Double", MIN_DOUBLE);
+        
+        // Check the keys went in
+        assertTrue(customProperties.containsKey("Schl\u00fcssel \u00e4"));
+        assertTrue(customProperties.containsKey("Boolean"));
+        
+        // Check the values went in
+        assertEquals("Wert \u00e4", customProperties.get("Schl\u00fcssel \u00e4"));
+        assertEquals(Boolean.TRUE, customProperties.get("Boolean"));
+        assertTrue(customProperties.containsValue(Boolean.TRUE));
+        assertTrue(customProperties.containsValue("Wert \u00e4"));
+        
+        // Check that things that aren't in aren't in
+        assertFalse(customProperties.containsKey("False Boolean"));
+        assertFalse(customProperties.containsValue(Boolean.FALSE));
+
+        // Save as our custom properties
         dsi.setCustomProperties(customProperties);
 
+        
         /* Write the summary information stream and the document summary
          * information stream to the POI filesystem. */
         si.write(dir, siEntry.getName());

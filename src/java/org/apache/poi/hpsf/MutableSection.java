@@ -53,7 +53,7 @@ public class MutableSection extends Section
      * decision has been taken when specifying the "properties" field
      * as an Property[]. It should have been a {@link java.util.List}.</p>
      */
-    private List preprops;
+    private List<Property> preprops;
 
 
 
@@ -74,7 +74,7 @@ public class MutableSection extends Section
         dirty = true;
         formatID = null;
         offset = -1;
-        preprops = new LinkedList();
+        preprops = new LinkedList<Property>();
     }
 
 
@@ -145,7 +145,7 @@ public class MutableSection extends Section
     public void setProperties(final Property[] properties)
     {
         this.properties = properties;
-        preprops = new LinkedList();
+        preprops = new LinkedList<Property>();
         for (int i = 0; i < properties.length; i++)
             preprops.add(properties[i]);
         dirty = true;
@@ -276,8 +276,8 @@ public class MutableSection extends Section
      */
     public void removeProperty(final long id)
     {
-        for (final Iterator i = preprops.iterator(); i.hasNext();)
-            if (((Property) i.next()).getID() == id)
+        for (final Iterator<Property> i = preprops.iterator(); i.hasNext();)
+            if (i.next().getID() == id)
             {
                 i.remove();
                 break;
@@ -423,12 +423,10 @@ public class MutableSection extends Section
         }
 
         /* Sort the property list by their property IDs: */
-        Collections.sort(preprops, new Comparator()
+        Collections.sort(preprops, new Comparator<Property>()
             {
-                public int compare(final Object o1, final Object o2)
+                public int compare(final Property p1, final Property p2)
                 {
-                    final Property p1 = (Property) o1;
-                    final Property p2 = (Property) o2;
                     if (p1.getID() < p2.getID())
                         return -1;
                     else if (p1.getID() == p2.getID())
@@ -440,7 +438,7 @@ public class MutableSection extends Section
 
         /* Write the properties and the property list into their respective
          * streams: */
-        for (final ListIterator i = preprops.listIterator(); i.hasNext();)
+        for (final ListIterator<Property> i = preprops.listIterator(); i.hasNext();)
         {
             final MutableProperty p = (MutableProperty) i.next();
             final long id = p.getID();
@@ -502,14 +500,14 @@ public class MutableSection extends Section
      * @exception IOException if an I/O exception occurs.
      */
     private static int writeDictionary(final OutputStream out,
-                                       final Map dictionary, final int codepage)
+                                       final Map<Long,String> dictionary, final int codepage)
         throws IOException
     {
         int length = TypeWriter.writeUIntToStream(out, dictionary.size());
-        for (final Iterator i = dictionary.keySet().iterator(); i.hasNext();)
+        for (final Iterator<Long> i = dictionary.keySet().iterator(); i.hasNext();)
         {
-            final Long key = (Long) i.next();
-            final String value = (String) dictionary.get(key);
+            final Long key = i.next();
+            final String value = dictionary.get(key);
 
             if (codepage == Constants.CP_UNICODE)
             {
@@ -617,21 +615,11 @@ public class MutableSection extends Section
      *
      * @see Section#getDictionary()
      */
-    public void setDictionary(final Map dictionary)
+    public void setDictionary(final Map<Long,String> dictionary)
         throws IllegalPropertySetDataException
     {
         if (dictionary != null)
         {
-            for (final Iterator i = dictionary.keySet().iterator();
-                 i.hasNext();)
-                if (!(i.next() instanceof Long))
-                    throw new IllegalPropertySetDataException
-                        ("Dictionary keys must be of type Long.");
-            for (final Iterator i = dictionary.values().iterator();
-                 i.hasNext();)
-                if (!(i.next() instanceof String))
-                    throw new IllegalPropertySetDataException
-                        ("Dictionary values must be of type String.");
             this.dictionary = dictionary;
 
             /* Set the dictionary property (ID 0). Please note that the second
