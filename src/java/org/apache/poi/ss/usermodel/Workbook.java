@@ -405,7 +405,7 @@ public interface Workbook {
      *
      * @return the list of pictures (a list of {@link PictureData} objects.)
      */
-    List getAllPictures();
+    List<PictureData> getAllPictures();
 
     /**
      * Returns an object that handles instantiating concrete

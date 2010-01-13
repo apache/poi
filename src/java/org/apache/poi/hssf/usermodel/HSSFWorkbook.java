@@ -67,6 +67,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.POILogFactory;
@@ -1568,18 +1569,18 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @return the list of pictures (a list of {@link HSSFPictureData} objects.)
      */
-    public List<HSSFPictureData> getAllPictures()
+    public List<PictureData> getAllPictures()
     {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
-        List<HSSFPictureData> pictures = new ArrayList<HSSFPictureData>();
-        Iterator recordIter = workbook.getRecords().iterator();
+        List<PictureData> pictures = new ArrayList<PictureData>();
+        Iterator<Record> recordIter = workbook.getRecords().iterator();
         while (recordIter.hasNext())
         {
-            Object obj = recordIter.next();
-            if (obj instanceof AbstractEscherHolderRecord)
+            Record r = recordIter.next();
+            if (r instanceof AbstractEscherHolderRecord)
             {
-                ((AbstractEscherHolderRecord) obj).decode();
-                List escherRecords = ((AbstractEscherHolderRecord) obj).getEscherRecords();
+                ((AbstractEscherHolderRecord) r).decode();
+                List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
                 searchForPictures(escherRecords, pictures);
             }
         }
@@ -1592,7 +1593,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List<HSSFPictureData> pictures)
+    private void searchForPictures(List escherRecords, List<PictureData> pictures)
     {
         Iterator recordIter = escherRecords.iterator();
         while (recordIter.hasNext())

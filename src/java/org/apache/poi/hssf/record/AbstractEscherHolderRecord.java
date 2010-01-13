@@ -46,18 +46,18 @@ public abstract class AbstractEscherHolderRecord extends Record {
         }
     }
 
-    private List escherRecords;
+    private List<EscherRecord> escherRecords;
     private byte[] rawData;
 
 
     public AbstractEscherHolderRecord()
     {
-        escherRecords = new ArrayList();
+        escherRecords = new ArrayList<EscherRecord>();
     }
 
     public AbstractEscherHolderRecord(RecordInputStream in)
     {
-        escherRecords = new ArrayList();
+        escherRecords = new ArrayList<EscherRecord>();
         if (! DESERIALISE )
         {
             rawData = in.readRemainder();
@@ -93,9 +93,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
         buffer.append('[' + getRecordName() + ']' + nl);
         if (escherRecords.size() == 0)
             buffer.append("No Escher Records Decoded" + nl);
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             buffer.append(r.toString());
         }
         buffer.append("[/" + getRecordName() + ']' + nl);
@@ -120,9 +120,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
         int pos = offset + 4;
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             pos += r.serialize( pos, data, new NullEscherSerializationListener() );
         }
         return getRecordSize();
@@ -133,9 +133,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
             return rawData.length;
         }
         int size = 0;
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             size += r.getRecordSize();
         }
         return size;
@@ -160,7 +160,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
         return escherRecords.add( element );
     }
 
-    public List getEscherRecords()
+    public List<EscherRecord> getEscherRecords()
     {
         return escherRecords;
     }
@@ -176,8 +176,8 @@ public abstract class AbstractEscherHolderRecord extends Record {
      *  then return that.
      */
     public EscherContainerRecord getEscherContainer() {
-    	for(Iterator it = escherRecords.iterator(); it.hasNext();) {
-    		Object er = it.next();
+    	for(Iterator<EscherRecord> it = escherRecords.iterator(); it.hasNext();) {
+    		EscherRecord er = it.next();
     		if(er instanceof EscherContainerRecord) {
     			return (EscherContainerRecord)er;
     		}
