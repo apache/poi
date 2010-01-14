@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class TestWorkbookProtection extends TestCase {
@@ -95,7 +96,7 @@ public class TestWorkbookProtection extends TestCase {
 
 		wb.lockRevision();
 
-		File tempFile = File.createTempFile("workbookProtection", ".xlsx");
+		File tempFile = TempFile.createTempFile("workbookProtection", ".xlsx");
 		FileOutputStream out = new FileOutputStream(tempFile);
 		wb.write(out);
 		out.close();

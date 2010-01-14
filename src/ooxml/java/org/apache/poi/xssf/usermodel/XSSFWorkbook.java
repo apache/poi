@@ -266,7 +266,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     protected static OPCPackage newPackage() {
         try {
-            OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
+            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
