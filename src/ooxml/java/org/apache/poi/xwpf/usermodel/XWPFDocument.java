@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -195,7 +196,7 @@ public class XWPFDocument extends POIXMLDocument {
      */
     protected static OPCPackage newPackage() {
         try {
-            OPCPackage pkg = OPCPackage.create(PackageHelper.createTempFile());
+            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship

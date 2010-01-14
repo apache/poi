@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -126,7 +127,7 @@ public class TestDocumentProtection extends TestCase {
         r1.setText("Lorem ipsum dolor sit amet.");
         doc.enforceCommentsProtection();
 
-        File tempFile = File.createTempFile("documentProtectionFile", ".docx");
+        File tempFile = TempFile.createTempFile("documentProtectionFile", ".docx");
         FileOutputStream out = new FileOutputStream(tempFile);
 
         doc.write(out);

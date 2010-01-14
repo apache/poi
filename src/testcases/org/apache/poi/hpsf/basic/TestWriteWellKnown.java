@@ -54,6 +54,7 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.TempFile;
 
 /**
  * <p>Tests HPSF's high-level writing functionality for the well-known property
@@ -374,7 +375,7 @@ public class TestWriteWellKnown extends TestCase {
 
         /* Write the POI filesystem to a (temporary) file <em>doc2</em>
          * and close the latter. */
-        final File doc2 = File.createTempFile("POI_HPSF_Test.", ".tmp");
+        final File doc2 = TempFile.createTempFile("POI_HPSF_Test.", ".tmp");
         doc2.deleteOnExit();
         OutputStream out = new FileOutputStream(doc2);
         poifs.writeFilesystem(out);
@@ -503,7 +504,7 @@ public class TestWriteWellKnown extends TestCase {
         /*
          * <li><p>Write the POI filesystem to a (temporary) file <em>doc3</em>
          * and close the latter. */
-        final File doc3 = File.createTempFile("POI_HPSF_Test.", ".tmp");
+        final File doc3 = TempFile.createTempFile("POI_HPSF_Test.", ".tmp");
         doc3.deleteOnExit();
         out = new FileOutputStream(doc3);
         poifs.writeFilesystem(out);
