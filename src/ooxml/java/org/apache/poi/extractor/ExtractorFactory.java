@@ -16,13 +16,7 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,6 +24,8 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
@@ -87,9 +83,22 @@ public class ExtractorFactory {
 		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
 			return createExtractor(new POIFSFileSystem(inp));
 		}
+
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
-			return createExtractor(OPCPackage.open(inp));
-		}
+            File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
+
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                IOUtils.copy(inp, out);
+                out.close();
+
+                return createExtractor(OPCPackage.open(file.getPath()));
+            } finally {
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        }
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
 	
