@@ -428,4 +428,11 @@ public final class RecordInputStream implements LittleEndianInput {
 		//    and before the formatting run data)
 		return _nextSid == ContinueRecord.sid;
 	}
+
+    /**
+     @requrn sid of next record. Can be called after hasNextRecord()  
+     */
+    public int getNextSid() {
+        return _nextSid;
+    }
 }

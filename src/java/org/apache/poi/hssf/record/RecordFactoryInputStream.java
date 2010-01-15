@@ -218,20 +218,20 @@ public final class RecordFactoryInputStream {
 				return null;
 			}
 
-			// step underlying RecordInputStream to the next record
-			_recStream.nextRecord();
-
 			if (_lastRecordWasEOFLevelZero) {
 				// Potential place for ending the workbook stream
 				// Check that the next record is not BOFRecord(0x0809)
 				// Normally the input stream contains only zero padding after the last EOFRecord,
-				// but bug 46987 suggests that the padding may be garbage.
+				// but bug 46987 and 48068 suggests that the padding may be garbage.
 				// This code relies on the padding bytes not starting with BOFRecord.sid
-				if (_recStream.getSid() != BOFRecord.sid) {
+				if (_recStream.getNextSid() != BOFRecord.sid) {
 					return null;
 				}
 				// else - another sheet substream starting here
 			}
+
+            // step underlying RecordInputStream to the next record
+            _recStream.nextRecord();
 
 			r = readNextRecord();
 			if (r == null) {
