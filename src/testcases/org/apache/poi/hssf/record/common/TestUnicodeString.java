@@ -15,10 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.apache.poi.hssf.record.common;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 
 /**

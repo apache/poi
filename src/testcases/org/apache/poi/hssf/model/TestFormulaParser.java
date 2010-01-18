@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;

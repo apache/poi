@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.cf.TestCellRange;
 import org.apache.poi.hssf.record.chart.AllChartRecordTests;
+import org.apache.poi.hssf.record.common.TestUnicodeString;
 import org.apache.poi.hssf.record.constant.TestConstantValueParser;
 import org.apache.poi.hssf.record.crypto.AllHSSFEncryptionTests;
 import org.apache.poi.hssf.record.formula.AllFormulaTests;

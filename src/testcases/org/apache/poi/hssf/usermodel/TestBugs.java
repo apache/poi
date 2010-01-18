@@ -1536,4 +1536,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test47251() {
         openSample("47251.xls");
     }
+    
+    /**
+     * Round trip a file with an unusual ExtRst record
+     */
+    public void test47847() {
+       HSSFWorkbook wb = openSample("47251.xls");
+       assertEquals(1, wb.getNumberOfSheets());
+       wb = writeOutAndReadBack(wb);
+       assertEquals(1, wb.getNumberOfSheets());
+    }
 }

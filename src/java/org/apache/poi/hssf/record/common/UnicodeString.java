@@ -15,13 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.apache.poi.hssf.record.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;

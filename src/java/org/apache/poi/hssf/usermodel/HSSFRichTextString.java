@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 /**
