@@ -60,7 +60,7 @@ public final class SSTRecord extends ContinuableRecord {
 
     /** according to docs ONLY SST */
     private int field_2_num_unique_strings;
-    private IntMapper field_3_strings;
+    private IntMapper<UnicodeString> field_3_strings;
 
     private SSTDeserializer deserializer;
 
@@ -73,7 +73,7 @@ public final class SSTRecord extends ContinuableRecord {
     {
         field_1_num_strings = 0;
         field_2_num_unique_strings = 0;
-        field_3_strings = new IntMapper();
+        field_3_strings = new IntMapper<UnicodeString>();
         deserializer = new SSTDeserializer(field_3_strings);
     }
 
@@ -130,7 +130,7 @@ public final class SSTRecord extends ContinuableRecord {
      */
     public UnicodeString getString(int id )
     {
-        return (UnicodeString) field_3_strings.get( id );
+        return field_3_strings.get( id );
     }
 
 
@@ -149,7 +149,7 @@ public final class SSTRecord extends ContinuableRecord {
                 .append( Integer.toHexString( getNumUniqueStrings() ) ).append( "\n" );
         for ( int k = 0; k < field_3_strings.size(); k++ )
         {
-          UnicodeString s = (UnicodeString)field_3_strings.get( k );
+          UnicodeString s = field_3_strings.get( k );
             buffer.append( "    .string_" + k + "      = " )
                     .append( s.getDebugInfo() ).append( "\n" );
         }
@@ -245,7 +245,7 @@ public final class SSTRecord extends ContinuableRecord {
         // we initialize our fields
         field_1_num_strings = in.readInt();
         field_2_num_unique_strings = in.readInt();
-        field_3_strings = new IntMapper();
+        field_3_strings = new IntMapper<UnicodeString>();
         deserializer = new SSTDeserializer(field_3_strings);
         deserializer.manufactureStrings( field_2_num_unique_strings, in );
     }
@@ -255,7 +255,7 @@ public final class SSTRecord extends ContinuableRecord {
      * @return an iterator of the strings we hold. All instances are
      *         UnicodeStrings
      */
-    Iterator getStrings()
+    Iterator<UnicodeString> getStrings()
     {
         return field_3_strings.iterator();
     }

@@ -31,9 +31,9 @@ import org.apache.poi.util.IntMapper;
 class SSTDeserializer
 {
 
-    private IntMapper strings;
+    private IntMapper<UnicodeString> strings;
 
-    public SSTDeserializer( IntMapper strings )
+    public SSTDeserializer( IntMapper<UnicodeString> strings )
     {
         this.strings = strings;
     }
@@ -46,14 +46,14 @@ class SSTDeserializer
     public void manufactureStrings( int stringCount, RecordInputStream in )
     {
       for (int i=0;i<stringCount;i++) {
-        //Extract exactly the count of strings from the SST record.
-        UnicodeString str = new UnicodeString(in);
-        addToStringTable( strings, str );
-        }
+         // Extract exactly the count of strings from the SST record.
+         UnicodeString str = new UnicodeString(in);
+         addToStringTable( strings, str );
+      }
     }
 
-    static public void addToStringTable( IntMapper strings, UnicodeString string )
-            {
-      strings.add(string );
-            }
-        }
+    static public void addToStringTable( IntMapper<UnicodeString> strings, UnicodeString string )
+    {
+      strings.add(string);
+    }
+}
