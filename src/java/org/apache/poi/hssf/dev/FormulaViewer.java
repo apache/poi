@@ -62,7 +62,7 @@ public class FormulaViewer
     {
         POIFSFileSystem fs      =
             new POIFSFileSystem(new FileInputStream(file));
-        List            records =
+        List<Record>    records =
             RecordFactory
                 .createRecords(fs.createDocumentInputStream("Workbook"));
 
