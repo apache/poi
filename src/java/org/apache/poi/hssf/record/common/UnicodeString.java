@@ -34,10 +34,9 @@ import org.apache.poi.util.LittleEndianOutput;
  * Title: Unicode String<p/>
  * Description:  Unicode String - just standard fields that are in several records.
  *               It is considered more desirable then repeating it in all of them.<p/>
+ *               This is often called a XLUnicodeRichExtendedString in MS documentation.<p/>
  * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author  Andrew C. Oliver
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
+ * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
  */
 public final class UnicodeString implements Comparable<UnicodeString> {
     private short             field_1_charCount;
@@ -46,6 +45,7 @@ public final class UnicodeString implements Comparable<UnicodeString> {
     private List<FormatRun> field_4_format_runs;
     private byte[] field_5_ext_rst;
     private static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
+    // 0x2 is reserved
     private static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
     private static final BitField   richText  = BitFieldFactory.getInstance(0x8);
 
