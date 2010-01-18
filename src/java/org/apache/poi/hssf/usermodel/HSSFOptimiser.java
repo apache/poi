@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.common.UnicodeString;
 
 /**
  * Excel can get cranky if you give it files containing too
