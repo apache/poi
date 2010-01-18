@@ -48,6 +48,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	 * For use in {@link BiffViewer} which may construct {@link Record}s that don't completely
 	 * read all available data.  This exception should never be thrown otherwise.
 	 */
+	@SuppressWarnings("serial")
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
 			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase()
