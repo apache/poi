@@ -17,12 +17,19 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.common.UnicodeString.ExtRst;
+import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
  * Tests that {@link UnicodeString} record size calculates correctly.  The record size
@@ -85,13 +92,23 @@ public final class TestUnicodeString extends TestCase {
         //Test a compressed small string that has rich text and extended text
         s.setString("Test");
         s.setOptionFlags((byte)0xC);
-        s.setExtendedRst(new byte[]{(byte)0x1,(byte)0x2,(byte)0x3,(byte)0x4,(byte)0x5});
-        confirmSize(26, s);
+        confirmSize(17, s);
+        
+        // Extended phonetics data
+        // Minimum size is 14
+        // Also adds 4 bytes to hold the length
+        s.setExtendedRst(
+              new ExtRst()
+        );
+        confirmSize(35, s);
 
         //Test a uncompressed small string that has rich text and extended text
         s.setString(STR_16_BIT);
         s.setOptionFlags((byte)0xD);
-        confirmSize(30, s);
+        confirmSize(39, s);
+        
+        s.setExtendedRst(null);
+        confirmSize(21, s);
     }
 
     public void testPerfectStringSize() {
@@ -143,6 +160,146 @@ public final class TestUnicodeString extends TestCase {
       strSize -= 1;
       UnicodeString s = makeUnicodeString(strSize);
       confirmSize(MAX_DATA_SIZE*2, s);
+    }
+    
+    public void testFormatRun() throws Exception {
+       FormatRun fr = new FormatRun((short)4, (short)0x15c);
+       assertEquals(4, fr.getCharacterPos());
+       assertEquals(0x15c, fr.getFontIndex());
+       
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
+       
+       fr.serialize(out);
+       
+       byte[] b = baos.toByteArray();
+       assertEquals(4, b.length);
+       assertEquals(4, b[0]);
+       assertEquals(0, b[1]);
+       assertEquals(0x5c, b[2]);
+       assertEquals(0x01, b[3]);
+       
+       LittleEndianInputStream inp = new LittleEndianInputStream(
+             new ByteArrayInputStream(b)
+       );
+       fr = new FormatRun(inp);
+       assertEquals(4, fr.getCharacterPos());
+       assertEquals(0x15c, fr.getFontIndex());
+    }
+    
+    public void testExtRstFromEmpty() throws Exception {
+       ExtRst ext = new ExtRst();
+       
+       assertEquals(0, ext.getNumberOfRuns());
+       assertEquals(0, ext.getFormattingFontIndex());
+       assertEquals(0, ext.getFormattingOptions());
+       assertEquals("", ext.getPhoneticText());
+       assertEquals(0, ext.getPhRuns().length);
+       assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
+       
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
+       ContinuableRecordOutput cout = new ContinuableRecordOutput(out, 0xffff);
+       
+       ext.serialize(cout);
+       cout.writeContinue();
+       
+       byte[] b = baos.toByteArray();
+       assertEquals(20, b.length);
+       
+       // First 4 bytes from the outputstream
+       assertEquals(-1, b[0]);
+       assertEquals(-1, b[1]);
+       assertEquals(14, b[2]);
+       assertEquals(00, b[3]);
+       
+       // Reserved
+       assertEquals(1, b[4]);
+       assertEquals(0, b[5]);
+       // Data size
+       assertEquals(10, b[6]);
+       assertEquals(00, b[7]);
+       // Font*2
+       assertEquals(0, b[8]);
+       assertEquals(0, b[9]);
+       assertEquals(0, b[10]);
+       assertEquals(0, b[11]);
+       // 0 Runs
+       assertEquals(0, b[12]);
+       assertEquals(0, b[13]);
+       // Size=0, *2
+       assertEquals(0, b[14]);
+       assertEquals(0, b[15]);
+       assertEquals(0, b[16]);
+       assertEquals(0, b[17]);
+       
+       // Last 2 bytes from the outputstream
+       assertEquals(ContinueRecord.sid, b[18]);
+       assertEquals(0, b[19]);
+       
+       
+       // Load in again and re-test
+       byte[] data = new byte[14];
+       System.arraycopy(b, 4, data, 0, data.length);
+       LittleEndianInputStream inp = new LittleEndianInputStream(
+             new ByteArrayInputStream(data)
+       );
+       ext = new ExtRst(inp, data.length);
+       
+       assertEquals(0, ext.getNumberOfRuns());
+       assertEquals(0, ext.getFormattingFontIndex());
+       assertEquals(0, ext.getFormattingOptions());
+       assertEquals("", ext.getPhoneticText());
+       assertEquals(0, ext.getPhRuns().length);
+    }
+    
+    public void testExtRstFromData() throws Exception {
+       byte[] data = new byte[] {
+             01, 00, 0x0C, 00, 
+             00, 00, 0x37, 00, 
+             00, 00, 
+             00, 00, 00, 00, 
+             00, 00 // Cruft at the end, as found from real files
+       };
+       assertEquals(16, data.length);
+       
+       LittleEndianInputStream inp = new LittleEndianInputStream(
+             new ByteArrayInputStream(data)
+       );
+       ExtRst ext = new ExtRst(inp, data.length);
+       assertEquals(0x0c, ext.getDataSize()); // Excludes 4 byte header
+       
+       assertEquals(0, ext.getNumberOfRuns());
+       assertEquals(0x37, ext.getFormattingOptions());
+       assertEquals(0, ext.getFormattingFontIndex());
+       assertEquals("", ext.getPhoneticText());
+       assertEquals(0, ext.getPhRuns().length);
+    }
+    
+    public void testCorruptExtRstDetection() throws Exception {
+       byte[] data = new byte[] {
+             0x79, 0x79, 0x11, 0x11, 
+             0x22, 0x22, 0x33, 0x33, 
+       };
+       assertEquals(8, data.length);
+       
+       LittleEndianInputStream inp = new LittleEndianInputStream(
+             new ByteArrayInputStream(data)
+       );
+       ExtRst ext = new ExtRst(inp, data.length);
+       
+       // Will be empty
+       assertEquals(ext, new ExtRst());
+
+       // If written, will be the usual size
+       assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
+     
+       // Is empty
+       assertEquals(0, ext.getNumberOfRuns());
+       assertEquals(0, ext.getFormattingOptions());
+       assertEquals(0, ext.getFormattingFontIndex());
+       assertEquals("", ext.getPhoneticText());
+       assertEquals(0, ext.getPhRuns().length);
     }
 
 

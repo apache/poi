@@ -26,9 +26,9 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Title: Unicode String<p/>
@@ -42,8 +42,8 @@ public final class UnicodeString implements Comparable<UnicodeString> {
     private short             field_1_charCount;
     private byte              field_2_optionflags;
     private String            field_3_string;
-    private List<FormatRun> field_4_format_runs;
-    private byte[] field_5_ext_rst;
+    private List<FormatRun>   field_4_format_runs;
+    private ExtRst            field_5_ext_rst;
     private static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
     // 0x2 is reserved
     private static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
@@ -97,6 +97,225 @@ public final class UnicodeString implements Comparable<UnicodeString> {
             out.writeShort(_character);
             out.writeShort(_fontIndex);
         }
+    }
+    
+    // See page 681
+    public static class ExtRst implements Comparable<ExtRst> {
+       private short reserved;
+       
+       // This is a Phs (see page 881)
+       private short formattingFontIndex;
+       private short formattingOptions;
+       
+       // This is a RPHSSub (see page 894)
+       private int numberOfRuns;
+       private String phoneticText;
+       
+       // This is an array of PhRuns (see page 881)
+       private PhRun[] phRuns;
+       // Sometimes there's some cruft at the end
+       private byte[] extraData;
+
+       private void populateEmpty() {
+          reserved = 1;
+          phoneticText = "";
+          phRuns = new PhRun[0];
+          extraData = new byte[0];
+       }
+       
+       protected ExtRst() {
+          populateEmpty();
+       }
+       protected ExtRst(LittleEndianInput in, int expectedLength) {
+          reserved = in.readShort();
+          
+          // Old style detection (Reserved = 0xFF)
+          if(reserved == -1) {
+             populateEmpty();
+             return;
+          }
+          
+          // Spot corrupt records
+          if(reserved != 1) {
+             System.err.println("Warning - ExtRst was has wrong magic marker, expecting 1 but found " + reserved + " - ignoring");
+             // Grab all the remaining data, and ignore it
+             for(int i=0; i<expectedLength-2; i++) {
+                in.readByte();
+             }
+             // And make us be empty
+             populateEmpty();
+             return;
+          }
+          
+          // Carry on reading in as normal
+          short stringDataSize = in.readShort();
+          
+          formattingFontIndex = in.readShort();
+          formattingOptions   = in.readShort();
+          
+          // RPHSSub
+          numberOfRuns = in.readUShort();
+          short length1 = in.readShort();
+          // No really. Someone clearly forgot to read
+          //  the docs on their datastructure...
+          short length2 = in.readShort();
+          // And sometimes they write out garbage :(
+          if(length1 == 0 && length2 > 0) {
+             length2 = 0;
+          }
+          if(length1 != length2) {
+             throw new IllegalStateException(
+                   "The two length fields of the Phonetic Text don't agree! " +
+                   length1 + " vs " + length2
+             );
+          }
+          phoneticText = StringUtil.readUnicodeLE(in, length1);
+          
+          int runData = stringDataSize - 4 - 6 - (2*phoneticText.length());
+          int numRuns = (runData / 6);
+          phRuns = new PhRun[numRuns];
+          for(int i=0; i<phRuns.length; i++) {
+             phRuns[i] = new PhRun(in);
+          }
+
+          int extraDataLength = runData - (numRuns*6);
+          if(extraDataLength < 0) {
+             System.err.println("Warning - ExtRst overran by " + (0-extraDataLength) + " bytes");
+             extraDataLength = 0;
+          }
+          extraData = new byte[extraDataLength];
+          for(int i=0; i<extraData.length; i++) {
+             extraData[i] = in.readByte();
+          }
+       }
+       /**
+        * Returns our size, excluding our 
+        *  4 byte header
+        */
+       protected int getDataSize() {
+          return 4 + 6 + (2*phoneticText.length()) + 
+             (6*phRuns.length) + extraData.length;
+       }
+       protected void serialize(ContinuableRecordOutput out) {
+          int dataSize = getDataSize();
+          
+          out.writeContinueIfRequired(8);
+          out.writeShort(reserved);
+          out.writeShort(dataSize);
+          out.writeShort(formattingFontIndex);
+          out.writeShort(formattingOptions);
+          
+          out.writeContinueIfRequired(6);
+          out.writeShort(numberOfRuns);
+          out.writeShort(phoneticText.length());
+          out.writeShort(phoneticText.length());
+          
+          out.writeContinueIfRequired(phoneticText.length()*2);
+          StringUtil.putUnicodeLE(phoneticText, out);
+          
+          for(int i=0; i<phRuns.length; i++) {
+             phRuns[i].serialize(out);
+          }
+          
+          out.write(extraData);
+       }
+
+       public boolean equals(Object obj) {
+          if(! (obj instanceof ExtRst)) {
+             return false;
+          }
+          ExtRst other = (ExtRst)obj;
+          return (compareTo(other) == 0);
+       }
+       public int compareTo(ExtRst o) {
+          int result;
+          
+          result = reserved - o.reserved;
+          if(result != 0) return result;
+          result = formattingFontIndex - o.formattingFontIndex;
+          if(result != 0) return result;
+          result = formattingOptions - o.formattingOptions;
+          if(result != 0) return result;
+          result = numberOfRuns - o.numberOfRuns;
+          if(result != 0) return result;
+          
+          result = phoneticText.compareTo(o.phoneticText);
+          if(result != 0) return result;
+          
+          result = phRuns.length - o.phRuns.length;
+          if(result != 0) return result;
+          for(int i=0; i<phRuns.length; i++) {
+             result = phRuns[i].phoneticTextFirstCharacterOffset - o.phRuns[i].phoneticTextFirstCharacterOffset;
+             if(result != 0) return result;
+             result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextFirstCharacterOffset;
+             if(result != 0) return result;
+             result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextLength;
+             if(result != 0) return result;
+          }
+          
+          result = extraData.length - o.extraData.length;
+          if(result != 0) return result;
+          
+          // If we get here, it's the same
+          return 0;
+       }
+       
+       protected ExtRst clone() {
+          ExtRst ext = new ExtRst();
+          ext.reserved = reserved;
+          ext.formattingFontIndex = formattingFontIndex;
+          ext.formattingOptions = formattingOptions;
+          ext.numberOfRuns = numberOfRuns;
+          ext.phoneticText = new String(phoneticText);
+          ext.phRuns = new PhRun[phRuns.length];
+          for(int i=0; i<ext.phRuns.length; i++) {
+             ext.phRuns[i] = new PhRun(
+                   phRuns[i].phoneticTextFirstCharacterOffset,
+                   phRuns[i].realTextFirstCharacterOffset,
+                   phRuns[i].realTextLength
+             );
+          }
+          return ext;
+       }
+       
+       public short getFormattingFontIndex() {
+         return formattingFontIndex;
+       }
+       public short getFormattingOptions() {
+         return formattingOptions;
+       }
+       public int getNumberOfRuns() {
+         return numberOfRuns;
+       }
+       public String getPhoneticText() {
+         return phoneticText;
+       }
+       public PhRun[] getPhRuns() {
+         return phRuns;
+       }
+    }
+    public static class PhRun {
+       private int phoneticTextFirstCharacterOffset;
+       private int realTextFirstCharacterOffset;
+       private int realTextLength;
+       
+       public PhRun(int phoneticTextFirstCharacterOffset,
+            int realTextFirstCharacterOffset, int realTextLength) {
+         this.phoneticTextFirstCharacterOffset = phoneticTextFirstCharacterOffset;
+         this.realTextFirstCharacterOffset = realTextFirstCharacterOffset;
+         this.realTextLength = realTextLength;
+      }
+      private PhRun(LittleEndianInput in) {
+          phoneticTextFirstCharacterOffset = in.readUShort();
+          realTextFirstCharacterOffset = in.readUShort();
+          realTextLength = in.readUShort();
+       }
+       private void serialize(ContinuableRecordOutput out) {
+          out.writeContinueIfRequired(6);
+          out.writeShort(phoneticTextFirstCharacterOffset);
+          out.writeShort(realTextFirstCharacterOffset);
+          out.writeShort(realTextLength);
+       }
     }
 
     private UnicodeString() {
@@ -160,22 +379,20 @@ public final class UnicodeString implements Comparable<UnicodeString> {
             return false;
         }
 
-        //Well the format runs are equal as well!, better check the ExtRst data
-        //Which by the way we dont know how to decode!
-        if ((field_5_ext_rst == null) && (other.field_5_ext_rst == null))
-          return true;
-        if (((field_5_ext_rst == null) && (other.field_5_ext_rst != null)) ||
-            ((field_5_ext_rst != null) && (other.field_5_ext_rst == null)))
-          return false;
-        size = field_5_ext_rst.length;
-        if (size != field_5_ext_rst.length)
-          return false;
-
-        //Check individual bytes!
-        for (int i=0;i<size;i++) {
-          if (field_5_ext_rst[i] != other.field_5_ext_rst[i])
-            return false;
+        // Well the format runs are equal as well!, better check the ExtRst data
+        if(field_5_ext_rst == null && other.field_5_ext_rst == null) {
+           // Good
+        } else if(field_5_ext_rst != null && other.field_5_ext_rst != null) {
+           int extCmp = field_5_ext_rst.compareTo(other.field_5_ext_rst);
+           if(extCmp == 0) {
+              // Good
+           } else {
+              return false;
+           }
+        } else {
+           return false;
         }
+
         //Phew!! After all of that we have finally worked out that the strings
         //are identical.
         return true;
@@ -218,10 +435,10 @@ public final class UnicodeString implements Comparable<UnicodeString> {
         }
 
         if (isExtendedText() && (extensionLength > 0)) {
-          field_5_ext_rst = new byte[extensionLength];
-          for (int i=0;i<extensionLength;i++) {
-            field_5_ext_rst[i] = in.readByte();
-            }
+          field_5_ext_rst = new ExtRst(in, extensionLength);
+          if(field_5_ext_rst.getDataSize()+4 != extensionLength) {
+             System.err.println("ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize()+4));
+          }
         }
     }
 
@@ -395,10 +612,15 @@ public final class UnicodeString implements Comparable<UnicodeString> {
     }
 
 
-    void setExtendedRst(byte[] ext_rst) {
-      if (ext_rst != null)
-        field_2_optionflags = extBit.setByte(field_2_optionflags);
-      else field_2_optionflags = extBit.clearByte(field_2_optionflags);
+    public ExtRst getExtendedRst() {
+       return this.field_5_ext_rst;
+    }
+    void setExtendedRst(ExtRst ext_rst) {
+      if (ext_rst != null) {
+         field_2_optionflags = extBit.setByte(field_2_optionflags);
+      } else {
+         field_2_optionflags = extBit.clearByte(field_2_optionflags);
+      }
       this.field_5_ext_rst = ext_rst;
     }
 
@@ -452,12 +674,18 @@ public final class UnicodeString implements Comparable<UnicodeString> {
           }
         }
         if (field_5_ext_rst != null) {
-          buffer.append("    .field_5_ext_rst          = ").append("\n").append(HexDump.toHex(field_5_ext_rst)).append("\n");
+          buffer.append("    .field_5_ext_rst          = ").append("\n");
+          buffer.append( field_5_ext_rst.toString() ).append("\n");
         }
         buffer.append("[/UNICODESTRING]\n");
         return buffer.toString();
     }
 
+    /**
+     * Serialises out the String. There are special rules
+     *  about where we can and can't split onto
+     *  Continue records.
+     */
     public void serialize(ContinuableRecordOutput out) {
         int numberOfRichTextRuns = 0;
         int extendedDataSize = 0;
@@ -465,9 +693,11 @@ public final class UnicodeString implements Comparable<UnicodeString> {
             numberOfRichTextRuns = field_4_format_runs.size();
         }
         if (isExtendedText() && field_5_ext_rst != null) {
-            extendedDataSize = field_5_ext_rst.length;
+            extendedDataSize = 4 + field_5_ext_rst.getDataSize();
         }
-
+       
+        // Serialise the bulk of the String
+        // The writeString handles tricky continue stuff for us
         out.writeString(field_3_string, numberOfRichTextRuns, extendedDataSize);
 
         if (numberOfRichTextRuns > 0) {
@@ -477,25 +707,13 @@ public final class UnicodeString implements Comparable<UnicodeString> {
               if (out.getAvailableSpace() < 4) {
                   out.writeContinue();
               }
-                FormatRun r = field_4_format_runs.get(i);
-                r.serialize(out);
+              FormatRun r = field_4_format_runs.get(i);
+              r.serialize(out);
           }
         }
 
         if (extendedDataSize > 0) {
-            // OK ExtRst is actually not documented, so i am going to hope
-            // that we can actually continue on byte boundaries
-
-            int extPos = 0;
-            while (true) {
-                int nBytesToWrite = Math.min(extendedDataSize - extPos, out.getAvailableSpace());
-                out.write(field_5_ext_rst, extPos, nBytesToWrite);
-                extPos += nBytesToWrite;
-                if (extPos >= extendedDataSize) {
-                    break;
-                }
-                out.writeContinue();
-            }
+           field_5_ext_rst.serialize(out);
         }
     }
 
@@ -534,7 +752,6 @@ public final class UnicodeString implements Comparable<UnicodeString> {
         }
 
         //Well the format runs are equal as well!, better check the ExtRst data
-        //Which by the way we don't know how to decode!
         if ((field_5_ext_rst == null) && (str.field_5_ext_rst == null))
           return 0;
         if ((field_5_ext_rst == null) && (str.field_5_ext_rst != null))
@@ -542,15 +759,10 @@ public final class UnicodeString implements Comparable<UnicodeString> {
         if ((field_5_ext_rst != null) && (str.field_5_ext_rst == null))
           return -1;
 
-        size = field_5_ext_rst.length;
-        if (size != field_5_ext_rst.length)
-          return size - field_5_ext_rst.length;
+        result = field_5_ext_rst.compareTo(str.field_5_ext_rst); 
+        if (result != 0)
+           return result;
 
-        //Check individual bytes!
-        for (int i=0;i<size;i++) {
-          if (field_5_ext_rst[i] != str.field_5_ext_rst[i])
-            return field_5_ext_rst[i] - str.field_5_ext_rst[i];
-        }
         //Phew!! After all of that we have finally worked out that the strings
         //are identical.
         return 0;
@@ -575,12 +787,10 @@ public final class UnicodeString implements Comparable<UnicodeString> {
           str.field_4_format_runs = new ArrayList<FormatRun>();
           for (FormatRun r : field_4_format_runs) {
             str.field_4_format_runs.add(new FormatRun(r._character, r._fontIndex));
-            }
+          }
         }
         if (field_5_ext_rst != null) {
-          str.field_5_ext_rst = new byte[field_5_ext_rst.length];
-          System.arraycopy(field_5_ext_rst, 0, str.field_5_ext_rst, 0,
-                           field_5_ext_rst.length);
+           str.field_5_ext_rst = field_5_ext_rst.clone();
         }
 
         return str;
