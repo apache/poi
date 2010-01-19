@@ -339,7 +339,7 @@ public final class RecordFactoryInputStream {
 				//  outputs a file like this all the same
 				return record;
 			}
-			throw new RecordFormatException("Unhandled Continue Record");
+			throw new RecordFormatException("Unhandled Continue Record followining " + _lastRecord.getClass());
 		}
 		_lastRecord = record;
 		if (record instanceof DrawingRecord) {
