@@ -35,7 +35,7 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 	private UnknownLengthRecordOutput _ulrOutput;
 	private int _totalPreviousRecordsSize;
 
-	ContinuableRecordOutput(LittleEndianOutput out, int sid) {
+	public ContinuableRecordOutput(LittleEndianOutput out, int sid) {
 		_ulrOutput = new UnknownLengthRecordOutput(out, sid);
 		_out = out;
 		_totalPreviousRecordsSize = 0;
@@ -73,6 +73,11 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		_totalPreviousRecordsSize += _ulrOutput.getTotalSize();
 		_ulrOutput = new UnknownLengthRecordOutput(_out, ContinueRecord.sid);
 	}
+	/**
+	 * Will terminate the current record and start a new {@link ContinueRecord}
+	 *  if there isn't space for the requested number of bytes
+	 * @param requiredContinuousSize The number of bytes that need to be written
+	 */
 	public void writeContinueIfRequired(int requiredContinuousSize) {
 		if (_ulrOutput.getAvailableSpace() < requiredContinuousSize) {
 			writeContinue();
