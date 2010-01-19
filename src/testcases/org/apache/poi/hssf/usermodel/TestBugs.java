@@ -36,6 +36,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.*;
@@ -1538,12 +1539,37 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
     
     /**
-     * Round trip a file with an unusual ExtRst record
+     * Round trip a file with an unusual UnicodeString/ExtRst record parts
      */
-    public void test47847() {
-       HSSFWorkbook wb = openSample("47251.xls");
-       assertEquals(1, wb.getNumberOfSheets());
+    public void test47847() throws Exception {
+       HSSFWorkbook wb = openSample("47847.xls");
+       assertEquals(3, wb.getNumberOfSheets());
+       
+       // Find the SST record
+       UnicodeString withExt = wb.getWorkbook().getSSTString(0);
+       UnicodeString withoutExt = wb.getWorkbook().getSSTString(31);
+       
+       assertEquals("O:Alloc:Qty", withExt.getString());
+       assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
+       
+       assertEquals("RT", withoutExt.getString());
+       assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
+       
+       // Something about continues...
+
+       
+       // Write out and re-read
        wb = writeOutAndReadBack(wb);
-       assertEquals(1, wb.getNumberOfSheets());
+       assertEquals(3, wb.getNumberOfSheets());
+       
+       // Check it's the same now
+       withExt = wb.getWorkbook().getSSTString(0);
+       withoutExt = wb.getWorkbook().getSSTString(31);
+       
+       assertEquals("O:Alloc:Qty", withExt.getString());
+       assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
+       
+       assertEquals("RT", withoutExt.getString());
+       assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
     }
 }
