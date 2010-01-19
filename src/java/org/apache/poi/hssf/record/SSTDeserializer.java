@@ -47,7 +47,13 @@ class SSTDeserializer
     {
       for (int i=0;i<stringCount;i++) {
          // Extract exactly the count of strings from the SST record.
-         UnicodeString str = new UnicodeString(in);
+         UnicodeString str;
+         if(in.available() == 0 && ! in.hasNextRecord()) {
+            System.err.println("Ran out of data before creating all the strings! String at index " + i + "");
+            str = new UnicodeString("");
+         } else {
+            str = new UnicodeString(in);
+         }
          addToStringTable( strings, str );
       }
     }
