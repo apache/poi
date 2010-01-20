@@ -84,12 +84,20 @@ public final class OLEShape extends Picture {
 
         //persist reference
         int ref = getExEmbed().getExOleObjAtom().getObjStgDataRef();
-        for (int i = 0; i < ole.length; i++) {
-            if(ole[i].getExOleObjStg().getPersistId() == ref) return ole[i];
 
+        ObjectData data = null;
+
+        for (int i = 0; i < ole.length; i++) {
+            if(ole[i].getExOleObjStg().getPersistId() == ref) {
+                data=ole[i];
+            }
         }
-        logger.log(POILogger.WARN, "OLE data not found");
-        return null;
+
+        if (data==null) {
+            logger.log(POILogger.WARN, "OLE data not found");
+        }
+
+        return data;
     }
 
     /**
