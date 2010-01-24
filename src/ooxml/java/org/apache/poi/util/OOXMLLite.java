@@ -109,23 +109,17 @@ public final class OOXMLLite {
             String className = cls.getName();
             String classRef = className.replace('.', '/') + ".class";
             File destFile = new File(_destDest, classRef);
-            //System.out.println(classRef + "  -->  " + destFile);
             copyFile(cls.getResourceAsStream('/' + classRef), destFile);
 
             if(cls.isInterface()){
-                //always copy Factory that accompanies every ooxml schema object
-                String factoryClass = className + "$Factory";
-                if(!classes.containsKey(factoryClass)){
-                    try {
-                        Class fc = Class.forName(factoryClass);
-                        className = fc.getName();
-                        classRef = className.replace('.', '/') + ".class";
-                        destFile = new File(_destDest, classRef);
-                        //System.out.println(classRef + "  -->  " + destFile);
-                        copyFile(fc.getResourceAsStream('/' + classRef), destFile);
-                    } catch(ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                /**
+                 * Copy classes and interfaces declared as members of this class
+                 */
+                for(Class fc : cls.getDeclaredClasses()){
+                    className = fc.getName();
+                    classRef = className.replace('.', '/') + ".class";
+                    destFile = new File(_destDest, classRef);
+                    copyFile(fc.getResourceAsStream('/' + classRef), destFile);
                 }
             }
         }
