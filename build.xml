@@ -47,7 +47,7 @@ under the License.
           ANT_OPTS="-Xmx1024m -XX:MaxPermSize=256m" ant test
 
  -->
-<project name="POI Build" default="help" basedir=".">
+<project name="POI Build" default="help" basedir="." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
 
     <description>The Apache POI project Ant build.</description>
 
@@ -1035,5 +1035,39 @@ under the License.
 
     <target name="gump" depends="compile-all, test-all, jar"/>
 
+    <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
+    <target name="maven.ant.tasks-check">
+      <fail unless="maven.ant.tasks.present">
+      Maven ant tasks not found.
+      Please make sure the maven-ant-tasks jar is in ANT_HOME/lib, or made 
+      available to Ant using other mechanisms like -lib or CLASSPATH.
+      
+      You can download the Maven Ant Tasks from http://maven.apache.org/ant-tasks/download.html
+      </fail>
+    </target>
+
+    <macrodef name="m2-install">
+      <attribute name="artifactId"/>
+      
+      <sequential>
+        <mvn:install file="${dist.dir}/@{artifactId}-${version.id}-${DSTAMP}.jar">
+          <pom file="${dist.dir}/@{artifactId}-${version.id}.pom"/>
+        </mvn:install>
+      </sequential>
+    </macrodef>  
+
+    <!--
+      Install POI artifacts into the local repository. 
+      Invoking this command is equivalent to 'mvn install' in Maven-driven projects.
+    -->
+    <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms">
+      <m2-install artifactId="poi"/>
+      <m2-install artifactId="poi-scratchpad"/>
+      <m2-install artifactId="poi-contrib"/>
+      <m2-install artifactId="poi-ooxml"/>
+      <m2-install artifactId="poi-examples"/>
+      <m2-install artifactId="poi-ooxml-schemas"/>
+    </target>
+    
 </project>
 
