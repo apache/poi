@@ -151,8 +151,12 @@ public class XLSX2CSV {
                 throws IOException, SAXException, ParserConfigurationException {
             ArrayList<PackagePart> parts =
                     pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
-            PackagePart sstPart = parts.get(0);
-            readFrom(sstPart.getInputStream());
+
+            // Some workbooks have no shared strings table.
+            if (parts.size() > 0) {
+                PackagePart sstPart = parts.get(0);
+                readFrom(sstPart.getInputStream());
+            }
         }
 
         /**
