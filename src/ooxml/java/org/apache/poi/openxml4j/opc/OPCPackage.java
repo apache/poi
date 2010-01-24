@@ -367,6 +367,7 @@ public abstract class OPCPackage implements RelationshipSource {
 				}
 			} else if (this.output != null) {
 				save(this.output);
+				output.close();
 			}
 		} finally {
 			l.writeLock().unlock();
@@ -433,8 +434,10 @@ public abstract class OPCPackage implements RelationshipSource {
 				PackageRelationshipTypes.THUMBNAIL);
 
 		// Copy file data to the newly created part
-		StreamHelper.copyStream(new FileInputStream(path), thumbnailPart
+		FileInputStream is = new FileInputStream(path);
+		StreamHelper.copyStream(is, thumbnailPart
 				.getOutputStream());
+		is.close();
 	}
 
 	/**
@@ -1302,6 +1305,7 @@ public abstract class OPCPackage implements RelationshipSource {
 			throw new IOException(e.getLocalizedMessage());
 		}
 		this.save(fos);
+		fos.close();
 	}
 
 	/**
