@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48571 - properly close all IO streams created in OPCPackage</action>
            <action dev="POI-DEVELOPERS" type="fix">48572 - always copy all declared inner classes and interfaces when generating poi-ooxml-schemas</action>
            <action dev="POI-DEVELOPERS" type="add">Low Level record support for the ExtRst (phonetic text) part of Unicode Strings. No usermodel access to it as yet though.</action>
            <action dev="POI-DEVELOPERS" type="fix">record.UnicodeString has moved to record.common.UnicodeString, to live with the other record-part classes, as it isn't a full record.</action>
