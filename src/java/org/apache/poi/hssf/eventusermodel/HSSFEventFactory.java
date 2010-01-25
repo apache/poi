@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -51,10 +52,32 @@ public class HSSFEventFactory {
 	 * @param fs  a POIFS filesystem containing your workbook
 	 */
 	public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs) throws IOException {
-		InputStream in = fs.createDocumentInputStream("Workbook");
-
-		processEvents(req, in);
+	   processWorkbookEvents(req, fs.getRoot());
 	}
+
+   /**
+    * Processes a file into essentially record events.
+    *
+    * @param req an Instance of HSSFRequest which has your registered listeners
+    * @param fs  a POIFS filesystem containing your workbook
+    */
+   public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
+      InputStream in = dir.createDocumentInputStream("Workbook");
+
+      processEvents(req, in);
+   }
+
+   /**
+    * Processes a file into essentially record events.
+    *
+    * @param req an Instance of HSSFRequest which has your registered listeners
+    * @param fs  a POIFS filesystem containing your workbook
+    * @return    numeric user-specified result code.
+    */
+   public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
+      throws IOException, HSSFUserException {
+      return abortableProcessWorkbookEvents(req, fs.getRoot());
+   }
 
 	/**
 	 * Processes a file into essentially record events.
@@ -63,9 +86,9 @@ public class HSSFEventFactory {
 	 * @param fs  a POIFS filesystem containing your workbook
 	 * @return    numeric user-specified result code.
 	 */
-	public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
+	public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir)
 		throws IOException, HSSFUserException {
-		InputStream in = fs.createDocumentInputStream("Workbook");
+		InputStream in = dir.createDocumentInputStream("Workbook");
 		return abortableProcessEvents(req, in);
 	}
 

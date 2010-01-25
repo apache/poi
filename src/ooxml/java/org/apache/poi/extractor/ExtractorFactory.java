@@ -36,6 +36,7 @@ import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -62,6 +63,59 @@ import org.apache.xmlbeans.XmlException;
 public class ExtractorFactory {
 	public static final String CORE_DOCUMENT_REL =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+	
+	
+	/** Should this thread prefer event based over usermodel based extractors? */
+	private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
+      protected Boolean initialValue() { return Boolean.FALSE; }
+	};
+	/** Should all threads prefer event based over usermodel based extractors? */
+	private static Boolean allPreferEventExtractors;
+	
+   /** 
+    * Should this thread prefer event based over usermodel based extractors?
+    * (usermodel extractors tend to be more accurate, but use more memory) 
+    * Default is false. 
+    */
+	public static boolean getThreadPrefersEventExtractors() {
+	   return threadPreferEventExtractors.get();
+	}
+   /** 
+    * Should all threads prefer event based over usermodel based extractors? 
+    * (usermodel extractors tend to be more accurate, but use more memory) 
+    * Default is to use the thread level setting, which defaults to false. 
+    */
+	public static Boolean getAllThreadsPreferEventExtractors() {
+	   return allPreferEventExtractors;
+	}
+	
+   /** 
+    * Should this thread prefer event based over usermodel based extractors?
+    * Will only be used if the All Threads setting is null. 
+    */
+   public static void setThreadPrefersEventExtractors(boolean preferEventExtractors) {
+      threadPreferEventExtractors.set(preferEventExtractors);
+   }
+   /** 
+    * Should all threads prefer event based over usermodel based extractors?
+    * If set, will take preference over the Thread level setting. 
+    */
+   public static void setAllThreadsPreferEventExtractors(Boolean preferEventExtractors) {
+      allPreferEventExtractors = preferEventExtractors;
+   }
+	
+   
+   /**
+    * Should this thread use event based extractors is available?
+    * Checks the all-threads one first, then thread specific.
+    */
+   protected static boolean getPreferEventExtractor() {
+      if(allPreferEventExtractors != null) {
+         return allPreferEventExtractors;
+      }
+      return threadPreferEventExtractors.get();
+   }
+   
 	
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		InputStream inp = new PushbackInputStream( 
@@ -106,7 +160,12 @@ public class ExtractorFactory {
             corePart.getContentType().equals(XSSFRelation.MACRO_ADDIN_WORKBOOK.getContentType()) ||
             corePart.getContentType().equals(XSSFRelation.TEMPLATE_WORKBOOK.getContentType()) ||
             corePart.getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType())) {
-            return new XSSFExcelExtractor(pkg);
+           if(getPreferEventExtractor()) {
+              // TODO
+              return new XSSFExcelExtractor(pkg);
+           } else {
+              return new XSSFExcelExtractor(pkg);
+           }
         }
 
         if(corePart.getContentType().equals(XWPFRelation.DOCUMENT.getContentType()) ||
@@ -148,7 +207,11 @@ public class ExtractorFactory {
 			Entry entry = entries.next();
 			
 			if(entry.getName().equals("Workbook")) {
-				return new ExcelExtractor(poifsDir, fs);
+			   if(getPreferEventExtractor()) {
+               return new EventBasedExcelExtractor(poifsDir, fs);
+			   } else {
+			      return new ExcelExtractor(poifsDir, fs);
+			   }
 			}
 			if(entry.getName().equals("WordDocument")) {
 				return new WordExtractor(poifsDir, fs);
