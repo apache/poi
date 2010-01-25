@@ -27,6 +27,7 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -389,6 +390,72 @@ public class TestExtractorFactory extends TestCase {
 		} catch(InvalidOperationException e) {
 			// Good
 		}
+	}
+	
+	public void testPreferEventBased() throws Exception {
+	   assertEquals(false, ExtractorFactory.getPreferEventExtractor());
+	   assertEquals(false, ExtractorFactory.getThreadPrefersEventExtractors());
+	   assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+	   
+	   ExtractorFactory.setThreadPrefersEventExtractors(true);
+	   
+      assertEquals(true, ExtractorFactory.getPreferEventExtractor());
+      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
+      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      
+      ExtractorFactory.setAllThreadsPreferEventExtractors(false);
+      
+      assertEquals(false, ExtractorFactory.getPreferEventExtractor());
+      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
+      assertEquals(Boolean.FALSE, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      
+      ExtractorFactory.setAllThreadsPreferEventExtractors(null);
+      
+      assertEquals(true, ExtractorFactory.getPreferEventExtractor());
+      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
+      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      
+      
+      // Check we get the right extractors now
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
+            instanceof EventBasedExcelExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
+      );
+      
+      assertTrue(
+            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
+            instanceof XSSFExcelExtractor // TODO
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
+      );
+      
+      
+      // Put back to normal
+      ExtractorFactory.setThreadPrefersEventExtractors(false);
+      assertEquals(false, ExtractorFactory.getPreferEventExtractor());
+      assertEquals(false, ExtractorFactory.getThreadPrefersEventExtractors());
+      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      
+      // And back
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
+            instanceof ExcelExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
+      );
+      
+      assertTrue(
+            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
+            instanceof XSSFExcelExtractor
+      );
+      assertTrue(
+            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
+      );
 	}
 
    /**

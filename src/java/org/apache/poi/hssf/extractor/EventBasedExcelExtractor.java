@@ -46,6 +46,7 @@ import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -65,15 +66,28 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</link>
  */
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
+   private DirectoryNode _dir;
 	private POIFSFileSystem _fs;
 	boolean _includeSheetNames = true;
 	boolean _formulasNotResults = false;
 
-	public EventBasedExcelExtractor(POIFSFileSystem fs) {
+	public EventBasedExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) {
 		super(null);
+		_dir = dir;
 		_fs = fs;
 	}
+   public EventBasedExcelExtractor(POIFSFileSystem fs) {
+      this(fs.getRoot(), fs);
+   }
 
+   /**
+    * Return the underlying POIFS FileSystem of
+    *  this document.
+    */
+   public POIFSFileSystem getFileSystem() {
+      return _fs;
+   }
+   
 	/**
 	 * Would return the document information metadata for the document,
 	 *  if we supported it
@@ -134,7 +148,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		HSSFRequest request = new HSSFRequest();
 		request.addListenerForAllRecords(ft);
 
-		factory.processWorkbookEvents(request, _fs);
+		factory.processWorkbookEvents(request, _dir);
 
 		return tl;
 	}
