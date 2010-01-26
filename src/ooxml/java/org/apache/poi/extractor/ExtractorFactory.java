@@ -50,6 +50,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
@@ -161,8 +162,7 @@ public class ExtractorFactory {
             corePart.getContentType().equals(XSSFRelation.TEMPLATE_WORKBOOK.getContentType()) ||
             corePart.getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType())) {
            if(getPreferEventExtractor()) {
-              // TODO
-              return new XSSFExcelExtractor(pkg);
+              return new XSSFEventBasedExcelExtractor(pkg);
            } else {
               return new XSSFExcelExtractor(pkg);
            }

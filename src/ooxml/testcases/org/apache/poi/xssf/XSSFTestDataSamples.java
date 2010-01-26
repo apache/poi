@@ -19,18 +19,14 @@ package org.apache.poi.xssf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.util.TempFile;
 
 /**
  * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder. 
@@ -39,6 +35,15 @@ import org.apache.poi.util.TempFile;
  */
 public class XSSFTestDataSamples {
 
+   public static OPCPackage openSamplePackage(String sampleName) {
+      try {
+         return OPCPackage.open(
+               HSSFTestDataSamples.openSampleFileStream(sampleName)
+         );
+      } catch(Exception e) {
+         throw new RuntimeException(e);
+      }
+   }
 	public static XSSFWorkbook openSampleWorkbook(String sampleName) {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
 		try {
