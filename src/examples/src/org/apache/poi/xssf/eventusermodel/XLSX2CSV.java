@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -30,15 +29,11 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -84,192 +79,6 @@ public class XLSX2CSV {
         NUMBER,
     }
 
-    /**
-     * Each cell is enclosed in "si".  Each cell can have multiple "t" elements.
-     * Example input
-     * 
-     * <pre>
- 	&lt;?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-	&lt;sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
-	  &lt;si>
-	    &lt;r>
-	      &lt;rPr>
-	        &lt;b />
-	        &lt;sz val="11" />
-	        &lt;color theme="1" />
-  	        &lt;rFont val="Calibri" />
-  	        &lt;family val="2" />
-  	        &lt;scheme val="minor" />
-  	      &lt;/rPr>
-  	      &lt;t>This:&lt;/t>
-  	    &lt;/r>
-	    &lt;r>
-	      &lt;rPr>
-  	        &lt;sz val="11" />
-	        &lt;color theme="1" />
-  	        &lt;rFont val="Calibri" />
-  	        &lt;family val="2" />
-  	        &lt;scheme val="minor" />
-  	      &lt;/rPr>
-  	      &lt;t xml:space="preserve">Causes Problems&lt;/t>
-  	    &lt;/r>
-  	  &lt;/si>
-	  &lt;si>
-  	    &lt;t>This does not&lt;/t>
-  	  &lt;/si>
-  	&lt;/sst>
-  	 * </pre>
-     *
-     */
-    static class ReadonlySharedStringsTable extends DefaultHandler {
-
-        /**
-         * An integer representing the total count of strings in the workbook. This count does not
-         * include any numbers, it counts only the total of text strings in the workbook.
-         */
-        private int count;
-
-        /**
-         * An integer representing the total count of unique strings in the Shared String Table.
-         * A string is unique even if it is a copy of another string, but has different formatting applied
-         * at the character level.
-         */
-        private int uniqueCount;
-
-        /**
-         * The shared strings table.
-         */
-        private String[] strings;
-
-        /**
-         * @param pkg
-         * @throws IOException
-         * @throws SAXException
-         * @throws ParserConfigurationException
-         */
-        public ReadonlySharedStringsTable(OPCPackage pkg)
-                throws IOException, SAXException, ParserConfigurationException {
-            ArrayList<PackagePart> parts =
-                    pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
-
-            // Some workbooks have no shared strings table.
-            if (parts.size() > 0) {
-                PackagePart sstPart = parts.get(0);
-                readFrom(sstPart.getInputStream());
-            }
-        }
-
-        /**
-         * Like POIXMLDocumentPart constructor
-         *
-         * @param part
-         * @param rel_ignored
-         * @throws IOException
-         */
-        public ReadonlySharedStringsTable(PackagePart part, PackageRelationship rel_ignored)
-                throws IOException, SAXException, ParserConfigurationException {
-            readFrom(part.getInputStream());
-        }
-
-        /**
-         * Read this shared strings table from an XML file.
-         *
-         * @param is The input stream containing the XML document.
-         * @throws IOException                  if an error occurs while reading.
-         * @throws SAXException
-         * @throws ParserConfigurationException
-         */
-        public void readFrom(InputStream is) throws IOException, SAXException, ParserConfigurationException {
-            InputSource sheetSource = new InputSource(is);
-            SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-            SAXParser saxParser = saxFactory.newSAXParser();
-            XMLReader sheetParser = saxParser.getXMLReader();
-            sheetParser.setContentHandler(this);
-            sheetParser.parse(sheetSource);
-        }
-
-        /**
-         * Return an integer representing the total count of strings in the workbook. This count does not
-         * include any numbers, it counts only the total of text strings in the workbook.
-         *
-         * @return the total count of strings in the workbook
-         */
-        public int getCount() {
-            return this.count;
-        }
-
-        /**
-         * Returns an integer representing the total count of unique strings in the Shared String Table.
-         * A string is unique even if it is a copy of another string, but has different formatting applied
-         * at the character level.
-         *
-         * @return the total count of unique strings in the workbook
-         */
-        public int getUniqueCount() {
-            return this.uniqueCount;
-        }
-
-        /**
-         * Return a string item by index
-         *
-         * @param idx index of item to return.
-         * @return the item at the specified position in this Shared String table.
-         */
-        public String getEntryAt(int idx) {
-            return strings[idx];
-        }
-
-        //// ContentHandler methods ////
-
-        private StringBuffer characters;
-        private boolean tIsOpen;
-        private int index;
-
-        /*
-       * (non-Javadoc)
-       * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-       */
-        public void startElement(String uri, String localName, String name,
-                                 Attributes attributes) throws SAXException {
-            if ("sst".equals(name)) {
-                String count = attributes.getValue("count");
-                String uniqueCount = attributes.getValue("uniqueCount");
-                this.count = Integer.parseInt(count);
-                this.uniqueCount = Integer.parseInt(uniqueCount);
-                this.strings = new String[this.uniqueCount];
-                index = 0;
-                characters = new StringBuffer();
-            } else if ("si".equals(name)) {
-                characters.setLength(0);
-            } else if ("t".equals(name)) {
-                tIsOpen = true;
-            }
-        }
-
-        /*
-       * (non-Javadoc)
-       * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-       */
-        public void endElement(String uri, String localName, String name)
-                throws SAXException {
-            if ("si".equals(name)) {
-                strings[index] = characters.toString();            	
-                ++index;
-            } else if ("t".equals(name)) {
-            	tIsOpen = false;
-            }
-        }
-
-        /**
-         * Captures characters only if a t(ext?) element is open.
-         */
-        public void characters(char[] ch, int start, int length)
-                throws SAXException {
-            if (tIsOpen)
-                characters.append(ch, start, length);
-        }
-
-    }
 
     /**
      * Derived from http://poi.apache.org/spreadsheet/how-to.html#xssf_sax_api
@@ -289,7 +98,7 @@ public class XLSX2CSV {
         /**
          * Table with unique strings
          */
-        private ReadonlySharedStringsTable sharedStringsTable;
+        private ReadOnlySharedStringsTable sharedStringsTable;
 
         /**
          * Destination for data
@@ -330,7 +139,7 @@ public class XLSX2CSV {
          */
         public MyXSSFSheetHandler(
                 StylesTable styles,
-                ReadonlySharedStringsTable strings,
+                ReadOnlySharedStringsTable strings,
                 int cols,
                 PrintStream target) {
             this.stylesTable = styles;
@@ -384,12 +193,8 @@ public class XLSX2CSV {
                 else if ("str".equals(cellType))
                     nextDataType = xssfDataType.FORMULA;
                 else if (cellStyleStr != null) {
-                    /*
-                          * It's a number, but possibly has a style and/or special format.
-                          * Nick Burch said to use org.apache.poi.ss.usermodel.BuiltinFormats,
-                          * and I see javadoc for that at apache.org, but it's not in the
-                          * POI 3.5 Beta 5 jars.  Scheduled to appear in 3.5 beta 6.
-                          */
+                    // It's a number, but almost certainly one
+                    //  with a special style or format 
                     int styleIndex = Integer.parseInt(cellStyleStr);
                     XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
                     this.formatIndex = style.getDataFormat();
@@ -553,7 +358,7 @@ public class XLSX2CSV {
      */
     public void processSheet(
             StylesTable styles,
-            ReadonlySharedStringsTable strings,
+            ReadOnlySharedStringsTable strings,
             InputStream sheetInputStream)
             throws IOException, ParserConfigurationException, SAXException {
 
@@ -577,7 +382,7 @@ public class XLSX2CSV {
     public void process()
             throws IOException, OpenXML4JException, ParserConfigurationException, SAXException {
 
-        ReadonlySharedStringsTable strings = new ReadonlySharedStringsTable(this.xlsxPackage);
+        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(this.xlsxPackage);
         XSSFReader xssfReader = new XSSFReader(this.xlsxPackage);
         StylesTable styles = xssfReader.getStylesTable();
         XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
