@@ -16,9 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hssf.eventusermodel;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -37,12 +39,28 @@ import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
  */
 public class FormatTrackingHSSFListener implements HSSFListener {
 	private final HSSFListener _childListener;
-	private HSSFDataFormatter _formatter = new HSSFDataFormatter();
+	private final HSSFDataFormatter _formatter;
+	private final NumberFormat _defaultFormat;
 	private final Map<Integer, FormatRecord> _customFormatRecords = new Hashtable<Integer, FormatRecord>();
 	private final List<ExtendedFormatRecord> _xfRecords = new ArrayList<ExtendedFormatRecord>();
 
+	/**
+	 * Creates a format tracking wrapper around the given listener, using
+	 * the {@link Locale#getDefault() default locale} for the formats.
+	 */
 	public FormatTrackingHSSFListener(HSSFListener childListener) {
+		this(childListener, Locale.getDefault());
+	}
+
+	/**
+	 * Creates a format tracking wrapper around the given listener, using
+	 * the given locale for the formats.
+	 */
+	public FormatTrackingHSSFListener(
+			HSSFListener childListener, Locale locale) {
 		_childListener = childListener;
+		_formatter = new HSSFDataFormatter(locale);
+		_defaultFormat = NumberFormat.getInstance(locale);
 	}
 
 	protected int getNumberOfCustomFormats() {
@@ -104,7 +122,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 		String formatString = getFormatString(cell);
 
 		if (formatString == null) {
-			return Double.toString(value);
+			return _defaultFormat.format(value);
 		}
 		// Format, using the nice new
 		// HSSFDataFormatter to do the work for us

@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 
@@ -65,5 +66,19 @@ import org.apache.poi.ss.usermodel.DataFormatter;
  * @author James May (james dot may at fmr dot com)
  */
 public final class HSSFDataFormatter extends DataFormatter {
+
+    /**
+     * Creates a formatter using the given locale.
+     */
+    public HSSFDataFormatter(Locale locale) {
+        super(locale);
+    }
+
+    /**
+     * Creates a formatter using the {@link Locale#getDefault() default locale}.
+     */
+    public HSSFDataFormatter() {
+        this(Locale.getDefault());
+    }
 
 }
