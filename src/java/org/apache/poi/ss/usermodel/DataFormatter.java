@@ -77,11 +77,21 @@ public class DataFormatter {
     /** A regex to find patterns like [$$-1009] and [$?-452]. */
     private static final Pattern specialPatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+\\])");
 
+    /**
+     * The decimal symbols of the locale used for formatting values.
+     */
+    private final DecimalFormatSymbols decimalSymbols;
+
+    /**
+     * The date symbols of the locale used for formatting values.
+     */
+    private final DateFormatSymbols dateSymbols;
+
     /** <em>General</em> format for whole numbers. */
-    private static final Format generalWholeNumFormat = new DecimalFormat("#");
+    private final Format generalWholeNumFormat;
 
     /** <em>General</em> format for decimal numbers. */
-    private static final Format generalDecimalNumFormat = new DecimalFormat("#.##########");
+    private final Format generalDecimalNumFormat;
 
     /** A default format to use when a number pattern cannot be parsed. */
     private Format defaultNumFormat;
@@ -90,13 +100,25 @@ public class DataFormatter {
      * A map to cache formats.
      *  Map<String,Format> formats
      */
-    private final Map formats;
+    private final Map<String,Format> formats;
 
     /**
-     * Constructor
+     * Creates a formatter using the {@link Locale#getDefault() default locale}.
      */
     public DataFormatter() {
-        formats = new HashMap();
+        this(Locale.getDefault());
+    }
+
+    /**
+     * Creates a formatter using the given locale.
+     */
+    public DataFormatter(Locale locale) {
+        dateSymbols = new DateFormatSymbols(locale);
+        decimalSymbols = new DecimalFormatSymbols(locale);
+        generalWholeNumFormat = new DecimalFormat("#", decimalSymbols);
+        generalDecimalNumFormat = new DecimalFormat("#.##########", decimalSymbols);
+
+        formats = new HashMap<String,Format>();
 
         // init built-in formats
 
@@ -143,7 +165,7 @@ public class DataFormatter {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStr) {
-        Format format = (Format)formats.get(formatStr);
+        Format format = formats.get(formatStr);
         if (format != null) {
             return format;
         }
@@ -242,7 +264,7 @@ public class DataFormatter {
         StringBuffer sb = new StringBuffer();
         char[] chars = formatStr.toCharArray();
         boolean mIsMonth = true;
-        List ms = new ArrayList();
+        List<Integer> ms = new ArrayList<Integer>();
         for(int j=0; j<chars.length; j++) {
             char c = chars[j];
             if (c == 'h' || c == 'H') {
@@ -267,7 +289,7 @@ public class DataFormatter {
                 sb.append('s');
                 // if 'M' precedes 's' it should be minutes ('m')
                 for (int i = 0; i < ms.size(); i++) {
-                    int index = ((Integer)ms.get(i)).intValue();
+                    int index = ms.get(i).intValue();
                     if (sb.charAt(index) == 'M') {
                         sb.replace(index, index+1, "m");
                     }
@@ -295,7 +317,7 @@ public class DataFormatter {
         formatStr = sb.toString();
 
         try {
-            return new SimpleDateFormat(formatStr);
+            return new SimpleDateFormat(formatStr, dateSymbols);
         } catch(IllegalArgumentException iae) {
 
             // the pattern could not be parsed correctly,
@@ -335,7 +357,7 @@ public class DataFormatter {
         }
 
         try {
-            return new DecimalFormat(sb.toString());
+            return new DecimalFormat(sb.toString(), decimalSymbols);
         } catch(IllegalArgumentException iae) {
 
             // the pattern could not be parsed correctly,
@@ -520,9 +542,9 @@ public class DataFormatter {
      * @see java.text.Format#format
      */
     public void setDefaultNumberFormat(Format format) {
-        Iterator itr = formats.entrySet().iterator();
+        Iterator<Map.Entry<String,Format>> itr = formats.entrySet().iterator();
         while(itr.hasNext()) {
-            Map.Entry entry = (Map.Entry)itr.next();
+            Map.Entry<String,Format> entry = itr.next();
             if (entry.getValue() == generalDecimalNumFormat
                     || entry.getValue() == generalWholeNumFormat) {
                 entry.setValue(format);
@@ -562,7 +584,8 @@ public class DataFormatter {
      *
      * @author James May
      */
-    private static final class SSNFormat extends Format {
+    @SuppressWarnings("serial")
+   private static final class SSNFormat extends Format {
         public static final Format instance = new SSNFormat();
         private static final DecimalFormat df = createIntegerOnlyFormat("000000000");
         private SSNFormat() {
@@ -593,7 +616,8 @@ public class DataFormatter {
      * built-in formatting for Zip + 4.
      * @author James May
      */
-    private static final class ZipPlusFourFormat extends Format {
+    @SuppressWarnings("serial")
+   private static final class ZipPlusFourFormat extends Format {
         public static final Format instance = new ZipPlusFourFormat();
         private static final DecimalFormat df = createIntegerOnlyFormat("000000000");
         private ZipPlusFourFormat() {
@@ -623,7 +647,8 @@ public class DataFormatter {
      * built-in phone number formatting.
      * @author James May
      */
-    private static final class PhoneFormat extends Format {
+    @SuppressWarnings("serial")
+   private static final class PhoneFormat extends Format {
         public static final Format instance = new PhoneFormat();
         private static final DecimalFormat df = createIntegerOnlyFormat("##########");
         private PhoneFormat() {
