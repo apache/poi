@@ -56,7 +56,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Use:");
-			System.err.println("  HXFExcelExtractor <filename.xlsx>");
+			System.err.println("  XSSFExcelExtractor <filename.xlsx>");
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor =

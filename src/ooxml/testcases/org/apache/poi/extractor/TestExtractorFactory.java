@@ -32,6 +32,7 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 
@@ -427,7 +428,7 @@ public class TestExtractorFactory extends TestCase {
       
       assertTrue(
             ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
-            instanceof XSSFExcelExtractor // TODO
+            instanceof XSSFEventBasedExcelExtractor
       );
       assertTrue(
             ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
