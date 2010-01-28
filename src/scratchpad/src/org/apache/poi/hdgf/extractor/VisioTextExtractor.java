@@ -61,13 +61,13 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 *  contents.
 	 */
 	public String[] getAllText() {
-		ArrayList text = new ArrayList();
+		ArrayList<String> text = new ArrayList<String>();
 		for(int i=0; i<hdgf.getTopLevelStreams().length; i++) {
 			findText(hdgf.getTopLevelStreams()[i], text);
 		}
-		return (String[])text.toArray( new String[text.size()] );
+		return text.toArray( new String[text.size()] );
 	}
-	private void findText(Stream stream, ArrayList text) {
+	private void findText(Stream stream, ArrayList<String> text) {
 		if(stream instanceof PointerContainingStream) {
 			PointerContainingStream ps = (PointerContainingStream)stream;
 			for(int i=0; i<ps.getPointedToStreams().length; i++) {
@@ -82,10 +82,18 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 						chunk.getName() != null &&
 						chunk.getName().equals("Text") &&
 						chunk.getCommands().length > 0) {
+				   
 					// First command
 					Command cmd = chunk.getCommands()[0];
 					if(cmd != null && cmd.getValue() != null) {
-						text.add( cmd.getValue().toString() );
+					   // Capture the text, as long as it isn't
+					   //  simply an empty string
+					   String str = cmd.getValue().toString();
+					   if(str.equals("") || str.equals("\n")) {
+					      // Ignore empty strings
+					   } else {
+					      text.add( str );
+					   }
 					}
 				}
 			}
