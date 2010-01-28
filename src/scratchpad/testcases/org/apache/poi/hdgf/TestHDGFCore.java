@@ -63,13 +63,18 @@ public final class TestHDGFCore extends TestCase {
 	}
 
 	/**
-	 * Tests that we can open a problematic file, that initially
-	 *  appears to have a negative chunk length
+	 * Tests that we can open a problematic file, that used to
+	 *  break with a negative chunk length
 	 */
-	public void DISABLEDtestNegativeChunkLength() throws Exception {
+	public void testNegativeChunkLength() throws Exception {
 		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
 
 		HDGFDiagram hdgf = new HDGFDiagram(fs);
+		assertNotNull(hdgf);
+		
+		// And another file
+		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength2.vsd"));
+		hdgf = new HDGFDiagram(fs);
 		assertNotNull(hdgf);
 	}
 }
