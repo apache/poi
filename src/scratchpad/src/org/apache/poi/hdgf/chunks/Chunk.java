@@ -116,7 +116,7 @@ public final class Chunk {
 
 		// Loop over the definitions, building the commands
 		//  and getting their values
-		ArrayList commands = new ArrayList();
+		ArrayList<Command> commands = new ArrayList<Command>();
 		for(int i=0; i<commandDefinitions.length; i++) {
 			int type = commandDefinitions[i].getType();
 			int offset = commandDefinitions[i].getOffset();
@@ -232,7 +232,7 @@ public final class Chunk {
 		}
 
 		// Save the commands we liked the look of
-		this.commands = (Command[])commands.toArray(
+		this.commands = commands.toArray(
 							new Command[commands.size()] );
 
 		// Now build up the blocks, if we had a command that tells
