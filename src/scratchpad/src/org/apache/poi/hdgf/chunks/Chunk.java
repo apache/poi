@@ -180,6 +180,14 @@ public final class Chunk {
 				// A Little Endian String
 				// Starts 8 bytes into the data segment
 				// Ends at end of data, or 00 00
+			   
+				// Ensure we have enough data
+				if(contents.length < 8) {
+					command.value = "";
+					break;
+				}
+			   
+				// Find the end point
 				int startsAt = 8;
 				int endsAt = startsAt;
 				for(int j=startsAt; j<contents.length-1 && endsAt == startsAt; j++) {
@@ -190,7 +198,7 @@ public final class Chunk {
 				if(endsAt == startsAt) {
 					endsAt = contents.length;
 				}
-
+				
 				int strLen = (endsAt-startsAt) / 2;
 				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
 				break;

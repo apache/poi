@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">43670 - Improve HDGF ChunkV11 separator detection, and short string detection, to solve the "Negative length of ChunkHeader" problem</action>
            <action dev="POI-DEVELOPERS" type="add">48617 - Optionally allow the overriding of the Locale used by DataFormatter to control how the default number and date formats should look</action>
            <action dev="POI-DEVELOPERS" type="add">New event based xssf text extractor (XSSFEventBasedExcelExtractor)</action>
            <action dev="POI-DEVELOPERS" type="add">ExtractorFactory can now be told to prefer Event Based extractors (current Excel only) on a per-thread or overall basis</action>
