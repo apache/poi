@@ -18,7 +18,6 @@
 package org.apache.poi.hdgf.extractor;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 
 import junit.framework.TestCase;
@@ -31,8 +30,10 @@ public final class TestVisioExtractor extends TestCase {
     private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
 
 	private String defFilename;
+	private int defTextChunks;
 	protected void setUp() {
 		defFilename = "Test_Visio-Some_Random_Text.vsd";
+		defTextChunks = 5;
 	}
 
 	/**
@@ -44,7 +45,7 @@ public final class TestVisioExtractor extends TestCase {
 		extractor = new VisioTextExtractor(_dgTests.openResourceAsStream(defFilename));
 		assertNotNull(extractor);
 		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
+		assertEquals(defTextChunks, extractor.getAllText().length);
 
 		extractor = new VisioTextExtractor(
 				new POIFSFileSystem(
@@ -53,7 +54,7 @@ public final class TestVisioExtractor extends TestCase {
 		);
 		assertNotNull(extractor);
 		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
+		assertEquals(defTextChunks, extractor.getAllText().length);
 
 		extractor = new VisioTextExtractor(
 			new HDGFDiagram(
@@ -64,7 +65,7 @@ public final class TestVisioExtractor extends TestCase {
 		);
 		assertNotNull(extractor);
 		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
+		assertEquals(defTextChunks, extractor.getAllText().length);
 	}
 
 	public void testExtraction() throws Exception {
@@ -74,19 +75,25 @@ public final class TestVisioExtractor extends TestCase {
 		// Check the array fetch
 		String[] text = extractor.getAllText();
 		assertNotNull(text);
-		assertEquals(3, text.length);
+		assertEquals(defTextChunks, text.length);
 
-		assertEquals("Test View\n", text[0]);
-		assertEquals("I am a test view\n", text[1]);
-		assertEquals("Some random text, on a page\n", text[2]);
+      assertEquals("text\n", text[0]);
+      assertEquals("View\n", text[1]);
+		assertEquals("Test View\n", text[2]);
+		assertEquals("I am a test view\n", text[3]);
+		assertEquals("Some random text, on a page\n", text[4]);
 
 		// And the all-in fetch
 		String textS = extractor.getText();
-		assertEquals("Test View\nI am a test view\nSome random text, on a page\n", textS);
+		assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page\n", textS);
 	}
 
 	public void testProblemFiles() throws Exception {
-		String[] files = {"44594.vsd", "44594-2.vsd", "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd"};
+		String[] files = {
+		      "44594.vsd", "44594-2.vsd", 
+		      "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",
+		      "NegativeChunkLength.vsd", "NegativeChunkLength2.vsd"
+		};
         for(String file : files){
             VisioTextExtractor ex = new VisioTextExtractor(_dgTests.openResourceAsStream(file));
             ex.getText();
@@ -108,6 +115,10 @@ public final class TestVisioExtractor extends TestCase {
 		// Check
 		capture.flush();
 		String text = baos.toString();
-		assertEquals("Test View\nI am a test view\nSome random text, on a page\n", text);
+		assertEquals(
+		      "text\nView\n" +
+		      "Test View\nI am a test view\n" +
+		      "Some random text, on a page\n", 
+		      text);
 	}
 }
