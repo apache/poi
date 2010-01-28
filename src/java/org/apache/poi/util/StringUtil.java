@@ -67,7 +67,7 @@ public class StringUtil {
 		final int len)
 		throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
 		if ((offset < 0) || (offset >= string.length)) {
-			throw new ArrayIndexOutOfBoundsException("Illegal offset");
+			throw new ArrayIndexOutOfBoundsException("Illegal offset " + offset + " (String data is of length " + string.length + ")");
 		}
 		if ((len < 0) || (((string.length - offset) / 2) < len)) {
 			throw new IllegalArgumentException("Illegal length " + len);
