@@ -26,16 +26,10 @@ public class XSLFCommonSlideData {
 
         List<DrawingParagraph> out = new ArrayList<DrawingParagraph>();
 
-        CTShape[] shapes = gs.getSpArray();
-        for (int i = 0; i < shapes.length; i++) {
-            CTTextBody ctTextBody = shapes[i].getTxBody();
-            if (ctTextBody==null) {
-                continue;
-            }
+        processShape(gs, out);
 
-            DrawingTextBody textBody = new DrawingTextBody(ctTextBody);
-
-            out.addAll(Arrays.asList(textBody.getParagraphs()));
+        for (CTGroupShape shape : gs.getGrpSpArray()) {
+            processShape(shape, out);
         }
 
         CTGraphicalObjectFrame[] graphicFrames = gs.getGraphicFrameArray();
@@ -62,6 +56,20 @@ public class XSLFCommonSlideData {
         }
 
         return out;
+    }
+
+    private void processShape(CTGroupShape gs, List<DrawingParagraph> out) {
+        CTShape[] shapes = gs.getSpArray();
+        for (int i = 0; i < shapes.length; i++) {
+            CTTextBody ctTextBody = shapes[i].getTxBody();
+            if (ctTextBody==null) {
+                continue;
+            }
+
+            DrawingTextBody textBody = new DrawingTextBody(ctTextBody);
+
+            out.addAll(Arrays.asList(textBody.getParagraphs()));
+        }
     }
 
 }
