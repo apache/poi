@@ -21,14 +21,11 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests for the INDIRECT() function.</p>
@@ -62,6 +59,19 @@ public final class TestIndirect extends TestCase {
 
 		createDataRow(sheet3, 0, 30, 31, 32);
 		createDataRow(sheet3, 1, 33, 34, 35);
+
+        HSSFName name1 = wb.createName();
+        name1.setNameName("sales1");
+        name1.setRefersToFormula("Sheet1!A1:D1");
+
+        HSSFName name2 = wb.createName();
+        name2.setNameName("sales2");
+        name2.setRefersToFormula("Sheet2!B1:C3");
+
+        HSSFRow row = sheet1.createRow(3);
+        row.createCell(0).setCellValue("sales1");  //A4
+        row.createCell(1).setCellValue("sales2");  //B4
+
 		return wb;
 	}
 
@@ -103,6 +113,8 @@ public final class TestIndirect extends TestCase {
 
 		confirm(feA, c, "INDIRECT(\"A1:G1\")", 13); // de-reference area ref (note formula is in C4)
 
+        confirm(feA, c, "SUM(INDIRECT(A4))", 50); // indirect defined name
+        confirm(feA, c, "SUM(INDIRECT(B4))", 351); // indirect defined name pointinh to other sheet
 
 		// simple error propagation:
 
