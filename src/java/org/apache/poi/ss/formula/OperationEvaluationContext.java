@@ -17,10 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.RefEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.eval.*;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
@@ -159,8 +156,11 @@ public final class OperationEvaluationContext {
 			case BAD_CELL_OR_NAMED_RANGE:
 				return ErrorEval.REF_INVALID;
 			case NAMED_RANGE:
-				throw new RuntimeException("Cannot evaluate '" + refStrPart1
-						+ "'. Indirect evaluation of defined names not supported yet");
+                EvaluationName nm = ((FormulaParsingWorkbook)_workbook).getName(refStrPart1, _sheetIndex);
+                if(!nm.isRange()){
+                    throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
+                }
+                return _bookEvaluator.evaluateNameFormula(nm.getNameDefinition(), this);
 		}
 		if (refStrPart2 == null) {
 			// no ':'

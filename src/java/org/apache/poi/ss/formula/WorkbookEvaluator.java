@@ -580,7 +580,10 @@ public final class WorkbookEvaluator {
 
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
-	private ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
+    /**
+     * YK: Used by OperationEvaluationContext to resolve indirect names.
+     */
+	/*package*/ ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
 		if (ptgs.length > 1) {
 			throw new RuntimeException("Complex name formulas not supported yet");
 		}
