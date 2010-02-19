@@ -158,26 +158,36 @@ public final class TestDirectoryNode extends TestCase {
         DirectoryEntry  root = fs.getRoot();
 
         // verify cannot delete the root directory
-        assertTrue(!root.delete());
+        assertFalse(root.delete());
+        assertTrue(root.isEmpty());
+        
         DirectoryEntry dir = fs.createDirectory("myDir");
 
-        assertTrue(!root.isEmpty());
+        assertFalse(root.isEmpty());
+        assertTrue(dir.isEmpty());
 
         // verify can delete empty directory
+        assertFalse(root.delete());
         assertTrue(dir.delete());
+        
+        // Now look at a non-empty one
         dir = fs.createDirectory("NextDir");
         DocumentEntry doc =
             dir.createDocument("foo",
                                new ByteArrayInputStream(new byte[ 1 ]));
 
-        assertTrue(!dir.isEmpty());
+        assertFalse(root.isEmpty());
+        assertFalse(dir.isEmpty());
 
-        // verify cannot delete empty directory
-        assertTrue(!dir.delete());
+        // verify cannot delete non-empty directory
+        assertFalse(dir.delete());
+        
+        // but we can delete it if we remove the document
         assertTrue(doc.delete());
-
-        // verify now we can delete it
+        assertTrue(dir.isEmpty());
         assertTrue(dir.delete());
+        
+        // It's really gone!
         assertTrue(root.isEmpty());
     }
 

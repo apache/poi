@@ -41,7 +41,9 @@ public class DirectoryNode
 {
 
     // Map of Entry instances, keyed by their names
-    private Map<String,Entry> _entries;
+    private Map<String,Entry> _byname;
+    // Our list of entries, kept sorted to preserve order
+    private ArrayList<Entry> _entries;
 
     // the POIFSFileSystem we belong to
     private POIFSFileSystem   _filesystem;
@@ -75,7 +77,8 @@ public class DirectoryNode
             });
         }
         _filesystem = filesystem;
-        _entries    = new HashMap<String, Entry>();
+        _byname     = new HashMap<String, Entry>();
+        _entries    = new ArrayList<Entry>();
         Iterator<Property> iter = property.getChildren();
 
         while (iter.hasNext())
@@ -93,7 +96,8 @@ public class DirectoryNode
                 childNode = new DocumentNode(( DocumentProperty ) child,
                                              this);
             }
-            _entries.put(childNode.getName(), childNode);
+            _entries.add(childNode);
+            _byname.put(childNode.getName(), childNode);
         }
     }
 
@@ -149,7 +153,8 @@ public class DirectoryNode
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _filesystem.addDocument(document);
-        _entries.put(property.getName(), rval);
+        _entries.add(rval);
+        _byname.put(property.getName(), rval);
         return rval;
     }
 
@@ -165,7 +170,7 @@ public class DirectoryNode
     boolean changeName(final String oldName, final String newName)
     {
         boolean   rval  = false;
-        EntryNode child = ( EntryNode ) _entries.get(oldName);
+        EntryNode child = ( EntryNode ) _byname.get(oldName);
 
         if (child != null)
         {
@@ -173,8 +178,8 @@ public class DirectoryNode
                 .changeName(child.getProperty(), newName);
             if (rval)
             {
-                _entries.remove(oldName);
-                _entries.put(child.getProperty().getName(), child);
+                _byname.remove(oldName);
+                _byname.put(child.getProperty().getName(), child);
             }
         }
         return rval;
@@ -196,7 +201,8 @@ public class DirectoryNode
 
         if (rval)
         {
-            _entries.remove(entry.getName());
+            _entries.remove(entry);
+        	_byname.remove(entry.getName());
             _filesystem.remove(entry);
         }
         return rval;
@@ -217,7 +223,7 @@ public class DirectoryNode
 
     public Iterator<Entry> getEntries()
     {
-        return _entries.values().iterator();
+        return _entries.iterator();
     }
 
     /**
@@ -263,7 +269,7 @@ public class DirectoryNode
 
         if (name != null)
         {
-            rval = _entries.get(name);
+            rval = _byname.get(name);
         }
         if (rval == null)
         {
@@ -332,7 +338,8 @@ public class DirectoryNode
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _filesystem.addDirectory(property);
-        _entries.put(name, rval);
+        _entries.add(rval);
+        _byname.put(name, rval);
         return rval;
     }
 
@@ -416,10 +423,7 @@ public class DirectoryNode
         List components = new ArrayList();
 
         components.add(getProperty());
-        SortedMap<String,Entry> sortedEntries = 
-        	   new TreeMap<String,Entry>(_entries);
-        Iterator<Entry> iter = sortedEntries.values().iterator();
-
+        Iterator<Entry> iter = _entries.iterator();
         while (iter.hasNext())
         {
             components.add(iter.next());

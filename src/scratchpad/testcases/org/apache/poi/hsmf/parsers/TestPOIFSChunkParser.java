@@ -151,10 +151,10 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals(9, groups.length);
       assertTrue(groups[0] instanceof Chunks);
       assertTrue(groups[1] instanceof RecipientChunks);
-      assertTrue(groups[2] instanceof AttachmentChunks);
+      assertTrue(groups[2] instanceof RecipientChunks);
       assertTrue(groups[3] instanceof RecipientChunks);
       assertTrue(groups[4] instanceof RecipientChunks);
-      assertTrue(groups[5] instanceof RecipientChunks);
+      assertTrue(groups[5] instanceof AttachmentChunks);
       assertTrue(groups[6] instanceof RecipientChunks);
       assertTrue(groups[7] instanceof RecipientChunks);
       assertTrue(groups[8] instanceof NameIdChunks);
@@ -162,33 +162,33 @@ public final class TestPOIFSChunkParser extends TestCase {
       // In FS order initially
       RecipientChunks[] chunks = new RecipientChunks[] {
             (RecipientChunks)groups[1],
+            (RecipientChunks)groups[2],
             (RecipientChunks)groups[3],
             (RecipientChunks)groups[4],
-            (RecipientChunks)groups[5],
             (RecipientChunks)groups[6],
             (RecipientChunks)groups[7],
       };
       assertEquals(6, chunks.length);
       assertEquals(0, chunks[0].recipientNumber);
-      assertEquals(4, chunks[1].recipientNumber);
-      assertEquals(3, chunks[2].recipientNumber);
-      assertEquals(2, chunks[3].recipientNumber);
-      assertEquals(1, chunks[4].recipientNumber);
-      assertEquals(5, chunks[5].recipientNumber);
+      assertEquals(2, chunks[1].recipientNumber);
+      assertEquals(4, chunks[2].recipientNumber);
+      assertEquals(5, chunks[3].recipientNumber);
+      assertEquals(3, chunks[4].recipientNumber);
+      assertEquals(1, chunks[5].recipientNumber);
       
       // Check
       assertEquals("'Ashutosh Dandavate'", chunks[0].getRecipientName());
       assertEquals("ashutosh.dandavate@alfresco.com", chunks[0].getRecipientEmailAddress());
-      assertEquals("nick.burch@alfresco.com", chunks[1].getRecipientName());
-      assertEquals("nick.burch@alfresco.com", chunks[1].getRecipientEmailAddress());
-      assertEquals("nickb@alfresco.com", chunks[2].getRecipientName());
-      assertEquals("nickb@alfresco.com", chunks[2].getRecipientEmailAddress());
-      assertEquals("'Mike Farman'", chunks[3].getRecipientName());
-      assertEquals("mikef@alfresco.com", chunks[3].getRecipientEmailAddress());
-      assertEquals("'Paul Holmes-Higgin'", chunks[4].getRecipientName());
-      assertEquals("paul.hh@alfresco.com", chunks[4].getRecipientEmailAddress());
-      assertEquals("'Roy Wetherall'", chunks[5].getRecipientName());
-      assertEquals("roy.wetherall@alfresco.com", chunks[5].getRecipientEmailAddress());
+      assertEquals("'Mike Farman'", chunks[1].getRecipientName());
+      assertEquals("mikef@alfresco.com", chunks[1].getRecipientEmailAddress());
+      assertEquals("nick.burch@alfresco.com", chunks[2].getRecipientName());
+      assertEquals("nick.burch@alfresco.com", chunks[2].getRecipientEmailAddress());
+      assertEquals("'Roy Wetherall'", chunks[3].getRecipientName());
+      assertEquals("roy.wetherall@alfresco.com", chunks[3].getRecipientEmailAddress());
+      assertEquals("nickb@alfresco.com", chunks[4].getRecipientName());
+      assertEquals("nickb@alfresco.com", chunks[4].getRecipientEmailAddress());
+      assertEquals("'Paul Holmes-Higgin'", chunks[5].getRecipientName());
+      assertEquals("paul.hh@alfresco.com", chunks[5].getRecipientEmailAddress());
       
       // Now sort, and re-check
       Arrays.sort(chunks, new RecipientChunksSorter());

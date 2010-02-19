@@ -197,7 +197,6 @@ public final class RecipientChunks implements ChunkGroup {
     * Orders by the recipient number.
     */
    public static class RecipientChunksSorter implements Comparator<RecipientChunks> {
-      @Override
       public int compare(RecipientChunks a, RecipientChunks b) {
          if(a.recipientNumber < b.recipientNumber)
             return -1;

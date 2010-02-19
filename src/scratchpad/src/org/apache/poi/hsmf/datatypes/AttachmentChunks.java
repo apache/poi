@@ -105,7 +105,6 @@ public class AttachmentChunks implements ChunkGroup {
     * Orders by the attachment number.
     */
    public static class AttachmentChunksSorter implements Comparator<AttachmentChunks> {
-      @Override
       public int compare(AttachmentChunks a, AttachmentChunks b) {
          return a.poifsName.compareTo(b.poifsName);
       }
