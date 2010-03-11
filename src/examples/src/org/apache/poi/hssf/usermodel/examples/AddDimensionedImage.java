@@ -18,6 +18,8 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
+package bookfromtemplate;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -121,6 +123,19 @@ import org.apache.poi.hssf.util.CellReference;
  * calculations are performed - possibly using double(s) throughout and
  * rounding the values at the correct point - it is likely that these errors
  * could be reduced or removed.
+ *
+ * A note concerning Excels' image resizing behaviour. The HSSFClientAnchor
+ * class contains a method called setAnchorType(int) which can be used to
+ * determine how Excel will resize an image in reponse to the user increasing
+ * or decreasing the dimensions of the cell containing the image. There are 
+ * three values that can be passed to this method; 0 = To move and size the 
+ * image with the cell, 2 = To move but don't size the image with the cell,
+ * 3 = To prevent the image from moving or being resized along with the cell. If
+ * an image is inserted using this class and placed into a single cell then if
+ * the setAnchorType(int) method is called and a value of either 0 or 2 passed
+ * to it, the resultant resizing behaviour may be a surprise. The image will not
+ * grow in size of the column is made wider or the row higher but it will shrink
+ * if the columns width or rows height are reduced.
  *
  * @author Mark Beardsley [msb at apache.org]
  * @version 1.00 5th August 2009.
@@ -238,6 +253,7 @@ public class AddDimensionedImage {
             String imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws FileNotFoundException, IOException,
                                                      IllegalArgumentException  {
+        HSSFRow row = null;
         HSSFClientAnchor anchor = null;
         HSSFPatriarch patriarch = null;
         ClientAnchorDetail rowClientAnchorDetail = null;
@@ -278,13 +294,15 @@ public class AddDimensionedImage {
         // For now, set the anchor type to do not move or resize the
         // image as the size of the row/column is adjusted. This could easilly
         // become another parameter passed to the method.
-        anchor.setAnchorType(HSSFClientAnchor.DONT_MOVE_AND_RESIZE);
-
+        //anchor.setAnchorType(HSSFClientAnchor.DONT_MOVE_AND_RESIZE);
+        anchor.setAnchorType(HSSFClientAnchor.MOVE_AND_RESIZE);
+        
         // Now, add the picture to the workbook. Note that the type is assumed
         // to be a JPEG/JPG, this could easily (and should) be parameterised
         // however.
-        int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile),
-                    HSSFWorkbook.PICTURE_TYPE_JPEG);
+        //int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile),
+        //            HSSFWorkbook.PICTURE_TYPE_JPEG);
+        int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile), HSSFWorkbook.PICTURE_TYPE_PNG);
 
         // Get the drawing patriarch and create the picture.
         patriarch = sheet.createDrawingPatriarch();
@@ -484,6 +502,7 @@ public class AddDimensionedImage {
         double colWidthMM = 0.0D;
         double overlapMM = 0.0D;
         double coordinatePositionsPerMM = 0.0D;
+        int fromNumber = startingColumn;
         int toColumn = startingColumn;
         int inset = 0;
 
@@ -520,7 +539,7 @@ public class AddDimensionedImage {
             // total number of co-ordinate positions to the third paramater
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
-            anchorDetail = new ClientAnchorDetail(startingColumn,
+            anchorDetail = new ClientAnchorDetail(startingColumn, 
                     toColumn, ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS);
         }
         // In this case, the image will overlap part of another column and it is
@@ -541,7 +560,7 @@ public class AddDimensionedImage {
 
             // Next, from the columns width, calculate how many co-ordinate
             // positons there are per millimetre
-            coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
+            coordinatePositionsPerMM = ExcelUtil.TOTAL_COLUMN_COORDINATE_POSITIONS /
                     colWidthMM;
             // From this figure, determine how many co-ordinat positions to
             // inset the left hand or bottom edge of the image.
@@ -704,16 +723,18 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        File file = null;
+        FileInputStream fis = null;
         FileOutputStream fos = null;
         HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
         try {
             workbook = new HSSFWorkbook();
             sheet = workbook.createSheet("Picture Test");
-            new AddDimensionedImage().addImageToSheet("B5", sheet,
-                    "image.jpg", 25, 25,
-                    AddDimensionedImage.OVERLAY_ROW_AND_COLUMN);
-            fos = new FileOutputStream("Workbook.xls");
+            new AddDimensionedImage().addImageToSheet("A1", sheet,
+                    "C:/temp/1.png", 25, 25,
+                    AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
+            fos = new FileOutputStream("C:/temp/Newly Auto Adjusted.xls");
             workbook.write(fos);
         }
         catch(FileNotFoundException fnfEx) {
@@ -757,14 +778,14 @@ public class AddDimensionedImage {
      *      * Together, parameter seven and eight determine the column and row
      *      co-ordinates of the cell whose top left hand corner will be aligned
      *      with the images bottom right hand corner.
-     *
+     * 
      * An instance of the ClientAnchorDetail class provides three of the eight
      * parameters, one of the co-ordinates for the images top left hand corner,
-     * one of the co-ordinates for the images bottom right hand corner and
+     * one of the co-ordinates for the images bottom right hand corner and 
      * either how far the image should be inset from the top or the left hand
      * edge of the cell.
-     *
-     * @author Mark Beardsley [msb at apache.org]
+     * 
+     * @author Mark Beardsley [mas at apache.org]
      * @version 1.00 5th August 2009.
      */
     public class ClientAnchorDetail {
@@ -888,7 +909,7 @@ public class AddDimensionedImage {
             int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
                     * UNIT_OFFSET_LENGTH;
             int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-            pixels += Math.round(offsetWidthUnits /
+            pixels += Math.round((float) offsetWidthUnits /
                     ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
             return pixels;
         }
