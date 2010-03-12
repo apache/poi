@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-package bookfromtemplate;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
