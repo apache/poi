@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -250,8 +249,7 @@ public class AddDimensionedImage {
      */
     public void addImageToSheet(String cellNumber, Sheet sheet, Drawing drawing,
             URL imageFile, double reqImageWidthMM, double reqImageHeightMM,
-            int resizeBehaviour) throws FileNotFoundException, IOException,
-                                                      IllegalArgumentException {
+            int resizeBehaviour) throws IOException, IllegalArgumentException {
         // Convert the String into column and row indices then chain the
         // call to the overridden addImageToSheet() method.
         CellReference cellRef = new CellReference(cellNumber);
@@ -305,7 +303,7 @@ public class AddDimensionedImage {
      */
     public void addImageToSheet(int colNumber, int rowNumber, Sheet sheet, Drawing drawing,
             URL imageFile, double reqImageWidthMM, double reqImageHeightMM,
-            int resizeBehaviour) throws FileNotFoundException, IOException,
+            int resizeBehaviour) throws IOException,
                                                      IllegalArgumentException {
         ClientAnchor anchor = null;
         ClientAnchorDetail rowClientAnchorDetail = null;
@@ -365,11 +363,11 @@ public class AddDimensionedImage {
 			imageType = Workbook.PICTURE_TYPE_JPEG;
 		}
 		else  {
-			throw new IllegalArgumentException("Invalid Image file extension: " +
-				FilenameUtils.getExtension(sURL));
+			throw new IllegalArgumentException("Invalid Image file : " +
+				sURL);
 		}
         int index = sheet.getWorkbook().addPicture(
-        	IOUtils.toByteArray(imageFile.openStream()),type);
+        	IOUtils.toByteArray(imageFile.openStream()), imageType);
         drawing.createPicture(anchor, index);
     }
 
