@@ -198,8 +198,7 @@ public class AddDimensionedImage {
      */
     public void addImageToSheet(String cellNumber, HSSFSheet sheet,
             String imageFile, double reqImageWidthMM, double reqImageHeightMM,
-            int resizeBehaviour) throws FileNotFoundException, IOException,
-                                                      IllegalArgumentException {
+            int resizeBehaviour) throws IOException, IllegalArgumentException {
         // Convert the String into column and row indices then chain the
         // call to the overridden addImageToSheet() method.
         CellReference cellRef = new CellReference(cellNumber);
@@ -500,7 +499,6 @@ public class AddDimensionedImage {
         double colWidthMM = 0.0D;
         double overlapMM = 0.0D;
         double coordinatePositionsPerMM = 0.0D;
-        int fromNumber = startingColumn;
         int toColumn = startingColumn;
         int inset = 0;
 
@@ -558,7 +556,7 @@ public class AddDimensionedImage {
 
             // Next, from the columns width, calculate how many co-ordinate
             // positons there are per millimetre
-            coordinatePositionsPerMM = ExcelUtil.TOTAL_COLUMN_COORDINATE_POSITIONS /
+            coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
                     colWidthMM;
             // From this figure, determine how many co-ordinat positions to
             // inset the left hand or bottom edge of the image.
@@ -673,8 +671,7 @@ public class AddDimensionedImage {
      * @throws java.io.IOException Thrown if reading the file failed or was
      *                             interrupted.
      */
-    private byte[] imageToBytes(String imageFilename)
-                                     throws FileNotFoundException, IOException {
+    private byte[] imageToBytes(String imageFilename) throws IOException {
         File imageFile = null;
         FileInputStream fis = null;
         ByteArrayOutputStream bos = null;
@@ -721,18 +718,26 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        File file = null;
+        String imageFile = null;
+        String outputFile = null;
         FileInputStream fis = null;
         FileOutputStream fos = null;
         HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
         try {
+            if(args.length < 2){
+                System.err.println("Usage: AddDimensionedImage imageFile outputFile");
+                return;
+            }
+            imageFile = args[0];
+            outputFile = args[1];
+
             workbook = new HSSFWorkbook();
             sheet = workbook.createSheet("Picture Test");
             new AddDimensionedImage().addImageToSheet("A1", sheet,
-                    "C:/temp/1.png", 25, 25,
+                    imageFile, 125, 125,
                     AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
-            fos = new FileOutputStream("C:/temp/Newly Auto Adjusted.xls");
+            fos = new FileOutputStream(outputFile);
             workbook.write(fos);
         }
         catch(FileNotFoundException fnfEx) {
