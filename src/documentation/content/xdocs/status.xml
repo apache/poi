@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48485 - Add extra paper size constans to PrintSetup, such as A3, B4 and B5</action>
            <action dev="POI-DEVELOPERS" type="fix">Make poifs.filesystem.DirectoryNode preserve the original ordering of its files, which HSMF needs to be able to correctly match up chunks</action>
            <action dev="POI-DEVELOPERS" type="add">Support evaluation of indirect defined names in INDIRECT</action>
            <action dev="POI-DEVELOPERS" type="fix">43670 - Improve HDGF ChunkV11 separator detection, and short string detection, to solve the "Negative length of ChunkHeader" problem</action>

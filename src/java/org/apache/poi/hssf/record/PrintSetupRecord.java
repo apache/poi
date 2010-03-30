@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -25,12 +26,14 @@ import org.apache.poi.util.BitFieldFactory;
  * Title:        PAGESETUP (0x00A1)<p/>
  * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<p/>
  * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
+ * REFERENCE:  PG 412 Microsoft Excel Binary File Format Structure v20091214<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 public final class PrintSetupRecord extends StandardRecord {
     public final static short     sid = 0x00A1;
+    /** Constants for this are held in {@link PrintSetup} */
     private short                 field_1_paper_size;
     private short                 field_2_scale;
     private short                 field_3_page_start;
