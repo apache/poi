@@ -18,24 +18,69 @@
 package org.apache.poi.ss.usermodel;
 
 public interface PrintSetup {
-
+    /** US Letter 8 1/2 x 11 in */
     public static final short LETTER_PAPERSIZE = 1;
-
+    /** US Letter Small 8 1/2 x 11 in */
+    public static final short LETTER_SMALL_PAGESIZE = 2;
+    /** US Tabloid 11 x 17 in */
+    public static final short TABLOID_PAPERSIZE = 3;
+    /** US Ledger 17 x 11 in */
+    public static final short LEDGER_PAPERSIZE = 4;
+    /** US Legal 8 1/2 x 14 in */
     public static final short LEGAL_PAPERSIZE = 5;
-
+    /** US Statement 5 1/2 x 8 1/2 in */
+    public static final short STATEMENT_PAPERSIZE = 6;
+    /** US Executive 7 1/4 x 10 1/2 in */
     public static final short EXECUTIVE_PAPERSIZE = 7;
-
+    /** A3 - 297x420 mm */
+    public static final short A3_PAPERSIZE = 8;
+    /** A4 - 210x297 mm */
     public static final short A4_PAPERSIZE = 9;
-
+    /** A4 Small - 210x297 mm */
+    public static final short A4_SMALL_PAPERSIZE = 10;
+    /** A5 - 148x210 mm */
     public static final short A5_PAPERSIZE = 11;
-
+    /** B4 (JIS) 250x354 mm */
+    public static final short B4_PAPERSIZE = 12;
+    /** B5 (JIS) 182x257 mm */
+    public static final short B5_PAPERSIZE = 13;
+    /** Folio 8 1/2 x 13 in */
+    public static final short FOLIO8_PAPERSIZE = 14;
+    /** Quarto 215x275 mm */
+    public static final short QUARTO_PAPERSIZE = 15;
+    /** 10 x 14 in */
+    public static final short TEN_BY_FOURTEEN_PAPERSIZE = 16;
+    /** 11 x 17 in */
+    public static final short ELEVEN_BY_SEVENTEEN_PAPERSIZE = 17;
+    /** US Note 8 1/2 x 11 in */
+    public static final short NOTE8_PAPERSIZE = 18;
+    /** US Envelope #9 3 7/8 x 8 7/8 */
+    public static final short ENVELOPE_9_PAPERSIZE = 19;
+    /** US Envelope #10 4 1/8 x 9 1/2 */
     public static final short ENVELOPE_10_PAPERSIZE = 20;
-
+    /** Envelope DL 110x220 mm */
     public static final short ENVELOPE_DL_PAPERSIZE = 27;
-
+    /** Envelope C5 162x229 mm */
     public static final short ENVELOPE_CS_PAPERSIZE = 28;
+    public static final short ENVELOPE_C5_PAPERSIZE = 28;
+    /** Envelope C3 324x458 mm */
+    public static final short ENVELOPE_C3_PAPERSIZE = 29;
+    /** Envelope C4 229x324 mm */
+    public static final short ENVELOPE_C4_PAPERSIZE = 30;
+    /** Envelope C6 114x162 mm */
+    public static final short ENVELOPE_C6_PAPERSIZE = 31;
 
     public static final short ENVELOPE_MONARCH_PAPERSIZE = 37;
+    /** A4 Extra - 9.27 x 12.69 in */
+    public static final short A4_EXTRA_PAPERSIZE = 53;
+    /** A4 Transverse - 210x297 mm */
+    public static final short A4_TRANSVERSE_PAPERSIZE = 55;
+    /** A4 Plus - 210x330 mm */
+    public static final short A4_PLUS_PAPERSIZE = 60;
+    /** US Letter Rotated 11 x 8 1/2 in */
+    public static final short LETTER_ROTATED_PAPERSIZE = 75;
+    /** A4 Rotated - 297x210 mm */
+    public static final short A4_ROTATED_PAPERSIZE = 77;
 
     /**    
      * Set the paper size.    
