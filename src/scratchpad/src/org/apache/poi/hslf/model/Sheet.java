@@ -126,6 +126,9 @@ public abstract class Sheet {
         EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
             int s1 = runsV.size();
+
+            // propagate parents to parent-aware records
+            RecordContainer.handleParentAwareRecords(wrappers[i]);
             findTextRuns(wrappers[i].getChildRecords(), runsV);
             int s2 = runsV.size();
             if (s2 != s1){

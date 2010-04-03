@@ -140,4 +140,8 @@ public final class SlideMaster extends MasterSheet {
             _runs = tmp;
         }
     }
+
+    public TxMasterStyleAtom[] getTxMasterStyleAtoms(){
+        return _txmaster;
+    }
 }

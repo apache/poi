@@ -91,13 +91,15 @@ public final class SlideShow {
 	 * @param hslfSlideShow the HSLFSlideShow to base on
 	 */
 	public SlideShow(HSLFSlideShow hslfSlideShow) {
-	// Get useful things from our base slideshow
-	_hslfSlideShow = hslfSlideShow;
+	    // Get useful things from our base slideshow
+	    _hslfSlideShow = hslfSlideShow;
 		_records = _hslfSlideShow.getRecords();
 
-		// Handle Parent-aware Reocrds
-		for (int i = 0; i < _records.length; i++) {
-			handleParentAwareRecords(_records[i]);
+		// Handle Parent-aware Records
+		for (Record record : _records) {
+			if(record instanceof RecordContainer){
+                RecordContainer.handleParentAwareRecords((RecordContainer)record);
+            }
 		}
 
 		// Find the versions of the core records we'll want to use
@@ -119,30 +121,6 @@ public final class SlideShow {
 	 */
 	public SlideShow(InputStream inputStream) throws IOException {
 		this(new HSLFSlideShow(inputStream));
-	}
-
-	/**
-	 * Find the records that are parent-aware, and tell them who their parent is
-	 */
-	private void handleParentAwareRecords(Record baseRecord) {
-		// Only need to do something if this is a container record
-		if (baseRecord instanceof RecordContainer) {
-			RecordContainer br = (RecordContainer) baseRecord;
-			Record[] childRecords = br.getChildRecords();
-
-			// Loop over child records, looking for interesting ones
-			for (int i = 0; i < childRecords.length; i++) {
-				Record record = childRecords[i];
-				// Tell parent aware records of their parent
-				if (record instanceof ParentAwareRecord) {
-					((ParentAwareRecord) record).setParentRecord(br);
-				}
-				// Walk on down for the case of container records
-				if (record instanceof RecordContainer) {
-					handleParentAwareRecords(record);
-				}
-			}
-		}
 	}
 
 	/**

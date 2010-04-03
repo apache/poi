@@ -341,4 +341,23 @@ public abstract class RecordContainer extends Record
 			out.write(toWrite);
 		}
 	}
+
+    /**
+     * Find the records that are parent-aware, and tell them who their parent is
+     */
+    public static void handleParentAwareRecords(RecordContainer br) {
+        // Loop over child records, looking for interesting ones
+        for (Record record : br.getChildRecords()) {
+            // Tell parent aware records of their parent
+            if (record instanceof ParentAwareRecord) {
+                ((ParentAwareRecord) record).setParentRecord(br);
+            }
+            // Walk on down for the case of container records
+            if (record instanceof RecordContainer) {
+                handleParentAwareRecords((RecordContainer)record);
+            }
+        }
+    }
+
+
 }

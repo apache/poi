@@ -18,11 +18,15 @@
 package org.apache.poi.hslf.model;
 
 
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -490,4 +494,41 @@ public final class TestTextRun extends TestCase {
 		assertNotNull(runs);
 		assertEquals(4, runs.length);
 	}
+
+    public void test48916() throws IOException {
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
+        for(Slide slide : ppt.getSlides()){
+            for(Shape sh : slide.getShapes()){
+                if(sh instanceof TextShape){
+                    TextShape tx = (TextShape)sh;
+                    TextRun run = tx.getTextRun();
+                    //verify that records cached in  TextRun and EscherTextboxWrapper are the same
+                    Record[] runChildren = run.getRecords();
+                    Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
+                    assertEquals(runChildren.length, txboxChildren.length);
+                    for(int i=0; i < txboxChildren.length; i++){
+                        assertSame(txboxChildren[i], runChildren[i]);
+                    }
+                    //caused NPE prior to fix of Bugzilla #48916 
+                    run.getRichTextRuns()[0].setBold(true);
+                    run.getRichTextRuns()[0].setFontColor(Color.RED);
+                }
+            }
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        for(Slide slide : ppt.getSlides()){
+            for(Shape sh : slide.getShapes()){
+                if(sh instanceof TextShape){
+                    TextShape tx = (TextShape)sh;
+                    TextRun run = tx.getTextRun();
+                    RichTextRun rt = run.getRichTextRuns()[0];
+                    assertTrue(rt.isBold());
+                    assertEquals(rt.getFontColor(), Color.RED);
+                }
+            }
+        }
+
+    }
 }
