@@ -527,6 +527,14 @@ public abstract class TextShape extends SimpleShape {
                 }
             }
         }
+        // ensure the same references child records of TextRun
+        if(_txtrun != null) for (int i = 0; i < child.length; i++) {
+            for (Record r : _txtrun.getRecords()) {
+                if (child[i].getRecordType() == r.getRecordType()) {
+                    child[i] = r;
+                }
+            }
+        }
     }
 
     public void draw(Graphics2D graphics){
