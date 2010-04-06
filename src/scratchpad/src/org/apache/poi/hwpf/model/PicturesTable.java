@@ -168,9 +168,13 @@ public final class PicturesTable
                     {
                         // Blip stored in delay stream, which in a word doc, is the main stream
                         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
-                        blip = (EscherBlipRecord) recordFactory.createRecord(_mainStream, bse.getOffset());
-                        blip.fillFields(_mainStream, bse.getOffset(), recordFactory);
-                        pictures.add(new Picture(blip.getPicturedata()));
+                        EscherRecord record = recordFactory.createRecord(_mainStream, bse.getOffset());
+
+                        if (record instanceof EscherBlipRecord) {
+                            record.fillFields(_mainStream, bse.getOffset(), recordFactory);
+                            blip = (EscherBlipRecord) record;
+                            pictures.add(new Picture(blip.getPicturedata()));
+                        }
                     }
                 }
 
