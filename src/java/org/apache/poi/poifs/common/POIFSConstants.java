@@ -32,10 +32,21 @@ public interface POIFSConstants
     /** Some use 4096 bytes */
     public static final int LARGER_BIG_BLOCK_SIZE = 0x1000;
     
-    public static final int END_OF_CHAIN   = -2;
     public static final int PROPERTY_SIZE  = 0x0080;
+    
+    /** The highest sector number you're allowed, 0xFFFFFFFA */
+    public static final int LARGEST_REGULAR_SECTOR_NUMBER = -5;
+    
+    /** Indicates the sector holds a DIFAT block (0xFFFFFFFC) */
+    public static final int DIFAT_SECTOR_BLOCK   = -4;
+    /** Indicates the sector holds a FAT block (0xFFFFFFFD) */
+    public static final int FAT_SECTOR_BLOCK   = -3;
+    /** Indicates the sector is the end of a chain (0xFFFFFFFE) */
+    public static final int END_OF_CHAIN   = -2;
+    /** Indicates the sector is not used (0xFFFFFFFF) */
     public static final int UNUSED_BLOCK   = -1;
     
+    /** The first 4 bytes of an OOXML file, used in detection */
     public static final byte[] OOXML_FILE_HEADER = 
     	new byte[] { 0x50, 0x4b, 0x03, 0x04 };
 }   // end public interface POIFSConstants;

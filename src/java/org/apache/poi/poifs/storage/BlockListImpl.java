@@ -138,4 +138,21 @@ abstract class BlockListImpl implements BlockList {
         }
         _bat = bat;
     }
+    
+    /**
+     * Returns the count of the number of blocks
+     */
+    public int blockCount() {
+       return _blocks.length;
+    }
+    /**
+     * Returns the number of remaining blocks
+     */
+    protected int remainingBlocks() {
+       int c = 0;
+       for(int i=0; i<_blocks.length; i++) {
+          if(_blocks[i] != null) c++;
+       }
+       return c;
+    }
 }

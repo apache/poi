@@ -22,6 +22,7 @@ import static org.apache.poi.poifs.storage.HeaderBlockConstants._bat_count_offse
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._max_bats_in_header;
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._property_start_offset;
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._sbat_start_offset;
+import static org.apache.poi.poifs.storage.HeaderBlockConstants._sbat_block_count_offset;
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._signature;
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._signature_offset;
 import static org.apache.poi.poifs.storage.HeaderBlockConstants._xbat_count_offset;
@@ -49,21 +50,37 @@ public final class HeaderBlockReader {
 	 */
 	private final int bigBlockSize;
 
-	/** number of big block allocation table blocks (int) */
+	/** 
+	 * number of big block allocation table blocks (int).
+	 * (Number of FAT Sectors in Microsoft parlance) 
+	 */
 	private final int _bat_count;
 
-	/** start of the property set block (int index of the property set
-	 * chain's first big block)
+	/** 
+	 * Start of the property set block (int index of the property set
+	 * chain's first big block).
 	 */
 	private final int _property_start;
 
-	/** start of the small block allocation table (int index of small
+	/** 
+	 * start of the small block allocation table (int index of small
 	 * block allocation table's first big block)
 	 */
 	private final int _sbat_start;
+	/**
+	 * Number of small block allocation table blocks (int)
+	 * (Number of MiniFAT Sectors in Microsoft parlance)
+	 */
+	private final int _sbat_count;
 
-	/** big block index for extension to the big block allocation table */
+	/** 
+	 * Big block index for extension to the big block allocation table
+	 */
 	private final int _xbat_start;
+	/**
+	 * Number of big block allocation table blocks (int)
+	 * (Number of DIFAT Sectors in Microsoft parlance)
+	 */
 	private final int _xbat_count;
 	private final byte[] _data;
 
@@ -132,6 +149,7 @@ public final class HeaderBlockReader {
 		_bat_count      = getInt(_bat_count_offset, _data);
 		_property_start = getInt(_property_start_offset, _data);
 		_sbat_start     = getInt(_sbat_start_offset, _data);
+		_sbat_count     = getInt(_sbat_block_count_offset, _data);
 		_xbat_start     = getInt(_xbat_start_offset, _data);
 		_xbat_count     = getInt(_xbat_count_offset, _data);
 	}
@@ -169,10 +187,13 @@ public final class HeaderBlockReader {
 	}
 
 	/**
-	 * @return start of small block allocation table
+	 * @return start of small block (MiniFAT) allocation table
 	 */
 	public int getSBATStart() {
 		return _sbat_start;
+	}
+	public int getSBATCount() {
+	   return _sbat_count;
 	}
 
 	/**
@@ -183,7 +204,10 @@ public final class HeaderBlockReader {
 	}
 
 	/**
-	 * @return BAT array
+	 * Returns the offsets to the first (up to) 109
+	 *  BAT sectors.
+	 * Any additional BAT sectors 
+	 * @return BAT offset array
 	 */
 	public int[] getBATArray() {
 		int[] result = new int[ _max_bats_in_header ];
@@ -197,14 +221,14 @@ public final class HeaderBlockReader {
 	}
 
 	/**
-	 * @return XBAT count
+	 * @return XBAT (DIFAT) count
 	 */
 	public int getXBATCount() {
 		return _xbat_count;
 	}
 
 	/**
-	 * @return XBAT index
+	 * @return XBAT (DIFAT) index
 	 */
 	public int getXBATIndex() {
 		return _xbat_start;

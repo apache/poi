@@ -79,5 +79,7 @@ public interface BlockList
 
     public void setBAT(final BlockAllocationTableReader bat)
         throws IOException;
+    
+    public int blockCount();
 }   // end public interface BlockList
 

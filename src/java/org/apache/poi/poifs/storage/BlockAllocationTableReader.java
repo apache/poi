@@ -89,17 +89,35 @@ public final class BlockAllocationTableReader {
                     + " is too high. POI maximum is " + MAX_BLOCK_COUNT + ".");
         }
 
-        // acquire raw data blocks containing the BAT block data
-        RawDataBlock blocks[] = new RawDataBlock[ block_count ];
+        // We want to get the whole of the FAT table
+        // To do this:
+        //  * Work through raw_block_list, which points to the 
+        //     first (up to) 109 BAT blocks
+        //  * Jump to the XBAT offset, and read in XBATs which
+        //     point to more BAT blocks
         int          limit    = Math.min(block_count, block_array.length);
         int          block_index;
+        
+        // This will hold all of the BAT blocks in order
+        RawDataBlock blocks[] = new RawDataBlock[ block_count ];
 
+        // Process the first (up to) 109 BAT blocks
         for (block_index = 0; block_index < limit; block_index++)
         {
+            // Check that the sector number of the BAT block is a valid one
+            int nextOffset = block_array[ block_index ];
+            if(nextOffset > raw_block_list.blockCount()) {
+               throw new IOException("Your file contains " + raw_block_list.blockCount() + 
+                     " sectors, but the initial DIFAT array at index " + block_index +
+                     " referenced block # " + nextOffset + ". This isn't allowed and " +
+                     " your file is corrupt");
+            }
+            // Record the sector number of this BAT block 
             blocks[ block_index ] =
-                ( RawDataBlock ) raw_block_list
-                    .remove(block_array[ block_index ]);
+                ( RawDataBlock ) raw_block_list.remove(nextOffset);
         }
+        
+        // Process additional BAT blocks via the XBATs
         if (block_index < block_count)
         {
 
@@ -113,6 +131,9 @@ public final class BlockAllocationTableReader {
             int max_entries_per_block = BATBlock.entriesPerXBATBlock();
             int chain_index_offset    = BATBlock.getXBATChainOffset();
 
+            // Each XBAT block contains either:
+            //  (maximum number of sector indexes) + index of next XBAT
+            //  some sector indexes + FREE sectors to max # + EndOfChain
             for (int j = 0; j < xbat_count; j++)
             {
                 limit = Math.min(block_count - block_index,
@@ -139,8 +160,8 @@ public final class BlockAllocationTableReader {
             throw new IOException("Could not find all blocks");
         }
 
-        // now that we have all of the raw data blocks, go through and
-        // create the indices
+        // Now that we have all of the raw data blocks which make
+        //  up the FAT, go through and create the indices
         setEntries(blocks, raw_block_list);
     }
 

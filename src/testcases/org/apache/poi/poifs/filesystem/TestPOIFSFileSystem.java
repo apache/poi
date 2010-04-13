@@ -148,6 +148,26 @@ public final class TestPOIFSFileSystem extends TestCase {
 			// Check sizes
 		}
 	}
+	
+	/**
+	 * Check that we do the right thing when the list of which
+	 *  sectors are BAT blocks points off the list of
+	 *  sectors that exist in the file.
+	 */
+	public void testFATandDIFATsectors() throws Exception {
+      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+      
+      // Open the file up
+      try {
+         POIFSFileSystem fs = new POIFSFileSystem(
+             _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")
+         );
+         fail("File is corrupt and shouldn't have been opened");
+      } catch(IOException e) {
+         String msg = e.getMessage();
+         assertTrue(msg.startsWith("Your file contains 695 sectors"));
+      }
+	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
