@@ -111,6 +111,10 @@ public class RawDataBlock
     public boolean hasData() {
     	return _hasData;
     }
+    
+    public String toString() {
+       return "RawDataBlock of size " + _data.length; 
+    }
 
     /* ********** START implementation of ListManagedBlock ********** */
 

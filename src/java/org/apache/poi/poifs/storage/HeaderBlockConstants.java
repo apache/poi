@@ -33,6 +33,11 @@ public interface HeaderBlockConstants
         (POIFSConstants.BIG_BLOCK_SIZE - _bat_array_offset)
         / LittleEndianConsts.INT_SIZE;
 
+    // Note - in Microsoft terms:
+    //  BAT ~= FAT
+    //  SBAT ~= MiniFAT
+    //  XBAT ~= DIFat
+    
     // useful offsets
     public static final int  _signature_offset        = 0;
     public static final int  _bat_count_offset        = 0x2C;
