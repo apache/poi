@@ -17,9 +17,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
@@ -175,13 +180,19 @@ public final class TestHSSFDataFormatter extends TestCase {
 		log("==== VALID DATE FORMATS ====");
 		while (it.hasNext()) {
 			Cell cell = it.next();
-			log(formatter.formatCellValue(cell));
+            String fmtval = formatter.formatCellValue(cell);
+            log(fmtval);
 
 			// should not be equal to "555.555"
-			assertTrue( ! "555.555".equals(formatter.formatCellValue(cell)));
+			assertTrue( ! "555.555".equals(fmtval));
 
-			// should contain "Jul" in the String
-			assertTrue( formatter.formatCellValue(cell).indexOf("Jul") > -1);
+            String fmt = cell.getCellStyle().getDataFormatString();
+            //assert the correct month form, as in the original Excel format
+            String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
+
+            // this line is intended to compute how "July" would look like in the current locale
+            String jul = new SimpleDateFormat(monthPtrn).format(new GregorianCalendar(2010,6,15).getTime());
+			assertTrue( fmtval.indexOf(jul) > -1);
 		}
 
 		// test number formats
@@ -203,8 +214,10 @@ public final class TestHSSFDataFormatter extends TestCase {
 		while (it.hasNext()) {
 			HSSFCell cell = (HSSFCell) it.next();
 			log(formatter.formatCellValue(cell));
-			// should be equal to "1234567890.12345"
-			assertEquals("1234567890.12345", formatter.formatCellValue(cell));
+			// should be equal to "1234567890.12345" 
+			// in some locales the the decimal delimiter is a comma, not a dot
+			char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+			assertEquals("1234567890" + decimalSeparator + "12345", formatter.formatCellValue(cell));
 		}
 
 		// test Zip+4 format
@@ -248,7 +261,9 @@ public final class TestHSSFDataFormatter extends TestCase {
 		// now with a formula evaluator
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 		log(formatter.formatCellValue(cell, evaluator) + "\t\t\t (with evaluator)");
-		assertEquals("24.50%", formatter.formatCellValue(cell,evaluator));
+		char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+		assertEquals("24" + decimalSeparator + "50%", formatter.formatCellValue(cell,evaluator));
+		
 	}
 
 	/**

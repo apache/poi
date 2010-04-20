@@ -19,6 +19,9 @@ package org.apache.poi.hsmf.extractor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
@@ -57,7 +60,10 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: Test the content transformer\n");
-      assertContains(text, "Date: Thu, 14 Jun 2007 09:42:55\n");
+      Calendar cal = new GregorianCalendar(2007, 5, 14, 9, 42, 55);
+      SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
+      String dateText = f.format(cal.getTime());
+      assertContains(text, "Date: " + dateText + "\n");
       assertContains(text, "The quick brown fox jumps over the lazy dog");
    }
    

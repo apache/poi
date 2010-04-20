@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -64,6 +65,7 @@ public final class TestPackageCoreProperties extends TestCase {
 		OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
 				0));
 
@@ -96,6 +98,7 @@ public final class TestPackageCoreProperties extends TestCase {
 
 	private void compareProperties(OPCPackage p) throws InvalidFormatException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date expectedDate = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
 				0));
 
