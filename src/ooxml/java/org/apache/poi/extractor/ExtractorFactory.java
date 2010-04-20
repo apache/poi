@@ -119,18 +119,22 @@ public class ExtractorFactory {
    
 	
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
-		InputStream inp = new PushbackInputStream( 
-			new FileInputStream(f), 8);
-		
-		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-			return createExtractor(new POIFSFileSystem(inp));
-		}
-		if(POIXMLDocument.hasOOXMLHeader(inp)) {
-			inp.close();
-			return createExtractor(OPCPackage.open(f.toString()));
-		}
-		throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
-	}
+		InputStream inp = null;
+        try {
+            inp = new PushbackInputStream(
+                new FileInputStream(f), 8);
+
+            if(POIFSFileSystem.hasPOIFSHeader(inp)) {
+                return createExtractor(new POIFSFileSystem(inp));
+            }
+            if(POIXMLDocument.hasOOXMLHeader(inp)) {
+                return createExtractor(OPCPackage.open(f.toString()));
+            }
+            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
+        } finally {
+            if(inp != null) inp.close();
+        }
+    }
 	
 	public static POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		// Figure out the kind of stream
