@@ -45,6 +45,8 @@ public final class AllXWPFTests {
 		result.addTestSuite(TestXWPFParagraph.class);
 		result.addTestSuite(TestXWPFRun.class);
 		result.addTestSuite(TestXWPFTable.class);
-		return result;
+		result.addTestSuite(TestAllExtendedProperties.class);
+		result.addTestSuite(TestPackageCorePropertiesGetKeywords.class);
+        return result;
 	}
 }
