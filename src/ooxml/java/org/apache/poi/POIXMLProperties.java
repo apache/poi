@@ -217,6 +217,12 @@ public class POIXMLProperties {
 		public void setIdentifier(String identifier) {
 			part.setIdentifierProperty(identifier);
 		}
+		public String getKeywords() {
+			return part.getKeywordsProperty().getValue();
+		}
+		public void setKeywords(String keywords) {
+			part.setKeywordsProperty(keywords);
+		}
 		public Date getLastPrinted() {
 			return part.getLastPrintedProperty().getValue();
 		}
