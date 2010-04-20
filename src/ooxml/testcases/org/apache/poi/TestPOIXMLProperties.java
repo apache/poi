@@ -17,8 +17,7 @@
 
 package org.apache.poi;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -27,7 +26,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties;
+import org.apache.poi.openxml4j.util.Nullable;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -143,8 +142,8 @@ public final class TestPOIXMLProperties extends TestCase {
 		_coreProperties.setContentStatus(contentStatus);
 		assertEquals("Draft", contentStatus);
 		Date created = _coreProperties.getCreated();
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, ''yy");
-		assertEquals("Mon, Jul 20, '09", formatter.format(created));
+		// the original file contains a following value: 2009-07-20T13:12:00Z
+		assertTrue(dateTimeEqualToUTCString(created, "2009-07-20T13:12:00Z"));
 		String creator = _coreProperties.getCreator();
 		assertEquals("Paolo Mottadelli", creator);
 		String subject = _coreProperties.getSubject();
@@ -152,6 +151,21 @@ public final class TestPOIXMLProperties extends TestCase {
 		String title = _coreProperties.getTitle();
 		assertEquals("Hello World", title);
 	}
+
+    public void testTransitiveSetters() {
+		XWPFDocument doc = new XWPFDocument();
+        CoreProperties cp = doc.getProperties().getCoreProperties();
+
+        Date dateCreated = new GregorianCalendar(2010, 6, 15, 10, 0, 0).getTime();
+        cp.setCreated(new Nullable<Date>(dateCreated));
+        assertEquals(dateCreated.toString(), cp.getCreated().toString());
+
+        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        cp = doc.getProperties().getCoreProperties();
+        Date dt3 = cp.getCreated();
+        assertEquals(dateCreated.toString(), dt3.toString());
+
+    }
 
 	public void testGetSetRevision() {
 		String revision = _coreProperties.getRevision();
@@ -161,4 +175,26 @@ public final class TestPOIXMLProperties extends TestCase {
 		_coreProperties.setRevision("20xx");
 		assertEquals("20", _coreProperties.getRevision());
 	}
+	
+	public static boolean dateTimeEqualToUTCString(Date dateTime, String utcString) {
+		Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK);
+        utcCalendar.setTimeInMillis(dateTime.getTime());
+        String dateTimeUtcString = utcCalendar.get(Calendar.YEAR) + "-" + 
+               zeroPad((utcCalendar.get(Calendar.MONTH)+1)) + "-" + 
+               zeroPad(utcCalendar.get(Calendar.DAY_OF_MONTH)) + "T" + 
+               zeroPad(utcCalendar.get(Calendar.HOUR_OF_DAY)) + ":" +
+               zeroPad(utcCalendar.get(Calendar.MINUTE)) + ":" + 
+               zeroPad(utcCalendar.get(Calendar.SECOND)) + "Z";
+		
+		
+        return utcString.equals(dateTimeUtcString);
+    }
+
+	private static String zeroPad(long i) {
+        if (i >= 0 && i <=9) {
+            return "0" + i;
+        } else {
+            return String.valueOf(i);
+        }
+    }
 }
