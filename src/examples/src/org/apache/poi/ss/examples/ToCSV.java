@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.examples;
 
+
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -36,22 +37,20 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
- * Demonstrates one way to convert an Excel spreadsheet into a CSV
+ * Demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV
  * file. This class makes the following assumptions;
- *
  * <list>
  * <li>1. Where the Excel workbook contains more that one worksheet, then a single
- *        CSV file will contain the data from all of the worksheets.</li>
+ *    CSV file will contain the data from all of the worksheets.</li>
  * <li>2. The data matrix contained in the CSV file will be square. This means that
- *     the number of fields in each record of the CSV file will match the number
- *     of cells in the longest row found in the Excel workbook. Any short records
- *     will be 'padded' with empty fields - an empty field is represented in the
- *     the CSV file in this way - ,,.</li>
+ *    the number of fields in each record of the CSV file will match the number
+ *    of cells in the longest row found in the Excel workbook. Any short records
+ *    will be 'padded' with empty fields - an empty field is represented in the
+ *    the CSV file in this way - ,,.</li>
  * <li>3. Empty fields will represent missing cells.</li>
  * <li>4. A record consisting of empty fields will be used to represent an empty row
- *     in the Excel workbook.</li>
+ *    in the Excel workbook.</li>
  * </list>
- *
  * Therefore, if the worksheet looked like this;
  *
  * <pre>
@@ -78,15 +77,13 @@ import java.util.ArrayList;
  * </pre>
  *
  * Then, the resulting CSV file will contain the following lines (records);
- *
  * <pre>
  * 1,2,3,4,5
  * ,,,,
  * ,A,,B,
  * ,,,,Z
  * "1,400",,250,,
- * </pre>
- * <p>
+ * </pre><p>
  * Typically, the comma is used to separate each of the fields that, together,
  * constitute a single record or line within the CSV file. This is not however
  * a hard and fast rule and so this class allows the user to determine which
@@ -120,7 +117,7 @@ import java.util.ArrayList;
  * class has to be modified to produce files to suit a specific application
  * or requirement.
  * </p>
- * @author Mark B [msb at apache.org]
+ * @author Mark B
  * @version 1.00 9th April 2010
  *          1.10 13th April 2010 - Added support for processing all Excel
  *                                 workbooks in a folder along with the ability
@@ -609,10 +606,11 @@ public class ToCSV {
         // convention....
         if(this.formattingConvention == ToCSV.EXCEL_STYLE_ESCAPING) {
 
-            // Firstly, check if there are any speech marks (") in the field. If
-            // so, each occurrence must be escaped with another set of speahmarks
+            // Firstly, check if there are any speech marks (") in the field;
+            // each occurrence must be escaped with another set of spech marks
             // and then the entire field should be enclosed within another
-            // set of speechmarks.
+            // set of speech marks. Thus, "Yes" he said would become
+            // """Yes"" he said"
             if(field.contains("\"")) {
                 buffer = new StringBuffer(field.replaceAll("\"", "\\\"\\\""));
                 buffer.insert(0, "\"");
@@ -647,36 +645,79 @@ public class ToCSV {
 
     /**
      * The main() method contains code that demonstrates how to use the class.
-     * @param args
+     *
+     * @param args An array containing zero, one or more elements all of type
+     *        String. Each element will encapsulate an argument specified by the
+     *        user when running the program from the command prompt.
      */
     public static void main(String[] args) {
         // Check the number of arguments passed to the main method. There
-        // must be two or three, the name of and path to either the folder
-        // containing the Excel files or an individula Excel workbook that is/are
+        // must be two, three or four; the name of and path to either the folder
+        // containing the Excel files or an individual Excel workbook that is/are
         // to be converted, the name of and path to the folder to which the CSV
-        // files should be written and then finally, optionally, the separator
-        // that should be used to separate individual items on the lines in the
-        // CSV file. Note that the names of the CSV files will be derived from
-        // those of the Excel file(s). Put simply the .xls or .xlsx extension
-        // will be replaced with .csv.
+        // files should be written, - optionally - the separator character
+        // that should be used to separate individual items (fields) on the
+        // lines (records) of the CSV file and - again optionally - an integer
+        // that idicates whether the CSV file ought to obey Excel's or UNIX
+        // convnetions with regard to formatting fields that contain embedded
+        // separator, Speech mark or EOL character(s).
+        //
+        // Note that the names of the CSV files will be derived from those
+        // of the Excel file(s). Put simply the .xls or .xlsx extension will be
+        // replaced with .csv. Therefore, if the source folder contains files
+        // with matching names but different extensions - Test.xls and Test.xlsx
+        // for example - then the CSV file generated from one will overwrite
+        // that generated from the other.
         ToCSV converter = null;
         try {
             converter = new ToCSV();
             if(args.length == 2) {
+                // Just the Source File/Folder and Destination Folder were
+                // passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1]);
             }
             else if(args.length == 3){
+                // The Source File/Folder, Destination Folder and Separator
+                // were passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1], args[2]);
             }
             else if(args.length == 4) {
+                // The Source File/Folder, Destination Folder, Separator and
+                // Formatting Convnetion were passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1],
                                             args[2], Integer.parseInt(args[3]));
             }
             else {
-                System.out.println("Usage: java ToCSV \"Source Folder\" " +
-                        "\"Destination Folder\" \"CSV Element Separator\"");
+                // None or more than four parameters were passed so display
+                //a Usage message.
+                System.out.println("Usage: java ToCSV [Source File/Folder] " +
+                    "[Destination Folder] [Separator] [Formatting Convention]\n" +
+                    "\tSource File/Folder\tThis argument should contain the name of and\n" +
+                    "\t\t\t\tpath to either a single Excel workbook or a\n" +
+                    "\t\t\t\tfolder containing one or more Excel workbooks.\n" +
+                    "\tDestination Folder\tThe name of and path to the folder that the\n" +
+                    "\t\t\t\tCSV files should be written out into. The\n" +
+                    "\t\t\t\tfolder must exist before running the ToCSV\n" +
+                    "\t\t\t\tcode as it will not check for or create it.\n" +
+                    "\tSeparator\t\tOptional. The character or characters that\n" +
+                    "\t\t\t\tshould be used to separate fields in the CSV\n" +
+                    "\t\t\t\trecord. If no value is passed then the comma\n" +
+                    "\t\t\t\twill be assumed.\n" +
+                    "\tFormatting Convention\tOptional. This argument can take one of two\n" +
+                    "\t\t\t\tvalues. Passing 0 (zero) will result in a CSV\n" +
+                    "\t\t\t\tfile that obeys Excel's formatting conventions\n" +
+                    "\t\t\t\twhilst passing 1 (one) will result in a file\n" +
+                    "\t\t\t\tthat obeys UNIX formatting conventions. If no\n" +
+                    "\t\t\t\tvalue is passed, then the CSV file produced\n" +
+                    "\t\t\t\twill obey Excel's formatting conventions.");
             }
         }
+        // It is not wise to have such a wide catch clause - Exception is very
+        // close to being at the top of the inheritance hierarchy - though it
+        // will suffice for this example as it is really not possible to recover
+        // easilly from an exceptional set of circumstances at this point in the
+        // program. It should however, ideally be replaced with one or more
+        // catch clauses optimised to handle more specific problems.
         catch(Exception ex) {
             System.out.println("Caught an: " + ex.getClass().getName());
             System.out.println("Message: " + ex.getMessage());
@@ -695,7 +736,14 @@ public class ToCSV {
         /**
          * Determine those files that will be returned by a call to the
          * listFiles() method. In this case, the name of the file must end with
-         * either of the following two extension; '.xls' or '.xlsx'
+         * either of the following two extension; '.xls' or '.xlsx'. For the
+         * future, it is very possible to parameterise this and allow the
+         * containing class to pass, for example, an array of Strings to this
+         * class on instantiation. Each element in that array could encapsulate
+         * a valid file extension - '.xls', '.xlsx', '.xlt', '.xlst', etc. These
+         * could then be used to control which files were returned by the call
+         * to the listFiles() method.
+         *
          * @param file An instance of the File class that encapsulates a handle
          *             referring to the folder/directory that contains the file.
          * @param name An instance of the String class that encapsulates the
