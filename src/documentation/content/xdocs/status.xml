@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">49026 - Added implementation for TEXT()  </action>
+           <action dev="POI-DEVELOPERS" type="add">49025 - Added implementation for TRUNC()  </action>
            <action dev="POI-DEVELOPERS" type="fix">49147 - Properly close internal InputStream in ExtractorFactory#createExtractor(File)</action>
            <action dev="POI-DEVELOPERS" type="fix">49138 - Fixed locale-sensitive formatters in PackagePropertiesPart</action>
            <action dev="POI-DEVELOPERS" type="fix">49153 - Ensure that CTVectorVariant is included in poi-ooxml-schemas.jar</action>
