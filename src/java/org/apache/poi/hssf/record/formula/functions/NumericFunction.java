@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * @author Josh Micich
+ * @author Stephen Wolke (smwolke at geistig.com)
  */
 public abstract class NumericFunction implements Function {
 
@@ -319,6 +320,27 @@ public abstract class NumericFunction implements Function {
 	public static final Function ROUNDUP = new TwoArg() {
 		protected double evaluate(double d0, double d1) {
 			return MathX.roundUp(d0, (int)d1);
+		}
+	};
+	static final NumberEval TRUNC_ARG2_DEFAULT = new NumberEval(0);
+	public static final Function TRUNC = new Var1or2ArgFunction() {
+
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+			return evaluate(srcRowIndex, srcColumnIndex, arg0, TRUNC_ARG2_DEFAULT);
+		}
+
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+			double result;
+			try {
+				double d0 = singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+				double d1 = singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
+				double multi = Math.pow(10d,d1);
+				result = Math.floor(d0 * multi) / multi;
+				checkValue(result);
+			}catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+			return new NumberEval(result);
 		}
 	};
 
