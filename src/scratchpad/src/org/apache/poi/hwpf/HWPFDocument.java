@@ -448,8 +448,8 @@ public final class HWPFDocument extends POIDocument
 
     // determine the FileInformationBLock size
     int fibSize = _fib.getSize();
-    fibSize  += POIFSConstants.BIG_BLOCK_SIZE -
-        (fibSize % POIFSConstants.BIG_BLOCK_SIZE);
+    fibSize  += POIFSConstants.SMALLER_BIG_BLOCK_SIZE -
+        (fibSize % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
 
     // preserve space for the FileInformationBlock because we will be writing
     // it after we write everything else.

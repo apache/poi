@@ -20,6 +20,8 @@ package org.apache.poi.poifs.storage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import junit.framework.TestCase;
 
 /**
@@ -44,7 +46,7 @@ public final class TestSmallDocumentBlockList extends TestCase {
             blocks[ j ] = new RawDataBlock(stream);
         }
         SmallDocumentBlockList sdbl =
-            new SmallDocumentBlockList(SmallDocumentBlock.extract(blocks));
+            new SmallDocumentBlockList(SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks));
 
         // proof we added the blocks
         for (int j = 0; j < 40; j++)

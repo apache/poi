@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import junit.framework.TestCase;
 
 /**
@@ -39,27 +41,27 @@ public final class TestBATBlock extends TestCase {
     public void testCreateBATBlocks() throws IOException {
 
         // test 0 length array (basic sanity)
-        BATBlock[] rvalue = BATBlock.createBATBlocks(createTestArray(0));
+        BATBlock[] rvalue = BATBlock.createBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(0));
 
         assertEquals(0, rvalue.length);
 
         // test array of length 1
-        rvalue = BATBlock.createBATBlocks(createTestArray(1));
+        rvalue = BATBlock.createBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(1));
         assertEquals(1, rvalue.length);
         verifyContents(rvalue, 1);
 
         // test array of length 127
-        rvalue = BATBlock.createBATBlocks(createTestArray(127));
+        rvalue = BATBlock.createBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(127));
         assertEquals(1, rvalue.length);
         verifyContents(rvalue, 127);
 
         // test array of length 128
-        rvalue = BATBlock.createBATBlocks(createTestArray(128));
+        rvalue = BATBlock.createBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(128));
         assertEquals(1, rvalue.length);
         verifyContents(rvalue, 128);
 
         // test array of length 129
-        rvalue = BATBlock.createBATBlocks(createTestArray(129));
+        rvalue = BATBlock.createBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(129));
         assertEquals(2, rvalue.length);
         verifyContents(rvalue, 129);
     }
@@ -105,32 +107,32 @@ public final class TestBATBlock extends TestCase {
 
     public void testCreateXBATBlocks() throws IOException {
         // test 0 length array (basic sanity)
-        BATBlock[] rvalue = BATBlock.createXBATBlocks(createTestArray(0), 1);
+        BATBlock[] rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(0), 1);
 
         assertEquals(0, rvalue.length);
 
         // test array of length 1
-        rvalue = BATBlock.createXBATBlocks(createTestArray(1), 1);
+        rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(1), 1);
         assertEquals(1, rvalue.length);
         verifyXBATContents(rvalue, 1, 1);
 
         // test array of length 127
-        rvalue = BATBlock.createXBATBlocks(createTestArray(127), 1);
+        rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(127), 1);
         assertEquals(1, rvalue.length);
         verifyXBATContents(rvalue, 127, 1);
 
         // test array of length 128
-        rvalue = BATBlock.createXBATBlocks(createTestArray(128), 1);
+        rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(128), 1);
         assertEquals(2, rvalue.length);
         verifyXBATContents(rvalue, 128, 1);
 
         // test array of length 254
-        rvalue = BATBlock.createXBATBlocks(createTestArray(254), 1);
+        rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(254), 1);
         assertEquals(2, rvalue.length);
         verifyXBATContents(rvalue, 254, 1);
 
         // test array of length 255
-        rvalue = BATBlock.createXBATBlocks(createTestArray(255), 1);
+        rvalue = BATBlock.createXBATBlocks(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, createTestArray(255), 1);
         assertEquals(3, rvalue.length);
         verifyXBATContents(rvalue, 255, 1);
     }
@@ -193,17 +195,17 @@ public final class TestBATBlock extends TestCase {
         {
             assertEquals(
                 "requirement for " + blockCounts[ j ], requirements[ j ],
-                BATBlock.calculateXBATStorageRequirements(blockCounts[ j ]));
+                BATBlock.calculateXBATStorageRequirements(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, blockCounts[ j ]));
         }
     }
 
     public void testEntriesPerBlock() {
-        assertEquals(128, BATBlock.entriesPerBlock());
+        assertEquals(128, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getBATEntriesPerBlock()); 
     }
     public void testEntriesPerXBATBlock() {
-        assertEquals(127, BATBlock.entriesPerXBATBlock());
+        assertEquals(127, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getXBATEntriesPerBlock());
     }
     public void testGetXBATChainOffset() {
-        assertEquals(508, BATBlock.getXBATChainOffset());
+        assertEquals(508, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getNextXBATChainOffset());
     }
 }

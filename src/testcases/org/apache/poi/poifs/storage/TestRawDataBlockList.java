@@ -51,14 +51,14 @@ public final class TestRawDataBlockList extends TestCase {
         {
             data[ j ] = ( byte ) j;
         }
-        new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
+        new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
     }
 
     /**
      * Test creating an empty RawDataBlockList
      */
     public void testEmptyConstructor() throws IOException {
-        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
+        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
     }
 
     /**
@@ -84,7 +84,7 @@ public final class TestRawDataBlockList extends TestCase {
 
             // Check we logged the error
             logger.reset();
-            new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
+            new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
             assertEquals(1, logger.logged.size());
         }
     }

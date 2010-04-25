@@ -25,6 +25,7 @@ import java.util.Arrays;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
@@ -187,8 +188,9 @@ public final class TestBlockAllocationTableReader extends TestCase {
 			sbts[j] = new RawDataBlock(sbt_input);
 		}
 		SmallDocumentBlockList small_blocks = new SmallDocumentBlockList(SmallDocumentBlock
-				.extract(sbts));
-		BlockAllocationTableReader sbat = new BlockAllocationTableReader(sbats, small_blocks);
+				.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, sbts));
+		BlockAllocationTableReader sbat = new BlockAllocationTableReader(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, sbats, small_blocks);
 		boolean[] isUsed = {
 			false, false, false, false, false, false, false, false, false,
 			false, true, true, true, true, true, true, true, true, true, true,
@@ -271,7 +273,8 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		}
 		list.fill(132);
 		int[] blocks = { 2, 3 };
-		BlockAllocationTableReader table = new BlockAllocationTableReader(130, blocks, 2, 0, list);
+		BlockAllocationTableReader table = new BlockAllocationTableReader(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 130, blocks, 2, 0, list);
 
 		for (int i = 0; i < (130 * 128); i++) {
 			if (i % 256 == 0) {
@@ -353,7 +356,8 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		list.add(new RawDataBlock(new ByteArrayInputStream(data)));
 		list.fill(1);
 		int[] blocks = { 0 };
-		BlockAllocationTableReader table = new BlockAllocationTableReader(1, blocks, 0, -2, list);
+		BlockAllocationTableReader table = new BlockAllocationTableReader(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, blocks, 0, -2, list);
 		int[] start_blocks = { -2, 1, 2, 3, 5, 7, 9, 11, 12 };
 		int[] expected_length = { 0, 1, -1, -1, -1, -1, -1, -1, 116 };
 
@@ -384,6 +388,9 @@ public final class TestBlockAllocationTableReader extends TestCase {
 	 */
 	public void testBadSectorAllocationTableSize_bug48085() {
 		int BLOCK_SIZE = 512;
+		POIFSBigBlockSize bigBlockSize = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
+		assertEquals(BLOCK_SIZE, bigBlockSize.getBigBlockSize());
+		
 		// 512 bytes take from the start of bugzilla attachment 24444
 		byte[] initData = HexRead.readFromString(
 
@@ -402,12 +409,13 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		RawDataBlockList dataBlocks;
 		try {
 			hb = new HeaderBlockReader(stream);
-			dataBlocks = new RawDataBlockList(stream, BLOCK_SIZE);
+			dataBlocks = new RawDataBlockList(stream, bigBlockSize);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		try {
-			new BlockAllocationTableReader(hb.getBATCount(), hb.getBATArray(), hb.getXBATCount(),
+			new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 
+			      hb.getBATCount(), hb.getBATArray(), hb.getXBATCount(),
 					hb.getXBATIndex(), dataBlocks);
 		} catch (IOException e) {
 			// expected during successful test

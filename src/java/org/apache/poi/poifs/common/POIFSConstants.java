@@ -21,16 +21,17 @@ package org.apache.poi.poifs.common;
 
 /**
  * <p>A repository for constants shared by POI classes.</p>
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
-
 public interface POIFSConstants
 {
     /** Most files use 512 bytes as their big block size */
-    public static final int BIG_BLOCK_SIZE = 0x0200;
+    public static final int SMALLER_BIG_BLOCK_SIZE = 0x0200;
+    public static final POIFSBigBlockSize SMALLER_BIG_BLOCK_SIZE_DETAILS = 
+       new POIFSBigBlockSize(SMALLER_BIG_BLOCK_SIZE, (short)9);
     /** Some use 4096 bytes */
     public static final int LARGER_BIG_BLOCK_SIZE = 0x1000;
+    public static final POIFSBigBlockSize LARGER_BIG_BLOCK_SIZE_DETAILS = 
+       new POIFSBigBlockSize(LARGER_BIG_BLOCK_SIZE, (short)12);
     
     public static final int PROPERTY_SIZE  = 0x0080;
     

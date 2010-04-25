@@ -25,6 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -142,10 +143,10 @@ public final class TestBlockListImpl extends TestCase {
         BlockListImpl list = create();
 
         list.setBAT(null);
-        list.setBAT(new BlockAllocationTableReader());
+        list.setBAT(new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS));
         try
         {
-            list.setBAT(new BlockAllocationTableReader());
+            list.setBAT(new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS));
             fail("second attempt should have failed");
         }
         catch (IOException ignored)
@@ -233,7 +234,7 @@ public final class TestBlockListImpl extends TestCase {
             0
         };
         BlockAllocationTableReader table           =
-            new BlockAllocationTableReader(1, blocks, 0, -2, list);
+            new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, blocks, 0, -2, list);
         int[]                      start_blocks    =
         {
             -2, 1, 2, 3, 5, 7, 9, 11, 12

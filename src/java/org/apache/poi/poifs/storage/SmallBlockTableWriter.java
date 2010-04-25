@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.storage;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
@@ -50,10 +51,11 @@ public class SmallBlockTableWriter
      * @param root the Filesystem's root property
      */
 
-    public SmallBlockTableWriter(final List documents,
+    public SmallBlockTableWriter(final POIFSBigBlockSize bigBlockSize,
+                                 final List documents,
                                  final RootProperty root)
     {
-        _sbat         = new BlockAllocationTableWriter();
+        _sbat         = new BlockAllocationTableWriter(bigBlockSize);
         _small_blocks = new ArrayList();
         _root         = root;
         Iterator iter = documents.iterator();
@@ -76,7 +78,7 @@ public class SmallBlockTableWriter
         }
         _sbat.simpleCreateBlocks();
         _root.setSize(_small_blocks.size());
-        _big_block_count = SmallDocumentBlock.fill(_small_blocks);
+        _big_block_count = SmallDocumentBlock.fill(bigBlockSize,_small_blocks);
     }
 
     /**

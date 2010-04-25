@@ -296,17 +296,18 @@ public final class TestSmallBlockTableReader extends TestCase {
 		};
 
 		RawDataBlockList data_blocks = new RawDataBlockList(new ByteArrayInputStream(RawDataUtil
-				.decode(raw_data_array)), POIFSConstants.BIG_BLOCK_SIZE);
+				.decode(raw_data_array)), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		int[] bat_array = { 15 };
 
 		// need to initialize the block list with a block allocation
 		// table
-		new BlockAllocationTableReader(1, bat_array, 0, -2, data_blocks);
+		new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, bat_array, 0, -2, data_blocks);
 
 		// get property table from the document
-		PropertyTable properties = new PropertyTable(0, data_blocks);
+		PropertyTable properties = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0, data_blocks);
 		RootProperty root = properties.getRoot();
-		BlockList bl = SmallBlockTableReader.getSmallDocumentBlocks(data_blocks, root, 14);
+		BlockList bl = SmallBlockTableReader.getSmallDocumentBlocks(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, data_blocks, root, 14);
 		assertNotNull(bl);
 	}
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.BlockWritable;
@@ -37,12 +38,14 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class PropertyTable implements BATManaged, BlockWritable {
-    private int             _start_block;
-    private List<Property> _properties;
-    private BlockWritable[] _blocks;
+    private POIFSBigBlockSize _bigBigBlockSize;
+    private int               _start_block;
+    private List<Property>    _properties;
+    private BlockWritable[]   _blocks;
 
-    public PropertyTable()
+    public PropertyTable(POIFSBigBlockSize bigBlockSize)
     {
+        _bigBigBlockSize = bigBlockSize;
         _start_block = POIFSConstants.END_OF_CHAIN;
         _properties  = new ArrayList<Property>();
         addProperty(new RootProperty());
@@ -60,10 +63,12 @@ public final class PropertyTable implements BATManaged, BlockWritable {
      * @exception IOException if anything goes wrong (which should be
      *            a result of the input being NFG)
      */
-    public PropertyTable(final int startBlock,
+    public PropertyTable(final POIFSBigBlockSize bigBlockSize,
+                         final int startBlock,
                          final RawDataBlockList blockList)
         throws IOException
     {
+        _bigBigBlockSize = bigBlockSize;
         _start_block = POIFSConstants.END_OF_CHAIN;
         _blocks      = null;
         _properties  =
@@ -118,7 +123,7 @@ public final class PropertyTable implements BATManaged, BlockWritable {
         }
 
         // allocate the blocks for the property table
-        _blocks = PropertyBlock.createPropertyBlockArray(_properties);
+        _blocks = PropertyBlock.createPropertyBlockArray(_bigBigBlockSize, _properties);
 
         // prepare each property for writing
         for (int k = 0; k < properties.length; k++)

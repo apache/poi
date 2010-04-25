@@ -18,6 +18,8 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,6 +27,9 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
+import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
  * Tests for POIFSFileSystem
@@ -167,6 +172,34 @@ public final class TestPOIFSFileSystem extends TestCase {
          String msg = e.getMessage();
          assertTrue(msg.startsWith("Your file contains 695 sectors"));
       }
+	}
+	
+	/**
+	 * Most OLE2 files use 512byte blocks. However, a small number
+	 *  use 4k blocks. Check that we can open these.
+	 * DISABLED until we get a sample 4k block file that's under 22mb...
+	 */
+	public void DISABLEDtest4KBlocks() throws Exception {
+	   InputStream inp = new FileInputStream(new File("/home/nick/Downloads/IP-ConvertImage-01.zvi"));
+	   
+	   // First up, check that we can process the header properly
+      HeaderBlockReader header_block_reader = new HeaderBlockReader(inp);
+      POIFSBigBlockSize bigBlockSize = header_block_reader.getBigBlockSize();
+      assertEquals(4096, bigBlockSize.getBigBlockSize());
+      
+      // Check the fat info looks sane
+      assertEquals(109, header_block_reader.getBATArray().length);
+      assertTrue(header_block_reader.getBATCount() > 5);
+      assertEquals(0, header_block_reader.getXBATCount());
+      
+      // Now check we can get the basic fat
+      RawDataBlockList data_blocks = new RawDataBlockList(inp, bigBlockSize);
+
+	   
+	   // Now try and open properly
+	   POIFSFileSystem fs = new POIFSFileSystem(
+	         new FileInputStream(new File("/home/nick/Downloads/IP-ConvertImage-01.zvi"))
+	   );
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
