@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -46,7 +47,7 @@ public final class TestHeaderBlockWriter extends TestCase {
 	 * Test creating a HeaderBlockWriter
 	 */
 	public void testConstructors() throws IOException {
-		HeaderBlockWriter block = new HeaderBlockWriter();
+		HeaderBlockWriter block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
 		block.writeBlocks(output);
@@ -85,7 +86,7 @@ public final class TestHeaderBlockWriter extends TestCase {
 	 * Test setting the SBAT start block
 	 */
 	public void testSetSBATStart() throws IOException {
-		HeaderBlockWriter block = new HeaderBlockWriter();
+	   HeaderBlockWriter block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
 		block.setSBATStart(0x01234567);
 		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
@@ -117,7 +118,7 @@ public final class TestHeaderBlockWriter extends TestCase {
 	 * test setPropertyStart and getPropertyStart
 	 */
 	public void testSetPropertyStart() throws IOException {
-		HeaderBlockWriter block = new HeaderBlockWriter();
+	   HeaderBlockWriter block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
 		block.setPropertyStart(0x01234567);
 		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
@@ -152,11 +153,11 @@ public final class TestHeaderBlockWriter extends TestCase {
 	public void testSetBATBlocks() throws IOException {
 
 		// first, a small set of blocks
-		HeaderBlockWriter block = new HeaderBlockWriter();
+	   HeaderBlockWriter block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		BATBlock[] xbats = block.setBATBlocks(5, 0x01234567);
 
 		assertEquals(0, xbats.length);
-		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(5));
+		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,5));
 		ByteArrayOutputStream output = new ByteArrayOutputStream(512);
 
 		block.writeBlocks(output);
@@ -183,10 +184,10 @@ public final class TestHeaderBlockWriter extends TestCase {
 		confirmEqual(expected, copy);
 
 		// second, a full set of blocks (109 blocks)
-		block = new HeaderBlockWriter();
+		block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		xbats = block.setBATBlocks(109, 0x01234567);
 		assertEquals(0, xbats.length);
-		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(109));
+		assertEquals(0, HeaderBlockWriter.calculateXBATStorageRequirements(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,109));
 		output = new ByteArrayOutputStream(512);
 		block.writeBlocks(output);
 		copy = output.toByteArray();
@@ -211,10 +212,10 @@ public final class TestHeaderBlockWriter extends TestCase {
 		confirmEqual(expected2, copy);
 
 		// finally, a really large set of blocks (256 blocks)
-		block = new HeaderBlockWriter();
+		block = new HeaderBlockWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		xbats = block.setBATBlocks(256, 0x01234567);
 		assertEquals(2, xbats.length);
-		assertEquals(2, HeaderBlockWriter.calculateXBATStorageRequirements(256));
+		assertEquals(2, HeaderBlockWriter.calculateXBATStorageRequirements(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,256));
 		output = new ByteArrayOutputStream(512);
 		block.writeBlocks(output);
 		copy = output.toByteArray();

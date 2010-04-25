@@ -31,6 +31,7 @@ import static org.apache.poi.poifs.storage.HeaderBlockConstants._xbat_start_offs
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.HexDump;
@@ -48,7 +49,7 @@ public final class HeaderBlockReader {
 	 * What big block size the file uses. Most files
 	 *  use 512 bytes, but a few use 4096
 	 */
-	private final int bigBlockSize;
+	private final POIFSBigBlockSize bigBlockSize;
 
 	/** 
 	 * number of big block allocation table blocks (int).
@@ -130,20 +131,20 @@ public final class HeaderBlockReader {
 		// Figure out our block size
 		switch (blockStart[30]) {
 			case 12:
-				bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE; break;
+				bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS; break;
 			case  9:
-				bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE; break;
+				bigBlockSize = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS; break;
 			default:
 				throw new IOException("Unsupported blocksize  (2^"
 						+ blockStart[30] + "). Expected 2^9 or 2^12.");
 		}
-		_data = new byte[ bigBlockSize ];
+		_data = new byte[ bigBlockSize.getBigBlockSize() ];
 		System.arraycopy(blockStart, 0, _data, 0, blockStart.length);
 
 		// Now we can read the rest of our header
 		int byte_count = IOUtils.readFully(stream, _data, blockStart.length, _data.length - blockStart.length);
-		if (byte_count+bsCount != bigBlockSize) {
-			throw alertShortRead(byte_count, bigBlockSize);
+		if (byte_count+bsCount != bigBlockSize.getBigBlockSize()) {
+			throw alertShortRead(byte_count, bigBlockSize.getBigBlockSize());
 		}
 
 		_bat_count      = getInt(_bat_count_offset, _data);
@@ -237,7 +238,7 @@ public final class HeaderBlockReader {
 	/**
 	 * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
 	 */
-	public int getBigBlockSize() {
+	public POIFSBigBlockSize getBigBlockSize() {
 		return bigBlockSize;
 	}
 }

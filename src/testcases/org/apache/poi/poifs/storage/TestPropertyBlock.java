@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import junit.framework.TestCase;
 
 /**
@@ -36,13 +38,13 @@ public final class TestPropertyBlock extends TestCase {
         // test with 0 properties
         List            properties = new ArrayList();
         BlockWritable[] blocks     =
-            PropertyBlock.createPropertyBlockArray(properties);
+            PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
 
         assertEquals(0, blocks.length);
 
         // test with 1 property
         properties.add(new LocalProperty("Root Entry"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         byte[] testblock = new byte[ 512 ];
 
@@ -66,7 +68,7 @@ public final class TestPropertyBlock extends TestCase {
         // test with 3 properties
         properties.add(new LocalProperty("workbook"));
         properties.add(new LocalProperty("summary"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         testblock[ 0x0080 ] = ( byte ) 'w';
         testblock[ 0x0082 ] = ( byte ) 'o';
@@ -89,7 +91,7 @@ public final class TestPropertyBlock extends TestCase {
 
         // test with 4 properties
         properties.add(new LocalProperty("wintery"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         testblock[ 0x0180 ] = ( byte ) 'w';
         testblock[ 0x0182 ] = ( byte ) 'i';
@@ -103,7 +105,7 @@ public final class TestPropertyBlock extends TestCase {
 
         // test with 5 properties
         properties.add(new LocalProperty("foo"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(2, blocks.length);
         testblock = new byte[ 1024 ];
         for (int j = 0; j < 8; j++)

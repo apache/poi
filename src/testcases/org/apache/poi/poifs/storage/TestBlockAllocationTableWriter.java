@@ -36,7 +36,7 @@ public final class TestBlockAllocationTableWriter extends TestCase {
 
     public void testAllocateSpace() {
         BlockAllocationTableWriter table         =
-            new BlockAllocationTableWriter();
+            new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         int[]                      blockSizes    =
         {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
@@ -51,36 +51,36 @@ public final class TestBlockAllocationTableWriter extends TestCase {
     }
 
     public void testCreateBlocks() {
-        BlockAllocationTableWriter table = new BlockAllocationTableWriter();
+        BlockAllocationTableWriter table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
         table.allocateSpace(127);
         table.createBlocks();
         verifyBlocksCreated(table, 1);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(128);
         table.createBlocks();
         verifyBlocksCreated(table, 2);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(254);
         table.createBlocks();
         verifyBlocksCreated(table, 2);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(255);
         table.createBlocks();
         verifyBlocksCreated(table, 3);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(13843);
         table.createBlocks();
         verifyBlocksCreated(table, 109);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(13844);
         table.createBlocks();
         verifyBlocksCreated(table, 110);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(13969);
         table.createBlocks();
         verifyBlocksCreated(table, 110);
-        table = new BlockAllocationTableWriter();
+        table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         table.allocateSpace(13970);
         table.createBlocks();
         verifyBlocksCreated(table, 111);
@@ -90,7 +90,7 @@ public final class TestBlockAllocationTableWriter extends TestCase {
      * Test content produced by BlockAllocationTableWriter
      */
     public void testProduct() throws IOException {
-        BlockAllocationTableWriter table = new BlockAllocationTableWriter();
+        BlockAllocationTableWriter table = new BlockAllocationTableWriter(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
         for (int k = 1; k <= 22; k++)
         {

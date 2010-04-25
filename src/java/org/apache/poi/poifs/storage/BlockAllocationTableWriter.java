@@ -20,6 +20,7 @@ package org.apache.poi.poifs.storage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.util.IntList;
@@ -43,15 +44,17 @@ public final class BlockAllocationTableWriter implements BlockWritable, BATManag
     private IntList    _entries;
     private BATBlock[] _blocks;
     private int        _start_block;
+    private POIFSBigBlockSize _bigBlockSize;
 
     /**
      * create a BlockAllocationTableWriter
      */
-    public BlockAllocationTableWriter()
+    public BlockAllocationTableWriter(POIFSBigBlockSize bigBlockSize)
     {
-        _start_block = POIFSConstants.END_OF_CHAIN;
-        _entries     = new IntList();
-        _blocks      = new BATBlock[ 0 ];
+       _bigBlockSize = bigBlockSize; 
+        _start_block  = POIFSConstants.END_OF_CHAIN;
+        _entries      = new IntList();
+        _blocks       = new BATBlock[ 0 ];
     }
 
     /**
@@ -67,12 +70,13 @@ public final class BlockAllocationTableWriter implements BlockWritable, BATManag
         while (true)
         {
             int calculated_bat_blocks  =
-                BATBlock.calculateStorageRequirements(bat_blocks
+                BATBlock.calculateStorageRequirements(_bigBlockSize,
+                                                      bat_blocks
                                                       + xbat_blocks
                                                       + _entries.size());
             int calculated_xbat_blocks =
-                HeaderBlockWriter
-                    .calculateXBATStorageRequirements(calculated_bat_blocks);
+                HeaderBlockWriter.calculateXBATStorageRequirements(
+                      _bigBlockSize, calculated_bat_blocks);
 
             if ((bat_blocks == calculated_bat_blocks)
                     && (xbat_blocks == calculated_xbat_blocks))
@@ -131,7 +135,7 @@ public final class BlockAllocationTableWriter implements BlockWritable, BATManag
      */
     void simpleCreateBlocks()
     {
-        _blocks = BATBlock.createBATBlocks(_entries.toArray());
+        _blocks = BATBlock.createBATBlocks(_bigBlockSize, _entries.toArray());
     }
 
     /**

@@ -51,7 +51,7 @@ public class RawDataBlock
      */
     public RawDataBlock(final InputStream stream)
     		throws IOException {
-    	this(stream, POIFSConstants.BIG_BLOCK_SIZE);
+    	this(stream, POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
     }
     /**
      * Constructor RawDataBlock
@@ -133,6 +133,13 @@ public class RawDataBlock
             throw new IOException("Cannot return empty data");
         }
         return _data;
+    }
+    
+    /**
+     * What's the big block size?
+     */
+    public int getBigBlockSize() {
+       return _data.length;
     }
 
     /* **********  END  implementation of ListManagedBlock ********** */

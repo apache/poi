@@ -172,9 +172,9 @@ public final class TextPieceTable implements CharIndexTranslator {
 			PieceDescriptor pd = next.getPieceDescriptor();
 
 			int offset = docStream.getOffset();
-			int mod = (offset % POIFSConstants.BIG_BLOCK_SIZE);
+			int mod = (offset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
 			if (mod != 0) {
-				mod = POIFSConstants.BIG_BLOCK_SIZE - mod;
+				mod = POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod;
 				byte[] buf = new byte[mod];
 				docStream.write(buf);
 			}

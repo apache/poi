@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import junit.framework.TestCase;
 
 /**
@@ -55,7 +57,7 @@ public final class TestSmallDocumentBlock extends TestCase {
 
         while (true)
         {
-            DocumentBlock block = new DocumentBlock(stream);
+            DocumentBlock block = new DocumentBlock(stream,POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
             documents.add(block);
             if (block.partiallyRead())
@@ -65,7 +67,7 @@ public final class TestSmallDocumentBlock extends TestCase {
         }
         SmallDocumentBlock[] results =
             SmallDocumentBlock
-                .convert(( BlockWritable [] ) documents
+                .convert(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,( BlockWritable [] ) documents
                     .toArray(new DocumentBlock[ 0 ]), _testdata_size);
 
         assertEquals("checking correct result size: ",
@@ -108,8 +110,8 @@ public final class TestSmallDocumentBlock extends TestCase {
             {
                 array[ k ] = ( byte ) k;
             }
-            SmallDocumentBlock[] blocks = SmallDocumentBlock.convert(array,
-                                              319);
+            SmallDocumentBlock[] blocks = SmallDocumentBlock.convert(
+                  POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, array, 319);
 
             assertEquals(5, blocks.length);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -146,7 +148,7 @@ public final class TestSmallDocumentBlock extends TestCase {
             {
                 foo.add(new Object());
             }
-            int result = SmallDocumentBlock.fill(foo);
+            int result = SmallDocumentBlock.fill(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,foo);
 
             assertEquals("correct big block count: ", (j + 7) / 8, result);
             assertEquals("correct small block count: ", 8 * result,
@@ -206,7 +208,7 @@ public final class TestSmallDocumentBlock extends TestCase {
         {
             new RawDataBlock(new ByteArrayInputStream(data))
         };
-        List           output = SmallDocumentBlock.extract(blocks);
+        List           output = SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks);
         Iterator       iter   = output.iterator();
 
         offset = 0;

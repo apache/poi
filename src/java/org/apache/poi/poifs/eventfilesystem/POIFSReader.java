@@ -82,7 +82,8 @@ public class POIFSReader
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block_reader.getBATCount(),
+        new BlockAllocationTableReader(header_block_reader.getBigBlockSize(),
+                                       header_block_reader.getBATCount(),
                                        header_block_reader.getBATArray(),
                                        header_block_reader.getXBATCount(),
                                        header_block_reader.getXBATIndex(),
@@ -90,14 +91,17 @@ public class POIFSReader
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block_reader.getPropertyStart(),
+            new PropertyTable(header_block_reader.getBigBlockSize(),
+                              header_block_reader.getPropertyStart(),
                               data_blocks);
 
         // process documents
         processProperties(SmallBlockTableReader
-            .getSmallDocumentBlocks(data_blocks, properties
-                .getRoot(), header_block_reader
-                    .getSBATStart()), data_blocks, properties.getRoot()
+            .getSmallDocumentBlocks(
+                  header_block_reader.getBigBlockSize(),
+                  data_blocks, properties.getRoot(), 
+                  header_block_reader.getSBATStart()), 
+                  data_blocks, properties.getRoot()
                         .getChildren(), new POIFSDocumentPath());
     }
 

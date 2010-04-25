@@ -23,6 +23,7 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndianConsts;
@@ -64,9 +65,11 @@ public class HeaderBlockWriter
      * Create a single instance initialized with default values
      */
 
-    public HeaderBlockWriter()
+    public HeaderBlockWriter(POIFSBigBlockSize bigBlockSize)
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
+        super(bigBlockSize);
+        
+        _data = new byte[ bigBlockSize.getBigBlockSize() ];
         Arrays.fill(_data, _default_value);
         new LongField(_signature_offset, _signature, _data);
         new IntegerField(0x08, 0, _data);
@@ -76,7 +79,15 @@ public class HeaderBlockWriter
         new ShortField(0x18, ( short ) 0x3b, _data);
         new ShortField(0x1a, ( short ) 0x3, _data);
         new ShortField(0x1c, ( short ) -2, _data);
-        new ShortField(0x1e, ( short ) 0x9, _data);
+        
+        new ShortField(0x1e, bigBlockSize.getHeaderValue(), _data);
+        if(bigBlockSize.getBigBlockSize() == POIFSConstants.LARGER_BIG_BLOCK_SIZE) {
+           // Need to fill the extra header size with zeros
+           for(int i=POIFSConstants.SMALLER_BIG_BLOCK_SIZE; i<_data.length; i++) {
+              _data[i] = 0;
+           }
+        }
+        
         new IntegerField(0x20, 0x6, _data);
         new IntegerField(0x24, 0, _data);
         new IntegerField(0x28, 0, _data);
@@ -131,13 +142,13 @@ public class HeaderBlockWriter
                 excess_block_array[ j ] = startBlock + j
                                           + _max_bats_in_header;
             }
-            rvalue = BATBlock.createXBATBlocks(excess_block_array,
+            rvalue = BATBlock.createXBATBlocks(bigBlockSize, excess_block_array,
                                                startBlock + blockCount);
             _xbat_start.set(startBlock + blockCount, _data);
         }
         else
         {
-            rvalue = BATBlock.createXBATBlocks(new int[ 0 ], 0);
+            rvalue = BATBlock.createXBATBlocks(bigBlockSize, new int[ 0 ], 0);
             _xbat_start.set(POIFSConstants.END_OF_CHAIN, _data);
         }
         _xbat_count.set(rvalue.length, _data);
@@ -188,11 +199,11 @@ public class HeaderBlockWriter
      * @return number of XBAT blocks needed
      */
 
-    static int calculateXBATStorageRequirements(final int blockCount)
+    static int calculateXBATStorageRequirements(POIFSBigBlockSize bigBlockSize, final int blockCount)
     {
         return (blockCount > _max_bats_in_header)
-               ? BATBlock.calculateXBATStorageRequirements(blockCount
-                   - _max_bats_in_header)
+               ? BATBlock.calculateXBATStorageRequirements(
+                     bigBlockSize, blockCount - _max_bats_in_header)
                : 0;
     }
 

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
@@ -97,14 +98,15 @@ public class POIFSFileSystem
      * What big block size the file uses. Most files
      *  use 512 bytes, but a few use 4096
      */
-    private int bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE;
+    private POIFSBigBlockSize bigBlockSize = 
+       POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
 
     /**
      * Constructor, intended for writing
      */
     public POIFSFileSystem()
     {
-        _property_table = new PropertyTable();
+        _property_table = new PropertyTable(bigBlockSize);
         _documents      = new ArrayList();
         _root           = null;
     }
@@ -161,7 +163,8 @@ public class POIFSFileSystem
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block_reader.getBATCount(),
+        new BlockAllocationTableReader(header_block_reader.getBigBlockSize(),
+                                       header_block_reader.getBATCount(),
                                        header_block_reader.getBATArray(),
                                        header_block_reader.getXBATCount(),
                                        header_block_reader.getXBATIndex(),
@@ -169,13 +172,14 @@ public class POIFSFileSystem
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block_reader.getPropertyStart(),
+            new PropertyTable(bigBlockSize,
+                              header_block_reader.getPropertyStart(),
                               data_blocks);
 
         // init documents
         processProperties(
         		SmallBlockTableReader.getSmallDocumentBlocks(
-        				data_blocks, properties.getRoot(),
+        		      bigBlockSize, data_blocks, properties.getRoot(),
         				header_block_reader.getSBATStart()
         		),
         		data_blocks,
@@ -315,11 +319,11 @@ public class POIFSFileSystem
 
         // create the small block store, and the SBAT
         SmallBlockTableWriter      sbtw       =
-            new SmallBlockTableWriter(_documents, _property_table.getRoot());
+            new SmallBlockTableWriter(bigBlockSize, _documents, _property_table.getRoot());
 
         // create the block allocation table
         BlockAllocationTableWriter bat        =
-            new BlockAllocationTableWriter();
+            new BlockAllocationTableWriter(bigBlockSize);
 
         // create a list of BATManaged objects: the documents plus the
         // property table and the small block table
@@ -357,7 +361,7 @@ public class POIFSFileSystem
         int               batStartBlock       = bat.createBlocks();
 
         // get the extended block allocation table blocks
-        HeaderBlockWriter header_block_writer = new HeaderBlockWriter();
+        HeaderBlockWriter header_block_writer = new HeaderBlockWriter(bigBlockSize);
         BATBlock[]        xbat_blocks         =
             header_block_writer.setBATBlocks(bat.countBlocks(),
                                              batStartBlock);
@@ -612,7 +616,13 @@ public class POIFSFileSystem
      * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
      */
     public int getBigBlockSize() {
-    	return bigBlockSize;
+    	return bigBlockSize.getBigBlockSize();
+    }
+    /**
+     * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
+     */
+    public POIFSBigBlockSize getBigBlockSizeDetails() {
+      return bigBlockSize;
     }
 
     /* **********  END  begin implementation of POIFSViewable ********** */

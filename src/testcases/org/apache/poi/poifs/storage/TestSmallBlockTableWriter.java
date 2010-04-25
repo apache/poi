@@ -24,6 +24,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.RootProperty;
@@ -74,9 +75,9 @@ public final class TestSmallBlockTableWriter extends TestCase {
         documents
             .add(new POIFSDocument("doc9",
                                    new ByteArrayInputStream(new byte[ 9 ])));
-        RootProperty               root = new PropertyTable().getRoot();
-        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(documents,
-                                              root);
+        RootProperty               root = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS).getRoot();
+        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(
+              POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, documents,root);
         BlockAllocationTableWriter bat  = sbtw.getSBAT();
 
         // 15 small blocks: 6 for doc340, 0 for doc5000 (too big), 0

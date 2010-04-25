@@ -70,7 +70,7 @@ public final class TestPropertyTable extends TestCase {
 	public void testWriterPropertyTable() throws IOException {
 
 		// create the PropertyTable
-		PropertyTable table = new PropertyTable();
+		PropertyTable table = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
 		// create three DocumentProperty instances and add them to the
 		// PropertyTable
@@ -430,15 +430,17 @@ public final class TestPropertyTable extends TestCase {
 		};
 
 		RawDataBlockList data_blocks = new RawDataBlockList(new ByteArrayInputStream(RawDataUtil
-				.decode(raw_data_array)), POIFSConstants.BIG_BLOCK_SIZE);
+				.decode(raw_data_array)), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 		int[] bat_array = { 15 };
 
 		// need to initialize the block list with a block allocation
 		// table
-		new BlockAllocationTableReader(1, bat_array, 0, -2, data_blocks);
+		new BlockAllocationTableReader(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, bat_array, 0, -2, data_blocks);
 
 		// get property table from the document
-		PropertyTable table = new PropertyTable(0, data_blocks);
+		PropertyTable table = new PropertyTable(
+		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0, data_blocks);
 
 		assertEquals(30 * 64, table.getRoot().getSize());
 		int count = 0;

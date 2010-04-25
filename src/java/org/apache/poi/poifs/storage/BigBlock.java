@@ -33,9 +33,21 @@ package org.apache.poi.poifs.storage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
+import org.apache.poi.poifs.common.POIFSConstants;
+
 abstract class BigBlock
     implements BlockWritable
 {
+    /** 
+     * Either 512 bytes ({@link POIFSConstants#SMALLER_BIG_BLOCK_SIZE}) 
+     *  or 4096 bytes ({@link POIFSConstants#LARGER_BIG_BLOCK_SIZE})
+     */
+    protected POIFSBigBlockSize bigBlockSize;
+    
+    protected BigBlock(POIFSBigBlockSize bigBlockSize) {
+       this.bigBlockSize = bigBlockSize;
+    }
 
     /**
      * Default implementation of write for extending classes that

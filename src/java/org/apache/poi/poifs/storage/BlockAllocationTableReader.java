@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import java.util.*;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndian;
@@ -56,6 +57,7 @@ public final class BlockAllocationTableReader {
      */
     private static final int MAX_BLOCK_COUNT = 65535;
     private final IntList _entries;
+    private POIFSBigBlockSize bigBlockSize;
 
     /**
      * create a BlockAllocationTableReader for an existing filesystem. Side
@@ -75,9 +77,10 @@ public final class BlockAllocationTableReader {
      * @exception IOException if, in trying to create the table, we
      *            encounter logic errors
      */
-    public BlockAllocationTableReader(int block_count, int [] block_array,
+    public BlockAllocationTableReader(POIFSBigBlockSize bigBlockSize, int block_count, int [] block_array,
             int xbat_count, int xbat_index, BlockList raw_block_list) throws IOException {
-        this();
+        this(bigBlockSize);
+        
         if (block_count <= 0) {
             throw new IOException(
                 "Illegal block count; minimum count is 1, got " + block_count
@@ -128,8 +131,8 @@ public final class BlockAllocationTableReader {
                     "BAT count exceeds limit, yet XBAT index indicates no valid entries");
             }
             int chain_index           = xbat_index;
-            int max_entries_per_block = BATBlock.entriesPerXBATBlock();
-            int chain_index_offset    = BATBlock.getXBATChainOffset();
+            int max_entries_per_block = bigBlockSize.getXBATEntriesPerBlock(); 
+            int chain_index_offset    = bigBlockSize.getNextXBATChainOffset(); 
 
             // Each XBAT block contains either:
             //  (maximum number of sector indexes) + index of next XBAT
@@ -173,13 +176,14 @@ public final class BlockAllocationTableReader {
      *
      * @exception IOException
      */
-    BlockAllocationTableReader(ListManagedBlock[] blocks, BlockList raw_block_list)
+    BlockAllocationTableReader(POIFSBigBlockSize bigBlockSize, ListManagedBlock[] blocks, BlockList raw_block_list)
             throws IOException {
-        this();
+        this(bigBlockSize);
         setEntries(blocks, raw_block_list);
     }
 
-    BlockAllocationTableReader() {
+    BlockAllocationTableReader(POIFSBigBlockSize bigBlockSize) {
+        this.bigBlockSize = bigBlockSize;
         _entries = new IntList();
     }
 
@@ -279,7 +283,7 @@ public final class BlockAllocationTableReader {
      *                   blocks will be eliminated from the list
      */
     private void setEntries(ListManagedBlock[] blocks, BlockList raw_blocks) throws IOException {
-        int limit = BATBlock.entriesPerBlock();
+        int limit = bigBlockSize.getBATEntriesPerBlock(); 
 
         for (int block_index = 0; block_index < blocks.length; block_index++)
         {

@@ -58,7 +58,7 @@ public final class PAPBinTable
       GenericPropertyNode node = binTable.getProperty(x);
 
       int pageNum = LittleEndian.getInt(node.getBytes());
-      int pageOffset = POIFSConstants.BIG_BLOCK_SIZE * pageNum;
+      int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
         dataStream, pageOffset, fcMin, tpt);
@@ -195,16 +195,16 @@ public final class PAPBinTable
 
     // each FKP must start on a 512 byte page.
     int docOffset = docStream.getOffset();
-    int mod = docOffset % POIFSConstants.BIG_BLOCK_SIZE;
+    int mod = docOffset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
     if (mod != 0)
     {
-      byte[] padding = new byte[POIFSConstants.BIG_BLOCK_SIZE - mod];
+      byte[] padding = new byte[POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod];
       docStream.write(padding);
     }
 
     // get the page number for the first fkp
     docOffset = docStream.getOffset();
-    int pageNum = docOffset/POIFSConstants.BIG_BLOCK_SIZE;
+    int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
     // get the ending fc
     int endingFc = ((PropertyNode)_paragraphs.get(_paragraphs.size() - 1)).getEnd();

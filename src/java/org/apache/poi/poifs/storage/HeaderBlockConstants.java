@@ -30,8 +30,8 @@ public interface HeaderBlockConstants
     public static final long _signature               = 0xE11AB1A1E011CFD0L;
     public static final int  _bat_array_offset        = 0x4c;
     public static final int  _max_bats_in_header      =
-        (POIFSConstants.BIG_BLOCK_SIZE - _bat_array_offset)
-        / LittleEndianConsts.INT_SIZE;
+        (POIFSConstants.SMALLER_BIG_BLOCK_SIZE - _bat_array_offset)
+        / LittleEndianConsts.INT_SIZE; // If 4k blocks, rest is blank
 
     // Note - in Microsoft terms:
     //  BAT ~= FAT

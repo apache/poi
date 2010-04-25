@@ -17,30 +17,42 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.storage;
+package org.apache.poi.poifs.common;
 
-import java.util.*;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * A list of SmallDocumentBlocks instances, and methods to manage the list
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * <p>A class describing attributes of the Big Block Size</p>
  */
-
-public class SmallDocumentBlockList
-    extends BlockListImpl
+public final class POIFSBigBlockSize
 {
-
-    /**
-     * Constructor SmallDocumentBlockList
-     *
-     * @param blocks a list of SmallDocumentBlock instances
-     */
-
-    public SmallDocumentBlockList(final List blocks)
-    {
-        setBlocks(( SmallDocumentBlock [] ) blocks
-            .toArray(new SmallDocumentBlock[ blocks.size() ]));
-    }
-}   // end public class SmallDocumentBlockList
-
+   private int bigBlockSize;
+   private short headerValue;
+   
+   protected POIFSBigBlockSize(int bigBlockSize, short headerValue) {
+      this.bigBlockSize = bigBlockSize;
+      this.headerValue = headerValue;
+   }
+   
+   public int getBigBlockSize() {
+      return bigBlockSize;
+   }
+   
+   public short getHeaderValue() {
+      return headerValue;
+   }
+   
+   public int getPropertiesPerBlock() {
+      return bigBlockSize / POIFSConstants.PROPERTY_SIZE;
+   }
+   
+   public int getBATEntriesPerBlock() {
+      return bigBlockSize / LittleEndianConsts.INT_SIZE;
+   }
+   public int getXBATEntriesPerBlock() {
+      return getBATEntriesPerBlock() - 1;
+   }
+   public int getNextXBATChainOffset() {
+      return getXBATEntriesPerBlock() * LittleEndianConsts.INT_SIZE;
+   }
+}

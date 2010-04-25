@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.Property;
 
@@ -30,8 +31,6 @@ import org.apache.poi.poifs.property.Property;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class PropertyBlock extends BigBlock {
-    private static final int _properties_per_block =
-        POIFSConstants.BIG_BLOCK_SIZE / POIFSConstants.PROPERTY_SIZE;
     private Property[]       _properties;
 
     /**
@@ -41,10 +40,12 @@ public final class PropertyBlock extends BigBlock {
      * @param offset the offset into the properties array
      */
 
-    private PropertyBlock(final Property [] properties, final int offset)
+    private PropertyBlock(final POIFSBigBlockSize bigBlockSize, final Property [] properties, final int offset)
     {
-        _properties = new Property[ _properties_per_block ];
-        for (int j = 0; j < _properties_per_block; j++)
+        super(bigBlockSize);
+        
+        _properties = new Property[ bigBlockSize.getPropertiesPerBlock() ]; 
+        for (int j = 0; j < _properties.length; j++)
         {
             _properties[ j ] = properties[ j + offset ];
         }
@@ -62,8 +63,9 @@ public final class PropertyBlock extends BigBlock {
      */
 
     public static BlockWritable [] createPropertyBlockArray(
-            final List properties)
+            final POIFSBigBlockSize bigBlockSize, final List properties)
     {
+        int _properties_per_block = bigBlockSize.getPropertiesPerBlock();
         int        block_count   =
             (properties.size() + _properties_per_block - 1)
             / _properties_per_block;
@@ -93,7 +95,7 @@ public final class PropertyBlock extends BigBlock {
 
         for (int j = 0; j < block_count; j++)
         {
-            rvalue[ j ] = new PropertyBlock(to_be_written,
+            rvalue[ j ] = new PropertyBlock(bigBlockSize, to_be_written,
                                             j * _properties_per_block);
         }
         return rvalue;
@@ -114,6 +116,7 @@ public final class PropertyBlock extends BigBlock {
     void writeData(final OutputStream stream)
         throws IOException
     {
+        int _properties_per_block = bigBlockSize.getPropertiesPerBlock();
         for (int j = 0; j < _properties_per_block; j++)
         {
             _properties[ j ].writeData(stream);

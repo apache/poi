@@ -22,6 +22,7 @@ import java.io.OutputStream;
 
 import java.util.Arrays;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndianConsts;
@@ -33,12 +34,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class BATBlock extends BigBlock {
-    private static final int  _entries_per_block      =
-        POIFSConstants.BIG_BLOCK_SIZE / LittleEndianConsts.INT_SIZE;
-    private static final int  _entries_per_xbat_block = _entries_per_block
-                                                            - 1;
-    private static final int  _xbat_chain_offset      =
-        _entries_per_xbat_block * LittleEndianConsts.INT_SIZE;
     private static final byte _default_value          = ( byte ) 0xFF;
     private IntegerField[]    _fields;
     private byte[]            _data;
@@ -47,9 +42,13 @@ public final class BATBlock extends BigBlock {
      * Create a single instance initialized with default values
      */
 
-    private BATBlock()
+    private BATBlock(POIFSBigBlockSize bigBlockSize)
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
+        super(bigBlockSize);
+        
+        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock(); 
+        
+        _data = new byte[ bigBlockSize.getBigBlockSize() ];
         Arrays.fill(_data, _default_value);
         _fields = new IntegerField[ _entries_per_block ];
         int offset = 0;
@@ -70,16 +69,17 @@ public final class BATBlock extends BigBlock {
      * @return the newly created array of BATBlocks
      */
 
-    public static BATBlock [] createBATBlocks(final int [] entries)
+    public static BATBlock [] createBATBlocks(final POIFSBigBlockSize bigBlockSize, final int [] entries)
     {
-        int        block_count = calculateStorageRequirements(entries.length);
+        int        block_count = calculateStorageRequirements(bigBlockSize, entries.length);
         BATBlock[] blocks      = new BATBlock[ block_count ];
         int        index       = 0;
         int        remaining   = entries.length;
 
+        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
         for (int j = 0; j < entries.length; j += _entries_per_block)
         {
-            blocks[ index++ ] = new BATBlock(entries, j,
+            blocks[ index++ ] = new BATBlock(bigBlockSize, entries, j,
                                              (remaining > _entries_per_block)
                                              ? j + _entries_per_block
                                              : entries.length);
@@ -98,21 +98,23 @@ public final class BATBlock extends BigBlock {
      * @return the newly created array of BATBlocks
      */
 
-    public static BATBlock [] createXBATBlocks(final int [] entries,
+    public static BATBlock [] createXBATBlocks(final POIFSBigBlockSize bigBlockSize,
+                                               final int [] entries,
                                                final int startBlock)
     {
         int        block_count =
-            calculateXBATStorageRequirements(entries.length);
+            calculateXBATStorageRequirements(bigBlockSize, entries.length);
         BATBlock[] blocks      = new BATBlock[ block_count ];
         int        index       = 0;
         int        remaining   = entries.length;
 
+        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
         if (block_count != 0)
         {
             for (int j = 0; j < entries.length; j += _entries_per_xbat_block)
             {
                 blocks[ index++ ] =
-                    new BATBlock(entries, j,
+                    new BATBlock(bigBlockSize, entries, j,
                                  (remaining > _entries_per_xbat_block)
                                  ? j + _entries_per_xbat_block
                                  : entries.length);
@@ -120,9 +122,9 @@ public final class BATBlock extends BigBlock {
             }
             for (index = 0; index < blocks.length - 1; index++)
             {
-                blocks[ index ].setXBATChain(startBlock + index + 1);
+                blocks[ index ].setXBATChain(bigBlockSize, startBlock + index + 1);
             }
-            blocks[ index ].setXBATChain(POIFSConstants.END_OF_CHAIN);
+            blocks[ index ].setXBATChain(bigBlockSize, POIFSConstants.END_OF_CHAIN);
         }
         return blocks;
     }
@@ -136,8 +138,9 @@ public final class BATBlock extends BigBlock {
      * @return the number of BATBlocks needed
      */
 
-    public static int calculateStorageRequirements(final int entryCount)
+    public static int calculateStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
     {
+        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
         return (entryCount + _entries_per_block - 1) / _entries_per_block;
     }
 
@@ -150,41 +153,16 @@ public final class BATBlock extends BigBlock {
      * @return the number of XBATBlocks needed
      */
 
-    public static int calculateXBATStorageRequirements(final int entryCount)
+    public static int calculateXBATStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
     {
+        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
         return (entryCount + _entries_per_xbat_block - 1)
                / _entries_per_xbat_block;
     }
 
-    /**
-     * @return number of entries per block
-     */
-
-    public static final int entriesPerBlock()
+    private void setXBATChain(final POIFSBigBlockSize bigBlockSize, int chainIndex)
     {
-        return _entries_per_block;
-    }
-
-    /**
-     * @return number of entries per XBAT block
-     */
-
-    public static final int entriesPerXBATBlock()
-    {
-        return _entries_per_xbat_block;
-    }
-
-    /**
-     * @return offset of chain index of XBAT block
-     */
-
-    public static final int getXBATChainOffset()
-    {
-        return _xbat_chain_offset;
-    }
-
-    private void setXBATChain(int chainIndex)
-    {
+        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
         _fields[ _entries_per_xbat_block ].set(chainIndex, _data);
     }
 
@@ -199,10 +177,10 @@ public final class BATBlock extends BigBlock {
      *                  k, start_index <= k < end_index)
      */
 
-    private BATBlock(final int [] entries, final int start_index,
-                     final int end_index)
+    private BATBlock(POIFSBigBlockSize bigBlockSize, final int [] entries,
+                     final int start_index, final int end_index)
     {
-        this();
+        this(bigBlockSize);
         for (int k = start_index; k < end_index; k++)
         {
             _fields[ k - start_index ].set(entries[ k ], _data);

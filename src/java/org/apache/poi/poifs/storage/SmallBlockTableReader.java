@@ -19,6 +19,7 @@ package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.property.RootProperty;
 
 /**
@@ -43,15 +44,22 @@ public final class SmallBlockTableReader {
      * @exception IOException
      */
     public static BlockList getSmallDocumentBlocks(
+            final POIFSBigBlockSize bigBlockSize,
             final RawDataBlockList blockList, final RootProperty root,
             final int sbatStart)
         throws IOException
     {
-        BlockList list =
-            new SmallDocumentBlockList(SmallDocumentBlock
-                .extract(blockList.fetchBlocks(root.getStartBlock(), -1)));
+       // Fetch the blocks which hold the Small Blocks stream
+       ListManagedBlock [] smallBlockBlocks = 
+          blockList.fetchBlocks(root.getStartBlock(), -1);
+        
+       // Turn that into a list
+       BlockList list =new SmallDocumentBlockList(
+             SmallDocumentBlock.extract(bigBlockSize, smallBlockBlocks));
 
-        new BlockAllocationTableReader(blockList.fetchBlocks(sbatStart, -1),
+       // Process
+        new BlockAllocationTableReader(bigBlockSize,
+                                       blockList.fetchBlocks(sbatStart, -1),
                                        list);
         return list;
     }

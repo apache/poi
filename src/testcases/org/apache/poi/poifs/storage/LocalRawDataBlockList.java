@@ -38,7 +38,7 @@ public final class LocalRawDataBlockList extends RawDataBlockList {
     public LocalRawDataBlockList()
         throws IOException
     {
-        super(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
+        super(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
         _list  = new ArrayList<RawDataBlock>();
         _array = null;
     }

@@ -23,6 +23,8 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
+
 /**
  * A list of RawDataBlocks instances, and methods to manage the list
  *
@@ -43,14 +45,14 @@ public class RawDataBlockList
      *            block is read
      */
 
-    public RawDataBlockList(final InputStream stream, int bigBlockSize)
+    public RawDataBlockList(final InputStream stream, POIFSBigBlockSize bigBlockSize)
         throws IOException
     {
-        List blocks = new ArrayList();
+        List<RawDataBlock> blocks = new ArrayList<RawDataBlock>();
 
         while (true)
         {
-            RawDataBlock block = new RawDataBlock(stream, bigBlockSize);
+            RawDataBlock block = new RawDataBlock(stream, bigBlockSize.getBigBlockSize());
             
             // If there was data, add the block to the list
             if(block.hasData()) {
@@ -62,7 +64,7 @@ public class RawDataBlockList
                 break;
             }
         }
-        setBlocks(( RawDataBlock [] ) blocks.toArray(new RawDataBlock[ 0 ]));
+        setBlocks( blocks.toArray(new RawDataBlock[ blocks.size() ]) );
     }
 }   // end public class RawDataBlockList
 
