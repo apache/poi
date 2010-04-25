@@ -84,7 +84,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     private int uniqueCount;
 
-    private SstDocument _sstDoc;
+    public SstDocument _sstDoc;
 
     public SharedStringsTable() {
         super();
@@ -195,6 +195,10 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     public void writeTo(OutputStream out) throws IOException {
         XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
+        // the following two lines turn off writing CDATA
+        // see Bugzilla 48936
+        options.setSaveCDataLengthThreshold(1000000);
+        options.setSaveCDataEntityCountThreshold(-1);
 
         //re-create the sst table every time saving a workbook
         CTSst sst = _sstDoc.getSst();
