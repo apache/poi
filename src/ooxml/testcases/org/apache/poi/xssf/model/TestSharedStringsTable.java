@@ -18,12 +18,18 @@
 package org.apache.poi.xssf.model;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.io.*;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -125,4 +131,49 @@ public final class TestSharedStringsTable extends TestCase {
             assertEquals(st1.toString(), st2.toString());
         }
     }
+
+    /**
+     * Test for Bugzilla 48936
+     *
+     * A specific sequence of strings can result in broken CDATA section in sharedStrings.xml file.
+     *
+     * @author Philippe Laflamme
+     */
+    public void testBug48936() throws IOException {
+        Workbook w = new XSSFWorkbook();
+        Sheet s = w.createSheet();
+        int i = 0;
+        List<String> lst = readStrings("48936-strings.txt");
+        for (String str : lst) {
+            s.createRow(i++).createCell(0).setCellValue(str);
+        }
+
+        try {
+            w = XSSFTestDataSamples.writeOutAndReadBack(w);
+        } catch (POIXMLException e){
+            fail("Detected Bug #48936");        
+        }
+        s = w.getSheetAt(0);
+        i = 0;
+        for (String str : lst) {
+            String val = s.getRow(i++).getCell(0).getStringCellValue();
+            assertEquals(str, val);
+        }
+    }
+
+    private List<String> readStrings(String filename) throws IOException {
+        List<String> strs = new ArrayList<String>();
+        POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(samples.openResourceAsStream(filename)));
+        String s;
+        while ((s = br.readLine()) != null) {
+            if (s.trim().length() > 0) {
+                strs.add(s.trim());
+            }
+        }
+        br.close();
+        return strs;
+    }
+
 }

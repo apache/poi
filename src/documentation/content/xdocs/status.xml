@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48936 - Avoid writing malformed CDATA blocks in sharedStrings.xml</action>
            <action dev="POI-DEVELOPERS" type="add">49026 - Added implementation for TEXT()  </action>
            <action dev="POI-DEVELOPERS" type="add">49025 - Added implementation for TRUNC()  </action>
            <action dev="POI-DEVELOPERS" type="fix">49147 - Properly close internal InputStream in ExtractorFactory#createExtractor(File)</action>
