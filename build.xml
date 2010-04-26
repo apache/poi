@@ -358,6 +358,7 @@ under the License.
         </condition>
     </target>
     <target name="fetch-ooxml-xsds" unless="ooxml-xsds.present"
+            depends="check-ooxml-xsds"
             description="Fetches needed OOXML xsd files from the Internet">
         <get src="${ooxml.xsds.url}" dest="${ooxml.xsds.ozip}"/>
         <unzip src="${ooxml.xsds.ozip}" dest="${ooxml.lib}">
@@ -366,7 +367,7 @@ under the License.
             </patternset>
         </unzip>
     </target>
-    <target name="check-compiled-ooxml-xsds">
+    <target name="check-compiled-ooxml-xsds" depends="fetch-ooxml-xsds">
         <condition property="ooxml-compiled-xsds.present">
             <or>
                 <and>
@@ -377,7 +378,7 @@ under the License.
         </condition>
     </target>
     <target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
-            depends="check-jars,fetch-jars"
+            depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
             description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
         <property name="ooxml.xsds.tmp.dir" location="build/ooxml-xsds"/>
         <mkdir dir="${ooxml.xsds.tmp.dir}"/>
