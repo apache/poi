@@ -43,6 +43,10 @@ public final class MMSRecord
 
     public MMSRecord(RecordInputStream in)
     {
+        if (in.remaining()==0) {
+            return;
+        }
+        
         field_1_addMenuCount = in.readByte();
         field_2_delMenuCount = in.readByte();
     }
