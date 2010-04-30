@@ -17,7 +17,15 @@
     <mailing-list rdf:resource="http://poi.apache.org/mailinglists.html" />
     <download-page rdf:resource="http://www.apache.org/dyn/closer.cgi/poi/" />
     <programming-language>Java</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/content" />
     <category rdf:resource="http://projects.apache.org/category/library" />
+    <release>
+      <Version>
+        <name>Apache POI 3.6</name>
+        <created>2009-12-14</created>
+        <revision>3.6</revision>
+      </Version>
+    </release>
     <release>
       <Version>
         <name>Apache POI 3.5</name>
