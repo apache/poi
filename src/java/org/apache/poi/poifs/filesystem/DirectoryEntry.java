@@ -33,7 +33,7 @@ import org.apache.poi.hpsf.ClassID;
  */
 
 public interface DirectoryEntry
-    extends Entry
+    extends Entry, Iterable<Entry>
 {
 
     /**

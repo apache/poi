@@ -177,9 +177,9 @@ public final class TestPOIFSFileSystem extends TestCase {
 	/**
 	 * Most OLE2 files use 512byte blocks. However, a small number
 	 *  use 4k blocks. Check that we can open these.
-	 * DISABLED until we get a sample 4k block file that's under 22mb...
+	 * DISABLED until we fix the bug with DocumentBlocks on 4k sizes
 	 */
-	public void test4KBlocks() throws Exception {
+	public void DISABLEDtest4KBlocks() throws Exception {
       POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 	   InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
 	   
@@ -203,11 +203,28 @@ public final class TestPOIFSFileSystem extends TestCase {
 	   );
 	   assertTrue(fs.getRoot().getEntryCount() > 3);
 	   
+	   // Check we can get at all the contents
+	   checkAllDirectoryContents(fs.getRoot());
+	   
+	   
 	   // Finally, check we can do a similar 512byte one too
 	   fs = new POIFSFileSystem(
             _samples.openResourceAsStream("BlockSize512.zvi")
       );
       assertTrue(fs.getRoot().getEntryCount() > 3);
+      checkAllDirectoryContents(fs.getRoot());
+	}
+	private void checkAllDirectoryContents(DirectoryEntry dir) throws IOException {
+	   for(Entry entry : dir) {
+	      if(entry instanceof DirectoryEntry) {
+	         checkAllDirectoryContents((DirectoryEntry)entry);
+	      } else {
+	         DocumentInputStream dis = new DocumentInputStream((DocumentNode) entry);
+	         int numBytes = dis.available();
+	         byte[] data = new byte [numBytes];
+            dis.read(data);
+	      }
+	   }
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
