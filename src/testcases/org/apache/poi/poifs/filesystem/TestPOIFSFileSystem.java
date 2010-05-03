@@ -179,8 +179,9 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 *  use 4k blocks. Check that we can open these.
 	 * DISABLED until we get a sample 4k block file that's under 22mb...
 	 */
-	public void DISABLEDtest4KBlocks() throws Exception {
-	   InputStream inp = new FileInputStream(new File("/home/nick/Downloads/IP-ConvertImage-01.zvi"));
+	public void test4KBlocks() throws Exception {
+      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+	   InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
 	   
 	   // First up, check that we can process the header properly
       HeaderBlockReader header_block_reader = new HeaderBlockReader(inp);
@@ -189,7 +190,7 @@ public final class TestPOIFSFileSystem extends TestCase {
       
       // Check the fat info looks sane
       assertEquals(109, header_block_reader.getBATArray().length);
-      assertTrue(header_block_reader.getBATCount() > 5);
+      assertTrue(header_block_reader.getBATCount() > 0);
       assertEquals(0, header_block_reader.getXBATCount());
       
       // Now check we can get the basic fat
@@ -198,8 +199,15 @@ public final class TestPOIFSFileSystem extends TestCase {
 	   
 	   // Now try and open properly
 	   POIFSFileSystem fs = new POIFSFileSystem(
-	         new FileInputStream(new File("/home/nick/Downloads/IP-ConvertImage-01.zvi"))
+	         _samples.openResourceAsStream("BlockSize4096.zvi")
 	   );
+	   assertTrue(fs.getRoot().getEntryCount() > 3);
+	   
+	   // Finally, check we can do a similar 512byte one too
+	   fs = new POIFSFileSystem(
+            _samples.openResourceAsStream("BlockSize512.zvi")
+      );
+      assertTrue(fs.getRoot().getEntryCount() > 3);
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
