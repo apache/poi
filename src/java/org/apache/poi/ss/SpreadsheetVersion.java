@@ -36,7 +36,6 @@ public enum SpreadsheetVersion {
 	 * <li>The total number of available rows is 64k (2^16)</li>
 	 * <li>The maximum number of arguments to a function is 30</li>
 	 * <li>Number of conditional format conditions on a cell is 3</li>
-     * <li>Length of text cell contents is unlimited </li>
      * <li>Length of text cell contents is 32767</li>
 	 * </ul>
 	 */
@@ -51,10 +50,10 @@ public enum SpreadsheetVersion {
 	 * <li>The maximum number of arguments to a function is 255</li>
 	 * <li>Number of conditional format conditions on a cell is unlimited
 	 * (actually limited by available memory in Excel)</li>
-     * <li>Length of text cell contents is unlimited </li>
+     * <li>Length of text cell contents is 32767</li>
 	 * <ul>
 	 */
-	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, Integer.MAX_VALUE);
+	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, 32767);
 
 	private final int _maxRows;
 	private final int _maxColumns;
