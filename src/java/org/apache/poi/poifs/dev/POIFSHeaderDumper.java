@@ -149,6 +149,8 @@ public class POIFSHeaderDumper {
             bnS = "DI Fat Block";
          } else if(bn == POIFSConstants.FAT_SECTOR_BLOCK) {
             bnS = "Normal Fat Block";
+         } else if(bn == POIFSConstants.UNUSED_BLOCK) {
+            bnS = "Block Not Used (Free)";
          }
          
          System.out.println("  Block  # " + i + " -> " + bnS);
