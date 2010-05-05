@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.util.LazilyConcatenatedByteArray;
 
 /**
  * The escher container record is used to hold escher records.  It is abstract and
@@ -47,8 +47,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
 
     private List<EscherRecord> escherRecords;
-    private byte[] rawData;
-
+    private LazilyConcatenatedByteArray rawDataContainer = new LazilyConcatenatedByteArray();
 
     public AbstractEscherHolderRecord()
     {
@@ -60,7 +59,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
         escherRecords = new ArrayList<EscherRecord>();
         if (! DESERIALISE )
         {
-            rawData = in.readRemainder();
+            rawDataContainer.concatenate(in.readRemainder());
         }
         else
         {
@@ -70,6 +69,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
 
     protected void convertRawBytesToEscherRecords() {
+        byte[] rawData = getRawData();
     	convertToEscherRecords(0, rawData.length, rawData);
     }
     private void convertToEscherRecords( int offset, int size, byte[] data )
@@ -109,6 +109,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     {
         LittleEndian.putShort( data, 0 + offset, getSid() );
         LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
+        byte[] rawData = getRawData();
         if ( escherRecords.size() == 0 && rawData != null )
         {
             LittleEndian.putShort(data, 0 + offset, getSid());
@@ -129,7 +130,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
 
     public int getRecordSize() {
+        byte[] rawData = getRawData();
         if (escherRecords.size() == 0 && rawData != null) {
+            // XXX: It should be possible to derive this without concatenating the array, too.
             return rawData.length;
         }
         int size = 0;
@@ -229,30 +232,23 @@ public abstract class AbstractEscherHolderRecord extends Record {
      */
     public void join( AbstractEscherHolderRecord record )
     {
-        int length = this.rawData.length + record.getRawData().length;
-        byte[] data = new byte[length];
-        System.arraycopy( rawData, 0, data, 0, rawData.length );
-        System.arraycopy( record.getRawData(), 0, data, rawData.length, record.getRawData().length );
-        rawData = data;
+        rawDataContainer.concatenate(record.getRawData());
     }
 
     public void processContinueRecord( byte[] record )
     {
-        int length = this.rawData.length + record.length;
-        byte[] data = new byte[length];
-        System.arraycopy( rawData, 0, data, 0, rawData.length );
-        System.arraycopy( record, 0, data, rawData.length, record.length );
-        rawData = data;
+        rawDataContainer.concatenate(record);
     }
 
     public byte[] getRawData()
     {
-        return rawData;
+        return rawDataContainer.toArray();
     }
 
     public void setRawData( byte[] rawData )
     {
-        this.rawData = rawData;
+        rawDataContainer.clear();
+        rawDataContainer.concatenate(rawData);
     }
 
     /**
@@ -260,6 +256,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
      */
     public void decode()
     {
+        byte[] rawData = getRawData();
         convertToEscherRecords(0, rawData.length, rawData );
     }
 }
