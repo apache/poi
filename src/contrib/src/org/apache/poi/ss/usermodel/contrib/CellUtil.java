@@ -165,7 +165,7 @@ public final class CellUtil {
 	 *@param font The Font that you want to set...
 	 */
 	public static void setFont(Cell cell, Workbook workbook, Font font) {
-		setCellStyleProperty(cell, workbook, FONT, font);
+		setCellStyleProperty(cell, workbook, FONT, font.getIndex());
 	}
 
 	/**
