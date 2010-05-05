@@ -138,4 +138,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, rels.size());
         assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
     }
+    
+    /**
+     * Excel will sometimes write a button with a textbox
+     *  containing &gt;br&lt; (not closed!).
+     * Clearly Excel shouldn't do this, but test that we can
+     *  read the file despite the naughtyness
+     */
+    public void test49020() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx");
+    }
 }
