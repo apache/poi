@@ -32,10 +32,6 @@ import org.apache.poi.util.IOUtils;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class DocumentBlock extends BigBlock {
-    private static final int BLOCK_SHIFT = 9;
-    private static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-    private static final int BLOCK_MASK = BLOCK_SIZE-1;
-
     private static final byte _default_value = ( byte ) 0xFF;
     private byte[]            _data;
     private int               _bytes_read;
@@ -165,6 +161,17 @@ public final class DocumentBlock extends BigBlock {
     }
 
     public static DataInputBlock getDataInputBlock(DocumentBlock[] blocks, int offset) {
+        if(blocks == null || blocks.length == 0) {
+           return null;
+        }
+        
+        // Key things about the size of the block
+        POIFSBigBlockSize bigBlockSize = blocks[0].bigBlockSize;
+        int BLOCK_SHIFT = bigBlockSize.getHeaderValue();
+        int BLOCK_SIZE = bigBlockSize.getBigBlockSize();
+        int BLOCK_MASK = BLOCK_SIZE - 1;
+
+        // Now do the offset lookup
         int firstBlockIndex = offset >> BLOCK_SHIFT;
         int firstBlockOffset= offset & BLOCK_MASK;
         return new DataInputBlock(blocks[firstBlockIndex]._data, firstBlockOffset);

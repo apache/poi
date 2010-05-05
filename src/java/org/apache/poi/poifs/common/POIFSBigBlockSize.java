@@ -38,6 +38,12 @@ public final class POIFSBigBlockSize
       return bigBlockSize;
    }
    
+   /**
+    * Returns the value that gets written into the 
+    *  header.
+    * Is the power of two that corresponds to the
+    *  size of the block, eg 512 => 9
+    */
    public short getHeaderValue() {
       return headerValue;
    }
