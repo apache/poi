@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.xssf.util.EvilUnclosedBRFixingInputStream;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlObject;
@@ -52,6 +53,11 @@ import schemasMicrosoftComOfficeExcel.STObjectType;
  * created with the goal of eventually replacing any uses of VML in the Office Open XML formats. VML should be
  * considered a deprecated format included in Office Open XML for legacy reasons only and new applications that
  * need a file format for drawings are strongly encouraged to use preferentially DrawingML
+ * </p>
+ * 
+ * <p>
+ * Warning - Excel is known to put invalid XML into these files!
+ *  For example, &gt;br&lt; without being closed or escaped crops up.
  * </p>
  *
  * See 6.4 VML - SpreadsheetML Drawing in Office Open XML Part 4 - Markup Language Reference.pdf
@@ -98,7 +104,9 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
 
 
     protected void read(InputStream is) throws IOException, XmlException {
-        XmlObject root = XmlObject.Factory.parse(is);
+        XmlObject root = XmlObject.Factory.parse(
+              new EvilUnclosedBRFixingInputStream(is)
+        );
 
         _qnames = new ArrayList<QName>();
         _items = new ArrayList<XmlObject>();
