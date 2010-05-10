@@ -504,6 +504,11 @@ under the License.
                 <pathelement path="${ooxml.output.dir}"/>
             </classpath>
         </javac>
+        <copy todir="${examples.output.dir}">
+          <fileset dir="${examples.src}">
+            <include name="**/*.css"/>
+          </fileset>
+        </copy>
     </target>
 
     <target name="compile-ooxml" depends="compile-main,compile-scratchpad">

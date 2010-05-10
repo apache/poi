@@ -17,7 +17,7 @@
 ==================================================================== */
         
 
-package org.apache.poi.hssf.contrib.view;
+package org.apache.poi.hssf.view;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

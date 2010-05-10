@@ -18,7 +18,7 @@
         
 
 
-package org.apache.poi.hssf.contrib.view;
+package org.apache.poi.hssf.view;
 
 import java.awt.*;
 import java.awt.event.*;
