@@ -798,4 +798,12 @@ public interface Sheet extends Iterable<Row> {
      * @return the {@link CellRange} of cells affected by this change
      */
     CellRange<? extends Cell> removeArrayFormula(Cell cell);
+    
+    public DataValidationHelper getDataValidationHelper();
+
+	/**
+	 * Creates a data validation object
+	 * @param dataValidation The Data validation object settings
+	 */
+	public void addValidationData(DataValidation dataValidation);
 }

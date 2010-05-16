@@ -26,68 +26,14 @@ import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
 
 /**
  * 
  * @author Josh Micich
  */
-public class DVConstraint {
-	/**
-	 * ValidationType enum
-	 */
-	public static final class ValidationType {
-		private ValidationType() {
-			// no instances of this class
-		}
-		/** 'Any value' type - value not restricted */
-		public static final int ANY         = 0x00;
-		/** Integer ('Whole number') type */
-		public static final int INTEGER     = 0x01;
-		/** Decimal type */
-		public static final int DECIMAL     = 0x02;
-		/** List type ( combo box type ) */
-		public static final int LIST        = 0x03;
-		/** Date type */
-		public static final int DATE        = 0x04;
-		/** Time type */
-		public static final int TIME        = 0x05;
-		/** String length type */
-		public static final int TEXT_LENGTH = 0x06;
-		/** Formula ( 'Custom' ) type */
-		public static final int FORMULA     = 0x07;
-	}
-	/**
-	 * Condition operator enum
-	 */
-	public static final class OperatorType {
-		private OperatorType() {
-			// no instances of this class
-		}
-
-		public static final int BETWEEN = 0x00;
-		public static final int NOT_BETWEEN = 0x01;
-		public static final int EQUAL = 0x02;
-		public static final int NOT_EQUAL = 0x03;
-		public static final int GREATER_THAN = 0x04;
-		public static final int LESS_THAN = 0x05;
-		public static final int GREATER_OR_EQUAL = 0x06;
-		public static final int LESS_OR_EQUAL = 0x07;
-		/** default value to supply when the operator type is not used */
-		public static final int IGNORED = BETWEEN;
-		
-		/* package */ static void validateSecondArg(int comparisonOperator, String paramValue) {
-			switch (comparisonOperator) {
-				case BETWEEN:
-				case NOT_BETWEEN:
-					if (paramValue == null) {
-						throw new IllegalArgumentException("expr2 must be supplied for 'between' comparisons");
-					}
-				// all other operators don't need second arg
-			}
-		}
-	}
-	
-	/* package */ static final class FormulaPair {
+public class DVConstraint implements DataValidationConstraint {
+	/* package */ public static final class FormulaPair {
 
 		private final Ptg[] _formula1;
 		private final Ptg[] _formula2;
@@ -211,8 +157,8 @@ public class DVConstraint {
 		String formula2 = getFormulaFromTextExpression(expr2);
 		Double value2 = formula2 == null ? convertTime(expr2) : null;
 		return new DVConstraint(VT.TIME, comparisonOperator, formula1, formula2, value1, value2, null);
-		
 	}
+	
 	/**
 	 * Creates a date based data validation constraint. The text values entered for expr1 and expr2
 	 * can be either standard Excel formulas or formatted date values. If the expression starts 
@@ -321,6 +267,113 @@ public class DVConstraint {
 		return new DVConstraint(VT.FORMULA, OperatorType.IGNORED, formula, null, null, null, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getValidationType()
+	 */
+	public int getValidationType() {
+		return _validationType;
+	}
+	/**
+	 * Convenience method
+	 * @return <code>true</code> if this constraint is a 'list' validation
+	 */
+	public boolean isListValidationType() {
+		return _validationType == VT.LIST;
+	}
+	/**
+	 * Convenience method
+	 * @return <code>true</code> if this constraint is a 'list' validation with explicit values
+	 */
+	public boolean isExplicitList() {
+		return _validationType == VT.LIST && _explicitListValues != null;
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getOperator()
+	 */
+	public int getOperator() {
+		return _operator;
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setOperator(int)
+	 */
+	public void setOperator(int operator) {
+		_operator = operator;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getExplicitListValues()
+	 */
+	public String[] getExplicitListValues() {
+		return _explicitListValues;
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setExplicitListValues(java.lang.String[])
+	 */
+	public void setExplicitListValues(String[] explicitListValues) {
+		if (_validationType != VT.LIST) {
+			throw new RuntimeException("Cannot setExplicitListValues on non-list constraint");
+		}
+		_formula1 = null;
+		_explicitListValues = explicitListValues;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getFormula1()
+	 */
+	public String getFormula1() {
+		return _formula1;
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setFormula1(java.lang.String)
+	 */
+	public void setFormula1(String formula1) {
+		_value1 = null;
+		_explicitListValues = null;
+		_formula1 = formula1;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getFormula2()
+	 */
+	public String getFormula2() {
+		return _formula2;
+	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
+	 */
+	public void setFormula2(String formula2) {
+		_value2 = null;
+		_formula2 = formula2;
+	}
+
+	/**
+	 * @return the numeric value for expression 1. May be <code>null</code>
+	 */
+	public Double getValue1() {
+		return _value1;
+	}
+	/**
+	 * Sets a numeric value for expression 1.
+	 */
+	public void setValue1(double value1) {
+		_formula1 = null;
+		_value1 = new Double(value1);
+	}
+
+	/**
+	 * @return the numeric value for expression 2. May be <code>null</code>
+	 */
+	public Double getValue2() {
+		return _value2;
+	}
+	/**
+	 * Sets a numeric value for expression 2.
+	 */
+	public void setValue2(double value2) {
+		_formula2 = null;
+		_value2 = new Double(value2);
+	}
+	
 	/**
 	 * @return both parsed formulas (for expression 1 and 2). 
 	 */
@@ -374,110 +427,5 @@ public class DVConstraint {
 		}
         HSSFWorkbook wb = sheet.getWorkbook();
 		return HSSFFormulaParser.parse(formula, wb, FormulaType.CELL, wb.getSheetIndex(sheet));
-	}
-	
-	
-	/**
-	 * @return data validation type of this constraint
-	 * @see ValidationType
-	 */
-	public int getValidationType() {
-		return _validationType;
-	}
-	/**
-	 * Convenience method
-	 * @return <code>true</code> if this constraint is a 'list' validation
-	 */
-	public boolean isListValidationType() {
-		return _validationType == VT.LIST;
-	}
-	/**
-	 * Convenience method
-	 * @return <code>true</code> if this constraint is a 'list' validation with explicit values
-	 */
-	public boolean isExplicitList() {
-		return _validationType == VT.LIST && _explicitListValues != null;
-	}
-	/**
-	 * @return the operator used for this constraint
-	 * @see OperatorType
-	 */
-	public int getOperator() {
-		return _operator;
-	}
-	/**
-	 * Sets the comparison operator for this constraint
-	 * @see OperatorType
-	 */
-	public void setOperator(int operator) {
-		_operator = operator;
-	}
-	
-	public String[] getExplicitListValues() {
-		return _explicitListValues;
-	}
-	public void setExplicitListValues(String[] explicitListValues) {
-		if (_validationType != VT.LIST) {
-			throw new RuntimeException("Cannot setExplicitListValues on non-list constraint");
-		}
-		_formula1 = null;
-		_explicitListValues = explicitListValues;
-	}
-
-	/**
-	 * @return the formula for expression 1. May be <code>null</code>
-	 */
-	public String getFormula1() {
-		return _formula1;
-	}
-	/**
-	 * Sets a formula for expression 1.
-	 */
-	public void setFormula1(String formula1) {
-		_value1 = null;
-		_explicitListValues = null;
-		_formula1 = formula1;
-	}
-
-	/**
-	 * @return the formula for expression 2. May be <code>null</code>
-	 */
-	public String getFormula2() {
-		return _formula2;
-	}
-	/**
-	 * Sets a formula for expression 2.
-	 */
-	public void setFormula2(String formula2) {
-		_value2 = null;
-		_formula2 = formula2;
-	}
-
-	/**
-	 * @return the numeric value for expression 1. May be <code>null</code>
-	 */
-	public Double getValue1() {
-		return _value1;
-	}
-	/**
-	 * Sets a numeric value for expression 1.
-	 */
-	public void setValue1(double value1) {
-		_formula1 = null;
-		_value1 = new Double(value1);
-	}
-
-	/**
-	 * @return the numeric value for expression 2. May be <code>null</code>
-	 */
-	public Double getValue2() {
-		return _value2;
-	}
-	/**
-	 * Sets a numeric value for expression 2.
-	 */
-	public void setValue2(double value2) {
-		_formula2 = null;
-		_value2 = new Double(value2);
-	}
+	}	
 }

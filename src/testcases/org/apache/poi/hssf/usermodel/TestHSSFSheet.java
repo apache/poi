@@ -42,6 +42,9 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.TempFile;
@@ -382,10 +385,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFSheet sheet = workbook.createSheet("Sheet1");
         sheet.protectSheet("secret");
 
-        DVConstraint dvc = DVConstraint.createNumericConstraint(DVConstraint.ValidationType.INTEGER,
-                                                DVConstraint.OperatorType.BETWEEN, "10", "100");
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint dvc = dataValidationHelper.createIntegerConstraint(DataValidationConstraint.OperatorType.BETWEEN, "10", "100");
         CellRangeAddressList numericCellAddressList = new CellRangeAddressList(0, 0, 1, 1);
-        HSSFDataValidation dv = new HSSFDataValidation(numericCellAddressList, dvc);
+        DataValidation dv = dataValidationHelper.createValidation(dvc,numericCellAddressList);
         try {
             sheet.addValidationData(dv);
         } catch (IllegalStateException e) {
@@ -535,7 +538,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         int minWithRow1And2 = 6400;
         int maxWithRow1And2 = 7800;
         int minWithRow1Only = 2750;
-        int maxWithRow1Only = 3300;
+        int maxWithRow1Only = 3400;
 
         // autoSize the first column and check its size before the merged region (1,0,1,1) is set:
         // it has to be based on the 2nd row width

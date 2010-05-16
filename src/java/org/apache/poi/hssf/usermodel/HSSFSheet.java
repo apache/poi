@@ -51,15 +51,17 @@ import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -373,13 +375,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Creates a data validation object
      * @param dataValidation The Data validation object settings
      */
-    public void addValidationData(HSSFDataValidation dataValidation) {
+    public void addValidationData(DataValidation dataValidation) {
        if (dataValidation == null) {
            throw new IllegalArgumentException("objValidation must not be null");
        }
+       HSSFDataValidation hssfDataValidation = (HSSFDataValidation)dataValidation;
        DataValidityTable dvt = _sheet.getOrCreateDataValidityTable();
 
-       DVRecord dvRecord = dataValidation.createDVRecord(this);
+       DVRecord dvRecord = hssfDataValidation.createDVRecord(this);
        dvt.addDataValidation(dvRecord);
     }
 
@@ -1997,4 +2000,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
         return result;
     }
+
+	public DataValidationHelper getDataValidationHelper() {
+		return new HSSFDataValidationHelper(this);
+	}
+    
+    
 }

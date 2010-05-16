@@ -42,11 +42,14 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.util.Internal;
@@ -58,7 +61,41 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -82,6 +119,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private CommentsTable sheetComments;
     private Map<Integer, XSSFCell> sharedFormulas;
     private List<CellRangeAddress> arrayFormulas;
+    private XSSFDataValidationHelper dataValidationHelper;    
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -90,6 +128,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected XSSFSheet() {
         super();
+        dataValidationHelper = new XSSFDataValidationHelper(this);
         onDocumentCreate();
     }
 
@@ -102,6 +141,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected XSSFSheet(PackagePart part, PackageRelationship rel) {
         super(part, rel);
+        dataValidationHelper = new XSSFDataValidationHelper(this);
     }
 
     /**
@@ -2794,4 +2834,49 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         String ref = ((XSSFCell)cell).getCTCell().getR();
         throw new IllegalArgumentException("Cell " + ref + " is not part of an array formula.");
     }
+
+
+	public DataValidationHelper getDataValidationHelper() {
+		return dataValidationHelper;
+	}
+    
+    public List<XSSFDataValidation> getDataValidations() {
+    	List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
+    	CTDataValidations dataValidations = this.worksheet.getDataValidations();
+    	if( dataValidations!=null && dataValidations.getCount() > 0 ) {
+    		CTDataValidation[] dataValidationList = dataValidations.getDataValidationArray();
+    		for (CTDataValidation ctDataValidation : dataValidationList) {
+    			CellRangeAddressList addressList = new CellRangeAddressList();
+    			
+    			@SuppressWarnings("unchecked")
+    			List<String> sqref = ctDataValidation.getSqref();
+    			for (String stRef : sqref) {
+    				String[] regions = stRef.split(" ");
+    				for (int i = 0; i < regions.length; i++) {
+						String[] parts = regions[i].split(":");
+						CellReference begin = new CellReference(parts[0]);
+						CellReference end = parts.length > 1 ? new CellReference(parts[1]) : begin;
+						CellRangeAddress cellRangeAddress = new CellRangeAddress(begin.getRow(), end.getRow(), begin.getCol(), end.getCol());
+						addressList.addCellRangeAddress(cellRangeAddress);
+					}
+				}
+				XSSFDataValidation xssfDataValidation = new XSSFDataValidation(addressList, ctDataValidation);
+				xssfValidations.add(xssfDataValidation);
+			}
+    	}
+    	return xssfValidations;
+    }
+
+	public void addValidationData(DataValidation dataValidation) {
+		XSSFDataValidation xssfDataValidation = (XSSFDataValidation)dataValidation;		
+		CTDataValidations dataValidations = worksheet.getDataValidations();
+		if( dataValidations==null ) {
+			dataValidations = worksheet.addNewDataValidations();
+		}
+		int currentCount = dataValidations.getDataValidationArray().length;
+        CTDataValidation newval = dataValidations.addNewDataValidation();
+		newval.set(xssfDataValidation.getCtDdataValidation());
+		dataValidations.setCount(currentCount + 1);
+
+	}
 }
