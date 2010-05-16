@@ -19,6 +19,9 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.usermodel.DVConstraint.FormulaPair;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
@@ -26,19 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
  * 
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
-public final class HSSFDataValidation {
-	/**
-	 * Error style constants for error box
-	 */
-	public static final class ErrorStyle {
-    	/** STOP style */
-    	public static final int STOP    = 0x00;
-    	/** WARNING style */
-    	public static final int WARNING = 0x01;
-    	/** INFO style */
-    	public static final int INFO    = 0x02;
-	}    
-
+public final class HSSFDataValidation implements DataValidation {
 	private String _prompt_title;
 	private String _prompt_text;
 	private String _error_title;
@@ -49,7 +40,7 @@ public final class HSSFDataValidation {
 	private boolean _suppress_dropdown_arrow = false;
 	private boolean _showPromptBox = true;
 	private boolean _showErrorBox = true;
-	private final CellRangeAddressList _regions;
+	private CellRangeAddressList _regions;
 	private DVConstraint _constraint;
 
 	/**
@@ -57,119 +48,106 @@ public final class HSSFDataValidation {
 	 * applied
 	 * @param constraint 
 	 */
-	public HSSFDataValidation(CellRangeAddressList regions, DVConstraint constraint) {
+	public HSSFDataValidation(CellRangeAddressList regions, DataValidationConstraint constraint) {
 		_regions = regions;
-		_constraint = constraint;
+		
+		//FIXME: This cast can be avoided.
+		_constraint = (DVConstraint)constraint;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getConstraint()
+	 */
+	public DataValidationConstraint getValidationConstraint() {
+		return _constraint;
+	}
 
 	public DVConstraint getConstraint() {
 		return _constraint;
 	}
+	
+	public CellRangeAddressList getRegions() {
+		return _regions;
+	}
 
-	/**
-	 * Sets the error style for error box
-	 * @see ErrorStyle
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#setErrorStyle(int)
 	 */
 	public void setErrorStyle(int error_style) {
 		_errorStyle = error_style;
 	}
 
-	/**
-	 * @return the error style of error box
-	 * @see ErrorStyle
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorStyle()
 	 */
 	public int getErrorStyle() {
 		return _errorStyle;
 	}
 
-	/**
-	 * Sets if this object allows empty as a valid value
-	 * 
-	 * @param allowed <code>true</code> if this object should treats empty as valid value , <code>false</code>
-	 *            otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#setEmptyCellAllowed(boolean)
 	 */
 	public void setEmptyCellAllowed(boolean allowed) {
 		_emptyCellAllowed = allowed;
 	}
 
-	/**
-	 * Retrieve the settings for empty cells allowed
-	 * 
-	 * @return True if this object should treats empty as valid value , false
-	 *         otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getEmptyCellAllowed()
 	 */
 	public boolean getEmptyCellAllowed() {
 		return _emptyCellAllowed;
 	}
 
-	/**
-	 * Useful for list validation objects .
-	 * 
-	 * @param suppress
-	 *            True if a list should display the values into a drop down list ,
-	 *            false otherwise . In other words , if a list should display
-	 *            the arrow sign on its right side
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
 	 */
 	public void setSuppressDropDownArrow(boolean suppress) {
 		_suppress_dropdown_arrow = suppress;
 	}
 
-	/**
-	 * Useful only list validation objects . This method always returns false if
-	 * the object isn't a list validation object
-	 * 
-	 * @return <code>true</code> if a list should display the values into a drop down list ,
-	 *         <code>false</code> otherwise .
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
 	 */
 	public boolean getSuppressDropDownArrow() {
-		if (_constraint.isListValidationType()) {
+		if (_constraint.getValidationType()==ValidationType.LIST) {
 			return _suppress_dropdown_arrow;
 		}
 		return false;
 	}
 
-	/**
-	 * Sets the behaviour when a cell which belongs to this object is selected
-	 * 
-	 * @param show <code>true</code> if an prompt box should be displayed , <code>false</code> otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowPromptBox(boolean)
 	 */
 	public void setShowPromptBox(boolean show) {
 		_showPromptBox = show;
 	}
 
-	/**
-	 * @return <code>true</code> if an prompt box should be displayed , <code>false</code> otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowPromptBox()
 	 */
 	public boolean getShowPromptBox() {
 		return _showPromptBox;
 	}
 
-	/**
-	 * Sets the behaviour when an invalid value is entered
-	 * 
-	 * @param show <code>true</code> if an error box should be displayed , <code>false</code> otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowErrorBox(boolean)
 	 */
 	public void setShowErrorBox(boolean show) {
 		_showErrorBox = show;
 	}
 
-	/**
-	 * @return <code>true</code> if an error box should be displayed , <code>false</code> otherwise
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowErrorBox()
 	 */
 	public boolean getShowErrorBox() {
 		return _showErrorBox;
 	}
 
 
-	/**
-	 * Sets the title and text for the prompt box . Prompt box is displayed when
-	 * the user selects a cell which belongs to this validation object . In
-	 * order for a prompt box to be displayed you should also use method
-	 * setShowPromptBox( boolean show )
-	 * 
-	 * @param title The prompt box's title
-	 * @param text The prompt box's text
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
 	 */
 	public void createPromptBox(String title, String text) {
 		_prompt_title = title;
@@ -177,28 +155,22 @@ public final class HSSFDataValidation {
 		this.setShowPromptBox(true);
 	}
 
-	/**
-	 * @return Prompt box's title or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxTitle()
 	 */
 	public String getPromptBoxTitle() {
 		return _prompt_title;
 	}
 
-	/**
-	 * @return Prompt box's text or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxText()
 	 */
 	public String getPromptBoxText() {
 		return _prompt_text;
 	}
 
-	/**
-	 * Sets the title and text for the error box . Error box is displayed when
-	 * the user enters an invalid value int o a cell which belongs to this
-	 * validation object . In order for an error box to be displayed you should
-	 * also use method setShowErrorBox( boolean show )
-	 * 
-	 * @param title The error box's title
-	 * @param text The error box's text
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
 	 */
 	public void createErrorBox(String title, String text) {
 		_error_title = title;
@@ -206,15 +178,15 @@ public final class HSSFDataValidation {
 		this.setShowErrorBox(true);
 	}
 
-	/**
-	 * @return Error box's title or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxTitle()
 	 */
 	public String getErrorBoxTitle() {
 		return _error_title;
 	}
 
-	/**
-	 * @return Error box's text or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxText()
 	 */
 	public String getErrorBoxText() {
 		return _error_text;
@@ -227,7 +199,7 @@ public final class HSSFDataValidation {
 		return new DVRecord(_constraint.getValidationType(),
 				_constraint.getOperator(),
 				_errorStyle, _emptyCellAllowed, getSuppressDropDownArrow(),
-				_constraint.isExplicitList(),
+				_constraint.getValidationType()==ValidationType.LIST && _constraint.getExplicitListValues()!=null,
 				_showPromptBox, _prompt_title, _prompt_text,
 				_showErrorBox, _error_title, _error_text,
 				fp.getFormula1(), fp.getFormula2(),
