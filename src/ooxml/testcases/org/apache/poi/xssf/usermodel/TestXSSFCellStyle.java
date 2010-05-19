@@ -80,7 +80,7 @@ public class TestXSSFCellStyle extends TestCase {
 		cellXf.setFontId(1);
 		stylesTable.putCellStyleXf(cellStyleXf);
 		stylesTable.putCellXf(cellXf);
-		cellStyle = new XSSFCellStyle(1, 1, stylesTable);
+		cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
 	}
 
 	public void testGetSetBorderBottom() {

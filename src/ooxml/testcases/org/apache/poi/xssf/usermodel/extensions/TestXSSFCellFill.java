@@ -18,6 +18,10 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
@@ -62,5 +66,20 @@ public class TestXSSFCellFill extends TestCase {
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
         assertEquals(8, cellFill.getPatternType().intValue());
+    }
+
+    public void testColorFromTheme() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
+        XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
+        //color RGB will be extracted from theme
+        XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
+        byte[] rgb = foregroundColor.getRgb();
+        byte[] rgbWithTint = foregroundColor.getRgbWithTint();
+        assertEquals(rgb[0],-18);
+        assertEquals(rgb[1],-20);
+        assertEquals(rgb[2],-31);
+        assertEquals(rgbWithTint[0],-12);
+        assertEquals(rgbWithTint[1],-13);
+        assertEquals(rgbWithTint[2],-20);
     }
 }

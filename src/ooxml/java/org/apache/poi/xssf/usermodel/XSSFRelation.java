@@ -40,6 +40,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.SingleXmlCells;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.Table;
+import org.apache.poi.xssf.model.ThemesTable;
 
 /**
  *
@@ -232,7 +233,7 @@ public final class XSSFRelation extends POIXMLRelation {
             "application/vnd.openxmlformats-officedocument.theme+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
             "/xl/theme/theme#.xml",
-            null
+            ThemesTable.class
     );
     public static final XSSFRelation CALC_CHAIN = new XSSFRelation(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml",
