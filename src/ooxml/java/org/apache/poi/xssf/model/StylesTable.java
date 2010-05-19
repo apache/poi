@@ -74,6 +74,7 @@ public class StylesTable extends POIXMLDocumentPart {
 	public static final int FIRST_CUSTOM_STYLE_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX + 1;
 
 	private StyleSheetDocument doc;
+	private ThemesTable theme;
 
 	/**
 	 * Create a new, empty StylesTable
@@ -90,6 +91,14 @@ public class StylesTable extends POIXMLDocumentPart {
 		super(part, rel);
 		readFrom(part.getInputStream());
 	}
+
+	public ThemesTable getTheme() {
+        return theme;
+    }
+
+    public void setTheme(ThemesTable theme) {
+        this.theme = theme;
+    }
 
 	/**
 	 * Read this shared styles table from an XML file.
@@ -184,7 +193,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			styleXfId = (int) xfs.get(idx).getXfId();
 		}
 
-		return new XSSFCellStyle(idx, styleXfId, this);
+		return new XSSFCellStyle(idx, styleXfId, this, theme);
 	}
 	public int putStyle(XSSFCellStyle style) {
 		CTXf mainXF = style.getCoreXf();
@@ -455,7 +464,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		xf.setXfId(0);
 		int xfSize = styleXfs.size();
 		int indexXf = putCellXf(xf);
-		return new XSSFCellStyle(indexXf - 1, xfSize - 1, this);
+		return new XSSFCellStyle(indexXf - 1, xfSize - 1, this, theme);
 	}
 
 	/**

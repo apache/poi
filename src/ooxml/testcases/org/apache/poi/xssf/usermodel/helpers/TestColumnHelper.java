@@ -283,7 +283,7 @@ public final class TestColumnHelper extends TestCase {
         col_2.setMax(12);
         col_2.setStyle(1);
         assertEquals(1, columnHelper.getColDefaultStyle(11));
-        XSSFCellStyle cellStyle = new XSSFCellStyle(0, 0, stylesTable);
+        XSSFCellStyle cellStyle = new XSSFCellStyle(0, 0, stylesTable, null);
         columnHelper.setColDefaultStyle(11, cellStyle);
         assertEquals(0, col_2.getStyle());
         assertEquals(1, columnHelper.getColDefaultStyle(10));

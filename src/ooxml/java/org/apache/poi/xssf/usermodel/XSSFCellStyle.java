@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -58,6 +59,7 @@ public class XSSFCellStyle implements CellStyle {
     private CTXf _cellStyleXf;
     private XSSFFont _font;
     private XSSFCellAlignment _cellAlignment;
+    private ThemesTable _theme;
 
     /**
      * Creates a Cell Style from the supplied parts
@@ -65,11 +67,12 @@ public class XSSFCellStyle implements CellStyle {
      * @param cellStyleXfId Optional, style xf
      * @param stylesSource Styles Source to work off
      */
-    public XSSFCellStyle(int cellXfId, int cellStyleXfId, StylesTable stylesSource) {
+    public XSSFCellStyle(int cellXfId, int cellStyleXfId, StylesTable stylesSource, ThemesTable theme) {
         _cellXfId = cellXfId;
         _stylesSource = stylesSource;
         _cellXf = stylesSource.getCellXfAt(this._cellXfId);
         _cellStyleXf = stylesSource.getCellStyleXfAt(cellStyleXfId);
+        _theme = theme;
     }
 
     /**
@@ -394,7 +397,11 @@ public class XSSFCellStyle implements CellStyle {
         int fillIndex = (int)_cellXf.getFillId();
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
-        return fg.getFillBackgroundColor();
+        XSSFColor fillBackgroundColor = fg.getFillBackgroundColor();
+        if (fillBackgroundColor != null && fillBackgroundColor.getCTColor().isSetTheme() && _theme != null) {
+            extractColorFromTheme(fillBackgroundColor);
+        }
+        return fillBackgroundColor;
     }
 
     /**
@@ -422,7 +429,11 @@ public class XSSFCellStyle implements CellStyle {
         int fillIndex = (int)_cellXf.getFillId();
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
 
-        return fg.getFillForegroundColor();
+        XSSFColor fillForegroundColor = fg.getFillForegroundColor();
+        if (fillForegroundColor != null && fillForegroundColor.getCTColor().isSetTheme() && _theme != null) {
+            extractColorFromTheme(fillForegroundColor);
+        }
+        return fillForegroundColor;
     }
 
     /**
@@ -1385,7 +1396,15 @@ public class XSSFCellStyle implements CellStyle {
 
         int xfSize = _stylesSource._getStyleXfsSize();
         int indexXf = _stylesSource.putCellXf(xf);
-        return new XSSFCellStyle(indexXf-1, xfSize-1, _stylesSource);
+        return new XSSFCellStyle(indexXf-1, xfSize-1, _stylesSource, _theme);
     }
 
+    /**
+     * Extracts RGB form theme color.
+     * @param originalColor Color that refers to theme.
+     */
+    private void extractColorFromTheme(XSSFColor originalColor){
+        XSSFColor themeColor = _theme.getThemeColor(originalColor.getTheme());
+        originalColor.setRgb(themeColor.getRgb());
+    }
 }

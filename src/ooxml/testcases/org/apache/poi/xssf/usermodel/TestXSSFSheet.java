@@ -273,7 +273,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         CTXf cellXf = CTXf.Factory.newInstance();
         cellXf.setXfId(1);
         stylesTable.putCellXf(cellXf);
-        XSSFCellStyle cellStyle = new XSSFCellStyle(1, 1, stylesTable);
+        XSSFCellStyle cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
         assertEquals(1, cellStyle.getFontIndex());
 
         sheet.setDefaultColumnStyle(3, cellStyle);

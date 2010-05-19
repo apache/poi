@@ -45,6 +45,11 @@ public class XSSFColor {
         ctColor.setRgb(new byte[]{(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
     }
 
+    public XSSFColor(byte[] rgb) {
+        this();
+        ctColor.setRgb(rgb);
+    }
+
     /**
      * A boolean value indicating the ctColor is automatic and system ctColor dependent.
      */
@@ -81,6 +86,27 @@ public class XSSFColor {
 	}
 	
     /**
+     * Standard Alpha Red Green Blue ctColor value (ARGB) with applied tint.
+     */
+	public byte[] getRgbWithTint() {
+		byte[] rgb =ctColor.getRgb();
+		for(int i = 0; i < rgb.length; i++){
+			rgb[i] = applyTint(rgb[i] & 0xFF, ctColor.getTint());
+		}
+		return rgb;
+	}
+
+	private static byte applyTint(int lum, double tint){
+		if(tint > 0){
+			return (byte)(lum * (1.0-tint) + (255 - 255 * (1.0-tint)));
+		} else if (tint < 0){
+			return (byte)(lum*(1+tint));
+		} else {
+			return (byte)lum;
+		}
+	}
+
+    /**
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
 	public void setRgb(byte[] rgb) {
@@ -91,8 +117,8 @@ public class XSSFColor {
      * Index into the <clrScheme> collection, referencing a particular <sysClr> or
      *  <srgbClr> value expressed in the Theme part.
      */
-    public int getTheme() {
-		return (int)ctColor.getTheme();
+   public int getTheme() {
+      return (int)ctColor.getTheme();
 	}
 	
     /**
