@@ -1079,12 +1079,16 @@ public class HSSFCell implements Cell {
                 if (note.getRow() == row && note.getColumn() == column) {
                     if(i < noteTxo.size()) {
                         TextObjectRecord txo = noteTxo.get(note.getShapeId());
-                        comment = new HSSFComment(note, txo);
-                        comment.setRow(note.getRow());
-                        comment.setColumn((short) note.getColumn());
-                        comment.setAuthor(note.getAuthor());
-                        comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
-                        comment.setString(txo.getStr());
+                        if(txo != null){
+                            comment = new HSSFComment(note, txo);
+                            comment.setRow(note.getRow());
+                            comment.setColumn(note.getColumn());
+                            comment.setAuthor(note.getAuthor());
+                            comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
+                            comment.setString(txo.getStr());     
+                        } else{
+                            log.log(POILogger.WARN, "Failed to match NoteRecord and TextObjectRecord, row: " + row + ", column: " + column);
+                         }
                     } else {
                         log.log(POILogger.WARN, "Failed to match NoteRecord and TextObjectRecord, row: " + row + ", column: " + column);
                     }
