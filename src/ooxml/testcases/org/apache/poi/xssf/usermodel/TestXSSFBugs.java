@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
@@ -147,5 +148,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     public void test49020() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx");
+    }
+
+    /**
+     * ensure that CTPhoneticPr is loaded by the ooxml test suite so that it is included in poi-ooxml-schemas
+     */
+    public void test49325() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49325.xlsx");
+        CTWorksheet sh = wb.getSheetAt(0).getCTWorksheet();
+        assertNotNull(sh.getPhoneticPr());
     }
 }
