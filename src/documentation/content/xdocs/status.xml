@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49325 - Ensure that CTPhoneticPr is included in poi-ooxml jar</action>
+           <action dev="POI-DEVELOPERS" type="fix">49191 - Fixed tests failing in non-english locales</action>
            <action dev="POI-DEVELOPERS" type="add">48432 - Support for XSSF themes</action>
            <action dev="POI-DEVELOPERS" type="add">49244 - Support for data validation for OOXML format</action>
            <action dev="POI-DEVELOPERS" type="add">49066 - Worksheet/cell formatting, with view and HTML converter</action>
