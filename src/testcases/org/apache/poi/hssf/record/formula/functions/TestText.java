@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+
 import junit.framework.TestCase;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
@@ -46,20 +50,22 @@ public final class TestText extends TestCase {
 		ValueEval formatArg = new StringEval("#,###.00000");
 		ValueEval[] args = { numArg, formatArg };
 		ValueEval result = T.TEXT.evaluate(args, -1, (short)-1);
-		ValueEval testResult = new StringEval("321,321.32100");
+		char groupSeparator = DecimalFormatSymbols.getInstance().getGroupingSeparator();
+		char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+		ValueEval testResult = new StringEval("321" + groupSeparator + "321" + decimalSeparator + "32100");
 		assertEquals(testResult.toString(), result.toString());
 		numArg = new NumberEval(321.321);
 		formatArg = new StringEval("00000.00000");
 		args[0] = numArg; 
 		args[1] = formatArg; 
 		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("00321.32100");
+		testResult = new StringEval("00321" + decimalSeparator + "32100");
 		assertEquals(testResult.toString(), result.toString());
 		
 		formatArg = new StringEval("$#.#");
 		args[1] = formatArg; 
 		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("$321.3");
+		testResult = new StringEval("$321" + decimalSeparator + "3");
 		assertEquals(testResult.toString(), result.toString());
 	}
 	
@@ -94,10 +100,13 @@ public final class TestText extends TestCase {
 		ValueEval testResult = new StringEval("16:11:1900 07:42:14");
 		assertEquals(testResult.toString(), result.toString());
 		
+        // this line is intended to compute how "November" would look like in the current locale
+        String november = new SimpleDateFormat("MMMM").format(new GregorianCalendar(2010,10,15).getTime());
+		
 		formatArg = new StringEval("MMMM dd, yyyy");
 		args[1] = formatArg; 
 		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("November 16, 1900");
+		testResult = new StringEval(november + " 16, 1900");
 		assertEquals(testResult.toString(), result.toString());
 	}
 	
