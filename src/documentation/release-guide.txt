@@ -1,4 +1,24 @@
-POI Release Guide
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+             ==============================
+                   POI Release Guide
+             ==============================
 
 
 (I) Prerequisites
@@ -7,7 +27,7 @@ POI Release Guide
    2. You must have shell access to people.apache.org
    3. Release manager must have his public key appended to the KEYS file checked in to SVN and the key published on one of the public key servers.
       More info can be found here: <a href="http://www.apache.org/dev/release-signing.html">http://www.apache.org/dev/release-signing.html</a>
-   4. You must have <a href="java.sun.com">JDK 1.4 / 1.5</a>
+   4. You must have <a href="java.sun.com">JDK 1.5</a>
    5. You must have the following utilities installed on your local machine and available in your path:
           * <a href="www.openssh.com">ssh</a>
           * <a href="www.gnupg.org">gnupg</a>
@@ -17,6 +37,12 @@ POI Release Guide
           * <a href="ant.apache.org">Ant</a>  
           * <a href="http://forrest.apache.org/">Forrest</a>. 
   POI 3.0.2 and 3.1 were built using Ant 1.6.2 and Forrest 0.5
+
+   7. Before building, you should run the "rat-check" build task, which
+      uses <a href="http://incubator.apache.org/rat/">Apache Rat</a>
+      to check the source tree for files lacking license headers. Files
+      without headers should be either fixed, or added to the exlude list
+
 
 (II) Making release artefacts
   1. Update version id in build.xml
