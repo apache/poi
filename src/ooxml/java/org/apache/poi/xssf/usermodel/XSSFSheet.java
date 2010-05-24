@@ -113,7 +113,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
 
-    private TreeMap<Integer, XSSFRow> rows;
+    private TreeMap<Integer, XSSFRow> _rows;
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
@@ -194,12 +194,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private void initRows(CTWorksheet worksheet) {
-        rows = new TreeMap<Integer, XSSFRow>();
+        _rows = new TreeMap<Integer, XSSFRow>();
         sharedFormulas = new HashMap<Integer, XSSFCell>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
-            rows.put(r.getRowNum(), r);
+            _rows.put(r.getRowNum(), r);
         }
     }
 
@@ -503,7 +503,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public XSSFRow createRow(int rownum) {
         CTRow ctRow;
-        XSSFRow prev = rows.get(rownum);
+        XSSFRow prev = _rows.get(rownum);
         if(prev != null){
             ctRow = prev.getCTRow();
             ctRow.set(CTRow.Factory.newInstance());
@@ -512,7 +512,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         XSSFRow r = new XSSFRow(ctRow, this);
         r.setRowNum(rownum);
-        rows.put(rownum, r);
+        _rows.put(rownum, r);
         return r;
     }
 
@@ -707,7 +707,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return the number of the first logical row on the sheet, zero based
      */
     public int getFirstRowNum() {
-        return rows.size() == 0 ? 0 : rows.firstKey();
+        return _rows.size() == 0 ? 0 : _rows.firstKey();
     }
 
     /**
@@ -820,7 +820,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     public int getLastRowNum() {
-        return rows.size() == 0 ? 0 : rows.lastKey();
+        return _rows.size() == 0 ? 0 : _rows.lastKey();
     }
 
     public short getLeftCol() {
@@ -948,7 +948,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return the number of phsyically defined rows
      */
     public int getPhysicalNumberOfRows() {
-        return rows.size();
+        return _rows.size();
     }
 
     /**
@@ -977,7 +977,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return <code>XSSFRow</code> representing the rownumber or <code>null</code> if its not defined on the sheet
      */
     public XSSFRow getRow(int rownum) {
-        return rows.get(rownum);
+        return _rows.get(rownum);
     }
 
     /**
@@ -1158,7 +1158,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private short getMaxOutlineLevelRows(){
         short outlineLevel=0;
-        for(XSSFRow xrow : rows.values()){
+        for(XSSFRow xrow : _rows.values()){
             outlineLevel=xrow.getCTRow().getOutlineLevel()>outlineLevel? xrow.getCTRow().getOutlineLevel(): outlineLevel;
         }
         return outlineLevel;
@@ -1358,7 +1358,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 xcell.notifyArrayFormulaChanging(msg);
             }
         }
-        rows.remove(row.getRowNum());
+        _rows.remove(row.getRowNum());
     }
 
     /**
@@ -1380,7 +1380,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Call getRowNum() on each row if you care which one it is.
      */
     public Iterator<Row> rowIterator() {
-        return (Iterator<Row>)(Iterator<? extends Row>)rows.values().iterator();
+        return (Iterator<Row>)(Iterator<? extends Row>) _rows.values().iterator();
     }
 
     /**
@@ -2157,12 +2157,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateFormulas(shifter);
         rowShifter.shiftMerged(startRow, endRow, n);
 
-        //rebuild the rows map
+        //rebuild the _rows map
         TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
-        for(XSSFRow r : rows.values()) {
+        for(XSSFRow r : _rows.values()) {
             map.put(r.getRowNum(), r);
         }
-        rows = map;
+        _rows = map;
     }
 
     /**
@@ -2441,13 +2441,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
 
-        CTSheetData sheetData = worksheet.getSheetData();
-        ArrayList<CTRow> rArray = new ArrayList<CTRow>(rows.size());
-        for(XSSFRow row : rows.values()){
+        for(XSSFRow row : _rows.values()){
             row.onDocumentWrite();
-            rArray.add(row.getCTRow());
         }
-        sheetData.setRowArray(rArray.toArray(new CTRow[rArray.size()]));
+        ensureRowOrdering();
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
@@ -2456,6 +2453,32 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         xmlOptions.setSaveSuggestedPrefixes(map);
 
         worksheet.save(out, xmlOptions);
+    }
+
+    /**
+     * ensure that the array of CTRow written to CTSheetData is ordered by row index
+     */
+    private void ensureRowOrdering(){
+        CTSheetData sheetData = worksheet.getSheetData();
+        // check if row indexes in CTSheetData match the internal model:
+        // rows in the internal model (_rows) are always ordered while
+        // CTRow beans held by CTSheetData may be not, for example, user can
+        // insert rows in random order, shift rows after insertion, etc.
+        Integer [] curRows = new Integer[sheetData.sizeOfRowArray()];
+        int i = 0;
+        for(CTRow ctrow : sheetData.getRowArray()){
+            curRows[i++] = (int)(ctrow.getR() - 1);
+        }
+        Integer [] ordRows = _rows.keySet().toArray(new Integer[_rows.size()]);
+        if(!Arrays.equals(curRows, ordRows)){
+            // The order of rows in CTSheetData and internal model does not match 
+            CTRow[] orderedCTRows = new CTRow[_rows.size()];
+            i = 0;
+            for(XSSFRow row : _rows.values()){
+                orderedCTRows[i++] = row.getCTRow();
+            }
+            sheetData.setRowArray(orderedCTRows);
+        }
     }
 
     /**
