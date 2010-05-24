@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 
 /**
  * Tests for org.apache.poi.poifs.filesystem<br/>
- * 
+ *
  * @author Josh Micich
  */
 public final class AllPOIFSFileSystemTests {
@@ -38,6 +38,7 @@ public final class AllPOIFSFileSystemTests {
         result.addTestSuite(TestEmptyDocument.class);
         result.addTestSuite(TestOffice2007XMLException.class);
         result.addTestSuite(TestPOIFSDocumentPath.class);
+        result.addTestSuite(TestPOIFSFileSystem.class);
         result.addTestSuite(TestPropertySorter.class);
         return result;
     }

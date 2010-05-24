@@ -30,6 +30,7 @@ public class AllUserModelTests {
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllUserModelTests.class.getName());
 
+		result.addTestSuite(TestBug42464.class);
 		result.addTestSuite(TestBugs.class);
 		result.addTestSuite(TestCellStyle.class);
 		result.addTestSuite(TestCloneSheet.class);
@@ -37,18 +38,21 @@ public class AllUserModelTests {
 		result.addTestSuite(TestEscherGraphics.class);
 		result.addTestSuite(TestEscherGraphics2d.class);
 		result.addTestSuite(TestFontDetails.class);
-		result.addTestSuite(TestFormulas.class);
 		result.addTestSuite(TestFormulaEvaluatorBugs.class);
 		result.addTestSuite(TestFormulaEvaluatorDocs.class);
+		result.addTestSuite(TestFormulas.class);
 		result.addTestSuite(TestHSSFCell.class);
 		result.addTestSuite(TestHSSFClientAnchor.class);
 		result.addTestSuite(TestHSSFComment.class);
 		result.addTestSuite(TestHSSFConditionalFormatting.class);
+		result.addTestSuite(TestHSSFDataFormat.class);
 		result.addTestSuite(TestHSSFDataFormatter.class);
 		result.addTestSuite(TestHSSFDateUtil.class);
+		result.addTestSuite(TestHSSFFont.class);
 		result.addTestSuite(TestHSSFFormulaEvaluator.class);
 		result.addTestSuite(TestHSSFHeaderFooter.class);
 		result.addTestSuite(TestHSSFHyperlink.class);
+		result.addTestSuite(TestHSSFName.class);
 		result.addTestSuite(TestHSSFOptimiser.class);
 		result.addTestSuite(TestHSSFPalette.class);
 		result.addTestSuite(TestHSSFPatriarch.class);
@@ -57,16 +61,16 @@ public class AllUserModelTests {
 		result.addTestSuite(TestHSSFRichTextString.class);
 		result.addTestSuite(TestHSSFRow.class);
 		result.addTestSuite(TestHSSFSheet.class);
+		result.addTestSuite(TestHSSFSheetShiftRows.class);
 		result.addTestSuite(TestHSSFSheetUpdateArrayFormulas.class);
 		result.addTestSuite(TestHSSFTextbox.class);
 		result.addTestSuite(TestHSSFWorkbook.class);
-		result.addTestSuite(TestHSSFName.class);
 		result.addTestSuite(TestOLE2Embeding.class);
 		result.addTestSuite(TestPOIFSProperties.class);
 		result.addTestSuite(TestReadWriteChart.class);
+		result.addTestSuite(TestRowStyle.class);
 		result.addTestSuite(TestSanityChecker.class);
 		result.addTestSuite(TestSheetHiding.class);
-		result.addTestSuite(TestHSSFSheetShiftRows.class);
 		if (false) { // deliberately avoiding this one
 			result.addTestSuite(TestUnfixedBugs.class);
 		}
