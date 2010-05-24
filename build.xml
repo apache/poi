@@ -1075,5 +1075,22 @@ under the License.
       <m2-install artifactId="poi-ooxml-schemas"/>
     </target>
     
+    <!-- Runs Apache Rat against the source code, to spot any files -->
+    <!--  which are missing the correct license headers -->
+    <!-- You need to download rat from http://incubator.apache.org/rat/ -->
+    <!--  and place the Rat jar into your ant lib before running -->
+    <target name="rat-check">
+       <typedef resource="org/apache/rat/anttasks/antlib.xml"
+             uri="antlib:org.apache.rat.anttasks"/>
+       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+           <fileset dir="src/">
+              <exclude name="documentation/content/xdocs/dtd/" />
+              <exclude name="documentation/content/xdocs/entity/" />
+              <exclude name="scratchpad/testcases/dummy.txt" />
+              <exclude name="contrib/testcases/dummy.txt" />
+              <exclude name="examples/lib/dummy.txt" />
+           </fileset>
+       </rat:report>
+    </target>
 </project>
 
