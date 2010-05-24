@@ -104,7 +104,7 @@ public class CellFormatTestBase extends TestCase {
             String format = row.getCell(1).getStringCellValue();
             String testCategoryList = row.getCell(3).getStringCellValue();
             boolean byCategory = runByCategory(runCategories, testCategoryList);
-            if ((!expectedText.isEmpty() || !format.isEmpty()) && byCategory) {
+            if ((expectedText.length() > 0 || format.length() > 0) && byCategory) {
                 Cell cell = row.getCell(2);
                 tryFormat(r, expectedText, format, valueGetter, cell);
             }
