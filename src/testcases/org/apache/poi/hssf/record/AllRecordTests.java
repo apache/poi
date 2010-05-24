@@ -45,6 +45,7 @@ public final class AllRecordTests {
 		result.addTest(AllPivotRecordTests.suite());
 		result.addTest(AllRecordAggregateTests.suite());
 
+		result.addTestSuite(TestArrayRecord.class);
 		result.addTestSuite(TestBOFRecord.class);
 		result.addTestSuite(TestBoolErrRecord.class);
 		result.addTestSuite(TestBoundSheetRecord.class);
@@ -54,17 +55,21 @@ public final class AllRecordTests {
 		result.addTestSuite(TestColumnInfoRecord.class);
 		result.addTestSuite(TestCommonObjectDataSubRecord.class);
 		result.addTestSuite(TestConstantValueParser.class);
+		result.addTestSuite(TestDVALRecord.class);
 		result.addTestSuite(TestDrawingGroupRecord.class);
+		result.addTestSuite(TestDrawingRecord.class);
 		result.addTestSuite(TestEmbeddedObjectRefSubRecord.class);
 		result.addTestSuite(TestEndSubRecord.class);
 		result.addTestSuite(TestEscherAggregate.class);
 		result.addTestSuite(TestExtendedFormatRecord.class);
 		result.addTestSuite(TestExternalNameRecord.class);
+		result.addTestSuite(TestFeatRecord.class);
 		result.addTestSuite(TestFontRecord.class);
 		result.addTestSuite(TestFormulaRecord.class);
 		result.addTestSuite(TestHyperlinkRecord.class);
 		result.addTestSuite(TestInterfaceEndRecord.class);
 		result.addTestSuite(TestLabelRecord.class);
+		result.addTestSuite(TestLbsDataSubRecord.class);
 		result.addTestSuite(TestMergeCellsRecord.class);
 		result.addTestSuite(TestNameRecord.class);
 		result.addTestSuite(TestNoteRecord.class);

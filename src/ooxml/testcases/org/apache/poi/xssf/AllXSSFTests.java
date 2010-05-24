@@ -20,6 +20,7 @@ package org.apache.poi.xssf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.poi.ss.format.TestCellFormatPart;
 import org.apache.poi.ss.util.TestCellReference;
 import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
@@ -50,6 +51,7 @@ public final class AllXSSFTests {
 		result.addTestSuite(TestCellReference.class);
 		result.addTestSuite(TestCTColComparator.class);
 		result.addTestSuite(TestNumericRanges.class);		
+		result.addTestSuite(TestCellFormatPart.class);
 		return result;
 	}
 }

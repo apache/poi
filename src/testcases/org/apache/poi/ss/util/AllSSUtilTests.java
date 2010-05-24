@@ -27,6 +27,7 @@ import junit.framework.TestSuite;
 public final class AllSSUtilTests {
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllSSUtilTests.class.getName());
+		result.addTestSuite(TestCellRangeAddress.class);
 		result.addTestSuite(TestCellReference.class);
 		result.addTestSuite(TestExpandedDouble.class);
 		result.addTestSuite(TestNumberComparer.class);
