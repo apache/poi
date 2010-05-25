@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -72,6 +73,21 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		xssfFont.setCharSet(FontCharset.DEFAULT);
 		assertEquals(FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
+		
+		
+		// Now try with a few sample files
+		
+		// Normal charset
+      XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
+      assertEquals(0, 
+            workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+      );
+		
+		// GB2312 charact set
+      workbook = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
+      assertEquals(134, 
+            workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+      );
 	}
 
 	public void testFontName() {
