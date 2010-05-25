@@ -251,7 +251,7 @@ public interface Font {
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    byte getCharSet();
+    int getCharSet();
 
     /**
      * set character-set to use.
@@ -260,6 +260,13 @@ public interface Font {
      * @see #SYMBOL_CHARSET
      */
     void setCharSet(byte charset);
+    /**
+     * set character-set to use.
+     * @see #ANSI_CHARSET
+     * @see #DEFAULT_CHARSET
+     * @see #SYMBOL_CHARSET
+     */
+    void setCharSet(int charset);
 
     /**
      * get the index within the XSSFWorkbook (sequence within the collection of Font objects)

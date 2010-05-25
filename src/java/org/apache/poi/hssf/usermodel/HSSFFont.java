@@ -280,9 +280,29 @@ public final class HSSFFont implements Font {
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    public byte getCharSet()
+    public int getCharSet()
     {
-        return font.getCharset();
+        byte charset = font.getCharset();
+        if(charset >= 0) {
+           return (int)charset;
+        } else {
+           return charset + 256;
+        }
+    }
+
+    /**
+     * set character-set to use.
+     * @see #ANSI_CHARSET
+     * @see #DEFAULT_CHARSET
+     * @see #SYMBOL_CHARSET
+     */
+    public void setCharSet(int charset)
+    {
+        byte cs = (byte)charset;
+        if(charset > 127) {
+           cs = (byte)(charset-256);
+        }
+        setCharSet(cs);
     }
 
     /**

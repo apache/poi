@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49273 - Correct handling for Font Character Sets with indicies greater than 127</action>
            <action dev="POI-DEVELOPERS" type="add">49334 - Track the ValueRangeRecords of charts in HSSFChart, to allow the basic axis operations</action>
            <action dev="POI-DEVELOPERS" type="add">49242 - Track the LinkDataRecords of charts in HSSFChart</action>
            <action dev="POI-DEVELOPERS" type="add">Improved performance of XSSFWorkbook.write </action>
