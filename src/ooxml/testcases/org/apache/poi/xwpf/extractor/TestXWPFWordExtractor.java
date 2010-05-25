@@ -219,4 +219,22 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("2008"));
         assertTrue(extractor.getText().contains("(120 "));
     }
+    
+    /**
+     * Test that we handle things like tabs and
+     *  carriage returns properly in the text that
+     *  we're extracting (bug #49189)
+     */
+    public void testDocTabs() {
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx");
+       XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+ 
+       // Check bits
+       assertTrue(extractor.getText().contains("a"));
+       assertTrue(extractor.getText().contains("\t"));
+       assertTrue(extractor.getText().contains("b"));
+       
+       // Now check the first paragraph in total
+       assertTrue(extractor.getText().contains("a\tb\n"));
+    }
 }

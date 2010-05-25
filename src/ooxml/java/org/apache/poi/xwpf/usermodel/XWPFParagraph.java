@@ -24,6 +24,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
@@ -107,6 +108,18 @@ public class XWPFParagraph {
                     }
                     if (o instanceof CTPTab) {
                         text.append("\t");
+                    }
+                    if (o instanceof CTEmpty) {
+                       // Some inline text elements get returned not as
+                       //  themselves, but as CTEmpty, owing to some odd
+                       //  definitions around line 5642 of the XSDs
+                       String tagName = o.getDomNode().getNodeName();
+                       if ("w:tab".equals(tagName)) {
+                          text.append("\t");
+                       }
+                       if ("w:cr".equals(tagName)) {
+                          text.append("\n");
+                       }
                     }
                     //got a reference to a footnote
                     if (o instanceof CTFtnEdnRef) {
