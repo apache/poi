@@ -241,7 +241,6 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x101B:
 			case 0x101D:
 			case 0x101E:
-			case 0x101F:
 			case 0x1020:
 			case 0x1021:
 			case 0x1022:

@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.record.chart.*;
@@ -37,6 +36,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
 
 /**
  * Has methods for construction of a chart object.
@@ -49,8 +49,9 @@ public final class HSSFChart {
 	private LegendRecord legendRecord;
 	private ChartTitleFormatRecord chartTitleFormat;
 	private SeriesTextRecord chartTitleText;
-
-	private List series = new ArrayList();
+	private List<ValueRangeRecord> valueRanges = new ArrayList<ValueRangeRecord>(); 
+	
+	private List<HSSFSeries> series = new ArrayList<HSSFSeries>();
 
 	private HSSFChart(ChartRecord chartRecord) {
 		this.chartRecord = chartRecord;
@@ -137,13 +138,12 @@ public final class HSSFChart {
 	 *  these charts yet, as this is very limited support
 	 */
 	public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
-		List charts = new ArrayList();
+		List<HSSFChart> charts = new ArrayList<HSSFChart>();
 		HSSFChart lastChart = null;
-
+		HSSFSeries lastSeries = null;
 		// Find records of interest
-		List records = sheet.getSheet().getRecords();
-		for(Iterator it = records.iterator(); it.hasNext();) {
-			RecordBase r = (RecordBase)it.next();
+		List<RecordBase> records = sheet.getSheet().getRecords();
+		for(RecordBase r : records) {
 
 			if(r instanceof ChartRecord) {
 				lastChart = new HSSFChart((ChartRecord)r);
@@ -155,6 +155,7 @@ public final class HSSFChart {
 			if(r instanceof SeriesRecord) {
 				HSSFSeries series = lastChart.new HSSFSeries( (SeriesRecord)r );
 				lastChart.series.add(series);
+				lastSeries = series;
 			}
 			if(r instanceof ChartTitleFormatRecord) {
 				lastChart.chartTitleFormat =
@@ -172,6 +173,13 @@ public final class HSSFChart {
 				} else {
 					lastChart.chartTitleText = str;
 				}
+			}
+			if(r instanceof LinkedDataRecord) {
+				LinkedDataRecord data = (LinkedDataRecord)r;
+				lastSeries.insertData( data );
+			}
+			if(r instanceof ValueRangeRecord){
+				lastChart.valueRanges.add((ValueRangeRecord)r);
 			}
 		}
 
@@ -226,6 +234,35 @@ public final class HSSFChart {
 			chartTitleText.setText(title);
 		} else {
 			throw new IllegalStateException("No chart title found to change");
+		}
+	}
+	
+	/**
+	 * Set value range (basic Axis Options) 
+	 * @param axisIndex 0 - primary axis, 1 - secondary axis
+	 * @param minimum minimum value; Double.NaN - automatic; null - no change
+	 * @param maximum maximum value; Double.NaN - automatic; null - no change
+	 * @param majorUnit major unit value; Double.NaN - automatic; null - no change
+	 * @param minorUnit minor unit value; Double.NaN - automatic; null - no change
+	 */
+	public void setValueRange( int axisIndex, Double minimum, Double maximum, Double majorUnit, Double minorUnit){
+		ValueRangeRecord valueRange = (ValueRangeRecord)valueRanges.get( axisIndex );
+		if( valueRange == null ) return;
+		if( minimum != null ){
+			valueRange.setAutomaticMinimum(minimum.isNaN());
+			valueRange.setMinimumAxisValue(minimum);
+		}
+		if( maximum != null ){
+			valueRange.setAutomaticMaximum(maximum.isNaN());
+			valueRange.setMaximumAxisValue(maximum);
+		}
+		if( majorUnit != null ){
+			valueRange.setAutomaticMajor(majorUnit.isNaN());
+			valueRange.setMajorIncrement(majorUnit);
+		}
+		if( minorUnit != null ){
+			valueRange.setAutomaticMinor(minorUnit.isNaN());
+			valueRange.setMinorIncrement(minorUnit);
 		}
 	}
 
@@ -348,7 +385,7 @@ public final class HSSFChart {
 		return new UnknownRecord((short)0x00EC, data);
 	}
 
-	private void createAxisRecords( List records )
+	private void createAxisRecords( List<Record> records )
 	{
 		records.add( createAxisParentRecord() );
 		records.add( createBeginRecord() );
@@ -867,11 +904,30 @@ public final class HSSFChart {
 	public class HSSFSeries {
 		private SeriesRecord series;
 		private SeriesTextRecord seriesTitleText;
+		private LinkedDataRecord dataName;
+		private LinkedDataRecord dataValues;
+		private LinkedDataRecord dataCategoryLabels;
+		private LinkedDataRecord dataSecondaryCategoryLabels;
+		private int dataReaded = 0;
 
 		/* package */ HSSFSeries(SeriesRecord series) {
 			this.series = series;
 		}
 
+		public void insertData(LinkedDataRecord data){
+			switch(dataReaded){
+				case 0: dataName = data;
+				break;
+				case 1: dataValues = data;
+				break;
+				case 2: dataCategoryLabels = data;
+				break;
+				case 3: dataSecondaryCategoryLabels = data;
+				break;
+			}
+			dataReaded++;
+		}
+		
 		public short getNumValues() {
 			return series.getNumValues();
 		}
@@ -904,6 +960,41 @@ public final class HSSFChart {
 			} else {
 				throw new IllegalStateException("No series title found to change");
 			}
+		}
+
+		/**
+		 * @return record with data names
+		 */
+		public LinkedDataRecord getDataName(){
+			return dataName;
+		}
+		
+		/**
+		 * @return record with data values
+		 */
+		public LinkedDataRecord getDataValues(){
+			return dataValues;
+		}
+		
+		/**
+		 * @return record with data category labels
+		 */
+		public LinkedDataRecord getDataCategoryLabels(){
+			return dataCategoryLabels;
+		}
+		
+		/**
+		 * @return record with data secondary category labels
+		 */
+		public LinkedDataRecord getDataSecondaryCategoryLabels() {
+			return dataSecondaryCategoryLabels;
+		}
+		
+		/**
+		 * @return record with series
+		 */
+		public SeriesRecord getSeries() {
+			return series;
 		}
 	}
 }
