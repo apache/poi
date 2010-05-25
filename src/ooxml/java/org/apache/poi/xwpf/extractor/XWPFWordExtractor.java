@@ -76,75 +76,73 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 		XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
 
 		// Start out with all headers
-                extractHeaders(text, hfPolicy);
+		extractHeaders(text, hfPolicy);
 		
 		// First up, all our paragraph based text
 		Iterator<XWPFParagraph> i = document.getParagraphsIterator();
 		while(i.hasNext()) {
-                        XWPFParagraph paragraph = i.next();
+			XWPFParagraph paragraph = i.next();
 
+			try {
+				CTSectPr ctSectPr = null;
+				if (paragraph.getCTP().getPPr()!=null) {
+					ctSectPr = paragraph.getCTP().getPPr().getSectPr();
+				}
 
-                        try {
-                                CTSectPr ctSectPr = null;
-                                if (paragraph.getCTP().getPPr()!=null) {
-                                        ctSectPr = paragraph.getCTP().getPPr().getSectPr();
-                                }
+				XWPFHeaderFooterPolicy headerFooterPolicy = null;
 
-                                XWPFHeaderFooterPolicy headerFooterPolicy = null;
+				if (ctSectPr!=null) {
+					headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
+					extractHeaders(text, headerFooterPolicy);
+				}
 
-                                if (ctSectPr!=null) {
-                                        headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
+				XWPFParagraphDecorator decorator = new XWPFCommentsDecorator(
+						new XWPFHyperlinkDecorator(paragraph, null, fetchHyperlinks));
+				text.append(decorator.getText()).append('\n');
 
-                                        extractHeaders(text, headerFooterPolicy);
-                                }
-
-                                XWPFParagraphDecorator decorator = new XWPFCommentsDecorator(
-                                                new XWPFHyperlinkDecorator(paragraph, null, fetchHyperlinks));
-                                text.append(decorator.getText()).append('\n');
-
-                                if (ctSectPr!=null) {
-                                        extractFooters(text, headerFooterPolicy);
-                                }
-                        } catch (IOException e) {
-                                throw new POIXMLException(e);
-                        } catch (XmlException e) {
-                                throw new POIXMLException(e);
-                        }
-                }
+				if (ctSectPr!=null) {
+					extractFooters(text, headerFooterPolicy);
+				}
+			} catch (IOException e) {
+				throw new POIXMLException(e);
+			} catch (XmlException e) {
+				throw new POIXMLException(e);
+			}
+		}
 
 		// Then our table based text
 		Iterator<XWPFTable> j = document.getTablesIterator();
 		while(j.hasNext()) {
-                        text.append(j.next().getText()).append('\n');
+			text.append(j.next().getText()).append('\n');
 		}
 		
 		// Finish up with all the footers
-                extractFooters(text, hfPolicy);
+		extractFooters(text, hfPolicy);
 		
 		return text.toString();
 	}
 
-        private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
-                if(hfPolicy.getFirstPageFooter() != null) {
-                        text.append( hfPolicy.getFirstPageFooter().getText() );
-                }
-                if(hfPolicy.getEvenPageFooter() != null) {
-                        text.append( hfPolicy.getEvenPageFooter().getText() );
-                }
-                if(hfPolicy.getDefaultFooter() != null) {
-                        text.append( hfPolicy.getDefaultFooter().getText() );
-                }
-        }
+	private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+		if(hfPolicy.getFirstPageFooter() != null) {
+			text.append( hfPolicy.getFirstPageFooter().getText() );
+		}
+		if(hfPolicy.getEvenPageFooter() != null) {
+			text.append( hfPolicy.getEvenPageFooter().getText() );
+		}
+		if(hfPolicy.getDefaultFooter() != null) {
+			text.append( hfPolicy.getDefaultFooter().getText() );
+		}
+	}
 
-        private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
-                if(hfPolicy.getFirstPageHeader() != null) {
-                        text.append( hfPolicy.getFirstPageHeader().getText() );
-                }
-                if(hfPolicy.getEvenPageHeader() != null) {
-                        text.append( hfPolicy.getEvenPageHeader().getText() );
-                }
-                if(hfPolicy.getDefaultHeader() != null) {
-                        text.append( hfPolicy.getDefaultHeader().getText() );
-                }
-        }
+	private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+		if(hfPolicy.getFirstPageHeader() != null) {
+			text.append( hfPolicy.getFirstPageHeader().getText() );
+		}
+		if(hfPolicy.getEvenPageHeader() != null) {
+			text.append( hfPolicy.getEvenPageHeader().getText() );
+		}
+		if(hfPolicy.getDefaultHeader() != null) {
+			text.append( hfPolicy.getDefaultHeader().getText() );
+		}
+	}
 }
