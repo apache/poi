@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">49334 - Track the ValueRangeRecords of charts in HSSFChart, to allow the basic axis operations</action>
+           <action dev="POI-DEVELOPERS" type="add">49242 - Track the LinkDataRecords of charts in HSSFChart</action>
            <action dev="POI-DEVELOPERS" type="add">Improved performance of XSSFWorkbook.write </action>
            <action dev="POI-DEVELOPERS" type="fix">48846 - Avoid NPE when finding cell comments</action>
            <action dev="POI-DEVELOPERS" type="fix">49325 - Ensure that CTPhoneticPr is included in poi-ooxml jar</action>
