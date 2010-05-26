@@ -17,26 +17,12 @@
 
 package org.apache.poi.xwpf;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageProperties;
-import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes.CTVariant;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTDigSigBlob;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVectorLpstr;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVectorVariant;
@@ -105,5 +91,15 @@ public final class TestAllExtendedProperties extends TestCase {
 		assertEquals(3,ctProps.getTotalTime());
 		assertEquals(10,ctProps.getWords());
 		
+		// Check the digital signature part
+		// Won't be there in this file, but we
+		//  need to do this check so that the
+		//  appropriate parts end up in the
+		//  smaller ooxml schemas file
+		CTDigSigBlob blob = ctProps.getDigSig();
+		assertNull(blob);
+		
+		blob = CTDigSigBlob.Factory.newInstance();
+		blob.setBlob(new byte [] {2,6,7,2,3,4,5,1,2,3});
 	}
 }
