@@ -24,6 +24,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -157,5 +158,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49325.xlsx");
         CTWorksheet sh = wb.getSheetAt(0).getCTWorksheet();
         assertNotNull(sh.getPhoneticPr());
+    }
+    
+    /**
+     * Names which are defined with a Sheet
+     *  should return that sheet index properly 
+     */
+    public void test48923() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48923.xlsx");
+       assertEquals(4, wb.getNumberOfNames());
+       
+       Name b1 = wb.getName("NameB1");
+       Name b2 = wb.getName("NameB2");
+       Name sheet2 = wb.getName("NameSheet2");
+       Name test = wb.getName("Test");
+       
+       assertNotNull(b1);
+       assertEquals("NameB1", b1.getNameName());
+       assertEquals("Sheet1", b1.getSheetName());
+       assertEquals(-1, b1.getSheetIndex());
+       
+       assertNotNull(b2);
+       assertEquals("NameB2", b2.getNameName());
+       assertEquals("Sheet1", b2.getSheetName());
+       assertEquals(-1, b2.getSheetIndex());
+       
+       assertNotNull(sheet2);
+       assertEquals("NameSheet2", sheet2.getNameName());
+       assertEquals("Sheet2", sheet2.getSheetName());
+       assertEquals(-1, sheet2.getSheetIndex());
+       
+       assertNotNull(test);
+       assertEquals("Test", test.getNameName());
+       assertEquals("Sheet1", test.getSheetName());
+       assertEquals(-1, test.getSheetIndex());
     }
 }
