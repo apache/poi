@@ -646,10 +646,20 @@ public interface CellStyle {
     void setFillBackgroundColor(short bg);
 
     /**
-     * get the background fill color
-     * @return fill color
+     * get the background fill color, if the fill
+     *  is defined with an indexed color.
+     * @return fill color index, or 0 if not indexed (XSSF only)
      */
     short getFillBackgroundColor();
+    
+    /**
+     * Gets the color object representing the current
+     *  background fill, resolving indexes using
+     *  the supplied workbook.
+     * This will work for both indexed and rgb
+     *  defined colors. 
+     */
+    Color getFillBackgroundColorColor();
 
     /**
      * set the foreground fill color
@@ -659,10 +669,20 @@ public interface CellStyle {
     void setFillForegroundColor(short bg);
 
     /**
-     * get the foreground fill color
-     * @return fill color
+     * get the foreground fill color, if the fill  
+     *  is defined with an indexed color.
+     * @return fill color, or 0 if not indexed (XSSF only)
      */
     short getFillForegroundColor();
+    
+    /**
+     * Gets the color object representing the current
+     *  foreground fill, resolving indexes using
+     *  the supplied workbook.
+     * This will work for both indexed and rgb
+     *  defined colors. 
+     */
+    Color getFillForegroundColorColor();
 
     /**
      * Clones all the style information from another

@@ -16,16 +16,33 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import junit.framework.TestCase;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.ITestDataProvider;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.MAGENTA;
+import static java.awt.Color.ORANGE;
+import static java.awt.Color.RED;
+import static java.awt.Color.WHITE;
+import static java.awt.Color.YELLOW;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-
-import static java.awt.Color.*;
+import java.awt.Color;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.swing.JLabel;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * This class is a base class for spreadsheet-based tests, such as are used for

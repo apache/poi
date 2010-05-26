@@ -24,13 +24,13 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
-import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
@@ -381,6 +381,10 @@ public class XSSFCellStyle implements CellStyle {
         XSSFColor clr = getFillBackgroundXSSFColor();
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
+    
+    public XSSFColor getFillBackgroundColorColor() {
+       return getFillBackgroundXSSFColor();
+    }
 
     /**
      * Get the background fill color.
@@ -418,6 +422,10 @@ public class XSSFCellStyle implements CellStyle {
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
 
+    public XSSFColor getFillForegroundColorColor() {
+       return getFillForegroundXSSFColor();
+    }
+    
     /**
      * Get the foreground fill color.
      *
