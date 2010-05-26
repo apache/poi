@@ -68,6 +68,7 @@ public final class FileInformationBlock extends FIBAbstractType
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLFLFO));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDMOM));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBFFFN));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBFRMARK));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBSAVEDBY));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.MODIFIED));
 
@@ -257,6 +258,26 @@ public final class FileInformationBlock extends FIBAbstractType
     public void setLcbSttbfffn(int lcbSttbFffn)
     {
       _fieldHandler.setFieldSize(FIBFieldHandler.STTBFFFN, lcbSttbFffn);
+    }
+    
+    public int getFcSttbfRMark()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.STTBFRMARK);
+    }
+
+    public int getLcbSttbfRMark()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.STTBFRMARK);
+    }
+    
+    public void setFcSttbfRMark(int fcSttbfRMark)
+    {
+      _fieldHandler.setFieldOffset(FIBFieldHandler.STTBFRMARK, fcSttbfRMark);
+    }
+
+    public void setLcbSttbfRMark(int lcbSttbfRMark)
+    {
+      _fieldHandler.setFieldSize(FIBFieldHandler.STTBFRMARK, lcbSttbfRMark);
     }
 
     /**

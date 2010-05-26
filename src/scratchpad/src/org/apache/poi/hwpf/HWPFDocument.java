@@ -92,6 +92,9 @@ public final class HWPFDocument extends POIDocument
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
+  
+  /** Holds the revision mark authors for this document. */
+  protected RevisionMarkAuthorTable _rmat;
 
   /** Holds pictures table */
   protected PicturesTable _pictures;
@@ -274,6 +277,13 @@ public final class HWPFDocument extends POIDocument
       _sbt = new SavedByTable(_tableStream, sbtOffset, sbtLength);
     }
 
+    int rmarkOffset = _fib.getFcSttbfRMark();
+    int rmarkLength = _fib.getLcbSttbfRMark();
+    if (rmarkOffset != 0 && rmarkLength != 0)
+    {
+      _rmat = new RevisionMarkAuthorTable(_tableStream, rmarkOffset, rmarkLength);
+    }
+    
     PlexOfCps plc = new PlexOfCps(_tableStream, _fib.getFcPlcffldMom(), _fib.getLcbPlcffldMom(), 2);
     for (int x = 0; x < plc.length(); x++)
     {
@@ -412,6 +422,16 @@ public final class HWPFDocument extends POIDocument
   }
 
   /**
+   * Gets a reference to the revision mark author table, which holds the revision mark authors for the document.
+   *
+   * @return the saved-by table.
+   */
+  public RevisionMarkAuthorTable getRevisionMarkAuthorTable()
+  {
+    return _rmat;
+  }
+  
+  /**
    * @return PicturesTable object, that is able to extract images from this document
    */
   public PicturesTable getPicturesTable() {
@@ -511,6 +531,16 @@ public final class HWPFDocument extends POIDocument
       _fib.setFcSttbSavedBy(tableOffset);
       _sbt.writeTo(tableStream);
       _fib.setLcbSttbSavedBy(tableStream.getOffset() - tableOffset);
+
+      tableOffset = tableStream.getOffset();
+    }
+    
+    // write out the revision mark authors table.
+    if (_rmat != null)
+    {
+      _fib.setFcSttbfRMark(tableOffset);
+      _rmat.writeTo(tableStream);
+      _fib.setLcbSttbfRMark(tableStream.getOffset() - tableOffset);
 
       tableOffset = tableStream.getOffset();
     }
