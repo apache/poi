@@ -702,6 +702,15 @@ public final class HSSFCellStyle implements CellStyle {
 		}
     	return result;
     }
+    
+    public HSSFColor getFillBackgroundColorColor() {
+       HSSFPalette pallette = new HSSFPalette(
+             _workbook.getCustomPalette()
+       );
+       return pallette.getColor(
+             getFillBackgroundColor()
+       );
+    }
 
     /**
      * set the foreground fill color
@@ -724,6 +733,15 @@ public final class HSSFCellStyle implements CellStyle {
     public short getFillForegroundColor()
     {
         return _format.getFillForeground();
+    }
+
+    public HSSFColor getFillForegroundColorColor() {
+       HSSFPalette pallette = new HSSFPalette(
+             _workbook.getCustomPalette()
+       );
+       return pallette.getColor(
+             getFillForegroundColor()
+       );
     }
 
     /**

@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
@@ -223,5 +224,40 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        
        // Now all of them
        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+    }
+    
+    /**
+     * Foreground colours should be found even if
+     *  a theme is used 
+     */
+    public void test48779() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx");
+       XSSFCell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+       XSSFCellStyle cs = cell.getCellStyle();
+       
+       assertNotNull(cs);
+       assertEquals(1, cs.getIndex());
+
+       // Look at the low level xml elements
+       assertEquals(2, cs.getCoreXf().getFillId());
+       assertEquals(0, cs.getCoreXf().getXfId());
+       assertEquals(true, cs.getCoreXf().getApplyFill());
+       
+       XSSFCellFill fg = wb.getStylesSource().getFillAt(2);
+       assertEquals(0, fg.getFillForegroundColor().getIndexed());
+       assertEquals(0.0, fg.getFillForegroundColor().getTint());
+       assertEquals("FFFF0000", fg.getFillForegroundColor().getARGBHex());
+       assertEquals(64, fg.getFillBackgroundColor().getIndexed());
+       
+       // Now look higher up
+       assertNotNull(cs.getFillForegroundXSSFColor());
+       assertEquals(0, cs.getFillForegroundColor());
+       assertEquals("FFFF0000", cs.getFillForegroundXSSFColor().getARGBHex());
+       assertEquals("FFFF0000", cs.getFillForegroundColorColor().getARGBHex());
+       
+       assertNotNull(cs.getFillBackgroundColor());
+       assertEquals(64, cs.getFillBackgroundColor());
+       assertEquals(null, cs.getFillBackgroundXSSFColor().getARGBHex());
+       assertEquals(null, cs.getFillBackgroundColorColor().getARGBHex());
     }
 }

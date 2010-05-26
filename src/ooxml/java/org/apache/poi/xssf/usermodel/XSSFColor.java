@@ -17,12 +17,13 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.util.Internal;
 
 /**
  * Represents a color in SpreadsheetML
  */
-public class XSSFColor {
+public class XSSFColor implements Color {
 	
 	private CTColor ctColor;
 
@@ -94,6 +95,30 @@ public class XSSFColor {
 			rgb[i] = applyTint(rgb[i] & 0xFF, ctColor.getTint());
 		}
 		return rgb;
+	}
+	
+	/**
+	 * Return the ARGB value in hex format, eg FF00FF00.
+	 * For indexed colours, returns null.
+	 */
+	public String getARGBHex() {
+	   StringBuffer sb = new StringBuffer();
+	   byte[] rgb = getRgb();
+	   if(rgb == null) {
+	      return null;
+	   }
+	   for(byte c : rgb) {
+	      int i = (int)c;
+	      if(i < 0) {
+	         i += 256;
+	      }
+	      String cs = Integer.toHexString(i);
+	      if(cs.length() == 1) {
+	         sb.append('0');
+	      }
+	      sb.append(cs);
+	   }
+	   return sb.toString().toUpperCase();
 	}
 
 	private static byte applyTint(int lum, double tint){
@@ -239,5 +264,4 @@ public class XSSFColor {
         XSSFColor cf = (XSSFColor)o;
         return ctColor.toString().equals(cf.getCTColor().toString());
     }
-
 }

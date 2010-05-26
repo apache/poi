@@ -20,6 +20,8 @@ package org.apache.poi.hssf.util;
 import java.lang.reflect.Field;
 import java.util.Hashtable;
 
+import org.apache.poi.ss.usermodel.Color;
+
 
 /**
  * Intends to provide support for the very evil index to triplet issue and
@@ -34,7 +36,7 @@ import java.util.Hashtable;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
-public class HSSFColor {
+public class HSSFColor implements Color {
     // TODO make subclass instances immutable
 
     /** Creates a new instance of HSSFColor */

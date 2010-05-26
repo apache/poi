@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">48779 - Allow you to get straight from a CellStyle to a Color, irrespective of if the Color is indexed or inline-defined</action>
            <action dev="POI-DEVELOPERS" type="add">48924 - Allow access of the HWPF DateAndTime underlying date values</action>
            <action dev="POI-DEVELOPERS" type="add">48926 - Initial support for the HWPF revision marks authors list</action>
            <action dev="POI-DEVELOPERS" type="fix">49160 - Ensure that CTDigSigBlob is included in poi-ooxml jar</action>
