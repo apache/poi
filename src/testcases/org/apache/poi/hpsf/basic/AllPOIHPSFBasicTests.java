@@ -30,6 +30,7 @@ public final class AllPOIHPSFBasicTests {
         result.addTestSuite(TestBasic.class);
         result.addTestSuite(TestClassID.class);
         result.addTestSuite(TestEmptyProperties.class);
+        result.addTestSuite(TestHPSFBugs.class);
         result.addTestSuite(TestMetaDataIPI.class);
         result.addTestSuite(TestUnicode.class);
         result.addTestSuite(TestWrite.class);
