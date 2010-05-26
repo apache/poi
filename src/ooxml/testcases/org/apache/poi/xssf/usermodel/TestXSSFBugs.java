@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.awt.peer.SystemTrayPeer;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -24,7 +25,10 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -192,5 +196,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("Test", test.getNameName());
        assertEquals("Sheet1", test.getSheetName());
        assertEquals(-1, test.getSheetIndex());
+    }
+    
+    /**
+     * Problem with evaluation formulas due to
+     *  NameXPtgs.
+     * Blows up on:
+     *   IF(B6= (ROUNDUP(B6,0) + ROUNDDOWN(B6,0))/2, MROUND(B6,2),ROUND(B6,0))
+     */
+    public void DISABLEDtest48539() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48539.xlsx");
+       assertEquals(3, wb.getNumberOfSheets());
+       
+       // Try each cell individually
+       XSSFFormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
+       for(int i=0; i<wb.getNumberOfSheets(); i++) {
+          Sheet s = wb.getSheetAt(i);
+          for(Row r : s) {
+             for(Cell c : r) {
+                if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                   eval.evaluate(c);
+                }
+             }
+          }
+       }
+       
+       // Now all of them
+       XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
 }
