@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import java.util.Calendar;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
@@ -29,12 +31,12 @@ import org.apache.poi.util.LittleEndian;
 public final class DateAndTime
   implements Cloneable
 {
-  public static final int SIZE = 4;
-  private short _info;
+    public static final int SIZE = 4;
+    private short _info;
     private static final BitField _minutes = BitFieldFactory.getInstance(0x3f);
     private static final BitField _hours = BitFieldFactory.getInstance(0x7c0);
     private static final BitField _dom = BitFieldFactory.getInstance(0xf800);
-  private short _info2;
+    private short _info2;
     private static final BitField _months = BitFieldFactory.getInstance(0xf);
     private static final BitField _years = BitFieldFactory.getInstance(0x1ff0);
     private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
@@ -47,6 +49,21 @@ public final class DateAndTime
   {
     _info = LittleEndian.getShort(buf, offset);
     _info2 = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
+  }
+  
+  public Calendar getDate() {
+     // TODO Discover if the timezone is stored somewhere else or not
+     Calendar cal = Calendar.getInstance();
+     cal.set(
+           _years.getValue(_info2)+1900, 
+           _months.getValue(_info2)-1, 
+           _dom.getValue(_info), 
+           _hours.getValue(_info), 
+           _minutes.getValue(_info),
+           0
+     );
+     cal.set(Calendar.MILLISECOND, 0);
+     return cal;
   }
 
   public void serialize(byte[] buf, int offset)
