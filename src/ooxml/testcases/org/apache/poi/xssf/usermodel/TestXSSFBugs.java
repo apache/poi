@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.awt.peer.SystemTrayPeer;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
