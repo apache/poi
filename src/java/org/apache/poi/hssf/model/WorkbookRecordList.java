@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.record.Record;
 
-public final class WorkbookRecordList {
+public final class WorkbookRecordList implements Iterable<Record> {
     private List<Record> records = new ArrayList<Record>();
 
 	private int  protpos	 = 0;   // holds the position of the protect record.
