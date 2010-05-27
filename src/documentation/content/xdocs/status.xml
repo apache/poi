@@ -91,6 +91,7 @@
            <action dev="POI-DEVELOPERS" type="fix">48339 - fixed ExternalNameRecord to properly distinguish DDE data from OLE data items </action>
            <action dev="POI-DEVELOPERS" type="fix">47920 - allow editing workbooks embedded into PowerPoint files</action>
            <action dev="POI-DEVELOPERS" type="add">48343 - added implementation of SUBTOTAL function</action>
+           <action dev="POI-DEVELOPERS" type="add">49311 - initial support for reading AES-encrypted/write-protected OOXML files</action>
         </release>
         <release version="3.6" date="2009-12-14">
            <action dev="POI-DEVELOPERS" type="fix">48332 - fixed XSSFSheet autoSizeColumn() to tolerate empty RichTextString</action>
