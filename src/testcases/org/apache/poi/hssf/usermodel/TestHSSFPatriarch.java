@@ -38,8 +38,7 @@ public final class TestHSSFPatriarch extends TestCase {
 		// assert something more interesting
 	}
 
-	// TODO - fix bug 44916 (1-May-2008)
-	public void DISABLED_test44916() {
+	public void test44916() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
