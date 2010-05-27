@@ -1869,27 +1869,25 @@ public final class InternalWorkbook {
      * @return the format id of a format that matches or -1 if none found and createIfNotFound
      */
     public short getFormat(String format, boolean createIfNotFound) {
-    Iterator iterator;
-    for (iterator = formats.iterator(); iterator.hasNext();) {
-        FormatRecord r = (FormatRecord)iterator.next();
+      for (FormatRecord r : formats) {
         if (r.getFormatString().equals(format)) {
         return (short)r.getIndexCode();
         }
-    }
+      }
 
-    if (createIfNotFound) {
+      if (createIfNotFound) {
         return (short)createFormat(format);
-    }
+      }
 
-    return -1;
+      return -1;
     }
 
     /**
      * Returns the list of FormatRecords in the workbook.
      * @return ArrayList of FormatRecords in the notebook
      */
-    public List getFormats() {
-    return formats;
+    public List<FormatRecord> getFormats() {
+      return formats;
     }
 
     /**
@@ -1919,9 +1917,7 @@ public final class InternalWorkbook {
      * Returns the first occurance of a record matching a particular sid.
      */
     public Record findFirstRecordBySid(short sid) {
-        for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
-            Record record = ( Record ) iterator.next();
-
+        for (Record record : records) {
             if (record.getSid() == sid) {
                 return record;
             }
@@ -1936,9 +1932,7 @@ public final class InternalWorkbook {
      */
     public int findFirstRecordLocBySid(short sid) {
         int index = 0;
-        for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
-            Record record = ( Record ) iterator.next();
-
+        for (Record record : records) {
             if (record.getSid() == sid) {
                 return index;
             }
@@ -1952,9 +1946,7 @@ public final class InternalWorkbook {
      */
     public Record findNextRecordBySid(short sid, int pos) {
         int matches = 0;
-        for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
-            Record record = ( Record ) iterator.next();
-
+        for (Record record : records) {
             if (record.getSid() == sid) {
                 if (matches++ == pos)
                     return record;
@@ -1963,7 +1955,7 @@ public final class InternalWorkbook {
         return null;
     }
 
-    public List getHyperlinks()
+    public List<HyperlinkRecord> getHyperlinks()
     {
         return hyperlinks;
     }
@@ -2010,11 +2002,14 @@ public final class InternalWorkbook {
      * Finds the primary drawing group, if one already exists
      */
     public void findDrawingGroup() {
+        if(drawingManager != null) {
+           // We already have it!
+           return;
+        }
+        
         // Need to find a DrawingGroupRecord that
         //  contains a EscherDggRecord
-        for(Iterator<Record> rit = records.iterator(); rit.hasNext();) {
-            Record r = rit.next();
-
+        for(Record r : records) {
             if(r instanceof DrawingGroupRecord) {
                 DrawingGroupRecord dg = (DrawingGroupRecord)r;
                 dg.processChildRecords();
@@ -2047,8 +2042,7 @@ public final class InternalWorkbook {
         if(dgLoc != -1) {
             DrawingGroupRecord dg = (DrawingGroupRecord)records.get(dgLoc);
             EscherDggRecord dgg = null;
-            for(Iterator it = dg.getEscherRecords().iterator(); it.hasNext();) {
-                Object er = it.next();
+            for(EscherRecord er : dg.getEscherRecords()) {
                 if(er instanceof EscherDggRecord) {
                     dgg = (EscherDggRecord)er;
                 }
@@ -2086,9 +2080,7 @@ public final class InternalWorkbook {
                 bstoreContainer = new EscherContainerRecord();
                 bstoreContainer.setRecordId( EscherContainerRecord.BSTORE_CONTAINER );
                 bstoreContainer.setOptions( (short) ( (escherBSERecords.size() << 4) | 0xF ) );
-                for ( Iterator iterator = escherBSERecords.iterator(); iterator.hasNext(); )
-                {
-                    EscherRecord escherRecord = (EscherRecord) iterator.next();
+                for (EscherRecord escherRecord : escherBSERecords) {
                     bstoreContainer.addChildRecord( escherRecord );
                 }
             }
