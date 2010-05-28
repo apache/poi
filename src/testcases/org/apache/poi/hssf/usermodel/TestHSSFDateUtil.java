@@ -242,8 +242,8 @@ public final class TestHSSFDateUtil extends TestCase {
                 "dd.mm.yyyy", "dd\\.mm\\.yyyy",
                 "dd\\ mm\\.yyyy AM", "dd\\ mm\\.yyyy pm",
                  "dd\\ mm\\.yyyy\\-dd", "[h]:mm:ss",
-
-                //YK: TODO "mm:ss.0" is a built-in date format which is not recognized by DateUtil.isInternalDateFormat
+                 "mm/dd/yy", "\"mm\"/\"dd\"/\"yy\"",
+                 "m\\/d\\/yyyy", 
 
                 // These crazy ones are valid
                 "yyyy-mm-dd;@", "yyyy/mm/dd;@",
@@ -269,7 +269,9 @@ public final class TestHSSFDateUtil extends TestCase {
                 "mm/dd HH:MM", "yy/mmm/dd SS",
                 "mm/dd HH:MM AM", "mm/dd HH:MM am",
                 "mm/dd HH:MM PM", "mm/dd HH:MM pm",
-                "m/d/yy h:mm AM/PM"
+                "m/d/yy h:mm AM/PM",
+                "hh:mm:ss", "hh:mm:ss.0", "mm:ss.0",
+
         };
         for(int i=0; i<formats.length; i++) {
             assertTrue(
