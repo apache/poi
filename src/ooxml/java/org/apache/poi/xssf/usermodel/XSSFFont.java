@@ -85,7 +85,7 @@ public class XSSFFont implements Font {
         setFontName(DEFAULT_FONT_NAME);
         setFontHeight((double)DEFAULT_FONT_SIZE);
     }
-
+    
     /**
      * get the underlying CTFont font
      */
@@ -516,10 +516,11 @@ public class XSSFFont implements Font {
 
 
     /**
-     * Register ourselfs in the style table
+     * Perform a registration of ourselves 
+     *  to the style table
      */
-    public long putFont(StylesTable styles) {
-        short idx = (short)styles.putFont(this);
+    public long registerTo(StylesTable styles) {
+        short idx = (short)styles.putFont(this, true);
         this._index = idx;
         return idx;
     }

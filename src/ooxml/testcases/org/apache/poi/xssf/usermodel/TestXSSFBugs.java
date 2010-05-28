@@ -20,14 +20,17 @@ package org.apache.poi.xssf.usermodel;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -258,5 +261,40 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(64, cs.getFillBackgroundColor());
        assertEquals(null, cs.getFillBackgroundXSSFColor().getARGBHex());
        assertEquals(null, cs.getFillBackgroundColorColor().getARGBHex());
+    }
+    
+    /**
+     * With HSSF, if you create a font, don't change it, and
+     *  create a 2nd, you really do get two fonts that you 
+     *  can alter as and when you want.
+     * With XSSF, that wasn't the case, but this verfies
+     *  that it now is again
+     */
+    public void test48718() throws Exception {
+       // Verify the HSSF behaviour
+       // Then ensure the same for XSSF
+       Workbook[] wbs = new Workbook[] {
+             new HSSFWorkbook(),
+             new XSSFWorkbook()
+       };
+       int[] initialFonts = new int[] { 4, 1 };
+       for(int i=0; i<wbs.length; i++) {
+          Workbook wb = wbs[i];
+          int startingFonts = initialFonts[i];
+          
+          assertEquals(startingFonts, wb.getNumberOfFonts());
+          
+          // Get a font, and slightly change it
+          Font a = wb.createFont();
+          assertEquals(startingFonts+1, wb.getNumberOfFonts());
+          a.setFontHeightInPoints((short)23);
+          assertEquals(startingFonts+1, wb.getNumberOfFonts());
+          
+          // Get two more, unchanged
+          Font b = wb.createFont();
+          assertEquals(startingFonts+2, wb.getNumberOfFonts());
+          Font c = wb.createFont();
+          assertEquals(startingFonts+3, wb.getNumberOfFonts());
+       }
     }
 }

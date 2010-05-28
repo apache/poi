@@ -176,13 +176,28 @@ public class StylesTable extends POIXMLDocumentPart {
 		return fonts.get(idx);
 	}
 
-	public int putFont(XSSFFont font) {
-		int idx = fonts.indexOf(font);
+	/**
+	 * Records the given font in the font table.
+	 * Will re-use an existing font index if this
+	 *  font matches another, EXCEPT if forced
+	 *  registration is requested.
+	 * This allows people to create several fonts
+	 *  then customise them later.
+	 */
+	public int putFont(XSSFFont font, boolean forceRegistration) {
+		int idx = -1;
+		if(!forceRegistration) {
+			idx = fonts.indexOf(font);
+		}
+
 		if (idx != -1) {
 			return idx;
 		}
 		fonts.add(font);
 		return fonts.size() - 1;
+	}
+	public int putFont(XSSFFont font) {
+		return putFont(font, false);
 	}
 
 	public XSSFCellStyle getStyleAt(int idx) {

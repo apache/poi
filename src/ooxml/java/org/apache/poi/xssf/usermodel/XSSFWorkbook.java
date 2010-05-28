@@ -453,7 +453,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFFont createFont() {
         XSSFFont font = new XSSFFont();
-        font.putFont(stylesSource);
+        font.registerTo(stylesSource);
         return font;
     }
 
