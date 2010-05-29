@@ -24,13 +24,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 public final class TestXSSFSheet extends BaseTestSheet {
@@ -894,21 +888,84 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertSame(comment1, sheet1.getCommentsTable(true));
     }
 
+    /**
+     * Rows and cells can be created in random order,
+     * but serialization forces strict ascending order of the CTRow and CTCell xml beans
+     */
     public void testCreateRow() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet wsh = sheet.getCTWorksheet();
-        assertEquals(0, wsh.getSheetData().sizeOfRowArray());
-        XSSFRow row1 = sheet.createRow(1);
-        row1.createCell(1);
+        CTSheetData sheetData = wsh.getSheetData();
+        assertEquals(0, sheetData.sizeOfRowArray());
+
+        XSSFRow row1 = sheet.createRow(2);
         row1.createCell(2);
-        assertEquals(1, wsh.getSheetData().sizeOfRowArray());
-        assertEquals(2, wsh.getSheetData().getRowArray(0).sizeOfCArray());
+        row1.createCell(1);
+
+        XSSFRow row2 = sheet.createRow(1);
+        row2.createCell(2);
+        row2.createCell(1);
+        row2.createCell(0);
+
+        XSSFRow row3 = sheet.createRow(0);
+        row3.createCell(3);
+        row3.createCell(0);
+        row3.createCell(2);
+        row3.createCell(5);
+
+
+        CTRow[] xrow = sheetData.getRowArray();
+        assertEquals(3, xrow.length);
+
+        //rows are unsorted: {2, 1, 0}
+        assertEquals(2, xrow[0].sizeOfCArray());
+        assertEquals(3, xrow[0].getR());
+        assertTrue(xrow[0].equals(row1.getCTRow()));
+
+        assertEquals(3, xrow[1].sizeOfCArray());
+        assertEquals(2, xrow[1].getR());
+        assertTrue(xrow[1].equals(row2.getCTRow()));
+
+        assertEquals(4, xrow[2].sizeOfCArray());
+        assertEquals(1, xrow[2].getR());
+        assertTrue(xrow[2].equals(row3.getCTRow()));
+
+        CTCell[] xcell = xrow[2].getCArray();
+        assertEquals("D1", xcell[0].getR());
+        assertEquals("A1", xcell[1].getR());
+        assertEquals("C1", xcell[2].getR());
+        assertEquals("F1", xcell[3].getR());
 
         //re-creating a row does NOT add extra data to the parent
-        sheet.createRow(1);
-        assertEquals(1, wsh.getSheetData().sizeOfRowArray());
+        row2 = sheet.createRow(1);
+        assertEquals(3, sheetData.sizeOfRowArray());
         //existing cells are invalidated
-        assertEquals(0, wsh.getSheetData().getRowArray(0).sizeOfCArray());
+        assertEquals(0, sheetData.getRowArray(1).sizeOfCArray());
+        assertEquals(0, row2.getPhysicalNumberOfCells());
+
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+        wsh = sheet.getCTWorksheet();
+        xrow = sheetData.getRowArray();
+        assertEquals(3, xrow.length);
+
+        //rows are sorted: {0, 1, 2}
+        assertEquals(4, xrow[0].sizeOfCArray());
+        assertEquals(1, xrow[0].getR());
+        //cells are now sorted
+        xcell = xrow[0].getCArray();
+        assertEquals("A1", xcell[0].getR());
+        assertEquals("C1", xcell[1].getR());
+        assertEquals("D1", xcell[2].getR());
+        assertEquals("F1", xcell[3].getR());
+
+
+        assertEquals(0, xrow[1].sizeOfCArray());
+        assertEquals(2, xrow[1].getR());
+
+        assertEquals(2, xrow[2].sizeOfCArray());
+        assertEquals(3, xrow[2].getR());
+
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -384,20 +385,37 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
     /**
      * Fired when the document is written to an output stream.
-     * <p>
-     * Attaches CTCell beans to the underlying CTRow bean
-     * </p>
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#commit()
+     *
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
     protected void onDocumentWrite(){
-        ArrayList<CTCell> cArray = new ArrayList<CTCell>(_cells.size());
-        //create array of CTCell objects.
-        //TreeMap's value iterator ensures that the cells are ordered by columnIndex in the ascending order
-        for (Cell cell : _cells.values()) {
-            XSSFCell c = (XSSFCell)cell;
-            cArray.add(c.getCTCell());
+        // check if cells in the CTRow are ordered
+        boolean isOrdered = true;
+        if(_row.sizeOfCArray() != _cells.size()) isOrdered = false;
+        else {
+            int i = 0;
+            CTCell[] xcell = _row.getCArray();
+            for (XSSFCell cell : _cells.values()) {
+                CTCell c1 = cell.getCTCell();
+                CTCell c2 = xcell[i++];
+
+                String r1 = c1.getR();
+                String r2 = c2.getR();
+                if (!(r1==null ? r2==null : r1.equals(r2))){
+                    isOrdered = false;
+                    break;
+                }
+            }
         }
-        _row.setCArray(cArray.toArray(new CTCell[cArray.size()]));
+
+        if(!isOrdered){
+            CTCell[] cArray = new CTCell[_cells.size()];
+            int i = 0;
+            for (XSSFCell c : _cells.values()) {
+                cArray[i++] = c.getCTCell();
+            }
+            _row.setCArray(cArray);
+        }
     }
 
     /**

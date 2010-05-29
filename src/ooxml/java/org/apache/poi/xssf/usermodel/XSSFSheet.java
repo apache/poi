@@ -2464,20 +2464,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // rows in the internal model (_rows) are always ordered while
         // CTRow beans held by CTSheetData may be not, for example, user can
         // insert rows in random order, shift rows after insertion, etc.
-        Integer [] curRows = new Integer[sheetData.sizeOfRowArray()];
-        int i = 0;
-        for(CTRow ctrow : sheetData.getRowArray()){
-            curRows[i++] = (int)(ctrow.getR() - 1);
-        }
-        Integer [] ordRows = _rows.keySet().toArray(new Integer[_rows.size()]);
-        if(!Arrays.equals(curRows, ordRows)){
-            // The order of rows in CTSheetData and internal model does not match 
-            CTRow[] orderedCTRows = new CTRow[_rows.size()];
-            i = 0;
-            for(XSSFRow row : _rows.values()){
-                orderedCTRows[i++] = row.getCTRow();
+        boolean isOrdered = true;
+        if(sheetData.sizeOfRowArray() != _rows.size()) isOrdered = false;
+        else {
+            int i = 0;
+            CTRow[] xrow = sheetData.getRowArray();
+            for (XSSFRow row : _rows.values()) {
+                CTRow c1 = row.getCTRow();
+                CTRow c2 = xrow[i++];
+                if (c1.getR() != c2.getR()){
+                    isOrdered = false;
+                    break;
+                }
             }
-            sheetData.setRowArray(orderedCTRows);
+        }
+        
+        if(!isOrdered){
+            CTRow[] cArray = new CTRow[_rows.size()];
+            int i = 0;
+            for(XSSFRow row : _rows.values()){
+                cArray[i++] = row.getCTRow();
+            }
+            sheetData.setRowArray(cArray);
         }
     }
 
