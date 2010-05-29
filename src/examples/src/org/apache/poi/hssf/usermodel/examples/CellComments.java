@@ -89,7 +89,7 @@ public class CellComments {
          * It works, the comment is visible.
          */
         comment2.setRow(6);
-        comment2.setColumn((short)1);
+        comment2.setColumn(1);
 
         FileOutputStream out = new FileOutputStream("poi_comment.xls");
         wb.write(out);

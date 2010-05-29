@@ -171,9 +171,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
     public void testGetCellComment() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        XSSFComment comment = sheet.createComment();
+        XSSFDrawing dg = sheet.createDrawingPatriarch();
+        XSSFComment comment = dg.createCellComment(new XSSFClientAnchor());
+        XSSFCell cell = sheet.createRow(9).createCell(2);
         comment.setAuthor("test C10 author");
-        sheet.setCellComment("C10", comment);
+        cell.setCellComment(comment);
 
         assertNotNull(sheet.getCellComment(9, 2));
         assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
@@ -183,13 +185,14 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
 
-        XSSFComment comment = sheet.createComment();
+        XSSFDrawing dg = sheet.createDrawingPatriarch();
+        XSSFComment comment = dg.createCellComment(new XSSFClientAnchor());
 
         Cell cell = sheet.createRow(0).createCell(0);
         CommentsTable comments = sheet.getCommentsTable(false);
         CTComments ctComments = comments.getCTComments();
 
-        sheet.setCellComment("A1", comment);
+        cell.setCellComment(comment);
         assertEquals("A1", ctComments.getCommentList().getCommentArray(0).getRef());
         comment.setAuthor("test A1 author");
         assertEquals("test A1 author", comments.getAuthor((int) ctComments.getCommentList().getCommentArray(0).getAuthorId()));

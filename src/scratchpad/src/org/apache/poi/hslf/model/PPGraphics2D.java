@@ -1655,6 +1655,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
+    @SuppressWarnings("deprecation")
     public FontMetrics getFontMetrics(Font f) {
         return Toolkit.getDefaultToolkit().getFontMetrics(f);
     }

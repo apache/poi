@@ -27,10 +27,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
@@ -131,7 +128,8 @@ public class TestCommentsTable extends TestCase {
 		Cell c1r2s2 = r2s2.createCell(1);
 		assertNull(c1r2s2.getCellComment());
 
-		Comment cc2 = sheet2.createComment();
+        Drawing dg = sheet2.createDrawingPatriarch();
+        Comment cc2 = dg.createCellComment(new XSSFClientAnchor());
 		cc2.setAuthor("Also POI");
 		cc2.setString(new XSSFRichTextString("A new comment"));
 		c1r2s2.setCellComment(cc2);
