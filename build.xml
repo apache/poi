@@ -70,8 +70,7 @@ under the License.
       JVM system properties for running tests,
       user.language and user.country are required as we have locale-sensitive formatters
     -->
-    <property name="user.language" value="en"/>
-    <property name="user.country" value="US"/>
+    <property name="poi.test.locale" value="-Duser.language=en -Duser.country=US"/>
     <property name="POI.testdata.path" value="test-data"/>
     <property name="java.awt.headless" value="true"/>
     
@@ -159,8 +158,6 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <propertyset id="junit.properties">
-        <propertyref name="user.language"/>
-        <propertyref name="user.country"/>
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
     </propertyset>
@@ -572,6 +569,7 @@ under the License.
                failureproperty="main.test.failed" showoutput="true">
             <classpath refid="test.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <jvmarg value="${poi.test.locale}"/>
             <formatter type="plain"/>
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
@@ -608,6 +606,7 @@ under the License.
                failureproperty="scratchpad.test.failed">
             <classpath refid="test.scratchpad.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <jvmarg value="${poi.test.locale}"/>
             <formatter type="plain"/>
             <batchtest todir="${scratchpad.reports.test}">
                 <fileset dir="${scratchpad.src.test}">
@@ -642,6 +641,7 @@ under the License.
                 <pathelement location="${contrib.output.test.dir}"/>
             </classpath>
             <syspropertyset refid="junit.properties"/>
+            <jvmarg value="${poi.test.locale}"/>
             <formatter type="plain"/>
             <batchtest todir="${contrib.reports.test}">
                 <fileset dir="${contrib.src.test}">
@@ -672,6 +672,7 @@ under the License.
                  failureproperty="ooxml.test.failed">
               <classpath refid="@{classpath}"/>
               <syspropertyset refid="junit.properties"/>
+              <jvmarg value="${poi.test.locale}"/>
               <formatter type="plain"/>
               <batchtest todir="${ooxml.reports.test}">
                   <fileset dir="${ooxml.src.test}">
@@ -697,6 +698,7 @@ under the License.
         <java classname="org.apache.poi.util.OOXMLLite" fork="yes">
             <classpath refid="test.ooxml.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <jvmarg value="${poi.test.locale}"/>
             <arg line="-ooxml ${ooxml.xsds.jar} -test ${ooxml.output.test.dir} -dest ${ooxml.lite.output.dir}"/>
         </java>
     </target>
