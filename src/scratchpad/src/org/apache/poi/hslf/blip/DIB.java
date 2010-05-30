@@ -49,23 +49,32 @@ public final class DIB extends Bitmap {
     public int getSignature(){
         return 0x7A80;
     }
-
+    
     public byte[] getData(){
-        byte[] data = super.getData();
+        return addBMPHeader ( super.getData() );
+    }
 
+    public static byte[] addBMPHeader(byte[] data){
         // bitmap file-header, corresponds to a
         // Windows  BITMAPFILEHEADER structure
         // (For more information, consult the Windows API Programmer's reference )
         byte[] header = new byte[HEADER_SIZE];
         //Specifies the file type. It must be set to the signature word BM (0x4D42) to indicate bitmap.
         LittleEndian.putInt(header, 0, 0x4D42);
-        //Specifies the size, in bytes, of the bitmap file.
-        LittleEndian.putInt(header, 2, data.length); //DIB length including the header
-        //Reserved; set to zero
-        LittleEndian.putInt(header, 6, 0);
-        //the offset, in bytes, from the header to the bitmap bits (looks like it is always 2)
-        LittleEndian.putInt(header, 10, 2);
 
+        // read the size of the image and calculate the overall file size
+        // and the offset where the bitmap starts
+        int imageSize = LittleEndian.getInt(data, 0x22 - HEADER_SIZE);
+        int fileSize = data.length + HEADER_SIZE;
+        int offset = fileSize - imageSize;
+        
+		// specifies the size, in bytes, of the bitmap file - must add the length of the header
+        LittleEndian.putInt(header, 2, fileSize); 
+        // Reserved; set to zero
+        LittleEndian.putInt(header, 6, 0);
+        // the offset, i.e. starting address, of the byte where the bitmap data can be found
+        LittleEndian.putInt(header, 10, offset);
+        
         //DIB data is the header + dib bytes
         byte[] dib = new byte[header.length + data.length];
         System.arraycopy(header, 0, dib, 0, header.length);
