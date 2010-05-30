@@ -70,7 +70,7 @@ public class TOC {
 		p.setRsidR("00EF7E24".getBytes());
 		p.setRsidRDefault("00EF7E24".getBytes());
 		p.addNewPPr().addNewPStyle().setVal("TOCHeading");
-		p.addNewR().addNewT().set("Table of Contents");
+		p.addNewR().addNewT().setStringValue("Table of Contents");
 	}
 
     @Internal
@@ -93,7 +93,7 @@ public class TOC {
 		pPr.addNewRPr().addNewNoProof();
 		CTR run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
-		run.addNewT().set(title);
+		run.addNewT().setStringValue(title);
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
 		run.addNewTab();
@@ -106,7 +106,7 @@ public class TOC {
 		CTText text = run.addNewInstrText();
 		text.setSpace(Space.PRESERVE);
 		// bookmark reference
-		text.set(" PAGEREF _Toc" + bookmarkRef + " \\h ");
+		text.setStringValue(" PAGEREF _Toc" + bookmarkRef + " \\h ");
 		p.addNewR().addNewRPr().addNewNoProof();
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
@@ -114,7 +114,7 @@ public class TOC {
 		// page number run
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
-		run.addNewT().set(Integer.valueOf(page).toString());
+		run.addNewT().setStringValue(Integer.valueOf(page).toString());
 		run = p.addNewR();
 		run.addNewRPr().addNewNoProof();
 		run.addNewFldChar().setFldCharType(STFldCharType.END);

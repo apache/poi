@@ -432,6 +432,7 @@ public class EscherGraphics
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public Rectangle getClipRect()
     {
         return getClipBounds();
@@ -447,6 +448,7 @@ public class EscherGraphics
         return font;
     }
 
+    @SuppressWarnings("deprecation")
     public FontMetrics getFontMetrics(Font f)
     {
         return Toolkit.getDefaultToolkit().getFontMetrics(f);

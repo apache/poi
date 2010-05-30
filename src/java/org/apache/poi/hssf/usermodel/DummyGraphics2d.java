@@ -695,6 +695,7 @@ public class DummyGraphics2d
         return g2D.getClipBounds( r );
     }
 
+    @SuppressWarnings("deprecation")
     public Rectangle getClipRect() {
         System.out.println( "getClipRect():" );
         return g2D.getClipRect();
