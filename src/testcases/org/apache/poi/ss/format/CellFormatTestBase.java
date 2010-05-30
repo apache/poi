@@ -43,6 +43,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * This class is a base class for spreadsheet-based tests, such as are used for
@@ -58,6 +60,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 @SuppressWarnings(
         {"JUnitTestCaseWithNoTests", "JUnitTestClassNamingConvention"})
 public class CellFormatTestBase extends TestCase {
+    private static final POILogger logger = POILogFactory.getLogger(CellFormatTestBase.class);
+
     private final ITestDataProvider _testDataProvider;
 
     protected Workbook workbook;
@@ -212,13 +216,11 @@ public class CellFormatTestBase extends TestCase {
         label.setForeground(testColor);
         label.setText("xyzzy");
 
-        System.out.printf("Row %d: \"%s\" -> \"%s\": expected \"%s\"", row + 1,
-                String.valueOf(value), desc, expectedText);
-        System.out.flush();
+        logger.log(POILogger.INFO, String.format("Row %d: \"%s\" -> \"%s\": expected \"%s\"", row + 1,
+                String.valueOf(value), desc, expectedText));
         String actualText = tryColor(desc, null, getter, value, expectedText,
                 testColor);
-        System.out.printf(", actual \"%s\")%n", actualText);
-        System.out.flush();
+        logger.log(POILogger.INFO, String.format(", actual \"%s\")%n", actualText));
 
         if (tryAllColors && testColor != TEST_COLOR) {
             for (int i = 0; i < COLOR_NAMES.length; i++) {
