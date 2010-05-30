@@ -252,7 +252,7 @@ public final class TestPictures extends TestCase{
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
-        byte[] src_bytes = slTests.readFile("sci_cec.dib");
+        byte[] src_bytes = slTests.readFile("clock.dib");
         int idx = ppt.addPicture(src_bytes, Picture.DIB);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());
