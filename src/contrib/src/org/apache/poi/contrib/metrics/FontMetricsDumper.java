@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@SuppressWarnings("deprecation")
 public class FontMetricsDumper
 {
     public static void main( String[] args ) throws IOException
