@@ -91,6 +91,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 				"0000.00000%",
 				"0.000E+00",
 				"0.00E+00",
+				"[BLACK]0.00;[COLOR 5]##.##",
 		};
 
 		// invalid date formats -- will throw exception in DecimalFormat ctor
