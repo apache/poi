@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48872 - handle MMMMM and elapsed time formatting rules in DataFormatter</action>
            <action dev="POI-DEVELOPERS" type="fix">48872 - handle zero formatting rules, and better color detection in DataFormatter</action>
            <action dev="POI-DEVELOPERS" type="fix">48872 - support for more kinds of formatting in DataFormatter</action>
            <action dev="POI-DEVELOPERS" type="fix">43161 - fixed construction of the DIB picture header</action>

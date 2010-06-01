@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.*;
+import java.math.RoundingMode;
 import java.text.*;
 
 /**
@@ -275,7 +276,10 @@ public class DataFormatter {
         formatStr = formatStr.replaceAll("\\\\-","-");
         formatStr = formatStr.replaceAll("\\\\,",",");
         formatStr = formatStr.replaceAll("\\\\ "," ");
+        formatStr = formatStr.replaceAll("\\\\/","/"); // weird: m\\/d\\/yyyy 
         formatStr = formatStr.replaceAll(";@", "");
+        formatStr = formatStr.replaceAll("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
+
         boolean hasAmPm = false;
         Matcher amPmMatcher = amPmPattern.matcher(formatStr);
         while (amPmMatcher.find()) {
@@ -357,7 +361,7 @@ public class DataFormatter {
         formatStr = sb.toString();
 
         try {
-            return new SimpleDateFormat(formatStr, dateSymbols);
+            return new ExcelStyleDateFormatter(formatStr, dateSymbols);
         } catch(IllegalArgumentException iae) {
 
             // the pattern could not be parsed correctly,
@@ -372,16 +376,19 @@ public class DataFormatter {
         
         // If they requested spacers, with "_",
         //  remove those as we don't do spacing
+        // If they requested full-column-width
+        //  padding, with "*", remove those too
         for(int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
-            if(c == '_') {
+            if(c == '_' || c == '*') {
                if(i > 0 && sb.charAt((i-1)) == '\\') {
                   // It's escaped, don't worry
                   continue;
                } else {
                   if(i < sb.length()-1) {
                      // Remove the character we're supposed
-                     //  to match the space of
+                     //  to match the space of / pad to the
+                     //  column width with
                      sb.deleteCharAt(i+1);
                   }
                   // Remove the _ too
@@ -407,7 +414,9 @@ public class DataFormatter {
         }
 
         try {
-            return new DecimalFormat(sb.toString(), decimalSymbols);
+            DecimalFormat df = new DecimalFormat(sb.toString(), decimalSymbols);
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            return df;
         } catch(IllegalArgumentException iae) {
 
             // the pattern could not be parsed correctly,
@@ -445,6 +454,17 @@ public class DataFormatter {
         }
         return generalDecimalNumFormat;
     }
+    
+    /**
+     * Performs Excel-style date formatting, using the
+     *  supplied Date and format
+     */
+    private String performDateFormatting(Date d, Format dateFormat) {
+       if(dateFormat != null) {
+          return dateFormat.format(d);
+      }
+      return d.toString();
+    }
 
     /**
      * Returns the formatted value of an Excel date as a <tt>String</tt> based
@@ -456,11 +476,14 @@ public class DataFormatter {
      */
     private String getFormattedDateString(Cell cell) {
         Format dateFormat = getFormat(cell);
-        Date d = cell.getDateCellValue();
-        if (dateFormat != null) {
-            return dateFormat.format(d);
+        if(dateFormat instanceof ExcelStyleDateFormatter) {
+           // Hint about the raw excel value
+           ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(
+                 cell.getNumericCellValue()
+           );
         }
-        return d.toString();
+        Date d = cell.getDateCellValue();
+        return performDateFormatting(d, dateFormat);
     }
 
     /**
@@ -491,13 +514,13 @@ public class DataFormatter {
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString) &&
                 DateUtil.isValidExcelDate(value)) {
-
             Format dateFormat = getFormat(value, formatIndex, formatString);
-            Date d = DateUtil.getJavaDate(value);
-            if (dateFormat == null) {
-                return d.toString();
+            if(dateFormat instanceof ExcelStyleDateFormatter) {
+               // Hint about the raw excel value
+               ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
             }
-            return dateFormat.format(d);
+            Date d = DateUtil.getJavaDate(value);
+            return performDateFormatting(d, dateFormat);
         }
         // else Number
         Format numberFormat = getFormat(value, formatIndex, formatString);

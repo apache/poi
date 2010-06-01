@@ -181,19 +181,24 @@ public final class TestHSSFDataFormatter extends TestCase {
 		log("==== VALID DATE FORMATS ====");
 		while (it.hasNext()) {
 			Cell cell = it.next();
-            String fmtval = formatter.formatCellValue(cell);
-            log(fmtval);
+			String fmtval = formatter.formatCellValue(cell);
+			log(fmtval);
 
 			// should not be equal to "555.555"
 			assertTrue( ! "555.555".equals(fmtval));
 
-            String fmt = cell.getCellStyle().getDataFormatString();
-            //assert the correct month form, as in the original Excel format
-            String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
+			String fmt = cell.getCellStyle().getDataFormatString();
 
-            // this line is intended to compute how "July" would look like in the current locale
-            String jul = new SimpleDateFormat(monthPtrn).format(new GregorianCalendar(2010,6,15).getTime());
-			assertTrue( fmtval.indexOf(jul) > -1);
+			//assert the correct month form, as in the original Excel format
+			String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
+			// this line is intended to compute how "July" would look like in the current locale
+			String jul = new SimpleDateFormat(monthPtrn).format(new GregorianCalendar(2010,6,15).getTime());
+			// special case for MMMMM = 1st letter of month name
+			if(fmt.indexOf("mmmmm") > -1) {
+				jul = jul.substring(0,1);
+			}
+			// check we found july properly
+			assertTrue("Format came out incorrect - " + fmt, fmtval.indexOf(jul) > -1);
 		}
 
 		// test number formats
