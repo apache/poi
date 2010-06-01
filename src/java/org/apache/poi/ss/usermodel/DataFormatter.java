@@ -511,6 +511,14 @@ public class DataFormatter {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString) {
+       return formatRawCellContents(value, formatIndex, formatString, false);
+    }
+    /**
+     * Formats the given raw cell value, based on the supplied
+     *  format index and string, according to excel style rules.
+     * @see #formatCellValue(Cell)
+     */
+    public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString) &&
                 DateUtil.isValidExcelDate(value)) {
@@ -519,7 +527,7 @@ public class DataFormatter {
                // Hint about the raw excel value
                ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
             }
-            Date d = DateUtil.getJavaDate(value);
+            Date d = DateUtil.getJavaDate(value, use1904Windowing);
             return performDateFormatting(d, dateFormat);
         }
         // else Number

@@ -18,12 +18,11 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
-import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
 
 /**
  * Tests of {@link DataFormatter}
@@ -188,5 +187,13 @@ public class TestDataFormatter extends TestCase {
        assertEquals("30:00", dfUS.formatRawCellContents(0.5*hour, -1, "[mm]:ss"));
        assertEquals("60:00", dfUS.formatRawCellContents(1*hour, -1, "[mm]:ss"));
        assertEquals("120:00", dfUS.formatRawCellContents(2*hour, -1, "[mm]:ss"));
+    }
+    
+    public void testDateWindowing() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+       
+       assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss"));
+       assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", false));
+       assertEquals("1904-01-01 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", true));
     }
 }
