@@ -77,6 +77,16 @@ public class DataFormatter {
     /** A regex to find patterns like [$$-1009] and [$?-452]. */
     private static final Pattern specialPatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+\\])");
 
+    /** 
+     * A regex to match the colour formattings rules.
+     * Allowed colours are: Black, Blue, Cyan, Green,
+     *  Magenta, Red, White, Yellow, "Color n" (1<=n<=56)
+     */
+    private static final Pattern colorPattern = 
+       Pattern.compile("(\\[BLACK\\])|(\\[BLUE\\])|(\\[CYAN\\])|(\\[GREEN\\])|" +
+       		"(\\[MAGENTA\\])|(\\[RED\\])|(\\[WHITE\\])|(\\[YELLOW\\])|" +
+       		"(\\[COLOR\\s*\\d\\])|(\\[COLOR\\s*[0-5]\\d\\])", Pattern.CASE_INSENSITIVE);
+    
     /**
      * The decimal symbols of the locale used for formatting values.
      */
@@ -165,6 +175,20 @@ public class DataFormatter {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStr) {
+       // Excel supports positive/negative/zero, but java
+       // doesn't, so we need to do it specially
+       if(formatStr.indexOf(';') != formatStr.lastIndexOf(';')) {
+          int lastAt = formatStr.lastIndexOf(';');
+          String zeroFormat = formatStr.substring(lastAt+1);
+          String normalFormat = formatStr.substring(0,lastAt);
+          if(cellValue == 0.0) {
+             formatStr = zeroFormat;
+          } else {
+             formatStr = normalFormat;
+          }
+       }
+      
+       // See if we already have it cached
         Format format = formats.get(formatStr);
         if (format != null) {
             return format;
@@ -195,9 +219,25 @@ public class DataFormatter {
     }
 
     private Format createFormat(double cellValue, int formatIndex, String sFormat) {
-        // remove color formatting if present
-        String formatStr = sFormat.replaceAll("\\[[a-zA-Z]*\\]", "");
+        String formatStr = sFormat;
+        
+        // Remove colour formatting if present
+        Matcher colourM = colorPattern.matcher(formatStr);
+        while(colourM.find()) {
+           String colour = colourM.group();
+           
+           // Paranoid replacement...
+           int at = formatStr.indexOf(colour);
+           if(at == -1) break;
+           String nFormatStr = formatStr.substring(0,at) +
+              formatStr.substring(at+colour.length()+1);
+           if(nFormatStr.equals(formatStr)) break;
 
+           // Try again in case there's multiple
+           formatStr = nFormatStr;
+           colourM = colorPattern.matcher(formatStr);
+        }
+        
         // try to extract special characters like currency
         Matcher m = specialPatternGroup.matcher(formatStr);
         while(m.find()) {
@@ -329,23 +369,33 @@ public class DataFormatter {
 
     private Format createNumberFormat(String formatStr, double cellValue) {
         StringBuffer sb = new StringBuffer(formatStr);
-        for (int i = 0; i < sb.length(); i++) {
+        
+        // If they requested spacers, with "_",
+        //  remove those as we don't do spacing
+        for(int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
-            //handle (#,##0_);
-            if (c == '(') {
-                int idx = sb.indexOf(")", i);
-                if (idx > -1 && sb.charAt(idx -1) == '_') {
-                    sb.deleteCharAt(idx);
-                    sb.deleteCharAt(idx - 1);
-                    sb.deleteCharAt(i);
-                    i--;
-                }
-            } else if (c == ')' && i > 0 && sb.charAt(i - 1) == '_') {
-                sb.deleteCharAt(i);
-                sb.deleteCharAt(i - 1);
-                i--;
+            if(c == '_') {
+               if(i > 0 && sb.charAt((i-1)) == '\\') {
+                  // It's escaped, don't worry
+                  continue;
+               } else {
+                  if(i < sb.length()-1) {
+                     // Remove the character we're supposed
+                     //  to match the space of
+                     sb.deleteCharAt(i+1);
+                  }
+                  // Remove the _ too
+                  sb.deleteCharAt(i);
+               }
+            }
+        }
+        
+        // Now, handle the other aspects like 
+        //  quoting and scientific notation
+        for(int i = 0; i < sb.length(); i++) {
+           char c = sb.charAt(i);
             // remove quotes and back slashes
-            } else if (c == '\\' || c == '"') {
+            if (c == '\\' || c == '"') {
                 sb.deleteCharAt(i);
                 i--;
 
