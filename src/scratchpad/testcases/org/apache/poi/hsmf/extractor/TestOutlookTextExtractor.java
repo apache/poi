@@ -26,6 +26,9 @@ import java.util.GregorianCalendar;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.TestExtractorFactory;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -59,6 +62,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertContains(text, "To: Kevin Roast <kevin.roast@alfresco.org>\n");
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
+      assertEquals(-1, text.indexOf("Attachment:"));
       assertContains(text, "Subject: Test the content transformer\n");
       Calendar cal = new GregorianCalendar(2007, 5, 14, 9, 42, 55);
       SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
@@ -170,5 +174,32 @@ public final class TestOutlookTextExtractor extends TestCase {
          assertEquals(-1, text.indexOf("Date:"));
          assertContains(text, "The quick brown fox jumps over the lazy dog");
       }
+   }
+   
+   /**
+    * See also {@link TestExtractorFactory#testEmbeded()}
+    */
+   public void testWithAttachments() throws Exception {
+      POIFSFileSystem simple = new POIFSFileSystem(
+            new FileInputStream(samples.getFile("attachment_test_msg.msg"))
+      );
+      MAPIMessage msg = new MAPIMessage(simple);
+      OutlookTextExtactor ext = new OutlookTextExtactor(msg);
+      
+      // Check the normal bits
+      String text = ext.getText();
+      
+      assertContains(text, "From: Nicolas1");
+      assertContains(text, "To: 'nicolas1.23456@free.fr'");
+      assertEquals(-1, text.indexOf("CC:"));
+      assertEquals(-1, text.indexOf("BCC:"));
+      assertContains(text, "Subject: test");
+      assertEquals(-1, text.indexOf("Date:"));
+      assertContains(text, "Attachment: test-unicode.doc\n");
+      assertContains(text, "Attachment: pj1.txt\n");
+      assertContains(text, "contenu");
+      
+      // Embeded bits are checked in
+      //  TestExtractorFactory
    }
 }
