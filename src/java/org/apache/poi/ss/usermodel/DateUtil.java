@@ -258,13 +258,19 @@ public class DateUtil {
             sb.append(c);
         }
         fs = sb.toString();
-
+        
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
         fs = date_ptrn1.matcher(fs).replaceAll("");
         // If it starts with something like [Black] or [Yellow],
         //  then it could be a date
         fs = date_ptrn2.matcher(fs).replaceAll("");
+        // You're allowed something like dd/mm/yy;[red]dd/mm/yy
+        //  which would place dates before 1900/1904 in red
+        // For now, only consider the first one
+        if(fs.indexOf(';') > 0 && fs.indexOf(';') < fs.length()-1) {
+           fs = fs.substring(0, fs.indexOf(';'));
+        }
 
         // Otherwise, check it's only made up, in any case, of:
         //  y m d h s - \ / , . :

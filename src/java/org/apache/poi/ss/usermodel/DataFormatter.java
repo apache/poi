@@ -297,7 +297,7 @@ public class DataFormatter {
         }
 
         // Convert excel date format to SimpleDateFormat.
-        // Excel uses lower case 'm' for both minutes and months.
+        // Excel uses lower and upper case 'm' for both minutes and months.
         // From Excel help:
         /*
             The "m" or "mm" code must appear immediately after the "h" or"hh"
@@ -319,7 +319,7 @@ public class DataFormatter {
                     sb.append('H');
                 }
             }
-            else if (c == 'm') {
+            else if (c == 'm' || c == 'M') {
                 if(mIsMonth) {
                     sb.append('M');
                     ms.add(
