@@ -1572,4 +1572,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("RT", withoutExt.getString());
        assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
     }
+    
+    /**
+     * Problem with cloning a sheet with a chart
+     *  contained in it.
+     */
+    public void test49096() throws Exception {
+       HSSFWorkbook wb = openSample("49096.xls");
+       assertEquals(1, wb.getNumberOfSheets());
+       
+       assertNotNull(wb.getSheetAt(0));
+       wb.cloneSheet(0);
+       assertEquals(2, wb.getNumberOfSheets());
+       
+       wb = writeOutAndReadBack(wb);
+       assertEquals(2, wb.getNumberOfSheets());
+    }
 }
