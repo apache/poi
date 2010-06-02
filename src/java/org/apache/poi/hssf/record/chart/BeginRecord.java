@@ -63,4 +63,10 @@ public final class BeginRecord extends StandardRecord {
     {
         return sid;
     }
+    
+    public Object clone() {
+       BeginRecord br = new BeginRecord();
+       // No data so nothing to copy
+       return br;
+    }
 }

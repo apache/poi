@@ -64,4 +64,10 @@ public final class EndRecord extends StandardRecord {
     {
         return sid;
     }
+    
+    public Object clone() {
+       EndRecord er = new EndRecord();
+       // No data so nothing to copy
+       return er;
+    }
 }
