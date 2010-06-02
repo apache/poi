@@ -53,6 +53,45 @@ System.out.println("Core POI came from " + path);
   </faq>
   <faq>
     <question>
+      I'm using the poi-ooxml-schemas jar, but my code is failing with "java.lang.NoClassDefFoundError: org/openxmlformats/schemas/*something*"
+    </question>
+    <answer>
+      <p>To use the new OOXML file formats, POI requires a jar containing
+       the file format XSDs, as compiled by 
+       <link href="http://xmlbeans.apache.org/">XMLBeans</link>. These
+       XSDs, once compiled into Java classes, live in the
+       <em>org.openxmlformats.schemas</em> namespace.</p>
+      <p>There are two jar files available, as described in
+       <link href="/overview.html">the components overview section</link>.
+       The <em>full jar of all of the schemas is ooxml-schemas-1.0.jar</em>, 
+       and it is currently around 15mb. The <em>smaller poi-ooxml-schemas 
+       jar</em> is only about 4mb. This latter jar file only contains the 
+       typically used parts though.</p>
+      <p>Many users choose to use the smaller poi-ooxml-schemas jar to save
+       space. However, the poi-ooxml-schemas jar only contains the XSDs and
+       classes that are typically used, as identified by the unit tests.
+       Every so often, you may try to use part of the file format which
+       isn't included in the minimal poi-ooxml-schemas jar. In this case,
+       you should switch to the full ooxml-schemas-1.0.jar. Longer term,
+       you may also wish to submit a new unit test which uses the extra
+       parts of the XSDs, so that a future poi-ooxml-schemas jar will 
+       include them.</p>
+      <p>There are a number of ways to get the full ooxml-schemas-1.0.jar.
+       If you are a maven user, see the 
+       <link href="/overview.html">the components overview section</link>
+       for the artifact details to have maven download it for you.
+       If you download the source release of POI, and/or checkout the
+       source code from <link href="/subversion.html">subversion</link>,
+       then you can run the ant task "compile-ooxml-xsds" to have the
+       OOXML schemas downloaded and compiled for you (This will also
+       give you the XMLBeans generated source code, in case you wish to
+       look at this). Finally, you can download the jar by hand from the
+       <link href="http://www.ibiblio.org/maven/org.apache.poi/jars/">POI
+       Maven Repository</link>.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
       Why is reading a simple sheet taking so long?
     </question>
     <answer>
