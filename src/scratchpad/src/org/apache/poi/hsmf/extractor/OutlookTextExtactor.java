@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -93,6 +94,18 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       try {
          s.append("Subject: " + msg.getSubject() + "\n");
       } catch(ChunkNotFoundException e) {}
+      
+      // Display attachment names
+      // To get the attachments, use ExtractorFactory
+      for(AttachmentChunks att : msg.getAttachmentFiles()) {
+         String ats = att.attachLongFileName.getValue();
+         if(att.attachMimeTag != null && 
+               att.attachMimeTag.getValue() != null) {
+            ats = att.attachMimeTag.getValue() + " = " + ats; 
+         }
+         s.append("Attachment: " + ats + "\n");
+      }
+      
       try {
          s.append("\n" + msg.getTextBody() + "\n");
       } catch(ChunkNotFoundException e) {}
