@@ -26,7 +26,9 @@ import java.io.PrintStream;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -51,6 +53,7 @@ import org.apache.poi.ss.usermodel.HeaderFooter;
  */
 public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
 	private HSSFWorkbook _wb;
+	private HSSFDataFormatter _formatter;
 	private boolean _includeSheetNames = true;
 	private boolean _shouldEvaluateFormulas = true;
 	private boolean _includeCellComments = false;
@@ -60,6 +63,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
 		_wb = wb;
+		_formatter = new HSSFDataFormatter();
 	}
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot(), fs);
@@ -323,8 +327,9 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 								text.append(cell.getRichStringCellValue().getString());
 								break;
 							case HSSFCell.CELL_TYPE_NUMERIC:
-								// Note - we don't apply any formatting!
-								text.append(cell.getNumericCellValue());
+								text.append(
+								      _formatter.formatCellValue(cell)
+								);
 								break;
 							case HSSFCell.CELL_TYPE_BOOLEAN:
 								text.append(cell.getBooleanCellValue());
@@ -344,7 +349,18 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 											}
 											break;
 										case HSSFCell.CELL_TYPE_NUMERIC:
-											text.append(cell.getNumericCellValue());
+										   HSSFCellStyle style = cell.getCellStyle();
+										   if(style == null) {
+										      text.append( cell.getNumericCellValue() );
+										   } else {
+	                                 text.append(
+	                                       _formatter.formatRawCellContents(
+	                                             cell.getNumericCellValue(),
+	                                             style.getDataFormat(),
+	                                             style.getDataFormatString()
+	                                       )
+	                                 );
+										   }
 											break;
 										case HSSFCell.CELL_TYPE_BOOLEAN:
 											text.append(cell.getBooleanCellValue());

@@ -309,6 +309,63 @@ public final class TestHSSFDataFormatter extends TestCase {
 
 		assertEquals("2345", f.formatCellValue(cellA1));
 	}
+	
+	/**
+	 * Tests various formattings of dates and numbers
+	 */
+	public void testFromFile() {
+      HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("Formatting.xls");
+      HSSFSheet sheet = workbook.getSheetAt(0);
+	   
+      HSSFDataFormatter f = new HSSFDataFormatter();
+
+      // This one is one of the nasty auto-locale changing ones...
+      assertEquals("dd/mm/yyyy", sheet.getRow(1).getCell(0).getStringCellValue());
+      assertEquals("m/d/yy",     sheet.getRow(1).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("11/24/06",   f.formatCellValue(sheet.getRow(1).getCell(1)));
+      
+      assertEquals("yyyy/mm/dd", sheet.getRow(2).getCell(0).getStringCellValue());
+      assertEquals("yyyy/mm/dd", sheet.getRow(2).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("2006/11/24", f.formatCellValue(sheet.getRow(2).getCell(1)));
+      
+      assertEquals("yyyy-mm-dd", sheet.getRow(3).getCell(0).getStringCellValue());
+      assertEquals("yyyy\\-mm\\-dd", sheet.getRow(3).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("2006-11-24", f.formatCellValue(sheet.getRow(3).getCell(1)));
+      
+      assertEquals("yy/mm/dd", sheet.getRow(4).getCell(0).getStringCellValue());
+      assertEquals("yy/mm/dd", sheet.getRow(4).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("06/11/24", f.formatCellValue(sheet.getRow(4).getCell(1)));
+      
+      // Another builtin fun one
+      assertEquals("dd/mm/yy", sheet.getRow(5).getCell(0).getStringCellValue());
+      assertEquals("d/m/yy;@", sheet.getRow(5).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("24/11/06", f.formatCellValue(sheet.getRow(5).getCell(1)));
+      
+      assertEquals("dd-mm-yy", sheet.getRow(6).getCell(0).getStringCellValue());
+      assertEquals("dd\\-mm\\-yy", sheet.getRow(6).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("24-11-06", f.formatCellValue(sheet.getRow(6).getCell(1)));
+      
+      
+      // Another builtin fun one
+      assertEquals("nn.nn", sheet.getRow(9).getCell(0).getStringCellValue());
+      assertEquals("General", sheet.getRow(9).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("10.52", f.formatCellValue(sheet.getRow(9).getCell(1)));
+
+      // text isn't quite the format rule...
+      assertEquals("nn.nnn", sheet.getRow(10).getCell(0).getStringCellValue());
+      assertEquals("0.000", sheet.getRow(10).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("10.520", f.formatCellValue(sheet.getRow(10).getCell(1)));
+
+      // text isn't quite the format rule...
+      assertEquals("nn.n", sheet.getRow(11).getCell(0).getStringCellValue());
+      assertEquals("0.0", sheet.getRow(11).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("10.5", f.formatCellValue(sheet.getRow(11).getCell(1)));
+
+      // text isn't quite the format rule...
+      assertEquals("£nn.nn", sheet.getRow(12).getCell(0).getStringCellValue());
+      assertEquals("\"£\"#,##0.00", sheet.getRow(12).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("£10.52", f.formatCellValue(sheet.getRow(12).getCell(1)));
+	}
 
 	private static void log(String msg) {
 		if (false) { // successful tests should be silent

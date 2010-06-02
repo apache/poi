@@ -63,11 +63,11 @@ public final class TestExcelExtractor extends TestCase {
 
 		assertEquals(
 				"Sheet1\n" +
-				"1000.0\t1.0\t5.0\n" +
-				"2000.0\t2.0\n" +
-				"3000.0\t3.0\n" +
-				"4000.0\t4.0\n" +
-				"5000.0\t5.0\n" +
+				"1000\t1\t5\n" +
+				"2000\t2\n" +
+				"3000\t3\n" +
+				"4000\t4\n" +
+				"5000\t5\n" +
 				"Sheet2\nSheet3\n",
 				extractor.getText()
 		);
@@ -76,11 +76,11 @@ public final class TestExcelExtractor extends TestCase {
 
 		assertEquals(
 				"Sheet1\n" +
-				"1000.0\t1.0\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
-				"2000.0\t2.0\n" +
-				"3000.0\t3.0\n" +
-				"4000.0\t4.0\n" +
-				"5000.0\t5.0\n" +
+				"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
+				"2000\t2\n" +
+				"3000\t3\n" +
+				"4000\t4\n" +
+				"5000\t5\n" +
 				"Sheet2\nSheet3\n",
 				extractor.getText()
 		);
@@ -173,18 +173,18 @@ public final class TestExcelExtractor extends TestCase {
 
 		// Check without comments
 		assertEquals(
-				"1.0\tone\n" +
-				"2.0\ttwo\n" +
-				"3.0\tthree\n",
+				"1\tone\n" +
+				"2\ttwo\n" +
+				"3\tthree\n",
 				extractor.getText()
 		);
 
 		// Now with
 		extractor.setIncludeCellComments(true);
 		assertEquals(
-				"1.0\tone Comment by Yegor Kozlov: Yegor Kozlov: first cell\n" +
-				"2.0\ttwo Comment by Yegor Kozlov: Yegor Kozlov: second cell\n" +
-				"3.0\tthree Comment by Yegor Kozlov: Yegor Kozlov: third cell\n",
+				"1\tone Comment by Yegor Kozlov: Yegor Kozlov: first cell\n" +
+				"2\ttwo Comment by Yegor Kozlov: Yegor Kozlov: second cell\n" +
+				"3\tthree Comment by Yegor Kozlov: Yegor Kozlov: third cell\n",
 				extractor.getText()
 		);
 	}
@@ -199,20 +199,65 @@ public final class TestExcelExtractor extends TestCase {
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
 				"Hello\n" +
-				"11.0\t23.0\n"
+				"11\t23\n"
 		));
 
 		assertTrue(padded.startsWith(
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
 				"Hello\n" +
-				"11.0\t\t\t23.0\n"
+				"11\t\t\t23\n"
 		));
 	}
 
+	public void testFormatting() throws Exception {
+      ExcelExtractor extractor = createExtractor("Formatting.xls");
+      extractor.setIncludeBlankCells(false);
+      extractor.setIncludeSheetNames(false);
+      String text = extractor.getText();
+      
+      // Note - not all the formats in the file
+      //  actually quite match what they claim to
+      //  be, as some are auto-local builtins...
+      
+      assertTrue(text.startsWith(
+            "Dates, all 24th November 2006\n"
+      ));
+      assertTrue(
+            text.indexOf(
+               "yyyy/mm/dd\t2006/11/24\n"
+            ) > -1
+      );
+      assertTrue(
+            text.indexOf(
+               "yyyy-mm-dd\t2006-11-24\n"
+            ) > -1
+      );
+      assertTrue(
+            text.indexOf(
+               "dd-mm-yy\t24-11-06\n"
+            ) > -1
+      );
+      
+      assertTrue(
+            text.indexOf(
+               "nn.nn\t10.52\n"
+            ) > -1
+      );
+      assertTrue(
+            text.indexOf(
+               "nn.nnn\t10.520\n"
+            ) > -1
+      );
+      assertTrue(
+            text.indexOf(
+               "£nn.nn\t£10.52\n"
+            ) > -1
+      );
+	}
 
 	/**
-	 * Embded in a non-excel file
+	 * Embeded in a non-excel file
 	 */
 	public void testWithEmbeded() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
