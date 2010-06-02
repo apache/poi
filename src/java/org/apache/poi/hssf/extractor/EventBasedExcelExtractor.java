@@ -18,11 +18,7 @@
 package org.apache.poi.hssf.extractor;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.POIOLE2TextExtractor;
@@ -35,7 +31,6 @@ import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -44,7 +39,6 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -206,7 +200,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 						outputNextStringValue = true;
 						nextRow = frec.getRow();
 					} else {
-						thisText = formatNumberDateCell(frec, frec.getValue());
+						thisText = _ft.formatNumberDateCell(frec); 
 					}
 				}
 				break;
@@ -240,7 +234,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 			case NumberRecord.sid:
 				NumberRecord numrec = (NumberRecord) record;
 				thisRow = numrec.getRow();
-				thisText = formatNumberDateCell(numrec, numrec.getValue());
+				thisText = _ft.formatNumberDateCell(numrec); 
 				break;
 			default:
 				break;
@@ -256,41 +250,6 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 				}
 				_text.append(thisText);
 			}
-		}
-
-		/**
-		 * Formats a number or date cell, be that a real number, or the
-		 *  answer to a formula
-		 */
-		private String formatNumberDateCell(CellValueRecordInterface cell, double value) {
-			// Get the built in format, if there is one
-			int formatIndex = _ft.getFormatIndex(cell);
-			String formatString = _ft.getFormatString(cell);
-
-			if(formatString == null) {
-				return Double.toString(value);
-			}
-			// Is it a date?
-			if(HSSFDateUtil.isADateFormat(formatIndex,formatString) &&
-					HSSFDateUtil.isValidExcelDate(value)) {
-				// Java wants M not m for month
-				formatString = formatString.replace('m','M');
-				// Change \- into -, if it's there
-				formatString = formatString.replaceAll("\\\\-","-");
-
-				// Format as a date
-				Date d = HSSFDateUtil.getJavaDate(value, false);
-				DateFormat df = new SimpleDateFormat(formatString);
-				return df.format(d);
-			}
-			if(formatString == "General") {
-				// Some sort of wierd default
-				return Double.toString(value);
-			}
-
-			// Format as a number
-			DecimalFormat df = new DecimalFormat(formatString);
-			return df.format(value);
 		}
 	}
 }

@@ -158,11 +158,11 @@ public final class TestExcelExtractor extends TestCase {
 
 		text = extractor.getText();
 		assertEquals(
-				"1000.0\t1.0\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
-				"2000.0\t2.0\n" +
-				"3000.0\t3.0\n" +
-				"4000.0\t4.0\n" +
-				"5000.0\t5.0\n",
+				"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
+				"2000\t2\n" +
+				"3000\t3\n" +
+				"4000\t4\n" +
+				"5000\t5\n",
 				text
 		);
 	}
