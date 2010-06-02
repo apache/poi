@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">48494 - have EventBasedExcelExtractor make use of HSSFDataFormatter, so that numbers and dates come out closer to how Excel would render them</action>
            <action dev="POI-DEVELOPERS" type="fix">49096 - add clone support to Chart begin and end records, to allow cloning of more Chart containing sheets</action>
            <action dev="POI-DEVELOPERS" type="add">List attachment names in the output of OutlookTextExtractor (to get attachment contents, use ExtractorFactory as normal)</action>
            <action dev="POI-DEVELOPERS" type="fix">48872 - allow DateFormatter.formatRawCellContents to handle 1904 as well as 1900 dates</action>
