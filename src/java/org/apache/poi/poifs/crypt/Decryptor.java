@@ -16,22 +16,22 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndian;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *  @author Maxim Valyanskiy
@@ -104,7 +104,7 @@ public class Decryptor {
         System.arraycopy(x1, 0, x3, 0, x1.length);
         System.arraycopy(x2, 0, x3, x1.length, x2.length);
 
-        return Arrays.copyOf(x3, requiredKeyLength);
+        return truncateOrPad(x3, requiredKeyLength);
     }
 
     public boolean verifyPassword(String password) throws GeneralSecurityException {
@@ -117,9 +117,25 @@ public class Decryptor {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         byte[] calcVerifierHash = sha1.digest(verifier);
 
-        byte[] verifierHash = Arrays.copyOf(cipher.doFinal(info.getVerifier().getVerifierHash()), calcVerifierHash.length);
+        byte[] verifierHash = truncateOrPad(cipher.doFinal(info.getVerifier().getVerifierHash()), calcVerifierHash.length);
 
         return Arrays.equals(calcVerifierHash, verifierHash);
+    }
+    
+    /**
+     * Returns a byte array of the requested length,
+     *  truncated or zero padded as needed.
+     * Behaves like Arrays.copyOf in Java 1.6
+     */
+    private byte[] truncateOrPad(byte[] source, int length) {
+       byte[] result = new byte[length];
+       System.arraycopy(source, 0, result, 0, Math.min(length, source.length));
+       if(length > source.length) {
+          for(int i=source.length; i<length; i++) {
+             result[i] = 0;
+          }
+       }
+       return result;
     }
 
     private Cipher getCipher() throws GeneralSecurityException {
