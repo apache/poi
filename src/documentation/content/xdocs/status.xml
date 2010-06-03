@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Parse the HSMF headers chunk if present, and use it to find Dates in text extraction if needed</action>
            <action dev="POI-DEVELOPERS" type="fix">48494 - detect and support time formats like HH:MM;HH:MM</action>
            <action dev="POI-DEVELOPERS" type="fix">48494 - have ExcelExtractor make use of HSSFDataFormatter, so that numbers and dates come out closer to how Excel would render them</action>
            <action dev="POI-DEVELOPERS" type="fix">48494 - have EventBasedExcelExtractor make use of HSSFDataFormatter, so that numbers and dates come out closer to how Excel would render them</action>

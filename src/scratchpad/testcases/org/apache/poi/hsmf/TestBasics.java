@@ -76,6 +76,35 @@ public final class TestBasics extends TestCase {
 	}
 	
 	/**
+	 * Test message headers
+	 */
+	public void testHeaders() throws Exception {
+	   // Simple email first
+	   assertEquals(26, simple.getHeaders().length);
+	   assertTrue(simple.getHeaders()[0].startsWith("Return-path:"));
+      assertTrue(simple.getHeaders()[1].equals("Envelope-to: travis@overwrittenstack.com"));
+      assertTrue(simple.getHeaders()[25].startsWith("X-Antivirus-Scanner: Clean"));
+      
+      // Quick doesn't have them
+      try {
+         quick.getHeaders();
+         fail();
+      } catch(ChunkNotFoundException e) {}
+      
+      // Attachments doesn't have them
+      try {
+         attachments.getHeaders();
+         fail();
+      } catch(ChunkNotFoundException e) {}
+      
+      // Outlook30 has some
+      assertEquals(33, outlook30.getHeaders().length);
+      assertTrue(outlook30.getHeaders()[0].startsWith("Microsoft Mail Internet Headers"));
+      assertTrue(outlook30.getHeaders()[1].startsWith("x-mimeole:"));
+      assertTrue(outlook30.getHeaders()[32].startsWith("\t\"Williams")); // May need better parsing in future
+	}
+	
+	/**
 	 * Test attachments
 	 */
 	public void testAttachments() throws Exception {
