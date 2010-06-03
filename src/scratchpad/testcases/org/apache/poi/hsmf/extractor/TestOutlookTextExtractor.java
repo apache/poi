@@ -84,7 +84,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: test message\n");
-      assertEquals(-1, text.indexOf("Date:"));
+      assertContains(text, "Date: Fri, 6 Jul 2007 01:27:17 -0400\n");
       assertContains(text, "This is a test message.");
    }
 
@@ -171,7 +171,7 @@ public final class TestOutlookTextExtractor extends TestCase {
                "nick.burch@alfresco.com; 'Roy Wetherall' <roy.wetherall@alfresco.com>\n");
          assertEquals(-1, text.indexOf("BCC:"));
          assertContains(text, "Subject: This is a test message please ignore\n");
-         assertEquals(-1, text.indexOf("Date:"));
+         assertContains(text, "Date: Mon, 11 Jan 2010 16:25:07 +0000 (GMT)\n");
          assertContains(text, "The quick brown fox jumps over the lazy dog");
       }
    }

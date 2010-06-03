@@ -87,10 +87,30 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
          handleEmails(s, "BCC", msg.getDisplayBCC(), emails);
       } catch(ChunkNotFoundException e) {}
       
+      // Date - try two ways to find it
       try {
+         // First try via the proper chunk
          SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
          s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
-      } catch(ChunkNotFoundException e) {}
+      } catch(ChunkNotFoundException e) {
+         try {
+            // Failing that try via the raw headers 
+            String[] headers = msg.getHeaders();
+            for(String header: headers) {
+               if(header.toLowerCase().startsWith("date:")) {
+                  s.append(
+                        "Date:" + 
+                        header.substring(header.indexOf(':')+1) +
+                        "\n"
+                  );
+                  break;
+               }
+            }
+         } catch(ChunkNotFoundException he) {
+            // We can't find the date, sorry...
+         }
+      }
+      
       try {
          s.append("Subject: " + msg.getSubject() + "\n");
       } catch(ChunkNotFoundException e) {}

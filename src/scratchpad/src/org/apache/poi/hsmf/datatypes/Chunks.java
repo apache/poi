@@ -35,6 +35,7 @@ public final class Chunks implements ChunkGroup {
    // 0x0050 -> 0x006F seem to be routing info or similar
    public static final int CONVERSATION_TOPIC  = 0x0070;
    public static final int SENT_BY_SERVER_TYPE = 0x0075;
+   public static final int MESSAGE_HEADERS     = 0x007D;
    // RECEIVEDEMAIL = 76
    public static final int DISPLAY_TO          = 0x0E04;
    public static final int DISPLAY_FROM        = 0x0C1A;
@@ -66,6 +67,8 @@ public final class Chunks implements ChunkGroup {
    public StringChunk conversationTopic;
    /** Type of server that the message originated from (SMTP, etc). */
    public StringChunk sentByServerType;
+   /** The email headers */
+   public StringChunk messageHeaders;
    /** TODO */
    public MessageSubmissionChunk submissionChunk; 
    /** TODO */
@@ -103,6 +106,9 @@ public final class Chunks implements ChunkGroup {
          break;
       case SENT_BY_SERVER_TYPE:
          sentByServerType = (StringChunk)chunk;
+         break;
+      case MESSAGE_HEADERS:
+         messageHeaders = (StringChunk)chunk;
          break;
       case DISPLAY_TO:
          displayToChunk = (StringChunk)chunk;

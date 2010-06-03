@@ -282,6 +282,17 @@ public class MAPIMessage extends POIDocument {
       return names;
    }
 
+   
+   /**
+    * 
+    */
+   public String[] getHeaders() throws ChunkNotFoundException {
+      String headers = getStringFromChunk(mainChunks.messageHeaders);
+      if(headers == null) {
+         return null;
+      }
+      return headers.split("\\r?\\n");
+   }
 
    /**
     * Gets the conversation topic of the parsed Outlook Message.
