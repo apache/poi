@@ -19,6 +19,8 @@ package org.apache.poi.ss.usermodel;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.RoundingMode;
 import java.text.*;
 
@@ -415,7 +417,7 @@ public class DataFormatter {
 
         try {
             DecimalFormat df = new DecimalFormat(sb.toString(), decimalSymbols);
-            df.setRoundingMode(RoundingMode.HALF_UP);
+            setExcelStyleRoundingMode(df);
             return df;
         } catch(IllegalArgumentException iae) {
 
@@ -659,6 +661,30 @@ public class DataFormatter {
         result.setParseIntegerOnly(true);
         return result;
     }
+    
+    /**
+     * Enables excel style rounding mode (round half up)
+     *  on the Decimal Format if possible.
+     * This will work for Java 1.6, but isn't possible
+     *  on Java 1.5. 
+     */
+    public static void setExcelStyleRoundingMode(DecimalFormat format) {
+       try {
+          Method srm = format.getClass().getMethod("setRoundingMode", RoundingMode.class);
+          srm.invoke(format, RoundingMode.HALF_UP);
+       } catch(NoSuchMethodException e) {
+          // Java 1.5
+       } catch(IllegalAccessException iae) {
+          // Shouldn't happen
+          throw new RuntimeException("Unable to set rounding mode", iae);
+       } catch(InvocationTargetException ite) {
+          // Shouldn't happen
+          throw new RuntimeException("Unable to set rounding mode", ite);
+       } catch(SecurityException se) {
+          // Not much we can do here
+       }
+    }
+    
     /**
      * Format class for Excel's SSN format. This class mimics Excel's built-in
      * SSN formatting.

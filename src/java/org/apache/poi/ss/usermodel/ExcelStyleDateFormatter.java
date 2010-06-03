@@ -43,8 +43,8 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
    private DecimalFormat format1digit = new DecimalFormat("0");
    private DecimalFormat format2digits = new DecimalFormat("00");
    {
-      format1digit.setRoundingMode(RoundingMode.HALF_UP);
-      format2digits.setRoundingMode(RoundingMode.HALF_UP);
+      DataFormatter.setExcelStyleRoundingMode(format1digit);
+      DataFormatter.setExcelStyleRoundingMode(format2digits);
    }
    
    private double dateToBeFormatted = 0.0;
