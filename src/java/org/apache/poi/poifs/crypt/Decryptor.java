@@ -26,6 +26,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -47,9 +48,16 @@ public class Decryptor {
 
     private void generatePasswordHash(String password) throws NoSuchAlgorithmException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        
+        byte[] passwordBytes;
+        try {
+           passwordBytes = password.getBytes("UTF-16LE");
+        } catch(UnsupportedEncodingException e) {
+           throw new RuntimeException("Your JVM is broken - UTF16 not found!");
+        }
 
         sha1.update(info.getVerifier().getSalt());
-        byte[] hash = sha1.digest(password.getBytes(Charset.forName("UTF-16LE")));
+        byte[] hash = sha1.digest(passwordBytes);
 
         byte[] iterator = new byte[4];
         for (int i = 0; i<50000; i++) {
