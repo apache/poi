@@ -26,7 +26,6 @@ import java.util.GregorianCalendar;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.extractor.TestExtractorFactory;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -175,7 +174,7 @@ public final class TestOutlookTextExtractor extends TestCase {
    }
    
    /**
-    * See also {@link TestExtractorFactory#testEmbeded()}
+    * See also {@link org.apache.poi.extractor.TestExtractorFactory#testEmbeded()}
     */
    public void testWithAttachments() throws Exception {
       POIFSFileSystem simple = new POIFSFileSystem(
