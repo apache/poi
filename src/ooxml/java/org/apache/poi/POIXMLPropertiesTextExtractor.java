@@ -20,6 +20,8 @@ package org.apache.poi;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
+import java.util.Date;
+
 /**
  * A {@link POITextExtractor} for returning the textual
  *  content of the OOXML file properties, eg author
@@ -41,6 +43,24 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	public POIXMLPropertiesTextExtractor(POIXMLTextExtractor otherExtractor) {
 		super(otherExtractor.getDocument());
 	}
+	
+   private void appendIfPresent(StringBuffer text, String thing, boolean value) {
+      appendIfPresent(text, thing, Boolean.toString(value));
+   }
+   private void appendIfPresent(StringBuffer text, String thing, int value) {
+      appendIfPresent(text, thing, Integer.toString(value));
+   }
+   private void appendIfPresent(StringBuffer text, String thing, Date value) {
+      if(value == null) { return; }
+      appendIfPresent(text, thing, value.toString());
+   }
+	private void appendIfPresent(StringBuffer text, String thing, String value) {
+	   if(value == null) { return; }
+	   text.append(thing);
+	   text.append(" = ");
+	   text.append(value);
+	   text.append("\n");
+	}
 
 	/**
 	 * Returns the core document properties, eg author
@@ -50,25 +70,26 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		PackagePropertiesPart props =
 			getDocument().getProperties().getCoreProperties().getUnderlyingProperties();
 
-		text.append("Category = " + props.getCategoryProperty().getValue() + "\n");
-		text.append("ContentStatus = " + props.getContentStatusProperty().getValue() + "\n");
-		text.append("ContentType = " + props.getContentTypeProperty().getValue() + "\n");
-		text.append("Created = " + props.getCreatedProperty().getValue() + "\n");
-		text.append("CreatedString = " + props.getCreatedPropertyString() + "\n");
-		text.append("Creator = " + props.getCreatorProperty().getValue() + "\n");
-		text.append("Description = " + props.getDescriptionProperty().getValue() + "\n");
-		text.append("Identifier = " + props.getIdentifierProperty().getValue() + "\n");
-		text.append("Keywords = " + props.getKeywordsProperty().getValue() + "\n");
-		text.append("Language = " + props.getLanguageProperty().getValue() + "\n");
-		text.append("LastModifiedBy = " + props.getLastModifiedByProperty().getValue() + "\n");
-		text.append("LastPrinted = " + props.getLastPrintedProperty().getValue() + "\n");
-		text.append("LastPrintedString = " + props.getLastPrintedPropertyString() + "\n");
-		text.append("Modified = " + props.getModifiedProperty().getValue() + "\n");
-		text.append("ModifiedString = " + props.getModifiedPropertyString() + "\n");
-		text.append("Revision = " + props.getRevisionProperty().getValue() + "\n");
-		text.append("Subject = " + props.getSubjectProperty().getValue() + "\n");
-		text.append("Title = " + props.getTitleProperty().getValue() + "\n");
-		text.append("Version = " + props.getVersionProperty().getValue() + "\n");
+		appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
+		appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
+		appendIfPresent(text, "ContentStatus", props.getContentStatusProperty().getValue());
+		appendIfPresent(text, "ContentType", props.getContentTypeProperty().getValue());
+		appendIfPresent(text, "Created", props.getCreatedProperty().getValue());
+		appendIfPresent(text, "CreatedString", props.getCreatedPropertyString());
+		appendIfPresent(text, "Creator", props.getCreatorProperty().getValue());
+		appendIfPresent(text, "Description", props.getDescriptionProperty().getValue());
+		appendIfPresent(text, "Identifier", props.getIdentifierProperty().getValue());
+		appendIfPresent(text, "Keywords", props.getKeywordsProperty().getValue());
+		appendIfPresent(text, "Language", props.getLanguageProperty().getValue());
+		appendIfPresent(text, "LastModifiedBy", props.getLastModifiedByProperty().getValue());
+		appendIfPresent(text, "LastPrinted", props.getLastPrintedProperty().getValue());
+		appendIfPresent(text, "LastPrintedString", props.getLastPrintedPropertyString());
+		appendIfPresent(text, "Modified", props.getModifiedProperty().getValue());
+		appendIfPresent(text, "ModifiedString", props.getModifiedPropertyString());
+		appendIfPresent(text, "Revision", props.getRevisionProperty().getValue());
+		appendIfPresent(text, "Subject", props.getSubjectProperty().getValue());
+		appendIfPresent(text, "Title", props.getTitleProperty().getValue());
+		appendIfPresent(text, "Version", props.getVersionProperty().getValue());
 
 		return text.toString();
 	}
@@ -81,21 +102,21 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
 			props = getDocument().getProperties().getExtendedProperties().getUnderlyingProperties();
 
-		text.append("Application = " + props.getApplication() + "\n");
-		text.append("AppVersion = " + props.getAppVersion() + "\n");
-		text.append("Characters = " + props.getCharacters() + "\n");
-		text.append("CharactersWithSpaces = " + props.getCharactersWithSpaces() + "\n");
-		text.append("Company = " + props.getCompany() + "\n");
-		text.append("HyperlinkBase = " + props.getHyperlinkBase() + "\n");
-		text.append("HyperlinksChanged = " + props.getHyperlinksChanged() + "\n");
-		text.append("Lines = " + props.getLines() + "\n");
-		text.append("LinksUpToDate = " + props.getLinksUpToDate() + "\n");
-		text.append("Manager = " + props.getManager() + "\n");
-		text.append("Pages = " + props.getPages() + "\n");
-		text.append("Paragraphs = " + props.getParagraphs() + "\n");
-		text.append("PresentationFormat = " + props.getPresentationFormat() + "\n");
-		text.append("Template = " + props.getTemplate() + "\n");
-		text.append("TotalTime = " + props.getTotalTime() + "\n");
+		appendIfPresent(text, "Application", props.getApplication());
+		appendIfPresent(text, "AppVersion", props.getAppVersion());
+		appendIfPresent(text, "Characters", props.getCharacters());
+		appendIfPresent(text, "CharactersWithSpaces", props.getCharactersWithSpaces());
+		appendIfPresent(text, "Company", props.getCompany());
+		appendIfPresent(text, "HyperlinkBase", props.getHyperlinkBase());
+		appendIfPresent(text, "HyperlinksChanged", props.getHyperlinksChanged());
+		appendIfPresent(text, "Lines", props.getLines());
+		appendIfPresent(text, "LinksUpToDate", props.getLinksUpToDate());
+		appendIfPresent(text, "Manager", props.getManager());
+		appendIfPresent(text, "Pages", props.getPages());
+		appendIfPresent(text, "Paragraphs", props.getParagraphs());
+		appendIfPresent(text, "PresentationFormat", props.getPresentationFormat());
+		appendIfPresent(text, "Template", props.getTemplate());
+		appendIfPresent(text, "TotalTime", props.getTotalTime());
 
 		return text.toString();
 	}
