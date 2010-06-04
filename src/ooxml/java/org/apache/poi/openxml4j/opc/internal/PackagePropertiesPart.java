@@ -583,10 +583,15 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (d == null) {
 			return "";
 		}
+		Date date = d.getValue();
+		if (date == null) {
+		   return "";
+		}
+		
 		SimpleDateFormat df = new SimpleDateFormat(
 				"yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		return df.format(d.getValue());
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return df.format(date);
 	}
 
 	@Override
