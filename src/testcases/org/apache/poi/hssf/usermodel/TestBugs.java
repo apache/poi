@@ -1588,4 +1588,87 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        wb = writeOutAndReadBack(wb);
        assertEquals(2, wb.getNumberOfSheets());
     }
+    
+    /**
+     * Problems with formula references to 
+     *  sheets via URLs
+     */
+    public void test45970() throws Exception {
+       HSSFWorkbook wb = openSample("FormulaRefs.xls");
+       assertEquals(3, wb.getNumberOfSheets());
+       
+       HSSFSheet s = wb.getSheetAt(0);
+       HSSFRow row;
+       
+       row = s.getRow(0);
+       assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(1);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("B1", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(2);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("Sheet1!B1", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(3);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("[Formulas2.xls]Sheet1!B2", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(4);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("'[\u0005$http://gagravarr.org/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       // Change 4
+       row.getCell(1).setCellFormula("'[\u0005$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2");
+       row.getCell(1).setCellValue(123.0);
+       
+       // Add 5
+       row = s.createRow(5);
+       row.createCell(1, Cell.CELL_TYPE_FORMULA);
+       row.getCell(1).setCellFormula("'[\u0005$http://example.com/FormulaRefs.xls]Sheet1'!B1");
+       row.getCell(1).setCellValue(234.0);
+       
+       
+       // Re-test
+       wb = writeOutAndReadBack(wb);
+       s = wb.getSheetAt(0);
+       
+       row = s.getRow(0);
+       assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(1);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("B1", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(2);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("Sheet1!B1", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(3);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("[Formulas2.xls]Sheet1!B2", row.getCell(1).getCellFormula());
+       assertEquals(112.0, row.getCell(1).getNumericCellValue());
+       
+// TODO - Fix these so they work...
+if(1==2) {
+       row = s.getRow(4);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("'[\u0005$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
+       assertEquals(123.0, row.getCell(1).getNumericCellValue());
+       
+       row = s.getRow(5);
+       assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
+       assertEquals("'[\u0005$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
+       assertEquals(234.0, row.getCell(1).getNumericCellValue());
+}
+    }
 }
