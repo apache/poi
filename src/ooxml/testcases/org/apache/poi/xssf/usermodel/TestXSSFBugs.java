@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -329,5 +330,71 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("123", df.formatCellValue(r.getCell(2)));
        assertEquals("123", df.formatRawCellContents(123.0, -1, "@"));
        assertEquals("123", df.formatRawCellContents(123.0, -1, "General"));
+    }
+    
+    /**
+     * Ensures that XSSF and HSSF agree with each other,
+     *  and with the docs on when fetching the wrong
+     *  kind of value from a Formula cell
+     */
+    public void test47815() {
+       Workbook[] wbs = new Workbook[] {
+             new HSSFWorkbook(),
+             new XSSFWorkbook()
+       };
+       for(Workbook wb : wbs) {
+          Sheet s = wb.createSheet();
+          Row r = s.createRow(0);
+          
+          // Setup
+          Cell cn = r.createCell(0, Cell.CELL_TYPE_NUMERIC);
+          cn.setCellValue(1.2);
+          Cell cs = r.createCell(1, Cell.CELL_TYPE_STRING);
+          cs.setCellValue("Testing");
+          
+          Cell cfn = r.createCell(2, Cell.CELL_TYPE_FORMULA);
+          cfn.setCellFormula("A1");  
+          Cell cfs = r.createCell(3, Cell.CELL_TYPE_FORMULA);
+          cfs.setCellFormula("B1");
+          
+          FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+          assertEquals(Cell.CELL_TYPE_NUMERIC, fe.evaluate(cfn).getCellType());
+          assertEquals(Cell.CELL_TYPE_STRING, fe.evaluate(cfs).getCellType());
+          fe.evaluateFormulaCell(cfn);
+          fe.evaluateFormulaCell(cfs);
+          
+          // Now test
+          assertEquals(Cell.CELL_TYPE_NUMERIC, cn.getCellType());
+          assertEquals(Cell.CELL_TYPE_STRING, cs.getCellType());
+          assertEquals(Cell.CELL_TYPE_FORMULA, cfn.getCellType());
+          assertEquals(Cell.CELL_TYPE_NUMERIC, cfn.getCachedFormulaResultType());
+          assertEquals(Cell.CELL_TYPE_FORMULA, cfs.getCellType());
+          assertEquals(Cell.CELL_TYPE_STRING, cfs.getCachedFormulaResultType());
+          
+          // Different ways of retrieving
+          assertEquals(1.2, cn.getNumericCellValue());
+          try {
+             cn.getRichStringCellValue();
+             fail();
+          } catch(IllegalStateException e) {}
+          
+          assertEquals("Testing", cs.getStringCellValue());
+          try {
+             cs.getNumericCellValue();
+             fail();
+          } catch(IllegalStateException e) {}
+          
+          assertEquals(1.2, cfn.getNumericCellValue());
+          try {
+             cfn.getRichStringCellValue();
+             fail();
+          } catch(IllegalStateException e) {}
+          
+          assertEquals("Testing", cfs.getStringCellValue());
+          try {
+             cfs.getNumericCellValue();
+             fail();
+          } catch(IllegalStateException e) {}
+       }
     }
 }

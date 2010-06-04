@@ -195,7 +195,15 @@ public final class XSSFCell implements Cell {
                 return 0.0;
             case CELL_TYPE_FORMULA:
             case CELL_TYPE_NUMERIC:
-                return _cell.isSetV() ? Double.parseDouble(_cell.getV()) : 0.0;
+                if(_cell.isSetV()) {
+                   try {
+                      return Double.parseDouble(_cell.getV());
+                   } catch(NumberFormatException e) {
+                      throw typeMismatch(CELL_TYPE_NUMERIC, CELL_TYPE_STRING, false);
+                   }
+                } else {
+                   return 0.0;
+                }
             default:
                 throw typeMismatch(CELL_TYPE_NUMERIC, cellType, false);
         }
@@ -223,7 +231,7 @@ public final class XSSFCell implements Cell {
      * Get the value of the cell as a string
      * <p>
      * For numeric cells we throw an exception. For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String.
+     * For formulaCells that are not string Formulas, we throw an exception
      * </p>
      * @return the value of the cell as a string
      */
@@ -236,7 +244,7 @@ public final class XSSFCell implements Cell {
      * Get the value of the cell as a XSSFRichTextString
      * <p>
      * For numeric cells we throw an exception. For blank cells we return an empty string.
-     * For formula cells we return the pre-calculated value.
+     * For formula cells we return the pre-calculated value if a string, otherwise an exception
      * </p>
      * @return the value of the cell as a XSSFRichTextString
      */

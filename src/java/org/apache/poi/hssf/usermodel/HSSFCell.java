@@ -700,7 +700,7 @@ public class HSSFCell implements Cell {
     /**
      * get the value of the cell as a string - for numeric cells we throw an exception.
      * For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String
+     * For formulaCells that are not string Formulas, we throw an exception
      */
     public String getStringCellValue()
     {
@@ -711,7 +711,7 @@ public class HSSFCell implements Cell {
     /**
      * get the value of the cell as a string - for numeric cells we throw an exception.
      * For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String
+     * For formulaCells that are not string Formulas, we throw an exception
      */
     public HSSFRichTextString getRichStringCellValue() {
 

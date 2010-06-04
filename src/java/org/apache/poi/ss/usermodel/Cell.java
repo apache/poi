@@ -257,7 +257,7 @@ public interface Cell {
      * Get the value of the cell as a XSSFRichTextString
      * <p>
      * For numeric cells we throw an exception. For blank cells we return an empty string.
-     * For formula cells we return the pre-calculated value.
+     * For formula cells we return the pre-calculated value if a string, otherwise an exception.
      * </p>
      * @return the value of the cell as a XSSFRichTextString
      */
@@ -267,7 +267,7 @@ public interface Cell {
      * Get the value of the cell as a string
      * <p>
      * For numeric cells we throw an exception. For blank cells we return an empty string.
-     * For formulaCells that are not string Formulas, we return empty String.
+     * For formulaCells that are not string Formulas, we throw an exception.
      * </p>
      * @return the value of the cell as a string
      */
