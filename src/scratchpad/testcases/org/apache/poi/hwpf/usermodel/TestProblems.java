@@ -161,4 +161,41 @@ public final class TestProblems extends HWPFTestCase {
 		HWPFDocument doc2 = writeOutAndRead(doc);
 		assertEquals("Nick Burch", doc2.getSummaryInformation().getAuthor());
 	}
+	
+	/**
+	 * Test for reading paragraphs from Range after replacing some 
+	 * text in this Range.
+	 * Bug #45269
+	 */
+	public void testReadParagraphsAfterReplaceText()throws Exception{
+    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45269.doc");
+    Range range = doc.getRange();
+    
+    String toFind = "campo1";
+    String longer = " foi porraaaaa ";
+    String shorter = " foi ";
+    
+    //check replace with longer text
+    for (int x = 0; x < range.numParagraphs(); x++) {
+      Paragraph para = range.getParagraph(x);
+      int offset = para.text().indexOf(toFind);
+      if (offset >= 0) {
+          para.replaceText(toFind, longer, offset);
+          assertEquals(offset, para.text().indexOf(longer));
+      }
+    }
+    
+  	doc = HWPFTestDataSamples.openSampleFile("Bug45269.doc");
+   range = doc.getRange();
+    
+    //check replace with shorter text
+    for (int x = 0; x < range.numParagraphs(); x++) {
+      Paragraph para = range.getParagraph(x);
+      int offset = para.text().indexOf(toFind);
+      if (offset >= 0) {
+          para.replaceText(toFind, shorter, offset);
+          assertEquals(offset, para.text().indexOf(shorter));
+      }
+    }
+	}
 }

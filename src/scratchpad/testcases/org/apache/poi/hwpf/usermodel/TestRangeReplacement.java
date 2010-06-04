@@ -85,12 +85,16 @@ public final class TestRangeReplacement extends TestCase {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
+		// Has one section
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());
 
+		// The first section has 5 paragraphs
 		Section section = range.getSection(0);
 		assertEquals(5, section.numParagraphs());
 
+		
+		// Change some text
 		Paragraph para = section.getParagraph(2);
 
 		String text = para.text();
@@ -101,12 +105,14 @@ public final class TestRangeReplacement extends TestCase {
 
 		para.replaceText(searchText, replacementText, offset);
 
+		// Ensure we still have one section, 5 paragraphs
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(4, section.numParagraphs());
+		assertEquals(5, section.numParagraphs());
 		para = section.getParagraph(2);
 
+		// Ensure the text is what we should now have
 		text = para.text();
 		assertEquals(expectedText2, text);
 	}
