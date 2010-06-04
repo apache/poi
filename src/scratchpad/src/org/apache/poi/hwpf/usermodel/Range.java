@@ -745,8 +745,9 @@ public class Range { // TODO -instantiable superclass
 
 		subRange.insertBefore(pValue);
 
-		if (subRange.getEndOffset() != previousEndOffset)
-			_end += (subRange.getEndOffset() - previousEndOffset);
+		if (subRange.getEndOffset() != previousEndOffset) {
+			adjustForInsert(subRange.getEndOffset() - previousEndOffset);
+		}
 
 		// re-create the sub-range so we can delete it
 		subRange = new Range((absPlaceHolderIndex + pValue.length()), (absPlaceHolderIndex
