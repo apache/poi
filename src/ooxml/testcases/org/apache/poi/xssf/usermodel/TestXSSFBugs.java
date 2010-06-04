@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -296,5 +297,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           Font c = wb.createFont();
           assertEquals(startingFonts+3, wb.getNumberOfFonts());
        }
+    }
+    
+    /**
+     * Ensure General and @ format are working properly
+     *  for integers 
+     */
+    public void test47490() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GeneralFormatTests.xlsx");
+       Sheet s = wb.getSheetAt(1);
+       Row r;
+       DataFormatter df = new DataFormatter();
+       
+       r = s.getRow(1);
+       assertEquals(1.0, r.getCell(2).getNumericCellValue());
+       assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+       assertEquals("1", df.formatCellValue(r.getCell(2)));
+       assertEquals("1", df.formatRawCellContents(1.0, -1, "@"));
+       assertEquals("1", df.formatRawCellContents(1.0, -1, "General"));
+              
+       r = s.getRow(2);
+       assertEquals(12.0, r.getCell(2).getNumericCellValue());
+       assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+       assertEquals("12", df.formatCellValue(r.getCell(2)));
+       assertEquals("12", df.formatRawCellContents(12.0, -1, "@"));
+       assertEquals("12", df.formatRawCellContents(12.0, -1, "General"));
+       
+       r = s.getRow(3);
+       assertEquals(123.0, r.getCell(2).getNumericCellValue());
+       assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+       assertEquals("123", df.formatCellValue(r.getCell(2)));
+       assertEquals("123", df.formatRawCellContents(123.0, -1, "@"));
+       assertEquals("123", df.formatRawCellContents(123.0, -1, "General"));
     }
 }
