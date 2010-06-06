@@ -31,8 +31,7 @@ import org.apache.poi.util.StringUtil;
  * <P>
  * This record part specifies Protection data for a sheet, stored
  *  as part of a Shared Feature. It can be found in records such
- *  as {@link FeatRecord}, {@link Feat11Record} or
- *  {@link Feat12Record}  
+ *  as {@link FeatRecord}
  */
 public final class FeatProtection implements SharedFeature {
 	public static long NO_SELF_RELATIVE_SECURITY_FEATURE = 0;

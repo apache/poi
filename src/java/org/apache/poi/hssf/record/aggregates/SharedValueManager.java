@@ -154,12 +154,6 @@ public final class SharedValueManager {
 	}
 
 	/**
-	 * @param firstCells
-	 * @param recs list of sheet records (possibly contains records for other parts of the Excel file)
-	 * @param startIx index of first row/cell record for current sheet
-	 * @param endIx one past index of last row/cell record for current sheet.  It is important
-	 * that this code does not inadvertently collect <tt>SharedFormulaRecord</tt>s from any other
-	 * sheet (which could happen if endIx is chosen poorly).  (see bug 44449)
 	 */
 	public static SharedValueManager create(SharedFormulaRecord[] sharedFormulaRecords,
 			CellReference[] firstCells, ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {

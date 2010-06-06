@@ -187,8 +187,7 @@ public class Table extends POIXMLDocumentPart {
 	}
 
 	/**
-	 *  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
-	 * @return 
+	 * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
 	 */
 	public long getNumerOfMappedColumns(){
 		return ctTable.getTableColumns().getCount();
@@ -196,9 +195,9 @@ public class Table extends POIXMLDocumentPart {
 	
 	
 	/**
-	 * The reference for the cell in the top-left part of the table 
+	 * @return The reference for the cell in the top-left part of the table
 	 * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
-	 * @return
+	 *
 	 */
 	public CellReference getStartCellReference() {
 		
@@ -212,9 +211,9 @@ public class Table extends POIXMLDocumentPart {
 	}
 	
 	/**
-	 * The reference for the cell in the bottom-right part of the table
+	 * @return The reference for the cell in the bottom-right part of the table
 	 * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
-	 * @return
+	 *
 	 */
 	public CellReference getEndCellReference() {
 		
@@ -230,8 +229,8 @@ public class Table extends POIXMLDocumentPart {
 	
 	
 	/**
-	 * Gets the total number of rows in the selection. (Note: in this version autofiltering is ignored)
-	 * @return 
+	 *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
+	 *
 	 */
 	public int getRowCount(){
 		

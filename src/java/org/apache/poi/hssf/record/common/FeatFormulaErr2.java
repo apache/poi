@@ -30,8 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * <P>
  * This record part specifies Formula Evaluation & Error Ignoring data 
  *  for a sheet, stored as part of a Shared Feature. It can be found in 
- *  records such as {@link FeatRecord}, {@link Feat11Record} or
- *  {@link Feat12Record}.
+ *  records such as {@link FeatRecord}.
  * For the full meanings of the flags, see pages 669 and 670
  *  of the Excel binary file format documentation.
  */

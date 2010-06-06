@@ -103,16 +103,16 @@ public class MessageSubmissionChunk extends Chunk {
    }
    
    /**
-    * Returns the date that the server accepted the
+    * @return the date that the server accepted the
     *  message, as found from the message ID it generated.
-    * @return
+    *
     */
    public Calendar getAcceptedAtTime() {
       return date;
    }
    
    /**
-    * Returns the full ID that the server generated when
+    * @return the full ID that the server generated when
     *  it accepted the message.
     */
    public String getSubmissionId() {

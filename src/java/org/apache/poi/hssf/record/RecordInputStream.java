@@ -431,7 +431,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	}
 
     /**
-     @requrn sid of next record. Can be called after hasNextRecord()  
+     @return sid of next record. Can be called after hasNextRecord()
      */
     public int getNextSid() {
         return _nextSid;

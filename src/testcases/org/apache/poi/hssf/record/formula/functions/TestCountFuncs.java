@@ -236,7 +236,7 @@ public final class TestCountFuncs extends TestCase {
 	}
 
 	/**
-	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(Eval, int, short)}
+	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(org.apache.poi.hssf.record.formula.eval.ValueEval, int, int)}}
 	 */
 	public void testCountifAreaCriteria() {
 		int srcColIx = 2; // anything but column A

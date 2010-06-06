@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
- * Tests for {@link Find}
+ * Tests for {@link Financed}
  * 
  * @author Torstein Svendsen (torstei@officenet.no)
  */

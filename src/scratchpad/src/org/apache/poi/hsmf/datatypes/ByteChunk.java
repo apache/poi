@@ -68,7 +68,7 @@ public class ByteChunk extends Chunk {
     * If your data isn't in fact stored as basically
     *  ASCII, don't expect this to return much of any
     *  sense.... 
-    * @return
+    * @return  the data formatted as a string
     */
    public String getAs7bitString() {
       return StringChunk.parseAs7BitData(value);

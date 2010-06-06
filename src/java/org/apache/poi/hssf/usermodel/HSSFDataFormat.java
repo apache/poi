@@ -96,7 +96,7 @@ public final class HSSFDataFormat implements DataFormat {
 	 * Get the format index that matches the given format
 	 *  string, creating a new format entry if required.
 	 * Aliases text to the proper format as required.
-	 * @param format string matching a built in format
+	 * @param pFormat string matching a built in format
 	 * @return index of format.
 	 */
 	public short getFormat(String pFormat) {
