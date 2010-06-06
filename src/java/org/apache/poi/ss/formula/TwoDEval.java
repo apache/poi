@@ -21,7 +21,7 @@ import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
- * Common interface of {@link AreaEval} and {@link ArrayEval}
+ * Common interface of {@link AreaEval} and {@link org.apache.poi.hssf.record.formula.eval.AreaEvalBase}
  *
  * @author Josh Micich
  */

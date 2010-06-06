@@ -34,8 +34,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * a static id matching one that you have registered in your HSSFRequest will be passed
  * to your associated HSSFListener.
  *
- * @see org.apache.poi.hssf.dev.EFHSSF
- *
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Carey Sublette  (careysub@earthling.net)
  */
@@ -59,7 +57,7 @@ public class HSSFEventFactory {
     * Processes a file into essentially record events.
     *
     * @param req an Instance of HSSFRequest which has your registered listeners
-    * @param fs  a POIFS filesystem containing your workbook
+    * @param dir  a DirectoryNode containing your workbook
     */
    public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
       InputStream in = dir.createDocumentInputStream("Workbook");
@@ -83,7 +81,7 @@ public class HSSFEventFactory {
 	 * Processes a file into essentially record events.
 	 *
 	 * @param req an Instance of HSSFRequest which has your registered listeners
-	 * @param fs  a POIFS filesystem containing your workbook
+	 * @param dir  a DirectoryNode containing your workbook
 	 * @return    numeric user-specified result code.
 	 */
 	public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir)

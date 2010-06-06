@@ -27,8 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Title: FeatSmartTag (Smart Tag Shared Feature) common record part
  * <P>
  * This record part specifies Smart Tag data for a sheet, stored as part
- *  of a Shared Feature. It can be found in records such as 
- *  {@link FeatRecord}, {@link Feat11Record} or {@link Feat12Record}.
+ *  of a Shared Feature. It can be found in records such as  {@link FeatRecord}.
  * It is made up of a hash, and a set of Factoid Data that makes up
  *  the smart tags.
  * For more details, see page 669 of the Excel binary file

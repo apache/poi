@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * This is the abstract supertype for the various cell formatters.
  *
- * @@author Ken Arnold, Industrious Media LLC
+ * @author Ken Arnold, Industrious Media LLC
  */
 public abstract class CellFormatter {
     /** The original specified format. */

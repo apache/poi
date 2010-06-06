@@ -987,8 +987,7 @@ public class XWPFParagraph {
     }
     
     /**
-     * Gets the style of the paragraph
-     * @return
+     * @return  the style of the paragraph
      */
     public String getStyle() {
     	CTPPr pr = getCTPPr();

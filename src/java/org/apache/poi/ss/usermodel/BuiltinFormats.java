@@ -172,7 +172,7 @@ public final class BuiltinFormats {
 	 * <p/>
 	 * Automatically converts "text" to excel's format string to represent text.
 	 * </p>
-	 * @param fmt string matching a built-in format
+	 * @param pFmt string matching a built-in format
 	 * @return index of format or -1 if undefined.
 	 */
 	public static int getBuiltinFormat(String pFmt) {

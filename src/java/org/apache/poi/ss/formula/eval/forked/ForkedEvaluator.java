@@ -104,7 +104,9 @@ public final class ForkedEvaluator {
 	 * evaluateInCell() when the call should not modify the contents of the
 	 * original cell.
 	 *
-	 * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
+     * @param sheetName the name of the sheet containing the cell
+     * @param rowIndex zero based
+     * @param columnIndex zero based
 	 * @return <code>null</code> if the supplied cell is <code>null</code> or blank
 	 */
 	public ValueEval evaluate(String sheetName, int rowIndex, int columnIndex) {

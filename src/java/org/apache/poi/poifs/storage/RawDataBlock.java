@@ -57,7 +57,8 @@ public class RawDataBlock
      * Constructor RawDataBlock
      *
      * @param stream the InputStream from which the data will be read
-     * @param blockSize the size of the POIFS blocks, normally 512 bytes {@link POIFSConstants#BIG_BLOCK_SIZE}
+     * @param blockSize the size of the POIFS blocks, normally 512 bytes
+     * {@link org.apache.poi.poifs.common.POIFSConstants#SMALLER_BIG_BLOCK_SIZE}
      *
      * @exception IOException on I/O errors, and if an insufficient
      *            amount of data is read (the InputStream must

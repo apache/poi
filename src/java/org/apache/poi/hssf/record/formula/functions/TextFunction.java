@@ -353,7 +353,7 @@ public abstract class TextFunction implements Function {
 	 * <tt>start_num</tt>, is optional (default=1) and specifies where to start searching
 	 * from.  Character positions are 1-based.<p/>
 	 *
-	 * @author Torstein Tauno Svendsen (torstei@officenet.no)
+	 * Author: Torstein Tauno Svendsen (torstei@officenet.no)
 	 */
 	public static final Function FIND = new SearchFind(true);
 	/**
