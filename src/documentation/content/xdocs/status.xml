@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">46664 - fix up Tab IDs when adding new sheets, so that print areas don't end up invalid</action>
            <action dev="POI-DEVELOPERS" type="fix">45269 - improve replaceText on HWPF ranges</action>
            <action dev="POI-DEVELOPERS" type="fix">47815 - correct documentation on what happens when you request a String from a non-string Formula cell</action>
            <action dev="POI-DEVELOPERS" type="fix">49386 - avoid NPE when extracting OOXML file properties which are dates</action>

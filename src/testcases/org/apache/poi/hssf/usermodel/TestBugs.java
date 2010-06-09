@@ -35,6 +35,8 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
@@ -1587,6 +1589,48 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        
        wb = writeOutAndReadBack(wb);
        assertEquals(2, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * Newly created sheets need to get a 
+     *  proper TabID, otherwise print setup
+     *  gets confused on them. 
+     */
+    public void test46664() throws Exception {
+       HSSFWorkbook wb = new HSSFWorkbook();
+       HSSFSheet sheet = wb.createSheet("new_sheet");
+       HSSFRow row = sheet.createRow((short)0);
+       row.createCell(0).setCellValue(new HSSFRichTextString("Column A"));
+       row.createCell(1).setCellValue(new HSSFRichTextString("Column B"));
+       row.createCell(2).setCellValue(new HSSFRichTextString("Column C"));
+       row.createCell(3).setCellValue(new HSSFRichTextString("Column D"));
+       row.createCell(4).setCellValue(new HSSFRichTextString("Column E"));
+       row.createCell(5).setCellValue(new HSSFRichTextString("Column F"));
+
+       //set print area from column a to column c (on first row)
+       wb.setPrintArea(
+               0, //sheet index
+               0, //start column
+               2, //end column
+               0, //start row
+               0  //end row
+       );
+       
+       wb = writeOutAndReadBack(wb);
+       
+       // Ensure the tab index
+       TabIdRecord tr = null;
+       for(Record r : wb.getWorkbook().getRecords()) {
+          if(r instanceof TabIdRecord) {
+             tr = (TabIdRecord)r;
+          }
+       }
+       assertNotNull(tr);
+       assertEquals(1, tr._tabids.length);
+       assertEquals(0, tr._tabids[0]);
+       
+       // Ensure the print setup
+       assertEquals("new_sheet!$A$1:$C$1", wb.getPrintArea(0));
     }
     
     /**
