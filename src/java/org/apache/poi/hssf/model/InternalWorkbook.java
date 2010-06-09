@@ -712,6 +712,15 @@ public final class InternalWorkbook {
             boundsheets.add(bsr);
             getOrCreateLinkTable().checkExternSheet(sheetnum);
             fixTabIdRecord();
+        } else {
+           // Ensure we have enough tab IDs
+           // Can be a few short if new sheets were added
+           if(records.getTabpos() > 0) {
+              TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
+              if(tir._tabids.length < boundsheets.size()) {
+                 fixTabIdRecord();
+              }
+           }
         }
     }
 
