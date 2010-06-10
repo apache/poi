@@ -33,6 +33,7 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 
 /**
  * Internal POI use only
@@ -106,6 +107,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _iBook.getExternalSheet(externSheetIndex);
+	}
+	
+	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+		return _iBook.getExternalName(externSheetIndex, externNameIndex);
 	}
 
 	public String resolveNameXText(NameXPtg n) {

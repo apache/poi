@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -93,6 +94,10 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public String getSheetName(int sheetIndex) {
 		return _uBook.getSheetName(sheetIndex);
+	}
+	
+	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+	   throw new RuntimeException("Not implemented yet");
 	}
 
 	public NameXPtg getNameXPtg(String name) {

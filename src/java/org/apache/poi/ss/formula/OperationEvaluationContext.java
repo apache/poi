@@ -17,10 +17,15 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.eval.*;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
@@ -254,4 +259,40 @@ public final class OperationEvaluationContext {
 		SheetRefEvaluator sre = createExternSheetRefEvaluator(extSheetIndex);
 		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
 	}
+	public ValueEval getNameXEval(NameXPtg nameXPtg) {
+      ExternalSheet externSheet = _workbook.getExternalSheet(nameXPtg.getSheetRefIndex());
+      if(externSheet == null)
+         return new NameXEval(nameXPtg);
+      String workbookName = externSheet.getWorkbookName();
+      ExternalName externName = _workbook.getExternalName(
+            nameXPtg.getSheetRefIndex(), 
+            nameXPtg.getNameIndex()
+      );
+      try{
+         WorkbookEvaluator refWorkbookEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
+         EvaluationName evaluationName = refWorkbookEvaluator.getName(externName.getName(),externName.getIx()-1);
+         if(evaluationName != null && evaluationName.hasFormula()){
+            if (evaluationName.getNameDefinition().length > 1) {
+               throw new RuntimeException("Complex name formulas not supported yet");
+            }
+            Ptg ptg = evaluationName.getNameDefinition()[0];
+            if(ptg instanceof Ref3DPtg){
+               Ref3DPtg ref3D = (Ref3DPtg)ptg;
+               int sheetIndex = refWorkbookEvaluator.getSheetIndexByExternIndex(ref3D.getExternSheetIndex());
+               String sheetName = refWorkbookEvaluator.getSheetName(sheetIndex);
+               SheetRefEvaluator sre = createExternSheetRefEvaluator(workbookName, sheetName);
+               return new LazyRefEval(ref3D.getRow(), ref3D.getColumn(), sre);
+            }else if(ptg instanceof Area3DPtg){
+               Area3DPtg area3D = (Area3DPtg)ptg;
+               int sheetIndex = refWorkbookEvaluator.getSheetIndexByExternIndex(area3D.getExternSheetIndex());
+               String sheetName = refWorkbookEvaluator.getSheetName(sheetIndex);
+               SheetRefEvaluator sre = createExternSheetRefEvaluator(workbookName, sheetName);
+               return new LazyAreaEval(area3D.getFirstRow(), area3D.getFirstColumn(), area3D.getLastRow(), area3D.getLastColumn(), sre);
+            }
+         }
+         return ErrorEval.REF_INVALID;
+      }catch(WorkbookNotFoundException wnfe){
+         return ErrorEval.REF_INVALID;
+      }
+   }
 }

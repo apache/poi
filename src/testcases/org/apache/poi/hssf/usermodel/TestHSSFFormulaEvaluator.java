@@ -215,4 +215,65 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		assertEquals(3, evalCount);
 		assertEquals(2.0, ((NumberEval)ve).getNumberValue(), 0D);
 	}
+	
+	/**
+	 * Ensures that we can handle NameXPtgs in the formulas
+	 *  we parse.
+	 */
+	public void testXRefs() throws Exception {
+      HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("XRefCalc.xls");
+      HSSFWorkbook wbData = HSSFTestDataSamples.openSampleWorkbook("XRefCalcData.xls");
+      Cell cell;
+      
+      // VLookup on a name in another file
+      cell = wb.getSheetAt(0).getRow(1).getCell(2);
+      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
+      // WARNING - this is wrong!
+      // The file name should be showing, but bug #45970 is fixed
+      //  we seem to loose it
+      assertEquals("VLOOKUP(PART,COSTS,2,FALSE)", cell.getCellFormula());
+      
+      
+      // Simple reference to a name in another file
+      cell = wb.getSheetAt(0).getRow(1).getCell(4);
+      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
+      // WARNING - this is wrong!
+      // The file name should be showing, but bug #45970 is fixed
+      //  we seem to loose it
+      assertEquals("Cost*Markup_Cost", cell.getCellFormula());
+      
+      
+      // Evaluate the cells
+      HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+      HSSFFormulaEvaluator.setupEnvironment(
+            new String[] { "XRefCalc.xls", "XRefCalcData.xls" },
+            new HSSFFormulaEvaluator[] {
+                  eval,
+                  new HSSFFormulaEvaluator(wbData)
+            }
+      );
+      eval.evaluateFormulaCell(
+            wb.getSheetAt(0).getRow(1).getCell(2)
+      );      
+      eval.evaluateFormulaCell(
+            wb.getSheetAt(0).getRow(1).getCell(4)
+      );      
+      
+
+      // Re-check VLOOKUP one
+      cell = wb.getSheetAt(0).getRow(1).getCell(2);
+      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
+      
+      // Re-check ref one
+      cell = wb.getSheetAt(0).getRow(1).getCell(4);
+      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
+   }
 }

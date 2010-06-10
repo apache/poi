@@ -65,6 +65,7 @@ import org.apache.poi.hssf.record.formula.functions.Choose;
 import org.apache.poi.hssf.record.formula.functions.FreeRefFunction;
 import org.apache.poi.hssf.record.formula.functions.IfFunc;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -123,6 +124,19 @@ public final class WorkbookEvaluator {
 
 	/* package */ EvaluationSheet getSheet(int sheetIndex) {
 		return _workbook.getSheet(sheetIndex);
+	}
+	
+	/* package */ EvaluationName getName(String name, int sheetIndex) {
+		NamePtg namePtg = null;
+		if(_workbook instanceof HSSFEvaluationWorkbook){
+			namePtg =((HSSFEvaluationWorkbook)_workbook).getName(name, sheetIndex).createPtg();
+		}
+
+		if(namePtg == null) {
+			return null;
+		} else {
+			return _workbook.getName(namePtg);
+		}
 	}
 
 	private static boolean isDebugLogEnabled() {
@@ -222,6 +236,10 @@ public final class WorkbookEvaluator {
 			_sheetIndexesByName.put(sheetName, result);
 		}
 		return result.intValue();
+	}
+	
+	/* package */ int getSheetIndexByExternIndex(int externSheetIndex) {
+	   return _workbook.convertFromExternSheetIndex(externSheetIndex);
 	}
 
 
@@ -524,7 +542,7 @@ public final class WorkbookEvaluator {
 			throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
 		}
 		if (ptg instanceof NameXPtg) {
-			return new NameXEval(((NameXPtg) ptg));
+		   return ec.getNameXEval(((NameXPtg) ptg));
 		}
 
 		if (ptg instanceof IntPtg) {

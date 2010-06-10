@@ -124,6 +124,10 @@ final class LinkTable {
 		public String getNameText(int definedNameIndex) {
 			return _externalNameRecords[definedNameIndex].getText();
 		}
+		
+		public int getNameIx(int definedNameIndex) {
+		   return _externalNameRecords[definedNameIndex].getIx();
+		}
 
 		/**
 		 * Performs case-insensitive search
@@ -316,8 +320,12 @@ final class LinkTable {
 		if (!ebr.isExternalReferences()) {
 			return null;
 		}
+		// Sheet name only applies if not a global reference
 		int shIx = _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
-		String usSheetName = ebr.getSheetNames()[shIx];
+		String usSheetName = null;
+		if(shIx >= 0) {
+		   usSheetName = ebr.getSheetNames()[shIx];
+		}
 		return new String[] {
 				ebr.getURL(),
 				usSheetName,
@@ -418,6 +426,10 @@ final class LinkTable {
 	public String resolveNameXText(int refIndex, int definedNameIndex) {
 		int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
 		return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);
+	}
+	public int resolveNameXIx(int refIndex, int definedNameIndex) {
+      int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
+      return _externalBookBlocks[extBookIndex].getNameIx(definedNameIndex);
 	}
 
 	public NameXPtg getNameXPtg(String name) {
