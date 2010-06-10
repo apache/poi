@@ -47,5 +47,28 @@ public final class TestRevisionMarkAuthorTable extends TestCase {
 		assertNotNull(rmt);
 		assertEquals(1, rmt.getSize());
 		assertEquals("Unknown", rmt.getAuthor(0));
+		
+		assertEquals(null, rmt.getAuthor(1));
+      assertEquals(null, rmt.getAuthor(2));
+      assertEquals(null, rmt.getAuthor(3));
+	}
+	
+	/**
+	 * Several authors, one of whom has no name
+	 */
+	public void testMultipleAuthors() {
+      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("MarkAuthorsTable.doc");
+      
+      RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
+      assertNotNull(rmt);
+      assertEquals(4, rmt.getSize());
+      assertEquals("Unknown", rmt.getAuthor(0));
+      assertEquals("BSanders", rmt.getAuthor(1));
+      assertEquals(" ", rmt.getAuthor(2));
+      assertEquals("Ryan Lauck", rmt.getAuthor(3));
+      
+      assertEquals(null, rmt.getAuthor(4));
+      assertEquals(null, rmt.getAuthor(5));
+      assertEquals(null, rmt.getAuthor(6));
 	}
 }
