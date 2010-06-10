@@ -81,6 +81,7 @@ import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -1770,6 +1771,14 @@ public final class InternalWorkbook {
             return null;
         }
         return new ExternalSheet(extNames[0], extNames[1]);
+    }
+    public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+       String nameName = linkTable.resolveNameXText(externSheetIndex, externNameIndex);
+       if(nameName == null) {
+          return null;
+       }
+       int ix = linkTable.resolveNameXIx(externSheetIndex, externNameIndex);
+       return new ExternalName(nameName, externNameIndex, ix);
     }
 
     /**

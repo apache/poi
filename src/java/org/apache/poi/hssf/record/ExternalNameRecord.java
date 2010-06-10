@@ -41,7 +41,8 @@ public final class ExternalNameRecord extends StandardRecord {
 
 
 	private short  field_1_option_flag;
-	private int  field_2_not_used;
+	private short  field_2_ixals;
+	private short  field_3_not_used;
 	private String field_4_name;
 	private Formula  field_5_name_definition;
 
@@ -96,6 +97,16 @@ public final class ExternalNameRecord extends StandardRecord {
 	public String getText() {
 		return field_4_name;
 	}
+	
+	/**
+	 * If this is a local name, then this is the (1 based)
+	 *  index of the name of the Sheet this refers to, as
+	 *  defined in the preceeding {@link SupBookRecord}.
+	 * If it isn't a local name, then it must be zero.
+	 */
+	public short getIx() {
+	   return field_2_ixals;
+	}
 
 	protected int getDataSize(){
 		int result = 2 + 4;  // short and int
@@ -114,10 +125,11 @@ public final class ExternalNameRecord extends StandardRecord {
 
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(field_1_option_flag);
-		out.writeInt(field_2_not_used);
+		out.writeShort(field_2_ixals);
+		out.writeShort(field_3_not_used);
 
-        out.writeByte(field_4_name.length());
-        StringUtil.writeUnicodeStringFlagAndData(out, field_4_name);
+		out.writeByte(field_4_name.length());
+		StringUtil.writeUnicodeStringFlagAndData(out, field_4_name);
 
         if(!isOLELink() && !isStdDocumentNameIdentifier()){
             if(isAutomaticLink()){
@@ -133,7 +145,8 @@ public final class ExternalNameRecord extends StandardRecord {
 
 	public ExternalNameRecord(RecordInputStream in) {
 		field_1_option_flag = in.readShort();
-		field_2_not_used    = in.readInt();
+		field_2_ixals       = in.readShort();
+      field_3_not_used    = in.readShort();
 
         int numChars = in.readUByte();
         field_4_name = StringUtil.readUnicodeString(in, numChars);
@@ -166,10 +179,13 @@ public final class ExternalNameRecord extends StandardRecord {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName()).append(" [EXTERNALNAME ");
-		sb.append(" ").append(field_4_name);
-		sb.append(" ix=").append(field_2_not_used);
-		sb.append("]");
+		sb.append("[EXTERNALNAME]\n");
+		sb.append("    .ix      = ").append(field_2_ixals).append("\n");
+		sb.append("    .name    = ").append(field_4_name).append("\n");
+		if(field_5_name_definition != null) {
+		sb.append("    .formula = ").append(field_5_name_definition).append("\n");
+		}
+		sb.append("[/EXTERNALNAME]\n");
 		return sb.toString();
 	}
 }
