@@ -39,6 +39,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.usermodel.*;
@@ -1594,7 +1595,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * Newly created sheets need to get a 
      *  proper TabID, otherwise print setup
-     *  gets confused on them. 
+     *  gets confused on them.
+     * Also ensure that print setup refs are
+     *  by reference not value 
      */
     public void test46664() throws Exception {
        HSSFWorkbook wb = new HSSFWorkbook();
@@ -1631,6 +1634,22 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        
        // Ensure the print setup
        assertEquals("new_sheet!$A$1:$C$1", wb.getPrintArea(0));
+       assertEquals("new_sheet!$A$1:$C$1", wb.getName("Print_Area").getRefersToFormula());
+       
+       // Needs reference not value
+       NameRecord nr = wb.getWorkbook().getNameRecord(
+             wb.getNameIndex("Print_Area")
+       ); 
+       assertEquals("Print_Area", nr.getNameText());
+       assertEquals(1, nr.getNameDefinition().length);
+       assertEquals(
+             "new_sheet!$A$1:$C$1", 
+             ((Area3DPtg)nr.getNameDefinition()[0]).toFormulaString(HSSFEvaluationWorkbook.create(wb))
+       );
+       // TODO - fix me to be Reference not Value!
+if(1==2) {       
+       assertEquals('R', nr.getNameDefinition()[0].getRVAType());
+}
     }
     
     /**
