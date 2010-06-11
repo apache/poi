@@ -441,7 +441,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	 * Returns the table at position pos
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
 	 */
-	@Override
 	public XWPFTable getTableArray(int pos) {
 	
 		if(pos > 0 && pos < tables.size()){
@@ -455,7 +454,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	 * @param i
 	 * @param table
 	 */
-	@Override
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
 		int i;

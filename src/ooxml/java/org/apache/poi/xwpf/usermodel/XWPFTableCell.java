@@ -114,7 +114,6 @@ public class XWPFTableCell implements IBody {
 	 * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this table
 	 * 		   XWPFParagraph with the correspondig CTP p
 	 */
-	@Override
     public XWPFParagraph getParagraph(CTP p){
     	for (XWPFParagraph paragraph : paragraphs) {
 			if(p.equals(paragraph.getCTP())){
@@ -232,7 +231,6 @@ public class XWPFTableCell implements IBody {
 	/**
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
 	 */
-	@Override
 	public XWPFParagraph getParagraphArray(int pos) {
 		if(pos > 0 && pos < paragraphs.size()){
 			return paragraphs.get(pos);
@@ -247,7 +245,6 @@ public class XWPFTableCell implements IBody {
 	 * get the to which the TableCell belongs 
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
 	 */
-	@Override
 	public IBody getPart() {
 		return (IBody) tableRow.getTable().getPart();
 	}
@@ -256,7 +253,6 @@ public class XWPFTableCell implements IBody {
 	/** 
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
 	 */
-	@Override
 	public BodyType getPartType() {
 		return BodyType.TABLECELL;
 	}
@@ -266,7 +262,6 @@ public class XWPFTableCell implements IBody {
 	 * get a table by its CTTbl-Object
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
 	 */
-	@Override
 	public XWPFTable getTable(CTTbl ctTable) {
 		for(int i=0; i<tables.size(); i++){
 			if(getTables().get(i).getCTTbl() == ctTable) return getTables().get(i); 
@@ -278,7 +273,6 @@ public class XWPFTableCell implements IBody {
 	/** 
 	 * @see org.apache.poi.xwpf.usermodel.IBodyPart#getTableArray(int)
 	 */
-	@Override
 	public XWPFTable getTableArray(int pos) {
 		if(pos > 0 && pos < tables.size()){
 			return tables.get(pos);
@@ -290,7 +284,6 @@ public class XWPFTableCell implements IBody {
 	/** 
 	 * @see org.apache.poi.xwpf.usermodel.IBodyPart#getTables()
 	 */
-	@Override
 	public List<XWPFTable> getTables() {
 		return Collections.unmodifiableList(tables);
 	}
@@ -300,7 +293,6 @@ public class XWPFTableCell implements IBody {
 	 * inserts an existing XWPFTable to the arrays bodyElements and tables
 	 * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int, org.apache.poi.xwpf.usermodel.XWPFTable)
 	 */
-	@Override
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
 		int i;
@@ -327,7 +319,6 @@ public class XWPFTableCell implements IBody {
 	 * @param o
 	 * @return
 	 */
-	@Override
 	public XWPFTableCell getTableCell(CTTc cell) {
 		XmlCursor cursor = cell.newCursor();
 		cursor.toParent();
