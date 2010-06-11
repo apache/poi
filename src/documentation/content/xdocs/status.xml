@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-SNAPSHOT" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">48245 - tweak HWPF table cell detection to work across more files</action>
            <action dev="POI-DEVELOPERS" type="add">48996 - initial support for External Name References in HSSF formula evaluation</action>
            <action dev="POI-DEVELOPERS" type="fix">46664 - fix up Tab IDs when adding new sheets, so that print areas don't end up invalid</action>
            <action dev="POI-DEVELOPERS" type="fix">45269 - improve replaceText on HWPF ranges</action>

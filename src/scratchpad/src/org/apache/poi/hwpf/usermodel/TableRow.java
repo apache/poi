@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 
 public final class TableRow
@@ -57,10 +58,19 @@ public final class TableRow
         p = getParagraph(end);
         s = p.text();
       }
-      _cells[cellIndex] = new TableCell(start, end+1, this, levelNum,
+
+      // Create it for the correct paragraph range
+      _cells[cellIndex] = new TableCell(start, end, this, levelNum,
                                         _tprops.getRgtc()[cellIndex],
                                         _tprops.getRgdxaCenter()[cellIndex],
                                         _tprops.getRgdxaCenter()[cellIndex+1]-_tprops.getRgdxaCenter()[cellIndex]);
+      // Now we've decided where everything is, tweak the
+      //  record of the paragraph end so that the
+      //  paragraph level counts work
+      // This is a bit hacky, we really need a better fix...
+      _cells[cellIndex]._parEnd++;
+      
+      // Next!
       end++;
       start = end;
     }
