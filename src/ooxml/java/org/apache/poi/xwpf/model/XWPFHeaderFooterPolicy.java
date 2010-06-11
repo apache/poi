@@ -120,8 +120,7 @@ public class XWPFHeaderFooterPolicy {
 			CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
 			PackagePart ftrPart = doc.getPartById(ref.getId());
 			XWPFFooter ftr = new XWPFFooter(
-					FtrDocument.Factory.parse(ftrPart.getInputStream()).getFtr()
-			);
+					FtrDocument.Factory.parse(ftrPart.getInputStream()).getFtr());
 
 			// Assign it
 			Enum type = ref.getType();
@@ -163,6 +162,7 @@ public class XWPFHeaderFooterPolicy {
     	XWPFHeader wrapper = (XWPFHeader)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
     	CTHdrFtr hdr = buildHdr(type, pStyle, wrapper, pars);
+    	wrapper.setHeaderFooter(hdr);
     	
     	OutputStream outputStream = wrapper.getPackagePart().getOutputStream();
     	hdrDoc.setHdr(hdr);
@@ -189,6 +189,7 @@ public class XWPFHeaderFooterPolicy {
     	XWPFFooter wrapper = (XWPFFooter)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
     	CTHdrFtr ftr = buildFtr(type, pStyle, wrapper, pars);
+      wrapper.setHeaderFooter(ftr);
     	
     	OutputStream outputStream = wrapper.getPackagePart().getOutputStream();
     	ftrDoc.setFtr(ftr);
@@ -459,6 +460,6 @@ public class XWPFHeaderFooterPolicy {
 		shapeTextPath.setString(text);
 		pict.set(group);
 		// end watermark paragraph
-		return new XWPFParagraph(p);
+		return new XWPFParagraph(p, null);
 	}
 }

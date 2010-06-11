@@ -18,12 +18,26 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
-import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
 /**
  * Tests for XWPF Paragraphs
@@ -39,9 +53,9 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
         assertNotNull(hdr);
 
-        XWPFParagraph[] ps = hdr.getParagraphs();
-        assertEquals(1, ps.length);
-        XWPFParagraph p = ps[0];
+       List<XWPFParagraph> ps =  hdr.getParagraphs();
+        assertEquals(1, ps.size());
+        XWPFParagraph p = ps.get(0);
 
         assertEquals(5, p.getCTP().getRArray().length);
         assertEquals("First header column!\tMid header\tRight header!", p
@@ -53,25 +67,25 @@ public final class TestXWPFParagraph extends TestCase {
      */
     public void disabled_testDocumentParagraph() {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
-        XWPFParagraph[] ps = xml.getParagraphs();
-        assertEquals(10, ps.length);
+        List<XWPFParagraph> ps = xml.getParagraphs();
+        assertEquals(10, ps.size());
 
-        assertFalse(ps[0].isEmpty());
+        assertFalse(ps.get(0).isEmpty());
         assertEquals(
                 "This is a sample word document. It has two pages. It has a three column heading, but no footer.",
-                ps[0].getText());
+                ps.get(0).getText());
 
-        assertTrue(ps[1].isEmpty());
-        assertEquals("", ps[1].getText());
+        assertTrue(ps.get(1).isEmpty());
+        assertEquals("", ps.get(1).getText());
 
-        assertFalse(ps[2].isEmpty());
-        assertEquals("HEADING TEXT", ps[2].getText());
+        assertFalse(ps.get(2).isEmpty());
+        assertEquals("HEADING TEXT", ps.get(2).getText());
 
-        assertTrue(ps[3].isEmpty());
-        assertEquals("", ps[3].getText());
+        assertTrue(ps.get(3).isEmpty());
+        assertEquals("", ps.get(3).getText());
 
-        assertFalse(ps[4].isEmpty());
-        assertEquals("More on page one", ps[4].getText());
+        assertFalse(ps.get(4).isEmpty());
+        assertEquals("More on page one", ps.get(4).getText());
     }
 
     public void testSetGetBorderTop() {
@@ -216,7 +230,7 @@ public final class TestXWPFParagraph extends TestCase {
 
     public void testBookmarks() {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bookmarks.docx");
-        XWPFParagraph paragraph = doc.getParagraphs()[0];
+        XWPFParagraph paragraph = doc.getParagraphs().get(0);
         assertEquals("Sample Word Document", paragraph.getText());
         assertEquals(1, paragraph.getCTP().sizeOfBookmarkStartArray());
         assertEquals(0, paragraph.getCTP().sizeOfBookmarkEndArray());

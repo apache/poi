@@ -18,8 +18,8 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 
-import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute.Space;
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute.Space;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;

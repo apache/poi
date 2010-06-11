@@ -17,8 +17,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Specifies all types of alignment which are available to be applied to objects in a

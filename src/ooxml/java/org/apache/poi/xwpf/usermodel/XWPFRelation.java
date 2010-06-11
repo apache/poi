@@ -17,11 +17,11 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.POIXMLDocumentPart;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLRelation;
 
 /**
  * @author Yegor Kozlov
@@ -58,6 +58,13 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/document.xml",
             null
     );
+        
+    public static final XWPFRelation NUMBERING = new XWPFRelation(
+    		"application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml",
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering",
+    		"/word/numbering.xml",
+    		XWPFNumbering.class
+    );
     public static final XWPFRelation FONT_TABLE = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable",
@@ -74,7 +81,7 @@ public final class XWPFRelation extends POIXMLRelation {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
             "/word/styles.xml",
-            null
+            XWPFStyles.class
     );
     public static final XWPFRelation WEB_SETTINGS = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml",
@@ -118,6 +125,50 @@ public final class XWPFRelation extends POIXMLRelation {
             null,
             null
     );
+    
+    public static final XWPFRelation IMAGE_EMF = new XWPFRelation(
+	  "image/x-emf",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.emf",
+		XWPFPictureData.class
+	);
+	public static final XWPFRelation IMAGE_WMF = new XWPFRelation(
+		"image/x-wmf",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.wmf",
+		XWPFPictureData.class
+	);
+	public static final XWPFRelation IMAGE_PICT = new XWPFRelation(
+	  "image/pict",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.pict",
+		XWPFPictureData.class
+	);
+	public static final XWPFRelation IMAGE_JPEG = new XWPFRelation(
+	  "image/jpeg",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.jpeg",
+		XWPFPictureData.class
+	);
+	public static final XWPFRelation IMAGE_PNG = new XWPFRelation(
+	  "image/png",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.png",
+		XWPFPictureData.class
+	);
+	public static final XWPFRelation IMAGE_DIB = new XWPFRelation(
+	  "image/dib",
+		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+		"/word/media/image#.dib",
+		XWPFPictureData.class
+	);
+    
+    public static final XWPFRelation IMAGES = new XWPFRelation(
+    		null,
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		null,
+    		null
+	);	
 
 
     private XWPFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
