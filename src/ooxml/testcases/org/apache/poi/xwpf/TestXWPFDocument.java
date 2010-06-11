@@ -20,10 +20,15 @@ package org.apache.poi.xwpf;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties;
+import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument extends TestCase {
 
@@ -92,5 +97,36 @@ public final class TestXWPFDocument extends TestCase {
 		POIXMLProperties props = doc.getProperties();
 		assertNotNull(props);
 		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+	}
+	
+//	public void testAddParagraph(){
+//		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+//		int pLength = doc.getParagraphs().length;
+//		XWPFParagraph p = doc.insertNewParagraph(3);
+//		assertTrue(p == doc.getParagraphs()[3]);
+//		assertTrue(++pLength == doc.getParagraphs().length);
+//		CTP ctp = p.getCTP();
+//		XWPFParagraph newP = doc.getParagraph(ctp);
+//		assertSame(p, newP);
+//		XmlCursor cursor = doc.getDocument().getBody().getPArray(0).newCursor();
+//		XWPFParagraph cP = doc.insertNewParagraph(cursor);
+//		assertSame(cP, doc.getParagraphs()[0]);
+//		assertTrue(++pLength == doc.getParagraphs().length);	
+//	}
+	
+	public void testAddPicture(){
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+		byte[] jpeg = "This is a jpeg".getBytes();
+		try {
+			int jpegNum = doc.addPicture(jpeg, XWPFDocument.PICTURE_TYPE_JPEG);
+			byte[] newJpeg = doc.getAllPictures().get(jpegNum).getData();
+			assertEquals(newJpeg.length, jpeg.length);
+			for(int i = 0 ; i < jpeg.length; i++){
+				assertEquals(newJpeg[i], jpeg[i]); 
+			}
+		} catch (InvalidFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

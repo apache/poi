@@ -16,28 +16,33 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
-
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
-
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
-
+public class XWPFLatentStyles {
+	private CTLatentStyles latentStyles;
+	protected XWPFStyles styles; //LatentStyle shall know styles
+	
+	protected XWPFLatentStyles(){
+	}
+	
+	protected XWPFLatentStyles(CTLatentStyles latentStyles){
+		this(latentStyles,null);
+	}
+	
+	protected XWPFLatentStyles(CTLatentStyles latentStyles, XWPFStyles styles) {
+		this.latentStyles=latentStyles;
+		this.styles=styles;
+	}
+	
+	/**
+	 * checks wheter specific LatentStyleID is a latentStyle
+	*/
+	protected boolean isLatentStyle(String latentStyleID){	
+		for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
+			if(lsd.getName().equals(latentStyleID));
+				return true;
+		}
+		return false;		
+	}
 }

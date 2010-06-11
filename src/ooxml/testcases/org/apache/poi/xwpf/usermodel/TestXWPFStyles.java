@@ -14,30 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+import junit.framework.TestCase;
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
+public class TestXWPFStyles extends TestCase {
 
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
+//	protected void setUp() throws Exception {
+//		super.setUp();
+//	}
+	
+	public void testGetUsedStyles(){
+		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
+		List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
+		XWPFStyles styles = sampleDoc.getStyles();
+		XWPFStyle style = styles.getStyle("berschrift1");
+		testUsedStyleList.add(style);
+		testUsedStyleList.add(styles.getStyle("Standard"));
+		testUsedStyleList.add(styles.getStyle("berschrift1Zchn"));
+		testUsedStyleList.add(styles.getStyle("Absatz-Standardschriftart"));
+		style.hasSameName(style);
+		
+		List<XWPFStyle> usedStyleList = styles.getUsedStyleList(style);
+		assertEquals(usedStyleList, testUsedStyleList);
+		
+		
+	}
 
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
+//	protected void tearDown() throws Exception {
+//		super.tearDown();
+//	}
 
 }

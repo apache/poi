@@ -24,9 +24,13 @@ import org.apache.poi.xwpf.extractor.TestXWPFWordExtractor;
 import org.apache.poi.xwpf.model.TestXWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeader;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeadings;
+import org.apache.poi.xwpf.usermodel.TestXWPFNumbering;
 import org.apache.poi.xwpf.usermodel.TestXWPFParagraph;
+import org.apache.poi.xwpf.usermodel.TestXWPFPictureData;
 import org.apache.poi.xwpf.usermodel.TestXWPFRun;
+import org.apache.poi.xwpf.usermodel.TestXWPFStyles;
 import org.apache.poi.xwpf.usermodel.TestXWPFTable;
+import org.apache.poi.xwpf.usermodel.TestXWPFTableRow;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xwpf</tt> and sub-packages.
@@ -45,8 +49,11 @@ public final class AllXWPFTests {
 		result.addTestSuite(TestXWPFParagraph.class);
 		result.addTestSuite(TestXWPFRun.class);
 		result.addTestSuite(TestXWPFTable.class);
+		result.addTestSuite(TestXWPFStyles.class);
+		result.addTestSuite(TestXWPFPictureData.class);
+		result.addTestSuite(TestXWPFNumbering.class);
 		result.addTestSuite(TestAllExtendedProperties.class);
 		result.addTestSuite(TestPackageCorePropertiesGetKeywords.class);
-        return result;
+		return result;
 	}
 }

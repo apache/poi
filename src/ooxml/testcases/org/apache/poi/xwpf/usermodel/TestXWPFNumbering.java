@@ -14,30 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.math.BigInteger;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import junit.framework.TestCase;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
-
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
-
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
+public class TestXWPFNumbering extends TestCase {
+	
+	public void testCompareAbstractNum(){
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+		XWPFNumbering numbering = doc.getNumbering();
+		BigInteger numId = BigInteger.valueOf(1);
+		assertTrue(numbering.numExist(numId));
+		XWPFNum num = numbering.getNum(numId);
+		BigInteger abstrNumId = num.getCTNum().getAbstractNumId().getVal();
+		XWPFAbstractNum abstractNum = numbering.getAbstractNum(abstrNumId);
+		BigInteger compareAbstractNum = numbering.getIdOfAbstractNum(abstractNum);
+		assertEquals(abstrNumId, compareAbstractNum);
+	}
 
 }

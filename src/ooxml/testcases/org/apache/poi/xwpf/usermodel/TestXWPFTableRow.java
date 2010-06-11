@@ -14,30 +14,33 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import junit.framework.TestCase;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+public class TestXWPFTableRow extends TestCase {
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
+	
+	
+	@Override
+	protected void setUp() throws Exception {
+		// TODO Auto-generated method stub
+		super.setUp();
+	}
 
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
+	public void testSomething() throws Exception {
+		
+		CTRow ctRow = CTRow.Factory.newInstance();
 
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		// TODO Auto-generated method stub
+		super.tearDown();
+	}
 
 }

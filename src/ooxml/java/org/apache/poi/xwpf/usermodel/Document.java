@@ -16,28 +16,23 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+public interface Document {
+    /** Extended windows meta file */
+    public static final int PICTURE_TYPE_EMF = 2;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+    /** Windows Meta File */
+    public static final int PICTURE_TYPE_WMF = 3;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+    /** Mac PICT format */
+    public static final int PICTURE_TYPE_PICT = 4;
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
+    /** JPEG format */
+    public static final int PICTURE_TYPE_JPEG = 5;
 
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
+    /** PNG format */
+    public static final int PICTURE_TYPE_PNG = 6;
 
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
-
+    /** Device independent bitmap */
+    public static final int PICTURE_TYPE_DIB = 7;
+	
 }

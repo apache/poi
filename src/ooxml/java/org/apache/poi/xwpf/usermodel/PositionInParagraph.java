@@ -14,30 +14,52 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+/**
+ * postion of a character in a paragrapho
+* 1st RunPositon
+* 2nd TextPosition
+* 3rd CharacterPosition 
+* 
+*
+*/
+public class PositionInParagraph {
+	private int posRun = 0, posText = 0, posChar = 0;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+	public PositionInParagraph(){
+	}
+	
+	public PositionInParagraph(int posRun, int posText, int posChar){
+		this.posRun=posRun;
+		this.posChar=posChar;
+		this.posText= posText;
+	}
+	
+	public int getRun() {
+		return posRun;
+	}
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
+	public void setRun(int beginRun) {
+		this.posRun = beginRun;
+	}
 
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
+	public int getText() {
+		return posText;
+	}
 
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
+	public void setText(int beginText) {
+		this.posText = beginText;
+	}
+
+	public int getChar() {
+		return posChar;
+	}
+
+	public void setChar(int beginChar) {
+		this.posChar = beginChar;
+	}
 
 }

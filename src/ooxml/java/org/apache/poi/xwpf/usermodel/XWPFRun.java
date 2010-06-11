@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
@@ -33,7 +34,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
-import org.apache.poi.util.Internal;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -48,7 +48,7 @@ public class XWPFRun {
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
      */
-    protected XWPFRun(CTR r, XWPFParagraph p) {
+    public XWPFRun(CTR r, XWPFParagraph p) {
         this.run = r;
         this.paragraph = p;
     }
@@ -471,5 +471,6 @@ public class XWPFRun {
     public void removeCarriageReturn() {
 	//TODO
     }    
+
     
 }

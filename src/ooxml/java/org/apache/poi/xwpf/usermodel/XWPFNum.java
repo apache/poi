@@ -16,28 +16,50 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph> {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
-    }
-
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
-
-    public Iterator<XWPFParagraph> iterator(){
-        return paragraphs.iterator();
-    }
-
+/**
+ * @author Philipp Epp
+ *
+ */
+public class XWPFNum {
+	private CTNum ctNum;
+	protected XWPFNumbering numbering;
+	
+	public XWPFNum(){
+		this.ctNum = null;
+		this.numbering = null;
+	}
+	
+	public XWPFNum(CTNum ctNum){
+		this.ctNum = ctNum;
+		this.numbering = null;
+	}
+	
+	public XWPFNum(XWPFNumbering numbering){
+		this.ctNum = null;
+		this.numbering = numbering;
+	}
+	
+	public XWPFNum(CTNum ctNum, XWPFNumbering numbering){
+		this.ctNum = ctNum;
+		this.numbering = numbering;
+	}
+	
+	public XWPFNumbering getNumbering(){
+		return numbering;
+	}
+	
+	public CTNum getCTNum(){
+		return ctNum;
+	}
+	
+	public void setNumbering(XWPFNumbering numbering){
+		this.numbering = numbering;
+	}
+	
+	public void setCTNum(CTNum ctNum){
+		this.ctNum = ctNum;
+	}
 }
