@@ -38,7 +38,7 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
  */
-public final class UnicodeString implements Comparable<UnicodeString> {
+public class UnicodeString implements Comparable<UnicodeString> { // TODO - make this final when the compatibility version is removed
     private short             field_1_charCount;
     private byte              field_2_optionflags;
     private String            field_3_string;
