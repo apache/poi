@@ -291,7 +291,6 @@ public class XWPFTable implements IBodyElement{
 	 * returns the type of the BodyElement Table
 	 * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
 	 */
-	@Override
 	public BodyElementType getElementType() {
 		return BodyElementType.TABLE;
 	}
@@ -301,7 +300,6 @@ public class XWPFTable implements IBodyElement{
 	 * returns the part of the bodyElement
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
 	 */
-	@Override
 	public IBody getPart() {
 		if(part != null){
 			return part.getPart();
@@ -314,7 +312,6 @@ public class XWPFTable implements IBodyElement{
 	 * returns the partType of the bodyPart which owns the bodyElement
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
 	 */
-	@Override
 	public BodyType getPartType() {
 		return ((IBody)part).getPartType();
 	}

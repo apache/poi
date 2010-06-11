@@ -138,7 +138,6 @@ public class XWPFFooter extends XWPFHeaderFooter {
 		 * returns the Part, to which the body belongs, which you need for adding relationship to other parts
 		 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
 		 */
-		@Override
 		public IBody getPart() {
 			return this;
 		}
@@ -147,7 +146,6 @@ public class XWPFFooter extends XWPFHeaderFooter {
 		 * get the PartType of the body
 		 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
 		 */
-		@Override
 		public BodyType getPartType() {
 			return BodyType.FOOTER;
 		}
