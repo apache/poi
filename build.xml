@@ -132,9 +132,9 @@ under the License.
     <property name="ooxml.jsr173.jar" location="${ooxml.lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
     <property name="ooxml.jsr173.url"
               value="${repository.m2}/maven2/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar"/>
-    <property name="ooxml.schemas.jar" location="${ooxml.lib}/ooxml-schemas-1.0.jar"/>
+    <property name="ooxml.schemas.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
     <property name="ooxml.schemas.url"
-              value="${repository.m2}/maven2/org/apache/poi/ooxml-schemas/1.0/ooxml-schemas-1.0.jar"/>
+              value="${repository.m2}/maven2/org/apache/poi/ooxml-schemas/1.1/ooxml-schemas-1.1.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -143,8 +143,8 @@ under the License.
     <property name="ooxml.xsds.url"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-src-1.0.jar"/>
-    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.0.jar"/>
+    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-src-1.1.jar"/>
+    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
