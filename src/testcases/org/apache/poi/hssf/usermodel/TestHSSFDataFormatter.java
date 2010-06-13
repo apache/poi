@@ -405,9 +405,9 @@ public final class TestHSSFDataFormatter extends TestCase {
       assertEquals("10.5", f.formatCellValue(sheet.getRow(11).getCell(1)));
 
       // text isn't quite the format rule...
-      assertEquals("£nn.nn", sheet.getRow(12).getCell(0).getStringCellValue());
-      assertEquals("\"£\"#,##0.00", sheet.getRow(12).getCell(1).getCellStyle().getDataFormatString());
-      assertEquals("£10.52", f.formatCellValue(sheet.getRow(12).getCell(1)));
+      assertEquals("\u00a3nn.nn", sheet.getRow(12).getCell(0).getStringCellValue());
+      assertEquals("\"\u00a3\"#,##0.00", sheet.getRow(12).getCell(1).getCellStyle().getDataFormatString());
+      assertEquals("\u00a310.52", f.formatCellValue(sheet.getRow(12).getCell(1)));
 	}
 
 	private static void log(String msg) {

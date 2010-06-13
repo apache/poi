@@ -251,7 +251,7 @@ public final class TestExcelExtractor extends TestCase {
       );
       assertTrue(
             text.indexOf(
-               "£nn.nn\t£10.52\n"
+               "\u00a3nn.nn\t\u00a310.52\n"
             ) > -1
       );
 	}
