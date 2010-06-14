@@ -110,8 +110,12 @@ public class XSSFComment implements Comment {
      * @param col the 0-based column of the cell that contains the comment
      */
     public void setColumn(int col) {
+        String oldRef = _comment.getRef();
+        
         CellReference ref = new CellReference(getRow(), col);
-		_comment.setRef(ref.formatAsString());
+        _comment.setRef(ref.formatAsString());
+        _comments.referenceUpdated(oldRef, _comment);
+        
         if(_vmlShape != null) _vmlShape.getClientDataArray(0).setColumnArray(0, new BigInteger(String.valueOf(col)));
 	}
 
@@ -121,9 +125,13 @@ public class XSSFComment implements Comment {
      * @param row the 0-based row of the cell that contains the comment
      */
 	public void setRow(int row) {
+	   String oldRef = _comment.getRef();
+	   
 		String newRef =
 			(new CellReference(row, getColumn())).formatAsString();
 		_comment.setRef(newRef);
+      _comments.referenceUpdated(oldRef, _comment);
+      
         if(_vmlShape != null) _vmlShape.getClientDataArray(0).setRowArray(0, new BigInteger(String.valueOf(row)));
     }
 	

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49432 - Lazy caching of XSSFComment CTComment objects by reference, to make repeated comment searching faster</action>
            <action dev="POI-DEVELOPERS" type="fix">Better handling of Outlook messages in HSMF when there's no recipient email address</action>
            <action dev="POI-DEVELOPERS" type="fix">When formatting numbers with DataFormatter, handle brackets following colours</action>
         </release>
