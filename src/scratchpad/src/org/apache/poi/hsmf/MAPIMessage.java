@@ -239,7 +239,11 @@ public class MAPIMessage extends POIDocument {
          if(email != null) {
             emails[i] = email;
          } else {
-            throw new ChunkNotFoundException("No email address holding chunks found for the " + (i+1) + "th recipient");
+            if(returnNullOnMissingChunk) {
+               emails[i] = null;
+            } else {
+               throw new ChunkNotFoundException("No email address holding chunks found for the " + (i+1) + "th recipient");
+            }
          }
       }
 
@@ -393,6 +397,7 @@ public class MAPIMessage extends POIDocument {
       boolean first = true;
 
       for(String s : l) {
+         if(s == null) continue;
          if(first) {
             first = false;
          } else {

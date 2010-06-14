@@ -33,6 +33,7 @@ public final class TestBasics extends TestCase {
    private MAPIMessage quick;
    private MAPIMessage outlook30;
    private MAPIMessage attachments;
+   private MAPIMessage noRecipientAddress;
 
 	/**
 	 * Initialize this test, load up the blank.msg mapi message.
@@ -44,6 +45,7 @@ public final class TestBasics extends TestCase {
       quick  = new MAPIMessage(samples.openResourceAsStream("quick.msg"));
       outlook30  = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
       attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
+      noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
 	}
 	
 	/**
@@ -139,5 +141,40 @@ public final class TestBasics extends TestCase {
       } catch(ChunkNotFoundException e) {
          // Good
       }
+	}
+	
+	/**
+	 * More missing chunk testing, this time for
+	 *  missing recipient email address
+	 */
+	public void testMissingAddressChunk() throws Exception {
+      assertEquals(false, noRecipientAddress.isReturnNullOnMissingChunk());
+
+      try {
+         noRecipientAddress.getRecipientEmailAddress();
+         fail();
+      } catch(ChunkNotFoundException e) {
+         // Good
+      }
+      try {
+         noRecipientAddress.getRecipientEmailAddressList();
+         fail();
+      } catch(ChunkNotFoundException e) {
+         // Good
+      }
+      
+      noRecipientAddress.setReturnNullOnMissingChunk(true);
+      
+      noRecipientAddress.getRecipientEmailAddress();
+      noRecipientAddress.getRecipientEmailAddressList();
+      assertEquals("", noRecipientAddress.getRecipientEmailAddress());
+      assertEquals(1, noRecipientAddress.getRecipientEmailAddressList().length);
+      assertEquals(null, noRecipientAddress.getRecipientEmailAddressList()[0]);
+      
+      // Check a few other bits too
+      assertEquals("Microsoft Outlook 2003 Team", noRecipientAddress.getDisplayFrom());
+      assertEquals("New Outlook User", noRecipientAddress.getDisplayTo());
+      
+      noRecipientAddress.setReturnNullOnMissingChunk(false);
 	}
 }
