@@ -233,14 +233,14 @@ public class DataFormatter {
            int at = formatStr.indexOf(colour);
            if(at == -1) break;
            String nFormatStr = formatStr.substring(0,at) +
-              formatStr.substring(at+colour.length()+1);
+              formatStr.substring(at+colour.length());
            if(nFormatStr.equals(formatStr)) break;
 
            // Try again in case there's multiple
            formatStr = nFormatStr;
            colourM = colorPattern.matcher(formatStr);
         }
-        
+
         // try to extract special characters like currency
         Matcher m = specialPatternGroup.matcher(formatStr);
         while(m.find()) {
