@@ -518,7 +518,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-ooxml" depends="compile-main,compile-scratchpad">
+    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
