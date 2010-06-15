@@ -247,15 +247,17 @@
         <tr>
           <td>ooxml-schemas</td>
 	  <td>xmlbeans</td>
-          <td>ooxml-schemas-1.0.jar</td>
+          <td>ooxml-schemas-1.1.jar</td>
         </tr>
       </table>
       <p>
 	(*) starting with 3.6-beta1-20091124.
       </p>
       <p>
-	poi-ooxml requires poi-ooxml-schemas. This is a substantially smaller version of the ooxml-schemas-1.0.jar.
-	The larger ooxml-schemas jar is only required for development.
+	poi-ooxml requires poi-ooxml-schemas. This is a substantially smaller 
+   version of the ooxml-schemas jar (ooxml-schemas-1.1.jar for POI 3.7 or later, ooxml-scheams-1.0.jar for POI 3.5 and 3.6).
+	The larger ooxml-schemas jar is <link href="faq.html">normally</link> 
+   only required for development
       </p>
     </section>
     <section><title>Examples</title>

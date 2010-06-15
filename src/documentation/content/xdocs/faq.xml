@@ -63,7 +63,7 @@ System.out.println("Core POI came from " + path);
        <em>org.openxmlformats.schemas</em> namespace.</p>
       <p>There are two jar files available, as described in
        <link href="/overview.html">the components overview section</link>.
-       The <em>full jar of all of the schemas is ooxml-schemas-1.0.jar</em>, 
+       The <em>full jar of all of the schemas is ooxml-schemas-1.1.jar</em>, 
        and it is currently around 15mb. The <em>smaller poi-ooxml-schemas 
        jar</em> is only about 4mb. This latter jar file only contains the 
        typically used parts though.</p>
@@ -72,11 +72,11 @@ System.out.println("Core POI came from " + path);
        classes that are typically used, as identified by the unit tests.
        Every so often, you may try to use part of the file format which
        isn't included in the minimal poi-ooxml-schemas jar. In this case,
-       you should switch to the full ooxml-schemas-1.0.jar. Longer term,
+       you should switch to the full ooxml-schemas-1.1.jar. Longer term,
        you may also wish to submit a new unit test which uses the extra
        parts of the XSDs, so that a future poi-ooxml-schemas jar will 
        include them.</p>
-      <p>There are a number of ways to get the full ooxml-schemas-1.0.jar.
+      <p>There are a number of ways to get the full ooxml-schemas-1.1.jar.
        If you are a maven user, see the 
        <link href="/overview.html">the components overview section</link>
        for the artifact details to have maven download it for you.
@@ -88,6 +88,12 @@ System.out.println("Core POI came from " + path);
        look at this). Finally, you can download the jar by hand from the
        <link href="http://www.ibiblio.org/maven/org.apache.poi/jars/">POI
        Maven Repository</link>.</p>
+      <p>Note that for POI 3.5 and 3.6, the full ooxml schemas jar was
+       named ooxml-schemas-1.0.jar. For POI 3.7, the filename was bumped
+       to ooxml-schemas-1.1.jar when generics support was added. You can
+       use ooxml-schemas-1.1.jar with POI 3.5 and 3.6 if you wish, but
+       POI 3.7 won't wokr with ooxml-schemas-1.0.jar (it needs thew newer
+       one).</p>
     </answer>
   </faq>
   <faq>

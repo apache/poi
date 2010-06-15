@@ -19,20 +19,27 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 public class CommentsTable extends POIXMLDocumentPart {
     private CTComments comments;
+    /**
+     * XML Beans uses a list, which is very slow
+     *  to search, so we wrap things with our own
+     *  map for fast lookup.
+     */
+    private Map<String, CTComment> commentRefs;
 
     public CommentsTable() {
         super();
@@ -67,6 +74,17 @@ public class CommentsTable extends POIXMLDocumentPart {
         writeTo(out);
         out.close();
     }
+    
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     */
+    public void referenceUpdated(String oldReference, CTComment comment) {
+       if(commentRefs != null) {
+          commentRefs.remove(oldReference);
+          commentRefs.put(comment.getRef(), comment);
+       }
+    }
 
     public int getNumberOfComments() {
         return comments.getCommentList().sizeOfCommentArray();
@@ -95,18 +113,26 @@ public class CommentsTable extends POIXMLDocumentPart {
     }
 
     public CTComment getCTComment(String cellRef) {
-        for (CTComment comment : comments.getCommentList().getCommentArray()) {
-            if (cellRef.equals(comment.getRef())) {
-                return comment;
-            }
+        // Create the cache if needed
+        if(commentRefs == null) {
+           commentRefs = new HashMap<String, CTComment>();
+           for (CTComment comment : comments.getCommentList().getCommentArray()) {
+              commentRefs.put(comment.getRef(), comment);
+           }
         }
-        return null;
+
+        // Return the comment, or null if not known
+        return commentRefs.get(cellRef);
     }
 
     public CTComment newComment() {
         CTComment ct = comments.getCommentList().addNewComment();
         ct.setRef("A1");
         ct.setAuthorId(0);
+        
+        if(commentRefs != null) {
+           commentRefs.put(ct.getRef(), ct);
+        }
         return ct;
     }
 
@@ -116,6 +142,10 @@ public class CommentsTable extends POIXMLDocumentPart {
             CTComment comment = lst.getCommentArray(i);
             if (cellRef.equals(comment.getRef())) {
                 lst.removeComment(i);
+                
+                if(commentRefs != null) {
+                   commentRefs.remove(cellRef);
+                }
                 return true;
             }
         }

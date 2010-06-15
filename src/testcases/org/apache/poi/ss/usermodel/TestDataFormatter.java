@@ -77,6 +77,44 @@ public class TestDataFormatter extends TestCase {
        assertEquals("[ab]12.34[x]", dfUS.formatRawCellContents(12.343, -1, "[ab]##.##[x]"));
     }
     
+    public void testColoursAndBrackets() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+       
+       // Without currency symbols
+       String[] formats = new String[] {
+             "#,##0.00;[Blue](#,##0.00)",
+       };
+       for(String format : formats) {
+          assertEquals(
+                "Wrong format for: " + format,
+                "12.34",
+                dfUS.formatRawCellContents(12.343, -1, format)
+          );
+          assertEquals(
+                "Wrong format for: " + format,
+                "(12.34)",
+                dfUS.formatRawCellContents(-12.343, -1, format)
+          );
+       }
+       
+       // With
+       formats = new String[] {
+             "$#,##0.00;[Red]($#,##0.00)"
+       };
+       for(String format : formats) {
+          assertEquals(
+                "Wrong format for: " + format,
+                "$12.34",
+                dfUS.formatRawCellContents(12.343, -1, format)
+          );
+          assertEquals(
+                "Wrong format for: " + format,
+                "($12.34)",
+                dfUS.formatRawCellContents(-12.343, -1, format)
+          );
+       }
+    }
+    
     /**
      * Test how we handle negative and zeros.
      * Note - some tests are disabled as DecimalFormat

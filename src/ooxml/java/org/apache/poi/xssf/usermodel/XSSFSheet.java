@@ -175,9 +175,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         initRows(worksheet);
         columnHelper = new ColumnHelper(worksheet);
 
+        // Look for bits we're interested in
         for(POIXMLDocumentPart p : getRelations()){
-            if(p instanceof CommentsTable) sheetComments = (CommentsTable)p;
+            if(p instanceof CommentsTable) {
+               sheetComments = (CommentsTable)p;
+               break;
+            }
         }
+        
         // Process external hyperlinks for the sheet, if there are any
         initHyperlinks();
     }

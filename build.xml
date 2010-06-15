@@ -66,6 +66,9 @@ under the License.
     <property name="jdk.version.class" value="1.5" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
+    <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
+    <property name="java.source.encoding" value="ASCII"/>
+
     <!--
       JVM system properties for running tests,
       user.language and user.country are required as we have locale-sensitive formatters
@@ -394,7 +397,7 @@ under the License.
                 srcgendir="${ooxml.xsds.src.dir}"
                 optimize="yes"
                 destfile="${ooxml.xsds.jar}"
-                javasource="1.5"
+                javasource="1.4"
                 failonerror="true"
                 fork="true"
                 memoryMaximumSize="512m"
@@ -421,6 +424,7 @@ under the License.
                destdir="${main.output.dir}"
                srcdir="${main.src}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath refid="main.classpath"/>
         </javac>
@@ -429,6 +433,7 @@ under the License.
                destdir="${main.output.test.dir}"
                srcdir="${main.src.test}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath>
                 <path refid="main.classpath"/>
@@ -446,6 +451,7 @@ under the License.
                destdir="${scratchpad.output.dir}"
                srcdir="${scratchpad.src}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath refid="scratchpad.classpath"/>
         </javac>
@@ -454,6 +460,7 @@ under the License.
                destdir="${scratchpad.output.test.dir}"
                srcdir="${scratchpad.src.test}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath>
                 <path refid="scratchpad.classpath"/>
@@ -472,6 +479,7 @@ under the License.
                destdir="${contrib.output.dir}"
                srcdir="${contrib.src}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath refid="contrib.classpath"/>
         </javac>
@@ -481,6 +489,7 @@ under the License.
                destdir="${contrib.output.test.dir}"
                srcdir="${contrib.src.test}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath>
                 <path refid="contrib.classpath"/>
@@ -495,6 +504,7 @@ under the License.
                destdir="${examples.output.dir}"
                srcdir="${examples.src}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath>
                 <path refid="ooxml.classpath"/>
@@ -508,11 +518,12 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-ooxml" depends="compile-main,compile-scratchpad">
+    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
                srcdir="${ooxml.src}"
+               encoding="${java.source.encoding}"
                debug="${compile.debug}">
             <classpath refid="ooxml.classpath"/>
         </javac>
@@ -521,6 +532,7 @@ under the License.
                destdir="${ooxml.output.test.dir}"
                srcdir="${ooxml.src.test}"
                debug="${compile.debug}"
+               encoding="${java.source.encoding}"
                fork="yes">
             <classpath>
                 <path refid="ooxml.classpath"/>
@@ -547,7 +559,9 @@ under the License.
         <!-- Compile -->
         <javac target="${jdk.version.class}" source="${jdk.version.source}"
                failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
-               srcdir="${main.output.dir}"/>
+               srcdir="${main.output.dir}"
+               encoding="${java.source.encoding}">
+        </javac>
         <!-- Tidy up -->
         <delete file="${version.java}"/>
     </target>
