@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf.extractor;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
@@ -149,5 +151,14 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
 		public void write(OutputStream out) {
 			throw new IllegalStateException("Unable to write, only for properties!");
 		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+	   for(String file : args) {
+	      HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
+	            new POIFSFileSystem(new FileInputStream(file))
+	      );
+	      System.out.println(ext.getText());
+	   }
 	}
 }
