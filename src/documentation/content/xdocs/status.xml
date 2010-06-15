@@ -34,11 +34,11 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+        </release>
+        <release version="3.7-beta1" date="2010-06-20">
            <action dev="POI-DEVELOPERS" type="fix">49432 - Lazy caching of XSSFComment CTComment objects by reference, to make repeated comment searching faster</action>
            <action dev="POI-DEVELOPERS" type="fix">Better handling of Outlook messages in HSMF when there's no recipient email address</action>
            <action dev="POI-DEVELOPERS" type="fix">When formatting numbers with DataFormatter, handle brackets following colours</action>
-        </release>
-        <release version="3.7-beta1" date="2010-06-16">
            <action dev="POI-DEVELOPERS" type="add">48574 - further XWPF support for tables, paragraphs, including enhanced support for adding new ones</action>
            <action dev="POI-DEVELOPERS" type="add">48245 - tweak HWPF table cell detection to work across more files</action>
            <action dev="POI-DEVELOPERS" type="add">48996 - initial support for External Name References in HSSF formula evaluation</action>
