@@ -93,8 +93,8 @@ public class XWPFParagraph implements IBodyElement{
         }
         
         runs = new ArrayList<XWPFRun>();
-        if (prgrph.getRList().size() > 0) {
-           for(CTR ctRun : prgrph.getRList()) {
+        if (prgrph.getRArray().length > 0) {
+           for(CTR ctRun : prgrph.getRArray()) {
               runs.add(new XWPFRun(ctRun, this));
            }
         }
@@ -111,17 +111,17 @@ public class XWPFParagraph implements IBodyElement{
       // TODO - replace this with some sort of XPath expression
       // to directly find all the CTRs, in the right order
       ArrayList<CTR> rs = new ArrayList<CTR>();
-      rs.addAll( paragraph.getRList() );
+      rs.addAll( Arrays.asList(paragraph.getRArray()) );
       
-      for (CTSdtRun sdt : paragraph.getSdtList()) {
+      for (CTSdtRun sdt : paragraph.getSdtArray()) {
           CTSdtContentRun run = sdt.getSdtContent();
-          rs.addAll( run.getRList() );
+          rs.addAll( Arrays.asList(run.getRArray()) );
       }
-      for (CTRunTrackChange c : paragraph.getDelList()) {
-          rs.addAll( c.getRList() );
+      for (CTRunTrackChange c : paragraph.getDelArray()) {
+          rs.addAll( Arrays.asList(c.getRArray()) );
       }
-      for (CTRunTrackChange c : paragraph.getInsList()) {
-          rs.addAll( c.getRList() );
+      for (CTRunTrackChange c : paragraph.getInsArray()) {
+          rs.addAll( Arrays.asList(c.getRArray()) );
       }
 
       // Get text of the paragraph
@@ -179,7 +179,7 @@ public class XWPFParagraph implements IBodyElement{
 
           // Loop over pictures inside our
           // paragraph, looking for text in them
-          for(CTPicture pict : rs.get(j).getPictList()) {
+          for(CTPicture pict : rs.get(j).getPictArray()) {
               XmlObject[] t = pict
                       .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
               for (int m = 0; m < t.length; m++) {
