@@ -45,7 +45,7 @@ public class XMLSlideShow implements SlideShow {
 		
 		// Build the slides list
 		CTSlideIdList slideIds = slideShow.getSlideReferences();
-		slides = new XSLFSlide[slideIds.getSldIdArray().length];
+		slides = new XSLFSlide[slideIds.getSldIdList().size()];
 		for(int i=0; i<slides.length; i++) {
 			CTSlideIdListEntry slideId = slideIds.getSldIdArray(i);
 			CTSlide slide = slideShow.getSlide(slideId);

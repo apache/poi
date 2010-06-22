@@ -17,6 +17,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.util.List;
+
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
@@ -28,11 +30,11 @@ public class DrawingTextBody {
     }
 
     public DrawingParagraph[] getParagraphs() {
-        CTTextParagraph[] pArray = textBody.getPArray();
-        DrawingParagraph[] o = new DrawingParagraph[pArray.length];
+        List<CTTextParagraph> paragraphs = textBody.getPList();
+        DrawingParagraph[] o = new DrawingParagraph[paragraphs.size()];
 
         for (int i=0; i<o.length; i++) {
-            o[i] = new DrawingParagraph(pArray[i]);
+            o[i] = new DrawingParagraph(paragraphs.get(i));
         }
 
         return o;

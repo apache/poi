@@ -19,7 +19,6 @@ package org.apache.poi.xssf.eventusermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -186,7 +185,7 @@ public class XSSFReader {
                 //step 2. Read array of CTSheet elements, wrap it in a ArayList and construct an iterator
                 //Note, using XMLBeans might be expensive, consider refactoring to use SAX or a plain regexp search
                 CTWorkbook wbBean = WorkbookDocument.Factory.parse(wb.getInputStream()).getWorkbook();
-                sheetIterator = Arrays.asList(wbBean.getSheets().getSheetArray()).iterator();
+                sheetIterator = wbBean.getSheets().getSheetList().iterator(); 
             } catch (InvalidFormatException e){
                 throw new POIXMLException(e);
             } catch (XmlException e){

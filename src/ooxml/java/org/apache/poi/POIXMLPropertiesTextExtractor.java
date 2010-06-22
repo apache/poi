@@ -21,6 +21,7 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * A {@link POITextExtractor} for returning the textual
@@ -129,13 +130,13 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
 			props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
 
-		CTProperty[] properties = props.getPropertyArray();
-		for(int i = 0; i<properties.length; i++) {
+		List<CTProperty> properties = props.getPropertyList();
+		for(int i = 0; i<properties.size(); i++) {
 			// TODO - finish off
 			String val = "(not implemented!)";
 
 			text.append(
-					properties[i].getName() +
+					properties.get(i).getName() +
 					" = " + val + "\n"
 			);
 		}

@@ -17,6 +17,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.util.List;
+
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 
@@ -28,11 +30,11 @@ public class DrawingTableRow {
     }
 
     public DrawingTableCell[] getCells() {
-        CTTableCell[] ctTableCells = row.getTcArray();
-        DrawingTableCell[] o = new DrawingTableCell[ctTableCells.length];
+        List<CTTableCell> ctTableCells = row.getTcList();
+        DrawingTableCell[] o = new DrawingTableCell[ctTableCells.size()];
 
         for (int i=0; i<o.length; i++) {
-            o[i] = new DrawingTableCell(ctTableCells[i]);
+            o[i] = new DrawingTableCell(ctTableCells.get(i));
         }
 
         return o;
