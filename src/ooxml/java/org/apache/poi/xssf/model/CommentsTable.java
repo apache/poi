@@ -116,7 +116,7 @@ public class CommentsTable extends POIXMLDocumentPart {
         // Create the cache if needed
         if(commentRefs == null) {
            commentRefs = new HashMap<String, CTComment>();
-           for (CTComment comment : comments.getCommentList().getCommentArray()) {
+           for (CTComment comment : comments.getCommentList().getCommentList()) {
               commentRefs.put(comment.getRef(), comment);
            }
         }
