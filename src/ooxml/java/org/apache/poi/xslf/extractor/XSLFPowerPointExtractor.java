@@ -104,7 +104,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 					
 					// Comments too for the slide
 					if(comments != null) {
-						for(CTComment comment : comments.getCmArray()) {
+						for(CTComment comment : comments.getCmList()) {
 							// TODO - comment authors too
 							// (They're in another stream)
 							text.append(

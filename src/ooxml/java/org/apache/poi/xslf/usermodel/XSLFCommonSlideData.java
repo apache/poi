@@ -45,12 +45,11 @@ public class XSLFCommonSlideData {
 
         processShape(gs, out);
 
-        for (CTGroupShape shape : gs.getGrpSpArray()) {
+        for (CTGroupShape shape : gs.getGrpSpList()) {
             processShape(shape, out);
         }
 
-        CTGraphicalObjectFrame[] graphicFrames = gs.getGraphicFrameArray();
-        for (CTGraphicalObjectFrame frame: graphicFrames) {
+        for (CTGraphicalObjectFrame frame: gs.getGraphicFrameList()) {
             CTGraphicalObjectData data = frame.getGraphic().getGraphicData();
             XmlCursor c = data.newCursor();
             c.selectPath("./*");
@@ -76,9 +75,9 @@ public class XSLFCommonSlideData {
     }
 
     private void processShape(CTGroupShape gs, List<DrawingParagraph> out) {
-        CTShape[] shapes = gs.getSpArray();
-        for (int i = 0; i < shapes.length; i++) {
-            CTTextBody ctTextBody = shapes[i].getTxBody();
+        List<CTShape> shapes = gs.getSpList();
+        for (int i = 0; i < shapes.size(); i++) {
+            CTTextBody ctTextBody = shapes.get(i).getTxBody();
             if (ctTextBody==null) {
                 continue;
             }
