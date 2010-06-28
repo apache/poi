@@ -146,21 +146,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
 
-
-    /** Extended windows meta file */
-    public static final int PICTURE_TYPE_EMF = 2;
-    /** Windows Meta File */
-    public static final int PICTURE_TYPE_WMF = 3;
-    /** Mac PICT format */
-    public static final int PICTURE_TYPE_PICT = 4;
-    /** JPEG format */
-    public static final int PICTURE_TYPE_JPEG = 5;
-    /** PNG format */
-    public static final int PICTURE_TYPE_PNG = 6;
-    /** Device independant bitmap */
-    public static final int PICTURE_TYPE_DIB = 7;
-
-
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
     public static HSSFWorkbook create(InternalWorkbook book) {
