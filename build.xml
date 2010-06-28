@@ -135,7 +135,6 @@ under the License.
     <property name="ooxml.jsr173.jar" location="${ooxml.lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
     <property name="ooxml.jsr173.url"
               value="${repository.m2}/maven2/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar"/>
-    <property name="ooxml.schemas.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -183,7 +182,7 @@ under the License.
         <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
-        <pathelement location="${ooxml.schemas.jar}"/>
+        <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
@@ -213,7 +212,7 @@ under the License.
         <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
-        <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-schemas.jar use the filtered classes-->
+        <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
@@ -319,7 +318,7 @@ under the License.
                     <available file="${ooxml.dom4j.jar}"/>
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.jsr173.jar}"/>
-                    <available file="${ooxml.schemas.jar}"/>
+                    <available file="${ooxml.xsds.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
