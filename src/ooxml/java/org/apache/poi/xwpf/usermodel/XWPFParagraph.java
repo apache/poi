@@ -133,7 +133,13 @@ public class XWPFParagraph implements IBodyElement{
           while (c.toNextSelection()) {
               XmlObject o = c.getObject();
               if (o instanceof CTText) {
-                  text.append(((CTText) o).getStringValue());
+                  String tagName = o.getDomNode().getNodeName();
+                  // Field Codes (w:instrText, defined in spec sec. 17.16.23)
+                  //  come up as instances of CTText, but we don't want them
+                  //  in the normal text output
+                  if (!"w:instrText".equals(tagName)) {
+                     text.append(((CTText) o).getStringValue());
+                  }
               }
               if (o instanceof CTPTab) {
                   text.append("\t");
