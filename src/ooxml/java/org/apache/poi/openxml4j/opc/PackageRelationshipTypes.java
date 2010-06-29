@@ -56,6 +56,11 @@ public interface PackageRelationshipTypes {
 	String EXTENDED_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
 
 	/**
+	 * Custom properties relationship type.
+	 */
+	String CUSTOM_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties";
+	
+	/**
 	 * Core properties relationship type.
 	 */
 	String CORE_DOCUMENT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";

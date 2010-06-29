@@ -23,6 +23,7 @@ import java.net.URI;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.*;
 
@@ -84,6 +85,24 @@ public class POIXMLDocumentPart {
         this.relations = new LinkedList<POIXMLDocumentPart>();
         this.packagePart = part;
         this.packageRel = rel;
+    }
+    
+    /**
+     * When you open something like a theme, call this to
+     *  re-base the XML Document onto the core child of the
+     *  current core document 
+     */
+    protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
+       PackageRelationshipCollection cores =
+          packagePart.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+       if(cores.size() != 1) {
+          throw new IllegalStateException(
+                "Tried to rebase using " + PackageRelationshipTypes.CORE_DOCUMENT +
+                " but found " + cores.size() + " parts of the right type"
+          );
+       }
+       packageRel = cores.getRelationship(0);
+       packagePart = POIXMLDocument.getTargetPart(pkg, packageRel);
     }
 
     /**
