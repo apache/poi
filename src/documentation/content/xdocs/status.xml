@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">XSLFSlideShow shouldn't break on .thmx (theme) files. Support for them is still very limited though</action>
         </release>
         <release version="3.7-beta1" date="2010-06-20">
            <action dev="POI-DEVELOPERS" type="fix">49432 - Lazy caching of XSSFComment CTComment objects by reference, to make repeated comment searching faster</action>

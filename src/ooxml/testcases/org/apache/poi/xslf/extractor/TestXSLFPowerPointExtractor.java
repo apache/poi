@@ -126,4 +126,53 @@ public class TestXSLFPowerPointExtractor extends TestCase {
         // Check comments are there
         assertTrue("Unable to find expected word in text\n" + text, text.contains("TEST"));
     }
+    
+    /**
+     * Test that we can get the text from macro enabled,
+     *  template, theme, slide enabled etc formats, as 
+     *  well as from the normal file
+     */
+    public void testDifferentSubformats() throws Exception {
+       POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+       String[] extensions = new String[] {
+             "pptx", "pptm", "ppsm", "ppsx",
+             "thmx", 
+             //"xps" // Doesn't have a core document
+       };
+       for(String extension : extensions) {
+          String filename = "testPPT." + extension;
+          xmlA = new XSLFSlideShow(OPCPackage.open(slTests.openResourceAsStream(filename)));
+          XSLFPowerPointExtractor extractor =
+             new XSLFPowerPointExtractor(xmlA);
+
+         String text = extractor.getText();
+         if(extension.equals("thmx")) {
+            // Theme file doesn't have any textual content
+            assertEquals(0, text.length());
+            continue;
+         }
+         
+         assertTrue(text.length() > 0);
+         assertTrue(
+               "Text missing for " + filename + "\n" + text, 
+               text.contains("Attachment Test")
+         );
+         assertTrue(
+               "Text missing for " + filename + "\n" + text, 
+               text.contains("This is a test file data with the same content")
+         );
+         assertTrue(
+               "Text missing for " + filename + "\n" + text, 
+               text.contains("content parsing")
+         );
+         assertTrue(
+               "Text missing for " + filename + "\n" + text, 
+               text.contains("Different words to test against")
+         );
+         assertTrue(
+               "Text missing for " + filename + "\n" + text, 
+               text.contains("Mystery")
+         );
+       }
+    }
 }

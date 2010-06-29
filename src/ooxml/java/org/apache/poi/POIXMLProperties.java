@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -68,7 +69,7 @@ public class POIXMLProperties {
 
 		// Extended properties
 		PackageRelationshipCollection extRel =
-			pkg.getRelationshipsByType(POIXMLDocument.EXTENDED_PROPERTIES_REL_TYPE);
+			pkg.getRelationshipsByType(PackageRelationshipTypes.EXTENDED_PROPERTIES);
 		if(extRel.size() == 1) {
 			extPart = pkg.getPart( extRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
@@ -82,7 +83,7 @@ public class POIXMLProperties {
 
 		// Custom properties
 		PackageRelationshipCollection custRel =
-			pkg.getRelationshipsByType(POIXMLDocument.CUSTOM_PROPERTIES_REL_TYPE);
+			pkg.getRelationshipsByType(PackageRelationshipTypes.CUSTOM_PROPERTIES);
 		if(custRel.size() == 1) {
 			custPart = pkg.getPart( custRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
