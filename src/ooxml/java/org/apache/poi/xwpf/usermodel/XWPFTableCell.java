@@ -45,7 +45,7 @@ public class XWPFTableCell implements IBody {
         this.part = part;
         this.tableRow = tableRow;
         // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
-        if(cell.getPArray().length<1)
+        if(cell.getPList().size()<1)
         	cell.addNewP();
         bodyElements = new ArrayList<IBodyElement>();
         paragraphs = new ArrayList<XWPFParagraph>();
@@ -87,6 +87,16 @@ public class XWPFTableCell implements IBody {
      */
     public List<XWPFParagraph> getParagraphs(){
     		return paragraphs;
+    }
+    
+    /**
+     * Add a Paragraph to this Table Cell
+     * @return The paragraph which was added
+     */
+    public XWPFParagraph addParagraph() {
+       XWPFParagraph p = new XWPFParagraph(ctTc.addNewP(), this);
+       addParagraph(p);
+       return p;
     }
     
     /**
@@ -296,7 +306,7 @@ public class XWPFTableCell implements IBody {
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
 		int i;
-    	for (i = 0; i < ctTc.getTblArray().length; i++) {
+    	for (i = 0; i < ctTc.getTblList().size(); i++) {
 			CTTbl tbl = ctTc.getTblArray(i);
 			if(tbl == table.getCTTbl()){
 				break;
