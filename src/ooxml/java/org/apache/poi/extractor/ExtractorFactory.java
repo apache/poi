@@ -38,6 +38,8 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hwpf.OldWordFileFormatException;
+import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -218,7 +220,12 @@ public class ExtractorFactory {
 			   }
 			}
 			if(entry.getName().equals("WordDocument")) {
-				return new WordExtractor(poifsDir, fs);
+			    // Old or new style word document?
+			    try {
+			        return new WordExtractor(poifsDir, fs);
+			    } catch(OldWordFileFormatException e) {
+			        return new Word6Extractor(poifsDir, fs);
+			    }
 			}
 			if(entry.getName().equals("PowerPoint Document")) {
 				return new PowerPointExtractor(poifsDir, fs);
@@ -230,12 +237,12 @@ public class ExtractorFactory {
             return new PublisherTextExtractor(poifsDir, fs);
          }
 			if(
-			      entry.getName().equals("__substg1.0_1000001E") ||
-               entry.getName().equals("__substg1.0_1000001F") ||
-			      entry.getName().equals("__substg1.0_0047001E") ||
-               entry.getName().equals("__substg1.0_0047001F") ||
-			      entry.getName().equals("__substg1.0_0037001E") ||
-               entry.getName().equals("__substg1.0_0037001F")
+                entry.getName().equals("__substg1.0_1000001E") ||
+                entry.getName().equals("__substg1.0_1000001F") ||
+                entry.getName().equals("__substg1.0_0047001E") ||
+                entry.getName().equals("__substg1.0_0047001F") ||
+                entry.getName().equals("__substg1.0_0037001E") ||
+                entry.getName().equals("__substg1.0_0037001F")
 			) {
 			   return new OutlookTextExtactor(poifsDir, fs);
 			}
