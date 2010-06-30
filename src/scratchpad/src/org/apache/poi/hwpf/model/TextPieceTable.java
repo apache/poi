@@ -17,14 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.poifs.common.POIFSConstants;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * The piece table for matching up character positions to bits of text. This
@@ -34,7 +33,7 @@ import java.util.List;
  * @author Ryan Ackley
  */
 public final class TextPieceTable implements CharIndexTranslator {
-	protected ArrayList _textPieces = new ArrayList();
+	protected ArrayList<TextPiece> _textPieces = new ArrayList<TextPiece>();
 	// int _multiple;
 	int _cpMin;
 
@@ -97,7 +96,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 
 		// In the interest of our sanity, now sort the text pieces
 		// into order, if they're not already
-		TextPiece[] tp = (TextPiece[]) _textPieces.toArray(new TextPiece[_textPieces.size()]);
+		TextPiece[] tp = _textPieces.toArray(new TextPiece[_textPieces.size()]);
 		Arrays.sort(tp);
 		for (int i = 0; i < tp.length; i++) {
 			_textPieces.set(i, tp[i]);
@@ -108,7 +107,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 		return _cpMin;
 	}
 
-	public List getTextPieces() {
+	public List<TextPiece> getTextPieces() {
 		return _textPieces;
 	}
 
@@ -123,9 +122,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public boolean isUnicodeAtCharOffset(int cp) {
 		boolean lastWas = false;
 
-		Iterator it = _textPieces.iterator();
-		while (it.hasNext()) {
-			TextPiece tp = (TextPiece) it.next();
+		for(TextPiece tp : _textPieces) {
 			// If the text piece covers the character, all good
 			if (tp.getStart() <= cp && tp.getEnd() >= cp) {
 				return tp.isUnicode();
@@ -141,9 +138,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public boolean isUnicodeAtByteOffset(int bytePos) {
 		boolean lastWas = false;
 
-		Iterator it = _textPieces.iterator();
-		while (it.hasNext()) {
-			TextPiece tp = (TextPiece) it.next();
+        for(TextPiece tp : _textPieces) {
 			int curByte = tp.getPieceDescriptor().getFilePosition();
 			int pieceEnd = curByte + tp.bytesLength();
 
@@ -168,7 +163,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 
 		int size = _textPieces.size();
 		for (int x = 0; x < size; x++) {
-			TextPiece next = (TextPiece) _textPieces.get(x);
+			TextPiece next = _textPieces.get(x);
 			PieceDescriptor pd = next.getPieceDescriptor();
 
 			int offset = docStream.getOffset();
@@ -209,7 +204,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public int adjustForInsert(int listIndex, int length) {
 		int size = _textPieces.size();
 
-		TextPiece tp = (TextPiece) _textPieces.get(listIndex);
+		TextPiece tp = _textPieces.get(listIndex);
 
 		// Update with the new end
 		tp.setEnd(tp.getEnd() + length);
@@ -243,9 +238,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public int getCharIndex(int bytePos) {
 		int charCount = 0;
 
-		Iterator it = _textPieces.iterator();
-		while (it.hasNext()) {
-			TextPiece tp = (TextPiece) it.next();
+        for(TextPiece tp : _textPieces) {
 			int pieceStart = tp.getPieceDescriptor().getFilePosition();
 			if (pieceStart >= bytePos) {
 				break;

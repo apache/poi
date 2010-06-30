@@ -35,7 +35,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 public final class CHPBinTable
 {
   /** List of character properties.*/
-  protected ArrayList _textRuns = new ArrayList();
+  protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
 
   /** So we can know if things are unicode or not */
   private TextPieceTable tpt;
@@ -85,33 +85,33 @@ public final class CHPBinTable
     int endMark = offset + length;
     int endIndex = listIndex;
 
-    CHPX chpx = (CHPX)_textRuns.get(endIndex);
+    CHPX chpx = _textRuns.get(endIndex);
     while (chpx.getEnd() < endMark)
     {
-      chpx = (CHPX)_textRuns.get(++endIndex);
+      chpx = _textRuns.get(++endIndex);
     }
     if (listIndex == endIndex)
     {
-      chpx = (CHPX)_textRuns.get(endIndex);
+      chpx = _textRuns.get(endIndex);
       chpx.setEnd((chpx.getEnd() - endMark) + offset);
     }
     else
     {
-      chpx = (CHPX)_textRuns.get(listIndex);
+      chpx = _textRuns.get(listIndex);
       chpx.setEnd(offset);
       for (int x = listIndex + 1; x < endIndex; x++)
       {
-        chpx = (CHPX)_textRuns.get(x);
+        chpx = _textRuns.get(x);
         chpx.setStart(offset);
         chpx.setEnd(offset);
       }
-      chpx = (CHPX)_textRuns.get(endIndex);
+      chpx = _textRuns.get(endIndex);
       chpx.setEnd((chpx.getEnd() - endMark) + offset);
     }
 
     for (int x = endIndex + 1; x < size; x++)
     {
-      chpx = (CHPX)_textRuns.get(x);
+      chpx = _textRuns.get(x);
       chpx.setStart(chpx.getStart() - length);
       chpx.setEnd(chpx.getEnd() - length);
     }
@@ -132,7 +132,7 @@ public final class CHPBinTable
     }
     else
     {
-      CHPX chpx = (CHPX)_textRuns.get(listIndex);
+      CHPX chpx = _textRuns.get(listIndex);
       if (chpx.getStart() < cpStart)
       {
     	// Copy the properties of the one before to afterwards
@@ -160,18 +160,18 @@ public final class CHPBinTable
   public void adjustForInsert(int listIndex, int length)
   {
     int size = _textRuns.size();
-    CHPX chpx = (CHPX)_textRuns.get(listIndex);
+    CHPX chpx = _textRuns.get(listIndex);
     chpx.setEnd(chpx.getEnd() + length);
 
     for (int x = listIndex + 1; x < size; x++)
     {
-      chpx = (CHPX)_textRuns.get(x);
+      chpx = _textRuns.get(x);
       chpx.setStart(chpx.getStart() + length);
       chpx.setEnd(chpx.getEnd() + length);
     }
   }
 
-  public List getTextRuns()
+  public List<CHPX> getTextRuns()
   {
     return _textRuns;
   }
@@ -203,7 +203,7 @@ public final class CHPBinTable
     endingFc += fcMin;
 
 
-    ArrayList overflow = _textRuns;
+    ArrayList<CHPX> overflow = _textRuns;
     do
     {
       PropertyNode startingProp = (PropertyNode)overflow.get(0);
@@ -230,9 +230,4 @@ public final class CHPBinTable
     while (overflow != null);
     tableStream.write(binTable.toByteArray());
   }
-
-
-
-
-
 }
