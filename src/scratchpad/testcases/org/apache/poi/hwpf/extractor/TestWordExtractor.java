@@ -19,13 +19,12 @@ package org.apache.poi.hwpf.extractor;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
-
-import java.io.FileInputStream;
 
 /**
  * Test the different routes to extracting text
@@ -236,5 +235,43 @@ public final class TestWordExtractor extends TestCase {
 		}
 
 		assertTrue(b.toString().contains("TestComment"));
+	}
+	
+	public void testWord95() throws Exception {
+	    // Too old for the default
+	    try {
+    		extractor = new WordExtractor(
+    				POIDataSamples.getDocumentInstance().openResourceAsStream("Word95.doc")
+    		);
+    		fail();
+	    } catch(OldWordFileFormatException e) {}
+		
+		// Can work with the special one
+	    Word6Extractor w6e = new Word6Extractor(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("Word95.doc")
+        );
+		String text = w6e.getText();
+		
+		assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
+        assertTrue(text.contains("Paragraph 2"));
+        assertTrue(text.contains("Paragraph 3. Has some RED text and some BLUE BOLD text in it"));
+        assertTrue(text.contains("Last (4th) paragraph"));
+	}
+	
+	public void testWord6() throws Exception {
+        // Too old for the default
+        try {
+    		extractor = new WordExtractor(
+    				POIDataSamples.getDocumentInstance().openResourceAsStream("Word6.doc")
+    		);
+            fail();
+        } catch(OldWordFileFormatException e) {}
+        
+        Word6Extractor w6e = new Word6Extractor(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("Word6.doc")
+        );
+        String text = w6e.getText();
+        
+        assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
 	}
 }

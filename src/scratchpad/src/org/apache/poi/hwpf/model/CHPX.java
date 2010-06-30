@@ -61,4 +61,9 @@ public final class CHPX extends BytePropertyNode
     CharacterProperties props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
     return props;
   }
+  
+  public String toString() {
+      return "CHPX from " + getStart() + " to " + getEnd() + 
+         " (in bytes " + getStartBytes() + " to " + getEndBytes() + ")";
+  }
 }
