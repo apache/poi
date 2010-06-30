@@ -86,7 +86,8 @@
          provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
          which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
-         XLS format; and <link href="http://lucene.apache.org/">Lucene</link>
+         XLS format; and <link href="http://tika.apache.org/">Tika</link> / 
+         <link href="http://lucene.apache.org/">Lucene</link>,
          for which we provide format interpretors.  When practical, we donate
          components directly to those projects for POI-enabling them. 
       </p>

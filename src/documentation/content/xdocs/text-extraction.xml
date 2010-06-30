@@ -81,11 +81,15 @@
     </section>
 
     <section><title>Word</title>
-     <p>For .doc files, in scratchpad there is 
+     <p>For .doc files from Word 97 - Word 2003, in scratchpad there is 
       <em>org.apache.poi.hwpf.extractor.WordExtractor</em>, which will 
-      return text for your document. Those using POI 3.5 can also use 
+      return text for your document.</p>
+     <p>Those using POI 3.7 can also extract simple textual content from
+      older Word 6 and Word 95 files, using the scratchpad class
+      <em>org.apache.poi.hwpf.extractor.Word6Extractor</em>.</p>
+     <p>Since POI 3.5, it is possible to use
       <em>org.apache.poi.xwpf.extractor.XPFFWordExtractor</em>, to perform
-      a similar task for .docx files.</p>
+      text extraction for .docx files.</p> 
     </section>
 
     <section><title>PowerPoint</title>
@@ -95,6 +99,12 @@
       slides text or notes text. Those using POI 3.5 can also use 
       <em>org.apache.poi.xslf.extractor.XSLFPowerPointExtractor</em>, to 
       perform a similar task for .pptx files.</p>
+    </section>
+
+    <section><title>Publisher</title>
+     <p>For .pub files, in scratchpad there is 
+      <em>org.apache.poi.hpbf.extractor.PublisherExtractor</em>, which 
+      will return text for your file.</p>
     </section>
 
     <section><title>Visio</title>

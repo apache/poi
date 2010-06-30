@@ -35,8 +35,12 @@
  <section><title>Overview</title>
 
   <p>HWPF is the name of our port of the Microsoft Word 97(-2007) file format
-    to pure Java. It <em>does not</em> support the new Word 2007 .docx
-	file format, which is not OLE2 based.</p>
+    to pure Java. It also provides limited read only support for the older
+    Word 6 and Word 95 file formats.</p>
+
+  <p>The partner to HWPF for the new Word 2007 .docx format is <em>XWPF</em>.
+    Whilst HWPF and XWPF provide similar features, there is not a common
+    interface across the two of them at this time.</p>
 
   <p>HWPF is still in early development. It is in the <link
      href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">
@@ -54,6 +58,20 @@
    </p>
 
    <section>
+    <title>XWPF Patches Required!</title>
+
+    <p>At the moment, XWPF covers many common use cases for reading and writing
+     .docx files. Whilst this is a great thing, it does mean that XWPF does
+     everything that the current POI committers need it to do, and so none of
+     the committers are actively adding new features.</p>
+
+    <p>If you come across a feature in XWPF that you need, and isn't currently 
+     there, please do send in a patch to add the extra functionality! More details
+     on contributing patches are available on the <link
+      href="../getinvolved/index.html">"Contribution to POI" page</link>.</p>
+   </section>
+
+   <section>
     <title>HWPF Pointman Needed!</title>
 
     <p>At the moment we unfortunately do not have someone taking care for HWPF
@@ -65,12 +83,12 @@
     <p>If <strong>you</strong> are interested in becoming the new HWPF
      pointman, you should look into the Microsoft Word internals. A good
      starting point seems to be Ryan Ackley's  <link
-      href="docoverview.html">overview</link>. This document contains a link to
-     a detailled Word format description you can find somewhere at
-     <link href="http://www.wotsit.org/">http://www.wotsit.org/</link>. Please
-     do not contact Ryan Ackley directly, because he is working for a company
-     now that signed a NDA with Microsoft and thus he will be no longer able to
-     answer questions.</p>
+      href="docoverview.html">overview</link>. Full details on the word format
+     is available from 
+     <link href="http://www.microsoft.com/interop/docs/OfficeBinaryFormats.mspx">Microsoft</link>,
+     but the documentation can be a little hard to get into at first... Try reading the
+     <link href="docoverview.html">overview</link> first, and looking at the existing
+     code, then finally look up the documentation for specific missing features.</p>
 
     <p>As a first step you should familiarize yourself with the source code,
      examples, test cases, and the HWPF patches available at <link
@@ -88,13 +106,14 @@
     </ul>
 
     <p>When you start coding, you will not yet have write access to the
-     CVS repository. Please submit your patches to <link
+     SVN repository. Please submit your patches to <link
       href="http://issues.apache.org/">Bugzilla</link> and nag <link
-      href="mailto:klute@apache.org">Rainer Klute</link> until he commits
-     them. Besides the actual checking in of HWPF patches Rainer will also do
-     some minor reviews now and then of your source code patches, test cases
-     and documentation to help ensure software quality. But most of the time
-     you will be on your own.</p>
+      href="mailto:dev@poi.apache.org">the dev list</link> until someone commits
+     them. Besides the actual checking in of HWPF patches, current POI
+     committers will also do some minor reviews now and then of your source code 
+     patches, test cases and documentation to help ensure software quality. But 
+     most of the time you will be on your own. However, anyone offering useful
+     contributions over a period of time will be offered committership!</p>
 
     <p>Please do not forget to write <link
       href="http://www.junit.org/">JUnit</link> test cases and documentation!
@@ -102,15 +121,9 @@
      consider that other contributors should be able to understand your source
      code easily. If you need any help getting started with JUnit test cases
      for HWPF, please ask on the developers' mailing list! If you show that you
-     are prepared to stick at it you will most likely be given CVS commit
-     access.</p>
-
-    <p><strong>Important:</strong> It is legally vital for POI that you have
-     never seen any documentation or specification from Microsoft that required
-     you or your employer to sign an NDA to get it. Please do read the <link
-      href="../getinvolved/index.html">"Contribution to POI" page</link> for
-     details! This page also contains further information for you to start POI
-     development.</p>
+     are prepared to stick at it you will most likely be given SVN commit
+     access. See <link href="../getinvolved/index.html">"Contribution to POI" page</link>
+     for more details and help getting started.</p>
 
     <p>Of course we will help you as best as we can. However, presently there
      is no committer who is really familiar with the Word format, so you'll be
