@@ -169,7 +169,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     
     // Is this document too old for us?
     if(_fib.getNFib() < 106) {
-        throw new OldWordFileFormatException("The document is too old (Word 95 or older) ");
+        throw new OldWordFileFormatException("The document is too old - Word 95 or older. Try HWPFOldDocument instead?");
     }
 
     // use the fib to determine the name of the table stream.
