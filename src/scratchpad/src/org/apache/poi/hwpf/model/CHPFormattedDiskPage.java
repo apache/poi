@@ -42,8 +42,8 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
     private static final int FC_SIZE = 4;
 
-    private ArrayList _chpxList = new ArrayList();
-    private ArrayList _overFlow;
+    private ArrayList<CHPX> _chpxList = new ArrayList<CHPX>();
+    private ArrayList<CHPX> _overFlow;
 
 
     public CHPFormattedDiskPage()
@@ -68,15 +68,15 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
 
     public CHPX getCHPX(int index)
     {
-      return (CHPX)_chpxList.get(index);
+      return _chpxList.get(index);
     }
 
-    public void fill(List filler)
+    public void fill(List<CHPX> filler)
     {
       _chpxList.addAll(filler);
     }
 
-    public ArrayList getOverflow()
+    public ArrayList<CHPX> getOverflow()
     {
       return _overFlow;
     }
@@ -119,7 +119,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
       int index = 0;
       for (; index < size; index++)
       {
-        int grpprlLength = ((CHPX)_chpxList.get(index)).getGrpprl().length;
+        int grpprlLength = (_chpxList.get(index)).getGrpprl().length;
 
         // check to see if we have enough room for an FC, the grpprl offset,
         // the grpprl size byte and the grpprl.
@@ -142,7 +142,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
       // see if we couldn't fit some
       if (index != size)
       {
-        _overFlow = new ArrayList();
+        _overFlow = new ArrayList<CHPX>();
         _overFlow.addAll(_chpxList.subList(index, size));
       }
 
