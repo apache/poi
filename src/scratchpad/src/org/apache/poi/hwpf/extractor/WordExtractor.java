@@ -40,7 +40,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * You should use either getParagraphText() or getText() unless
  *  you have a strong reason otherwise.
  *
- * @author Nick Burch (nick at torchbox dot com)
+ * @author Nick Burch
  */
 public final class WordExtractor extends POIOLE2TextExtractor {
 	private POIFSFileSystem fs;
