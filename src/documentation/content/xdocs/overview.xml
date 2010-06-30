@@ -50,14 +50,16 @@
       <section><title>HWPF and XWPF for Word Documents</title>
 	<p>
 	  HWPF is our port of the Microsoft Word 97 (-2003) file format to pure
-	  Java.  It supports read, and limited write capabilities. Please see <link
-	    href="./hwpf/index.html">the HWPF project page for more
+	  Java.  It supports read, and limited write capabilities. It also provides
+      simple text extraction support for the older Word 6 and Word 95 formats.
+      Please see <link href="./hwpf/index.html">the HWPF project page for more
 	    information</link>.  This component remains in early stages of
 	  development. It can already read and write simple files.
 	</p>
 	<p>
 	  We are also working on the XWPF for the WordprocessingML (2007+) format from the 
-	  OOXML specification.
+	  OOXML specification. This provides read and write support for simpler
+      files, along with text extraction capabilities.
 	</p>
       </section>
       <section><title>HSLF and XSLF for PowerPoint Documents</title>
@@ -108,8 +110,8 @@
       <section><title>HSMF for Outlook Messages</title>
 	<p>
 	  HSMF is our port of the Microsoft Outlook message file format to pure
-	  Java. It currently only some of the textual content of MSG files. 
-	  Further support and documentation is expected over the comming weeks and months.
+	  Java. It currently only some of the textual content of MSG files, and
+      some attachments. Further support and documentation is coming in slowly.
 	  For now, users are advised to consult the unit tests for example use.
 	  Please see <link href="./hsmf/index.html">the HPBF project page for more
 	    information</link>.
