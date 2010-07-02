@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class PAPBinTable
 {
-  protected ArrayList _paragraphs = new ArrayList();
+  protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
   byte[] _dataStream;
 
   /** So we can know if things are unicode or not */
@@ -89,7 +89,7 @@ public final class PAPBinTable
     }
     else
     {
-      PAPX currentPap = (PAPX)_paragraphs.get(listIndex);
+      PAPX currentPap = _paragraphs.get(listIndex);
       if (currentPap != null && currentPap.getStart() < cpStart)
       {
         SprmBuffer clonedBuf = null;
@@ -131,33 +131,33 @@ public final class PAPBinTable
     int endMark = offset + length;
     int endIndex = listIndex;
 
-    PAPX papx = (PAPX)_paragraphs.get(endIndex);
+    PAPX papx = _paragraphs.get(endIndex);
     while (papx.getEnd() < endMark)
     {
-      papx = (PAPX)_paragraphs.get(++endIndex);
+      papx = _paragraphs.get(++endIndex);
     }
     if (listIndex == endIndex)
     {
-      papx = (PAPX)_paragraphs.get(endIndex);
+      papx = _paragraphs.get(endIndex);
       papx.setEnd((papx.getEnd() - endMark) + offset);
     }
     else
     {
-      papx = (PAPX)_paragraphs.get(listIndex);
+      papx = _paragraphs.get(listIndex);
       papx.setEnd(offset);
       for (int x = listIndex + 1; x < endIndex; x++)
       {
-        papx = (PAPX)_paragraphs.get(x);
+        papx = _paragraphs.get(x);
         papx.setStart(offset);
         papx.setEnd(offset);
       }
-      papx = (PAPX)_paragraphs.get(endIndex);
+      papx = _paragraphs.get(endIndex);
       papx.setEnd((papx.getEnd() - endMark) + offset);
     }
 
     for (int x = endIndex + 1; x < size; x++)
     {
-      papx = (PAPX)_paragraphs.get(x);
+      papx = _paragraphs.get(x);
       papx.setStart(papx.getStart() - length);
       papx.setEnd(papx.getEnd() - length);
     }
@@ -179,7 +179,7 @@ public final class PAPBinTable
   }
 
 
-  public ArrayList getParagraphs()
+  public ArrayList<PAPX> getParagraphs()
   {
     return _paragraphs;
   }
@@ -211,7 +211,7 @@ public final class PAPBinTable
     endingFc += fcMin;
 
 
-    ArrayList overflow = _paragraphs;
+    ArrayList<PAPX> overflow = _paragraphs;
     do
     {
       PropertyNode startingProp = (PropertyNode)overflow.get(0);
