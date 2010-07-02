@@ -114,7 +114,7 @@ be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2002-2009</year>
+  <year>2002-2010</year>
   <vendor>The Apache Software Foundation</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't

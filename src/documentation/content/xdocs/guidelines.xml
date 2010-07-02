@@ -23,10 +23,8 @@
  <header>
   <title>Apache POI - Contribution Guidelines</title>
   <authors>
-   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/> 
-   <person name="Marc Johnson" email="mjohnson@apache.org"/>
-   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
-   <person name="Tetsuya Kitahata" email="tetsuya.kitahata@nifty.com"/>
+   <person name="Nick Burch" email="dev@poi.apache.org"/> 
+   <person name="David Fisher" email="dev@poi.apache.org"/> 
    </authors>
  </header>
 
@@ -93,24 +91,30 @@
   <section><title>I just signed an NDA to get a spec from Microsoft and I'd like to contribute</title>
    <p>
      In short, stay away, stay far far away.  Implementing these file formats
-     in POI is done strictly by using public information.  Public information
+     in POI is done strictly by using public information. Most of this Public
+     Information currently comes from the documentation that Microsoft
+     makes freely available (see above). The rest of the public information
      includes sources from other open source projects, books that state the 
      purpose intended is for allowing implementation of the file format and 
      do not require any non-disclosure agreement and just hard work. 
-     We are intent on keeping it
-     legal, by contributing patches you agree to do the same.
+     We are intent on keeping it legal, by contributing patches you agree to 
+     do the same.
    </p>
    <p> 
      If you've ever received information regarding the OLE 2 Compound Document
      Format under any type of exclusionary agreement from Microsoft, or  
-     (possibly illegally) received such information from a person bound by
-     such an agreement, you cannot participate in this project. (Sorry)
+     received such information from a person bound by such an agreement, you 
+     cannot participate in this project. Sorry. Well, unless you can persuade 
+     Microsoft to release you from the terms of the NDA on the grounds that
+     most of the information is now publically available. However, if you have
+     been party to a Microsoft NDA, you will need to get clearance from Microsoft
+     before contributing.
    </p>
    <p>
      Those submitting patches that show insight into the file format may be 
      asked to state explicitly that they have only ever read the publicly
      available file format information, and not any received under an NDA
-     or similar.
+     or similar, and have only made us of the public documentation.
    </p>
   </section>
  </section>
@@ -130,12 +134,15 @@
       <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">OOXML XML File Formats</link></li>
      <li>Submit patches (see below) of your contributions, modifications.</li>
      <li>Check the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link> for simple problem reports, and write a patch to fix the problem</li>
+     <li>Review existing patches in the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link>, and report if they still apply, if they need unit tests atc.</li>
      <li>Add in new features, see <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug database</link> for suggestions.</li>
    </ul>
    <p>The Nutch project also have a very useful guide on becoming a 
     new developer in their project. While it is written for their project,
     a large part of it will apply to POI too. You can read it at
-    <link href="http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer">http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer</link></p>
+    <link href="http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer">http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer</link>. The
+    <link href="http://community.apache.org/">Apache Community Development
+    Project</link> also provides guidance and mentoring for new contributors.</p>
   </section>
   <section><title>Submitting Patches</title>
    <p>
@@ -147,6 +154,19 @@
      files, create an archive (tar.bz2 preferred as its the smallest) in a 
      path-preserving archive format, relative to your poi directory. 
      You'll attach both files in the next step.
+   </p>
+   <p>
+     Ideally, patches should be submitted early and often. This is for
+     two key reasons. Firstly, it's much easier to review smaller patches
+     than large ones. This means that smaller patches are much more likely
+     to be applied to SVN in a timely fashion. Secondly, by sending in your
+     patches earlier rather than later, it's much easier to get feedback
+     on your coding and direction. If you've missed an easier way to do something,
+     or are duplicating some (probably hidden) existing code, or taking things
+     in an unusual direction, it's best to get the feedback sooner rather than
+     later! As such, when submitting patches to POI, as with other Apache
+     Software Foundation projects, do please try to submit early and often, rather
+     than "throwing a large patch over the wall" at the end.
    </p>
    <p> 
      Patches are submitted via the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.  
@@ -179,8 +199,7 @@ svn diff > /tmp/poi-patch/diff.txt
 
 # Capture any new files, as svn diff won't include them
 # Preserve the path
-svn status | grep "^\?" | \
-    awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
+svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
 
 # tar up the new files
 cd /tmp/poi-patch/new-files/
@@ -194,10 +213,43 @@ echo "   /tmp/poi-patch/new-files.tar.bz2"
    </source>
   </section>
 
+  <section><title>Mentoring and Committership</title>
+   <p>The POI project will generally offer committership to contributors who send
+    in consistently good patches over a period of several months.</p>
+   <p>The requirement for "good patches" generally means patches which can be applied
+    to SVN with little or no changes. These patches should include unit test, and
+    appropriate documentation. Whilst your first patch to POI may require quite a 
+    bit of work before it can be committed by an existing committer, with any luck
+    your later patches will be applied with no / minor tweaks. Please do take note
+    of any changes required by your earlier patches, to learn for later ones! If
+    in doubt, ask on the <link href="mailinglists.html">dev mailing list</link>.</p>
+   <p>The requirement for patches over several months is to ensure that committers
+    remain with the project. It's very easy for a good developer to fire off half
+    a dozen good patches in the couple of weeks that they're working on a POI
+    powered project. However, if that developer then moves away, and stops 
+    contributing to POI after that spurt, then they're not a good candidate for
+    committership. As such, we generally require people to stay around for a while,
+    submitting patches and helping on the mailing list before considering them
+    for committership.</p>
+   <p>Where possible, patches should be submitted early and often. For more details
+    on this, please see the "Submitting Patches" section above.</p>
+
+   <p>Where possible, the existing developers will try to help and mentor new
+    contributors. However, everyone involved in POI is a volunteer, and it may
+    happen that your first few patches come in at a time when all the committers
+    are very busy. Do please have patience, and remember to use the 
+    <link href="mailinglists.html">dev mailing list</link> so that other
+    contributors can assist you!</p>
+   <p>For more information on getting started at Apache, mentoring, and local
+    Apache Committers near you who can offer advice, please see the
+    <link href="http://community.apache.org/">Apache Community Development
+    Project</link> website.</p>
+  </section>
+
 </body>
-  <footer>
-    <legal>
+<footer>
+   <legal>
       Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
-    </legal>
-  </footer>
+   </legal>
+</footer>
 </document>
