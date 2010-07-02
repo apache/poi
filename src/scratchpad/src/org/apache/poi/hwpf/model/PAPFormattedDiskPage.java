@@ -44,8 +44,8 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;
 
-    private ArrayList _papxList = new ArrayList();
-    private ArrayList _overFlow;
+    private ArrayList<PAPX> _papxList = new ArrayList<PAPX>();
+    private ArrayList<PAPX> _overFlow;
     private byte[] _dataStream;
 
 
@@ -74,7 +74,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      *
      * @param filler a List of PAPXs
      */
-    public void fill(List filler)
+    public void fill(List<PAPX> filler)
     {
       _papxList.addAll(filler);
     }
@@ -91,7 +91,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      *
      * @return The remaining PAPXs that didn't fit into this FKP.
      */
-    ArrayList getOverflow()
+    ArrayList<PAPX> getOverflow()
     {
       return _overFlow;
     }
@@ -103,7 +103,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      */
     public PAPX getPAPX(int index)
     {
-      return (PAPX)_papxList.get(index);
+      return _papxList.get(index);
     }
 
     /**
@@ -198,7 +198,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
       // see if we couldn't fit some
       if (index != size)
       {
-        _overFlow = new ArrayList();
+        _overFlow = new ArrayList<PAPX>();
         _overFlow.addAll(_papxList.subList(index, size));
       }
 
@@ -212,7 +212,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
       lastGrpprl = new byte[0];
       for (int x = 0; x < index; x++)
       {
-        papx = (PAPX)_papxList.get(x);
+        papx = _papxList.get(x);
         byte[] phe = papx.getParagraphHeight().toByteArray();
         byte[] grpprl = papx.getGrpprl();
 
