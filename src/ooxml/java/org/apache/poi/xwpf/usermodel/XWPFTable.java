@@ -71,12 +71,12 @@ public class XWPFTable implements IBodyElement{
         if (table.sizeOfTrArray() == 0)
             createEmptyTable(table);
 
-        for (CTRow row : table.getTrArray()) {
+        for (CTRow row : table.getTrList()) {
             StringBuffer rowText = new StringBuffer();
             XWPFTableRow tabRow = new XWPFTableRow(row, this);
             tableRows.add(tabRow);
-            for (CTTc cell : row.getTcArray()) {
-                for (CTP ctp : cell.getPArray()) {
+            for (CTTc cell : row.getTcList()) {
+                for (CTP ctp : cell.getPList()) {
                     XWPFParagraph p = new XWPFParagraph(ctp, part);
                     if (rowText.length() > 0) {
                         rowText.append('\t');

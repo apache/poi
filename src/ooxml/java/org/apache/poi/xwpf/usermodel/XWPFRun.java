@@ -127,7 +127,7 @@ public class XWPFRun {
      * @param value the literal text which shall be displayed in the document
      */
     public void setText(String value) {
-	setText(value,run.getTArray().length);
+	setText(value,run.getTList().size());
     }
 
     /**

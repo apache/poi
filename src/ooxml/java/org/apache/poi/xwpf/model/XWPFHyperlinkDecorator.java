@@ -49,10 +49,10 @@ public class XWPFHyperlinkDecorator extends XWPFParagraphDecorator {
 		hyperlinkText = new StringBuffer();
 		
 		// loop over hyperlink anchors
-		for(CTHyperlink link : paragraph.getCTP().getHyperlinkArray()){
-			for (CTR r : link.getRArray()) {
+		for(CTHyperlink link : paragraph.getCTP().getHyperlinkList()){
+			for (CTR r : link.getRList()) {
 				// Loop over text runs
-				for (CTText text : r.getTArray()){
+				for (CTText text : r.getTList()){
 					hyperlinkText.append(text.getStringValue());
 				}
 			}

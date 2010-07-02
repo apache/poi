@@ -27,7 +27,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph> {
     private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
 
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPArray())	{
+        for (CTP p : body.getPList())	{
             paragraphs.add(new XWPFParagraph(p, document));
         }
     }

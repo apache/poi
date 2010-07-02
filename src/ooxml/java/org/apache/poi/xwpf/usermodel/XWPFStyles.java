@@ -75,7 +75,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
 			throw new POIXMLException();
 		}
         //get any Style
-        for(CTStyle style : ctStyles.getStyleArray()) {
+        for(CTStyle style : ctStyles.getStyleList()) {
             listStyle.add(new XWPFStyle(style, this));
         }
 	}
@@ -117,7 +117,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	public void addStyle(XWPFStyle style){
 		listStyle.add(style);
 		ctStyles.addNewStyle();
-		int pos = (ctStyles.getStyleArray().length) - 1;
+		int pos = (ctStyles.getStyleList().size()) - 1;
 		ctStyles.setStyleArray(pos, style.getCTStyle());
 	}
 	/**

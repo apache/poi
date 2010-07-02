@@ -37,7 +37,7 @@ public class XWPFComment
         id = comment.getId().toString();
         author = comment.getAuthor();
         
-        for(CTP ctp : comment.getPArray())
+        for(CTP ctp : comment.getPList())
         {
             XWPFParagraph p = new XWPFParagraph(ctp, null);
             text.append(p.getText());
