@@ -133,7 +133,7 @@ public class Table extends POIXMLDocumentPart {
 		
 		String[] commonTokens ={};
 		
-		for(CTTableColumn column :ctTable.getTableColumns().getTableColumnArray()){
+		for(CTTableColumn column :ctTable.getTableColumns().getTableColumnList()){
 			if(column.getXmlColumnPr()!=null){
 				String xpath = column.getXmlColumnPr().getXpath();
 				String[] tokens =  xpath.split("/");
@@ -176,7 +176,7 @@ public class Table extends POIXMLDocumentPart {
 		
 		if(xmlColumnPr==null){
 			xmlColumnPr = new Vector<XSSFXmlColumnPr>();
-			for(CTTableColumn column:ctTable.getTableColumns().getTableColumnArray()){
+			for(CTTableColumn column:ctTable.getTableColumns().getTableColumnList()){
 				if(column.getXmlColumnPr()!=null){
 					XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
 					xmlColumnPr.add(columnPr);
