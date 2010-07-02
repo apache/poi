@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public final class PAPBinTable
+public class PAPBinTable
 {
   protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
   byte[] _dataStream;

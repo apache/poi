@@ -21,25 +21,16 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This class holds all of the character formatting 
+ * This class holds all of the paragraph formatting 
  *  properties from Old (Word 6 / Word 95) documents.
  * Unlike with Word 97+, it all gets held in the
  *  same stream.
  * In common with the rest of the old support, it 
  *  is read only
  */
-public final class OldCHPBinTable extends CHPBinTable
+public final class OldPAPBinTable extends PAPBinTable
 {
-  /**
-   * Constructor used to read an old-style binTable
-   *  in from a Word document.
-   *
-   * @param documentStream
-   * @param offset
-   * @param size
-   * @param fcMin
-   */
-  public OldCHPBinTable(byte[] documentStream, int offset,
+  public OldPAPBinTable(byte[] documentStream, int offset,
                      int size, int fcMin, TextPieceTable tpt)
   {
     PlexOfCps binTable = new PlexOfCps(documentStream, offset, size, 2);
@@ -52,15 +43,17 @@ public final class OldCHPBinTable extends CHPBinTable
       int pageNum = LittleEndian.getShort(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
-      CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin, tpt);
+      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
+        documentStream, pageOffset, fcMin, tpt);
 
-      int fkpSize = cfkp.size();
+      int fkpSize = pfkp.size();
 
       for (int y = 0; y < fkpSize; y++)
       {
-        _textRuns.add(cfkp.getCHPX(y));
+    	PAPX papx = pfkp.getPAPX(y);
+        _paragraphs.add(papx);
       }
     }
   }
 }
+

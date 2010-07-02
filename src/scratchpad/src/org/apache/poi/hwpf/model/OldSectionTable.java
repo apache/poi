@@ -17,49 +17,48 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This class holds all of the character formatting 
+ * This class holds all of the section formatting 
  *  properties from Old (Word 6 / Word 95) documents.
  * Unlike with Word 97+, it all gets held in the
  *  same stream.
  * In common with the rest of the old support, it 
  *  is read only
  */
-public final class OldCHPBinTable extends CHPBinTable
+public final class OldSectionTable extends SectionTable
 {
-  /**
-   * Constructor used to read an old-style binTable
-   *  in from a Word document.
-   *
-   * @param documentStream
-   * @param offset
-   * @param size
-   * @param fcMin
-   */
-  public OldCHPBinTable(byte[] documentStream, int offset,
-                     int size, int fcMin, TextPieceTable tpt)
+  public OldSectionTable(byte[] documentStream, int offset,
+                      int size, int fcMin,
+                      TextPieceTable tpt)
   {
-    PlexOfCps binTable = new PlexOfCps(documentStream, offset, size, 2);
+    PlexOfCps sedPlex = new PlexOfCps(documentStream, offset, size, 12);
 
-    int length = binTable.length();
+    int length = sedPlex.length();
+
     for (int x = 0; x < length; x++)
     {
-      GenericPropertyNode node = binTable.getProperty(x);
+      GenericPropertyNode node = sedPlex.getProperty(x);
+      SectionDescriptor sed = new SectionDescriptor(node.getBytes(), 0);
 
-      int pageNum = LittleEndian.getShort(node.getBytes());
-      int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
+      int fileOffset = sed.getFc();
+      int startAt = node.getStart();
+      int endAt = node.getEnd();
 
-      CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin, tpt);
-
-      int fkpSize = cfkp.size();
-
-      for (int y = 0; y < fkpSize; y++)
+      // check for the optimization
+      if (fileOffset == 0xffffffff)
       {
-        _textRuns.add(cfkp.getCHPX(y));
+        _sections.add(new SEPX(sed, startAt, endAt, tpt, new byte[0]));
+      }
+      else
+      {
+        // The first short at the offset is the size of the grpprl.
+        int sepxSize = LittleEndian.getShort(documentStream, fileOffset);
+        byte[] buf = new byte[sepxSize];
+        fileOffset += LittleEndian.SHORT_SIZE;
+        System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
+        _sections.add(new SEPX(sed, startAt, endAt, tpt, buf));
       }
     }
   }

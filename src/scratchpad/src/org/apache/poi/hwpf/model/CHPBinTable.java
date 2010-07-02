@@ -32,7 +32,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  *
  * @author Ryan Ackley
  */
-public final class CHPBinTable
+public class CHPBinTable
 {
   /** List of character properties.*/
   protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();

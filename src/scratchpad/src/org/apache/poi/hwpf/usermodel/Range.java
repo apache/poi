@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFDocumentCore;
 
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -77,7 +78,7 @@ public class Range { // TODO -instantiable superclass
 	protected int _end;
 
 	/** The document this range blongs to. */
-	protected HWPFDocument _doc;
+	protected HWPFDocumentCore _doc;
 
 	/** Have we loaded the section indexes yet */
 	boolean _sectionRangeFound;
@@ -144,7 +145,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param doc
 	 *            The HWPFDocument the range is based on.
 	 */
-	public Range(int start, int end, HWPFDocument doc) {
+	public Range(int start, int end, HWPFDocumentCore doc) {
 		_start = start;
 		_end = end;
 		_doc = doc;
@@ -1004,6 +1005,8 @@ public class Range { // TODO -instantiable superclass
 	 *            The (signed) value that should be added to the FIB CCP fields
 	 */
 	protected void adjustFIB(int adjustment) {
+	    assert (_doc instanceof HWPFDocument);
+	    
 		// update the FIB.CCPText field (this should happen once per adjustment,
 		// so we don't want it in
 		// adjustForInsert() or it would get updated multiple times if the range
@@ -1011,7 +1014,7 @@ public class Range { // TODO -instantiable superclass
 		// without this, OpenOffice.org (v. 2.2.x) does not see all the text in
 		// the document
 
-		CPSplitCalculator cpS = _doc.getCPSplitCalculator();
+		CPSplitCalculator cpS = ((HWPFDocument)_doc).getCPSplitCalculator();
 		FileInformationBlock fib = _doc.getFileInformationBlock();
 
 		// Do for each affected part
@@ -1066,7 +1069,7 @@ public class Range { // TODO -instantiable superclass
 		return _end;
 	}
 
-	protected HWPFDocument getDocument() {
+	protected HWPFDocumentCore getDocument() {
 
 		return _doc;
 	}

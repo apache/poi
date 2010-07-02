@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Paragraph level as well as whole-file text extraction for Word 6/95 files through HWPF</action>
            <action dev="POI-DEVELOPERS" type="add">Text Extraction support for older Word 6 and Word 95 files via HWPF</action>
            <action dev="POI-DEVELOPERS" type="add">49508 - Allow the addition of paragraphs to XWPF Table Cells</action>
            <action dev="POI-DEVELOPERS" type="fix">49446 - Don't consider 17.16.23 field codes as properly part of the paragraph's text</action>
