@@ -47,7 +47,7 @@
     <menu-item label="Espejos [EN]" href="../../mirrors.html"/>    
     <menu-item label="Cambios [EN]" href="../../changes.html"/>
     <menu-item label="Tareas" href="todo.html"/> 
-    <menu-item label="Contribuya [EN]" href="../../getinvolved/index.html"/>
+    <menu-item label="Contribuya [EN]" href="../../guidelines.html"/>
     <menu-item label="Listas de Correo" href="http://jakarta.apache.org/site/mail2.html#poi"/>
     <menu-item label="Visión [EN]" href="../../plan/POI20Vision.html"/>
     <menu-item label="Historia y Futuro" href="historyandfuture.html"/>

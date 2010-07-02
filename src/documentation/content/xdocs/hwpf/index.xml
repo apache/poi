@@ -68,7 +68,7 @@
     <p>If you come across a feature in XWPF that you need, and isn't currently 
      there, please do send in a patch to add the extra functionality! More details
      on contributing patches are available on the <link
-      href="../getinvolved/index.html">"Contribution to POI" page</link>.</p>
+      href="../guidelines.html">"Contribution to POI" page</link>.</p>
    </section>
 
    <section>
@@ -122,7 +122,7 @@
      code easily. If you need any help getting started with JUnit test cases
      for HWPF, please ask on the developers' mailing list! If you show that you
      are prepared to stick at it you will most likely be given SVN commit
-     access. See <link href="../getinvolved/index.html">"Contribution to POI" page</link>
+     access. See <link href="../guidelines.html">"Contribution to POI" page</link>
      for more details and help getting started.</p>
 
     <p>Of course we will help you as best as we can. However, presently there

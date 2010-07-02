@@ -80,7 +80,7 @@
      </p>
      <p>
        Submitting translations is simple, you follow the same
-       <link href="/getinvolved/index.html">instructions</link> as you would for submitting a code patch.
+       <link href="/guidelines.html">instructions</link> as you would for submitting a code patch.
        Remeber to always generate patchs in diff -u format preserving the context relative to the jakarta-poi directory.  Also remember
        to submit any new files in a directory preserving archive format.  Never post these to the list, always use
        <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr">Bugzilla</link>
