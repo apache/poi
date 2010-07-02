@@ -256,6 +256,16 @@ public final class TestWordExtractor extends TestCase {
         assertTrue(text.contains("Paragraph 2"));
         assertTrue(text.contains("Paragraph 3. Has some RED text and some BLUE BOLD text in it"));
         assertTrue(text.contains("Last (4th) paragraph"));
+        
+        String[] tp = w6e.getParagraphText();
+        assertEquals(7, tp.length);
+        assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
+        assertEquals("\r\n", tp[1]);
+        assertEquals("Paragraph 2\r\n", tp[2]);
+        assertEquals("\r\n", tp[3]);
+        assertEquals("Paragraph 3. Has some RED text and some BLUE BOLD text in it.\r\n", tp[4]);
+        assertEquals("\r\n", tp[5]);
+        assertEquals("Last (4th) paragraph.\r\n", tp[6]);
 	}
 	
 	public void testWord6() throws Exception {
@@ -273,5 +283,9 @@ public final class TestWordExtractor extends TestCase {
         String text = w6e.getText();
         
         assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
+        
+        String[] tp = w6e.getParagraphText();
+        assertEquals(1, tp.length);
+        assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
 	}
 }

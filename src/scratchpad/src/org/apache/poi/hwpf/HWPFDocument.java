@@ -31,7 +31,6 @@ import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.DocumentProperties;
 import org.apache.poi.hwpf.model.EscherRecordHolder;
 import org.apache.poi.hwpf.model.FSPATable;
-import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.ListTables;
@@ -82,24 +81,6 @@ public final class HWPFDocument extends HWPFDocumentCore
   protected ComplexFileTable _cft;
 
   protected TextPieceTable _tpt;
-
-  /** Contains formatting properties for text*/
-  protected CHPBinTable _cbt;
-
-  /** Contains formatting properties for paragraphs*/
-  protected PAPBinTable _pbt;
-
-  /** Contains formatting properties for sections.*/
-  protected SectionTable _st;
-
-  /** Holds styles for this document.*/
-  protected StyleSheet _ss;
-
-  /** Holds fonts for this document.*/
-  protected FontTable _ft;
-
-  /** Hold list tables */
-  protected ListTables _lt;
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
@@ -277,15 +258,11 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
   }
 
-  public StyleSheet getStyleSheet()
+  public TextPieceTable getTextTable()
   {
-    return _ss;
+    return _cft.getTextPieceTable();
   }
 
-  public FileInformationBlock getFileInformationBlock()
-  {
-    return _fib;
-  }
   public CPSplitCalculator getCPSplitCalculator()
   {
 	return _cpSplit;
@@ -388,11 +365,6 @@ public final class HWPFDocument extends HWPFDocumentCore
       length += tp.characterLength();
     }
     return length;
-  }
-
-  public ListTables getListTables()
-  {
-    return _lt;
   }
 
   /**
@@ -591,26 +563,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     pfs.writeFilesystem(out);
   }
 
-  public CHPBinTable getCharacterTable()
-  {
-    return _cbt;
-  }
-
-  public PAPBinTable getParagraphTable()
-  {
-    return _pbt;
-  }
-
-  public SectionTable getSectionTable()
-  {
-    return _st;
-  }
-
-  public TextPieceTable getTextTable()
-  {
-    return _cft.getTextPieceTable();
-  }
-
   public byte[] getDataStream()
   {
     return _dataStream;
@@ -627,11 +579,6 @@ public final class HWPFDocument extends HWPFDocumentCore
       _lt = new ListTables();
     }
     return _lt.addList(list.getListData(), list.getOverride());
-  }
-
-  public FontTable getFontTable()
-  {
-    return _ft;
   }
 
   public void delete(int start, int length)

@@ -112,7 +112,11 @@ public final class PAPX extends BytePropertyNode {
     {
       return 0;
     }
-      return LittleEndian.getShort(buf);
+    if (buf.length == 1)
+    {
+      return (short)LittleEndian.getUnsignedByte(buf, 0);
+    }
+    return LittleEndian.getShort(buf);
   }
 
   public SprmBuffer getSprmBuf()
@@ -122,6 +126,11 @@ public final class PAPX extends BytePropertyNode {
 
   public ParagraphProperties getParagraphProperties(StyleSheet ss)
   {
+    if(ss == null) {
+        // TODO Fix up for Word 6/95
+        return new ParagraphProperties();
+    }
+      
     short istd = getIstd();
     ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
     ParagraphProperties props = ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);

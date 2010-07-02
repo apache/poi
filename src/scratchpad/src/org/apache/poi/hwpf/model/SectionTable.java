@@ -27,12 +27,12 @@ import org.apache.poi.hwpf.model.io.*;
 /**
  * @author Ryan Ackley
  */
-public final class SectionTable
+public class SectionTable
 {
   private static final int SED_SIZE = 12;
 
-  protected ArrayList _sections = new ArrayList();
-  protected List _text;
+  protected ArrayList<SEPX> _sections = new ArrayList<SEPX>();
+  protected List<TextPiece> _text;
 
   /** So we can know if things are unicode or not */
   private TextPieceTable tpt;
@@ -84,7 +84,7 @@ public final class SectionTable
     boolean matchAt = false;
     boolean matchHalf = false;
     for(int i=0; i<_sections.size(); i++) {
-    	SEPX s = (SEPX)_sections.get(i);
+    	SEPX s = _sections.get(i);
     	if(s.getEnd() == mainEndsAt) {
     		matchAt = true;
     	} else if(s.getEndBytes() == mainEndsAt || s.getEndBytes() == mainEndsAt-1) {
@@ -94,7 +94,7 @@ public final class SectionTable
     if(! matchAt && matchHalf) {
     	System.err.println("Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
         for(int i=0; i<_sections.size(); i++) {
-        	SEPX s = (SEPX)_sections.get(i);
+        	SEPX s = _sections.get(i);
             GenericPropertyNode node = sedPlex.getProperty(i);
 
         	s.setStart( CPtoFC(node.getStart()) );
@@ -106,12 +106,12 @@ public final class SectionTable
   public void adjustForInsert(int listIndex, int length)
   {
     int size = _sections.size();
-    SEPX sepx = (SEPX)_sections.get(listIndex);
+    SEPX sepx = _sections.get(listIndex);
     sepx.setEnd(sepx.getEnd() + length);
 
     for (int x = listIndex + 1; x < size; x++)
     {
-      sepx = (SEPX)_sections.get(x);
+      sepx = _sections.get(x);
       sepx.setStart(sepx.getStart() + length);
       sepx.setEnd(sepx.getEnd() + length);
     }
@@ -129,7 +129,7 @@ public final class SectionTable
 
       for(int i=_text.size()-1; i>-1; i--)
       {
-        TP = (TextPiece)_text.get(i);
+        TP = _text.get(i);
 
         if(CP >= TP.getCP()) break;
       }
@@ -142,7 +142,7 @@ public final class SectionTable
       return FC;
     }
 
-  public ArrayList getSections()
+  public ArrayList<SEPX> getSections()
   {
     return _sections;
   }
@@ -159,7 +159,7 @@ public final class SectionTable
 
     for (int x = 0; x < len; x++)
     {
-      SEPX sepx = (SEPX)_sections.get(x);
+      SEPX sepx = _sections.get(x);
       byte[] grpprl = sepx.getGrpprl();
 
       // write the sepx to the document stream. starts with a 2 byte size

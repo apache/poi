@@ -22,7 +22,6 @@ import java.io.InputStream;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFOldDocument;
-import org.apache.poi.hwpf.HWPFOldDocument.TextAndCHPX;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -68,12 +67,41 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 		this.doc = doc;
 	}
 
-    @Override
+    /**
+     * Get the text from the word file, as an array with one String
+     *  per paragraph
+     */
+	public String[] getParagraphText() {
+	    String[] ret;
+
+	    // Extract using the model code
+	    try {
+	        Range r = doc.getRange();
+
+	        ret = WordExtractor.getParagraphText(r);
+	    } catch (Exception e) {
+            // Something's up with turning the text pieces into paragraphs
+            // Fall back to ripping out the text pieces
+	        ret = new String[doc.getTextTable().getTextPieces().size()];
+	        for(int i=0; i<ret.length; i++) {
+	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuffer().toString();
+	            
+	            // Fix the line endings
+	            ret[i].replaceAll("\r", "\ufffe");
+                ret[i].replaceAll("\ufffe","\r\n");
+	        }
+	    }
+
+	    return ret;
+	}
+
     public String getText() {
         StringBuffer text = new StringBuffer();
-        for(TextAndCHPX tchpx : doc.getContents()) {
-            text.append( Range.stripFields(tchpx.getText()) );
+        
+        for(String t : getParagraphText()) {
+            text.append(t);
         }
+
         return text.toString();
     }
 }

@@ -23,7 +23,15 @@ import java.io.PushbackInputStream;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
+import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.FileInformationBlock;
+import org.apache.poi.hwpf.model.FontTable;
+import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.model.PAPBinTable;
+import org.apache.poi.hwpf.model.SectionTable;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.TextPieceTable;
+import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -39,6 +47,24 @@ public abstract class HWPFDocumentCore extends POIDocument
 {
   /** The FIB */
   protected FileInformationBlock _fib;
+
+  /** Holds styles for this document.*/
+  protected StyleSheet _ss;
+
+  /** Contains formatting properties for text*/
+  protected CHPBinTable _cbt;
+
+  /** Contains formatting properties for paragraphs*/
+  protected PAPBinTable _pbt;
+
+  /** Contains formatting properties for sections.*/
+  protected SectionTable _st;
+
+  /** Holds fonts for this document.*/
+  protected FontTable _ft;
+
+  /** Hold list tables */
+  protected ListTables _lt;
 
   /** main document stream buffer*/
   protected byte[] _mainStream;
@@ -121,6 +147,44 @@ public abstract class HWPFDocumentCore extends POIDocument
     if(_fib.isFEncrypted()) {
     	throw new EncryptedDocumentException("Cannot process encrypted word files!");
     }
+  }
+
+  /**
+   * Returns the range which covers the whole of the
+   *  document, but excludes any headers and footers.
+   */
+  public abstract Range getRange();
+  
+  public abstract TextPieceTable getTextTable();
+  
+  public CHPBinTable getCharacterTable()
+  {
+    return _cbt;
+  }
+
+  public PAPBinTable getParagraphTable()
+  {
+    return _pbt;
+  }
+
+  public SectionTable getSectionTable()
+  {
+    return _st;
+  }
+
+  public StyleSheet getStyleSheet()
+  {
+    return _ss;
+  }
+
+  public ListTables getListTables()
+  {
+    return _lt;
+  }
+
+  public FontTable getFontTable()
+  {
+    return _ft;
   }
 
   public FileInformationBlock getFileInformationBlock()
