@@ -217,7 +217,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
             // Load individual sheets. The order of sheets is defined by the order of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
-            for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
+            for (CTSheet ctSheet : this.workbook.getSheets().getSheetList()) {
                 XSSFSheet sh = shIdMap.get(ctSheet.getId());
                 if(sh == null) {
                     logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
@@ -231,7 +231,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // Process the named ranges
             namedRanges = new ArrayList<XSSFName>();
             if(workbook.isSetDefinedNames()) {
-                for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
+                for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameList()) {
                     namedRanges.add(new XSSFName(ctName, this));
                 }
             }
@@ -873,7 +873,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         validateSheetIndex(index);
         //activeTab (Active Sheet Index) Specifies an unsignedInt that contains the index to the active sheet in this book view.
-        CTBookView[] arrayBook = workbook.getBookViews().getWorkbookViewArray();
+        CTBookView[] arrayBook = new CTBookView[workbook.getBookViews().getWorkbookViewList().size()];
+        workbook.getBookViews().getWorkbookViewList().toArray(arrayBook);
+        
         for (int i = 0; i < arrayBook.length; i++) {
             workbook.getBookViews().getWorkbookViewArray(i).setActiveTab(index);
         }
@@ -1153,7 +1155,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     private void saveCalculationChain(){
         if(calcChain != null){
-            int count = calcChain.getCTCalcChain().getCArray().length;
+            int count = calcChain.getCTCalcChain().getCList().size();
             if(count == 0){
                 removeRelation(calcChain);
                 calcChain = null;
@@ -1220,7 +1222,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return true if the sheet contains the name, false otherwise.
      */
     private boolean containsSheet(String name, int excludeSheetIdx) {
-        CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
+        CTSheet[] ctSheetArray = new CTSheet[workbook.getSheets().getSheetList().size()];
+        workbook.getSheets().getSheetList().toArray(ctSheetArray);
+        
         for (int i = 0; i < ctSheetArray.length; i++) {
             if (excludeSheetIdx != i && name.equalsIgnoreCase(ctSheetArray[i].getName()))
                 return true;

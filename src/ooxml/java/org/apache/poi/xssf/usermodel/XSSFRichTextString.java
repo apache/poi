@@ -147,7 +147,9 @@ public class XSSFRichTextString implements RichTextString {
         XSSFFont xssfFont = (XSSFFont)font;
         ArrayList<CTRElt> runs = new ArrayList<CTRElt>();
 
-        CTRElt[] r = st.getRArray();
+        CTRElt[] r = new  CTRElt[st.getRList().size()];
+        st.getRList().toArray(r);
+        
         int pos = 0;
         for (int i = 0; i < r.length; i++) {
             int rStart = pos;
@@ -338,7 +340,7 @@ public class XSSFRichTextString implements RichTextString {
             return st.getT();
         }
         StringBuffer buf = new StringBuffer();
-        for(CTRElt r : st.getRArray()){
+        for(CTRElt r : st.getRList()){
             buf.append(r.getT());
         }
         return buf.toString();
@@ -425,7 +427,7 @@ public class XSSFRichTextString implements RichTextString {
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
         if(st.sizeOfRArray() > 0) {
-            for (CTRElt r : st.getRArray()) {
+            for (CTRElt r : st.getRList()) {
                 CTRPrElt pr = r.getRPr();
                 if(pr != null){
                     String fontName = pr.getRFontArray(0).getVal();
