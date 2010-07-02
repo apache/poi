@@ -170,7 +170,7 @@ public class TestXWPFRun extends TestCase {
         run.addCarriageReturn();
         run.setText("T2");
         run.addCarriageReturn();
-        assertEquals(3, run.getCTR().getCrArray().length);
+        assertEquals(3, run.getCTR().getCrList().size());
         
     }
 

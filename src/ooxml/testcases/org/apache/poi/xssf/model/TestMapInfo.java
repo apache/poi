@@ -16,16 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSchema;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMapInfo;
 import org.w3c.dom.Node;
-
-import junit.framework.TestCase;
 
 /**
  * @author Roberto Manicardi
@@ -51,9 +50,7 @@ public final class TestMapInfo extends TestCase {
 
                 assertNotNull(ctMapInfo);
 
-                CTSchema[] schemas = ctMapInfo.getSchemaArray();
-                assertEquals(1, schemas.length);
-
+                assertEquals(1, ctMapInfo.getSchemaList().size());
 
                 for (XSSFMap map : mapInfo.getAllXSSFMaps()) {
                     Node xmlSchema = map.getSchema();

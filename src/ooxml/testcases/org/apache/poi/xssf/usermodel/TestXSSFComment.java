@@ -142,10 +142,10 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertSame(comment.getString(), richText);
         //check that the rich text is set in the comment
         CTRPrElt rPr = richText.getCTRst().getRArray(0).getRPr();
-        assertEquals(true, rPr.getIArray()[0].getVal());
-        assertEquals(8.5, rPr.getSzArray()[0].getVal());
-        assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray()[0].getIndexed());
-        assertEquals("Tahoma", rPr.getRFontArray()[0].getVal());
+        assertEquals(true, rPr.getIArray(0).getVal());
+        assertEquals(8.5, rPr.getSzArray(0).getVal());
+        assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray(0).getIndexed());
+        assertEquals("Tahoma", rPr.getRFontArray(0).getVal());
     }
 
     public void testAuthor() {

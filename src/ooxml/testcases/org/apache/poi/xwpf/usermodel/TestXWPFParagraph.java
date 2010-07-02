@@ -57,7 +57,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(1, ps.size());
         XWPFParagraph p = ps.get(0);
 
-        assertEquals(5, p.getCTP().getRArray().length);
+        assertEquals(5, p.getCTP().getRList().size());
         assertEquals("First header column!\tMid header\tRight header!", p
                 .getText());
     }
