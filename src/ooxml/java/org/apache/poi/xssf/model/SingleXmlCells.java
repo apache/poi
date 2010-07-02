@@ -96,9 +96,8 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 	 */
 	public List<XSSFSingleXmlCell> getAllSimpleXmlCell(){
 		List<XSSFSingleXmlCell> list = new Vector<XSSFSingleXmlCell>();
-		CTSingleXmlCell[] singleXMLCellArray = singleXMLCells.getSingleXmlCellArray();
 		
-		for(CTSingleXmlCell singleXmlCell: singleXMLCellArray){			
+		for(CTSingleXmlCell singleXmlCell: singleXMLCells.getSingleXmlCellList()){			
 			list.add(new XSSFSingleXmlCell(singleXmlCell,this));
 		}		
 		return list;

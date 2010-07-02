@@ -81,7 +81,9 @@ public class CalculationChain extends POIXMLDocumentPart {
     public void removeItem(int sheetId, String ref){
         //sheet Id of a sheet the cell belongs to
         int id = -1;
-        CTCalcCell[] c = chain.getCArray();
+        CTCalcCell[] c = new CTCalcCell[chain.getCList().size()];
+        chain.getCList().toArray(c);
+        
         for (int i = 0; i < c.length; i++){
             //If sheet Id  is omitted, it is assumed to be the same as the value of the previous cell.
             if(c[i].isSetI()) id = c[i].getI();

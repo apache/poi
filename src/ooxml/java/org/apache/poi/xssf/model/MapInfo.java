@@ -72,7 +72,7 @@ public class MapInfo extends POIXMLDocumentPart {
 			mapInfo = doc.getMapInfo();
 
             maps= new HashMap<Integer, XSSFMap>();
-            for(CTMap map :mapInfo.getMapArray()){
+            for(CTMap map :mapInfo.getMapList()){
                 maps.put((int)map.getID(), new XSSFMap(map,this));
             }
 
@@ -107,8 +107,7 @@ public class MapInfo extends POIXMLDocumentPart {
 	public CTSchema getCTSchemaById(String schemaId){
 		CTSchema xmlSchema = null;
 
-		CTSchema[] schemas = mapInfo.getSchemaArray();
-		for(CTSchema schema: schemas){
+		for(CTSchema schema: mapInfo.getSchemaList()){
 			if(schema.getID().equals(schemaId)){
 				xmlSchema = schema;
 				break;

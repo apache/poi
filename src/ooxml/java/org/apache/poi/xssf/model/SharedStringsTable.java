@@ -110,7 +110,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
-            for (CTRst st : sst.getSiArray()) {
+            for (CTRst st : sst.getSiList()) {
                 stmap.put(st.toString(), cnt);
                 strings.add(st);
                 cnt++;
