@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -26,9 +24,9 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
@@ -65,7 +63,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _row = row;
         _sheet = sheet;
         _cells = new TreeMap<Integer, XSSFCell>();
-        for (CTCell c : row.getCArray()) {
+        for (CTCell c : row.getCList()) {
             XSSFCell cell = new XSSFCell(this, c);
             _cells.put(cell.getColumnIndex(), cell);
             sheet.onReadCell(cell);
@@ -394,10 +392,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(_row.sizeOfCArray() != _cells.size()) isOrdered = false;
         else {
             int i = 0;
-            CTCell[] xcell = _row.getCArray();
             for (XSSFCell cell : _cells.values()) {
                 CTCell c1 = cell.getCTCell();
-                CTCell c2 = xcell[i++];
+                CTCell c2 = _row.getCArray(i++); 
 
                 String r1 = c1.getR();
                 String r2 = c2.getR();

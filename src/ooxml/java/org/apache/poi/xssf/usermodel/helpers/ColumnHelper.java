@@ -55,11 +55,14 @@ public class ColumnHelper {
 
     public void cleanColumns() {
         this.newCols = CTCols.Factory.newInstance();
-        CTCols[] colsArray = worksheet.getColsArray();
+        CTCols[] colsArray = new CTCols[worksheet.getColsList().size()];
+        worksheet.getColsList().toArray(colsArray);
+        
         int i = 0;
         for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
-            CTCol[] colArray = cols.getColArray();
+            CTCol[] colArray = new CTCol[cols.getColList().size()];
+            cols.getColList().toArray(colArray);
             for (int y = 0; y < colArray.length; y++) {
                 CTCol col = colArray[y];
                 newCols = addCleanColIntoCols(newCols, col);
@@ -73,7 +76,8 @@ public class ColumnHelper {
     }
 
     public static void sortColumns(CTCols newCols) {
-        CTCol[] colArray = newCols.getColArray();
+        CTCol[] colArray = new CTCol[newCols.getColList().size()];
+        newCols.getColList().toArray(colArray);
         Arrays.sort(colArray, new CTColComparator());
         newCols.setColArray(colArray);
     }
