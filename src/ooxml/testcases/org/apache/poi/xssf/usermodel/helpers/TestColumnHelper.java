@@ -186,10 +186,9 @@ public final class TestColumnHelper extends TestCase {
         helper.addCleanColIntoCols(cols1, col9);
 
         // TODO - assert something interesting
-        CTCol[] colArray = cols1.getColArray();
-        assertEquals(12, colArray.length);
-        assertEquals(1, colArray[0].getMin());
-        assertEquals(16750, colArray[11].getMax());
+        assertEquals(12, cols1.getColList().size());
+        assertEquals(1, cols1.getColArray(0).getMin());
+        assertEquals(16750, cols1.getColArray(11).getMax());
     }
 
     public void testGetColumn() {
