@@ -127,7 +127,7 @@ public class XWPFTableRow {
     public List<XWPFTableCell> getTableCells(){
     	if(tableCells == null){
     		List<XWPFTableCell> cells = new ArrayList<XWPFTableCell>();
-    		for (CTTc tableCell : ctRow.getTcArray()) {
+    		for (CTTc tableCell : ctRow.getTcList()) {
     			cells.add(new XWPFTableCell(tableCell, this, table.getPart()));
     		}
     		this.tableCells = cells;

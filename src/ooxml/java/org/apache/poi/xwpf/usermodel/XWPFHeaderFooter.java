@@ -457,7 +457,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
 		int i;
-    	for (i = 0; i < headerFooter.getTblArray().length; i++) {
+    	for (i = 0; i < headerFooter.getTblList().size(); i++) {
 			CTTbl tbl = headerFooter.getTblArray(i);
 			if(tbl == table.getCTTbl()){
 				break;

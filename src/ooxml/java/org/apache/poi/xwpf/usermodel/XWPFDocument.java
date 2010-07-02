@@ -179,7 +179,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
                 else if(relation.equals(XWPFRelation.COMMENT.getRelation())){
                     CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream());
-                    for(CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
+                    for(CTComment ctcomment : cmntdoc.getComments().getCommentList()) {
                         comments.add(new XWPFComment(ctcomment));
                     }
                 }
@@ -217,13 +217,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             if(relation.equals(XWPFRelation.FOOTNOTE.getRelation())){
                 FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
 
-                for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteArray()) {
+                for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteList()) {
                     footnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
                 }
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
                 EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
 
-                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
+                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteList()) {
                     endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
                 }
             }
@@ -944,7 +944,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
 		int i;
-    	for (i = 0; i < ctDocument.getBody().getTblArray().length; i++) {
+    	for (i = 0; i < ctDocument.getBody().getTblList().size(); i++) {
 			CTTbl tbl = ctDocument.getBody().getTblArray(i);
 			if(tbl == table.getCTTbl()){
 				break;

@@ -72,10 +72,10 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 			numberingDoc = NumberingDocument.Factory.parse(is);
 			ctNumbering = numberingDoc.getNumbering();
 	        //get any Nums
-	        for(CTNum ctNum : ctNumbering.getNumArray()) {
+	        for(CTNum ctNum : ctNumbering.getNumList()) {
 	            nums.add(new XWPFNum(ctNum, this));
 	        }
-	        for(CTAbstractNum ctAbstractNum : ctNumbering.getAbstractNumArray()){
+	        for(CTAbstractNum ctAbstractNum : ctNumbering.getAbstractNumList()){
 	        	abstractNums.add(new XWPFAbstractNum(ctAbstractNum, this));
 	        }
 	        isNew = false;
@@ -129,7 +129,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 */
 	public BigInteger addNum(XWPFNum num){
 		ctNumbering.addNewNum();
-		int pos = (ctNumbering.getNumArray().length) - 1;
+		int pos = (ctNumbering.getNumList().size()) - 1;
 		ctNumbering.setNumArray(pos, num.getCTNum());
 		nums.add(num);
 		return num.getCTNum().getNumId();

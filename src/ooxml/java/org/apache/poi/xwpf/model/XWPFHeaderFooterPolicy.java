@@ -242,8 +242,8 @@ public class XWPFHeaderFooterPolicy {
 		}
 		else {
 			CTP p = ftr.addNewP();
-			byte[] rsidr = doc.getDocument().getBody().getPArray()[0].getRsidR();
-			byte[] rsidrdefault = doc.getDocument().getBody().getPArray()[0].getRsidRDefault();
+			byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
+			byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
 			p.setRsidP(rsidr);
 			p.setRsidRDefault(rsidrdefault);
 			CTPPr pPr = p.addNewPPr();
@@ -274,8 +274,8 @@ public class XWPFHeaderFooterPolicy {
 		}
 		else {
 			CTP p = ftr.addNewP();
-			byte[] rsidr = doc.getDocument().getBody().getPArray()[0].getRsidR();
-			byte[] rsidrdefault = doc.getDocument().getBody().getPArray()[0].getRsidRDefault();
+			byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
+			byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
 			p.setRsidP(rsidr);
 			p.setRsidRDefault(rsidrdefault);
 			CTPPr pPr = p.addNewPPr();
@@ -400,8 +400,8 @@ public class XWPFHeaderFooterPolicy {
 	 */
 	private XWPFParagraph getWatermarkParagraph(String text, int idx) {
 		CTP p = CTP.Factory.newInstance();
-		byte[] rsidr = doc.getDocument().getBody().getPArray()[0].getRsidR();
-		byte[] rsidrdefault = doc.getDocument().getBody().getPArray()[0].getRsidRDefault();
+		byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
+		byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
 		p.setRsidP(rsidr);
 		p.setRsidRDefault(rsidrdefault);
 		CTPPr pPr = p.addNewPPr();

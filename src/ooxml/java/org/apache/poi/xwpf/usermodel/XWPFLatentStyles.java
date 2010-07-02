@@ -39,7 +39,7 @@ public class XWPFLatentStyles {
 	 * checks wheter specific LatentStyleID is a latentStyle
 	*/
 	protected boolean isLatentStyle(String latentStyleID){	
-		for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
+		for ( CTLsdException lsd: latentStyles.getLsdExceptionList()) {
 			if(lsd.getName().equals(latentStyleID));
 				return true;
 		}
