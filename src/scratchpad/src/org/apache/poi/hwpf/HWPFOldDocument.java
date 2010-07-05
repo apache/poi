@@ -86,7 +86,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             TextPiece tp = new TextPiece(
                     0, textData.length, textData, pd, 0
             );
-            tpt.getTextPieces().add(tp);
+            tpt.add(tp);
             
             text.append(tp.getStringBuffer());
         }

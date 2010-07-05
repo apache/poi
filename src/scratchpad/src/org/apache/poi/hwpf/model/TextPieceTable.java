@@ -17,13 +17,14 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The piece table for matching up character positions to bits of text. This
@@ -34,6 +35,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
  */
 public final class TextPieceTable implements CharIndexTranslator {
 	protected ArrayList<TextPiece> _textPieces = new ArrayList<TextPiece>();
+    protected ArrayList<TextPiece> _textPiecesFCOrder = new ArrayList<TextPiece>();
 	// int _multiple;
 	int _cpMin;
 
@@ -96,11 +98,9 @@ public final class TextPieceTable implements CharIndexTranslator {
 
 		// In the interest of our sanity, now sort the text pieces
 		// into order, if they're not already
-		TextPiece[] tp = _textPieces.toArray(new TextPiece[_textPieces.size()]);
-		Arrays.sort(tp);
-		for (int i = 0; i < tp.length; i++) {
-			_textPieces.set(i, tp[i]);
-		}
+        Collections.sort(_textPieces);
+        _textPiecesFCOrder = new ArrayList<TextPiece>(_textPieces);
+        Collections.sort(_textPiecesFCOrder, new FCComparator());
 	}
 
 	public int getCpMin() {
@@ -110,6 +110,13 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public List<TextPiece> getTextPieces() {
 		return _textPieces;
 	}
+
+    public void add(TextPiece piece) {
+        _textPieces.add(piece);
+        _textPiecesFCOrder.add(piece);
+        Collections.sort(_textPieces);
+        Collections.sort(_textPiecesFCOrder, new FCComparator());
+    }
 
 	/**
 	 * Is the text at the given Character offset unicode, or plain old ascii? In
@@ -238,7 +245,7 @@ public final class TextPieceTable implements CharIndexTranslator {
 	public int getCharIndex(int bytePos) {
 		int charCount = 0;
 
-        for(TextPiece tp : _textPieces) {
+        for(TextPiece tp : _textPiecesFCOrder) {
 			int pieceStart = tp.getPieceDescriptor().getFilePosition();
 			if (pieceStart >= bytePos) {
 				break;
@@ -259,4 +266,15 @@ public final class TextPieceTable implements CharIndexTranslator {
 		return charCount;
 	}
 
+    private static class FCComparator implements Comparator<TextPiece> {
+        public int compare(TextPiece textPiece, TextPiece textPiece1) {
+            if (textPiece.getPieceDescriptor().fc>textPiece1.getPieceDescriptor().fc) {
+                return 1;
+            } else if (textPiece.getPieceDescriptor().fc<textPiece1.getPieceDescriptor().fc) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 }
