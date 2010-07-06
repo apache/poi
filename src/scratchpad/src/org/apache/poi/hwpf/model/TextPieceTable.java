@@ -242,29 +242,50 @@ public final class TextPieceTable implements CharIndexTranslator {
 		return false;
 	}
 
-	public int getCharIndex(int bytePos) {
-		int charCount = 0;
+    public int getCharIndex(int bytePos) {
+        int charCount = 0;
 
         for(TextPiece tp : _textPiecesFCOrder) {
 			int pieceStart = tp.getPieceDescriptor().getFilePosition();
-			if (pieceStart >= bytePos) {
-				break;
+
+            if (bytePos > pieceStart + tp.bytesLength()) {
+                continue;
+            }
+
+			if (pieceStart > bytePos) {
+				bytePos = pieceStart;
 			}
 
-			int bytesLength = tp.bytesLength();
-			int pieceEnd = pieceStart + bytesLength;
+            break;
+        }
 
-			int toAdd = bytePos > pieceEnd ? bytesLength : bytesLength - (pieceEnd - bytePos);
+        for(TextPiece tp : _textPieces) {
+            int pieceStart = tp.getPieceDescriptor().getFilePosition();
 
-			if (tp.isUnicode()) {
-				charCount += toAdd / 2;
-			} else {
-				charCount += toAdd;
-			}
-		}
+            int bytesLength = tp.bytesLength();
+            int pieceEnd = pieceStart + bytesLength;
 
-		return charCount;
-	}
+            int toAdd;
+
+            if (bytePos< pieceStart || bytePos > pieceEnd) {
+                toAdd = bytesLength;
+            } else {
+                toAdd = bytesLength - (pieceEnd - bytePos);
+            }
+
+            if (tp.isUnicode()) {
+                charCount += toAdd / 2;
+            } else {
+                charCount += toAdd;
+            }
+
+            if (bytePos>=pieceStart && bytePos<=pieceEnd) {
+                break;
+            }
+        }
+
+        return charCount;
+    }
 
     private static class FCComparator implements Comparator<TextPiece> {
         public int compare(TextPiece textPiece, TextPiece textPiece1) {
