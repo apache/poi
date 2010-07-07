@@ -141,14 +141,20 @@ public final class TestPictures extends TestCase {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 
 		List pics = doc.getPicturesTable().getAllPictures();
-		assertEquals(pics.size(), 2);
+		assertEquals(2, pics.size());
 	}
 
         public void testPicturesInHeader() {
                 HWPFDocument doc = HWPFTestDataSamples.openSampleFile("header_image.doc");
 
                 List pics = doc.getPicturesTable().getAllPictures();
-                assertEquals(pics.size(), 2);
+                assertEquals(2, pics.size());
         }
+
+    public void testFastSaved() {
+            HWPFDocument doc = HWPFTestDataSamples.openSampleFile("rasp.doc");
+
+            doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
+    }
 
 }
