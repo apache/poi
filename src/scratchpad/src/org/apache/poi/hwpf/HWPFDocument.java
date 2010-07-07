@@ -280,8 +280,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    */
   public Range getOverallRange() {
 	  // hack to get the ending cp of the document, Have to revisit this.
-	  java.util.List text = _tpt.getTextPieces();
-	  PropertyNode p = (PropertyNode)text.get(text.size() - 1);
+      PropertyNode p =  _tpt.getTextPieces().get(_tpt.getTextPieces().size() - 1);
 
       return new Range(0, p.getEnd(), this);
   }
