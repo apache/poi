@@ -288,4 +288,14 @@ public final class TestWordExtractor extends TestCase {
         assertEquals(1, tp.length);
         assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
 	}
+
+    public void testFastSaved() throws Exception {
+        extractor = new WordExtractor(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("rasp.doc")
+        );
+
+        String text = extractor.getText();
+        assertTrue(text.contains("\u0425\u0425\u0425\u0425\u0425"));
+        assertTrue(text.contains("\u0423\u0423\u0423\u0423\u0423"));
+    }
 }
