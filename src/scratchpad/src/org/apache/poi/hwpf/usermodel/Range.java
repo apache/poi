@@ -962,10 +962,15 @@ public class Range { // TODO -instantiable superclass
 	private int[] findRange(List rpl, int min, int start, int end) {
 		int x = min;
 		PropertyNode node = (PropertyNode) rpl.get(x);
+
 		while (node.getEnd() <= start && x < rpl.size() - 1) {
 			x++;
 			node = (PropertyNode) rpl.get(x);
 		}
+
+        if (node.getStart()>end) {
+            return new int[] {0, 0};
+        }
 
 		if (node.getEnd() <= start) {
 			return new int[] { rpl.size(), rpl.size() };
