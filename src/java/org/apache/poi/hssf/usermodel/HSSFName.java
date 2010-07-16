@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
@@ -33,8 +34,10 @@ import org.apache.poi.ss.usermodel.Name;
 public final class HSSFName implements Name {
     private HSSFWorkbook _book;
     private NameRecord _definedNameRec;
+    private NameCommentRecord _commentRec;
 
-    /** Creates new HSSFName   - called by HSSFWorkbook to create a sheet from
+    /** 
+     * Creates new HSSFName   - called by HSSFWorkbook to create a name from
      * scratch.
      *
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
@@ -42,8 +45,21 @@ public final class HSSFName implements Name {
      * @param book workbook object associated with the sheet.
      */
     /* package */ HSSFName(HSSFWorkbook book, NameRecord name) {
+      this(book, name, null);
+    }
+    /** 
+     * Creates new HSSFName   - called by HSSFWorkbook to create a name from
+     * scratch.
+     *
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
+     * @param name the Name Record
+     * @param comment the Name Comment Record, optional.
+     * @param book workbook object associated with the sheet.
+     */
+    /* package */ HSSFName(final HSSFWorkbook book, final NameRecord name, final NameCommentRecord comment) {
         _book = book;
         _definedNameRec = name;
+        _commentRec = comment;
     }
 
     /** Get the sheets name which this named range is referenced to
@@ -130,6 +146,13 @@ public final class HSSFName implements Name {
                     throw new IllegalArgumentException(msg);
                 }
             }
+        }
+        
+        // Update our comment, if there is one
+        if(_commentRec != null) {
+           String oldName = _commentRec.getNameText();
+           _commentRec.setNameText(nameName);
+           _book.getWorkbook().updateNameCommentRecordCache(_commentRec);
         }
     }
 
@@ -230,7 +253,14 @@ public final class HSSFName implements Name {
      *
      * @return the user comment for this named range
      */
-    public String getComment(){
+    public String getComment() {
+        if(_commentRec != null) {
+           // Prefer the comment record if it has text in it
+           if(_commentRec.getCommentText() != null &&
+                 _commentRec.getCommentText().length() > 0) {
+              return _commentRec.getCommentText();
+           }
+        }
         return _definedNameRec.getDescriptionText();
     }
 
@@ -240,7 +270,12 @@ public final class HSSFName implements Name {
      * @param comment the user comment for this named range
      */
     public void setComment(String comment){
+        // Update the main record
         _definedNameRec.setDescriptionText(comment);
+        // If we have a comment record too, update that as well
+        if(_commentRec != null) {
+           _commentRec.setCommentText(comment);
+        }
     }
 
     /**

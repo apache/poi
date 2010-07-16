@@ -1734,4 +1734,31 @@ if(1==2) {
        assertEquals(234.0, row.getCell(1).getNumericCellValue());
 }
     }
+    
+    /**
+     * Test for a file with NameRecord with NameCommentRecord comments
+     */
+    public void test49185() throws Exception {
+      HSSFWorkbook wb = openSample("49185.xls");
+      Name name = wb.getName("foobarName");
+      assertEquals("This is a comment", name.getComment());
+      
+      // Rename the name, comment comes with it
+      name.setNameName("ChangedName");
+      assertEquals("This is a comment", name.getComment());
+      
+      // Save and re-check
+      wb = writeOutAndReadBack(wb);
+      name = wb.getName("ChangedName");
+      assertEquals("This is a comment", name.getComment());
+      
+      // Now try to change it
+      name.setComment("Changed Comment");
+      assertEquals("Changed Comment", name.getComment());
+      
+      // Save and re-check
+      wb = writeOutAndReadBack(wb);
+      name = wb.getName("ChangedName");
+      assertEquals("Changed Comment", name.getComment());
+    }
 }

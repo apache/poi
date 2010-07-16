@@ -173,6 +173,7 @@ public final class RecordFactory {
 		MulBlankRecord.class,
 		MulRKRecord.class,
 		NameRecord.class,
+		NameCommentRecord.class,
 		NoteRecord.class,
 		NumberRecord.class,
 		ObjectProtectRecord.class,
