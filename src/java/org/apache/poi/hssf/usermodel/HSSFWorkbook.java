@@ -67,7 +67,6 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.POILogFactory;
@@ -276,7 +275,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
 
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){
-            HSSFName name = new HSSFName(this, workbook.getNameRecord(i));
+            NameRecord nameRecord = workbook.getNameRecord(i);
+            HSSFName name = new HSSFName(this, nameRecord, workbook.getNameCommentRecord(nameRecord));
             names.add(name);
         }
     }
@@ -970,7 +970,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         if (isNewRecord)
         {
-            HSSFName newName = new HSSFName(this, nameRecord);
+            HSSFName newName = new HSSFName(this, nameRecord, nameRecord.isBuiltInName() ? null : workbook.getNameCommentRecord(nameRecord));
             names.add(newName);
         }
 

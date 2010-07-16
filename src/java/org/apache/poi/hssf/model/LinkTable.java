@@ -20,12 +20,14 @@ package org.apache.poi.hssf.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.record.CRNCountRecord;
 import org.apache.poi.hssf.record.CRNRecord;
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
 import org.apache.poi.hssf.record.ExternalNameRecord;
+import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
@@ -149,7 +151,7 @@ final class LinkTable {
 	private final int _recordCount;
 	private final WorkbookRecordList _workbookRecordList; // TODO - would be nice to remove this
 
-	public LinkTable(List inputList, int startIndex, WorkbookRecordList workbookRecordList) {
+	public LinkTable(List inputList, int startIndex, WorkbookRecordList workbookRecordList, Map<String, NameCommentRecord> commentRecords) {
 
 		_workbookRecordList = workbookRecordList;
 		RecordStream rs = new RecordStream(inputList, startIndex);
@@ -176,10 +178,21 @@ final class LinkTable {
 		}
 
 		_definedNames = new ArrayList<NameRecord>();
-		// collect zero or more DEFINEDNAMEs id=0x18
-		while(rs.peekNextClass() == NameRecord.class) {
-			NameRecord nr = (NameRecord)rs.getNext();
-			_definedNames.add(nr);
+		// collect zero or more DEFINEDNAMEs id=0x18,
+		//  with their comments if present
+		while(true) {
+		  Class nextClass = rs.peekNextClass();
+		  if (nextClass == NameRecord.class) {
+		    NameRecord nr = (NameRecord)rs.getNext();
+		    _definedNames.add(nr);
+		  }
+		  else if (nextClass == NameCommentRecord.class) {
+		    NameCommentRecord ncr = (NameCommentRecord)rs.getNext();
+		    commentRecords.put(ncr.getNameText(), ncr);
+		  }
+		  else {
+		    break;
+		  }
 		}
 
 		_recordCount = rs.getCountRead();

@@ -197,6 +197,7 @@ public final class BiffViewer {
 			case MulBlankRecord.sid:       return new MulBlankRecord(in);
 			case MulRKRecord.sid:          return new MulRKRecord(in);
 			case NameRecord.sid:           return new NameRecord(in);
+			case NameCommentRecord.sid:    return new NameCommentRecord(in);
 			case NoteRecord.sid:           return new NoteRecord(in);
 			case NumberRecord.sid:         return new NumberRecord(in);
 			case ObjRecord.sid:            return new ObjRecord(in);

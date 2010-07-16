@@ -18,12 +18,17 @@
 package org.apache.poi.hssf.model;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.NameCommentRecord;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
@@ -138,7 +143,7 @@ public final class TestLinkTable extends TestCase {
 		
 		LinkTable lt;
 		try {
-			lt = new LinkTable(recList, 0, wrl);
+			lt = new LinkTable(recList, 0, wrl, Collections.<String, NameCommentRecord>emptyMap());
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)")) {
 				throw new AssertionFailedError("Identified bug 47001b");
@@ -148,4 +153,30 @@ public final class TestLinkTable extends TestCase {
 		}
 		assertNotNull(lt);
 	}	
+
+	/**
+	 *
+	 */
+	public void testNameCommentRecordBetweenNameRecords() {
+
+		final Record[] recs = {
+        new NameRecord(),
+        new NameCommentRecord("name1", "comment1"),
+        new NameRecord(),
+        new NameCommentRecord("name2", "comment2"),
+
+		};
+		final List<Record> recList = Arrays.asList(recs);
+		final WorkbookRecordList wrl = new WorkbookRecordList();
+		final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<String, NameCommentRecord>();
+
+		final LinkTable	lt = new LinkTable(recList, 0, wrl, commentRecords);
+		assertNotNull(lt);
+
+		assertEquals(2, commentRecords.size());
+    assertTrue(recs[1] == commentRecords.get("name1")); //== is intentionally not .equals()!
+    assertTrue(recs[3] == commentRecords.get("name2")); //== is intentionally not .equals()!
+
+    assertEquals(2, lt.getNumNames());
+	}
 }
