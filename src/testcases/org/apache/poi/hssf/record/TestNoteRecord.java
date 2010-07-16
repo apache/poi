@@ -102,8 +102,34 @@ public final class TestNoteRecord extends TestCase {
             throw new AssertionFailedError("Identified bug in reading note with unicode author");
         }
         assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
         
         byte[] ser = nr.serialize();
         TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, data, ser);
+
+        // Re-check
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
+        
+        
+        // Change to a non unicode author, will stop being unicode
+        nr.setAuthor("Simple");
+        ser = nr.serialize();
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        
+        assertEquals("Simple", nr.getAuthor());
+        assertFalse(nr.authorIsMultibyte());
+        
+        // Now set it back again
+        nr.setAuthor("Unicode\u1234");
+        ser = nr.serialize();
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        
+        assertEquals("Unicode\u1234", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
     }
 }
