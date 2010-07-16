@@ -35,6 +35,9 @@ public final class ChartEndBlockRecord extends StandardRecord {
 	private short iObjectKind;
 	private byte[] unused;
 
+	public ChartEndBlockRecord() {
+	}
+	
 	public ChartEndBlockRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
@@ -79,5 +82,17 @@ public final class ChartEndBlockRecord extends StandardRecord {
 		buffer.append("    .unused     =").append(HexDump.toHex(unused)).append('\n');
 		buffer.append("[/ENDBLOCK]\n");
 		return buffer.toString();
+	}
+	
+	@Override
+	public ChartEndBlockRecord clone() {
+		ChartEndBlockRecord record = new ChartEndBlockRecord();
+		
+		record.rt = rt ;
+		record.grbitFrt = grbitFrt ;
+		record.iObjectKind = iObjectKind ;
+		record.unused = unused.clone() ;
+		
+		return record;
 	}
 }

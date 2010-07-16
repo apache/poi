@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">49581 - Ability to add, modify and remove series from HSSF Charts</action>
            <action dev="POI-DEVELOPERS" type="add">49185 - Support for HSSFNames where the comment is stored in a NameCommentRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">49599 - Correct writing of NoteRecord author text when switching between ASCII and Unicode</action>
            <action dev="POI-DEVELOPERS" type="fix">HWPF: Improve reading of auto-saved ("complex") documents</action>
