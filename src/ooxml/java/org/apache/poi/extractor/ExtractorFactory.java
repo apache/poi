@@ -181,24 +181,14 @@ public class ExtractorFactory {
 			return new XWPFWordExtractor(pkg);
 		}
 
-		if(corePart.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
+		if(corePart.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE) ||
+		      corePart.getContentType().equals(XSLFSlideShow.MACRO_CONTENT_TYPE) ||
+            corePart.getContentType().equals(XSLFSlideShow.MACRO_TEMPLATE_CONTENT_TYPE) ||
+            corePart.getContentType().equals(XSLFSlideShow.PRESENTATIONML_CONTENT_TYPE) ||
+            corePart.getContentType().equals(XSLFSlideShow.PRESENTATIONML_TEMPLATE_CONTENT_TYPE) ||
+            corePart.getContentType().equals(XSLFSlideShow.PRESENTATION_MACRO_CONTENT_TYPE)) {
 			return new XSLFPowerPointExtractor(pkg);
 		}
-                if(corePart.getContentType().equals(XSLFSlideShow.MACRO_CONTENT_TYPE)) {
-                        return new XSLFPowerPointExtractor(pkg);
-                }
-                if(corePart.getContentType().equals(XSLFSlideShow.MACRO_TEMPLATE_CONTENT_TYPE)) {
-                        return new XSLFPowerPointExtractor(pkg);
-                }
-                if(corePart.getContentType().equals(XSLFSlideShow.PRESENTATIONML_CONTENT_TYPE)) {
-                        return new XSLFPowerPointExtractor(pkg);
-                }
-                if(corePart.getContentType().equals(XSLFSlideShow.PRESENTATIONML_TEMPLATE_CONTENT_TYPE)) {
-                        return new XSLFPowerPointExtractor(pkg);
-                }
-                if(corePart.getContentType().equals(XSLFSlideShow.PRESENTATION_MACRO_CONTENT_TYPE)) {
-                        return new XSLFPowerPointExtractor(pkg);
-                }
 
 		throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
