@@ -232,6 +232,7 @@ public final class RecordFactory {
 		ChartStartObjectRecord.class,
 		ChartEndObjectRecord.class,
 		CatLabRecord.class,
+      DataFormatRecord.class,
 		EndRecord.class,
 		LinkedDataRecord.class,
 		SeriesToChartGroupRecord.class,
