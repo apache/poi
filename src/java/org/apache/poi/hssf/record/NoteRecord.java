@@ -190,6 +190,13 @@ public final class NoteRecord extends StandardRecord {
 	public void setFlags(short flags) {
 		field_3_flags = flags;
 	}
+	
+	/**
+	 * For unit testing only!
+	 */
+	protected boolean authorIsMultibyte() {
+	   return field_5_hasMultibyte;
+	}
 
 	/**
 	 * Object id for OBJ record that contains the comment
@@ -221,6 +228,7 @@ public final class NoteRecord extends StandardRecord {
 	 */
 	public void setAuthor(String author) {
 		field_6_author = author;
+      field_5_hasMultibyte = StringUtil.hasMultibyte(author);
 	}
 
 	public Object clone() {
