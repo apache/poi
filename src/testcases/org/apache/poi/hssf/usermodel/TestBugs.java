@@ -42,7 +42,12 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -1760,5 +1765,42 @@ if(1==2) {
       wb = writeOutAndReadBack(wb);
       name = wb.getName("ChangedName");
       assertEquals("Changed Comment", name.getComment());
+    }
+    
+    /**
+     * Vertically aligned text
+     */
+    public void test49524() throws Exception {
+       HSSFWorkbook wb = openSample("49524.xls");
+       Sheet s = wb.getSheetAt(0);
+       Row r = s.getRow(0);
+       Cell rotated = r.getCell(0);
+       Cell normal = r.getCell(1);
+       
+       // Check the current ones
+       assertEquals(0, normal.getCellStyle().getRotation());
+       assertEquals(0xff, rotated.getCellStyle().getRotation());
+       
+       // Add a new style, also rotated
+       CellStyle cs = wb.createCellStyle();
+       cs.setRotation((short)0xff);
+       Cell nc = r.createCell(2);
+       nc.setCellValue("New Rotated Text");
+       nc.setCellStyle(cs);
+       assertEquals(0xff, nc.getCellStyle().getRotation());
+       
+       // Write out and read back
+       wb = writeOutAndReadBack(wb);
+       
+       // Re-check
+       s = wb.getSheetAt(0);
+       r = s.getRow(0);
+       rotated = r.getCell(0);
+       normal = r.getCell(1);
+       nc = r.getCell(2);
+       
+       assertEquals(0, normal.getCellStyle().getRotation());
+       assertEquals(0xff, rotated.getCellStyle().getRotation());
+       assertEquals(0xff, nc.getCellStyle().getRotation());
     }
 }

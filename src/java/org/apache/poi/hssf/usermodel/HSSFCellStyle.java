@@ -283,31 +283,40 @@ public final class HSSFCellStyle implements CellStyle {
 
     /**
      * set the degree of rotation for the text in the cell
-     * @param rotation degrees (between -90 and 90 degrees)
+     * @param rotation degrees (between -90 and 90 degrees, of 0xff for vertical)
      */
     public void setRotation(short rotation)
     {
-      if ((rotation < 0)&&(rotation >= -90)) {
+      if (rotation == 0xff) {
+          // Special cases for vertically aligned text
+      } 
+      else if ((rotation < 0)&&(rotation >= -90)) {
         //Take care of the funny 4th quadrant issue
         //The 4th quadrant (-1 to -90) is stored as (91 to 180)
         rotation = (short)(90 - rotation);
       }
-      else if ((rotation < -90)  ||(rotation > 90))
+      else if ((rotation < -90)  ||(rotation > 90)) {
         //Do not allow an incorrect rotation to be set
-        throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees");
-        _format.setRotation(rotation);
+        throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees, or 0xff");
+      }
+      _format.setRotation(rotation);
     }
 
     /**
      * get the degree of rotation for the text in the cell
-     * @return rotation degrees (between -90 and 90 degrees)
+     * @return rotation degrees (between -90 and 90 degrees, or 0xff for vertical)
      */
     public short getRotation()
     {
       short rotation = _format.getRotation();
-      if (rotation > 90)
+      if (rotation == 0xff) {
+         // Vertical aligned special case
+         return rotation;
+      }
+      if (rotation > 90) {
         //This is actually the 4th quadrant
         rotation = (short)(90-rotation);
+      }
       return rotation;
     }
 
