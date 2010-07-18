@@ -397,4 +397,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           } catch(IllegalStateException e) {}
        }
     }
+
+    /**
+     * A problem file from a non-standard source (a scientific instrument that saves its
+     * output as an .xlsx file) that have two issues:
+     * 1. The Content Type part name is lower-case:  [content_types].xml
+     * 2. The file appears to use backslashes as path separators
+     *
+     * The OPC spec tolerates both of these peculiarities, so does POI
+     */
+    public void test49609() throws Exception {
+        XSSFWorkbook wb =  XSSFTestDataSamples.openSampleWorkbook("49609.xlsx");
+        assertEquals("FAM", wb.getSheetName(0));
+        assertEquals("Cycle", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+
+    }
 }
