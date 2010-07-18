@@ -484,7 +484,7 @@ public final class PackagingURIHelper {
 			throws InvalidFormatException {
 		URI partNameURI;
 		try {
-			partNameURI = new URI(partName);
+			partNameURI = new URI(resolvePartName(partName));
 		} catch (URISyntaxException e) {
 			throw new InvalidFormatException(e.getMessage());
 		}
@@ -646,4 +646,29 @@ public final class PackagingURIHelper {
 		}
 		return retPartName;
 	}
+
+    /**
+     *  If  part name is not a valid URI, it is resolved as follows:
+     * <p>
+     * 1. Percent-encode each open bracket ([) and close bracket (]).</li>
+     * 2. Percent-encode each percent (%) character that is not followed by a hexadecimal notation of an octet value.</li>
+     * 3. Un-percent-encode each percent-encoded unreserved character.
+     * 4. Un-percent-encode each forward slash (/) and back slash (\).
+     * 5. Convert all back slashes to forward slashes.
+     * 6. If present in a segment containing non-dot (?.?) characters, remove trailing dot (?.?) characters from each segment.
+     * 7. Replace each occurrence of multiple consecutive forward slashes (/) with a single forward slash.
+     * 8. If a single trailing forward slash (/) is present, remove that trailing forward slash.
+     * 9. Remove complete segments that consist of three or more dots.
+     * 10. Resolve the relative reference against the base URI of the part holding the Unicode string, as it is defined
+     * in ?5.2 of RFC 3986. The path component of the resulting absolute URI is the part name.
+     *</p>
+     *
+     * @param partName the name to resolve
+     * @return  the resolved part name that should be OK to construct a URI
+     *
+     * TODO YK: for now this method does only (5). Finish the rest.
+     */
+    public static String resolvePartName(String partName){
+        return partName.replace('\\', '/');
+    }
 }
