@@ -23,6 +23,10 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
 
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.File;
+
 /**
  * @author aviks
  * 
@@ -46,4 +50,33 @@ public final class TestUnfixedBugs extends TestCase {
 			throw e;
 		}
 	}
+
+    public void test49612() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        HSSFRow row = sh.getRow(0);
+        HSSFCell c1 = row.getCell(2);
+        HSSFCell d1 = row.getCell(3);
+        HSSFCell e1 = row.getCell(2);
+
+        assertEquals("SUM(BOB+JIM)", c1.getCellFormula());
+
+        // Problem 1: java.lang.ArrayIndexOutOfBoundsException in org.apache.poi.hssf.model.LinkTable$ExternalBookBlock.getNameText
+        assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", d1.getCellFormula());
+
+        //Problem 2
+        //junit.framework.ComparisonFailure:
+        //Expected :SUM('49612.xls'!BOB+'49612.xls'!JIM)
+        //Actual   :SUM(BOB+JIM)
+        assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", e1.getCellFormula());
+
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+        assertEquals("evaluating c1", 30., eval.evaluate(c1).getNumberValue());
+
+        //Problem 3:  java.lang.RuntimeException: Unexpected arg eval type (org.apache.poi.hssf.record.formula.eval.NameXEval)
+        assertEquals("evaluating d1", 30., eval.evaluate(d1).getNumberValue());
+
+        assertEquals("evaluating e1", 30., eval.evaluate(e1).getNumberValue());
+    }
+    
 }
