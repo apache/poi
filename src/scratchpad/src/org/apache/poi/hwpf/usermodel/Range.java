@@ -784,6 +784,10 @@ public class Range { // TODO -instantiable superclass
 	public CharacterRun getCharacterRun(int index) {
 		initCharacterRuns();
 		CHPX chpx = _characters.get(index + _charStart);
+        
+        if (chpx == null) {
+            return null;
+        }
 
 		int[] point = findRange(_paragraphs, _parStart, Math.max(chpx.getStart(), _start), chpx
 				.getEnd());
@@ -963,7 +967,7 @@ public class Range { // TODO -instantiable superclass
 		int x = min;
 		PropertyNode node = (PropertyNode) rpl.get(x);
 
-		while (node.getEnd() <= start && x < rpl.size() - 1) {
+		while (node==null || (node.getEnd() <= start && x < rpl.size() - 1)) {
 			x++;
 			node = (PropertyNode) rpl.get(x);
 		}
@@ -978,7 +982,7 @@ public class Range { // TODO -instantiable superclass
 
 		int y = x;
 		node = (PropertyNode) rpl.get(y);
-		while (node.getEnd() < end && y < rpl.size() - 1) {
+		while (node==null || (node.getEnd() < end && y < rpl.size() - 1)) {
 			y++;
 			node = (PropertyNode) rpl.get(y);
 		}

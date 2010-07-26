@@ -18,9 +18,9 @@
 package org.apache.poi.hwpf.model;
 
 public interface CharIndexTranslator {
-
     /**
      * Calculates the char index of the given byte index.
+     * Look forward if index is not in table
      *
      * @param bytePos The character offset to check 
      * @return the char index
@@ -28,13 +28,28 @@ public interface CharIndexTranslator {
     int getCharIndex(int bytePos);
 
     /**
-     * Is the text at the given byte offset unicode, or plain old ascii? In a
-     * very evil fashion, you have to actually know this to make sense of
-     * character and paragraph properties :(
+     * Check if index is in table
      *
-     * @param bytePos The character offset to check about
-     * @return true if the text at the given byte offset is unicode
+     * @param bytePos
+     * @return true if index in table, false if not
      */
-    boolean isUnicodeAtByteOffset(int bytePos);
+
+    boolean isIndexInTable(int bytePos);
+
+    /**
+     * Return first index >= bytePos that is in table
+     *
+     * @param bytePos
+     * @return
+     */
+    public int lookIndexForward(int bytePos);
+
+    /**
+     * Return last index <= bytePos that is in table
+     *
+     * @param bytePos
+     * @return
+     */
+    public int lookIndexBackward(int bytePos);
 
 }

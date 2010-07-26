@@ -196,7 +196,11 @@ public final class PicturesTable
     Range range = _document.getOverallRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {
     	CharacterRun run = range.getCharacterRun(i);
-    	String text = run.text();
+
+        if (run==null) {
+            continue;
+        }
+
     	Picture picture = extractPicture(run, false);
     	if (picture != null) {
     		pictures.add(picture);

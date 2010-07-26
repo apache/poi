@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author Ryan Ackley
  */
-public final class TextPieceTable implements CharIndexTranslator {
+public class TextPieceTable implements CharIndexTranslator {
 	protected ArrayList<TextPiece> _textPieces = new ArrayList<TextPiece>();
     protected ArrayList<TextPiece> _textPiecesFCOrder = new ArrayList<TextPiece>();
 	// int _multiple;
@@ -118,51 +118,6 @@ public final class TextPieceTable implements CharIndexTranslator {
         Collections.sort(_textPiecesFCOrder, new FCComparator());
     }
 
-	/**
-	 * Is the text at the given Character offset unicode, or plain old ascii? In
-	 * a very evil fashion, you have to actually know this to make sense of
-	 * character and paragraph properties :(
-	 *
-	 * @param cp
-	 *            The character offset to check about
-	 */
-	public boolean isUnicodeAtCharOffset(int cp) {
-		boolean lastWas = false;
-
-		for(TextPiece tp : _textPieces) {
-			// If the text piece covers the character, all good
-			if (tp.getStart() <= cp && tp.getEnd() >= cp) {
-				return tp.isUnicode();
-			}
-			// Otherwise keep track for the last one
-			lastWas = tp.isUnicode();
-		}
-
-		// If they ask off the end, just go with the last one...
-		return lastWas;
-	}
-
-	public boolean isUnicodeAtByteOffset(int bytePos) {
-		boolean lastWas = false;
-
-        for(TextPiece tp : _textPieces) {
-			int curByte = tp.getPieceDescriptor().getFilePosition();
-			int pieceEnd = curByte + tp.bytesLength();
-
-			// If the text piece covers the character, all good
-			if (curByte <= bytePos && pieceEnd > bytePos) {
-				return tp.isUnicode();
-			}
-			// Otherwise keep track for the last one
-			lastWas = tp.isUnicode();
-			// Move along
-			curByte = pieceEnd;
-		}
-
-		// If they ask off the end, just go with the last one...
-		return lastWas;
-	}
-
 	public byte[] writeTo(HWPFOutputStream docStream) throws IOException {
 
 		PlexOfCps textPlex = new PlexOfCps(PieceDescriptor.getSizeInBytes());
@@ -245,19 +200,7 @@ public final class TextPieceTable implements CharIndexTranslator {
     public int getCharIndex(int bytePos) {
         int charCount = 0;
 
-        for(TextPiece tp : _textPiecesFCOrder) {
-			int pieceStart = tp.getPieceDescriptor().getFilePosition();
-
-            if (bytePos > pieceStart + tp.bytesLength()) {
-                continue;
-            }
-
-			if (pieceStart > bytePos) {
-				bytePos = pieceStart;
-			}
-
-            break;
-        }
+        bytePos = lookIndexForward(bytePos);
 
         for(TextPiece tp : _textPieces) {
             int pieceStart = tp.getPieceDescriptor().getFilePosition();
@@ -285,6 +228,62 @@ public final class TextPieceTable implements CharIndexTranslator {
         }
 
         return charCount;
+    }
+
+    public int lookIndexForward(int bytePos) {
+        for(TextPiece tp : _textPiecesFCOrder) {
+			int pieceStart = tp.getPieceDescriptor().getFilePosition();
+
+            if (bytePos > pieceStart + tp.bytesLength()) {
+                continue;
+            }
+
+			if (pieceStart > bytePos) {
+				bytePos = pieceStart;
+			}
+
+            break;
+        }
+        return bytePos;
+    }
+
+    public int lookIndexBackward(int bytePos) {
+        int lastEnd = 0;
+
+        for(TextPiece tp : _textPiecesFCOrder) {
+			int pieceStart = tp.getPieceDescriptor().getFilePosition();
+
+            if (bytePos > pieceStart + tp.bytesLength()) {
+                lastEnd = pieceStart + tp.bytesLength();
+                continue;
+            }
+
+			if (pieceStart > bytePos) {
+				bytePos = lastEnd;
+			}
+
+            break;
+        }
+
+        return bytePos;
+    }
+
+    public boolean isIndexInTable(int bytePos) {
+        for(TextPiece tp : _textPiecesFCOrder) {
+			int pieceStart = tp.getPieceDescriptor().getFilePosition();
+
+            if (bytePos > pieceStart + tp.bytesLength()) {
+                continue;
+            }
+
+			if (pieceStart > bytePos) {
+				return false;
+			}
+
+            return true;
+        }
+
+        return false;
     }
 
     private static class FCComparator implements Comparator<TextPiece> {
