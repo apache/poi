@@ -52,6 +52,7 @@ import org.apache.poi.ss.util.CellReference.NameType;
  *  @author Peter M. Murray (pete at quantrix dot com)
  *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  *  @author Josh Micich
+ *  @author David Lewis (DLewis400 at gmail dot com)
  */
 public final class FormulaParser {
 	private static final class Identifier {
@@ -537,7 +538,8 @@ public final class FormulaParser {
 		// which will either be named ranges or functions
 		StringBuilder sb = new StringBuilder();
 
-		if (!Character.isLetter(look)) {
+		// defined names may begin with a letter or underscore
+		if (!Character.isLetter(look) && look != '_') {
 			throw expected("number, string, or defined name");
 		}
 		while (isValidDefinedNameChar(look)) {
