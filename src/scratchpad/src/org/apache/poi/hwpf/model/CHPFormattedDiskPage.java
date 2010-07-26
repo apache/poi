@@ -62,7 +62,12 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
       {
     	int startAt = getStart(x);
 		int endAt = getEnd(x);
-		_chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
+
+        if (!tpt.isIndexInTable(startAt) && !tpt.isIndexInTable(endAt)) {
+            _chpxList.add(null);
+        } else {
+		    _chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
+        }
       }
     }
 
