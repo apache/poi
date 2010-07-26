@@ -17,11 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.OperandResolver;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.eval.*;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -395,4 +391,105 @@ public abstract class NumericFunction implements Function {
 			return new NumberEval(Math.random());
 		}
 	};
+    public static final Function POISSON = new Fixed3ArgFunction() {
+
+        private final static double DEFAULT_RETURN_RESULT =1;
+        
+        /**
+         * This checks is x = 0 and the mean = 0.
+         * Excel currently returns the value 1 where as the
+         * maths common implementation will error.
+         * @param x  The number.
+         * @param mean The mean.
+         * @return If a default value should be returned.
+         */
+        private boolean isDefaultResult(double x, double mean) {
+
+            if ( x == 0 && mean == 0 ) {
+                return true;
+            }
+            return false;
+        }
+
+        private boolean checkArgument(double aDouble) throws EvaluationException {
+
+            NumericFunction.checkValue(aDouble);
+
+            // make sure that the number is positive
+            if (aDouble < 0) {
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
+            
+            return true;
+        }
+
+        private double probability(int k, double lambda) {
+            return Math.pow(lambda, k) * Math.exp(-lambda) / factorial(k);
+        }
+
+        private double cumulativeProbability(int x, double lambda) {
+            double result = 0;
+            for(int k = 0; k <= x; k++){
+                result += probability(k, lambda);
+            }
+            return result;
+        }
+
+        /** All long-representable factorials */
+        private final long[] FACTORIALS = new long[] {
+                           1l,                  1l,                   2l,
+                           6l,                 24l,                 120l,
+                         720l,               5040l,               40320l,
+                      362880l,            3628800l,            39916800l,
+                   479001600l,         6227020800l,         87178291200l,
+               1307674368000l,     20922789888000l,     355687428096000l,
+            6402373705728000l, 121645100408832000l, 2432902008176640000l };
+
+
+        public long factorial(final int n) {
+            if (n < 0 || n > 20) {
+                throw new IllegalArgumentException("Valid argument should be in the range [0..20]");
+            }
+            return FACTORIALS[n];
+        }
+
+        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2) {
+
+            // arguments/result for this function
+            double mean=0;
+            double x=0;
+            boolean cumulative = ((BoolEval)arg2).getBooleanValue();
+            double result=0;
+
+            try {
+				x = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+				mean = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
+
+                // check for default result : excel implementation for 0,0
+                // is different to Math Common.
+                if (isDefaultResult(x,mean)) {
+                    return new NumberEval(DEFAULT_RETURN_RESULT); 
+                }
+                // check the arguments : as per excel function def
+                checkArgument(x);
+                checkArgument(mean);
+
+                // truncate x : as per excel function def
+                if ( cumulative ) {
+                    result = cumulativeProbability((int)x, mean);
+                } else {
+                    result = probability((int)x, mean);
+                }
+
+                // check the result
+                NumericFunction.checkValue(result);
+
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+            
+            return new NumberEval(result);
+
+        }
+    };
 }

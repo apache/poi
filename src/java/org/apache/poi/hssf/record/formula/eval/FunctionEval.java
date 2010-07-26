@@ -187,6 +187,8 @@ public final class FunctionEval {
 
 		retval[298] = new Odd();
 
+        retval[300] = NumericFunction.POISSON;
+
 		retval[303] = new Sumxmy2();
 		retval[304] = new Sumx2my2();
 		retval[305] = new Sumx2py2();
