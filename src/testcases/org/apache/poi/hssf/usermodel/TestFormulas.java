@@ -31,6 +31,9 @@ import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -934,5 +937,25 @@ public final class TestFormulas extends TestCase {
 
         assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
         assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
+    }
+
+    /**
+     * Verify that FormulaParser handles defined names beginning with underscores,
+     * see Bug #49640
+     */
+    public void testFormulasWithUnderscore(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Name nm1 = wb.createName();
+        nm1.setNameName("_score1");
+        nm1.setRefersToFormula("A1");
+
+        Name nm2 = wb.createName();
+        nm2.setNameName("_score2");
+        nm2.setRefersToFormula("A2");
+
+        Sheet sheet = wb.createSheet();
+        Cell cell = sheet.createRow(0).createCell(2);
+        cell.setCellFormula("_score1*SUM(_score1+_score2)");
+        assertEquals("_score1*SUM(_score1+_score2)", cell.getCellFormula());
     }
 }

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">49640 - Fixed parsing formulas containing defined names beginning with an underscore</action>
            <action dev="POI-DEVELOPERS" type="add">49538 - Added implementation for POISSON()</action>
            <action dev="POI-DEVELOPERS" type="add">49524 - Support for setting cell text to be vertically rotated, via style.setRotation(0xff)</action>
            <action dev="POI-DEVELOPERS" type="fix">49609 - Case insensitive matching of OOXML part names</action>
