@@ -198,6 +198,10 @@ public class TextPieceTable implements CharIndexTranslator {
 	}
 
     public int getCharIndex(int bytePos) {
+        return getCharIndex(bytePos, 0);
+    }
+
+    public int getCharIndex(int bytePos, int startCP) {
         int charCount = 0;
 
         bytePos = lookIndexForward(bytePos);
@@ -222,7 +226,7 @@ public class TextPieceTable implements CharIndexTranslator {
                 charCount += toAdd;
             }
 
-            if (bytePos>=pieceStart && bytePos<=pieceEnd) {
+            if (bytePos>=pieceStart && bytePos<=pieceEnd && charCount>=startCP) {
                 break;
             }
         }

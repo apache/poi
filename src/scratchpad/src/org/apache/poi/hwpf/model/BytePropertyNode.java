@@ -35,7 +35,7 @@ public abstract class BytePropertyNode extends PropertyNode {
 	public BytePropertyNode(int fcStart, int fcEnd, CharIndexTranslator translator, Object buf) {
 		super(
 				translator.getCharIndex(fcStart),
-				translator.getCharIndex(fcEnd),
+				translator.getCharIndex(fcEnd, translator.getCharIndex(fcStart)),
 				buf
 		);
                 this.startBytes = fcStart;
