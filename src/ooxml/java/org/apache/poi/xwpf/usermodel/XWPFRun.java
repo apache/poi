@@ -19,6 +19,8 @@ package org.apache.poi.xwpf.usermodel;
 import java.math.BigInteger;
 
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlString;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
@@ -34,6 +36,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+
+import javax.xml.namespace.QName;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -140,6 +144,7 @@ public class XWPFRun {
 	if(pos > run.sizeOfTArray()) throw new ArrayIndexOutOfBoundsException("Value too large for the parameter position in XWPFRun.setText(String value,int pos)");
         CTText t = (pos < run.sizeOfTArray() && pos >= 0) ? run.getTArray(pos) : run.addNewT();
         t.setStringValue(value);
+        preserveSpaces(t);
     }
 
     
@@ -472,5 +477,19 @@ public class XWPFRun {
 	//TODO
     }    
 
-    
+    /**
+     * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
+     *
+     * @param xs    the string to check
+     */
+    static void preserveSpaces(XmlString xs) {
+        String text = xs.getStringValue();
+        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
+            XmlCursor c = xs.newCursor();
+            c.toNextToken();
+            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+            c.dispose();
+        }
+    }
+
 }
