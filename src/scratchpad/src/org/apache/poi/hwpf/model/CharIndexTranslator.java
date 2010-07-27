@@ -28,6 +28,16 @@ public interface CharIndexTranslator {
     int getCharIndex(int bytePos);
 
     /**
+     * Calculates the char index of the given byte index.
+     * Look forward if index is not in table
+     *
+     * @param bytePos The character offset to check
+     * @param startCP look from this characted position 
+     * @return the char index
+     */
+    int getCharIndex(int bytePos, int startCP);
+
+    /**
      * Check if index is in table
      *
      * @param bytePos

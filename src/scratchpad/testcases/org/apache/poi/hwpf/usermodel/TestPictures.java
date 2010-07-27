@@ -163,4 +163,10 @@ public final class TestPictures extends TestCase {
             doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
+    public void testFastSaved3() {
+            HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ob_is.doc");
+
+            doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
+    }
+
 }
