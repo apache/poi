@@ -28,6 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * we do not explicitly support.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Zhang Zhang (zhangzzh at gmail.com)
  */
 public final class UnknownEscherRecord extends EscherRecord {
     private static final byte[] NO_BYTES = new byte[0];
@@ -42,6 +43,17 @@ public final class UnknownEscherRecord extends EscherRecord {
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
+		/*
+		 * Modified by Zhang Zhang
+		 * Have a check between avaliable bytes and bytesRemaining, 
+		 * take the avaliable length if the bytesRemaining out of range.
+		 * July 09, 2010
+		 */
+		int avaliable = data.length - (offset + 8);
+		if (bytesRemaining > avaliable) {
+			bytesRemaining = avaliable;
+		}
+
         if (isContainerRecord()) {
             int bytesWritten = 0;
             thedata = new byte[0];
@@ -58,6 +70,7 @@ public final class UnknownEscherRecord extends EscherRecord {
             }
             return bytesWritten;
         }
+
         thedata = new byte[bytesRemaining];
         System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
         return bytesRemaining + 8;
