@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
@@ -41,6 +42,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRunTrackChange;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
@@ -118,6 +120,9 @@ public class XWPFParagraph implements IBodyElement{
       }
       for (CTRunTrackChange c : paragraph.getInsList()) {
           rs.addAll( c.getRList() );
+      }
+      for (CTSimpleField f : paragraph.getFldSimpleList()) {
+    	  rs.addAll( f.getRList() );
       }
 
       // Get text of the paragraph
