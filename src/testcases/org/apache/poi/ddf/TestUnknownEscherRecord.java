@@ -76,7 +76,45 @@ public final class TestUnknownEscherRecord extends TestCase {
         assertTrue( r.isContainerRecord() );
         assertEquals( 1, r.getChildRecords().size() );
         assertEquals( (short) 0xFFFF, r.getChild( 0 ).getRecordId() );
+        
+        //Add by Zhang Zhang test error situation when remaining bytes > avalible bytes
+        testData =
+            "00 02 " + // options
+            "11 F1 " + // record id
+            "05 00 00 00 " + // remaining bytes
+            "01 02 03 04";
 
+	    r = new UnknownEscherRecord();
+	    r.fillFields( HexRead.readFromString( testData ), factory );
+	
+	    assertEquals( 0x0200, r.getOptions() );
+	    assertEquals( (short) 0xF111, r.getRecordId() );
+	    assertEquals( 12, r.getRecordSize() );
+	    assertFalse( r.isContainerRecord() );
+	    assertEquals( 0, r.getChildRecords().size() );
+	    assertEquals( 4, r.getData().length );
+	    assertEquals( 1, r.getData()[0] );
+	    assertEquals( 2, r.getData()[1] );
+	    assertEquals( 3, r.getData()[2] );
+	    assertEquals( 4, r.getData()[3] );
+	    
+        testData =
+            "0F 02 " + // options
+            "11 F1 " + // record id
+            "09 00 00 00 " + // remaining bytes
+            "00 02 " + // options
+            "FF FF " + // record id
+            "00 00 00 00";      // remaining bytes
+
+	    r = new UnknownEscherRecord();
+	    r.fillFields( HexRead.readFromString( testData ), factory );
+	
+	    assertEquals( 0x020F, r.getOptions() );
+	    assertEquals( (short) 0xF111, r.getRecordId() );
+	    assertEquals( 8, r.getRecordSize() );
+	    assertTrue( r.isContainerRecord() );
+	    assertEquals( 1, r.getChildRecords().size() );
+	    assertEquals( (short) 0xFFFF, r.getChild( 0 ).getRecordId() );
     }
 
     public void testSerialize() {
