@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.xml.namespace.QName;
 
@@ -75,6 +77,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
  * @author Yegor Kozlov
  */
 public class XSSFRichTextString implements RichTextString {
+    private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-F]{4})_");
+
     private CTRst st;
     private StylesTable styles;
 
@@ -337,13 +341,13 @@ public class XSSFRichTextString implements RichTextString {
      */
     public String getString() {
         if(st.sizeOfRArray() == 0) {
-            return st.getT();
+            return utfDecode(st.getT());
         }
         StringBuffer buf = new StringBuffer();
         for(CTRElt r : st.getRList()){
             buf.append(r.getT());
         }
-        return buf.toString();
+        return utfDecode(buf.toString());
     }
 
     /**
@@ -489,5 +493,40 @@ public class XSSFRichTextString implements RichTextString {
             c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
             c.dispose();
         }
+    }
+
+    /**
+     * For all characters which cannot be represented in XML as defined by the XML 1.0 specification,
+     * the characters are escaped using the Unicode numerical character representation escape character
+     * format _xHHHH_, where H represents a hexadecimal character in the character's value.
+     * <p>
+     * Example: The Unicode character 0D is invalid in an XML 1.0 document,
+     * so it shall be escaped as <code>_x000D_</code>.
+     * </p>
+     * See section 3.18.9 in the OOXML spec.
+     *
+     * @param   value the string to decode
+     * @return  the decoded string
+     */
+    static String utfDecode(String value){
+        if(value == null) return null;
+        
+        StringBuffer buf = new StringBuffer();
+        Matcher m = utfPtrn.matcher(value);
+        int idx = 0;
+        while(m.find()) {
+            int pos = m.start();
+            if( pos > idx) {
+                buf.append(value.substring(idx, pos));
+            }
+
+            String code = m.group(1);
+            int icode = Integer.decode("0x" + code);
+            buf.append((char)icode);
+
+            idx = m.end();
+        }
+        buf.append(value.substring(idx));
+        return buf.toString();
     }
 }
