@@ -167,4 +167,12 @@ public final class FeatRecord extends StandardRecord  {
 			cbFeatData = 0;
 		}
 	}
+
+    
+    //HACK: do a "cheat" clone, see Record.java for more information
+    public Object clone() {
+        return cloneViaReserialise();
+    }
+
+    
 }

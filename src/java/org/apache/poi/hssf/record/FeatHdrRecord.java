@@ -105,4 +105,11 @@ public final class FeatHdrRecord extends StandardRecord  {
 	protected int getDataSize() {
 		return 12 + 2+1+4+rgbHdrData.length;
 	}
+    
+    //HACK: do a "cheat" clone, see Record.java for more information
+    public Object clone() {
+        return cloneViaReserialise();
+    }
+
+    
 }

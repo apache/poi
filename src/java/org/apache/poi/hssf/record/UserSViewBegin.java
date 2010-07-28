@@ -83,5 +83,10 @@ public final class UserSViewBegin extends StandardRecord {
         sb.append("[/").append("USERSVIEWBEGIN").append("]\n");
         return sb.toString();
     }
-    
+
+    //HACK: do a "cheat" clone, see Record.java for more information
+    public Object clone() {
+        return cloneViaReserialise();
+    }
+ 
 }
