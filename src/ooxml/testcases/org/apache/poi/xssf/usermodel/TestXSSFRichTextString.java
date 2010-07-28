@@ -130,4 +130,16 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals("<xml-fragment xml:space=\"preserve\">  Apache</xml-fragment>", xs.xmlText());
 
     }
+
+    /**
+     * test that unicode representation_ xHHHH_ is properly processed
+     */
+    public void testUtfDecode() {
+        CTRst st = CTRst.Factory.newInstance();
+        st.setT("abc_x000D_2ef_x000D_");
+        XSSFRichTextString rt = new XSSFRichTextString(st);
+        //_x000D_ is converted into carriage return
+        assertEquals("abc\r2ef\r", rt.getString());
+        
+    }
 }
