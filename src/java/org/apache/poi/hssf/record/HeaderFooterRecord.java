@@ -94,5 +94,11 @@ public final class HeaderFooterRecord extends StandardRecord {
         sb.append("[/").append("HEADERFOOTER").append("]\n");
         return sb.toString();
     }
+
+    //HACK: do a "cheat" clone, see Record.java for more information
+    public Object clone() {
+                return cloneViaReserialise();
+    }
     
+ 
 }

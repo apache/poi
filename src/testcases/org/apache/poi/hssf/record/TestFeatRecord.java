@@ -170,4 +170,13 @@ public final class TestFeatRecord extends TestCase {
 		assertFalse(fferr2.getCheckUnprotectedFormulas());
 		assertFalse(fferr2.getPerformDataValidation());
 	}
+
+    /**
+     *  cloning sheets with feat records 
+     */
+    public void testCloneSheetWithFeatRecord() throws Exception {
+        HSSFWorkbook wb =
+            HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls");
+        wb.cloneSheet(0);
+    }
 }

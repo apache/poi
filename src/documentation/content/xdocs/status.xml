@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49649 - Added clone support for UserSView* and Feat* families of records</action>
            <action dev="POI-DEVELOPERS" type="fix">49653 - Support for escaped unicode characters in Shared String Table</action>
            <action dev="POI-DEVELOPERS" type="fix">49579 - prevent ArrayIndexOutOfBoundException in UnknowEscherRecord</action>
            <action dev="POI-DEVELOPERS" type="fix">49593 - preserve leading and trailing white spaces in  XWPFRun</action>

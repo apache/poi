@@ -72,4 +72,10 @@ public final class UserSViewEnd extends StandardRecord {
         return sb.toString();
     }
 
+    //HACK: do a "cheat" clone, see Record.java for more information
+    public Object clone() {
+        return cloneViaReserialise();
+    }
+
+    
 }
