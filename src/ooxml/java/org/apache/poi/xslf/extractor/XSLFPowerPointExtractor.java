@@ -23,6 +23,7 @@ import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
+import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.*;
@@ -30,6 +31,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.*;
 import java.io.IOException;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
+   public static final XSLFRelation[] SUPPORTED_TYPES = new XSLFRelation[] {
+      XSLFRelation.MAIN, XSLFRelation.MACRO, XSLFRelation.MACRO_TEMPLATE,
+      XSLFRelation.PRESENTATIONML, XSLFRelation.PRESENTATIONML_TEMPLATE,
+      XSLFRelation.PRESENTATION_MACRO
+   };
+   
 	private XMLSlideShow slideshow;
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;

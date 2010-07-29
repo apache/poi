@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
@@ -36,6 +37,12 @@ import org.apache.xmlbeans.XmlException;
  * Helper class to extract text from an OOXML Excel file
  */
 public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
+   public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[] {
+      XSSFRelation.WORKBOOK, XSSFRelation.MACRO_TEMPLATE_WORKBOOK,
+      XSSFRelation.MACRO_ADDIN_WORKBOOK, XSSFRelation.TEMPLATE_WORKBOOK,
+      XSSFRelation.MACROS_WORKBOOK
+   };
+   
 	private XSSFWorkbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;

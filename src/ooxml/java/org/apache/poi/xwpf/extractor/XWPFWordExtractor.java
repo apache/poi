@@ -30,6 +30,7 @@ import org.apache.poi.xwpf.model.XWPFHyperlinkDecorator;
 import org.apache.poi.xwpf.model.XWPFParagraphDecorator;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
@@ -38,6 +39,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  * Helper class to extract text from an OOXML Word file
  */
 public class XWPFWordExtractor extends POIXMLTextExtractor {
+   public static final XWPFRelation[] SUPPORTED_TYPES = new XWPFRelation[] {
+      XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
+      XWPFRelation.MACRO_DOCUMENT, 
+      XWPFRelation.MACRO_TEMPLATE_DOCUMENT
+   };
+   
 	private XWPFDocument document;
 	private boolean fetchHyperlinks = false;
 	
