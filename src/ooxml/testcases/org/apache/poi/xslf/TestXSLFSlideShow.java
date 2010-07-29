@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
@@ -35,7 +36,7 @@ public class TestXSLFSlideShow extends TestCase {
 	public void testContainsMainContentType() throws Exception {
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
 				found = true;
 			}
 			//System.out.println(part);
