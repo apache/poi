@@ -25,10 +25,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks.AttachmentChunksSorter;
+import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
@@ -286,10 +289,58 @@ public class MAPIMessage extends POIDocument {
 
       return names;
    }
-
    
    /**
-    * 
+    * Many messages store their strings as unicode, which is
+    *  nice and easy. Some use one-byte encodings for their
+    *  strings, but don't easily store the encoding anywhere
+    *  in the file!
+    * This method looks at the headers for the message, and
+    *  tries to use these to guess the correct encoding for
+    *  your file.
+    * Bug #49441 has more on why this is needed
+    */
+   public void guess7BitEncoding() {
+      try {
+         String[] headers = getHeaders();
+         if(headers == null || headers.length == 0) {
+            return;
+         }
+
+         // Look for a content type with a charset
+         Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?(.*?)[\"']?");
+         for(String header : headers) {
+            if(header.startsWith("Content-Type")) {
+               Matcher m = p.matcher(header);
+               if(m.matches()) {
+                  // Found it! Tell all the string chunks
+                  String charset = m.group(1);
+                  
+                  for(Chunk c : mainChunks.getAll()) {
+                     if(c instanceof StringChunk) {
+                        ((StringChunk)c).set7BitEncoding(charset);
+                     }
+                  }
+                  for(Chunk c : nameIdChunks.getAll()) {
+                     if(c instanceof StringChunk) {
+                        ((StringChunk)c).set7BitEncoding(charset);
+                     }
+                  }
+                  for(RecipientChunks rc : recipientChunks) {
+                     for(Chunk c : rc.getAll()) {
+                        if(c instanceof StringChunk) {
+                           ((StringChunk)c).set7BitEncoding(charset);
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      } catch(ChunkNotFoundException e) {}
+   }
+   
+   /**
+    * Returns all the headers, one entry per line
     */
    public String[] getHeaders() throws ChunkNotFoundException {
       String headers = getStringFromChunk(mainChunks.messageHeaders);
