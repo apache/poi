@@ -778,7 +778,9 @@ public final class HSSFCellStyle implements CellStyle {
     	if(sr == null) {
     		sr = _workbook.createStyleRecord(_index);
     	}
-    	if(sr.isBuiltin()) {
+    	// All Style records start as "builtin", but generally
+    	//  only 20 and below really need to be
+    	if(sr.isBuiltin() && _index <= 20) {
     		throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
     	}
     	sr.setName(styleName);

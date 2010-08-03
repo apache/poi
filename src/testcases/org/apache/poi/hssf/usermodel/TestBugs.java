@@ -1803,4 +1803,38 @@ if(1==2) {
        assertEquals(0xff, rotated.getCellStyle().getRotation());
        assertEquals(0xff, nc.getCellStyle().getRotation());
     }
+    
+    /**
+     * Setting the user style name on custom styles
+     */
+    public void test49689() throws Exception {
+       HSSFWorkbook wb = new HSSFWorkbook();
+       HSSFSheet s = wb.createSheet("Test");
+       HSSFRow r = s.createRow(0);
+       HSSFCell c = r.createCell(0);
+       
+       HSSFCellStyle cs1 = wb.createCellStyle();
+       HSSFCellStyle cs2 = wb.createCellStyle();
+       HSSFCellStyle cs3 = wb.createCellStyle();
+       
+       assertEquals(21, cs1.getIndex());
+       cs1.setUserStyleName("Testing");
+       
+       assertEquals(22, cs2.getIndex());
+       cs2.setUserStyleName("Testing 2");
+       
+       assertEquals(23, cs3.getIndex());
+       cs3.setUserStyleName("Testing 3");
+       
+       // Set one
+       c.setCellStyle(cs1);
+       
+       // Write out and read back
+       wb = writeOutAndReadBack(wb);
+       
+       // Re-check
+       assertEquals("Testing", wb.getCellStyleAt((short)21).getUserStyleName());
+       assertEquals("Testing 2", wb.getCellStyleAt((short)22).getUserStyleName());
+       assertEquals("Testing 3", wb.getCellStyleAt((short)23).getUserStyleName());
+    }
 }
