@@ -34,6 +34,7 @@ public final class TestBasics extends TestCase {
    private MAPIMessage outlook30;
    private MAPIMessage attachments;
    private MAPIMessage noRecipientAddress;
+   private MAPIMessage cyrillic;
 
 	/**
 	 * Initialize this test, load up the blank.msg mapi message.
@@ -46,6 +47,7 @@ public final class TestBasics extends TestCase {
       outlook30  = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
       attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
       noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
+      cyrillic = new MAPIMessage(samples.openResourceAsStream("cyrillic_message.msg"));
 	}
 	
 	/**
@@ -177,4 +179,21 @@ public final class TestBasics extends TestCase {
       
       noRecipientAddress.setReturnNullOnMissingChunk(false);
 	}
+	
+   /**
+    * We default to CP1252, but can sometimes do better
+    *  if needed.
+    * This file is really CP1251, according to the person
+    *  who submitted it in bug #49441
+    */
+   public void testEncoding() throws Exception {
+      assertEquals(2, cyrillic.getRecipientDetailsChunks().length);
+      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      
+      cyrillic.guess7BitEncoding();
+      
+      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+   }
 }
