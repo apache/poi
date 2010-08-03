@@ -1765,6 +1765,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = HSSFWorkbook.create(_book); // TODO - is it important to not use _workbook?
+        HSSFDataFormatter formatter = new HSSFDataFormatter();
         HSSFFont defaultFont = wb.getFontAt((short) 0);
 
         str = new AttributedString("" + defaultChar);
@@ -1840,20 +1841,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             } else {
                 String sval = null;
                 if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
-                    String dfmt = style.getDataFormatString();
-                    String format = dfmt == null ? null : dfmt.replaceAll("\"", "");
-                    double value = cell.getNumericCellValue();
+                    // Try to get it formatted to look the same as excel
                     try {
-                        NumberFormat fmt;
-                        if ("General".equals(format))
-                            sval = "" + value;
-                        else
-                        {
-                            fmt = new DecimalFormat(format);
-                            sval = fmt.format(value);
-                        }
+                        sval = formatter.formatCellValue(cell);
                     } catch (Exception e) {
-                        sval = "" + value;
+                        sval = "" + cell.getNumericCellValue();
                     }
                 } else if (cellType == HSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
