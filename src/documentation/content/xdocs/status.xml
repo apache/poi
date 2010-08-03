@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49694 - Use DataFormatter when autosizing columns, to better match the real display width of formatted cells</action>
            <action dev="POI-DEVELOPERS" type="add">49441 - Allow overriding and guessing of HSMF non-unicode string encodings</action>
            <action dev="POI-DEVELOPERS" type="fix">49689 - Allow the setting of user style names on newly created HSSF cell styles</action>
            <action dev="POI-DEVELOPERS" type="add">Make it easier to tell which content types each POIXMLTextExtractor handles</action>

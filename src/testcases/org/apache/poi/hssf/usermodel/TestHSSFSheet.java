@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.TempFile;
@@ -564,6 +565,43 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFSheet sheet3 = wb3.getSheet(sheetName);
         assertTrue(sheet3.getColumnWidth(0) >= minWithRow1And2);
         assertTrue(sheet3.getColumnWidth(0) <= maxWithRow1And2);
+    }
+    
+    public void testAutoSizeDate() throws Exception {
+       HSSFWorkbook wb = new HSSFWorkbook();
+       HSSFSheet s = wb.createSheet("Sheet1");
+       HSSFRow r = s.createRow(0);
+       r.createCell(0).setCellValue(1);
+       r.createCell(1).setCellValue(123456);
+       
+       // Will be sized fairly small
+       s.autoSizeColumn((short)0);
+       s.autoSizeColumn((short)1);
+       
+       // Size ranges due to different fonts on different machines
+       assertTrue("Single number column too small", s.getColumnWidth(0) > 350); 
+       assertTrue("Single number column too big",   s.getColumnWidth(0) < 500); 
+       assertTrue("6 digit number column too small", s.getColumnWidth(1) > 1500); 
+       assertTrue("6 digit number column too big",   s.getColumnWidth(1) < 2000);
+       
+       // Set a date format
+       HSSFCellStyle cs = wb.createCellStyle();
+       HSSFDataFormat f = wb.createDataFormat();
+       cs.setDataFormat(f.getFormat("yyyy-mm-dd MMMM hh:mm:ss"));
+       r.getCell(0).setCellStyle(cs);
+       r.getCell(1).setCellStyle(cs);
+       
+       assertEquals(true, DateUtil.isCellDateFormatted(r.getCell(0)));
+       assertEquals(true, DateUtil.isCellDateFormatted(r.getCell(1)));
+       
+       // Should get much bigger now
+       s.autoSizeColumn((short)0);
+       s.autoSizeColumn((short)1);
+
+       assertTrue("Date column too small", s.getColumnWidth(0) > 4750); 
+       assertTrue("Date column too small", s.getColumnWidth(1) > 4750); 
+       assertTrue("Date column too big", s.getColumnWidth(0) < 6500); 
+       assertTrue("Date column too big", s.getColumnWidth(0) < 6500); 
     }
 
     /**
