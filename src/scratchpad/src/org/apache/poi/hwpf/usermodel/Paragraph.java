@@ -101,6 +101,14 @@ public class Paragraph extends Range implements Cloneable {
     _istd = papx.getIstd();
   }
 
+  protected Paragraph(PAPX papx, Range parent, int start)
+  {
+    super(Math.max(parent._start, start), Math.min(parent._end, papx.getEnd()), parent);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
+  }
+
   public short getStyleIndex()
   {
     return _istd;
