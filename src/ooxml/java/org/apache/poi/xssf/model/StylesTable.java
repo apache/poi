@@ -280,7 +280,9 @@ public class StylesTable extends POIXMLDocumentPart {
 	 * get the size of cell styles
 	 */
 	public int getNumCellStyles(){
-		return styleXfs.size();
+        // Each cell style has a unique xfs entry
+        // Several might share the same styleXfs entry
+        return xfs.size();
 	}
 
 	/**

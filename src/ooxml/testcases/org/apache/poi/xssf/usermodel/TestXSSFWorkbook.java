@@ -271,7 +271,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 * Verify that the attached test data was not modified. If this test method
 	 * fails, the test data is not working properly.
 	 */
-	public void test47668() throws Exception {
+	public void testBug47668() throws Exception {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("47668.xlsx");
 		List<XSSFPictureData> allPictures = workbook.getAllPictures();
 		assertEquals(2, allPictures.size());
@@ -353,5 +353,56 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
 		assertEquals("Numbers", wb.getSheetName(0));
 		assertEquals("Chart", wb.getSheetName(1));
+	}
+	
+	/**
+	 * Problems with the count of the number of styles
+	 *  coming out wrong
+	 */
+	public void testBug49702() throws Exception {
+	    // First try with a new file
+	    XSSFWorkbook wb = new XSSFWorkbook();
+
+	    // Should have one style
+	    assertEquals(1, wb.getNumCellStyles());
+	    wb.getCellStyleAt((short)0);
+	    try {
+	        wb.getCellStyleAt((short)1);
+	        fail("Shouldn't be able to get style at 1 that doesn't exist");
+	    } catch(IndexOutOfBoundsException e) {}
+
+	    // Add another one
+	    CellStyle cs = wb.createCellStyle();
+	    cs.setDataFormat((short)11);
+
+	    // Re-check
+	    assertEquals(2, wb.getNumCellStyles());
+	    wb.getCellStyleAt((short)0);
+	    wb.getCellStyleAt((short)1);
+	    try {
+	        wb.getCellStyleAt((short)2);
+	        fail("Shouldn't be able to get style at 2 that doesn't exist");
+	    } catch(IndexOutOfBoundsException e) {}
+
+	    // Save and reload
+	    XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+	    assertEquals(2, nwb.getNumCellStyles());
+	    nwb.getCellStyleAt((short)0);
+	    nwb.getCellStyleAt((short)1);
+	    try {
+	        nwb.getCellStyleAt((short)2);
+	        fail("Shouldn't be able to get style at 2 that doesn't exist");
+	    } catch(IndexOutOfBoundsException e) {}
+
+	    // Now with an existing file
+	    wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+	    assertEquals(3, wb.getNumCellStyles());
+	    wb.getCellStyleAt((short)0);
+	    wb.getCellStyleAt((short)1);
+	    wb.getCellStyleAt((short)2);
+	    try {
+	        wb.getCellStyleAt((short)3);
+	        fail("Shouldn't be able to get style at 3 that doesn't exist");
+	    } catch(IndexOutOfBoundsException e) {}
 	}
 }
