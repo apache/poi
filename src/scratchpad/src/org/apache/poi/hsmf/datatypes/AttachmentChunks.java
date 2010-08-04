@@ -42,6 +42,8 @@ public class AttachmentChunks implements ChunkGroup {
    public StringChunk attachFileName;
    public StringChunk attachLongFileName;
    public StringChunk attachMimeTag;
+   public DirectoryChunk attachmentDirectory;
+   
    /** 
     * This is in WMF Format. You'll probably want to pass it
     *  to Apache Batik to turn it into a SVG that you can
@@ -79,7 +81,13 @@ public class AttachmentChunks implements ChunkGroup {
    public void record(Chunk chunk) {
       switch(chunk.getChunkId()) {
       case ATTACH_DATA:
-         attachData = (ByteChunk)chunk;
+         if(chunk instanceof ByteChunk) {
+             attachData = (ByteChunk)chunk;
+         } else if(chunk instanceof DirectoryChunk) {
+             attachmentDirectory = (DirectoryChunk)chunk;
+         } else {
+             System.err.println("Unexpected data chunk of type " + chunk);
+         }
          break;
       case ATTACH_EXTENSION:
          attachExtension = (StringChunk)chunk;

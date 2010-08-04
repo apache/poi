@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta2" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">47990 - Support for .msg attachments within a MAPIMessage .msg</action>
            <action dev="POI-DEVELOPERS" type="fix">Improve handling and warnings when closing OPCPackage objects</action>
            <action dev="POI-DEVELOPERS" type="fix">49702 - Correct XSSFWorkbook.getNumCellStyles to check the right styles list</action>
            <action dev="POI-DEVELOPERS" type="add">49690 - Add WorkbookUtil, which provies a way of generating valid sheet names</action>

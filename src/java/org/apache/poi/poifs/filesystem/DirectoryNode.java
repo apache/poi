@@ -111,6 +111,15 @@ public class DirectoryNode
     }
     
     /**
+     * @return the filesystem that this belongs to
+     */
+    
+    public POIFSFileSystem getFileSystem()
+    {
+        return _filesystem; 
+    }
+    
+    /**
      * open a document in the directory's entry's list of entries
      *
      * @param documentName the name of the document to be opened
