@@ -725,7 +725,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @param sheetname the name for the new sheet. Note - certain length limits
      * apply. See {@link #setSheetName(int, String)}.
-     *
+     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+	 *      for a safe way to create valid names
      * @return HSSFSheet representing the new sheet.
      * @throws IllegalArgumentException
      *             if there is already a sheet present with a case-insensitive

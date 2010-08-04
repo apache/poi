@@ -84,6 +84,8 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
 	 * @param sheetName the name of the sheet
+	 * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+	 *      for a safe way to create valid names
 	 * @throws IllegalArgumentException if sheet name will cause excel to crash.
 	 */
 	public void setSheetname(String sheetName) {
