@@ -298,4 +298,14 @@ public final class TestWordExtractor extends TestCase {
         assertTrue(text.contains("\u0425\u0425\u0425\u0425\u0425"));
         assertTrue(text.contains("\u0423\u0423\u0423\u0423\u0423"));
     }
+
+    public void testFirstParagraphFix() throws Exception {
+        extractor = new WordExtractor(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("MBD001D0B89.doc")
+        );
+
+        String text = extractor.getText();
+
+        assertTrue(text.startsWith("\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435"));
+    }
 }

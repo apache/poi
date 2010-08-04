@@ -830,7 +830,11 @@ public class Range { // TODO -instantiable superclass
 		if (props.getIlfo() > 0) {
 			pap = new ListEntry(papx, this, _doc.getListTables());
 		} else {
-			pap = new Paragraph(papx, this);
+            if (((index + _parStart)==0) && papx.getStart()>0) {
+                pap = new Paragraph(papx, this, 0);
+            } else {
+    			pap = new Paragraph(papx, this);
+            }
 		}
 
 		return pap;
