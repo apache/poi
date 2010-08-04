@@ -338,15 +338,19 @@ public abstract class OPCPackage implements RelationshipSource {
 	}
 
 	/**
-	 * Close the package and save its content.
+	 * Close the open, writable package and save its content.
+	 * 
+	 * If your package is open read only, then you should call {@link #revert()}
+	 *  when finished with the package.
 	 *
 	 * @throws IOException
 	 *             If an IO exception occur during the saving process.
 	 */
 	public void close() throws IOException {
 		if (this.packageAccess == PackageAccess.READ) {
-			logger
-					.log(POILogger.WARN, "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
+			logger.log(POILogger.WARN, 
+			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
+			revert();
 			return;
 		}
 
@@ -1298,6 +1302,17 @@ public abstract class OPCPackage implements RelationshipSource {
 			throw new IllegalArgumentException("targetFile");
 
 		this.throwExceptionIfReadOnly();
+		
+		// You shouldn't save the the same file, do a close instead
+		if(targetFile.exists() && 
+		        targetFile.getAbsolutePath().equals(this.originalPackagePath)) {
+		    throw new InvalidOperationException(
+		            "You can't call save(File) to save to the currently open " +
+		            "file. To save to the current file, please just call close()"
+		    );
+		}
+		
+		// Do the save
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(targetFile);

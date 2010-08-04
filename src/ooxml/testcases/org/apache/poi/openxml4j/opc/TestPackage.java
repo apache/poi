@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.util.TempFile;
@@ -443,6 +444,64 @@ public final class TestPackage extends TestCase {
 		// Don't save modifications
 		p.revert();
 	}
+	
+	/**
+	 * Test that we can open a file by path, and then
+	 *  write changes to it.
+	 */
+	public void testOpenFileThenOverwrite() throws Exception {
+        File tempFile = File.createTempFile("poiTesting","tmp");
+        File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
+        FileHelper.copyFile(origFile, tempFile);
+        
+        // Open the temp file
+        OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
+        // Close it
+        p.close();
+        // Delete it
+        assertTrue(tempFile.delete());
+        
+        // Reset
+        FileHelper.copyFile(origFile, tempFile);
+        p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
+        
+        // Save it to the same file - not allowed
+        try {
+            p.save(tempFile);
+            fail("You shouldn't be able to call save(File) to overwrite the current file");
+        } catch(InvalidOperationException e) {}
+        
+        // Delete it
+        assertTrue(tempFile.delete());
+        
+        
+        // Open it read only, then close and delete - allowed
+        FileHelper.copyFile(origFile, tempFile);
+        p = OPCPackage.open(tempFile.toString(), PackageAccess.READ);
+        p.close();
+        assertTrue(tempFile.delete());
+	}
+    /**
+     * Test that we can open a file by path, save it
+     *  to another file, then delete both
+     */
+    public void testOpenFileThenSaveDelete() throws Exception {
+        File tempFile = File.createTempFile("poiTesting","tmp");
+        File tempFile2 = File.createTempFile("poiTesting","tmp");
+        File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
+        FileHelper.copyFile(origFile, tempFile);
+        
+        // Open the temp file
+        OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
+
+        // Save it to a different file
+        p.save(tempFile2);
+        p.close();
+        
+        // Delete both the files
+        assertTrue(tempFile.delete());
+        assertTrue(tempFile2.delete());
+    }
 
 	private static ContentTypeManager getContentTypeManager(OPCPackage pkg) throws Exception {
 		Field f = OPCPackage.class.getDeclaredField("contentTypeManager");
