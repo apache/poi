@@ -50,7 +50,6 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
@@ -289,8 +288,10 @@ public class ExtractorFactory {
 		   MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
 		   for(AttachmentChunks attachment : msg.getAttachmentFiles()) {
 		      if(attachment.attachData != null) {
-   		      byte[] data = attachment.attachData.getValue();
-   		      nonPOIFS.add( new ByteArrayInputStream(data) );
+   		         byte[] data = attachment.attachData.getValue();
+   		         nonPOIFS.add( new ByteArrayInputStream(data) );
+		      } else if(attachment.attachmentDirectory != null) {
+		          dirs.add(attachment.attachmentDirectory.getDirectory());
 		      }
 		   }
 		}
