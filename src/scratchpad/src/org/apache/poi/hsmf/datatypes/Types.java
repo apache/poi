@@ -32,6 +32,7 @@ public final class Types {
 	public static final int LONG = 0x0003;
 	public static final int TIME = 0x0040;
 	public static final int BOOLEAN = 0x000B;
+	public static final int DIRECTORY = 0x000D;
 
 	public static String asFileEnding(int type) {
 		String str = Integer.toHexString(type).toUpperCase();

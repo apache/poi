@@ -25,6 +25,7 @@ import org.apache.poi.hsmf.datatypes.ByteChunk;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.apache.poi.hsmf.datatypes.MessageSubmissionChunk;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
@@ -93,7 +94,11 @@ public final class POIFSChunkParser {
    protected static void processChunks(DirectoryNode node, ChunkGroup grouping) {
       for(Entry entry : node) {
          if(entry instanceof DocumentNode) {
-            process((DocumentNode)entry, grouping);
+            process(entry, grouping);
+         } else if(entry instanceof DirectoryNode) {
+             if(entry.getName().endsWith(Types.asFileEnding(Types.DIRECTORY))) {
+                 process(entry, grouping);
+             }
          }
       }
    }
@@ -101,7 +106,7 @@ public final class POIFSChunkParser {
    /**
     * Creates a chunk, and gives it to its parent group 
     */
-   protected static void process(DocumentNode entry, ChunkGroup grouping) {
+   protected static void process(Entry entry, ChunkGroup grouping) {
       String entryName = entry.getName();
       
       if(entryName.length() < 9) {
@@ -140,6 +145,11 @@ public final class POIFSChunkParser {
             case Types.BINARY:
                chunk = new ByteChunk(namePrefix, chunkId, type);
                break;
+            case Types.DIRECTORY:
+               if(entry instanceof DirectoryNode) {
+                   chunk = new DirectoryChunk((DirectoryNode)entry, namePrefix, chunkId, type);
+               }
+               break;
             case Types.ASCII_STRING:
             case Types.UNICODE_STRING:
                chunk = new StringChunk(namePrefix, chunkId, type);
@@ -148,13 +158,17 @@ public final class POIFSChunkParser {
          }
          
          if(chunk != null) {
-            try {
-               DocumentInputStream inp = new DocumentInputStream(entry);
-               chunk.readValue(inp);
-               grouping.record(chunk);
-            } catch(IOException e) {
-               System.err.println("Error reading from part " + entry.getName() + " - " + e.toString());
-            }
+             if(entry instanceof DocumentNode) {
+                try {
+                   DocumentInputStream inp = new DocumentInputStream((DocumentNode)entry);
+                   chunk.readValue(inp);
+                   grouping.record(chunk);
+                } catch(IOException e) {
+                   System.err.println("Error reading from part " + entry.getName() + " - " + e.toString());
+                }
+             } else {
+                grouping.record(chunk);
+             }
          }
       } catch(NumberFormatException e) {
          // Name in the wrong format
