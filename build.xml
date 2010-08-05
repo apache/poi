@@ -981,6 +981,7 @@ under the License.
                       *.lnk,
                       *.rdf,
                       *.swp,
+                      .settings/**,
                       .classpath,
                       .project"/>
          
