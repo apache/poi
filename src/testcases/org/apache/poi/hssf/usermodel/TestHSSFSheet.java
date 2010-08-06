@@ -579,10 +579,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
        s.autoSizeColumn((short)1);
        
        // Size ranges due to different fonts on different machines
-       assertTrue("Single number column too small", s.getColumnWidth(0) > 350); 
-       assertTrue("Single number column too big",   s.getColumnWidth(0) < 500); 
-       assertTrue("6 digit number column too small", s.getColumnWidth(1) > 1500); 
-       assertTrue("6 digit number column too big",   s.getColumnWidth(1) < 2000);
+       assertTrue("Single number column too small: " + s.getColumnWidth(0), s.getColumnWidth(0) > 350); 
+       assertTrue("Single number column too big: " + s.getColumnWidth(0),   s.getColumnWidth(0) < 550); 
+       assertTrue("6 digit number column too small: " + s.getColumnWidth(1), s.getColumnWidth(1) > 1500); 
+       assertTrue("6 digit number column too big: " + s.getColumnWidth(1),   s.getColumnWidth(1) < 2000);
        
        // Set a date format
        HSSFCellStyle cs = wb.createCellStyle();
@@ -598,10 +598,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
        s.autoSizeColumn((short)0);
        s.autoSizeColumn((short)1);
 
-       assertTrue("Date column too small", s.getColumnWidth(0) > 4750); 
-       assertTrue("Date column too small", s.getColumnWidth(1) > 4750); 
-       assertTrue("Date column too big", s.getColumnWidth(0) < 6500); 
-       assertTrue("Date column too big", s.getColumnWidth(0) < 6500); 
+       assertTrue("Date column too small: " + s.getColumnWidth(0), s.getColumnWidth(0) > 4750); 
+       assertTrue("Date column too small: " + s.getColumnWidth(1), s.getColumnWidth(1) > 4750); 
+       assertTrue("Date column too big: " + s.getColumnWidth(0), s.getColumnWidth(0) < 6500); 
+       assertTrue("Date column too big: " + s.getColumnWidth(0), s.getColumnWidth(0) < 6500); 
     }
 
     /**
