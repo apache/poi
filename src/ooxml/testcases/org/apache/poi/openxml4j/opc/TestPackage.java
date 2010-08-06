@@ -470,7 +470,8 @@ public final class TestPackage extends TestCase {
             p.save(tempFile);
             fail("You shouldn't be able to call save(File) to overwrite the current file");
         } catch(InvalidOperationException e) {}
-        
+
+        p.close();
         // Delete it
         assertTrue(tempFile.delete());
         
