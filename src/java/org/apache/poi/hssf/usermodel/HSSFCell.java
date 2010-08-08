@@ -1159,8 +1159,9 @@ public class HSSFCell implements Cell {
                 break;
         }
 
-        int eofLoc = _sheet.getSheet().findFirstRecordLocBySid( EOFRecord.sid );
-        _sheet.getSheet().getRecords().add( eofLoc, link.record );
+        List<RecordBase> records = _sheet.getSheet().getRecords();
+        int eofLoc = records.size() - 1;
+        records.add( eofLoc, link.record );
     }
     /**
      * Only valid for formula cells
