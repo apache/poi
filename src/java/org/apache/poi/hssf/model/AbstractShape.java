@@ -63,6 +63,9 @@ public abstract class AbstractShape
                 case HSSFSimpleShape.OBJECT_TYPE_RECTANGLE:
                     shape = new SimpleFilledShape( simpleShape, shapeId );
                     break;
+                case HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX:
+                    shape = new ComboboxShape( simpleShape, shapeId );
+                    break;
                 default:
                     throw new IllegalArgumentException("Do not know how to handle this type of shape");
             }

@@ -971,4 +971,12 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(3, xrow[2].getR());
 
     }
+
+    public void testSetAutoFilter() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        sheet.setAutoFilter(CellRangeAddress.valueOf("A1:D100"));
+
+        assertEquals("A1:D100", sheet.getCTWorksheet().getAutoFilter().getRef());
+    }
 }

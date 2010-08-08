@@ -61,41 +61,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -2918,4 +2884,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 		dataValidations.setCount(currentCount + 1);
 
 	}
+
+    public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
+        CTAutoFilter af = worksheet.getAutoFilter();
+        if(af == null) af = worksheet.addNewAutoFilter();
+
+        CellRangeAddress norm = new CellRangeAddress(range.getFirstRow(), range.getLastRow(),
+                range.getFirstColumn(), range.getLastColumn());
+        String ref = norm.formatAsString();
+        af.setRef(ref);
+
+        return new XSSFAutoFilter(this);
+    }
 }

@@ -70,6 +70,7 @@
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
                     <li><link href="#Validation">Data Validation</link></li>
                     <li><link href="#Embedded">Embedded Objects</link></li>
+                    <li><link href="#Autofilter">Autofilters</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -1637,6 +1638,15 @@ Examples:
       }
   }
        </source>  
+     </section>  
+     <anchor id="Autofilter"/>
+     <p>(Since POI-3.7)</p>
+     <section><title>Autofilters</title>
+       <source>
+    Workbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
+    Sheet sheet = wb.createSheet();
+    sheet.setAutoFilter(CellRangeAddress.valueOf("C5:F200"));
+       </source>
      </section>  
     </body>
 </document>

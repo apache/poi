@@ -27,18 +27,11 @@ import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.GridsetRecord;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.ObjectProtectRecord;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.ScenarioProtectRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
@@ -291,13 +284,23 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(0, r6.getOutlineLevel());
     }
 
+    public void testCreateDrawings() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFPatriarch p1 = sheet.createDrawingPatriarch();
+        HSSFPatriarch p2 = sheet.createDrawingPatriarch();
+        assertSame(p1, p2);
+    }
+
     public void testGetDrawings() {
         HSSFWorkbook wb1c = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
         HSSFWorkbook wb2c = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
 
         // 1 chart sheet -> data on 1st, chart on 2nd
         assertNotNull(wb1c.getSheetAt(0).getDrawingPatriarch());
+        assertSame(wb1c.getSheetAt(0).getDrawingPatriarch(), wb1c.getSheetAt(0).getDrawingPatriarch());
         assertNotNull(wb1c.getSheetAt(1).getDrawingPatriarch());
+        assertSame(wb1c.getSheetAt(1).getDrawingPatriarch(), wb1c.getSheetAt(1).getDrawingPatriarch());
         assertFalse(wb1c.getSheetAt(0).getDrawingPatriarch().containsChart());
         assertTrue(wb1c.getSheetAt(1).getDrawingPatriarch().containsChart());
 
@@ -859,5 +862,38 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(false, s.isRightToLeft());
         s.setRightToLeft(true);
         assertEquals(true, s.isRightToLeft());
+    }
+
+    public void testAutoFilter(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        InternalWorkbook iwb = wb.getWorkbook();
+        InternalSheet ish = sh.getSheet();
+
+        assertNull( iwb.getSpecificBuiltinRecord(NameRecord.BUILTIN_FILTER_DB, 1) );
+        assertNull( ish.findFirstRecordBySid(AutoFilterInfoRecord.sid) );
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A1:B10");
+        sh.setAutoFilter(range);
+
+        NameRecord name = iwb.getSpecificBuiltinRecord(NameRecord.BUILTIN_FILTER_DB, 1);
+        assertNotNull( name );
+
+        // The built-in name for auto-filter must consist of a single Area3d Ptg.
+        Ptg[] ptg = name.getNameDefinition();
+        assertEquals("The built-in name for auto-filter must consist of a single Area3d Ptg", 1, ptg.length);
+        assertTrue("The built-in name for auto-filter must consist of a single Area3d Ptg", ptg[0] instanceof Area3DPtg);
+
+        Area3DPtg aref = (Area3DPtg)ptg[0];
+        assertEquals(range.getFirstColumn(), aref.getFirstColumn());
+        assertEquals(range.getFirstRow(), aref.getFirstRow());
+        assertEquals(range.getLastColumn(), aref.getLastColumn());
+        assertEquals(range.getLastRow(), aref.getLastRow());
+
+        // verify  AutoFilterInfoRecord
+        AutoFilterInfoRecord afilter = (AutoFilterInfoRecord)ish.findFirstRecordBySid(AutoFilterInfoRecord.sid);
+        assertNotNull(afilter );
+        assertEquals(2, afilter.getNumEntries()); //filter covers two columns
+
     }
 }
