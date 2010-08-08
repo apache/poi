@@ -150,6 +150,29 @@ public class LbsDataSubRecord extends SubRecord {
 
     }
 
+    LbsDataSubRecord(){
+
+    }
+
+    /**
+     *
+     * @return a new instance of LbsDataSubRecord to construct auto-filters
+     * @see org.apache.poi.hssf.model.ComboboxShape#createObjRecord(org.apache.poi.hssf.usermodel.HSSFSimpleShape, int)
+     */
+    public static LbsDataSubRecord newAutoFilterInstance(){
+        LbsDataSubRecord lbs = new LbsDataSubRecord();
+        lbs._cbFContinued = 0x1FEE;  //autofilters seem to alway have this magic number
+        lbs._iSel = 0x000;
+
+        lbs._flags = 0x0301;
+        lbs._dropData = new LbsDropData();
+        lbs._dropData._wStyle = LbsDropData.STYLE_COMBO_SIMPLE_DROPDOWN;
+
+        // the number of lines to be displayed in the dropdown
+        lbs._dropData._cLine = 8;
+        return lbs;
+    }
+
     /**
      * @return true as LbsDataSubRecord is always the last sub-record
      */
@@ -273,6 +296,19 @@ public class LbsDataSubRecord extends SubRecord {
      */
     public static class LbsDropData {
         /**
+         * Combo dropdown control
+         */
+        public static int STYLE_COMBO_DROPDOWN = 0;
+        /**
+         * Combo Edit dropdown control
+         */
+        public static int STYLE_COMBO_EDIT_DROPDOWN = 1;
+        /**
+         * Simple dropdown control (just the dropdown button)
+         */
+        public static int STYLE_COMBO_SIMPLE_DROPDOWN = 2;
+
+        /**
          *  An unsigned integer that specifies the style of this dropdown. 
          */
         private int _wStyle;
@@ -298,6 +334,11 @@ public class LbsDataSubRecord extends SubRecord {
          */
         private Byte _unused;
 
+        public LbsDropData(){
+            _str = "";
+            _unused = 0;
+        }
+
         public LbsDropData(LittleEndianInput in){
             _wStyle = in.readUShort();
             _cLine = in.readUShort();
@@ -306,6 +347,27 @@ public class LbsDataSubRecord extends SubRecord {
             if(StringUtil.getEncodedSize(_str) % 2 != 0){
                 _unused = in.readByte();
             }
+        }
+
+        /**
+         *  Set the style of this dropdown.
+         *
+         * Possible values:
+         *  <p>
+         *  0  Combo dropdown control
+         *  1  Combo Edit dropdown control
+         *  2  Simple dropdown control (just the dropdown button)
+         *
+         */
+        public void setStyle(int style){
+            _wStyle = style;
+        }
+
+        /**
+         * Set the number of lines to be displayed in the dropdown.
+         */
+        public void setNumLines(int num){
+            _cLine = num;
         }
 
         public void serialize(LittleEndianOutput out) {

@@ -139,7 +139,6 @@ public final class UnknownRecord extends StandardRecord {
 			case SORT_0090: return "SORT"; // Sorting Options
 			case 0x0094: return "LHRECORD"; // .WK? File Conversion Information
 			case STANDARDWIDTH_0099: return "STANDARDWIDTH"; //Standard Column Width
-			case 0x009D: return "AUTOFILTERINFO"; // Drop-Down Arrow Count
 			case SCL_00A0: return "SCL"; // Window Zoom Magnification
 			case 0x00AE: return "SCENMAN"; // Scenario Output Data
 
@@ -241,6 +240,7 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x101B:
 			case 0x101D:
 			case 0x101E:
+			case 0x101F:
 			case 0x1020:
 			case 0x1021:
 			case 0x1022:

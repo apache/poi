@@ -33,10 +33,9 @@
     </developers>
 
     <changes>
-<!--
-        <release version="3.7-beta2" date="2010-??-??">
+        <release version="3.7-beta3" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="add">initial support for Excel autofilter</action>
         </release>
--->
         <release version="3.7-beta2" date="2010-08-09">
            <action dev="POI-DEVELOPERS" type="add">47990 - Support for .msg attachments within a MAPIMessage .msg</action>
            <action dev="POI-DEVELOPERS" type="fix">Improve handling and warnings when closing OPCPackage objects</action>

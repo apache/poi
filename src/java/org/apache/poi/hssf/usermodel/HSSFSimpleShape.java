@@ -46,7 +46,7 @@ public class HSSFSimpleShape
 //    public final static short       OBJECT_TYPE_SCROLL_BAR         = 17;
 //    public final static short       OBJECT_TYPE_LIST_BOX           = 18;
 //    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
-//    public final static short       OBJECT_TYPE_COMBO_BOX          = 20;
+    public final static short       OBJECT_TYPE_COMBO_BOX          = 20;
     public final static short       OBJECT_TYPE_COMMENT            = 25;
 //    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 

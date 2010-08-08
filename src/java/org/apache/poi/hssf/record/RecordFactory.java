@@ -107,7 +107,8 @@ public final class RecordFactory {
 	@SuppressWarnings("unchecked")
 	private static final Class<? extends Record>[] recordClasses = new Class[] {
 		ArrayRecord.class,
-		BackupRecord.class,
+        AutoFilterInfoRecord.class,
+        BackupRecord.class,
 		BlankRecord.class,
 		BOFRecord.class,
 		BookBoolRecord.class,

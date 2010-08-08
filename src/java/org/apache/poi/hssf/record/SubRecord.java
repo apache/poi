@@ -57,6 +57,8 @@ public abstract class SubRecord {
 				return new NoteStructureSubRecord(in, secondUShort);
 			case LbsDataSubRecord.sid:
 				return new LbsDataSubRecord(in, secondUShort, cmoOt);
+            case FtCblsSubRecord.sid:
+                return new FtCblsSubRecord(in, secondUShort);
 		}
 		return new UnknownSubRecord(in, sid, secondUShort);
 	}

@@ -34,21 +34,13 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.DVRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -1573,15 +1565,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return  The new patriarch.
      */
     public HSSFPatriarch createDrawingPatriarch() {
-        // Create the drawing group if it doesn't already exist.
-        _book.createDrawingGroup();
+        if(_patriarch == null){
+            // Create the drawing group if it doesn't already exist.
+            _book.createDrawingGroup();
 
-        _sheet.aggregateDrawingRecords(_book.getDrawingManager(), true);
-        EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
-        _patriarch = new HSSFPatriarch(this, agg);
-        agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
-                         // creating a new patriarch.
-        agg.setPatriarch(_patriarch);
+            _sheet.aggregateDrawingRecords(_book.getDrawingManager(), true);
+            EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
+            _patriarch = new HSSFPatriarch(this, agg);
+            agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
+                             // creating a new patriarch.
+            agg.setPatriarch(_patriarch);
+        }
         return _patriarch;
     }
 
@@ -2000,5 +1994,39 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 		return new HSSFDataValidationHelper(this);
 	}
     
-    
+    public HSSFAutoFilter setAutoFilter(CellRangeAddress range) {
+
+
+        InternalWorkbook workbook = _workbook.getWorkbook();
+        int sheetIndex = _workbook.getSheetIndex(this);
+
+        NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_FILTER_DB, sheetIndex+1);
+
+        if (name == null) {
+            name = workbook.createBuiltInName(NameRecord.BUILTIN_FILTER_DB, sheetIndex+1);
+        }
+
+        // The built-in name must consist of a single Area3d Ptg.
+        Area3DPtg ptg = new Area3DPtg(range.getFirstRow(), range.getLastRow(),
+                range.getFirstColumn(), range.getLastColumn(),
+                false, false, false, false, sheetIndex);
+        name.setNameDefinition(new Ptg[]{ptg});
+
+        AutoFilterInfoRecord r = new AutoFilterInfoRecord();
+        // the number of columns that have AutoFilter enabled.
+        int numcols = 1 + range.getLastColumn() - range.getFirstColumn();
+        r.setNumEntries((short)numcols);
+        int idx = _sheet.findFirstRecordLocBySid(DimensionsRecord.sid);
+        _sheet.getRecords().add(idx, r);
+
+        //create a combobox control for each column
+        HSSFPatriarch p = createDrawingPatriarch();
+        for(int col = range.getFirstColumn(); col <= range.getLastColumn(); col++){
+            p.createComboBox(new HSSFClientAnchor(0,0,0,0,
+                    (short)col, range.getFirstRow(), (short)(col+1), range.getFirstRow()+1));
+        }
+        
+        return new HSSFAutoFilter(this);
+    }
+
 }

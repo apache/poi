@@ -806,4 +806,12 @@ public interface Sheet extends Iterable<Row> {
 	 * @param dataValidation The Data validation object settings
 	 */
 	public void addValidationData(DataValidation dataValidation);
+
+    /**
+     * Enable filtering for a range of cells
+     * 
+     * @param range the range of cells to filter
+     */
+    AutoFilter setAutoFilter(CellRangeAddress range);
+    
 }

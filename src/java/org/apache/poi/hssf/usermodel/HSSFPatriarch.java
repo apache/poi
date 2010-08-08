@@ -157,6 +157,20 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return shape;
     }
 
+    /**
+     * YK: used to create autofilters
+     *
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setAutoFilter(int, int, int, int)
+     */
+     HSSFSimpleShape createComboBox(HSSFAnchor anchor)
+     {
+         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
+         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
+         shape.anchor = anchor;
+         _shapes.add(shape);
+         return shape;
+     }
+
     public HSSFComment createCellComment(ClientAnchor anchor) {
         return createComment((HSSFAnchor)anchor);
     }
