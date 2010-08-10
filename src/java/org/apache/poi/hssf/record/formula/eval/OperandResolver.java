@@ -17,13 +17,28 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
+import java.util.regex.Pattern;
+
 /**
  * Provides functionality for evaluating arguments to functions and operators.
  *
  * @author Josh Micich
+ * @author Brendan Nolan
  */
 public final class OperandResolver {
 
+	// Based on regular expression defined in JavaDoc at {@link java.lang.Double#valueOf}
+	// modified to remove support for NaN, Infinity, Hexadecimal support and floating type suffixes
+    private static final String Digits	= "(\\p{Digit}+)";
+    private static final String Exp	= "[eE][+-]?"+Digits;
+    private static final String fpRegex	=
+        	    ("[\\x00-\\x20]*" +	
+        	     "[+-]?(" +	
+          	     "((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+        
+        	     "(\\.("+Digits+")("+Exp+")?))))"+       
+        	     "[\\x00-\\x20]*"); 
+    	    
+	
 	private OperandResolver() {
 		// no instances of this class
 	}
@@ -214,11 +229,15 @@ public final class OperandResolver {
 
 	/**
 	 * Converts a string to a double using standard rules that Excel would use.<br/>
-	 * Tolerates currency prefixes, commas, leading and trailing spaces.<p/>
+	 * Tolerates leading and trailing spaces, <p/>
+	 * 
+	 * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.  
 	 *
 	 *  Some examples:<br/>
 	 *  " 123 " -&gt; 123.0<br/>
 	 *  ".123" -&gt; 0.123<br/>
+	 *  "1E4" -&gt; 1000<br/>
+	 *  "-123" -&gt; -123.0<br/>
 	 *  These not supported yet:<br/>
 	 *  " $ 1,000.00 " -&gt; 1000.0<br/>
 	 *  "$1.25E4" -&gt; 12500.0<br/>
@@ -228,29 +247,17 @@ public final class OperandResolver {
 	 * @return <code>null</code> if the specified text cannot be parsed as a number
 	 */
 	public static Double parseDouble(String pText) {
-		String text = pText.trim();
-		if(text.length() < 1) {
-			return null;
-		}
-		boolean isPositive = true;
-		if(text.charAt(0) == '-') {
-			isPositive = false;
-			text= text.substring(1).trim();
-		}
-
-		if(!Character.isDigit(text.charAt(0))) {
-			// avoid using NumberFormatException to tell when string is not a number
-			return null;
-		}
-		// TODO - support notation like '1E3' (==1000)
-
-		double val;
-		try {
-			val = Double.parseDouble(text);
-		} catch (NumberFormatException e) {
-			return null;
-		}
-		return new Double(isPositive ? +val : -val);
+		
+	    if (Pattern.matches(fpRegex, pText))
+			try {
+				return Double.parseDouble(pText);
+			} catch (NumberFormatException e) {
+				return null;
+			}
+	    else {
+	        return null;
+	    }
+		
 	}
 
 	/**
