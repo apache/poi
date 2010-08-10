@@ -380,6 +380,13 @@ under the License.
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
                  classpath="${ooxml.xmlbeans.jar}:${ooxml.jsr173.jar}"/>
 
+        <!-- We need a fair amount of memory to compile the xml schema, -->
+        <!--  but limit it in case it goes wrong! -->
+        <!-- Pick the right amount based on 32 vs 64 bit jvm -->
+        <condition property="ooxml.memory" value="768m" else="512m">
+           <equals arg1="${sun.arch.data.model}" arg2="64" />
+        </condition>
+
         <unzip src="${ooxml.xsds.izip}" dest="${ooxml.xsds.tmp.dir}"/>
         <!--
               schema="build/ooxml-xsds/"
@@ -393,7 +400,7 @@ under the License.
                 javasource="1.5"
                 failonerror="true"
                 fork="true"
-                memoryMaximumSize="512m"
+                memoryMaximumSize="${ooxml.memory}"
                 >
             <classpath refid="ooxml.classpath"/>
         </xmlbean>
