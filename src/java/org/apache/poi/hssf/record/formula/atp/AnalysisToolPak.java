@@ -138,7 +138,7 @@ public final class AnalysisToolPak implements UDFFinder {
 		r(m, "PRICEDISC", null);
 		r(m, "PRICEMAT", null);
 		r(m, "QUOTIENT", null);
-		r(m, "RAND BETWEEN", null);
+		r(m, "RANDBETWEEN", RandBetween.instance);
 		r(m, "RECEIVED", null);
 		r(m, "SERIESSUM", null);
 		r(m, "SQRTPI", null);
