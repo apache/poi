@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49725 - fixed FormulaParser to correctly process defined names with underscore</action>
            <action dev="POI-DEVELOPERS" type="add">48526 - added implementation for RANDBETWEEN()</action>
            <action dev="POI-DEVELOPERS" type="fix">49725 - avoid exception in OperandResolver.parseDouble when input is minus ("-")</action>
            <action dev="POI-DEVELOPERS" type="fix">49723 - fixed OperandResolver to correctly handle inputs with leading decimal place</action>
