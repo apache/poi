@@ -665,7 +665,7 @@ public final class FormulaParser {
 				hasDigits = true;
 			} else if (Character.isLetter(ch)) {
 				hasLetters = true;
-			} else if (ch =='$') {
+			} else if (ch =='$' || ch =='_') {
 				//
 			} else {
 				break;

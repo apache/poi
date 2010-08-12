@@ -271,7 +271,51 @@ public final class TestFormulaParser extends TestCase {
 		cell.setCellFormula("Cash_Flow!A1");
 	}
 
-	// bug 38396 : Formula with exponential numbers not parsed correctly.
+    /** bug 49725, defined names with underscore */
+    public void testNamesWithUnderscore() {
+        HSSFWorkbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
+
+        HSSFName nm;
+
+        nm = wb.createName();
+        nm.setNameName("DA6_LEO_WBS_Number");
+        nm.setRefersToFormula("33");
+
+        nm = wb.createName();
+        nm.setNameName("DA6_LEO_WBS_Name");
+        nm.setRefersToFormula("33");
+
+        nm = wb.createName();
+        nm.setNameName("A1_");
+        nm.setRefersToFormula("22");
+
+        nm = wb.createName();
+        nm.setNameName("_A1");
+        nm.setRefersToFormula("11");
+
+        nm = wb.createName();
+        nm.setNameName("A_1");
+        nm.setRefersToFormula("44");
+
+        nm = wb.createName();
+        nm.setNameName("A_1_");
+        nm.setRefersToFormula("44");
+
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+
+        cell.setCellFormula("DA6_LEO_WBS_Number*2");
+        assertEquals("DA6_LEO_WBS_Number*2", cell.getCellFormula());
+
+        cell.setCellFormula("(A1_*_A1+A_1)/A_1_");
+        assertEquals("(A1_*_A1+A_1)/A_1_", cell.getCellFormula());
+
+        cell.setCellFormula("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))");
+        assertEquals("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))", cell.getCellFormula());
+    }
+
+    // bug 38396 : Formula with exponential numbers not parsed correctly.
 	public void testExponentialParsing() {
 		confirmTokenClasses("1.3E21/2",  NumberPtg.class, IntPtg.class, DividePtg.class);
 		confirmTokenClasses("1322E21/2", NumberPtg.class, IntPtg.class, DividePtg.class);
