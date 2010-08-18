@@ -455,7 +455,13 @@ public interface Sheet extends Iterable<Row> {
      * @return true => protection enabled; false => protection disabled
      */
     boolean getProtect();
-
+    
+    /**
+     * Sets the protection enabled as well as the password
+     * @param password to set for protection. Pass <code>null</code> to remove protection
+     */
+    public void protectSheet(String password);
+    
     /**
      * Answer whether scenario protection is enabled or disabled
      *
