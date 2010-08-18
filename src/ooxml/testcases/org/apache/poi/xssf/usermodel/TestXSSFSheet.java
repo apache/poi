@@ -24,6 +24,8 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.hssf.record.PasswordRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
@@ -979,4 +981,25 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         assertEquals("A1:D100", sheet.getCTWorksheet().getAutoFilter().getRef());
     }
+
+    public void testProtectSheet_lowlevel() {
+
+    	XSSFWorkbook wb = new XSSFWorkbook();
+    	XSSFSheet sheet = wb.createSheet();
+        CTSheetProtection pr = sheet.getCTWorksheet().getSheetProtection();
+        assertNull("CTSheetProtection should be null by default", pr);
+        String password = "Test";
+        sheet.protectSheet(password);
+        pr = sheet.getCTWorksheet().getSheetProtection();
+        assertNotNull("CTSheetProtection should be not null", pr);
+        assertTrue("sheet protection should be on", pr.isSetSheet());
+        assertTrue("object protection should be on", pr.isSetObjects());
+        assertTrue("scenario protection should be on", pr.isSetScenarios());
+        String hash = String.valueOf(HexDump.shortToHex(PasswordRecord.hashPassword(password))).substring(2);
+        assertEquals("well known value for top secret hash should be "+ hash, hash, pr.xgetPassword().getStringValue());
+
+        sheet.protectSheet(null);
+        assertNull("protectSheet(null) should unset CTSheetProtection", sheet.getCTWorksheet().getSheetProtection());
+    }
+
 }

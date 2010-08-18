@@ -640,4 +640,18 @@ public abstract class BaseTestSheet extends TestCase {
         sheet.setColumnHidden(2, true);
         assertTrue(sheet.isColumnHidden(2));
     }
+
+    public void testProtectSheet() {
+
+    	Workbook wb = _testDataProvider.createWorkbook();
+    	Sheet sheet = wb.createSheet();
+        assertFalse(sheet.getProtect());
+    	sheet.protectSheet("Test");  
+    	assertTrue(sheet.getProtect());
+    	sheet.protectSheet(null);
+    	assertFalse(sheet.getProtect());
+
+    }
+
+
 }
