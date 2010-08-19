@@ -871,7 +871,7 @@ public final class InternalWorkbook {
                 continue;
             }
             if(!(r instanceof StyleRecord)) {
-                return null;
+                continue;
             }
             StyleRecord sr = (StyleRecord)r;
             if(sr.getXFIndex() == xfIndex) {

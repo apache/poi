@@ -22,9 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.AssertionFailedError;
 
@@ -1837,4 +1835,28 @@ if(1==2) {
        assertEquals("Testing 2", wb.getCellStyleAt((short)22).getUserStyleName());
        assertEquals("Testing 3", wb.getCellStyleAt((short)23).getUserStyleName());
     }
+
+    public void test49751() {
+        HSSFWorkbook wb = openSample("49751.xls");
+        short numCellStyles = wb.getNumCellStyles();
+        List<String> namedStyles = Arrays.asList(
+                "20% - Accent1", "20% - Accent2", "20% - Accent3", "20% - Accent4", "20% - Accent5",
+                "20% - Accent6", "40% - Accent1", "40% - Accent2", "40% - Accent3", "40% - Accent4", 
+                "40% - Accent5", "40% - Accent6", "60% - Accent1", "60% - Accent2", "60% - Accent3",
+                "60% - Accent4", "60% - Accent5", "60% - Accent6", "Accent1", "Accent2", "Accent3",
+                "Accent4", "Accent5", "Accent6", "Bad", "Calculation", "Check Cell", "Explanatory Text",
+                "Good", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Input", "Linked Cell",
+                "Neutral", "Note", "Output", "Title", "Total", "Warning Text");
+
+        List<String> collecteddStyles = new ArrayList<String>();
+        for (short i = 0; i < numCellStyles; i++) {
+            HSSFCellStyle cellStyle = wb.getCellStyleAt(i);
+            String styleName = cellStyle.getUserStyleName();
+            if (styleName != null) {
+                collecteddStyles.add(styleName);
+            }
+        }
+        assertTrue(namedStyles.containsAll(collecteddStyles));
+
+    }    
 }
