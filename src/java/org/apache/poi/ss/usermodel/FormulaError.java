@@ -57,7 +57,7 @@ public enum FormulaError {
      * OFFSET(A1,0,20000) will result in a #REF! error.
      * </p>
      */
-    REF(0x1D, "#REF!"),
+    REF(0x17, "#REF!"),
 
     /**
      * Intended to indicate when what looks like a name is used, but no such name has been defined.

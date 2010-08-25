@@ -24,15 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -412,4 +404,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("Cycle", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
 
     }
+
+    public void test49783() throws Exception {
+        Workbook wb =  XSSFTestDataSamples.openSampleWorkbook("49783.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell;
+
+        cell = sheet.getRow(0).getCell(0);
+        assertEquals("#REF!*#REF!", cell.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+
+        Name nm1 = wb.getName("sale_1");
+        assertNotNull("name sale_1 should be present", nm1);
+        assertEquals("Sheet1!#REF!", nm1.getRefersToFormula());
+        Name nm2 = wb.getName("sale_2");
+        assertNotNull("name sale_2 should be present", nm2);
+        assertEquals("Sheet1!#REF!", nm2.getRefersToFormula());
+
+        cell = sheet.getRow(1).getCell(0);
+        assertEquals("sale_1*sale_2", cell.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+    }
+
 }

@@ -417,8 +417,12 @@ public final class FormulaParser {
 		SimpleRangePart part1 = parseSimpleRangePart();
 		if (part1 == null) {
 			if (sheetIden != null) {
-				throw new FormulaParseException("Cell reference expected after sheet name at index "
-						+ _pointer + ".");
+                if(look == '#'){  // error ref like MySheet!#REF!
+                    return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));    
+                } else {
+                    throw new FormulaParseException("Cell reference expected after sheet name at index "
+                            + _pointer + ".");
+                }
 			}
 			return parseNonRange(savePointer);
 		}
