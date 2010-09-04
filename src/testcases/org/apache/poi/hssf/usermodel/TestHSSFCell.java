@@ -320,4 +320,6 @@ public final class TestHSSFCell extends BaseTestCell {
 			assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
 		}
 	}
+
+
 }

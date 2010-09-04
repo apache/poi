@@ -46,11 +46,7 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -464,20 +460,31 @@ public class HSSFCell implements Cell {
      *        will change the cell to a numeric cell and set its value.
      */
     public void setCellValue(double value) {
-        int row=_record.getRow();
-        short col=_record.getColumn();
-        short styleIndex=_record.getXFIndex();
+        if(Double.isInfinite(value)) {
+            // Excel does not support positive/negative infinities,
+            // rather, it gives a #DIV/0! error in these cases.
+            setCellErrorValue(FormulaError.DIV0.getCode());
+        } else if (Double.isNaN(value)){
+            // Excel does not support Not-a-Number (NaN),
+            // instead it immediately generates a #NUM! error.
+            setCellErrorValue(FormulaError.NUM.getCode());
+        } else {
+            int row=_record.getRow();
+            short col=_record.getColumn();
+            short styleIndex=_record.getXFIndex();
 
-        switch (_cellType) {
-            default:
-                setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
-            case CELL_TYPE_NUMERIC:
-                (( NumberRecord ) _record).setValue(value);
-                break;
-            case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)_record).setCachedDoubleResult(value);
-                break;
+            switch (_cellType) {
+                default:
+                    setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
+                case CELL_TYPE_NUMERIC:
+                    (( NumberRecord ) _record).setValue(value);
+                    break;
+                case CELL_TYPE_FORMULA:
+                    ((FormulaRecordAggregate)_record).setCachedDoubleResult(value);
+                    break;
+            }
         }
+
     }
 
     /**
