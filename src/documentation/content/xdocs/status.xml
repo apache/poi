@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">49850 - added a getter for _iStartAt in ListFormatOverrideLevel</action>
            <action dev="poi-developers" type="fix">49761 - change cell type to error when setting Double.NaN or Infinities</action>
            <action dev="poi-developers" type="fix">49833 - ensure that CTNumPr is included in poi-ooxml-schemas.jar</action>
            <action dev="POI-DEVELOPERS" type="fix">49841 - fixed LEFT and RIGHT to return #VALUE! when called with a negative operand </action>

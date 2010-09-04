@@ -114,4 +114,8 @@ public final class ListFormatOverrideLevel
 
     return buf;
   }
+
+  public int getIStartAt() {
+    return _iStartAt;
+  }
 }
