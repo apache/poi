@@ -60,7 +60,7 @@ public final class TestPackage extends TestCase {
 
 		// Compare the original and newly saved document
 		assertTrue(targetFile.exists());
-		//ZipFileAssert.assertEquals(originalFile, targetFile);
+		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
 		assertTrue(targetFile.delete());
 	}
 
@@ -103,43 +103,43 @@ public final class TestPackage extends TestCase {
 	public void testCreatePackageAddPart() throws Exception {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
-		File expectedFileFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageOUTPUT.docx");
+		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestCreatePackageOUTPUT.docx");
 
-		// Zap the target file, in case of an earlier run
-		if(targetFile.exists()) targetFile.delete();
+        // Zap the target file, in case of an earlier run
+        if(targetFile.exists()) targetFile.delete();
 
-		// Create a package
-		OPCPackage pkg = OPCPackage.create(targetFile);
-		PackagePartName corePartName = PackagingURIHelper
-				.createPartName("/word/document.xml");
+        // Create a package
+        OPCPackage pkg = OPCPackage.create(targetFile);
+        PackagePartName corePartName = PackagingURIHelper
+                .createPartName("/word/document.xml");
 
-		pkg.addRelationship(corePartName, TargetMode.INTERNAL,
-				PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
+        pkg.addRelationship(corePartName, TargetMode.INTERNAL,
+                PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
 
-		PackagePart corePart = pkg
-				.createPart(
-						corePartName,
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml");
+        PackagePart corePart = pkg
+                .createPart(
+                        corePartName,
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml");
 
-		Document doc = DocumentHelper.createDocument();
-		Namespace nsWordprocessinML = new Namespace("w",
-				"http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-		Element elDocument = doc.addElement(new QName("document",
-				nsWordprocessinML));
-		Element elBody = elDocument.addElement(new QName("body",
-				nsWordprocessinML));
-		Element elParagraph = elBody.addElement(new QName("p",
-				nsWordprocessinML));
-		Element elRun = elParagraph
-				.addElement(new QName("r", nsWordprocessinML));
-		Element elText = elRun.addElement(new QName("t", nsWordprocessinML));
-		elText.setText("Hello Open XML !");
+        Document doc = DocumentHelper.createDocument();
+        Namespace nsWordprocessinML = new Namespace("w",
+                "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
+        Element elDocument = doc.addElement(new QName("document",
+                nsWordprocessinML));
+        Element elBody = elDocument.addElement(new QName("body",
+                nsWordprocessinML));
+        Element elParagraph = elBody.addElement(new QName("p",
+                nsWordprocessinML));
+        Element elRun = elParagraph
+                .addElement(new QName("r", nsWordprocessinML));
+        Element elText = elRun.addElement(new QName("t", nsWordprocessinML));
+        elText.setText("Hello Open XML !");
 
-		StreamHelper.saveXmlInStream(doc, corePart.getOutputStream());
-		pkg.close();
+        StreamHelper.saveXmlInStream(doc, corePart.getOutputStream());
+        pkg.close();
 
-		//ZipFileAssert.assertEquals(expectedFile, targetFile);
-		assertTrue(targetFile.delete());
+        ZipFileAssert.assertEquals(expectedFile, targetFile);
+        assertTrue(targetFile.delete());
 	}
 
 	/**
@@ -240,7 +240,7 @@ public final class TestPackage extends TestCase {
 
 		File inputFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageINPUT.docx");
 
-		File expectedFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageOUTPUT.docx");
+		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageOUTPUT.docx");
 
 		// Copy the input file in the output directory
 		FileHelper.copyFile(inputFile, targetFile);
@@ -286,7 +286,7 @@ public final class TestPackage extends TestCase {
 			fail();
 		}
 
-		//ZipFileAssert.assertEquals(expectedFile, targetFile);
+		ZipFileAssert.assertEquals(expectedFile, targetFile);
 		assertTrue(targetFile.delete());
 	}
 
@@ -306,7 +306,7 @@ public final class TestPackage extends TestCase {
 
 		// Compare the original and newly saved document
 		assertTrue(targetFile.exists());
-		//ZipFileAssert.assertEquals(originalFile, targetFile);
+		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
 		assertTrue(targetFile.delete());
 	}
 
@@ -346,7 +346,7 @@ public final class TestPackage extends TestCase {
 
 		// Compare the original and newly saved document
 		assertTrue(targetFile.exists());
-		//ZipFileAssert.assertEquals(targetFile, tempFile);
+		ZipFileAssert.assertEquals(targetFile, tempFile);
 		assertTrue(targetFile.delete());
 	}
 
