@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
@@ -30,11 +31,17 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
+
 /**
  *
  * @author Josh Micich
  */
-public final class TestHSSFFormulaEvaluator extends TestCase {
+public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
+
+    public TestHSSFFormulaEvaluator() {
+        super(HSSFITestDataProvider.instance);
+    }
 
 	/**
 	 * Test that the HSSFFormulaEvaluator can evaluate simple named ranges
@@ -48,58 +55,6 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
 		CellValue cv = fe.evaluate(cell);
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
-	}
-
-	public void testFullColumnRefs() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell0 = row.createCell(0);
-		cell0.setCellFormula("sum(D:D)");
-		HSSFCell cell1 = row.createCell(1);
-		cell1.setCellFormula("sum(D:E)");
-
-		// some values in column D
-		setValue(sheet, 1, 3, 5.0);
-		setValue(sheet, 2, 3, 6.0);
-		setValue(sheet, 5, 3, 7.0);
-		setValue(sheet, 50, 3, 8.0);
-
-		// some values in column E
-		setValue(sheet, 1, 4, 9.0);
-		setValue(sheet, 2, 4, 10.0);
-		setValue(sheet, 30000, 4, 11.0);
-
-		// some other values
-		setValue(sheet, 1, 2, 100.0);
-		setValue(sheet, 2, 5, 100.0);
-		setValue(sheet, 3, 6, 100.0);
-
-
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
-		assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
-	}
-
-	private static void setValue(HSSFSheet sheet, int rowIndex, int colIndex, double value) {
-		HSSFRow row = sheet.getRow(rowIndex);
-		if (row == null) {
-			row = sheet.createRow(rowIndex);
-		}
-		row.createCell(colIndex).setCellValue(value);
-	}
-
-	/**
-	 * {@link HSSFFormulaEvaluator#evaluate(org.apache.poi.ss.usermodel.Cell)} should behave the same whether the cell
-	 * is <code>null</code> or blank.
-	 */
-	public void testEvaluateBlank() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		assertNull(fe.evaluate(null));
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell(0);
-		assertNull(fe.evaluate(cell));
 	}
 
 	/**
@@ -276,4 +231,9 @@ public final class TestHSSFFormulaEvaluator extends TestCase {
       assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
    }
+
+    public void testSharedFormulas(){
+        baseTestSharedFormulas("shared_formulas.xls");
+    }
+
 }

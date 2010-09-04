@@ -132,6 +132,9 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 	public void notifyUpdateCell(HSSFCell cell) {
 		_bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell(cell));
 	}
+    public void notifyUpdateCell(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
+    }
 	/**
 	 * Should be called to tell the cell value cache that the specified cell has just been
 	 * deleted.

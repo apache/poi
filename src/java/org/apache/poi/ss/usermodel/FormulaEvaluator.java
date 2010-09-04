@@ -47,6 +47,15 @@ public interface FormulaEvaluator {
 	 * formula cell, or the formula text has changed 
 	 */
     void notifyDeleteCell(Cell cell);
+
+    /**
+     * Should be called to tell the cell value cache that the specified (value or formula) cell
+     * has changed.
+     * Failure to call this method after changing cell values will cause incorrect behaviour
+     * of the evaluate~ methods of this class
+     */
+    void notifyUpdateCell(Cell cell);
+
     /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
