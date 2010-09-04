@@ -26,6 +26,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.ss.util.WorkbookUtil;
 
 /**
  * Title:        Bound Sheet Record (aka BundleSheet) (0x0085)<P>
@@ -90,40 +91,9 @@ public final class BoundSheetRecord extends StandardRecord {
 	 */
 	public void setSheetname(String sheetName) {
 
-		validateSheetName(sheetName);
+		WorkbookUtil.validateSheetName(sheetName);
 		field_5_sheetname = sheetName;
 		field_4_isMultibyteUnicode = StringUtil.hasMultibyte(sheetName) ?  1 : 0;
-	}
-
-	private static void validateSheetName(String sheetName) {
-		if (sheetName == null) {
-			throw new IllegalArgumentException("sheetName must not be null");
-		}
-		int len = sheetName.length();
-		if (len < 1) {
-			throw new IllegalArgumentException("sheetName must not be empty string");
-		}
-		for (int i=0; i<len; i++) {
-			char ch = sheetName.charAt(i);
-			switch (ch) {
-				case '/':
-				case '\\':
-				case '?':
-				case '*':
-				case ']':
-				case '[':
-					break;
-				default:
-					// all other chars OK
-					continue;
-			}
-			throw new IllegalArgumentException("Invalid char (" + ch
-					+ ") found at index (" + i + ") in sheet name '" + sheetName + "'");
-		}
-		if (sheetName.charAt(0) == '\'' || sheetName.charAt(len-1) == '\'') {
-			throw new IllegalArgumentException("Invalid sheet name '" + sheetName
-					+ "'. Sheet names must not begin or end with (').");
-		}
 	}
 
 	/**

@@ -51,6 +51,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.MapInfo;
@@ -511,7 +512,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     private CTSheet addSheet(String sheetname) {
-        validateSheetName(sheetname);
+        WorkbookUtil.validateSheetName(sheetname);
 
         CTSheet sheet = workbook.getSheets().addNewSheet();
         sheet.setName(sheetname);
@@ -1099,11 +1100,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * or contains /\?*[]
      *
      * @param sheet number (0 based)
-     * @see #validateSheetName(String)
      */
     public void setSheetName(int sheet, String name) {
         validateSheetIndex(sheet);
-        validateSheetName(name);
+        WorkbookUtil.validateSheetName(name);
         if (containsSheet(name, sheet ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
         workbook.getSheets().getSheetArray(sheet).setName(name);
@@ -1231,56 +1231,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         return false;
     }
-
-    /**
-     * Validates sheet name.
-     *
-     * <p>
-     * The character count <tt>MUST</tt> be greater than or equal to 1 and less than or equal to 31.
-     * The string MUST NOT contain the any of the following characters:
-     * <ul>
-     * <li> 0x0000 </li>
-     * <li> 0x0003 </li>
-     * <li> colon (:) </li>
-     * <li> backslash (\) </li>
-     * <li> asterisk (*) </li>
-     * <li> question mark (?) </li>
-     * <li> forward slash (/) </li>
-     * <li> opening square bracket ([) </li>
-     * <li> closing square bracket (]) </li>
-     * </ul>
-     * The string MUST NOT begin or end with the single quote (') character.
-     * </p>
-     *
-     * @param sheetName the name to validate
-     */
-    private static void validateSheetName(String sheetName) {
-        if (sheetName == null) {
-            throw new IllegalArgumentException("sheetName must not be null");
-        }
-        int len = sheetName.length();
-        if (len < 1 || len > 31) {
-            throw new IllegalArgumentException("sheetName '" + sheetName
-                    + "' is invalid - must be 1-30 characters long");
-        }
-        for (int i=0; i<len; i++) {
-            char ch = sheetName.charAt(i);
-            switch (ch) {
-                case '/':
-                case '\\':
-                case '?':
-                case '*':
-                case ']':
-                case '[':
-                    break;
-                default:
-                    // all other chars OK
-                    continue;
-            }
-            throw new IllegalArgumentException("Invalid char (" + ch
-                    + ") found at index (" + i + ") in sheet name '" + sheetName + "'");
-        }
-     }
 
     /**
      * Gets a boolean value that indicates whether the date systems used in the workbook starts in 1904.
