@@ -90,6 +90,9 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	public void notifyDeleteCell(Cell cell) {
 		_bookEvaluator.notifyDeleteCell(new XSSFEvaluationCell((XSSFCell)cell));
 	}
+    public void notifyUpdateCell(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
+    }
 
 	/**
 	 * If cell contains a formula, the formula is evaluated and returned,
@@ -115,6 +118,8 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 				return new CellValue(cell.getNumericCellValue());
 			case XSSFCell.CELL_TYPE_STRING:
 				return new CellValue(cell.getRichStringCellValue().getString());
+            case XSSFCell.CELL_TYPE_BLANK:
+                return null;
 		}
 		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
 	}
