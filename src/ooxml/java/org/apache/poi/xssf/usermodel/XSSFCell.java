@@ -218,7 +218,14 @@ public final class XSSFCell implements Cell {
      *        will change the cell to a numeric cell and set its value.
      */
     public void setCellValue(double value) {
-        if(Double.isInfinite(value) || Double.isNaN(value)) {
+        if(Double.isInfinite(value)) {
+            // Excel does not support positive/negative infinities,
+            // rather, it gives a #DIV/0! error in these cases.
+            _cell.setT(STCellType.E);
+            _cell.setV(FormulaError.DIV0.getString());
+        } else if (Double.isNaN(value)){
+            // Excel does not support Not-a-Number (NaN),
+            // instead it immediately generates an #NUM! error.
             _cell.setT(STCellType.E);
             _cell.setV(FormulaError.NUM.getString());
         } else {

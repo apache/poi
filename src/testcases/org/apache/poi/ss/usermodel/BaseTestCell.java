@@ -489,4 +489,59 @@ public abstract class BaseTestCell extends TestCase {
         int i2 = cell.getCellStyle().getIndex();
         assertEquals(i1, i2);
     }
+
+    /**
+     * Excel's implementation of floating number arithmetic does not fully adhere to IEEE 754:
+     *
+     * From http://support.microsoft.com/kb/78113:
+     *
+     * <ul>
+     * <li> Positive/Negative Infinities:
+     *   Infinities occur when you divide by 0. Excel does not support infinities, rather,
+     *   it gives a #DIV/0! error in these cases.
+     * </li>
+     * <li>
+     *   Not-a-Number (NaN):
+     *   NaN is used to represent invalid operations (such as infinity/infinity, 
+     *   infinity-infinity, or the square root of -1). NaNs allow a program to
+     *   continue past an invalid operation. Excel instead immediately generates
+     *   an error such as #NUM! or #DIV/0!.
+     * </li>
+     * </ul>
+     */
+    public void testNanAndInfinity() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet workSheet = wb.createSheet("Sheet1");
+        Row row = workSheet.createRow(0);
+
+        Cell cell0 = row.createCell(0);
+        cell0.setCellValue(Double.NaN);
+        assertEquals("Double.NaN should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell0.getCellType());
+        assertEquals("Double.NaN should change cell value to #NUM!", ErrorConstants.ERROR_NUM, cell0.getErrorCellValue());
+
+        Cell cell1 = row.createCell(1);
+        cell1.setCellValue(Double.POSITIVE_INFINITY);
+        assertEquals("Double.POSITIVE_INFINITY should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell1.getCellType());
+        assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", ErrorConstants.ERROR_DIV_0, cell1.getErrorCellValue());
+
+        Cell cell2 = row.createCell(2);
+        cell2.setCellValue(Double.NEGATIVE_INFINITY);
+        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell2.getCellType());
+        assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        row = wb.getSheetAt(0).getRow(0);
+
+        cell0 = row.getCell(0);
+        assertEquals(Cell.CELL_TYPE_ERROR, cell0.getCellType());
+        assertEquals(ErrorConstants.ERROR_NUM, cell0.getErrorCellValue());
+
+        cell1 = row.getCell(1);
+        assertEquals(Cell.CELL_TYPE_ERROR, cell1.getCellType());
+        assertEquals(ErrorConstants.ERROR_DIV_0, cell1.getErrorCellValue());
+
+        cell2 = row.getCell(2);
+        assertEquals(Cell.CELL_TYPE_ERROR, cell2.getCellType());
+        assertEquals(ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
+    }
 }
