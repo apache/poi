@@ -72,7 +72,8 @@ public abstract class BaseTestWorkbook extends TestCase {
 
         //names cannot be blank or contain any of /\*?[]
         String[] invalidNames = {"", "Sheet/", "Sheet\\",
-                "Sheet?", "Sheet*", "Sheet[", "Sheet]"};
+                "Sheet?", "Sheet*", "Sheet[", "Sheet]", "'Sheet'",
+                "My:Sheet"};
         for (String sheetName : invalidNames) {
             try {
                 wb.createSheet(sheetName);

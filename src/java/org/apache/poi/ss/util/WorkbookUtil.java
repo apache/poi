@@ -74,4 +74,59 @@ public class WorkbookUtil {
 		}
 		return result.toString();
 	}
+
+    /**
+     * Validates sheet name.
+     *
+     * <p>
+     * The character count <tt>MUST</tt> be greater than or equal to 1 and less than or equal to 31.
+     * The string MUST NOT contain the any of the following characters:
+     * <ul>
+     * <li> 0x0000 </li>
+     * <li> 0x0003 </li>
+     * <li> colon (:) </li>
+     * <li> backslash (\) </li>
+     * <li> asterisk (*) </li>
+     * <li> question mark (?) </li>
+     * <li> forward slash (/) </li>
+     * <li> opening square bracket ([) </li>
+     * <li> closing square bracket (]) </li>
+     * </ul>
+     * The string MUST NOT begin or end with the single quote (') character.
+     * </p>
+     *
+     * @param sheetName the name to validate
+     */
+    public static void validateSheetName(String sheetName) {
+        if (sheetName == null) {
+            throw new IllegalArgumentException("sheetName must not be null");
+        }
+        int len = sheetName.length();
+        if (len < 1) {
+            throw new IllegalArgumentException("sheetName must not be empty string");
+        }
+        for (int i=0; i<len; i++) {
+            char ch = sheetName.charAt(i);
+            switch (ch) {
+                case '/':
+                case '\\':
+                case '?':
+                case '*':
+                case ']':
+                case '[':
+                case ':':
+                    break;
+                default:
+                    // all other chars OK
+                    continue;
+            }
+            throw new IllegalArgumentException("Invalid char (" + ch
+                    + ") found at index (" + i + ") in sheet name '" + sheetName + "'");
+        }
+        if (sheetName.charAt(0) == '\'' || sheetName.charAt(len-1) == '\'') {
+            throw new IllegalArgumentException("Invalid sheet name '" + sheetName
+                    + "'. Sheet names must not begin or end with (').");
+        }
+    }
+
 }

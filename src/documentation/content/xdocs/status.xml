@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">49875 - fixed  XSSFWorkbook.createSheet to throw exception if sheet name begins or ends with a single quote (')</action>
            <action dev="poi-developers" type="fix">49873 - fixed  XSSFFormulaEvaluator to support blank cells</action>
            <action dev="poi-developers" type="fix">49850 - added a getter for _iStartAt in ListFormatOverrideLevel</action>
            <action dev="poi-developers" type="fix">49761 - change cell type to error when setting Double.NaN or Infinities</action>
