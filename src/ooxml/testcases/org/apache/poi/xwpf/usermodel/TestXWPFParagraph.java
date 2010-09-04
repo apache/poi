@@ -237,4 +237,13 @@ public final class TestXWPFParagraph extends TestCase {
         CTBookmark ctBookmark = paragraph.getCTP().getBookmarkStartArray(0);
         assertEquals("poi", ctBookmark.getName());
     }
+
+    public void testGetSetNumID() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFParagraph p = doc.createParagraph();
+
+        p.setNumID(new BigInteger("10"));
+        assertEquals("10", p.getNumID().toString());
+    }
+    
 }
