@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">49841 - fixed LEFT and RIGHT to return #VALUE! when called with a negative operand </action>
            <action dev="POI-DEVELOPERS" type="fix">49783 - fixed evaluation of XSSF workbooks containing formulas with reference errors (#REF!)</action>
            <action dev="POI-DEVELOPERS" type="fix">49751 - fixed fetching names of user defined styles in HSSFCellStyle.getUserStyleName()</action>
            <action dev="POI-DEVELOPERS" type="add">48900 - support for protecting a XSSF workbook</action>

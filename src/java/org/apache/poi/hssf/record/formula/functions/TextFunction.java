@@ -173,7 +173,11 @@ public abstract class TextFunction implements Function {
 			} catch (EvaluationException e) {
 				return e.getErrorEval();
 			}
-
+			
+			if(index < 0) {
+				return ErrorEval.VALUE_INVALID;
+			}
+			
 			String result;
 			if (_isLeft) {
 				result = arg.substring(0, Math.min(arg.length(), index));
