@@ -69,6 +69,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -557,6 +558,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public void setSheetHidden(int sheetIx, int hidden) {
         validateSheetIndex(sheetIx);
+        WorkbookUtil.validateSheetState(hidden);
         workbook.setSheetHidden(sheetIx, hidden);
     }
 
