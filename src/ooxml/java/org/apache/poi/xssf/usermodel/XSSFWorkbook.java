@@ -1271,28 +1271,74 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         throw new RuntimeException("Not implemented yet");
     }
 
+    /**
+     * Check whether a sheet is hidden.
+     * <p>
+     * Note that a sheet could instead be set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
+     * </p>
+     * @param sheetIx Number
+     * @return <code>true</code> if sheet is hidden
+     */
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.HIDDEN;
     }
 
+    /**
+     * Check whether a sheet is very hidden.
+     * <p>
+     * This is different from the normal hidden status
+     *  ({@link #isSheetHidden(int)})
+     * </p>
+     * @param sheetIx sheet index to check
+     * @return <code>true</code> if sheet is very hidden
+     */
     public boolean isSheetVeryHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.VERY_HIDDEN;
     }
 
+    /**
+     * Sets the visible state of this sheet.
+     * <p>
+     *   Calling <code>setSheetHidden(sheetIndex, true)</code> is equivalent to
+     *   <code>setSheetHidden(sheetIndex, Workbook.SHEET_STATE_HIDDEN)</code>.
+     * <br/>
+     *   Calling <code>setSheetHidden(sheetIndex, false)</code> is equivalent to
+     *   <code>setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VISIBLE)</code>.
+     * </p>
+     *
+     * @param sheetIx   the 0-based index of the sheet
+     * @param hidden whether this sheet is hidden
+     * @see #setSheetHidden(int, int)
+     */
     public void setSheetHidden(int sheetIx, boolean hidden) {
-        validateSheetIndex(sheetIx);
-        CTSheet ctSheet = sheets.get(sheetIx).sheet;
-        ctSheet.setState(hidden ? STSheetState.HIDDEN : STSheetState.VISIBLE);
+        setSheetHidden(sheetIx, hidden ? SHEET_STATE_HIDDEN : SHEET_STATE_VISIBLE);
     }
 
-    public void setSheetHidden(int sheetIx, int hidden) {
+    /**
+     * Hide or unhide a sheet.
+     *
+     * <ul>
+     *  <li>0 - visible. </li>
+     *  <li>1 - hidden. </li>
+     *  <li>2 - very hidden.</li>
+     * </ul>
+     * @param sheetIx the sheet index (0-based)
+     * @param state one of the following <code>Workbook</code> constants:
+     *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
+     *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
+     *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
+     * @throws IllegalArgumentException if the supplied sheet index or state is invalid
+     */
+    public void setSheetHidden(int sheetIx, int state) {
         validateSheetIndex(sheetIx);
+        WorkbookUtil.validateSheetState(state);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
-        ctSheet.setState(STSheetState.Enum.forInt(hidden));
+        ctSheet.setState(STSheetState.Enum.forInt(state + 1));
     }
 
     /**

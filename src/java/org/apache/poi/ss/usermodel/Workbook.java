@@ -48,6 +48,33 @@ public interface Workbook {
     /** Device independent bitmap */
     public static final int PICTURE_TYPE_DIB = 7;
 
+
+    /**
+     * Indicates the sheet is visible.
+     * 
+     * @see #setSheetHidden(int, int)
+     */
+    public static final int SHEET_STATE_VISIBLE = 0;
+
+    /**
+     * Indicates the book window is hidden, but can be shown by the user via the user interface.
+     *
+     * @see #setSheetHidden(int, int)
+     */
+    public static final int SHEET_STATE_HIDDEN = 1;
+
+    /**
+     * Indicates the sheet is hidden and cannot be shown in the user interface (UI).
+     *
+     * <p>
+     * In Excel this state is only available programmatically in VBA:
+     * <code>ThisWorkbook.Sheets("MySheetName").Visible = xlSheetVeryHidden </code>
+     * </p>
+     *
+     * @see #setSheetHidden(int, int)
+     */
+    public static final int SHEET_STATE_VERY_HIDDEN = 2;
+
     /**
      * Convenience method to get the active sheet.  The active sheet is is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
@@ -455,13 +482,18 @@ public interface Workbook {
 
     /**
      * Hide or unhide a sheet.
-     * <pre>
-     *  0 = not hidden
-     *  1 = hidden
-     *  2 = very hidden.
-     * </pre>
-     * @param sheetIx The sheet number
-     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     * 
+     * <ul>
+     *  <li>0 - visible. </li>
+     *  <li>1 - hidden. </li>
+     *  <li>2 - very hidden.</li>
+     * </ul>
+     * @param sheetIx the sheet index (0-based)
+     * @param hidden one of the following <code>Workbook</code> constants:
+     *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
+     *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
+     *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
+     * @throws IllegalArgumentException if the supplied sheet index or state is invalid
      */
     void setSheetHidden(int sheetIx, int hidden);
 }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 
 /**
  * Helper methods for when working with Usermodel Workbooks
@@ -129,4 +131,14 @@ public class WorkbookUtil {
         }
     }
 
+
+    public static void validateSheetState(int state) {
+        switch(state){
+            case Workbook.SHEET_STATE_VISIBLE: break;
+            case Workbook.SHEET_STATE_HIDDEN: break;
+            case Workbook.SHEET_STATE_VERY_HIDDEN: break;
+            default: throw new IllegalArgumentException("Ivalid sheet state : " + state + "\n" +
+                            "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
+        }
+    }    
 }

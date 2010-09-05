@@ -1240,7 +1240,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertTrue(wb.isSheetVeryHidden(2));
 
         // Change 0 to be very hidden, and re-load
-        wb.setSheetHidden(0, 2);
+        wb.setSheetHidden(0, HSSFWorkbook.SHEET_STATE_VERY_HIDDEN);
 
         HSSFWorkbook nwb = writeOutAndReadBack(wb);
 
