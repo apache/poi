@@ -90,6 +90,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;
 
     /**
+     * Excel silently truncates long sheet names to 31 chars.
+     * This constant is used to ensure uniqueness in the first 31 chars
+     */
+    private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
+
+    /**
      * The underlying XML bean
      */
     private CTWorkbook workbook;
@@ -1216,6 +1222,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     /**
      * Determines whether a workbook contains the provided sheet name.
+     * For the purpose of comparison, long names are truncated to 31 chars.
      *
      * @param name the name to test (case insensitive match)
      * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
@@ -1225,8 +1232,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTSheet[] ctSheetArray = new CTSheet[workbook.getSheets().getSheetList().size()];
         workbook.getSheets().getSheetList().toArray(ctSheetArray);
         
+        if (name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+            name = name.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+        }
+
         for (int i = 0; i < ctSheetArray.length; i++) {
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctSheetArray[i].getName()))
+            String ctName = ctSheetArray[i].getName();
+            if (ctName.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
+                ctName = ctName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
+            }
+
+            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName))
                 return true;
         }
         return false;

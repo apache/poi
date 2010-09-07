@@ -114,6 +114,44 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(2, wb.getSheetIndex("I changed!"));
     }
 
+    /**
+     * POI allows creating sheets with names longer than 31 characters.
+     *
+     * Excel opens files with long sheet names without error or warning.
+     * However, long sheet names are silently truncated to 31 chars.  In order to
+     * avoid funny duplicate sheet name errors, POI enforces uniqueness on only the first 31 chars.
+     * but for the purpose of uniqueness long sheet names are silently truncated to 31 chars.
+     */
+    public final void testCreateSheetWithLongNames() {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        String sheetName1 = "My very long sheet name which is longer than 31 chars";
+        Sheet sh1 = wb.createSheet(sheetName1);
+        assertEquals(sheetName1, sh1.getSheetName());
+        assertSame(sh1, wb.getSheet(sheetName1));
+
+        String sheetName2 = "My very long sheet name which is longer than 31 chars " +
+                "and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)";
+        try {
+            Sheet sh2 = wb.createSheet(sheetName2);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
+            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+        }
+
+        String sheetName3 = "POI allows creating sheets with names longer than 31 characters";
+        Sheet sh3 = wb.createSheet(sheetName3);
+        assertEquals(sheetName3, sh3.getSheetName());
+        assertSame(sh3, wb.getSheet(sheetName3));
+
+        //serialize and read again
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        assertEquals(2, wb.getNumberOfSheets());
+        assertEquals(0, wb.getSheetIndex(sheetName1));
+        assertEquals(1, wb.getSheetIndex(sheetName3));
+    }
+
     public final void testRemoveSheetAt() {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("sheet1");
