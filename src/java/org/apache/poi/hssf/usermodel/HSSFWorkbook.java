@@ -1581,29 +1581,21 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List<HSSFPictureData> pictures)
+    private void searchForPictures(List<EscherRecord> escherRecords, List<HSSFPictureData> pictures)
     {
-        Iterator recordIter = escherRecords.iterator();
-        while (recordIter.hasNext())
-        {
-            Object obj = recordIter.next();
-            if (obj instanceof EscherRecord)
-            {
-                EscherRecord escherRecord = (EscherRecord) obj;
+        for(EscherRecord escherRecord : escherRecords) {
+           if (escherRecord instanceof EscherBSERecord)
+           {
+              EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
+              if (blip != null)
+              {
+                  // TODO: Some kind of structure.
+                  pictures.add(new HSSFPictureData(blip));
+              }
+           }
 
-                if (escherRecord instanceof EscherBSERecord)
-                {
-                    EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
-                    if (blip != null)
-                    {
-                        // TODO: Some kind of structure.
-                        pictures.add(new HSSFPictureData(blip));
-                    }
-                }
-
-                // Recursive call.
-                searchForPictures(escherRecord.getChildRecords(), pictures);
-            }
+           // Recursive call.
+           searchForPictures(escherRecord.getChildRecords(), pictures);
         }
     }
 
