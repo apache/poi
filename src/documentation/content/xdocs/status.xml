@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="add">Add getMimeType() method to HWPF Picture, alongside existing file extension</action>
            <action dev="poi-developers" type="add">Add code for reading Ole10Native data</action>
            <action dev="poi-developers" type="add">Add getMimeType() method to HSSF/XSSF PictureData, alongside existing file extension</action>
            <action dev="poi-developers" type="fix">49887 - allow sheet names longer than 31 chars in XSSF, enforce name uniqueness on the first 31 chars</action>

@@ -29,7 +29,7 @@ import org.apache.poi.POIDataSamples;
 /**
  * Test the picture handling
  *
- * @author Nick Burch (nick at torchbox dot com)
+ * @author Nick Burch
  */
 public final class TestPictures extends TestCase {
 
@@ -38,21 +38,18 @@ public final class TestPictures extends TestCase {
 	 */
 	public void testTwoImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
-		List pics = doc.getPicturesTable().getAllPictures();
+		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
 		assertEquals(pics.size(), 2);
 		for(int i=0; i<pics.size(); i++) {
-			Object p = pics.get(i);
-			assertTrue(p instanceof Picture);
-
-			Picture pic = (Picture)p;
+			Picture pic = (Picture)pics.get(i);
 			assertNotNull(pic.suggestFileExtension());
 			assertNotNull(pic.suggestFullFileName());
 		}
 
-		Picture picA = (Picture)pics.get(0);
-		Picture picB = (Picture)pics.get(1);
+		Picture picA = pics.get(0);
+		Picture picB = pics.get(1);
 		assertEquals("jpg", picA.suggestFileExtension());
 		assertEquals("jpg", picA.suggestFileExtension());
 	}
@@ -62,25 +59,28 @@ public final class TestPictures extends TestCase {
 	 */
 	public void testDifferentImages() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testPictures.doc");
-		List pics = doc.getPicturesTable().getAllPictures();
+		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
 		assertEquals(7, pics.size());
 		for(int i=0; i<pics.size(); i++) {
-			Object p = pics.get(i);
-			assertTrue(p instanceof Picture);
-
-			Picture pic = (Picture)p;
+			Picture pic = (Picture)pics.get(i);
 			assertNotNull(pic.suggestFileExtension());
 			assertNotNull(pic.suggestFullFileName());
 		}
 
-		assertEquals("jpg", ((Picture)pics.get(0)).suggestFileExtension());
-		assertEquals("jpg", ((Picture)pics.get(1)).suggestFileExtension());
-		assertEquals("png", ((Picture)pics.get(3)).suggestFileExtension());
-		assertEquals("png", ((Picture)pics.get(4)).suggestFileExtension());
-		assertEquals("wmf", ((Picture)pics.get(5)).suggestFileExtension());
-		assertEquals("jpg", ((Picture)pics.get(6)).suggestFileExtension());
+		assertEquals("jpg", pics.get(0).suggestFileExtension());
+		assertEquals("image/jpeg", pics.get(0).getMimeType());
+		assertEquals("jpg", pics.get(1).suggestFileExtension());
+      assertEquals("image/jpeg", pics.get(1).getMimeType());
+		assertEquals("png", pics.get(3).suggestFileExtension());
+      assertEquals("image/png", pics.get(3).getMimeType());
+		assertEquals("png", pics.get(4).suggestFileExtension());
+      assertEquals("image/png", pics.get(4).getMimeType());
+		assertEquals("wmf", pics.get(5).suggestFileExtension());
+      assertEquals("application/x-wmf", pics.get(5).getMimeType());
+		assertEquals("jpg", pics.get(6).suggestFileExtension());
+      assertEquals("image/jpeg", pics.get(6).getMimeType());
 	}
 
 	/**
@@ -88,12 +88,12 @@ public final class TestPictures extends TestCase {
 	 */
 	public void testEmfImage() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("vector_image.doc");
-		List pics = doc.getPicturesTable().getAllPictures();
+		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
 		assertEquals(1, pics.size());
 
-		Picture pic = (Picture)pics.get(0);
+		Picture pic = pics.get(0);
 		assertNotNull(pic.suggestFileExtension());
 		assertNotNull(pic.suggestFullFileName());
 		assertTrue(pic.getSize() > 128);
@@ -117,12 +117,12 @@ public final class TestPictures extends TestCase {
 		// revisiting the implementation of office drawing objects.
 
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("emf_2003_image.doc");
-		List pics = doc.getPicturesTable().getAllPictures();
+		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
 		assertNotNull(pics);
 		assertEquals(1, pics.size());
 
-		Picture pic = (Picture)pics.get(0);
+		Picture pic = pics.get(0);
 		assertNotNull(pic.suggestFileExtension());
 		assertNotNull(pic.suggestFullFileName());
 
@@ -140,33 +140,33 @@ public final class TestPictures extends TestCase {
 	public void testPicturesWithTable() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 
-		List pics = doc.getPicturesTable().getAllPictures();
+		List<Picture> pics = doc.getPicturesTable().getAllPictures();
 		assertEquals(2, pics.size());
 	}
 
-        public void testPicturesInHeader() {
-                HWPFDocument doc = HWPFTestDataSamples.openSampleFile("header_image.doc");
+	public void testPicturesInHeader() {
+	   HWPFDocument doc = HWPFTestDataSamples.openSampleFile("header_image.doc");
 
-                List pics = doc.getPicturesTable().getAllPictures();
-                assertEquals(2, pics.size());
-        }
+	   List<Picture> pics = doc.getPicturesTable().getAllPictures();
+	   assertEquals(2, pics.size());
+	}
 
     public void testFastSaved() {
-            HWPFDocument doc = HWPFTestDataSamples.openSampleFile("rasp.doc");
+       HWPFDocument doc = HWPFTestDataSamples.openSampleFile("rasp.doc");
 
-            doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
+       doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
     public void testFastSaved2() {
-            HWPFDocument doc = HWPFTestDataSamples.openSampleFile("o_kurs.doc");
+       HWPFDocument doc = HWPFTestDataSamples.openSampleFile("o_kurs.doc");
 
-            doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
+       doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
     public void testFastSaved3() {
-            HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ob_is.doc");
+       HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ob_is.doc");
 
-            doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
+       doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
 }

@@ -17,15 +17,15 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-
-import java.io.OutputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.zip.InflaterInputStream;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Represents embedded picture extracted from Word Document
@@ -215,6 +215,35 @@ public final class Picture
       extension = suggestFileExtension(getContent(), 0);
     }
     return extension;
+  }
+  
+  /**
+   * Returns the mime type for the image
+   */
+  public String getMimeType() {
+     String extension = suggestFileExtension();
+     if("jpg".equals(extension)) {
+        return "image/jpeg";
+     }
+     if("png".equals(extension)) {
+        return "image/png";
+     }
+     if("gif".equals(extension)) {
+        return "image/gif";
+     }
+     if("bmp".equals(extension)) {
+        return "image/bmp";
+     }
+     if("tiff".equals(extension)) {
+        return "image/tiff";
+     }
+     if("wmf".equals(extension)) {
+        return "application/x-wmf";
+     }
+     if("emf".equals(extension)) {
+        return "application/x-emf";
+     }
+     return "image/unknown";
   }
 
 
