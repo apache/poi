@@ -33,4 +33,8 @@ public interface PictureData {
      */
     String suggestFileExtension();
 
+    /**
+     * Returns the mime type for the image
+     */
+    String getMimeType();
 }

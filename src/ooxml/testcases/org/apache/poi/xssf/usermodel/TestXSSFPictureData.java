@@ -36,8 +36,10 @@ public final class TestXSSFPictureData extends TestCase {
 
         assertEquals(5, pictures.size());
         String[] ext = {"jpeg", "emf", "png", "emf", "wmf"};
+        String[] mimetype = {"image/jpeg", "image/x-emf", "image/png", "image/x-emf", "image/x-wmf"};
         for (int i = 0; i < pictures.size(); i++) {
             assertEquals(ext[i], pictures.get(i).suggestFileExtension());
+            assertEquals(mimetype[i], pictures.get(i).getMimeType());
         }
 
         int num = pictures.size();

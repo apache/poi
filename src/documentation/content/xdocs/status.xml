@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="add">Add getMimeType() method to HSSF/XSSF PictureData, alongside existing file extension</action>
            <action dev="poi-developers" type="fix">49887 - allow sheet names longer than 31 chars in XSSF, enforce name uniqueness on the first 31 chars</action>
            <action dev="poi-developers" type="fix">49878 - improved API for hiding sheets</action>
            <action dev="poi-developers" type="fix">49875 - fixed  XSSFWorkbook.createSheet to throw exception if sheet name begins or ends with a single quote (')</action>
