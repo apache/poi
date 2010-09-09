@@ -120,4 +120,8 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
         }
         return 0;
     }
+
+    public String getMimeType() {
+        return getPackagePart().getContentType();
+    }
 }

@@ -57,6 +57,7 @@ public final class TestHSSFPictureData extends TestCase{
                 assertEquals(192, jpg.getWidth());
                 assertEquals(176, jpg.getHeight());
                 assertEquals(HSSFWorkbook.PICTURE_TYPE_JPEG, pict.getFormat());
+                assertEquals("image/jpeg", pict.getMimeType());
             } else if (ext.equals("png")){
                 //try to read image data using javax.imageio.* (JDK 1.4+)
                 BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
@@ -64,6 +65,7 @@ public final class TestHSSFPictureData extends TestCase{
                 assertEquals(300, png.getWidth());
                 assertEquals(300, png.getHeight());
                 assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
+                assertEquals("image/png", pict.getMimeType());
             } else {
                 //TODO: test code for PICT, WMF and EMF
             }
