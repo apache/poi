@@ -40,6 +40,7 @@ public final class AllPOIFSFileSystemTests {
         result.addTestSuite(TestPOIFSDocumentPath.class);
         result.addTestSuite(TestPOIFSFileSystem.class);
         result.addTestSuite(TestPropertySorter.class);
+        result.addTestSuite(TestOle10Native.class);
         return result;
     }
 }
