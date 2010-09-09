@@ -25,7 +25,6 @@ import org.apache.poi.hwpf.usermodel.Range;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -146,42 +145,33 @@ public final class PicturesTable
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List pictures)
+    private void searchForPictures(List<EscherRecord> escherRecords, List<Picture> pictures)
     {
-        Iterator recordIter = escherRecords.iterator();
-        while (recordIter.hasNext())
-        {
-            Object obj = recordIter.next();
-            if (obj instanceof EscherRecord)
-            {
-                EscherRecord escherRecord = (EscherRecord) obj;
+       for(EscherRecord escherRecord : escherRecords) {
+          if (escherRecord instanceof EscherBSERecord) {
+              EscherBSERecord bse = (EscherBSERecord) escherRecord;
+              EscherBlipRecord blip = bse.getBlipRecord();
+              if (blip != null)
+              {
+                  pictures.add(new Picture(blip.getPicturedata()));
+              }
+              else if (bse.getOffset() > 0)
+              {
+                  // Blip stored in delay stream, which in a word doc, is the main stream
+                  EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
+                  EscherRecord record = recordFactory.createRecord(_mainStream, bse.getOffset());
 
-                if (escherRecord instanceof EscherBSERecord)
-                {
-                    EscherBSERecord bse = (EscherBSERecord) escherRecord;
-                    EscherBlipRecord blip = bse.getBlipRecord();
-                    if (blip != null)
-                    {
-                        pictures.add(new Picture(blip.getPicturedata()));
-                    }
-                    else if (bse.getOffset() > 0)
-                    {
-                        // Blip stored in delay stream, which in a word doc, is the main stream
-                        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
-                        EscherRecord record = recordFactory.createRecord(_mainStream, bse.getOffset());
+                  if (record instanceof EscherBlipRecord) {
+                      record.fillFields(_mainStream, bse.getOffset(), recordFactory);
+                      blip = (EscherBlipRecord) record;
+                      pictures.add(new Picture(blip.getPicturedata()));
+                  }
+              }
+          }
 
-                        if (record instanceof EscherBlipRecord) {
-                            record.fillFields(_mainStream, bse.getOffset(), recordFactory);
-                            blip = (EscherBlipRecord) record;
-                            pictures.add(new Picture(blip.getPicturedata()));
-                        }
-                    }
-                }
-
-                // Recursive call.
-                searchForPictures(escherRecord.getChildRecords(), pictures);
-            }
-        }
+          // Recursive call.
+          searchForPictures(escherRecord.getChildRecords(), pictures);
+       }
     }
 
   /**
@@ -190,8 +180,8 @@ public final class PicturesTable
    *
    * @return a list of Picture objects found in current document
    */
-  public List getAllPictures() {
-    ArrayList pictures = new ArrayList();
+  public List<Picture> getAllPictures() {
+    ArrayList<Picture> pictures = new ArrayList<Picture>();
 
     Range range = _document.getOverallRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {

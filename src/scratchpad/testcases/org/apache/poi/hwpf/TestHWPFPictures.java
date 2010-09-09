@@ -57,8 +57,8 @@ public final class TestHWPFPictures extends TestCase {
 	 * Test just opening the files
 	 */
 	public void testOpen() {
-		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
-		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
+		HWPFTestDataSamples.openSampleFile(docAFile);
+		HWPFTestDataSamples.openSampleFile(docBFile);
 	}
 
 	/**
@@ -74,8 +74,8 @@ public final class TestHWPFPictures extends TestCase {
 		PicturesTable picA = docA.getPicturesTable();
 		PicturesTable picB = docB.getPicturesTable();
 
-		List picturesA = picA.getAllPictures();
-		List picturesB = picB.getAllPictures();
+		List<Picture> picturesA = picA.getAllPictures();
+		List<Picture> picturesB = picB.getAllPictures();
 
 		assertEquals(7, picturesA.size());
 		assertEquals(2, picturesB.size());
@@ -87,12 +87,12 @@ public final class TestHWPFPictures extends TestCase {
 	public void testImageData() {
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 		PicturesTable picB = docB.getPicturesTable();
-		List picturesB = picB.getAllPictures();
+		List<Picture> picturesB = picB.getAllPictures();
 
 		assertEquals(2, picturesB.size());
 
-		Picture pic1 = (Picture)picturesB.get(0);
-		Picture pic2 = (Picture)picturesB.get(1);
+		Picture pic1 = picturesB.get(0);
+		Picture pic2 = picturesB.get(1);
 
 		assertNotNull(pic1);
 		assertNotNull(pic2);
@@ -114,11 +114,11 @@ public final class TestHWPFPictures extends TestCase {
 	public void testCompressedImageData() {
 		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
 		PicturesTable picC = docC.getPicturesTable();
-		List picturesC = picC.getAllPictures();
+		List<Picture> picturesC = picC.getAllPictures();
 
 		assertEquals(1, picturesC.size());
 
-		Picture pic = (Picture)picturesC.get(0);
+		Picture pic = picturesC.get(0);
 		assertNotNull(pic);
 
 		// Check the same
@@ -134,11 +134,11 @@ public final class TestHWPFPictures extends TestCase {
 	 */
 	public void BROKENtestEscherDrawing() {
 		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
-		List allPictures = docD.getPicturesTable().getAllPictures();
+		List<Picture> allPictures = docD.getPicturesTable().getAllPictures();
 
 		assertEquals(1, allPictures.size());
 
-		Picture pic = (Picture) allPictures.get(0);
+		Picture pic = allPictures.get(0);
 		assertNotNull(pic);
 		byte[] picD = readFile(imgDFile);
 
