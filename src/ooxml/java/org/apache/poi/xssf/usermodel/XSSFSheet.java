@@ -951,7 +951,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * 
      * @param password to set for protection. Pass <code>null</code> to remove protection
      */
-    @Override
     public void protectSheet(String password) {
         	
     	if(password != null) {
