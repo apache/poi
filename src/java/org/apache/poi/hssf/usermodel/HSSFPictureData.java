@@ -50,7 +50,7 @@ public class HSSFPictureData implements PictureData
      *
      * @param blip the underlying blip record containing the bitmap data.
      */
-    HSSFPictureData( EscherBlipRecord blip )
+    public HSSFPictureData( EscherBlipRecord blip )
     {
         this.blip = blip;
     }
