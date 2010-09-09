@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
@@ -354,13 +355,13 @@ public final class HWPFDocument extends HWPFDocumentCore
    */
   public int characterLength()
   {
-    java.util.List textPieces = _tpt.getTextPieces();
-    Iterator textIt = textPieces.iterator();
+    List<TextPiece> textPieces = _tpt.getTextPieces();
+    Iterator<TextPiece> textIt = textPieces.iterator();
 
     int length = 0;
     while(textIt.hasNext())
     {
-      TextPiece tp = (TextPiece)textIt.next();
+      TextPiece tp = textIt.next();
       length += tp.characterLength();
     }
     return length;
