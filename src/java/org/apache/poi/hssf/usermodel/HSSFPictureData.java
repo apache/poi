@@ -106,9 +106,9 @@ public class HSSFPictureData implements PictureData
     public String getMimeType() {
        switch (blip.getRecordId()) {
            case EscherMetafileBlip.RECORD_ID_WMF:
-               return "application/x-wmf";
+               return "image/x-wmf";
            case EscherMetafileBlip.RECORD_ID_EMF:
-               return "application/x-emf";
+               return "image/x-emf";
            case EscherMetafileBlip.RECORD_ID_PICT:
                return "image/x-pict";
            case EscherBitmapBlip.RECORD_ID_PNG:

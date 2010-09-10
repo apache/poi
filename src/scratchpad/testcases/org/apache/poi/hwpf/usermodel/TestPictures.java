@@ -79,7 +79,7 @@ public final class TestPictures extends TestCase {
 		assertEquals("png", pics.get(4).suggestFileExtension());
       assertEquals("image/png", pics.get(4).getMimeType());
 		assertEquals("wmf", pics.get(5).suggestFileExtension());
-      assertEquals("application/x-wmf", pics.get(5).getMimeType());
+      assertEquals("image/x-wmf", pics.get(5).getMimeType());
 		assertEquals("jpg", pics.get(6).suggestFileExtension());
       assertEquals("image/jpeg", pics.get(6).getMimeType());
 	}
