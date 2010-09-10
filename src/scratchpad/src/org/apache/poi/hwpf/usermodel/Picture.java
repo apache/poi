@@ -236,10 +236,10 @@ public final class Picture
         return "image/tiff";
      }
      if("wmf".equals(extension)) {
-        return "application/x-wmf";
+        return "image/x-wmf";
      }
      if("emf".equals(extension)) {
-        return "application/x-emf";
+        return "image/x-emf";
      }
      return "image/unknown";
   }
