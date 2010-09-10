@@ -21,10 +21,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Test the picture handling
@@ -169,4 +170,95 @@ public final class TestPictures extends TestCase {
        doc.getPicturesTable().getAllPictures(); // just check that we do not throw Exception
     }
 
+    /**
+     * When you embed another office document into Word, it stores
+     *  a rendered "icon" picture of what that document looks like.
+     * This image is re-created when you edit the embeded document,
+     *  then used as-is to speed things up.
+     * Check that we can properly read one of these
+     */
+    public void testEmbededDocumentIcon() throws Exception {
+       // This file has two embeded excel files, an embeded powerpoint
+       //   file and an embeded word file, in that order
+       HWPFDocument doc = HWPFTestDataSamples.openSampleFile("word_with_embeded.doc");
+       
+       // Check we don't break loading the pictures
+       doc.getPicturesTable().getAllPictures();
+       PicturesTable pictureTable = doc.getPicturesTable();
+       
+       // Check the text, and its embeded images
+       Paragraph p;
+       Range r = doc.getRange();
+       assertEquals(1, r.numSections());
+       assertEquals(5, r.numParagraphs());
+       
+       p = r.getParagraph(0);
+       assertEquals(2, p.numCharacterRuns());
+       assertEquals("I have lots of embedded files in me\r", p.text());
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+       
+       p = r.getParagraph(1);
+       assertEquals(5, p.numCharacterRuns());
+       assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
+       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
+       
+       p = r.getParagraph(2);
+       assertEquals(6, p.numCharacterRuns());
+       assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
+       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+       
+       p = r.getParagraph(3);
+       assertEquals(6, p.numCharacterRuns());
+       assertEquals("\u0013 EMBED PowerPoint.Show.8  \u0014\u0001\u0015\r", p.text());
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
+       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+       
+       p = r.getParagraph(4);
+       assertEquals(6, p.numCharacterRuns());
+       assertEquals("\u0013 EMBED Word.Document.8 \\s \u0014\u0001\u0015\r", p.text());
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
+       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
+       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+
+       // Look at the pictures table
+       List<Picture> pictures = pictureTable.getAllPictures();
+       assertEquals(4, pictures.size());
+       
+       Picture picture = pictures.get(0);
+       assertEquals("", picture.suggestFileExtension());
+       assertEquals("0", picture.suggestFullFileName());
+       assertEquals("image/unknown", picture.getMimeType());
+       
+       picture = pictures.get(1);
+       assertEquals("", picture.suggestFileExtension());
+       assertEquals("469", picture.suggestFullFileName());
+       assertEquals("image/unknown", picture.getMimeType());
+       
+       picture = pictures.get(2);
+       assertEquals("", picture.suggestFileExtension());
+       assertEquals("8c7", picture.suggestFullFileName());
+       assertEquals("image/unknown", picture.getMimeType());
+       
+       picture = pictures.get(3);
+       assertEquals("", picture.suggestFileExtension());
+       assertEquals("10a8", picture.suggestFullFileName());
+       assertEquals("image/unknown", picture.getMimeType());
+    }
 }
