@@ -141,6 +141,7 @@ public final class CharacterSprmUncompressor
         // undocumented till 0x30
 
       case 0x11:
+        // sprmCFWebHidden
         break;
       case 0x12:
         break;
@@ -149,16 +150,21 @@ public final class CharacterSprmUncompressor
       case 0x14:
         break;
       case 0x15:
+        // sprmCRsidProp
         break;
       case 0x16:
+        // sprmCRsidText
         break;
       case 0x17:
+        // sprmCRsidRMDel
         break;
       case 0x18:
+        // sprmCFSpecVanish
         break;
       case 0x19:
         break;
       case 0x1a:
+        // sprmCFMathPr
         break;
       case 0x1b:
         break;
@@ -236,8 +242,7 @@ public final class CharacterSprmUncompressor
         }
         return;
       case 0x34:
-
-        // undocumented
+        // sprmCKcd
         break;
       case 0x35:
         newCHP.setFBold (getCHPFlag ((byte) sprm.getOperand(), oldCHP.isFBold ()));
@@ -443,8 +448,7 @@ public final class CharacterSprmUncompressor
         newCHP.setFtcOther ((short) sprm.getOperand());
         break;
       case 0x52:
-
-        // undocumented
+        // sprmCCharScale
         break;
       case 0x53:
         newCHP.setFDStrike (getFlag (sprm.getOperand()));
@@ -471,23 +475,28 @@ public final class CharacterSprmUncompressor
       case 0x59:
         newCHP.setSfxtText ((byte) sprm.getOperand());
         break;
-
-        // undocumented till 0x61
       case 0x5a:
+        // sprmCFBiDi
         break;
       case 0x5b:
         break;
       case 0x5c:
+        // sprmCFBoldBi
         break;
       case 0x5d:
+        // sprmCFItalicBi
         break;
       case 0x5e:
+        // sprmCFtcBi
         break;
       case 0x5f:
+        // sprmCLidBi 
         break;
       case 0x60:
+        // sprmCIcoBi
         break;
       case 0x61:
+        // sprmCHpsBi
         break;
       case 0x62:
         byte[] xstDispFldRMark = new byte[32];
@@ -512,14 +521,11 @@ public final class CharacterSprmUncompressor
         newCHP.setShd (new ShadingDescriptor(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
       case 0x67:
-
         // Obsolete
         break;
       case 0x68:
+        //  sprmCFUsePgsuSettings
         break;
-
-        // undocumented till 0x6c
-
       case 0x69:
         break;
       case 0x6a:
@@ -539,6 +545,18 @@ public final class CharacterSprmUncompressor
         break;
       case 0x70:
         newCHP.setIco24 (sprm.getOperand());
+        break;
+      case 0x71:
+        // sprmCShd
+        break;
+      case 0x72:
+        // sprmCBrc
+        break;
+      case 0x73:
+        // sprmCRgLid0
+        break;
+      case 0x74:
+        // sprmCRgLid1
         break;
     }
   }

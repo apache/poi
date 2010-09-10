@@ -465,7 +465,13 @@ public final class CharacterRun
     _chpx.updateSprm(SPRM_PICLOCATION, offset);
   }
 
-
+  /**
+   * Does the picture offset represent picture
+   *  or binary data?
+   * If it's set, then the picture offset refers to
+   *  a NilPICFAndBinData structure, otherwise to a
+   *  PICFAndOfficeArtData
+   */
   public boolean isData()
   {
     return _props.isFData();

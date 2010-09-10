@@ -37,9 +37,11 @@ public final class Picture
 
 //  public static final int FILENAME_OFFSET = 0x7C;
 //  public static final int FILENAME_SIZE_OFFSET = 0x6C;
-  static final int MFPMM_OFFSET = 0x6;
-  static final int BLOCK_TYPE_OFFSET = 0xE;
+  static final int PICF_OFFSET = 0x0;
   static final int PICT_HEADER_OFFSET = 0x4;
+  static final int MFPMM_OFFSET = 0x6;
+  static final int PICF_SHAPE_OFFSET = 0xE;
+  static final int PICMD_OFFSET = 0x1C;
   static final int UNKNOWN_HEADER_SIZE = 0x49;
 
   public static final byte[] GIF = new byte[]{'G', 'I', 'F'};
@@ -87,10 +89,6 @@ public final class Picture
 
     this.aspectRatioX = extractAspectRatioX(_dataStream, dataBlockStartOfsset);
     this.aspectRatioY = extractAspectRatioY(_dataStream, dataBlockStartOfsset);
-//    this.fileName = extractFileName(dataBlockStartOfsset, _dataStream);
-//    if (fileName==null || fileName.length()==0) {
-//      fileName = "clipboard";
-//    }
 
     if (fillBytes)
     {
@@ -353,11 +351,20 @@ public final class Picture
 
   private static int getPictureBytesStartOffset(int dataBlockStartOffset, byte[] _dataStream, int dataBlockSize)
   {
-    final int dataBlockEndOffset = dataBlockSize + dataBlockStartOffset;
     int realPicoffset = dataBlockStartOffset;
-
-    int PICTFBlockSize = LittleEndian.getShort(_dataStream, dataBlockStartOffset +PICT_HEADER_OFFSET);
+    final int dataBlockEndOffset = dataBlockSize + dataBlockStartOffset;
+    
+    // Skip over the PICT block
+    int PICTFBlockSize = LittleEndian.getShort(_dataStream, dataBlockStartOffset +PICT_HEADER_OFFSET); // Should be 68 bytes
+    
+    // Now the PICTF1
     int PICTF1BlockOffset = PICTFBlockSize + PICT_HEADER_OFFSET;
+    short MM_TYPE = LittleEndian.getShort(_dataStream, dataBlockStartOffset + PICT_HEADER_OFFSET + 2);
+    if(MM_TYPE == 0x66) {
+       // Skip the stPicName
+       int cchPicName = LittleEndian.getUnsignedByte(_dataStream, PICTF1BlockOffset);
+       PICTF1BlockOffset += 1 + cchPicName;
+    }
     int PICTF1BlockSize = LittleEndian.getShort(_dataStream, dataBlockStartOffset +PICTF1BlockOffset);
 
     int unknownHeaderOffset = (PICTF1BlockSize + PICTF1BlockOffset) < dataBlockEndOffset ?  (PICTF1BlockSize + PICTF1BlockOffset) : PICTF1BlockOffset;
