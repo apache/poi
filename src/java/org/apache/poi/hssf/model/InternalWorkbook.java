@@ -1863,11 +1863,6 @@ public final class InternalWorkbook {
     {
 
         LinkTable linkTable = getOrCreateLinkTable();
-        if(linkTable.nameAlreadyExists(name)) {
-            throw new IllegalArgumentException(
-                "You are trying to assign a duplicated name record: "
-                + name.getNameText());
-        }
         linkTable.addName(name);
 
         return name;
@@ -1884,7 +1879,7 @@ public final class InternalWorkbook {
 
         NameRecord name = new NameRecord(builtInName, sheetNumber);
 
-        while(linkTable.nameAlreadyExists(name)) {
+        if(linkTable.nameAlreadyExists(name)) {
             throw new RuntimeException("Builtin (" + builtInName
                     + ") already exists for sheet (" + sheetNumber + ")");
         }

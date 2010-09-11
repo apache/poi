@@ -465,7 +465,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     public XSSFName createName() {
-        XSSFName name = new XSSFName(CTDefinedName.Factory.newInstance(), this);
+        CTDefinedName ctName = CTDefinedName.Factory.newInstance();
+        ctName.setName("");
+        XSSFName name = new XSSFName(ctName, this);
         namedRanges.add(name);
         return name;
     }

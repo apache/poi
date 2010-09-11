@@ -559,4 +559,29 @@ public abstract class BaseTestNamedRange extends TestCase {
         n.setFunction(false);
         assertFalse(n.isFunctionName());
     }
+
+    public final void testDefferedSetting() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Name n1 = wb.createName();
+        assertNull(n1.getRefersToFormula());
+        assertEquals("", n1.getNameName());
+
+        Name n2 = wb.createName();
+        assertNull(n2.getRefersToFormula());
+        assertEquals("", n2.getNameName());
+
+        n1.setNameName("sale_1");
+        n1.setRefersToFormula("10");
+
+        n2.setNameName("sale_2");
+        n2.setRefersToFormula("20");
+
+        try {
+            n2.setNameName("sale_1");
+            fail("Expected exception");
+        } catch(Exception e){
+            assertEquals("The workbook already contains this name: sale_1", e.getMessage());
+        }
+
+    }
 }
