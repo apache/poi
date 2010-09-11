@@ -1350,7 +1350,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 mergeCellsArray[i - 1] = ctMergeCells.getMergeCellArray(i);
             }
         }
-        ctMergeCells.setMergeCellArray(mergeCellsArray);
+        if(mergeCellsArray.length > 0){
+            ctMergeCells.setMergeCellArray(mergeCellsArray);
+        } else{
+            worksheet.unsetMergeCells();
+        }
     }
 
     /**

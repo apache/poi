@@ -253,6 +253,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.removeMergedRegion(1);
         sheet.removeMergedRegion(0);
         assertEquals(0, sheet.getNumMergedRegions());
+        assertNull(" CTMergeCells should be deleted after removing the last merged " +
+                "region on the sheet.", sheet.getCTWorksheet().getMergeCells());
     }
 
     public void testSetDefaultColumnStyle() {
