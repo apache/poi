@@ -85,7 +85,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
-    private Map<Integer, XSSFCell> sharedFormulas;
+    /**
+     * cache of master shared formulas in this sheet.
+     * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
+     */
+    private Map<Integer, CTCellFormula> sharedFormulas;
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper;    
 
@@ -168,7 +172,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private void initRows(CTWorksheet worksheet) {
         _rows = new TreeMap<Integer, XSSFRow>();
-        sharedFormulas = new HashMap<Integer, XSSFCell>();
+        sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheet.getSheetData().getRowList()) {
             XSSFRow r = new XSSFRow(row, this);
@@ -2401,12 +2405,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Return a cell holding shared formula by shared group index
+     * Return a master shared formula by index
      *
      * @param sid shared group index
-     * @return a cell holding shared formula or <code>null</code> if not found
+     * @return a CTCellFormula bean holding shared formula or <code>null</code> if not found
      */
-    XSSFCell getSharedFormulaCell(int sid){
+    CTCellFormula getSharedFormula(int sid){
         return sharedFormulas.get(sid);
     }
 
@@ -2415,7 +2419,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTCell ct = cell.getCTCell();
         CTCellFormula f = ct.getF();
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
-            sharedFormulas.put((int)f.getSi(), cell);
+            // save a detached  copy to avoid XmlValueDisconnectedException,
+            // this may happen when the master cell of a shared formula is changed
+            sharedFormulas.put((int)f.getSi(), (CTCellFormula)f.copy());
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
