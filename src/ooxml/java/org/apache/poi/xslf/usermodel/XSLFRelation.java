@@ -76,19 +76,36 @@ public class XSLFRelation extends POIXMLRelation {
    
    public static final XSLFRelation SLIDE = new XSLFRelation(
            "application/vnd.openxmlformats-officedocument.presentationml.slide+xml",
-           null, null, null
+           "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide", 
+           "/ppt/slides/slide#.xml", 
+           null
    );
    
    public static final XSLFRelation SLIDE_LAYOUT = new XSLFRelation(
          "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml",
          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout",
-         null, null
+         "/ppt/slideLayouts/slideLayout#.xml", 
+         null
    );
    
    public static final XSLFRelation COMMENTS = new XSLFRelation(
          "application/vnd.openxmlformats-officedocument.presentationml.comments+xml",
          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
          null, null
+   );
+   
+   public static final XSLFRelation THEME = new XSLFRelation(
+         "application/vnd.openxmlformats-officedocument.theme+xml",
+         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
+         "/ppt/theme/theme#.xml", 
+         null
+   );
+   
+   public static final XSLFRelation VML_DRAWING = new XSLFRelation(
+         "application/vnd.openxmlformats-officedocument.vmlDrawing",
+         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing",
+         "/ppt/drawings/vmlDrawing#.vml", 
+         null
    );
    
 
