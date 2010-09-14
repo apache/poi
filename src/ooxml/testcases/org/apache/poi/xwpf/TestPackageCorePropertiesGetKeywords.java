@@ -17,24 +17,10 @@
 
 package org.apache.poi.xwpf;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageProperties;
-import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**

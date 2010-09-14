@@ -30,7 +30,6 @@ import org.apache.poi.xwpf.usermodel.TestXWPFPictureData;
 import org.apache.poi.xwpf.usermodel.TestXWPFRun;
 import org.apache.poi.xwpf.usermodel.TestXWPFStyles;
 import org.apache.poi.xwpf.usermodel.TestXWPFTable;
-import org.apache.poi.xwpf.usermodel.TestXWPFTableRow;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xwpf</tt> and sub-packages.

@@ -20,9 +20,9 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 public class TestXWPFStyles extends TestCase {
 

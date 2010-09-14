@@ -16,10 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.POIDataSamples;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.io.*;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * @author Yegor Kozlov

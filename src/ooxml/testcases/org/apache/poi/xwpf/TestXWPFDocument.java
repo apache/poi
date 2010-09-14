@@ -20,15 +20,11 @@ package org.apache.poi.xwpf;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties;
-import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.XmlCursor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument extends TestCase {
 
