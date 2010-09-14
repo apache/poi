@@ -236,6 +236,9 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(0, paragraph.getCTP().sizeOfBookmarkEndArray());
         CTBookmark ctBookmark = paragraph.getCTP().getBookmarkStartArray(0);
         assertEquals("poi", ctBookmark.getName());
+        for(CTBookmark bookmark : paragraph.getCTP().getBookmarkStartList()) {
+           assertEquals("poi", bookmark.getName());
+        }
     }
 
     public void testGetSetNumID() {

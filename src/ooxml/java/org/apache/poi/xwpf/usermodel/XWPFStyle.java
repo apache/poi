@@ -129,6 +129,12 @@ public class XWPFStyle {
 			return null;
 	 }
 	 
+	 public String getName() {
+	    if(ctStyle.isSetName()) 
+	       return ctStyle.getName().getVal();
+	    return null;
+	 }
+	 
 	 /**
 	  * compares the names of the Styles 
 	  * @param compStyle

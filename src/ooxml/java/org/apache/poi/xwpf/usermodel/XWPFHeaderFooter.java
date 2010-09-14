@@ -70,6 +70,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 		return headerFooter;
 	}
 
+   public List<IBodyElement> getBodyElements(){
+        return Collections.unmodifiableList(bodyElements);
+   }
+    
 	/**
 	 * Returns the paragraph(s) that holds
 	 *  the text of the header or footer.

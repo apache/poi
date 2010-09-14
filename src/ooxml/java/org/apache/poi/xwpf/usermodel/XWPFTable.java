@@ -46,7 +46,6 @@ public class XWPFTable implements IBodyElement{
     protected List<XWPFTableRow> tableRows;
     protected List<String> styleIDs;
     protected IBody part;
-	private XWPFDocument document;
 
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
         this(table, part);
