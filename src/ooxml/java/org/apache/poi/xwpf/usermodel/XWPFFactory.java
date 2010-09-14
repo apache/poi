@@ -17,16 +17,16 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLFactory;
+import java.lang.reflect.Constructor;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.POIXMLFactory;
 import org.apache.poi.POIXMLRelation;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagePart;
-
-import java.lang.reflect.Constructor;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * @author Yegor Kozlov
