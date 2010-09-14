@@ -17,11 +17,15 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -39,8 +43,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
-
-import javax.xml.namespace.QName;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -49,7 +53,9 @@ import javax.xml.namespace.QName;
  */
 public class XWPFRun {
     private CTR run;
+    private String pictureText;
     private XWPFParagraph paragraph;
+    private List<XWPFPicture> pictures;
 
     /**
      * @param r the CTR bean which holds the run attributes
@@ -58,6 +64,42 @@ public class XWPFRun {
     public XWPFRun(CTR r, XWPFParagraph p) {
         this.run = r;
         this.paragraph = p;
+        
+        // Look for any text in any of our pictures or drawings
+        StringBuffer text = new StringBuffer();
+        List<XmlObject> pictTextObjs = new ArrayList<XmlObject>();
+        pictTextObjs.addAll(r.getPictList());
+        pictTextObjs.addAll(r.getDrawingList());
+        for(XmlObject o : pictTextObjs) {
+           XmlObject[] t = o
+                 .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+           for (int m = 0; m < t.length; m++) {
+              NodeList kids = t[m].getDomNode().getChildNodes();
+              for (int n = 0; n < kids.getLength(); n++) {
+                 if (kids.item(n) instanceof Text) {
+                    if(text.length() > 0)
+                       text.append("\n");
+                    text.append(kids.item(n).getNodeValue());
+                 }
+              }
+           }
+        }
+        pictureText = text.toString();
+        
+        // Do we have any embedded pictures?
+        // (They're a different CTPicture, under the drawingml namespace)
+        pictures = new ArrayList<XWPFPicture>();
+        for(XmlObject o : pictTextObjs) {
+           XmlObject[] picts = o
+                 .selectPath("declare namespace pic='http://schemas.openxmlformats.org/drawingml/2006/picture' .//pic:pic");
+           for(XmlObject pict : picts) {
+              if(pict instanceof org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture) {
+                 pictures.add(new XWPFPicture(
+                       (org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture)pict, p
+                 ));
+              }
+           }
+        }
     }
 
     /**
@@ -127,6 +169,13 @@ public class XWPFRun {
         return run.sizeOfTArray() == 0 ? null : run.getTArray(pos)
                 .getStringValue();
     }
+    
+    /**
+     * Returns text embedded in pictures
+     */
+    public String getPictureText() {
+        return pictureText;
+    }
 
     /**
      * Sets the text of this text run
@@ -134,7 +183,7 @@ public class XWPFRun {
      * @param value the literal text which shall be displayed in the document
      */
     public void setText(String value) {
-	setText(value,run.getTList().size());
+       setText(value,run.getTList().size());
     }
 
     /**
@@ -479,6 +528,15 @@ public class XWPFRun {
     public void removeCarriageReturn() {
 	//TODO
     }    
+    
+    /**
+     * Returns the embedded pictures of the run. These
+     *  are pictures which reference an external, 
+     *  embedded picture image such as a .png or .jpg
+     */
+    public List<XWPFPicture> getEmbeddedPictures() {
+       return pictures;
+    }
 
     /**
      * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
@@ -532,6 +590,11 @@ public class XWPFRun {
                  text.append("\n");
               }
            }
+       }
+       
+       // Any picture text?
+       if(pictureText != null && pictureText.length() > 0) {
+          text.append("\n").append(pictureText);
        }
        
        return text.toString();

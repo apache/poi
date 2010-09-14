@@ -64,9 +64,7 @@ public class XWPFParagraph implements IBodyElement{
     protected XWPFDocument document;
     protected List<XWPFRun> runs;
     
-    private StringBuffer pictureText = new StringBuffer();
     private StringBuffer footnoteText = new StringBuffer();
-
 
     public XWPFParagraph(CTP prgrph) {
         this(prgrph, null);
@@ -125,6 +123,7 @@ public class XWPFParagraph implements IBodyElement{
           
           // Check for bits that only apply when
           //  attached to a core document
+          // TODO Make this nicer by tracking the XWPFFootnotes directly
           if(document != null) {
              c = r.newCursor();
              c.selectPath("child::*");
@@ -150,22 +149,6 @@ public class XWPFParagraph implements IBodyElement{
                    footnoteText.append("]");
                 }
              }
-          }
-
-          // Loop over pictures inside our
-          // paragraph, looking for text in them
-          for(CTPicture pict : r.getPictList()) {
-              XmlObject[] t = pict
-                      .selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
-              for (int m = 0; m < t.length; m++) {
-                  NodeList kids = t[m].getDomNode().getChildNodes();
-                  for (int n = 0; n < kids.getLength(); n++) {
-                      if (kids.item(n) instanceof Text) {
-                          pictureText.append("\n");
-                          pictureText.append(kids.item(n).getNodeValue());
-                      }
-                  }
-              }
           }
       }
     }
@@ -196,7 +179,7 @@ public class XWPFParagraph implements IBodyElement{
         for(XWPFRun run : runs) {
            out.append(run.toString());
         }
-        out.append(footnoteText).append(pictureText);
+        out.append(footnoteText);
         return out.toString();
     }
 	
@@ -261,7 +244,11 @@ public class XWPFParagraph implements IBodyElement{
      * Returns any text from any suitable pictures in the paragraph
      */
     public String getPictureText() {
-        return pictureText.toString();
+       StringBuffer out = new StringBuffer();
+       for(XWPFRun run : runs) {
+          out.append(run.getPictureText());
+       }
+       return out.toString();
     }
 
     /**

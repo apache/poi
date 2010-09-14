@@ -120,14 +120,11 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 				XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
 				text.append(decorator.getCommentText()).append('\n');
 				
-				// Do endnotes, footnotes and pictures
-				for(String str : new String[] {
-				      paragraph.getFootnoteText(), paragraph.getPictureText()
-				}) {
-				   if(str != null && str.length() > 0) {
-				      text.append(str + "\n");
-				   }
-				}
+				// Do endnotes and footnotes
+				String footnameText = paragraph.getFootnoteText();
+			   if(footnameText != null && footnameText.length() > 0) {
+			      text.append(footnameText + "\n");
+			   }
 
 				if (ctSectPr!=null) {
 					extractFooters(text, headerFooterPolicy);

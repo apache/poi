@@ -249,4 +249,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals("10", p.getNumID().toString());
     }
     
+    public void testPictures() throws Exception {
+       // TODO
+    }
 }

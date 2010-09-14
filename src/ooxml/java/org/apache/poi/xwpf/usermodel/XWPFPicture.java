@@ -25,13 +25,12 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
 /**
  * @author Philipp Epp
- *
  */
 public class XWPFPicture {
-	private static final POILogger logger = POILogFactory.getLogger(XWPFPicture.class); 
+	private static final POILogger logger = POILogFactory.getLogger(XWPFPicture.class);
+	
 	protected XWPFParagraph paragraph;
 	private CTPicture ctPic;
-	 
 	 
 	 public XWPFParagraph getParagraph(){
 		 return paragraph;
@@ -41,6 +40,7 @@ public class XWPFPicture {
 		 this.paragraph = paragraph;
 		 this.ctPic = ctPic;
 	 }
+	 
 	 /**
 	  * Link Picture with PictureData
 	  * @param rel
@@ -57,9 +57,10 @@ public class XWPFPicture {
     public CTPicture getCTPicture(){
         return ctPic;
     }
+    
     /**
-     * Get the PictureData of the Picture
-     * @return
+     * Get the PictureData of the Picture, if present.
+     * Note - not all kinds of picture have data
      */
     public XWPFPictureData getPictureData(){
     	String blipId = ctPic.getBlipFill().getBlip().getEmbed();
@@ -71,4 +72,4 @@ public class XWPFPicture {
     	return null;
     }
     
-}//end class
+}
