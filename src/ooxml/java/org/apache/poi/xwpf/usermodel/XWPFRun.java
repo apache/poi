@@ -26,6 +26,7 @@ import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -94,9 +95,10 @@ public class XWPFRun {
                  .selectPath("declare namespace pic='http://schemas.openxmlformats.org/drawingml/2006/picture' .//pic:pic");
            for(XmlObject pict : picts) {
               if(pict instanceof org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture) {
-                 pictures.add(new XWPFPicture(
+                 XWPFPicture picture = new XWPFPicture(
                        (org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture)pict, p
-                 ));
+                 );
+                 pictures.add(picture);
               }
            }
         }

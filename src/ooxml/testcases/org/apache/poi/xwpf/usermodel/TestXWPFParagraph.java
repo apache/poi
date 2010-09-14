@@ -38,6 +38,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
+import        org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
+import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
 
 /**
  * Tests for XWPF Paragraphs
@@ -250,6 +253,74 @@ public final class TestXWPFParagraph extends TestCase {
     }
     
     public void testPictures() throws Exception {
-       // TODO
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx");
+       assertEquals(7, doc.getParagraphs().size());
+       
+       XWPFParagraph p;
+       XWPFRun r;
+
+       // Text paragraphs
+       assertEquals("Sheet with various pictures", doc.getParagraphs().get(0).getText());
+       assertEquals("(jpeg, png, wmf, emf and pict) ", doc.getParagraphs().get(1).getText());
+       
+       // Spacer ones
+       assertEquals("", doc.getParagraphs().get(2).getText());
+       assertEquals("", doc.getParagraphs().get(3).getText());
+       assertEquals("", doc.getParagraphs().get(4).getText());
+       
+       // Image one
+       p = doc.getParagraphs().get(5);
+       assertEquals(6, p.getRuns().size());
+
+       r = p.getRuns().get(0);
+       assertEquals("", r.toString());
+       assertEquals(1, r.getEmbeddedPictures().size());
+       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+       assertEquals("image1.wmf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+       r = p.getRuns().get(1);
+       assertEquals("", r.toString());
+       assertEquals(1, r.getEmbeddedPictures().size());
+       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+       assertEquals("image2.png", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+       r = p.getRuns().get(2);
+       assertEquals("", r.toString());
+       assertEquals(1, r.getEmbeddedPictures().size());
+       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+       assertEquals("image3.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+       r = p.getRuns().get(3);
+       assertEquals("", r.toString());
+       assertEquals(1, r.getEmbeddedPictures().size());
+       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+       assertEquals("image4.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+       r = p.getRuns().get(4);
+       assertEquals("", r.toString());
+       assertEquals(1, r.getEmbeddedPictures().size());
+       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+       assertEquals("image5.jpeg", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+       
+       r = p.getRuns().get(5);
+       assertEquals(" ", r.toString());
+       assertEquals(0, r.getEmbeddedPictures().size());
+       
+       // Final spacer
+       assertEquals("", doc.getParagraphs().get(6).getText());
+       
+       
+       // Look in detail at one
+       r = p.getRuns().get(4);
+       XWPFPicture pict = r.getEmbeddedPictures().get(0);
+       CTPicture picture = pict.getCTPicture();
+       assertEquals("rId8", picture.getBlipFill().getBlip().getEmbed());
+       
+       // Ensure that the ooxml compiler finds everything we need
+       r.getCTR().getDrawingArray(0);
+       r.getCTR().getDrawingArray(0).getInlineArray(0);
+       r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic();
+       r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic().getGraphicData();
+       PicDocument pd = new PicDocumentImpl(null);
     }
 }
