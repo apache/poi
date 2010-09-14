@@ -118,6 +118,19 @@ public class XWPFRun {
     public XWPFParagraph getParagraph() {
         return paragraph;
     }
+    
+    /**
+     * For isBold, isItalic etc
+     */
+    private boolean isCTOnOff(CTOnOff onoff) {
+       if(! onoff.isSetVal())
+          return true;
+       if(onoff.getVal() == STOnOff.ON)
+          return true;
+       if(onoff.getVal() == STOnOff.TRUE)
+          return true;
+       return false;
+    }
 
     /**
      * Whether the bold property shall be applied to all non-complex script
@@ -127,7 +140,9 @@ public class XWPFRun {
      */
     public boolean isBold() {
         CTRPr pr = run.getRPr();
-        return pr != null && pr.isSetB();
+        if(pr == null || !pr.isSetB())
+           return false;
+        return isCTOnOff(pr.getB());
     }
 
     /**
@@ -208,7 +223,9 @@ public class XWPFRun {
      */
     public boolean isItalic() {
         CTRPr pr = run.getRPr();
-        return pr != null && pr.isSetI();
+        if(pr == null || !pr.isSetI())
+           return false;
+        return isCTOnOff(pr.getI());
     }
 
     /**
@@ -284,7 +301,9 @@ public class XWPFRun {
      */
     public boolean isStrike() {
         CTRPr pr = run.getRPr();
-        return pr != null && pr.isSetStrike();
+        if(pr == null || !pr.isSetStrike())
+           return false;
+        return isCTOnOff(pr.getStrike());
     }
 
     /**
