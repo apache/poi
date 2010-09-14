@@ -20,6 +20,7 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
@@ -190,7 +191,139 @@ public class TestXWPFRun extends TestCase {
         run.addBreak(BreakType.TEXT_WRAPPING);
         assertEquals(2, run.getCTR().sizeOfBrArray());
     }
-    
 
+    /**
+     * Test that on an existing document, we do the
+     *  right thing with it
+     */
+    public void testExisting() {
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+       XWPFParagraph p;
+       XWPFRun run;
+       
+       
+       // First paragraph is simple
+       p = doc.getParagraphArray(0);
+       assertEquals("This is a test document.", p.getText());
+       assertEquals(2, p.getRuns().size());
+       
+       run = p.getRuns().get(0);
+       assertEquals("This is a test document", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(1);
+       assertEquals(".", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       
+       // Next paragraph is all in one style, but a different one
+       p = doc.getParagraphArray(1);
+       assertEquals("This bit is in bold and italic", p.getText());
+       assertEquals(1, p.getRuns().size());
+       
+       run = p.getRuns().get(0);
+       assertEquals("This bit is in bold and italic", run.toString());
+       assertEquals(true, run.isBold());
+       assertEquals(true, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(true, run.getCTR().getRPr().isSetB());
+       assertEquals(false, run.getCTR().getRPr().getB().isSetVal());
+       
+       
+       // Back to normal
+       p = doc.getParagraphArray(2);
+       assertEquals("Back to normal", p.getText());
+       assertEquals(1, p.getRuns().size());
+       
+       run = p.getRuns().get(0);
+       assertEquals("Back to normal", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       
+       // Different styles in one paragraph
+       p = doc.getParagraphArray(3);
+       assertEquals("This contains BOLD, ITALIC and BOTH, as well as RED and YELLOW text.", p.getText());
+       assertEquals(11, p.getRuns().size());
+       
+       run = p.getRuns().get(0);
+       assertEquals("This contains ", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(1);
+       assertEquals("BOLD", run.toString());
+       assertEquals(true, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       
+       run = p.getRuns().get(2);
+       assertEquals(", ", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(3);
+       assertEquals("ITALIC", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(true, run.isItalic());
+       assertEquals(false, run.isStrike());
+       
+       run = p.getRuns().get(4);
+       assertEquals(" and ", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(5);
+       assertEquals("BOTH", run.toString());
+       assertEquals(true, run.isBold());
+       assertEquals(true, run.isItalic());
+       assertEquals(false, run.isStrike());
+       
+       run = p.getRuns().get(6);
+       assertEquals(", as well as ", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(7);
+       assertEquals("RED", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       
+       run = p.getRuns().get(8);
+       assertEquals(" and ", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+       
+       run = p.getRuns().get(9);
+       assertEquals("YELLOW", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       
+       run = p.getRuns().get(10);
+       assertEquals(" text.", run.toString());
+       assertEquals(false, run.isBold());
+       assertEquals(false, run.isItalic());
+       assertEquals(false, run.isStrike());
+       assertEquals(null, run.getCTR().getRPr());
+    }
 }
-

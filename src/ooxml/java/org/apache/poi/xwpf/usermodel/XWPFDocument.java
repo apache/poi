@@ -1161,7 +1161,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
 	 */
 	public XWPFParagraph getParagraphArray(int pos) {
-		if(pos > 0 && pos < paragraphs.size()){		
+		if(pos >= 0 && pos < paragraphs.size()){		
 			return paragraphs.get(pos);
 		}
 		return null;
