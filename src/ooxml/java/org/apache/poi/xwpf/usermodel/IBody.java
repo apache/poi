@@ -50,6 +50,13 @@ public interface IBody {
 	 * @return
 	 */
 	BodyType getPartType();
+	
+   /**
+    * Returns an Iterator with paragraphs and tables, 
+    *  in the order that they occur in the text.
+    */
+   public List<IBodyElement> getBodyElements();
+
 	/**
 	 * Returns the paragraph(s) that holds
 	 *  the text of the header or footer.

@@ -74,6 +74,15 @@ public class XWPFTableCell implements IBody {
         return ctTc;
     }
 
+    /**
+     * returns an Iterator with paragraphs and tables
+     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
+     * @return
+     */
+    public List<IBodyElement> getBodyElements(){
+      return Collections.unmodifiableList(bodyElements);
+    }
+    
     public void setParagraph(XWPFParagraph p) {
         if (ctTc.sizeOfPArray() == 0) {
             ctTc.addNewP();
