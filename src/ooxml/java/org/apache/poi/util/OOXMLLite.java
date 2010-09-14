@@ -129,10 +129,9 @@ public final class OOXMLLite {
         JarFile jar = new  JarFile(_ooxmlJar);
         for(Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ){
             JarEntry je = e.nextElement();
-            if(je.getName().matches("schemaorg_apache_xmlbeans/system/\\w+/\\w+\\.xsb")){
-                File destFile = new File(_destDest, je.getName());
-                //System.out.println(je.getName() + "  -->  " + destFile);
-                copyFile(jar.getInputStream(je), destFile);
+            if(je.getName().matches("schemaorg_apache_xmlbeans/system/\\w+/\\w+\\.xsb")) {
+                 File destFile = new File(_destDest, je.getName());
+                 copyFile(jar.getInputStream(je), destFile);
             }
         }
         jar.close();

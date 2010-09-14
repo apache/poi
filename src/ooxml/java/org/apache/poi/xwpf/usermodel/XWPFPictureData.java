@@ -93,6 +93,18 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     }
     
     /**
+     * Returns the file name of the image, eg image7.jpg .
+     * The original filename isn't always available, but if it
+     *  can be found it's likely to be in the CTDrawing 
+     */
+    public String getFileName() {
+       String name = getPackagePart().getPartName().getName();
+       if(name == null)
+          return null;
+       return name.substring(name.lastIndexOf('/') + 1);
+    }
+    
+    /**
      * Suggests a file extension for this image.
      *
      * @return the file extension.
@@ -123,6 +135,4 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         }
         return 0;
     }
-    
-    
 }
