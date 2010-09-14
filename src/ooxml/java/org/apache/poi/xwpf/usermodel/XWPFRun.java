@@ -19,12 +19,15 @@ package org.apache.poi.xwpf.usermodel;
 import java.math.BigInteger;
 
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure;
@@ -492,4 +495,45 @@ public class XWPFRun {
         }
     }
 
+    /**
+     * Returns the string version of the text, with tabs and
+     *  carriage returns in place of their xml equivalents.
+     */
+    public String toString() {
+       StringBuffer text = new StringBuffer();
+       
+       // Grab the text and tabs of the text run
+       // Do so in a way that preserves the ordering
+       XmlCursor c = run.newCursor();
+       c.selectPath("./*");
+       while (c.toNextSelection()) {
+           XmlObject o = c.getObject();
+           if (o instanceof CTText) {
+               String tagName = o.getDomNode().getNodeName();
+               // Field Codes (w:instrText, defined in spec sec. 17.16.23)
+               //  come up as instances of CTText, but we don't want them
+               //  in the normal text output
+               if (!"w:instrText".equals(tagName)) {
+                  text.append(((CTText) o).getStringValue());
+               }
+           }
+           if (o instanceof CTPTab) {
+               text.append("\t");
+           }
+           if (o instanceof CTEmpty) {
+              // Some inline text elements get returned not as
+              //  themselves, but as CTEmpty, owing to some odd
+              //  definitions around line 5642 of the XSDs
+              String tagName = o.getDomNode().getNodeName();
+              if ("w:tab".equals(tagName)) {
+                 text.append("\t");
+              }
+              if ("w:cr".equals(tagName)) {
+                 text.append("\n");
+              }
+           }
+       }
+       
+       return text.toString();
+    }
 }

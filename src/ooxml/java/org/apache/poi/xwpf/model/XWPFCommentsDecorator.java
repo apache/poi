@@ -46,6 +46,10 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
 		}
 	}
 
+	public String getCommentText() {
+	   return commentText.toString();
+	}
+	
 	public String getText() {
 		return super.getText() + commentText;
 	}

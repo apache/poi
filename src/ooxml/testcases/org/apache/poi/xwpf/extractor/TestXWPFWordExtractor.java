@@ -96,22 +96,18 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         // Now check contents
-        // TODO - fix once correctly handling contents
         extractor.setFetchHyperlinks(false);
         assertEquals(
-//				"This is a test document\nThis bit is in bold and italic\n" +
-//				"Back to normal\nWe have a hyperlink here, and another.\n",
-                "This is a test document\nThis bit is in bold and italic\n" +
-                        "Back to normal\nWe have a  here, and .hyperlinkanother\n",
+				"This is a test document\nThis bit is in bold and italic\n" +
+				"Back to normal\nWe have a hyperlink here, and another.\n",
                 extractor.getText()
         );
 
+        // One hyperlink is a real one, one is just to the top of page
         extractor.setFetchHyperlinks(true);
         assertEquals(
-//				"This is a test document\nThis bit is in bold and italic\n" +
-//				"Back to normal\nWe have a hyperlink here, and another.\n",
-                "This is a test document\nThis bit is in bold and italic\n" +
-                        "Back to normal\nWe have a  here, and .hyperlink <http://poi.apache.org/>another\n",
+				"This is a test document\nThis bit is in bold and italic\n" +
+				"Back to normal\nWe have a hyperlink <http://poi.apache.org/> here, and another.\n",
                 extractor.getText()
         );
     }
