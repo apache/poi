@@ -144,7 +144,7 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 		policy = oddEven.getHeaderFooterPolicy();
 
 		assertEquals(
-			"[]ODD Page Header text\n\n",
+			"[ODD Page Header text]\n\n",
 			policy.getDefaultHeader().getText()
 		);
 		assertEquals(

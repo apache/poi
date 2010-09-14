@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">Improve handling of Hyperlinks inside XWPFParagraph objects through XWPFHyperlinkRun</action>
+           <action dev="poi-developers" type="fix">Make XWPFParagraph make more use of XWPFRun, and less on internal StringBuffers</action>
            <action dev="poi-developers" type="add">Add a getBodyElements() method to XWPF IBody, to make access to embedded paragraphs and tables easier</action>
            <action dev="poi-developers" type="add">More XSLFRelation entries for common .pptx file parts</action>
            <action dev="poi-developers" type="fix">49872 - avoid exception in XSSFFormulaEvaluator.evaluateInCell when evaluating shared formulas</action>

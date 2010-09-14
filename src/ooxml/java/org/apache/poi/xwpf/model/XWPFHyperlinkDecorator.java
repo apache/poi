@@ -19,15 +19,18 @@ package org.apache.poi.xwpf.model;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 /**
  * Decorator class for XWPFParagraph allowing to add hyperlinks 
  *  found in paragraph to its text.
  *  
- * TODO - add the hyperlink text in the right place, and not just
- *  at the end
+ * Note - adds the hyperlink at the end, not in the right place...
+ *  
+ * @deprecated Use {@link XWPFHyperlinkRun} instead
  */
+@Deprecated
 public class XWPFHyperlinkDecorator extends XWPFParagraphDecorator {
 	private StringBuffer hyperlinkText;
 	
