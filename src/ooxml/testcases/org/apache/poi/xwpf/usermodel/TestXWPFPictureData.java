@@ -20,14 +20,11 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hssf.record.formula.AddPtg;
+import junit.framework.TestCase;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-
-
-import junit.framework.TestCase;
 
 public class TestXWPFPictureData extends TestCase {
 	   public void testRead(){

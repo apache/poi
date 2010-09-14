@@ -18,7 +18,6 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 

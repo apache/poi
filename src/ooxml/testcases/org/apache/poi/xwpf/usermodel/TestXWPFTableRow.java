@@ -17,9 +17,9 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-
 import junit.framework.TestCase;
+
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 
 public class TestXWPFTableRow extends TestCase {
 
