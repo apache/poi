@@ -115,6 +115,7 @@ public final class ParagraphSprmUncompressor
         }
         break;
       case 0x3:
+        // Physical justification of the paragraph
         newPAP.setJc ((byte) sprm.getOperand());
         break;
       case 0x4:
@@ -383,6 +384,9 @@ public final class ParagraphSprmUncompressor
         break;
       case 0x4c:
         newPAP.setFTtpEmbedded((byte)sprm.getOperand());
+        break;
+      case 0x61:
+        // Logicial justification of the paragraph, eg left, centre, right
         break;
       default:
         break;
