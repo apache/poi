@@ -31,7 +31,7 @@
       </p>
       <ul>
           <li><link href="download.html#POI-3.6">The latest stable release is Apache POI 3.6</link></li>
-          <li><link href="download.html#POI-3.7beta1">The latest development release is Apache POI 3.7 Beta 1</link></li>
+          <li><link href="download.html#POI-3.7beta2">The latest development release is Apache POI 3.7 Beta 2</link></li>
           <li><link href="download.html#archive">Archives of all prior releases</link></li>
       </ul>
       <p>
@@ -44,9 +44,9 @@
       </p>
     </section>
 
-    <section id="POI-3.7beta1"><title>20 June 2010 - POI 3.7 beta 1 available</title>
+    <section id="POI-3.7beta2"><title>9 August 2010 - POI 3.7 beta 2 available</title>
       <p>The Apache POI team is pleased to announce the release of 3.7
-        beta 1. This includes a large number of bug fixes, and some
+        beta 2. This includes a large number of bug fixes, and some
         enhancements (especially text extraction). See the
         <link href="http://www.apache.org/dist/poi/release/bin/RELEASE-NOTES.txt">full release notes</link> for more details.
       </p>
@@ -55,33 +55,33 @@
       <p>
         The POI source release as well as the pre-built binary deployment packages are listed below. 
         Pre-built versions of all <link href="index.html#components">POI components</link> are available in the central Maven repository
-        under Group ID "org.apache.poi" and Version "3.7beta1".
+        under Group ID "org.apache.poi" and Version "3.7beta2".
       </p>
       <section><title>Binary Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.7-beta1-20100620.tar.gz">poi-bin-3.7-beta1-20100620.tar.gz</link> (
-          13MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.7-beta1-20100620.tar.gz.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.7-beta2-20100809.tar.gz">poi-bin-3.7-beta2-20100809.tar.gz</link> (
+          13MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.7-beta2-20100809.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 05e464e323c6acfad07c888d3b088332
+          MD5 checksum: 0e3e7c0efa3e3a748564e3f74b7dbd65
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.7-beta1-20100620.zip">poi-bin-3.7-beta1-20100620.zip</link> (
-          18MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.7-beta1-20100620.zip.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.7-beta2-20100809.zip">poi-bin-3.7-beta2-20100809.zip</link> (
+          18MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.7-beta2-20100809.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: 115219d2953971d0103f193255397c2d
+          MD5 checksum: 35549fba56aea989ba7e0a736e5ebe6e
         </li>
       </ul>
       </section>
       <section><title>Source Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.7-beta1-20100620.tar.gz">poi-src-3.7-beta1-20100620.tar.gz</link> (
-          30MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.7-beta1-20100620.tar.gz.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.7-beta2-20100809.tar.gz">poi-src-3.7-beta2-20100809.tar.gz</link> (
+          30MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.7-beta2-20100809.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 2550c128ed61d3d131bcaed609e899c1
+          MD5 checksum: c0deab606c55e184798f5ee83bfa3d22
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.7-beta1-20100620.zip">poi-src-3.7-beta1-20100620.zip</link> (
-          38MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.7-beta1-20100620.zip.asc">signed</link>)
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.7-beta2-20100809.zip">poi-src-3.7-beta2-20100809.zip</link> (
+          38MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.7-beta2-20100809.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: b43af5602bb753b0e2e94f070c4b694d
+          MD5 checksum: 60cfb04a27aaec366a15ff5929c212a8
         </li>
       </ul>
       </section>
