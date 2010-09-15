@@ -29,8 +29,6 @@ import junit.framework.TestCase;
  * Tests to ensure that our ranges end up with
  *  the right text in them, and the right font/styling
  *  properties applied to them.
- *
- * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
 public final class TestRangeProperties extends TestCase {
 	private static final char page_break = (char)12;
@@ -146,6 +144,16 @@ public final class TestRangeProperties extends TestCase {
 		assertEquals("Arial Black", c7.getFontName());
 		assertEquals(22, c1.getFontSize());
 		assertEquals(32, c7.getFontSize());
+		
+		// This document has 15 styles
+		assertEquals(15, a.getStyleSheet().numStyles());
+		
+		// Ensure none of the paragraphs refer to one that isn't there,
+		//  and none of their character runs either
+		for(int i=0; i<a.getRange().numParagraphs(); i++) {
+		   Paragraph p = a.getRange().getParagraph(i);
+		   assertTrue(p.getStyleIndex() < 15);
+		}
 	}
 
 	/**
@@ -360,5 +368,15 @@ public final class TestRangeProperties extends TestCase {
 				p1_parts[6].length() + 1,
 				c7b.getEndOffset()
 		);
+      
+      // This document has 15 styles
+      assertEquals(15, a.getStyleSheet().numStyles());
+      
+      // Ensure none of the paragraphs refer to one that isn't there,
+      //  and none of their character runs either
+      for(int i=0; i<a.getRange().numParagraphs(); i++) {
+         Paragraph p = a.getRange().getParagraph(i);
+         assertTrue(p.getStyleIndex() < 15);
+      }
 	}
 }
