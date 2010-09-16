@@ -305,6 +305,7 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(0, cell.getStartOffset());
       assertEquals(13, cell.getEndOffset());
       assertEquals("Row 1/Cell 1\u0007", cell.text());
+      assertEquals("Row 1/Cell 1\u0007", cell.getParagraph(0).text());
 
       cell = row.getCell(1);
       assertEquals(1, cell.numParagraphs());
@@ -313,6 +314,7 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(13, cell.getStartOffset());
       assertEquals(26, cell.getEndOffset());
       assertEquals("Row 1/Cell 2\u0007", cell.text());
+      assertEquals("Row 1/Cell 2\u0007", cell.getParagraph(0).text());
 
       cell = row.getCell(2);
       assertEquals(1, cell.numParagraphs());
@@ -321,6 +323,7 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(26, cell.getStartOffset());
       assertEquals(39, cell.getEndOffset());
       assertEquals("Row 1/Cell 3\u0007", cell.text());
+      assertEquals("Row 1/Cell 3\u0007", cell.getParagraph(0).text());
 
 
       // Onto row #2
