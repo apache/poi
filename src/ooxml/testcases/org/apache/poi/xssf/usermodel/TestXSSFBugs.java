@@ -26,7 +26,16 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -429,6 +438,84 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("sale_1*sale_2", cell.getCellFormula());
         assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+    }
+    
+    /**
+     * Creating a rich string of "hello world" and applying
+     *  a font to characters 1-5 means we have two strings,
+     *  "hello" and " world". As such, we need to apply
+     *  preserve spaces to the 2nd bit, lest we end up
+     *  with something like "helloworld" !
+     */
+    public void test49941() throws Exception {
+       XSSFWorkbook wb = new XSSFWorkbook();
+       XSSFSheet s = wb.createSheet();
+       XSSFRow r = s.createRow(0);
+       XSSFCell c = r.createCell(0);
+       
+       // First without fonts
+       c.setCellValue(
+             new XSSFRichTextString(" with spaces ")
+       );
+       assertEquals(" with spaces ", c.getRichStringCellValue().toString());
+       assertEquals(0, c.getRichStringCellValue().getCTRst().sizeOfRArray());
+       assertEquals(true, c.getRichStringCellValue().getCTRst().isSetT());
+       // Should have the preserve set
+       assertEquals(
+             1,
+             c.getRichStringCellValue().getCTRst().xgetT().getDomNode().getAttributes().getLength()
+       );
+       assertEquals(
+             "preserve",
+             c.getRichStringCellValue().getCTRst().xgetT().getDomNode().getAttributes().item(0).getNodeValue()
+       );
+       
+       // Save and check
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       s = wb.getSheetAt(0);
+       r = s.getRow(0);
+       c = r.getCell(0);
+       assertEquals(" with spaces ", c.getRichStringCellValue().toString());
+       assertEquals(0, c.getRichStringCellValue().getCTRst().sizeOfRArray());
+       assertEquals(true, c.getRichStringCellValue().getCTRst().isSetT());
+       
+       // Change the string
+       c.setCellValue(
+             new XSSFRichTextString("hello world")
+       );
+       assertEquals("hello world", c.getRichStringCellValue().toString());
+       // Won't have preserve
+       assertEquals(
+             0,
+             c.getRichStringCellValue().getCTRst().xgetT().getDomNode().getAttributes().getLength()
+       );
+       
+       // Apply a font
+       XSSFFont f = wb.createFont();
+       f.setBold(true);
+       c.getRichStringCellValue().applyFont(0, 5, f);
+       assertEquals("hello world", c.getRichStringCellValue().toString());
+       // Does need preserving on the 2nd part
+       assertEquals(2, c.getRichStringCellValue().getCTRst().sizeOfRArray());
+       assertEquals(
+             0,
+             c.getRichStringCellValue().getCTRst().getRArray(0).xgetT().getDomNode().getAttributes().getLength()
+       );
+       assertEquals(
+             1,
+             c.getRichStringCellValue().getCTRst().getRArray(1).xgetT().getDomNode().getAttributes().getLength()
+       );
+       assertEquals(
+             "preserve",
+             c.getRichStringCellValue().getCTRst().getRArray(1).xgetT().getDomNode().getAttributes().item(0).getNodeValue()
+       );
+       
+       // Save and check
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       s = wb.getSheetAt(0);
+       r = s.getRow(0);
+       c = r.getCell(0);
+       assertEquals("hello world", c.getRichStringCellValue().toString());
     }
     
     /**

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">49941 - Correctly handle space preservation of XSSFRichTextRuns when applying fonts to parts of the string</action>
            <action dev="poi-developers" type="fix">Correct XWPFRun detection of bold/italic in a paragraph with multiple runs of different styles</action>
            <action dev="poi-developers" type="add">Link XWPFPicture to XWPFRun, so that embedded pictures can be access from where they live in the text stream</action>
            <action dev="poi-developers" type="fix">Improve handling of Hyperlinks inside XWPFParagraph objects through XWPFHyperlinkRun</action>
