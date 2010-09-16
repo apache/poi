@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -427,6 +429,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("sale_1*sale_2", cell.getCellFormula());
         assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+    }
+    
+    /**
+     * Repeatedly writing the same file which has styles
+     * TODO Currently failing
+     */
+    public void DISABLEDtest49940() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
+       assertEquals(3, wb.getNumberOfSheets());
+       assertEquals(10, wb.getStylesSource().getNumCellStyles());
+       
+       ByteArrayOutputStream b1 = new ByteArrayOutputStream();
+       ByteArrayOutputStream b2 = new ByteArrayOutputStream();
+       ByteArrayOutputStream b3 = new ByteArrayOutputStream();
+       wb.write(b1);
+       wb.write(b2);
+       wb.write(b3);
+       
+       for(byte[] data : new byte[][] {
+             b1.toByteArray(), b2.toByteArray(), b3.toByteArray()
+       }) {
+          ByteArrayInputStream bais = new ByteArrayInputStream(data);
+          wb = new XSSFWorkbook(bais);
+          assertEquals(3, wb.getNumberOfSheets());
+          assertEquals(10, wb.getStylesSource().getNumCellStyles());
+       }
     }
 
 }
