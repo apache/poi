@@ -193,6 +193,7 @@ public class XSSFRichTextString implements RichTextString {
                 c.setT(txt);
                 runs.add(c);
                 pos += txt.length();
+                preserveSpaces(c.xgetT());
             }
         }
 
