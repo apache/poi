@@ -21,6 +21,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.StyleSheet;
 
 /**
@@ -231,6 +232,27 @@ public final class TestProblems extends HWPFTestCase {
             assertEquals(offset, para.text().indexOf(shorter));
          }
       }
+   }
+   
+   /**
+    * Bug #49936 - Problems with reading the header out of
+    *  the Header Stories
+    */
+   public void testProblemHeaderStories49936() throws Exception {
+      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("HeaderFooterProblematic.doc");
+      HeaderStories hs = new HeaderStories(doc);
+      
+      assertEquals("", hs.getFirstHeader());
+      assertEquals("\r", hs.getEvenHeader());
+      assertEquals("", hs.getOddHeader());
+      
+      assertEquals("", hs.getFirstFooter());
+      assertEquals("", hs.getEvenFooter());
+      assertEquals("", hs.getOddFooter());
+      
+      WordExtractor ext = new WordExtractor(doc);
+      assertEquals("\n", ext.getHeaderText());
+      assertEquals("", ext.getFooterText());
    }
 
    /**
