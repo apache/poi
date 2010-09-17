@@ -216,6 +216,8 @@ public class TextPieceTable implements CharIndexTranslator {
 
             if (bytePos< pieceStart || bytePos > pieceEnd) {
                 toAdd = bytesLength;
+            } else if (bytePos > pieceStart && bytePos < pieceEnd) {
+               toAdd = (bytePos - pieceStart);
             } else {
                 toAdd = bytesLength - (pieceEnd - bytePos);
             }

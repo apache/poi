@@ -34,6 +34,7 @@ public final class OldSectionTable extends SectionTable
                       TextPieceTable tpt)
   {
     PlexOfCps sedPlex = new PlexOfCps(documentStream, offset, size, 12);
+    CharIsBytes charConv = new CharIsBytes(tpt);
 
     int length = sedPlex.length();
 
@@ -49,7 +50,7 @@ public final class OldSectionTable extends SectionTable
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, startAt, endAt, tpt, new byte[0]));
+        _sections.add(new SEPX(sed, startAt, endAt, charConv, new byte[0]));
       }
       else
       {
@@ -58,8 +59,32 @@ public final class OldSectionTable extends SectionTable
         byte[] buf = new byte[sepxSize];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, startAt, endAt, tpt, buf));
+        _sections.add(new SEPX(sed, startAt, endAt, charConv, buf));
       }
     }
+  }
+  
+  private static class CharIsBytes implements CharIndexTranslator {
+     private TextPieceTable tpt;
+     private CharIsBytes(TextPieceTable tpt) {
+        this.tpt = tpt;
+     }
+
+     public int getCharIndex(int bytePos, int startCP) {
+        return bytePos;
+     }
+     public int getCharIndex(int bytePos) {
+        return bytePos;
+     }
+
+     public boolean isIndexInTable(int bytePos) {
+        return tpt.isIndexInTable(bytePos);
+     }
+     public int lookIndexBackward(int bytePos) {
+        return tpt.lookIndexBackward(bytePos);
+     }
+     public int lookIndexForward(int bytePos) {
+        return tpt.lookIndexForward(bytePos);
+     }
   }
 }
