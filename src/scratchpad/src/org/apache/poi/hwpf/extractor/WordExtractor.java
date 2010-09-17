@@ -245,22 +245,22 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 	 *  but slightly slower than getTextFromPieces().
 	 */
 	public String getText() {
-		StringBuffer ret = new StringBuffer();
+	   StringBuffer ret = new StringBuffer();
 
-		ret.append(getHeaderText());
+	   ret.append(getHeaderText());
 
-                ArrayList<String> text = new ArrayList<String>();
-                text.addAll(Arrays.asList(getParagraphText()));
-                text.addAll(Arrays.asList(getFootnoteText()));
-                text.addAll(Arrays.asList(getEndnoteText()));
+	   ArrayList<String> text = new ArrayList<String>();
+	   text.addAll(Arrays.asList(getParagraphText()));
+	   text.addAll(Arrays.asList(getFootnoteText()));
+	   text.addAll(Arrays.asList(getEndnoteText()));
 
-		for(String p : text) {
-			ret.append(p);
-		}
+	   for(String p : text) {
+	      ret.append(p);
+	   }
 
-		ret.append(getFooterText());
+	   ret.append(getFooterText());
 
-		return ret.toString();
+	   return ret.toString();
 	}
 
 	/**

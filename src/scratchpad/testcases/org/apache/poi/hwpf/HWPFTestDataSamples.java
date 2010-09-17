@@ -17,6 +17,7 @@
 package org.apache.poi.hwpf;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.*;
 
@@ -30,6 +31,14 @@ public class HWPFTestDataSamples {
             throw new RuntimeException(e);
         }
     }
+    public static HWPFOldDocument openOldSampleFile(String sampleFileName) {
+       try {
+           InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
+           return new HWPFOldDocument(new POIFSFileSystem(is));
+       } catch (IOException e) {
+           throw new RuntimeException(e);
+       }
+   }
     /**
      * Writes a spreadsheet to a <tt>ByteArrayOutputStream</tt> and reads it back
      * from a <tt>ByteArrayInputStream</tt>.<p/>

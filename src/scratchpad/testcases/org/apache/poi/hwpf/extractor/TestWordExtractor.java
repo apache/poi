@@ -52,7 +52,7 @@ public final class TestWordExtractor extends TestCase {
 
 	// Well behaved document
 	private WordExtractor extractor;
-	// Corrupted document - can't do paragraph based stuff
+	// Slightly iffy document
 	private WordExtractor extractor2;
 	// A word doc embeded in an excel file
 	private String filename3;
@@ -93,8 +93,11 @@ public final class TestWordExtractor extends TestCase {
 			assertEquals(p_text1[i], text[i]);
 		}
 
-		// On second one, should fall back
-		assertEquals(1, extractor2.getParagraphText().length);
+		// Lots of paragraphs with only a few lines in them
+		assertEquals(24, extractor2.getParagraphText().length);
+		assertEquals("as d\r\n", extractor2.getParagraphText()[16]);
+      assertEquals("as d\r\n", extractor2.getParagraphText()[17]);
+      assertEquals("as d\r\n", extractor2.getParagraphText()[18]);
 	}
 
 	/**
@@ -103,8 +106,11 @@ public final class TestWordExtractor extends TestCase {
 	public void testGetText() {
 		assertEquals(p_text1_block, extractor.getText());
 
-		// On second one, should fall back to text piece
-		assertEquals(extractor2.getTextFromPieces(), extractor2.getText());
+		// For the 2nd, should give similar answers for
+		//  the two methods, differing only in line endings
+		assertEquals(
+		      extractor2.getTextFromPieces().replaceAll("[\\r\\n]", ""), 
+		      extractor2.getText().replaceAll("[\\r\\n]", ""));
 	}
 
 	/**

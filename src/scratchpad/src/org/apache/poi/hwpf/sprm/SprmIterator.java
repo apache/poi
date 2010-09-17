@@ -37,7 +37,8 @@ public final class SprmIterator
 
   public boolean hasNext()
   {
-    return _offset < _grpprl.length;
+    // A Sprm is at least 2 bytes long
+    return _offset < (_grpprl.length-1);
   }
 
   public SprmOperation next()
