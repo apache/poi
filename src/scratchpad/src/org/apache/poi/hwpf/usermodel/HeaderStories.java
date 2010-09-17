@@ -157,10 +157,18 @@ public final class HeaderStories {
 			// Empty story
 			return "";
 		}
+		if(prop.getEnd() < prop.getStart()) {
+		   // Broken properties?
+		   return "";
+		}
+
+		// Ensure we're getting a sensible length
+		String rawText = headerStories.text();
+		int start = Math.min(prop.getStart(), rawText.length());
+		int end = Math.min(prop.getEnd(), rawText.length());
 
 		// Grab the contents
-		String text =
-			headerStories.text().substring(prop.getStart(), prop.getEnd());
+		String text = rawText.substring(start, end);
 
 		// Strip off fields and macros if requested
 		if(stripFields) {
