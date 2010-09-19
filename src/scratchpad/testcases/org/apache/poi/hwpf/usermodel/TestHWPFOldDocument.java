@@ -119,4 +119,24 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
       assertEquals("\u000c", doc.getRange().getParagraph(4).text()); // Section line?
       assertEquals("\r", doc.getRange().getParagraph(5).text());
    }
+   
+   /**
+    * Another word document with sections, this time with a 
+    *  few more section properties set on it
+    */
+   public void testWord6Sections2() throws Exception {
+      HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Word6_sections2.doc");
+      
+      assertEquals(1, doc.getRange().numSections());
+      assertEquals(57, doc.getRange().numParagraphs());
+      
+      assertEquals(
+            "\r",
+            doc.getRange().getParagraph(0).text()
+      );
+      assertEquals(
+            "STATEMENT  OF  INSOLVENCY  PRACTICE  10  (SCOTLAND)\r",
+            doc.getRange().getParagraph(1).text()
+      );
+   }
 }
