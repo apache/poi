@@ -258,6 +258,16 @@ public final class StyleSheet implements HDFType {
       CharacterProperties chp = sd.getCHP();
       byte[] chpx = sd.getCHPX();
       int baseIndex = sd.getBaseStyle();
+      
+      if(baseIndex == istd) {
+         // Oh dear, this isn't allowed...
+         // The word file seems to be corrupted
+         // Switch to using the nil style so that
+         //  there's a chance we can read it
+         baseIndex = NIL_STYLE;
+      }
+      
+      // Build and decompress the Chp if required 
       if(chp == null && chpx != null)
       {
           CharacterProperties parentCHP = new CharacterProperties();
