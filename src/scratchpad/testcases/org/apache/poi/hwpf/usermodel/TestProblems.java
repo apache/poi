@@ -254,6 +254,17 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals("\n", ext.getHeaderText());
       assertEquals("", ext.getFooterText());
    }
+   
+   /**
+    * Bug #45877 - problematic PAPX with no parent set
+    */
+   public void testParagraphPAPXNoParent45877() throws Exception {
+      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug45877.doc");
+      assertEquals(17, doc.getRange().numParagraphs());
+      
+      assertEquals("First paragraph\r", doc.getRange().getParagraph(0).text());
+      assertEquals("After Crashing Part\r", doc.getRange().getParagraph(13).text());
+   }
 
    /**
     * Bug #48245 - don't include the text from the
