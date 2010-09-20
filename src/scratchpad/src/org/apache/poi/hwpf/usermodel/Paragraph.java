@@ -435,14 +435,19 @@ public class Paragraph extends Range implements Cloneable {
   }
 
   public int getIlfo()
-   {
+  {
      return _props.getIlfo();
-   }
+  }
 
-   public int getIlvl()
-   {
+  public int getIlvl()
+  {
      return _props.getIlvl();
-   }
+  }
+
+  public int getLvl()
+  {
+     return _props.getLvl();
+  }
 
   void setTableRowEnd(TableProperties props)
   {

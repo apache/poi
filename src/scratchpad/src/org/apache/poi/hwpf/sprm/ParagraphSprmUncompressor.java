@@ -337,11 +337,12 @@ public final class ParagraphSprmUncompressor
         }
         break;
       case 0x40:
-
-        //newPAP._lvl = param;
-        if (newPAP.getIstd () >= 1 && newPAP.getIstd () <= 9)
+        // This condition commented out, as Word seems to set outline levels even for 
+        //  paragraph with other styles than Heading 1..9, even though specification 
+        //  does not say so. See bug 49820 for discussion.
+        //if (newPAP.getIstd () < 1 && newPAP.getIstd () > 9)
         {
-          newPAP.setIlvl ((byte) sprm.getOperand());
+          newPAP.setLvl ((byte) sprm.getOperand());
         }
         break;
       case 0x41:
