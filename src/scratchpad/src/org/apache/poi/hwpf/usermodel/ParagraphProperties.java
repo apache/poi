@@ -35,7 +35,7 @@ public final class ParagraphProperties extends PAPAbstractType implements Clonea
     this.field_17_fWidowControl = 1;
     this.field_21_lspd.setMultiLinespace((short)1);
     this.field_21_lspd.setDyaLine((short)240);
-    this.field_12_ilvl = (byte)9;
+    this.field_58_lvl = (byte)9;
     this.field_66_rgdxaTab = new int[0];
     this.field_67_rgtbd = new byte[0];
     this.field_63_dttmPropRMark = new DateAndTime();
