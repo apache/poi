@@ -19,16 +19,25 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 
 public class TestXSSFCellStyle extends TestCase {
@@ -586,12 +595,85 @@ public class TestXSSFCellStyle extends TestCase {
 	 * Cloning one XSSFCellStyle onto Another, same XSSFWorkbook
 	 */
 	public void testCloneStyleSameWB() {
-		// TODO
+      XSSFWorkbook wb = new XSSFWorkbook();
+      assertEquals(1, wb.getNumberOfFonts());
+      
+      XSSFFont fnt = wb.createFont();
+      fnt.setFontName("TestingFont");
+      assertEquals(2, wb.getNumberOfFonts());
+      
+      XSSFCellStyle orig = wb.createCellStyle();
+      orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+      orig.setFont(fnt);
+      orig.setDataFormat((short)18);
+      
+      assertTrue(HSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
+      assertTrue(fnt == orig.getFont());
+      assertTrue(18 == orig.getDataFormat());
+      
+      XSSFCellStyle clone = wb.createCellStyle();
+      assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+      assertFalse(fnt == clone.getFont());
+      assertFalse(18 == clone.getDataFormat());
+      
+      clone.cloneStyleFrom(orig);
+      assertTrue(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+      assertTrue(fnt == clone.getFont());
+      assertTrue(18 == clone.getDataFormat());
+      assertEquals(2, wb.getNumberOfFonts());
 	}
 	/**
 	 * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
 	 */
 	public void testCloneStyleDiffWB() {
-		// TODO
-	}
+       XSSFWorkbook wbOrig = new XSSFWorkbook();
+       assertEquals(1, wbOrig.getNumberOfFonts());
+       assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
+       
+       XSSFFont fnt = wbOrig.createFont();
+       fnt.setFontName("TestingFont");
+       assertEquals(2, wbOrig.getNumberOfFonts());
+       assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
+       
+       XSSFDataFormat fmt = wbOrig.createDataFormat();
+       fmt.getFormat("MadeUpOne");
+       fmt.getFormat("MadeUpTwo");
+       
+       XSSFCellStyle orig = wbOrig.createCellStyle();
+       orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+       orig.setFont(fnt);
+       orig.setDataFormat(fmt.getFormat("Test##"));
+       
+       assertTrue(XSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
+       assertTrue(fnt == orig.getFont());
+       assertTrue(fmt.getFormat("Test##") == orig.getDataFormat());
+       
+       assertEquals(2, wbOrig.getNumberOfFonts());
+       assertEquals(3, wbOrig.getStylesSource().getNumberFormats().size());
+       
+       
+       // Now a style on another workbook
+       XSSFWorkbook wbClone = new XSSFWorkbook();
+       assertEquals(1, wbClone.getNumberOfFonts());
+       assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
+       
+       XSSFDataFormat fmtClone = wbClone.createDataFormat();
+       XSSFCellStyle clone = wbClone.createCellStyle();
+       
+       assertEquals(1, wbClone.getNumberOfFonts());
+       assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
+       
+       assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+       assertFalse("TestingFont" == clone.getFont().getFontName());
+       
+       clone.cloneStyleFrom(orig);
+       
+       assertEquals(2, wbClone.getNumberOfFonts());
+       assertEquals(1, wbClone.getStylesSource().getNumberFormats().size());
+       
+       assertEquals(HSSFCellStyle.ALIGN_RIGHT, clone.getAlignment());
+       assertEquals("TestingFont", clone.getFont().getFontName());
+       assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
+       assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
+   }
 }

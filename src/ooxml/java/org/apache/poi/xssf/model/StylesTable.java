@@ -183,6 +183,8 @@ public class StylesTable extends POIXMLDocumentPart {
 	 *  registration is requested.
 	 * This allows people to create several fonts
 	 *  then customise them later.
+	 * Note - End Users probably want to call
+	 *  {@link XSSFFont#registerTo(StylesTable)}
 	 */
 	public int putFont(XSSFFont font, boolean forceRegistration) {
 		int idx = -1;
@@ -193,8 +195,10 @@ public class StylesTable extends POIXMLDocumentPart {
 		if (idx != -1) {
 			return idx;
 		}
+		
+		idx = fonts.size();
 		fonts.add(font);
-		return fonts.size() - 1;
+		return idx;
 	}
 	public int putFont(XSSFFont font) {
 		return putFont(font, false);

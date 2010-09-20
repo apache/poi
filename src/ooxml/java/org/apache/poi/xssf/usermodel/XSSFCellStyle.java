@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -31,11 +32,13 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
@@ -132,8 +135,44 @@ public class XSSFCellStyle implements CellStyle {
     public void cloneStyleFrom(CellStyle source) {
         if(source instanceof XSSFCellStyle) {
             XSSFCellStyle src = (XSSFCellStyle)source;
-            _cellXf.set(src.getCoreXf());
-            _cellStyleXf.set(src.getStyleXf());
+            
+            // Is it on our Workbook?
+            if(src._stylesSource == _stylesSource) {
+               // Nice and easy
+               _cellXf.set(src.getCoreXf());
+               _cellStyleXf.set(src.getStyleXf());
+            } else {
+               // Copy the style
+               try {
+                  _cellXf = CTXf.Factory.parse(
+                        src.getCoreXf().toString()
+                  );
+               } catch(XmlException e) {
+                  throw new POIXMLException(e);
+               }
+               
+               // Copy the format
+               String fmt = src.getDataFormatString();
+               setDataFormat(
+                     (new XSSFDataFormat(_stylesSource)).getFormat(fmt)
+               );
+               
+               // Copy the font
+               try {
+                  CTFont ctFont = CTFont.Factory.parse(
+                        src.getFont().getCTFont().toString()
+                  );
+                  XSSFFont font = new XSSFFont(ctFont);
+                  font.registerTo(_stylesSource);
+                  setFont(font);
+               } catch(XmlException e) {
+                  throw new POIXMLException(e);
+               }
+            }
+            
+            // Clear out cached details
+            _font = null;
+            _cellAlignment = null;
         } else {
             throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
         }
