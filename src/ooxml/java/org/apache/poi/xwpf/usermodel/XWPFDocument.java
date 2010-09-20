@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -994,13 +995,12 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public int addPicture(InputStream is, int format) throws IOException, InvalidFormatException {
         int imageNumber = getNextPicNameNumber(format);
-        XWPFPictureData img = (XWPFPictureData)createRelationship(XWPFPictureData.RELATIONS[format], XWPFFactory.getInstance(), imageNumber, true);
+        XWPFPictureData img = (XWPFPictureData)createRelationship(XWPFPictureData.RELATIONS[format], XWPFFactory.getInstance(), imageNumber, false);
         OutputStream out = img.getPackagePart().getOutputStream();
         IOUtils.copy(is, out);
         out.close();
         pictures.add(img);
         return getAllPictures().size()-1;
-       
     }
     
     /**
@@ -1013,18 +1013,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @throws InvalidFormatException 
      */
     public int addPicture(byte[] pictureData, int format) throws InvalidFormatException {
-        int imageNumber = getNextPicNameNumber(format);
-        XWPFPictureData img = (XWPFPictureData)createRelationship(XWPFPictureData.RELATIONS[format], XWPFFactory.getInstance(), imageNumber, false);
         try {
-            OutputStream out = img.getPackagePart().getOutputStream();
-            out.write(pictureData);
-            out.close();
+           return addPicture(new ByteArrayInputStream(pictureData), format);
         } catch (IOException e){
             throw new POIXMLException(e);
         }
-        
-        pictures.add(img);
-        return getAllPictures().size()-1;
     }
     
     /**
@@ -1064,48 +1057,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 		return null;	    	
     }
     
-    /**
-     * Add the picture to  drawing relations
-     *
-     * @param img the PictureData of the Picture,
-     * @throws InvalidFormatException 
-     */
-    public PackageRelationship addPictureReference(byte[] pictureData, int format) throws InvalidFormatException{
-    	int imageNumber = getNextPicNameNumber(format);
-        XWPFPictureData img = (XWPFPictureData)createRelationship(XWPFPictureData.RELATIONS[format], XWPFFactory.getInstance(), imageNumber, false);
-        PackageRelationship rel = null;
-        try {
-            OutputStream out = img.getPackagePart().getOutputStream();
-            out.write(pictureData);
-             out.close();
-             rel = img.getPackageRelationship();
-             pictures.add(img);
-         } catch (IOException e){
-             throw new POIXMLException(e);
-         }
-          return rel;
-    }
-          
-      /**
-       * Add the picture to  drawing relations
-       *
-       * @param img the PictureData of the Picture,
-     * @throws InvalidFormatException 
-     * @throws IOException 
-       */
-      public PackageRelationship addPictureReference(InputStream is, int format) throws InvalidFormatException, IOException{
-    	  
-    	  PackageRelationship rel = null;
-    	  int imageNumber = getNextPicNameNumber(format);
-    	  XWPFPictureData img = (XWPFPictureData)createRelationship(XWPFPictureData.RELATIONS[format], XWPFFactory.getInstance(), imageNumber, false);
-    	  OutputStream out = img.getPackagePart().getOutputStream();
-    	  IOUtils.copy(is, out);
-    	  out.close();
-    	  rel = img.getPackageRelationship();
-    	  pictures.add(img);
-        return rel;      
-      }
-	
     /**
      *  getNumbering
      * @return numbering

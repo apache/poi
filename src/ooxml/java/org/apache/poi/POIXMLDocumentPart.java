@@ -230,7 +230,9 @@ public class POIXMLDocumentPart {
         try {
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
-            if(!noRelation) rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
+            if(!noRelation) {
+               rel = packagePart.addRelationship(ppName, TargetMode.INTERNAL, descriptor.getRelation());
+            }
             PackagePart part = packagePart.getPackage().createPart(ppName, descriptor.getContentType());
             POIXMLDocumentPart doc = factory.newDocumentPart(descriptor);
             doc.packageRel = rel;
