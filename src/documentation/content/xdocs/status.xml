@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">49931 - Avoid concurrency problems when re-ordering multiple HSSF header records for a PageSettingsBlock</action>
            <action dev="poi-developers" type="fix">49765 - Fix XWPFDocument.addPicture so that it correctly sets up relationships</action>
            <action dev="poi-developers" type="fix">48018 - Improve HWPF handling of lists in documents read and then saved, by preserving order better</action>
            <action dev="poi-developers" type="fix">49820 - Fix HWPF paragraph levels, so that outline levels can be properly fetched</action>

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
@@ -639,7 +640,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Some apps can define multiple HeaderFooterRecord records for a sheet.
-     * When saving such a file Excel 2007 re-positiones them according to the followig rules:
+     * When saving such a file Excel 2007 re-positions them according to the following rules:
      *  - take a HeaderFooterRecord and read 16-byte GUID at offset 12. If it is zero,
      *    it means the current sheet and the given HeaderFooterRecord belongs to this PageSettingsBlock
      *  - If GUID is not zero then search in preceding CustomViewSettingsRecordAggregates.
@@ -649,10 +650,13 @@ public final class PageSettingsBlock extends RecordAggregate {
      * @param sheetRecords the list of sheet records read so far
      */
     public void positionRecords(List<RecordBase> sheetRecords) {
+        // Take a copy to loop over, so we can update the real one
+        //  without concurrency issues
+        List<HeaderFooterRecord> hfRecordsToIterate = new ArrayList<HeaderFooterRecord>(_sviewHeaderFooters);
+       
         // loop through HeaderFooterRecord records having not-empty GUID and match them with
         // CustomViewSettingsRecordAggregate blocks having UserSViewBegin with the same GUID
-        for (final Iterator<HeaderFooterRecord> it = _sviewHeaderFooters.iterator(); it.hasNext(); ) {
-            final HeaderFooterRecord hf = it.next();
+        for(final HeaderFooterRecord hf : hfRecordsToIterate) {
             for (RecordBase rb : sheetRecords) {
                 if (rb instanceof CustomViewSettingsRecordAggregate) {
                     final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
@@ -663,7 +667,7 @@ public final class PageSettingsBlock extends RecordAggregate {
                                 byte[] guid2 = hf.getGuid();
                                 if (Arrays.equals(guid1, guid2)) {
                                     cv.append(hf);
-                                    it.remove();
+                                    _sviewHeaderFooters.remove(hf);
                                 }
                             }
                         }
