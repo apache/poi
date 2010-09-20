@@ -17,19 +17,22 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import org.apache.poi.hwpf.model.io.*;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * @author Ryan Ackley
@@ -40,8 +43,8 @@ public final class ListTables
   private static final int LIST_FORMAT_OVERRIDE_SIZE = 16;
   private static POILogger log = POILogFactory.getLogger(ListTables.class);
 
-  HashMap _listMap = new HashMap();
-  ArrayList _overrideList = new ArrayList();
+  ListMap _listMap = new ListMap();
+  ArrayList<ListFormatOverride> _overrideList = new ArrayList<ListFormatOverride>();
 
   public ListTables()
   {
@@ -109,22 +112,17 @@ public final class ListTables
   public void writeListDataTo(HWPFOutputStream tableStream)
     throws IOException
   {
-
-    Integer[] intList = (Integer[])_listMap.keySet().toArray(new Integer[0]);
+    int listSize = _listMap.size();
 
     // use this stream as a buffer for the levels since their size varies.
     ByteArrayOutputStream levelBuf = new ByteArrayOutputStream();
 
-    // use a byte array for the lists because we know their size.
-    byte[] listBuf = new byte[intList.length * LIST_DATA_SIZE];
-
     byte[] shortHolder = new byte[2];
-    LittleEndian.putShort(shortHolder, (short)intList.length);
+    LittleEndian.putShort(shortHolder, (short)listSize);
     tableStream.write(shortHolder);
 
-    for (int x = 0; x < intList.length; x++)
-    {
-      ListData lst = (ListData)_listMap.get(intList[x]);
+    for(Integer x : _listMap.sortedKeys()) {
+      ListData lst = _listMap.get(x);
       tableStream.write(lst.toByteArray());
       ListLevel[] lvls = lst.getLevels();
       for (int y = 0; y < lvls.length; y++)
@@ -150,7 +148,7 @@ public final class ListTables
 
     for (int x = 0; x < size; x++)
     {
-      ListFormatOverride lfo = (ListFormatOverride)_overrideList.get(x);
+      ListFormatOverride lfo = _overrideList.get(x);
       tableStream.write(lfo.toByteArray());
       ListFormatOverrideLevel[] lfolvls = lfo.getLevelOverrides();
       for (int y = 0; y < lfolvls.length; y++)
@@ -164,7 +162,7 @@ public final class ListTables
 
   public ListFormatOverride getOverride(int lfoIndex)
   {
-    return (ListFormatOverride)_overrideList.get(lfoIndex - 1);
+    return _overrideList.get(lfoIndex - 1);
   }
 
   public int getOverrideIndexFromListID(int lstid)
@@ -173,7 +171,7 @@ public final class ListTables
     int size = _overrideList.size();
     for (int x = 0; x < size; x++)
     {
-      ListFormatOverride next = (ListFormatOverride)_overrideList.get(x);
+      ListFormatOverride next = _overrideList.get(x);
       if (next.getLsid() == lstid)
       {
         // 1-based index I think
@@ -190,7 +188,7 @@ public final class ListTables
 
   public ListLevel getLevel(int listID, int level)
   {
-    ListData lst = (ListData)_listMap.get(Integer.valueOf(listID));
+    ListData lst = _listMap.get(Integer.valueOf(listID));
     if(level < lst.numLevels()) {
     	ListLevel lvl = lst.getLevels()[level];
     	return lvl;
@@ -201,7 +199,7 @@ public final class ListTables
 
   public ListData getListData(int listID)
   {
-    return (ListData) _listMap.get(Integer.valueOf(listID));
+    return _listMap.get(Integer.valueOf(listID));
   }
 
   public boolean equals(Object obj)
@@ -215,12 +213,12 @@ public final class ListTables
 
     if (_listMap.size() == tables._listMap.size())
     {
-      Iterator it = _listMap.keySet().iterator();
+      Iterator<Integer> it = _listMap.keySet().iterator();
       while (it.hasNext())
       {
-        Object key = it.next();
-        ListData lst1 = (ListData)_listMap.get(key);
-        ListData lst2 = (ListData)tables._listMap.get(key);
+        Integer key = it.next();
+        ListData lst1 = _listMap.get(key);
+        ListData lst2 = tables._listMap.get(key);
         if (!lst1.equals(lst2))
         {
           return false;
@@ -240,5 +238,71 @@ public final class ListTables
       }
     }
     return false;
+  }
+  
+  private static class ListMap implements Map<Integer, ListData> {
+     private ArrayList<Integer> keyList = new ArrayList<Integer>();
+     private HashMap<Integer,ListData> parent = new HashMap<Integer,ListData>();
+     private ListMap() {}
+     
+     public void clear() {
+        keyList.clear();
+        parent.clear();
+     }
+
+     public boolean containsKey(Object key) {
+        return parent.containsKey(key);
+     }
+
+     public boolean containsValue(Object value) {
+        return parent.containsValue(value);
+     }
+
+     public ListData get(Object key) {
+        return parent.get(key);
+     }
+
+     public boolean isEmpty() {
+        return parent.isEmpty();
+     }
+
+     public ListData put(Integer key, ListData value) {
+        keyList.add(key);
+        return parent.put(key, value);
+     }
+
+     public void putAll(Map<? extends Integer, ? extends ListData> map) {
+        for(Entry<? extends Integer, ? extends ListData> entry : map.entrySet()) {
+           put(entry.getKey(), entry.getValue());
+        }
+     }
+
+     public ListData remove(Object key) {
+        keyList.remove(key);
+        return parent.remove(key);
+     }
+
+     public int size() {
+        return parent.size();
+     }
+
+     public Set<Entry<Integer, ListData>> entrySet() {
+        throw new IllegalStateException("Use sortedKeys() + get() instead");
+     }
+     
+     public List<Integer> sortedKeys() {
+        return Collections.unmodifiableList(keyList);
+     }
+     public Set<Integer> keySet() {
+        throw new IllegalStateException("Use sortedKeys() instead");
+     }
+
+     public Collection<ListData> values() {
+        ArrayList<ListData> values = new ArrayList<ListData>();
+        for(Integer key : keyList) {
+           values.add(parent.get(key));
+        }
+        return values;
+     }
   }
 }
