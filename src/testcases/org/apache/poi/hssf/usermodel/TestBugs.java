@@ -1857,6 +1857,15 @@ if(1==2) {
             }
         }
         assertTrue(namedStyles.containsAll(collecteddStyles));
-
     }    
+    
+    /**
+     * Regression with the PageSettingsBlock
+     */
+    public void test49931() throws Exception {
+       HSSFWorkbook wb = openSample("49931.xls");
+       
+       assertEquals(1, wb.getNumberOfSheets());
+       assertEquals("Foo", wb.getSheetAt(0).getRow(0).getCell(0).getRichStringCellValue().toString());
+    }
 }
