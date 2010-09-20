@@ -91,7 +91,7 @@ public final class ListLevel
     System.arraycopy(buf, offset, _rgbxchNums, 0, RGBXCH_NUMS_SIZE);
     offset += RGBXCH_NUMS_SIZE;
 
-   _ixchFollow = buf[offset++];
+    _ixchFollow = buf[offset++];
     _dxaSpace = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
     _dxaIndent = LittleEndian.getInt(buf, offset);
@@ -216,10 +216,10 @@ public final class ListLevel
     LittleEndian.putShort(buf, offset, _reserved);
     offset += LittleEndian.SHORT_SIZE;
 
-    System.arraycopy(_grpprlChpx, 0, buf, offset, _cbGrpprlChpx);
-    offset += _cbGrpprlChpx;
     System.arraycopy(_grpprlPapx, 0, buf, offset, _cbGrpprlPapx);
     offset += _cbGrpprlPapx;
+    System.arraycopy(_grpprlChpx, 0, buf, offset, _cbGrpprlChpx);
+    offset += _cbGrpprlChpx;
 
     if (_numberText == null) {
       // TODO - write junit to test this flow

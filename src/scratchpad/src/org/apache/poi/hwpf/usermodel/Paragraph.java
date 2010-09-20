@@ -434,16 +434,30 @@ public class Paragraph extends Range implements Cloneable {
     _papx.updateSprm(SPRM_DCS, dcs.toShort());
   }
 
+  /**
+   * Returns the ilfo, an index to the document's hpllfo, which
+   *  describes the automatic number formatting of the paragraph.
+   * A value of zero means it isn't numbered.
+   */
   public int getIlfo()
   {
      return _props.getIlfo();
   }
 
+  /**
+   * Returns the multi-level indent for the paragraph. Will be
+   *  zero for non-list paragraphs, and the first level of any
+   *  list. Subsequent levels in hold values 1-8.
+   */
   public int getIlvl()
   {
      return _props.getIlvl();
   }
 
+  /**
+   * Returns the heading level (1-8), or 9 if the paragraph
+   *  isn't in a heading style.
+   */
   public int getLvl()
   {
      return _props.getLvl();

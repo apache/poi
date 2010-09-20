@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta3" date="2010-??-??">
+           <action dev="poi-developers" type="fix">48018 - Improve HWPF handling of lists in documents read and then saved, by preserving order better</action>
            <action dev="poi-developers" type="fix">49820 - Fix HWPF paragraph levels, so that outline levels can be properly fetched</action>
            <action dev="poi-developers" type="fix">47271 - Avoid infinite loops on broken HWPF documents with a corrupt CHP style with a parent of itself</action>
            <action dev="poi-developers" type="fix">49936 - Handle HWPF documents with problematic HeaderStories better</action>
