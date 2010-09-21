@@ -106,7 +106,10 @@ public class Ole10Native {
       dataBuffer = new byte[totalSize-4];
       System.arraycopy(data, 4, dataBuffer, 0, dataBuffer.length);
       dataSize = totalSize - 4;
-      label = "ole-"+ HexDump.toHex(Arrays.copyOf(dataBuffer, 8));
+      
+      byte[] oleLabel = new byte[8];
+      System.arraycopy(dataBuffer, 0, oleLabel, 0, Math.min(dataBuffer.length, 8));
+      label = "ole-"+ HexDump.toHex(oleLabel);
       fileName = label;
       command = label;
     } else {
