@@ -365,8 +365,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
 
         XSSFCell xcell = (XSSFCell)cell;
-        if(xcell.isPartOfArrayFormulaGroup()){
+        if(xcell.isPartOfArrayFormulaGroup()) {
             xcell.notifyArrayFormulaChanging();
+        }
+        if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+           _sheet.getWorkbook().onDeleteFormula(xcell);
         }
         _cells.remove(cell.getColumnIndex());
     }
