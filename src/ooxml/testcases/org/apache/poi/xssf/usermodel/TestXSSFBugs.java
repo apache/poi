@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -544,4 +545,41 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        }
     }
 
+    /**
+     * Various ways of removing a cell formula should all zap
+     *  the calcChain entry.
+     */
+    public void test49966() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("shared_formulas.xlsx");
+       XSSFSheet sheet = wb.getSheetAt(0);
+       
+       // CalcChain has lots of entries
+       CalculationChain cc = wb.getCalculationChain();
+       assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+       assertEquals("A3", cc.getCTCalcChain().getCArray(1).getR());
+       assertEquals("A4", cc.getCTCalcChain().getCArray(2).getR());
+       assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
+       assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
+       assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
+       
+       // Try various ways of changing the formulas
+       // If it stays a formula, chain entry should remain
+       // Otherwise should go
+       sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
+       sheet.getRow(2).getCell(0).setCellFormula(null);  // go
+       sheet.getRow(3).getCell(0).setCellType(Cell.CELL_TYPE_FORMULA); // stay
+       sheet.getRow(4).getCell(0).setCellType(Cell.CELL_TYPE_STRING);  // go
+       sheet.getRow(5).removeCell(
+             sheet.getRow(5).getCell(0)  // go
+       );
+       
+       // Save and check
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sheet = wb.getSheetAt(0);
+       
+       cc = wb.getCalculationChain();
+       assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+       assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
+       assertEquals("A7", cc.getCTCalcChain().getCArray(2).getR());
+    }
 }

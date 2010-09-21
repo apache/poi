@@ -833,7 +833,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         //delete the CTSheet reference from workbook.xml
         workbook.getSheets().removeSheet(index);
 
-        //calculation chain is auxilary, remove it as it may contain orfan references to deleted cells
+        //calculation chain is auxiliary, remove it as it may contain orphan references to deleted cells
         if(calcChain != null) {
             removeRelation(calcChain);
             calcChain = null;

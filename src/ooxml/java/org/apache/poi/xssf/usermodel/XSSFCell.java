@@ -721,11 +721,15 @@ public final class XSSFCell implements Cell {
      * @see #CELL_TYPE_ERROR
      */
     public void setCellType(int cellType) {
+        int prevType = getCellType();
+       
         if(isPartOfArrayFormulaGroup()){
             notifyArrayFormulaChanging();
         }
-
-        int prevType = getCellType();
+        if(prevType == CELL_TYPE_FORMULA && cellType != CELL_TYPE_FORMULA) {
+            getSheet().getWorkbook().onDeleteFormula(this);
+        }
+        
         switch (cellType) {
             case CELL_TYPE_BLANK:
                 setBlank();
