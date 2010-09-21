@@ -40,7 +40,13 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 		String _center = "";
 		String _right = "";
 
+outer:
 		while (text.length() > 1) {
+			if (text.charAt(0) != '&') {
+				// Mimics the behaviour of Excel, which would put it in the center.
+				_center = text;
+				break;
+			}
 			int pos = text.length();
 			switch (text.charAt(1)) {
 			case 'L':
@@ -74,7 +80,9 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 				text = text.substring(pos);
 				break;
 			default:
-				throw new IllegalStateException("bad text '" + getRawText() + "'.");
+				// Mimics the behaviour of Excel, which would put it in the center.
+				_center = text;
+				break outer;
 			}
 		}
 		return new String[] { _left, _center, _right, };

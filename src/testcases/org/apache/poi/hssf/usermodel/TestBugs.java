@@ -1868,4 +1868,22 @@ if(1==2) {
        assertEquals(1, wb.getNumberOfSheets());
        assertEquals("Foo", wb.getSheetAt(0).getRow(0).getCell(0).getRichStringCellValue().toString());
     }
+    
+    /**
+     * Missing left/right/centre options on a footer
+     */
+    public void test48325() throws Exception {
+       HSSFWorkbook wb = openSample("48325.xls");
+       HSSFSheet sh = wb.getSheetAt(0);
+       HSSFFooter f = sh.getFooter();
+
+       // Will show as the centre, as that is what excel does
+       //  with an invalid footer lacking left/right/centre details
+       assertEquals("Left text should be empty", "", f.getLeft());
+       assertEquals("Right text should be empty", "", f.getRight());
+       assertEquals(
+             "Center text should contain the illegal value", 
+             "BlahBlah blah blah  ", f.getCenter()
+       );
+    }
 }
