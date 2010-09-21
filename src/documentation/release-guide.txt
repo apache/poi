@@ -89,8 +89,8 @@ https://svn.apache.org/repos/asf/poi/trunk
 
   6. Build as if the vote had passed. The build date must be +7 days from current.
 {code}
-# eg ant -DDSTAMP=20100924 build
-ant -DDSTAMP=YYYYMMDD build
+# eg ant -DDSTAMP=20100924 dist
+ant -DDSTAMP=YYYYMMDD dist
 {code}
 
 where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
@@ -139,7 +139,16 @@ cd build/dist
 
 3. Wait for the distributions to appear on your favourite mirror
 
-4. test maven
+4. Edit the website homepage and list the new release there. If a full release,
+   remove older full releases and all beta releases. If a beta release, keep
+   the last full release, and replace any other beta releases
+
+5. Edit the website download page, and list the new release there. This should
+   reference the checksums, so take care when updating
+
+6. Commit the site changes to svn, and publish live
+
+7. test maven
 create a simple project and make sure the release artifacts are accessible by maven:
 
 {code}
@@ -167,9 +176,9 @@ mvn compile
 
 You should see [INFO] BUILD SUCCESSFUL in the end.
 
-5. Don't forget to upload the latest version of the site and javadocs
+8. Don't forget to upload the latest version of the site and javadocs
 
-6. Send announcements:
+9. Send announcements:
  - to poi-user and poi-dev lists
  - to announcement@apache.org, announcements@jakarta.apache.org
 
