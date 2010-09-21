@@ -990,6 +990,7 @@ under the License.
                       *.swp,
                       .settings/**,
                       .classpath,
+                      .settings/**,
                       .project"/>
          
         <property name="zipdir" value="${jar.name}-${version.id}"/>
