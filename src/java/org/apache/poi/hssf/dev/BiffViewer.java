@@ -122,7 +122,7 @@ public final class BiffViewer {
 			case AxisParentRecord.sid:     return new AxisParentRecord(in);
 			case AxisRecord.sid:           return new AxisRecord(in);
 			case AxisUsedRecord.sid:       return new AxisUsedRecord(in);
-            case AutoFilterInfoRecord.sid: return new AutoFilterInfoRecord(in);
+			case AutoFilterInfoRecord.sid: return new AutoFilterInfoRecord(in);
 			case BOFRecord.sid:            return new BOFRecord(in);
 			case BackupRecord.sid:         return new BackupRecord(in);
 			case BarRecord.sid:            return new BarRecord(in);
@@ -216,6 +216,7 @@ public final class BiffViewer {
 			case ProtectRecord.sid:        return new ProtectRecord(in);
 			case ProtectionRev4Record.sid: return new ProtectionRev4Record(in);
 			case RKRecord.sid:             return new RKRecord(in);
+			case RecalcIdRecord.sid:       return new RecalcIdRecord(in);
 			case RefModeRecord.sid:        return new RefModeRecord(in);
 			case RefreshAllRecord.sid:     return new RefreshAllRecord(in);
 			case RightMarginRecord.sid:    return new RightMarginRecord(in);
@@ -279,7 +280,7 @@ public final class BiffViewer {
 		private final boolean _noint;
 		private final boolean _out;
 		private final boolean _rawhex;
-        private final boolean _noHeader;
+		private final boolean _noHeader;
 		private final File _file;
 
 		private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, boolean noHeader, File file) {
@@ -288,7 +289,7 @@ public final class BiffViewer {
 			_out = out;
 			_rawhex = rawhex;
 			_file = file;
-            _noHeader = noHeader;
+			_noHeader = noHeader;
 		}
 
 		public static CommandArgs parse(String[] args) throws CommandParseException {
@@ -297,7 +298,7 @@ public final class BiffViewer {
 			boolean noint = false;
 			boolean out = false;
 			boolean rawhex = false;
-            boolean noheader = false;
+			boolean noheader = false;
 			File file = null;
 			for (int i=0; i<nArgs; i++) {
 				String arg = args[i];
@@ -344,9 +345,9 @@ public final class BiffViewer {
 		public boolean shouldOutputRawHexOnly() {
 			return _rawhex;
 		}
-        public boolean suppressHeader() {
-            return _noHeader;
-        }
+		public boolean suppressHeader() {
+			return _noHeader;
+		}
 		public File getFile() {
 			return _file;
 		}
