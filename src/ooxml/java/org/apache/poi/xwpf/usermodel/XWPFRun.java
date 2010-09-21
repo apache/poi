@@ -22,10 +22,13 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
@@ -94,6 +97,16 @@ public class XWPFRun {
            XmlObject[] picts = o
                  .selectPath("declare namespace pic='http://schemas.openxmlformats.org/drawingml/2006/picture' .//pic:pic");
            for(XmlObject pict : picts) {
+              if(pict instanceof XmlAnyTypeImpl) {
+                 // Pesky XmlBeans bug - see Bugzilla #49934
+                 try {
+                    pict = org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture.Factory.parse(
+                          pict.toString()
+                    );
+                 } catch(XmlException e) {
+                    throw new POIXMLException(e);
+                 }
+              }
               if(pict instanceof org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture) {
                  XWPFPicture picture = new XWPFPicture(
                        (org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture)pict, p
