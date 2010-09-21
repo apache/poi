@@ -33,7 +33,11 @@
     </developers>
 
     <changes>
-        <release version="3.7-beta3" date="2010-??-??">
+<!--
+        <release version="3.7-beta4" date="2010-??-??">
+        </release>
+-->
+        <release version="3.7-beta3" date="2010-09-24">
            <action dev="poi-developers" type="fix">48325 - If a HSSF header or footer lacks left/right/centre information, assume it is a centre one</action>
            <action dev="poi-developers" type="fix">49966 - Correctly remove calcChain entries for XSSF cells that stop holding formulas</action>
            <action dev="poi-developers" type="add">47582 - XSSFCellStyle support for creating a style in one workbook based on a style from a different one</action>

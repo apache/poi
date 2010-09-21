@@ -89,7 +89,8 @@ https://svn.apache.org/repos/asf/poi/trunk
 
   6. Build as if the vote had passed. The build date must be +7 days from current.
 {code}
-ant build
+# eg ant -DDSTAMP=20100924 build
+ant -DDSTAMP=YYYYMMDD build
 {code}
 
 where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
