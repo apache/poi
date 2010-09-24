@@ -33,10 +33,9 @@
     </developers>
 
     <changes>
-<!--
         <release version="3.7-beta4" date="2010-??-??">
+           <action dev="poi-developers" type="add">Generate SHA1 hashes of distribution files, alongside existing MD5 ones</action>
         </release>
--->
         <release version="3.7-beta3" date="2010-09-24">
            <action dev="poi-developers" type="fix">48325 - If a HSSF header or footer lacks left/right/centre information, assume it is a centre one</action>
            <action dev="poi-developers" type="fix">49966 - Correctly remove calcChain entries for XSSF cells that stop holding formulas</action>
