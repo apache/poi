@@ -273,17 +273,7 @@ public final class TestWordExtractor extends TestCase {
         assertEquals("\r\n", tp[5]);
         assertEquals("Last (4th) paragraph.\r\n", tp[6]);
 	}
-
-    public void testWord95err() throws Exception {
-        // Can work with the special one
-        Word6Extractor w6e = new Word6Extractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("word95err.doc")
-        );
-        String text = w6e.getText();
-
-        assertTrue(text.contains("subject"));
-    }
-
+	
 	public void testWord6() throws Exception {
         // Too old for the default
         try {
