@@ -60,8 +60,8 @@ public final class OldSectionTable extends SectionTable
         //  section properties, and we're trying to decode them as if they
         //  were the new ones, we sometimes "need" more data than we have.
         // As a workaround, have a few extra 0 bytes on the end!
-        byte[] buf = new byte[sepxSize+2];
-        fileOffset += LittleEndian.SHORT_SIZE;
+        byte[] buf = new byte[sepxSize+4];
+        fileOffset += 4;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
         _sections.add(new SEPX(sed, startAt, endAt, charConv, buf));
       }
