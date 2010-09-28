@@ -261,4 +261,45 @@ public final class TestPictures extends TestCase {
        assertEquals("10a8", picture.suggestFullFileName());
        assertEquals("image/unknown", picture.getMimeType());
     }
+    
+    /**
+     * In word you can have floating or fixed pictures.
+     * Fixed have a \u0001 in place with an offset to the
+     *  picture data.
+     * Floating have a \u0008 in place, which references a
+     *  \u0001 which has the offset. More than one can
+     *  reference the same \u0001
+     */
+    public void testFloatingPictures() throws Exception {
+       HWPFDocument doc = HWPFTestDataSamples.openSampleFile("FloatingPictures.doc");
+       PicturesTable pictures = doc.getPicturesTable();
+       
+       // There are 19 images in the picture, but some are
+       //  duplicate floating ones
+       assertEquals(17, pictures.getAllPictures().size());
+       
+       int plain8s = 0;
+       int escher8s = 0;
+       int image1s = 0;
+       
+       Range r = doc.getRange();
+       for(int np=0; np < r.numParagraphs(); np++) {
+          Paragraph p = r.getParagraph(np);
+          for(int nc=0; nc < p.numCharacterRuns(); nc++) {
+             CharacterRun cr = p.getCharacterRun(nc);
+             if(pictures.hasPicture(cr)) {
+                image1s++;
+             } else if(pictures.hasEscherPicture(cr)) {
+                escher8s++;
+             } else if(cr.text().startsWith("\u0008")) {
+                plain8s++;
+             }
+          }
+       }
+       // Total is 20, as the 4 escher 8s all reference
+       //  the same regular image
+       assertEquals(16, image1s);
+       assertEquals(4,  escher8s);
+       assertEquals(0, plain8s);
+    }
 }
