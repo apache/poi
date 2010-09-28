@@ -985,7 +985,7 @@ public abstract class CHPAbstractType
 
     /**
      *
-     * @return  the fSpec field value.
+     * @return is the fSpec field value set? (Also known as sprmCFSpec)
      */
     public boolean isFSpec()
     {
