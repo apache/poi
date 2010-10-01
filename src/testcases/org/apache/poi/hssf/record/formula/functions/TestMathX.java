@@ -292,6 +292,20 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testMod() {
+
+        //example from Excel help
+        assertEquals(1.0, MathX.mod(3, 2));
+        assertEquals(1.0, MathX.mod(-3, 2));
+        assertEquals(-1.0, MathX.mod(3, -2));
+        assertEquals(-1.0, MathX.mod(-3, -2));
+
+        assertEquals((double) 1.4, MathX.mod(3.4, 2));
+        assertEquals((double) -1.4, MathX.mod(-3.4, -2));
+        assertEquals((double) 0.6000000000000001, MathX.mod(-3.4, 2.0));// should actually be 0.6
+        assertEquals((double) -0.6000000000000001, MathX.mod(3.4, -2.0));// should actually be -0.6
+
+        // Bugzilla 50033
+        assertEquals(1.0, MathX.mod(13, 12));
     }
 
     public void testNChooseK() {

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.functions;
 
+
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * This class is an extension to the standard math library
@@ -349,20 +350,14 @@ final class MathX {
             result = Double.NaN;
         }
         else if (sign(n) == sign(d)) {
-            double t = Math.abs(n / d);
-            t = t - (long) t;
-            result = sign(d) * Math.abs(t * d);
+            result = n % d;
         }
         else {
-            double t = Math.abs(n / d);
-            t = t - (long) t;
-            t = Math.ceil(t) - t;
-            result = sign(d) * Math.abs(t * d);
+            result = ((n % d) + d) % d;
         }
 
         return result;
     }
-
 
     /**
      * inverse hyperbolic cosine
