@@ -60,7 +60,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     /**
      * Constructs a picture object.
      */
-    HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
+    public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
         setShapeType(OBJECT_TYPE_PICTURE);
