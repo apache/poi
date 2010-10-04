@@ -1886,4 +1886,12 @@ if(1==2) {
              "BlahBlah blah blah  ", f.getCenter()
        );
     }
+
+    /**
+     * IllegalStateException received when creating Data validation in sheet with macro
+     */
+    public void test50020() throws Exception {
+       HSSFWorkbook wb = openSample("50020.xls");
+       writeOutAndReadBack(wb);
+    }
 }
