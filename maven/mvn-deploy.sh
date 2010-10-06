@@ -46,7 +46,7 @@ M2_SCP=people.apache.org:/www/people.apache.org/repo/m2-ibiblio-rsync-repository
 VERSION=@VERSION@
 DSTAMP=@DSTAMP@
 
-for artifactId in poi poi-scratchpad poi-contrib poi-ooxml poi-examples poi-ooxml-schemas
+for artifactId in poi poi-scratchpad poi-ooxml poi-examples poi-ooxml-schemas
 do
   mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
     -Durl=$M2_REPOSITORY \

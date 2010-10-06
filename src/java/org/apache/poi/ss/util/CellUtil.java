@@ -213,7 +213,7 @@ public final class CellUtil {
 	 *
 	 * @param style cell style
 	 * @return map of format properties (String -> Object)
-	 * @see #setFormatProperties(CellStyle, Map)
+	 * @see #setFormatProperties(org.apache.poi.ss.usermodel.CellStyle, org.apache.poi.ss.usermodel.Workbook, java.util.Map)
 	 */
 	private static Map<String, Object> getFormatProperties(CellStyle style) {
 		Map<String, Object> properties = new HashMap<String, Object>();

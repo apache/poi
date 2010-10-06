@@ -96,14 +96,6 @@ under the License.
     <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
     <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
 
-    <!-- Contributed software: -->
-    <property name="contrib.src" location="src/contrib/src"/>
-    <property name="contrib.src.test" location="src/contrib/testcases"/>
-    <property name="contrib.reports.test" location="build/contrib-test-results"/>
-    <property name="contrib.output.dir" location="build/contrib-classes"/>
-    <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
-    <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
-
     <!-- Examples: -->
     <property name="examples.src" location="src/examples/src"/>
     <property name="examples.output.dir" location="build/examples-classes"/>
@@ -173,11 +165,6 @@ under the License.
         <pathelement location="${main.output.dir}"/>
     </path>
 
-    <path id="contrib.classpath">
-        <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-    </path>
-
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
@@ -238,8 +225,8 @@ under the License.
   Timestamp ${DSTAMP}
   The main targets of interest are:
     - clean       Erase all build work products (ie. everything in the build directory)
-    - compile     Compile all files from main, ooxml, contrib and scratchpad
-    - test        Run all unit tests from main, ooxml, contrib and scratchpad
+    - compile     Compile all files from main, ooxml and scratchpad
+    - test        Run all unit tests from main, ooxml and scratchpad
     - jar         Produce jar files
     - site        Generate all documentation (Requires Apache Forrest)
     - dist        Create a distribution (Requires Apache Forrest)
@@ -258,9 +245,6 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
-        <mkdir dir="${contrib.output.dir}"/>
-        <mkdir dir="${contrib.output.test.dir}"/>
-        <mkdir dir="${contrib.reports.test}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
@@ -413,8 +397,8 @@ under the License.
     </target>
 
     <target name="compile" depends="init, compile-main,
-    compile-scratchpad, compile-contrib, compile-examples"
-            description="Compiles the POI main classes, scratchpad, contrib and examples"/>
+    compile-scratchpad, compile-examples"
+            description="Compiles the POI main classes, scratchpad and examples"/>
 
     <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
@@ -471,31 +455,6 @@ under the License.
         <copy todir="${scratchpad.output.dir}">
             <fileset dir="${scratchpad.resource1.dir}"/>
         </copy>
-    </target>
-
-    <target name="compile-contrib" depends="compile-main">
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${contrib.output.dir}"
-               srcdir="${contrib.src}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes">
-            <classpath refid="contrib.classpath"/>
-        </javac>
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               failonerror="true"
-               destdir="${contrib.output.test.dir}"
-               srcdir="${contrib.src.test}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes">
-            <classpath>
-                <path refid="contrib.classpath"/>
-                <pathelement path="${contrib.output.dir}"/>
-            </classpath>
-        </javac>
     </target>
 
     <target name="compile-examples" depends="compile-main,compile-scratchpad,compile-ooxml">
@@ -566,8 +525,8 @@ under the License.
         <delete file="${version.java}"/>
     </target>
 
-    <target name="test" depends="compile,test-main,test-scratchpad,test-contrib,test-ooxml"
-            description="Tests main, contrib, scratchpad and ooxml"/>
+    <target name="test" depends="compile,test-main,test-scratchpad,test-ooxml"
+            description="Tests main, scratchpad and ooxml"/>
     <target name="test-all" depends="test,test-ooxml-lite"/>
 
     <target name="-test-main-check">
@@ -635,41 +594,6 @@ under the License.
 
     <target name="-test-scratchpad-write-testfile" unless="scratchpad.test.failed">
         <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
-    </target>
-
-    <target name="-test-contrib-check">
-        <uptodate property="contrib.test.notRequired" targetfile="${contrib.testokfile}">
-            <srcfiles dir="${contrib.src}"/>
-            <srcfiles dir="${contrib.src.test}"/>
-        </uptodate>
-    </target>
-
-    <target name="test-contrib" depends="compile-main,compile-contrib,-test-contrib-check"
-            unless="contrib.test.notRequired">
-        <junit printsummary="yes" fork="yes" haltonfailure="${halt.on.test.failure}"
-               failureproperty="contrib.test.failed">
-            <classpath>
-                <path refid="contrib.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${contrib.output.dir}"/>
-                <pathelement location="${contrib.output.test.dir}"/>
-            </classpath>
-            <syspropertyset refid="junit.properties"/>
-            <jvmarg value="${poi.test.locale}"/>
-            <formatter type="plain"/>
-            <batchtest todir="${contrib.reports.test}">
-                <fileset dir="${contrib.src.test}">
-                    <include name="**/Test*.java"/>
-                    <exclude name="**/AllTests.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        <delete file="${contrib.testokfile}"/>
-        <antcall target="-test-contrib-write-testfile"/>
-    </target>
-
-    <target name="-test-contrib-write-testfile" unless="contrib.test.failed">
-        <echo file="${contrib.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="-test-ooxml-check">
@@ -775,9 +699,6 @@ under the License.
                 <include name="org/apache/poi/**"/>
                 <exclude name="org/apache/poi/hdf/**"/>
             </packageset>
-            <packageset dir="${contrib.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
             <packageset dir="${ooxml.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
@@ -785,7 +706,6 @@ under the License.
             <classpath id="javadoc.classpath">
                 <path refid="main.classpath"/>
                 <path refid="scratchpad.classpath"/>
-                <path refid="contrib.classpath"/>
                 <path refid="ooxml.classpath"/>
                 <path path="${env.CLASSPATH}"/>
             </classpath>
@@ -839,13 +759,6 @@ under the License.
 
         <!-- Build the org.apache.poi poms -->
         <copy file="maven/poi.pom" tofile="${dist.dir}/poi-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-contrib.pom" tofile="${dist.dir}/poi-contrib-${version.id}.pom">
             <filterchain>
                 <replacetokens>
                     <token key="VERSION" value="${version.id}"/>
@@ -908,11 +821,6 @@ under the License.
             <fileset dir="${main.output.dir}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${contrib.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
         <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${scratchpad.output.dir}"/>
@@ -946,11 +854,6 @@ under the License.
             <fileset dir="${scratchpad.src}"/>
             <metainf dir="legal/"/>
         </jar>
-        <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${contrib.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
         <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${ooxml.src}"/>
@@ -967,7 +870,6 @@ under the License.
          <!-- jars to include in binary assemblies -->         
          <patternset id="bin.dist.jars">
             <include name="${jar.name}-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-examples-${version.id}-${DSTAMP}.jar"/>
@@ -1087,7 +989,6 @@ under the License.
     <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms">
       <m2-install artifactId="poi"/>
       <m2-install artifactId="poi-scratchpad"/>
-      <m2-install artifactId="poi-contrib"/>
       <m2-install artifactId="poi-ooxml"/>
       <m2-install artifactId="poi-examples"/>
       <m2-install artifactId="poi-ooxml-schemas"/>
@@ -1105,7 +1006,6 @@ under the License.
               <exclude name="documentation/content/xdocs/dtd/" />
               <exclude name="documentation/content/xdocs/entity/" />
               <exclude name="scratchpad/testcases/dummy.txt" />
-              <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
            </fileset>
        </rat:report>
