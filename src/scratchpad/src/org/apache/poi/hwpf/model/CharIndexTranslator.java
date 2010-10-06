@@ -50,7 +50,7 @@ public interface CharIndexTranslator {
      * Return first index >= bytePos that is in table
      *
      * @param bytePos
-     * @return
+     * @return  first index greater or equal to bytePos that is in table
      */
     public int lookIndexForward(int bytePos);
 
@@ -58,7 +58,7 @@ public interface CharIndexTranslator {
      * Return last index <= bytePos that is in table
      *
      * @param bytePos
-     * @return
+     * @return last index less of equal to bytePos that is in table
      */
     public int lookIndexBackward(int bytePos);
 

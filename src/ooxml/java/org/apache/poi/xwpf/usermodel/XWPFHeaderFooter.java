@@ -142,7 +142,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	 * the method will return this table
 	 * if there is no corresponding {@link XWPFTable} the method will return null 
 	 * @param ctTable
-	 * @return
 	 */
 	public XWPFTable getTable(CTTbl ctTable){
 		for (XWPFTable table : tables) {
@@ -202,7 +201,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     
     /**
      * get all Pictures in this package
-     * @return
+     * @return all Pictures in this package
      */
     public List<XWPFPictureData> getAllPackagePictures(){
     	List<XWPFPictureData> pkgpictures = new ArrayList<XWPFPictureData>();
@@ -237,7 +236,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * Adds a picture to the document.
      *
-     * @param is                The stream to read image from
+     * @param pictureData       The picture bytes
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
@@ -260,7 +259,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * get the next free ImageNumber
      * @param format
-     * @return
+     * @return the next free ImageNumber
      */
     public int getNextPicNameNumber(int format){
     	int img = getAllPackagePictures().size()+1;
@@ -301,7 +300,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * Add the picture to  drawing relations
      *
-     * @param img the PictureData of the Picture,
+     * @param pictureData the picture bytes
+     * @param format      the picture format
      */
     public PackageRelationship addPictureReference(byte[] pictureData, int format){
     	int imageNumber = getNextPicNameNumber(format);
@@ -322,7 +322,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
       /**
        * Add the picture to  drawing relations
        *
-       * @param img the PictureData of the Picture,
+       * @param is the stream to read picture data from
        */
       public PackageRelationship addPictureReference(InputStream is, int format){
     	  
@@ -345,7 +345,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
       /**
        * add a new paragraph at position of the cursor
        * @param cursor
-       * @return
+       * @return the inserted paragraph
        */
       public XWPFParagraph insertNewParagraph(XmlCursor cursor){
       	if(isCursorInHdrF(cursor)){
@@ -385,7 +385,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
   	/**
        * 
        * @param cursor
-       * @return
+       * @return the inserted table
        */
   	public XWPFTable insertNewTbl(XmlCursor cursor) {
   		if(isCursorInHdrF(cursor)){
@@ -425,7 +425,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
   	/**
   	 * verifies that cursor is on the right position
   	 * @param cursor
-  	 * @return
   	 */
   	private boolean isCursorInHdrF(XmlCursor cursor) {
   		XmlCursor verify = cursor.newCursor();
@@ -455,7 +454,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	
 	/**
 	 * inserts an existing XWPFTable to the arrays bodyElements and tables
-	 * @param i
+	 * @param pos
 	 * @param table
 	 */
 	public void insertTable(int pos, XWPFTable table) {
@@ -497,8 +496,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	
 	/**
 	 * get the TableCell which belongs to the TableCell
-	 * @param o
-	 * @return
+	 * @param cell
 	 */
 	public XWPFTableCell getTableCell(CTTc cell) {
 		XmlCursor cursor = cell.newCursor();

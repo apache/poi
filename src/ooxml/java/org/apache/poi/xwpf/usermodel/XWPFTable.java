@@ -250,7 +250,7 @@ public class XWPFTable implements IBodyElement{
     /**
      * inserts a new tablerow 
      * @param pos
-     * @return
+     * @return  the inserted row
      */
     public XWPFTableRow insertNewTableRow(int pos){
     	if(pos >= 0 && pos <= tableRows.size()){
@@ -276,11 +276,6 @@ public class XWPFTable implements IBodyElement{
     	return false;
     }
 	
-    /**
-     * 
-     * @param pos
-     * @return
-     */
     public List<XWPFTableRow> getRows() {
         return tableRows;
     }
@@ -318,8 +313,6 @@ public class XWPFTable implements IBodyElement{
 	/**
 	 * returns the XWPFRow which belongs to the CTRow row
 	 * if this row is not existing in the table null will be returned
-	 * @param row
-	 * @return
 	 */
 	public XWPFTableRow getRow(CTRow row) {
 		for(int i=0; i<getRows().size(); i++){

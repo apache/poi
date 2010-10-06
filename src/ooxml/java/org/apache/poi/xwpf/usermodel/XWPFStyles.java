@@ -177,7 +177,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	
 	/**
 	 * get latentstyles
-	 * @return
 	 */
 	public XWPFLatentStyles getLatentStyles() {
 		return latentStyles;
@@ -186,8 +185,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	/**
 	 * get the style with the same name
 	 * if this style is not existing, return null
-	 * @param style
-	 * @return
 	 */
 	public XWPFStyle getStyleWithSameName(XWPFStyle style){
 		for (XWPFStyle ownStyle : listStyle) {

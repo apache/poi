@@ -1106,8 +1106,7 @@ public class XWPFParagraph implements IBodyElement{
      * If it finds the string, it will return true and the position of the String
      * will be saved in the parameter startPos.
      * @param searched
-     * @param pos
-     * @return
+     * @param startPos
      */
     public TextSegement searchText(String searched,PositionInParagraph startPos){
     	
@@ -1172,7 +1171,7 @@ public class XWPFParagraph implements IBodyElement{
     /**
      * insert a new Run in RunArray
      * @param pos
-     * @return
+     * @return  the inserted run
      */
     public XWPFRun insertNewRun(int pos){
     	 if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
@@ -1188,8 +1187,7 @@ public class XWPFParagraph implements IBodyElement{
     
     /**
      * get a Text
-     * @param posList
-     * @return
+     * @param segment
      */
     public String getText(TextSegement segment){
     int runBegin = segment.getBeginRun();
@@ -1223,7 +1221,7 @@ public class XWPFParagraph implements IBodyElement{
     /**
      * removes a Run at the position pos in the paragraph
      * @param pos
-     * @return
+     * @return true if the run was removed
      */
     public boolean removeRun(int pos){
     	 if (pos >= 0 && pos < paragraph.sizeOfRArray()){
@@ -1263,8 +1261,6 @@ public class XWPFParagraph implements IBodyElement{
 	
 	/**
 	 * adds a new Run to the Paragraph
-	 * @param r
-	 * @return
 	 */
 	public void addRun(XWPFRun r){
 		runs.add(r);
@@ -1272,8 +1268,6 @@ public class XWPFParagraph implements IBodyElement{
 	
 	/**
 	 * return the XWPFRun-Element which owns the CTR run-Element
-	 * @param r
-	 * @return
 	 */
 	public XWPFRun getRun(CTR r){
 		for(int i=0; i < getRuns().size(); i++){

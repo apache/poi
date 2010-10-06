@@ -77,7 +77,6 @@ public class XWPFTableCell implements IBody {
     /**
      * returns an Iterator with paragraphs and tables
      * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
-     * @return
      */
     public List<IBodyElement> getBodyElements(){
       return Collections.unmodifiableList(bodyElements);
@@ -92,7 +91,6 @@ public class XWPFTableCell implements IBody {
 
     /**
      * returns a list of paragraphs
-     * @return
      */
     public List<XWPFParagraph> getParagraphs(){
     		return paragraphs;
@@ -155,7 +153,7 @@ public class XWPFTableCell implements IBody {
     /**
      * add a new paragraph at position of the cursor
      * @param cursor
-     * @return
+     * @return the inserted paragraph
      */
     public XWPFParagraph insertNewParagraph(XmlCursor cursor){
     	if(!isCursorInTableCell(cursor))
@@ -191,11 +189,6 @@ public class XWPFTableCell implements IBody {
     	return newP;
     }
 
-	/**
-     * 
-     * @param cursor
-     * @return
-     */
 	public XWPFTable insertNewTbl(XmlCursor cursor) {
 		if(isCursorInTableCell(cursor)){
 			String uri = CTTbl.type.getName().getNamespaceURI();
@@ -233,8 +226,6 @@ public class XWPFTableCell implements IBody {
 	
 	/**
 	 * verifies that cursor is on the right position
-	 * @param cursor
-	 * @return
 	 */
 	private boolean isCursorInTableCell(XmlCursor cursor) {
 		XmlCursor verify = cursor.newCursor();
@@ -290,7 +281,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBodyPart#getTableArray(int)
+	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
 	 */
 	public XWPFTable getTableArray(int pos) {
 		if(pos > 0 && pos < tables.size()){
@@ -301,7 +292,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBodyPart#getTables()
+	 * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
 	 */
 	public List<XWPFTable> getTables() {
 		return Collections.unmodifiableList(tables);
@@ -335,8 +326,6 @@ public class XWPFTableCell implements IBody {
 
 	/**
 	 * get the TableCell which belongs to the TableCell
-	 * @param o
-	 * @return
 	 */
 	public XWPFTableCell getTableCell(CTTc cell) {
 		XmlCursor cursor = cell.newCursor();
