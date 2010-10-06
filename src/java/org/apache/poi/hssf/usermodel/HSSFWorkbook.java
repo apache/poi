@@ -326,7 +326,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       * contained strings will be written to the Shared String tabel (SSTRecord) within
       * the Workbook.
       *
-      * @param wb sheet's matching low level Workbook structure containing the SSTRecord.
+      * @param records a collection of sheet's records.
+      * @param offset the offset to search at 
       * @see org.apache.poi.hssf.record.LabelRecord
       * @see org.apache.poi.hssf.record.LabelSSTRecord
       * @see org.apache.poi.hssf.record.SSTRecord
@@ -727,8 +728,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @param sheetname the name for the new sheet. Note - certain length limits
      * apply. See {@link #setSheetName(int, String)}.
-     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
-	 *      for a safe way to create valid names
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     *  for a safe way to create valid names
      * @return HSSFSheet representing the new sheet.
      * @throws IllegalArgumentException
      *             if there is already a sheet present with a case-insensitive

@@ -133,7 +133,7 @@ public final class DVRecord extends StandardRecord {
 	// --> start option flags
 	/**
 	 * @return the condition data type
-	 * @see org.apache.poi.hssf.usermodel.DVConstraint.ValidationType
+	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType
 	 */
 	public int getDataType() {
 	   return opt_data_type.getValue(_option_flags);
@@ -141,7 +141,7 @@ public final class DVRecord extends StandardRecord {
 
 	/**
 	 * @return the condition error style
-	 * @see org.apache.poi.hssf.usermodel.HSSFDataValidation.ErrorStyle
+	 * @see org.apache.poi.ss.usermodel.DataValidation.ErrorStyle
 	 */
 	public int getErrorStyle() {
 	   return opt_error_style.getValue(_option_flags);

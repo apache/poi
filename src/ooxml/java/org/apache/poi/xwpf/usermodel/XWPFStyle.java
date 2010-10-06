@@ -109,7 +109,6 @@ public class XWPFStyle {
 	 
 	 /**
 	  * get StyleID of the linked Style
-	  * @return
 	  */
 	 public String getLinkStyleID(){
 		 if (ctStyle.getLink()!=null)
@@ -120,7 +119,6 @@ public class XWPFStyle {
 	 
 	 /**
 	  * get StyleID of the next style
-	  * @return
 	  */
 	 public String getNextStyleID(){
 		if(ctStyle.getNext()!=null)
@@ -138,7 +136,6 @@ public class XWPFStyle {
 	 /**
 	  * compares the names of the Styles 
 	  * @param compStyle
-	  * @return
 	  */
 	 public boolean hasSameName(XWPFStyle compStyle){
 		CTStyle ctCompStyle = compStyle.getCTStyle();

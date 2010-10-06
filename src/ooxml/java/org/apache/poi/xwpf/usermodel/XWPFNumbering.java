@@ -232,7 +232,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 *return the abstractNumID
 	 *If the AbstractNumID not exists
 	 *return null
-	 * @param 		num
+	 * @param 		numID
 	 * @return 		abstractNumID
 	 */
 	public BigInteger getAbstractNumID(BigInteger numID){

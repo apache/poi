@@ -57,10 +57,6 @@ public class XWPFTableRow {
         return tableCell;
     }
 
-    /** 
-     * @param pos
-     * @return
-     */
     public XWPFTableCell getCell(int pos) {
         if (pos >= 0 && pos < ctRow.sizeOfTcArray()) {
         	return getTableCells().get(pos);
@@ -70,7 +66,6 @@ public class XWPFTableRow {
     
     /**
      * adds a new TableCell at the end of this tableRow
-     * @return
      */
     public XWPFTableCell addNewTableCell(){
     	CTTc cell = ctRow.addNewTc();
@@ -138,8 +133,6 @@ public class XWPFTableRow {
 	/**
 	 * returns the XWPFTableCell which belongs to the CTTC cell
 	 * if there is no XWPFTableCell which belongs to the parameter CTTc cell null will be returned
-	 * @param cell
-	 * @return
 	 */
 	public XWPFTableCell getTableCell(CTTc cell) {
 		for(int i=0; i<tableCells.size(); i++){

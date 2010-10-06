@@ -103,7 +103,6 @@ public class XWPFHeader extends XWPFHeaderFooter {
 
 	/**
 	 * reads the document
-	 * @overide onDocumentRead of class {@link POIXMLDocumentPart}
 	 */
 	  @Override  
 	    protected void onDocumentRead(){
