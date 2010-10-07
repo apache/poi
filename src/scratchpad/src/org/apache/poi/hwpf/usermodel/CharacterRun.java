@@ -603,5 +603,10 @@ public final class CharacterRun
     } else
       throw new IllegalStateException("Not a symbol CharacterRun");
   }
+  
+  public BorderCode getBorder() {
+    return _props.getBrc();
+  }
+
 
 }
