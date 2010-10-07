@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 
 public final class TableRow
@@ -140,4 +139,33 @@ public final class TableRow
   {
     return _cells[index];
   }
+  
+  public BorderCode getTopBorder() {
+    return _tprops.getBrcBottom();
+  }
+  
+  public BorderCode getBottomBorder() {
+    return _tprops.getBrcBottom();
+  }
+  
+  public BorderCode getLeftBorder() {
+    return _tprops.getBrcLeft();
+  }
+  
+  public BorderCode getRightBorder() {
+    return _tprops.getBrcRight();
+  }
+  
+  public BorderCode getHorizontalBorder() {
+    return _tprops.getBrcHorizontal();
+  }
+  
+  public BorderCode getVerticalBorder() {
+    return _tprops.getBrcVertical();
+  }
+  
+  public BorderCode getBarBorder() {
+    throw new UnsupportedOperationException("not applicable for TableRow");
+  }
+  
 }
