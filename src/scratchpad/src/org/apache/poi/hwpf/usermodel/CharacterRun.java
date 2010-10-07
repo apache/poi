@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.CHPX;
+import org.apache.poi.hwpf.model.Ffn;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
@@ -556,6 +557,51 @@ public final class CharacterRun
     cp._props.setShd((ShadingDescriptor)_props.getShd().clone());
 
     return cp;
+  }
+  
+  /**
+   * Returns true, if the CharacterRun is a special character run containing a symbol, otherwise false.
+   *
+   * <p>In case of a symbol, the {@link #text()} method always returns a single character 0x0028, but word actually stores
+   * the character in a different field. Use {@link #getSymbolCharacter()} to get that character and {@link #getSymbolFont()}
+   * to determine its font.
+   */
+  public boolean isSymbol()
+  {
+    return isSpecialCharacter() && text().equals("\u0028");
+  }
+
+  /**
+   * Returns the symbol character, if this is a symbol character run.
+   * 
+   * @see #isSymbol()
+   * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
+   */
+  public char getSymbolCharacter()
+  {
+    if (isSymbol()) {
+      return (char)_props.getXchSym();
+    } else
+      throw new IllegalStateException("Not a symbol CharacterRun");
+  }
+
+  /**
+   * Returns the symbol font, if this is a symbol character run. Might return null, if the font index is not found in the font table.
+   * 
+   * @see #isSymbol()
+   * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
+   */
+  public Ffn getSymbolFont()
+  {
+    if (isSymbol()) {
+      Ffn[] fontNames = _doc.getFontTable().getFontNames();
+
+      if (fontNames.length <= _props.getFtcSym())
+        return null;
+
+      return fontNames[_props.getFtcSym()];
+    } else
+      throw new IllegalStateException("Not a symbol CharacterRun");
   }
 
 }

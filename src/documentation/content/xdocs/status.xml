@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.7-beta4" date="2010-??-??">
+           <action dev="poi-developers" type="fix">49908 - support for processing of symbols in HWPF</action>
            <action dev="poi-developers" type="fix">50022 - support for retrieving pictures from HSSF workbooks</action>
            <action dev="poi-developers" type="fix">50020 - Avoid IllegalStateException when creating Data validation in sheet with macro</action>
            <action dev="poi-developers" type="fix">50033 - Improved rounding in MOD</action>
