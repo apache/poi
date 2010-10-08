@@ -51,8 +51,8 @@ public class XSSFDataFormat implements DataFormat {
      * @return string represented at index of format or null if there is not a  format at that index
      */
     public String getFormat(short index) {
-        String fmt = BuiltinFormats.getBuiltinFormat(index);
-        if(fmt == null) fmt = stylesSource.getNumberFormatAt(index);
+        String fmt = stylesSource.getNumberFormatAt(index);
+        if(fmt == null) fmt = BuiltinFormats.getBuiltinFormat(index);
         return fmt;
     }
 }
