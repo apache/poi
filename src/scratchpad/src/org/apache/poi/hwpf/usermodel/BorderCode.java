@@ -118,7 +118,7 @@ public final class BorderCode implements Cloneable {
    * <li>23  dash dot stroked
    * <li>24  emboss 3D
    * <li>25  engrave 3D
-   * <li>codes 64 – 230 represent border art types and are used only for page borders
+   * <li>codes 64 - 230 represent border art types and are used only for page borders
    */
   public int getBorderType() {
     return _brcType.getShortValue(_info);
@@ -184,7 +184,7 @@ public final class BorderCode implements Cloneable {
   }
   
   /**
-   * Don‘t reverse the border.
+   * Don't reverse the border.
    */
   public boolean isFrame() {
     return _fFrame.getValue(_info2) != 0;
