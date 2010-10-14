@@ -141,7 +141,10 @@ public final class ListLevel
 
   public String getNumberText()
   {
-    return new String(_numberText);
+    if (_numberText != null)
+      return new String(_numberText);
+    else
+      return null;
   }
 
   public void setStartAt(int startAt)
