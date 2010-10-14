@@ -185,6 +185,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Read hyperlink relations, link them with CTHyperlink beans in this worksheet
      * and initialize the internal array of XSSFHyperlink objects
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initHyperlinks() {
         hyperlinks = new ArrayList<XSSFHyperlink>();
 
@@ -543,6 +544,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return column indexes of all the vertical page breaks, never <code>null</code>
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public int[] getColumnBreaks() {
         if (!worksheet.isSetColBreaks() || worksheet.getColBreaks().sizeOfBrkArray() == 0) {
             return new int[0];
@@ -998,6 +1000,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return row indexes of all the horizontal page breaks, never <code>null</code>
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public int[] getRowBreaks() {
         if (!worksheet.isSetRowBreaks() || worksheet.getRowBreaks().sizeOfBrkArray() == 0) {
             return new int[0];
@@ -1177,6 +1180,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
 
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private short getMaxOutlineLevelCols() {
         CTCols ctCols = worksheet.getColsArray(0);
         short outlineLevel = 0;
@@ -1324,6 +1328,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Removes a page break at the indicated column
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeColumnBreak(int column) {
         CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
@@ -1379,6 +1384,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Removes the page break at the indicated row
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeRowBreak(int row) {
         CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
         CTBreak[] brkArray = pgBreak.getBrkArray();
@@ -2134,6 +2140,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param copyRowHeight whether to copy the row height during the shift
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
@@ -2278,6 +2285,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param value <code>true</code> if this sheet is selected
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void setSelected(boolean value) {
         CTSheetViews views = getSheetTypeSheetViews();
         for (CTSheetView view : views.getSheetViewArray()) {
@@ -2887,6 +2895,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 		return dataValidationHelper;
 	}
     
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public List<XSSFDataValidation> getDataValidations() {
     	List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
     	CTDataValidations dataValidations = this.worksheet.getDataValidations();

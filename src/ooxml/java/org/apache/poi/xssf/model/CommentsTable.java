@@ -112,6 +112,7 @@ public class CommentsTable extends POIXMLDocumentPart {
         return ct == null ? null : new XSSFComment(this, ct, null);
     }
 
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public CTComment getCTComment(String cellRef) {
         // Create the cache if needed
         if(commentRefs == null) {
