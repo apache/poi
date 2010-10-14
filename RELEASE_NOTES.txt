@@ -1,0 +1,113 @@
+The Apache POI is pleased to announce the release of POI 3.7.
+
+See the downloads page for binary and source distributions: http://poi.apache.org/download.html
+
+
+Release Notes -- Apache POI -- Version 3.7
+
+Apache POI is an open source Java library for working with Microsoft Office documents. POI 3.7 is an incremental feature release based on the earlier 3.6 release. The most notable changes since POI 3.6 are:
+
+
+OOXML
+ * support for reading aes-encrypted/write-protected ooxml files
+ * support Java 1.5 in auto-generated xmlbeans for ooxml schemas
+
+Spreadsheet (Excel)
+ * initial support for autofilters
+ * support for data validation for ooxml format
+ * initial support for themes for ooxml format
+ * added implementation for new functions: RANDBETWEEN, POISSON, SUBTOTAL, TEXT, TRUNC
+ * support evaluation of indirect defined names in INDIRECT
+ * numerous fixes and performance optimizations in the Formula Evaluation module
+ * ability to add, modify and remove series from HSSF Charts
+ * numerous improvements in the cell data formatter (handling more formatting rules, better color detection,  allow overriding of default locale)
+ * more examples including a rich "spreadsheet to  HTML" convertor 
+
+Document (Word)
+ * initial support for the HWPF revision marks authors list
+ * support for border codes in HWPF
+ * support for processing of symbols in HWPF
+ * support sections in Word 6 and Word 95 files
+ * improved reading of auto-saved ("complex") documents in HWPF
+ * improved support for manipulation of tables and paragraphs in XWPF
+ 
+SlideShow (PowerPoint)
+ * allow editing workbooks embedded into HSLF slide shows
+
+Text Extraction
+ * support for text extraction from XSLF tables
+ * add PublisherTextExtractor support to extractorfactory
+ * support attachments as embedded documents within the new OutlookTextExtactor
+ * new event based XSSF text extractor (XSSFEventBasedExcelExtractor)
+ * make it easier to tell which content types each POIXMLTextExtractor handles
+ * paragraph level as well as whole-file text extraction for word 6/95 files
+
+
+ * ...and much much more: code cleanup, many bug fixes and performance improvements
+
+Contributors
+------------
+
+The following people have contributed to this release by submitting bug
+reports or by participating in the issue resolution process (in strict alphabetical order).
+
+Alexey Butchik        Jeff Lavezzo              Philippe Laflamme
+Andrew Shirley        Jens Gatze                Raiko Eckstein
+Andrzej Bialecki      Jerry Soung               Rainer Schwarze
+Antoni Mylka          Jonathan Holloway         Ranvijay Singh
+Antony Bowesman       Josh Micich               Rick Cameron
+Antti Koskimaki       Jukka Zitting             Robert Kish
+Attila Kiraily        Kai Zimmermann            Robin Salkeld
+Bob Smith             Kalpesh Parmar            Ryan Lauck
+Brendan Nolan         Kamil Soltys              Ryan Skow
+Charlie Chang         Karl Eilebrecht           Samuel Yung
+Chris Barlock         Ken Arnold                Simon Kelly
+Chris Lott            Liu Yan                   Stefan Stern
+Christiaan Fluit      Lon Binder                Steve Wolke
+Dave Fisher           Martin Studer             TK Gospodinov
+Dave Syer             Martin W. Kirst           Tao Jiang
+David Agnew           Maxim Valyanskiy          Ted Schrader
+David Lewis           Michael Vilensky          Thomas Herre
+Dmitry Sviridov       Michel Boudinot           Tomas Prochazka
+Domenico Napoletano   Nick Burch                Tony Harvey
+Ed Beaty              Paul Spencer              Trejkaz (pen name)
+Fabio Ebner           Payam Hekmat              Tsutomu YANO
+Fred Ross             Peter Kutak               Viveck Shastri
+Grzegorz Bloch        Petr Udalau               Vladimir Korenev
+Henry Huang           Phil Dunlea               William J. Coleda
+Immad Naseer          Phil Varner               Yegor Kozlov
+Jan Stette            Philipp Epp               Zhang Zhang
+
+
+Thank you all very much! Contributions are always welcome, come join the project.
+
+Release Contents
+----------------
+
+This release comes in two forms:
+ - pre-built binaries containing compiled versions of all Apache POI components and documentation
+   (poi-bin-3.7-20101025.zip or poi-bin-3.7-20101025.tar.gz)
+ - source archive you can build POI from (poi-src-3.7-20101025.zip or poi-src-3.7-20101025.tar.gz)
+
+ Pre-built versions of all POI components are also available in the central Maven repository
+ under Group ID "org.apache.poi" and Version "3.7"
+
+All release artifacts are accompanied by MD5 checksums and a PGP signatures
+that you can use to verify the authenticity of your download.
+The public key used for the PGP signature can be found at
+http://svn.apache.org/repos/asf/poi/tags/REL_3_7/KEYS
+
+
+About Apache POI
+-----------------------
+
+Apache POI is well-known in the Java field as a library for reading and
+writing Microsoft Office file formats, such as Excel, PowerPoint, Visio and
+Word. Since POI 3.5, the new OOXML (Office Open XML) formats introduced in Office 2007 have been supported.
+
+For more information, visit http://poi.apache.org/
+
+
+For the Apache POI Team
+Yegor Kozlov
+
