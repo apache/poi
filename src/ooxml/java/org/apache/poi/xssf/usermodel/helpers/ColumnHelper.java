@@ -53,16 +53,14 @@ public class ColumnHelper {
         cleanColumns();
     }
 
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void cleanColumns() {
         this.newCols = CTCols.Factory.newInstance();
-        CTCols[] colsArray = new CTCols[worksheet.getColsList().size()];
-        worksheet.getColsList().toArray(colsArray);
-        
+        CTCols[] colsArray = worksheet.getColsArray();
         int i = 0;
         for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
-            CTCol[] colArray = new CTCol[cols.getColList().size()];
-            cols.getColList().toArray(colArray);
+            CTCol[] colArray = cols.getColArray();
             for (int y = 0; y < colArray.length; y++) {
                 CTCol col = colArray[y];
                 newCols = addCleanColIntoCols(newCols, col);
@@ -75,9 +73,9 @@ public class ColumnHelper {
         worksheet.setColsArray(0, newCols);
     }
 
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public static void sortColumns(CTCols newCols) {
-        CTCol[] colArray = new CTCol[newCols.getColList().size()];
-        newCols.getColList().toArray(colArray);
+        CTCol[] colArray = newCols.getColArray();
         Arrays.sort(colArray, new CTColComparator());
         newCols.setColArray(colArray);
     }

@@ -78,12 +78,12 @@ public class CalculationChain extends POIXMLDocumentPart {
      * @param sheetId  the sheet Id of a sheet the formula belongs to.
      * @param ref  A1 style reference to the cell containing the formula.
      */
+    @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated 
     public void removeItem(int sheetId, String ref){
         //sheet Id of a sheet the cell belongs to
         int id = -1;
-        CTCalcCell[] c = new CTCalcCell[chain.getCList().size()];
-        chain.getCList().toArray(c);
-        
+        CTCalcCell[] c = chain.getCArray();
+
         for (int i = 0; i < c.length; i++){
             //If sheet Id  is omitted, it is assumed to be the same as the value of the previous cell.
             if(c[i].isSetI()) id = c[i].getI();

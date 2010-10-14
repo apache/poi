@@ -59,11 +59,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param row the xml bean containing all cell definitions for this row.
      * @param sheet the parent sheet.
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
         _row = row;
         _sheet = sheet;
         _cells = new TreeMap<Integer, XSSFCell>();
-        for (CTCell c : row.getCList()) {
+        for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
             _cells.put(cell.getColumnIndex(), cell);
             sheet.onReadCell(cell);
