@@ -339,6 +339,7 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Returns the plain string representation.
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public String getString() {
         if(st.sizeOfRArray() == 0) {
             return utfDecode(st.getT());

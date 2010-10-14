@@ -879,6 +879,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void setActiveSheet(int index) {
 
         validateSheetIndex(index);
