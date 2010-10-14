@@ -84,7 +84,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     private int uniqueCount;
 
-    public SstDocument _sstDoc;
+    private SstDocument _sstDoc;
 
     public SharedStringsTable() {
         super();
@@ -103,6 +103,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void readFrom(InputStream is) throws IOException {
         try {
             int cnt = 0;
@@ -110,7 +111,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
-            for (CTRst st : sst.getSiList()) {
+            for (CTRst st : sst.getSiArray()) {
                 stmap.put(st.toString(), cnt);
                 strings.add(st);
                 cnt++;

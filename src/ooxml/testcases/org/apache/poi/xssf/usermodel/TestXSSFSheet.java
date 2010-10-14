@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.PasswordRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
+@SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
 public final class TestXSSFSheet extends BaseTestSheet {
 
     public TestXSSFSheet() {
@@ -291,7 +292,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.groupColumn(10, 11);
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(2, cols.sizeOfColArray());
-        CTCol[] colArray = cols.getColList().toArray(new CTCol[2]);
+        CTCol[] colArray = cols.getColArray();
         assertNotNull(colArray);
         assertEquals(2 + 1, colArray[0].getMin()); // 1 based
         assertEquals(7 + 1, colArray[0].getMax()); // 1 based
@@ -301,7 +302,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.groupColumn(1, 2);
         cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(4, cols.sizeOfColArray());
-        colArray = cols.getColList().toArray(new CTCol[0]);
+        colArray = cols.getColArray();
         assertEquals(2, colArray[1].getOutlineLevel());
 
         //three level
@@ -309,17 +310,17 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.groupColumn(2, 3);
         cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(7, cols.sizeOfColArray());
-        colArray = cols.getColList().toArray(new CTCol[0]);
+        colArray = cols.getColArray();
         assertEquals(3, colArray[1].getOutlineLevel());
         assertEquals(3, sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelCol());
 
         sheet.ungroupColumn(8, 10);
-        colArray = cols.getColList().toArray(new CTCol[0]);
+        colArray = cols.getColArray();
         //assertEquals(3, colArray[1].getOutlineLevel());
 
         sheet.ungroupColumn(4, 6);
         sheet.ungroupColumn(2, 2);
-        colArray = cols.getColList().toArray(new CTCol[0]);
+        colArray = cols.getColArray();
         assertEquals(4, colArray.length);
         assertEquals(2, sheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelCol());
     }
@@ -701,7 +702,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFSheet xs = sheet;
         CTWorksheet cts = xs.getCTWorksheet();
 
-        CTCols[] cols_s = cts.getColsList().toArray(new CTCols[1]);
+        CTCols[] cols_s = cts.getColsArray();
         assertEquals(1, cols_s.length);
         CTCols cols = cols_s[0];
         assertEquals(1, cols.sizeOfColArray());
@@ -716,7 +717,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // Now set another
         sheet.setColumnWidth(3, 33 * 256);
 
-        cols_s = cts.getColsList().toArray(new CTCols[1]);
+        cols_s = cts.getColsArray();
         assertEquals(1, cols_s.length);
         cols = cols_s[0];
         assertEquals(2, cols.sizeOfColArray());
@@ -922,7 +923,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         row3.createCell(5);
 
 
-        CTRow[] xrow = sheetData.getRowList().toArray(new CTRow[3]);
+        CTRow[] xrow = sheetData.getRowArray();
         assertEquals(3, xrow.length);
 
         //rows are unsorted: {2, 1, 0}
@@ -938,7 +939,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(1, xrow[2].getR());
         assertTrue(xrow[2].equals(row3.getCTRow()));
 
-        CTCell[] xcell = xrow[2].getCList().toArray(new CTCell[4]);
+        CTCell[] xcell = xrow[2].getCArray();
         assertEquals("D1", xcell[0].getR());
         assertEquals("A1", xcell[1].getR());
         assertEquals("C1", xcell[2].getR());
@@ -954,14 +955,14 @@ public final class TestXSSFSheet extends BaseTestSheet {
         workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet = workbook.getSheetAt(0);
         wsh = sheet.getCTWorksheet();
-        xrow = sheetData.getRowList().toArray(new CTRow[3]);
+        xrow = sheetData.getRowArray();
         assertEquals(3, xrow.length);
 
         //rows are sorted: {0, 1, 2}
         assertEquals(4, xrow[0].sizeOfCArray());
         assertEquals(1, xrow[0].getR());
         //cells are now sorted
-        xcell = xrow[0].getCList().toArray(new CTCell[4]);
+        xcell = xrow[0].getCArray();
         assertEquals("A1", xcell[0].getR());
         assertEquals("C1", xcell[1].getR());
         assertEquals("D1", xcell[2].getR());

@@ -106,38 +106,52 @@ public class StylesTable extends POIXMLDocumentPart {
 	 * @param is The input stream containing the XML document.
 	 * @throws IOException if an error occurs while reading.
 	 */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
 	protected void readFrom(InputStream is) throws IOException {
 		try {
 			doc = StyleSheetDocument.Factory.parse(is);
-			// Grab all the different bits we care about
-			if(doc.getStyleSheet().getNumFmts() != null)
-			for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtList()) {
-				numberFormats.put((int)nfmt.getNumFmtId(), nfmt.getFormatCode());
-			}
-			if(doc.getStyleSheet().getFonts() != null){
+
+            CTStylesheet styleSheet = doc.getStyleSheet();
+
+            // Grab all the different bits we care about
+			CTNumFmts ctfmts = styleSheet.getNumFmts();
+            if( ctfmts != null){
+                for (CTNumFmt nfmt : ctfmts.getNumFmtArray()) {
+                    numberFormats.put((int)nfmt.getNumFmtId(), nfmt.getFormatCode());
+                }
+            }
+
+            CTFonts ctfonts = styleSheet.getFonts();
+            if(ctfonts != null){
 				int idx = 0;
-				for (CTFont font : doc.getStyleSheet().getFonts().getFontList()) {
+				for (CTFont font : ctfonts.getFontArray()) {
 					XSSFFont f = new XSSFFont(font, idx);
 					fonts.add(f);
 					idx++;
 				}
 			}
-			if(doc.getStyleSheet().getFills() != null)
-			for (CTFill fill : doc.getStyleSheet().getFills().getFillList()) {
-				fills.add(new XSSFCellFill(fill));
-			}
-			if(doc.getStyleSheet().getBorders() != null)
-			for (CTBorder border : doc.getStyleSheet().getBorders().getBorderList()) {
-				borders.add(new XSSFCellBorder(border));
-			}
-            CTCellXfs cellXfs = doc.getStyleSheet().getCellXfs();
-            if(cellXfs != null) xfs.addAll(cellXfs.getXfList());
+            CTFills ctfills = styleSheet.getFills();
+            if(ctfills != null){
+                for (CTFill fill : ctfills.getFillArray()) {
+                    fills.add(new XSSFCellFill(fill));
+                }
+            }
 
-            CTCellStyleXfs cellStyleXfs = doc.getStyleSheet().getCellStyleXfs();
-            if(cellStyleXfs != null) styleXfs.addAll(cellStyleXfs.getXfList());
+            CTBorders ctborders = styleSheet.getBorders();
+            if(ctborders != null) {
+                for (CTBorder border : ctborders.getBorderArray()) {
+                    borders.add(new XSSFCellBorder(border));
+                }
+            }
 
-            CTDxfs styleDxfs = doc.getStyleSheet().getDxfs();
-			if(styleDxfs != null) dxfs.addAll(styleDxfs.getDxfList());
+            CTCellXfs cellXfs = styleSheet.getCellXfs();
+            if(cellXfs != null) xfs.addAll(Arrays.asList(cellXfs.getXfArray()));
+
+            CTCellStyleXfs cellStyleXfs = styleSheet.getCellStyleXfs();
+            if(cellStyleXfs != null) styleXfs.addAll(Arrays.asList(cellStyleXfs.getXfArray()));
+
+            CTDxfs styleDxfs = styleSheet.getDxfs();
+			if(styleDxfs != null) dxfs.addAll(Arrays.asList(styleDxfs.getDxfArray()));
 
 		} catch (XmlException e) {
 			throw new IOException(e.getLocalizedMessage());
@@ -328,6 +342,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		// Work on the current one
 		// Need to do this, as we don't handle
 		//  all the possible entries yet
+        CTStylesheet styleSheet = doc.getStyleSheet();
 
 		// Formats
 		CTNumFmts formats = CTNumFmts.Factory.newInstance();
@@ -337,7 +352,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			ctFmt.setNumFmtId(fmt.getKey());
 			ctFmt.setFormatCode(fmt.getValue());
 		}
-		doc.getStyleSheet().setNumFmts(formats);
+		styleSheet.setNumFmts(formats);
 
 		int idx;
 		// Fonts
@@ -347,7 +362,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		idx = 0;
 		for(XSSFFont f : fonts) ctfnt[idx++] = f.getCTFont();
 		ctFonts.setFontArray(ctfnt);
-		doc.getStyleSheet().setFonts(ctFonts);
+		styleSheet.setFonts(ctFonts);
 
 		// Fills
 		CTFills ctFills = CTFills.Factory.newInstance();
@@ -356,7 +371,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		idx = 0;
 		for(XSSFCellFill f : fills) ctf[idx++] = f.getCTFill();
 		ctFills.setFillArray(ctf);
-		doc.getStyleSheet().setFills(ctFills);
+		styleSheet.setFills(ctFills);
 
 		// Borders
 		CTBorders ctBorders = CTBorders.Factory.newInstance();
@@ -365,7 +380,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		idx = 0;
 		for(XSSFCellBorder b : borders) ctb[idx++] = b.getCTBorder();
 		ctBorders.setBorderArray(ctb);
-		doc.getStyleSheet().setBorders(ctBorders);
+		styleSheet.setBorders(ctBorders);
 
 		// Xfs
 		if(xfs.size() > 0) {
@@ -374,7 +389,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			ctXfs.setXfArray(
 					xfs.toArray(new CTXf[xfs.size()])
 			);
-			doc.getStyleSheet().setCellXfs(ctXfs);
+			styleSheet.setCellXfs(ctXfs);
 		}
 
 		// Style xfs
@@ -384,7 +399,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			ctSXfs.setXfArray(
 					styleXfs.toArray(new CTXf[styleXfs.size()])
 			);
-			doc.getStyleSheet().setCellStyleXfs(ctSXfs);
+			styleSheet.setCellStyleXfs(ctSXfs);
 		}
 
 		// Style dxfs
@@ -393,7 +408,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			ctDxfs.setCount(dxfs.size());
 			ctDxfs.setDxfArray(dxfs.toArray(new CTDxf[dxfs.size()])
 			);
-			doc.getStyleSheet().setDxfs(ctDxfs);
+			styleSheet.setDxfs(ctDxfs);
 		}
 
 		// Save

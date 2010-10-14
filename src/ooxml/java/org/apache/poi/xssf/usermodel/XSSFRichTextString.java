@@ -132,6 +132,7 @@ public class XSSFRichTextString implements RichTextString {
      * @param endIndex      The end index to apply to font to (exclusive)
      * @param font          The index of the font to use.
      */
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void applyFont(int startIndex, int endIndex, Font font) {
         if (startIndex > endIndex)
             throw new IllegalArgumentException("Start index must be less than end index.");
@@ -151,9 +152,7 @@ public class XSSFRichTextString implements RichTextString {
         XSSFFont xssfFont = (XSSFFont)font;
         ArrayList<CTRElt> runs = new ArrayList<CTRElt>();
 
-        CTRElt[] r = new  CTRElt[st.getRList().size()];
-        st.getRList().toArray(r);
-        
+        CTRElt[] r = st.getRArray();
         int pos = 0;
         for (int i = 0; i < r.length; i++) {
             int rStart = pos;
@@ -345,7 +344,7 @@ public class XSSFRichTextString implements RichTextString {
             return utfDecode(st.getT());
         }
         StringBuffer buf = new StringBuffer();
-        for(CTRElt r : st.getRList()){
+        for(CTRElt r : st.getRArray()){
             buf.append(r.getT());
         }
         return utfDecode(buf.toString());
@@ -429,10 +428,11 @@ public class XSSFRichTextString implements RichTextString {
         return st;
     }
 
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
         if(st.sizeOfRArray() > 0) {
-            for (CTRElt r : st.getRList()) {
+            for (CTRElt r : st.getRArray()) {
                 CTRPrElt pr = r.getRPr();
                 if(pr != null){
                     String fontName = pr.getRFontArray(0).getVal();
