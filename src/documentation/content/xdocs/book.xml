@@ -60,4 +60,11 @@
         <menu-item label="Publisher (HPBF)" href="hpbf/index.html"/>
     </menu>
 
+    <menu label="Apache Wide">
+        <menu-item label="Apache Software Foundation" href="http://www.apache.org/" />
+        <menu-item label="License" href="http://www.apache.org/licenses/" />
+        <menu-item label="Sponsorship" href="http://www.apache.org/foundation/sponsorship.html" />
+        <menu-item label="Thanks" href="http://www.apache.org/foundation/thanks.html" />
+        <menu-item label="Security" href="http://www.apache.org/security/" />
+    </menu>
 </book>

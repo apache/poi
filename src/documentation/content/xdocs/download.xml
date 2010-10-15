@@ -27,7 +27,10 @@
   <body>
     <section><title>Available Downloads</title>
       <p>
-       This page provides instructions on how to download and verify Apache POI release artifacts.
+       This page provides instructions on how to download and verify the
+       Apache POI release artifacts. Apache POI is a pure Java library for
+       manipulating Microsoft Documents, for more information please see
+       <link href="index.html">the project homepage</link>.
       </p>
       <ul>
           <li><link href="download.html#POI-3.6">The latest stable release is Apache POI 3.6</link></li>
