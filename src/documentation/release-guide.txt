@@ -184,3 +184,4 @@ You should see [INFO] BUILD SUCCESSFUL in the end.
 
 Note, announcements should be sent from your @apache.org e-mail address.
 
+10. add a new project version in Bugzilla
