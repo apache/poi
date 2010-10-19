@@ -48,13 +48,13 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 * You always need to check the most recent PersistPtrHolder
 	 *  that knows about a given slide to find the right location
 	 */
-	private Hashtable _slideLocations;
+	private Hashtable<Integer,Integer> _slideLocations;
 	/**
 	 * Holds the lookup from slide id to where their offset is
 	 *  held inside _ptrData. Used when writing out, and updating
 	 *  the positions of the slides
 	 */
-	private Hashtable _slideOffsetDataLocation;
+	private Hashtable<Integer,Integer> _slideOffsetDataLocation;
 
 	/**
 	 * Get the list of slides that this PersistPtrHolder knows about.
@@ -63,9 +63,9 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 */
 	public int[] getKnownSlideIDs() {
 		int[] ids = new int[_slideLocations.size()];
-		Enumeration e = _slideLocations.keys();
+		Enumeration<Integer> e = _slideLocations.keys();
 		for(int i=0; i<ids.length; i++) {
-			Integer id = (Integer)e.nextElement();
+			Integer id = e.nextElement();
 			ids[i] = id.intValue();
 		}
 		return ids;
@@ -75,14 +75,14 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 * Get the lookup from slide numbers to byte offsets, for the slides
 	 *  known about by this PersistPtrHolder.
 	 */
-	public Hashtable getSlideLocationsLookup() {
+	public Hashtable<Integer,Integer> getSlideLocationsLookup() {
 		return _slideLocations;
 	}
 	/**
 	 * Get the lookup from slide numbers to their offsets inside
 	 *  _ptrData, used when adding or moving slides.
 	 */
-	public Hashtable getSlideOffsetDataLocationsLookup() {
+	public Hashtable<Integer,Integer> getSlideOffsetDataLocationsLookup() {
 		return _slideOffsetDataLocation;
 	}
 
@@ -140,8 +140,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		//      base number for these entries
 		//   count * 32 bit offsets
 		// Repeat as many times as you have data
-		_slideLocations = new Hashtable();
-		_slideOffsetDataLocation = new Hashtable();
+		_slideLocations = new Hashtable<Integer,Integer>();
+		_slideOffsetDataLocation = new Hashtable<Integer,Integer>();
 		_ptrData = new byte[len-8];
 		System.arraycopy(source,start+8,_ptrData,0,_ptrData.length);
 
@@ -181,7 +181,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 * At write-out time, update the references to the sheets to their
 	 *  new positions
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+	public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
 		int[] slideIDs = getKnownSlideIDs();
 
 		// Loop over all the slides we know about

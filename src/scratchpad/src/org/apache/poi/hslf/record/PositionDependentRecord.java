@@ -47,5 +47,5 @@ public interface PositionDependentRecord
 	 * Offer the record the list of records that have changed their
 	 *  location as part of the writeout.
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup);
+	public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup);
 }
