@@ -154,6 +154,14 @@ public final class Picture
       out.write(_dataStream, pictureBytesStartOffset, size);
     }
   }
+  
+  /**
+   * @return The offset of this picture in the picture bytes, used
+   *  when matching up with {@link CharacterRun#getPicOffset()}
+   */
+  public int getStartOffset() {
+     return dataBlockStartOfsset;
+  }
 
   /**
    * @return picture's content as byte array

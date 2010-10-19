@@ -608,5 +608,8 @@ public final class CharacterRun
     return _props.getBrc();
   }
 
-
+  public String toString() {
+     String text = text();
+     return "CharacterRun of " + text.length() + " characters - " + text; 
+  }
 }
