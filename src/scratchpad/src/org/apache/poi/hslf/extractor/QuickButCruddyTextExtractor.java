@@ -122,9 +122,8 @@ public final class QuickButCruddyTextExtractor {
 	 */
 	public String getTextAsString() {
 		StringBuffer ret = new StringBuffer();
-		Vector textV = getTextAsVector();
-		for(int i=0; i<textV.size(); i++) {
-			String text = (String)textV.get(i);
+		Vector<String> textV = getTextAsVector();
+		for(String text : textV) {
 			ret.append(text);
 			if(! text.endsWith("\n")) {
 				ret.append('\n');
@@ -137,8 +136,8 @@ public final class QuickButCruddyTextExtractor {
 	 * Fetches the ALL the text of the powerpoint file, in a vector of
 	 *  strings, one per text record
 	 */
-	public Vector getTextAsVector() {
-		Vector textV = new Vector();
+	public Vector<String> getTextAsVector() {
+		Vector<String> textV = new Vector<String>();
 
 		// Set to the start of the file
 		int walkPos = 0;
@@ -159,7 +158,7 @@ public final class QuickButCruddyTextExtractor {
 	 * If it is a text record, grabs out the text. Whatever happens, returns
 	 *  the position of the next record, or -1 if no more.
 	 */
-	public int findTextRecords(int startPos, Vector textV) {
+	public int findTextRecords(int startPos, Vector<String> textV) {
 		// Grab the length, and the first option byte
 		// Note that the length doesn't include the 8 byte atom header
 		int len = (int)LittleEndian.getUInt(pptContents,startPos+4);

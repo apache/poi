@@ -48,5 +48,5 @@ public abstract class PositionDependentRecordAtom extends RecordAtom implements 
 	 * Allows records to update their internal pointers to other records
 	 *  locations
 	 */
-	public abstract void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup);
+	public abstract void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup);
 }
