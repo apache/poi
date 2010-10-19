@@ -75,7 +75,7 @@ public final class SoundData {
      * @return the array with the sound data
      */
     public static SoundData[] find(Document document){
-        ArrayList lst = new ArrayList();
+        ArrayList<SoundData> lst = new ArrayList<SoundData>();
         Record[] ch = document.getChildRecords();
         for (int i = 0; i < ch.length; i++) {
             if(ch[i].getRecordType() == RecordTypes.SoundCollection.typeID){
@@ -89,6 +89,6 @@ public final class SoundData {
             }
 
         }
-        return (SoundData[])lst.toArray(new SoundData[lst.size()]);
+        return lst.toArray(new SoundData[lst.size()]);
     }
 }
