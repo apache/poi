@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.contrib.poibrowser;
+package org.apache.poi.poifs.poibrowser;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

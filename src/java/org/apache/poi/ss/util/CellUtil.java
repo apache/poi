@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.contrib;
+package org.apache.poi.ss.util;
 
 import java.util.HashMap;
 import java.util.Map;
