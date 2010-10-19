@@ -227,8 +227,8 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
     private Record[] read(byte[] docstream, int usrOffset){
-        ArrayList lst = new ArrayList();
-        HashMap offset2id = new HashMap();
+        ArrayList<Integer> lst = new ArrayList<Integer>();
+        HashMap<Integer,Integer> offset2id = new HashMap<Integer,Integer>();
         while (usrOffset != 0){
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
             lst.add(Integer.valueOf(usrOffset));
@@ -236,11 +236,9 @@ public final class HSLFSlideShow extends POIDocument {
 
             PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
             lst.add(Integer.valueOf(psrOffset));
-            Hashtable entries = ptr.getSlideLocationsLookup();
-            for (Iterator it = entries.keySet().iterator(); it.hasNext(); ) {
-                Integer id = (Integer)it.next();
-                Integer offset = (Integer)entries.get(id);
-
+            Hashtable<Integer,Integer> entries = ptr.getSlideLocationsLookup();
+            for(Integer id : entries.keySet()) {
+                Integer offset = entries.get(id);
                 lst.add(offset);
                 offset2id.put(offset, id);
             }
@@ -249,15 +247,15 @@ public final class HSLFSlideShow extends POIDocument {
         }
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
-        Object a[] = lst.toArray();
+        Integer a[] = lst.toArray(new Integer[lst.size()]);
         Arrays.sort(a);
         Record[] rec = new Record[lst.size()];
         for (int i = 0; i < a.length; i++) {
-            Integer offset = (Integer)a[i];
+            Integer offset = a[i];
             rec[i] = Record.buildRecordAtOffset(docstream, offset.intValue());
             if(rec[i] instanceof PersistRecord) {
                 PersistRecord psr = (PersistRecord)rec[i];
-                Integer id = (Integer)offset2id.get(offset);
+                Integer id = offset2id.get(offset);
                 psr.setPersistId(id.intValue());
             }
         }
@@ -379,7 +377,7 @@ public final class HSLFSlideShow extends POIDocument {
         POIFSFileSystem outFS = new POIFSFileSystem();
 
         // The list of entries we've written out
-        List writtenEntries = new ArrayList(1);
+        List<String> writtenEntries = new ArrayList<String>(1);
 
         // Write out the Property Streams
         writeProperties(outFS, writtenEntries);
@@ -388,7 +386,7 @@ public final class HSLFSlideShow extends POIDocument {
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
         //  records we happen across
-        Hashtable oldToNewPositions = new Hashtable();
+        Hashtable<Integer,Integer> oldToNewPositions = new Hashtable<Integer,Integer>();
 
         // First pass - figure out where all the position dependent
         //   records are going to end up, in the new scheme
@@ -549,13 +547,13 @@ public final class HSLFSlideShow extends POIDocument {
      */
     public ObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
-            List objects = new ArrayList();
+            List<ObjectData> objects = new ArrayList<ObjectData>();
             for (int i = 0; i < _records.length; i++) {
                 if (_records[i] instanceof ExOleObjStg) {
                     objects.add(new ObjectData((ExOleObjStg) _records[i]));
                 }
             }
-            _objects = (ObjectData[]) objects.toArray(new ObjectData[objects.size()]);
+            _objects = objects.toArray(new ObjectData[objects.size()]);
         }
         return _objects;
     }

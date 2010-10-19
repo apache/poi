@@ -62,7 +62,7 @@ public final class SlideShow {
 	private Record[] _mostRecentCoreRecords;
 	// Lookup between the PersitPtr "sheet" IDs, and the position
 	// in the mostRecentCoreRecords array
-	private Hashtable _sheetIdToCoreRecordsLookup;
+	private Hashtable<Integer,Integer> _sheetIdToCoreRecordsLookup;
 
 	// Records that are interesting
 	private Document _documentRecord;
@@ -131,7 +131,7 @@ public final class SlideShow {
 	 */
 	private void findMostRecentCoreRecords() {
 		// To start with, find the most recent in the byte offset domain
-		Hashtable mostRecentByBytes = new Hashtable();
+		Hashtable<Integer,Integer> mostRecentByBytes = new Hashtable<Integer,Integer>();
 		for (int i = 0; i < _records.length; i++) {
 			if (_records[i] instanceof PersistPtrHolder) {
 				PersistPtrHolder pph = (PersistPtrHolder) _records[i];
@@ -147,7 +147,7 @@ public final class SlideShow {
 				}
 
 				// Now, update the byte level locations with their latest values
-				Hashtable thisSetOfLocations = pph.getSlideLocationsLookup();
+				Hashtable<Integer,Integer> thisSetOfLocations = pph.getSlideLocationsLookup();
 				for (int j = 0; j < ids.length; j++) {
 					Integer id = Integer.valueOf(ids[j]);
 					mostRecentByBytes.put(id, thisSetOfLocations.get(id));
@@ -161,11 +161,11 @@ public final class SlideShow {
 
 		// We'll also want to be able to turn the slide IDs into a position
 		// in this array
-		_sheetIdToCoreRecordsLookup = new Hashtable();
+		_sheetIdToCoreRecordsLookup = new Hashtable<Integer,Integer>();
 		int[] allIDs = new int[_mostRecentCoreRecords.length];
-		Enumeration ids = mostRecentByBytes.keys();
+		Enumeration<Integer> ids = mostRecentByBytes.keys();
 		for (int i = 0; i < allIDs.length; i++) {
-			Integer id = (Integer) ids.nextElement();
+			Integer id = ids.nextElement();
 			allIDs[i] = id.intValue();
 		}
 		Arrays.sort(allIDs);
@@ -182,11 +182,11 @@ public final class SlideShow {
 				// Is it one we care about?
 				for (int j = 0; j < allIDs.length; j++) {
 					Integer thisID = Integer.valueOf(allIDs[j]);
-					Integer thatRecordAt = (Integer) mostRecentByBytes.get(thisID);
+					Integer thatRecordAt = mostRecentByBytes.get(thisID);
 
 					if (thatRecordAt.equals(recordAt)) {
 						// Bingo. Now, where do we store it?
-						Integer storeAtI = (Integer) _sheetIdToCoreRecordsLookup.get(thisID);
+						Integer storeAtI = _sheetIdToCoreRecordsLookup.get(thisID);
 						int storeAt = storeAtI.intValue();
 
 						// Tell it its Sheet ID, if it cares
@@ -236,7 +236,7 @@ public final class SlideShow {
 	 *            the refID
 	 */
 	private Record getCoreRecordForRefID(int refID) {
-		Integer coreRecordId = (Integer) _sheetIdToCoreRecordsLookup.get(Integer.valueOf(refID));
+		Integer coreRecordId = _sheetIdToCoreRecordsLookup.get(Integer.valueOf(refID));
 		if (coreRecordId != null) {
 			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
 			return r;
@@ -289,8 +289,8 @@ public final class SlideShow {
 		if (masterSLWT != null) {
 			masterSets = masterSLWT.getSlideAtomsSets();
 
-			ArrayList mmr = new ArrayList();
-			ArrayList tmr = new ArrayList();
+			ArrayList<SlideMaster> mmr = new ArrayList<SlideMaster>();
+			ArrayList<TitleMaster> tmr = new ArrayList<TitleMaster>();
 
 			for (int i = 0; i < masterSets.length; i++) {
 				Record r = getCoreRecordForSAS(masterSets[i]);
@@ -314,7 +314,6 @@ public final class SlideShow {
 
 			_titleMasters = new TitleMaster[tmr.size()];
 			tmr.toArray(_titleMasters);
-
 		}
 
 		// Having sorted out the masters, that leaves the notes and slides
@@ -323,14 +322,15 @@ public final class SlideShow {
 		// notesSLWT
 		org.apache.poi.hslf.record.Notes[] notesRecords;
 		SlideAtomsSet[] notesSets = new SlideAtomsSet[0];
-		Hashtable slideIdToNotes = new Hashtable();
+		Hashtable<Integer,Integer> slideIdToNotes = new Hashtable<Integer,Integer>();
 		if (notesSLWT == null) {
 			// None
 			notesRecords = new org.apache.poi.hslf.record.Notes[0];
 		} else {
 			// Match up the records and the SlideAtomSets
 			notesSets = notesSLWT.getSlideAtomsSets();
-			ArrayList notesRecordsL = new ArrayList();
+			ArrayList<org.apache.poi.hslf.record.Notes> notesRecordsL = 
+			   new ArrayList<org.apache.poi.hslf.record.Notes>();
 			for (int i = 0; i < notesSets.length; i++) {
 				// Get the right core record
 				Record r = getCoreRecordForSAS(notesSets[i]);
@@ -352,7 +352,7 @@ public final class SlideShow {
 				}
 			}
 			notesRecords = new org.apache.poi.hslf.record.Notes[notesRecordsL.size()];
-			notesRecords = (org.apache.poi.hslf.record.Notes[]) notesRecordsL.toArray(notesRecords);
+			notesRecords = notesRecordsL.toArray(notesRecords);
 		}
 
 		// Now, do the same thing for our slides
@@ -560,7 +560,7 @@ public final class SlideShow {
 		sas[oldSlideNumber - 1] = sas[newSlideNumber - 1];
 		sas[newSlideNumber - 1] = tmp;
 
-		ArrayList lst = new ArrayList();
+		ArrayList<Record> lst = new ArrayList<Record>();
 		for (int i = 0; i < sas.length; i++) {
 			lst.add(sas[i].getSlidePersistAtom());
 			Record[] r = sas[i].getSlideRecords();
@@ -569,7 +569,7 @@ public final class SlideShow {
 			}
 			_slides[i].setSlideNumber(i + 1);
 		}
-		Record[] r = (Record[]) lst.toArray(new Record[lst.size()]);
+		Record[] r = lst.toArray(new Record[lst.size()]);
 		slwt.setChildRecord(r);
 	}
 
