@@ -60,7 +60,7 @@ public abstract class PositionDependentRecordContainer extends RecordContainer i
 	 * Since we're a container, we don't mind if other records move about.
 	 * If we're told they have, just return straight off.
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+	public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
 		return;
 	}
 }

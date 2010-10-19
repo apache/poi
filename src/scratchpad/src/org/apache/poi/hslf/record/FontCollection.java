@@ -30,8 +30,8 @@ import java.util.*;
  */
 
 public final class FontCollection extends RecordContainer {
-    private List fonts;
-	private byte[] _header;
+    private List<String> fonts;
+    private byte[] _header;
 
 	protected FontCollection(byte[] source, int start, int len) {
 		// Grab the header
@@ -41,7 +41,7 @@ public final class FontCollection extends RecordContainer {
 		_children = Record.findChildRecords(source,start+8,len-8);
 
 		// Save font names into <code>List</code>
-		fonts = new ArrayList();
+		fonts = new ArrayList<String>();
 		for (int i = 0; i < _children.length; i++){
 			if(_children[i] instanceof FontEntityAtom) {
 	            FontEntityAtom atom = (FontEntityAtom)_children[i];
@@ -123,6 +123,6 @@ public final class FontCollection extends RecordContainer {
 			// No font with that id
 			return null;
 		}
-		return (String)fonts.get(id);
+		return fonts.get(id);
 	}
 }

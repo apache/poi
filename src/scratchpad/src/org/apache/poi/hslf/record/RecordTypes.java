@@ -31,8 +31,8 @@ import java.lang.reflect.Field;
  * @author Nick Burch
  */
 public final class RecordTypes {
-    public static HashMap typeToName;
-    public static HashMap typeToClass;
+    public static HashMap<Integer,String> typeToName;
+    public static HashMap<Integer,Class<? extends Record>> typeToClass;
 
     public static final Type Unknown = new Type(0,null);
     public static final Type Document = new Type(1000,Document.class);
@@ -217,7 +217,7 @@ public final class RecordTypes {
      * @return name of the record
      */
     public static String recordName(int type) {
-        String name = (String)typeToName.get(Integer.valueOf(type));
+        String name = typeToName.get(Integer.valueOf(type));
         if (name == null) name = "Unknown" + type;
         return name;
     }
@@ -231,33 +231,33 @@ public final class RecordTypes {
      * @param type section of the record header
      * @return class to handle the record, or null if an unknown (eg Escher) record
      */
-	public static Class recordHandlingClass(int type) {
-		Class c = (Class)typeToClass.get(Integer.valueOf(type));
+	public static Class<? extends Record> recordHandlingClass(int type) {
+		Class<? extends Record> c = typeToClass.get(Integer.valueOf(type));
 		return c;
 	}
 
     static {
-		typeToName = new HashMap();
-		typeToClass = new HashMap();
+		typeToName = new HashMap<Integer,String>();
+		typeToClass = new HashMap<Integer,Class<? extends Record>>();
         try {
             Field[] f = RecordTypes.class.getFields();
             for (int i = 0; i < f.length; i++){
-                Object val = f[i].get(null);
+               Object val = f[i].get(null);
 
-				// Escher record, only store ID -> Name
-                if (val instanceof Integer) {
-                    typeToName.put(val, f[i].getName());
-                }
-				// PowerPoint record, store ID -> Name and ID -> Class
-				if (val instanceof Type) {
-					Type t = (Type)val;
-					Class c = t.handlingClass;
-					Integer id = Integer.valueOf(t.typeID);
-					if(c == null) { c = UnknownRecordPlaceholder.class; }
+               // Escher record, only store ID -> Name
+               if (val instanceof Integer) {
+                  typeToName.put((Integer)val, f[i].getName());
+               }
+               // PowerPoint record, store ID -> Name and ID -> Class
+               if (val instanceof Type) {
+                  Type t = (Type)val;
+                  Class<? extends Record> c = t.handlingClass;
+                  Integer id = Integer.valueOf(t.typeID);
+                  if(c == null) { c = UnknownRecordPlaceholder.class; }
 
-                    typeToName.put(id, f[i].getName());
-                    typeToClass.put(id, c);
-				}
+                  typeToName.put(id, f[i].getName());
+                  typeToClass.put(id, c);
+               }
             }
         } catch (IllegalAccessException e){
             throw new RuntimeException("Failed to initialize records types");
@@ -272,8 +272,8 @@ public final class RecordTypes {
 	 */
 	public static class Type {
 		public int typeID;
-		public Class handlingClass;
-		public Type(int typeID, Class handlingClass) {
+		public Class<? extends Record> handlingClass;
+		public Type(int typeID, Class<? extends Record> handlingClass) {
 			this.typeID = typeID;
 			this.handlingClass = handlingClass;
 		}

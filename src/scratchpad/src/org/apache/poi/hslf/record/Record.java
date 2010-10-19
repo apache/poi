@@ -19,11 +19,13 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This abstract class represents a record in the PowerPoint document.
@@ -105,7 +107,7 @@ public abstract class Record
 	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
-		Vector children = new Vector(5);
+		List<Record> children = new ArrayList<Record>(5);
 
 		// Jump our little way along, creating records as we go
 		int pos = start;
@@ -134,10 +136,7 @@ public abstract class Record
 		}
 
 		// Turn the vector into an array, and return
-		Record[] cRecords = new Record[children.size()];
-		for(int i=0; i < children.size(); i++) {
-			cRecords[i] = (Record)children.get(i);
-		}
+		Record[] cRecords = children.toArray( new Record[children.size()] );
 		return cRecords;
 	}
 
@@ -165,7 +164,7 @@ public abstract class Record
 		// A spot of reflection gets us the (byte[],int,int) constructor
 		// From there, we instanciate the class
 		// Any special record handling occurs once we have the class
-		Class c = null;
+		Class<? extends Record> c = null;
 		try {
 			c = RecordTypes.recordHandlingClass((int)type);
 			if(c == null) {
@@ -177,9 +176,9 @@ public abstract class Record
 			}
 
 			// Grab the right constructor
-			java.lang.reflect.Constructor con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
+			java.lang.reflect.Constructor<? extends Record> con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
 			// Instantiate
-			toReturn = (Record)(con.newInstance(new Object[] { b, Integer.valueOf(start), Integer.valueOf(len) }));
+			toReturn = con.newInstance(new Object[] { b, Integer.valueOf(start), Integer.valueOf(len) });
 		} catch(InstantiationException ie) {
 			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
