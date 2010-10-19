@@ -16,7 +16,7 @@
    limitations under the License.
 ==================================================================== */
         
-package org.apache.poi.contrib.metrics;
+package org.apache.poi.util;
 
 import java.awt.*;
 import java.io.FileOutputStream;
