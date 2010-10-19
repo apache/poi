@@ -82,7 +82,7 @@ public final class SlideListWithText extends RecordContainer {
 		// Group our children together into SlideAtomsSets
 		// That way, model layer code can just grab the sets to use,
 		//  without having to try to match the children together
-		Vector sets = new Vector();
+		Vector<SlideAtomsSet> sets = new Vector<SlideAtomsSet>();
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlidePersistAtom) {
 				// Find where the next SlidePersistAtom is
@@ -108,10 +108,7 @@ public final class SlideListWithText extends RecordContainer {
 		}
 
 		// Turn the vector into an array
-		slideAtomsSets = new SlideAtomsSet[sets.size()];
-		for(int i=0; i<slideAtomsSets.length; i++) {
-			slideAtomsSets[i] = (SlideAtomsSet)sets.get(i);
-		}
+		slideAtomsSets = sets.toArray( new SlideAtomsSet[sets.size()] );
 	}
 
 	/**

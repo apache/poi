@@ -115,7 +115,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
     }
 
     public TextSpecInfoRun[] getTextSpecInfoRuns(){
-        ArrayList lst = new ArrayList();
+        ArrayList<TextSpecInfoRun> lst = new ArrayList<TextSpecInfoRun>();
         int pos = 0;
         int[] bits = {1, 0, 2};
         while(pos < _data.length) {
@@ -139,8 +139,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
             }
             lst.add(run);
         }
-        return (TextSpecInfoRun[])lst.toArray(new TextSpecInfoRun[lst.size()]);
-
+        return lst.toArray(new TextSpecInfoRun[lst.size()]);
     }
 
     public static class TextSpecInfoRun {

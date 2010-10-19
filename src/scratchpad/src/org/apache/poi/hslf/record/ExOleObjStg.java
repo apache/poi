@@ -165,7 +165,7 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         myLastOnDiskOffset = offset;
     }
 
-    public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+    public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
         return;
     }
 

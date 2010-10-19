@@ -63,8 +63,8 @@ public final class MainMaster extends SheetContainer {
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
 
-		ArrayList tx = new ArrayList();
-		ArrayList clr = new ArrayList();
+		ArrayList<TxMasterStyleAtom> tx = new ArrayList<TxMasterStyleAtom>();
+		ArrayList<ColorSchemeAtom> clr = new ArrayList<ColorSchemeAtom>();
 		// Find the interesting ones in there
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlideAtom) {
@@ -72,9 +72,9 @@ public final class MainMaster extends SheetContainer {
 			} else if(_children[i] instanceof PPDrawing) {
 				ppDrawing = (PPDrawing)_children[i];
 			} else if(_children[i] instanceof TxMasterStyleAtom) {
-				tx.add(_children[i]);
+				tx.add( (TxMasterStyleAtom)_children[i] );
 			} else if(_children[i] instanceof ColorSchemeAtom) {
-				clr.add(_children[i]);
+				clr.add( (ColorSchemeAtom)_children[i] );
 			}
 
 			if(ppDrawing != null && _children[i] instanceof ColorSchemeAtom) {
@@ -82,8 +82,8 @@ public final class MainMaster extends SheetContainer {
 			}
 
 		}
-		txmasters = (TxMasterStyleAtom[])tx.toArray(new TxMasterStyleAtom[tx.size()]);
-		clrscheme = (ColorSchemeAtom[])clr.toArray(new ColorSchemeAtom[clr.size()]);
+		txmasters = tx.toArray(new TxMasterStyleAtom[tx.size()]);
+		clrscheme = clr.toArray(new ColorSchemeAtom[clr.size()]);
 	}
 
 	/**
