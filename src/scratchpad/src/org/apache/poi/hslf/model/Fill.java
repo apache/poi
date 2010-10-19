@@ -209,7 +209,7 @@ public final class Fill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
-        java.util.List lst = bstore.getChildRecords();
+        java.util.List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
         if (idx == 0){
             logger.log(POILogger.WARN, "no reference to picture data found ");
