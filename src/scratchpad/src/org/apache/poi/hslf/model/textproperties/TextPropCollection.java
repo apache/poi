@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
 public class TextPropCollection {
 	private int charactersCovered;
 	private short reservedField;
-	private LinkedList textPropList;
+	private LinkedList<TextProp> textPropList;
     private int maskSpecial = 0;
     
     public int getSpecialMask() { return maskSpecial; }
@@ -41,12 +41,12 @@ public class TextPropCollection {
 	/** Fetch the number of characters this styling applies to */
 	public int getCharactersCovered() { return charactersCovered; }
 	/** Fetch the TextProps that define this styling */
-	public LinkedList getTextPropList() { return textPropList; }
+	public LinkedList<TextProp> getTextPropList() { return textPropList; }
 	
 	/** Fetch the TextProp with this name, or null if it isn't present */
 	public TextProp findByName(String textPropName) {
 		for(int i=0; i<textPropList.size(); i++) {
-			TextProp prop = (TextProp)textPropList.get(i);
+			TextProp prop = textPropList.get(i);
 			if(prop.getName().equals(textPropName)) {
 				return prop;
 			}
@@ -76,7 +76,7 @@ public class TextPropCollection {
 		TextProp textProp = (TextProp)base.clone();
 		int pos = 0;
 		for(int i=0; i<textPropList.size(); i++) {
-			TextProp curProp = (TextProp)textPropList.get(i);
+			TextProp curProp = textPropList.get(i);
 			if(textProp.getMask() > curProp.getMask()) {
 				pos++;
 			}
@@ -137,7 +137,7 @@ public class TextPropCollection {
 	public TextPropCollection(int charactersCovered, short reservedField) {
 		this.charactersCovered = charactersCovered;
 		this.reservedField = reservedField;
-		textPropList = new LinkedList();
+		textPropList = new LinkedList<TextProp>();
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class TextPropCollection {
 	public TextPropCollection(int textSize) {
 		charactersCovered = textSize;
 		reservedField = -1;
-		textPropList = new LinkedList();
+		textPropList = new LinkedList<TextProp>();
 	}
 	
 	/**
@@ -187,7 +187,7 @@ public class TextPropCollection {
 
 		// Then the contents of all the properties
 		for(int i=0; i<textPropList.size(); i++) {
-			TextProp textProp = (TextProp)textPropList.get(i);
+			TextProp textProp = textPropList.get(i);
 			int val = textProp.getValue();
 			if(textProp.getSize() == 2) {
 				StyleTextPropAtom.writeLittleEndian((short)val,o);

@@ -20,7 +20,6 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.poi.hslf.model.textproperties.AlignmentTextProp;
@@ -28,9 +27,9 @@ import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.HexDump;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties
@@ -69,26 +68,26 @@ public final class StyleTextPropAtom extends RecordAtom
 	 *  Characters the paragraph covers, and also contains the TextProps
 	 *  that actually define the styling of the paragraph.
 	 */
-	private LinkedList paragraphStyles;
-	public LinkedList getParagraphStyles() { return paragraphStyles; }
+	private LinkedList<TextPropCollection> paragraphStyles;
+	public LinkedList<TextPropCollection> getParagraphStyles() { return paragraphStyles; }
 	/**
 	 * Updates the link list of TextPropCollections which make up the
 	 *  paragraph stylings
 	 */
-	public void setParagraphStyles(LinkedList ps) { paragraphStyles = ps; }
+	public void setParagraphStyles(LinkedList<TextPropCollection> ps) { paragraphStyles = ps; }
 	/**
 	 * The list of all the different character stylings we code for.
 	 * Each entry is a TextPropCollection, which tells you how many
 	 *  Characters the character styling covers, and also contains the
 	 *  TextProps that actually define the styling of the characters.
 	 */
-	private LinkedList charStyles;
-	public LinkedList getCharacterStyles() { return charStyles; }
+	private LinkedList<TextPropCollection> charStyles;
+	public LinkedList<TextPropCollection> getCharacterStyles() { return charStyles; }
 	/**
 	 * Updates the link list of TextPropCollections which make up the
 	 *  character stylings
 	 */
-	public void setCharacterStyles(LinkedList cs) { charStyles = cs; }
+	public void setCharacterStyles(LinkedList<TextPropCollection> cs) { charStyles = cs; }
 
 	/**
 	 * Returns how many characters the paragraph's
@@ -110,12 +109,9 @@ public final class StyleTextPropAtom extends RecordAtom
 	public int getCharacterTextLengthCovered() {
 		return getCharactersCovered(charStyles);
 	}
-	private int getCharactersCovered(LinkedList styles) {
+	private int getCharactersCovered(LinkedList<TextPropCollection> styles) {
 		int length = 0;
-		Iterator it = styles.iterator();
-		while(it.hasNext()) {
-			TextPropCollection tpc =
-				(TextPropCollection)it.next();
+		for(TextPropCollection tpc : styles) {
 			length += tpc.getCharactersCovered();
 		}
 		return length;
@@ -199,8 +195,8 @@ public final class StyleTextPropAtom extends RecordAtom
 		reserved = new byte[0];
 
 		// Set empty linked lists, ready for when they call setParentTextSize
-		paragraphStyles = new LinkedList();
-		charStyles = new LinkedList();
+		paragraphStyles = new LinkedList<TextPropCollection>();
+		charStyles = new LinkedList<TextPropCollection>();
 	}
 
 
@@ -218,8 +214,8 @@ public final class StyleTextPropAtom extends RecordAtom
 		LittleEndian.putInt(_header,4,10);
 
 		// Set empty paragraph and character styles
-		paragraphStyles = new LinkedList();
-		charStyles = new LinkedList();
+		paragraphStyles = new LinkedList<TextPropCollection>();
+		charStyles = new LinkedList<TextPropCollection>();
 
 		TextPropCollection defaultParagraphTextProps =
 			new TextPropCollection(parentTextSize, (short)0);
@@ -366,13 +362,13 @@ public final class StyleTextPropAtom extends RecordAtom
 
 		// First up, we need to serialise the paragraph properties
 		for(int i=0; i<paragraphStyles.size(); i++) {
-			TextPropCollection tpc = (TextPropCollection)paragraphStyles.get(i);
+			TextPropCollection tpc = paragraphStyles.get(i);
 			tpc.writeOut(baos);
 		}
 
 		// Now, we do the character ones
 		for(int i=0; i<charStyles.size(); i++) {
-			TextPropCollection tpc = (TextPropCollection)charStyles.get(i);
+			TextPropCollection tpc = charStyles.get(i);
 			tpc.writeOut(baos);
 		}
 
@@ -424,12 +420,10 @@ public final class StyleTextPropAtom extends RecordAtom
 
 	        out.append("Paragraph properties\n");
 
-	        for (Iterator it1 = getParagraphStyles().iterator(); it1.hasNext();) {
-	            TextPropCollection pr = (TextPropCollection)it1.next();
+	        for(TextPropCollection pr : getParagraphStyles()) {
 	            out.append("  chars covered: " + pr.getCharactersCovered());
 	            out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
-	            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
-	                TextProp p = (TextProp)it2.next();
+	            for(TextProp p : pr.getTextPropList()) {
 	                out.append("    " + p.getName() + " = " + p.getValue() );
 	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
 	            }
@@ -447,12 +441,10 @@ public final class StyleTextPropAtom extends RecordAtom
 	        }
 
 	        out.append("Character properties\n");
-	        for (Iterator it1 = getCharacterStyles().iterator(); it1.hasNext();) {
-	            TextPropCollection pr = (TextPropCollection)it1.next();
+	        for(TextPropCollection pr : getCharacterStyles()) {
 	            out.append("  chars covered: " + pr.getCharactersCovered() );
 	            out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
-	            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
-	                TextProp p = (TextProp)it2.next();
+	            for(TextProp p : pr.getTextPropList()) {
 	                out.append("    " + p.getName() + " = " + p.getValue() );
 	                out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
 	            }
