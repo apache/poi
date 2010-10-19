@@ -620,6 +620,9 @@ public class XWPFRun {
               if ("w:tab".equals(tagName)) {
                  text.append("\t");
               }
+              if ("w:br".equals(tagName)) {
+                 text.append("\n");
+              }
               if ("w:cr".equals(tagName)) {
                  text.append("\n");
               }
