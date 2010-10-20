@@ -71,4 +71,16 @@ public final class TestHSSFPictureData extends TestCase{
             }
         }
     }
+
+    public void testNotNullPictures() throws IOException {
+
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
+
+        @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
+        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
+        for(HSSFPictureData pict : lst){
+            assertNotNull(pict);
+        }
+    }
+
 }
