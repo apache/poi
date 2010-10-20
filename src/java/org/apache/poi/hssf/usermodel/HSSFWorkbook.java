@@ -1594,8 +1594,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                     // TODO: Some kind of structure.
                     HSSFPictureData picture = new HSSFPictureData(blip);
 					pictures.add(picture);
-                } else {
-                	pictures.add(null);
                 }
                 
                 
