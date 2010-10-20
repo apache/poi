@@ -34,7 +34,7 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
-          
+           <action dev="poi-developers" type="fix">50119 - avoid NPE when XSSFReader comes across chart sheets</action>
         </release>
         <release version="3.7" date="2010-10-25">
            <action dev="poi-developers" type="fix">50075 - avoid NPE in ListLevel.getNumberText() when numberText is null </action>

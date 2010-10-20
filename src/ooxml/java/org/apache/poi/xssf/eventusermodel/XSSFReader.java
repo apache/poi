@@ -177,7 +177,8 @@ public class XSSFReader {
                 //step 1. Map sheet's relationship Id and the corresponding PackagePart
                 sheetMap = new HashMap<String, PackagePart>();
                 for(PackageRelationship rel : wb.getRelationships()){
-                    if(rel.getRelationshipType().equals(XSSFRelation.WORKSHEET.getRelation())){
+                    if(rel.getRelationshipType().equals(XSSFRelation.WORKSHEET.getRelation()) ||
+                       rel.getRelationshipType().equals(XSSFRelation.CHARTSHEET.getRelation())){
                         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
                         sheetMap.put(rel.getId(), wb.getPackage().getPart(relName));
                     }

@@ -116,4 +116,22 @@ public final class TestXSSFReader extends TestCase {
 		}
 		assertEquals(4, count);
 	}
+	
+   
+   /**
+    * Iterating over a workbook with chart sheets in it, using the
+    *  XSSFReader method
+    * @throws Exception
+    */
+   public void test50119() throws Exception {
+      OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithChartSheet.xlsx");
+      XSSFReader r = new XSSFReader(pkg);
+      XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
+      
+      while(it.hasNext())
+      {
+          InputStream stream = it.next();
+          stream.close();
+      }
+   }
 }
