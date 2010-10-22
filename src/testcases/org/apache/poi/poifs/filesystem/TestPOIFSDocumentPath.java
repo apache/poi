@@ -165,24 +165,40 @@ public final class TestPOIFSDocumentPath extends TestCase {
                 }
             }
 
-            // test weird variants
+            // Test weird variants
+            
+            // This one is allowed, even if it's really odd
             assertEquals(n, new POIFSDocumentPath(base, null).length());
+            new POIFSDocumentPath(base, new String[]
+            {
+                 "fu", ""
+            });
+            
+            // This one is allowed too
+            new POIFSDocumentPath(base, new String[]
+            {
+                 "", "fu"
+            });
+            
+            // This one shouldn't be allowed
             try
             {
                 new POIFSDocumentPath(base, new String[]
                 {
-                    "fu", ""
+                    "fu", null
                 });
                 fail("should have caught IllegalArgumentException");
             }
             catch (IllegalArgumentException ignored)
             {
             }
+            
+            // Ditto
             try
             {
                 new POIFSDocumentPath(base, new String[]
                 {
-                    "fu", null
+                    null, "fu"
                 });
                 fail("should have caught IllegalArgumentException");
             }
