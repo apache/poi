@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -225,6 +226,43 @@ public final class TestPOIFSFileSystem extends TestCase {
             dis.read(data);
 	      }
 	   }
+	}
+	
+	/**
+	 * Test that we can open files that come via Lotus notes.
+	 * These have a top level directory without a name....
+	 */
+	public void testNotesOLE2Files() throws Exception {
+      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+      
+      // Open the file up
+      POIFSFileSystem fs = new POIFSFileSystem(
+          _samples.openResourceAsStream("Notes.ole2")
+      );
+      
+      // Check the contents
+      assertEquals(1, fs.getRoot().getEntryCount());
+      
+      Entry entry = fs.getRoot().getEntries().next();
+      assertTrue(entry.isDirectoryEntry());
+      assertTrue(entry instanceof DirectoryEntry);
+      
+      // The directory lacks a name!
+      DirectoryEntry dir = (DirectoryEntry)entry;
+      assertEquals("", dir.getName());
+      
+      // Has two children
+      assertEquals(2, dir.getEntryCount());
+      
+      // Check them
+      Iterator<Entry> it = dir.getEntries();
+      entry = it.next();
+      assertEquals(true, entry.isDocumentEntry());
+      assertEquals("\u0001Ole10Native", entry.getName());
+      
+      entry = it.next();
+      assertEquals(true, entry.isDocumentEntry());
+      assertEquals("\u0001CompObj", entry.getName());
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {
