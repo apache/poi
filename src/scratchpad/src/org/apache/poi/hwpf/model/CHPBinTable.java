@@ -199,7 +199,8 @@ public class CHPBinTable
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
     // get the ending fc
-    int endingFc = ((PropertyNode)_textRuns.get(_textRuns.size() - 1)).getEnd();
+    PropertyNode lastRun = (PropertyNode)_textRuns.get(_textRuns.size() - 1); 
+    int endingFc = lastRun.getEnd();
     endingFc += fcMin;
 
 
