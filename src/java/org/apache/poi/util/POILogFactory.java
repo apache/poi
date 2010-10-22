@@ -36,7 +36,7 @@ public class POILogFactory
     /**
      * Map of POILogger instances, with classes as keys
      */
-    private static Map _loggers = new HashMap();;
+    private static Map<String,POILogger> _loggers = new HashMap<String,POILogger>();;
 
     /**
      * A common instance of NullLogger, as it does nothing
@@ -108,11 +108,12 @@ public class POILogFactory
         // Fetch the right logger for them, creating
         //  it if that's required 
         if (_loggers.containsKey(cat)) {
-            logger = ( POILogger ) _loggers.get(cat);
+            logger = _loggers.get(cat);
         } else {
             try {
-              Class loggerClass = Class.forName(_loggerClassName);
-              logger = ( POILogger ) loggerClass.newInstance();
+              Class<? extends POILogger> loggerClass = 
+                 (Class<? extends POILogger>)Class.forName(_loggerClassName);
+              logger = loggerClass.newInstance();
               logger.initialize(cat);
             } catch(Exception e) {
               // Give up and use the null logger
