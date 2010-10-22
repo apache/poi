@@ -98,108 +98,149 @@ public final class TestHWPFRangeParts extends TestCase {
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 	}
 
+	/**
+	 * Note - this test runs several times, to ensure that things
+	 *  don't get broken as we write out and read back in again
+	 * TODO - Make this work with 3+ runs
+	 */
 	public void testBasics() {
-		// First check the start and end bits
-		assertEquals(
-				0,
-				docAscii._cpSplit.getMainDocumentStart()
-		);
-		assertEquals(
-				a_page_1.length() +
-				2 + // page break
-				a_page_2.length(),
-				docAscii._cpSplit.getMainDocumentEnd()
-		);
-
-		assertEquals(
-				238,
-				docAscii._cpSplit.getFootnoteStart()
-		);
-		assertEquals(
-				238,
-				docAscii._cpSplit.getFootnoteEnd()
-		);
-
-		assertEquals(
-				238,
-				docAscii._cpSplit.getHeaderStoryStart()
-		);
-		assertEquals(
-				238 + headerDef.length() + a_header.length() +
-				footerDef.length() + a_footer.length() + endHeaderFooter.length(),
-				docAscii._cpSplit.getHeaderStoryEnd()
-		);
+	   HWPFDocument doc = docAscii;
+	   for(int run=0; run<3; run++) {
+   		// First check the start and end bits
+   		assertEquals(
+   				0,
+   				doc._cpSplit.getMainDocumentStart()
+   		);
+   		assertEquals(
+   				a_page_1.length() +
+   				2 + // page break
+   				a_page_2.length(),
+   				doc._cpSplit.getMainDocumentEnd()
+   		);
+   
+   		assertEquals(
+   				238,
+   				doc._cpSplit.getFootnoteStart()
+   		);
+   		assertEquals(
+   				238,
+   				doc._cpSplit.getFootnoteEnd()
+   		);
+   
+   		assertEquals(
+   				238,
+   				doc._cpSplit.getHeaderStoryStart()
+   		);
+   		assertEquals(
+   				238 + headerDef.length() + a_header.length() +
+   				footerDef.length() + a_footer.length() + endHeaderFooter.length(),
+   				doc._cpSplit.getHeaderStoryEnd()
+   		);
+   		
+   		// Write out and read back in again, ready for
+   		//  the next run of the test
+   		// TODO run more than once
+   		if(run < 1)
+   		   doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
+	   }
 	}
 
+   /**
+    * Note - this test runs several times, to ensure that things
+    *  don't get broken as we write out and read back in again
+    * TODO - Make this work with 3+ runs
+    */
 	public void testContents() {
-		Range r;
-
-		// Now check the real ranges
-		r = docAscii.getRange();
-		assertEquals(
-				a_page_1 +
-				page_break + "\r" +
-				a_page_2,
-				r.text()
-		);
-
-		r = docAscii.getHeaderStoryRange();
-		assertEquals(
-				headerDef +
-				a_header +
-				footerDef +
-				a_footer +
-				endHeaderFooter,
-				r.text()
-		);
-
-		r = docAscii.getOverallRange();
-		assertEquals(
-				a_page_1 +
-				page_break + "\r" +
-				a_page_2 +
-				headerDef +
-				a_header +
-				footerDef +
-				a_footer +
-				endHeaderFooter +
-				"\r",
-				r.text()
-		);
+      HWPFDocument doc = docAscii;
+      for(int run=0; run<3; run++) {
+   		Range r;
+   
+   		// Now check the real ranges
+   		r = doc.getRange();
+   		assertEquals(
+   				a_page_1 +
+   				page_break + "\r" +
+   				a_page_2,
+   				r.text()
+   		);
+   
+   		r = doc.getHeaderStoryRange();
+   		assertEquals(
+   				headerDef +
+   				a_header +
+   				footerDef +
+   				a_footer +
+   				endHeaderFooter,
+   				r.text()
+   		);
+   
+   		r = doc.getOverallRange();
+   		assertEquals(
+   				a_page_1 +
+   				page_break + "\r" +
+   				a_page_2 +
+   				headerDef +
+   				a_header +
+   				footerDef +
+   				a_footer +
+   				endHeaderFooter +
+   				"\r",
+   				r.text()
+   		);
+         
+         // Write out and read back in again, ready for
+         //  the next run of the test
+         // TODO run more than once
+         if(run < 1)
+            doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
+      }
 	}
 
+   /**
+    * Note - this test runs several times, to ensure that things
+    *  don't get broken as we write out and read back in again
+    */
 	public void testBasicsUnicode() {
-		// First check the start and end bits
-		assertEquals(
-				0,
-				docUnicode._cpSplit.getMainDocumentStart()
-		);
-		assertEquals(
-				u_page_1.length() +
-				2 + // page break
-				u_page_2.length(),
-				docUnicode._cpSplit.getMainDocumentEnd()
-		);
-
-		assertEquals(
-				408,
-				docUnicode._cpSplit.getFootnoteStart()
-		);
-		assertEquals(
-				408,
-				docUnicode._cpSplit.getFootnoteEnd()
-		);
-
-		assertEquals(
-				408,
-				docUnicode._cpSplit.getHeaderStoryStart()
-		);
-		// TODO - fix this one
-		assertEquals(
-				408 + headerDef.length() + u_header.length() +
-				footerDef.length() + u_footer.length() + endHeaderFooter.length(),
-				docUnicode._cpSplit.getHeaderStoryEnd()
-		);
+      HWPFDocument doc = docUnicode;
+      for(int run=0; run<3; run++) {
+   		// First check the start and end bits
+   		assertEquals(
+   				0,
+   				doc._cpSplit.getMainDocumentStart()
+   		);
+   		assertEquals(
+   				u_page_1.length() +
+   				2 + // page break
+   				u_page_2.length(),
+   				doc._cpSplit.getMainDocumentEnd()
+   		);
+   
+   		assertEquals(
+   				408,
+   				doc._cpSplit.getFootnoteStart()
+   		);
+   		assertEquals(
+   				408,
+   				doc._cpSplit.getFootnoteEnd()
+   		);
+   
+   		assertEquals(
+   				408,
+   				doc._cpSplit.getHeaderStoryStart()
+   		);
+   		// TODO - fix this one
+   		assertEquals(
+   				408 + headerDef.length() + u_header.length() +
+   				footerDef.length() + u_footer.length() + endHeaderFooter.length(),
+   				doc._cpSplit.getHeaderStoryEnd()
+   		);
+   		
+         // Write out and read back in again, ready for
+         //  the next run of the test
+         // TODO run more than once
+         if(run < 1)
+            doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
+      }
 	}
 
 	public void testContentsUnicode() {
