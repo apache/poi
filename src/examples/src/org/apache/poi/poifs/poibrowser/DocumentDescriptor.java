@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.contrib.poibrowser;
+package org.apache.poi.poifs.poibrowser;
 
 import java.io.*;
 import org.apache.poi.poifs.filesystem.*;

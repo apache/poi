@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel.contrib;
+package org.apache.poi.hssf.util;
 
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -24,7 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.contrib.CellUtil;
+import org.apache.poi.ss.util.CellUtil;
 
 /**
  *  Various utility functions that make working with a cells and rows easier.  The various

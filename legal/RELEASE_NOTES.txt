@@ -5,9 +5,11 @@ See the downloads page for binary and source distributions: http://poi.apache.or
 
 Release Notes -- Apache POI -- Version 3.7
 
-Apache POI is an open source Java library for working with Microsoft Office documents. POI 3.7 is an incremental feature release based on the earlier 3.6 release. The most notable changes since POI 3.6 are:
+Apache POI is an open source Java library for working with Microsoft Office documents. 
+POI 3.7 is an incremental feature release based on the earlier 3.6 release. 
 
-
+The most notable changes since POI 3.6 are:
+-------------------------------------------
 OOXML
  * support for reading aes-encrypted/write-protected ooxml files
  * support Java 1.5 in auto-generated xmlbeans for ooxml schemas
@@ -21,7 +23,7 @@ Spreadsheet (Excel)
  * numerous fixes and performance optimizations in the Formula Evaluation module
  * ability to add, modify and remove series from HSSF Charts
  * numerous improvements in the cell data formatter (handling more formatting rules, better color detection,  allow overriding of default locale)
- * more examples including a rich "spreadsheet to  HTML" convertor 
+ * more examples including a rich "spreadsheet to  HTML" converter 
 
 Document (Word)
  * initial support for the HWPF revision marks authors list
@@ -86,8 +88,8 @@ Release Contents
 
 This release comes in two forms:
  - pre-built binaries containing compiled versions of all Apache POI components and documentation
-   (poi-bin-3.7-20101025.zip or poi-bin-3.7-20101025.tar.gz)
- - source archive you can build POI from (poi-src-3.7-20101025.zip or poi-src-3.7-20101025.tar.gz)
+   (poi-bin-3.7-20101029.zip or poi-bin-3.7-20101029.tar.gz)
+ - source archive you can build POI from (poi-src-3.7-20101029.zip or poi-src-3.7-20101029.tar.gz)
 
  Pre-built versions of all POI components are also available in the central Maven repository
  under Group ID "org.apache.poi" and Version "3.7"
