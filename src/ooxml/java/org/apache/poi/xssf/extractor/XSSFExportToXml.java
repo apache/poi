@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -255,7 +254,7 @@ public class XSSFExportToXml implements Comparator<String>{
     private boolean isValid(Document xml) throws SAXException{
         boolean isValid = false;
         try{
-            String language = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+            String language = "http://www.w3.org/2001/XMLSchema";
             SchemaFactory factory = SchemaFactory.newInstance(language);
 
             Source source = new DOMSource(map.getSchema());
