@@ -57,7 +57,7 @@ public final class TestPOIXMLDocument extends TestCase {
         public TestFactory() {
             //
         }
-        public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
+        public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
             return new POIXMLDocumentPart(part, rel);
         }
 

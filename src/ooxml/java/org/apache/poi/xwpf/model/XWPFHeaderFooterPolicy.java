@@ -109,7 +109,7 @@ public class XWPFHeaderFooterPolicy {
 			PackagePart hdrPart = doc.getPartById(ref.getId());
 			HdrDocument hdrDoc = HdrDocument.Factory.parse(hdrPart.getInputStream());
 			CTHdrFtr hdrFtr = hdrDoc.getHdr();
-			XWPFHeader hdr = new XWPFHeader(hdrFtr);
+			XWPFHeader hdr = new XWPFHeader(doc, hdrFtr);
 
 			// Assign it
 			Enum type = ref.getType();
@@ -119,7 +119,7 @@ public class XWPFHeaderFooterPolicy {
 			// Get the footer
 			CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
 			PackagePart ftrPart = doc.getPartById(ref.getId());
-			XWPFFooter ftr = new XWPFFooter(
+			XWPFFooter ftr = new XWPFFooter(doc, 
 					FtrDocument.Factory.parse(ftrPart.getInputStream()).getFtr());
 
 			// Assign it
@@ -460,6 +460,6 @@ public class XWPFHeaderFooterPolicy {
 		shapeTextPath.setString(text);
 		pict.set(group);
 		// end watermark paragraph
-		return new XWPFParagraph(p, null);
+		return new XWPFParagraph(p, doc);
 	}
 }

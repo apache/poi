@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 public final class XSSFFactory extends POIXMLFactory  {
-    private static POILogger logger = POILogFactory.getLogger(XSSFFactory.class);
+    private static final POILogger logger = POILogFactory.getLogger(XSSFFactory.class);
 
     private XSSFFactory(){
 
@@ -46,7 +46,8 @@ public final class XSSFFactory extends POIXMLFactory  {
         return inst;
     }
 
-    public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
+    @Override
+    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
         POIXMLRelation descriptor = XSSFRelation.getInstance(rel.getRelationshipType());
         if(descriptor == null || descriptor.getRelationClass() == null){
             logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
@@ -62,6 +63,7 @@ public final class XSSFFactory extends POIXMLFactory  {
         }
     }
 
+    @Override
     public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
         try {
             Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();

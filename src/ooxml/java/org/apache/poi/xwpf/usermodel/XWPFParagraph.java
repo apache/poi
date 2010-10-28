@@ -55,7 +55,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
  * Sketch of XWPF paragraph class
  */
 public class XWPFParagraph implements IBodyElement{
-    private CTP paragraph;
+    private final CTP paragraph;
     protected IBody part;
     /** For access to the document's hyperlink, comments, tables etc */
     protected XWPFDocument document;
@@ -63,22 +63,16 @@ public class XWPFParagraph implements IBodyElement{
     
     private StringBuffer footnoteText = new StringBuffer();
 
-    public XWPFParagraph(CTP prgrph) {
-        this(prgrph, null);
-    }
-
-
     public XWPFParagraph(CTP prgrph, IBody part) {
         this.paragraph = prgrph;
         this.part = part;
         
-        // We only care about the document (for comments,
-        //  hyperlinks etc) if we're attached to the
-        //  core document
-        if(part instanceof XWPFDocument) {
-           this.document = (XWPFDocument)part;
+        this.document = part.getXWPFDocument();
+
+        if (document==null) {
+            throw new NullPointerException();
         }
-        
+
         runs = new ArrayList<XWPFRun>();
 
        // Get all our child nodes in order, and process them

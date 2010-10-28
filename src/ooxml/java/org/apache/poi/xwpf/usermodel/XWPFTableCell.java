@@ -30,8 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
 
 public class XWPFTableCell implements IBody {
-
-    private CTTc ctTc;
+    private final CTTc ctTc;
     protected List<XWPFParagraph> paragraphs = null;
     protected List<XWPFTable> tables = null;
     protected List<IBodyElement> bodyElements = null;
@@ -256,7 +255,7 @@ public class XWPFTableCell implements IBody {
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
 	 */
 	public IBody getPart() {
-		return (IBody) tableRow.getTable().getPart();
+		return tableRow.getTable().getPart();
 	}
 
 
@@ -351,4 +350,8 @@ public class XWPFTableCell implements IBody {
 		}
 		return tableRow.getTableCell(cell);
 	}
+
+    public XWPFDocument getXWPFDocument() {
+        return part.getXWPFDocument();
+    }
 }// end class

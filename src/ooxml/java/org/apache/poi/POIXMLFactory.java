@@ -30,11 +30,12 @@ public abstract class POIXMLFactory {
      * Create a POIXMLDocumentPart from existing package part and relation. This method is called
      * from {@link POIXMLDocument#load(POIXMLFactory)} when parsing a document
      *
+     * @param parent parent part
      * @param rel   the package part relationship
      * @param part  the PackagePart representing the created instance
      * @return A new instance of a POIXMLDocumentPart.
      */
-     public abstract POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part);
+     public abstract POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part);
 
     /**
      * Create a new POIXMLDocumentPart using the supplied descriptor. This method is used when adding new parts
