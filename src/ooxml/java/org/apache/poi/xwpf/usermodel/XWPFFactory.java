@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
  */
 public final class XWPFFactory extends POIXMLFactory  {
 
-    private static POILogger logger = POILogFactory.getLogger(XWPFFactory.class);
+    private static final POILogger logger = POILogFactory.getLogger(XWPFFactory.class);
 
     private XWPFFactory(){
 
@@ -45,7 +45,8 @@ public final class XWPFFactory extends POIXMLFactory  {
         return inst;
     }
 
-    public POIXMLDocumentPart createDocumentPart(PackageRelationship rel, PackagePart part){
+    @Override
+    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
         POIXMLRelation descriptor = XWPFRelation.getInstance(rel.getRelationshipType());
         if(descriptor == null || descriptor.getRelationClass() == null){
             logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
@@ -54,13 +55,19 @@ public final class XWPFFactory extends POIXMLFactory  {
 
         try {
             Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();
-            Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
-            return constructor.newInstance(part, rel);
+            try {
+                Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(POIXMLDocumentPart.class, PackagePart.class, PackageRelationship.class);
+                return constructor.newInstance(parent, part, rel);
+            } catch (NoSuchMethodException e) {
+                Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
+                return constructor.newInstance(part, rel);
+            }
         } catch (Exception e){
             throw new POIXMLException(e);
         }
     }
 
+    @Override
     public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
         try {
             Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();

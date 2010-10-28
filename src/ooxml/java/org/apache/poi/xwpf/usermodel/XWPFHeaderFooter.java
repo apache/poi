@@ -51,18 +51,31 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 	protected XWPFDocument document;
 	protected List<IBodyElement> bodyElements;
 	
-	protected XWPFHeaderFooter(CTHdrFtr hdrFtr){
+	protected XWPFHeaderFooter(XWPFDocument doc, CTHdrFtr hdrFtr){
+        if (doc==null) {
+            throw new NullPointerException();
+        }
+
+        document = doc;
 		headerFooter = hdrFtr;
 		readHdrFtr();
 	}
-	protected XWPFHeaderFooter() {
-	   this(CTHdrFtr.Factory.newInstance());
-	}
 
-	public XWPFHeaderFooter(PackagePart part, PackageRelationship rel) throws IOException {
-		super(part, rel);
+    protected XWPFHeaderFooter() {
+        headerFooter = CTHdrFtr.Factory.newInstance();
+        readHdrFtr();
+    }
+
+
+    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
+		super(parent, part, rel);
 		this.document = (XWPFDocument)getParent();
-      onDocumentRead();
+
+        if (this.document==null) {
+            throw new NullPointerException();
+        }
+
+        onDocumentRead();
 	}
 	
     @Internal
@@ -523,5 +536,11 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 		return tableRow.getTableCell(cell);
 	}
   	
-    
+    public XWPFDocument getXWPFDocument() {
+        if (document!=null) {
+            return document;
+        } else {
+            return (XWPFDocument)getParent();
+        }
+    }
 }//end class

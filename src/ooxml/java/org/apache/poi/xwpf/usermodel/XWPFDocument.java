@@ -165,25 +165,18 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 String relation = p.getPackageRelationship().getRelationshipType();
                 if(relation.equals(XWPFRelation.STYLES.getRelation())){
                 	this.styles = (XWPFStyles) p;
-                }
-                else if(relation.equals(XWPFRelation.NUMBERING.getRelation())){
+                } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())){
                 	this.numbering = (XWPFNumbering) p;
-
-                }
-                else if(relation.equals(XWPFRelation.FOOTER.getRelation())){
+                } else if (relation.equals(XWPFRelation.FOOTER.getRelation())){
                 	footers.add((XWPFFooter)p);
-                }
-                else if(relation.equals(XWPFRelation.HEADER.getRelation())){
+                } else if (relation.equals(XWPFRelation.HEADER.getRelation())){
                 	headers.add((XWPFHeader)p);
-                }
-
-                else if(relation.equals(XWPFRelation.COMMENT.getRelation())){
+                } else if (relation.equals(XWPFRelation.COMMENT.getRelation())){
                     CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream());
                     for(CTComment ctcomment : cmntdoc.getComments().getCommentList()) {
-                        comments.add(new XWPFComment(ctcomment));
+                        comments.add(new XWPFComment(ctcomment, this));
                     }
-                }
-                else if(relation.equals(XWPFRelation.SETTINGS.getRelation())){
+                } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())){
                 	settings = (XWPFSettings)p;
                 }
             }
@@ -254,6 +247,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Create a new CTWorkbook with all values set to default
      */
+    @Override
     protected void onDocumentCreate() {
         hyperlinks = new ArrayList<XWPFHyperlink>();
         comments = new ArrayList<XWPFComment>();
@@ -429,6 +423,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Get the document's embedded files.
      */
+    @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
         List<PackagePart> embedds = new LinkedList<PackagePart>();
 
@@ -1116,4 +1111,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 		}
 		return tableRow.getTableCell(cell);
 	}
+
+    public XWPFDocument getXWPFDocument() {
+        return this;
+    }
 }//end class

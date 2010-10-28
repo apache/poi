@@ -42,17 +42,16 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
  * Sketch of XWPF header class
  */
 public class XWPFHeader extends XWPFHeaderFooter {
-	
-	public XWPFHeader() {
-		super();
+    public XWPFHeader() {
+        super();
+    }
+
+    public XWPFHeader(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
+		super(parent, part, rel);
 	}
 	
-	public XWPFHeader(PackagePart part, PackageRelationship rel) throws IOException {
-		super(part, rel);
-	}
-	
-	public XWPFHeader(CTHdrFtr hdrFtr) throws IOException {
-		super(hdrFtr);
+	public XWPFHeader(XWPFDocument doc, CTHdrFtr hdrFtr) throws IOException {
+		super(doc, hdrFtr);
 		paragraphs = new ArrayList<XWPFParagraph>();
 		tables = new ArrayList<XWPFTable>();
 		XmlCursor cursor = headerFooter.newCursor();

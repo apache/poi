@@ -42,15 +42,16 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testConstructor() {
+        XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
-        XWPFTable xtab = new XWPFTable(ctTable, null);
+        XWPFTable xtab = new XWPFTable(ctTable, doc);
         assertNotNull(xtab);
         assertEquals(1, ctTable.sizeOfTrArray());
         assertEquals(1, ctTable.getTrArray(0).sizeOfTcArray());
         assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
 
         ctTable = CTTbl.Factory.newInstance();
-        xtab = new XWPFTable(ctTable, null, 3, 2);
+        xtab = new XWPFTable(ctTable, doc, 3, 2);
         assertNotNull(xtab);
         assertEquals(3, ctTable.sizeOfTrArray());
         assertEquals(2, ctTable.getTrArray(0).sizeOfTcArray());
@@ -59,6 +60,7 @@ public class TestXWPFTable extends TestCase {
 
 
     public void testGetText() {
+        XWPFDocument doc = new XWPFDocument();
         CTTbl table = CTTbl.Factory.newInstance();
         CTRow row = table.addNewTr();
         CTTc cell = row.addNewTc();
@@ -67,12 +69,14 @@ public class TestXWPFTable extends TestCase {
         CTText text = run.addNewT();
         text.setStringValue("finally I can write!");
 
-        XWPFTable xtab = new XWPFTable(table, null);
+        XWPFTable xtab = new XWPFTable(table, doc);
         assertEquals("finally I can write!\n", xtab.getText());
     }
 
 
     public void testCreateRow() {
+        XWPFDocument doc = new XWPFDocument();
+
         CTTbl table = CTTbl.Factory.newInstance();
         CTRow r1 = table.addNewTr();
         r1.addNewTc().addNewP();
@@ -84,7 +88,7 @@ public class TestXWPFTable extends TestCase {
         r3.addNewTc().addNewP();
         r3.addNewTc().addNewP();
 
-        XWPFTable xtab = new XWPFTable(table, null);
+        XWPFTable xtab = new XWPFTable(table, doc);
         assertEquals(3, xtab.getNumberOfRows());
         assertNotNull(xtab.getRow(2));
 
@@ -95,16 +99,18 @@ public class TestXWPFTable extends TestCase {
         assertEquals(2, table.getTrArray(0).sizeOfTcArray());
 
         //check creation of first row
-        xtab = new XWPFTable(CTTbl.Factory.newInstance(), null);
+        xtab = new XWPFTable(CTTbl.Factory.newInstance(), doc);
         assertEquals(1, xtab.getCTTbl().getTrArray(0).sizeOfTcArray());
     }
 
 
     public void testSetGetWidth() {
+        XWPFDocument doc = new XWPFDocument();
+        
         CTTbl table = CTTbl.Factory.newInstance();
         table.addNewTblPr().addNewTblW().setW(new BigInteger("1000"));
 
-        XWPFTable xtab = new XWPFTable(table, null);
+        XWPFTable xtab = new XWPFTable(table, doc);
 
         assertEquals(1000, xtab.getWidth());
 
@@ -113,9 +119,11 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testSetGetHeight() {
+        XWPFDocument doc = new XWPFDocument();
+
         CTTbl table = CTTbl.Factory.newInstance();
 
-        XWPFTable xtab = new XWPFTable(table, null);
+        XWPFTable xtab = new XWPFTable(table, doc);
         XWPFTableRow row = xtab.createRow();
         row.setHeight(20);
         assertEquals(20, row.getHeight());

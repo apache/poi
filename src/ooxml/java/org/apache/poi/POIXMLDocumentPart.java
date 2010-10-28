@@ -37,7 +37,7 @@ import org.apache.poi.openxml4j.opc.*;
  * @author Yegor Kozlov
  */
 public class POIXMLDocumentPart {
-    private static POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
+    private static final POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
 
     public static final XmlOptions DEFAULT_XML_OPTIONS;
     static {
@@ -86,7 +86,23 @@ public class POIXMLDocumentPart {
         this.packagePart = part;
         this.packageRel = rel;
     }
-    
+
+    /**
+     * Creates an POIXMLDocumentPart representing the given package part, relationship and parent
+     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an exisiting file.
+     *
+     * @param parent - Parent part
+     * @param part - The package part that holds xml data represenring this sheet.
+     * @param rel - the relationship of the given package part
+     * @see #read(POIXMLFactory, java.util.Map)
+     */
+    public POIXMLDocumentPart(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel){
+        this.relations = new LinkedList<POIXMLDocumentPart>();
+        this.packagePart = part;
+        this.packageRel = rel;
+        this.parent = parent;
+    }
+
     /**
      * When you open something like a theme, call this to
      *  re-base the XML Document onto the core child of the
@@ -274,7 +290,7 @@ public class POIXMLDocumentPart {
                 }
 
                 if (!context.containsKey(p)) {
-    				POIXMLDocumentPart childPart = factory.createDocumentPart(rel, p);
+    				POIXMLDocumentPart childPart = factory.createDocumentPart(this, rel, p);
     				childPart.parent = this;
     				addRelation(childPart);
                     if(p != null){

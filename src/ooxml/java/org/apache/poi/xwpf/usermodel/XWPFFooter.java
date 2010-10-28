@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlCursor;
@@ -41,13 +42,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
  * Sketch of XWPF footer class
  */
 public class XWPFFooter extends XWPFHeaderFooter {
-	public XWPFFooter() {
-		super();
-	}
-	
-	
-	public XWPFFooter(CTHdrFtr hdrFtr) throws IOException {
-		super(hdrFtr);
+    public XWPFFooter() {
+        super();
+    }
+
+	public XWPFFooter(XWPFDocument doc, CTHdrFtr hdrFtr) throws IOException {
+		super(doc, hdrFtr);
 		bodyElements = new ArrayList<IBodyElement>();
 		paragraphs = new ArrayList<XWPFParagraph>();
 		tables = new ArrayList<XWPFTable>();
@@ -69,8 +69,8 @@ public class XWPFFooter extends XWPFHeaderFooter {
         getAllPictures();
 	}
 
-	public XWPFFooter(PackagePart part, PackageRelationship rel) throws IOException {
-		super(part, rel);
+	public XWPFFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
+		super(parent, part, rel);
 	}
 	
 	/**
@@ -149,5 +149,4 @@ public class XWPFFooter extends XWPFHeaderFooter {
 		public BodyType getPartType() {
 			return BodyType.FOOTER;
 		}
-
 }

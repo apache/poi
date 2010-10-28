@@ -62,8 +62,7 @@ public interface IBody {
 	 *  the text of the header or footer.
 	 */
     public List<XWPFParagraph> getParagraphs();
-	
-	
+
 	/**
 	 * Return the table(s) that holds the text
 	 *  of the IBodyPart, for complex cases
@@ -123,6 +122,11 @@ public interface IBody {
 	 * @param cell
 	 */
 	XWPFTableCell getTableCell(CTTc cell);
-	
+
+    /**
+     * Return XWPFDocument
+     */
+    public XWPFDocument getXWPFDocument();
+
 }
 

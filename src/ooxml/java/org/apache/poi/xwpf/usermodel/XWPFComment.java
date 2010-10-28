@@ -31,7 +31,7 @@ public class XWPFComment
     protected String author;
     protected StringBuffer text;
     
-    public XWPFComment(CTComment comment)
+    public XWPFComment(CTComment comment, XWPFDocument document)
     {
         text = new StringBuffer();
         id = comment.getId().toString();
@@ -39,7 +39,7 @@ public class XWPFComment
         
         for(CTP ctp : comment.getPList())
         {
-            XWPFParagraph p = new XWPFParagraph(ctp, null);
+            XWPFParagraph p = new XWPFParagraph(ctp, document);
             text.append(p.getText());
         }
     }

@@ -76,12 +76,12 @@ public final class TestXWPFHeader extends TestCase {
 		CTText t3 = ctR3.addNewT();
 		t3.setStringValue("Second paragraph for the footer");
 
-		XWPFParagraph p1 = new XWPFParagraph(ctP1);
+		XWPFParagraph p1 = new XWPFParagraph(ctP1, sampleDoc);
 		XWPFParagraph[] pars = new XWPFParagraph[1];
 		pars[0] = p1;
 
-		XWPFParagraph p2 = new XWPFParagraph(ctP2);
-		XWPFParagraph p3 = new XWPFParagraph(ctP3, null);
+		XWPFParagraph p2 = new XWPFParagraph(ctP2, sampleDoc);
+		XWPFParagraph p3 = new XWPFParagraph(ctP3, sampleDoc);
 		XWPFParagraph[] pars2 = new XWPFParagraph[2];
 		pars2[0] = p2;
 		pars2[1] = p3;
@@ -98,7 +98,7 @@ public final class TestXWPFHeader extends TestCase {
 		assertNotNull(policy.getDefaultFooter());
 		// ....and that the footer object captured above contains two
 		// paragraphs of text.
-		assertEquals(footer.getParagraphs().size(), 2);
+		assertEquals(2, footer.getParagraphs().size());
 		
 		// As an additional check, recover the defauls footer and
 		// make sure that it contains two paragraphs of text and that
@@ -111,9 +111,9 @@ public final class TestXWPFHeader extends TestCase {
 		   paras[i++] = p;
 		}
 		
-		assertEquals(paras.length, 2);
-		assertEquals(paras[0].getText(), "First paragraph for the footer");
-		assertEquals(paras[1].getText(), "Second paragraph for the footer");
+		assertEquals(2, paras.length);
+		assertEquals("First paragraph for the footer", paras[0].getText());
+		assertEquals("Second paragraph for the footer", paras[1].getText());
 	}
 
 	public void testSetWatermark() {
