@@ -61,12 +61,12 @@
       <section><title>Binary Distribution</title>
       <ul>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.7-20101029.tar.gz">poi-bin-3.7-20101029.tar.gz</link> (
-          12MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.7-20101029.tar.gz.asc">signed</link>)
+          14MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.7-20101029.tar.gz.asc">signed</link>)
           <br/>
           MD5 checksum: c1f63c1e65fbde7050650ae903c95e5c          
         </li>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.7-20101029.zip">poi-bin-3.7-20101029.zip</link> (
-          17MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.7-20101029.zip.asc">signed</link>)
+          19MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.7-20101029.zip.asc">signed</link>)
           <br/>
           MD5 checksum: d353644608f9c1b9e38d9d2b722551c0
         </li>
@@ -75,12 +75,12 @@
       <section><title>Source Distribution</title>
       <ul>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.7-20101029.tar.gz">poi-src-3.7-20101029.tar.gz</link> (
-          28MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.7-20101029.tar.gz.asc">signed</link>)
+          31MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.7-20101029.tar.gz.asc">signed</link>)
           <br/>
           MD5 checksum: 2b93b3254bae7fbebb86fdf95cbd06f2
         </li>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.7-20101029.zip">poi-src-3.7-20101029.zip</link> (
-          35MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.7-20101029.zip.asc">signed</link>)
+          38MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.7-20101029.zip.asc">signed</link>)
           <br/>
           MD5 checksum: a6f80911a6a8b4d3cf97c1550d873e01
         </li>
