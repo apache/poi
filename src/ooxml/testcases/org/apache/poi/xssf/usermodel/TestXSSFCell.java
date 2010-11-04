@@ -114,6 +114,7 @@ public final class TestXSSFCell extends BaseTestCell {
 
         cell.setCellFormula("A2");
         assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("A2", cell.getCellFormula());
         //the value is not set and cell's type='N' which means blank
         assertEquals(STCellType.N, ctCell.getT());
 
@@ -121,6 +122,7 @@ public final class TestXSSFCell extends BaseTestCell {
         cell.setCellValue("t='str'");
         //we are still of 'formula' type
         assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("A2", cell.getCellFormula());
         //cached formula value is set and cell's type='STR'
         assertEquals(STCellType.STR, ctCell.getT());
         assertEquals("t='str'", cell.getStringCellValue());
