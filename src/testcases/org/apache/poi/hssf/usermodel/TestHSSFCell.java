@@ -321,5 +321,10 @@ public final class TestHSSFCell extends BaseTestCell {
 		}
 	}
 
-
+    /**
+     * HSSF prior to version 3.7 had a bug: it could write a NaN but could not read such a file back.
+     */
+    public void testReadNaN() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49761.xls");
+    }
 }

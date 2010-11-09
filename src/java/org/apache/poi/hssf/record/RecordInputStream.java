@@ -273,7 +273,10 @@ public final class RecordInputStream implements LittleEndianInput {
 		long valueLongBits = readLong();
 		double result = Double.longBitsToDouble(valueLongBits);
 		if (Double.isNaN(result)) {
-			throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN
+            // YK: Excel doesn't write NaN but instead converts the cell type into CELL_TYPE_ERROR.
+            // HSSF prior to version 3.7 had a bug: it could write Double.NaN but could not read such a file back.
+            // This behavior was fixed in POI-3.7.
+            //throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN
 		}
 		return result;
 	}
