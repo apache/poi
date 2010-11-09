@@ -1371,9 +1371,14 @@ Examples:
      <section><title>Adjust column width to fit the contents</title>
         <source>
     Sheet sheet = workbook.getSheetAt(0);
-    sheet.autoSizeColumn((short)0); //adjust width of the first column
-    sheet.autoSizeColumn((short)1); //adjust width of the second column
+    sheet.autoSizeColumn(0); //adjust width of the first column
+    sheet.autoSizeColumn(1); //adjust width of the second column
         </source>
+    <p>
+      Note, that Sheet#autoSizeColumn() does not evaluate formula cells, 
+      the width of formula cells is calculated based on the cached formula result.
+      If your workbook has many formulas then it is a good idea to evaluate them before auto-sizing.
+    </p>
         <warning>
     To calculate column width HSSFSheet.autoSizeColumn uses Java2D classes
     that throw exception if graphical environment is not available. In case if graphical environment
