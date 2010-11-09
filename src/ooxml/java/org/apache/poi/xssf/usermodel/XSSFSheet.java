@@ -49,10 +49,7 @@ import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.SSCellRange;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -334,7 +331,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
     public void autoSizeColumn(int column, boolean useMergedCells) {
-        double width = ColumnHelper.getColumnWidth(this, column, useMergedCells);
+        double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
         if(width != -1){
             columnHelper.setColBestFit(column, true);
             columnHelper.setCustomWidth(column, true);
