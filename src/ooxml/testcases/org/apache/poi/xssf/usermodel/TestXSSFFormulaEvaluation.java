@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
@@ -56,5 +57,36 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
         XSSFCell d3 = sheet.getRow(2).getCell(3);
         assertEquals(result, evaluator.evaluateInCell(d3).getNumericCellValue());
+    }
+
+    /**
+     * Evaluation of cell references with column indexes greater than 255. See bugzilla 50096
+     */
+    public void testEvaluateColumnGreaterThan255() {
+        XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("50096.xlsx");
+        XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        /**
+         *  The first row simply contains the numbers 1 - 300.
+         *  The second row simply refers to the cell value above in the first row by a simple formula.
+         */
+        for (int i = 245; i < 265; i++) {
+            XSSFCell cell_noformula = wb.getSheetAt(0).getRow(0).getCell(i);
+            XSSFCell cell_formula = wb.getSheetAt(0).getRow(1).getCell(i);
+
+            CellReference ref_noformula = new CellReference(cell_noformula.getRowIndex(), cell_noformula.getColumnIndex());
+            CellReference ref_formula = new CellReference(cell_noformula.getRowIndex(), cell_noformula.getColumnIndex());
+            String fmla = cell_formula.getCellFormula();
+            // assure that the formula refers to the cell above.
+            // the check below is 'deep' and involves conversion of the shared formula:
+            // in the sample file a shared formula in GN1 is spanned in the range GN2:IY2,
+            assertEquals(ref_noformula.formatAsString(), fmla);
+
+            CellValue cv_noformula = evaluator.evaluate(cell_noformula);
+            CellValue cv_formula = evaluator.evaluate(cell_formula);
+            assertEquals("Wrong evaluation result in " + ref_formula.formatAsString(),
+                    cv_noformula.getNumberValue(), cv_formula.getNumberValue());
+        }
+
     }
 }

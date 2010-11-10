@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.SharedFormula;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -391,8 +392,10 @@ public final class XSSFCell implements Cell {
 
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
+        SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL2007);
+
         Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex);
-        Ptg[] fmla = SharedFormulaRecord.convertSharedFormulas(ptgs,
+        Ptg[] fmla = sf.convertSharedFormulas(ptgs,
                 getRowIndex() - ref.getFirstRow(), getColumnIndex() - ref.getFirstColumn());
         return FormulaRenderer.toFormulaString(fpb, fmla);
     }

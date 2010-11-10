@@ -40,7 +40,14 @@ public abstract class RefPtgBase extends OperandPtg {
 	private int field_2_col;
 	private static final BitField rowRelative = BitFieldFactory.getInstance(0x8000);
 	private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
-	private static final BitField column = BitFieldFactory.getInstance(0x00FF);
+
+    /**
+     * YK: subclasses of RefPtgBase are used by the FormulaParser and FormulaEvaluator accross HSSF and XSSF.
+     * The bit mask should accomodate the maximum number of avaiable columns, i.e. 0x3FFF.
+     *
+     * @see org.apache.poi.ss.SpreadsheetVersion
+     */
+    private static final BitField column = BitFieldFactory.getInstance(0x3FFF);
 
 	protected RefPtgBase() {
 		// Required for clone methods

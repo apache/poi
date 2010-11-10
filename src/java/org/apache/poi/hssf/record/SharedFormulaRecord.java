@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -97,51 +98,6 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     /**
-     * Creates a non shared formula from the shared formula counterpart<br/>
-     *
-     * Perhaps this functionality could be implemented in terms of the raw
-     * byte array inside {@link Formula}.
-     */
-    public static Ptg[] convertSharedFormulas(Ptg[] ptgs, int formulaRow, int formulaColumn) {
-
-        Ptg[] newPtgStack = new Ptg[ptgs.length];
-
-        for (int k = 0; k < ptgs.length; k++) {
-            Ptg ptg = ptgs[k];
-            byte originalOperandClass = -1;
-            if (!ptg.isBaseToken()) {
-                originalOperandClass = ptg.getPtgClass();
-            }
-            if (ptg instanceof RefPtgBase) {
-                RefPtgBase refNPtg = (RefPtgBase)ptg;
-                ptg = new RefPtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
-                                     fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
-                                     refNPtg.isRowRelative(),
-                                     refNPtg.isColRelative());
-                ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof AreaPtgBase) {
-                AreaPtgBase areaNPtg = (AreaPtgBase)ptg;
-                ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
-                                fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
-                                fixupRelativeColumn(formulaColumn,areaNPtg.getLastColumn(),areaNPtg.isLastColRelative()),
-                                areaNPtg.isFirstRowRelative(),
-                                areaNPtg.isLastRowRelative(),
-                                areaNPtg.isFirstColRelative(),
-                                areaNPtg.isLastColRelative());
-                ptg.setClass(originalOperandClass);
-            } else if (ptg instanceof OperandPtg) {
-                // Any subclass of OperandPtg is mutable, so it's safest to not share these instances.
-                ptg = ((OperandPtg) ptg).copy();
-            } else {
-            	// all other Ptgs are immutable and can be shared
-            }
-            newPtgStack[k] = ptg;
-        }
-        return newPtgStack;
-    }
-
-    /**
      * @return the equivalent {@link Ptg} array that the formula would have, were it not shared.
      */
     public Ptg[] getFormulaTokens(FormulaRecord formula) {
@@ -152,23 +108,8 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
             throw new RuntimeException("Shared Formula Conversion: Coding Error");
         }
 
-        return convertSharedFormulas(field_7_parsed_expr.getTokens(), formulaRow, formulaColumn);
-    }
-
-    private static int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
-        if(relative) {
-            // mask out upper bits to produce 'wrapping' at column 256 ("IV")
-            return (column + currentcolumn) & 0x00FF;
-        }
-        return column;
-    }
-
-    private static int fixupRelativeRow(int currentrow, int row, boolean relative) {
-        if(relative) {
-            // mask out upper bits to produce 'wrapping' at row 65536
-            return (row+currentrow) & 0x00FFFF;
-        }
-        return row;
+        SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
+        return sf.convertSharedFormulas(field_7_parsed_expr.getTokens(), formulaRow, formulaColumn);
     }
 
     public Object clone() {
