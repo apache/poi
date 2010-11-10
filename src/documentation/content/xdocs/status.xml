@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
+           <action dev="poi-developers" type="fix">50096 - Fixed evaluation of cell references with column index greater than 255 </action>
            <action dev="poi-developers" type="fix">49761 - Tolerate Double.NaN when reading .xls files</action>
            <action dev="poi-developers" type="fix">50211 - Use cached formula result when auto-sizing formula cells</action>
            <action dev="poi-developers" type="fix">50118 - OLE2 does allow a directory with an empty name, so support this in POIFS</action>

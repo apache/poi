@@ -24,11 +24,13 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.hssf.record.formula.SharedFormula;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -74,7 +76,8 @@ public final class TestSharedFormulaRecord extends TestCase {
 		int encodedLen = in.readUShort();
 		Ptg[] sharedFormula = Ptg.readTokens(encodedLen, in);
 
-		Ptg[] convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 100, 200);
+        SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
+		Ptg[] convertedFormula = sf.convertSharedFormulas(sharedFormula, 100, 200);
 
 		RefPtg refPtg = (RefPtg) convertedFormula[1];
 		assertEquals("$C101", refPtg.toFormulaString());
@@ -102,32 +105,34 @@ public final class TestSharedFormulaRecord extends TestCase {
         HSSFEvaluationWorkbook fpb = HSSFEvaluationWorkbook.create(wb);
         Ptg[] sharedFormula, convertedFormula;
 
+        SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
+
         sharedFormula = FormulaParser.parse("A2", fpb, FormulaType.CELL, -1);
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         //conversion relative to [0,0] should return the original formula
         assertEquals("A2", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 0);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 1, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         //one row down
         assertEquals("A3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 1);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 1, 1);
         confirmOperandClasses(sharedFormula, convertedFormula);
         //one row down and one cell right
         assertEquals("B3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
         sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb, FormulaType.CELL, -1);
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 0, 0);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         assertEquals("SUM(A1:C1)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 0);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 1, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         assertEquals("SUM(A2:C2)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        convertedFormula = SharedFormulaRecord.convertSharedFormulas(sharedFormula, 1, 1);
+        convertedFormula = sf.convertSharedFormulas(sharedFormula, 1, 1);
         confirmOperandClasses(sharedFormula, convertedFormula);
         assertEquals("SUM(B2:D2)", FormulaRenderer.toFormulaString(fpb, convertedFormula));
     }

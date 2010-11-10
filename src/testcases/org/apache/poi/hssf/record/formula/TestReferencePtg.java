@@ -103,5 +103,20 @@ public final class TestReferencePtg extends TestCase {
         }
         assertTrue(Arrays.equals(tRefN_data, outData));
     }
+
+    /**
+     * test that RefPtgBase can handle references with column index greater than 255,
+     * see Bugzilla 50096
+     */
+    public void testColumnGreater255() {
+        RefPtgBase ptg;
+        ptg = new RefPtg("IW1");
+        assertEquals(256, ptg.getColumn());
+        assertEquals("IW1", ptg.formatReferenceAsString());
+
+        ptg = new RefPtg("JA1");
+        assertEquals(260, ptg.getColumn());
+        assertEquals("JA1", ptg.formatReferenceAsString());
+    }
 }
 
