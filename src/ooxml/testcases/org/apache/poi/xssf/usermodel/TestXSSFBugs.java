@@ -561,7 +561,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
        assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
        assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
-       
+       assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
+       assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
+
        // Try various ways of changing the formulas
        // If it stays a formula, chain entry should remain
        // Otherwise should go
@@ -572,14 +574,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        sheet.getRow(5).removeCell(
              sheet.getRow(5).getCell(0)  // go
        );
-       
+        sheet.getRow(6).getCell(0).setCellType(Cell.CELL_TYPE_BLANK);  // go
+        sheet.getRow(7).getCell(0).setCellValue((String)null);  // go
+
        // Save and check
        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-       sheet = wb.getSheetAt(0);
-       
+       assertEquals(35, cc.getCTCalcChain().sizeOfCArray());
+
        cc = wb.getCalculationChain();
        assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
        assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
-       assertEquals("A7", cc.getCTCalcChain().getCArray(2).getR());
+       assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
+
     }
 }
