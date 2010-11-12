@@ -326,7 +326,7 @@ public final class XSSFCell implements Cell {
      */
     public void setCellValue(RichTextString str) {
         if(str == null || str.getString() == null){
-            setBlank();
+            setCellType(Cell.CELL_TYPE_BLANK);
             return;
         }
         int cellType = getCellType();

@@ -23,6 +23,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hssf.record.PasswordRecord;
@@ -1003,6 +1004,26 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         sheet.protectSheet(null);
         assertNull("protectSheet(null) should unset CTSheetProtection", sheet.getCTWorksheet().getSheetProtection());
+    }
+
+
+    public void test49966() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49966.xlsx");
+        CalculationChain calcChain = wb.getCalculationChain();
+        assertNotNull(wb.getCalculationChain());
+        assertEquals(3, calcChain.getCTCalcChain().sizeOfCArray());
+
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFRow row = sheet.getRow(0);
+
+        sheet.removeRow(row);
+        assertEquals("XSSFSheet#removeRow did not clear calcChain entries",
+                0, calcChain.getCTCalcChain().sizeOfCArray());
+
+        //calcChain should be gone 
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNull(wb.getCalculationChain());
+
     }
 
 }

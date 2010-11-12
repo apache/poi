@@ -1368,13 +1368,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (row.getSheet() != this) {
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
-        for(Cell cell : row) {
-            XSSFCell xcell = (XSSFCell)cell;
-            String msg = "Row[rownum="+row.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
-            if(xcell.isPartOfArrayFormulaGroup()){
-                xcell.notifyArrayFormulaChanging(msg);
-            }
-        }
+        // collect cells into a temporary array to avoid ConcurrentModificationException
+        ArrayList<XSSFCell> cellsToDelete = new ArrayList<XSSFCell>();
+        for(Cell cell : row) cellsToDelete.add((XSSFCell)cell);
+
+        for(XSSFCell cell : cellsToDelete) row.removeCell(cell);
+
         _rows.remove(row.getRowNum());
     }
 
