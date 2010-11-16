@@ -155,6 +155,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 	tables.add(t);
                 }
             }
+            cursor.dispose();
 			
             // Sort out headers and footers
 			if (doc.getDocument().getBody().getSectPr() != null)

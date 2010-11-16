@@ -140,6 +140,7 @@ public class XWPFParagraph implements IBodyElement{
                    footnoteText.append("]");
                 }
              }
+             c.dispose();
           }
       }
     }
