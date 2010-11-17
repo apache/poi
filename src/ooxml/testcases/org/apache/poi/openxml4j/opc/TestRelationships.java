@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.*;
+import java.net.URI;
 
 import junit.framework.TestCase;
 
@@ -252,6 +253,64 @@ public class TestRelationships extends TestCase {
     	// Check core too
     	assertEquals("/docProps/core.xml",
     			pkg.getRelationshipsByType("http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties").getRelationship(0).getTargetURI().toString());
+    }
+
+
+    public void testTargetWithSpecialChars() throws Exception{
+
+        OPCPackage pkg;
+
+        String filepath = OpenXML4JTestDataSamples.getSampleFileName("50154.xlsx");
+        pkg = OPCPackage.open(filepath);
+        assert_50154(pkg);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        pkg.save(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        pkg = OPCPackage.open(bais);
+
+        assert_50154(pkg);
+    }
+
+    public void assert_50154(OPCPackage pkg) throws Exception {
+        URI drawingURI = new URI("/xl/drawings/drawing1.xml");
+        PackagePart drawingPart = pkg.getPart(PackagingURIHelper.createPartName(drawingURI));
+        PackageRelationshipCollection drawingRels = drawingPart.getRelationships();
+
+        assertEquals(6, drawingRels.size());
+
+        // expected one image
+        assertEquals(1, drawingPart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/image").size());
+        // and three hyperlinks
+        assertEquals(5, drawingPart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink").size());
+
+        PackageRelationship rId1 = drawingPart.getRelationship("rId1");
+        URI parent = drawingPart.getPartName().getURI();
+        URI rel1 = parent.relativize(rId1.getTargetURI());
+        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
+        assertEquals("'Another Sheet'!A1", rel1.getFragment());
+
+        PackageRelationship rId2 = drawingPart.getRelationship("rId2");
+        URI rel2 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId2.getTargetURI());
+        assertEquals("../media/image1.png", rel2.getPath());
+
+        PackageRelationship rId3 = drawingPart.getRelationship("rId3");
+        URI rel3 = parent.relativize(rId3.getTargetURI());
+        assertEquals("ThirdSheet!A1", rel3.getFragment());
+
+        PackageRelationship rId4 = drawingPart.getRelationship("rId4");
+        URI rel4 = parent.relativize(rId4.getTargetURI());
+        assertEquals("'\u0410\u043F\u0430\u0447\u0435 \u041F\u041E\u0418'!A1", rel4.getFragment());
+
+        PackageRelationship rId5 = drawingPart.getRelationship("rId5");
+        URI rel5 = parent.relativize(rId5.getTargetURI());
+        // back slashed have been replaced with forward
+        assertEquals("file:///D:/chan-chan.mp3", rel5.toString());
+
+        PackageRelationship rId6 = drawingPart.getRelationship("rId6");
+        URI rel6 = parent.relativize(rId6.getTargetURI());
+        assertEquals("../../../../../../../cygwin/home/yegor/dinom/&&&[access].2010-10-26.log", rel6.getPath());
+        assertEquals("'\u0410\u043F\u0430\u0447\u0435 \u041F\u041E\u0418'!A5", rel6.getFragment());
     }
 
 }
