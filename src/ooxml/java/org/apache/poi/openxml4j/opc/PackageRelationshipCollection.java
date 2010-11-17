@@ -351,16 +351,8 @@ public final class PackageRelationshipCollection implements
 							PackageRelationship.TARGET_ATTRIBUTE_NAME)
 							.getValue();
 
-					if (value.indexOf("\\") != -1) {
-						logger
-								.log(POILogger.INFO, "target contains \\ therefore not a valid URI"
-										+ value + " replaced by /");
-						value = value.replaceAll("\\\\", "/");
-						// word can save external relationship with a \ instead
-						// of /
-					}
+                    target = PackagingURIHelper.toURI(value);
 
-					target = new URI(value);
 				} catch (URISyntaxException e) {
 					logger.log(POILogger.ERROR, "Cannot convert " + value
 							+ " in a valid relationship URI-> ignored", e);

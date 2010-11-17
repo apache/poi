@@ -19,6 +19,8 @@ package org.apache.poi.openxml4j.opc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -287,7 +289,7 @@ public final class PackagingURIHelper {
 		//  form must actually be an absolute URI
 		if(sourceURI.toString().equals("/")) {
             String path = targetURI.getPath();
-            if(msCompatible && path.charAt(0) == '/') {
+            if(msCompatible && path.length() > 0 && path.charAt(0) == '/') {
                 try {
                     targetURI = new URI(path.substring(1));
                 } catch (Exception e) {
@@ -362,6 +364,12 @@ public final class PackagingURIHelper {
 			}
 		}
 
+        // if the target had a fragment then append it to the result
+        String fragment = targetURI.getRawFragment();
+        if (fragment != null) {
+            retVal.append("#").append(fragment);
+        }
+
 		try {
 			return new URI(retVal.toString());
 		} catch (Exception e) {
@@ -412,9 +420,9 @@ public final class PackagingURIHelper {
 	 * Get URI from a string path.
 	 */
 	public static URI getURIFromPath(String path) {
-		URI retUri = null;
+		URI retUri;
 		try {
-			retUri = new URI(path);
+			retUri = toURI(path);
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException("path");
 		}
@@ -484,7 +492,7 @@ public final class PackagingURIHelper {
 			throws InvalidFormatException {
 		URI partNameURI;
 		try {
-			partNameURI = new URI(resolvePartName(partName));
+			partNameURI = toURI(partName);
 		} catch (URISyntaxException e) {
 			throw new InvalidFormatException(e.getMessage());
 		}
@@ -648,7 +656,9 @@ public final class PackagingURIHelper {
 	}
 
     /**
-     *  If  part name is not a valid URI, it is resolved as follows:
+     * Convert a string to {@link java.net.URI}
+     *
+     * If  part name is not a valid URI, it is resolved as follows:
      * <p>
      * 1. Percent-encode each open bracket ([) and close bracket (]).</li>
      * 2. Percent-encode each percent (%) character that is not followed by a hexadecimal notation of an octet value.</li>
@@ -663,12 +673,72 @@ public final class PackagingURIHelper {
      * in ?5.2 of RFC 3986. The path component of the resulting absolute URI is the part name.
      *</p>
      *
-     * @param partName the name to resolve
+     * @param   value   the string to be parsed into a URI
      * @return  the resolved part name that should be OK to construct a URI
      *
      * TODO YK: for now this method does only (5). Finish the rest.
      */
-    public static String resolvePartName(String partName){
-        return partName.replace('\\', '/');
+    public static URI toURI(String value) throws URISyntaxException  {
+        //5. Convert all back slashes to forward slashes
+        if (value.indexOf("\\") != -1) {
+             value = value.replace('\\', '/');
+        }
+
+        // URI fragemnts (those starting with '#') are not encoded
+        // and may contain white spaces and raw unicode characters
+        int fragmentIdx = value.indexOf('#');
+        if(fragmentIdx != -1){
+            String path = value.substring(0, fragmentIdx);
+            String fragment = value.substring(fragmentIdx + 1);
+
+            value = path + "#" + encode(fragment);
+        }
+
+        return new URI(value);
     }
+
+    /**
+     * percent-encode white spaces and characters above 0x80.
+     * <p>
+     *   Examples:
+     *   'Apache POI' --> 'Apache%20POI'
+     *   'Apache\u0410POI' --> 'Apache%04%10POI'
+     *
+     * @param s the string to encode
+     * @return  the encoded string
+     */
+    public static String encode(String s) {
+        int n = s.length();
+        if (n == 0) return s;
+
+        ByteBuffer bb;
+        try {
+            bb = ByteBuffer.wrap(s.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e){
+            // should not happen
+            throw new RuntimeException(e);
+        }
+        StringBuilder sb = new StringBuilder();
+        while (bb.hasRemaining()) {
+            int b = bb.get() & 0xff;
+            if (isUnsafe(b)) {
+                sb.append('%');
+                sb.append(hexDigits[(b >> 4) & 0x0F]);
+                sb.append(hexDigits[(b >> 0) & 0x0F]);
+            } else {
+                sb.append((char)b);
+            }
+        }
+        return sb.toString();
+    }
+
+    private final static char[] hexDigits = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+
+    private static boolean isUnsafe(int ch) {
+        return ch > 0x80 || " ".indexOf(ch) >= 0;
+    }
+
 }

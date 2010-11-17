@@ -75,6 +75,11 @@ public interface PackageRelationshipTypes {
 	 */
 	String IMAGE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
+    /**
+     * Hyperlink type.
+     */
+    String HYPERLINK_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
+
 	/**
 	 * Style type.
 	 */
