@@ -628,6 +628,8 @@ public class XWPFRun {
               }
            }
        }
+
+       c.dispose();
        
        // Any picture text?
        if(pictureText != null && pictureText.length() > 0) {

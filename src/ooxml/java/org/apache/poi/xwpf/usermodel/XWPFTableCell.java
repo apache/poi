@@ -65,6 +65,7 @@ public class XWPFTableCell implements IBody {
             	bodyElements.add(t);
             }
         }
+        cursor.dispose();
     }
 
 
@@ -336,6 +337,7 @@ public class XWPFTableCell implements IBody {
 		CTRow row = (CTRow)o;
 		cursor.toParent();
 		o = cursor.getObject();
+        cursor.dispose();
 		if(! (o instanceof CTTbl)){
 			return null;
 		}

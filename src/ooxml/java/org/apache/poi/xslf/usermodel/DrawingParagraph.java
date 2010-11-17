@@ -44,6 +44,8 @@ public class DrawingParagraph {
                 text.append('\n');
             }
         }
+
+        c.dispose();
         
         return text;
     }

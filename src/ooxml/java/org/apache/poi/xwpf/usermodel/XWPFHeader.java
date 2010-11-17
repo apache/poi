@@ -67,6 +67,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
 				tables.add(t);
 			}
 		}
+        cursor.dispose();
 		getAllPictures();
 	}
 
@@ -131,6 +132,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
 		            	bodyElements.add(t);
 		            }
 		        }
+                cursor.dispose();
 		        getAllPictures();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
