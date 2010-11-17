@@ -504,6 +504,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             	bodyElements.add(t);
             }
         }
+        cursor.dispose();
         getAllPictures();
 	}
 	
@@ -521,6 +522,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 		CTRow row = (CTRow)o;
 		cursor.toParent();
 		o = cursor.getObject();
+        cursor.dispose();
 		if(! (o instanceof CTTbl)){
 			return null;
 		}

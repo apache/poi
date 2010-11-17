@@ -69,6 +69,8 @@ public class XSLFCommonSlideData {
                     }
                 }
             }
+
+            c.dispose();
         }
 
         return out;
