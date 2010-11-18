@@ -21,6 +21,9 @@ import junit.framework.TestCase;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+
+import java.util.TreeMap;
 
 /**
  * Tests functionality of the XSSFRichTextRun object
@@ -53,23 +56,27 @@ public final class TestXSSFRichTextString extends TestCase {
         rt.append("4567");
         rt.append("89");
 
+        assertEquals("123456789", rt.getString());
+
         XSSFFont font1 = new XSSFFont();
         font1.setBold(true);
 
         rt.applyFont(2, 5, font1);
 
-        assertEquals(5, rt.numFormattingRuns());
+        assertEquals(4, rt.numFormattingRuns());
         assertEquals(0, rt.getIndexOfFormattingRun(0));
-        assertEquals(2, rt.getLengthOfFormattingRun(0));
+        assertEquals("12", rt.getCTRst().getRArray(0).getT());
 
         assertEquals(2, rt.getIndexOfFormattingRun(1));
-        assertEquals(3, rt.getLengthOfFormattingRun(1));
+        assertEquals("345", rt.getCTRst().getRArray(1).getT());
 
         assertEquals(5, rt.getIndexOfFormattingRun(2));
-        assertEquals(3, rt.getLengthOfFormattingRun(2));
+        assertEquals(2, rt.getLengthOfFormattingRun(2));
+        assertEquals("67", rt.getCTRst().getRArray(2).getT());
 
-        assertEquals(8, rt.getIndexOfFormattingRun(3));
-        assertEquals(1, rt.getLengthOfFormattingRun(3));
+        assertEquals(7, rt.getIndexOfFormattingRun(3));
+        assertEquals(2, rt.getLengthOfFormattingRun(3));
+        assertEquals("89", rt.getCTRst().getRArray(3).getT());
     }
 
     public void testClearFormatting() {
@@ -141,5 +148,146 @@ public final class TestXSSFRichTextString extends TestCase {
         //_x000D_ is converted into carriage return
         assertEquals("abc\r2ef\r", rt.getString());
         
+    }
+
+    public void testApplyFont_lowlevel(){
+        CTRst st = CTRst.Factory.newInstance();
+        String text = "Apache Software Foundation";
+        XSSFRichTextString str = new XSSFRichTextString(text);
+        assertEquals(26, text.length());
+
+        st.addNewR().setT(text);
+
+        TreeMap<Integer, CTRPrElt> formats = str.getFormatMap(st);
+        assertEquals(1, formats.size());
+        assertEquals(26, (int)formats.firstEntry().getKey());
+        assertNull(formats.firstEntry().getValue());
+
+        CTRPrElt fmt1 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 0, 6, fmt1);
+        assertEquals(2, formats.size());
+        assertEquals("[6, 26]", formats.keySet().toString());
+        Object[] runs1 = formats.values().toArray();
+        assertSame(fmt1, runs1[0]);
+        assertSame(null, runs1[1]);
+
+        CTRPrElt fmt2 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 7, 15, fmt2);
+        assertEquals(4, formats.size());
+        assertEquals("[6, 7, 15, 26]", formats.keySet().toString());
+        Object[] runs2 = formats.values().toArray();
+        assertSame(fmt1, runs2[0]);
+        assertSame(null, runs2[1]);
+        assertSame(fmt2, runs2[2]);
+        assertSame(null, runs2[3]);
+
+        CTRPrElt fmt3 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 6, 7, fmt3);
+        assertEquals(4, formats.size());
+        assertEquals("[6, 7, 15, 26]", formats.keySet().toString());
+        Object[] runs3 = formats.values().toArray();
+        assertSame(fmt1, runs3[0]);
+        assertSame(fmt3, runs3[1]);
+        assertSame(fmt2, runs3[2]);
+        assertSame(null, runs3[3]);
+
+        CTRPrElt fmt4 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 0, 7, fmt4);
+        assertEquals(3, formats.size());
+        assertEquals("[7, 15, 26]", formats.keySet().toString());
+        Object[] runs4 = formats.values().toArray();
+        assertSame(fmt4, runs4[0]);
+        assertSame(fmt2, runs4[1]);
+        assertSame(null, runs4[2]);
+
+        CTRPrElt fmt5 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 0, 26, fmt5);
+        assertEquals(1, formats.size());
+        assertEquals("[26]", formats.keySet().toString());
+        Object[] runs5 = formats.values().toArray();
+        assertSame(fmt5, runs5[0]);
+
+        CTRPrElt fmt6 = CTRPrElt.Factory.newInstance();
+        str.applyFont(formats, 15, 26, fmt6);
+        assertEquals(2, formats.size());
+        assertEquals("[15, 26]", formats.keySet().toString());
+        Object[] runs6 = formats.values().toArray();
+        assertSame(fmt5, runs6[0]);
+        assertSame(fmt6, runs6[1]);
+
+        str.applyFont(formats, 0, 26, null);
+        assertEquals(1, formats.size());
+        assertEquals("[26]", formats.keySet().toString());
+        Object[] runs7 = formats.values().toArray();
+        assertSame(null, runs7[0]);
+
+        str.applyFont(formats, 15, 26, fmt6);
+        assertEquals(2, formats.size());
+        assertEquals("[15, 26]", formats.keySet().toString());
+        Object[] runs8 = formats.values().toArray();
+        assertSame(null, runs8[0]);
+        assertSame(fmt6, runs8[1]);
+
+        str.applyFont(formats, 15, 26, fmt5);
+        assertEquals(2, formats.size());
+        assertEquals("[15, 26]", formats.keySet().toString());
+        Object[] runs9 = formats.values().toArray();
+        assertSame(null, runs9[0]);
+        assertSame(fmt5, runs9[1]);
+
+        str.applyFont(formats, 2, 20, fmt6);
+        assertEquals(3, formats.size());
+        assertEquals("[2, 20, 26]", formats.keySet().toString());
+        Object[] runs10 = formats.values().toArray();
+        assertSame(null, runs10[0]);
+        assertSame(fmt6, runs10[1]);
+        assertSame(fmt5, runs10[2]);
+
+        str.applyFont(formats, 22, 24, fmt4);
+        assertEquals(5, formats.size());
+        assertEquals("[2, 20, 22, 24, 26]", formats.keySet().toString());
+        Object[] runs11 = formats.values().toArray();
+        assertSame(null, runs11[0]);
+        assertSame(fmt6, runs11[1]);
+        assertSame(fmt5, runs11[2]);
+        assertSame(fmt4, runs11[3]);
+        assertSame(fmt5, runs11[4]);
+
+        str.applyFont(formats, 0, 10, fmt1);
+        assertEquals(5, formats.size());
+        assertEquals("[10, 20, 22, 24, 26]", formats.keySet().toString());
+        Object[] runs12 = formats.values().toArray();
+        assertSame(fmt1, runs12[0]);
+        assertSame(fmt6, runs12[1]);
+        assertSame(fmt5, runs12[2]);
+        assertSame(fmt4, runs12[3]);
+        assertSame(fmt5, runs12[4]);
+    }
+
+    public void testApplyFont_usermodel(){
+        String text = "Apache Software Foundation";
+        XSSFRichTextString str = new XSSFRichTextString(text);
+        XSSFFont font1 = new XSSFFont();
+        XSSFFont font2 = new XSSFFont();
+        XSSFFont font3 = new XSSFFont();
+        str.applyFont(font1);
+        assertEquals(1, str.numFormattingRuns());
+
+        str.applyFont(0, 6, font1);
+        str.applyFont(6, text.length(), font2);
+        assertEquals(2, str.numFormattingRuns());
+        assertEquals("Apache", str.getCTRst().getRArray(0).getT());
+        assertEquals(" Software Foundation", str.getCTRst().getRArray(1).getT());
+
+        str.applyFont(15, 26, font3);
+        assertEquals(3, str.numFormattingRuns());
+        assertEquals("Apache", str.getCTRst().getRArray(0).getT());
+        assertEquals(" Software", str.getCTRst().getRArray(1).getT());
+        assertEquals(" Foundation", str.getCTRst().getRArray(2).getT());
+
+        str.applyFont(6, text.length(), font2);
+        assertEquals(2, str.numFormattingRuns());
+        assertEquals("Apache", str.getCTRst().getRArray(0).getT());
+        assertEquals(" Software Foundation", str.getCTRst().getRArray(1).getT());
     }
 }
