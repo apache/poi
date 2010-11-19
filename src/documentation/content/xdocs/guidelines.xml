@@ -135,6 +135,7 @@
      <li>Submit patches (see below) of your contributions, modifications.</li>
      <li>Check the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link> for simple problem reports, and write a patch to fix the problem</li>
      <li>Review existing patches in the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link>, and report if they still apply, if they need unit tests atc.</li>
+     <li>Take a look at all the <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI;bug_status=NEW;bug_status=NEEDINFO">unresolved issues in the bug database</link>, and see if you can help with testing or patches for them</li>
      <li>Add in new features, see <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug database</link> for suggestions.</li>
    </ul>
    <p>The Nutch project also have a very useful guide on becoming a 
