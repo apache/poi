@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class ErrPtg extends ScalarConstantPtg {
 
     // convenient access to namespace
-    private static final HSSFErrorConstants EC = null;
+    private static final ErrorConstants EC = null;
 
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
     public static final ErrPtg NULL_INTERSECTION = new ErrPtg(EC.ERROR_NULL);
@@ -52,7 +52,7 @@ public final class ErrPtg extends ScalarConstantPtg {
     /** Creates new ErrPtg */
 
     private ErrPtg(int errorCode) {
-        if(!HSSFErrorConstants.isValidCode(errorCode)) {
+        if(!ErrorConstants.isValidCode(errorCode)) {
             throw new IllegalArgumentException("Invalid error code (" + errorCode + ")");
         }
         field_1_error_code = errorCode;
@@ -68,7 +68,7 @@ public final class ErrPtg extends ScalarConstantPtg {
     }
 
     public String toFormulaString() {
-        return HSSFErrorConstants.getText(field_1_error_code);
+        return ErrorConstants.getText(field_1_error_code);
     }
 
     public int getSize() {
@@ -81,13 +81,13 @@ public final class ErrPtg extends ScalarConstantPtg {
 
     public static ErrPtg valueOf(int code) {
         switch(code) {
-            case HSSFErrorConstants.ERROR_DIV_0: return DIV_ZERO;
-            case HSSFErrorConstants.ERROR_NA: return N_A;
-            case HSSFErrorConstants.ERROR_NAME: return NAME_INVALID;
-            case HSSFErrorConstants.ERROR_NULL: return NULL_INTERSECTION;
-            case HSSFErrorConstants.ERROR_NUM: return NUM_ERROR;
-            case HSSFErrorConstants.ERROR_REF: return REF_INVALID;
-            case HSSFErrorConstants.ERROR_VALUE: return VALUE_INVALID;
+            case ErrorConstants.ERROR_DIV_0: return DIV_ZERO;
+            case ErrorConstants.ERROR_NA: return N_A;
+            case ErrorConstants.ERROR_NAME: return NAME_INVALID;
+            case ErrorConstants.ERROR_NULL: return NULL_INTERSECTION;
+            case ErrorConstants.ERROR_NUM: return NUM_ERROR;
+            case ErrorConstants.ERROR_REF: return REF_INVALID;
+            case ErrorConstants.ERROR_VALUE: return VALUE_INVALID;
         }
         throw new RuntimeException("Unexpected error code (" + code + ")");
     }

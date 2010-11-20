@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 public final class ErrorEval implements ValueEval {
 
     // convenient access to namespace
-    private static final HSSFErrorConstants EC = null;
+    private static final ErrorConstants EC = null;
 
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
     public static final ErrorEval NULL_INTERSECTION = new ErrorEval(EC.ERROR_NULL);
@@ -58,13 +58,13 @@ public final class ErrorEval implements ValueEval {
      */
     public static ErrorEval valueOf(int errorCode) {
         switch(errorCode) {
-            case HSSFErrorConstants.ERROR_NULL:  return NULL_INTERSECTION;
-            case HSSFErrorConstants.ERROR_DIV_0: return DIV_ZERO;
-            case HSSFErrorConstants.ERROR_VALUE: return VALUE_INVALID;
-            case HSSFErrorConstants.ERROR_REF:   return REF_INVALID;
-            case HSSFErrorConstants.ERROR_NAME:  return NAME_INVALID;
-            case HSSFErrorConstants.ERROR_NUM:   return NUM_ERROR;
-            case HSSFErrorConstants.ERROR_NA:    return NA;
+            case ErrorConstants.ERROR_NULL:  return NULL_INTERSECTION;
+            case ErrorConstants.ERROR_DIV_0: return DIV_ZERO;
+            case ErrorConstants.ERROR_VALUE: return VALUE_INVALID;
+            case ErrorConstants.ERROR_REF:   return REF_INVALID;
+            case ErrorConstants.ERROR_NAME:  return NAME_INVALID;
+            case ErrorConstants.ERROR_NUM:   return NUM_ERROR;
+            case ErrorConstants.ERROR_NA:    return NA;
             // non-std errors (conditions modeled as errors by POI)
             case CIRCULAR_REF_ERROR_CODE:        return CIRCULAR_REF_ERROR;
         }
@@ -77,8 +77,8 @@ public final class ErrorEval implements ValueEval {
      * @return the String representation of the specified Excel error code.
      */
     public static String getText(int errorCode) {
-        if(HSSFErrorConstants.isValidCode(errorCode)) {
-            return HSSFErrorConstants.getText(errorCode);
+        if(ErrorConstants.isValidCode(errorCode)) {
+            return ErrorConstants.getText(errorCode);
         }
         // It is desirable to make these (arbitrary) strings look clearly different from any other
         // value expression that might appear in a formula.  In addition these error strings should

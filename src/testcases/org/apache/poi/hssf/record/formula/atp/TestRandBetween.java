@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -50,7 +49,7 @@ public class TestRandBetween extends TestCase {
 		Row row = sheet.createRow(0);
 		bottomValueCell = row.createCell(0);
 		topValueCell = row.createCell(1);
-		formulaCell = row.createCell(2, HSSFCell.CELL_TYPE_FORMULA);
+		formulaCell = row.createCell(2, Cell.CELL_TYPE_FORMULA);
 	}
 	
 	@Override

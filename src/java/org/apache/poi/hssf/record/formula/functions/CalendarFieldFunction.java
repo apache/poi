@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation of Excel functions DAY, MONTH and YEAR
@@ -73,7 +73,7 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
 			}
 			throw new IllegalStateException("bad date field " + _dateFieldId);
 		}
-		Date d = HSSFDateUtil.getJavaDate(serialDay, false); // TODO fix 1900/1904 problem
+		Date d = DateUtil.getJavaDate(serialDay, false); // TODO fix 1900/1904 problem
 
 		Calendar c = new GregorianCalendar();
 		c.setTime(d);

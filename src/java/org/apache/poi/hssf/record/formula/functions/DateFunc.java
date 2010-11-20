@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 
 /**
@@ -77,7 +77,7 @@ public final class DateFunc extends Fixed3ArgFunction {
 		c.set(year, month, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);
 
-		return HSSFDateUtil.getExcelDate(c.getTime(), false); // TODO - fix 1900/1904 problem
+		return DateUtil.getExcelDate(c.getTime(), false); // TODO - fix 1900/1904 problem
 	}
 
 	private static int getYear(double d) {

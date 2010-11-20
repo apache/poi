@@ -23,7 +23,7 @@ import java.util.GregorianCalendar;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Specific test cases for YearFracCalculator
@@ -62,6 +62,6 @@ public final class TestYearFracCalculator extends TestCase {
 		
 		c.set(year, month-1, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);
-		return HSSFDateUtil.getExcelDate(c.getTime());
+		return DateUtil.getExcelDate(c.getTime());
 	}
 }
