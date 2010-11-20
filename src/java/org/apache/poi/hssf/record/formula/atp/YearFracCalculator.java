@@ -23,7 +23,7 @@ import java.util.TimeZone;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 
 /**
@@ -317,7 +317,7 @@ final class YearFracCalculator {
 
 	private static SimpleDate createDate(int dayCount) {
 		GregorianCalendar calendar = new GregorianCalendar(UTC_TIME_ZONE);
-		HSSFDateUtil.setCalendar(calendar, dayCount, 0, false);
+		DateUtil.setCalendar(calendar, dayCount, 0, false);
 		return new SimpleDate(calendar);
 	}
 

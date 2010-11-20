@@ -22,7 +22,7 @@ import java.util.GregorianCalendar;
 
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation of Excel TODAY() Function<br/>
@@ -36,6 +36,6 @@ public final class Today extends Fixed0ArgFunction {
 		Calendar now = new GregorianCalendar();
 		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
 		now.set(Calendar.MILLISECOND, 0);
-		return new NumberEval(HSSFDateUtil.getExcelDate(now.getTime()));
+		return new NumberEval(DateUtil.getExcelDate(now.getTime()));
 	}
 }

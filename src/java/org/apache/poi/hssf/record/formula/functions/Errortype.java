@@ -22,7 +22,7 @@ import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
  * Implementation for the ERROR.TYPE() Excel function.
@@ -45,7 +45,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
  *    </table>
  *
  * Note - the results of ERROR.TYPE() are different to the constants defined in
- * <tt>HSSFErrorConstants</tt>.
+ * <tt>ErrorConstants</tt>.
  * </p>
  *
  * @author Josh Micich
@@ -65,13 +65,13 @@ public final class Errortype extends Fixed1ArgFunction {
 
 	private int translateErrorCodeToErrorTypeValue(int errorCode) {
 		switch (errorCode) {
-			case HSSFErrorConstants.ERROR_NULL:  return 1;
-			case HSSFErrorConstants.ERROR_DIV_0: return 2;
-			case HSSFErrorConstants.ERROR_VALUE: return 3;
-			case HSSFErrorConstants.ERROR_REF:   return 4;
-			case HSSFErrorConstants.ERROR_NAME:  return 5;
-			case HSSFErrorConstants.ERROR_NUM:   return 6;
-			case HSSFErrorConstants.ERROR_NA :   return 7;
+			case ErrorConstants.ERROR_NULL:  return 1;
+			case ErrorConstants.ERROR_DIV_0: return 2;
+			case ErrorConstants.ERROR_VALUE: return 3;
+			case ErrorConstants.ERROR_REF:   return 4;
+			case ErrorConstants.ERROR_NAME:  return 5;
+			case ErrorConstants.ERROR_NUM:   return 6;
+			case ErrorConstants.ERROR_NA :   return 7;
 		}
 		throw new IllegalArgumentException("Invalid error code (" + errorCode + ")");
 	}

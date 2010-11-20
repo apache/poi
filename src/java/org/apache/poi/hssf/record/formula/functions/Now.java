@@ -21,7 +21,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation of Excel NOW() Function
@@ -32,6 +32,6 @@ public final class Now extends Fixed0ArgFunction {
 
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
 		Date now = new Date(System.currentTimeMillis());
-		return new NumberEval(HSSFDateUtil.getExcelDate(now));
+		return new NumberEval(DateUtil.getExcelDate(now));
 	}
 }

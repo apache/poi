@@ -149,7 +149,7 @@ public final class OperandResolver {
 		cells this method could not detect it.
 
 		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
-		(and HSSFFormulaEvaluator).
+		(and FormulaEvaluator).
 		 */
 		}
 
