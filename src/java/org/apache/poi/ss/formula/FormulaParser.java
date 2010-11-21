@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.record.constant.ErrorConstant;
 import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.formula.function.FunctionMetadata;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -1297,13 +1297,13 @@ public final class FormulaParser {
 			case 'V':
 				if(part1.equals("VALUE")) {
 					Match('!');
-					return HSSFErrorConstants.ERROR_VALUE;
+					return ErrorConstants.ERROR_VALUE;
 				}
 				throw expected("#VALUE!");
 			case 'R':
 				if(part1.equals("REF")) {
 					Match('!');
-					return HSSFErrorConstants.ERROR_REF;
+					return ErrorConstants.ERROR_REF;
 				}
 				throw expected("#REF!");
 			case 'D':
@@ -1311,21 +1311,21 @@ public final class FormulaParser {
 					Match('/');
 					Match('0');
 					Match('!');
-					return HSSFErrorConstants.ERROR_DIV_0;
+					return ErrorConstants.ERROR_DIV_0;
 				}
 				throw expected("#DIV/0!");
 			case 'N':
 				if(part1.equals("NAME")) {
 					Match('?');  // only one that ends in '?'
-					return HSSFErrorConstants.ERROR_NAME;
+					return ErrorConstants.ERROR_NAME;
 				}
 				if(part1.equals("NUM")) {
 					Match('!');
-					return HSSFErrorConstants.ERROR_NUM;
+					return ErrorConstants.ERROR_NUM;
 				}
 				if(part1.equals("NULL")) {
 					Match('!');
-					return HSSFErrorConstants.ERROR_NULL;
+					return ErrorConstants.ERROR_NULL;
 				}
 				if(part1.equals("N")) {
 					Match('/');
@@ -1334,7 +1334,7 @@ public final class FormulaParser {
 					}
 					Match(look);
 					// Note - no '!' or '?' suffix
-					return HSSFErrorConstants.ERROR_NA;
+					return ErrorConstants.ERROR_NA;
 				}
 				throw expected("#NAME?, #NUM!, #NULL! or #N/A");
 

@@ -22,14 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Instances of this class keep track of multiple dependent cell evaluations due
- * to recursive calls to {@link WorkbookEvaluator#evaluate(HSSFCell)}
+ * to recursive calls to {@link WorkbookEvaluator#evaluate(EvaluationCell)}}
  * The main purpose of this class is to detect an attempt to evaluate a cell
  * that is already being evaluated. In other words, it detects circular
  * references in spreadsheet formulas.

@@ -19,9 +19,9 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.record.formula.AreaI;
 import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.AreaEvalBase;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.hssf.util.CellReference;
 
 /**

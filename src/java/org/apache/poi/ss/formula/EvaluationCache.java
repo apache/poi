@@ -17,22 +17,21 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
 import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * Performance optimisation for {@link HSSFFormulaEvaluator}. This class stores previously
- * calculated values of already visited cells, to avoid unnecessary re-calculation when the
- * same cells are referenced multiple times
+ * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
+ * This class stores previously calculated values of already visited cells,
+ * to avoid unnecessary re-calculation when the same cells are referenced multiple times
  *
  * @author Josh Micich
  */
@@ -57,7 +56,7 @@ final class EvaluationCache {
 		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 			if (fcce == null) {
 				fcce = new FormulaCellCacheEntry();
 				if (pcce == null) {
@@ -198,7 +197,7 @@ final class EvaluationCache {
 	}
 	public void notifyDeleteCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 			FormulaCellCacheEntry fcce = _formulaCellCache.remove(cell);
 			if (fcce == null) {
 				// formula cell has not been evaluated yet

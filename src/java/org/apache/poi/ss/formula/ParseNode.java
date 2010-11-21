@@ -23,7 +23,7 @@ import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.MemAreaPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 /**
  * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
  * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped

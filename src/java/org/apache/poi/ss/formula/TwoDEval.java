@@ -17,11 +17,11 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Common interface of {@link AreaEval} and {@link org.apache.poi.hssf.record.formula.eval.AreaEvalBase}
+ * Common interface of {@link AreaEval} and {@link org.apache.poi.ss.formula.eval.AreaEvalBase}
  *
  * @author Josh Micich
  */
