@@ -25,8 +25,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.formula.eval.TestFormulasFromSpreadsheet;
-import org.apache.poi.hssf.record.formula.functions.TestMathX;
+import org.apache.poi.ss.formula.eval.TestFormulasFromSpreadsheet;
+import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
