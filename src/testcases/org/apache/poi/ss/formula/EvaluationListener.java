@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br/>
