@@ -20,7 +20,6 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -506,7 +505,7 @@ public abstract class BaseTestNamedRange extends TestCase {
      * 00000010 | 00 00 00 55 50 53 53 74 61 74 65                | ...UPSState
      * </pre>
      *
-     * This caused trouble for anything that requires {@link HSSFName#getRefersToFormula()}
+     * This caused trouble for anything that requires {@link Name#getRefersToFormula()}
      * It is easy enough to re-create the the same data (by not setting the formula). Excel
      * seems to gracefully remove this uninitialized name record.  It would be nice if POI
      * could do the same, but that would involve adjusting subsequent name indexes across

@@ -15,29 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.ss.formula.function;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-
 /**
- * Tests {@link org.apache.poi.ss.formula.CellCacheEntry}.
- *
+ * 
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public final class TestFunctionMetadataRegistry extends TestCase {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
+	public void testWellKnownFunctions() {
+		confirmFunction(0, "COUNT");
+		confirmFunction(1, "IF");
+
+	}
+
+	private static void confirmFunction(int index, String funcName) {
+		FunctionMetadata fm;
+		fm = FunctionMetadataRegistry.getFunctionByIndex(index);
+		assertNotNull(fm);
+		assertEquals(funcName, fm.getName());
+
+		fm = FunctionMetadataRegistry.getFunctionByName(funcName);
+		assertNotNull(fm);
+		assertEquals(index, fm.getIndex());
 	}
 }
