@@ -38,7 +38,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
 
 /**

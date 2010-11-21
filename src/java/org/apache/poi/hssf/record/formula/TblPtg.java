@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -69,7 +68,7 @@ public final class TblPtg extends ControlPtg {
     public String toFormulaString()
     {
         // table(....)[][]
-        throw new RecordFormatException("Table and Arrays are not yet supported");
+        throw new RuntimeException("Table and Arrays are not yet supported");
     }
 
     public String toString() {

@@ -61,7 +61,7 @@ import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.hssf.record.formula.OperandPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.SheetNameFormatter;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;

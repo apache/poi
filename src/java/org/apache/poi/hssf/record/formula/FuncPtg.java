@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.function.FunctionMetadata;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 

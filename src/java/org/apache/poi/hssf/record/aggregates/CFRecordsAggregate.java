@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.formula.AreaErrPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 
