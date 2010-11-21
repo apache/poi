@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 
 /**
  * @author Josh Micich

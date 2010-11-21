@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 

@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFComment;
