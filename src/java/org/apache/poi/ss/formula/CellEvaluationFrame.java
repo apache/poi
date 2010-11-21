@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Stores details about the current evaluation of a cell.<br/>

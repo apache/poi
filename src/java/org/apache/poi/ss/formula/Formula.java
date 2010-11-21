@@ -19,9 +19,6 @@ package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
 
-import org.apache.poi.hssf.record.ArrayRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.formula.ExpPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.TblPtg;
@@ -165,8 +162,9 @@ public class Formula {
 	}
 
 	/**
-	 * Gets the locator for the corresponding {@link SharedFormulaRecord}, {@link ArrayRecord} or
-	 * {@link TableRecord} if this formula belongs to such a grouping.  The {@link CellReference}
+	 * Gets the locator for the corresponding {@link org.apache.poi.hssf.record.SharedFormulaRecord},
+     * {@link org.apache.poi.hssf.record.ArrayRecord} or {@link org.apache.poi.hssf.record.TableRecord}
+     * if this formula belongs to such a grouping.  The {@link CellReference}
 	 * returned by this method will  match the top left corner of the range of that grouping.
 	 * The return value is usually not the same as the location of the cell containing this formula.
 	 *

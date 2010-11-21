@@ -41,19 +41,19 @@ import org.apache.poi.hssf.record.formula.RangePtg;
 import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
-import org.apache.poi.hssf.record.formula.eval.ConcatEval;
-import org.apache.poi.hssf.record.formula.eval.FunctionEval;
-import org.apache.poi.hssf.record.formula.eval.IntersectionEval;
-import org.apache.poi.hssf.record.formula.eval.PercentEval;
-import org.apache.poi.hssf.record.formula.eval.RangeEval;
-import org.apache.poi.hssf.record.formula.eval.RelationalOperationEval;
-import org.apache.poi.hssf.record.formula.eval.TwoOperandNumericOperation;
-import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
-import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.hssf.record.formula.functions.Function;
-import org.apache.poi.hssf.record.formula.functions.Indirect;
+import org.apache.poi.ss.formula.eval.ConcatEval;
+import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.IntersectionEval;
+import org.apache.poi.ss.formula.eval.PercentEval;
+import org.apache.poi.ss.formula.eval.RangeEval;
+import org.apache.poi.ss.formula.eval.RelationalOperationEval;
+import org.apache.poi.ss.formula.eval.TwoOperandNumericOperation;
+import org.apache.poi.ss.formula.eval.UnaryMinusEval;
+import org.apache.poi.ss.formula.eval.UnaryPlusEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.formula.functions.Indirect;
 
 /**
  * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>

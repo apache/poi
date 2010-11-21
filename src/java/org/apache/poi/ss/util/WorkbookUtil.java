@@ -28,7 +28,7 @@ public class WorkbookUtil {
 	/**
 	 * Creates a valid sheet name, which is conform to the rules.
 	 * In any case, the result safely can be used for 
-	 * {@link org.apache.poi.hssf.usermodel.HSSFWorkbook#setSheetName(int, String)}.
+	 * {@link org.apache.poi.ss.usermodel.Workbook#setSheetName(int, String)}.
 	 * <br>
 	 * Rules:
 	 * <ul>
