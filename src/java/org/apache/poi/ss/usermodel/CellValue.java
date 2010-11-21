@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 
 /**
  * Mimics the 'data view' of a cell. This allows formula evaluator
