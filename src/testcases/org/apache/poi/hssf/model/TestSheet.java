@@ -46,7 +46,7 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;

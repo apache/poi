@@ -17,9 +17,11 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.record.formula.eval.AllFormulaEvalTests;
-import org.apache.poi.hssf.record.formula.function.AllFormulaFunctionTests;
-import org.apache.poi.hssf.record.formula.functions.AllIndividualFunctionEvaluationTests;
+import org.apache.poi.ss.formula.TestFormulaShifter;
+import org.apache.poi.ss.formula.TestSheetNameFormatter;
+import org.apache.poi.ss.formula.eval.AllFormulaEvalTests;
+import org.apache.poi.ss.formula.function.AllFormulaFunctionTests;
+import org.apache.poi.ss.formula.functions.AllIndividualFunctionEvaluationTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

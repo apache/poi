@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.eval.forked;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

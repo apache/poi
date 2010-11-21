@@ -30,12 +30,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;

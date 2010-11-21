@@ -15,29 +15,36 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.ss.formula.functions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
 
 /**
- * Tests {@link org.apache.poi.ss.formula.CellCacheEntry}.
+ * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
  *
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public final class TestRoundFuncs extends TestCase {
+	private static final NumericFunction F = null;
+	public void testRounddownWithStringArg() {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
+		ValueEval strArg = new StringEval("abc");
+		ValueEval[] args = { strArg, new NumberEval(2), };
+		ValueEval result = F.ROUNDDOWN.evaluate(args, -1, (short)-1);
+		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
+
+	public void testRoundupWithStringArg() {
+
+		ValueEval strArg = new StringEval("abc");
+		ValueEval[] args = { strArg, new NumberEval(2), };
+		ValueEval result = F.ROUNDUP.evaluate(args, -1, (short)-1);
+		assertEquals(ErrorEval.VALUE_INVALID, result);
+	}
+
 }

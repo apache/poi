@@ -15,29 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.ss.formula.eval;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
- * Tests {@link org.apache.poi.ss.formula.CellCacheEntry}.
+ * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
  *
  * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public class AllFormulaEvalTests {
 
-	public void testBasic() {
-		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
-		ValueEval ve = pcce.getValue();
-		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
-		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
-		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
-		ve = fcce.getValue();
-		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
+	public static Test suite() {
+		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
+		result.addTestSuite(TestAreaEval.class);
+		result.addTestSuite(TestCircularReferences.class);
+		result.addTestSuite(TestDivideEval.class);
+		result.addTestSuite(TestEqualEval.class);
+		result.addTestSuite(TestExternalFunction.class);
+		result.addTestSuite(TestFormulaBugs.class);
+		result.addTestSuite(TestFormulasFromSpreadsheet.class);
+		result.addTestSuite(TestMinusZeroResult.class);
+		result.addTestSuite(TestMissingArgEval.class);
+		result.addTestSuite(TestPercentEval.class);
+		result.addTestSuite(TestRangeEval.class);
+		result.addTestSuite(TestUnaryPlusEval.class);
+		return result;
 	}
 }
