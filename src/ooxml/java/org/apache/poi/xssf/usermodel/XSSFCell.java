@@ -22,10 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.SharedFormula;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.SharedFormula;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
