@@ -17,13 +17,12 @@
 
 package org.apache.poi.ss.formula.eval.forked;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -60,27 +59,27 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		Class<? extends ValueEval> cls = value.getClass();
 
 		if (cls == NumberEval.class) {
-			_cellType = HSSFCell.CELL_TYPE_NUMERIC;
+			_cellType = Cell.CELL_TYPE_NUMERIC;
 			_numberValue = ((NumberEval)value).getNumberValue();
 			return;
 		}
 		if (cls == StringEval.class) {
-			_cellType = HSSFCell.CELL_TYPE_STRING;
+			_cellType = Cell.CELL_TYPE_STRING;
 			_stringValue = ((StringEval)value).getStringValue();
 			return;
 		}
 		if (cls == BoolEval.class) {
-			_cellType = HSSFCell.CELL_TYPE_BOOLEAN;
+			_cellType = Cell.CELL_TYPE_BOOLEAN;
 			_booleanValue = ((BoolEval)value).getBooleanValue();
 			return;
 		}
 		if (cls == ErrorEval.class) {
-			_cellType = HSSFCell.CELL_TYPE_ERROR;
+			_cellType = Cell.CELL_TYPE_ERROR;
 			_errorValue = ((ErrorEval)value).getErrorCode();
 			return;
 		}
 		if (cls == BlankEval.class) {
-			_cellType = HSSFCell.CELL_TYPE_BLANK;
+			_cellType = Cell.CELL_TYPE_BLANK;
 			return;
 		}
 		throw new IllegalArgumentException("Unexpected value class (" + cls.getName() + ")");
@@ -105,19 +104,19 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		return _cellType;
 	}
 	public boolean getBooleanCellValue() {
-		checkCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		checkCellType(Cell.CELL_TYPE_BOOLEAN);
 		return _booleanValue;
 	}
 	public int getErrorCellValue() {
-		checkCellType(HSSFCell.CELL_TYPE_ERROR);
+		checkCellType(Cell.CELL_TYPE_ERROR);
 		return _errorValue;
 	}
 	public double getNumericCellValue() {
-		checkCellType(HSSFCell.CELL_TYPE_NUMERIC);
+		checkCellType(Cell.CELL_TYPE_NUMERIC);
 		return _numberValue;
 	}
 	public String getStringCellValue() {
-		checkCellType(HSSFCell.CELL_TYPE_STRING);
+		checkCellType(Cell.CELL_TYPE_STRING);
 		return _stringValue;
 	}
 	public EvaluationSheet getSheet() {
