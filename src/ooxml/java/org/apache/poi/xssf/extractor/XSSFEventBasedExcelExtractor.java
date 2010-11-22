@@ -18,14 +18,20 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.POIXMLProperties.CustomProperties;
+import org.apache.poi.POIXMLProperties.ExtendedProperties;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -43,6 +49,9 @@ import org.xml.sax.XMLReader;
  */
 public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
    private OPCPackage container;
+   private POIXMLProperties properties;
+   
+   private Locale locale;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 
@@ -52,6 +61,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
 	public XSSFEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
 		super(null);
 		this.container = container;
+		
+		properties = new POIXMLProperties(container);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -79,22 +90,64 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
 		this.formulasNotResults = formulasNotResults;
 	}
 	
+	public void setLocale(Locale locale) {
+	   this.locale = locale;
+	}
+	
+	/**
+	 * Returns the opened OPCPackage container.
+	 */
+	@Override
+	public OPCPackage getPackage() {
+	   return container;
+	}
+	
+   /**
+    * Returns the core document properties
+    */
+   @Override
+   public CoreProperties getCoreProperties() {
+       return properties.getCoreProperties();
+   }
+   /**
+    * Returns the extended document properties
+    */
+   @Override
+   public ExtendedProperties getExtendedProperties() {
+      return properties.getExtendedProperties();
+   }
+   /**
+    * Returns the custom document properties
+    */
+   @Override
+   public CustomProperties getCustomProperties() {
+      return properties.getCustomProperties();
+   }
+   
    /**
     * Processes the given sheet
     */
    public void processSheet(
-           SheetTextExtractor sheetExtractor,
+           SheetContentsHandler sheetContentsExtractor,
            StylesTable styles,
            ReadOnlySharedStringsTable strings,
            InputStream sheetInputStream)
            throws IOException, SAXException {
 
+       DataFormatter formatter;
+       if(locale == null) {
+          formatter = new DataFormatter();
+       } else  {
+          formatter = new DataFormatter(locale);
+       }
+      
        InputSource sheetSource = new InputSource(sheetInputStream);
        SAXParserFactory saxFactory = SAXParserFactory.newInstance();
        try {
           SAXParser saxParser = saxFactory.newSAXParser();
           XMLReader sheetParser = saxParser.getXMLReader();
-          ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, sheetExtractor, formulasNotResults);
+          ContentHandler handler = new XSSFSheetXMLHandler(
+                styles, strings, sheetContentsExtractor, formatter, formulasNotResults);
           sheetParser.setContentHandler(handler);
           sheetParser.parse(sheetSource);
        } catch(ParserConfigurationException e) {
@@ -161,6 +214,10 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
             output.append('\t');
          }
          output.append(formattedValue);
+      }
+      
+      public void headerFooter(String text, boolean isHeader, String tagName) {
+         // We don't include headers in the output yet, so ignore
       }
    }
 }

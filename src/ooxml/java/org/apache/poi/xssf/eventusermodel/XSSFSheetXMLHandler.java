@@ -61,6 +61,8 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private boolean vIsOpen;
    // Set when F start element is seen
    private boolean fIsOpen;
+   // Set when a header/footer element is seen
+   private boolean hfIsOpen;
 
    // Set when cell start element is seen;
    // used when cell close element is seen.
@@ -76,26 +78,39 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    // Gathers characters as they are seen.
    private StringBuffer value = new StringBuffer();
    private StringBuffer formula = new StringBuffer();
+   private StringBuffer headerFooter = new StringBuffer();
 
    /**
     * Accepts objects needed while parsing.
     *
     * @param styles  Table of styles
     * @param strings Table of shared strings
-    * @param cols    Minimum number of columns to show
-    * @param target  Sink for output
     */
    public XSSFSheetXMLHandler(
            StylesTable styles,
            ReadOnlySharedStringsTable strings,
            SheetContentsHandler sheetContentsHandler,
+           DataFormatter dataFormatter,
            boolean formulasNotResults) {
        this.stylesTable = styles;
        this.sharedStringsTable = strings;
        this.output = sheetContentsHandler;
        this.formulasNotResults = formulasNotResults;
        this.nextDataType = xssfDataType.NUMBER;
-       this.formatter = new DataFormatter();
+       this.formatter = dataFormatter;
+   }
+   /**
+    * Accepts objects needed while parsing.
+    *
+    * @param styles  Table of styles
+    * @param strings Table of shared strings
+    */
+   public XSSFSheetXMLHandler(
+           StylesTable styles,
+           ReadOnlySharedStringsTable strings,
+           SheetContentsHandler sheetContentsHandler,
+           boolean formulasNotResults) {
+       this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
 
    public void startElement(String uri, String localName, String name,
@@ -121,6 +136,13 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           } else {
              fIsOpen = true;
           }
+       }
+       else if("oddHeader".equals(name) || "evenHeader".equals(name) ||
+             "firstHeader".equals(name) || "firstFooter".equals(name) ||
+             "oddFooter".equals(name) || "evenFooter".equals(name)) {
+          hfIsOpen = true;
+          // Clear contents cache
+          headerFooter.setLength(0);
        }
        else if("row".equals(name)) {
            int rowNum = Integer.parseInt(attributes.getValue("r")) - 1;
@@ -222,6 +244,16 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        } else if ("row".equals(name)) {
           output.endRow();
        }
+       else if("oddHeader".equals(name) || "evenHeader".equals(name) ||
+             "firstHeader".equals(name)) {
+          hfIsOpen = false;
+          output.headerFooter(headerFooter.toString(), true, name);
+       }
+       else if("oddFooter".equals(name) || "evenFooter".equals(name) ||
+             "firstFooter".equals(name)) {
+          hfIsOpen = false;
+          output.headerFooter(headerFooter.toString(), false, name);
+       }
    }
 
    /**
@@ -236,6 +268,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        if (fIsOpen) {
           formula.append(ch, start, length);
        }
+       if (hfIsOpen) {
+          headerFooter.append(ch, start, length);
+       }
    }
 
    /**
@@ -249,5 +284,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       public void endRow();
       /** A cell, with the given formatted value, was encountered */
       public void cell(String cellReference, String formattedValue);
+      /** A header or footer has been encountered */
+      public void headerFooter(String text, boolean isHeader, String tagName);
    }
 }

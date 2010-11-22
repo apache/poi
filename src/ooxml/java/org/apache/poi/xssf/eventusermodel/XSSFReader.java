@@ -30,8 +30,10 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -155,7 +157,7 @@ public class XSSFReader {
          * Current CTSheet bean
          */
         private CTSheet ctSheet;
-
+        
         /**
          * Iterator over CTSheet objects, returns sheets in <tt>logical</tt> order.
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
@@ -228,7 +230,40 @@ public class XSSFReader {
         public String getSheetName() {
             return ctSheet.getName();
         }
+        
+        /**
+         * Returns the comments associated with this sheet,
+         *  or null if there aren't any
+         */
+        public CommentsTable getSheetComments() {
+           PackagePart sheetPkg = getSheetPart();
+           
+           // Do we have a comments relationship? (Only ever one if so)
+           try {
+              PackageRelationshipCollection commentsList = 
+                   sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
+              if(commentsList.size() > 0) {
+                 PackageRelationship comments = commentsList.getRelationship(0);
+                 PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
+                 PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
+                 return new CommentsTable(commentsPart, comments);
+              }
+           } catch (InvalidFormatException e) {
+              return null;
+           } catch (IOException e) {
+              return null;
+           }
+           return null;
+        }
+        
+        public PackagePart getSheetPart() {
+           String sheetId = ctSheet.getId();
+           return sheetMap.get(sheetId);
+        }
 
+        /**
+         * We're read only, so remove isn't supported
+         */
         public void remove() {
             throw new IllegalStateException("Not supported");
         }
