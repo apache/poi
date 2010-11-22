@@ -87,6 +87,10 @@ public final class PicturesTable
    * @param run
    */
   public boolean hasPicture(CharacterRun run) {
+    if (run==null) {
+        return false;
+    }
+
     if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData()) {
        // Image should be in it's own run, or in a run with the end-of-special marker
        if("\u0001".equals(run.text()) || "\u0001\u0015".equals(run.text())) {
