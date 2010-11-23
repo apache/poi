@@ -130,9 +130,27 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           }
           
           // Decide where to get the formula string from
-          String type = attributes.getValue("t"); 
+          String type = attributes.getValue("t");
           if(type != null && type.equals("shared")) {
-             System.err.println("Warning - shared formulas not yet supported!");
+             // Is it the one that defines the shared, or uses it?
+             String ref = attributes.getValue("ref");
+             String si = attributes.getValue("si");
+             
+             if(ref != null) {
+                // This one defines it
+                // TODO Save it somewhere
+                fIsOpen = true;
+             } else {
+                // This one uses a shared formula
+                // TODO Retrieve the shared formula and tweak it to 
+                //  match the current cell
+                if(formulasNotResults) {
+                   System.err.println("Warning - shared formulas not yet supported!");
+                } else {
+                   // It's a shared formula, so we can't get at the formula string yet
+                   // However, they don't care about the formula string, so that's ok!
+                }
+             }
           } else {
              fIsOpen = true;
           }
