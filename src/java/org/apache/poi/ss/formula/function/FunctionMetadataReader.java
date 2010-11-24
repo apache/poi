@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * Converts the text meta-data file into a <tt>FunctionMetadataRegistry</tt>

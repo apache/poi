@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
