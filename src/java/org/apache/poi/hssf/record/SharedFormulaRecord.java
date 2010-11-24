@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.SpreadsheetVersion;

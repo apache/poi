@@ -22,9 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 

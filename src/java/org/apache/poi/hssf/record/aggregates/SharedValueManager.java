@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.SharedValueRecordBase;
 import org.apache.poi.hssf.record.TableRecord;
-import org.apache.poi.hssf.record.formula.ExpPtg;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.util.CellReference;
 
