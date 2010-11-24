@@ -22,9 +22,8 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.constant.ConstantValueParser;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.ss.formula.constant.ConstantValueParser;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.util.NumberToTextConversionExamples.ExampleConversion;
 /**
  * Tests for {@link NumberToTextConverter}

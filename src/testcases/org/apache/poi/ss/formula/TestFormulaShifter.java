@@ -18,10 +18,9 @@
 package org.apache.poi.ss.formula;
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.record.formula.AreaErrPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.ptg.AreaErrPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * Tests for {@link FormulaShifter}.
