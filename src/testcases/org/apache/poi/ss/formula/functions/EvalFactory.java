@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
 import org.apache.poi.ss.formula.eval.NumberEval;

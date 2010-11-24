@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.eval;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
 

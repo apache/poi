@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Name;

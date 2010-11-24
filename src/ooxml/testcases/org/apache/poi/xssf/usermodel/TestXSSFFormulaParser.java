@@ -19,10 +19,10 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;

@@ -35,9 +35,9 @@ import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.AreaPtgBase;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtgBase;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressBase;
 

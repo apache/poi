@@ -29,7 +29,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;

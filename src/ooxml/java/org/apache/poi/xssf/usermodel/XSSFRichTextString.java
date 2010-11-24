@@ -480,6 +480,7 @@ public class XSSFRichTextString implements RichTextString {
         return buf.toString();
     }
 
+    @SuppressWarnings("deprecation")
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
             // delete format runs that fit between startIndex and endIndex
             // runs intersecting startIndex and endIndex remain

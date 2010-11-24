@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 
