@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.constant.ConstantValueParser;
+import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;

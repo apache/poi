@@ -31,9 +31,9 @@ import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.NameXPtg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>

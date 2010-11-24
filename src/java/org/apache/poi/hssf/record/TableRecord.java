@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.TblPtg;
+import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;

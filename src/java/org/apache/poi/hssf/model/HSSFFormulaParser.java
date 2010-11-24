@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;

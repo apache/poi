@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;

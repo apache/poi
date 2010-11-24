@@ -24,10 +24,10 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.OperationPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 

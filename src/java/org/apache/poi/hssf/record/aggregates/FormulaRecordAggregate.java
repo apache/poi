@@ -24,10 +24,10 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.util.CellRangeAddress;
 

@@ -24,10 +24,10 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.formula.AreaErrPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaErrPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
