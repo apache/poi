@@ -20,9 +20,9 @@
  */
 package org.apache.poi.ss.formula.eval;
 
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
 /**

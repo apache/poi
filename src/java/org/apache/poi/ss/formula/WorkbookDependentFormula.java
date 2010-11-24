@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula;
 
 /**
- * Should be implemented by any {@link org.apache.poi.hssf.record.formula.Ptg} subclass that needs a workbook to render its formula.
+ * Should be implemented by any {@link org.apache.poi.ss.formula.ptg.Ptg} subclass that needs a workbook to render its formula.
  * <br/>
  *
  * For POI internal use only

@@ -22,7 +22,7 @@ package org.apache.poi.ss.usermodel;
  * For a list of all the different fields that can be
  *  placed into a header, such as page number,
  *  bold, underline etc, see 
- *  {@link org.apache.poi.hssf.usermodel.HeaderFooter}.
+ *  {@link org.apache.poi.ss.usermodel.HeaderFooter}.
  */
 public interface Header extends HeaderFooter {
     /**

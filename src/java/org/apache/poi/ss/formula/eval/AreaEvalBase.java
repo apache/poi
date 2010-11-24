@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import org.apache.poi.hssf.record.formula.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI;
 
 /**
  * @author Josh Micich

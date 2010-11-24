@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.ss.formula.ptg.*;
 
 
 /**

@@ -19,10 +19,10 @@ package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
 
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.TblPtg;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.TblPtg;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
