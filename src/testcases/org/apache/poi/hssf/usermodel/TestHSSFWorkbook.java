@@ -32,7 +32,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.WindowOneRecord;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;

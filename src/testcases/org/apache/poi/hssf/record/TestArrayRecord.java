@@ -17,25 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
-
-import java.util.Arrays;
 
 public final class TestArrayRecord extends TestCase {
 

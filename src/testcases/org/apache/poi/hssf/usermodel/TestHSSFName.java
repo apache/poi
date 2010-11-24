@@ -26,7 +26,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;

@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianInputStream;
