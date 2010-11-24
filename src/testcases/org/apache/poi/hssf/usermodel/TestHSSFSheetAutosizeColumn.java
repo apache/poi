@@ -17,27 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-import junit.framework.AssertionFailedError;
-
-import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
-import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.TempFile;
 
 /**
  * Test auto-sizing columns in HSSF

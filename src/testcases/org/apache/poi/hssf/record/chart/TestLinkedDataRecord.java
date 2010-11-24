@@ -21,8 +21,8 @@ package org.apache.poi.hssf.record.chart;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * Tests the serialization and deserialization of the LinkedDataRecord

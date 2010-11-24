@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;

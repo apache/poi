@@ -22,8 +22,8 @@ import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellValue;
