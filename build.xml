@@ -409,7 +409,8 @@ under the License.
                srcdir="${main.src}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath refid="main.classpath"/>
         </javac>
         <javac target="${jdk.version.class}"
@@ -418,7 +419,8 @@ under the License.
                srcdir="${main.src.test}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath>
                 <path refid="main.classpath"/>
                 <pathelement path="${main.output.dir}"/>
@@ -436,7 +438,8 @@ under the License.
                srcdir="${scratchpad.src}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath refid="scratchpad.classpath"/>
         </javac>
         <javac target="${jdk.version.class}"
@@ -445,7 +448,8 @@ under the License.
                srcdir="${scratchpad.src.test}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${scratchpad.output.dir}"/>
@@ -464,7 +468,8 @@ under the License.
                srcdir="${examples.src}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
@@ -482,8 +487,10 @@ under the License.
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
                srcdir="${ooxml.src}"
+               debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               debug="${compile.debug}">
+               fork="yes"
+               includeantruntime="false">
             <classpath refid="ooxml.classpath"/>
         </javac>
         <javac target="${jdk.version.class}"
@@ -492,7 +499,8 @@ under the License.
                srcdir="${ooxml.src.test}"
                debug="${compile.debug}"
                encoding="${java.source.encoding}"
-               fork="yes">
+               fork="yes"
+               includeantruntime="false">
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
@@ -519,7 +527,7 @@ under the License.
         <javac target="${jdk.version.class}" source="${jdk.version.source}"
                failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
                srcdir="${main.output.dir}"
-               encoding="${java.source.encoding}">
+               encoding="${java.source.encoding}" includeantruntime="false">
         </javac>
         <!-- Tidy up -->
         <delete file="${version.java}"/>
