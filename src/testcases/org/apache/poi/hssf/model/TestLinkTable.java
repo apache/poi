@@ -27,13 +27,12 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.NameCommentRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+
 /**
  * Tests for {@link LinkTable}
  *
@@ -179,4 +178,86 @@ public final class TestLinkTable extends TestCase {
 
     assertEquals(2, lt.getNumNames());
 	}
+
+    public void testAddNameX(){
+        WorkbookRecordList wrl = new WorkbookRecordList();
+        wrl.add(0, new BOFRecord());
+        wrl.add(1, new CountryRecord());
+        wrl.add(2, EOFRecord.instance);
+
+        int numberOfSheets = 3;
+        LinkTable tbl = new LinkTable(numberOfSheets, wrl);
+        // creation of a new LinkTable insert two new records: SupBookRecord followed by ExternSheetRecord
+        // assure they are in place:
+        //    [BOFRecord]
+        //    [CountryRecord]
+        //    [SUPBOOK Internal References  nSheets= 3]
+        //    [EXTERNSHEET]
+        //    [EOFRecord]
+
+        assertEquals(5, wrl.getRecords().size());
+        assertTrue(wrl.get(2) instanceof SupBookRecord);
+        SupBookRecord sup1 = (SupBookRecord)wrl.get(2);
+        assertEquals(numberOfSheets, sup1.getNumberOfSheets());
+        assertTrue(wrl.get(3) instanceof ExternSheetRecord);
+        ExternSheetRecord extSheet = (ExternSheetRecord)wrl.get(3);
+        assertEquals(0, extSheet.getNumOfRefs());
+
+        assertNull(tbl.getNameXPtg("ISODD"));
+        assertEquals(5, wrl.getRecords().size()); //still have five records
+
+        NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new rercords
+        assertEquals(0, namex1.getSheetRefIndex());
+        assertEquals(0, namex1.getNameIndex());
+        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD").toString());
+        // assure they are in place:
+        //    [BOFRecord]
+        //    [CountryRecord]
+        //    [SUPBOOK Internal References  nSheets= 3]
+        //    [SUPBOOK Add-In Functions nSheets= 1]
+        //    [EXTERNALNAME .name    = ISODD]
+        //    [EXTERNSHEET]
+        //    [EOFRecord]
+
+        assertEquals(7, wrl.getRecords().size());
+        assertTrue(wrl.get(3) instanceof SupBookRecord);
+        SupBookRecord sup2 = (SupBookRecord)wrl.get(3);
+        assertTrue(sup2.isAddInFunctions());
+        assertTrue(wrl.get(4) instanceof ExternalNameRecord);
+        ExternalNameRecord ext1 = (ExternalNameRecord)wrl.get(4);
+        assertEquals("ISODD", ext1.getText());
+        assertTrue(wrl.get(5) instanceof ExternSheetRecord);
+        assertEquals(1, extSheet.getNumOfRefs());
+
+        //check that
+        assertEquals(0, tbl.resolveNameXIx(namex1.getSheetRefIndex(), namex1.getNameIndex()));
+        assertEquals("ISODD", tbl.resolveNameXText(namex1.getSheetRefIndex(), namex1.getNameIndex()));
+
+        assertNull(tbl.getNameXPtg("ISEVEN"));
+        NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
+        assertEquals(0, namex2.getSheetRefIndex());
+        assertEquals(1, namex2.getNameIndex());  // name index increased by one
+        assertEquals(namex2.toString(), tbl.getNameXPtg("ISEVEN").toString());
+        assertEquals(8, wrl.getRecords().size());
+        // assure they are in place:
+        //    [BOFRecord]
+        //    [CountryRecord]
+        //    [SUPBOOK Internal References  nSheets= 3]
+        //    [SUPBOOK Add-In Functions nSheets= 1]
+        //    [EXTERNALNAME .name    = ISODD]
+        //    [EXTERNALNAME .name    = ISEVEN]
+        //    [EXTERNSHEET]
+        //    [EOFRecord]
+        assertTrue(wrl.get(3) instanceof SupBookRecord);
+        assertTrue(wrl.get(4) instanceof ExternalNameRecord);
+        assertTrue(wrl.get(5) instanceof ExternalNameRecord);
+        assertEquals("ISODD", ((ExternalNameRecord)wrl.get(4)).getText());
+        assertEquals("ISEVEN", ((ExternalNameRecord)wrl.get(5)).getText());
+        assertTrue(wrl.get(6) instanceof ExternSheetRecord);
+        assertTrue(wrl.get(7) instanceof EOFRecord);
+
+        assertEquals(0, tbl.resolveNameXIx(namex2.getSheetRefIndex(), namex2.getNameIndex()));
+        assertEquals("ISEVEN", tbl.resolveNameXText(namex2.getSheetRefIndex(), namex2.getNameIndex()));
+
+    }
 }

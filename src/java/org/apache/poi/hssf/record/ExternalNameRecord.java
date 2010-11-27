@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -98,6 +99,10 @@ public final class ExternalNameRecord extends StandardRecord {
 		return field_4_name;
 	}
 	
+    public void setText(String str) {
+        field_4_name = str;
+    }
+
 	/**
 	 * If this is a local name, then this is the (1 based)
 	 *  index of the name of the Sheet this refers to, as
@@ -107,6 +112,17 @@ public final class ExternalNameRecord extends StandardRecord {
 	public short getIx() {
 	   return field_2_ixals;
 	}
+    public void setIx(short ix) {
+        field_2_ixals = ix;
+    }
+
+    public Ptg[] getParsedExpression() {
+        return Formula.getTokens(field_5_name_definition);
+    }
+    public void setParsedExpression(Ptg[] ptgs) {
+        field_5_name_definition = Formula.create(ptgs);
+    }
+
 
 	protected int getDataSize(){
 		int result = 2 + 4;  // short and int
@@ -142,8 +158,11 @@ public final class ExternalNameRecord extends StandardRecord {
         }
 	}
 
-
-	public ExternalNameRecord(RecordInputStream in) {
+    public ExternalNameRecord() {
+        field_2_ixals = 0;
+    }
+    
+    public ExternalNameRecord(RecordInputStream in) {
 		field_1_option_flag = in.readShort();
 		field_2_ixals       = in.readShort();
       field_3_not_used    = in.readShort();
@@ -180,10 +199,15 @@ public final class ExternalNameRecord extends StandardRecord {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[EXTERNALNAME]\n");
+        sb.append("    .options      = ").append(field_1_option_flag).append("\n");
 		sb.append("    .ix      = ").append(field_2_ixals).append("\n");
 		sb.append("    .name    = ").append(field_4_name).append("\n");
 		if(field_5_name_definition != null) {
-		sb.append("    .formula = ").append(field_5_name_definition).append("\n");
+            Ptg[] ptgs = field_5_name_definition.getTokens();
+            for (int i = 0; i < ptgs.length; i++) {
+                Ptg ptg = ptgs[i];
+                sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+            }
 		}
 		sb.append("[/EXTERNALNAME]\n");
 		return sb.toString();

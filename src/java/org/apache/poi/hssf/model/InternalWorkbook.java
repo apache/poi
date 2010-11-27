@@ -83,6 +83,7 @@ import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
@@ -2300,8 +2301,22 @@ public final class InternalWorkbook {
         return linkTable.resolveNameXText(refIndex, definedNameIndex);
     }
 
-    public NameXPtg getNameXPtg(String name) {
-        return getOrCreateLinkTable().getNameXPtg(name);
+    /**
+     *
+     * @param name the  name of an external function, typically a name of a UDF
+     * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
+     * @return the external name or null
+     */
+    public NameXPtg getNameXPtg(String name, UDFFinder udf) {
+        LinkTable lnk = getOrCreateLinkTable();
+        NameXPtg xptg = lnk.getNameXPtg(name);
+
+        if(xptg == null && udf.findFunction(name) != null) {
+            // the name was not found in the list of external names
+            // check if the Workbook's UDFFinder is aware about it and register the name if it is
+            xptg = lnk.addNameXPtg(name);
+        }
+        return xptg;
     }
 
     /**
