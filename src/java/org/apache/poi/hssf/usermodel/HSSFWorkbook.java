@@ -1679,12 +1679,4 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private static byte[] newUID() {
         return new byte[16];
     }
-
-    /**
-     * Note - This method should only used by POI internally.
-     * It may get deleted or change definition in future POI versions
-     */
-    public NameXPtg getNameXPtg(String name) {
-        return workbook.getNameXPtg(name);
-    }
 }

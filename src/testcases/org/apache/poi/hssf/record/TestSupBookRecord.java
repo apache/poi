@@ -102,5 +102,12 @@ public final class TestSupBookRecord extends TestCase {
         SupBookRecord record = SupBookRecord.createExternalReferences(url, sheetNames);
 
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());
-    }    
+    }
+
+    public void testStoreAIF() {
+        SupBookRecord record = SupBookRecord.createAddInFunctions();
+        assertEquals(1, record.getNumberOfSheets());
+        assertTrue(record.isAddInFunctions());
+        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataAIF, record.serialize());
+    }
 }

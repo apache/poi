@@ -22,6 +22,13 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
+import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 /**
  * Unit test for the Workbook class.
@@ -83,4 +90,28 @@ public final class TestWorkbook extends TestCase {
 		assertEquals(6, wb.getFontIndex(n7));
 		assertEquals(n7, wb.getFontRecordAt(6));
 	}
+
+    public void testAddNameX(){
+        InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(new HSSFWorkbook());
+        assertNotNull(wb.getNameXPtg("ISODD", UDFFinder.DEFAULT));
+
+        FreeRefFunction NotImplemented = new FreeRefFunction() {
+            public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+                throw new RuntimeException("not implemented");
+            }
+        };
+
+        /**
+         * register the two test UDFs in a UDF finder, to be passed to the evaluator
+         */
+        UDFFinder udff1 = new DefaultUDFFinder(new String[] { "myFunc", },
+                new FreeRefFunction[] { NotImplemented });
+        UDFFinder udff2 = new DefaultUDFFinder(new String[] { "myFunc2", },
+                new FreeRefFunction[] { NotImplemented });
+        UDFFinder udff = new AggregatingUDFFinder(udff1, udff2);
+        assertNotNull(wb.getNameXPtg("myFunc", udff));
+        assertNotNull(wb.getNameXPtg("myFunc2", udff));
+
+        assertNull(wb.getNameXPtg("myFunc3", udff));  // myFunc3 is unknown
+    }
 }

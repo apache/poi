@@ -29,7 +29,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Libin Roman (Vista Portal LDT. Developer)
  */
 public class ExternSheetRecord extends StandardRecord {
-	public final static short sid = 0x0017;
+
+    public final static short sid = 0x0017;
 	private List<RefSubRecord> _list;
 	
 	private static final class RefSubRecord {
@@ -184,6 +185,33 @@ public class ExternSheetRecord extends StandardRecord {
 	}
 
 	/**
+     * Add a zero-based reference to a {@link org.apache.poi.hssf.record.SupBookRecord}.
+     * <p>
+     *  If the type of the SupBook record is same-sheet referencing, Add-In referencing,
+     *  DDE data source referencing, or OLE data source referencing,
+     *  then no scope is specified and this value <em>MUST</em> be -2. Otherwise,
+     *  the scope must be set as follows:
+     *   <ol>
+     *    <li><code>-2</code> Workbook-level reference that applies to the entire workbook.</li>
+     *    <li><code>-1</code> Sheet-level reference. </li>
+     *    <li><code>&gt;=0</code> Sheet-level reference. This specifies the first sheet in the reference.
+     *    <p>
+     *    If the SupBook type is unused or external workbook referencing,
+     *    then this value specifies the zero-based index of an external sheet name,
+     *    see {@link org.apache.poi.hssf.record.SupBookRecord#getSheetNames()}.
+     *    This referenced string specifies the name of the first sheet within the external workbook that is in scope.
+     *    This sheet MUST be a worksheet or macro sheet.
+     *    <p>
+     *    <p>
+     *    If the supporting link type is self-referencing, then this value specifies the zero-based index of a
+     *    {@link org.apache.poi.hssf.record.BoundSheetRecord} record in the workbook stream that specifies
+     *    the first sheet within the scope of this reference. This sheet MUST be a worksheet or a macro sheet.
+     *    </p>
+     *    </li>
+     *  </ol>
+     *
+     * @param firstSheetIndex  the scope, must be -2 for add-in references
+     * @param lastSheetIndex   the scope, must be -2 for add-in references
 	 * @return index of newly added ref
 	 */
 	public int addRef(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {

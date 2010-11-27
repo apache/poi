@@ -33,6 +33,7 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 
 /**
  * Internal POI use only
@@ -65,7 +66,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public NameXPtg getNameXPtg(String name) {
-		return _iBook.getNameXPtg(name);
+        // TODO YK: passing UDFFinder.DEFAULT is temporary,
+        // a proper design should take it from the parent HSSFWorkbook
+        return _iBook.getNameXPtg(name, UDFFinder.DEFAULT);
 	}
 
 	/**

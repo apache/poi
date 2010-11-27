@@ -47,7 +47,7 @@ public final class SupBookRecord extends StandardRecord {
         return new SupBookRecord(false, numberOfSheets);
     }
     public static SupBookRecord createAddInFunctions() {
-        return new SupBookRecord(true, (short)0);
+        return new SupBookRecord(true, (short)1 /* this field MUST be 0x0001 for add-in referencing */);
     }
     public static SupBookRecord createExternalReferences(String url, String[] sheetNames) {
         return new SupBookRecord(url, sheetNames);
