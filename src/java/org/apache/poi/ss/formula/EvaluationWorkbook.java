@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 
 /**
  * Abstracts a workbook for the purpose of formula evaluation.<br/>
@@ -49,8 +50,10 @@ public interface EvaluationWorkbook {
 	int convertFromExternSheetIndex(int externSheetIndex);
 	ExternalName getExternalName(int externSheetIndex, int externNameIndex);
 	EvaluationName getName(NamePtg namePtg);
+    EvaluationName getName(String name, int sheetIndex);
 	String resolveNameXText(NameXPtg ptg);
 	Ptg[] getFormulaTokens(EvaluationCell cell);
+    UDFFinder getUDFFinder();
 
 	class ExternalSheet {
 		private final String _workbookName;

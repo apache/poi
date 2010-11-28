@@ -38,12 +38,12 @@ public final class DefaultUDFFinder implements UDFFinder {
 		}
 		HashMap<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(nFuncs * 3 / 2);
 		for (int i = 0; i < functionImpls.length; i++) {
-			m.put(functionNames[i], functionImpls[i]);
+			m.put(functionNames[i].toUpperCase(), functionImpls[i]);
 		}
 		_functionsByName = m;
 	}
 
 	public FreeRefFunction findFunction(String name) {
-		return _functionsByName.get(name);
+		return _functionsByName.get(name.toUpperCase());
 	}
 }

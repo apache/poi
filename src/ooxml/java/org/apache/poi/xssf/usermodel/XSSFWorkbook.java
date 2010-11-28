@@ -46,6 +46,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,11 +55,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.*;
-import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.MapInfo;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.xssf.model.*;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -122,6 +120,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private StylesTable stylesSource;
 
     private ThemesTable theme;
+
+    /**
+     * The locator of user-defined functions.
+     * By default includes functions from the Excel Analysis Toolpack
+     */
+    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
 
     /**
      * TODO
@@ -1492,4 +1496,31 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 			workbook.setWorkbookProtection(CTWorkbookProtection.Factory.newInstance());
 		}
 	}
+
+    /**
+     *
+     * Returns the locator of user-defined functions.
+     * <p>
+     * The default instance extends the built-in functions with the Excel Analysis Tool Pack.
+     * To set / evaluate custom functions you need to register them as follows:
+     *
+     *
+     *
+     * </p>
+     * @return wrapped instance of UDFFinder that allows seeking functions both by index and name
+     */
+    /*package*/ UDFFinder getUDFFinder() {
+        return _udfFinder;
+    }
+
+    /**
+     * Register a new toolpack in this workbook.
+     *
+     * @param toopack the toolpack to register
+     */
+    public void addToolPack(UDFFinder toopack){
+        _udfFinder.add(toopack);
+    }
+
+
 }

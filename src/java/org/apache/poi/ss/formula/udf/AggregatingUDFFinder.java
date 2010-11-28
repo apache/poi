@@ -19,17 +19,22 @@ package org.apache.poi.ss.formula.udf;
 
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * Collects add-in libraries and VB macro functions together into one UDF finder
  *
  * @author PUdalau
  */
-public final class AggregatingUDFFinder implements UDFFinder {
+public class AggregatingUDFFinder implements UDFFinder {
 
-	private final UDFFinder[] _usedToolPacks;
+	private final Collection<UDFFinder> _usedToolPacks;
 
 	public AggregatingUDFFinder(UDFFinder ... usedToolPacks) {
-		_usedToolPacks = usedToolPacks.clone();
+        _usedToolPacks = new ArrayList<UDFFinder>(usedToolPacks.length);
+		_usedToolPacks.addAll(Arrays.asList(usedToolPacks));
 	}
 
 	/**
@@ -49,4 +54,13 @@ public final class AggregatingUDFFinder implements UDFFinder {
 		}
 		return null;
 	}
+
+    /**
+     * Add a new toolpack
+     *
+     * @param toolPack the UDF toolpack to add
+     */
+    public void add(UDFFinder toolPack){
+        _usedToolPacks.add(toolPack);
+    }
 }
