@@ -66,9 +66,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public NameXPtg getNameXPtg(String name) {
-        // TODO YK: passing UDFFinder.DEFAULT is temporary,
-        // a proper design should take it from the parent HSSFWorkbook
-        return _iBook.getNameXPtg(name, UDFFinder.DEFAULT);
+        return _iBook.getNameXPtg(name, _uBook.getUDFFinder());
 	}
 
 	/**
@@ -147,6 +145,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
 		return fra.getFormulaTokens();
 	}
+    public UDFFinder getUDFFinder(){
+        return _uBook.getUDFFinder();
+    }
 
 	private static final class Name implements EvaluationName {
 

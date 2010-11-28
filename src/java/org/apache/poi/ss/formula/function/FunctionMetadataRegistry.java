@@ -41,7 +41,7 @@ public final class FunctionMetadataRegistry {
 	private final FunctionMetadata[] _functionDataByIndex;
 	private final Map<String, FunctionMetadata> _functionDataByName;
 
-	private static FunctionMetadataRegistry getInstance() {
+	public static FunctionMetadataRegistry getInstance() {
 		if (_instance == null) {
 			_instance = FunctionMetadataReader.createRegistry();
 		}

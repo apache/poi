@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
@@ -496,4 +497,12 @@ public interface Workbook {
      * @throws IllegalArgumentException if the supplied sheet index or state is invalid
      */
     void setSheetHidden(int sheetIx, int hidden);
+
+    /**
+     * Register a new toolpack in this workbook.
+     *
+     * @param toopack the toolpack to register
+     */
+    void addToolPack(UDFFinder toopack);
+
 }

@@ -66,6 +66,8 @@ import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
@@ -147,6 +149,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
 
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
+
+    /**
+     * The locator of user-defined functions.
+     * By default includes functions from the Excel Analysis Toolpack
+     */
+    private UDFFinder _udfFinder = UDFFinder.DEFAULT;
 
     public static HSSFWorkbook create(InternalWorkbook book) {
     	return new HSSFWorkbook(book);
@@ -1672,11 +1680,33 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
     }
 
-    public CreationHelper getCreationHelper() {
+    public HSSFCreationHelper getCreationHelper() {
         return new HSSFCreationHelper(this);
     }
 
     private static byte[] newUID() {
         return new byte[16];
     }
+
+    /**
+     *
+     * Returns the locator of user-defined functions.
+     * The default instance extends the built-in functions with the Analysis Tool Pack
+     *
+     * @return the locator of user-defined functions
+     */
+    /*package*/ UDFFinder getUDFFinder(){
+        return _udfFinder;
+    }
+
+    /**
+     * Register a new toolpack in this workbook.
+     *
+     * @param toopack the toolpack to register
+     */
+    public void addToolPack(UDFFinder toopack){
+        AggregatingUDFFinder udfs = (AggregatingUDFFinder)_udfFinder;
+        udfs.add(toopack);
+    }
+
 }

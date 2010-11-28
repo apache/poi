@@ -61,8 +61,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.IfFunc;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -91,7 +91,7 @@ public final class WorkbookEvaluator {
 	private final Map<String, Integer> _sheetIndexesByName;
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 	private final IStabilityClassifier _stabilityClassifier;
-	private final UDFFinder _udfFinder;
+	private final AggregatingUDFFinder _udfFinder;
 
 	/**
 	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
@@ -109,7 +109,13 @@ public final class WorkbookEvaluator {
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_workbookIx = 0;
 		_stabilityClassifier = stabilityClassifier;
-		_udfFinder = udfFinder == null ? UDFFinder.DEFAULT : udfFinder;
+
+        AggregatingUDFFinder defaultToolkit = // workbook can be null in unit tests
+                workbook == null ? null : (AggregatingUDFFinder)workbook.getUDFFinder();
+        if(defaultToolkit != null && udfFinder != null) {
+            defaultToolkit.add(udfFinder);
+        }
+        _udfFinder = defaultToolkit;
 	}
 
 	/**
@@ -124,10 +130,7 @@ public final class WorkbookEvaluator {
 	}
 	
 	/* package */ EvaluationName getName(String name, int sheetIndex) {
-		NamePtg namePtg = null;
-		if(_workbook instanceof HSSFEvaluationWorkbook){
-			namePtg =((HSSFEvaluationWorkbook)_workbook).getName(name, sheetIndex).createPtg();
-		}
+        NamePtg namePtg = _workbook.getName(name, sheetIndex).createPtg();
 
 		if(namePtg == null) {
 			return null;
