@@ -980,10 +980,19 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
     public void testSetAutoFilter() {
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        XSSFSheet sheet = wb.createSheet("new sheet");
         sheet.setAutoFilter(CellRangeAddress.valueOf("A1:D100"));
 
         assertEquals("A1:D100", sheet.getCTWorksheet().getAutoFilter().getRef());
+
+        // auto-filter must be registered in workboook.xml, see Bugzilla 50315
+        XSSFName nm = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, 0);
+        assertNotNull(nm);
+
+        assertEquals(0, nm.getCTName().getLocalSheetId());
+        assertEquals(true, nm.getCTName().getHidden());
+        assertEquals("_xlnm._FilterDatabase", nm.getCTName().getName());
+        assertEquals("'new sheet'!$A$1:$D$100", nm.getCTName().getStringValue());
     }
 
     public void testProtectSheet_lowlevel() {
