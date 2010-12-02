@@ -941,7 +941,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) {
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
-            namedRanges.add(name);
         }
         //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
         //name.setExternSheetNumber(externSheetIndex);
@@ -1014,7 +1013,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
         if (name == null) {
             name = createBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
-            namedRanges.add(name);
         }
 
         String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
@@ -1061,7 +1059,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return "$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
     }
 
-    private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
+    XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
         for (XSSFName name : namedRanges) {
             if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getSheetIndex() == sheetNumber) {
                 return name;
@@ -1077,7 +1075,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @throws IllegalArgumentException if sheetNumber is invalid
      * @throws POIXMLException if such a name already exists in the workbook
      */
-    private XSSFName createBuiltInName(String builtInName, int sheetNumber) {
+    XSSFName createBuiltInName(String builtInName, int sheetNumber) {
         validateSheetIndex(sheetNumber);
 
         CTDefinedNames names = workbook.getDefinedNames() == null ? workbook.addNewDefinedNames() : workbook.getDefinedNames();
@@ -1092,6 +1090,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                         + ") already exists for sheet (" + sheetNumber + ")");
         }
 
+        namedRanges.add(name);
         return name;
     }
 

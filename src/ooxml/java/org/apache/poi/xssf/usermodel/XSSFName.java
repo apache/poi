@@ -85,7 +85,7 @@ public final class XSSFName implements Name {
      * <li> This defined name refers to a range to which an AutoFilter has been
      * applied
      */
-    public final static String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase:";
+    public final static String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase";
 
     /**
      * A built-in defined name that refers to a consolidation area
