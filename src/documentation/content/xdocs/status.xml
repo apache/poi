@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
+           <action dev="poi-developers" type="add">47405 - Improved performance of RowRecordsAggregate.getStartRowNumberForBlock / getEndRowNumberForBlock</action>
            <action dev="poi-developers" type="add">50315 - Avoid crashing Excel when sorting XSSFSheet autofilter</action>
            <action dev="poi-developers" type="add">50076 - Allow access from XSSFReader to sheet comments and headers/footers</action>
            <action dev="poi-developers" type="add">50076 - Refactor XSSFEventBasedExcelExtractor to make it easier for you to have control over outputting the cell contents</action>

@@ -54,6 +54,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	private final List<Record> _unknownRecords;
 	private final SharedValueManager _sharedValueManager;
 
+	// Cache values to speed up performance of
+    // getStartRowNumberForBlock / getEndRowNumberForBlock, see Bugzilla 47405
+    private RowRecord[] _rowRecordValues = null;
+
 	/** Creates a new instance of ValueRecordsAggregate */
 	public RowRecordsAggregate() {
 		this(SharedValueManager.createEmpty());
@@ -121,6 +125,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	public void insertRow(RowRecord row) {
 		// Integer integer = Integer.valueOf(row.getRowNumber());
 		_rowRecords.put(Integer.valueOf(row.getRowNumber()), row);
+		// Clear the cached values
+		_rowRecordValues = null; 
 		if ((row.getRowNumber() < _firstrow) || (_firstrow == -1)) {
 			_firstrow = row.getRowNumber();
 		}
@@ -141,6 +147,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
 			_rowRecords.put(key, rr);
 			throw new RuntimeException("Attempt to remove row that does not belong to this sheet");
 		}
+		
+		// Clear the cached values
+		_rowRecordValues = null;
 	}
 
 	public RowRecord getRow(int rowIndex) {
@@ -193,22 +202,17 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
 	/** Returns the physical row number of the first row in a block*/
 	private int getStartRowNumberForBlock(int block) {
-	  //Given that we basically iterate through the rows in order,
-	  // TODO - For a performance improvement, it would be better to return an instance of
-	  //an iterator and use that instance throughout, rather than recreating one and
-	  //having to move it to the right position.
-	  int startIndex = block * DBCellRecord.BLOCK_SIZE;
-	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
-	  RowRecord row = null;
-	  //Position the iterator at the start of the block
-	  for (int i=0; i<=startIndex;i++) {
-		row = rowIter.next();
-	  }
-	  if (row == null) {
-		  throw new RuntimeException("Did not find start row for block " + block);
-	  }
+	    int startIndex = block * DBCellRecord.BLOCK_SIZE;
 
-	  return row.getRowNumber();
+        if(_rowRecordValues == null){
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+        }
+
+        try {
+            return _rowRecordValues[startIndex].getRowNumber();
+        } catch(ArrayIndexOutOfBoundsException e) {
+		  throw new RuntimeException("Did not find start row for block " + block);
+	    }
 	}
 
 	/** Returns the physical row number of the end row in a block*/
@@ -217,15 +221,15 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	  if (endIndex >= _rowRecords.size())
 		endIndex = _rowRecords.size()-1;
 
-	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
-	  RowRecord row = null;
-	  for (int i=0; i<=endIndex;i++) {
-		row = rowIter.next();
+        if(_rowRecordValues == null){
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+        }
+
+        try {
+            return _rowRecordValues[endIndex].getRowNumber();
+        } catch(ArrayIndexOutOfBoundsException e) {
+            throw new RuntimeException("Did not find end row for block " + block);
 	  }
-	  if (row == null) {
-		  throw new RuntimeException("Did not find start row for block " + block);
-	  }
-	  return row.getRowNumber();
 	}
 
 	private int visitRowRecordsForBlock(int blockIndex, RecordVisitor rv) {
