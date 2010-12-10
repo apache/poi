@@ -17,10 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+
+import java.util.Arrays;
 
 /**
  * Calculates the net present value of an investment by using a discount rate
@@ -30,78 +33,27 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * income.
  *
  * @author SPetrakovsky
+ * @author Marcel May
  */
-public final class Npv implements Function2Arg, Function3Arg, Function4Arg {
-
-
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-		double result;
-		try {
-			double rate = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-			double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-			result = evaluate(rate, d1);
-			NumericFunction.checkValue(result);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new NumberEval(result);
-	}
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2) {
-		double result;
-		try {
-			double rate = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-			double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-			double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
-			result = evaluate(rate, d1, d2);
-			NumericFunction.checkValue(result);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new NumberEval(result);
-	}
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
-		double result;
-		try {
-			double rate = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-			double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-			double d2 = NumericFunction.singleOperandEvaluate(arg2, srcRowIndex, srcColumnIndex);
-			double d3 = NumericFunction.singleOperandEvaluate(arg3, srcRowIndex, srcColumnIndex);
-			result = evaluate(rate, d1, d2, d3);
-			NumericFunction.checkValue(result);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		return new NumberEval(result);
-	}
+public final class Npv implements Function {
 
 	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 		int nArgs = args.length;
-		if (nArgs<2) {
+		if (nArgs < 2) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		int np = nArgs-1;
-		double[] ds = new double[np];
-		double result;
-		try {
+
+        try {
 			double rate = NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
-			for (int i = 0; i < ds.length; i++) {
-				ds[i] =  NumericFunction.singleOperandEvaluate(args[i+1], srcRowIndex, srcColumnIndex);
-			}
-			result = evaluate(rate, ds);
+            // convert tail arguments into an array of doubles
+            ValueEval[] vargs = Arrays.copyOfRange(args, 1 , args.length);
+            double[] values = AggregateFunction.ValueCollector.collectValues(vargs);
+
+            double result = FinanceLib.npv(rate, values);
 			NumericFunction.checkValue(result);
+            return new NumberEval(result);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-		return new NumberEval(result);
-	}
-
-	private static double evaluate(double rate, double...ds) {
-		double sum = 0;
-		for (int i = 0; i < ds.length; i++) {
-			sum += ds[i] / Math.pow(rate + 1, i);
-		}
-		return sum;
 	}
 }
