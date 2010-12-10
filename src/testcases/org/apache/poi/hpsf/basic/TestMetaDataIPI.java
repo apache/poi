@@ -383,7 +383,7 @@ public final class TestMetaDataIPI extends TestCase{
 			j += 33;
 			// System.out.println(j);
 			sb.append(">");
-			sb.append(new Character(j));
+			sb.append(Character.valueOf(j));
 			sb.append("=");
 			sb.append(umlaute[rand.nextInt(umlaute.length)]);
 			sb.append("<");
@@ -509,7 +509,7 @@ public final class TestMetaDataIPI extends TestCase{
 			j += 33;
 			// System.out.println(j);
 			sb.append(">");
-			sb.append(new Character(j));
+			sb.append(Character.valueOf(j));
 			sb.append("=");
 			sb.append(umlaute[rand.nextInt(umlaute.length)]);
 			sb.append("<");

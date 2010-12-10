@@ -57,7 +57,7 @@ public class FontDetails
 
     public void addChar( char c, int width )
     {
-        charWidths.put(new Character(c), Integer.valueOf(width));
+        charWidths.put(Character.valueOf(c), Integer.valueOf(width));
     }
 
     /**
@@ -67,7 +67,7 @@ public class FontDetails
      */
     public int getCharWidth( char c )
     {
-        Integer widthInteger = charWidths.get(new Character(c));
+        Integer widthInteger = charWidths.get(Character.valueOf(c));
         if (widthInteger == null && c != 'W') {
             return getCharWidth('W');
         }
@@ -78,7 +78,7 @@ public class FontDetails
     {
         for ( int i = 0; i < characters.length; i++ )
         {
-            charWidths.put( new Character(characters[i]), Integer.valueOf(widths[i]));
+            charWidths.put( Character.valueOf(characters[i]), Integer.valueOf(widths[i]));
         }
     }
 

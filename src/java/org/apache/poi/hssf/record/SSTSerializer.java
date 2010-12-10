@@ -38,7 +38,6 @@ final class SSTSerializer {
     private final int[] bucketAbsoluteOffsets;
     /** Offsets relative the start of the current SST or continue record */
     private final int[] bucketRelativeOffsets;
-    int startOfSST, startOfRecord;
 
     public SSTSerializer( IntMapper<UnicodeString> strings, int numStrings, int numUniqueStrings )
     {

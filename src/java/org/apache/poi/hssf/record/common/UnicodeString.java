@@ -266,7 +266,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
           ext.formattingFontIndex = formattingFontIndex;
           ext.formattingOptions = formattingOptions;
           ext.numberOfRuns = numberOfRuns;
-          ext.phoneticText = new String(phoneticText);
+          ext.phoneticText = phoneticText;
           ext.phRuns = new PhRun[phRuns.length];
           for(int i=0; i<ext.phRuns.length; i++) {
              ext.phRuns[i] = new PhRun(

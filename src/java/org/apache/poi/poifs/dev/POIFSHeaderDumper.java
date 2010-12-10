@@ -123,7 +123,7 @@ public class POIFSHeaderDumper {
       gbm.setAccessible(true);
       
       for(int i=0; i<Math.min(16, data_blocks.blockCount()); i++) {
-         ListManagedBlock block = (ListManagedBlock)gbm.invoke(data_blocks, new Integer(i));
+         ListManagedBlock block = (ListManagedBlock)gbm.invoke(data_blocks, Integer.valueOf(i));
          byte[] data = new byte[Math.min(48, block.getData().length)];
          System.arraycopy(block.getData(), 0, data, 0, data.length);
          
