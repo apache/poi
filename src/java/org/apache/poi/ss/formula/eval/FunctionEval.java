@@ -100,6 +100,7 @@ public final class FunctionEval {
 		retval[58] = FinanceFunction.NPER;
 		retval[59] = FinanceFunction.PMT;
 
+		retval[62] = new Irr();
 		retval[63] = NumericFunction.RAND;
 		retval[64] = new Match();
 		retval[65] = DateFunc.instance;

@@ -56,7 +56,7 @@ package org.apache.poi.ss.formula.functions;
  * ny + p + f=0                            ...{when r=0}
  * </pre>
  */
-final class FinanceLib {
+public final class FinanceLib {
 
     private FinanceLib() {
         // no instances of this class

@@ -67,7 +67,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 			return new NumberEval(result);
 		}
 	}
-	private static final class ValueCollector extends MultiOperandNumericFunction {
+	static final class ValueCollector extends MultiOperandNumericFunction {
 		private static final ValueCollector instance = new ValueCollector();
 		public ValueCollector() {
 			super(false, false);
