@@ -308,7 +308,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public void drawString(AttributedCharacterIterator attributedcharacteriterator, int x, int y)
     {
-        drawString(attributedcharacteriterator, x, y);
+        getEscherGraphics().drawString(attributedcharacteriterator, x, y);
     }
 
     public void fill(Shape shape)

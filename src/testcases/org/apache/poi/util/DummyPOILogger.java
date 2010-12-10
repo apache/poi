@@ -37,10 +37,10 @@ public class DummyPOILogger extends POILogger {
 	public void initialize(String cat) {}
 
 	public void log(int level, Object obj1) {
-		logged.add(new String(level + " - " + obj1));
+		logged.add(level + " - " + obj1);
 	}
 
 	public void log(int level, Object obj1, Throwable exception) {
-		logged.add(new String(level + " - " + obj1 + " - " + exception));
+		logged.add(level + " - " + obj1 + " - " + exception);
 	}
 }
