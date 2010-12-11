@@ -93,6 +93,8 @@ public final class FunctionEval {
 		retval[37] = BooleanFunction.OR;
 		retval[38] = BooleanFunction.NOT;
 		retval[39] = NumericFunction.MOD;
+
+        retval[46] = AggregateFunction.VAR;
 		retval[48] = TextFunction.TEXT;
 
 		retval[56] = FinanceFunction.PV;
@@ -153,6 +155,7 @@ public final class FunctionEval {
 		retval[184] = NumericFunction.FACT;
 
 		retval[190] = LogicalFunction.ISNONTEXT;
+        retval[194] = AggregateFunction.VARP;
 		retval[197] = NumericFunction.TRUNC;
 		retval[198] = LogicalFunction.ISLOGICAL;
 

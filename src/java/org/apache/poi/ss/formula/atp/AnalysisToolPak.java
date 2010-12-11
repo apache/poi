@@ -138,7 +138,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "JIS", null);
         r(m, "LCM", null);
         r(m, "MDURATION", null);
-        r(m, "MROUND", null);
+        r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", null);
         r(m, "NOMINAL", null);

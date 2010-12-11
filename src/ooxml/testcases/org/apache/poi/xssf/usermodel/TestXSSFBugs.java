@@ -26,16 +26,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -212,8 +204,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  NameXPtgs.
      * Blows up on:
      *   IF(B6= (ROUNDUP(B6,0) + ROUNDDOWN(B6,0))/2, MROUND(B6,2),ROUND(B6,0))
+     * 
+     * TODO: delete this test case when MROUND and VAR are implemented
      */
-    public void DISABLEDtest48539() throws Exception {
+    public void test48539() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48539.xlsx");
        assertEquals(3, wb.getNumberOfSheets());
        
@@ -224,14 +218,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           for(Row r : s) {
              for(Cell c : r) {
                 if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                   eval.evaluate(c);
+                    CellValue cv = eval.evaluate(c);
+                    if(cv.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                        // assert that the calculated value agrees with
+                        // the cached formula result calculated by Excel
+                        double cachedFormulaResult = c.getNumericCellValue();
+                        double evaluatedFormulaResult = cv.getNumberValue();
+                        assertEquals(c.getCellFormula(), cachedFormulaResult, evaluatedFormulaResult, 1E-7);
+                    }
                 }
              }
           }
        }
        
        // Now all of them
-       XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
     
     /**
