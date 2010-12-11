@@ -59,6 +59,21 @@ final class StatsLib {
         return r;
     }
 
+    public static double var(double[] v) {
+        double r = Double.NaN;
+        if (v!=null && v.length > 1) {
+            r = devsq(v) / (v.length - 1);
+        }
+        return r;
+    }
+
+    public static double varp(double[] v) {
+        double r = Double.NaN;
+        if (v!=null && v.length > 1) {
+            r = devsq(v) /v.length;
+        }
+        return r;
+    }
 
     public static double median(double[] v) {
         double r = Double.NaN;

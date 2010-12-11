@@ -268,4 +268,54 @@ public class TestStatsLib extends AbstractNumericTestCase {
         x = 3.02765035410;
         assertEquals("stdev ", x, d);
     }
+
+    public void testVar() {
+        double[] v = null;
+        double d, x = 0;
+
+        v = new double[] {3.50, 5.00, 7.23, 2.99};
+        d = StatsLib.var(v);
+        x = 3.6178;
+        assertEquals("var ", x, d);
+
+        v = new double[] {34.5, 2.0, 8.9, -4.0};
+        d = StatsLib.var(v);
+        x = 286.99;
+        assertEquals("var ", x, d);
+
+        v = new double[] {7.0, 25.0, 21.69};
+        d = StatsLib.var(v);
+        x = 91.79203333;
+        assertEquals("var ", x, d);
+
+        v = new double[] {1345,1301,1368,1322,1310,1370,1318,1350,1303,1299};
+        d = StatsLib.var(v);
+        x = 754.2666667;
+        assertEquals("var ", x, d);
+    }
+
+    public void testVarp() {
+        double[] v = null;
+        double d, x = 0;
+
+        v = new double[] {3.50, 5.00, 7.23, 2.99};
+        d = StatsLib.varp(v);
+        x = 2.71335;
+        assertEquals("varp ", x, d);
+
+        v = new double[] {34.5, 2.0, 8.9, -4.0};
+        d = StatsLib.varp(v);
+        x = 215.2425;
+        assertEquals("varp ", x, d);
+
+        v = new double[] {7.0, 25.0, 21.69};
+        d = StatsLib.varp(v);
+        x = 61.19468889;
+        assertEquals("varp ", x, d);
+
+        v = new double[] {1345,1301,1368,1322,1310,1370,1318,1350,1303,1299};
+        d = StatsLib.varp(v);
+        x = 678.84;
+        assertEquals("varp ", x, d);
+    }
 }

@@ -142,4 +142,20 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 			return MathX.sumsq(values);
 		}
 	};
+    public static final Function VAR = new AggregateFunction() {
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return StatsLib.var(values);
+        }
+    };
+    public static final Function VARP = new AggregateFunction() {
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return StatsLib.varp(values);
+        }
+    };
 }
