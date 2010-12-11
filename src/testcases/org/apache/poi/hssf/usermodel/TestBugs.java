@@ -1894,4 +1894,9 @@ if(1==2) {
        HSSFWorkbook wb = openSample("50020.xls");
        writeOutAndReadBack(wb);
     }
+
+    public void test50426() throws Exception {
+       HSSFWorkbook wb = openSample("50426.xls");
+       writeOutAndReadBack(wb);
+    }
 }
