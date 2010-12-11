@@ -588,4 +588,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
 
     }
+
+    public void test49156() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("49156.xlsx");
+        FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        Sheet sheet = wb.getSheetAt(0);
+        for(Row row : sheet){
+            for(Cell cell : row){
+                if(cell.getCellType() == Cell.CELL_TYPE_FORMULA){
+                    formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
+                }
+            }
+        }
+    }
 }
