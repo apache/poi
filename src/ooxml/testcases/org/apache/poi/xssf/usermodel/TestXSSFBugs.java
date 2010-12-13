@@ -602,4 +602,22 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
     }
+    
+    /**
+     * Newlines are valid characters in a formula
+     */
+    public void test50440() throws Exception {
+       Workbook wb = XSSFTestDataSamples.openSampleWorkbook("NewlineInFormulas.xlsx");
+       Sheet s = wb.getSheetAt(0);
+       Cell c = s.getRow(0).getCell(0);
+       
+       assertEquals("SUM(\n1,2\n)", c.getCellFormula());
+       assertEquals(3.0, c.getNumericCellValue());
+       
+       FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+       formulaEvaluator.evaluateFormulaCell(c);
+       
+       assertEquals("SUM(\n1,2\n)", c.getCellFormula());
+       assertEquals(3.0, c.getNumericCellValue());
+    }
 }
