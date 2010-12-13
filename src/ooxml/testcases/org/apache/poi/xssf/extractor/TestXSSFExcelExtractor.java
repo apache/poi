@@ -174,4 +174,26 @@ public final class TestXSSFExcelExtractor extends TestCase {
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
 	}
+	
+	public void testInlineStrings() {
+      XSSFExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
+      extractor.setFormulasNotResults(true);
+      String text = extractor.getText();
+
+      // Numbers
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("43"));
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("22"));
+      
+      // Strings
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("ABCDE"));
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("Long Text"));
+      
+      // Inline Strings
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("1st Inline String"));
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("And More"));
+      
+      // Formulas
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("A2"));
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("A5-A$2"));
+	}
 }

@@ -61,6 +61,8 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private boolean vIsOpen;
    // Set when F start element is seen
    private boolean fIsOpen;
+   // Set when an Inline String "is" is seen
+   private boolean isIsOpen;
    // Set when a header/footer element is seen
    private boolean hfIsOpen;
 
@@ -113,13 +115,33 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
 
+   private boolean isTextTag(String name) {
+      if("v".equals(name)) {
+         // Easy, normal v text tag
+         return true;
+      }
+      if("inlineStr".equals(name)) {
+         // Easy inline string
+         return true;
+      }
+      if("t".equals(name) && isIsOpen) {
+         // Inline string <is><t>...</t></is> pair
+         return true;
+      }
+      // It isn't a text tag
+      return false;
+   }
+   
    public void startElement(String uri, String localName, String name,
                             Attributes attributes) throws SAXException {
 
-       if ("inlineStr".equals(name) || "v".equals(name)) {
+       if (isTextTag(name)) {
            vIsOpen = true;
            // Clear contents cache
            value.setLength(0);
+       } else if ("is".equals(name)) {
+          // Inline string outer tag
+          isIsOpen = true;
        } else if ("f".equals(name)) {
           // Clear contents cache
           formula.setLength(0);
@@ -202,7 +224,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        String thisStr = null;
 
        // v => contents of a cell
-       if ("v".equals(name)) {
+       if (isTextTag(name)) {
            vIsOpen = false;
            
            // Process the value contents as required, now we have it all
@@ -225,7 +247,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    break;
 
                case INLINE_STRING:
-                   // TODO: have seen an example of this, so it's untested.
+                   // TODO: Can these ever have formatting on them?
                    XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
                    thisStr = rtsi.toString();
                    break;
@@ -259,6 +281,8 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            output.cell(cellRef, thisStr);
        } else if ("f".equals(name)) {
           fIsOpen = false;
+       } else if ("is".equals(name)) {
+          isIsOpen = false;
        } else if ("row".equals(name)) {
           output.endRow();
        }
