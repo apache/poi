@@ -1899,4 +1899,58 @@ if(1==2) {
        HSSFWorkbook wb = openSample("50426.xls");
        writeOutAndReadBack(wb);
     }
+    
+    /**
+     * Last row number when shifting rows
+     */
+    public void test50416LastRowNumber() {
+       // Create the workbook with 1 sheet which contains 3 rows
+       HSSFWorkbook workbook = new HSSFWorkbook();
+       Sheet sheet = workbook.createSheet("Bug50416");
+       Row row1 = sheet.createRow(0);
+       Cell cellA_1 = row1.createCell(0,Cell.CELL_TYPE_STRING);
+       cellA_1.setCellValue("Cell A,1");
+       Row row2 = sheet.createRow(1);
+       Cell cellA_2 = row2.createCell(0,Cell.CELL_TYPE_STRING);
+       cellA_2.setCellValue("Cell A,2");
+       Row row3 = sheet.createRow(2);
+       Cell cellA_3 = row3.createCell(0,Cell.CELL_TYPE_STRING);
+       cellA_3.setCellValue("Cell A,3");
+       
+       // Test the last Row number it currently correct
+       assertEquals(2, sheet.getLastRowNum());
+       
+       // Shift the first row to the end
+       sheet.shiftRows(0, 0, 3);
+       assertEquals(3, sheet.getLastRowNum());
+       assertEquals(-1,         sheet.getRow(0).getLastCellNum());
+       assertEquals("Cell A,2", sheet.getRow(1).getCell(0).getStringCellValue());
+       assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+       assertEquals("Cell A,1", sheet.getRow(3).getCell(0).getStringCellValue());
+       
+       // Shift the 2nd row up to the first one
+       sheet.shiftRows(1, 1, -1);
+       assertEquals(3, sheet.getLastRowNum());
+       assertEquals("Cell A,2", sheet.getRow(0).getCell(0).getStringCellValue());
+       assertEquals(-1,         sheet.getRow(1).getLastCellNum());
+       assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+       assertEquals("Cell A,1", sheet.getRow(3).getCell(0).getStringCellValue());
+
+       // Shift the 4th row up into the gap in the 3rd row
+       sheet.shiftRows(3, 3, -2);
+       assertEquals(2, sheet.getLastRowNum());
+       assertEquals("Cell A,2", sheet.getRow(0).getCell(0).getStringCellValue());
+       assertEquals("Cell A,1", sheet.getRow(1).getCell(0).getStringCellValue());
+       assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+       assertEquals(-1,         sheet.getRow(3).getLastCellNum());
+       
+       // Now zap the empty 4th row - won't do anything
+       sheet.removeRow(sheet.getRow(3));
+       
+       // Test again the last row number which should be 2
+       assertEquals(2, sheet.getLastRowNum());
+       assertEquals("Cell A,2", sheet.getRow(0).getCell(0).getStringCellValue());
+       assertEquals("Cell A,1", sheet.getRow(1).getCell(0).getStringCellValue());
+       assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+    }
 }
