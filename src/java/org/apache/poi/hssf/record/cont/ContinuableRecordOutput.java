@@ -204,10 +204,22 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		writeContinueIfRequired(b.length);
 		_ulrOutput.write(b);
 	}
+
 	public void write(byte[] b, int offset, int len) {
-		writeContinueIfRequired(len);
-		_ulrOutput.write(b, offset, len);
+
+        int i=0;
+        while(true) {
+            int nWritableChars = Math.min(len - i, _ulrOutput.getAvailableSpace() / 1);
+            for ( ; nWritableChars > 0; nWritableChars--) {
+                _ulrOutput.writeByte(b[offset + i++]);
+            }
+            if (i >= len) {
+                break;
+            }
+            writeContinue();
+        }
 	}
+
 	public void writeByte(int v) {
 		writeContinueIfRequired(1);
 		_ulrOutput.writeByte(v);
