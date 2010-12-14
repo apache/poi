@@ -1221,10 +1221,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         if (n < 0) {
             s = startRow;
             inc = 1;
-        } else {
+        } else if (n > 0) {
             s = endRow;
             inc = -1;
+        } else {
+           // Nothing to do
+           return;
         }
+        
         NoteRecord[] noteRecs;
         if (moveComments) {
             noteRecs = _sheet.getNoteRecords();
@@ -1302,8 +1306,39 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 }
             }
         }
-        if ( endRow == _lastrow || endRow + n > _lastrow ) _lastrow = Math.min( endRow + n, SpreadsheetVersion.EXCEL97.getLastRowIndex() );
-        if ( startRow == _firstrow || startRow + n < _firstrow ) _firstrow = Math.max( startRow + n, 0 );
+        
+        // Re-compute the first and last rows of the sheet as needed
+        if(n > 0) {
+           // Rows are moving down
+           if ( startRow == _firstrow ) {
+              // Need to walk forward to find the first non-blank row
+              _firstrow = Math.max( startRow + n, 0 );
+              for( int i=startRow+1; i < startRow+n; i++ ) {
+                 if (getRow(i) != null) {
+                    _firstrow = i;
+                    break;
+                 }
+              }
+           }
+           if ( endRow + n > _lastrow ) {
+              _lastrow = Math.min( endRow + n, SpreadsheetVersion.EXCEL97.getLastRowIndex() );
+           }
+        } else {
+           // Rows are moving up
+           if ( startRow + n < _firstrow ) {
+              _firstrow = Math.max( startRow + n, 0 );
+           }
+           if ( endRow == _lastrow  ) {
+              // Need to walk backward to find the last non-blank row
+              _lastrow = Math.min( endRow + n, SpreadsheetVersion.EXCEL97.getLastRowIndex() );
+              for (int i=endRow-1; i > endRow+n; i++) {
+                 if (getRow(i) != null) {
+                    _lastrow = i;
+                    break;
+                 }
+              }
+           }
+        }
 
         // Update any formulas on this sheet that point to
         //  rows which have been moved
