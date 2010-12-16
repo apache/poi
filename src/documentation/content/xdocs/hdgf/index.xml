@@ -72,7 +72,8 @@
 				  HDGFLZW, which will be much better documented, and also 
 				  under the ASL. <strong>Completed October 2007</strong></li>
 				 <li>Add compression support to HDGFLZW. 
-				  <strong>In progress</strong></li>
+				  <strong>In progress - works for small streams but encoding
+               goes wrong on larger ones</strong></li>
 				 <li>Have HDGF just write back the raw bytes it read in, and
 				  have a test to ensure the file is un-changed.</li>
 				 <li>Have HDGF generate the bytes to write out from the
