@@ -191,10 +191,11 @@ public class ExtractorFactory {
        throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
 	
-	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
-		return createExtractor(fs.getRoot(), fs);
+	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+	   // Only ever an OLE2 one from the root of the FS
+		return (POIOLE2TextExtractor)createExtractor(fs.getRoot(), fs);
 	}
-	public static POIOLE2TextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+	public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		// Look for certain entries in the stream, to figure it
 		//  out from
 		for(Iterator<Entry> entries = poifsDir.getEntries(); entries.hasNext(); ) {
@@ -234,6 +235,12 @@ public class ExtractorFactory {
 			) {
 			   return new OutlookTextExtactor(poifsDir, fs);
 			}
+			if(entry.getName().equals("Package")) {
+			   OPCPackage pkg = OPCPackage.open(
+			         poifsDir.createDocumentInputStream(entry.getName())
+			   );
+			   return createExtractor(pkg);
+			}
 		}
 		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
 	}
@@ -246,7 +253,7 @@ public class ExtractorFactory {
 	 *  empty array. Otherwise, you'll get one open 
 	 *  {@link POITextExtractor} for each embeded file.
 	 */
-	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException {
+	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 	   // All the embded directories we spotted
 		ArrayList<Entry> dirs = new ArrayList<Entry>();
 		// For anything else not directly held in as a POIFS directory

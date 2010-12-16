@@ -60,6 +60,7 @@ public class TestExtractorFactory extends TestCase {
    private File docx;
    private File dotx;
    private File docEmb;
+   private File docEmbOOXML;
 
    private File ppt;
    private File pptx;
@@ -88,6 +89,7 @@ public class TestExtractorFactory extends TestCase {
       docx = wpTests.getFile("SampleDoc.docx");
       dotx = wpTests.getFile("test.dotx");
       docEmb = wpTests.getFile("word_with_embeded.doc");
+      docEmbOOXML = wpTests.getFile("word_with_embeded_ooxml.doc");
 
       POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
       ppt = slTests.getFile("SampleShow.ppt");
@@ -536,7 +538,7 @@ public class TestExtractorFactory extends TestCase {
       embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
 
       assertEquals(6, embeds.length);
-      int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0;
+      int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX;
       for(int i=0; i<embeds.length; i++) {
          assertTrue(embeds[i].getText().length() > 20);
 
@@ -567,6 +569,27 @@ public class TestExtractorFactory extends TestCase {
       assertEquals(1, numPpt);
       assertEquals(2, numXls);
       assertEquals(1, numWord);
+      assertEquals(0, numMsg);
+      
+      // Word which contains an OOXML file
+      ext = (POIOLE2TextExtractor)
+      ExtractorFactory.createExtractor(docEmbOOXML);
+      embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+
+      numWord = 0; numXls = 0; numPpt = 0; numMsg = 0; numWordX = 0;
+      assertEquals(3, embeds.length);
+      for(int i=0; i<embeds.length; i++) {
+         assertTrue(embeds[i].getText().length() > 20);
+         if(embeds[i] instanceof PowerPointExtractor) numPpt++;
+         else if(embeds[i] instanceof ExcelExtractor) numXls++;
+         else if(embeds[i] instanceof WordExtractor) numWord++;
+         else if(embeds[i] instanceof OutlookTextExtactor) numMsg++;
+         else if(embeds[i] instanceof XWPFWordExtractor) numWordX++;
+      }
+      assertEquals(1, numPpt);
+      assertEquals(1, numXls);
+      assertEquals(0, numWord);
+      assertEquals(1, numWordX);
       assertEquals(0, numMsg);
       
       // Outlook
