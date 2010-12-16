@@ -28,17 +28,19 @@ public final class TestHDGFLZW extends TestCase {
 		-21, -16, // 3 @ 4093
 		1, 0, 0, -72,
 		-13, -16, // 3 @ 5
-		78,       // *mask bit*
+		78,       // *mask bit* 2,3,4,7
 		-32, -5,  // 14 @ 4082
 		1, 0, 3,
 		-21, -16, // 3 @ 4093
 		10, 5,    // 8 @ 28
 		4,
 		-21, -16, // 3 @ 4093
-		21,       // *mask bit*
+		21,       // *mask bit* 1,3,5
 		9,
 		-21, -16, // 3 @ 4093
-		103, -21, -16, 34,
+		103, 
+		-21, -16, // 3 @ 4093
+		34,
 		-36, -1,  // 18 @ 4078
 		52, 15,   // 18 @ 70
 		70, 15,   // 18 @ 88
@@ -169,19 +171,98 @@ public final class TestHDGFLZW extends TestCase {
 		}
 	}
 
-	public void DISABLEDtestCompress() throws Exception {
-		assertEquals(339, testTrailerComp.length);
-		assertEquals(632, testTrailerDecomp.length);
+	/**
+	 * Test that we can round-trip a little bit.
+	 * Uses a part short enough that we agree with visio
+	 *  on the best way to compress it
+	 */
+	public void testCompressMini() throws Exception {
+	   // first 11 bytes compressed = 12 bytes uncompressed
+	   byte[] sourceComp = new byte[11];
+	   byte[] sourceDecomp = new byte[12];
+	   System.arraycopy(testTrailerComp, 0, sourceComp, 0, sourceComp.length);
+      System.arraycopy(testTrailerDecomp, 0, sourceDecomp, 0, sourceDecomp.length);
 
 		// Compress it using our engine
 		HDGFLZW lzw = new HDGFLZW();
-		byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
+		byte[] comp = lzw.compress(new ByteArrayInputStream(sourceDecomp));
+		
+		// Now decompress it again
+		byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
 
-		// Now check it's the right data
-		assertEquals(339, comp.length);
-		for(int i=0; i<comp.length; i++) {
-			if(comp[i] != testTrailerComp[i])
-				System.err.println(i + "\t" + comp[i] + "\t" + testTrailerComp[i]);
-		}
+		// First up, check the round tripping
+		assertEquals(12, decomp.length);
+      for(int i=0; i<decomp.length; i++) {
+         assertEquals("Wrong at " + i, decomp[i], testTrailerDecomp[i]);
+      }
+
+		// Now check the compressed intermediate version
+      assertEquals(11, comp.length);
+      for(int i=0; i<comp.length; i++) {
+         assertEquals("Wrong at " + i, comp[i], testTrailerComp[i]);
+      }
 	}
+
+	/**
+	 * Tests that we can do several mask pages
+	 */
+   public void testCompressMidi() throws Exception {
+      // First 12 -> 11
+      // Next 32 -> 13
+      byte[] sourceComp = new byte[24];
+      byte[] sourceDecomp = new byte[44];
+      System.arraycopy(testTrailerComp, 0, sourceComp, 0, sourceComp.length);
+      System.arraycopy(testTrailerDecomp, 0, sourceDecomp, 0, sourceDecomp.length);
+
+      // Compress it using our engine
+      HDGFLZW lzw = new HDGFLZW();
+      byte[] comp = lzw.compress(new ByteArrayInputStream(sourceDecomp));
+      
+      // We should be 3 characters bigger, as
+      //  we split one compressed bit into two
+      assertEquals(27, comp.length);
+      
+      // Now decompress it again
+      byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
+
+      // We can only check the round-tripping, as for now
+      //  visio cheats on re-using a block
+      assertEquals(44, decomp.length);
+      for(int i=0; i<decomp.length; i++) {
+         assertEquals("Wrong at " + i, decomp[i], sourceDecomp[i]);
+      }
+   }
+
+   /**
+    * Gets 160 bytes through then starts going wrong...
+    * TODO Fix this
+    */
+   public void DISABLEDtestCompressFull() throws Exception {
+      assertEquals(339, testTrailerComp.length);
+      assertEquals(632, testTrailerDecomp.length);
+
+      // Compress it using our engine
+      HDGFLZW lzw = new HDGFLZW();
+      byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
+      
+      // Now decompress it again
+      byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
+
+//      for(int i=0; i<comp.length; i++) {
+//         System.err.println(i + "\t" + comp[i] + "\t" + testTrailerComp[i]);
+//      }
+      
+      // First up, check the round tripping
+//    assertEquals(632, decomp.length);
+      for(int i=0; i<decomp.length; i++) {
+         assertEquals("Wrong at " + i, decomp[i], testTrailerDecomp[i]);
+      }
+
+      
+      // Now check the compressed intermediate version
+      assertEquals(339, comp.length);
+      for(int i=0; i<comp.length; i++) {
+         assertEquals("Wrong at " + i, comp[i], testTrailerComp[i]);
+      }
+   }
 }

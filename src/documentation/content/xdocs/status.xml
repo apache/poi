@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
+           <action dev="poi-developers" type="add">Inside ExtractorFactory, support finding embedded OOXML documents and providing extractors for them</action>
+           <action dev="poi-developers" type="add">Partial HDGF LZW compression support</action>
            <action dev="poi-developers" type="add">50244 - Support for continued NameRecords</action>
            <action dev="POI-DEVELOPERS" type="fix">50416 - Correct shifting of the first or last row in a sheet by multiple rows</action>
            <action dev="POI-DEVELOPERS" type="fix">50440 - Support evaluating formulas with newlines in them, which XSSF may have (but HSSF may not)</action>
