@@ -30,6 +30,7 @@ import static org.apache.poi.poifs.storage.HeaderBlockConstants._xbat_start_offs
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -83,6 +84,10 @@ public final class HeaderBlockReader {
 	 * (Number of DIFAT Sectors in Microsoft parlance)
 	 */
 	private final int _xbat_count;
+	
+	/**
+	 * The data
+	 */
 	private final byte[] _data;
 
 	/**
@@ -93,26 +98,36 @@ public final class HeaderBlockReader {
 	 * @exception IOException on errors or bad data
 	 */
 	public HeaderBlockReader(InputStream stream) throws IOException {
-		// At this point, we don't know how big our
-		//  block sizes are
-		// So, read the first 32 bytes to check, then
-		//  read the rest of the block
-		byte[] blockStart = new byte[32];
-		int bsCount = IOUtils.readFully(stream, blockStart);
-		if(bsCount != 32) {
-			throw alertShortRead(bsCount, 32);
+		// Grab the first 512 bytes
+	   // (For 4096 sized blocks, the remaining 3584 bytes are zero)
+		// Then, process the contents
+		this(readFirst512(stream));
+		
+		// Fetch the rest of the block if needed
+		if(bigBlockSize.getBigBlockSize() != 512) {
+		   int rest = bigBlockSize.getBigBlockSize() - 512;
+		   byte[] tmp = new byte[rest];
+		   IOUtils.readFully(stream, tmp);
 		}
-
+	}
+	
+	public HeaderBlockReader(ByteBuffer buffer) throws IOException {
+	   this(buffer.array());
+	}
+	
+	private HeaderBlockReader(byte[] data) throws IOException {
+	   this._data = data;
+	   
 		// verify signature
-		long signature = LittleEndian.getLong(blockStart, _signature_offset);
+		long signature = LittleEndian.getLong(_data, _signature_offset);
 
 		if (signature != _signature) {
 			// Is it one of the usual suspects?
 			byte[] OOXML_FILE_HEADER = POIFSConstants.OOXML_FILE_HEADER;
-			if(blockStart[0] == OOXML_FILE_HEADER[0] &&
-				blockStart[1] == OOXML_FILE_HEADER[1] &&
-				blockStart[2] == OOXML_FILE_HEADER[2] &&
-				blockStart[3] == OOXML_FILE_HEADER[3]) {
+			if(_data[0] == OOXML_FILE_HEADER[0] &&
+				_data[1] == OOXML_FILE_HEADER[1] &&
+				_data[2] == OOXML_FILE_HEADER[2] &&
+				_data[3] == OOXML_FILE_HEADER[3]) {
 				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)");
 			}
 			if ((signature & 0xFF8FFFFFFFFFFFFFL) == 0x0010000200040009L) {
@@ -129,22 +144,14 @@ public final class HeaderBlockReader {
 
 
 		// Figure out our block size
-		switch (blockStart[30]) {
+		switch (_data[30]) {
 			case 12:
 				bigBlockSize = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS; break;
 			case  9:
 				bigBlockSize = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS; break;
 			default:
 				throw new IOException("Unsupported blocksize  (2^"
-						+ blockStart[30] + "). Expected 2^9 or 2^12.");
-		}
-		_data = new byte[ bigBlockSize.getBigBlockSize() ];
-		System.arraycopy(blockStart, 0, _data, 0, blockStart.length);
-
-		// Now we can read the rest of our header
-		int byte_count = IOUtils.readFully(stream, _data, blockStart.length, _data.length - blockStart.length);
-		if (byte_count+bsCount != bigBlockSize.getBigBlockSize()) {
-			throw alertShortRead(byte_count, bigBlockSize.getBigBlockSize());
+						+ _data[30] + "). Expected 2^9 or 2^12.");
 		}
 
 		_bat_count      = getInt(_bat_count_offset, _data);
@@ -153,6 +160,17 @@ public final class HeaderBlockReader {
 		_sbat_count     = getInt(_sbat_block_count_offset, _data);
 		_xbat_start     = getInt(_xbat_start_offset, _data);
 		_xbat_count     = getInt(_xbat_count_offset, _data);
+	}
+	
+	private static byte[] readFirst512(InputStream stream) throws IOException {
+      // Grab the first 512 bytes
+      // (For 4096 sized blocks, the remaining 3584 bytes are zero)
+      byte[] data = new byte[512];
+      int bsCount = IOUtils.readFully(stream, data);
+      if(bsCount != 512) {
+         throw alertShortRead(bsCount, 512);
+      }
+      return data;
 	}
 
 	private static int getInt(int offset, byte[] data) {
@@ -216,7 +234,7 @@ public final class HeaderBlockReader {
 
 		for (int j = 0; j < _max_bats_in_header; j++) {
 			result[ j ] = LittleEndian.getInt(_data, offset);
-			offset      += LittleEndianConsts.INT_SIZE;
+			offset     += LittleEndianConsts.INT_SIZE;
 		}
 		return result;
 	}
