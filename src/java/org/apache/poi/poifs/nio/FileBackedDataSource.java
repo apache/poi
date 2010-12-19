@@ -42,17 +42,26 @@ public class FileBackedDataSource extends DataSource {
       this.channel = channel;
    }
    
-   public void read(ByteBuffer dst, long position) throws IOException {
+   public ByteBuffer read(int length, long position) throws IOException {
       if(position >= size()) {
          throw new IllegalArgumentException("Position " + position + " past the end of the file");
       }
-      
+
+      // Read
       channel.position(position);
+      ByteBuffer dst = ByteBuffer.allocate(length);
       int worked = IOUtils.readFully(channel, dst);
       
+      // Check
       if(worked == -1) {
          throw new IllegalArgumentException("Position " + position + " past the end of the file");
       }
+      
+      // Ready it for reading
+      dst.position(0);
+      
+      // All done
+      return dst;
    }
    
    public void write(ByteBuffer src, long position) throws IOException {

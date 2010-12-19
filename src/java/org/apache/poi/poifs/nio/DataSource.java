@@ -24,8 +24,8 @@ import java.nio.ByteBuffer;
  * Common definition of how we read and write bytes
  */
 public abstract class DataSource {
-   abstract void read(ByteBuffer dst, long position) throws IOException;
-   abstract void write(ByteBuffer src, long position) throws IOException;
-   abstract long size() throws IOException;
-   abstract void close() throws IOException;
+   public abstract ByteBuffer read(int length, long position) throws IOException;
+   public abstract void write(ByteBuffer src, long position) throws IOException;
+   public abstract long size() throws IOException;
+   public abstract void close() throws IOException;
 }

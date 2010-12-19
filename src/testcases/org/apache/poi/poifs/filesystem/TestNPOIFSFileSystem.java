@@ -55,5 +55,30 @@ public final class TestNPOIFSFileSystem extends TestCase {
          assertEquals(4096, fs.getBigBlockSize());
       }
    }
-   
+
+   public void testPropertiesAndFatOnRead() throws Exception {
+      NPOIFSFileSystem fsA, fsB;
+      
+      // With a simple 512 block file
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // Check the FAT was properly processed
+         // TODO
+         
+         // Check the properties
+         // TODO
+      }
+      
+      // Now with a simple 4096 block file
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // Check the FAT was properly processed
+         // TODO
+         
+         // Check the properties
+         // TODO
+      }
+   }
 }
