@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  *
  * @author Marc Johnson
  */
-public final class TestHeaderBlockReader extends TestCase {
+public final class TestHeaderBlockReading extends TestCase {
 
 	public void testConstructors() throws IOException {
 		String[] hexData = {
@@ -49,7 +49,7 @@ public final class TestHeaderBlockReader extends TestCase {
 			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
 		};
 		byte[] content = RawDataUtil.decode(hexData);
-		HeaderBlockReader block = new HeaderBlockReader(new ByteArrayInputStream(content));
+		HeaderBlock block = new HeaderBlock(new ByteArrayInputStream(content));
 
 		assertEquals(-2, block.getPropertyStart());
 
@@ -58,7 +58,7 @@ public final class TestHeaderBlockReader extends TestCase {
 
 		System.arraycopy(content, 0, shortblock, 0, 511);
 		try {
-			block = new HeaderBlockReader(new ByteArrayInputStream(shortblock));
+			block = new HeaderBlock(new ByteArrayInputStream(shortblock));
 			fail("Should have caught IOException reading a short block");
 		} catch (IOException ignored) {
 
@@ -69,7 +69,7 @@ public final class TestHeaderBlockReader extends TestCase {
 		for (int index = 0; index < 8; index++) {
 			content[index] = (byte) (content[index] - 1);
 			try {
-				block = new HeaderBlockReader(new ByteArrayInputStream(content));
+				block = new HeaderBlock(new ByteArrayInputStream(content));
 				fail("Should have caught IOException corrupting byte " + index);
 			} catch (IOException ignored) {
 

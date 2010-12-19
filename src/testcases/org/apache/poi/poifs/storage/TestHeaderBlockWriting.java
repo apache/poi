@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson
  */
-public final class TestHeaderBlockWriter extends TestCase {
+public final class TestHeaderBlockWriting extends TestCase {
 
 	private static void confirmEqual(String[] expectedDataHexDumpLines, byte[] actual) {
 		byte[] expected = RawDataUtil.decode(expectedDataHexDumpLines);
@@ -78,8 +78,8 @@ public final class TestHeaderBlockWriter extends TestCase {
 		block.setPropertyStart(0x87654321);
 		output = new ByteArrayOutputStream(512);
 		block.writeBlocks(output);
-		assertEquals(0x87654321, new HeaderBlockReader(new ByteArrayInputStream(output
-				.toByteArray())).getPropertyStart());
+		assertEquals(0x87654321, new HeaderBlock(
+		      new ByteArrayInputStream(output.toByteArray())).getPropertyStart());
 	}
 
 	/**

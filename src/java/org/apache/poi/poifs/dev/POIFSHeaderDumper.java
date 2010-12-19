@@ -18,21 +18,16 @@
 package org.apache.poi.poifs.dev;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.ListManagedBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
@@ -67,51 +62,50 @@ public class POIFSHeaderDumper {
 		InputStream inp = new FileInputStream(filename);
 		
 		// Header
-		HeaderBlockReader header_block_reader = 
-		   new HeaderBlockReader(inp);
-		displayHeader(header_block_reader);
+		HeaderBlock header_block = new HeaderBlock(inp);
+		displayHeader(header_block);
 		
 		// Raw blocks
-      POIFSBigBlockSize bigBlockSize = header_block_reader.getBigBlockSize();
+      POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
       RawDataBlockList data_blocks = new RawDataBlockList(inp, bigBlockSize);
       displayRawBlocksSummary(data_blocks);
       
       // Main FAT Table
       BlockAllocationTableReader batReader =
          new BlockAllocationTableReader(
-            header_block_reader.getBigBlockSize(),
-            header_block_reader.getBATCount(),
-            header_block_reader.getBATArray(),
-            header_block_reader.getXBATCount(),
-            header_block_reader.getXBATIndex(),
+            header_block.getBigBlockSize(),
+            header_block.getBATCount(),
+            header_block.getBATArray(),
+            header_block.getXBATCount(),
+            header_block.getXBATIndex(),
             data_blocks);
       displayBATReader(batReader);
 
       // Properties Table
       PropertyTable properties =
          new PropertyTable(
-               header_block_reader.getBigBlockSize(),
-               header_block_reader.getPropertyStart(),
+               header_block.getBigBlockSize(),
+               header_block.getPropertyStart(),
                data_blocks);
       
       // Mini Fat
       BlockList sbat = 
          SmallBlockTableReader.getSmallDocumentBlocks(
                bigBlockSize, data_blocks, properties.getRoot(),
-               header_block_reader.getSBATStart()
+               header_block.getSBATStart()
          );
    }
 
-	public static void displayHeader(HeaderBlockReader header_block_reader) throws Exception {
+	public static void displayHeader(HeaderBlock header_block) throws Exception {
 	   System.out.println("Header Details:");
-	   System.out.println(" Block size: " + header_block_reader.getBigBlockSize());
-      System.out.println(" BAT (FAT) header blocks: " + header_block_reader.getBATArray().length);
-      System.out.println(" BAT (FAT) block count: " + header_block_reader.getBATCount());
-      System.out.println(" XBAT (FAT) block count: " + header_block_reader.getXBATCount());
-      System.out.println(" XBAT (FAT) block 1 at: " + header_block_reader.getXBATIndex());
-      System.out.println(" SBAT (MiniFAT) block count: " + header_block_reader.getSBATCount());
-      System.out.println(" SBAT (MiniFAT) block 1 at: " + header_block_reader.getSBATStart());
-      System.out.println(" Property table at: " + header_block_reader.getPropertyStart());
+	   System.out.println(" Block size: " + header_block.getBigBlockSize());
+      System.out.println(" BAT (FAT) header blocks: " + header_block.getBATArray().length);
+      System.out.println(" BAT (FAT) block count: " + header_block.getBATCount());
+      System.out.println(" XBAT (FAT) block count: " + header_block.getXBATCount());
+      System.out.println(" XBAT (FAT) block 1 at: " + header_block.getXBATIndex());
+      System.out.println(" SBAT (MiniFAT) block count: " + header_block.getSBATCount());
+      System.out.println(" SBAT (MiniFAT) block 1 at: " + header_block.getSBATStart());
+      System.out.println(" Property table at: " + header_block.getPropertyStart());
       System.out.println("");
 	}
 
