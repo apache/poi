@@ -17,32 +17,53 @@
 
 package org.apache.poi.poifs.nio;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+
+import org.apache.poi.util.IOUtils;
 
 /**
  * A POIFS {@link DataSource} backed by a File
  */
 public class FileBackedDataSource extends DataSource {
-   private FileChannel file;
-   public FileBackedDataSource(FileChannel file) {
-      this.file = file;
+   private FileChannel channel;
+   
+   public FileBackedDataSource(File file) throws FileNotFoundException {
+      if(!file.exists()) {
+         throw new FileNotFoundException(file.toString());
+      }
+      this.channel = (new RandomAccessFile(file, "r")).getChannel();
+   }
+   public FileBackedDataSource(FileChannel channel) {
+      this.channel = channel;
    }
    
    public void read(ByteBuffer dst, long position) throws IOException {
-      file.read(dst, position);
+      if(position >= size()) {
+         throw new IllegalArgumentException("Position " + position + " past the end of the file");
+      }
+      
+      channel.position(position);
+      int worked = IOUtils.readFully(channel, dst);
+      
+      if(worked == -1) {
+         throw new IllegalArgumentException("Position " + position + " past the end of the file");
+      }
    }
    
    public void write(ByteBuffer src, long position) throws IOException {
-      file.write(src, position);
+      channel.write(src, position);
    }
    
    public long size() throws IOException {
-      return file.size();
+      return channel.size();
    }
    
    public void close() throws IOException {
-      file.close();
+      channel.close();
    }
 }

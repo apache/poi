@@ -32,13 +32,15 @@ public class ByteArrayBackedDataSource extends DataSource {
    }
                 
    public void read(ByteBuffer dst, long position) {
-      if(position + dst.capacity() > size) {
+      if(position >= size) {
          throw new IndexOutOfBoundsException(
                "Unable to read " + dst.capacity() + " bytes from " +
                position + " in stream of length " + size
          );
       }
-      dst.put(buffer, (int)position, dst.capacity());
+      
+      int toRead = (int)Math.min(dst.capacity(), size - position);
+      dst.put(buffer, (int)position, toRead);
    }
    
    public void write(ByteBuffer src, long position) {
