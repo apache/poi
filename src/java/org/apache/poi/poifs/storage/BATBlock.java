@@ -19,13 +19,12 @@ package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A block of block allocation table entries. BATBlocks are created
@@ -34,10 +33,19 @@ import org.apache.poi.util.LittleEndianConsts;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class BATBlock extends BigBlock {
-    private static final byte _default_value          = ( byte ) 0xFF;
-    private IntegerField[]    _fields;
-    private byte[]            _data;
-
+    /**
+     * For a regular fat block, these are 128 / 1024 
+     *  next sector values.
+     * For a XFat (DIFat) block, these are 127 / 1023
+     *  next sector values, then a chaining value.
+     */
+    private int[] _values;
+    
+    /**
+     * Does this BATBlock have any free sectors in it?
+     */
+    private boolean _has_free_sectors;
+    
     /**
      * Create a single instance initialized with default values
      */
@@ -46,18 +54,68 @@ public final class BATBlock extends BigBlock {
     {
         super(bigBlockSize);
         
-        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock(); 
-        
-        _data = new byte[ bigBlockSize.getBigBlockSize() ];
-        Arrays.fill(_data, _default_value);
-        _fields = new IntegerField[ _entries_per_block ];
-        int offset = 0;
+        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
+        _values = new int[_entries_per_block];
+        _has_free_sectors = true;
 
-        for (int j = 0; j < _entries_per_block; j++)
-        {
-            _fields[ j ] = new IntegerField(offset);
-            offset       += LittleEndianConsts.INT_SIZE;
+        Arrays.fill(_values, POIFSConstants.UNUSED_BLOCK);
+    }
+
+    /**
+     * Create a single instance initialized (perhaps partially) with entries
+     *
+     * @param entries the array of block allocation table entries
+     * @param start_index the index of the first entry to be written
+     *                    to the block
+     * @param end_index the index, plus one, of the last entry to be
+     *                  written to the block (writing is for all index
+     *                  k, start_index <= k < end_index)
+     */
+
+    private BATBlock(POIFSBigBlockSize bigBlockSize, final int [] entries,
+                     final int start_index, final int end_index)
+    {
+        this(bigBlockSize);
+        for (int k = start_index; k < end_index; k++) {
+           _values[k - start_index] = entries[k];
         }
+        
+        // Do we have any free sectors?
+        if(end_index - start_index == _values.length) {
+           recomputeFree();
+        }
+    }
+    
+    private void recomputeFree() {
+       boolean hasFree = false;
+       for(int k=0; k<_values.length; k++) {
+          if(_values[k] == POIFSConstants.UNUSED_BLOCK) {
+             hasFree = true;
+             break;
+          }
+       }
+       _has_free_sectors = hasFree;
+    }
+
+    /**
+     * Create a single BATBlock from the byte buffer, which must hold at least
+     *  one big block of data to be read.
+     */
+    public static BATBlock createBATBlock(final POIFSBigBlockSize bigBlockSize, ByteBuffer data)
+    {
+       // Create an empty block
+       BATBlock block = new BATBlock(bigBlockSize);
+       
+       // Fill it
+       byte[] buffer = new byte[LittleEndian.INT_SIZE];
+       for(int i=0; i<block._values.length; i++) {
+          data.get(buffer);
+          block._values[i] = LittleEndian.getInt(buffer);
+       }
+       block.recomputeFree();
+       
+       // All done
+       return block;
     }
 
     /**
@@ -68,7 +126,6 @@ public final class BATBlock extends BigBlock {
      *
      * @return the newly created array of BATBlocks
      */
-
     public static BATBlock [] createBATBlocks(final POIFSBigBlockSize bigBlockSize, final int [] entries)
     {
         int        block_count = calculateStorageRequirements(bigBlockSize, entries.length);
@@ -87,7 +144,7 @@ public final class BATBlock extends BigBlock {
         }
         return blocks;
     }
-
+    
     /**
      * Create an array of XBATBlocks from an array of int block
      * allocation table entries
@@ -163,28 +220,32 @@ public final class BATBlock extends BigBlock {
     private void setXBATChain(final POIFSBigBlockSize bigBlockSize, int chainIndex)
     {
         int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
-        _fields[ _entries_per_xbat_block ].set(chainIndex, _data);
+        _values[ _entries_per_xbat_block ] = chainIndex;
     }
-
+    
     /**
-     * Create a single instance initialized (perhaps partially) with entries
-     *
-     * @param entries the array of block allocation table entries
-     * @param start_index the index of the first entry to be written
-     *                    to the block
-     * @param end_index the index, plus one, of the last entry to be
-     *                  written to the block (writing is for all index
-     *                  k, start_index <= k < end_index)
+     * Does this BATBlock have any free sectors in it, or
+     *  is it full?
      */
-
-    private BATBlock(POIFSBigBlockSize bigBlockSize, final int [] entries,
-                     final int start_index, final int end_index)
-    {
-        this(bigBlockSize);
-        for (int k = start_index; k < end_index; k++)
-        {
-            _fields[ k - start_index ].set(entries[ k ], _data);
-        }
+    public boolean hasFreeSectors() {
+       return _has_free_sectors;
+    }
+    
+    public int getValueAt(int relativeOffset) {
+       return _values[relativeOffset];
+    }
+    public void setValueAt(int relativeOffset, int value) {
+       int oldValue = _values[relativeOffset];
+       _values[relativeOffset] = value;
+       
+       // Do we need to re-compute the free?
+       if(value == POIFSConstants.UNUSED_BLOCK) {
+          _has_free_sectors = true;
+          return;
+       }
+       if(oldValue == POIFSConstants.UNUSED_BLOCK) {
+          recomputeFree();
+       }
     }
 
     /* ********** START extension of BigBlock ********** */
@@ -198,11 +259,21 @@ public final class BATBlock extends BigBlock {
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
     void writeData(final OutputStream stream)
         throws IOException
     {
-        doWriteData(stream, _data);
+       // Create the empty array
+       byte[] data = new byte[ bigBlockSize.getBigBlockSize() ];
+       
+       // Fill in the values
+       int offset = 0;
+       for(int i=0; i<_values.length; i++) {
+          LittleEndian.putInt(data, offset, _values[i]);
+          offset += LittleEndian.INT_SIZE;
+       }
+       
+       // Save it out
+       stream.write(data);
     }
 
     /* **********  END  extension of BigBlock ********** */
