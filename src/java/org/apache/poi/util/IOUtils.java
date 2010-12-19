@@ -47,6 +47,22 @@ public final class IOUtils {
 		return baos.toByteArray();
 	}
 
+   /**
+    * Returns an array (that shouldn't be written to!) of the
+    *  ByteBuffer. Will be of the requested length, or possibly
+    *  longer if that's easier.
+    */
+   public static byte[] toByteArray(ByteBuffer buffer, int length) {
+      if(buffer.hasArray() && buffer.arrayOffset() == 0) {
+         // The backing array should work out fine for us
+         return buffer.array();
+      }
+      
+      byte[] data = new byte[length];
+      buffer.get(data);
+      return data;
+   }
+
 	/**
 	 * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
 	 */
@@ -99,7 +115,7 @@ public final class IOUtils {
          }
       }
 	}
-
+	
 	/**
 	 * Copies all the data from the given InputStream to the OutputStream. It
 	 * leaves both streams open, so you will still need to close them once done.

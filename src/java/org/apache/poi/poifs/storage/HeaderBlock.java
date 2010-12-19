@@ -112,7 +112,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
 	}
 	
 	public HeaderBlock(ByteBuffer buffer) throws IOException {
-	   this(buffer.array());
+	   this(IOUtils.toByteArray(buffer, POIFSConstants.SMALLER_BIG_BLOCK_SIZE));
 	}
 	
 	private HeaderBlock(byte[] data) throws IOException {

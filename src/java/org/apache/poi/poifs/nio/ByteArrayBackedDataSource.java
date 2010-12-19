@@ -26,9 +26,12 @@ public class ByteArrayBackedDataSource extends DataSource {
    private byte[] buffer;
    private long size;
    
-   public ByteArrayBackedDataSource(byte[] data) {
+   public ByteArrayBackedDataSource(byte[] data, int size) {
       this.buffer = data;
-      this.size = data.length;
+      this.size = size;
+   }
+   public ByteArrayBackedDataSource(byte[] data) {
+      this(data, data.length);
    }
                 
    public void read(ByteBuffer dst, long position) {
