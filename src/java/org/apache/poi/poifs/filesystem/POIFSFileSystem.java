@@ -48,6 +48,7 @@ import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
+import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
 import org.apache.poi.util.POILogFactory;
@@ -65,23 +66,6 @@ public class POIFSFileSystem
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(POIFSFileSystem.class);
-
-    private static final class CloseIgnoringInputStream extends InputStream {
-
-        private final InputStream _is;
-        public CloseIgnoringInputStream(InputStream is) {
-            _is = is;
-        }
-        public int read() throws IOException {
-            return _is.read();
-        }
-        public int read(byte[] b, int off, int len) throws IOException {
-            return _is.read(b, off, len);
-        }
-        public void close() {
-            // do nothing
-        }
-    }
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
