@@ -33,8 +33,8 @@ public final class AllPOIFSStorageTests {
 		result.addTestSuite(TestBlockAllocationTableWriter.class);
 		result.addTestSuite(TestBlockListImpl.class);
 		result.addTestSuite(TestDocumentBlock.class);
-		result.addTestSuite(TestHeaderBlockReader.class);
-		result.addTestSuite(TestHeaderBlockWriter.class);
+		result.addTestSuite(TestHeaderBlockReading.class);
+		result.addTestSuite(TestHeaderBlockWriting.class);
 		result.addTestSuite(TestPropertyBlock.class);
 		result.addTestSuite(TestRawDataBlock.class);
 		result.addTestSuite(TestRawDataBlockList.class);

@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
@@ -184,14 +184,14 @@ public final class TestPOIFSFileSystem extends TestCase {
 	   InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
 	   
 	   // First up, check that we can process the header properly
-      HeaderBlockReader header_block_reader = new HeaderBlockReader(inp);
-      POIFSBigBlockSize bigBlockSize = header_block_reader.getBigBlockSize();
+      HeaderBlock header_block = new HeaderBlock(inp);
+      POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
       assertEquals(4096, bigBlockSize.getBigBlockSize());
       
       // Check the fat info looks sane
-      assertEquals(109, header_block_reader.getBATArray().length);
-      assertTrue(header_block_reader.getBATCount() > 0);
-      assertEquals(0, header_block_reader.getXBATCount());
+      assertEquals(1, header_block.getBATArray().length);
+      assertEquals(1, header_block.getBATCount());
+      assertEquals(0, header_block.getXBATCount());
       
       // Now check we can get the basic fat
       RawDataBlockList data_blocks = new RawDataBlockList(inp, bigBlockSize);
