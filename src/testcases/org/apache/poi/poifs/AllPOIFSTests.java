@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.poifs.eventfilesystem.TestPOIFSReaderRegistry;
 import org.apache.poi.poifs.filesystem.AllPOIFSFileSystemTests;
+import org.apache.poi.poifs.nio.TestDataSource;
 import org.apache.poi.poifs.property.AllPOIFSPropertyTests;
 import org.apache.poi.poifs.storage.AllPOIFSStorageTests;
 /**
@@ -33,6 +34,7 @@ public final class AllPOIFSTests {
     public static Test suite() {
         TestSuite result = new TestSuite("Tests for org.apache.poi.poifs");
         result.addTestSuite(TestPOIFSReaderRegistry.class);
+        result.addTestSuite(TestDataSource.class);
         result.addTest(AllPOIFSFileSystemTests.suite());
         result.addTest(AllPOIFSPropertyTests.suite());
         result.addTest(AllPOIFSStorageTests.suite());
