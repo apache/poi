@@ -266,17 +266,22 @@ public class NPOIFSFileSystem
        // Grab the block size
        bigBlockSize = _header.getBigBlockSize();
        
+       // Each block should only ever be used by one of the
+       //  FAT, XFAT or Property Table. Ensure it does
+       ChainLoopDetector loopDetector = new ChainLoopDetector();
+       
        // Read the FAT blocks
-       for(int fatAT : _header.getBATArray()) {
-          ByteBuffer fatData = getBlockAt(fatAT);
+       for(int fatAt : _header.getBATArray()) {
+          loopDetector.claim(fatAt);
+          ByteBuffer fatData = getBlockAt(fatAt);
           _blocks.add(BATBlock.createBATBlock(bigBlockSize, fatData));
        }
        
        // Now read the XFAT blocks
-// TODO Corrupt / Loop checking       
        BATBlock xfat; 
        int nextAt = _header.getXBATIndex();
        for(int i=0; i<_header.getXBATCount(); i++) {
+          loopDetector.claim(nextAt);
           ByteBuffer fatData = getBlockAt(nextAt);
           xfat = BATBlock.createBATBlock(bigBlockSize, fatData);
           nextAt = xfat.getValueAt(bigBlockSize.getNextXBATChainOffset());
@@ -287,7 +292,6 @@ public class NPOIFSFileSystem
        // We're now able to load steams
        // Use this to read in the properties
        // TODO
-// TODO With loop checking
     }
     
     /**
@@ -613,6 +617,27 @@ public class NPOIFSFileSystem
                 parent.createDocument(document);
             }
         }
+    }
+    
+    /**
+     * Used to detect if a chain has a loop in it, so
+     *  we can bail out with an error rather than
+     *  spinning away for ever... 
+     */
+    private class ChainLoopDetector {
+       private boolean[] used_blocks;
+       private ChainLoopDetector() throws IOException {
+          used_blocks = new boolean[(int)(_data.size()/bigBlockSize.getBigBlockSize())];
+       }
+       private void claim(int offset) {
+          if(used_blocks[offset]) {
+             throw new IllegalStateException(
+                   "Potential loop detected - Block " + offset + 
+                   " was already claimed but was just requested again"
+             );
+          }
+          used_blocks[offset] = true;
+       }
     }
 
     /* ********** START begin implementation of POIFSViewable ********** */
