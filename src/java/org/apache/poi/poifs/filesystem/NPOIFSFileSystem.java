@@ -184,12 +184,18 @@ public class NPOIFSFileSystem
            _header = new HeaderBlock(headerBuffer);
    
            // We need to buffer the whole file into memory when
-           //  working with an InputStream. Do so now
-           int maxSize = _header.getBATCount() * 
+           //  working with an InputStream.
+           // The max possible size is when each BAT block entry is used
+           int maxSize = 
+                 _header.getBATCount() * 
                  _header.getBigBlockSize().getBATEntriesPerBlock() *
-                 _header.getBigBlockSize().getBigBlockSize();
+                 _header.getBigBlockSize().getBigBlockSize()
+           ;
            ByteBuffer data = ByteBuffer.allocate(maxSize);
+           // Copy in the header
            data.put(headerBuffer);
+           data.position(_header.getBigBlockSize().getBigBlockSize());
+           // Now read the rest of the stream
            IOUtils.readFully(channel, data);
            success = true;
            
@@ -260,14 +266,46 @@ public class NPOIFSFileSystem
        // Grab the block size
        bigBlockSize = _header.getBigBlockSize();
        
-       // Read the properties
-       // TODO
-       
        // Read the FAT blocks
-       // TODO
+       for(int fatAT : _header.getBATArray()) {
+          ByteBuffer fatData = getBlockAt(fatAT);
+          _blocks.add(BATBlock.createBATBlock(bigBlockSize, fatData));
+       }
        
        // Now read the XFAT blocks
+// TODO Corrupt / Loop checking       
+       BATBlock xfat; 
+       int nextAt = _header.getXBATIndex();
+       for(int i=0; i<_header.getXBATCount(); i++) {
+          ByteBuffer fatData = getBlockAt(nextAt);
+          xfat = BATBlock.createBATBlock(bigBlockSize, fatData);
+          nextAt = xfat.getValueAt(bigBlockSize.getNextXBATChainOffset());
+          
+          _blocks.add(xfat);
+       }
+       
+       // We're now able to load steams
+       // Use this to read in the properties
        // TODO
+// TODO With loop checking
+    }
+    
+    /**
+     * Load the block at the given offset.
+     */
+    protected ByteBuffer getBlockAt(final int offset) throws IOException {
+       ByteBuffer data = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
+       
+       // The header block doesn't count, so add one
+       long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
+       return _data.read(bigBlockSize.getBigBlockSize(), startAt);
+    }
+    /**
+     * Works out what block follows the specified one.
+     */
+    protected int getNextBlock(final int offset) {
+       // TODO
+       return -1;
     }
 
     /**

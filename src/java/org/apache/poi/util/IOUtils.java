@@ -105,7 +105,7 @@ public final class IOUtils {
 	public static int readFully(ReadableByteChannel channel, ByteBuffer b) throws IOException {
       int total = 0;
       while (true) {
-         int got = channel.read(b); 
+         int got = channel.read(b);
          if (got < 0) {
             return (total == 0) ? -1 : total;
          }

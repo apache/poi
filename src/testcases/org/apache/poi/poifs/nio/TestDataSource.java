@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.nio;
 
 import java.io.File;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import org.apache.poi.POIDataSamples;
@@ -40,20 +41,23 @@ public class TestDataSource extends TestCase
       assertEquals(8192, ds.size());
       
       // Start of file
-      ByteBuffer bs = ByteBuffer.allocate(4); 
-      ds.read(bs, 0);
+      ByteBuffer bs; 
+      bs = ds.read(4, 0);
       assertEquals(4, bs.capacity());
-      assertEquals(4, bs.position());
+      assertEquals(0, bs.position());
       assertEquals(0xd0-256, bs.get(0));
       assertEquals(0xcf-256, bs.get(1));
       assertEquals(0x11-000, bs.get(2));
       assertEquals(0xe0-256, bs.get(3));
+      assertEquals(0xd0-256, bs.get());
+      assertEquals(0xcf-256, bs.get());
+      assertEquals(0x11-000, bs.get());
+      assertEquals(0xe0-256, bs.get());
       
       // Mid way through
-      bs = ByteBuffer.allocate(8);
-      ds.read(bs, 0x400);
+      bs = ds.read(8, 0x400);
       assertEquals(8, bs.capacity());
-      assertEquals(8, bs.position());
+      assertEquals(0, bs.position());
       assertEquals((byte)'R', bs.get(0));
       assertEquals(0, bs.get(1));
       assertEquals((byte)'o', bs.get(2));
@@ -64,14 +68,12 @@ public class TestDataSource extends TestCase
       assertEquals(0, bs.get(7));
       
       // Can go to the end, but not past it
-      bs.clear();
-      ds.read(bs, 8190);
-      assertEquals(2, bs.position());
+      bs = ds.read(8, 8190);
+      assertEquals(0, bs.position()); // TODO How best to warn of a short read?
       
       // Can't go off the end
       try {
-         bs.clear();
-         ds.read(bs, 8192);
+         bs = ds.read(4, 8192);
          fail("Shouldn't be able to read off the end of the file");
       } catch(IllegalArgumentException e) {}
    }
@@ -87,70 +89,64 @@ public class TestDataSource extends TestCase
       ByteArrayBackedDataSource ds = new ByteArrayBackedDataSource(data);
       
       // Start
-      ByteBuffer bs = ByteBuffer.allocate(4); 
-      ds.read(bs, 0);
-      assertEquals(4, bs.capacity());
-      assertEquals(4, bs.position());
-      assertEquals(0x00, bs.get(0));
-      assertEquals(0x01, bs.get(1));
-      assertEquals(0x02, bs.get(2));
-      assertEquals(0x03, bs.get(3));
+      ByteBuffer bs; 
+      bs = ds.read(4, 0);
+      assertEquals(0, bs.position());
+      assertEquals(0x00, bs.get());
+      assertEquals(0x01, bs.get());
+      assertEquals(0x02, bs.get());
+      assertEquals(0x03, bs.get());
       
       // Middle
-      bs.clear(); 
-      ds.read(bs, 100);
-      assertEquals(4, bs.capacity());
-      assertEquals(4, bs.position());
-      assertEquals(100, bs.get(0));
-      assertEquals(101, bs.get(1));
-      assertEquals(102, bs.get(2));
-      assertEquals(103, bs.get(3));
+      bs = ds.read(4, 100);
+      assertEquals(100, bs.position());
+      assertEquals(100, bs.get());
+      assertEquals(101, bs.get());
+      assertEquals(102, bs.get());
+      assertEquals(103, bs.get());
       
       // End
-      bs.clear(); 
-      ds.read(bs, 252);
-      assertEquals(4, bs.capacity());
-      assertEquals(4, bs.position());
-      assertEquals(-4, bs.get(0));
-      assertEquals(-3, bs.get(1));
-      assertEquals(-2, bs.get(2));
-      assertEquals(-1, bs.get(3));
+      bs = ds.read(4, 252);
+      assertEquals(-4, bs.get());
+      assertEquals(-3, bs.get());
+      assertEquals(-2, bs.get());
+      assertEquals(-1, bs.get());
       
       // Off the end
-      bs.clear(); 
-      ds.read(bs, 254);
-      assertEquals(4, bs.capacity());
-      assertEquals(2, bs.position());
-      assertEquals(-2, bs.get(0));
-      assertEquals(-1, bs.get(1));
+      bs = ds.read(4, 254);
+      assertEquals(-2, bs.get());
+      assertEquals(-1, bs.get());
+      try {
+         bs.get();
+         fail("Shouldn't be able to read off the end");
+      } catch(BufferUnderflowException e) {}
 
       // Past the end
-      bs.clear(); 
       try {
-         ds.read(bs, 256);
+         bs = ds.read(4, 256);
          fail("Shouldn't be able to read off the end");
       } catch(IndexOutOfBoundsException e) {}
       
       
       // Overwrite
-      bs.clear();
+      bs = ByteBuffer.allocate(4);
       bs.put(0, (byte)-55);
       bs.put(1, (byte)-54);
       bs.put(2, (byte)-53);
       bs.put(3, (byte)-52);
       
+      assertEquals(256, ds.size());
       ds.write(bs, 40);
-      bs.clear();
-      ds.read(bs, 40);
+      assertEquals(256, ds.size());
+      bs = ds.read(4, 40);
       
-      assertEquals(4, bs.position());
-      assertEquals(-55, bs.get(0));
-      assertEquals(-54, bs.get(1));
-      assertEquals(-53, bs.get(2));
-      assertEquals(-52, bs.get(3));
+      assertEquals(-55, bs.get());
+      assertEquals(-54, bs.get());
+      assertEquals(-53, bs.get());
+      assertEquals(-52, bs.get());
       
       // Append
-      bs.clear();
+      bs = ByteBuffer.allocate(4);
       bs.put(0, (byte)-55);
       bs.put(1, (byte)-54);
       bs.put(2, (byte)-53);
@@ -160,12 +156,11 @@ public class TestDataSource extends TestCase
       ds.write(bs, 256);
       assertEquals(260, ds.size());
       
-      bs.clear();
-      ds.read(bs, 256);
-      assertEquals(4, bs.position());
-      assertEquals(-55, bs.get(0));
-      assertEquals(-54, bs.get(1));
-      assertEquals(-53, bs.get(2));
-      assertEquals(-52, bs.get(3));
+      bs = ds.read(4, 256);
+      assertEquals(256, bs.position());
+      assertEquals(-55, bs.get());
+      assertEquals(-54, bs.get());
+      assertEquals(-53, bs.get());
+      assertEquals(-52, bs.get());
    }
 }
