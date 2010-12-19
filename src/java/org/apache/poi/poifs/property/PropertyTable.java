@@ -32,7 +32,7 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
  * This class embodies the Property Table for the filesystem; this is
- * basically the dsirectory for all of the documents in the
+ * basically the directory for all of the documents in the
  * filesystem.
  *
  * @author Marc Johnson (mjohnson at apache dot org)

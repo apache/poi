@@ -28,7 +28,7 @@ import org.apache.poi.poifs.storage.ListManagedBlock;
 
 /**
  * Factory for turning an array of RawDataBlock instances containing
- * Proprty data into an array of proper Property objects.
+ * Property data into an array of proper Property objects.
  *
  * The array produced may be sparse, in that any portion of data that
  * should correspond to a Property, but which does not map to a proper
