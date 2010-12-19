@@ -17,17 +17,6 @@
 
 package org.apache.poi.poifs.storage;
 
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._bat_array_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._bat_count_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._max_bats_in_header;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._property_start_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._sbat_start_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._sbat_block_count_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._signature;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._signature_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._xbat_count_offset;
-import static org.apache.poi.poifs.storage.HeaderBlockConstants._xbat_start_offset;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +26,6 @@ import java.util.Arrays;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IntegerField;
@@ -51,7 +39,7 @@ import org.apache.poi.util.ShortField;
 /**
  * The block containing the archive header
  */
-public final class HeaderBlock {
+public final class HeaderBlock implements HeaderBlockConstants {
    private static final POILogger _logger =
       POILogFactory.getLogger(HeaderBlock.class);
    
@@ -183,7 +171,7 @@ public final class HeaderBlock {
    /**
     * Create a single instance initialized with default values
     */
-   public HeaderBlock(POIFSBigBlockSize bigBlockSize) throws IOException
+   public HeaderBlock(POIFSBigBlockSize bigBlockSize)
    {
       this.bigBlockSize = bigBlockSize;
 
@@ -255,6 +243,14 @@ public final class HeaderBlock {
 	public int getPropertyStart() {
 		return _property_start;
 	}
+   /**
+    * Set start of Property Table
+    *
+    * @param startBlock the index of the first block of the Property Table
+    */
+   public void setPropertyStart(final int startBlock) {
+       _property_start = startBlock;
+   }
 
 	/**
 	 * @return start of small block (MiniFAT) allocation table
@@ -265,6 +261,25 @@ public final class HeaderBlock {
 	public int getSBATCount() {
 	   return _sbat_count;
 	}
+	
+   /**
+    * Set start of small block allocation table
+    *
+    * @param startBlock the index of the first big block of the small
+    *                   block allocation table
+    */
+   public void setSBATStart(final int startBlock) {
+       _sbat_start = startBlock;
+   }
+   /**
+    * Set count of SBAT blocks
+    *
+    * @param count the number of SBAT blocks
+    */
+   public void setSBATBlockCount(final int count)
+   {
+      _sbat_count = count;
+   }
 
 	/**
 	 * @return number of BAT blocks
@@ -272,6 +287,13 @@ public final class HeaderBlock {
 	public int getBATCount() {
 		return _bat_count;
 	}
+   /**
+    * Sets the number of BAT blocks that are used.
+    * This is the number used in both the BAT and XBAT. 
+    */
+   public void setBATCount(final int count) {
+      _bat_count = count;
+   }
 
 	/**
 	 * Returns the offsets to the first (up to) 109
@@ -282,13 +304,31 @@ public final class HeaderBlock {
 	 */
 	public int[] getBATArray() {
       // Read them in
-		int[] result = new int[ _bat_count ];
+		int[] result = new int[ Math.min(_bat_count,_max_bats_in_header) ];
 		int offset = _bat_array_offset;
 		for (int j = 0; j < _bat_count; j++) {
 			result[ j ] = LittleEndian.getInt(_data, offset);
 			offset     += LittleEndianConsts.INT_SIZE;
 		}
 		return result;
+	}
+	/**
+	 * Sets the offsets of the first (up to) 109
+	 *  BAT sectors.
+	 */
+	public void setBATArray(int[] bat_array) {
+	   int count = Math.min(bat_array.length, _max_bats_in_header);
+	   int blank = _max_bats_in_header - count;
+	   
+      int offset = _bat_array_offset;
+	   for(int i=0; i<count; i++) {
+	      LittleEndian.putInt(_data, offset, bat_array[i]);
+         offset += LittleEndianConsts.INT_SIZE;
+	   }
+	   for(int i=0; i<blank; i++) {
+         LittleEndian.putInt(_data, offset, POIFSConstants.UNUSED_BLOCK);
+         offset += LittleEndianConsts.INT_SIZE;
+	   }
 	}
 
 	/**
@@ -297,6 +337,12 @@ public final class HeaderBlock {
 	public int getXBATCount() {
 		return _xbat_count;
 	}
+	/**
+	 * Sets the number of XBAT (DIFAT) blocks used
+	 */
+	public void setXBATCount(final int count) {
+	   _xbat_count = count;
+	}
 
 	/**
 	 * @return XBAT (DIFAT) index
@@ -304,6 +350,12 @@ public final class HeaderBlock {
 	public int getXBATIndex() {
 		return _xbat_start;
 	}
+	/**
+	 * Sets the first XBAT (DIFAT) block location
+	 */
+   public void setXBATStart(final int startBlock) {
+      _xbat_start = startBlock;
+  }
 
 	/**
 	 * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
@@ -336,7 +388,7 @@ public final class HeaderBlock {
       stream.write(_data, 0, 512);
       
       // Now do the padding if needed
-      for(int i=POIFSConstants.SMALLER_BIG_BLOCK_SIZE; i<POIFSConstants.LARGER_BIG_BLOCK_SIZE; i++) {
+      for(int i=POIFSConstants.SMALLER_BIG_BLOCK_SIZE; i<bigBlockSize.getBigBlockSize(); i++) {
          stream.write(0);
       }
    }
