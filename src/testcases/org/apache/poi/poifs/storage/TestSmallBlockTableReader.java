@@ -302,9 +302,13 @@ public final class TestSmallBlockTableReader extends TestCase {
 		// need to initialize the block list with a block allocation
 		// table
 		new BlockAllocationTableReader(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, bat_array, 0, -2, data_blocks);
+		
+		// Fake up a header
+		HeaderBlock header_block = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+		header_block.setPropertyStart(0);
 
 		// get property table from the document
-		PropertyTable properties = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0, data_blocks);
+		PropertyTable properties = new PropertyTable(header_block, data_blocks);
 		RootProperty root = properties.getRoot();
 		BlockList bl = SmallBlockTableReader.getSmallDocumentBlocks(
 		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, data_blocks, root, 14);

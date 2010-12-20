@@ -156,9 +156,7 @@ public class POIFSFileSystem
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(bigBlockSize,
-                              header_block.getPropertyStart(),
-                              data_blocks);
+            new PropertyTable(header_block, data_blocks);
 
         // init documents
         processProperties(

@@ -27,6 +27,7 @@ import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.BlockWritable;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.PropertyBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
@@ -63,17 +64,16 @@ public final class PropertyTable implements BATManaged, BlockWritable {
      * @exception IOException if anything goes wrong (which should be
      *            a result of the input being NFG)
      */
-    public PropertyTable(final POIFSBigBlockSize bigBlockSize,
-                         final int startBlock,
+    public PropertyTable(final HeaderBlock headerBlock,
                          final RawDataBlockList blockList)
         throws IOException
     {
-        _bigBigBlockSize = bigBlockSize;
+        _bigBigBlockSize = headerBlock.getBigBlockSize();
         _start_block = POIFSConstants.END_OF_CHAIN;
         _blocks      = null;
-        _properties  =
-            PropertyFactory
-                .convertToProperties(blockList.fetchBlocks(startBlock, -1));
+        _properties  = PropertyFactory.convertToProperties(
+              blockList.fetchBlocks(headerBlock.getPropertyStart(), -1)
+        );
         populatePropertyTree(( DirectoryProperty ) _properties.get(0));
     }
 
@@ -114,7 +114,7 @@ public final class PropertyTable implements BATManaged, BlockWritable {
      */
     public void preWrite()
     {
-        Property[] properties = _properties.toArray(new Property[ 0 ]);
+        Property[] properties = _properties.toArray(new Property[_properties.size()]);
 
         // give each property its index
         for (int k = 0; k < properties.length; k++)

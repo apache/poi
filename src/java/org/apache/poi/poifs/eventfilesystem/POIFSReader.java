@@ -78,7 +78,7 @@ public class POIFSReader
         HeaderBlock header_block = new HeaderBlock(stream);
 
         // read the rest of the stream into blocks
-        RawDataBlockList  data_blocks         = new RawDataBlockList(stream, header_block.getBigBlockSize());
+        RawDataBlockList data_blocks = new RawDataBlockList(stream, header_block.getBigBlockSize());
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
@@ -91,9 +91,7 @@ public class POIFSReader
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block.getBigBlockSize(),
-                              header_block.getPropertyStart(),
-                              data_blocks);
+            new PropertyTable(header_block, data_blocks);
 
         // process documents
         processProperties(SmallBlockTableReader
