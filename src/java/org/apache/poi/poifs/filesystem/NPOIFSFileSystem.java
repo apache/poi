@@ -102,9 +102,10 @@ public class NPOIFSFileSystem
      */
     public NPOIFSFileSystem()
     {
-        _property_table = new PropertyTable(bigBlockSize);
-        _blocks = new ArrayList<BATBlock>();
-        _root   = null;
+        _header         = new HeaderBlock(bigBlockSize);
+        _property_table = new PropertyTable(_header);// TODO Needs correct type
+        _blocks         = new ArrayList<BATBlock>();
+        _root           = null;
     }
 
     /**
