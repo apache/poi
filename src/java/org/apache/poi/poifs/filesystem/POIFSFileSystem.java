@@ -90,7 +90,8 @@ public class POIFSFileSystem
      */
     public POIFSFileSystem()
     {
-        _property_table = new PropertyTable(bigBlockSize);
+        HeaderBlock header_block = new HeaderBlock(bigBlockSize);
+        _property_table = new PropertyTable(header_block);
         _documents      = new ArrayList();
         _root           = null;
     }

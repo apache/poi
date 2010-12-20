@@ -71,7 +71,8 @@ public final class TestPropertyTable extends TestCase {
 	public void testWriterPropertyTable() throws IOException {
 
 		// create the PropertyTable
-		PropertyTable table = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+	   HeaderBlock   headerBlock = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+		PropertyTable table = new PropertyTable(headerBlock);
 
 		// create three DocumentProperty instances and add them to the
 		// PropertyTable

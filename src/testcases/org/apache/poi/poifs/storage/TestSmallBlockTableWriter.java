@@ -75,7 +75,9 @@ public final class TestSmallBlockTableWriter extends TestCase {
         documents
             .add(new POIFSDocument("doc9",
                                    new ByteArrayInputStream(new byte[ 9 ])));
-        RootProperty               root = new PropertyTable(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS).getRoot();
+        
+        HeaderBlock              header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+        RootProperty               root = new PropertyTable(header).getRoot();
         SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(
               POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, documents,root);
         BlockAllocationTableWriter bat  = sbtw.getSBAT();

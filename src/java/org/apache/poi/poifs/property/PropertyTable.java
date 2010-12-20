@@ -19,13 +19,8 @@ package org.apache.poi.poifs.property;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.PropertyBlock;
@@ -38,18 +33,14 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-public final class PropertyTable implements BATManaged, BlockWritable {
+public final class PropertyTable extends PropertyTableBase implements BlockWritable {
     private POIFSBigBlockSize _bigBigBlockSize;
-    private int               _start_block;
-    private List<Property>    _properties;
     private BlockWritable[]   _blocks;
 
-    public PropertyTable(POIFSBigBlockSize bigBlockSize)
+    public PropertyTable(HeaderBlock headerBlock)
     {
-        _bigBigBlockSize = bigBlockSize;
-        _start_block = POIFSConstants.END_OF_CHAIN;
-        _properties  = new ArrayList<Property>();
-        addProperty(new RootProperty());
+        super(headerBlock);
+        _bigBigBlockSize = headerBlock.getBigBlockSize();
         _blocks = null;
     }
 
@@ -68,45 +59,14 @@ public final class PropertyTable implements BATManaged, BlockWritable {
                          final RawDataBlockList blockList)
         throws IOException
     {
-        _bigBigBlockSize = headerBlock.getBigBlockSize();
-        _start_block = POIFSConstants.END_OF_CHAIN;
-        _blocks      = null;
-        _properties  = PropertyFactory.convertToProperties(
-              blockList.fetchBlocks(headerBlock.getPropertyStart(), -1)
+        super(
+              headerBlock,
+              PropertyFactory.convertToProperties(
+                    blockList.fetchBlocks(headerBlock.getPropertyStart(), -1)
+              )
         );
-        populatePropertyTree(( DirectoryProperty ) _properties.get(0));
-    }
-
-    /**
-     * Add a property to the list of properties we manage
-     *
-     * @param property the new Property to manage
-     */
-    public void addProperty(Property property)
-    {
-        _properties.add(property);
-    }
-
-    /**
-     * Remove a property from the list of properties we manage
-     *
-     * @param property the Property to be removed
-     */
-    public void removeProperty(final Property property)
-    {
-        _properties.remove(property);
-    }
-
-    /**
-     * Get the root property
-     *
-     * @return the root property
-     */
-    public RootProperty getRoot()
-    {
-
-        // it's always the first element in the List
-        return ( RootProperty ) _properties.get(0);
+        _bigBigBlockSize = headerBlock.getBigBlockSize();
+        _blocks      = null;
     }
 
     /**
@@ -131,53 +91,7 @@ public final class PropertyTable implements BATManaged, BlockWritable {
             properties[ k ].preWrite();
         }
     }
-
-    /**
-     * Get the start block for the property table
-     *
-     * @return start block index
-     */
-    public int getStartBlock()
-    {
-        return _start_block;
-    }
-
-    private void populatePropertyTree(DirectoryProperty root)
-        throws IOException
-    {
-        int index = root.getChildIndex();
-
-        if (!Property.isValidIndex(index))
-        {
-
-            // property has no children
-            return;
-        }
-        Stack<Property> children = new Stack<Property>();
-
-        children.push(_properties.get(index));
-        while (!children.empty())
-        {
-            Property property = children.pop();
-
-            root.addChild(property);
-            if (property.isDirectory())
-            {
-                populatePropertyTree(( DirectoryProperty ) property);
-            }
-            index = property.getPreviousChildIndex();
-            if (Property.isValidIndex(index))
-            {
-                children.push(_properties.get(index));
-            }
-            index = property.getNextChildIndex();
-            if (Property.isValidIndex(index))
-            {
-                children.push(_properties.get(index));
-            }
-        }
-    }
-
+    
     /**
      * Return the number of BigBlock's this instance uses
      *
@@ -187,17 +101,6 @@ public final class PropertyTable implements BATManaged, BlockWritable {
     {
         return (_blocks == null) ? 0
                                  : _blocks.length;
-    }
-
-    /**
-     * Set the start block for this instance
-     *
-     * @param index index into the array of BigBlock instances making
-     *              up the the filesystem
-     */
-    public void setStartBlock(final int index)
-    {
-        _start_block = index;
     }
 
     /**
