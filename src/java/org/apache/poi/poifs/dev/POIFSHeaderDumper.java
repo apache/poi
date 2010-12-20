@@ -83,10 +83,7 @@ public class POIFSHeaderDumper {
 
       // Properties Table
       PropertyTable properties =
-         new PropertyTable(
-               header_block.getBigBlockSize(),
-               header_block.getPropertyStart(),
-               data_blocks);
+         new PropertyTable(header_block, data_blocks);
       
       // Mini Fat
       BlockList sbat = 
