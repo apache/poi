@@ -24,17 +24,24 @@ import java.util.List;
 /**
  * Collection of convenience chunks for standard parts of the MSG file.
  * 
- * Not all of these will be present in any given file
+ * Not all of these will be present in any given file.
+ * 
+ * A partial list is available at:
+ *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public final class Chunks implements ChunkGroup {
    /* String parts of Outlook Messages that are currently known */
    public static final int MESSAGE_CLASS       = 0x001A;
    public static final int SUBJECT             = 0x0037;
    // "PidTagMessageSubmissionId" as given by accepting server
+   public static final int RECEIVED_REPRESENTING_NAME = 0x0044;
    public static final int SUBMISSION_ID_DATE  = 0x0047;
    // 0x0050 -> 0x006F seem to be routing info or similar
    public static final int CONVERSATION_TOPIC  = 0x0070;
+   public static final int CONVERSATION_INDEX  = 0x0071;
    public static final int SENT_BY_SERVER_TYPE = 0x0075;
+   public static final int RECEIVED_BY_ADDRESS = 0x0076;
+   public static final int RECEIVED_REPRESENTING_ADDRESS = 0x0078;
    public static final int MESSAGE_HEADERS     = 0x007D;
    // RECEIVEDEMAIL = 76
    public static final int DISPLAY_TO          = 0x0E04;
@@ -45,6 +52,7 @@ public final class Chunks implements ChunkGroup {
    // 0x0E1D seems a duplicate of 0x0070 !
    public static final int TEXT_BODY           = 0x1000;
    public static final int MESSAGE_ID          = 0x1035;
+   // 0x8??? ones are outlook specific, and not standard MAPI
    
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
