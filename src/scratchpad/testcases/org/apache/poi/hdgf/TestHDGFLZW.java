@@ -139,9 +139,9 @@ public final class TestHDGFLZW extends TestCase {
 		assertEquals(339, testTrailerComp.length);
 		assertEquals(632, testTrailerDecomp.length);
 
-		// Decode it using our engine
+		// decompress it using our engine
 		HDGFLZW lzw = new HDGFLZW();
-		byte[] dec = lzw.decode(new ByteArrayInputStream(testTrailerComp));
+		byte[] dec = lzw.decompress(new ByteArrayInputStream(testTrailerComp));
 
 		// Check it's of the right size
 		assertEquals(632, dec.length);
@@ -159,9 +159,9 @@ public final class TestHDGFLZW extends TestCase {
 		assertEquals(339, testTrailerComp.length);
 		assertEquals(632, testTrailerDecomp.length);
 
-		// Decode it using our engine
+		// decompress it using our engine
 		HDGFLZW lzw = new HDGFLZW();
-		byte[] dec = lzw.decode(new ByteArrayInputStream(testTrailerComp));
+		byte[] dec = lzw.decompress(new ByteArrayInputStream(testTrailerComp));
 
 		// Now check it's the right data
 		assertEquals(632, dec.length);
@@ -188,7 +188,7 @@ public final class TestHDGFLZW extends TestCase {
 		byte[] comp = lzw.compress(new ByteArrayInputStream(sourceDecomp));
 		
 		// Now decompress it again
-		byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
+		byte[] decomp = lzw.decompress(new ByteArrayInputStream(comp));
 
 		// First up, check the round tripping
 		assertEquals(12, decomp.length);
@@ -223,7 +223,7 @@ public final class TestHDGFLZW extends TestCase {
       assertEquals(27, comp.length);
       
       // Now decompress it again
-      byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
+      byte[] decomp = lzw.decompress(new ByteArrayInputStream(comp));
 
       // We can only check the round-tripping, as for now
       //  visio cheats on re-using a block
@@ -246,7 +246,7 @@ public final class TestHDGFLZW extends TestCase {
       byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
       
       // Now decompress it again
-      byte[] decomp = lzw.decode(new ByteArrayInputStream(comp));
+      byte[] decomp = lzw.decompress(new ByteArrayInputStream(comp));
 
 //      for(int i=0; i<comp.length; i++) {
 //         System.err.println(i + "\t" + comp[i] + "\t" + testTrailerComp[i]);
