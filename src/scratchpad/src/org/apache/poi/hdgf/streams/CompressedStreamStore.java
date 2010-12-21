@@ -78,7 +78,7 @@ public final class CompressedStreamStore extends StreamStore {
 
 		// Decompress
 		HDGFLZW lzw = new HDGFLZW();
-		byte[] decompressed = lzw.decode(bais);
+		byte[] decompressed = lzw.decompress(bais);
 
 		// Split into header and contents
 		byte[][] ret = new byte[2][];
