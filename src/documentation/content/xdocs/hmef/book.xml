@@ -20,14 +20,14 @@
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
 
 <book software="POI Project"
-    title="HDGF"
+    title="HMEF"
     copyright="@year@ POI Project">
 
     <menu label="Apache POI">
         <menu-item label="Top" href="../index.html"/>
     </menu>
 
-    <menu label="HDGF">
+    <menu label="HMEF">
         <menu-item label="Overview" href="index.html"/>
 	</menu>
 	

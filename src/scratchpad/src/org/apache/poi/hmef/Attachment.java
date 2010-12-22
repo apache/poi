@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,20 +13,25 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+==================================================================== */
 
-<book software="POI Project"
-    title="HDGF"
-    copyright="@year@ POI Project">
+package org.apache.poi.hmef;
 
-    <menu label="Apache POI">
-        <menu-item label="Top" href="../index.html"/>
-    </menu>
+import java.util.ArrayList;
+import java.util.List;
 
-    <menu label="HDGF">
-        <menu-item label="Overview" href="index.html"/>
-	</menu>
-	
-</book>
+
+/**
+ * An attachment within a {@link HMEFMessage}
+ */
+public final class Attachment {
+   private final List<Attribute> attributes = new ArrayList<Attribute>();
+   
+   protected void addAttribute(Attribute attr) {
+      attributes.add(attr);
+   }
+   
+   public List<Attribute> getAttributes() {
+      return attributes;
+   }
+}
