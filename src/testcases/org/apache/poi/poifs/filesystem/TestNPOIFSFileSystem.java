@@ -17,20 +17,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.RawDataBlockList;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Tests for the new NIO POIFSFileSystem implementation
@@ -80,5 +70,52 @@ public final class TestNPOIFSFileSystem extends TestCase {
          // Check the properties
          // TODO
       }
+   }
+   
+   /**
+    * Check that for a given block, we can correctly figure
+    *  out what the next one is
+    */
+   public void testNextBlock() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      
+      // 0 -> 21 are simple
+      for(int i=0; i<21; i++) {
+         assertEquals(i+1, fs.getNextBlock(i));
+      }
+      // 21 jumps to 89, then ends
+      assertEquals(89, fs.getNextBlock(21));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(89));
+      
+      // 22 -> 88 simple sequential stream
+      for(int i=22; i<88; i++) {
+         assertEquals(i+1, fs.getNextBlock(i));
+      }
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(88));
+      
+      // 90 -> 96 is another stream
+      for(int i=90; i<96; i++) {
+         assertEquals(i+1, fs.getNextBlock(i));
+      }
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(96));
+      
+      // 97+98 is another
+      assertEquals(98, fs.getNextBlock(97));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
+      
+      // 99 is our FAT block
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      
+      // 100 onwards is free
+      for(int i=100; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
+         assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
+      }
+   }
+
+   /**
+    * Check we get the right data back for each block
+    */
+   public void testGetBlock() throws Exception {
+      // TODO
    }
 }

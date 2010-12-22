@@ -56,6 +56,7 @@ import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
+import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
@@ -81,10 +82,10 @@ public class NPOIFSFileSystem
        return new CloseIgnoringInputStream(is);
     }
    
-    private PropertyTable _property_table;
-	 private List<BATBlock> _blocks;
-    private HeaderBlock   _header;
-    private DirectoryNode _root;
+    private PropertyTable  _property_table;
+	 private List<BATBlock> _bat_blocks;
+    private HeaderBlock    _header;
+    private DirectoryNode  _root;
     
     private DataSource _data;
     
@@ -104,7 +105,7 @@ public class NPOIFSFileSystem
     {
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(_header);// TODO Needs correct type
-        _blocks         = new ArrayList<BATBlock>();
+        _bat_blocks     = new ArrayList<BATBlock>();
         _root           = null;
     }
 
@@ -187,11 +188,7 @@ public class NPOIFSFileSystem
            // We need to buffer the whole file into memory when
            //  working with an InputStream.
            // The max possible size is when each BAT block entry is used
-           int maxSize = 
-                 _header.getBATCount() * 
-                 _header.getBigBlockSize().getBATEntriesPerBlock() *
-                 _header.getBigBlockSize().getBigBlockSize()
-           ;
+           int maxSize = BATBlock.calculateMaximumSize(_header); 
            ByteBuffer data = ByteBuffer.allocate(maxSize);
            // Copy in the header
            data.put(headerBuffer);
@@ -275,7 +272,7 @@ public class NPOIFSFileSystem
        for(int fatAt : _header.getBATArray()) {
           loopDetector.claim(fatAt);
           ByteBuffer fatData = getBlockAt(fatAt);
-          _blocks.add(BATBlock.createBATBlock(bigBlockSize, fatData));
+          _bat_blocks.add(BATBlock.createBATBlock(bigBlockSize, fatData));
        }
        
        // Now read the XFAT blocks
@@ -287,7 +284,7 @@ public class NPOIFSFileSystem
           xfat = BATBlock.createBATBlock(bigBlockSize, fatData);
           nextAt = xfat.getValueAt(bigBlockSize.getNextXBATChainOffset());
           
-          _blocks.add(xfat);
+          _bat_blocks.add(xfat);
        }
        
        // We're now able to load steams
@@ -305,10 +302,41 @@ public class NPOIFSFileSystem
        long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
        return _data.read(bigBlockSize.getBigBlockSize(), startAt);
     }
+    
+    /**
+     * Returns the BATBlock that handles the specified offset,
+     *  and the relative index within it
+     */
+    protected BATBlockAndIndex getBATBlockAndIndex(final int offset) {
+       return BATBlock.getBATBlockAndIndex(
+             offset, _header, _bat_blocks
+       );
+    }
+    
     /**
      * Works out what block follows the specified one.
      */
     protected int getNextBlock(final int offset) {
+       BATBlockAndIndex bai = getBATBlockAndIndex(offset);
+       return bai.getBlock().getValueAt( bai.getIndex() );
+    }
+    
+    /**
+     * Changes the record of what block follows the specified one.
+     */
+    protected void setNextBlock(final int offset, final int nextBlock) {
+       BATBlockAndIndex bai = getBATBlockAndIndex(offset);
+       bai.getBlock().setValueAt(
+             bai.getIndex(), nextBlock
+       );
+    }
+    
+    /**
+     * Finds a free block, and returns its offset.
+     * This method will extend the file if needed, and if doing
+     *  so, allocate new FAT blocks to address the extra space.
+     */
+    protected int getFreeBlock() {
        // TODO
        return -1;
     }
