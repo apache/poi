@@ -107,6 +107,17 @@
 	    information</link>.
 	</p>
       </section>
+      <section><title>HMEF for TNEF (winmail.dat) Outlook Attachments</title>
+	<p>
+     HMEF is our port of the Microsoft TNEF (Transport Neutral Encoding
+     Format) file format to pure Java. TNEF is sometimes used by Outlook
+     for encoding the message, and will typically come through as
+     winmail.dat. HMEF currently only supports reading at a low level, but
+     we hope to add text and attachment extraction shortly. Please see <link
+	    href="./hmef/index.html">the HMEF project page for more
+	    information</link>.
+	</p>
+      </section>
       <section><title>HSMF for Outlook Messages</title>
 	<p>
 	  HSMF is our port of the Microsoft Outlook message file format to pure

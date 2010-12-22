@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HMEF - Java API To Access Microsoft Transport Neutral Encoding Files (TNEF)</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at apache dot org"/>
+        </authors>
+    </header>
+
+    <body>
+       <section>
+         <title>Overview</title>
+
+         <p>HMEF is the POI Project's pure Java implementation of the 
+            TNEF (Transport Neurtral Encoding Format), aka winmail.dat,
+            which is used by Outlook and Exchange in some situations.</p>
+          <p>Currently, HMEF provides a low-level, read-only api for 
+            accessing core TNEF attributes. Embedded MAPI attributes
+            are not yet processed, and attachments are not properly
+            handled either.</p>
+          <p>HMEF is currently very much a work-in-progress, and we hope
+            to add a text extractor and attachment extractor in the not
+            too distant future.</p>
+			<p>To get a feel for the contents of a file, and to track down
+			 where data of interest is stored, HMEF comes with
+			 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/src/org/apache/poi/hmef/dev/">HMEFDumper</link>
+			 to print out the contents of the file.</p>
+        <note> 
+          This code currently lives the 
+          <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
+          of the POI SVN repository. 
+          Ensure that you have the scratchpad jar or the scratchpad 
+          build area in your classpath before experimenting with this code.
+        </note>
+
+       </section>
+    </body>
+</document>

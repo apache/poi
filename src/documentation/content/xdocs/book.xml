@@ -57,6 +57,7 @@
         <menu-item label="OLE2 Document Props (HPSF)" href="hpsf/index.html"/>
         <menu-item label="Outlook (HSMF)" href="hsmf/index.html"/>
         <menu-item label="Visio (HDGF)" href="hdgf/index.html"/>
+        <menu-item label="TNEF (HMEF)" href="hmef/index.html"/>
         <menu-item label="Publisher (HPBF)" href="hpbf/index.html"/>
     </menu>
 
