@@ -19,7 +19,10 @@ package org.apache.poi.poifs.storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 
@@ -207,5 +210,176 @@ public final class TestBATBlock extends TestCase {
     }
     public void testGetXBATChainOffset() {
         assertEquals(508, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS.getNextXBATChainOffset());
+    }
+    
+    public void testCalculateMaximumSize() throws Exception {
+       // Zero fat blocks isn't technically valid, but it'd be header only
+       assertEquals(
+             512, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0, 0)
+       );
+       assertEquals(
+             4096, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 0, 0)
+       );
+       
+       // A single FAT block can address 128/1024 blocks
+       assertEquals(
+             512 + 512*128, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, 0)
+       );
+       assertEquals(
+             4096 + 4096*1024, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 1, 0)
+       );
+       
+       assertEquals(
+             512 + 4*512*128, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 4, 0)
+       );
+       assertEquals(
+             4096 + 4*4096*1024, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 4, 0)
+       );
+       
+       // Once we get into XBAT blocks, they address a little bit less
+       assertEquals(
+             512 + 109*512*128, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 0)
+       );
+       assertEquals(
+             4096 + 109*4096*1024, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 0)
+       );
+             
+       assertEquals(
+             512 + 109*512*128 + 512*127, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 1)
+       );
+       assertEquals(
+             4096 + 109*4096*1024 + 4096*1023, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 1)
+       );
+       
+       assertEquals(
+             512 + 109*512*128 + 3*512*127, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 3)
+       );
+       assertEquals(
+             4096 + 109*4096*1024 + 3*4096*1023, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 3)
+       );
+    }
+    
+    public void testGetBATBlockAndIndex() throws Exception {
+       HeaderBlock header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+       List<BATBlock> blocks = new ArrayList<BATBlock>();
+       int offset;
+       
+       
+       // First, try a one BAT block file
+       header.setBATCount(1);
+       blocks.add(
+             BATBlock.createBATBlock(header.getBigBlockSize(), ByteBuffer.allocate(512))
+       );
+       
+       offset = 0;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1;
+       assertEquals(1, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 127;
+       assertEquals(127, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       
+       // Now go for one with multiple BAT blocks
+       header.setBATCount(2);
+       blocks.add(
+             BATBlock.createBATBlock(header.getBigBlockSize(), ByteBuffer.allocate(512))
+       );
+       
+       offset = 0;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 127;
+       assertEquals(127, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 128;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 129;
+       assertEquals(1, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       
+       // And finally one with XBATs too
+       // This is a naughty file, but we should be able to cope...
+       // (We'll decide everything is XBAT not BAT)
+       header.setBATCount(0);
+       offset = 0;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 126;
+       assertEquals(126, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 127;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 128;
+       assertEquals(1, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 129;
+       assertEquals(2, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       
+       // Check with the bigger block size too
+       header = new HeaderBlock(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS);
+       
+       offset = 0;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1022;
+       assertEquals(1022, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1023;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1024;
+       assertEquals(1, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+
+       // Biggr block size, back to real BATs
+       header.setBATCount(2);
+       
+       offset = 0;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1022;
+       assertEquals(1022, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1023;
+       assertEquals(1023, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(0, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
+       
+       offset = 1024;
+       assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
+       assertEquals(1, blocks.indexOf( BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock() ));
     }
 }

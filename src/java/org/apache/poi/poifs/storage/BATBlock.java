@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -194,7 +195,6 @@ public final class BATBlock extends BigBlock {
      *
      * @return the number of BATBlocks needed
      */
-
     public static int calculateStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
     {
         int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
@@ -209,14 +209,62 @@ public final class BATBlock extends BigBlock {
      *
      * @return the number of XBATBlocks needed
      */
-
     public static int calculateXBATStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
     {
         int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
         return (entryCount + _entries_per_xbat_block - 1)
                / _entries_per_xbat_block;
     }
+    
+    /**
+     * Calculates the maximum size of a file which is addressable given the
+     *  number of FAT (BAT and XBAT) sectors specified.
+     * The actual file size will be between [size of fatCount-1 blocks] and
+     *  [size of fatCount blocks].
+     * For 512 byte block sizes, this means we may over-estimate by up to 65kb.
+     * For 4096 byte block sizes, this means we may over-estimate by up to 4mb
+     */
+    public static int calculateMaximumSize(final POIFSBigBlockSize bigBlockSize,
+          final int numBAT, final int numXBAT) {
+       int size = 1; // Header isn't FAT addressed
+       size += (numBAT * bigBlockSize.getBATEntriesPerBlock());
+       size += (numXBAT * bigBlockSize.getXBATEntriesPerBlock());
+       return size * bigBlockSize.getBigBlockSize();
+    }
+    public static int calculateMaximumSize(final HeaderBlock header)
+    {
+       return calculateMaximumSize(header.getBigBlockSize(), header.getBATCount(), header.getXBATCount());
+    }
 
+    /**
+     * Returns the BATBlock that handles the specified offset,
+     *  and the relative index within it.
+     * The List of BATBlocks must be in sequential order
+     */
+    public static BATBlockAndIndex getBATBlockAndIndex(final int offset, 
+                final HeaderBlock header, final List<BATBlock> blocks) {
+       POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
+       
+       // Are we in the BAT or XBAT range
+       int batRangeEndsAt = bigBlockSize.getBATEntriesPerBlock() *
+                            header.getBATCount();
+       
+       if(offset < batRangeEndsAt) {
+          int whichBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
+          int index = offset % bigBlockSize.getBATEntriesPerBlock();
+          return new BATBlockAndIndex( index, blocks.get(whichBAT) );
+       }
+       
+       // XBATs hold slightly less
+       int relOffset = offset - batRangeEndsAt;
+       int whichXBAT = (int)Math.floor(relOffset / bigBlockSize.getXBATEntriesPerBlock());
+       int index = relOffset % bigBlockSize.getXBATEntriesPerBlock();
+       return new BATBlockAndIndex(
+             index,
+             blocks.get(header.getBATCount() + whichXBAT)
+       );
+    }
+    
     private void setXBATChain(final POIFSBigBlockSize bigBlockSize, int chainIndex)
     {
         int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
@@ -277,5 +325,21 @@ public final class BATBlock extends BigBlock {
     }
 
     /* **********  END  extension of BigBlock ********** */
-}   // end public class BATBlock
+    
+    
+    public static class BATBlockAndIndex {
+       private final int index;
+       private final BATBlock block;
+       private BATBlockAndIndex(int index, BATBlock block) {
+          this.index = index;
+          this.block = block;
+       }
+       public int getIndex() {
+          return index;
+       }
+       public BATBlock getBlock() {
+          return block;
+       }
+    }
+}
 
