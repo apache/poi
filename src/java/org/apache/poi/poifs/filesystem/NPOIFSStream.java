@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem.ChainLoopDetector;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.storage.HeaderBlock;
 
@@ -38,6 +39,8 @@ import org.apache.poi.poifs.storage.HeaderBlock;
  * This only works on big block streams, it doesn't
  *  handle small block ones.
  * This uses the new NIO code
+ * 
+ * TODO Add loop checking on read and on write
  */
 
 public class NPOIFSStream implements Iterable<ByteBuffer>
@@ -100,11 +103,16 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       // How many blocks are we going to need?
       int blocks = (int)Math.ceil(contents.length / filesystem.getBigBlockSize());
       
+      // Make sure we don't encounter a loop whilst overwriting
+      //  the existing blocks
+      ChainLoopDetector loopDetector = filesystem.new ChainLoopDetector();
+      
       // Start writing
       int prevBlock = POIFSConstants.END_OF_CHAIN;
       int nextBlock = startBlock;
       for(int i=0; i<blocks; i++) {
          int thisBlock = nextBlock;
+         loopDetector.claim(thisBlock);
          
          // Allocate a block if needed, otherwise figure
          //  out what the next block will be
@@ -128,6 +136,9 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
          prevBlock = thisBlock;
       }
       
+      // If we're overwriting, free any remaining blocks
+      // TODO
+      
       // Mark the end of the stream
       filesystem.setNextBlock(nextBlock, POIFSConstants.END_OF_CHAIN);
    }
@@ -138,9 +149,16 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
     * Class that handles a streaming read of one stream
     */
    protected class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
+      private ChainLoopDetector loopDetector;
       private int nextBlock;
+      
       protected StreamBlockByteBufferIterator(int firstBlock) {
-         nextBlock = firstBlock;
+         this.nextBlock = firstBlock;
+         try {
+            this.loopDetector = filesystem.new ChainLoopDetector();
+         } catch(IOException e) {
+            throw new RuntimeException(e);
+         }
       }
 
       public boolean hasNext() {
@@ -156,6 +174,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
          }
          
          try {
+            loopDetector.claim(nextBlock);
             ByteBuffer data = filesystem.getBlockAt(nextBlock);
             nextBlock = filesystem.getNextBlock(nextBlock);
             return data;

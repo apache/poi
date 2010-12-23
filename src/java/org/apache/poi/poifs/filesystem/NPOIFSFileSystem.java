@@ -653,12 +653,21 @@ public class NPOIFSFileSystem
      *  we can bail out with an error rather than
      *  spinning away for ever... 
      */
-    private class ChainLoopDetector {
+    protected class ChainLoopDetector {
        private boolean[] used_blocks;
-       private ChainLoopDetector() throws IOException {
-          used_blocks = new boolean[(int)(_data.size()/bigBlockSize.getBigBlockSize())];
+       protected ChainLoopDetector() throws IOException {
+          int numBlocks = (int)Math.ceil(_data.size()/bigBlockSize.getBigBlockSize());
+          used_blocks = new boolean[numBlocks];
        }
-       private void claim(int offset) {
+       protected void claim(int offset) {
+          if(offset >= used_blocks.length) {
+             // They're writing, and have had new blocks requested
+             //  for the write to proceed. That means they're into
+             //  blocks we've allocated for them, so are safe
+             return;
+          }
+          
+          // Claiming an existing block, ensure there's no loop
           if(used_blocks[offset]) {
              throw new IllegalStateException(
                    "Potential loop detected - Block " + offset + 
