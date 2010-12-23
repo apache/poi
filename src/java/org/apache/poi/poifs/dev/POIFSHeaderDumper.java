@@ -95,7 +95,7 @@ public class POIFSHeaderDumper {
 
 	public static void displayHeader(HeaderBlock header_block) throws Exception {
 	   System.out.println("Header Details:");
-	   System.out.println(" Block size: " + header_block.getBigBlockSize());
+	   System.out.println(" Block size: " + header_block.getBigBlockSize().getBigBlockSize());
       System.out.println(" BAT (FAT) header blocks: " + header_block.getBATArray().length);
       System.out.println(" BAT (FAT) block count: " + header_block.getBATCount());
       System.out.println(" XBAT (FAT) block count: " + header_block.getXBATCount());
