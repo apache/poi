@@ -48,9 +48,13 @@ public final class BATBlock extends BigBlock {
     private boolean _has_free_sectors;
     
     /**
+     * Where in the file are we?
+     */
+    private int ourBlockIndex;
+    
+    /**
      * Create a single instance initialized with default values
      */
-
     private BATBlock(POIFSBigBlockSize bigBlockSize)
     {
         super(bigBlockSize);
@@ -116,6 +120,17 @@ public final class BATBlock extends BigBlock {
        block.recomputeFree();
        
        // All done
+       return block;
+    }
+    
+    /**
+     * Creates a single BATBlock, with all the values set to empty.
+     */
+    public static BATBlock createEmptyBATBlock(final POIFSBigBlockSize bigBlockSize, boolean isXBAT) {
+       BATBlock block = new BATBlock(bigBlockSize);
+       if(isXBAT) {
+          block.setXBATChain(bigBlockSize, POIFSConstants.END_OF_CHAIN);
+       }
        return block;
     }
 
@@ -295,10 +310,24 @@ public final class BATBlock extends BigBlock {
           recomputeFree();
        }
     }
+    
+    /**
+     * Record where in the file we live
+     */
+    public void setOurBlockIndex(int index) {
+       this.ourBlockIndex = index;
+    }
+    /**
+     * Retrieve where in the file we live 
+     */
+    public int getOurBlockIndex() {
+       return ourBlockIndex;
+    }
+
 
     /* ********** START extension of BigBlock ********** */
 
-    /**
+   /**
      * Write the block's data to an OutputStream
      *
      * @param stream the OutputStream to which the stored data should

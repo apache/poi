@@ -40,7 +40,7 @@ import org.apache.poi.poifs.storage.HeaderBlock;
  *  handle small block ones.
  * This uses the new NIO code
  * 
- * TODO Add loop checking on read and on write
+ * TODO Implement a streaming write method
  */
 
 public class NPOIFSStream implements Iterable<ByteBuffer>
@@ -137,13 +137,18 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       }
       
       // If we're overwriting, free any remaining blocks
-      // TODO
+      while(nextBlock != POIFSConstants.END_OF_CHAIN) {
+         int thisBlock = nextBlock;
+         loopDetector.claim(thisBlock);
+         nextBlock = filesystem.getNextBlock(thisBlock);
+         filesystem.setNextBlock(thisBlock, POIFSConstants.UNUSED_BLOCK);
+      }
       
       // Mark the end of the stream
       filesystem.setNextBlock(nextBlock, POIFSConstants.END_OF_CHAIN);
    }
    
-   // TODO Streaming write too
+   // TODO Streaming write support too
    
    /**
     * Class that handles a streaming read of one stream

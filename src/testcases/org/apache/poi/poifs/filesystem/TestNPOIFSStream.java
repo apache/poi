@@ -26,6 +26,8 @@ import org.apache.poi.POIDataSamples;
 
 /**
  * Tests {@link NPOIFSStream}
+ * 
+ * TODO Write unit tests
  */
 public final class TestNPOIFSStream extends TestCase {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
@@ -211,7 +213,38 @@ public final class TestNPOIFSStream extends TestCase {
     * Craft a nasty file with a loop, and ensure we don't get stuck
     */
    public void testReadFailsOnLoop() throws Exception {
-      // TODO
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      
+      // Hack the FAT so that it goes 0->1->2->0
+      fs.setNextBlock(0, 1);
+      fs.setNextBlock(1, 2);
+      fs.setNextBlock(2, 0);
+      
+      // Now try to read
+      NPOIFSStream stream = new NPOIFSStream(fs, 0);
+      Iterator<ByteBuffer> i = stream.getBlockIterator();
+      assertEquals(true, i.hasNext());
+      
+      // 1st read works
+      i.next();
+      assertEquals(true, i.hasNext());
+      
+      // 2nd read works
+      i.next();
+      assertEquals(true, i.hasNext());
+      
+      // 3rd read works
+      i.next();
+      assertEquals(true, i.hasNext());
+      
+      // 4th read blows up as it loops back to 0
+      try {
+         i.next();
+         fail("Loop should have been detected but wasn't!");
+      } catch(RuntimeException e) {
+         // Good, it was detected
+      }
+      assertEquals(true, i.hasNext());
    }
 
    /**

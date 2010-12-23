@@ -146,4 +146,84 @@ public final class TestNPOIFSFileSystem extends TestCase {
       assertEquals((byte)0x00, b.get());
       assertEquals((byte)0x00, b.get());
    }
+   
+   /**
+    * Ask for free blocks where there are some already
+    *  to be had from the FAT
+    */
+   public void testGetFreeBlockWithSpare() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      
+      // Our first BAT block has spares
+      assertEquals(true, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      
+      // First free one is 100
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(100));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(101));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
+      
+      // Ask, will get 100
+      assertEquals(100, fs.getFreeBlock());
+      
+      // Ask again, will still get 100 as not written to
+      assertEquals(100, fs.getFreeBlock());
+      
+      // Allocate it, then ask again
+      fs.setNextBlock(100, POIFSConstants.END_OF_CHAIN);
+      assertEquals(101, fs.getFreeBlock());
+   }
+
+   /**
+    * Ask for free blocks where no free ones exist, and so the
+    *  file needs to be extended and another BAT/XBAT added
+    */
+   public void testGetFreeBlockWithNoneSpare() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      
+      // We've spare ones from 100 to 128
+      for(int i=100; i<128; i++) {
+         assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
+      }
+      
+      // Check our BAT knows it's free
+      assertEquals(true, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      
+      // Allocate all the spare ones
+      for(int i=100; i<128; i++) {
+         fs.setNextBlock(i, POIFSConstants.END_OF_CHAIN);
+      }
+      
+      // BAT is now full, but there's only the one
+      assertEquals(false, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+         fail("Should only be one BAT");
+      } catch(IndexOutOfBoundsException e) {}
+      
+      // Now ask for a free one, will need to extend the file
+      assertEquals(129, fs.getFreeBlock());
+      
+      assertEquals(false, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertEquals(true, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(128));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(129));
+      
+      
+      // Fill up to hold 109 BAT blocks
+      // TODO
+      
+      // Ask for another, will get our first XBAT
+      // TODO
+      
+      // Fill the XBAT
+      // TODO
+      
+      // Ask for another, will get our 2nd XBAT
+      // TODO
+      
+      // Write it out and read it back in again
+      // Ensure it's correct
+      // TODO
+   }
 }
