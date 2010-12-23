@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.nio.ByteBuffer;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
@@ -116,6 +118,32 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Check we get the right data back for each block
     */
    public void testGetBlock() throws Exception {
-      // TODO
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      ByteBuffer b;
+      
+      // The 0th block is the first data block
+      b = fs.getBlockAt(0);
+      assertEquals((byte)0x9e, b.get());
+      assertEquals((byte)0x75, b.get());
+      assertEquals((byte)0x97, b.get());
+      assertEquals((byte)0xf6, b.get());
+      
+      // And the next block
+      b = fs.getBlockAt(1);
+      assertEquals((byte)0x86, b.get());
+      assertEquals((byte)0x09, b.get());
+      assertEquals((byte)0x22, b.get());
+      assertEquals((byte)0xfb, b.get());
+      
+      // Check the final block too
+      b = fs.getBlockAt(99);
+      assertEquals((byte)0x01, b.get());
+      assertEquals((byte)0x00, b.get());
+      assertEquals((byte)0x00, b.get());
+      assertEquals((byte)0x00, b.get());
+      assertEquals((byte)0x02, b.get());
+      assertEquals((byte)0x00, b.get());
+      assertEquals((byte)0x00, b.get());
+      assertEquals((byte)0x00, b.get());
    }
 }
