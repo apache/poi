@@ -43,6 +43,7 @@ import org.apache.poi.poifs.nio.ByteArrayBackedDataSource;
 import org.apache.poi.poifs.nio.DataSource;
 import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
+import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
@@ -82,8 +83,8 @@ public class NPOIFSFileSystem
        return new CloseIgnoringInputStream(is);
     }
    
-    private PropertyTable  _property_table;
-	 private List<BATBlock> _bat_blocks;
+    private NPropertyTable  _property_table;
+    private List<BATBlock> _bat_blocks;
     private HeaderBlock    _header;
     private DirectoryNode  _root;
     
@@ -104,7 +105,7 @@ public class NPOIFSFileSystem
     public NPOIFSFileSystem()
     {
         _header         = new HeaderBlock(bigBlockSize);
-        _property_table = new PropertyTable(_header);// TODO Needs correct type
+        _property_table = new NPropertyTable(_header);
         _bat_blocks     = new ArrayList<BATBlock>();
         _root           = null;
     }
@@ -191,8 +192,9 @@ public class NPOIFSFileSystem
            int maxSize = BATBlock.calculateMaximumSize(_header); 
            ByteBuffer data = ByteBuffer.allocate(maxSize);
            // Copy in the header
+           headerBuffer.position(0);
            data.put(headerBuffer);
-           data.position(_header.getBigBlockSize().getBigBlockSize());
+           data.position(headerBuffer.capacity());
            // Now read the rest of the stream
            IOUtils.readFully(channel, data);
            success = true;
@@ -292,7 +294,7 @@ public class NPOIFSFileSystem
        
        // We're now able to load steams
        // Use this to read in the properties
-       // TODO
+       _property_table = new NPropertyTable(_header, this);
     }
     
     /**
@@ -479,10 +481,6 @@ public class NPOIFSFileSystem
     public void writeFilesystem(final OutputStream stream)
         throws IOException
     {
-
-        // get the property table ready
-        _property_table.preWrite();
-
         // create the small block store, and the SBAT
         SmallBlockTableWriter      sbtw       =
             new SmallBlockTableWriter(bigBlockSize, _documents, _property_table.getRoot());
@@ -550,7 +548,6 @@ public class NPOIFSFileSystem
 
         writers.add(header_block_writer);
         writers.addAll(_documents);
-        writers.add(_property_table);
         writers.add(sbtw);
         writers.add(sbtw.getSBAT());
         writers.add(bat);
@@ -567,6 +564,11 @@ public class NPOIFSFileSystem
 
             writer.writeBlocks(stream);
         }
+        
+        // Finally have the property table serialise itself
+        _property_table.write(
+              new NPOIFSStream(this, _header.getPropertyStart())
+        );
     }
 
     /**

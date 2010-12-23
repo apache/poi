@@ -55,8 +55,19 @@ public final class TestNPOIFSFileSystem extends TestCase {
       fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
-         // Check the FAT was properly processed
-         // TODO
+         // Check the FAT was properly processed:
+         // Verify we only got one block
+         fs.getBATBlockAndIndex(0);
+         fs.getBATBlockAndIndex(1);
+         try {
+            fs.getBATBlockAndIndex(140);
+            fail("Should only be one BAT, but a 2nd was found");
+         } catch(IndexOutOfBoundsException e) {}
+         
+         // Verify a few next offsets
+         // 97 -> 98 -> END
+         assertEquals(98, fs.getNextBlock(97));
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
          
          // Check the properties
          // TODO
@@ -67,7 +78,19 @@ public final class TestNPOIFSFileSystem extends TestCase {
       fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
          // Check the FAT was properly processed
-         // TODO
+         // Verify we only got one block
+         fs.getBATBlockAndIndex(0);
+         fs.getBATBlockAndIndex(1);
+         try {
+            fs.getBATBlockAndIndex(1040);
+            fail("Should only be one BAT, but a 2nd was found");
+         } catch(IndexOutOfBoundsException e) {}
+         
+         // Verify a few next offsets
+         // 0 -> 1 -> 2 -> END
+         assertEquals(1, fs.getNextBlock(0));
+         assertEquals(2, fs.getNextBlock(1));
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
          
          // Check the properties
          // TODO
@@ -79,72 +102,81 @@ public final class TestNPOIFSFileSystem extends TestCase {
     *  out what the next one is
     */
    public void testNextBlock() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      
-      // 0 -> 21 are simple
-      for(int i=0; i<21; i++) {
-         assertEquals(i+1, fs.getNextBlock(i));
+      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // 0 -> 21 are simple
+         for(int i=0; i<21; i++) {
+            assertEquals(i+1, fs.getNextBlock(i));
+         }
+         // 21 jumps to 89, then ends
+         assertEquals(89, fs.getNextBlock(21));
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(89));
+         
+         // 22 -> 88 simple sequential stream
+         for(int i=22; i<88; i++) {
+            assertEquals(i+1, fs.getNextBlock(i));
+         }
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(88));
+         
+         // 90 -> 96 is another stream
+         for(int i=90; i<96; i++) {
+            assertEquals(i+1, fs.getNextBlock(i));
+         }
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(96));
+         
+         // 97+98 is another
+         assertEquals(98, fs.getNextBlock(97));
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
+         
+         // 99 is our FAT block
+         assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+         
+         // 100 onwards is free
+         for(int i=100; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
+            assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
+         }
       }
-      // 21 jumps to 89, then ends
-      assertEquals(89, fs.getNextBlock(21));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(89));
       
-      // 22 -> 88 simple sequential stream
-      for(int i=22; i<88; i++) {
-         assertEquals(i+1, fs.getNextBlock(i));
-      }
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(88));
-      
-      // 90 -> 96 is another stream
-      for(int i=90; i<96; i++) {
-         assertEquals(i+1, fs.getNextBlock(i));
-      }
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(96));
-      
-      // 97+98 is another
-      assertEquals(98, fs.getNextBlock(97));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
-      
-      // 99 is our FAT block
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
-      
-      // 100 onwards is free
-      for(int i=100; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
-         assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
-      }
+      // TODO Check a few bits of a 4096 byte file
    }
 
    /**
     * Check we get the right data back for each block
     */
    public void testGetBlock() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      ByteBuffer b;
+      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         ByteBuffer b;
+         
+         // The 0th block is the first data block
+         b = fs.getBlockAt(0);
+         assertEquals((byte)0x9e, b.get());
+         assertEquals((byte)0x75, b.get());
+         assertEquals((byte)0x97, b.get());
+         assertEquals((byte)0xf6, b.get());
+         
+         // And the next block
+         b = fs.getBlockAt(1);
+         assertEquals((byte)0x86, b.get());
+         assertEquals((byte)0x09, b.get());
+         assertEquals((byte)0x22, b.get());
+         assertEquals((byte)0xfb, b.get());
+         
+         // Check the final block too
+         b = fs.getBlockAt(99);
+         assertEquals((byte)0x01, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x02, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+      }
       
-      // The 0th block is the first data block
-      b = fs.getBlockAt(0);
-      assertEquals((byte)0x9e, b.get());
-      assertEquals((byte)0x75, b.get());
-      assertEquals((byte)0x97, b.get());
-      assertEquals((byte)0xf6, b.get());
-      
-      // And the next block
-      b = fs.getBlockAt(1);
-      assertEquals((byte)0x86, b.get());
-      assertEquals((byte)0x09, b.get());
-      assertEquals((byte)0x22, b.get());
-      assertEquals((byte)0xfb, b.get());
-      
-      // Check the final block too
-      b = fs.getBlockAt(99);
-      assertEquals((byte)0x01, b.get());
-      assertEquals((byte)0x00, b.get());
-      assertEquals((byte)0x00, b.get());
-      assertEquals((byte)0x00, b.get());
-      assertEquals((byte)0x02, b.get());
-      assertEquals((byte)0x00, b.get());
-      assertEquals((byte)0x00, b.get());
-      assertEquals((byte)0x00, b.get());
+      // TODO Check a few bits of a 4096 byte file
    }
    
    /**
