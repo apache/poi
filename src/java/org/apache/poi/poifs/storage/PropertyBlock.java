@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.Property;
 
 /**
@@ -63,7 +62,7 @@ public final class PropertyBlock extends BigBlock {
      */
 
     public static BlockWritable [] createPropertyBlockArray(
-            final POIFSBigBlockSize bigBlockSize, final List properties)
+            final POIFSBigBlockSize bigBlockSize, final List<Property> properties)
     {
         int _properties_per_block = bigBlockSize.getPropertiesPerBlock();
         int        block_count   =

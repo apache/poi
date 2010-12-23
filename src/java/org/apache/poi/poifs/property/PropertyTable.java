@@ -21,14 +21,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.PropertyBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
- * This class embodies the Property Table for the filesystem; this is
- * basically the directory for all of the documents in the
+ * This class embodies the Property Table for the {@link POIFSFileSystem}; 
+ *  this is basically the directory for all of the documents in the
  * filesystem.
  *
  * @author Marc Johnson (mjohnson at apache dot org)
@@ -49,7 +50,7 @@ public final class PropertyTable extends PropertyTableBase implements BlockWrita
      * to extract the property table from it). Populates the
      * properties thoroughly
      *
-     * @param startBlock the first block of the property table
+     * @param headerBlock the header block of the file
      * @param blockList the list of blocks
      *
      * @exception IOException if anything goes wrong (which should be
