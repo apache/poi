@@ -33,6 +33,10 @@ public interface POIFSConstants
     public static final POIFSBigBlockSize LARGER_BIG_BLOCK_SIZE_DETAILS = 
        new POIFSBigBlockSize(LARGER_BIG_BLOCK_SIZE, (short)12);
     
+    /** How big a block in the small block stream is. Fixed size */
+    public static final int SMALL_BLOCK_SIZE = 0x0040; 
+    
+    /** How big a single property is */
     public static final int PROPERTY_SIZE  = 0x0080;
     
     /** 

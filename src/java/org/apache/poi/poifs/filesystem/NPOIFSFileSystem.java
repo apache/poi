@@ -66,7 +66,7 @@ import org.apache.poi.util.POILogger;
  * This is the new NIO version
  */
 
-public class NPOIFSFileSystem
+public class NPOIFSFileSystem extends BlockStore
     implements POIFSViewable
 {
 	private static final POILogger _logger =
@@ -79,10 +79,11 @@ public class NPOIFSFileSystem
        return new CloseIgnoringInputStream(is);
     }
    
+    private NPOIFSMiniStore _mini_store;
     private NPropertyTable  _property_table;
-    private List<BATBlock> _bat_blocks;
-    private HeaderBlock    _header;
-    private DirectoryNode  _root;
+    private List<BATBlock>  _bat_blocks;
+    private HeaderBlock     _header;
+    private DirectoryNode   _root;
     
     private DataSource _data;
     
@@ -102,6 +103,7 @@ public class NPOIFSFileSystem
     {
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new NPropertyTable(_header);
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
         _bat_blocks     = new ArrayList<BATBlock>();
         _root           = null;
     }
@@ -264,7 +266,7 @@ public class NPOIFSFileSystem
        
        // Each block should only ever be used by one of the
        //  FAT, XFAT or Property Table. Ensure it does
-       ChainLoopDetector loopDetector = new ChainLoopDetector();
+       ChainLoopDetector loopDetector = getChainLoopDetector();
        
        // Read the FAT blocks
        for(int fatAt : _header.getBATArray()) {
@@ -291,6 +293,20 @@ public class NPOIFSFileSystem
        // We're now able to load steams
        // Use this to read in the properties
        _property_table = new NPropertyTable(_header, this);
+       
+       // Finally read the Small Stream FAT (SBAT) blocks
+       BATBlock sfat;
+       List<BATBlock> sbats = new ArrayList<BATBlock>();
+       _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
+       nextAt = _header.getSBATStart();
+       for(int i=0; i<_header.getSBATCount(); i++) {
+          loopDetector.claim(nextAt);
+          ByteBuffer fatData = getBlockAt(nextAt);
+          sfat = BATBlock.createBATBlock(bigBlockSize, fatData);
+          sfat.setOurBlockIndex(nextAt);
+          sbats.add(sfat);
+          nextAt = getNextBlock(nextAt);  
+       }
     }
     
     /**
@@ -300,6 +316,24 @@ public class NPOIFSFileSystem
        // The header block doesn't count, so add one
        long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
        return _data.read(bigBlockSize.getBigBlockSize(), startAt);
+    }
+    
+    /**
+     * Load the block at the given offset, 
+     *  extending the file if needed
+     */
+    protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
+       try {
+          return getBlockAt(offset);
+       } catch(IndexOutOfBoundsException e) {
+          // The header block doesn't count, so add one
+          long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
+          // Allocate and write
+          ByteBuffer buffer = ByteBuffer.allocate(getBigBlockSize());
+          _data.write(buffer, startAt);
+          // Retrieve the properly backed block
+          return getBlockAt(offset);
+       }
     }
     
     /**
@@ -409,13 +443,26 @@ public class NPOIFSFileSystem
        // The first offset stores us, but the 2nd is free
        return offset+1;
     }
+    
+    @Override
+    protected ChainLoopDetector getChainLoopDetector() throws IOException {
+      return new ChainLoopDetector(_data.size());
+    }
 
-    /**
+   /**
      * For unit testing only! Returns the underlying
      *  properties table
      */
     NPropertyTable _get_property_table() {
       return _property_table;
+    }
+    
+    /**
+     * Returns the MiniStore, which performs a similar low
+     *  level function to this, except for the small blocks.
+     */
+    public NPOIFSMiniStore getMiniStore() {
+       return _mini_store;
     }
 
    /**
@@ -725,36 +772,6 @@ public class NPOIFSFileSystem
         }
     }
     
-    /**
-     * Used to detect if a chain has a loop in it, so
-     *  we can bail out with an error rather than
-     *  spinning away for ever... 
-     */
-    protected class ChainLoopDetector {
-       private boolean[] used_blocks;
-       protected ChainLoopDetector() throws IOException {
-          int numBlocks = (int)Math.ceil(_data.size()/bigBlockSize.getBigBlockSize());
-          used_blocks = new boolean[numBlocks];
-       }
-       protected void claim(int offset) {
-          if(offset >= used_blocks.length) {
-             // They're writing, and have had new blocks requested
-             //  for the write to proceed. That means they're into
-             //  blocks we've allocated for them, so are safe
-             return;
-          }
-          
-          // Claiming an existing block, ensure there's no loop
-          if(used_blocks[offset]) {
-             throw new IllegalStateException(
-                   "Potential loop detected - Block " + offset + 
-                   " was already claimed but was just requested again"
-             );
-          }
-          used_blocks[offset] = true;
-       }
-    }
-
     /* ********** START begin implementation of POIFSViewable ********** */
 
     /**
@@ -815,11 +832,13 @@ public class NPOIFSFileSystem
         return "POIFS FileSystem";
     }
 
+    /* **********  END  begin implementation of POIFSViewable ********** */
+
     /**
      * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
      */
     public int getBigBlockSize() {
-    	return bigBlockSize.getBigBlockSize();
+      return bigBlockSize.getBigBlockSize();
     }
     /**
      * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
@@ -827,7 +846,8 @@ public class NPOIFSFileSystem
     public POIFSBigBlockSize getBigBlockSizeDetails() {
       return bigBlockSize;
     }
-
-    /* **********  END  begin implementation of POIFSViewable ********** */
+    protected int getBlockStoreBlockSize() {
+       return getBigBlockSize();
+    }
 }
 

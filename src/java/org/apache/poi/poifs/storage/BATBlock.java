@@ -257,7 +257,7 @@ public final class BATBlock extends BigBlock {
      * The List of BATBlocks must be in sequential order
      */
     public static BATBlockAndIndex getBATBlockAndIndex(final int offset, 
-                final HeaderBlock header, final List<BATBlock> blocks) {
+                final HeaderBlock header, final List<BATBlock> bats) {
        POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
        
        // Are we in the BAT or XBAT range
@@ -267,7 +267,7 @@ public final class BATBlock extends BigBlock {
        if(offset < batRangeEndsAt) {
           int whichBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
           int index = offset % bigBlockSize.getBATEntriesPerBlock();
-          return new BATBlockAndIndex( index, blocks.get(whichBAT) );
+          return new BATBlockAndIndex( index, bats.get(whichBAT) );
        }
        
        // XBATs hold slightly less
@@ -276,8 +276,23 @@ public final class BATBlock extends BigBlock {
        int index = relOffset % bigBlockSize.getXBATEntriesPerBlock();
        return new BATBlockAndIndex(
              index,
-             blocks.get(header.getBATCount() + whichXBAT)
+             bats.get(header.getBATCount() + whichXBAT)
        );
+    }
+    
+    /**
+     * Returns the BATBlock that handles the specified offset,
+     *  and the relative index within it, for the mini stream.
+     * The List of BATBlocks must be in sequential order
+     */
+    public static BATBlockAndIndex getSBATBlockAndIndex(final int offset, 
+          final HeaderBlock header, final List<BATBlock> sbats) {
+       POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
+       
+       // SBATs are so much easier, as they're chained streams
+       int whichSBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
+       int index = offset % bigBlockSize.getBATEntriesPerBlock();
+       return new BATBlockAndIndex( index, sbats.get(whichSBAT) );
     }
     
     private void setXBATChain(final POIFSBigBlockSize bigBlockSize, int chainIndex)
