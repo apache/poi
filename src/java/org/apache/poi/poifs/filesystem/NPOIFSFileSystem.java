@@ -45,17 +45,13 @@ import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.property.Property;
-import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.RawDataBlockList;
-import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.util.CloseIgnoringInputStream;
@@ -415,6 +411,14 @@ public class NPOIFSFileSystem
     }
 
     /**
+     * For unit testing only! Returns the underlying
+     *  properties table
+     */
+    NPropertyTable _get_property_table() {
+      return _property_table;
+    }
+
+   /**
      * Create a new document to be added to the root directory
      *
      * @param stream the InputStream from which the document's data
