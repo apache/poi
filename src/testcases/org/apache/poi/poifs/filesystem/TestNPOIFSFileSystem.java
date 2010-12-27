@@ -18,11 +18,15 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.property.NPropertyTable;
+import org.apache.poi.poifs.property.Property;
+import org.apache.poi.poifs.property.RootProperty;
 
 /**
  * Tests for the new NIO POIFSFileSystem implementation
@@ -69,7 +73,35 @@ public final class TestNPOIFSFileSystem extends TestCase {
          assertEquals(98, fs.getNextBlock(97));
          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
          
+         
          // Check the properties
+         NPropertyTable props = fs._get_property_table();
+         assertEquals(90, props.getStartBlock());
+         assertEquals(7, props.countBlocks());
+         
+         // Root property tells us about the Mini Stream
+         RootProperty root = props.getRoot();
+         assertEquals("Root Entry", root.getName());
+         assertEquals(11564, root.getSize());
+         assertEquals(0, root.getStartBlock());
+         
+         // Check its children too
+         Property prop;
+         Iterator<Property> pi = root.getChildren();
+         prop = pi.next();
+         assertEquals("Thumbnail", prop.getName());
+         prop = pi.next();
+         assertEquals("\u0005DocumentSummaryInformation", prop.getName());
+         prop = pi.next();
+         assertEquals("\u0005SummaryInformation", prop.getName());
+         prop = pi.next();
+         assertEquals("Image", prop.getName());
+         prop = pi.next();
+         assertEquals("Tags", prop.getName());
+         assertEquals(false, pi.hasNext());
+         
+         
+         // Check the SBAT (Small Blocks FAT) was properly processed
          // TODO
       }
       
@@ -91,8 +123,36 @@ public final class TestNPOIFSFileSystem extends TestCase {
          assertEquals(1, fs.getNextBlock(0));
          assertEquals(2, fs.getNextBlock(1));
          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+
          
          // Check the properties
+         NPropertyTable props = fs._get_property_table();
+         assertEquals(12, props.getStartBlock());
+         assertEquals(1, props.countBlocks());
+         
+         // Root property tells us about the Mini Stream
+         RootProperty root = props.getRoot();
+         assertEquals("Root Entry", root.getName());
+         assertEquals(11564, root.getSize());
+         assertEquals(0, root.getStartBlock());
+         
+         // Check its children too
+         Property prop;
+         Iterator<Property> pi = root.getChildren();
+         prop = pi.next();
+         assertEquals("Thumbnail", prop.getName());
+         prop = pi.next();
+         assertEquals("\u0005DocumentSummaryInformation", prop.getName());
+         prop = pi.next();
+         assertEquals("\u0005SummaryInformation", prop.getName());
+         prop = pi.next();
+         assertEquals("Image", prop.getName());
+         prop = pi.next();
+         assertEquals("Tags", prop.getName());
+         assertEquals(false, pi.hasNext());
+         
+         
+         // Check the SBAT (Small Blocks FAT) was properly processed
          // TODO
       }
    }
@@ -138,7 +198,21 @@ public final class TestNPOIFSFileSystem extends TestCase {
          }
       }
       
-      // TODO Check a few bits of a 4096 byte file
+      // Quick check on 4096 byte blocks too
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // 0 -> 1 -> 2 -> end
+         assertEquals(1, fs.getNextBlock(0));
+         assertEquals(2, fs.getNextBlock(1));
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+         
+         // 4 -> 11 then end
+         for(int i=4; i<11; i++) {
+            assertEquals(i+1, fs.getNextBlock(i));
+         }
+         assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
+      }
    }
 
    /**
@@ -176,7 +250,37 @@ public final class TestNPOIFSFileSystem extends TestCase {
          assertEquals((byte)0x00, b.get());
       }
       
-      // TODO Check a few bits of a 4096 byte file
+      // Quick check on 4096 byte blocks too
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         ByteBuffer b;
+         
+         // The 0th block is the first data block
+         b = fs.getBlockAt(0);
+         assertEquals((byte)0x9e, b.get());
+         assertEquals((byte)0x75, b.get());
+         assertEquals((byte)0x97, b.get());
+         assertEquals((byte)0xf6, b.get());
+         
+         // And the next block
+         b = fs.getBlockAt(1);
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x03, b.get());
+         assertEquals((byte)0x00, b.get());
+
+         // The 14th block is the FAT
+         b = fs.getBlockAt(14);
+         assertEquals((byte)0x01, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x02, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+         assertEquals((byte)0x00, b.get());
+      }
    }
    
    /**
