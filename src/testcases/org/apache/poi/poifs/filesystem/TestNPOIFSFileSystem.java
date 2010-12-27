@@ -102,7 +102,21 @@ public final class TestNPOIFSFileSystem extends TestCase {
          
          
          // Check the SBAT (Small Blocks FAT) was properly processed
-         // TODO
+         NPOIFSMiniStore ministore = fs.getMiniStore();
+         
+         // Verify we only got two SBAT blocks
+         ministore.getBATBlockAndIndex(0);
+         ministore.getBATBlockAndIndex(128);
+         try {
+            ministore.getBATBlockAndIndex(256);
+            fail("Should only be two SBATs, but a 3rd was found");
+         } catch(IndexOutOfBoundsException e) {}
+         
+         // Verify a few offsets: 0->50 is a stream
+         for(int i=0; i<50; i++) {
+            assertEquals(i+1, ministore.getNextBlock(i));
+         }
+         assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(50));
       }
       
       // Now with a simple 4096 block file
@@ -153,7 +167,22 @@ public final class TestNPOIFSFileSystem extends TestCase {
          
          
          // Check the SBAT (Small Blocks FAT) was properly processed
-         // TODO
+         NPOIFSMiniStore ministore = fs.getMiniStore();
+         
+         // Verify we only got one SBAT block
+         ministore.getBATBlockAndIndex(0);
+         ministore.getBATBlockAndIndex(128);
+         ministore.getBATBlockAndIndex(1023);
+         try {
+            ministore.getBATBlockAndIndex(1024);
+            fail("Should only be one SBAT, but a 2nd was found");
+         } catch(IndexOutOfBoundsException e) {}
+         
+         // Verify a few offsets: 0->50 is a stream
+         for(int i=0; i<50; i++) {
+            assertEquals(i+1, ministore.getNextBlock(i));
+         }
+         assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(50));
       }
    }
    
@@ -362,4 +391,42 @@ public final class TestNPOIFSFileSystem extends TestCase {
       // Ensure it's correct
       // TODO
    }
+   
+   /**
+    * Test that we can correctly get the list of directory
+    *  entries, and the details on the files in them
+    */
+   public void testListEntries() throws Exception {
+      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // TODO
+      }
+      
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // TODO
+      }
+   }
+   
+   /**
+    * Tests that we can get the correct contents for
+    *  a document in the filesystem 
+    */
+   public void testGetDocumentEntry() throws Exception {
+      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // TODO
+      }
+      
+      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
+         // TODO
+      }
+   }
+   
+   // TODO Directory/Document write tests
 }
