@@ -97,7 +97,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
     * Updates the contents of the stream to the new
     *  set of bytes.
     * Note - if this is property based, you'll still
-    *  need to 
+    *  need to update the size in the property yourself
     */
    public void updateContents(byte[] contents) throws IOException {
       // How many blocks are we going to need?
