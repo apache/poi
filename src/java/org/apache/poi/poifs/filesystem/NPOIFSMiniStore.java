@@ -50,7 +50,7 @@ public class NPOIFSMiniStore extends BlockStore
        this._header = header;
        this._root = root;
        
-       this._mini_stream = new NPOIFSStream(filesystem);
+       this._mini_stream = new NPOIFSStream(filesystem, root.getStartBlock());
     }
     
     /**
@@ -70,7 +70,9 @@ public class NPOIFSMiniStore extends BlockStore
        ByteBuffer dataBlock = it.next();
        
        // Skip forward to the right place
-       dataBlock.position(bigBlockOffset);
+       dataBlock.position(
+             dataBlock.position() + bigBlockOffset
+       );
        
        // All done
        return dataBlock;
