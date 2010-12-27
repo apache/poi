@@ -23,6 +23,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Tests {@link NPOIFSStream}
@@ -248,12 +249,43 @@ public final class TestNPOIFSStream extends TestCase {
    }
 
    /**
+    * Tests that we can load some streams that are
+    *  stored in the mini stream.
+    */
+   public void testReadMiniStreams() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      
+      // TODO
+   }
+
+   /**
     * Writing the same amount of data as before
     */
    public void testReplaceStream() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       
-      // TODO
+      byte[] data = new byte[512];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i%256);
+      }
+      
+      // 98 is actually the last block in a two block stream...
+      NPOIFSStream stream = new NPOIFSStream(fs, 98);
+      stream.updateContents(data);
+      
+      // Check the reading of blocks
+      Iterator<ByteBuffer> it = stream.getBlockIterator();
+      assertEquals(true, it.hasNext());
+      ByteBuffer b = it.next();
+      assertEquals(false, it.hasNext());
+      
+      // Now check the contents
+      data = new byte[512];
+      b.get(data);
+      for(int i=0; i<data.length; i++) {
+         byte exp = (byte)(i%256);
+         assertEquals(exp, data[i]);
+      }
    }
    
    /**
@@ -261,18 +293,82 @@ public final class TestNPOIFSStream extends TestCase {
     *  to be freed
     */
    public void testReplaceStreamWithLess() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       
-      // TODO
+      byte[] data = new byte[512];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i%256);
+      }
+      
+      // 97 -> 98 -> end
+      assertEquals(98, fs.getNextBlock(97));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
+      
+      // Create a 2 block stream, will become a 1 block one
+      NPOIFSStream stream = new NPOIFSStream(fs, 97);
+      stream.updateContents(data);
+      
+      // 97 should now be the end, and 98 free
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(97));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(98));
+      
+      // Check the reading of blocks
+      Iterator<ByteBuffer> it = stream.getBlockIterator();
+      assertEquals(true, it.hasNext());
+      ByteBuffer b = it.next();
+      assertEquals(false, it.hasNext());
+      
+      // Now check the contents
+      data = new byte[512];
+      b.get(data);
+      for(int i=0; i<data.length; i++) {
+         byte exp = (byte)(i%256);
+         assertEquals(exp, data[i]);
+      }
    }
    
    /**
     * Writes more data than before, new blocks will be needed
     */
    public void testReplaceStreamWithMore() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       
-      // TODO
+      byte[] data = new byte[512*3];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i%256);
+      }
+      
+      // 97 -> 98 -> end
+      assertEquals(98, fs.getNextBlock(97));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(98));
+      
+      // 100 is our first free one
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(100));
+      
+      // Create a 2 block stream, will become a 3 block one
+      NPOIFSStream stream = new NPOIFSStream(fs, 97);
+      stream.updateContents(data);
+      
+      // 97 -> 98 -> 100 -> end
+      assertEquals(98, fs.getNextBlock(97));
+      assertEquals(100, fs.getNextBlock(98));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
+      
+      // Check the reading of blocks
+      Iterator<ByteBuffer> it = stream.getBlockIterator();
+      int count = 0;
+      while(it.hasNext()) {
+         ByteBuffer b = it.next();
+         data = new byte[512];
+         b.get(data);
+         for(int i=0; i<data.length; i++) {
+            byte exp = (byte)(i%256);
+            assertEquals(exp, data[i]);
+         }
+         count++;
+      }
+      assertEquals(3, count);
    }
    
    /**
@@ -306,9 +402,44 @@ public final class TestNPOIFSStream extends TestCase {
    }
    
    /**
+    * Tests that we can write into the mini stream
+    */
+   public void testWriteMiniStreams() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      
+      // TODO
+   }
+
+   /**
     * Craft a nasty file with a loop, and ensure we don't get stuck
     */
    public void testWriteFailsOnLoop() throws Exception {
-      // TODO
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      
+      // Hack the FAT so that it goes 0->1->2->0
+      fs.setNextBlock(0, 1);
+      fs.setNextBlock(1, 2);
+      fs.setNextBlock(2, 0);
+      
+      // Try to write a large amount, should fail on the write
+      byte[] data = new byte[512*4];
+      NPOIFSStream stream = new NPOIFSStream(fs, 0);
+      try {
+         stream.updateContents(data);
+         fail("Loop should have been detected but wasn't!");
+      } catch(IllegalStateException e) {}
+      
+      // Now reset, and try on a small bit
+      // Should fail during the freeing set
+      fs.setNextBlock(0, 1);
+      fs.setNextBlock(1, 2);
+      fs.setNextBlock(2, 0);
+      
+      data = new byte[512];
+      stream = new NPOIFSStream(fs, 0);
+      try {
+         stream.updateContents(data);
+         fail("Loop should have been detected but wasn't!");
+      } catch(IllegalStateException e) {}
    }
 }
