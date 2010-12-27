@@ -65,7 +65,7 @@ public abstract class Property implements Child, POIFSViewable {
     static final protected byte _NODE_RED                 = 0;
 
     // documents must be at least this size to be stored in big blocks
-    static final private int    _big_block_minimum_bytes  = 4096;
+    static final private int    _big_block_minimum_bytes  = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
     private String              _name;
     private ShortField          _name_size;
     private ByteField           _property_type;
