@@ -354,6 +354,18 @@ public final class BATBlock extends BigBlock {
     void writeData(final OutputStream stream)
         throws IOException
     {
+       // Save it out
+       stream.write( serialize() );
+    }
+    
+    void writeData(final ByteBuffer block)
+        throws IOException
+    {
+       // Save it out
+       block.put( serialize() );
+    }
+    
+    private byte[] serialize() {
        // Create the empty array
        byte[] data = new byte[ bigBlockSize.getBigBlockSize() ];
        
@@ -364,8 +376,8 @@ public final class BATBlock extends BigBlock {
           offset += LittleEndian.INT_SIZE;
        }
        
-       // Save it out
-       stream.write(data);
+       // Done
+       return data;
     }
 
     /* **********  END  extension of BigBlock ********** */

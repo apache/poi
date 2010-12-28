@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -87,8 +88,6 @@ public class NPOIFSFileSystem extends BlockStore
     
     private DataSource _data;
     
-    private List          _documents; // TODO - probably remove this shortly
-
     /**
      * What big block size the file uses. Most files
      *  use 512 bytes, but a few use 4096
@@ -519,6 +518,26 @@ public class NPOIFSFileSystem extends BlockStore
     {
         return getRoot().createDirectory(name);
     }
+    
+    /**
+     * Write the filesystem out to the open file. Will thrown an
+     *  {@link IllegalArgumentException} if opened from an 
+     *  {@link InputStream}.
+     * 
+     * @exception IOException thrown on errors writing to the stream
+     */
+    public void writeFilesystem() throws IOException
+    {
+       if(_data instanceof FileBackedDataSource) {
+          // Good, correct type
+       } else {
+          throw new IllegalArgumentException(
+                "POIFS opened from an inputstream, so writeFilesystem() may " +
+                "not be called. Use writeFilesystem(OutputStream) instead"
+          );
+       }
+       syncWithDataSource();
+    }
 
     /**
      * Write the filesystem out
@@ -532,94 +551,36 @@ public class NPOIFSFileSystem extends BlockStore
     public void writeFilesystem(final OutputStream stream)
         throws IOException
     {
-        // create the small block store, and the SBAT
-        SmallBlockTableWriter      sbtw       =
-            new SmallBlockTableWriter(bigBlockSize, _documents, _property_table.getRoot());
-
-        // create the block allocation table
-        BlockAllocationTableWriter bat        =
-            new BlockAllocationTableWriter(bigBlockSize);
-
-        // create a list of BATManaged objects: the documents plus the
-        // property table and the small block table
-        List bm_objects = new ArrayList();
-
-        bm_objects.addAll(_documents);
-        bm_objects.add(_property_table);
-        bm_objects.add(sbtw);
-        bm_objects.add(sbtw.getSBAT());
-
-        // walk the list, allocating space for each and assigning each
-        // a starting block number
-        Iterator iter = bm_objects.iterator();
-
-        while (iter.hasNext())
-        {
-            BATManaged bmo         = ( BATManaged ) iter.next();
-            int        block_count = bmo.countBlocks();
-
-            if (block_count != 0)
-            {
-                bmo.setStartBlock(bat.allocateSpace(block_count));
-            }
-            else
-            {
-
-                // Either the BATManaged object is empty or its data
-                // is composed of SmallBlocks; in either case,
-                // allocating space in the BAT is inappropriate
-            }
-        }
-
-        // allocate space for the block allocation table and take its
-        // starting block
-        int               batStartBlock       = bat.createBlocks();
-
-        // get the extended block allocation table blocks
-        HeaderBlockWriter header_block_writer = new HeaderBlockWriter(bigBlockSize);
-        BATBlock[]        xbat_blocks         =
-            header_block_writer.setBATBlocks(bat.countBlocks(),
-                                             batStartBlock);
-
-        // set the property table start block
-        header_block_writer.setPropertyStart(_property_table.getStartBlock());
-
-        // set the small block allocation table start block
-        header_block_writer.setSBATStart(sbtw.getSBAT().getStartBlock());
-
-        // set the small block allocation table block count
-        header_block_writer.setSBATBlockCount(sbtw.getSBATBlockCount());
-
-        // the header is now properly initialized. Make a list of
-        // writers (the header block, followed by the documents, the
-        // property table, the small block store, the small block
-        // allocation table, the block allocation table, and the
-        // extended block allocation table blocks)
-        List writers = new ArrayList();
-
-        writers.add(header_block_writer);
-        writers.addAll(_documents);
-        writers.add(sbtw);
-        writers.add(sbtw.getSBAT());
-        writers.add(bat);
-        for (int j = 0; j < xbat_blocks.length; j++)
-        {
-            writers.add(xbat_blocks[ j ]);
-        }
-
-        // now, write everything out
-        iter = writers.iterator();
-        while (iter.hasNext())
-        {
-            BlockWritable writer = ( BlockWritable ) iter.next();
-
-            writer.writeBlocks(stream);
-        }
-        
-        // Finally have the property table serialise itself
-        _property_table.write(
-              new NPOIFSStream(this, _header.getPropertyStart())
-        );
+       // Have the datasource updated
+       syncWithDataSource();
+       
+       // Now copy the contents to the stream
+       _data.copyTo(stream);
+    }
+    
+    /**
+     * Has our in-memory objects write their state
+     *  to their backing blocks 
+     */
+    private void syncWithDataSource() throws IOException
+    {
+       // HeaderBlock
+       HeaderBlockWriter hbw = new HeaderBlockWriter(_header);
+       hbw.writeBlock( getBlockAt(0) );
+       
+       // BATs
+       for(BATBlock bat : _bat_blocks) {
+          ByteBuffer block = getBlockAt(bat.getOurBlockIndex());
+          BlockAllocationTableWriter.writeBlock(bat, block);
+       }
+       
+       // SBATs
+       _mini_store.syncWithDataSource();
+       
+       // Properties
+       _property_table.write(
+             new NPOIFSStream(this, _header.getPropertyStart())
+       );
     }
 
     /**
@@ -683,29 +644,6 @@ public class NPOIFSFileSystem extends BlockStore
     }
 
     /**
-     * add a new POIFSDocument
-     *
-     * @param document the POIFSDocument being added
-     */
-
-    void addDocument(final POIFSDocument document)
-    {
-        _documents.add(document);
-        _property_table.addProperty(document.getDocumentProperty());
-    }
-
-    /**
-     * add a new DirectoryProperty
-     *
-     * @param directory the DirectoryProperty being added
-     */
-
-    void addDirectory(final DirectoryProperty directory)
-    {
-        _property_table.addProperty(directory);
-    }
-
-    /**
      * remove an entry
      *
      * @param entry to be removed
@@ -714,62 +652,6 @@ public class NPOIFSFileSystem extends BlockStore
     void remove(EntryNode entry)
     {
         _property_table.removeProperty(entry.getProperty());
-        if (entry.isDocumentEntry())
-        {
-            _documents.remove((( DocumentNode ) entry).getDocument());
-        }
-    }
-
-    private void processProperties(final BlockList small_blocks,
-                                   final BlockList big_blocks,
-                                   final Iterator properties,
-                                   final DirectoryNode dir,
-                                   final int headerPropertiesStartAt)
-        throws IOException
-    {
-        while (properties.hasNext())
-        {
-            Property      property = ( Property ) properties.next();
-            String        name     = property.getName();
-            DirectoryNode parent   = (dir == null)
-                                     ? (( DirectoryNode ) getRoot())
-                                     : dir;
-
-            if (property.isDirectory())
-            {
-                DirectoryNode new_dir =
-                    ( DirectoryNode ) parent.createDirectory(name);
-
-                new_dir.setStorageClsid( property.getStorageClsid() );
-
-                processProperties(
-                    small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(),
-                    new_dir, headerPropertiesStartAt);
-            }
-            else
-            {
-                int           startBlock = property.getStartBlock();
-                int           size       = property.getSize();
-                POIFSDocument document   = null;
-
-                if (property.shouldUseSmallBlocks())
-                {
-                    document =
-                        new POIFSDocument(name,
-                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
-                                          size);
-                }
-                else
-                {
-                    document =
-                        new POIFSDocument(name,
-                                          big_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
-                                          size);
-                }
-                parent.createDocument(document);
-            }
-        }
     }
     
     /* ********** START begin implementation of POIFSViewable ********** */
