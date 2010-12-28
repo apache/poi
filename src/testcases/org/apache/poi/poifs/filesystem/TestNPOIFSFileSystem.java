@@ -23,6 +23,10 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.property.Property;
@@ -446,12 +450,25 @@ public final class TestNPOIFSFileSystem extends TestCase {
       NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
          DirectoryEntry root = fs.getRoot();
-         Entry dsi = root.getEntry("\u0005DocumentSummaryInformation");
+         Entry si = root.getEntry("\u0005SummaryInformation");
          
-         assertEquals(true, dsi.isDocumentEntry());
-         DocumentEntry doc = (DocumentEntry)dsi;
+         assertEquals(true, si.isDocumentEntry());
+         DocumentNode doc = (DocumentNode)si;
          
+         // Check we can read it
+         NDocumentInputStream inp = new NDocumentInputStream(doc);
+         byte[] contents = new byte[doc.getSize()];
+         assertEquals(doc.getSize(), inp.read(contents));
          
+         // Now try to build the property set
+         inp = new NDocumentInputStream(doc);
+         PropertySet ps = PropertySetFactory.create(inp);
+         SummaryInformation inf = (SummaryInformation)ps;
+         
+         // Check some bits in it
+         assertEquals(null, inf.getApplicationName());
+         assertEquals(null, inf.getAuthor());
+         assertEquals(null, inf.getSubject());
       }
    }
    

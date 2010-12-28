@@ -100,6 +100,14 @@ public final class NPOIFSDocument implements POIFSViewable {
       this._property = new DocumentProperty(name, contents.length);
       _property.setStartBlock(_stream.getStartBlock());     
    }
+   
+   int getDocumentBlockSize() {
+      return _block_size;
+   }
+   
+   Iterator<ByteBuffer> getBlockIterator() {
+      return _stream.getBlockIterator();
+   }
 
    /**
     * @return size of the document
