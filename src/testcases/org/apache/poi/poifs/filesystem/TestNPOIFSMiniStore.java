@@ -245,6 +245,7 @@ public final class TestNPOIFSMiniStore extends TestCase {
     *  big blocks that make up the ministream as needed
     */
    public void testCreateBlockIfNeeded() throws Exception {
-      // TODO
+      // TODO Add underlying implementation
+      // TODO Add unit test
    }
 }

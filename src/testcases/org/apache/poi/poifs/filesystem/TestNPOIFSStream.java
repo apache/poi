@@ -27,8 +27,6 @@ import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Tests {@link NPOIFSStream}
- * 
- * TODO Write unit tests
  */
 public final class TestNPOIFSStream extends TestCase {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
@@ -254,8 +252,53 @@ public final class TestNPOIFSStream extends TestCase {
     */
    public void testReadMiniStreams() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      NPOIFSMiniStore ministore = fs.getMiniStore();
       
-      // TODO
+      // 178 -> 179 -> 180 -> end
+      NPOIFSStream stream = new NPOIFSStream(ministore, 178);
+      Iterator<ByteBuffer> i = stream.getBlockIterator();
+      assertEquals(true, i.hasNext());
+      assertEquals(true, i.hasNext());
+      assertEquals(true, i.hasNext());
+      ByteBuffer b178 = i.next();
+      assertEquals(true, i.hasNext());
+      assertEquals(true, i.hasNext());
+      ByteBuffer b179 = i.next();
+      assertEquals(true, i.hasNext());
+      ByteBuffer b180 = i.next();
+      assertEquals(false, i.hasNext());
+      assertEquals(false, i.hasNext());
+      assertEquals(false, i.hasNext());
+      
+      // Check the contents of the 1st block
+      assertEquals((byte)0xfe, b178.get());
+      assertEquals((byte)0xff, b178.get());
+      assertEquals((byte)0x00, b178.get());
+      assertEquals((byte)0x00, b178.get());
+      assertEquals((byte)0x05, b178.get());
+      assertEquals((byte)0x01, b178.get());
+      assertEquals((byte)0x02, b178.get());
+      assertEquals((byte)0x00, b178.get());
+      
+      // And the 2nd
+      assertEquals((byte)0x6c, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      assertEquals((byte)0x28, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      assertEquals((byte)0x00, b179.get());
+      
+      // And the 3rd
+      assertEquals((byte)0x30, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x00, b180.get());
+      assertEquals((byte)0x80, b180.get());
    }
 
    /**
@@ -375,9 +418,90 @@ public final class TestNPOIFSStream extends TestCase {
     * Writes to a new stream in the file
     */
    public void testWriteNewStream() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       
-      // TODO
+      // 100 is our first free one
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(100));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(101));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
+      
+      
+      // Add a single block one
+      byte[] data = new byte[512];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i%256);
+      }
+      
+      NPOIFSStream stream = new NPOIFSStream(fs);
+      stream.updateContents(data);
+      
+      // Check it was allocated properly
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(101));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
+      
+      // And check the contents
+      Iterator<ByteBuffer> it = stream.getBlockIterator();
+      int count = 0;
+      while(it.hasNext()) {
+         ByteBuffer b = it.next();
+         data = new byte[512];
+         b.get(data);
+         for(int i=0; i<data.length; i++) {
+            byte exp = (byte)(i%256);
+            assertEquals(exp, data[i]);
+         }
+         count++;
+      }
+      assertEquals(1, count);
+      
+      
+      // And a multi block one
+      data = new byte[512*3];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i%256);
+      }
+      
+      stream = new NPOIFSStream(fs);
+      stream.updateContents(data);
+      
+      // Check it was allocated properly
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
+      assertEquals(102,                         fs.getNextBlock(101));
+      assertEquals(103,                         fs.getNextBlock(102));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(103));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
+      
+      // And check the contents
+      it = stream.getBlockIterator();
+      count = 0;
+      while(it.hasNext()) {
+         ByteBuffer b = it.next();
+         data = new byte[512];
+         b.get(data);
+         for(int i=0; i<data.length; i++) {
+            byte exp = (byte)(i%256);
+            assertEquals(exp, data[i]);
+         }
+         count++;
+      }
+      assertEquals(3, count);
+      
+      // Free it
+      stream.free();
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(101));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
    }
    
    /**

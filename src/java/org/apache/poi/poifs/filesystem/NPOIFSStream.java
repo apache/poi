@@ -127,6 +127,13 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
             if(prevBlock != POIFSConstants.END_OF_CHAIN) {
                blockStore.setNextBlock(prevBlock, thisBlock);
             }
+            blockStore.setNextBlock(thisBlock, POIFSConstants.END_OF_CHAIN);
+            
+            // If we've just written the first block on a 
+            //  new stream, save the start block offset
+            if(this.startBlock == POIFSConstants.END_OF_CHAIN) {
+               this.startBlock = thisBlock;
+            }
          } else {
             loopDetector.claim(thisBlock);
             nextBlock = blockStore.getNextBlock(thisBlock);
@@ -142,18 +149,32 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       int lastBlock = prevBlock;
       
       // If we're overwriting, free any remaining blocks
-      while(nextBlock != POIFSConstants.END_OF_CHAIN) {
-         int thisBlock = nextBlock;
-         loopDetector.claim(thisBlock);
-         nextBlock = blockStore.getNextBlock(thisBlock);
-         blockStore.setNextBlock(thisBlock, POIFSConstants.UNUSED_BLOCK);
-      }
+      NPOIFSStream toFree = new NPOIFSStream(blockStore, nextBlock);
+      toFree.free(loopDetector);
       
       // Mark the end of the stream
       blockStore.setNextBlock(lastBlock, POIFSConstants.END_OF_CHAIN);
    }
    
    // TODO Streaming write support too
+   
+   /**
+    * Frees all blocks in the stream
+    */
+   public void free() throws IOException {
+      ChainLoopDetector loopDetector = blockStore.getChainLoopDetector();
+      free(loopDetector);
+   }
+   private void free(ChainLoopDetector loopDetector) {
+      int nextBlock = startBlock;
+      while(nextBlock != POIFSConstants.END_OF_CHAIN) {
+         int thisBlock = nextBlock;
+         loopDetector.claim(thisBlock);
+         nextBlock = blockStore.getNextBlock(thisBlock);
+         blockStore.setNextBlock(thisBlock, POIFSConstants.UNUSED_BLOCK);
+      }
+      this.startBlock = POIFSConstants.END_OF_CHAIN;
+   }
    
    /**
     * Class that handles a streaming read of one stream
