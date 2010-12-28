@@ -310,6 +310,12 @@ public final class BATBlock extends BigBlock {
     }
     
     public int getValueAt(int relativeOffset) {
+       if(relativeOffset >= _values.length) {
+          throw new ArrayIndexOutOfBoundsException(
+                "Unable to fetch offset " + relativeOffset + " as the " + 
+                "BAT only contains " + _values.length + " entries"
+          ); 
+       }
        return _values[relativeOffset];
     }
     public void setValueAt(int relativeOffset, int value) {
