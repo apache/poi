@@ -345,6 +345,9 @@ public final class TestNPOIFSFileSystem extends TestCase {
     */
    public void testGetFreeBlockWithNoneSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+
+      // We have one BAT at block 99
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
       
       // We've spare ones from 100 to 128
       for(int i=100; i<128; i++) {
