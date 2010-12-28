@@ -19,8 +19,10 @@
 
 package org.apache.poi.poifs.storage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -37,10 +39,18 @@ public class HeaderBlockWriter implements HeaderBlockConstants, BlockWritable
     /**
      * Create a single instance initialized with default values
      */
-
     public HeaderBlockWriter(POIFSBigBlockSize bigBlockSize)
     {
        _header_block = new HeaderBlock(bigBlockSize);
+    }
+
+    /**
+     * Create a single instance initialized with the specified 
+     *  existing values
+     */
+    public HeaderBlockWriter(HeaderBlock headerBlock)
+    {
+       _header_block = headerBlock;
     }
 
     /**
@@ -155,11 +165,29 @@ public class HeaderBlockWriter implements HeaderBlockConstants, BlockWritable
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
     public void writeBlocks(final OutputStream stream)
         throws IOException
     {
         _header_block.writeData(stream);
+    }
+    
+    /**
+     * Write the block's data to an existing block
+     *
+     * @param block the ByteBuffer of the block to which the 
+     *               stored data should be written
+     *
+     * @exception IOException on problems writing to the block
+     */
+    public void writeBlock(ByteBuffer block)
+        throws IOException
+    {
+       ByteArrayOutputStream baos = new ByteArrayOutputStream(
+             _header_block.getBigBlockSize().getBigBlockSize()
+       );
+       _header_block.writeData(baos);
+       
+       block.put(baos.toByteArray());
     }
 
     /* **********  END  extension of BigBlock ********** */

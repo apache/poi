@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 
@@ -194,5 +195,14 @@ public class NPOIFSMiniStore extends BlockStore
     protected int getBlockStoreBlockSize() {
        return POIFSConstants.SMALL_BLOCK_SIZE;
     }
+    
+    /**
+     * Writes the SBATs to their backing blocks
+     */
+    protected void syncWithDataSource() throws IOException {
+       for(BATBlock sbat : _sbat_blocks) {
+          ByteBuffer block = _filesystem.getBlockAt(sbat.getOurBlockIndex());
+          BlockAllocationTableWriter.writeBlock(sbat, block);
+       }
+    }
 }
-

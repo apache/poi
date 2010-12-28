@@ -20,9 +20,12 @@ package org.apache.poi.poifs.nio;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 
 import org.apache.poi.util.IOUtils;
 
@@ -66,6 +69,13 @@ public class FileBackedDataSource extends DataSource {
    
    public void write(ByteBuffer src, long position) throws IOException {
       channel.write(src, position);
+   }
+   
+   public void copyTo(OutputStream stream) throws IOException {
+      // Wrap the OutputSteam as a channel
+      WritableByteChannel out = Channels.newChannel(stream);
+      // Now do the transfer
+      channel.transferTo(0, channel.size(), out);
    }
    
    public long size() throws IOException {

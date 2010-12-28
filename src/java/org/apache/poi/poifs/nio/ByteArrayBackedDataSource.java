@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.nio;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -75,6 +77,10 @@ public class ByteArrayBackedDataSource extends DataSource {
       byte[] nb = new byte[(int)(difference+buffer.length)];
       System.arraycopy(buffer, 0, nb, 0, (int)size);
       buffer = nb;
+   }
+   
+   public void copyTo(OutputStream stream) throws IOException {
+      stream.write(buffer, 0, (int)size);
    }
    
    public long size() {
