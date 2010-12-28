@@ -279,7 +279,7 @@ public class NPOIFSFileSystem extends BlockStore
           ByteBuffer fatData = getBlockAt(nextAt);
           xfat = BATBlock.createBATBlock(bigBlockSize, fatData);
           xfat.setOurBlockIndex(nextAt);
-          nextAt = xfat.getValueAt(bigBlockSize.getNextXBATChainOffset());
+          nextAt = xfat.getValueAt(bigBlockSize.getXBATEntriesPerBlock());
           
           _bat_blocks.add(xfat);
        }
@@ -464,7 +464,7 @@ public class NPOIFSFileSystem extends BlockStore
      *
      * @param document the POIFSDocument being added
      */
-    void addDocument(final POIFSDocument document)
+    void addDocument(final NPOIFSDocument document)
     {
         _property_table.addProperty(document.getDocumentProperty());
     }

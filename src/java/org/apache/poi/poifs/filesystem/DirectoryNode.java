@@ -187,7 +187,6 @@ public class DirectoryNode
      *
      * @exception IOException
      */
-
     DocumentEntry createDocument(final POIFSDocument document)
         throws IOException
     {
@@ -195,12 +194,30 @@ public class DirectoryNode
         DocumentNode     rval     = new DocumentNode(property, this);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
+        _ofilesystem.addDocument(document);
         
-        if(_ofilesystem != null) {
-           _ofilesystem.addDocument(document);
-        } else {
-           _nfilesystem.addDocument(document);
-        }
+        _entries.add(rval);
+        _byname.put(property.getName(), rval);
+        return rval;
+    }
+
+    /**
+     * create a new DocumentEntry
+     *
+     * @param document the new document
+     *
+     * @return the new DocumentEntry
+     *
+     * @exception IOException
+     */
+    DocumentEntry createDocument(final NPOIFSDocument document)
+        throws IOException
+    {
+        DocumentProperty property = document.getDocumentProperty();
+        DocumentNode     rval     = new DocumentNode(property, this);
+
+        (( DirectoryProperty ) getProperty()).addChild(property);
+        _nfilesystem.addDocument(document);
         
         _entries.add(rval);
         _byname.put(property.getName(), rval);
@@ -215,7 +232,6 @@ public class DirectoryNode
      *
      * @return true if the operation succeeded, else false
      */
-
     boolean changeName(final String oldName, final String newName)
     {
         boolean   rval  = false;
