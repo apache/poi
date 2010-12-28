@@ -120,8 +120,7 @@ public class DirectoryNode
             }
             else
             {
-                childNode = new DocumentNode(( DocumentProperty ) child,
-                                             this);
+                childNode = new DocumentNode((DocumentProperty) child, this);
             }
             _entries.add(childNode);
             _byname.put(childNode.getName(), childNode);
