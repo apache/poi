@@ -54,7 +54,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 
 	// one of these stores will be valid
 	private SmallBlockStore  _small_store;
-	private BigBlockStore	_big_store;
+	private BigBlockStore	 _big_store;
 	
 		/**
 	 * Constructor from large blocks

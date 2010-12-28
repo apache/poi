@@ -402,14 +402,36 @@ public final class TestNPOIFSFileSystem extends TestCase {
    public void testListEntries() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
-         // TODO
-      }
-      
-      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
-         // TODO
+      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+         DirectoryEntry root = fs.getRoot();
+         assertEquals(5, root.getEntryCount());
+         
+         // Check by the names
+         Entry thumbnail = root.getEntry("Thumbnail");
+         Entry dsi = root.getEntry("\u0005DocumentSummaryInformation");
+         Entry si = root.getEntry("\u0005SummaryInformation");
+         Entry image = root.getEntry("Image");
+         Entry tags = root.getEntry("Tags");
+         
+         assertEquals(false, thumbnail.isDirectoryEntry());
+         assertEquals(false, dsi.isDirectoryEntry());
+         assertEquals(false, si.isDirectoryEntry());
+         assertEquals(true, image.isDirectoryEntry());
+         assertEquals(false, tags.isDirectoryEntry());
+         
+         // Check via the iterator
+         Iterator<Entry> it = root.getEntries();
+         assertEquals(thumbnail.getName(), it.next().getName());
+         assertEquals(dsi.getName(), it.next().getName());
+         assertEquals(si.getName(), it.next().getName());
+         assertEquals(image.getName(), it.next().getName());
+         assertEquals(tags.getName(), it.next().getName());
+         
+         // Look inside another
+         DirectoryEntry imageD = (DirectoryEntry)image;
+         assertEquals(7, imageD.getEntryCount());
       }
    }
    
@@ -420,14 +442,16 @@ public final class TestNPOIFSFileSystem extends TestCase {
    public void testGetDocumentEntry() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
-         // TODO
-      }
-      
-      fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
-         // TODO
+      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+         DirectoryEntry root = fs.getRoot();
+         Entry dsi = root.getEntry("\u0005DocumentSummaryInformation");
+         
+         assertEquals(true, dsi.isDocumentEntry());
+         DocumentEntry doc = (DocumentEntry)dsi;
+         
+         
       }
    }
    

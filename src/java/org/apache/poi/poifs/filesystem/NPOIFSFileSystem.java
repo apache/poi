@@ -19,7 +19,6 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,15 +44,11 @@ import org.apache.poi.poifs.nio.DataSource;
 import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
-import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
-import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
@@ -464,6 +459,26 @@ public class NPOIFSFileSystem extends BlockStore
        return _mini_store;
     }
 
+    /**
+     * add a new POIFSDocument to the FileSytem 
+     *
+     * @param document the POIFSDocument being added
+     */
+    void addDocument(final POIFSDocument document)
+    {
+        _property_table.addProperty(document.getDocumentProperty());
+    }
+
+    /**
+     * add a new DirectoryProperty to the FileSystem
+     *
+     * @param directory the DirectoryProperty being added
+     */
+    void addDirectory(final DirectoryProperty directory)
+    {
+        _property_table.addProperty(directory);
+    }
+
    /**
      * Create a new document to be added to the root directory
      *
@@ -610,17 +625,14 @@ public class NPOIFSFileSystem extends BlockStore
     }
 
     /**
-     * get the root entry
+     * Get the root entry
      *
      * @return the root entry
      */
-
     public DirectoryNode getRoot()
     {
-        if (_root == null)
-        {
-           // TODO
-//            _root = new DirectoryNode(_property_table.getRoot(), this, null);
+        if (_root == null) {
+           _root = new DirectoryNode(_property_table.getRoot(), this, null);
         }
         return _root;
     }
