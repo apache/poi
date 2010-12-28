@@ -82,7 +82,8 @@ public class NPOIFSMiniStore extends BlockStore
      * Load the block, extending the underlying stream if needed
      */
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
-       // TODO Extend
+       // TODO Extend the stream if needed
+       // TODO Needs append support on the underlying stream
        return getBlockAt(offset);
     }
     
