@@ -57,7 +57,7 @@ public final class TestDocumentInputStream extends TestCase {
         _workbook = new DocumentNode(
             document.getDocumentProperty(),
             new DirectoryNode(
-                new DirectoryProperty("Root Entry"), null, null));
+                new DirectoryProperty("Root Entry"), (POIFSFileSystem)null, null));
     }
 
     private DocumentNode     _workbook;

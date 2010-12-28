@@ -49,7 +49,7 @@ public final class TestDocumentNode extends TestCase {
         POIFSDocument    document  = new POIFSDocument("document", rawBlocks,
                                          2000);
         DocumentProperty property2 = document.getDocumentProperty();
-        DirectoryNode    parent    = new DirectoryNode(property1, null, null);
+        DirectoryNode    parent    = new DirectoryNode(property1, (POIFSFileSystem)null, null);
         DocumentNode     node      = new DocumentNode(property2, parent);
 
         // verify we can retrieve the document
