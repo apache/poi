@@ -81,16 +81,7 @@ public final class BlockAllocationTableReader {
             int xbat_count, int xbat_index, BlockList raw_block_list) throws IOException {
         this(bigBlockSize);
         
-        if (block_count <= 0) {
-            throw new IOException(
-                "Illegal block count; minimum count is 1, got " + block_count
-                + " instead");
-        }
-
-        if (block_count > MAX_BLOCK_COUNT) {
-            throw new IOException("Block count " + block_count 
-                    + " is too high. POI maximum is " + MAX_BLOCK_COUNT + ".");
-        }
+        sanityCheckBlockCount(block_count);
 
         // We want to get the whole of the FAT table
         // To do this:
@@ -185,6 +176,21 @@ public final class BlockAllocationTableReader {
     BlockAllocationTableReader(POIFSBigBlockSize bigBlockSize) {
         this.bigBlockSize = bigBlockSize;
         _entries = new IntList();
+    }
+    
+    public static void sanityCheckBlockCount(int block_count) throws IOException {
+       if (block_count <= 0) {
+          throw new IOException(
+                "Illegal block count; minimum count is 1, got " + 
+                block_count + " instead"
+          );
+       }
+       if (block_count > MAX_BLOCK_COUNT) {
+          throw new IOException(
+                "Block count " + block_count + 
+                " is too high. POI maximum is " + MAX_BLOCK_COUNT + "."
+          );
+       }
     }
 
     /**

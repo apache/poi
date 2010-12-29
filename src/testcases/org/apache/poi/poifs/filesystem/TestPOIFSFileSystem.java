@@ -17,11 +17,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -29,6 +29,9 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
@@ -38,6 +41,8 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  * @author Josh Micich
  */
 public final class TestPOIFSFileSystem extends TestCase {
+   private POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+   
 
 	/**
 	 * Mock exception used to ensure correct error handling
@@ -98,7 +103,6 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * POIFSFileSystem was not closing the input stream.
 	 */
 	public void testAlwaysClose() {
-
 		TestIS testIS;
 
 		// Normal case - read until EOF and close
@@ -139,9 +143,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"
 		};
 
-		POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 		for(int i=0; i<files.length; i++) {
-
 			// Open the file up
 			POIFSFileSystem fs = new POIFSFileSystem(
 			    _samples.openResourceAsStream(files[i])
@@ -161,8 +163,6 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 *  sectors that exist in the file.
 	 */
 	public void testFATandDIFATsectors() throws Exception {
-      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-      
       // Open the file up
       try {
          POIFSFileSystem fs = new POIFSFileSystem(
@@ -173,6 +173,68 @@ public final class TestPOIFSFileSystem extends TestCase {
          String msg = e.getMessage();
          assertTrue(msg.startsWith("Your file contains 695 sectors"));
       }
+	}
+	
+	/**
+	 * Tests that we can write and read a file that contains XBATs
+	 *  as well as regular BATs.
+	 * However, because a file needs to be at least 6.875mb big
+	 *  to have an XBAT in it, we don't have a test one. So, generate it.
+	 */
+	public void testBATandXBAT() throws Exception {
+	   byte[] hugeStream = new byte[8*1024*1024];
+	   POIFSFileSystem fs = new POIFSFileSystem();
+	   fs.getRoot().createDocument(
+	         "BIG", new ByteArrayInputStream(hugeStream)
+	   );
+	   
+	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	   fs.writeFilesystem(baos);
+	   byte[] fsData = baos.toByteArray();
+	   
+	   
+	   // Check the header was written properly
+	   InputStream inp = new ByteArrayInputStream(fsData); 
+	   HeaderBlock header = new HeaderBlock(inp);
+	   assertEquals(109+21, header.getBATCount());
+	   assertEquals(1, header.getXBATCount());
+	   
+	   
+	   // We should have 21 BATs in the XBAT
+	   ByteBuffer xbatData = ByteBuffer.allocate(512);
+	   xbatData.put(fsData, (1+header.getXBATIndex())*512, 512);
+	   xbatData.position(0);
+	   BATBlock xbat = BATBlock.createBATBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, xbatData);
+	   for(int i=0; i<21; i++) {
+	      assertTrue(xbat.getValueAt(i) != POIFSConstants.UNUSED_BLOCK);
+	   }
+	   for(int i=21; i<127; i++) {
+	      assertEquals(POIFSConstants.UNUSED_BLOCK, xbat.getValueAt(i));
+	   }
+	   assertEquals(POIFSConstants.END_OF_CHAIN, xbat.getValueAt(127));
+	   
+	   
+	   // Load the blocks and check with that
+	   RawDataBlockList blockList = new RawDataBlockList(inp, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+	   assertEquals(fsData.length / 512, blockList.blockCount() + 1); // Header not counted
+	   new BlockAllocationTableReader(header.getBigBlockSize(),
+            header.getBATCount(),
+            header.getBATArray(),
+            header.getXBATCount(),
+            header.getXBATIndex(),
+            blockList);
+      assertEquals(fsData.length / 512, blockList.blockCount() + 1); // Header not counted
+      
+	   // Now load it and check
+	   fs = null;
+	   fs = new POIFSFileSystem(
+	         new ByteArrayInputStream(fsData)
+	   );
+	   
+	   DirectoryNode root = fs.getRoot();
+	   assertEquals(1, root.getEntryCount());
+	   DocumentNode big = (DocumentNode)root.getEntry("BIG");
+	   assertEquals(hugeStream.length, big.getSize());
 	}
 	
 	/**

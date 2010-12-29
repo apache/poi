@@ -216,59 +216,60 @@ public final class TestBATBlock extends TestCase {
        // Zero fat blocks isn't technically valid, but it'd be header only
        assertEquals(
              512, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 0)
        );
        assertEquals(
              4096, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 0, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 0)
        );
        
        // A single FAT block can address 128/1024 blocks
        assertEquals(
              512 + 512*128, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 1)
        );
        assertEquals(
              4096 + 4096*1024, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 1, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 1)
        );
        
        assertEquals(
              512 + 4*512*128, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 4, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 4)
        );
        assertEquals(
              4096 + 4*4096*1024, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 4, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 4)
        );
        
        // One XBAT block holds 127/1023 individual BAT blocks, so they can address
        //  a fairly hefty amount of space themselves
+       // However, the BATs continue as before
        assertEquals(
              512 + 109*512*128, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109)
        );
        assertEquals(
              4096 + 109*4096*1024, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 0)
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109)
        );
              
        assertEquals(
-             512 + 109*512*128 + 512*127*128, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 1)
+             512 + 110*512*128, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 110)
        );
        assertEquals(
-             4096 + 109*4096*1024 + 4096*1023*1024, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 1)
+             4096 + 110*4096*1024, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 110)
        );
        
        assertEquals(
-             512 + 109*512*128 + 3*512*127*128, 
-             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 109, 3)
+             512 + 112*512*128, 
+             BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 112)
        );
        assertEquals(
-             4096 + 109*4096*1024 + 3*4096*1023*1024, 
-             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 109, 3)
+             4096 + 112*4096*1024, 
+             BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 112)
        );
     }
     
