@@ -19,9 +19,14 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -162,7 +167,6 @@ public class DirectoryNode
      * @exception IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
      */
-
     public DocumentInputStream createDocumentInputStream(
             final String documentName)
         throws IOException
@@ -175,6 +179,33 @@ public class DirectoryNode
                                   + "' is not a DocumentEntry");
         }
         return new DocumentInputStream(( DocumentEntry ) document);
+    }
+
+    /**
+     * open a document in the directory's entry's list of entries
+     *
+     * @param documentEntry the document to be opened
+     *
+     * @return a newly opened DocumentInputStream or NDocumentInputStream
+     *
+     * @exception IOException if the document does not exist or the
+     *            name is that of a DirectoryEntry
+     */
+    public InputStream createDocumentInputStream(
+            final Entry document)
+        throws IOException
+    {
+        if (!document.isDocumentEntry()) {
+            throw new IOException("Entry '" + document.getName()
+                                  + "' is not a DocumentEntry");
+        }
+        
+        DocumentEntry entry = (DocumentEntry)document;
+        if(_ofilesystem != null) {
+           return new DocumentInputStream(entry);
+        } else {
+           return new NDocumentInputStream(entry);
+        }
     }
 
     /**
