@@ -144,7 +144,7 @@ public abstract class POIDocument {
 	   //directory can be null when creating new documents
 	   if(directory == null) return null;
 
-	   InputStream dis;
+	   DocumentInputStream dis;
 	   try {
 	      // Find the entry, and get an input stream for it
 	      dis = directory.createDocumentInputStream( directory.getEntry(setName) );
