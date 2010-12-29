@@ -20,6 +20,7 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -140,31 +141,31 @@ public abstract class POIDocument {
 	 *  if it wasn't found
 	 */
 	protected PropertySet getPropertySet(String setName) {
-        //directory can be null when creating new documents
-        if(directory == null) return null;
-        
-        DocumentInputStream dis;
-		try {
-			// Find the entry, and get an input stream for it
-			dis = directory.createDocumentInputStream(setName);
-		} catch(IOException ie) {
-			// Oh well, doesn't exist
-			logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
-			return null;
-		}
+	   //directory can be null when creating new documents
+	   if(directory == null) return null;
 
-		try {
-			// Create the Property Set
-			PropertySet set = PropertySetFactory.create(dis);
-			return set;
-		} catch(IOException ie) {
-			// Must be corrupt or something like that
-			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
-		} catch(org.apache.poi.hpsf.HPSFException he) {
-			// Oh well, doesn't exist
-			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
-		}
-		return null;
+	   InputStream dis;
+	   try {
+	      // Find the entry, and get an input stream for it
+	      dis = directory.createDocumentInputStream( directory.getEntry(setName) );
+	   } catch(IOException ie) {
+	      // Oh well, doesn't exist
+	      logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
+	      return null;
+	   }
+
+	   try {
+	      // Create the Property Set
+	      PropertySet set = PropertySetFactory.create(dis);
+	      return set;
+	   } catch(IOException ie) {
+	      // Must be corrupt or something like that
+	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
+	   } catch(org.apache.poi.hpsf.HPSFException he) {
+	      // Oh well, doesn't exist
+	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
+	   }
+	   return null;
 	}
 	
 	/**
