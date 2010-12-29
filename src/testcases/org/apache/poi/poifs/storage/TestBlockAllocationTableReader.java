@@ -419,11 +419,7 @@ public final class TestBlockAllocationTableReader extends TestCase {
 					hb.getXBATIndex(), dataBlocks);
 		} catch (IOException e) {
 			// expected during successful test
-			assertEquals(
-			      "Your file contains 0 sectors, but the initial DIFAT array at index 0 referenced block # 538976288. This isn't allowed and  your file is corrupt", 
-			      e.getMessage()
-			);
-//       assertEquals("Block count 538976257 is too high. POI maximum is 65535.", e.getMessage());
+         assertEquals("Block count 538976257 is too high. POI maximum is 65535.", e.getMessage());
 		} catch (OutOfMemoryError e) {
 			if (e.getStackTrace()[1].getMethodName().equals("testBadSectorAllocationTableSize")) {
 				throw new AssertionFailedError("Identified bug 48085");

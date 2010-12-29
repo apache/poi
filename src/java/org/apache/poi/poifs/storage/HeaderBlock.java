@@ -50,8 +50,8 @@ public final class HeaderBlock implements HeaderBlockConstants {
 	private final POIFSBigBlockSize bigBlockSize;
 
 	/** 
-	 * number of big block allocation table blocks (int).
-	 * (Number of FAT Sectors in Microsoft parlance) 
+	 * Number of big block allocation table blocks (int).
+	 * (Number of FAT Sectors in Microsoft parlance).
 	 */
 	private int _bat_count;
 
@@ -159,13 +159,6 @@ public final class HeaderBlock implements HeaderBlockConstants {
       _sbat_count = new IntegerField(_sbat_block_count_offset, _data).get();
       _xbat_start = new IntegerField(_xbat_start_offset, _data).get();
       _xbat_count = new IntegerField(_xbat_count_offset, _data).get();
-      
-      // Sanity check values
-      if(_bat_count > _max_bats_in_header) {
-         _logger.log(POILogger.WARN, "Too many BAT blocks listed in header, found " 
-                     + _bat_count + " but the maximum is " + _max_bats_in_header);
-         _bat_count = _max_bats_in_header;
-      }
 	}
 	
    /**
@@ -306,7 +299,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
       // Read them in
 		int[] result = new int[ Math.min(_bat_count,_max_bats_in_header) ];
 		int offset = _bat_array_offset;
-		for (int j = 0; j < _bat_count; j++) {
+		for (int j = 0; j < result.length; j++) {
 			result[ j ] = LittleEndian.getInt(_data, offset);
 			offset     += LittleEndianConsts.INT_SIZE;
 		}

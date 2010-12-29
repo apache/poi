@@ -343,7 +343,9 @@ public class IntList
     {
         if (index >= _limit)
         {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(
+                  index + " not accessible in a list of length " + _limit
+            );
         }
         return _array[ index ];
     }

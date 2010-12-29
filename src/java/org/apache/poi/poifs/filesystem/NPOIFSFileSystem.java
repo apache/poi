@@ -45,6 +45,7 @@ import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
@@ -179,6 +180,9 @@ public class NPOIFSFileSystem extends BlockStore
            
            // Have the header processed
            _header = new HeaderBlock(headerBuffer);
+           
+           // Sanity check the block count
+           BlockAllocationTableReader.sanityCheckBlockCount(_header.getBATCount());
    
            // We need to buffer the whole file into memory when
            //  working with an InputStream.
@@ -455,8 +459,8 @@ public class NPOIFSFileSystem extends BlockStore
           System.arraycopy(_header.getBATArray(), 0, newBATs, 0, newBATs.length-1);
           newBATs[newBATs.length-1] = offset;
           _header.setBATArray(newBATs);
-          _header.setBATCount(newBATs.length);
        }
+       _header.setBATCount(_bat_blocks.size());
        
        // The current offset stores us, but the next one is free
        return offset+1;
