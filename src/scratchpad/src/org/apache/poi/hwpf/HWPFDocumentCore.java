@@ -71,7 +71,7 @@ public abstract class HWPFDocumentCore extends POIDocument
 
   protected HWPFDocumentCore()
   {
-     super(null, null);
+     super((DirectoryNode)null);
   }
 
   /**
@@ -118,7 +118,7 @@ public abstract class HWPFDocumentCore extends POIDocument
    */
   public HWPFDocumentCore(POIFSFileSystem pfilesystem) throws IOException
   {
-	this(pfilesystem.getRoot(), pfilesystem);
+	this(pfilesystem.getRoot());
   }
 
   /**
@@ -130,10 +130,10 @@ public abstract class HWPFDocumentCore extends POIDocument
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */
-  public HWPFDocumentCore(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
+  public HWPFDocumentCore(DirectoryNode directory) throws IOException
   {
     // Sort out the hpsf properties
-	super(directory, pfilesystem);
+	super(directory);
 
     // read in the main stream.
     DocumentEntry documentProps = (DocumentEntry)

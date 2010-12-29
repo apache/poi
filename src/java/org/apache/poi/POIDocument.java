@@ -50,8 +50,6 @@ public abstract class POIDocument {
 	private SummaryInformation sInf;
 	/** Holds further metadata on our document */
 	private DocumentSummaryInformation dsInf;
-	/** The open POIFS FileSystem that contains our document */
-	protected POIFSFileSystem filesystem;
 	/**	The directory that our document lives in */
 	protected DirectoryNode directory;
 	
@@ -62,12 +60,15 @@ public abstract class POIDocument {
     private boolean initialized = false;
     
 
-    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
-    	this.filesystem = fs;
+    protected POIDocument(DirectoryNode dir) {
     	this.directory = dir;
     }
+    @Deprecated
+    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
+       this.directory = dir;
+     }
     protected POIDocument(POIFSFileSystem fs) {
-    	this(fs.getRoot(), fs);
+    	this(fs.getRoot());
     }
 
 	/**

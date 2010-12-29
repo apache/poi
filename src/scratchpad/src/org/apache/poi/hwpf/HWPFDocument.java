@@ -128,9 +128,23 @@ public final class HWPFDocument extends HWPFDocumentCore
    */
   public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException
   {
-	this(pfilesystem.getRoot(), pfilesystem);
+	this(pfilesystem.getRoot());
   }
 
+  /**
+   * This constructor loads a Word document from a specific point
+   *  in a POIFSFileSystem, probably not the default.
+   * Used typically to open embedded documents.
+   *
+   * @param pfilesystem The POIFSFileSystem that contains the Word document.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in POIFSFileSystem.
+   */
+  public HWPFDocument(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
+  {
+     this(directory);
+  }
+  
   /**
    * This constructor loads a Word document from a specific point
    *  in a POIFSFileSystem, probably not the default.
@@ -140,11 +154,11 @@ public final class HWPFDocument extends HWPFDocumentCore
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */
-  public HWPFDocument(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
+  public HWPFDocument(DirectoryNode directory) throws IOException
   {
     // Load the main stream and FIB
     // Also handles HPSF bits
-	super(directory, pfilesystem);
+	super(directory);
 
     // Do the CP Split
     _cpSplit = new CPSplitCalculator(_fib);
@@ -182,7 +196,7 @@ public final class HWPFDocument extends HWPFDocumentCore
       DocumentEntry dataProps =
           (DocumentEntry)directory.getEntry("Data");
       _dataStream = new byte[dataProps.getSize()];
-      filesystem.createDocumentInputStream("Data").read(_dataStream);
+      directory.createDocumentInputStream("Data").read(_dataStream);
     }
     catch(java.io.FileNotFoundException e)
     {

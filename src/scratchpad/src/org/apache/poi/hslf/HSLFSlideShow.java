@@ -28,14 +28,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PersistRecord;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -76,7 +81,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 *  that is open.
 	 */
 	protected POIFSFileSystem getPOIFSFileSystem() {
-		return filesystem;
+		return directory.getFileSystem();
 	}
 
 	/**
@@ -112,21 +117,34 @@ public final class HSLFSlideShow extends POIDocument {
 	 */
 	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
 	{
-		this(filesystem.getRoot(), filesystem);
+		this(filesystem.getRoot());
 	}
 
+   /**
+    * Constructs a Powerpoint document from a specific point in a
+    *  POIFS Filesystem. Parses the document and places all the
+    *  important stuff into data structures.
+    *
+    * @param dir the POIFS directory to read from
+    * @param filesystem the POIFS FileSystem to read from
+    * @throws IOException if there is a problem while parsing the document.
+    */
+   public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
+   {
+      this(dir);
+   }
+   
 	/**
 	 * Constructs a Powerpoint document from a specific point in a
 	 *  POIFS Filesystem. Parses the document and places all the
 	 *  important stuff into data structures.
 	 *
 	 * @param dir the POIFS directory to read from
-	 * @param filesystem the POIFS FileSystem to read from
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
+	public HSLFSlideShow(DirectoryNode dir) throws IOException
 	{
-		super(dir, filesystem);
+		super(dir);
 
 		// First up, grab the "Current User" stream
 		// We need this before we can detect Encrypted Documents
@@ -459,7 +477,7 @@ public final class HSLFSlideShow extends POIDocument {
 
         // If requested, write out any other streams we spot
         if(preserveNodes) {
-        	copyNodes(filesystem, outFS, writtenEntries);
+            copyNodes(directory.getFileSystem(), outFS, writtenEntries);
         }
 
         // Send the POIFSFileSystem object out to the underlying stream
