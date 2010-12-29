@@ -171,14 +171,7 @@ public class DirectoryNode
             final String documentName)
         throws IOException
     {
-        Entry document = getEntry(documentName);
-
-        if (!document.isDocumentEntry())
-        {
-            throw new IOException("Entry '" + documentName
-                                  + "' is not a DocumentEntry");
-        }
-        return new DocumentInputStream(( DocumentEntry ) document);
+        return createDocumentInputStream(getEntry(documentName));
     }
 
     /**
@@ -191,7 +184,7 @@ public class DirectoryNode
      * @exception IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
      */
-    public InputStream createDocumentInputStream(
+    public DocumentInputStream createDocumentInputStream(
             final Entry document)
         throws IOException
     {
@@ -201,11 +194,7 @@ public class DirectoryNode
         }
         
         DocumentEntry entry = (DocumentEntry)document;
-        if(_ofilesystem != null) {
-           return new DocumentInputStream(entry);
-        } else {
-           return new NDocumentInputStream(entry);
-        }
+        return new DocumentInputStream(entry);
     }
 
     /**
