@@ -234,16 +234,33 @@ public final class BATBlock extends BigBlock {
     /**
      * Calculates the maximum size of a file which is addressable given the
      *  number of FAT (BAT and XBAT) sectors specified.
-     * The actual file size will be between [size of fatCount-1 blocks] and
-     *  [size of fatCount blocks].
-     * For 512 byte block sizes, this means we may over-estimate by up to 65kb.
-     * For 4096 byte block sizes, this means we may over-estimate by up to 4mb
+     *  
+     * For files with 109 or fewer BATs:
+     *  The actual file size will be between [size of fatCount-1 blocks] and
+     *   [size of fatCount blocks].
+     *  For 512 byte block sizes, this means we may over-estimate by up to 65kb.
+     *  For 4096 byte block sizes, this means we may over-estimate by up to 4mb
+     *  
+     * For files with more than 109 BATs (i.e. has XBATs):
+     *  Each XBAT can hold 127/1023 BATs, which in turn address 128/1024 blocks.
+     *  For 512 byte block sizes, this means we may over-estimate by up to 8mb
+     *  For 4096 byte block sizes, this means we may over-estimate by up to 4gb,
+     *   but only for files of more than 436mb in size
      */
     public static int calculateMaximumSize(final POIFSBigBlockSize bigBlockSize,
           final int numBAT, final int numXBAT) {
        int size = 1; // Header isn't FAT addressed
+       
+       // The header contains up to 109 BATs, each of which can
+       //  address 128/1024 blocks
        size += (numBAT * bigBlockSize.getBATEntriesPerBlock());
-       size += (numXBAT * bigBlockSize.getXBATEntriesPerBlock());
+       
+       // Each XBAT holds up to 127/1024 BATs, each of which can
+       //  address 128/1024 blocks
+       size += (numXBAT * bigBlockSize.getXBATEntriesPerBlock() *
+                          bigBlockSize.getBATEntriesPerBlock());
+       
+       // So far we've been in sector counts, turn into bytes
        return size * bigBlockSize.getBigBlockSize();
     }
     public static int calculateMaximumSize(final HeaderBlock header)
@@ -260,24 +277,9 @@ public final class BATBlock extends BigBlock {
                 final HeaderBlock header, final List<BATBlock> bats) {
        POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
        
-       // Are we in the BAT or XBAT range
-       int batRangeEndsAt = bigBlockSize.getBATEntriesPerBlock() *
-                            header.getBATCount();
-       
-       if(offset < batRangeEndsAt) {
-          int whichBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
-          int index = offset % bigBlockSize.getBATEntriesPerBlock();
-          return new BATBlockAndIndex( index, bats.get(whichBAT) );
-       }
-       
-       // XBATs hold slightly less
-       int relOffset = offset - batRangeEndsAt;
-       int whichXBAT = (int)Math.floor(relOffset / bigBlockSize.getXBATEntriesPerBlock());
-       int index = relOffset % bigBlockSize.getXBATEntriesPerBlock();
-       return new BATBlockAndIndex(
-             index,
-             bats.get(header.getBATCount() + whichXBAT)
-       );
+       int whichBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
+       int index = offset % bigBlockSize.getBATEntriesPerBlock();
+       return new BATBlockAndIndex( index, bats.get(whichBAT) );
     }
     
     /**

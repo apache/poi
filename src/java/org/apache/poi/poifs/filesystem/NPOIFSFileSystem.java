@@ -77,6 +77,7 @@ public class NPOIFSFileSystem extends BlockStore
    
     private NPOIFSMiniStore _mini_store;
     private NPropertyTable  _property_table;
+    private List<BATBlock>  _xbat_blocks;
     private List<BATBlock>  _bat_blocks;
     private HeaderBlock     _header;
     private DirectoryNode   _root;
@@ -98,6 +99,7 @@ public class NPOIFSFileSystem extends BlockStore
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new NPropertyTable(_header);
         _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
+        _xbat_blocks     = new ArrayList<BATBlock>();
         _bat_blocks     = new ArrayList<BATBlock>();
         _root           = null;
     }
@@ -264,14 +266,10 @@ public class NPOIFSFileSystem extends BlockStore
        
        // Read the FAT blocks
        for(int fatAt : _header.getBATArray()) {
-          loopDetector.claim(fatAt);
-          ByteBuffer fatData = getBlockAt(fatAt);
-          BATBlock bat = BATBlock.createBATBlock(bigBlockSize, fatData);
-          bat.setOurBlockIndex(fatAt);
-          _bat_blocks.add(bat);
+          readBAT(fatAt, loopDetector);
        }
        
-       // Now read the XFAT blocks
+       // Now read the XFAT blocks, and the FATs within them
        BATBlock xfat; 
        int nextAt = _header.getXBATIndex();
        for(int i=0; i<_header.getXBATCount(); i++) {
@@ -280,8 +278,13 @@ public class NPOIFSFileSystem extends BlockStore
           xfat = BATBlock.createBATBlock(bigBlockSize, fatData);
           xfat.setOurBlockIndex(nextAt);
           nextAt = xfat.getValueAt(bigBlockSize.getXBATEntriesPerBlock());
+          _xbat_blocks.add(xfat);
           
-          _bat_blocks.add(xfat);
+          for(int j=0; j<bigBlockSize.getXBATEntriesPerBlock(); j++) {
+             int fatAt = xfat.getValueAt(j);
+             if(fatAt == POIFSConstants.UNUSED_BLOCK) break;
+             readBAT(fatAt, loopDetector);
+          }
        }
        
        // We're now able to load steams
@@ -301,6 +304,13 @@ public class NPOIFSFileSystem extends BlockStore
           sbats.add(sfat);
           nextAt = getNextBlock(nextAt);  
        }
+    }
+    private void readBAT(int batAt, ChainLoopDetector loopDetector) throws IOException {
+       loopDetector.claim(batAt);
+       ByteBuffer fatData = getBlockAt(batAt);
+       BATBlock bat = BATBlock.createBATBlock(bigBlockSize, fatData);
+       bat.setOurBlockIndex(batAt);
+       _bat_blocks.add(bat);
     }
     
     /**

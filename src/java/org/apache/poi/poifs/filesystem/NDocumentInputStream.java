@@ -29,8 +29,6 @@ import org.apache.poi.util.LittleEndianInput;
 /**
  * This class provides methods to read a DocumentEntry managed by a
  * {@link POIFSFileSystem} instance.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class NDocumentInputStream extends InputStream implements LittleEndianInput {
 	/** returned by read operations if we're at end of document */
