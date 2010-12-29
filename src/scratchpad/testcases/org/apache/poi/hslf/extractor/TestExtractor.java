@@ -150,14 +150,14 @@ public final class TestExtractor extends TestCase {
          assertNotNull(dirB.getEntry("PowerPoint Document"));
 
          // Check the first file
-         ss = new HSLFSlideShow(dirA, fs);
+         ss = new HSLFSlideShow(dirA);
          ppe = new PowerPointExtractor(ss);
          assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
                  ppe.getText(true, false)
          );
 
          // And the second
-         ss = new HSLFSlideShow(dirB, fs);
+         ss = new HSLFSlideShow(dirB);
          ppe = new PowerPointExtractor(ss);
          assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
                  ppe.getText(true, false)

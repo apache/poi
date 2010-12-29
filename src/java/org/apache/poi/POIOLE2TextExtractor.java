@@ -66,6 +66,6 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 *  this document.
 	 */
 	public POIFSFileSystem getFileSystem() {
-		return document.filesystem;
+		return document.directory.getFileSystem();
 	}
 }

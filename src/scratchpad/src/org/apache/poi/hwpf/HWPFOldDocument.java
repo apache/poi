@@ -39,12 +39,16 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     private TextPieceTable tpt;
     
     public HWPFOldDocument(POIFSFileSystem fs) throws IOException {
-        this(fs.getRoot(), fs);
+        this(fs.getRoot());
     }
 
     public HWPFOldDocument(DirectoryNode directory, POIFSFileSystem fs)
             throws IOException {
-        super(directory, fs);
+       this(directory);
+    }
+    public HWPFOldDocument(DirectoryNode directory)
+            throws IOException {
+        super(directory);
         
         // Where are things?
         int sedTableOffset = LittleEndian.getInt(_mainStream, 0x88);

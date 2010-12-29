@@ -168,7 +168,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
 	private HSSFWorkbook(InternalWorkbook book) {
-		super(null, null);
+		super((DirectoryNode)null);
 		workbook = book;
 		_sheets = new ArrayList(INITIAL_CAPACITY);
 		names = new ArrayList(INITIAL_CAPACITY);
@@ -249,7 +249,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
-        super(directory, fs);
+        super(directory);
         String workbookName = getWorkbookDirEntryName(directory);
 
         this.preserveNodes = preserveNodes;
@@ -257,7 +257,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // If we're not preserving nodes, don't track the
         //  POIFS any more
         if(! preserveNodes) {
-           this.filesystem = null;
            this.directory = null;
         }
 
@@ -1174,7 +1173,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             //  out correctly shortly, so don't include the old one
             excepts.add("WORKBOOK");
 
-            POIFSFileSystem srcFs = this.filesystem;
+            POIFSFileSystem srcFs = this.directory.getFileSystem();
             // Copy over all the other nodes to our new poifs
             copyNodes(srcFs, fs, excepts);
 
@@ -1673,7 +1672,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                     Object sub = subRecordIter.next();
                     if (sub instanceof EmbeddedObjectRefSubRecord)
                     {
-                        objects.add(new HSSFObjectData((ObjRecord) obj, filesystem));
+                        objects.add(new HSSFObjectData((ObjRecord) obj, directory.getFileSystem()));
                     }
                 }
             }
