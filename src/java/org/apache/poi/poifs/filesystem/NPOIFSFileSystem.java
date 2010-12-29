@@ -312,6 +312,17 @@ public class NPOIFSFileSystem extends BlockStore
        bat.setOurBlockIndex(batAt);
        _bat_blocks.add(bat);
     }
+    private BATBlock createBAT(int offset, boolean isBAT) throws IOException {
+       // Create a new BATBlock
+       BATBlock newBAT = BATBlock.createEmptyBATBlock(bigBlockSize, !isBAT);
+       newBAT.setOurBlockIndex(offset);
+       // Ensure there's a spot in the file for it
+       ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
+       int writeTo = (1+offset) * bigBlockSize.getBigBlockSize(); // Header isn't in BATs
+       _data.write(buffer, writeTo);
+       // All done
+       return newBAT;
+    }
     
     /**
      * Load the block at the given offset.
@@ -377,12 +388,7 @@ public class NPOIFSFileSystem extends BlockStore
        // First up, do we have any spare ones?
        int offset = 0;
        for(int i=0; i<_bat_blocks.size(); i++) {
-          boolean isXBAT = (i >= _header.getBATCount());
-          
           int numSectors = bigBlockSize.getBATEntriesPerBlock();
-          if(isXBAT) {
-             numSectors = bigBlockSize.getXBATEntriesPerBlock();
-          }
 
           // Check this one
           BATBlock bat = _bat_blocks.get(i);
@@ -397,54 +403,62 @@ public class NPOIFSFileSystem extends BlockStore
              }
           }
           
-          // Move onto the next BAT/XBAT
+          // Move onto the next BAT
           offset += numSectors;
        }
        
-       // If we get here, then there aren't any
-       //  free sectors in any of the BATs or XBATs
-       // So, we need to extend the file and add another
-       boolean isBAT = true;
+       // If we get here, then there aren't any free sectors
+       //  in any of the BATs, so we need another BAT
+       BATBlock bat = createBAT(offset, true);
+       bat.setValueAt(0, POIFSConstants.FAT_SECTOR_BLOCK);
+       _bat_blocks.add(bat);
+       
+       // Now store a reference to the BAT in the required place 
        if(_header.getBATCount() >= 109) {
-          isBAT = false;
-       }
-       
-       // Create a new BATBlock
-       BATBlock newBAT = BATBlock.createEmptyBATBlock(bigBlockSize, !isBAT);
-       newBAT.setOurBlockIndex(offset);
-       // Ensure there's a spot in the file for it
-       ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
-       int writeTo = (1+offset) * bigBlockSize.getBigBlockSize(); // Header isn't in BATs
-       _data.write(buffer, writeTo);
-       
-       // Allocate ourself within ourselves, at the first point
-       if(isBAT) {
-          newBAT.setValueAt(0, POIFSConstants.FAT_SECTOR_BLOCK);
+          // Needs to come from an XBAT
+          BATBlock xbat = null;
+          for(BATBlock x : _xbat_blocks) {
+             if(x.hasFreeSectors()) {
+                xbat = x;
+                break;
+             }
+          }
+          if(xbat == null) {
+             // Oh joy, we need a new XBAT too...
+             xbat = createBAT(offset+1, false);
+             xbat.setValueAt(0, offset);
+             bat.setValueAt(offset+1, POIFSConstants.DIFAT_SECTOR_BLOCK);
+             
+             // Will go one place higher as XBAT added in
+             offset++;
+             
+             // Chain it
+             if(_xbat_blocks.size() == 0) {
+                _header.setXBATStart(offset);
+             } else {
+                _xbat_blocks.get(_xbat_blocks.size()-1).setValueAt(
+                      bigBlockSize.getXBATEntriesPerBlock(), offset
+                );
+             }
+             _xbat_blocks.add(xbat);
+             _header.setXBATCount(_xbat_blocks.size());
+          }
+          // Allocate us in the XBAT
+          for(int i=0; i<bigBlockSize.getXBATEntriesPerBlock(); i++) {
+             if(xbat.getValueAt(i) == POIFSConstants.UNUSED_BLOCK) {
+                xbat.setValueAt(i, offset);
+             }
+          }
        } else {
-          newBAT.setValueAt(0, POIFSConstants.DIFAT_SECTOR_BLOCK);
-       }
-
-       // Store us
-       _bat_blocks.add(newBAT);
-       if(isBAT) {
-          // Put it in the BAT array in the header
+          // Store us in the header
           int[] newBATs = new int[_header.getBATCount()+1];
           System.arraycopy(_header.getBATArray(), 0, newBATs, 0, newBATs.length-1);
           newBATs[newBATs.length-1] = offset;
           _header.setBATArray(newBATs);
           _header.setBATCount(newBATs.length);
-       } else if(_header.getXBATCount() == 0) {
-          // Store our first XBAT offset in the header
-          _header.setXBATStart(offset);
-          _header.setXBATCount(1);
-       } else {
-          // Chain it off the last XBAT
-          BATBlock lastXBAT = _bat_blocks.get(_bat_blocks.size()-1);
-          lastXBAT.setValueAt(bigBlockSize.getNextXBATChainOffset(), offset);
-          _header.setXBATCount(_header.getXBATCount()+1);
        }
        
-       // The first offset stores us, but the 2nd is free
+       // The current offset stores us, but the next one is free
        return offset+1;
     }
     
