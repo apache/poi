@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link Section} class at a later time, so the API will change.</p>
- *
- * @version $Id$
- * @since 2002-02-20
  */
 public class MutableSection extends Section
 {
@@ -56,7 +53,7 @@ public class MutableSection extends Section
      * decision has been taken when specifying the "properties" field
      * as an Property[]. It should have been a {@link java.util.List}.</p>
      */
-    private List preprops;
+    private List<Property> preprops;
 
 
 
@@ -77,17 +74,17 @@ public class MutableSection extends Section
         dirty = true;
         formatID = null;
         offset = -1;
-        preprops = new LinkedList();
+        preprops = new LinkedList<Property>();
     }
 
 
 
     /**
-     * <p>Constructs a <code>MutableSection</code> by doing a deep copy of an 
-     * existing <code>Section</code>. All nested <code>Property</code> 
+     * <p>Constructs a <code>MutableSection</code> by doing a deep copy of an
+     * existing <code>Section</code>. All nested <code>Property</code>
      * instances, will be their mutable counterparts in the new
      * <code>MutableSection</code>.</p>
-     * 
+     *
      * @param s The section set to copy
      */
     public MutableSection(final Section s)
@@ -148,7 +145,7 @@ public class MutableSection extends Section
     public void setProperties(final Property[] properties)
     {
         this.properties = properties;
-        preprops = new LinkedList();
+        preprops = new LinkedList<Property>();
         for (int i = 0; i < properties.length; i++)
             preprops.add(properties[i]);
         dirty = true;
@@ -185,7 +182,7 @@ public class MutableSection extends Section
      */
     public void setProperty(final int id, final int value)
     {
-        setProperty(id, Variant.VT_I4, new Integer(value));
+        setProperty(id, Variant.VT_I4, Integer.valueOf(value));
         dirty = true;
     }
 
@@ -202,7 +199,7 @@ public class MutableSection extends Section
      */
     public void setProperty(final int id, final long value)
     {
-        setProperty(id, Variant.VT_I8, new Long(value));
+        setProperty(id, Variant.VT_I8, Long.valueOf(value));
         dirty = true;
     }
 
@@ -219,7 +216,7 @@ public class MutableSection extends Section
      */
     public void setProperty(final int id, final boolean value)
     {
-        setProperty(id, Variant.VT_BOOL, new Boolean(value));
+        setProperty(id, Variant.VT_BOOL, Boolean.valueOf(value));
         dirty = true;
     }
 
@@ -279,8 +276,8 @@ public class MutableSection extends Section
      */
     public void removeProperty(final long id)
     {
-        for (final Iterator i = preprops.iterator(); i.hasNext();)
-            if (((Property) i.next()).getID() == id)
+        for (final Iterator<Property> i = preprops.iterator(); i.hasNext();)
+            if (i.next().getID() == id)
             {
                 i.remove();
                 break;
@@ -303,7 +300,7 @@ public class MutableSection extends Section
      */
     protected void setPropertyBooleanValue(final int id, final boolean value)
     {
-        setProperty(id, Variant.VT_BOOL, new Boolean(value));
+        setProperty(id, Variant.VT_BOOL, Boolean.valueOf(value));
     }
 
 
@@ -342,10 +339,10 @@ public class MutableSection extends Section
      * properties) and the properties themselves.</p>
      *
      * @return the section's length in bytes.
-     * @throws WritingNotSupportedException 
-     * @throws IOException 
+     * @throws WritingNotSupportedException
+     * @throws IOException
      */
-    private int calcSize() throws WritingNotSupportedException, IOException 
+    private int calcSize() throws WritingNotSupportedException, IOException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         write(out);
@@ -360,7 +357,7 @@ public class MutableSection extends Section
 
     /**
      * <p>Writes this section into an output stream.</p>
-     * 
+     *
      * <p>Internally this is done by writing into three byte array output
      * streams: one for the properties, one for the property list and one for
      * the section as such. The two former are appended to the latter when they
@@ -393,7 +390,7 @@ public class MutableSection extends Section
          * "propertyListStream". */
         final ByteArrayOutputStream propertyListStream =
             new ByteArrayOutputStream();
- 
+
         /* Maintain the current position in the list. */
         int position = 0;
 
@@ -421,17 +418,15 @@ public class MutableSection extends Section
                  * dictionary is present. In order to cope with this problem we
                  * add the codepage property and set it to Unicode. */
                 setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                            new Integer(Constants.CP_UNICODE));
+                            Integer.valueOf(Constants.CP_UNICODE));
             codepage = getCodepage();
         }
 
         /* Sort the property list by their property IDs: */
-        Collections.sort(preprops, new Comparator()
+        Collections.sort(preprops, new Comparator<Property>()
             {
-                public int compare(final Object o1, final Object o2)
+                public int compare(final Property p1, final Property p2)
                 {
-                    final Property p1 = (Property) o1;
-                    final Property p2 = (Property) o2;
                     if (p1.getID() < p2.getID())
                         return -1;
                     else if (p1.getID() == p2.getID())
@@ -443,11 +438,11 @@ public class MutableSection extends Section
 
         /* Write the properties and the property list into their respective
          * streams: */
-        for (final ListIterator i = preprops.listIterator(); i.hasNext();)
+        for (final ListIterator<Property> i = preprops.listIterator(); i.hasNext();)
         {
             final MutableProperty p = (MutableProperty) i.next();
             final long id = p.getID();
-            
+
             /* Write the property list entry. */
             TypeWriter.writeUIntToStream(propertyListStream, p.getID());
             TypeWriter.writeUIntToStream(propertyListStream, position);
@@ -475,17 +470,17 @@ public class MutableSection extends Section
         /* Write the section: */
         byte[] pb1 = propertyListStream.toByteArray();
         byte[] pb2 = propertyStream.toByteArray();
-        
+
         /* Write the section's length: */
         TypeWriter.writeToStream(out, LittleEndian.INT_SIZE * 2 +
                                       pb1.length + pb2.length);
-        
+
         /* Write the section's number of properties: */
         TypeWriter.writeToStream(out, getPropertyCount());
-        
+
         /* Write the property list: */
         out.write(pb1);
-        
+
         /* Write the properties: */
         out.write(pb2);
 
@@ -505,14 +500,14 @@ public class MutableSection extends Section
      * @exception IOException if an I/O exception occurs.
      */
     private static int writeDictionary(final OutputStream out,
-                                       final Map dictionary, final int codepage)
+                                       final Map<Long,String> dictionary, final int codepage)
         throws IOException
     {
         int length = TypeWriter.writeUIntToStream(out, dictionary.size());
-        for (final Iterator i = dictionary.keySet().iterator(); i.hasNext();)
+        for (final Iterator<Long> i = dictionary.keySet().iterator(); i.hasNext();)
         {
-            final Long key = (Long) i.next();
-            final String value = (String) dictionary.get(key);
+            final Long key = i.next();
+            final String value = dictionary.get(key);
 
             if (codepage == Constants.CP_UNICODE)
             {
@@ -565,7 +560,7 @@ public class MutableSection extends Section
      * <p>Overwrites the super class' method to cope with a redundancy:
      * the property count is maintained in a separate member variable, but
      * shouldn't.</p>
-     * 
+     *
      * @return The number of properties in this section
      */
     public int getPropertyCount()
@@ -577,7 +572,7 @@ public class MutableSection extends Section
 
     /**
      * <p>Gets this section's properties.</p>
-     * 
+     *
      * @return this section's properties.
      */
     public Property[] getProperties()
@@ -590,7 +585,7 @@ public class MutableSection extends Section
 
     /**
      * <p>Gets a property.</p>
-     * 
+     *
      * @param id The ID of the property to get
      * @return The property or <code>null</code> if there is no such property
      */
@@ -614,27 +609,17 @@ public class MutableSection extends Section
      * method.</p>
      *
      * @param dictionary The dictionary
-     * 
+     *
      * @exception IllegalPropertySetDataException if the dictionary's key and
      * value types are not correct.
-     * 
+     *
      * @see Section#getDictionary()
      */
-    public void setDictionary(final Map dictionary)
+    public void setDictionary(final Map<Long,String> dictionary)
         throws IllegalPropertySetDataException
     {
         if (dictionary != null)
         {
-            for (final Iterator i = dictionary.keySet().iterator();
-                 i.hasNext();)
-                if (!(i.next() instanceof Long))
-                    throw new IllegalPropertySetDataException
-                        ("Dictionary keys must be of type Long.");
-            for (final Iterator i = dictionary.values().iterator();
-                 i.hasNext();)
-                if (!(i.next() instanceof String))
-                    throw new IllegalPropertySetDataException
-                        ("Dictionary values must be of type String.");
             this.dictionary = dictionary;
 
             /* Set the dictionary property (ID 0). Please note that the second
@@ -649,7 +634,7 @@ public class MutableSection extends Section
                 (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
             if (codepage == null)
                 setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                            new Integer(Constants.CP_UNICODE));
+                            Integer.valueOf(Constants.CP_UNICODE));
         }
         else
             /* Setting the dictionary to null means to remove property 0.
@@ -661,7 +646,7 @@ public class MutableSection extends Section
 
     /**
      * <p>Sets a property.</p>
-     * 
+     *
      * @param id The property ID.
      * @param value The property's value. The value's class must be one of those
      *        supported by HPSF.
@@ -710,7 +695,6 @@ public class MutableSection extends Section
     public void setCodepage(final int codepage)
     {
         setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                new Integer(codepage));
+                Integer.valueOf(codepage));
     }
-
 }

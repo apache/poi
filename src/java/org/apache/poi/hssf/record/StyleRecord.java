@@ -73,7 +73,7 @@ public final class StyleRecord extends Record {
 	            
 	            byte[] string = in.readRemainder();
 	            if (fHighByte.isSet(field_3_string_options)) {
-	                field_4_name= StringUtil.getFromUnicodeBE(string, 0, field_2_name_length);
+	                field_4_name= StringUtil.getFromUnicodeLE(string, 0, field_2_name_length);
 	            } else {
 	                field_4_name=StringUtil.getFromCompressedUnicode(string, 0, field_2_name_length);
 	            }

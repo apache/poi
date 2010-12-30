@@ -40,7 +40,7 @@ public class SmallDocumentBlockList
     public SmallDocumentBlockList(final List blocks)
     {
         setBlocks(( SmallDocumentBlock [] ) blocks
-            .toArray(new SmallDocumentBlock[ 0 ]));
+            .toArray(new SmallDocumentBlock[ blocks.size() ]));
     }
 }   // end public class SmallDocumentBlockList
 

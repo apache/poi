@@ -41,7 +41,8 @@ public class TestOffice2007XMLException extends TestCase {
 			fail("expected exception was not thrown");
 		} catch(OfficeXmlFileException e) {
 			// expected during successful test
-			assertTrue(e.getMessage().indexOf("POI only supports OLE2 Office documents") > 0);
+			assertTrue(e.getMessage().indexOf("The supplied data appears to be in the Office 2007+ XML") > -1);
+			assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OLE2 Office Documents") > -1);
 		}
 	}
 	

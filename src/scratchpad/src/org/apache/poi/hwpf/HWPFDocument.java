@@ -215,7 +215,7 @@ public class HWPFDocument extends POIDocument
       DocumentEntry dataProps =
           (DocumentEntry)directory.getEntry("Data");
       _dataStream = new byte[dataProps.getSize()];
-      filesystem.createDocumentInputStream("Data").read(_dataStream);
+      directory.createDocumentInputStream("Data").read(_dataStream);
     }
     catch(java.io.FileNotFoundException e)
     {

@@ -34,10 +34,10 @@ import java.util.*;
  * @author Jason Height
  */
 
-public class IntMapper
+public class IntMapper<T>
 {
-  private List elements;
-  private Map valueKeyMap;
+  private List<T> elements;
+  private Map<T,Integer> valueKeyMap;
 
   private static final int _default_size = 10;
 
@@ -52,8 +52,8 @@ public class IntMapper
 
     public IntMapper(final int initialCapacity)
     {
-        elements = new ArrayList(initialCapacity);
-        valueKeyMap = new HashMap(initialCapacity);
+        elements = new ArrayList<T>(initialCapacity);
+        valueKeyMap = new HashMap<T,Integer>(initialCapacity);
     }
 
     /**
@@ -64,12 +64,11 @@ public class IntMapper
      * @return true (as per the general contract of the Collection.add
      *         method).
      */
-
-    public boolean add(final Object value)
+    public boolean add(final T value)
     {
       int index = elements.size();
       elements.add(value);
-      valueKeyMap.put(value, new Integer(index));
+      valueKeyMap.put(value, index);
       return true;
     }
 
@@ -77,18 +76,18 @@ public class IntMapper
       return elements.size();
     }
 
-    public Object get(int index) {
+    public T get(int index) {
       return elements.get(index);
     }
 
-    public int getIndex(Object o) {
-      Integer i = ((Integer)valueKeyMap.get(o));
+    public int getIndex(T o) {
+      Integer i = valueKeyMap.get(o);
       if (i == null)
         return -1;
       return i.intValue();
     }
 
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
       return elements.iterator();
     }
 }   // end public class IntMapper

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,39 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test IntList
  *
  * @author Marc Johnson
  */
+public final class TestIntList extends TestCase {
 
-public class TestIntList
-    extends TestCase
-{
-
-    /**
-     * Constructor TestIntList
-     *
-     * @param name
-     */
-
-    public TestIntList(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test the various IntListconstructors
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         IntList list = new IntList();
 
         assertTrue(list.isEmpty());
@@ -61,12 +40,7 @@ public class TestIntList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the add method
-     */
-
-    public void testAdd()
-    {
+    public void testAdd() {
         IntList list      = new IntList();
         int[]   testArray =
         {
@@ -144,12 +118,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the addAll method
-     */
-
-    public void testAddAll()
-    {
+    public void testAddAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 5; j++)
@@ -223,12 +192,7 @@ public class TestIntList
         assertEquals(list.get(4), empty.get(14));
     }
 
-    /**
-     * test the clear method
-     */
-
-    public void testClear()
-    {
+    public void testClear() {
         IntList list = new IntList();
 
         for (int j = 0; j < 500; j++)
@@ -249,12 +213,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the contains method
-     */
-
-    public void testContains()
-    {
+    public void testContains() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j += 2)
@@ -274,12 +233,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the containsAll method
-     */
-
-    public void testContainsAll()
-    {
+    public void testContainsAll() {
         IntList list = new IntList();
 
         assertTrue(list.containsAll(list));
@@ -299,12 +253,7 @@ public class TestIntList
         assertTrue(!list.containsAll(list2));
     }
 
-    /**
-     * test the equals method
-     */
-
-    public void testEquals()
-    {
+    public void testEquals() {
         IntList list = new IntList();
 
         assertEquals(list, list);
@@ -328,12 +277,7 @@ public class TestIntList
         assertTrue(!list2.equals(list));
     }
 
-    /**
-     * test the get method
-     */
-
-    public void testGet()
-    {
+    public void testGet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -360,12 +304,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the indexOf method
-     */
-
-    public void testIndexOf()
-    {
+    public void testIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -385,12 +324,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the isEmpty method
-     */
-
-    public void testIsEmpty()
-    {
+    public void testIsEmpty() {
         IntList list1 = new IntList();
         IntList list2 = new IntList(1000);
         IntList list3 = new IntList(list1);
@@ -412,12 +346,7 @@ public class TestIntList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the lastIndexOf method
-     */
-
-    public void testLastIndexOf()
-    {
+    public void testLastIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -437,12 +366,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the remove method
-     */
-
-    public void testRemove()
-    {
+    public void testRemove() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -475,12 +399,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the removeValue method
-     */
-
-    public void testRemoveValue()
-    {
+    public void testRemoveValue() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -498,12 +417,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the removeAll method
-     */
-
-    public void testRemoveAll()
-    {
+    public void testRemoveAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -535,12 +449,7 @@ public class TestIntList
         assertTrue(listCopy.isEmpty());
     }
 
-    /**
-     * test the retainAll method
-     */
-
-    public void testRetainAll()
-    {
+    public void testRetainAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -572,12 +481,7 @@ public class TestIntList
         assertTrue(listCopy.isEmpty());
     }
 
-    /**
-     * test the set method
-     */
-
-    public void testSet()
-    {
+    public void testSet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -605,12 +509,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the size method
-     */
-
-    public void testSize()
-    {
+    public void testSize() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -627,12 +526,7 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the toArray method
-     */
-
-    public void testToArray()
-    {
+    public void testToArray() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -671,17 +565,5 @@ public class TestIntList
         {
             assertEquals(a5[ j ], list.get(j));
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param unused_args
-     */
-
-    public static void main(String [] unused_args)
-    {
-        System.out.println("Testing util.IntList functionality");
-        junit.textui.TestRunner.run(TestIntList.class);
     }
 }

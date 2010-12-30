@@ -21,6 +21,9 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.File;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * Class POIFSDocumentPath
  *
@@ -30,6 +33,8 @@ import java.io.File;
 
 public class POIFSDocumentPath
 {
+    private static final POILogger log = POILogFactory.getLogger(POIFSDocumentPath.class);
+          
     private String[] components;
     private int      hashcode = 0;
 
@@ -125,12 +130,17 @@ public class POIFSDocumentPath
         {
             for (int j = 0; j < components.length; j++)
             {
-                if ((components[ j ] == null)
-                        || (components[ j ].length() == 0))
+                if (components[ j ] == null)
                 {
                     throw new IllegalArgumentException(
-                        "components cannot contain null or empty strings");
+                        "components cannot contain null");
                 }
+                if (components[ j ].length() == 0)
+                {
+                    log.log(POILogger.WARN, "Directory under " + path + " has an empty name, " +
+                            "not all OLE2 readers will handle this file correctly!");
+                }
+                
                 this.components[ j + path.components.length ] =
                     components[ j ];
             }

@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -25,20 +25,18 @@ import java.util.Random;
  *
  * @author Glen Stampoultzis
  */
-public class TempFile
-{
-    static File dir;
-    static Random rnd = new Random();
+public final class TempFile {
+    private static File dir;
+    private static final Random rnd = new Random();
 
     /**
      * Creates a temporary file.  Files are collected into one directory and by default are
      * deleted on exit from the VM.  Files can be kept by defining the system property
      * <code>poi.keep.tmp.files</code>.
      * <p>
-     * Dont forget to close all files or it might not be possible to delete them.
+     * Don't forget to close all files or it might not be possible to delete them.
      */
-    public static File createTempFile(String prefix, String suffix) throws IOException
-    {
+    public static File createTempFile(String prefix, String suffix) {
         if (dir == null)
         {
             dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
@@ -52,7 +50,4 @@ public class TempFile
             newFile.deleteOnExit();
         return newFile;
     }
-
-
-
 }

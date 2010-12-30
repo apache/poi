@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.HexDump;
@@ -28,8 +28,6 @@ import org.apache.poi.util.HexDump;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2003-08-05
- * @version $Id$
  */
 public abstract class UnsupportedVariantTypeException
 extends VariantTypeException

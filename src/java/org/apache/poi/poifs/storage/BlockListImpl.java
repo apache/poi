@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,29 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.IOException;
 
 /**
  * A simple implementation of BlockList
  *
  * @author Marc Johnson (mjohnson at apache dot org
  */
-
-class BlockListImpl
-    implements BlockList
-{
+abstract class BlockListImpl implements BlockList {
     private ListManagedBlock[]         _blocks;
     private BlockAllocationTableReader _bat;
-
-    /**
-     * Constructor BlockListImpl
-     */
 
     protected BlockListImpl()
     {
@@ -50,13 +39,10 @@ class BlockListImpl
      *
      * @param blocks blocks to be managed
      */
-
     protected void setBlocks(final ListManagedBlock [] blocks)
     {
         _blocks = blocks;
     }
-
-    /* ********** START implementation of BlockList ********** */
 
     /**
      * remove the specified block from the list
@@ -64,13 +50,20 @@ class BlockListImpl
      * @param index the index of the specified block; if the index is
      *              out of range, that's ok
      */
-
     public void zap(final int index)
     {
         if ((index >= 0) && (index < _blocks.length))
         {
             _blocks[ index ] = null;
         }
+    }
+
+    /**
+     * Unit testing method. Gets, without sanity checks or
+     *  removing.
+     */
+    protected ListManagedBlock get(final int index) {
+        return _blocks[index];
     }
 
     /**
@@ -83,7 +76,6 @@ class BlockListImpl
      * @exception IOException if the index is out of range or has
      *            already been removed
      */
-
     public ListManagedBlock remove(final int index)
         throws IOException
     {
@@ -94,15 +86,17 @@ class BlockListImpl
             result = _blocks[ index ];
             if (result == null)
             {
-                throw new IOException("block[ " + index
-                                      + " ] already removed");
+                throw new IOException(
+                		"block[ " + index + " ] already removed - " +
+                		"does your POIFS have circular or duplicate block references?"
+                );
             }
             _blocks[ index ] = null;
         }
         catch (ArrayIndexOutOfBoundsException ignored)
         {
             throw new IOException("Cannot remove block[ " + index
-                                  + " ]; out of range[ 0 - " + 
+                                  + " ]; out of range[ 0 - " +
                                   (_blocks.length-1) + " ]");
         }
         return result;
@@ -118,8 +112,7 @@ class BlockListImpl
      *
      * @exception IOException if blocks are missing
      */
-
-    public ListManagedBlock [] fetchBlocks(final int startBlock)
+    public ListManagedBlock [] fetchBlocks(final int startBlock, final int headerPropertiesStartBlock)
         throws IOException
     {
         if (_bat == null)
@@ -127,17 +120,14 @@ class BlockListImpl
             throw new IOException(
                 "Improperly initialized list: no block allocation table provided");
         }
-        return _bat.fetchBlocks(startBlock, this);
+        return _bat.fetchBlocks(startBlock, headerPropertiesStartBlock, this);
     }
 
     /**
      * set the associated BlockAllocationTable
      *
      * @param bat the associated BlockAllocationTable
-     *
-     * @exception IOException
      */
-
     public void setBAT(final BlockAllocationTableReader bat)
         throws IOException
     {
@@ -148,7 +138,21 @@ class BlockListImpl
         }
         _bat = bat;
     }
-
-    /* **********  END  implementation of BlockList ********** */
-}   // end package-scope class BlockListImpl
-
+    
+    /**
+     * Returns the count of the number of blocks
+     */
+    public int blockCount() {
+       return _blocks.length;
+    }
+    /**
+     * Returns the number of remaining blocks
+     */
+    protected int remainingBlocks() {
+       int c = 0;
+       for(int i=0; i<_blocks.length; i++) {
+          if(_blocks[i] != null) c++;
+       }
+       return c;
+    }
+}

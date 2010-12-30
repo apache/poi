@@ -15,53 +15,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
-import java.util.*;
-
-import junit.framework.*;
-
-import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.poifs.storage.RawDataBlock;
+import junit.framework.TestCase;
 
 /**
  * Class to test DocumentOutputStream functionality
  *
  * @author Marc Johnson
  */
-
-public class TestDocumentOutputStream
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocumentOutputStream
-     *
-     * @param name
-     *
-     * @exception IOException
-     */
-
-    public TestDocumentOutputStream(String name)
-        throws IOException
-    {
-        super(name);
-    }
+public final class TestDocumentOutputStream extends TestCase {
 
     /**
      * test write(int) behavior
-     *
-     * @exception IOException
      */
-
-    public void testWrite1()
-        throws IOException
-    {
+    public void testWrite1() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
 
@@ -89,13 +62,8 @@ public class TestDocumentOutputStream
 
     /**
      * test write(byte[]) behavior
-     *
-     * @exception IOException
      */
-
-    public void testWrite2()
-        throws IOException
-    {
+    public void testWrite2() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
 
@@ -133,13 +101,8 @@ public class TestDocumentOutputStream
 
     /**
      * test write(byte[], int, int) behavior
-     *
-     * @exception IOException
      */
-
-    public void testWrite3()
-        throws IOException
-    {
+    public void testWrite3() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
         byte[]                array   = new byte[ 50 ];
@@ -169,13 +132,8 @@ public class TestDocumentOutputStream
 
     /**
      * test writeFiller()
-     *
-     * @exception IOException
      */
-
-    public void testWriteFiller()
-        throws IOException
-    {
+    public void testWriteFiller() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
 
@@ -204,18 +162,5 @@ public class TestDocumentOutputStream
             assertEquals(String.valueOf(j), ( byte ) 0xff, output[ j ]);
         }
         stream.close();
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.filesystem.DocumentOutputStream");
-        junit.textui.TestRunner.run(TestDocumentOutputStream.class);
     }
 }

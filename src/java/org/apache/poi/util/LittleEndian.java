@@ -28,12 +28,11 @@ import java.io.InputStream;
  *@author     Marc Johnson (mjohnson at apache dot org)
  *@author     Andrew Oliver (acoliver at apache dot org)
  */
-public final class LittleEndian implements LittleEndianConsts {
+public class LittleEndian implements LittleEndianConsts {
 
     private LittleEndian() {
-    	// no instances of this class
+        // no instances of this class
     }
-
 
     /**
      *  get a short value from a byte array
@@ -42,9 +41,10 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the short (16-bit) value
      */
-
-    public static short getShort(final byte[] data, final int offset) {
-        return (short) getNumber(data, offset, SHORT_SIZE);
+    public static short getShort(byte[] data, int offset) {
+        int b0 = data[offset] & 0xFF;
+        int b1 = data[offset+1] & 0xFF;
+        return (short) ((b1 << 8) + (b0 << 0));
     }
 
 
@@ -55,49 +55,11 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the unsigned short (16-bit) value in an integer
      */
-    public static int getUShort(final byte[] data, final int offset) {
-        short num = (short) getNumber(data, offset, SHORT_SIZE);
-        int retNum;
-        if (num < 0) {
-            retNum = (Short.MAX_VALUE + 1) * 2 + num;
-        } else {
-            retNum = num;
-        }
-        return retNum;
+    public static int getUShort(byte[] data, int offset) {
+        int b0 = data[offset] & 0xFF;
+        int b1 = data[offset+1] & 0xFF;
+        return (b1 << 8) + (b0 << 0);
     }
-
-
-    /**
-     *  get a short array from a byte array.
-     *
-     *@param  data    Description of the Parameter
-     *@param  offset  Description of the Parameter
-     *@param  size    Description of the Parameter
-     *@return         The simpleShortArray value
-     */
-    public static short[] getSimpleShortArray(final byte[] data, final int offset, final int size) {
-        short[] results = new short[size];
-        for (int i = 0; i < size; i++) {
-            results[i] = getShort(data, offset + 2 + (i * 2));
-        }
-        return results;
-    }
-
-
-    /**
-     *  get a short array from a byte array. The short array is assumed to start
-     *  with a word describing the length of the array.
-     *
-     *@param  data    Description of the Parameter
-     *@param  offset  Description of the Parameter
-     *@return         The shortArray value
-     */
-    public static short[] getShortArray(final byte[] data, final int offset) {
-        int size = (int) getNumber(data, offset, SHORT_SIZE);
-        short[] results = getSimpleShortArray(data, offset, size);
-        return results;
-    }
-
 
     /**
      *  get a short value from the beginning of a byte array
@@ -105,11 +67,9 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  data  the byte array
      *@return       the short (16-bit) value
      */
-
-    public static short getShort(final byte[] data) {
+    public static short getShort(byte[] data) {
         return getShort(data, 0);
     }
-
 
     /**
      *  get an unsigned short value from the beginning of a byte array
@@ -117,10 +77,9 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  data  the byte array
      *@return       the unsigned short (16-bit) value in an int
      */
-    public static int getUShort(final byte[] data) {
+    public static int getUShort(byte[] data) {
         return getUShort(data, 0);
     }
-
 
     /**
      *  get an int value from a byte array
@@ -129,9 +88,13 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the int (32-bit) value
      */
-
-    public static int getInt(final byte[] data, final int offset) {
-        return (int) getNumber(data, offset, INT_SIZE);
+    public static int getInt(byte[] data, int offset) {
+        int i=offset;
+        int b0 = data[i++] & 0xFF;
+        int b1 = data[i++] & 0xFF;
+        int b2 = data[i++] & 0xFF;
+        int b3 = data[i++] & 0xFF;
+        return (b3 << 24) + (b2 << 16) + (b1 << 8) + (b0 << 0);
     }
 
 
@@ -139,10 +102,9 @@ public final class LittleEndian implements LittleEndianConsts {
      *  get an int value from the beginning of a byte array
      *
      *@param  data  the byte array
-     *@return       the int (32-bit) value
+     *@return the int (32-bit) value
      */
-
-    public static int getInt(final byte[] data) {
+    public static int getInt(byte[] data) {
         return getInt(data, 0);
     }
 
@@ -154,15 +116,9 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the unsigned int (32-bit) value in a long
      */
-    public static long getUInt(final byte[] data, final int offset) {
-        int num = (int) getNumber(data, offset, INT_SIZE);
-        long retNum;
-        if (num < 0) {
-            retNum = ((long) Integer.MAX_VALUE + 1) * 2 + num;
-        } else {
-            retNum = num;
-        }
-        return retNum;
+    public static long getUInt(byte[] data, int offset) {
+        long retNum = getInt(data, offset);
+        return retNum & 0x00FFFFFFFF;
     }
 
     /**
@@ -171,8 +127,8 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  data    the byte array
      *@return         the unsigned int (32-bit) value in a long
      */
-    public static long getUInt(final byte[] data) {
-	return getUInt(data,0);
+    public static long getUInt(byte[] data) {
+        return getUInt(data,0);
     }
 
     /**
@@ -182,23 +138,15 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the long (64-bit) value
      */
-
-    public static long getLong(final byte[] data, final int offset) {
-        return getNumber(data, offset, LONG_SIZE);
+    public static long getLong(byte[] data, int offset) {
+        long result = 0;
+		
+		for (int j = offset + LONG_SIZE - 1; j >= offset; j--) {
+		    result <<= 8;
+		    result |= 0xff & data[j];
+		}
+		return result;
     }
-
-
-    /**
-     *  get a long value from the beginning of a byte array
-     *
-     *@param  data  the byte array
-     *@return       the long (64-bit) value
-     */
-
-    public static long getLong(final byte[] data) {
-        return getLong(data, 0);
-    }
-
 
     /**
      *  get a double value from a byte array, reads it in little endian format
@@ -209,23 +157,9 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@return         the double (64-bit) value
      */
-
-    public static double getDouble(final byte[] data, final int offset) {
-        return Double.longBitsToDouble(getNumber(data, offset, DOUBLE_SIZE));
+    public static double getDouble(byte[] data, int offset) {
+        return Double.longBitsToDouble(getLong(data, offset));
     }
-
-
-    /**
-     *  get a double value from the beginning of a byte array
-     *
-     *@param  data  the byte array
-     *@return       the double (64-bit) value
-     */
-
-    public static double getDouble(final byte[] data) {
-        return getDouble(data, 0);
-    }
-
 
     /**
      *  put a short value into a byte array
@@ -234,9 +168,10 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@param  value   the short (16-bit) value
      */
-    public static void putShort(final byte[] data, final int offset,
-            final short value) {
-        putNumber(data, offset, value, SHORT_SIZE);
+    public static void putShort(byte[] data, int offset, short value) {
+        int i = offset;
+        data[i++] = (byte)((value >>>  0) & 0xFF);
+        data[i++] = (byte)((value >>>  8) & 0xFF);
     }
 
     /**
@@ -247,7 +182,7 @@ public final class LittleEndian implements LittleEndianConsts {
      * Added for consistency with other put~() methods
      */
     public static void putByte(byte[] data, int offset, int value) {
-        putNumber(data, offset, value, LittleEndianConsts.BYTE_SIZE);
+        data[offset] = (byte) value;
     }
 
     /**
@@ -259,10 +194,10 @@ public final class LittleEndian implements LittleEndianConsts {
      *
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
-    public static void putUShort(final byte[] data, final int offset,
-                                final int value)
-    {
-        putNumber(data, offset, value, SHORT_SIZE);
+    public static void putUShort(byte[] data, int offset, int value) {
+        int i = offset;
+        data[i++] = (byte)((value >>>  0) & 0xFF);
+        data[i++] = (byte)((value >>>  8) & 0xFF);
     }
 
     /**
@@ -271,8 +206,7 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  data   the byte array
      *@param  value  the short (16-bit) value
      */
-
-    public static void putShort(final byte[] data, final short value) {
+    public static void putShort(byte[] data, short value) {
         putShort(data, 0, value);
     }
 
@@ -284,10 +218,12 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@param  value   the int (32-bit) value
      */
-
-    public static void putInt(final byte[] data, final int offset,
-            final int value) {
-        putNumber(data, offset, value, INT_SIZE);
+    public static void putInt(byte[] data, int offset, int value) {
+        int i = offset;
+        data[i++] = (byte)((value >>>  0) & 0xFF);
+        data[i++] = (byte)((value >>>  8) & 0xFF);
+        data[i++] = (byte)((value >>> 16) & 0xFF);
+        data[i++] = (byte)((value >>> 24) & 0xFF);
     }
 
 
@@ -297,8 +233,7 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  data   the byte array
      *@param  value  the int (32-bit) value
      */
-
-    public static void putInt(final byte[] data, final int value) {
+    public static void putInt(byte[] data, int value) {
         putInt(data, 0, value);
     }
 
@@ -310,22 +245,14 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@param  value   the long (64-bit) value
      */
-
-    public static void putLong(final byte[] data, final int offset,
-            final long value) {
-        putNumber(data, offset, value, LONG_SIZE);
-    }
-
-
-    /**
-     *  put a long value into beginning of a byte array
-     *
-     *@param  data   the byte array
-     *@param  value  the long (64-bit) value
-     */
-
-    public static void putLong(final byte[] data, final long value) {
-        putLong(data, 0, value);
+    public static void putLong(byte[] data, int offset, long value) {
+        int limit = LONG_SIZE + offset;
+        long v = value;
+        
+        for (int j = offset; j < limit; j++) {
+            data[j] = (byte) (v & 0xFF);
+            v >>= 8;
+        }
     }
 
 
@@ -336,26 +263,8 @@ public final class LittleEndian implements LittleEndianConsts {
      *@param  offset  a starting offset into the byte array
      *@param  value   the double (64-bit) value
      */
-
-    public static void putDouble(final byte[] data, final int offset,
-            final double value) {
-        // Excel likes NaN to be a specific value.
-        if (Double.isNaN(value))
-            putNumber(data, offset, -276939487313920L, DOUBLE_SIZE);
-        else
-            putNumber(data, offset, Double.doubleToLongBits(value), DOUBLE_SIZE);
-    }
-
-
-    /**
-     *  put a double value into beginning of a byte array
-     *
-     *@param  data   the byte array
-     *@param  value  the double (64-bit) value
-     */
-
-    public static void putDouble(final byte[] data, final double value) {
-        putDouble(data, 0, value);
+    public static void putDouble(byte[] data, int offset, double value) {
+        putLong(data, offset, Double.doubleToLongBits(value));
     }
 
 
@@ -364,7 +273,6 @@ public final class LittleEndian implements LittleEndianConsts {
      *
      *@author     Marc Johnson (mjohnson at apache dot org)
      */
-
     public static final class BufferUnderrunException extends IOException {
 
         BufferUnderrunException() {
@@ -376,79 +284,72 @@ public final class LittleEndian implements LittleEndianConsts {
     /**
      *  get a short value from an InputStream
      *
-     *@param  stream                       the InputStream from which the short
-     *      is to be read
+     *@param  stream the InputStream from which the short is to be read
      *@return                              the short (16-bit) value
      *@exception  IOException              will be propagated back to the caller
-     *@exception  BufferUnderrunException  if the stream cannot provide enough
-     *      bytes
+     *@exception  BufferUnderrunException  if the stream cannot provide enough bytes
      */
     public static short readShort(InputStream stream) throws IOException, BufferUnderrunException {
 
-		return (short) readUShort(stream);
-	}
+        return (short) readUShort(stream);
+    }
 
-	public static int readUShort(InputStream stream) throws IOException, BufferUnderrunException {
+    public static int readUShort(InputStream stream) throws IOException, BufferUnderrunException {
 
-		int ch1 = stream.read();
-		int ch2 = stream.read();
-		if ((ch1 | ch2) < 0) {
-			throw new BufferUnderrunException();
-		}
-		return ((ch2 << 8) + (ch1 << 0));
-	}
+        int ch1 = stream.read();
+        int ch2 = stream.read();
+        if ((ch1 | ch2) < 0) {
+            throw new BufferUnderrunException();
+        }
+        return (ch2 << 8) + (ch1 << 0);
+    }
     
 
     /**
      *  get an int value from an InputStream
      *
-     *@param  stream                       the InputStream from which the int is
-     *      to be read
-     *@return                              the int (32-bit) value
-     *@exception  IOException              will be propagated back to the caller
-     *@exception  BufferUnderrunException  if the stream cannot provide enough
-     *      bytes
+     *@param  stream the InputStream from which the int is to be read
+     * @return                              the int (32-bit) value
+     * @exception  IOException              will be propagated back to the caller
+     * @exception  BufferUnderrunException  if the stream cannot provide enough bytes
      */
-    public static int readInt(final InputStream stream)
+    public static int readInt(InputStream stream)
              throws IOException, BufferUnderrunException {
-		int ch1 = stream.read();
-		int ch2 = stream.read();
-		int ch3 = stream.read();
-		int ch4 = stream.read();
-		if ((ch1 | ch2 | ch3 | ch4) < 0) {
-			throw new BufferUnderrunException();
-		}
-		return ((ch4 << 24) + (ch3<<16) + (ch2 << 8) + (ch1 << 0));
+        int ch1 = stream.read();
+        int ch2 = stream.read();
+        int ch3 = stream.read();
+        int ch4 = stream.read();
+        if ((ch1 | ch2 | ch3 | ch4) < 0) {
+            throw new BufferUnderrunException();
+        }
+        return (ch4 << 24) + (ch3<<16) + (ch2 << 8) + (ch1 << 0);
     }
 
 
     /**
      *  get a long value from an InputStream
      *
-     *@param  stream                       the InputStream from which the long
-     *      is to be read
-     *@return                              the long (64-bit) value
-     *@exception  IOException              will be propagated back to the caller
-     *@exception  BufferUnderrunException  if the stream cannot provide enough
-     *      bytes
+     * @param  stream the InputStream from which the long is to be read
+     * @return                              the long (64-bit) value
+     * @exception  IOException              will be propagated back to the caller
+     * @exception  BufferUnderrunException  if the stream cannot provide enough bytes
      */
-
-    public static long readLong(final InputStream stream)
+    public static long readLong(InputStream stream)
              throws IOException, BufferUnderrunException {
-		int ch1 = stream.read();
-		int ch2 = stream.read();
-		int ch3 = stream.read();
-		int ch4 = stream.read();
-		int ch5 = stream.read();
-		int ch6 = stream.read();
-		int ch7 = stream.read();
-		int ch8 = stream.read();
-		if ((ch1 | ch2 | ch3 | ch4 | ch5 | ch6 | ch7 | ch8) < 0) {
-			throw new BufferUnderrunException();
-		}
-		
-		return 
-			((long)ch8 << 56) +
+        int ch1 = stream.read();
+        int ch2 = stream.read();
+        int ch3 = stream.read();
+        int ch4 = stream.read();
+        int ch5 = stream.read();
+        int ch6 = stream.read();
+        int ch7 = stream.read();
+        int ch8 = stream.read();
+        if ((ch1 | ch2 | ch3 | ch4 | ch5 | ch6 | ch7 | ch8) < 0) {
+            throw new BufferUnderrunException();
+        }
+        
+        return 
+            ((long)ch8 << 56) +
             ((long)ch7 << 48) +
             ((long)ch6 << 40) +
             ((long)ch5 << 32) +
@@ -459,113 +360,43 @@ public final class LittleEndian implements LittleEndianConsts {
     }
 
     /**
-     *  Gets the number attribute of the LittleEndian class
-     *
-     *@param  data    Description of the Parameter
-     *@param  offset  Description of the Parameter
-     *@param  size    Description of the Parameter
-     *@return         The number value
-     */
-    private static long getNumber(final byte[] data, final int offset,
-            final int size) {
-        long result = 0;
-
-        for (int j = offset + size - 1; j >= offset; j--) {
-            result <<= 8;
-            result |= 0xff & data[j];
-        }
-        return result;
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     *@param  data    Description of the Parameter
-     *@param  offset  Description of the Parameter
-     *@param  value   Description of the Parameter
-     *@param  size    Description of the Parameter
-     */
-    private static void putNumber(final byte[] data, final int offset,
-            final long value, final int size) {
-        int limit = size + offset;
-        long v = value;
-
-        for (int j = offset; j < limit; j++) {
-            data[j] = (byte) (v & 0xFF);
-            v >>= 8;
-        }
-    }
-
-
-    /**
      *  Convert an 'unsigned' byte to an integer. ie, don't carry across the
      *  sign.
      *
-     *@param  b  Description of the Parameter
-     *@return    Description of the Return Value
+     * @param  b  Description of the Parameter
+     * @return    Description of the Return Value
      */
     public static int ubyteToInt(byte b) {
-        return ((b & 0x80) == 0 ? (int) b : (b & (byte) 0x7f) + 0x80);
+        return b & 0xFF;
     }
 
 
     /**
      *  get the unsigned value of a byte.
      *
-     *@param  data    the byte array.
-     *@param  offset  a starting offset into the byte array.
-     *@return         the unsigned value of the byte as a 32 bit integer
+     * @param  data    the byte array.
+     * @param  offset  a starting offset into the byte array.
+     * @return         the unsigned value of the byte as a 32 bit integer
      */
-    public static int getUnsignedByte(final byte[] data, final int offset) {
-        return (int) getNumber(data, offset, BYTE_SIZE);
-    }
-
-
-    /**
-     *  get the unsigned value of a byte.
-     *
-     *@param  data  the byte array
-     *@return       the unsigned value of the byte as a 32 bit integer
-     */
-    public static int getUnsignedByte(final byte[] data) {
-        return getUnsignedByte(data, 0);
+    public static int getUnsignedByte(byte[] data, int offset) {
+        return data[offset] & 0xFF;
     }
 
 
     /**
      *  Copy a portion of a byte array
      *
-     *@param  data                        the original byte array
-     *@param  offset                      Where to start copying from.
-     *@param  size                        Number of bytes to copy.
-     *@return                             The byteArray value
-     *@throws  IndexOutOfBoundsException  - if copying would cause access of
+     * @param  data                        the original byte array
+     * @param  offset                      Where to start copying from.
+     * @param  size                        Number of bytes to copy.
+     * @return                             The byteArray value
+     * @throws  IndexOutOfBoundsException  - if copying would cause access of
      *      data outside array bounds.
      */
-    public static byte[] getByteArray(final byte[] data, int offset, int size) {
+    public static byte[] getByteArray(byte[] data, int offset, int size) {
         byte[] copy = new byte[size];
         System.arraycopy(data, offset, copy, 0, size);
 
         return copy;
     }
-
-    /**
-     * <p>Gets an unsigned int value (8 bytes) from a byte array.</p>
-     * 
-     * @param data the byte array
-     * @param offset a starting offset into the byte array
-     * @return the unsigned int (32-bit) value in a long
-     */
-    public static long getULong(final byte[] data, final int offset)
-    {
-        int num = (int) getNumber(data, offset, LONG_SIZE);
-        long retNum;
-        if (num < 0)
-            retNum = ((long) Integer.MAX_VALUE + 1) * 2 + num;
-        else
-            retNum = num;
-        return retNum;
-    }
-
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,63 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
+import org.apache.poi.poifs.storage.RawDataUtil;
 
-import junit.framework.*;
-
-import org.apache.poi.poifs.common.POIFSConstants;
+import junit.framework.TestCase;
 
 /**
  * Class to test DirectoryProperty functionality
  *
  * @author Marc Johnson
  */
-
-public class TestDirectoryProperty
-    extends TestCase
-{
+public final class TestDirectoryProperty extends TestCase {
     private DirectoryProperty _property;
     private byte[]            _testblock;
 
     /**
-     * Constructor TestDirectoryProperty
-     *
-     * @param name
-     */
-
-    public TestDirectoryProperty(String name)
-    {
-        super(name);
-    }
-
-    /**
      * Test constructing DirectoryProperty
-     *
-     * @exception IOException
      */
-
-    public void testConstructor()
-        throws IOException
-    {
+    public void testConstructor() throws IOException {
         createBasicDirectoryProperty();
         verifyProperty();
     }
 
     /**
      * Test pre-write functionality
-     *
-     * @exception IOException
      */
-
-    public void testPreWrite()
-        throws IOException
-    {
+    public void testPreWrite() throws IOException {
         createBasicDirectoryProperty();
         _property.preWrite();
 
@@ -119,9 +96,7 @@ public class TestDirectoryProperty
         }
     }
 
-    private void verifyChildren(int count)
-        throws IOException
-    {
+    private void verifyChildren(int count) {
         Iterator iter     = _property.getChildren();
         List     children = new ArrayList();
 
@@ -175,8 +150,7 @@ public class TestDirectoryProperty
         }
     }
 
-    private void createBasicDirectoryProperty()
-    {
+    private void createBasicDirectoryProperty() {
         String name = "MyDirectory";
 
         _property  = new DirectoryProperty(name);
@@ -209,9 +183,7 @@ public class TestDirectoryProperty
         }
     }
 
-    private void verifyProperty()
-        throws IOException
-    {
+    private void verifyProperty() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
 
         _property.writeData(stream);
@@ -225,15 +197,7 @@ public class TestDirectoryProperty
         }
     }
 
-    /**
-     * Test addChild
-     *
-     * @exception IOException
-     */
-
-    public void testAddChild()
-        throws IOException
-    {
+    public void testAddChild() throws IOException {
         createBasicDirectoryProperty();
         _property.addChild(new LocalProperty(1));
         _property.addChild(new LocalProperty(2));
@@ -260,15 +224,7 @@ public class TestDirectoryProperty
         _property.addChild(new LocalProperty(3));
     }
 
-    /**
-     * Test deleteChild
-     *
-     * @exception IOException
-     */
-
-    public void testDeleteChild()
-        throws IOException
-    {
+    public void testDeleteChild() throws IOException {
         createBasicDirectoryProperty();
         Property p1 = new LocalProperty(1);
 
@@ -288,15 +244,7 @@ public class TestDirectoryProperty
         _property.addChild(new LocalProperty(1));
     }
 
-    /**
-     * Test changeName
-     *
-     * @exception IOException
-     */
-
-    public void testChangeName()
-        throws IOException
-    {
+    public void testChangeName() throws IOException {
         createBasicDirectoryProperty();
         Property p1           = new LocalProperty(1);
         String   originalName = p1.getName();
@@ -314,88 +262,35 @@ public class TestDirectoryProperty
         assertTrue(_property.changeName(p1, originalName));
     }
 
-    /**
-     * Test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
-        byte[] input =
-        {
-            ( byte ) 0x42, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
-            ( byte ) 0x6F, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
-            ( byte ) 0x20, ( byte ) 0x00, ( byte ) 0x45, ( byte ) 0x00,
-            ( byte ) 0x6E, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
-            ( byte ) 0x72, ( byte ) 0x00, ( byte ) 0x79, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x16, ( byte ) 0x00, ( byte ) 0x01, ( byte ) 0x01,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x02, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x20, ( byte ) 0x08, ( byte ) 0x02, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xC0, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x46,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xC0, ( byte ) 0x5C, ( byte ) 0xE8, ( byte ) 0x23,
-            ( byte ) 0x9E, ( byte ) 0x6B, ( byte ) 0xC1, ( byte ) 0x01,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00
+    public void testReadingConstructor() {
+        String[] input = {
+            "42 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
+            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+            "16 00 01 01 FF FF FF FF FF FF FF FF 02 00 00 00 20 08 02 00 00 00 00 00 C0 00 00 00 00 00 00 46",
+            "00 00 00 00 00 00 00 00 00 00 00 00 C0 5C E8 23 9E 6B C1 01 FE FF FF FF 00 00 00 00 00 00 00 00",
         };
-
-        verifyReadingProperty(0, input, 0, "Boot Entry");
+        verifyReadingProperty(0, RawDataUtil.decode(input), 0, "Boot Entry");
     }
 
-    private void verifyReadingProperty(int index, byte [] input, int offset,
-                                       String name)
-        throws IOException
-    {
-        DirectoryProperty     property = new DirectoryProperty(index, input,
-                                             offset);
-        ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
-        byte[]                expected = new byte[ 128 ];
+    private static void verifyReadingProperty(int index, byte[] input, int offset, String name) {
+        DirectoryProperty property = new DirectoryProperty(index, input, offset);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
+        byte[] expected = new byte[128];
 
         System.arraycopy(input, offset, expected, 0, 128);
-        property.writeData(stream);
+        try {
+            property.writeData(stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         byte[] output = stream.toByteArray();
 
         assertEquals(128, output.length);
-        for (int j = 0; j < 128; j++)
-        {
-            assertEquals("mismatch at offset " + j, expected[ j ],
-                         output[ j ]);
+        for (int j = 0; j < 128; j++) {
+            assertEquals("mismatch at offset " + j, expected[j], output[j]);
         }
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());
         assertTrue(!property.getChildren().hasNext());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.property.DirectoryProperty");
-        junit.textui.TestRunner.run(TestDirectoryProperty.class);
     }
 }

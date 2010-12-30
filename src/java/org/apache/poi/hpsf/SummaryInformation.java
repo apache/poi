@@ -24,15 +24,12 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 /**
  * <p>Convenience class representing a Summary Information stream in a
  * Microsoft Office document.</p>
- * 
+ *
  * @author Rainer Klute <a
  *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @see DocumentSummaryInformation
- * @version $Id$
- * @since 2002-02-09
  */
-public class SummaryInformation extends SpecialPropertySet
-{
+public final class SummaryInformation extends SpecialPropertySet {
 
     /**
      * <p>The document name a summary information stream usually has in a POIFS
@@ -48,7 +45,7 @@ public class SummaryInformation extends SpecialPropertySet
     /**
      * <p>Creates a {@link SummaryInformation} from a given {@link
      * PropertySet}.</p>
-     * 
+     *
      * @param ps A property set which should be created from a summary
      *        information stream.
      * @throws UnexpectedPropertySetTypeException if <var>ps</var> does not
@@ -67,7 +64,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the title (or <code>null</code>).</p>
-     * 
+     *
      * @return The title or <code>null</code>
      */
     public String getTitle()
@@ -79,7 +76,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the title.</p>
-     * 
+     *
      * @param title The title to set.
      */
     public void setTitle(final String title)
@@ -103,7 +100,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the subject (or <code>null</code>).</p>
-     * 
+     *
      * @return The subject or <code>null</code>
      */
     public String getSubject()
@@ -115,7 +112,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the subject.</p>
-     * 
+     *
      * @param subject The subject to set.
      */
     public void setSubject(final String subject)
@@ -139,7 +136,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the author (or <code>null</code>).</p>
-     * 
+     *
      * @return The author or <code>null</code>
      */
     public String getAuthor()
@@ -151,7 +148,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the author.</p>
-     * 
+     *
      * @param author The author to set.
      */
     public void setAuthor(final String author)
@@ -175,7 +172,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the keywords (or <code>null</code>).</p>
-     * 
+     *
      * @return The keywords or <code>null</code>
      */
     public String getKeywords()
@@ -187,7 +184,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the keywords.</p>
-     * 
+     *
      * @param keywords The keywords to set.
      */
     public void setKeywords(final String keywords)
@@ -211,7 +208,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the comments (or <code>null</code>).</p>
-     * 
+     *
      * @return The comments or <code>null</code>
      */
     public String getComments()
@@ -223,7 +220,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the comments.</p>
-     * 
+     *
      * @param comments The comments to set.
      */
     public void setComments(final String comments)
@@ -247,7 +244,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the template (or <code>null</code>).</p>
-     * 
+     *
      * @return The template or <code>null</code>
      */
     public String getTemplate()
@@ -259,7 +256,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the template.</p>
-     * 
+     *
      * @param template The template to set.
      */
     public void setTemplate(final String template)
@@ -283,7 +280,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the last author (or <code>null</code>).</p>
-     * 
+     *
      * @return The last author or <code>null</code>
      */
     public String getLastAuthor()
@@ -295,7 +292,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the last author.</p>
-     * 
+     *
      * @param lastAuthor The last author to set.
      */
     public void setLastAuthor(final String lastAuthor)
@@ -319,7 +316,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the revision number (or <code>null</code>). </p>
-     * 
+     *
      * @return The revision number or <code>null</code>
      */
     public String getRevNumber()
@@ -331,7 +328,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the revision number.</p>
-     * 
+     *
      * @param revNumber The revision number to set.
      */
     public void setRevNumber(final String revNumber)
@@ -356,24 +353,24 @@ public class SummaryInformation extends SpecialPropertySet
     /**
      * <p>Returns the total time spent in editing the document (or
      * <code>0</code>).</p>
-     * 
+     *
      * @return The total time spent in editing the document or 0 if the {@link
      *         SummaryInformation} does not contain this information.
      */
     public long getEditTime()
     {
         final Date d = (Date) getProperty(PropertyIDMap.PID_EDITTIME);
-        if (d == null)
+        if (d == null) {
             return 0;
-        else
-            return Util.dateToFileTime(d);
+        }
+        return Util.dateToFileTime(d);
     }
 
 
 
     /**
      * <p>Sets the total time spent in editing the document.</p>
-     * 
+     *
      * @param time The time to set.
      */
     public void setEditTime(final long time)
@@ -398,7 +395,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the last printed time (or <code>null</code>).</p>
-     * 
+     *
      * @return The last printed time or <code>null</code>
      */
     public Date getLastPrinted()
@@ -410,7 +407,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the lastPrinted.</p>
-     * 
+     *
      * @param lastPrinted The lastPrinted to set.
      */
     public void setLastPrinted(final Date lastPrinted)
@@ -435,7 +432,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the creation time (or <code>null</code>).</p>
-     * 
+     *
      * @return The creation time or <code>null</code>
      */
     public Date getCreateDateTime()
@@ -447,7 +444,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the creation time.</p>
-     * 
+     *
      * @param createDateTime The creation time to set.
      */
     public void setCreateDateTime(final Date createDateTime)
@@ -472,7 +469,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the last save time (or <code>null</code>).</p>
-     * 
+     *
      * @return The last save time or <code>null</code>
      */
     public Date getLastSaveDateTime()
@@ -484,7 +481,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the total time spent in editing the document.</p>
-     * 
+     *
      * @param time The time to set.
      */
     public void setLastSaveDateTime(final Date time)
@@ -511,7 +508,7 @@ public class SummaryInformation extends SpecialPropertySet
     /**
      * <p>Returns the page count or 0 if the {@link SummaryInformation} does
      * not contain a page count.</p>
-     * 
+     *
      * @return The page count or 0 if the {@link SummaryInformation} does not
      *         contain a page count.
      */
@@ -524,7 +521,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the page count.</p>
-     * 
+     *
      * @param pageCount The page count to set.
      */
     public void setPageCount(final int pageCount)
@@ -549,7 +546,7 @@ public class SummaryInformation extends SpecialPropertySet
     /**
      * <p>Returns the word count or 0 if the {@link SummaryInformation} does
      * not contain a word count.</p>
-     * 
+     *
      * @return The word count or <code>null</code>
      */
     public int getWordCount()
@@ -561,7 +558,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the word count.</p>
-     * 
+     *
      * @param wordCount The word count to set.
      */
     public void setWordCount(final int wordCount)
@@ -586,7 +583,7 @@ public class SummaryInformation extends SpecialPropertySet
     /**
      * <p>Returns the character count or 0 if the {@link SummaryInformation}
      * does not contain a char count.</p>
-     * 
+     *
      * @return The character count or <code>null</code>
      */
     public int getCharCount()
@@ -598,7 +595,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the character count.</p>
-     * 
+     *
      * @param charCount The character count to set.
      */
     public void setCharCount(final int charCount)
@@ -624,12 +621,12 @@ public class SummaryInformation extends SpecialPropertySet
      * <p>Returns the thumbnail (or <code>null</code>) <strong>when this
      * method is implemented. Please note that the return type is likely to
      * change!</strong></p>
-     * 
+     *
      * <p><strong>Hint to developers:</strong> Drew Varner &lt;Drew.Varner
      * -at- sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?)
      * format. However, we won't do any conversion into any image type but
      * instead just return a byte array.</p>
-     * 
+     *
      * @return The thumbnail or <code>null</code>
      */
     public byte[] getThumbnail()
@@ -641,7 +638,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the thumbnail.</p>
-     * 
+     *
      * @param thumbnail The thumbnail to set.
      */
     public void setThumbnail(final byte[] thumbnail)
@@ -666,7 +663,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the application name (or <code>null</code>).</p>
-     * 
+     *
      * @return The application name or <code>null</code>
      */
     public String getApplicationName()
@@ -678,7 +675,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the application name.</p>
-     * 
+     *
      * @param applicationName The application name to set.
      */
     public void setApplicationName(final String applicationName)
@@ -702,24 +699,24 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns a security code which is one of the following values:</p>
-     * 
+     *
      * <ul>
-     * 
+     *
      * <li><p>0 if the {@link SummaryInformation} does not contain a
      * security field or if there is no security on the document. Use
      * {@link PropertySet#wasNull()} to distinguish between the two
      * cases!</p></li>
-     * 
+     *
      * <li><p>1 if the document is password protected</p></li>
-     * 
+     *
      * <li><p>2 if the document is read-only recommended</p></li>
-     * 
+     *
      * <li><p>4 if the document is read-only enforced</p></li>
-     * 
+     *
      * <li><p>8 if the document is locked for annotations</p></li>
-     * 
+     *
      * </ul>
-     * 
+     *
      * @return The security code or <code>null</code>
      */
     public int getSecurity()
@@ -731,7 +728,7 @@ public class SummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the security code.</p>
-     * 
+     *
      * @param security The security code to set.
      */
     public void setSecurity(final int security)

@@ -26,22 +26,22 @@ import junit.framework.TestSuite;
  */
 public final class AllPOIFSStorageTests {
 
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.poifs.storage");
-        result.addTestSuite(TestBATBlock.class);
-        result.addTestSuite(TestBlockAllocationTableReader.class);
-        result.addTestSuite(TestBlockAllocationTableWriter.class);
-        result.addTestSuite(TestBlockListImpl.class);
-        result.addTestSuite(TestDocumentBlock.class);
-        result.addTestSuite(TestHeaderBlockReader.class);
-        result.addTestSuite(TestHeaderBlockWriter.class);
-        result.addTestSuite(TestPropertyBlock.class);
-        result.addTestSuite(TestRawDataBlock.class);
-        result.addTestSuite(TestRawDataBlockList.class);
-        result.addTestSuite(TestSmallBlockTableReader.class);
-        result.addTestSuite(TestSmallBlockTableWriter.class);
-        result.addTestSuite(TestSmallDocumentBlock.class);
-        result.addTestSuite(TestSmallDocumentBlockList.class);
-        return result;
-    }
+	public static Test suite() {
+		TestSuite result = new TestSuite(AllPOIFSStorageTests.class.getName());
+		result.addTestSuite(TestBATBlock.class);
+		result.addTestSuite(TestBlockAllocationTableReader.class);
+		result.addTestSuite(TestBlockAllocationTableWriter.class);
+		result.addTestSuite(TestBlockListImpl.class);
+		result.addTestSuite(TestDocumentBlock.class);
+		result.addTestSuite(TestHeaderBlockReading.class);
+		result.addTestSuite(TestHeaderBlockWriting.class);
+		result.addTestSuite(TestPropertyBlock.class);
+		result.addTestSuite(TestRawDataBlock.class);
+		result.addTestSuite(TestRawDataBlockList.class);
+		result.addTestSuite(TestSmallBlockTableReader.class);
+		result.addTestSuite(TestSmallBlockTableWriter.class);
+		result.addTestSuite(TestSmallDocumentBlock.class);
+		result.addTestSuite(TestSmallDocumentBlockList.class);
+		return result;
+	}
 }

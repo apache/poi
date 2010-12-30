@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,31 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
-import java.util.*;
-
-import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.property.Property;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A block of Property instances
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class PropertyBlock
-    extends BigBlock
-{
-    private static final int _properties_per_block =
-        POIFSConstants.BIG_BLOCK_SIZE / POIFSConstants.PROPERTY_SIZE;
+public final class PropertyBlock extends BigBlock {
     private Property[]       _properties;
 
     /**
@@ -49,10 +39,12 @@ public class PropertyBlock
      * @param offset the offset into the properties array
      */
 
-    private PropertyBlock(final Property [] properties, final int offset)
+    private PropertyBlock(final POIFSBigBlockSize bigBlockSize, final Property [] properties, final int offset)
     {
-        _properties = new Property[ _properties_per_block ];
-        for (int j = 0; j < _properties_per_block; j++)
+        super(bigBlockSize);
+        
+        _properties = new Property[ bigBlockSize.getPropertiesPerBlock() ]; 
+        for (int j = 0; j < _properties.length; j++)
         {
             _properties[ j ] = properties[ j + offset ];
         }
@@ -70,8 +62,9 @@ public class PropertyBlock
      */
 
     public static BlockWritable [] createPropertyBlockArray(
-            final List properties)
+            final POIFSBigBlockSize bigBlockSize, final List<Property> properties)
     {
+        int _properties_per_block = bigBlockSize.getPropertiesPerBlock();
         int        block_count   =
             (properties.size() + _properties_per_block - 1)
             / _properties_per_block;
@@ -101,7 +94,7 @@ public class PropertyBlock
 
         for (int j = 0; j < block_count; j++)
         {
-            rvalue[ j ] = new PropertyBlock(to_be_written,
+            rvalue[ j ] = new PropertyBlock(bigBlockSize, to_be_written,
                                             j * _properties_per_block);
         }
         return rvalue;
@@ -122,6 +115,7 @@ public class PropertyBlock
     void writeData(final OutputStream stream)
         throws IOException
     {
+        int _properties_per_block = bigBlockSize.getPropertiesPerBlock();
         for (int j = 0; j < _properties_per_block; j++)
         {
             _properties[ j ].writeData(stream);

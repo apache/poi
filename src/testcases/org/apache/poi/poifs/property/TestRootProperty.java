@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,210 +14,118 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.storage.RawDataUtil;
 
 /**
  * Class to test RootProperty functionality
  *
  * @author Marc Johnson
  */
+public final class TestRootProperty extends TestCase {
+	private RootProperty _property;
+	private byte[] _testblock;
 
-public class TestRootProperty
-    extends TestCase
-{
-    private RootProperty _property;
-    private byte[]       _testblock;
+	public void testConstructor() throws IOException {
+		createBasicRootProperty();
+		verifyProperty();
+	}
 
-    /**
-     * Constructor TestRootProperty
-     *
-     * @param name
-     */
+	private void createBasicRootProperty() {
+		_property = new RootProperty();
+		_testblock = new byte[128];
+		int index = 0;
 
-    public TestRootProperty(String name)
-    {
-        super(name);
-    }
+		for (; index < 0x40; index++) {
+			_testblock[index] = (byte) 0;
+		}
+		String name = "Root Entry";
+		int limit = Math.min(31, name.length());
 
-    /**
-     * Test constructing RootProperty
-     *
-     * @exception IOException
-     */
+		_testblock[index++] = (byte) (2 * (limit + 1));
+		_testblock[index++] = (byte) 0;
+		_testblock[index++] = (byte) 5;
+		_testblock[index++] = (byte) 1;
+		for (; index < 0x50; index++) {
+			_testblock[index] = (byte) 0xff;
+		}
+		for (; index < 0x74; index++) {
+			_testblock[index] = (byte) 0;
+		}
+		_testblock[index++] = (byte) POIFSConstants.END_OF_CHAIN;
+		for (; index < 0x78; index++) {
+			_testblock[index] = (byte) 0xff;
+		}
+		for (; index < 0x80; index++) {
+			_testblock[index] = (byte) 0;
+		}
+		byte[] name_bytes = name.getBytes();
 
-    public void testConstructor()
-        throws IOException
-    {
-        createBasicRootProperty();
-        verifyProperty();
-    }
+		for (index = 0; index < limit; index++) {
+			_testblock[index * 2] = name_bytes[index];
+		}
+	}
 
-    private void createBasicRootProperty()
-    {
-        _property  = new RootProperty();
-        _testblock = new byte[ 128 ];
-        int index = 0;
+	private void verifyProperty() throws IOException {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
 
-        for (; index < 0x40; index++)
-        {
-            _testblock[ index ] = ( byte ) 0;
-        }
-        String name  = "Root Entry";
-        int    limit = Math.min(31, name.length());
+		_property.writeData(stream);
+		byte[] output = stream.toByteArray();
 
-        _testblock[ index++ ] = ( byte ) (2 * (limit + 1));
-        _testblock[ index++ ] = ( byte ) 0;
-        _testblock[ index++ ] = ( byte ) 5;
-        _testblock[ index++ ] = ( byte ) 1;
-        for (; index < 0x50; index++)
-        {
-            _testblock[ index ] = ( byte ) 0xff;
-        }
-        for (; index < 0x74; index++)
-        {
-            _testblock[ index ] = ( byte ) 0;
-        }
-        _testblock[ index++ ] = ( byte ) POIFSConstants.END_OF_CHAIN;
-        for (; index < 0x78; index++)
-        {
-            _testblock[ index ] = ( byte ) 0xff;
-        }
-        for (; index < 0x80; index++)
-        {
-            _testblock[ index ] = ( byte ) 0;
-        }
-        byte[] name_bytes = name.getBytes();
+		assertEquals(_testblock.length, output.length);
+		for (int j = 0; j < _testblock.length; j++) {
+			assertEquals("mismatch at offset " + j, _testblock[j], output[j]);
+		}
+	}
 
-        for (index = 0; index < limit; index++)
-        {
-            _testblock[ index * 2 ] = name_bytes[ index ];
-        }
-    }
+	public void testSetSize() {
+		for (int j = 0; j < 10; j++) {
+			createBasicRootProperty();
+			_property.setSize(j);
+			assertEquals("trying block count of " + j, j * 64, _property.getSize());
+		}
+	}
 
-    private void verifyProperty()
-        throws IOException
-    {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(512);
+	public void testReadingConstructor() {
+		String[] input = {
+			"52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",
+			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+			"16 00 05 01 FF FF FF FF FF FF FF FF 02 00 00 00 20 08 02 00 00 00 00 00 C0 00 00 00 00 00 00 46",
+			"00 00 00 00 00 00 00 00 00 00 00 00 C0 5C E8 23 9E 6B C1 01 FE FF FF FF 00 00 00 00 00 00 00 00",
+		};
+		verifyReadingProperty(0, RawDataUtil.decode(input), 0, "Root Entry",
+				"{00020820-0000-0000-C000-000000000046}");
+	}
 
-        _property.writeData(stream);
-        byte[] output = stream.toByteArray();
+	private void verifyReadingProperty(int index, byte[] input, int offset, String name,
+			String sClsId) {
+		RootProperty property = new RootProperty(index, input, offset);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
+		byte[] expected = new byte[128];
 
-        assertEquals(_testblock.length, output.length);
-        for (int j = 0; j < _testblock.length; j++)
-        {
-            assertEquals("mismatch at offset " + j, _testblock[ j ],
-                         output[ j ]);
-        }
-    }
+		System.arraycopy(input, offset, expected, 0, 128);
+		try {
+			property.writeData(stream);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] output = stream.toByteArray();
 
-    /**
-     * test setSize
-     */
-
-    public void testSetSize()
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            createBasicRootProperty();
-            _property.setSize(j);
-            assertEquals("trying block count of " + j, j * 64,
-                         _property.getSize());
-        }
-    }
-
-    /**
-     * Test reading constructor
-     *
-     * @exception IOException
-     */
-
-    public void testReadingConstructor()
-        throws IOException
-    {
-        byte[] input =
-        {
-            ( byte ) 0x52, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
-            ( byte ) 0x6F, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
-            ( byte ) 0x20, ( byte ) 0x00, ( byte ) 0x45, ( byte ) 0x00,
-            ( byte ) 0x6E, ( byte ) 0x00, ( byte ) 0x74, ( byte ) 0x00,
-            ( byte ) 0x72, ( byte ) 0x00, ( byte ) 0x79, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x16, ( byte ) 0x00, ( byte ) 0x05, ( byte ) 0x01,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x02, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x20, ( byte ) 0x08, ( byte ) 0x02, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xC0, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x46,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0xC0, ( byte ) 0x5C, ( byte ) 0xE8, ( byte ) 0x23,
-            ( byte ) 0x9E, ( byte ) 0x6B, ( byte ) 0xC1, ( byte ) 0x01,
-            ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
-            ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00
-        };
-
-        verifyReadingProperty(0, input, 0, "Root Entry", "{00020820-0000-0000-C000-000000000046}");
-    }
-
-    private void verifyReadingProperty(int index, byte [] input, int offset,
-                                       String name, String sClsId)
-        throws IOException
-    {
-        RootProperty          property = new RootProperty(index, input,
-                                             offset);
-        ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
-        byte[]                expected = new byte[ 128 ];
-
-        System.arraycopy(input, offset, expected, 0, 128);
-        property.writeData(stream);
-        byte[] output = stream.toByteArray();
-
-        assertEquals(128, output.length);
-        for (int j = 0; j < 128; j++)
-        {
-            assertEquals("mismatch at offset " + j, expected[ j ],
-                         output[ j ]);
-        }
-        assertEquals(index, property.getIndex());
-        assertEquals(name, property.getName());
-        assertTrue(!property.getChildren().hasNext());
-        assertEquals(property.getStorageClsid().toString(), sClsId);
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.property.RootProperty");
-        junit.textui.TestRunner.run(TestRootProperty.class);
-    }
+		assertEquals(128, output.length);
+		for (int j = 0; j < 128; j++) {
+			assertEquals("mismatch at offset " + j, expected[j], output[j]);
+		}
+		assertEquals(index, property.getIndex());
+		assertEquals(name, property.getName());
+		assertTrue(!property.getChildren().hasNext());
+		assertEquals(property.getStorageClsid().toString(), sClsId);
+	}
 }

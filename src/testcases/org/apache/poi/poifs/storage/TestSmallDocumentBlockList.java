@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,44 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import junit.framework.*;
+import org.apache.poi.poifs.common.POIFSConstants;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test SmallDocumentBlockList functionality
  *
  * @author Marc Johnson
  */
+public final class TestSmallDocumentBlockList extends TestCase {
 
-public class TestSmallDocumentBlockList
-    extends TestCase
-{
-
-    /**
-     * Constructor TestSmallDocumentBlockList
-     *
-     * @param name
-     */
-
-    public TestSmallDocumentBlockList(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test creating a SmallDocumentBlockList
-     *
-     * @exception IOException
-     */
-
-    public void testConstructor()
-        throws IOException
-    {
+    public void testConstructor() throws IOException {
         byte[] data = new byte[ 2560 ];
 
         for (int j = 0; j < 2560; j++)
@@ -67,7 +46,7 @@ public class TestSmallDocumentBlockList
             blocks[ j ] = new RawDataBlock(stream);
         }
         SmallDocumentBlockList sdbl =
-            new SmallDocumentBlockList(SmallDocumentBlock.extract(blocks));
+            new SmallDocumentBlockList(SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks));
 
         // proof we added the blocks
         for (int j = 0; j < 40; j++)
@@ -84,18 +63,5 @@ public class TestSmallDocumentBlockList
 
             // it better have thrown one!!
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallDocumentBlockList");
-        junit.textui.TestRunner.run(TestSmallDocumentBlockList.class);
     }
 }

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.property;
 
@@ -39,9 +39,7 @@ import org.apache.poi.util.ShortField;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-public abstract class Property
-    implements Child, POIFSViewable
-{
+public abstract class Property implements Child, POIFSViewable {
     static final private byte   _default_fill             = ( byte ) 0x00;
     static final private int    _name_size_offset         = 0x40;
     static final private int    _max_name_length          =
@@ -67,7 +65,7 @@ public abstract class Property
     static final protected byte _NODE_RED                 = 0;
 
     // documents must be at least this size to be stored in big blocks
-    static final private int    _big_block_minimum_bytes  = 4096;
+    static final private int    _big_block_minimum_bytes  = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
     private String              _name;
     private ShortField          _name_size;
     private ByteField           _property_type;
@@ -87,10 +85,6 @@ public abstract class Property
     private int                 _index;
     private Child               _next_child;
     private Child               _previous_child;
-
-    /**
-     * Default constructor
-     */
 
     protected Property()
     {
@@ -129,8 +123,7 @@ public abstract class Property
      * @param array byte data
      * @param offset offset into byte data
      */
-
-    protected Property(final int index, final byte [] array, final int offset)
+    protected Property(int index, byte [] array, int offset)
     {
         _raw_data = new byte[ POIFSConstants.PROPERTY_SIZE ];
         System.arraycopy(array, offset, _raw_data, 0,
@@ -187,8 +180,7 @@ public abstract class Property
      * @exception IOException on problems writing to the specified
      *            stream.
      */
-
-    public void writeData(final OutputStream stream)
+    public void writeData(OutputStream stream)
         throws IOException
     {
         stream.write(_raw_data);
@@ -200,8 +192,7 @@ public abstract class Property
      *
      * @param startBlock the start block index
      */
-
-    public void setStartBlock(final int startBlock)
+    public void setStartBlock(int startBlock)
     {
         _start_block.set(startBlock, _raw_data);
     }
@@ -209,7 +200,6 @@ public abstract class Property
     /**
      * @return the start block
      */
-
     public int getStartBlock()
     {
         return _start_block.get();
@@ -220,7 +210,6 @@ public abstract class Property
      *
      * @return size in bytes
      */
-
     public int getSize()
     {
         return _size.get();
@@ -232,7 +221,6 @@ public abstract class Property
      *
      * @return true if the size is less than _big_block_minimum_bytes
      */
-
     public boolean shouldUseSmallBlocks()
     {
         return Property.isSmall(_size.get());
@@ -246,8 +234,7 @@ public abstract class Property
      * @return true if the length is less than
      *         _big_block_minimum_bytes
      */
-
-    public static boolean isSmall(final int length)
+    public static boolean isSmall(int length)
     {
         return length < _big_block_minimum_bytes;
     }
@@ -257,7 +244,6 @@ public abstract class Property
      *
      * @return property name as String
      */
-
     public String getName()
     {
         return _name;
@@ -266,7 +252,6 @@ public abstract class Property
     /**
      * @return true if a directory type Property
      */
-
     abstract public boolean isDirectory();
 
     /**
@@ -284,7 +269,7 @@ public abstract class Property
      *
      * @param name the new name
      */
-    protected final void setName(final String name)
+    protected void setName(String name)
     {
         char[] char_array = name.toCharArray();
         int    limit      = Math.min(char_array.length, _max_name_length);
@@ -329,8 +314,7 @@ public abstract class Property
      *
      * @param propertyType the property type (root, file, directory)
      */
-
-    protected void setPropertyType(final byte propertyType)
+    protected void setPropertyType(byte propertyType)
     {
         _property_type.set(propertyType, _raw_data);
     }
@@ -340,8 +324,7 @@ public abstract class Property
      *
      * @param nodeColor the node color (red or black)
      */
-
-    protected void setNodeColor(final byte nodeColor)
+    protected void setNodeColor(byte nodeColor)
     {
         _node_color.set(nodeColor, _raw_data);
     }
@@ -351,8 +334,7 @@ public abstract class Property
      *
      * @param child the child property's index in the Property Table
      */
-
-    protected void setChildProperty(final int child)
+    protected void setChildProperty(int child)
     {
         _child_property.set(child, _raw_data);
     }
@@ -362,7 +344,6 @@ public abstract class Property
      *
      * @return child property index
      */
-
     protected int getChildIndex()
     {
         return _child_property.get();
@@ -373,8 +354,7 @@ public abstract class Property
      *
      * @param size the size of the document, in bytes
      */
-
-    protected void setSize(final int size)
+    protected void setSize(int size)
     {
         _size.set(size, _raw_data);
     }
@@ -385,8 +365,7 @@ public abstract class Property
      * @param index this Property's index within its containing
      *              Property Table
      */
-
-    protected void setIndex(final int index)
+    protected void setIndex(int index)
     {
         _index = index;
     }
@@ -396,7 +375,6 @@ public abstract class Property
      *
      * @return the index of this Property within its Property Table
      */
-
     protected int getIndex()
     {
         return _index;
@@ -406,7 +384,6 @@ public abstract class Property
      * Perform whatever activities need to be performed prior to
      * writing
      */
-
     abstract protected void preWrite();
 
     /**
@@ -414,7 +391,6 @@ public abstract class Property
      *
      * @return index of next sibling
      */
-
     int getNextChildIndex()
     {
         return _next_property.get();
@@ -425,7 +401,6 @@ public abstract class Property
      *
      * @return index of previous sibling
      */
-
     int getPreviousChildIndex()
     {
         return _previous_property.get();
@@ -438,20 +413,16 @@ public abstract class Property
      *
      * @return true if the index is valid
      */
-
     static boolean isValidIndex(int index)
     {
         return index != _NO_INDEX;
     }
-
-    /* ********** START implementation of Child ********** */
 
     /**
      * Get the next Child, if any
      *
      * @return the next Child; may return null
      */
-
     public Child getNextChild()
     {
         return _next_child;
@@ -462,7 +433,6 @@ public abstract class Property
      *
      * @return the previous Child; may return null
      */
-
     public Child getPreviousChild()
     {
         return _previous_child;
@@ -474,8 +444,7 @@ public abstract class Property
      * @param child the new 'next' child; may be null, which has the
      *              effect of saying there is no 'next' child
      */
-
-    public void setNextChild(final Child child)
+    public void setNextChild(Child child)
     {
         _next_child = child;
         _next_property.set((child == null) ? _NO_INDEX
@@ -489,8 +458,7 @@ public abstract class Property
      * @param child the new 'previous' child; may be null, which has
      *              the effect of saying there is no 'previous' child
      */
-
-    public void setPreviousChild(final Child child)
+    public void setPreviousChild(Child child)
     {
         _previous_child = child;
         _previous_property.set((child == null) ? _NO_INDEX
@@ -498,16 +466,12 @@ public abstract class Property
                                                    .getIndex(), _raw_data);
     }
 
-    /* **********  END  implementation of Child ********** */
-    /* ********** START begin implementation of POIFSViewable ********** */
-
     /**
      * Get an array of objects, some of which may implement
      * POIFSViewable
      *
      * @return an array of Object; may not be null, but may be empty
      */
-
     public Object [] getViewableArray()
     {
         Object[] results = new Object[ 5 ];
@@ -518,11 +482,11 @@ public abstract class Property
         long time = _days_1.get();
 
         time         <<= 32;
-        time         += (( long ) _seconds_1.get()) & 0x0000FFFFL;
+        time         += _seconds_1.get() & 0x0000FFFFL;
         results[ 3 ] = "Time 1        = " + time;
         time         = _days_2.get();
         time         <<= 32;
-        time         += (( long ) _seconds_2.get()) & 0x0000FFFFL;
+        time         += _seconds_2.get() & 0x0000FFFFL;
         results[ 4 ] = "Time 2        = " + time;
         return results;
     }
@@ -534,7 +498,6 @@ public abstract class Property
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-
     public Iterator getViewableIterator()
     {
         return Collections.EMPTY_LIST.iterator();
@@ -547,7 +510,6 @@ public abstract class Property
      * @return true if a viewer should call getViewableArray, false if
      *         a viewer should call getViewableIterator
      */
-
     public boolean preferArray()
     {
         return true;
@@ -559,7 +521,6 @@ public abstract class Property
      *
      * @return short description
      */
-
     public String getShortDescription()
     {
         StringBuffer buffer = new StringBuffer();
@@ -567,7 +528,4 @@ public abstract class Property
         buffer.append("Property: \"").append(getName()).append("\"");
         return buffer.toString();
     }
-
-    /* **********  END  begin implementation of POIFSViewable ********** */
-}   // end public abstract class Property
-
+}

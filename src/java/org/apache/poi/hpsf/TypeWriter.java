@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.IOException;
@@ -27,8 +27,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2003-02-20
  */
 public class TypeWriter
 {

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
+import junit.framework.TestCase;
 
-import junit.framework.*;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
 import org.apache.poi.poifs.storage.SmallDocumentBlock;
@@ -36,31 +32,12 @@ import org.apache.poi.poifs.storage.SmallDocumentBlock;
  *
  * @author Marc Johnson
  */
-
-public class TestDocument
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocument
-     *
-     * @param name
-     */
-
-    public TestDocument(String name)
-    {
-        super(name);
-    }
+public final class TestDocument extends TestCase {
 
     /**
      * Integration test -- really about all we can do
-     *
-     * @exception IOException
      */
-
-    public void testPOIFSDocument()
-        throws IOException
-    {
+    public void testPOIFSDocument() throws IOException {
 
         // verify correct number of blocks get created for document
         // that is exact multituple of block size
@@ -158,10 +135,8 @@ public class TestDocument
         }
     }
 
-    private POIFSDocument makeCopy(POIFSDocument document, byte [] input,
-                                   byte [] data)
-        throws IOException
-    {
+    private static POIFSDocument makeCopy(POIFSDocument document, byte[] input, byte[] data)
+            throws IOException {
         POIFSDocument copy = null;
 
         if (input.length >= 4096)
@@ -194,10 +169,8 @@ public class TestDocument
         return copy;
     }
 
-    private void checkDocument(final POIFSDocument document,
-                               final byte [] input)
-        throws IOException
-    {
+    private static void checkDocument(final POIFSDocument document, final byte[] input)
+            throws IOException {
         int big_blocks   = 0;
         int small_blocks = 0;
         int total_output = 0;
@@ -221,11 +194,8 @@ public class TestDocument
                 input)), input);
     }
 
-    private byte [] checkValues(int big_blocks, int small_blocks,
-                                int total_output, POIFSDocument document,
-                                byte [] input)
-        throws IOException
-    {
+    private static byte[] checkValues(int big_blocks, int small_blocks, int total_output,
+            POIFSDocument document, byte[] input) throws IOException {
         assertEquals(document, document.getDocumentProperty().getDocument());
         int increment = ( int ) Math.sqrt(input.length);
 
@@ -266,18 +236,5 @@ public class TestDocument
                          output[ j ]);
         }
         return output;
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.filesystem.POIFSDocument");
-        junit.textui.TestRunner.run(TestDocument.class);
     }
 }

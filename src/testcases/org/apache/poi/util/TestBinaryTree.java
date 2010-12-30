@@ -15,7 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -28,28 +27,9 @@ import java.util.*;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
+public final class TestBinaryTree extends TestCase {
 
-public class TestBinaryTree
-    extends TestCase
-{
-
-    /**
-     * constructor
-     *
-     * @param name
-     */
-
-    public TestBinaryTree(final String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test size() method
-     */
-
-    public void testSize()
-    {
+    public void testSize() {
         Map m = new BinaryTree();
 
         assertEquals(0, m.size());
@@ -74,12 +54,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test IsEmpty() method
-     */
-
-    public void testIsEmpty()
-    {
+    public void testIsEmpty() {
         Map m = new BinaryTree();
 
         assertTrue(m.isEmpty());
@@ -118,12 +93,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test containsKey() method
-     */
-
-    public void testContainsKey()
-    {
+    public void testContainsKey() {
         Map m = new BinaryTree();
 
         try
@@ -150,7 +120,7 @@ public class TestBinaryTree
             m.put(nodes[ k ].getKey(), nodes[ k ]);
             assertTrue(m.containsKey(nodes[ k ].getKey()));
         }
-        assertTrue(!m.containsKey(new Integer(-1)));
+        assertTrue(!m.containsKey(Integer.valueOf(-1)));
         try
         {
             m.containsKey("foo");
@@ -166,12 +136,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test containsValue() method
-     */
-
-    public void testContainsValue()
-    {
+    public void testContainsValue() {
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -187,12 +152,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test get() method
-     */
-
-    public void testGet()
-    {
+    public void testGet() {
         Map m = new BinaryTree();
 
         try
@@ -219,7 +179,7 @@ public class TestBinaryTree
             m.put(nodes[ k ].getKey(), nodes[ k ]);
             assertSame(m.get(nodes[ k ].getKey()), nodes[ k ]);
         }
-        assertNull(m.get(new Integer(-1)));
+        assertNull(m.get(Integer.valueOf(-1)));
         try
         {
             m.get("foo");
@@ -236,12 +196,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test put() method
-     */
-
-    public void testPut()
-    {
+    public void testPut() {
         Map m = new BinaryTree();
 
         try
@@ -291,12 +246,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test remove() method
-     */
-
-    public void testRemove()
-    {
+    public void testRemove() {
         BinaryTree    m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -320,7 +270,7 @@ public class TestBinaryTree
         catch (ClassCastException ignored)
         {
         }
-        assertNull(m.remove(new Integer(-1)));
+        assertNull(m.remove(Integer.valueOf(-1)));
         try
         {
             m.remove("foo");
@@ -350,12 +300,7 @@ public class TestBinaryTree
         assertTrue(m.isEmpty());
     }
 
-    /**
-     * Method testPutAll
-     */
-
-    public void testPutAll()
-    {
+    public void testPutAll() {
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -419,12 +364,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test clear() method
-     */
-
-    public void testClear()
-    {
+    public void testClear() {
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -448,12 +388,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test keySet() method
-     */
-
-    public void testKeySet()
-    {
+    public void testKeySet() {
         testKeySet(new BinaryTree());
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -515,7 +450,7 @@ public class TestBinaryTree
         Collection c1 = new LinkedList();
         Collection c2 = new LinkedList();
 
-        c2.add(new Integer(-99));
+        c2.add(Integer.valueOf(-99));
         for (int k = 0; k < nodes.length; k++)
         {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
@@ -526,7 +461,7 @@ public class TestBinaryTree
         assertTrue(!m.keySet().containsAll(c2));
         m  = new BinaryTree();
         c1 = new LinkedList();
-        c1.add(new Integer(-55));
+        c1.add(Integer.valueOf(-55));
         try
         {
             m.keySet().addAll(c1);
@@ -600,12 +535,7 @@ public class TestBinaryTree
         assertTrue(m.size() == 0);
     }
 
-    /**
-     * test values() method
-     */
-
-    public void testValues()
-    {
+    public void testValues() {
         testValues(new BinaryTree());
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -741,12 +671,7 @@ public class TestBinaryTree
         assertEquals(0, m.size());
     }
 
-    /**
-     * test entrySet() method
-     */
-
-    public void testEntrySet()
-    {
+    public void testEntrySet() {
         testEntrySet(new BinaryTree());
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -820,12 +745,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * Method testEquals
-     */
-
-    public void testEquals()
-    {
+    public void testEquals() {
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -871,12 +791,7 @@ public class TestBinaryTree
         assertEquals(m, m1);
     }
 
-    /**
-     * test hashCode() method
-     */
-
-    public void testHashCode()
-    {
+    public void testHashCode() {
         Map           m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -893,12 +808,7 @@ public class TestBinaryTree
         assertTrue(m.hashCode() == m1.hashCode());
     }
 
-    /**
-     * test constructors
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         BinaryTree m = new BinaryTree();
 
         assertTrue(m.isEmpty());
@@ -959,7 +869,7 @@ public class TestBinaryTree
         }
 
         // reject incompatible values
-        m2.put("2", new Integer(2));
+        m2.put("2", Integer.valueOf(2));
         try
         {
             m = new BinaryTree(m2);
@@ -971,7 +881,7 @@ public class TestBinaryTree
 
         // reject incompatible keys
         m2.remove("2");
-        m2.put(new Integer(2), "bad key");
+        m2.put(Integer.valueOf(2), "bad key");
         try
         {
             m = new BinaryTree(m2);
@@ -995,12 +905,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test getKeyForValue() method
-     */
-
-    public void testGetKeyForValue()
-    {
+    public void testGetKeyForValue() {
         BinaryTree m = new BinaryTree();
 
         try
@@ -1044,12 +949,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test removeValue() method
-     */
-
-    public void testRemoveValue()
-    {
+    public void testRemoveValue() {
         BinaryTree    m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
 
@@ -1073,7 +973,7 @@ public class TestBinaryTree
         catch (ClassCastException ignored)
         {
         }
-        assertNull(m.remove(new Integer(-1)));
+        assertNull(m.remove(Integer.valueOf(-1)));
         try
         {
             m.removeValue("foo");
@@ -1099,12 +999,7 @@ public class TestBinaryTree
         assertTrue(m.isEmpty());
     }
 
-    /**
-     * test entrySetByValue() method
-     */
-
-    public void testEntrySetByValue()
-    {
+    public void testEntrySetByValue() {
         testEntrySetByValue(new BinaryTree());
         BinaryTree    m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -1178,12 +1073,7 @@ public class TestBinaryTree
         }
     }
 
-    /**
-     * test keySetByValue() method
-     */
-
-    public void testKeySetByValue()
-    {
+    public void testKeySetByValue() {
         testKeySetByValue(new BinaryTree());
         BinaryTree    m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -1245,7 +1135,7 @@ public class TestBinaryTree
         Collection c1 = new LinkedList();
         Collection c2 = new LinkedList();
 
-        c2.add(new Integer(-99));
+        c2.add(Integer.valueOf(-99));
         for (int k = 0; k < nodes.length; k++)
         {
             m.put(nodes[ k ].getKey(), nodes[ k ]);
@@ -1256,7 +1146,7 @@ public class TestBinaryTree
         assertTrue(!m.keySetByValue().containsAll(c2));
         m  = new BinaryTree();
         c1 = new LinkedList();
-        c1.add(new Integer(-55));
+        c1.add(Integer.valueOf(-55));
         try
         {
             m.keySetByValue().addAll(c1);
@@ -1330,12 +1220,7 @@ public class TestBinaryTree
         assertTrue(m.size() == 0);
     }
 
-    /**
-     * test valuesByValue() method
-     */
-
-    public void testValuesByValue()
-    {
+    public void testValuesByValue() {
         testValuesByValue(new BinaryTree());
         BinaryTree    m       = new BinaryTree();
         LocalTestNode nodes[] = makeLocalNodes();
@@ -1472,8 +1357,7 @@ public class TestBinaryTree
     }
 
     /* ********** START helper methods ********** */
-    private void testKeySet(final Map m)
-    {
+    private static void testKeySet(final Map m) {
         Set s = m.keySet();
 
         assertEquals(m.size(), s.size());
@@ -1506,7 +1390,7 @@ public class TestBinaryTree
         }
         for (int k = 0; k < m.size(); k++)
         {
-            assertTrue(s.contains(new Integer(k)));
+            assertTrue(s.contains(Integer.valueOf(k)));
         }
         int count = 0;
 
@@ -1699,8 +1583,7 @@ public class TestBinaryTree
         assertTrue(s.hashCode() == hs.hashCode());
     }
 
-    private void testKeySetByValue(final BinaryTree m)
-    {
+    private static void testKeySetByValue(final BinaryTree m) {
         Set s = m.keySetByValue();
 
         assertEquals(m.size(), s.size());
@@ -1733,7 +1616,7 @@ public class TestBinaryTree
         }
         for (int k = 0; k < m.size(); k++)
         {
-            assertTrue(s.contains(new Integer(k)));
+            assertTrue(s.contains(Integer.valueOf(k)));
         }
         int count = 0;
 
@@ -1922,8 +1805,7 @@ public class TestBinaryTree
         assertTrue(s.hashCode() == hs.hashCode());
     }
 
-    private void testValues(Map m)
-    {
+    private static void testValues(Map m) {
         Collection s = m.values();
 
         assertEquals(m.size(), s.size());
@@ -2140,8 +2022,7 @@ public class TestBinaryTree
         assertTrue(!hs.equals(s));
     }
 
-    private void testValuesByValue(BinaryTree m)
-    {
+    private static void testValuesByValue(BinaryTree m) {
         Collection s = m.valuesByValue();
 
         assertEquals(m.size(), s.size());
@@ -2325,8 +2206,7 @@ public class TestBinaryTree
         assertTrue(!hs.equals(s));
     }
 
-    private void testEntrySet(Map m)
-    {
+    private static void testEntrySet(Map m) {
         Set s = m.entrySet();
 
         assertEquals(m.size(), s.size());
@@ -2539,8 +2419,7 @@ public class TestBinaryTree
         assertTrue(s.hashCode() == hs.hashCode());
     }
 
-    private void testEntrySetByValue(BinaryTree m)
-    {
+    private static void testEntrySetByValue(BinaryTree m) {
         Set s = m.entrySetByValue();
 
         assertEquals(m.size(), s.size());
@@ -2762,18 +2641,5 @@ public class TestBinaryTree
             nodes[ k ] = new LocalTestNode(k);
         }
         return nodes;
-    }
-
-    /* **********  END  helper methods ********** */
-
-    /**
-     * Method main
-     *
-     * @param unused_args
-     */
-
-    public static void main(final String unused_args[])
-    {
-        junit.textui.TestRunner.run(TestBinaryTree.class);
     }
 }

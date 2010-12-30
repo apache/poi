@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.ByteArrayInputStream;
@@ -33,8 +33,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
-
-
 /**
  * <p>Adds writing support to the {@link PropertySet} class.</p>
  *
@@ -43,8 +41,6 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2003-02-19
  */
 public class MutablePropertySet extends PropertySet
 {
@@ -79,10 +75,10 @@ public class MutablePropertySet extends PropertySet
 
     /**
      * <p>Constructs a <code>MutablePropertySet</code> by doing a deep copy of
-     * an existing <code>PropertySet</code>. All nested elements, i.e. 
+     * an existing <code>PropertySet</code>. All nested elements, i.e.
      * <code>Section</code>s and <code>Property</code> instances, will be their
      * mutable counterparts in the new <code>MutablePropertySet</code>.</p>
-     * 
+     *
      * @param ps The property set to copy
      */
     public MutablePropertySet(final PropertySet ps)
@@ -194,7 +190,7 @@ public class MutablePropertySet extends PropertySet
 
     /**
      * <p>Writes the property set to an output stream.</p>
-     * 
+     *
      * @param out the output stream to write the section to
      * @exception IOException if an error when writing to the output stream
      * occurs
@@ -236,10 +232,10 @@ public class MutablePropertySet extends PropertySet
             catch (HPSFRuntimeException ex)
             {
                 final Throwable cause = ex.getReason();
-                if (cause instanceof UnsupportedEncodingException)
+                if (cause instanceof UnsupportedEncodingException) {
                     throw new IllegalPropertySetDataException(cause);
-                else
-                    throw ex;
+                }
+                throw ex;
             }
         }
 
@@ -263,7 +259,7 @@ public class MutablePropertySet extends PropertySet
      * the {@link MutablePropertySet} only.</p>
      *
      * @return the contents of this property set stream
-     * 
+     *
      * @throws WritingNotSupportedException if HPSF does not yet support writing
      * of a property's variant type.
      * @throws IOException if an I/O exception occurs.
@@ -284,7 +280,7 @@ public class MutablePropertySet extends PropertySet
      * @param dir The directory in the POI filesystem to write the document to.
      * @param name The document's name. If there is already a document with the
      * same name in the directory the latter will be overwritten.
-     * 
+     *
      * @throws WritingNotSupportedException
      * @throws IOException
      */

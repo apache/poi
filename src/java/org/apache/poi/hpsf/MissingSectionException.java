@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 /**
@@ -26,8 +26,6 @@ package org.apache.poi.hpsf;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id: NoSingleSectionException.java 353545 2004-04-09 13:05:39Z glens $
- * @since 2006-02-08
  */
 public class MissingSectionException extends HPSFRuntimeException
 {

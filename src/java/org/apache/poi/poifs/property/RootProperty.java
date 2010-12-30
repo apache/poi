@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
-
-import java.util.*;
-
-import java.io.IOException;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.SmallDocumentBlock;
@@ -31,18 +25,12 @@ import org.apache.poi.poifs.storage.SmallDocumentBlock;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class RootProperty
-    extends DirectoryProperty
-{
-
-    /**
-     * Default constructor
-     */
+public final class RootProperty extends DirectoryProperty {
+   private static final String NAME = "Root Entry";
 
     RootProperty()
     {
-        super("Root Entry");
+        super(NAME);
 
         // overrides
         setNodeColor(_NODE_BLACK);
@@ -57,7 +45,6 @@ public class RootProperty
      * @param array byte data
      * @param offset offset into byte data
      */
-
     protected RootProperty(final int index, final byte [] array,
                            final int offset)
     {
@@ -69,10 +56,17 @@ public class RootProperty
      *
      * @param size size in terms of small blocks
      */
-
     public void setSize(int size)
     {
         super.setSize(SmallDocumentBlock.calcSize(size));
     }
-}   // end public class RootProperty
 
+    /**
+     * Returns the fixed name "Root Entry", as the
+     *  raw property doesn't have a real name set
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+}

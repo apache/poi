@@ -76,7 +76,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 *  that is open.
 	 */
 	protected POIFSFileSystem getPOIFSFileSystem() {
-		return filesystem;
+		return directory.getFileSystem();
 	}
 
 	/**
@@ -467,7 +467,7 @@ public final class HSLFSlideShow extends POIDocument {
         
         // If requested, write out any other streams we spot
         if(preserveNodes) {
-        	copyNodes(filesystem, outFS, writtenEntries);
+        	copyNodes(directory.getFileSystem(), outFS, writtenEntries);
         }
 
         // Send the POIFSFileSystem object out to the underlying stream

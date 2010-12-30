@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,16 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import junit.framework.TestCase;
 
-import junit.framework.*;
-
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.RootProperty;
@@ -34,32 +34,10 @@ import org.apache.poi.poifs.property.RootProperty;
  *
  * @author Marc Johnson
  */
+public final class TestSmallBlockTableWriter extends TestCase {
 
-public class TestSmallBlockTableWriter
-    extends TestCase
-{
-
-    /**
-     * Constructor TestSmallBlockTableWriter
-     *
-     * @param name
-     */
-
-    public TestSmallBlockTableWriter(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test writing constructor
-     *
-     * @exception IOException
-     */
-
-    public void testWritingConstructor()
-        throws IOException
-    {
-        List documents = new ArrayList();
+    public void testWritingConstructor() throws IOException {
+        List<POIFSDocument> documents = new ArrayList<POIFSDocument>();
 
         documents.add(
             new POIFSDocument(
@@ -97,9 +75,11 @@ public class TestSmallBlockTableWriter
         documents
             .add(new POIFSDocument("doc9",
                                    new ByteArrayInputStream(new byte[ 9 ])));
-        RootProperty               root = new PropertyTable().getRoot();
-        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(documents,
-                                              root);
+        
+        HeaderBlock              header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+        RootProperty               root = new PropertyTable(header).getRoot();
+        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(
+              POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, documents,root);
         BlockAllocationTableWriter bat  = sbtw.getSBAT();
 
         // 15 small blocks: 6 for doc340, 0 for doc5000 (too big), 0
@@ -112,18 +92,5 @@ public class TestSmallBlockTableWriter
 
         sbtw.setStartBlock(start_block);
         assertEquals(start_block, root.getStartBlock());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallBlockTableWriter");
-        junit.textui.TestRunner.run(TestSmallBlockTableWriter.class);
     }
 }

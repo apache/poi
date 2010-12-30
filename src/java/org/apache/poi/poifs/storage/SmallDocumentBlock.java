@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.*;
-
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
@@ -31,25 +33,33 @@ import org.apache.poi.poifs.common.POIFSConstants;
  *
  * @author  Marc Johnson (mjohnson at apache dot org)
  */
+public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock {
+    private static final int BLOCK_SHIFT = 6;
 
-public class SmallDocumentBlock
-    implements BlockWritable, ListManagedBlock
-{
     private byte[]            _data;
     private static final byte _default_fill         = ( byte ) 0xff;
-    private static final int  _block_size           = 64;
-    private static final int  _blocks_per_big_block =
-        POIFSConstants.BIG_BLOCK_SIZE / _block_size;
+    private static final int  _block_size           = 1 << BLOCK_SHIFT;
+    private static final int BLOCK_MASK = _block_size-1;
 
-    private SmallDocumentBlock(final byte [] data, final int index)
+    private final int  _blocks_per_big_block;
+    private final POIFSBigBlockSize _bigBlockSize;
+
+    private SmallDocumentBlock(final POIFSBigBlockSize bigBlockSize, final byte [] data, final int index)
     {
-        this();
+        this(bigBlockSize);
         System.arraycopy(data, index * _block_size, _data, 0, _block_size);
     }
 
-    private SmallDocumentBlock()
+    private SmallDocumentBlock(final POIFSBigBlockSize bigBlockSize)
     {
+        _bigBlockSize = bigBlockSize;
+        _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
         _data = new byte[ _block_size ];
+    }
+    
+    private static int getBlocksPerBigBlock(final POIFSBigBlockSize bigBlockSize)
+    {
+       return bigBlockSize.getBigBlockSize() / _block_size;
     }
 
     /**
@@ -62,9 +72,9 @@ public class SmallDocumentBlock
      * @return an array of SmallDocumentBlock instances, filled from
      *         the array
      */
-
-    public static SmallDocumentBlock [] convert(final byte [] array,
-                                                final int size)
+    public static SmallDocumentBlock [] convert(POIFSBigBlockSize bigBlockSize,
+                                                byte [] array,
+                                                int size)
     {
         SmallDocumentBlock[] rval   =
             new SmallDocumentBlock[ (size + _block_size - 1) / _block_size ];
@@ -72,7 +82,7 @@ public class SmallDocumentBlock
 
         for (int k = 0; k < rval.length; k++)
         {
-            rval[ k ] = new SmallDocumentBlock();
+            rval[ k ] = new SmallDocumentBlock(bigBlockSize);
             if (offset < array.length)
             {
                 int length = Math.min(_block_size, array.length - offset);
@@ -101,9 +111,10 @@ public class SmallDocumentBlock
      *
      * @return number of big blocks the list encompasses
      */
-
-    public static int fill(final List blocks)
+    public static int fill(POIFSBigBlockSize bigBlockSize, List blocks)
     {
+        int _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
+        
         int count           = blocks.size();
         int big_block_count = (count + _blocks_per_big_block - 1)
                               / _blocks_per_big_block;
@@ -111,7 +122,7 @@ public class SmallDocumentBlock
 
         for (; count < full_count; count++)
         {
-            blocks.add(makeEmptySmallDocumentBlock());
+            blocks.add(makeEmptySmallDocumentBlock(bigBlockSize));
         }
         return big_block_count;
     }
@@ -128,9 +139,9 @@ public class SmallDocumentBlock
      * @exception ArrayIndexOutOfBoundsException if, somehow, the store
      *            contains less data than size indicates
      */
-
-    public static SmallDocumentBlock [] convert(final BlockWritable [] store,
-                                                final int size)
+    public static SmallDocumentBlock [] convert(POIFSBigBlockSize bigBlockSize,
+                                                BlockWritable [] store,
+                                                int size)
         throws IOException, ArrayIndexOutOfBoundsException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -145,7 +156,7 @@ public class SmallDocumentBlock
 
         for (int index = 0; index < rval.length; index++)
         {
-            rval[ index ] = new SmallDocumentBlock(data, index);
+            rval[ index ] = new SmallDocumentBlock(bigBlockSize, data, index);
         }
         return rval;
     }
@@ -157,13 +168,12 @@ public class SmallDocumentBlock
      *               data
      *
      * @return a List of SmallDocumentBlock's extracted from the input
-     *
-     * @exception IOException
      */
-
-    public static List extract(ListManagedBlock [] blocks)
+    public static List extract(POIFSBigBlockSize bigBlockSize, ListManagedBlock [] blocks)
         throws IOException
     {
+        int _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
+        
         List sdbs = new ArrayList();
 
         for (int j = 0; j < blocks.length; j++)
@@ -172,52 +182,16 @@ public class SmallDocumentBlock
 
             for (int k = 0; k < _blocks_per_big_block; k++)
             {
-                sdbs.add(new SmallDocumentBlock(data, k));
+                sdbs.add(new SmallDocumentBlock(bigBlockSize, data, k));
             }
         }
         return sdbs;
     }
 
-    /**
-     * read data from an array of SmallDocumentBlocks
-     *
-     * @param blocks the blocks to read from
-     * @param buffer the buffer to write the data into
-     * @param offset the offset into the array of blocks to read from
-     */
-
-    public static void read(final BlockWritable [] blocks,
-                            final byte [] buffer, final int offset)
-    {
-        int firstBlockIndex  = offset / _block_size;
-        int firstBlockOffset = offset % _block_size;
-        int lastBlockIndex   = (offset + buffer.length - 1) / _block_size;
-
-        if (firstBlockIndex == lastBlockIndex)
-        {
-            System.arraycopy(
-                (( SmallDocumentBlock ) blocks[ firstBlockIndex ])._data,
-                firstBlockOffset, buffer, 0, buffer.length);
-        }
-        else
-        {
-            int buffer_offset = 0;
-
-            System.arraycopy(
-                (( SmallDocumentBlock ) blocks[ firstBlockIndex ])._data,
-                firstBlockOffset, buffer, buffer_offset,
-                _block_size - firstBlockOffset);
-            buffer_offset += _block_size - firstBlockOffset;
-            for (int j = firstBlockIndex + 1; j < lastBlockIndex; j++)
-            {
-                System.arraycopy((( SmallDocumentBlock ) blocks[ j ])._data,
-                                 0, buffer, buffer_offset, _block_size);
-                buffer_offset += _block_size;
-            }
-            System.arraycopy(
-                (( SmallDocumentBlock ) blocks[ lastBlockIndex ])._data, 0,
-                buffer, buffer_offset, buffer.length - buffer_offset);
-        }
+    public static DataInputBlock getDataInputBlock(SmallDocumentBlock[] blocks, int offset) {
+        int firstBlockIndex = offset >> BLOCK_SHIFT;
+        int firstBlockOffset= offset & BLOCK_MASK;
+        return new DataInputBlock(blocks[firstBlockIndex]._data, firstBlockOffset);
     }
 
     /**
@@ -227,26 +201,23 @@ public class SmallDocumentBlock
      *
      * @return total size
      */
-
     public static int calcSize(int size)
     {
         return size * _block_size;
     }
 
-    private static SmallDocumentBlock makeEmptySmallDocumentBlock()
+    private static SmallDocumentBlock makeEmptySmallDocumentBlock(POIFSBigBlockSize bigBlockSize)
     {
-        SmallDocumentBlock block = new SmallDocumentBlock();
+        SmallDocumentBlock block = new SmallDocumentBlock(bigBlockSize);
 
         Arrays.fill(block._data, _default_fill);
         return block;
     }
 
-    private static int convertToBlockCount(final int size)
+    private static int convertToBlockCount(int size)
     {
         return (size + _block_size - 1) / _block_size;
     }
-
-    /* ********** START implementation of BlockWritable ********** */
 
     /**
      * Write the storage to an OutputStream
@@ -257,15 +228,11 @@ public class SmallDocumentBlock
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
-    public void writeBlocks(final OutputStream stream)
+    public void writeBlocks(OutputStream stream)
         throws IOException
     {
         stream.write(_data);
     }
-
-    /* **********  END  implementation of BlockWritable ********** */
-    /* ********** START implementation of ListManagedBlock ********** */
 
     /**
      * Get the data from the block
@@ -274,13 +241,11 @@ public class SmallDocumentBlock
      *
      * @exception IOException if there is no data
      */
-
-    public byte [] getData()
-        throws IOException
-    {
+    public byte [] getData() {
         return _data;
     }
-
-    /* **********  END  implementation of ListManagedBlock ********** */
-}   // end public class SmallDocumentBlock
-
+    
+    public POIFSBigBlockSize getBigBlockSize() {
+       return _bigBlockSize;
+    }
+}

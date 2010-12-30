@@ -62,7 +62,7 @@ public class HexRead
      * @see #readData(String)
      */
     public static byte[] readData(InputStream stream, String section ) throws IOException {
-    	
+
         try
         {
             StringBuffer sectionText = new StringBuffer();
@@ -128,7 +128,7 @@ public class HexRead
                     characterCount++;
                     if ( characterCount == 2 )
                     {
-                        bytes.add( new Byte( b ) );
+                        bytes.add( Byte.valueOf( b ) );
                         characterCount = 0;
                         b = (byte) 0;
                     }
@@ -151,7 +151,7 @@ public class HexRead
                     characterCount++;
                     if ( characterCount == 2 )
                     {
-                        bytes.add( new Byte( b ) );
+                        bytes.add( Byte.valueOf( b ) );
                         characterCount = 0;
                         b = (byte) 0;
                     }

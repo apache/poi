@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 /**
@@ -23,8 +23,6 @@ package org.apache.poi.hpsf;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2004-06-21
- * @version $Id$
  */
 public abstract class VariantTypeException extends HPSFException
 {

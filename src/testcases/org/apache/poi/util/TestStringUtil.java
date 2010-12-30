@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,12 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.util;
 
-import junit.framework.*;
-
+import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
+
+import org.apache.poi.util.StringUtil.StringsIterator;
+
+import junit.framework.TestCase;
 
 /**
  * Unit test for StringUtil
@@ -29,62 +31,12 @@ import java.text.NumberFormat;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  */
-public class TestStringUtil
-        extends TestCase
-{
-    /**
-     * Creates new TestStringUtil
-     *
-     * @param name
-     */
-    public TestStringUtil( String name )
-    {
-        super( name );
-    }
-
-    /**
-     * test simple form of getFromUnicode
-     */
-    public void testSimpleGetFromUnicode()
-    {
-        byte[] test_data = new byte[32];
-        int index = 0;
-
-        for ( int k = 0; k < 16; k++ )
-        {
-            test_data[index++] = (byte) 0;
-            test_data[index++] = (byte) ( 'a' + k );
-        }
-
-        assertEquals( "abcdefghijklmnop",
-                StringUtil.getFromUnicodeBE( test_data ) );
-    }
-
-    /**
-     * test simple form of getFromUnicode with symbols with code below and more 127
-     */
-    public void testGetFromUnicodeSymbolsWithCodesMoreThan127()
-    {
-        byte[] test_data = new byte[]{0x04, 0x22,
-                                      0x04, 0x35,
-                                      0x04, 0x41,
-                                      0x04, 0x42,
-                                      0x00, 0x20,
-                                      0x00, 0x74,
-                                      0x00, 0x65,
-                                      0x00, 0x73,
-                                      0x00, 0x74,
-        };
-
-        assertEquals( "\u0422\u0435\u0441\u0442 test",
-                StringUtil.getFromUnicodeBE( test_data ) );
-    }
+public final class TestStringUtil extends TestCase {
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127
      */
-    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127()
-    {
+    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127() {
         byte[] test_data = new byte[]{0x22, 0x04,
                                       0x35, 0x04,
                                       0x41, 0x04,
@@ -101,68 +53,7 @@ public class TestStringUtil
                 StringUtil.getFromUnicodeLE( test_data ) );
     }
 
-    /**
-     * Test more complex form of getFromUnicode
-     */
-    public void testComplexGetFromUnicode()
-    {
-        byte[] test_data = new byte[32];
-        int index = 0;
-        for ( int k = 0; k < 16; k++ )
-        {
-            test_data[index++] = (byte) 0;
-            test_data[index++] = (byte) ( 'a' + k );
-        }
-        assertEquals( "abcdefghijklmno",
-                StringUtil.getFromUnicodeBE( test_data, 0, 15 ) );
-        assertEquals( "bcdefghijklmnop",
-                StringUtil.getFromUnicodeBE( test_data, 2, 15 ) );
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, -1, 16 );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
-
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 32, 16 );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
-
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 1, 16 );
-            fail( "Should have caught IllegalArgumentException" );
-        }
-        catch ( IllegalArgumentException ignored )
-        {
-            // as expected
-        }
-
-        try
-        {
-            StringUtil.getFromUnicodeBE( test_data, 1, -1 );
-            fail( "Should have caught IllegalArgumentException" );
-        }
-        catch ( IllegalArgumentException ignored )
-        {
-            // as expected
-        }
-    }
-
-    /**
-     * Test putCompressedUnicode
-     */
-    public void testPutCompressedUnicode() throws Exception
-    {
+    public void testPutCompressedUnicode() {
         byte[] output = new byte[100];
         byte[] expected_output =
                 {
@@ -170,7 +61,12 @@ public class TestStringUtil
                     (byte) 'o', (byte) ' ', (byte) 'W', (byte) 'o',
                     (byte) 'r', (byte) 'l', (byte) 'd', (byte) 0xAE
                 };
-        String input = new String( expected_output, StringUtil.getPreferredEncoding() );
+        String input;
+        try {
+            input = new String( expected_output, StringUtil.getPreferredEncoding() );
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         StringUtil.putCompressedUnicode( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )
@@ -197,11 +93,7 @@ public class TestStringUtil
         }
     }
 
-    /**
-     * Test putUncompressedUnicode
-     */
-    public void testPutUncompressedUnicode()
-    {
+    public void testPutUncompressedUnicode() {
         byte[] output = new byte[100];
         String input = "Hello World";
         byte[] expected_output =
@@ -238,88 +130,73 @@ public class TestStringUtil
         }
     }
 
+    public void testFormat() {
 
-    public void testFormat()
-            throws Exception
-    {
-        assertEquals( "This is a test " + fmt( 1.2345, 2, 2 ),
-                StringUtil.format( "This is a test %2.2", new Object[]
-                {
-                    new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a test " + fmt( 1.2345, -1, 3 ),
-                StringUtil.format( "This is a test %.3", new Object[]
-                {
-                    new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a great test " + fmt( 1.2345, -1, 3 ),
-                StringUtil.format( "This is a % test %.3", new Object[]
-                {
-                    "great", new Double( 1.2345 )
-                } ) );
-        assertEquals( "This is a test 1",
-                StringUtil.format( "This is a test %", new Object[]
-                {
-                    new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test 1",
-                StringUtil.format( "This is a test %", new Object[]
-                {
-                    new Integer( 1 ), new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test 1.x",
-                StringUtil.format( "This is a test %1.x", new Object[]
-                {
-                    new Integer( 1 )
-                } ) );
-        assertEquals( "This is a test ?missing data?1.x",
-                StringUtil.format( "This is a test %1.x", new Object[]
-                {
-                } ) );
-        assertEquals( "This is a test %1.x",
-                StringUtil.format( "This is a test \\%1.x", new Object[]
-                {
-                } ) );
+        confirm("This is a test " + fmt(1.2345, 2, 2), "This is a test %2.2", new Double(1.2345));
+        confirm("This is a test " + fmt(1.2345, -1, 3), "This is a test %.3", new Double(1.2345));
+        confirm("This is a great test " + fmt(1.2345, -1, 3),
+                "This is a % test %.3", "great", new Double(1.2345));
+        confirm("This is a test 1", "This is a test %", Integer.valueOf(1));
+        confirm("This is a test 1", "This is a test %", Integer.valueOf(1), Integer.valueOf(1));
+        confirm("This is a test 1.x", "This is a test %1.x", Integer.valueOf(1));
+        confirm("This is a test ?missing data?1.x", "This is a test %1.x");
+        confirm("This is a test %1.x", "This is a test \\%1.x");
     }
 
+    private static void confirm(String expectedResult, String fmtString, Object ... params) {
+        String actualResult = StringUtil.format(fmtString, params);
+        assertEquals(expectedResult, actualResult);
+    }
 
-    private String fmt( double num, int minIntDigits, int maxFracDigitis )
-    {
+    private static String fmt(double num, int minIntDigits, int maxFracDigitis) {
         NumberFormat nf = NumberFormat.getInstance();
 
-        if ( minIntDigits != -1 )
-        {
-            nf.setMinimumIntegerDigits( minIntDigits );
+        if (minIntDigits != -1) {
+            nf.setMinimumIntegerDigits(minIntDigits);
         }
-        if ( maxFracDigitis != -1 )
-        {
-            nf.setMaximumFractionDigits( maxFracDigitis );
+        if (maxFracDigitis != -1) {
+            nf.setMaximumFractionDigits(maxFracDigitis);
         }
 
         return nf.format( num );
     }
+    
+    public void testStringsIterator() {
+       StringsIterator i;
 
+       
+       i = new StringsIterator(new String[0]);
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
 
-    /**
-     * main
-     *
-     * @param ignored_args
-     */
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing util.StringUtil functionality" );
-        junit.textui.TestRunner.run( TestStringUtil.class );
+       
+       i = new StringsIterator(new String[] {"1"});
+       assertTrue(i.hasNext());
+       assertEquals("1", i.next());
+       
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
+
+       
+       i = new StringsIterator(new String[] {"1","2","3"});
+       assertTrue(i.hasNext());
+       assertEquals("1", i.next());
+       assertTrue(i.hasNext());
+       assertEquals("2", i.next());
+       assertTrue(i.hasNext());
+       assertEquals("3", i.next());
+       
+       assertFalse(i.hasNext());
+       try {
+          i.next();
+          fail();
+       } catch(ArrayIndexOutOfBoundsException e) {}
     }
-
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
-        // System.setProperty()
-    }
-
 }
 

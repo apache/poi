@@ -119,11 +119,11 @@ under the License.
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.2-FINAL"/>
+  <property name="version.id" value="3.2-NIObackport"/>
   <property name="halt.on.test.failure" value="true"/>
-  <property name="jdk.version.source" value="1.3"
+  <property name="jdk.version.source" value="1.5"
     description="JDK version of source code"/>
-  <property name="jdk.version.class" value="1.3"
+  <property name="jdk.version.class" value="1.5"
     description="JDK version of generated class files"/>  
  
 

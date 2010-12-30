@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
+import org.apache.poi.poifs.common.POIFSConstants;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test SmallDocumentBlock functionality
  *
  * @author Marc Johnson
  */
-
-public class TestSmallDocumentBlock
-    extends TestCase
-{
+public final class TestSmallDocumentBlock extends TestCase {
     static final private byte[] _testdata;
     static final private int    _testdata_size = 2999;
 
@@ -45,25 +45,10 @@ public class TestSmallDocumentBlock
             _testdata[ j ] = ( byte ) j;
         }
     }
-    ;
-
-    /**
-     * constructor
-     *
-     * @param name
-     */
-
-    public TestSmallDocumentBlock(String name)
-    {
-        super(name);
-    }
 
     /**
      * Test conversion from DocumentBlocks
-     *
-     * @exception IOException
      */
-
     public void testConvert1()
         throws IOException
     {
@@ -72,7 +57,7 @@ public class TestSmallDocumentBlock
 
         while (true)
         {
-            DocumentBlock block = new DocumentBlock(stream);
+            DocumentBlock block = new DocumentBlock(stream,POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
             documents.add(block);
             if (block.partiallyRead())
@@ -82,7 +67,7 @@ public class TestSmallDocumentBlock
         }
         SmallDocumentBlock[] results =
             SmallDocumentBlock
-                .convert(( BlockWritable [] ) documents
+                .convert(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,( BlockWritable [] ) documents
                     .toArray(new DocumentBlock[ 0 ]), _testdata_size);
 
         assertEquals("checking correct result size: ",
@@ -113,12 +98,7 @@ public class TestSmallDocumentBlock
 
     /**
      * Test conversion from byte array
-     *
-     * @exception IOException;
-     *
-     * @exception IOException
      */
-
     public void testConvert2()
         throws IOException
     {
@@ -130,8 +110,8 @@ public class TestSmallDocumentBlock
             {
                 array[ k ] = ( byte ) k;
             }
-            SmallDocumentBlock[] blocks = SmallDocumentBlock.convert(array,
-                                              319);
+            SmallDocumentBlock[] blocks = SmallDocumentBlock.convert(
+                  POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, array, 319);
 
             assertEquals(5, blocks.length);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -155,56 +135,8 @@ public class TestSmallDocumentBlock
     }
 
     /**
-     * Test read method
-     *
-     * @exception IOException
-     */
-
-    public void testRead()
-        throws IOException
-    {
-        ByteArrayInputStream stream    = new ByteArrayInputStream(_testdata);
-        List                 documents = new ArrayList();
-
-        while (true)
-        {
-            DocumentBlock block = new DocumentBlock(stream);
-
-            documents.add(block);
-            if (block.partiallyRead())
-            {
-                break;
-            }
-        }
-        SmallDocumentBlock[] blocks =
-            SmallDocumentBlock
-                .convert(( BlockWritable [] ) documents
-                    .toArray(new DocumentBlock[ 0 ]), _testdata_size);
-
-        for (int j = 1; j <= _testdata_size; j += 38)
-        {
-            byte[] buffer = new byte[ j ];
-            int    offset = 0;
-
-            for (int k = 0; k < (_testdata_size / j); k++)
-            {
-                SmallDocumentBlock.read(blocks, buffer, offset);
-                for (int n = 0; n < buffer.length; n++)
-                {
-                    assertEquals("checking byte " + (k * j) + n,
-                                 _testdata[ (k * j) + n ], buffer[ n ]);
-                }
-                offset += j;
-            }
-        }
-    }
-
-    /**
      * test fill
-     *
-     * @exception IOException
      */
-
     public void testFill()
         throws IOException
     {
@@ -216,7 +148,7 @@ public class TestSmallDocumentBlock
             {
                 foo.add(new Object());
             }
-            int result = SmallDocumentBlock.fill(foo);
+            int result = SmallDocumentBlock.fill(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,foo);
 
             assertEquals("correct big block count: ", (j + 7) / 8, result);
             assertEquals("correct small block count: ", 8 * result,
@@ -276,7 +208,7 @@ public class TestSmallDocumentBlock
         {
             new RawDataBlock(new ByteArrayInputStream(data))
         };
-        List           output = SmallDocumentBlock.extract(blocks);
+        List           output = SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks);
         Iterator       iter   = output.iterator();
 
         offset = 0;
@@ -293,18 +225,5 @@ public class TestSmallDocumentBlock
                 offset++;
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallDocumentBlock");
-        junit.textui.TestRunner.run(TestSmallDocumentBlock.class);
     }
 }

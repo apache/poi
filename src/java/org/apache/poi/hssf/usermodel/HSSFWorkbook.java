@@ -257,7 +257,6 @@ public class HSSFWorkbook extends POIDocument
         // If we're not preserving nodes, don't track the
         //  POIFS any more
         if(! preserveNodes) {
-           this.filesystem = null;
            this.directory = null;
         }
 
@@ -1163,7 +1162,7 @@ public class HSSFWorkbook extends POIDocument
             excepts.add("WORKBOOK");
 
             // Copy over all the other nodes to our new poifs
-            copyNodes(this.filesystem,fs,excepts);
+            copyNodes(this.directory.getFileSystem(),fs,excepts);
         }
         fs.writeFilesystem(stream);
         //poifs.writeFilesystem(stream);
@@ -1664,7 +1663,7 @@ public class HSSFWorkbook extends POIDocument
                     Object sub = subRecordIter.next();
                     if (sub instanceof EmbeddedObjectRefSubRecord)
                     {
-                        objects.add(new HSSFObjectData((ObjRecord) obj, filesystem));
+                        objects.add(new HSSFObjectData((ObjRecord) obj, this.directory.getFileSystem()));
                     }
                 }
             }

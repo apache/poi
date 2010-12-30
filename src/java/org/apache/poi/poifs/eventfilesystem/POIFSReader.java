@@ -31,7 +31,7 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 
@@ -75,29 +75,31 @@ public class POIFSReader
         registryClosed = true;
 
         // read the header block from the stream
-        HeaderBlockReader header_block_reader = new HeaderBlockReader(stream);
+        HeaderBlock header_block = new HeaderBlock(stream);
 
         // read the rest of the stream into blocks
-        RawDataBlockList  data_blocks         = new RawDataBlockList(stream, header_block_reader.getBigBlockSize());
+        RawDataBlockList data_blocks = new RawDataBlockList(stream, header_block.getBigBlockSize());
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block_reader.getBATCount(),
-                                       header_block_reader.getBATArray(),
-                                       header_block_reader.getXBATCount(),
-                                       header_block_reader.getXBATIndex(),
+        new BlockAllocationTableReader(header_block.getBigBlockSize(),
+                                       header_block.getBATCount(),
+                                       header_block.getBATArray(),
+                                       header_block.getXBATCount(),
+                                       header_block.getXBATIndex(),
                                        data_blocks);
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block_reader.getPropertyStart(),
-                              data_blocks);
+            new PropertyTable(header_block, data_blocks);
 
         // process documents
         processProperties(SmallBlockTableReader
-            .getSmallDocumentBlocks(data_blocks, properties
-                .getRoot(), header_block_reader
-                    .getSBATStart()), data_blocks, properties.getRoot()
+            .getSmallDocumentBlocks(
+                  header_block.getBigBlockSize(),
+                  data_blocks, properties.getRoot(), 
+                  header_block.getSBATStart()), 
+                  data_blocks, properties.getRoot()
                         .getChildren(), new POIFSDocumentPath());
     }
 
@@ -245,13 +247,13 @@ public class POIFSReader
                     {
                         document =
                             new POIFSDocument(name, small_blocks
-                                .fetchBlocks(startBlock), size);
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     else
                     {
                         document =
                             new POIFSDocument(name, big_blocks
-                                .fetchBlocks(startBlock), size);
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     while (listeners.hasNext())
                     {
@@ -270,11 +272,11 @@ public class POIFSReader
                     // consume the document's data and discard it
                     if (property.shouldUseSmallBlocks())
                     {
-                        small_blocks.fetchBlocks(startBlock);
+                        small_blocks.fetchBlocks(startBlock, -1);
                     }
                     else
                     {
-                        big_blocks.fetchBlocks(startBlock);
+                        big_blocks.fetchBlocks(startBlock, -1);
                     }
                 }
             }

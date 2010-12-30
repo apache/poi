@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
+import java.io.IOException;
+
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.property.RootProperty;
-
-import java.util.*;
-
-import java.io.*;
 
 /**
  * This class implements reading the small document block list from an
@@ -31,9 +28,7 @@ import java.io.*;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class SmallBlockTableReader
-{
+public final class SmallBlockTableReader {
 
     /**
      * fetch the small document block list from an existing file
@@ -48,17 +43,23 @@ public class SmallBlockTableReader
      *
      * @exception IOException
      */
-
     public static BlockList getSmallDocumentBlocks(
+            final POIFSBigBlockSize bigBlockSize,
             final RawDataBlockList blockList, final RootProperty root,
             final int sbatStart)
         throws IOException
     {
-        BlockList list =
-            new SmallDocumentBlockList(SmallDocumentBlock
-                .extract(blockList.fetchBlocks(root.getStartBlock())));
+       // Fetch the blocks which hold the Small Blocks stream
+       ListManagedBlock [] smallBlockBlocks = 
+          blockList.fetchBlocks(root.getStartBlock(), -1);
+        
+       // Turn that into a list
+       BlockList list =new SmallDocumentBlockList(
+             SmallDocumentBlock.extract(bigBlockSize, smallBlockBlocks));
 
-        new BlockAllocationTableReader(blockList.fetchBlocks(sbatStart),
+       // Process
+        new BlockAllocationTableReader(bigBlockSize,
+                                       blockList.fetchBlocks(sbatStart, -1),
                                        list);
         return list;
     }

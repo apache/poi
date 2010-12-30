@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.UnsupportedEncodingException;
@@ -46,7 +46,7 @@ import org.apache.poi.util.POILogger;
  * over time but largely depends on your feedback so that the POI team knows
  * which variant types are really needed. So please feel free to submit error
  * reports or patches for the types you need.</p>
- * 
+ *
  * <p>Microsoft documentation: <a
  * href="http://msdn.microsoft.com/library/en-us/stg/stg/property_set_display_name_dictionary.asp?frame=true">
  * Property Set Display Name Dictionary</a>.
@@ -56,8 +56,6 @@ import org.apache.poi.util.POILogger;
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
  * @see Section
  * @see Variant
- * @version $Id$
- * @since 2002-02-09
  */
 public class Property
 {
@@ -112,7 +110,7 @@ public class Property
 
     /**
      * <p>Creates a property.</p>
-     * 
+     *
      * @param id the property's ID.
      * @param type the property's type, see {@link Variant}.
      * @param value the property's value. Only certain types are allowed, see
@@ -185,7 +183,7 @@ public class Property
 
     /**
      * <p>Reads a dictionary.</p>
-     * 
+     *
      * @param src The byte array containing the bytes making out the dictionary.
      * @param offset At this offset within <var>src </var> the dictionary
      *        starts.
@@ -219,7 +217,7 @@ public class Property
             for (int i = 0; i < nrEntries; i++)
             {
                 /* The key. */
-                final Long id = new Long(LittleEndian.getUInt(src, o));
+                final Long id = Long.valueOf(LittleEndian.getUInt(src, o));
                 o += LittleEndian.INT_SIZE;
 
                 /* The value (a string). The length is the either the
@@ -298,7 +296,7 @@ public class Property
      * 4.</p>
      *
      * @return the property's size in bytes
-     * 
+     *
      * @exception WritingNotSupportedException if HPSF does not yet support the
      * property's variant type.
      */
@@ -339,13 +337,14 @@ public class Property
      * ID == 0 is a special case: It does not have a type, and its value is the
      * section's dictionary. Another special case are strings: Two properties
      * may have the different types Variant.VT_LPSTR and Variant.VT_LPWSTR;</p>
-     * 
+     *
      * @see Object#equals(java.lang.Object)
      */
     public boolean equals(final Object o)
     {
-        if (!(o instanceof Property))
+        if (!(o instanceof Property)) {
             return false;
+        }
         final Property p = (Property) o;
         final Object pValue = p.getValue();
         final long pId = p.getID();
@@ -357,8 +356,8 @@ public class Property
             return false;
 
         /* It's clear now that both values are non-null. */
-        final Class valueClass = value.getClass();
-        final Class pValueClass = pValue.getClass();
+        final Class<?> valueClass = value.getClass();
+        final Class<?> pValueClass = pValue.getClass();
         if (!(valueClass.isAssignableFrom(pValueClass)) &&
             !(pValueClass.isAssignableFrom(valueClass)))
             return false;
@@ -375,10 +374,10 @@ public class Property
     {
         if (t1 == t2 ||
             (t1 == Variant.VT_LPSTR && t2 == Variant.VT_LPWSTR) ||
-            (t2 == Variant.VT_LPSTR && t1 == Variant.VT_LPWSTR))
+            (t2 == Variant.VT_LPSTR && t1 == Variant.VT_LPWSTR)) {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
 

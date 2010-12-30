@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
-
-import java.util.*;
 
 /**
  * A logger class that strives to make it as easy as possible for
@@ -31,14 +27,13 @@ import java.util.*;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
 public class NullLogger extends POILogger
 {
     public void initialize(final String cat)
     {
-       //do nothing    
+       //do nothing
     }
-    
+
     /**
      * Log a message
      *
@@ -462,5 +457,5 @@ public class NullLogger extends POILogger
        //do nothing
     }
 
-} 
+}
 

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
@@ -42,11 +43,12 @@ import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
-import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
+import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
 import org.apache.poi.util.POILogFactory;
@@ -64,47 +66,32 @@ public class POIFSFileSystem
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(POIFSFileSystem.class);
-    
-    private static final class CloseIgnoringInputStream extends InputStream {
 
-        private final InputStream _is;
-        public CloseIgnoringInputStream(InputStream is) {
-            _is = is;
-        }
-        public int read() throws IOException {
-            return _is.read();
-        }
-        public int read(byte[] b, int off, int len) throws IOException {
-            return _is.read(b, off, len);
-        }
-        public void close() {
-            // do nothing
-        }
-    }
-    
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
      */
     public static InputStream createNonClosingInputStream(InputStream is) {
         return new CloseIgnoringInputStream(is);
     }
-    
+
     private PropertyTable _property_table;
     private List          _documents;
     private DirectoryNode _root;
-    
+
     /**
      * What big block size the file uses. Most files
      *  use 512 bytes, but a few use 4096
      */
-    private int bigBlockSize = POIFSConstants.BIG_BLOCK_SIZE;
+    private POIFSBigBlockSize bigBlockSize = 
+       POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
 
     /**
      * Constructor, intended for writing
      */
     public POIFSFileSystem()
     {
-        _property_table = new PropertyTable();
+        HeaderBlock header_block = new HeaderBlock(bigBlockSize);
+        _property_table = new PropertyTable(header_block);
         _documents      = new ArrayList();
         _root           = null;
     }
@@ -112,20 +99,20 @@ public class POIFSFileSystem
     /**
      * Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
      * EOF.  The stream is always closed.<p/>
-     * 
-     * Some streams are usable after reaching EOF (typically those that return <code>true</code> 
-     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream 
+     *
+     * Some streams are usable after reaching EOF (typically those that return <code>true</code>
+     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream
      * <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
      * stream in order to trap the <tt>close()</tt> call.  A convenience method (
      * <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
      * <pre>
      * InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
      * HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
-     * is.reset(); 
-     * doSomethingElse(is); 
+     * is.reset();
+     * doSomethingElse(is);
      * </pre>
      * Note also the special case of <tt>ByteArrayInputStream</tt> for which the <tt>close()</tt>
-     * method does nothing. 
+     * method does nothing.
      * <pre>
      * ByteArrayInputStream bais = ...
      * HSSFWorkbook wb = new HSSFWorkbook(bais); // calls bais.close() !
@@ -144,49 +131,57 @@ public class POIFSFileSystem
         this();
         boolean success = false;
 
-        HeaderBlockReader header_block_reader;
+        HeaderBlock header_block;
         RawDataBlockList data_blocks;
         try {
             // read the header block from the stream
-            header_block_reader = new HeaderBlockReader(stream);
-            bigBlockSize = header_block_reader.getBigBlockSize();
-            
+            header_block = new HeaderBlock(stream);
+            bigBlockSize = header_block.getBigBlockSize();
+
             // read the rest of the stream into blocks
             data_blocks = new RawDataBlockList(stream, bigBlockSize);
             success = true;
         } finally {
             closeInputStream(stream, success);
         }
-        
+
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block_reader.getBATCount(),
-                                       header_block_reader.getBATArray(),
-                                       header_block_reader.getXBATCount(),
-                                       header_block_reader.getXBATIndex(),
+        new BlockAllocationTableReader(header_block.getBigBlockSize(),
+                                       header_block.getBATCount(),
+                                       header_block.getBATArray(),
+                                       header_block.getXBATCount(),
+                                       header_block.getXBATIndex(),
                                        data_blocks);
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block_reader.getPropertyStart(),
-                              data_blocks);
+            new PropertyTable(header_block, data_blocks);
 
         // init documents
-        processProperties(SmallBlockTableReader
-            .getSmallDocumentBlocks(data_blocks, properties
-                .getRoot(), header_block_reader
-                    .getSBATStart()), data_blocks, properties.getRoot()
-                        .getChildren(), null);
+        processProperties(
+        		SmallBlockTableReader.getSmallDocumentBlocks(
+        		      bigBlockSize, data_blocks, properties.getRoot(),
+        				header_block.getSBATStart()
+        		),
+        		data_blocks,
+        		properties.getRoot().getChildren(),
+        		null,
+        		header_block.getPropertyStart()
+        );
+
+        // For whatever reason CLSID of root is always 0.
+        getRoot().setStorageClsid(properties.getRoot().getStorageClsid());
     }
     /**
      * @param stream the stream to be closed
      * @param success <code>false</code> if an exception is currently being thrown in the calling method
      */
     private void closeInputStream(InputStream stream, boolean success) {
-        
+
         if(stream.markSupported() && !(stream instanceof ByteArrayInputStream)) {
-            String msg = "POIFS is closing the supplied input stream of type (" 
+            String msg = "POIFS is closing the supplied input stream of type ("
                     + stream.getClass().getName() + ") which supports mark/reset.  "
                     + "This will be a problem for the caller if the stream will still be used.  "
                     + "If that is the case the caller should wrap the input stream to avoid this close logic.  "
@@ -199,7 +194,7 @@ public class POIFSFileSystem
             if(success) {
                 throw new RuntimeException(e);
             }
-            // else not success? Try block did not complete normally 
+            // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
             e.printStackTrace();
         }
@@ -207,15 +202,15 @@ public class POIFSFileSystem
 
     /**
      * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream) 
+     *  support mark and reset, or be a PushbackInputStream)
      *  has a POIFS (OLE2) header at the start of it.
      * If your InputStream does not support mark / reset,
      *  then wrap it in a PushBackInputStream, then be
      *  sure to always use that, and not the original!
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream 
+     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 8 bytes 
+        // We want to peek at the first 8 bytes
         inp.mark(8);
 
         byte[] header = new byte[8];
@@ -229,7 +224,7 @@ public class POIFSFileSystem
         } else {
             inp.reset();
         }
-        
+
         // Did it match the signature?
         return (signature.get() == HeaderBlockConstants._signature);
     }
@@ -288,7 +283,7 @@ public class POIFSFileSystem
     {
         return getRoot().createDirectory(name);
     }
-    
+
     /**
      * Write the filesystem out
      *
@@ -307,11 +302,11 @@ public class POIFSFileSystem
 
         // create the small block store, and the SBAT
         SmallBlockTableWriter      sbtw       =
-            new SmallBlockTableWriter(_documents, _property_table.getRoot());
+            new SmallBlockTableWriter(bigBlockSize, _documents, _property_table.getRoot());
 
         // create the block allocation table
         BlockAllocationTableWriter bat        =
-            new BlockAllocationTableWriter();
+            new BlockAllocationTableWriter(bigBlockSize);
 
         // create a list of BATManaged objects: the documents plus the
         // property table and the small block table
@@ -349,7 +344,7 @@ public class POIFSFileSystem
         int               batStartBlock       = bat.createBlocks();
 
         // get the extended block allocation table blocks
-        HeaderBlockWriter header_block_writer = new HeaderBlockWriter();
+        HeaderBlockWriter header_block_writer = new HeaderBlockWriter(bigBlockSize);
         BATBlock[]        xbat_blocks         =
             header_block_writer.setBATBlocks(bat.countBlocks(),
                                              batStartBlock);
@@ -491,7 +486,8 @@ public class POIFSFileSystem
     private void processProperties(final BlockList small_blocks,
                                    final BlockList big_blocks,
                                    final Iterator properties,
-                                   final DirectoryNode dir)
+                                   final DirectoryNode dir,
+                                   final int headerPropertiesStartAt)
         throws IOException
     {
         while (properties.hasNext())
@@ -511,7 +507,8 @@ public class POIFSFileSystem
 
                 processProperties(
                     small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(), new_dir);
+                    (( DirectoryProperty ) property).getChildren(),
+                    new_dir, headerPropertiesStartAt);
             }
             else
             {
@@ -522,14 +519,15 @@ public class POIFSFileSystem
                 if (property.shouldUseSmallBlocks())
                 {
                     document =
-                        new POIFSDocument(name, small_blocks
-                            .fetchBlocks(startBlock), size);
+                        new POIFSDocument(name,
+                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
+                                          size);
                 }
                 else
                 {
                     document =
                         new POIFSDocument(name,
-                                          big_blocks.fetchBlocks(startBlock),
+                                          big_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
                                           size);
                 }
                 parent.createDocument(document);
@@ -552,10 +550,7 @@ public class POIFSFileSystem
         {
             return (( POIFSViewable ) getRoot()).getViewableArray();
         }
-        else
-        {
-            return new Object[ 0 ];
-        }
+        return new Object[ 0 ];
     }
 
     /**
@@ -572,10 +567,7 @@ public class POIFSFileSystem
         {
             return (( POIFSViewable ) getRoot()).getViewableIterator();
         }
-        else
-        {
-            return Collections.EMPTY_LIST.iterator();
-        }
+        return Collections.EMPTY_LIST.iterator();
     }
 
     /**
@@ -607,9 +599,15 @@ public class POIFSFileSystem
      * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
      */
     public int getBigBlockSize() {
-    	return bigBlockSize;
+    	return bigBlockSize.getBigBlockSize();
     }
-    
+    /**
+     * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
+     */
+    public POIFSBigBlockSize getBigBlockSizeDetails() {
+      return bigBlockSize;
+    }
+
     /* **********  END  begin implementation of POIFSViewable ********** */
 }   // end public class POIFSFileSystem
 

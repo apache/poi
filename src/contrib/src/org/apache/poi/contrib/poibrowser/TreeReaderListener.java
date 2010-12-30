@@ -164,7 +164,7 @@ public class TreeReaderListener implements POIFSReaderListener
         {
             is.close();
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
             System.err.println
                 ("Unexpected exception while closing " +

@@ -21,7 +21,6 @@ package org.apache.poi.util;
  * Utility classes for dealing with arrays.
  *
  * @author Glen Stampoultzis
- * @version $Id$
  */
 public class ArrayUtil
 {

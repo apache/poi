@@ -51,13 +51,14 @@ public class RawDataBlock
      */
     public RawDataBlock(final InputStream stream)
     		throws IOException {
-    	this(stream, POIFSConstants.BIG_BLOCK_SIZE);
+    	this(stream, POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
     }
     /**
      * Constructor RawDataBlock
      *
      * @param stream the InputStream from which the data will be read
-     * @param blockSize the size of the POIFS blocks, normally 512 bytes {@link POIFSConstants#BIG_BLOCK_SIZE}
+     * @param blockSize the size of the POIFS blocks, normally 512 bytes
+     * {@link org.apache.poi.poifs.common.POIFSConstants#SMALLER_BIG_BLOCK_SIZE}
      *
      * @exception IOException on I/O errors, and if an insufficient
      *            amount of data is read (the InputStream must
@@ -111,6 +112,10 @@ public class RawDataBlock
     public boolean hasData() {
     	return _hasData;
     }
+    
+    public String toString() {
+       return "RawDataBlock of size " + _data.length; 
+    }
 
     /* ********** START implementation of ListManagedBlock ********** */
 
@@ -129,6 +134,13 @@ public class RawDataBlock
             throw new IOException("Cannot return empty data");
         }
         return _data;
+    }
+    
+    /**
+     * What's the big block size?
+     */
+    public int getBigBlockSize() {
+       return _data.length;
     }
 
     /* **********  END  implementation of ListManagedBlock ********** */

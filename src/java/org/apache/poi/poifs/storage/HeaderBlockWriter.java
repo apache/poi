@@ -19,80 +19,38 @@
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
-import java.util.*;
-
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.LongField;
-import org.apache.poi.util.ShortField;
 
 /**
  * The block containing the archive header
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class HeaderBlockWriter
-    extends BigBlock
-    implements HeaderBlockConstants
+public class HeaderBlockWriter implements HeaderBlockConstants, BlockWritable
 {
-    private static final byte _default_value = ( byte ) 0xFF;
-
-    // number of big block allocation table blocks (int)
-    private IntegerField      _bat_count;
-
-    // start of the property set block (int index of the property set
-    // chain's first big block)
-    private IntegerField      _property_start;
-
-    // start of the small block allocation table (int index of small
-    // block allocation table's first big block)
-    private IntegerField      _sbat_start;
-
-    // number of big blocks holding the small block allocation table
-    private IntegerField      _sbat_block_count;
-
-    // big block index for extension to the big block allocation table
-    private IntegerField      _xbat_start;
-    private IntegerField      _xbat_count;
-    private byte[]            _data;
+   private final HeaderBlock _header_block;
 
     /**
      * Create a single instance initialized with default values
      */
-
-    public HeaderBlockWriter()
+    public HeaderBlockWriter(POIFSBigBlockSize bigBlockSize)
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        Arrays.fill(_data, _default_value);
-        new LongField(_signature_offset, _signature, _data);
-        new IntegerField(0x08, 0, _data);
-        new IntegerField(0x0c, 0, _data);
-        new IntegerField(0x10, 0, _data);
-        new IntegerField(0x14, 0, _data);
-        new ShortField(0x18, ( short ) 0x3b, _data);
-        new ShortField(0x1a, ( short ) 0x3, _data);
-        new ShortField(0x1c, ( short ) -2, _data);
-        new ShortField(0x1e, ( short ) 0x9, _data);
-        new IntegerField(0x20, 0x6, _data);
-        new IntegerField(0x24, 0, _data);
-        new IntegerField(0x28, 0, _data);
-        _bat_count      = new IntegerField(_bat_count_offset, 0, _data);
-        _property_start = new IntegerField(_property_start_offset,
-                                           POIFSConstants.END_OF_CHAIN,
-                                           _data);
-        new IntegerField(0x34, 0, _data);
-        new IntegerField(0x38, 0x1000, _data);
-        _sbat_start = new IntegerField(_sbat_start_offset,
-                                       POIFSConstants.END_OF_CHAIN, _data);
-        _sbat_block_count = new IntegerField(_sbat_block_count_offset, 0,
-					     _data);
-        _xbat_start = new IntegerField(_xbat_start_offset,
-                                       POIFSConstants.END_OF_CHAIN, _data);
-        _xbat_count = new IntegerField(_xbat_count_offset, 0, _data);
+       _header_block = new HeaderBlock(bigBlockSize);
+    }
+
+    /**
+     * Create a single instance initialized with the specified 
+     *  existing values
+     */
+    public HeaderBlockWriter(HeaderBlock headerBlock)
+    {
+       _header_block = headerBlock;
     }
 
     /**
@@ -111,16 +69,19 @@ public class HeaderBlockWriter
                                     final int startBlock)
     {
         BATBlock[] rvalue;
+        POIFSBigBlockSize bigBlockSize = _header_block.getBigBlockSize();
 
-        _bat_count.set(blockCount, _data);
+        _header_block.setBATCount(blockCount);
+
+        // Set the BAT locations
         int limit  = Math.min(blockCount, _max_bats_in_header);
-        int offset = _bat_array_offset;
-
-        for (int j = 0; j < limit; j++)
-        {
-            new IntegerField(offset, startBlock + j, _data);
-            offset += LittleEndianConsts.INT_SIZE;
+        int[] bat_blocks = new int[limit];
+        for (int j = 0; j < limit; j++) {
+           bat_blocks[j] = startBlock + j;
         }
+        _header_block.setBATArray(bat_blocks);
+        
+        // Now do the XBATs
         if (blockCount > _max_bats_in_header)
         {
             int   excess_blocks      = blockCount - _max_bats_in_header;
@@ -131,16 +92,16 @@ public class HeaderBlockWriter
                 excess_block_array[ j ] = startBlock + j
                                           + _max_bats_in_header;
             }
-            rvalue = BATBlock.createXBATBlocks(excess_block_array,
+            rvalue = BATBlock.createXBATBlocks(bigBlockSize, excess_block_array,
                                                startBlock + blockCount);
-            _xbat_start.set(startBlock + blockCount, _data);
+            _header_block.setXBATStart(startBlock + blockCount);
         }
         else
         {
-            rvalue = BATBlock.createXBATBlocks(new int[ 0 ], 0);
-            _xbat_start.set(POIFSConstants.END_OF_CHAIN, _data);
+            rvalue = BATBlock.createXBATBlocks(bigBlockSize, new int[ 0 ], 0);
+            _header_block.setXBATStart(POIFSConstants.END_OF_CHAIN);
         }
-        _xbat_count.set(rvalue.length, _data);
+        _header_block.setXBATCount(rvalue.length);
         return rvalue;
     }
 
@@ -150,10 +111,9 @@ public class HeaderBlockWriter
      * @param startBlock the index of the first block of the Property
      *                   Table
      */
-
     public void setPropertyStart(final int startBlock)
     {
-        _property_start.set(startBlock, _data);
+       _header_block.setPropertyStart(startBlock);
     }
 
     /**
@@ -162,10 +122,9 @@ public class HeaderBlockWriter
      * @param startBlock the index of the first big block of the small
      *                   block allocation table
      */
-
     public void setSBATStart(final int startBlock)
     {
-        _sbat_start.set(startBlock, _data);
+        _header_block.setSBATStart(startBlock);
     }
 
     /**
@@ -173,10 +132,9 @@ public class HeaderBlockWriter
      *
      * @param count the number of SBAT blocks
      */
-
     public void setSBATBlockCount(final int count)
     {
-	_sbat_block_count.set(count, _data);
+       _header_block.setSBATBlockCount(count);
     }
 
     /**
@@ -188,11 +146,11 @@ public class HeaderBlockWriter
      * @return number of XBAT blocks needed
      */
 
-    static int calculateXBATStorageRequirements(final int blockCount)
+    static int calculateXBATStorageRequirements(POIFSBigBlockSize bigBlockSize, final int blockCount)
     {
         return (blockCount > _max_bats_in_header)
-               ? BATBlock.calculateXBATStorageRequirements(blockCount
-                   - _max_bats_in_header)
+               ? BATBlock.calculateXBATStorageRequirements(
+                     bigBlockSize, blockCount - _max_bats_in_header)
                : 0;
     }
 
@@ -207,11 +165,29 @@ public class HeaderBlockWriter
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
-    void writeData(final OutputStream stream)
+    public void writeBlocks(final OutputStream stream)
         throws IOException
     {
-        doWriteData(stream, _data);
+        _header_block.writeData(stream);
+    }
+    
+    /**
+     * Write the block's data to an existing block
+     *
+     * @param block the ByteBuffer of the block to which the 
+     *               stored data should be written
+     *
+     * @exception IOException on problems writing to the block
+     */
+    public void writeBlock(ByteBuffer block)
+        throws IOException
+    {
+       ByteArrayOutputStream baos = new ByteArrayOutputStream(
+             _header_block.getBigBlockSize().getBigBlockSize()
+       );
+       _header_block.writeData(baos);
+       
+       block.put(baos.toByteArray());
     }
 
     /* **********  END  extension of BigBlock ********** */

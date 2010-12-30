@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,39 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test POIFSDocumentPath functionality
  *
  * @author Marc Johnson
  */
+public final class TestPOIFSDocumentPath extends TestCase {
 
-public class TestPOIFSDocumentPath
-    extends TestCase
-{
-
-    /**
-     * Constructor TestPOIFSDocumentPath
-     *
-     * @param name
-     */
-
-    public TestPOIFSDocumentPath(String name)
-    {
-        super(name);
-    }
 
     /**
      * Test default constructor
      */
-
-    public void testDefaultConstructor()
-    {
+    public void testDefaultConstructor() {
         POIFSDocumentPath path = new POIFSDocumentPath();
 
         assertEquals(0, path.length());
@@ -56,9 +39,7 @@ public class TestPOIFSDocumentPath
     /**
      * Test full path constructor
      */
-
-    public void testFullPathConstructor()
-    {
+    public void testFullPathConstructor() {
         String[] components =
         {
             "foo", "bar", "foobar", "fubar"
@@ -125,9 +106,7 @@ public class TestPOIFSDocumentPath
     /**
      * Test relative path constructor
      */
-
-    public void testRelativePathConstructor()
-    {
+    public void testRelativePathConstructor() {
         String[] initialComponents =
         {
             "a", "b", "c"
@@ -186,24 +165,40 @@ public class TestPOIFSDocumentPath
                 }
             }
 
-            // test weird variants
+            // Test weird variants
+            
+            // This one is allowed, even if it's really odd
             assertEquals(n, new POIFSDocumentPath(base, null).length());
+            new POIFSDocumentPath(base, new String[]
+            {
+                 "fu", ""
+            });
+            
+            // This one is allowed too
+            new POIFSDocumentPath(base, new String[]
+            {
+                 "", "fu"
+            });
+            
+            // This one shouldn't be allowed
             try
             {
                 new POIFSDocumentPath(base, new String[]
                 {
-                    "fu", ""
+                    "fu", null
                 });
                 fail("should have caught IllegalArgumentException");
             }
             catch (IllegalArgumentException ignored)
             {
             }
+            
+            // Ditto
             try
             {
                 new POIFSDocumentPath(base, new String[]
                 {
-                    "fu", null
+                    null, "fu"
                 });
                 fail("should have caught IllegalArgumentException");
             }
@@ -216,9 +211,7 @@ public class TestPOIFSDocumentPath
     /**
      * test equality
      */
-
-    public void testEquality()
-    {
+    public void testEquality() {
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
         POIFSDocumentPath   a2    = new POIFSDocumentPath(null);
         POIFSDocumentPath   a3    = new POIFSDocumentPath(new String[ 0 ]);
@@ -317,18 +310,5 @@ public class TestPOIFSDocumentPath
                            !(fullPaths[ k ].equals(badPaths[ j ])));
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.eventfilesystem.POIFSDocumentPath");
-        junit.textui.TestRunner.run(TestPOIFSDocumentPath.class);
     }
 }

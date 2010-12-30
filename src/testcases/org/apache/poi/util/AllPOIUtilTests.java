@@ -27,17 +27,14 @@ import junit.framework.TestSuite;
 public final class AllPOIUtilTests {
 
     public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.util");
+        TestSuite result = new TestSuite(AllPOIUtilTests.class.getName());
         result.addTestSuite(TestArrayUtil.class);
         result.addTestSuite(TestBinaryTree.class);
         result.addTestSuite(TestBitField.class);
         result.addTestSuite(TestByteField.class);
-        result.addTestSuite(TestDoubleList2d.class);
         result.addTestSuite(TestHexDump.class);
         result.addTestSuite(TestIntegerField.class);
         result.addTestSuite(TestIntList.class);
-        result.addTestSuite(TestIntList2d.class);
-        result.addTestSuite(TestList2d.class);
         result.addTestSuite(TestLittleEndian.class);
         result.addTestSuite(TestLongField.class);
         result.addTestSuite(TestPOILogFactory.class);

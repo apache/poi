@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.util.Iterator;
@@ -32,8 +32,6 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  * @author Drew Varner (Drew.Varner closeTo sc.edu)
  * @author robert_flaherty@hyperion.com
  * @see SummaryInformation
- * @version $Id$
- * @since 2002-02-09
  */
 public class DocumentSummaryInformation extends SpecialPropertySet
 {
@@ -569,9 +567,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Gets the custom properties.</p>
-     * 
+     *
      * @return The custom properties.
-     * @since 2006-02-09
      */
     public CustomProperties getCustomProperties()
     {
@@ -580,7 +577,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         {
             cps = new CustomProperties();
             final Section section = (Section) getSections().get(1);
-            final Map dictionary = section.getDictionary();
+            final Map<Long,String> dictionary = section.getDictionary();
             final Property[] properties = section.getProperties();
             int propertyCount = 0;
             for (int i = 0; i < properties.length; i++)
@@ -591,7 +588,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
                 {
                     propertyCount++;
                     final CustomProperty cp = new CustomProperty(p,
-                            (String) dictionary.get(new Long(id)));
+                            dictionary.get(Long.valueOf(id)));
                     cps.put(cp.getName(), cp);
                 }
             }
@@ -603,15 +600,14 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Sets the custom properties.</p>
-     * 
+     *
      * @param customProperties The custom properties
-     * @since 2006-02-07
      */
     public void setCustomProperties(final CustomProperties customProperties)
     {
         ensureSection2();
         final MutableSection section = (MutableSection) getSections().get(1);
-        final Map dictionary = customProperties.getDictionary();
+        final Map<Long,String> dictionary = customProperties.getDictionary();
         section.clear();
 
         /* Set the codepage. If both custom properties and section have a
@@ -625,9 +621,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         customProperties.setCodepage(cpCodepage);
         section.setCodepage(cpCodepage);
         section.setDictionary(dictionary);
-        for (final Iterator i = customProperties.values().iterator(); i.hasNext();)
+        for (final Iterator<CustomProperty> i = customProperties.values().iterator(); i.hasNext();)
         {
-            final Property p = (Property) i.next();
+            final Property p = i.next();
             section.setProperty(p);
         }
     }
@@ -652,8 +648,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Removes the custom properties.</p>
-     * 
-     * @since 2006-02-08
      */
     public void removeCustomProperties()
     {
@@ -676,5 +670,4 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     {
         throw new UnsupportedOperationException(msg + " is not yet implemented.");
     }
-
 }

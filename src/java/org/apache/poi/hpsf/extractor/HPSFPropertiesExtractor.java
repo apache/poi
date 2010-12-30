@@ -14,8 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpsf.extractor;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -28,12 +31,13 @@ import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.SpecialPropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Extracts all of the HPSF properties, both
- *  build in and custom, returning them in 
+ *  build in and custom, returning them in
  *  textual form.
  */
 public class HPSFPropertiesExtractor extends POITextExtractor {
@@ -46,54 +50,59 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
 	public HPSFPropertiesExtractor(POIFSFileSystem fs) {
 		super(new PropertiesOnlyDocument(fs));
 	}
-	
+   public HPSFPropertiesExtractor(NPOIFSFileSystem fs) {
+      super(new PropertiesOnlyDocument(fs));
+   }
+
 	public String getDocumentSummaryInformationText() {
 		DocumentSummaryInformation dsi = document.getDocumentSummaryInformation();
 		StringBuffer text = new StringBuffer();
 
 		// Normal properties
 		text.append( getPropertiesText(dsi) );
-		
+
 		// Now custom ones
-		CustomProperties cps = dsi.getCustomProperties();
-		Iterator keys = cps.keySet().iterator();
-		while(keys.hasNext()) {
-			String key = (String)keys.next();
-			String val = getPropertyValueText( cps.get(key) );
-			text.append(key + " = " + val + "\n");
+		CustomProperties cps = dsi == null ? null : dsi.getCustomProperties();
+		if(cps != null) {
+			Iterator<String> keys = cps.nameSet().iterator();
+			while(keys.hasNext()) {
+				String key = keys.next();
+				String val = getPropertyValueText( cps.get(key) );
+				text.append(key + " = " + val + "\n");
+			}
 		}
-		
+
 		// All done
 		return text.toString();
 	}
 	public String getSummaryInformationText() {
 		SummaryInformation si = document.getSummaryInformation();
-		
+
 		// Just normal properties
 		return getPropertiesText(si);
 	}
-	
+
 	private static String getPropertiesText(SpecialPropertySet ps) {
 		if(ps == null) {
 			// Not defined, oh well
 			return "";
 		}
-		
+
 		StringBuffer text = new StringBuffer();
-		
+
 		PropertyIDMap idMap = ps.getPropertySetIDMap();
 		Property[] props = ps.getProperties();
 		for(int i=0; i<props.length; i++) {
-			String type = Long.toString( props[i].getID() ); 
+			String type = Long.toString( props[i].getID() );
 			Object typeObj = idMap.get(props[i].getID());
 			if(typeObj != null) {
 				type = typeObj.toString();
 			}
-			
+
 			String val = getPropertyValueText( props[i].getValue() );
 			text.append(type + " = " + val + "\n");
 		}
-		
+
 		return text.toString();
 	}
 	private static String getPropertyValueText(Object val) {
@@ -121,13 +130,13 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
 	}
 
 	/**
-	 * Return the text of all the properties defined in
+	 * @return the text of all the properties defined in
 	 *  the document.
 	 */
 	public String getText() {
 		return getSummaryInformationText() + getDocumentSummaryInformationText();
 	}
-	
+
 	/**
 	 * Prevent recursion!
 	 */
@@ -136,16 +145,28 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
 	}
 
 	/**
-	 * So we can get at the properties of any 
+	 * So we can get at the properties of any
 	 *  random OLE2 document.
 	 */
-	private static class PropertiesOnlyDocument extends POIDocument {
-		private PropertiesOnlyDocument(POIFSFileSystem fs) {
+	private static final class PropertiesOnlyDocument extends POIDocument {
+      public PropertiesOnlyDocument(NPOIFSFileSystem fs) {
+         super(fs.getRoot());
+      }
+		public PropertiesOnlyDocument(POIFSFileSystem fs) {
 			super(fs);
 		}
 
-		public void write(OutputStream out) throws IOException {
+		public void write(OutputStream out) {
 			throw new IllegalStateException("Unable to write, only for properties!");
 		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+	   for(String file : args) {
+	      HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
+	            new NPOIFSFileSystem(new File(file))
+	      );
+	      System.out.println(ext.getText());
+	   }
 	}
 }

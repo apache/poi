@@ -20,6 +20,7 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -47,27 +48,28 @@ import org.apache.poi.util.POILogger;
  */
 public abstract class POIDocument {
 	/** Holds metadata on our document */
-	protected SummaryInformation sInf;
+	private SummaryInformation sInf;
 	/** Holds further metadata on our document */
-	protected DocumentSummaryInformation dsInf;
-	/** The open POIFS FileSystem that contains our document */
-	protected POIFSFileSystem filesystem;
+	private DocumentSummaryInformation dsInf;
 	/**	The directory that our document lives in */
 	protected DirectoryNode directory;
 	
 	/** For our own logging use */
-	protected POILogger logger = POILogFactory.getLogger(this.getClass());
+	private final static POILogger logger = POILogFactory.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
-    protected boolean initialized = false;
+    private boolean initialized = false;
     
 
-    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
-    	this.filesystem = fs;
+    protected POIDocument(DirectoryNode dir) {
     	this.directory = dir;
     }
+    @Deprecated
+    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
+       this.directory = dir;
+     }
     protected POIDocument(POIFSFileSystem fs) {
-    	this(fs.getRoot(), fs);
+    	this(fs.getRoot());
     }
 
 	/**
@@ -85,6 +87,25 @@ public abstract class POIDocument {
         if(!initialized) readProperties();
         return sInf;
     }
+	
+	/**
+	 * Will create whichever of SummaryInformation
+	 *  and DocumentSummaryInformation (HPSF) properties
+	 *  are not already part of your document.
+	 * This is normally useful when creating a new
+	 *  document from scratch.
+	 * If the information properties are already there,
+	 *  then nothing will happen.
+	 */
+	public void createInformationProperties() {
+        if(!initialized) readProperties();
+		if(sInf == null) {
+			sInf = PropertySetFactory.newSummaryInformation();
+		}
+		if(dsInf == null) {
+			dsInf = PropertySetFactory.newDocumentSummaryInformation();
+		}
+	}
 
 	/**
 	 * Find, and create objects for, the standard
@@ -120,28 +141,31 @@ public abstract class POIDocument {
 	 *  if it wasn't found
 	 */
 	protected PropertySet getPropertySet(String setName) {
-		DocumentInputStream dis;
-		try {
-			// Find the entry, and get an input stream for it
-			dis = directory.createDocumentInputStream(setName);
-		} catch(IOException ie) {
-			// Oh well, doesn't exist
-			logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
-			return null;
-		}
+	   //directory can be null when creating new documents
+	   if(directory == null) return null;
 
-		try {
-			// Create the Property Set
-			PropertySet set = PropertySetFactory.create(dis);
-			return set;
-		} catch(IOException ie) {
-			// Must be corrupt or something like that
-			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
-		} catch(org.apache.poi.hpsf.HPSFException he) {
-			// Oh well, doesn't exist
-			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
-		}
-		return null;
+	   DocumentInputStream dis;
+	   try {
+	      // Find the entry, and get an input stream for it
+	      dis = directory.createDocumentInputStream( directory.getEntry(setName) );
+	   } catch(IOException ie) {
+	      // Oh well, doesn't exist
+	      logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
+	      return null;
+	   }
+
+	   try {
+	      // Create the Property Set
+	      PropertySet set = PropertySetFactory.create(dis);
+	      return set;
+	   } catch(IOException ie) {
+	      // Must be corrupt or something like that
+	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
+	   } catch(org.apache.poi.hpsf.HPSFException he) {
+	      // Oh well, doesn't exist
+	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
+	   }
+	   return null;
 	}
 	
 	/**
@@ -157,14 +181,16 @@ public abstract class POIDocument {
 	 * @param writtenEntries a list of POIFS entries to add the property names too
 	 */
 	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
-        if(sInf != null) {
-			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME,sInf,outFS);
+        SummaryInformation si = getSummaryInformation();
+        if(si != null) {
+			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
 			if(writtenEntries != null) {
 				writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
 			}
 		}
-		if(dsInf != null) {
-			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME,dsInf,outFS);
+        DocumentSummaryInformation dsi = getDocumentSummaryInformation();
+        if(dsi != null) {
+			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, outFS);
 			if(writtenEntries != null) {
 				writtenEntries.add(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 			}

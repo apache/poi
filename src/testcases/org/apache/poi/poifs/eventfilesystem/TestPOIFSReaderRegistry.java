@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.eventfilesystem;
 
-import junit.framework.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import java.util.*;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
@@ -30,10 +30,7 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
  *
  * @author Marc Johnson
  */
-
-public class TestPOIFSReaderRegistry
-    extends TestCase
-{
+public final class TestPOIFSReaderRegistry extends TestCase {
     private POIFSReaderListener[] listeners =
     {
         new Listener(), new Listener(), new Listener(), new Listener()
@@ -57,22 +54,9 @@ public class TestPOIFSReaderRegistry
     };
 
     /**
-     * Constructor TestPOIFSReaderRegistry
-     *
-     * @param name
-     */
-
-    public TestPOIFSReaderRegistry(String name)
-    {
-        super(name);
-    }
-
-    /**
      * Test empty registry
      */
-
-    public void testEmptyRegistry()
-    {
+    public void testEmptyRegistry() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
         for (int j = 0; j < paths.length; j++)
@@ -90,9 +74,7 @@ public class TestPOIFSReaderRegistry
     /**
      * Test mixed registration operations
      */
-
-    public void testMixedRegistrationOperations()
-    {
+    public void testMixedRegistrationOperations() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
         for (int j = 0; j < listeners.length; j++)
@@ -171,18 +153,5 @@ public class TestPOIFSReaderRegistry
                 }
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.eventfilesystem.POIFSReaderRegistry");
-        junit.textui.TestRunner.run(TestPOIFSReaderRegistry.class);
     }
 }

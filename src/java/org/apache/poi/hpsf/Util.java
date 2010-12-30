@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.IOException;
@@ -27,8 +27,6 @@ import java.util.Date;
  * <p>Provides various static utility methods.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @version $Id$
- * @since 2002-02-09
  */
 public class Util
 {
@@ -179,7 +177,7 @@ public class Util
      *
      * @param date The date to be converted
      * @return The filetime
-     * 
+     *
      * @see #filetimeToDate(long)
      * @see #filetimeToDate(int, int)
      */
@@ -213,10 +211,10 @@ public class Util
      * @return <code>true</code> if the collections are equal, else
      * <code>false</code>.
      */
-    public static boolean equals(final Collection c1, final Collection c2)
+    public static boolean equals(Collection<?> c1, Collection<?> c2)
     {
-        final Object[] o1 = c1.toArray();
-        final Object[] o2 = c2.toArray();
+        Object[] o1 = c1.toArray();
+        Object[] o2 = c2.toArray();
         return internalEquals(o1, o2);
     }
 
@@ -231,14 +229,14 @@ public class Util
      * @return <code>true</code> if the object arrays are equal,
      * <code>false</code> if they are not.
      */
-    public static boolean equals(final Object[] c1, final Object[] c2)
+    public static boolean equals(Object[] c1, Object[] c2)
     {
-        final Object[] o1 = (Object[]) c1.clone();
-        final Object[] o2 = (Object[]) c2.clone();
+        final Object[] o1 = c1.clone();
+        final Object[] o2 = c2.clone();
         return internalEquals(o1, o2);
     }
 
-    private static boolean internalEquals(final Object[] o1, final Object[] o2)
+    private static boolean internalEquals(Object[] o1, Object[] o2)
     {
         for (int i1 = 0; i1 < o1.length; i1++)
         {
@@ -328,9 +326,9 @@ public class Util
     /**
      * <p>Returns a textual representation of a {@link Throwable}, including a
      * stacktrace.</p>
-     * 
+     *
      * @param t The {@link Throwable}
-     * 
+     *
      * @return a string containing the output of a call to
      * <code>t.printStacktrace()</code>.
      */

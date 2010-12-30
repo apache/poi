@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
+import org.apache.poi.poifs.common.POIFSConstants;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test DocumentBlock functionality
  *
  * @author Marc Johnson
  */
-
-public class TestDocumentBlock
-    extends TestCase
-{
+public final class TestDocumentBlock extends TestCase {
     static final private byte[] _testdata;
 
     static
@@ -44,25 +41,10 @@ public class TestDocumentBlock
             _testdata[ j ] = ( byte ) j;
         }
     }
-    ;
-
-    /**
-     * Constructor TestDocumentBlock
-     *
-     * @param name
-     */
-
-    public TestDocumentBlock(String name)
-    {
-        super(name);
-    }
 
     /**
      * Test the writing DocumentBlock constructor.
-     *
-     * @exception IOException
      */
-
     public void testConstructor()
         throws IOException
     {
@@ -75,7 +57,7 @@ public class TestDocumentBlock
             byte[] data = new byte[ Math.min(_testdata.length - index, 512) ];
 
             System.arraycopy(_testdata, index, data, 0, data.length);
-            DocumentBlock block = new DocumentBlock(input);
+            DocumentBlock block = new DocumentBlock(input, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
             verifyOutput(block, data);
             size += block.size();
@@ -88,46 +70,10 @@ public class TestDocumentBlock
         assertEquals(_testdata.length, size);
     }
 
-    /**
-     * test static read method
-     *
-     * @exception IOException
-     */
-
-    public void testRead()
-        throws IOException
-    {
-        DocumentBlock[]      blocks = new DocumentBlock[ 4 ];
-        ByteArrayInputStream input  = new ByteArrayInputStream(_testdata);
-
-        for (int j = 0; j < 4; j++)
-        {
-            blocks[ j ] = new DocumentBlock(input);
-        }
-        for (int j = 1; j <= 2000; j += 17)
-        {
-            byte[] buffer = new byte[ j ];
-            int    offset = 0;
-
-            for (int k = 0; k < (2000 / j); k++)
-            {
-                DocumentBlock.read(blocks, buffer, offset);
-                for (int n = 0; n < buffer.length; n++)
-                {
-                    assertEquals("checking byte " + (k * j) + n,
-                                 _testdata[ (k * j) + n ], buffer[ n ]);
-                }
-                offset += j;
-            }
-        }
-    }
 
     /**
      * Test 'reading' constructor
-     *
-     * @exception IOException
      */
-
     public void testReadingConstructor()
         throws IOException
     {
@@ -163,18 +109,5 @@ public class TestDocumentBlock
         {
             assertEquals(( byte ) 0xFF, copy[ j ]);
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.storage.DocumentBlock");
-        junit.textui.TestRunner.run(TestDocumentBlock.class);
     }
 }
