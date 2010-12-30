@@ -107,7 +107,11 @@ public class NPOIFSFileSystem extends BlockStore
 
     /**
      * Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     *  creating from an <tt>InputStream</tt>
+     *  creating from an <tt>InputStream</tt>.
+     *  
+     * Note that with this constructor, you will need to call {@link #close()}
+     *  when you're done to have the underlying file closed, as the file is
+     *  kept open during normal operation to read the data out. 
      *  
      * @param file the File from which to read the data
      *
@@ -624,6 +628,15 @@ public class NPOIFSFileSystem extends BlockStore
        _property_table.write(
              new NPOIFSStream(this, _header.getPropertyStart())
        );
+    }
+    
+    /**
+     * Closes the FileSystem, freeing any underlying files, streams
+     *  and buffers. After this, you will be unable to read or 
+     *  write from the FileSystem.
+     */
+    public void close() throws IOException {
+       _data.close();
     }
 
     /**
