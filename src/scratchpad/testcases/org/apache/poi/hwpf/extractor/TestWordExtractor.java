@@ -24,6 +24,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -313,5 +314,31 @@ public final class TestWordExtractor extends TestCase {
         String text = extractor.getText();
 
         assertTrue(text.startsWith("\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435"));
+    }
+    
+    /**
+     * Tests that we can work with both {@link POIFSFileSystem}
+     *  and {@link NPOIFSFileSystem}
+     */
+    public void testDifferentPOIFS() throws Exception {
+       POIDataSamples docTests = POIDataSamples.getDocumentInstance();
+       
+       // Open the two filesystems
+       DirectoryNode[] files = new DirectoryNode[2];
+       files[0] = (new POIFSFileSystem(docTests.openResourceAsStream("test2.doc"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(docTests.getFile("test2.doc"))).getRoot();
+       
+       // Open directly 
+       for(DirectoryNode dir : files) {
+          WordExtractor extractor = new WordExtractor(dir, null);
+          assertEquals(p_text1_block, extractor.getText());
+       }
+
+       // Open via a HWPFDocument
+       for(DirectoryNode dir : files) {
+          HWPFDocument doc = new HWPFDocument(dir);
+          WordExtractor extractor = new WordExtractor(doc);
+          assertEquals(p_text1_block, extractor.getText());
+       }
     }
 }

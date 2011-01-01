@@ -84,6 +84,14 @@ public final class HSLFSlideShow extends POIDocument {
 		return directory.getFileSystem();
 	}
 
+   /**
+    * Returns the directory in the underlying POIFSFileSystem for the 
+    *  document that is open.
+    */
+   protected DirectoryNode getPOIFSDirectory() {
+      return directory;
+   }
+
 	/**
 	 * Constructs a Powerpoint document from fileName. Parses the document
 	 * and places all the important stuff into data structures.
