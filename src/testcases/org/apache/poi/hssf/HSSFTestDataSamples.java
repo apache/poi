@@ -19,6 +19,7 @@ package org.apache.poi.hssf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,6 +37,9 @@ public final class HSSFTestDataSamples {
 
 	public static InputStream openSampleFileStream(String sampleFileName) {
 		return _inst.openResourceAsStream(sampleFileName);
+	}
+	public static File getSampeFile(String sampleFileName) {
+	   return _inst.getFile(sampleFileName);
 	}
 	public static byte[] getTestDataFileContent(String fileName) {
 		return _inst.readFile(fileName);
