@@ -113,13 +113,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * this holds the HSSFSheet objects attached to this workbook
      */
 
-    protected List _sheets;
+    protected List<HSSFSheet> _sheets;
 
     /**
      * this holds the HSSFName objects attached to this workbook
      */
 
-    private ArrayList names;
+    private ArrayList<HSSFName> names;
 
     /**
      * this holds the HSSFFont objects attached to this workbook.
@@ -170,8 +170,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	private HSSFWorkbook(InternalWorkbook book) {
 		super((DirectoryNode)null);
 		workbook = book;
-		_sheets = new ArrayList(INITIAL_CAPACITY);
-		names = new ArrayList(INITIAL_CAPACITY);
+		_sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
+		names = new ArrayList<HSSFName>(INITIAL_CAPACITY);
 	}
 
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
@@ -249,6 +249,26 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
             throws IOException
     {
+       this(directory, preserveNodes);
+    }
+    
+    /**
+     * given a POI POIFSFileSystem object, and a specific directory
+     *  within it, read in its Workbook and populate the high and
+     *  low level models.  If you're reading in a workbook...start here.
+     *
+     * @param directory the POI filesystem directory to process from
+     * @param fs the POI filesystem that contains the Workbook stream.
+     * @param preserveNodes whether to preseve other nodes, such as
+     *        macros.  This takes more memory, so only say yes if you
+     *        need to. If set, will store all of the POIFSFileSystem
+     *        in memory
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @exception IOException if the stream cannot be read
+     */
+    public HSSFWorkbook(DirectoryNode directory, boolean preserveNodes)
+            throws IOException
+    {
         super(directory);
         String workbookName = getWorkbookDirEntryName(directory);
 
@@ -260,14 +280,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
            this.directory = null;
         }
 
-        _sheets = new ArrayList(INITIAL_CAPACITY);
-        names  = new ArrayList(INITIAL_CAPACITY);
+        _sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
+        names  = new ArrayList<HSSFName>(INITIAL_CAPACITY);
 
         // Grab the data from the workbook stream, however
         //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
 
-        List records = RecordFactory.createRecords(stream);
+        List<Record> records = RecordFactory.createRecords(stream);
 
         workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
