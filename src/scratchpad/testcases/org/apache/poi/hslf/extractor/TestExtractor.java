@@ -17,20 +17,20 @@
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.POIDataSamples;
-
-import junit.framework.TestCase;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests that the extractor correctly gets the text out of our sample file
@@ -40,8 +40,13 @@ import junit.framework.TestCase;
 public final class TestExtractor extends TestCase {
 	/** Extractor primed on the 2 page basic test data */
 	private PowerPointExtractor ppe;
+   private static final String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
+
 	/** Extractor primed on the 1 page but text-box'd test data */
 	private PowerPointExtractor ppe2;
+	private static final String expectText2 = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n";
+	
+	
 	/** Where our embeded files live */
 	//private String pdirname;
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
@@ -55,16 +60,14 @@ public final class TestExtractor extends TestCase {
     public void testReadSheetText() {
     	// Basic 2 page example
 		String sheetText = ppe.getText();
-		String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
 
 		ensureTwoStringsTheSame(expectText, sheetText);
 		
 		
 		// 1 page example with text boxes
 		sheetText = ppe2.getText();
-		expectText = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n";
 
-		ensureTwoStringsTheSame(expectText, sheetText);
+		ensureTwoStringsTheSame(expectText2, sheetText);
     }
     
 	public void testReadNoteText() {
@@ -273,4 +276,28 @@ public final class TestExtractor extends TestCase {
 		assertTrue(text.contains("Master Header Text"));
     }
 
+    
+    /**
+     * Tests that we can work with both {@link POIFSFileSystem}
+     *  and {@link NPOIFSFileSystem}
+     */
+    public void testDifferentPOIFS() throws Exception {
+       // Open the two filesystems
+       DirectoryNode[] files = new DirectoryNode[2];
+       files[0] = (new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(slTests.getFile("basic_test_ppt_file.ppt"))).getRoot();
+       
+       // Open directly 
+       for(DirectoryNode dir : files) {
+          PowerPointExtractor extractor = new PowerPointExtractor(dir, null);
+          assertEquals(expectText, extractor.getText());
+       }
+
+       // Open via a HWPFDocument
+       for(DirectoryNode dir : files) {
+          HSLFSlideShow slideshow = new HSLFSlideShow(dir);
+          PowerPointExtractor extractor = new PowerPointExtractor(slideshow);
+          assertEquals(expectText, extractor.getText());
+       }
+    }
 }

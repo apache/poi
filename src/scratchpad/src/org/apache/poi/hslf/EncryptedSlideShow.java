@@ -25,7 +25,6 @@ import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * This class provides helper functions for determining if a
@@ -39,34 +38,33 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public final class EncryptedSlideShow
 {
-	/**
-	 * Check to see if a HSLFSlideShow represents an encrypted
-	 *  PowerPoint document, or not
-	 * @param hss The HSLFSlideShow to check
-	 * @return true if encrypted, otherwise false
-	 */
-	public static boolean checkIfEncrypted(HSLFSlideShow hss) {
-		// Easy way to check - contains a stream
-		//  "EncryptedSummary"
-		POIFSFileSystem fs = hss.getPOIFSFileSystem();
-		try {
-			fs.getRoot().getEntry("EncryptedSummary");
-			return true;
-		} catch(FileNotFoundException fnfe) {
-			// Doesn't have encrypted properties
-		}
+   /**
+    * Check to see if a HSLFSlideShow represents an encrypted
+    *  PowerPoint document, or not
+    * @param hss The HSLFSlideShow to check
+    * @return true if encrypted, otherwise false
+    */
+   public static boolean checkIfEncrypted(HSLFSlideShow hss) {
+      // Easy way to check - contains a stream
+      //  "EncryptedSummary"
+      try {
+         hss.getPOIFSDirectory().getEntry("EncryptedSummary");
+         return true;
+      } catch(FileNotFoundException fnfe) {
+         // Doesn't have encrypted properties
+      }
 
-		// If they encrypted the document but not the properties,
-		//  it's harder.
-		// We need to see what the last record pointed to by the
-		//  first PersistPrtHolder is - if it's a
-		//  DocumentEncryptionAtom, then the file's Encrypted
-		DocumentEncryptionAtom dea = fetchDocumentEncryptionAtom(hss);
-		if(dea != null) {
-			return true;
-		}
-		return false;
-	}
+      // If they encrypted the document but not the properties,
+      //  it's harder.
+      // We need to see what the last record pointed to by the
+      //  first PersistPrtHolder is - if it's a
+      //  DocumentEncryptionAtom, then the file's Encrypted
+      DocumentEncryptionAtom dea = fetchDocumentEncryptionAtom(hss);
+      if(dea != null) {
+         return true;
+      }
+      return false;
+   }
 
 	/**
 	 * Return the DocumentEncryptionAtom for a HSLFSlideShow, or
