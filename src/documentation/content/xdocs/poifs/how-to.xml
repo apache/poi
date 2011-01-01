@@ -27,12 +27,9 @@
   </header>
   <body>
     <section><title>How To Use the POIFS APIs</title>
-      <p>This document describes how to use the POIFS APIs to read, write, and modify files that employ a POIFS-compatible data structure to organize their content.</p>
-      <section><title>Revision History</title>
-        <ul>
-          <li>02.10.2002 - completely rewritten from original documents on <link href="https://sourceforge.net/cvs/?group_id=32701">sourceforge</link></li>
-        </ul>
-      </section>
+      <p>This document describes how to use the POIFS APIs to read, write, 
+         and modify files that employ a POIFS-compatible data structure to 
+         organize their content.</p>
       <section><title>Target Audience</title>
         <p>This document is intended for Java developers who need to use the POIFS APIs to read, write, or modify files that employ a POIFS-compatible data structure to organize their content. It is not necessary for developers to understand the POIFS data structures, and an explanation of those data structures is beyond the scope of this document. It is expected that the members of the target audience will understand the rudiments of a hierarchical file system, and familiarity with the event pattern employed by Java APIs such as AWT would be helpful.</p>
       </section>
@@ -87,13 +84,26 @@
 	  <td><em>Disadvantages</em></td>
 	</tr>
 	<tr>
-	  <td>Conventional Reading</td>
+	  <td>Conventional Reading (POIFSFileSystem)</td>
 	  <td>
 	      Simpler API similar to reading a conventional file system.<br/>
 	      Can read documents in any order.
 	  </td>
 	  <td>
 	      All files are resident in memory, whether your application needs them or not.
+	  </td>
+	</tr>
+	<tr>
+	  <td>New NIO driven Reading (NPOIFSFileSystem)</td>
+	  <td>
+	      Simpler API similar to reading a conventional file system.<br/>
+	      Can read documents in any order.<br/>
+         Lower memory than POIFSFileSystem
+	  </td>
+	  <td>
+         If created from an InputStream, all files are resident in memory.
+         (If created from a File, only certain key structures are)<br/>
+         Currently doesn't support writing
 	  </td>
 	</tr>
         <tr>
@@ -135,9 +145,8 @@ DirectoryEntry root = fs.getRoot();</source>
 	  <p>Once the file system has been loaded into memory and the root directory has been obtained, the root directory can be read. The following code fragment shows how to read the entries in an <code>org.apache.poi.poifs.filesystem.DirectoryEntry</code> instance:</p>
 	  <source>
 // dir is an instance of DirectoryEntry ...
-for (Iterator iter = dir.getEntries(); iter.hasNext(); )
+for (Entry entry : dir)
 {
-    Entry entry = (Entry)iter.next();
     System.out.println("found entry: " + entry.getName());
     if (entry instanceof DirectoryEntry)
     {
@@ -197,6 +206,56 @@ DocumentInputStream stream = new DocumentInputStream(document);
 	  </section>
 	</section>
       </section>
+      <section><title>NIO Reading using NPOIFSFileSystem</title>
+        <p>In this technique for reading, certain key structures are loaded 
+         into memory, and the entire directory tree can be walked by the
+         application, reading specific documents at leisure.</p>
+        <p>If you create a NPOIFSFileSystem instance from a File, the memory 
+         footprint is very small. However, if you createa a NPOIFSFileSystem
+         instance from an input stream, then the whole contents must be 
+         buffered into memory to allow random access. As such, you should
+         budget on memory use of up to 20% of the file size when using a File,
+         or up to 120% of the file size when using an InputStream.</p>
+	<section><title>Preparation</title>
+	  <p>Before an application can read a file from the file system, the 
+       file system needs to be opened and core parts processed. This is done
+       using the <code>org.apache.poi.poifs.filesystem.NPOIFSFileSystem</code> 
+       class. Once the file system has been loaded into memory, the 
+       application may need the root directory. The following code fragment 
+       will accomplish this preparation stage:</p>
+	  <source>
+// This is the most memory efficient way to open the FileSystem
+NPOIFSFileSystem fs;
+try
+{
+    fs = new NPOIFSFileSystem(new File(filename));
+}
+catch (IOException e)
+{
+    // an I/O error occurred, or the InputStream did not provide a compatible
+    // POIFS data structure
+}
+DirectoryEntry root = fs.getRoot();
+
+
+// Using an InputStream requires more memory than using a File
+NPOIFSFileSystem fs;
+try
+{
+    fs = new NPOIFSFileSystem(inputStream);
+}
+catch (IOException e)
+{
+    // an I/O error occurred, or the InputStream did not provide a compatible
+    // POIFS data structure
+}
+DirectoryEntry root = fs.getRoot();
+     </source>
+	  <p>Assuming no exception was thrown, the file system can then be read.</p>
+	  <p>One the NPOFSFileSytem is open, you can manipulate it just like
+      a POIFSFileSytem one.</p>
+	</section>
+	</section>
       <section><title>Event-Driven Reading</title>
         <p>The event-driven API for reading documents is a little more complicated and requires that your application know, in advance, which files it wants to read. The benefit of using this API is that each document is in memory just long enough for your application to read it, and documents that you never read at all are not in memory at all. When you're finished reading the documents you wanted, the file system has no data structures associated with it at all and can be discarded.</p>
 	<section><title>Preparation</title>
