@@ -484,7 +484,7 @@ public class NPOIFSFileSystem extends BlockStore
              // Oh joy, we need a new XBAT too...
              xbat = createBAT(offset+1, false);
              xbat.setValueAt(0, offset);
-             bat.setValueAt(offset+1, POIFSConstants.DIFAT_SECTOR_BLOCK);
+             bat.setValueAt(1, POIFSConstants.DIFAT_SECTOR_BLOCK);
              
              // Will go one place higher as XBAT added in
              offset++;

@@ -348,6 +348,7 @@ public final class TestNPOIFSFileSystem extends TestCase {
     */
    public void testGetFreeBlockWithNoneSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      int free;
 
       // We have one BAT at block 99
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
@@ -382,19 +383,67 @@ public final class TestNPOIFSFileSystem extends TestCase {
       
       
       // Fill up to hold 109 BAT blocks
-      // TODO
+      for(int i=0; i<109; i++) {
+         fs.getFreeBlock();
+         int startOffset = i*128;
+         while( fs.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
+            free = fs.getFreeBlock();
+            fs.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
+         }
+      }
+      
+      assertEquals(false, fs.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(109*128).getBlock().hasFreeSectors());
+         fail("Should only be 109 BATs");
+      } catch(IndexOutOfBoundsException e) {}
+      
       
       // Ask for another, will get our first XBAT
-      // TODO
+      free = fs.getFreeBlock();
+      assertEquals(false, fs.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs.getBATBlockAndIndex(110*128-1).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(110*128).getBlock().hasFreeSectors());
+         fail("Should only be 110 BATs");
+      } catch(IndexOutOfBoundsException e) {}
+
       
-      // Fill the XBAT
-      // TODO
+      // Fill the XBAT, which means filling 127 BATs
+      for(int i=109; i<109+127; i++) {
+         fs.getFreeBlock();
+         int startOffset = i*128;
+         while( fs.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
+            free = fs.getFreeBlock();
+            fs.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
+         }
+      }
+      
+      // Should now have 109+127 = 236 BATs
+      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(236*128).getBlock().hasFreeSectors());
+         fail("Should only be 236 BATs");
+      } catch(IndexOutOfBoundsException e) {}
+
       
       // Ask for another, will get our 2nd XBAT
-      // TODO
+      free = fs.getFreeBlock();
+      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
+         fail("Should only be 237 BATs");
+      } catch(IndexOutOfBoundsException e) {}
+
       
       // Write it out and read it back in again
-      // Ensure it's correct
+      // TODO
+      
+      // Check the header is correct
+      // TODO
+      
+      // Now check the filesystem sees it correct too
       // TODO
    }
    
@@ -469,6 +518,24 @@ public final class TestNPOIFSFileSystem extends TestCase {
          assertEquals(null, inf.getAuthor());
          assertEquals(null, inf.getSubject());
       }
+   }
+   
+   /**
+    * Read a file, write it and read it again.
+    * Then, alter+add some streams, write and read
+    */
+   public void testReadWriteRead() throws Exception {
+      // TODO
+      // TODO
+   }
+   
+   /**
+    * Create a new file, write it and read it again
+    * Then, add some streams, write and read
+    */
+   public void testCreateWriteRead() throws Exception {
+      // TODO
+      // TODO
    }
    
    // TODO Directory/Document write tests
