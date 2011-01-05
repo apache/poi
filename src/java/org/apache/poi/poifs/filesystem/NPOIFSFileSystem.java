@@ -183,6 +183,14 @@ public class NPOIFSFileSystem extends BlockStore
              channel.close();
           }
           throw e;
+       } catch(RuntimeException e) {
+          // Comes from Iterators etc.
+          // TODO Decide if we can handle these better whilst
+          //  still sticking to the iterator contract
+          if(closeChannelOnError) {
+             channel.close();
+          }
+          throw e;
        }
     }
     
