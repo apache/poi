@@ -28,6 +28,7 @@ import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.HeaderStories;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -56,6 +57,15 @@ public class WordExtractor extends POIOLE2TextExtractor {
 	 */
 	public WordExtractor(POIFSFileSystem fs) throws IOException {
 		this(new HWPFDocument(fs));
+		this.fs = fs;
+	}
+	
+	/**
+	 * Create a new Word Extractor
+	 * @param dir DirectoryNode containing the word file
+	 */
+	public WordExtractor(DirectoryNode dir) throws IOException {
+		this(new HWPFDocument(dir));
 		this.fs = fs;
 	}
 	

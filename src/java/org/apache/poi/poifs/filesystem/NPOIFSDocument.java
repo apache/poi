@@ -51,7 +51,7 @@ public final class NPOIFSDocument implements POIFSViewable {
       this._property = property;
       this._filesystem = filesystem;
 
-      if(property.getSize() <= POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
+      if(property.getSize() < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
          _stream = new NPOIFSStream(_filesystem.getMiniStore(), property.getStartBlock());
          _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
       } else {

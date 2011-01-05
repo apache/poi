@@ -32,6 +32,9 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 /**
@@ -549,5 +552,32 @@ public final class TestHSSFWorkbook extends TestCase {
         assertEquals(3, wb.getWorkbook().getNumNames());
         nr = wb.getWorkbook().getNameRecord(2);
         assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", nr.getAreaReference(wb)); // E:F,9:12
+    }
+
+    /**
+     * Tests that we can work with both {@link POIFSFileSystem}
+     *  and {@link NPOIFSFileSystem}
+     */
+    public void testDifferentPOIFS() throws Exception {
+       // Open the two filesystems
+       DirectoryNode[] files = new DirectoryNode[2];
+       files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampeFile("Simple.xls"))).getRoot();
+       
+       // Open without preserving nodes 
+       for(DirectoryNode dir : files) {
+          HSSFWorkbook workbook = new HSSFWorkbook(dir, false);
+          HSSFSheet sheet = workbook.getSheetAt(0);
+          HSSFCell cell = sheet.getRow(0).getCell(0);
+          assertEquals("replaceMe", cell .getRichStringCellValue().getString());
+       }
+
+       // Now re-check with preserving
+       for(DirectoryNode dir : files) {
+          HSSFWorkbook workbook = new HSSFWorkbook(dir, true);
+          HSSFSheet sheet = workbook.getSheetAt(0);
+          HSSFCell cell = sheet.getRow(0).getCell(0);
+          assertEquals("replaceMe", cell .getRichStringCellValue().getString());
+       }
     }
 }

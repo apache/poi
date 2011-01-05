@@ -16,12 +16,14 @@
 */
 package org.apache.poi.hwpf.extractor;
 
+import java.io.File;
 import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -224,5 +226,32 @@ public class TestWordExtractor extends TestCase {
     	assertTrue(
     			text.indexOf("The footer, with") > -1
     	);
+    }
+    
+    /**
+     * Tests that we can work with both {@link POIFSFileSystem}
+     *  and {@link NPOIFSFileSystem}
+     */
+    public void testDifferentPOIFS() throws Exception {
+		 String dirname = System.getProperty("HWPF.testdata.path");
+       File f = new File(dirname, "test2.doc");
+       
+       // Open the two filesystems
+       DirectoryNode[] files = new DirectoryNode[2];
+       files[0] = (new POIFSFileSystem(new FileInputStream(f))).getRoot();
+       files[1] = (new NPOIFSFileSystem(f)).getRoot();
+       
+       // Open directly 
+       for(DirectoryNode dir : files) {
+          WordExtractor extractor = new WordExtractor(dir);
+          assertEquals(p_text1_block, extractor.getText());
+       }
+
+       // Open via a HWPFDocument
+       for(DirectoryNode dir : files) {
+          HWPFDocument doc = new HWPFDocument(dir);
+          WordExtractor extractor = new WordExtractor(doc);
+          assertEquals(p_text1_block, extractor.getText());
+       }
     }
 }

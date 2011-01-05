@@ -48,23 +48,20 @@ public final class HSSFTestDataSamples {
 	 * @return an open <tt>InputStream</tt> for the specified sample file
 	 */
 	public static InputStream openSampleFileStream(String sampleFileName) {
-		
+      File f = getSampeFile(sampleFileName);
+		try {
+			return new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+   }
+	public static File getSampeFile(String sampleFileName) {
 		if(!_isInitialised) {
 			try {
 				initialise();
 			} finally {
 				_isInitialised = true;
 			}
-		}
-		if (_sampleDataIsAvaliableOnClassPath) {
-			InputStream result = openClasspathResource(sampleFileName);
-			if(result == null) {
-				throw new RuntimeException("specified test sample file '" + sampleFileName 
-						+ "' not found on the classpath");
-			}
-//			System.out.println("opening cp: " + sampleFileName);
-			// wrap to avoid temp warning method about auto-closing input stream
-			return new NonSeekableInputStream(result);
 		}
 		if (_resolvedDataDir == null) {
 			throw new RuntimeException("Must set system property '"
@@ -78,11 +75,7 @@ public final class HSSFTestDataSamples {
 					+ "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
 		}
 //		System.out.println("opening " + f.getAbsolutePath());
-		try {
-			return new FileInputStream(f);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+      return f;
 	}
 
 	private static void initialise() {

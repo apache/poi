@@ -54,9 +54,8 @@ public class EncryptedSlideShow
 	public static boolean checkIfEncrypted(HSLFSlideShow hss) {
 		// Easy way to check - contains a stream
 		//  "EncryptedSummary"
-		POIFSFileSystem fs = hss.getPOIFSFileSystem();
 		try {
-			fs.getRoot().getEntry("EncryptedSummary");
+			hss.getPOIFSDirectory().getEntry("EncryptedSummary");
 			return true;
 		} catch(FileNotFoundException fnfe) {
 			// Doesn't have encrypted properties

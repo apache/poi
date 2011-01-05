@@ -163,14 +163,28 @@ public class HWPFDocument extends POIDocument
    *  in a POIFSFileSystem, probably not the default.
    * Used typically to open embeded documents.
    *
+   * @param directory The Directory that contains the Word document.
    * @param pfilesystem The POIFSFileSystem that contains the Word document.
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */
   public HWPFDocument(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
   {
+    this(directory);
+  }
+  /**
+   * This constructor loads a Word document from a specific point
+   *  in a POIFSFileSystem, probably not the default.
+   * Used typically to open embeded documents.
+   *
+   * @param directory The Directory that contains the Word document.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in POIFSFileSystem.
+   */
+  public HWPFDocument(DirectoryNode directory) throws IOException
+  {
     // Sort out the hpsf properties
-	super(directory, pfilesystem);
+	super(directory);
     readProperties();
     
     // read in the main stream.

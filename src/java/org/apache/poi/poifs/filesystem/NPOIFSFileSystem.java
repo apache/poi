@@ -107,7 +107,7 @@ public class NPOIFSFileSystem extends BlockStore
 
     /**
      * Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     *  creating from an <tt>InputStream</tt>.
+     *  creating from an <tt>InputStream</tt>. The File will be opened read-only
      *  
      * Note that with this constructor, you will need to call {@link #close()}
      *  when you're done to have the underlying file closed, as the file is
@@ -120,21 +120,70 @@ public class NPOIFSFileSystem extends BlockStore
     public NPOIFSFileSystem(File file)
          throws IOException
     {
+       this(file, true);
+    }
+    
+    /**
+     * Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+     *  creating from an <tt>InputStream</tt>.
+     *  
+     * Note that with this constructor, you will need to call {@link #close()}
+     *  when you're done to have the underlying file closed, as the file is
+     *  kept open during normal operation to read the data out. 
+     *  
+     * @param file the File from which to read the data
+     *
+     * @exception IOException on errors reading, or on invalid data
+     */
+    public NPOIFSFileSystem(File file, boolean readOnly)
+         throws IOException
+    {
+       this(
+           (new RandomAccessFile(file, readOnly? "r" : "rw")).getChannel(),
+           true
+       );
+    }
+    
+    /**
+     * Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses 
+     *  less memory than creating from an <tt>InputStream</tt>.
+     *  
+     * Note that with this constructor, you will need to call {@link #close()}
+     *  when you're done to have the underlying Channel closed, as the channel is
+     *  kept open during normal operation to read the data out. 
+     *  
+     * @param channel the FileChannel from which to read the data
+     *
+     * @exception IOException on errors reading, or on invalid data
+     */
+    public NPOIFSFileSystem(FileChannel channel)
+         throws IOException
+    {
+       this(channel, false);
+    }
+    
+    private NPOIFSFileSystem(FileChannel channel, boolean closeChannelOnError)
+         throws IOException
+    {
        this();
-       
-       // Open the underlying channel
-       FileChannel channel = (new RandomAccessFile(file, "r")).getChannel();
-       
-       // Get the header
-       ByteBuffer headerBuffer = ByteBuffer.allocate(POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
-       IOUtils.readFully(channel, headerBuffer);
-       
-       // Have the header processed
-       _header = new HeaderBlock(headerBuffer);
-       
-       // Now process the various entries
-       _data = new FileBackedDataSource(channel);
-       readCoreContents();
+
+       try {
+          // Get the header
+          ByteBuffer headerBuffer = ByteBuffer.allocate(POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
+          IOUtils.readFully(channel, headerBuffer);
+          
+          // Have the header processed
+          _header = new HeaderBlock(headerBuffer);
+          
+          // Now process the various entries
+          _data = new FileBackedDataSource(channel);
+          readCoreContents();
+       } catch(IOException e) {
+          if(closeChannelOnError) {
+             channel.close();
+          }
+          throw e;
+       }
     }
     
     /**
@@ -435,7 +484,7 @@ public class NPOIFSFileSystem extends BlockStore
              // Oh joy, we need a new XBAT too...
              xbat = createBAT(offset+1, false);
              xbat.setValueAt(0, offset);
-             bat.setValueAt(offset+1, POIFSConstants.DIFAT_SECTOR_BLOCK);
+             bat.setValueAt(1, POIFSConstants.DIFAT_SECTOR_BLOCK);
              
              // Will go one place higher as XBAT added in
              offset++;
