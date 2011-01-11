@@ -26,6 +26,7 @@ import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
+import org.apache.poi.hsmf.datatypes.MAPIAttribute;
 import org.apache.poi.hsmf.datatypes.MessageSubmissionChunk;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
@@ -134,11 +135,10 @@ public final class POIFSChunkParser {
          Chunk chunk = null;
          
          // Special cases based on the ID
-         switch(chunkId) {
-         case Chunks.SUBMISSION_ID_DATE:
+         if(chunkId == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
             chunk = new MessageSubmissionChunk(namePrefix, chunkId, type);
-            break;
-         default:
+         } 
+         else {
             // Nothing special about this ID
             // So, do the usual thing which is by type
             switch(type) {

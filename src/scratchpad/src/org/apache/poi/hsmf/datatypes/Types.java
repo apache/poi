@@ -41,4 +41,25 @@ public final class Types {
 		}
 		return str;
 	}
+	public static String asName(int type) {
+	   switch(type) {
+	      case BINARY:
+	         return "Binary";
+	      case ASCII_STRING:
+	         return "ASCII String";
+	      case UNICODE_STRING:
+	         return "Unicode String";
+	      case LONG:
+	         return "Long";
+	      case TIME:
+	         return "Time";
+	      case BOOLEAN:
+	         return "Boolean";
+	      case DIRECTORY:
+	         return "Directory";
+	      case -1:
+	         return "Unknown";
+	   }
+	   return "0x" + Integer.toHexString(type);
+	}
 }

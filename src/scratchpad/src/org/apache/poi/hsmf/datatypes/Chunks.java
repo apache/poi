@@ -30,12 +30,6 @@ import java.util.List;
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public final class Chunks implements ChunkGroup {
-   /* String parts of Outlook Messages that are currently known */
-   public static final int MESSAGE_CLASS       = 0x001A;
-   public static final int SUBJECT             = 0x0037;
-   // "PidTagMessageSubmissionId" as given by accepting server
-   public static final int RECEIVED_REPRESENTING_NAME = 0x0044;
-   public static final int SUBMISSION_ID_DATE  = 0x0047;
    // 0x0050 -> 0x006F seem to be routing info or similar
    public static final int CONVERSATION_TOPIC  = 0x0070;
    public static final int CONVERSATION_INDEX  = 0x0071;
@@ -95,19 +89,23 @@ public final class Chunks implements ChunkGroup {
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      switch(chunk.getChunkId()) {
-      case MESSAGE_CLASS:
+      if(chunk.getChunkId() == MAPIAttribute.MESSAGE_CLASS.id) {
          messageClass = (StringChunk)chunk;
-         break;
-      case MESSAGE_ID:
-         messageId = (StringChunk)chunk;
-         break;
-      case SUBJECT:
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.SUBJECT.id) {
          subjectChunk = (StringChunk)chunk;
-         break;
-      case SUBMISSION_ID_DATE:
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.ORIGINAL_SUBJECT.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
          // TODO - parse
          submissionChunk = (MessageSubmissionChunk)chunk;
+      }
+      
+      switch(chunk.getChunkId()) {
+      case MESSAGE_ID:
+         messageId = (StringChunk)chunk;
          break;
       case CONVERSATION_TOPIC:
          conversationTopic = (StringChunk)chunk;

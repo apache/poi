@@ -24,6 +24,8 @@ import static org.apache.poi.hsmf.datatypes.Types.DIRECTORY;
 import static org.apache.poi.hsmf.datatypes.Types.LONG;
 import static org.apache.poi.hsmf.datatypes.Types.TIME;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -1060,5 +1062,8 @@ public final class MAPIAttribute {
       } else {
          return UNKNOWN;
       }
+   }
+   public static Collection<MAPIAttribute> getAll() {
+      return Collections.unmodifiableCollection( attributes.values() );
    }
 }
