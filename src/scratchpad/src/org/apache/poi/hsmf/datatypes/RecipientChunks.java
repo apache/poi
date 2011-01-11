@@ -32,12 +32,12 @@ import java.util.List;
 public final class RecipientChunks implements ChunkGroup {
    public static final String PREFIX = "__recip_version1.0_#";
    
-   public static final int RECIPIENT_NAME   = 0x3001;
-   public static final int DELIVERY_TYPE    = 0x3002;
-   public static final int RECIPIENT_EMAIL_ADDRESS = 0x3003;
-   public static final int RECIPIENT_SEARCH        = 0x300B;
-   public static final int RECIPIENT_SMTP_ADDRESS  = 0x39FE;
-   public static final int RECIPIENT_DISPLAY_NAME  = 0x5FF6;
+   public static final MAPIAttribute RECIPIENT_NAME   = MAPIAttribute.DISPLAY_NAME;
+   public static final MAPIAttribute DELIVERY_TYPE    = MAPIAttribute.ADDRTYPE;
+   public static final MAPIAttribute RECIPIENT_EMAIL_ADDRESS = MAPIAttribute.EMAIL_ADDRESS;
+   public static final MAPIAttribute RECIPIENT_SEARCH        = MAPIAttribute.SEARCH_KEY;
+   public static final MAPIAttribute RECIPIENT_SMTP_ADDRESS  = MAPIAttribute.SMTP_ADDRESS;
+   public static final MAPIAttribute RECIPIENT_DISPLAY_NAME  = MAPIAttribute.RECIPIENT_DISPLAY_NAME;
    
    /** Our 0 based position in the list of recipients */
    public int recipientNumber;
@@ -167,26 +167,24 @@ public final class RecipientChunks implements ChunkGroup {
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      switch(chunk.getChunkId()) {
-      case RECIPIENT_SEARCH:
+      if(chunk.getChunkId() == RECIPIENT_SEARCH.id) {
          // TODO - parse
          recipientSearchChunk = (ByteChunk)chunk;
-         break;
-      case RECIPIENT_NAME:
+      }
+      else if(chunk.getChunkId() == RECIPIENT_NAME.id) {
          recipientDisplayNameChunk = (StringChunk)chunk;
-         break;
-      case RECIPIENT_DISPLAY_NAME:
+      }
+      else if(chunk.getChunkId() == RECIPIENT_DISPLAY_NAME.id) {
          recipientNameChunk = (StringChunk)chunk;
-         break;
-      case RECIPIENT_EMAIL_ADDRESS:
+      }
+      else if(chunk.getChunkId() == RECIPIENT_EMAIL_ADDRESS.id) {
          recipientEmailChunk = (StringChunk)chunk;
-         break;
-      case RECIPIENT_SMTP_ADDRESS:
+      }
+      else if(chunk.getChunkId() == RECIPIENT_SMTP_ADDRESS.id) {
          recipientSMTPChunk = (StringChunk)chunk;
-         break;
-      case DELIVERY_TYPE:
+      }
+      else if(chunk.getChunkId() == DELIVERY_TYPE.id) {
          deliveryTypeChunk = (StringChunk)chunk;
-         break;
       }
 
       // And add to the main list
