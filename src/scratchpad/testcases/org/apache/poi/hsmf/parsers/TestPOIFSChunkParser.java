@@ -60,7 +60,7 @@ public final class TestPOIFSChunkParser extends TestCase {
             (new StringChunk(MAPIAttribute.SUBJECT.id, Types.ASCII_STRING)).getEntryName()
       );
       simple.getRoot().getEntry(
-            (new StringChunk(Chunks.DISPLAY_FROM, Types.ASCII_STRING)).getEntryName()
+            (new StringChunk(MAPIAttribute.SENDER_NAME.id, Types.ASCII_STRING)).getEntryName()
       );
       
       // Now load the file

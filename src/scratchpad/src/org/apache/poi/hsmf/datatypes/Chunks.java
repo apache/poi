@@ -30,24 +30,6 @@ import java.util.List;
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public final class Chunks implements ChunkGroup {
-   // 0x0050 -> 0x006F seem to be routing info or similar
-   public static final int CONVERSATION_TOPIC  = 0x0070;
-   public static final int CONVERSATION_INDEX  = 0x0071;
-   public static final int SENT_BY_SERVER_TYPE = 0x0075;
-   public static final int RECEIVED_BY_ADDRESS = 0x0076;
-   public static final int RECEIVED_REPRESENTING_ADDRESS = 0x0078;
-   public static final int MESSAGE_HEADERS     = 0x007D;
-   // RECEIVEDEMAIL = 76
-   public static final int DISPLAY_TO          = 0x0E04;
-   public static final int DISPLAY_FROM        = 0x0C1A;
-   public static final int EMAIL_FROM          = 0x0C1F;
-   public static final int DISPLAY_CC          = 0x0E03;
-   public static final int DISPLAY_BCC         = 0x0E02;
-   // 0x0E1D seems a duplicate of 0x0070 !
-   public static final int TEXT_BODY           = 0x1000;
-   public static final int MESSAGE_ID          = 0x1035;
-   // 0x8??? ones are outlook specific, and not standard MAPI
-   
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
    
@@ -92,50 +74,50 @@ public final class Chunks implements ChunkGroup {
       if(chunk.getChunkId() == MAPIAttribute.MESSAGE_CLASS.id) {
          messageClass = (StringChunk)chunk;
       }
+      else if(chunk.getChunkId() == MAPIAttribute.INTERNET_MESSAGE_ID.id) {
+         messageId = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
+         // TODO - parse
+         submissionChunk = (MessageSubmissionChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.RECEIVED_BY_ADDRTYPE.id) {
+         sentByServerType = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.TRANSPORT_MESSAGE_HEADERS.id) {
+         messageHeaders = (StringChunk)chunk;
+      }
+      
+      else if(chunk.getChunkId() == MAPIAttribute.CONVERSATION_TOPIC.id) {
+         conversationTopic = (StringChunk)chunk;
+      }
       else if(chunk.getChunkId() == MAPIAttribute.SUBJECT.id) {
          subjectChunk = (StringChunk)chunk;
       }
       else if(chunk.getChunkId() == MAPIAttribute.ORIGINAL_SUBJECT.id) {
          // TODO
       }
-      else if(chunk.getChunkId() == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
-         // TODO - parse
-         submissionChunk = (MessageSubmissionChunk)chunk;
+      
+      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_TO.id) {
+         displayToChunk = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_CC.id) {
+         displayCCChunk = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_BCC.id) {
+         displayBCCChunk = (StringChunk)chunk;
       }
       
-      switch(chunk.getChunkId()) {
-      case MESSAGE_ID:
-         messageId = (StringChunk)chunk;
-         break;
-      case CONVERSATION_TOPIC:
-         conversationTopic = (StringChunk)chunk;
-         break;
-      case SENT_BY_SERVER_TYPE:
-         sentByServerType = (StringChunk)chunk;
-         break;
-      case MESSAGE_HEADERS:
-         messageHeaders = (StringChunk)chunk;
-         break;
-      case DISPLAY_TO:
-         displayToChunk = (StringChunk)chunk;
-         break;
-      case DISPLAY_FROM:
-         displayFromChunk = (StringChunk)chunk;
-         break;
-      case EMAIL_FROM:
+      else if(chunk.getChunkId() == MAPIAttribute.SENDER_EMAIL_ADDRESS.id) {
          emailFromChunk = (StringChunk)chunk;
-         break;
-      case DISPLAY_CC:
-         displayCCChunk = (StringChunk)chunk;
-         break;
-      case DISPLAY_BCC:
-         displayBCCChunk = (StringChunk)chunk;
-         break;
-      case TEXT_BODY:
-         textBodyChunk = (StringChunk)chunk;
-         break;
       }
-
+      else if(chunk.getChunkId() == MAPIAttribute.SENDER_NAME.id) {
+         displayFromChunk = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIAttribute.BODY.id) {
+         textBodyChunk = (StringChunk)chunk;
+      }
+      
       // And add to the main list
       allChunks.add(chunk);
    }
