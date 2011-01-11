@@ -102,7 +102,7 @@ public class MAPIMessage extends POIDocument {
     * @throws IOException
     */
    public MAPIMessage(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
-      super(poifsDir, fs);
+      super(poifsDir);
 
       // Grab all the chunks
       ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);

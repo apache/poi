@@ -79,7 +79,7 @@ public final class TestChunkData extends TestCase {
 
 	public void testSubjectChunk() {
 		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), Chunks.SUBJECT);
+      assertEquals(chunk.getChunkId(), MAPIAttribute.SUBJECT.id);
 	}
 
 }

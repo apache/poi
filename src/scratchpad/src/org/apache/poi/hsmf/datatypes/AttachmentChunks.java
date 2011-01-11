@@ -16,6 +16,21 @@
 ==================================================================== */
 package org.apache.poi.hsmf.datatypes;
 
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_ADDITIONAL_INFO;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_CONTENT_BASE;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_CONTENT_LOCATION;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_DATA;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_DISPOSITION;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_ENCODING;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_EXTENSION;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_FILENAME;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_FLAGS;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_LONG_FILENAME;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_LONG_PATHNAME;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_MIME_TAG;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_RENDERING;
+import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_SIZE;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,17 +41,6 @@ import java.util.List;
 public class AttachmentChunks implements ChunkGroup {
    public static final String PREFIX = "__attach_version1.0_#";
    
-   /* String parts of Outlook Messages Attachments that are currently known */
-   public static final int ATTACH_DATA          = 0x3701;
-   // 0x3702 might be "attach encoding"
-   public static final int ATTACH_EXTENSION     = 0x3703;
-   public static final int ATTACH_FILENAME      = 0x3704;
-   // 0x3705 might be "attach method"
-   public static final int ATTACH_LONG_FILENAME = 0x3707;
-   public static final int ATTACH_RENDERING_WMF = 0x3709;
-   // 0x370B might be "rendering position"
-   public static final int ATTACH_MIME_TAG      = 0x370E;
-
    public ByteChunk attachData;
    public StringChunk attachExtension;
    public StringChunk attachFileName;
@@ -79,8 +83,16 @@ public class AttachmentChunks implements ChunkGroup {
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      switch(chunk.getChunkId()) {
-      case ATTACH_DATA:
+      if(chunk.getChunkId() == ATTACH_ADDITIONAL_INFO.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_CONTENT_BASE.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_CONTENT_LOCATION.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_DATA.id) {
          if(chunk instanceof ByteChunk) {
              attachData = (ByteChunk)chunk;
          } else if(chunk instanceof DirectoryChunk) {
@@ -88,21 +100,36 @@ public class AttachmentChunks implements ChunkGroup {
          } else {
              System.err.println("Unexpected data chunk of type " + chunk);
          }
-         break;
-      case ATTACH_EXTENSION:
+      }
+      else if(chunk.getChunkId() == ATTACH_DISPOSITION.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_ENCODING.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_EXTENSION.id) {
          attachExtension = (StringChunk)chunk;
-         break;
-      case ATTACH_FILENAME:
+      }
+      else if(chunk.getChunkId() == ATTACH_FILENAME.id) {
          attachFileName = (StringChunk)chunk;
-         break;
-      case ATTACH_LONG_FILENAME:
+      }
+      else if(chunk.getChunkId() == ATTACH_FLAGS.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_LONG_FILENAME.id) {
          attachLongFileName = (StringChunk)chunk;
-         break;
-      case ATTACH_MIME_TAG:
+      }
+      else if(chunk.getChunkId() == ATTACH_LONG_PATHNAME.id) {
+         // TODO
+      }
+      else if(chunk.getChunkId() == ATTACH_MIME_TAG.id) {
          attachMimeTag = (StringChunk)chunk;
-         break;
-      case ATTACH_RENDERING_WMF:
+      }
+      else if(chunk.getChunkId() == ATTACH_RENDERING.id) {
          attachRenderingWMF = (ByteChunk)chunk;
+      }
+      else if(chunk.getChunkId() == ATTACH_SIZE.id) {
+         // TODO
       }
 
       // And add to the main list
