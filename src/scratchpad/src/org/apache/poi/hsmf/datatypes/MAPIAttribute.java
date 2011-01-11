@@ -1020,6 +1020,8 @@ public final class MAPIAttribute {
    public static final MAPIAttribute UNKNOWN =
       new MAPIAttribute(-1, -1, "Unknown", null);
    
+   // 0x8??? ones are outlook specific, and not standard MAPI
+   
    /* ---------------------------------------------------------------------  */
    
    public final int id;
