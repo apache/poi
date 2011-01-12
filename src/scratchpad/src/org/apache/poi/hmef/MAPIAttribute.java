@@ -28,6 +28,7 @@ import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A pure-MAPI attribute which applies to a {@link HMEFMessage}
@@ -103,9 +104,31 @@ public class MAPIAttribute {
          //  MAPI property, grab the details of it
          MAPIProperty prop = MAPIProperty.get(id);
          if(id >= 0x8000 && id <= 0xFFFF) {
-            // TODO
-            System.err.println("Not yet implemented for id " + id);
-            break;
+            byte[] guid = new byte[16];
+            IOUtils.readFully(inp, guid);
+            int mptype = LittleEndian.readInt(inp);
+            
+            // Get the name of it
+            String name;
+            if(mptype == 0) {
+               // It's based on a normal one
+               int mpid = LittleEndian.readInt(inp);
+               MAPIProperty base = MAPIProperty.get(mpid);
+               name = base.name;
+            } else {
+               // Custom name was stored
+               int mplen = LittleEndian.readInt(inp);
+               byte[] mpdata = new byte[mplen];
+               IOUtils.readFully(inp, mpdata);
+               name = StringUtil.getFromUnicodeLE(mpdata, 0, (mplen/2)-1);
+               skipToBoundary(mplen, inp);
+            }
+            
+            // Now create
+            prop = MAPIProperty.createCustom(id, type, name);
+         }
+         if(prop == MAPIProperty.UNKNOWN) {
+            prop = MAPIProperty.createCustom(id, type, "(unknown " + Integer.toHexString(id) + ")");
          }
          
          // Now read in the value(s)
@@ -117,6 +140,7 @@ public class MAPIAttribute {
             int len = getLength(type, inp);
             byte[] data = new byte[len];
             IOUtils.readFully(inp, data);
+            skipToBoundary(len, inp);
             
             // Create
             MAPIAttribute attr;
@@ -126,12 +150,6 @@ public class MAPIAttribute {
                attr = new MAPIAttribute(prop, type, data);
             }
             attrs.add(attr);
-            
-            // Data is always padded out to a 4 byte boundary
-            if(len % 4 != 0) {
-               byte[] padding = new byte[4 - (len % 4)];
-               IOUtils.readFully(inp, padding);
-            }
          }
       }
       
@@ -165,6 +183,14 @@ public class MAPIAttribute {
             return LittleEndian.readInt(inp);
          default:
             throw new IllegalArgumentException("Unknown type " + type);
+      }
+   }
+   private static void skipToBoundary(int length, InputStream inp) throws IOException {
+      // Data is always padded out to a 4 byte boundary
+      if(length % 4 != 0) {
+         int skip = 4 - (length % 4);
+         byte[] padding = new byte[skip];
+         IOUtils.readFully(inp, padding);
       }
    }
 }
