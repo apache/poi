@@ -37,6 +37,7 @@ public final class HMEFMessage {
    
    private int fileId; 
    private List<Attribute> messageAttributes = new ArrayList<Attribute>();
+   private List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    private List<Attachment> attachments = new ArrayList<Attachment>();
    
    public HMEFMessage(InputStream inp) throws IOException {
@@ -54,6 +55,24 @@ public final class HMEFMessage {
       
       // Now begin processing the contents
       process(inp, 0);
+      
+      // Finally expand out the MAPI Attributes
+      for(Attribute attr : messageAttributes) {
+         if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+            mapiAttributes.addAll( 
+                  MAPIAttribute.create(attr) 
+            );
+         }
+      }
+      for(Attachment attachment : attachments) {
+         for(Attribute attr : attachment.getAttributes()) {
+            if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+               attachment.getMAPIAttributes().addAll(
+                     MAPIAttribute.create(attr) 
+               );
+            }
+         }
+      }
    }
    
    private void process(InputStream inp, int lastLevel) throws IOException {

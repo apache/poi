@@ -65,7 +65,7 @@ public final class Types {
    public static final int UNICODE_STRING = 0x001F;
 
    /** MultiValued - Value part contains multiple values */
-   public static final int MULTIVALUED_FLAT = 0x1000;
+   public static final int MULTIVALUED_FLAG = 0x1000;
 
 
    public static String asFileEnding(int type) {
