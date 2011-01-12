@@ -20,9 +20,11 @@ package org.apache.poi.hmef.dev;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.hmef.Attribute;
 import org.apache.poi.hmef.HMEFMessage;
+import org.apache.poi.hmef.MAPIAttribute;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
@@ -104,6 +106,14 @@ public final class HMEFDumper {
             }
          }
          System.out.println();
+         
+         if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+            List<MAPIAttribute> attrs = MAPIAttribute.create(attr);
+            for(MAPIAttribute ma : attrs) {
+               System.out.println(indent + indent + ma);
+            }
+            System.out.println();
+         }
       }
    }
 }

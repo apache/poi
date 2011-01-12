@@ -26,12 +26,21 @@ import java.util.List;
  */
 public final class Attachment {
    private final List<Attribute> attributes = new ArrayList<Attribute>();
+   private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    
    protected void addAttribute(Attribute attr) {
       attributes.add(attr);
    }
    
+   protected void addAttribute(MAPIAttribute attr) {
+      mapiAttributes.add(attr);
+   }
+   
    public List<Attribute> getAttributes() {
       return attributes;
+   }
+   
+   public List<MAPIAttribute> getMAPIAttributes() {
+      return mapiAttributes;
    }
 }
