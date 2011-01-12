@@ -37,7 +37,7 @@ import java.util.Map;
  *  http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertyid%28v=EXCHG.140%29.aspx
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
-public final class MAPIProperty {
+public class MAPIProperty {
    private static Map<Integer, MAPIProperty> attributes = new HashMap<Integer, MAPIProperty>();
    
    public static final MAPIProperty AB_DEFAULT_DIR =
@@ -1021,6 +1021,8 @@ public final class MAPIProperty {
       new MAPIProperty(-1, -1, "Unknown", null);
    
    // 0x8??? ones are outlook specific, and not standard MAPI
+   private static final int ID_FIRST_CUSTOM = 0x8000;
+   private static final int ID_LAST_CUSTOM = 0xFFFE;
    
    /* ---------------------------------------------------------------------  */
    
@@ -1035,14 +1037,19 @@ public final class MAPIProperty {
       this.name = name;
       this.mapiProperty = mapiProperty;
       
-      // Store it for lookup
-      if(attributes.containsKey(id)) {
-         throw new IllegalArgumentException(
-               "Duplicate MAPI Property with ID " + id + " : " +
-               toString() + " vs " + attributes.get(id).toString()
-         );
+      // If it isn't unknown or custom, store it for lookup
+      if(id == -1 || (id >= ID_FIRST_CUSTOM && id <= ID_LAST_CUSTOM) 
+            || (this instanceof CustomMAPIProperty)) {
+         // Custom/Unknown, skip
+      } else {
+         if(attributes.containsKey(id)) {
+            throw new IllegalArgumentException(
+                  "Duplicate MAPI Property with ID " + id + " : " +
+                  toString() + " vs " + attributes.get(id).toString()
+            );
+         }
+         attributes.put(id, this);
       }
-      attributes.put(id, this);
    }
    public String toString() {
       StringBuffer str = new StringBuffer();
@@ -1057,6 +1064,7 @@ public final class MAPIProperty {
       }
       return str.toString();
    }
+   
    public static MAPIProperty get(int id) {
       MAPIProperty attr = attributes.get(id);
       if(attr != null) {
@@ -1067,5 +1075,15 @@ public final class MAPIProperty {
    }
    public static Collection<MAPIProperty> getAll() {
       return Collections.unmodifiableCollection( attributes.values() );
+   }
+   
+   public static MAPIProperty createCustom(int id, int type, String name) {
+      return new CustomMAPIProperty(id, type, name, null);
+   }
+   
+   private static class CustomMAPIProperty extends MAPIProperty {
+      private CustomMAPIProperty(int id, int usualType, String name, String mapiProperty) {
+         super(id, usualType, name, mapiProperty);
+      }
    }
 }

@@ -43,4 +43,9 @@ public final class TestTypes extends TestCase {
       assertEquals("0102", Types.asFileEnding(0x0102));
       assertEquals("FEDC", Types.asFileEnding(0xfedc));
    }
+   
+   public void testName() {
+      assertEquals("ASCII String", Types.asName(Types.ASCII_STRING));
+      assertEquals("Boolean", Types.asName(Types.BOOLEAN));
+   }
 }
