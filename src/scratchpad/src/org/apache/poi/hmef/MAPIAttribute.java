@@ -104,7 +104,8 @@ public class MAPIAttribute {
          MAPIProperty prop = MAPIProperty.get(id);
          if(id >= 0x8000 && id <= 0xFFFF) {
             // TODO
-            throw new UnsupportedOperationException("Not yet implemented for id " + id);
+            System.err.println("Not yet implemented for id " + id);
+            break;
          }
          
          // Now read in the value(s)
@@ -128,11 +129,10 @@ public class MAPIAttribute {
             
             // Data is always padded out to a 4 byte boundary
             if(len % 4 != 0) {
-               byte[] padding = new byte[len % 4];
+               byte[] padding = new byte[4 - (len % 4)];
                IOUtils.readFully(inp, padding);
             }
          }
-         break;
       }
       
       // All done
