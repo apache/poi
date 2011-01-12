@@ -16,20 +16,20 @@
 ==================================================================== */
 package org.apache.poi.hsmf.datatypes;
 
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_ADDITIONAL_INFO;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_CONTENT_BASE;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_CONTENT_LOCATION;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_DATA;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_DISPOSITION;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_ENCODING;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_EXTENSION;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_FILENAME;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_FLAGS;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_LONG_FILENAME;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_LONG_PATHNAME;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_MIME_TAG;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_RENDERING;
-import static org.apache.poi.hsmf.datatypes.MAPIAttribute.ATTACH_SIZE;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_ADDITIONAL_INFO;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_CONTENT_BASE;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_CONTENT_LOCATION;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_DATA;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_DISPOSITION;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_ENCODING;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_EXTENSION;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_FILENAME;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_FLAGS;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_LONG_FILENAME;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_LONG_PATHNAME;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_MIME_TAG;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_RENDERING;
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_SIZE;
 
 import java.util.ArrayList;
 import java.util.Comparator;

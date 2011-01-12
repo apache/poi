@@ -28,7 +28,7 @@ import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
-import org.apache.poi.hsmf.datatypes.MAPIAttribute;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
@@ -57,10 +57,10 @@ public final class TestPOIFSChunkParser extends TestCase {
       
       // Check a few core things are present
       simple.getRoot().getEntry(
-            (new StringChunk(MAPIAttribute.SUBJECT.id, Types.ASCII_STRING)).getEntryName()
+            (new StringChunk(MAPIProperty.SUBJECT.id, Types.ASCII_STRING)).getEntryName()
       );
       simple.getRoot().getEntry(
-            (new StringChunk(MAPIAttribute.SENDER_NAME.id, Types.ASCII_STRING)).getEntryName()
+            (new StringChunk(MAPIProperty.SENDER_NAME.id, Types.ASCII_STRING)).getEntryName()
       );
       
       // Now load the file

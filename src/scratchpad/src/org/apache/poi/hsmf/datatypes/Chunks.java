@@ -71,50 +71,50 @@ public final class Chunks implements ChunkGroup {
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      if(chunk.getChunkId() == MAPIAttribute.MESSAGE_CLASS.id) {
+      if(chunk.getChunkId() == MAPIProperty.MESSAGE_CLASS.id) {
          messageClass = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.INTERNET_MESSAGE_ID.id) {
+      else if(chunk.getChunkId() == MAPIProperty.INTERNET_MESSAGE_ID.id) {
          messageId = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
+      else if(chunk.getChunkId() == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
          // TODO - parse
          submissionChunk = (MessageSubmissionChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.RECEIVED_BY_ADDRTYPE.id) {
+      else if(chunk.getChunkId() == MAPIProperty.RECEIVED_BY_ADDRTYPE.id) {
          sentByServerType = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.TRANSPORT_MESSAGE_HEADERS.id) {
+      else if(chunk.getChunkId() == MAPIProperty.TRANSPORT_MESSAGE_HEADERS.id) {
          messageHeaders = (StringChunk)chunk;
       }
       
-      else if(chunk.getChunkId() == MAPIAttribute.CONVERSATION_TOPIC.id) {
+      else if(chunk.getChunkId() == MAPIProperty.CONVERSATION_TOPIC.id) {
          conversationTopic = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.SUBJECT.id) {
+      else if(chunk.getChunkId() == MAPIProperty.SUBJECT.id) {
          subjectChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.ORIGINAL_SUBJECT.id) {
+      else if(chunk.getChunkId() == MAPIProperty.ORIGINAL_SUBJECT.id) {
          // TODO
       }
       
-      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_TO.id) {
+      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_TO.id) {
          displayToChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_CC.id) {
+      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_CC.id) {
          displayCCChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.DISPLAY_BCC.id) {
+      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_BCC.id) {
          displayBCCChunk = (StringChunk)chunk;
       }
       
-      else if(chunk.getChunkId() == MAPIAttribute.SENDER_EMAIL_ADDRESS.id) {
+      else if(chunk.getChunkId() == MAPIProperty.SENDER_EMAIL_ADDRESS.id) {
          emailFromChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.SENDER_NAME.id) {
+      else if(chunk.getChunkId() == MAPIProperty.SENDER_NAME.id) {
          displayFromChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIAttribute.BODY.id) {
+      else if(chunk.getChunkId() == MAPIProperty.BODY.id) {
          textBodyChunk = (StringChunk)chunk;
       }
       

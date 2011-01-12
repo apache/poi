@@ -26,7 +26,7 @@ import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
-import org.apache.poi.hsmf.datatypes.MAPIAttribute;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.MessageSubmissionChunk;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
@@ -135,7 +135,7 @@ public final class POIFSChunkParser {
          Chunk chunk = null;
          
          // Special cases based on the ID
-         if(chunkId == MAPIAttribute.MESSAGE_SUBMISSION_ID.id) {
+         if(chunkId == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
             chunk = new MessageSubmissionChunk(namePrefix, chunkId, type);
          } 
          else {
