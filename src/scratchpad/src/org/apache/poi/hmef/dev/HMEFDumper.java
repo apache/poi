@@ -37,15 +37,24 @@ public final class HMEFDumper {
          throw new IllegalArgumentException("Filename must be given");
       }
       
-      for(String filename : args) {
+      boolean truncatePropData = true;
+      for(int i=0; i<args.length; i++) {
+         if(args[i].equalsIgnoreCase("--full")) {
+            truncatePropData = false;
+            continue;
+         }
+         
          HMEFDumper dumper = new HMEFDumper(
-               new FileInputStream(filename)
+               new FileInputStream(args[i])
          );
+         dumper.setTruncatePropertyData(truncatePropData);
          dumper.dump();
       }
    }
    
    private InputStream inp;
+   private boolean truncatePropertyData;
+   
    public HMEFDumper(InputStream inp) throws IOException {
       this.inp = inp;
       
@@ -61,6 +70,10 @@ public final class HMEFDumper {
       
       // Skip over the File ID
       LittleEndian.readUShort(inp);
+   }
+   
+   public void setTruncatePropertyData(boolean truncate) {
+      truncatePropertyData = truncate;
    }
    
    private void dump() throws IOException {
@@ -86,7 +99,11 @@ public final class HMEFDumper {
          String indent = "  ";
          System.out.println(indent + "Data of length " + attr.getData().length);
          if(attr.getData().length > 0) {
-            int len = Math.min( attr.getData().length, 48 );
+            int len = attr.getData().length;
+            if(truncatePropertyData) {
+               len = Math.min( attr.getData().length, 48 );
+            }
+            
             int loops = len/16;
             if(loops == 0) loops = 1;
             
