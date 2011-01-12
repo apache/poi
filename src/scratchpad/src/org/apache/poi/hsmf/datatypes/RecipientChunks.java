@@ -32,12 +32,12 @@ import java.util.List;
 public final class RecipientChunks implements ChunkGroup {
    public static final String PREFIX = "__recip_version1.0_#";
    
-   public static final MAPIAttribute RECIPIENT_NAME   = MAPIAttribute.DISPLAY_NAME;
-   public static final MAPIAttribute DELIVERY_TYPE    = MAPIAttribute.ADDRTYPE;
-   public static final MAPIAttribute RECIPIENT_EMAIL_ADDRESS = MAPIAttribute.EMAIL_ADDRESS;
-   public static final MAPIAttribute RECIPIENT_SEARCH        = MAPIAttribute.SEARCH_KEY;
-   public static final MAPIAttribute RECIPIENT_SMTP_ADDRESS  = MAPIAttribute.SMTP_ADDRESS;
-   public static final MAPIAttribute RECIPIENT_DISPLAY_NAME  = MAPIAttribute.RECIPIENT_DISPLAY_NAME;
+   public static final MAPIProperty RECIPIENT_NAME   = MAPIProperty.DISPLAY_NAME;
+   public static final MAPIProperty DELIVERY_TYPE    = MAPIProperty.ADDRTYPE;
+   public static final MAPIProperty RECIPIENT_EMAIL_ADDRESS = MAPIProperty.EMAIL_ADDRESS;
+   public static final MAPIProperty RECIPIENT_SEARCH        = MAPIProperty.SEARCH_KEY;
+   public static final MAPIProperty RECIPIENT_SMTP_ADDRESS  = MAPIProperty.SMTP_ADDRESS;
+   public static final MAPIProperty RECIPIENT_DISPLAY_NAME  = MAPIProperty.RECIPIENT_DISPLAY_NAME;
    
    /** Our 0 based position in the list of recipients */
    public int recipientNumber;

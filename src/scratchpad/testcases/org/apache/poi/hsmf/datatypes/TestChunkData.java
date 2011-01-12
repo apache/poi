@@ -53,28 +53,28 @@ public final class TestChunkData extends TestCase {
 
 	public void testTextBodyChunk() {
 		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
-		assertEquals(chunk.getChunkId(), MAPIAttribute.BODY.id);
+		assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
 	}
 
 	public void testDisplayToChunk() {
 		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIAttribute.DISPLAY_TO.id);
+      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_TO.id);
 	}
 
 
 	public void testDisplayCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIAttribute.DISPLAY_CC.id);
+      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_CC.id);
 	}
 
 	public void testDisplayBCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIAttribute.DISPLAY_BCC.id);
+      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_BCC.id);
 	}
 
 	public void testSubjectChunk() {
 		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIAttribute.SUBJECT.id);
+      assertEquals(chunk.getChunkId(), MAPIProperty.SUBJECT.id);
 	}
 
 }

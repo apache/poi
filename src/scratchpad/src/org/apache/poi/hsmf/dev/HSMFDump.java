@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
-import org.apache.poi.hsmf.datatypes.MAPIAttribute;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -41,10 +41,10 @@ public class HSMFDump {
       for(ChunkGroup chunks : chunkGroups) {
          System.out.println(chunks.getClass().getSimpleName());
          for(Chunk chunk : chunks.getChunks()) {
-            MAPIAttribute attr = MAPIAttribute.get(chunk.getChunkId());
+            MAPIProperty attr = MAPIProperty.get(chunk.getChunkId());
             
             String idName = attr.id + " - " + attr.name;
-            if(attr == MAPIAttribute.UNKNOWN) {
+            if(attr == MAPIProperty.UNKNOWN) {
                idName = chunk.getChunkId() + " - (unknown)";
             }
             

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.apache.poi.hsmf.datatypes.MAPIAttribute;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 
 /**
@@ -32,18 +32,18 @@ public class TypesLister {
    public TypesLister() {}
    
    public void listByName(PrintStream out) {
-      ArrayList<MAPIAttribute> all = new ArrayList<MAPIAttribute>(MAPIAttribute.getAll());
-      Collections.sort(all, new Comparator<MAPIAttribute>() {
-         public int compare(MAPIAttribute a, MAPIAttribute b) {
+      ArrayList<MAPIProperty> all = new ArrayList<MAPIProperty>(MAPIProperty.getAll());
+      Collections.sort(all, new Comparator<MAPIProperty>() {
+         public int compare(MAPIProperty a, MAPIProperty b) {
             return a.name.compareTo(b.name);
          }
       });
       list(all, out);
    }
    public void listById(PrintStream out) {
-      ArrayList<MAPIAttribute> all = new ArrayList<MAPIAttribute>(MAPIAttribute.getAll());
-      Collections.sort(all, new Comparator<MAPIAttribute>() {
-         public int compare(MAPIAttribute a, MAPIAttribute b) {
+      ArrayList<MAPIProperty> all = new ArrayList<MAPIProperty>(MAPIProperty.getAll());
+      Collections.sort(all, new Comparator<MAPIProperty>() {
+         public int compare(MAPIProperty a, MAPIProperty b) {
             if(a.id < b.id) return -1;
             if(a.id > b.id) return +1;
             return 0;
@@ -51,8 +51,8 @@ public class TypesLister {
       });
       list(all, out);
    }
-   private void list(ArrayList<MAPIAttribute> list, PrintStream out) {
-      for(MAPIAttribute attr : list) {
+   private void list(ArrayList<MAPIProperty> list, PrintStream out) {
+      for(MAPIProperty attr : list) {
          String id = Integer.toHexString(attr.id);
          while(id.length() < 4) { id = "0"+id; }
          
