@@ -31,10 +31,13 @@ import org.apache.poi.util.LittleEndian;
  * Within a {@link HMEFMessage}, the content is often
  *  stored in as RTF, but LZW compressed. This class
  *  handles decompressing it for you.
+ *  
+ * Note - this doesn't quite decompress the data correctly,
+ *  more work and unit testing is required...
  */
 public final class CompressedRTF extends LZWDecompresser {
    public static final byte[] COMPRESSED_SIGNATURE =
-      new byte[] { (byte)'L', (byte)'Z', (byte)'F', (byte)'U' };
+      new byte[] { (byte)'L', (byte)'Z', (byte)'F', (byte)'u' };
    public static final byte[] UNCOMPRESSED_SIGNATURE =
       new byte[] { (byte)'M', (byte)'E', (byte)'L', (byte)'A' };
    public static final int COMPRESSED_SIGNATURE_INT =
