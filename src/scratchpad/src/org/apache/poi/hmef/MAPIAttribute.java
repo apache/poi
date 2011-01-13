@@ -62,7 +62,17 @@ public class MAPIAttribute {
    }
    
    public String toString() {
-      return property.toString() + " " + HexDump.toHex(data);
+      String hex;
+      if(data.length <= 16) {
+         hex = HexDump.toHex(data);
+      } else {
+         byte[] d = new byte[16];
+         System.arraycopy(data, 0, d, 0, 16);
+         hex = HexDump.toHex(d);
+         hex = hex.substring(0, hex.length()-1) + ", ....]";
+      }
+      
+      return property.toString() + " " + hex;
    }
    
    /**
@@ -146,6 +156,8 @@ public class MAPIAttribute {
             MAPIAttribute attr;
             if(type == Types.UNICODE_STRING || type == Types.ASCII_STRING) {
                attr = new MAPIStringAttribute(prop, type, data);
+            } else if(id == MAPIProperty.RTF_COMPRESSED.id) {
+               attr = new MAPIRtfAttribute(prop, type, data);
             } else {
                attr = new MAPIAttribute(prop, type, data);
             }
