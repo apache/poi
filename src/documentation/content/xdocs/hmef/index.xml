@@ -36,9 +36,11 @@
             TNEF (Transport Neurtral Encoding Format), aka winmail.dat,
             which is used by Outlook and Exchange in some situations.</p>
           <p>Currently, HMEF provides a low-level, read-only api for 
-            accessing core TNEF attributes. Embedded MAPI attributes
-            are not yet processed, and attachments are not properly
-            handled either.</p>
+            accessing core TNEF attributes. It is able to provide access
+            to both TNEF and MAPI attributes, and low level access to
+            attachments. Compressed RTF is not yet fully supported, and
+            user-facing access to common attributes and attachment contents
+            is not yet present.</p>
           <p>HMEF is currently very much a work-in-progress, and we hope
             to add a text extractor and attachment extractor in the not
             too distant future.</p>
