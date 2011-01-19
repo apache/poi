@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>User Defined Functions</title>
+        <authors>
+            <person email="jon@loquatic.com" name="Jon Svede" id="JDS"/>
+            <person email="brian.bush@nrel.gov" name="Brian Bush" id="BWB"/>
+        </authors>
+    </header>
+  <body>
+    <section><title>How to Create and Use User Defined Functions</title>
+
+     <section><title>Description</title>
+            <p>This document describes the User Defined Functions within POI.
+            User defined functions allow you to take code that is written in VBA
+            and re-write in Java and use within POI. Consider the following example.</p>
+     </section>
+     <section><title>An Example</title>
+        <p>Suppose you are given a spreadsheet that can calculate the principal and interest
+        payments for a mortgage.  The user enters the principal loan amount, the interest rate
+        and the term of the loan.  The Excel spreadsheet does the rest.</p>
+        <p>
+            <img src="../resources/images/simple-xls-with-function.jpg" alt="mortgage calculation spreadsheet"/>
+        </p>
+        <p>When you actually look at the workbook you discover that rather than having
+        the formula in a cell it has been written as VBA function.  You review the 
+        function and determine that it could be written in Java:</p>
+        <p>
+            <img src="../resources/images/calculatePayment.jpg" alt="VBA code"/>
+        </p>
+        <p>If we write a small program to try to evaluate this cell, we'll fail.  Consider this source code:</p>
+        <source><![CDATA[
+import java.io.File ;
+import java.io.FileInputStream ;
+import java.io.FileNotFoundException ;
+import java.io.IOException ;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException ;
+import org.apache.poi.ss.formula.functions.FreeRefFunction ;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder ;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;
+import org.apache.poi.ss.formula.udf.UDFFinder ;
+import org.apache.poi.ss.usermodel.Cell ;
+import org.apache.poi.ss.usermodel.CellValue ;
+import org.apache.poi.ss.usermodel.Row ;
+import org.apache.poi.ss.usermodel.Sheet ;
+import org.apache.poi.ss.usermodel.Workbook ;
+import org.apache.poi.ss.usermodel.WorkbookFactory ;
+import org.apache.poi.ss.util.CellReference ;
+
+public class Evaluator {
+
+    
+    
+    public static void main( String[] args ) {
+        
+        System.out.println( "fileName: " + args[0] ) ;
+        System.out.println( "cell: " + args[1] ) ;
+        
+        File workbookFile = new File( args[0] ) ;
+        
+        try {
+            FileInputStream fis = new FileInputStream(workbookFile);
+            Workbook workbook = WorkbookFactory.create(fis);
+            
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            
+            CellReference cr = new CellReference( args[1] ) ;
+            String sheetName = cr.getSheetName() ;
+            Sheet sheet = workbook.getSheet( sheetName ) ;
+            int rowIdx = cr.getRow() ;
+            int colIdx = cr.getCol() ;
+            Row row = sheet.getRow( rowIdx ) ;
+            Cell cell = row.getCell( colIdx ) ;
+            
+            CellValue value = evaluator.evaluate( cell ) ;
+            
+            System.out.println("returns value: " +  value ) ;
+            
+            
+        } catch( FileNotFoundException e ) {
+            e.printStackTrace();
+        } catch( InvalidFormatException e ) {
+            e.printStackTrace();
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+}
+        
+]]></source>
+        <p>If you run this code, you're likely to get the following error:</p>
+        
+       <source><![CDATA[
+Exception in thread "main" org.apache.poi.ss.formula.eval.NotImplementedException: Error evaluating cell Sheet1!B4
+    at org.apache.poi.ss.formula.WorkbookEvaluator.addExceptionInfo(WorkbookEvaluator.java:321)
+    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateAny(WorkbookEvaluator.java:288)
+    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluate(WorkbookEvaluator.java:221)
+    at org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.evaluateFormulaCellValue(HSSFFormulaEvaluator.java:320)
+    at org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.evaluate(HSSFFormulaEvaluator.java:182)
+    at poi.tests.Evaluator.main(Evaluator.java:61)
+Caused by: org.apache.poi.ss.formula.eval.NotImplementedException: calculatePayment
+    at org.apache.poi.ss.formula.UserDefinedFunction.evaluate(UserDefinedFunction.java:59)
+    at org.apache.poi.ss.formula.OperationEvaluatorFactory.evaluate(OperationEvaluatorFactory.java:129)
+    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateFormula(WorkbookEvaluator.java:456)
+    at org.apache.poi.ss.formula.WorkbookEvaluator.evaluateAny(WorkbookEvaluator.java:279)
+    ... 4 more
+        
+]]></source>
+        
+        <p>How would we make it so POI can use this sheet?</p>
+     </section>
+     
+     <section><title>Defining Your Function</title>
+        <p>To 'convert' this code to Java and make it available to POI you need to implement
+        a FreeRefFunction instance.  FreeRefFunction is an interface in the org.apache.poi.ss.formula.functions 
+        package.  This interface defines one method, evaluate(ValueEval[] args, OperationEvaluationContext ec),
+        which is how you will receive the argument values from POI.</p>
+        <p>The evaluate() method as defined above is where you will convert the ValueEval instances to the 
+        proper number types.  The following code snippet shows you how to get your values:</p>
+ 
+      <source><![CDATA[
+public class CalculateMortgage implements FreeRefFunction {
+
+@Override
+public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {
+    if (args.length != 3) {  
+        return ErrorEval.VALUE_INVALID;
+    }
+
+    double principal, rate, years,  result;
+    try {
+        ValueEval v1 = OperandResolver.getSingleValue( args[0], 
+                                                       ec.getRowIndex(), 
+                                                       ec.getColumnIndex() ) ;
+        ValueEval v2 = OperandResolver.getSingleValue( args[1], 
+                                                       ec.getRowIndex(), 
+                                                       ec.getColumnIndex() ) ;
+        ValueEval v3 = OperandResolver.getSingleValue( args[2], 
+                                                       ec.getRowIndex(), 
+                                                       ec.getColumnIndex() ) ;
+
+        principal  = OperandResolver.coerceValueToDouble( v1 ) ; 
+        rate  = OperandResolver.coerceValueToDouble( v2 ) ;
+        years = OperandResolver.coerceValueToDouble( v3 ) ;
+     ]]></source>
+     
+     <p>The first thing we do is check the number of arguments being passed since there is no sense
+     in attempting to go further if you are missing critical information.</p>
+     <p>Next we declare our variables, in our case we need variables for:</p>
+     <ul>
+        <li>principal - the amount of the loan</li>
+        <li>rate - the interest rate as a decimal</li>
+        <li>years - the length of the loan in years</li>
+        <li>result - the result of the calculation</li>
+     </ul>
+     <p>Next, we use the OperandResolver to convert the ValueEval instances to doubles, though not directly.  
+     First we start by getting discreet values.  Using the OperandResolver.getSingleValue() method
+     we retrieve each of the values passed in by the cell in the spreadsheet.  Next, we use the
+     OperandResolver again to convert the ValueEval instances to doubles, in this case.  This
+     class has other methods of coercion for gettings Strings, ints and booleans.  Now that we've 
+     got our primitive values we can move on to calculating the value.</p>
+     <p>As shown previously, we have the VBA source.  We need to add code to our class to calculate 
+     	the payment.  To do this you could simply add it to the method we've already created but I've
+     	chosen to add it as its own method.  Add the following method: </p>
+     	<source><![CDATA[
+public double calculateMortgagePayment( double p, double r, double y ) {
+
+    double i = r / 12 ;
+    double n = y * 12 ;
+    
+    double principalAndInterest = 
+         p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1))  ;
+    
+    return principalAndInterest ;
+}	
+     	]]></source>
+     	<p>The biggest change necessary is related to the exponents; Java doesn't have a notation for this
+     		so we had to add calls to Math.pow().  Now we need to add this call to our previous method:</p>
+     	<source><![CDATA[
+     	 result = calculateMortgagePayment( principal, rate, years ) ;	
+     		]]></source>
+     	<p>Having done that, the last things we need to do are to check to make sure we didn't get a bad result and,
+     		if not, we need to return the value. Add the following code to the class:</p>
+     	<source><![CDATA[
+private void checkValue(double result) throws EvaluationException {
+    if (Double.isNaN(result) || Double.isInfinite(result)) {
+        throw new EvaluationException(ErrorEval.NUM_ERROR);
+    }
+} 
+     		]]></source>
+     <p>Then add a line of code to our evaluate method to call this new static method, complete our try/catch and return the value:</p>
+     	<source><![CDATA[
+        checkValue(result);
+        
+    } catch (EvaluationException e) {
+        e.printStackTrace() ;
+        return e.getErrorEval();
+    }
+
+    return new NumberEval( result ) ;
+     		]]></source>
+     		
+     		<p>So the whole class would be as follows:</p>
+     		
+     	<source><![CDATA[
+import org.apache.poi.ss.formula.OperationEvaluationContext ;
+import org.apache.poi.ss.formula.eval.ErrorEval ;
+import org.apache.poi.ss.formula.eval.EvaluationException ;
+import org.apache.poi.ss.formula.eval.NumberEval ;
+import org.apache.poi.ss.formula.eval.OperandResolver ;
+import org.apache.poi.ss.formula.eval.ValueEval ;
+import org.apache.poi.ss.formula.functions.FreeRefFunction ;
+
+/**
+ * A simple function to calculate principal and interest.
+ * 
+ * @author Jon Svede
+ *
+ */
+public class CalculateMortgage implements FreeRefFunction {
+
+    @Override
+    public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {
+        if (args.length != 3) {  
+            return ErrorEval.VALUE_INVALID;
+        }
+
+        double principal, rate, years,  result;
+        try {
+            ValueEval v1 = OperandResolver.getSingleValue( args[0], 
+                                                           ec.getRowIndex(), 
+                                                           ec.getColumnIndex() ) ;
+            ValueEval v2 = OperandResolver.getSingleValue( args[1], 
+                                                           ec.getRowIndex(), 
+                                                           ec.getColumnIndex() ) ;
+            ValueEval v3 = OperandResolver.getSingleValue( args[2], 
+                                                           ec.getRowIndex(), 
+                                                           ec.getColumnIndex() ) ;
+
+            principal  = OperandResolver.coerceValueToDouble( v1 ) ; 
+            rate  = OperandResolver.coerceValueToDouble( v2 ) ;
+            years = OperandResolver.coerceValueToDouble( v3 ) ;
+            
+            result = calculateMortgagePayment( principal, rate, years ) ;
+            
+            checkValue(result);
+            
+        } catch (EvaluationException e) {
+            e.printStackTrace() ;
+            return e.getErrorEval();
+        }
+
+        return new NumberEval( result ) ;
+    }
+    
+    public double calculateMortgagePayment( double p, double r, double y ) {
+        double i = r / 12 ;
+        double n = y * 12 ;
+        
+        //M = P [ i(1 + i)n ] / [ (1 + i)n - 1] 
+        double principalAndInterest = 
+             p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1))  ;
+        
+        return principalAndInterest ;
+    }
+    
+    /**
+     * Excel does not support infinities and NaNs, rather, it gives a #NUM! error in these cases
+     * 
+     * @throws EvaluationException (#NUM!) if <tt>result</tt> is <tt>NaN</> or <tt>Infinity</tt>
+     */
+     static final void checkValue(double result) throws EvaluationException {
+         if (Double.isNaN(result) || Double.isInfinite(result)) {
+             throw new EvaluationException(ErrorEval.NUM_ERROR);
+         }
+     }
+
+}
+	
+     		]]></source>
+     		
+     		<p>Great!  Now we need to go back to our original program that failed to evaluate our cell and add code that will allow it run our new Java code.</p>
+
+     </section>
+     
+     <section><title>Registering Your Function</title>
+     		<p>Now we need to register our function in the Workbook, so that the Formula Evaluator can resolve the name "calculatePayment"
+and map it to the actual implementation (CalculateMortgage). This is done using the UDFFinder object. 
+The UDFFinder manages FreeRefFunctions which are our analogy for the VBA code.  We need to create a UDFFinder. There are
+     			a few things we need to know in order to do this:</p>
+        <ul>
+          <li>The name of the function in the VBA code (in our case it is calculatePayment)</li>
+          <li>The Class name of our FreeRefFunction</li>
+        </ul>
+     		<p>UDFFinder is actually an interface, so we need to use an actual implementation of this interface.  Therefore we use the org.apache.poi.ss.formula.udf.DefaultUDFFinder class.  If you refer to the Javadocs you'll see that this class expects to get two arrays, one
+     		containing the alias and the other containing an instance of the class that will represent that alias.  In our case our alias will be calculatePayment 
+     		and our class instance will be of the  CalculateMortgage type.  This class needs to be available at compile and runtime.  Be sure to keep these arrays
+     		well organized because you'll run into problems if these arrays are of different sizes or the alias aren't in the same relative position in their respective
+     		arrays.  Add the following code:</p>
+     	  <source><![CDATA[
+String[] functionNames = { "calculatePayment" } ;
+FreeRefFunction[] functionImpls = { new CalculateMortgage() } ; 
+
+UDFFinder udfs = new DefaultUDFFinder( functionNames, functionImpls ) ;
+UDFFinder udfToolpack = new AggregatingUDFFinder( udfs ) ;	
+     	  	]]></source>
+     	  <p>Now we have our UDFFinder instance and we've created the AggregatingUDFFinder instance.  The last step is to pass this to our Workbook:</p>
+     	  
+     	  <source><![CDATA[
+workbook.addToolPack(udfToolpack);
+     	  	]]></source>
+     	  <p>So now the whole class will look like this:</p>
+     	  <source><![CDATA[ 
+import java.io.File ;
+import java.io.FileInputStream ;
+import java.io.FileNotFoundException ;
+import java.io.IOException ;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException ;
+import org.apache.poi.ss.formula.functions.FreeRefFunction ;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder ;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;
+import org.apache.poi.ss.formula.udf.UDFFinder ;
+import org.apache.poi.ss.usermodel.Cell ;
+import org.apache.poi.ss.usermodel.CellValue ;
+import org.apache.poi.ss.usermodel.Row ;
+import org.apache.poi.ss.usermodel.Sheet ;
+import org.apache.poi.ss.usermodel.Workbook ;
+import org.apache.poi.ss.usermodel.WorkbookFactory ;
+import org.apache.poi.ss.util.CellReference ;
+
+public class Evaluator {
+    
+    public static void main( String[] args ) {
+        
+        System.out.println( "fileName: " + args[0] ) ;
+        System.out.println( "cell: " + args[1] ) ;
+        
+        File workbookFile = new File( args[0] ) ;
+        
+        try {
+            FileInputStream fis = new FileInputStream(workbookFile);
+            Workbook workbook = WorkbookFactory.create(fis);
+            
+            String[] functionNames = { "calculatePayment" } ;
+            FreeRefFunction[] functionImpls = { new CalculateMortgage() } ;
+
+            UDFFinder udfs = new DefaultUDFFinder( functionNames, functionImpls ) ;
+            UDFFinder udfToolpack = new AggregatingUDFFinder( udfs ) ;	
+                      
+            workbook.addToolPack(udfToolpack);
+
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            
+            CellReference cr = new CellReference( args[1] ) ;
+            String sheetName = cr.getSheetName() ;
+            Sheet sheet = workbook.getSheet( sheetName ) ;
+            int rowIdx = cr.getRow() ;
+            int colIdx = cr.getCol() ;
+            Row row = sheet.getRow( rowIdx ) ;
+            Cell cell = row.getCell( colIdx ) ;
+            
+            CellValue value = evaluator.evaluate( cell ) ;
+            
+            System.out.println("returns value: " +  value ) ;
+            
+            
+        } catch( FileNotFoundException e ) {
+            e.printStackTrace();
+        } catch( InvalidFormatException e ) {
+            e.printStackTrace();
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+}
+     	  	
+     	  ]]></source>
+     	  <p>Now that our evaluator is aware of the UDFFinder which in turn is aware of our FreeRefFunction, we're ready to re-run our example:</p>
+        <source>Evaluator mortgage-calculation.xls Sheet1!B4</source>
+        <p>which prints the following output in the console:</p>
+     	  <source><![CDATA[
+fileName: mortgage-calculation.xls
+cell: Sheet1!B4
+returns value: org.apache.poi.ss.usermodel.CellValue [790.7936267415464]
+        ]]></source>
+     		<p>That is it!  Now you can create Java code and register it, allowing your POI based appliction to run spreadsheets that previously were inaccessible.</p>
+     		<p>This example can be found in the <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/formula">src/examples/src/org/apache/poi/ss/examples/formula</link> folder in the source.</p>
+    </section>
+  </section>
+</body>
+</document>
+

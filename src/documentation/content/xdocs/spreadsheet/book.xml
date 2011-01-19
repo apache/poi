@@ -39,6 +39,7 @@
         <menu-item label="Use Case" href="use-case.html"/>
         <menu-item label="Pictorial Docs" href="diagrams.html"/>
         <menu-item label="Limitations" href="limitations.html"/>
+        <menu-item label="User Defined Functions" href="user-defined-functions.html"/>
     </menu>
 
     <menu label="Contributer's Guide">
