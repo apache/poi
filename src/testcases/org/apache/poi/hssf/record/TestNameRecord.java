@@ -667,9 +667,7 @@ public final class TestNameRecord extends TestCase {
         byte[] data1 = HexRead.readFromString(record_0x0018 + record_0x03C);
         RecordInputStream in1 = TestcaseRecordInputStream.create(data1);
         NameRecord nr1 = new NameRecord(in1);
-        System.out.println(nr1);
         assert_bug50244(nr1);
-
 
         byte[] data2 = nr1.serialize();
 
