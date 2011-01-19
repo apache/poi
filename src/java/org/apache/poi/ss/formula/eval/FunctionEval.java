@@ -130,6 +130,7 @@ public final class FunctionEval {
 
 		retval[109] = NumericFunction.LOG;
 
+        retval[111] = TextFunction.CHAR;
 		retval[112] = TextFunction.LOWER;
 		retval[113] = TextFunction.UPPER;
 
@@ -148,7 +149,7 @@ public final class FunctionEval {
 		retval[130] = new T();
 
 		retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
-
+        retval[162] = TextFunction.CLEAN;  //Aniket Banerjee    
 		retval[169] = new Counta();
 
 		retval[183] = AggregateFunction.PRODUCT;
@@ -161,7 +162,7 @@ public final class FunctionEval {
 
 		retval[212] = NumericFunction.ROUNDUP;
 		retval[213] = NumericFunction.ROUNDDOWN;
-
+        retval[219] = new Address();  //Aniket Banerjee
         retval[220] = new Days360();
 		retval[221] = new Today();
 

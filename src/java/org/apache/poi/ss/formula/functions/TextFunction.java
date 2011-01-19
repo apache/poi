@@ -83,6 +83,25 @@ public abstract class TextFunction implements Function {
 		protected abstract ValueEval evaluate(String arg);
 	}
 
+    /**
+     * Returns the character specified by a number.
+     */
+    public static final Function CHAR = new Fixed1ArgFunction() {
+        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+            int arg;
+            try {
+                arg = evaluateIntArg(arg0, srcRowIndex, srcColumnIndex);
+                if (arg < 0 || arg >= 256) {
+                    throw new EvaluationException(ErrorEval.VALUE_INVALID);
+                }
+
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
+            return new StringEval(String.valueOf((char)arg));
+        }
+    };
+
 	public static final Function LEN = new SingleArgTextFunc() {
 		protected ValueEval evaluate(String arg) {
 			return new NumberEval(arg.length());
@@ -109,8 +128,43 @@ public abstract class TextFunction implements Function {
 			return new StringEval(arg.trim());
 		}
 	};
-
+	
 	/**
+	 * An implementation of the CLEAN function:
+	 * In Excel, the Clean function removes all non-printable characters from a string.
+     *
+	 * Author: Aniket Banerjee(banerjee@google.com)
+	 */
+    public static final Function CLEAN = new SingleArgTextFunc() {
+        protected ValueEval evaluate(String arg) {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < arg.length(); i++) {
+                char c = arg.charAt(i);
+                if (isPrintable(c)) {
+                    result.append(c);
+                }
+            }
+            return new StringEval(result.toString());
+        }
+
+        /**
+         * From Excel docs: The CLEAN function was designed to remove the first 32 nonprinting characters
+         * in the 7-bit ASCII code (values 0 through 31) from text. In the Unicode character set,
+         * there are additional nonprinting characters (values 127, 129, 141, 143, 144, and 157). By itself,
+         * the CLEAN function does not remove these additional  nonprinting characters. To do this task,
+         * use the SUBSTITUTE function to replace the higher value Unicode characters with the 7-bit ASCII
+         * characters for which the TRIM and CLEAN functions were designed.
+         *
+         * @param c the character to test
+         * @return  whether the character is printable
+         */
+        private boolean isPrintable(char c){
+            int charCode = (int)c ;
+            return charCode >= 32;
+        }
+    };
+
+    /**
 	 * An implementation of the MID function<br/>
 	 * MID returns a specific number of
 	 * characters from a text string, starting at the specified position.<p/>

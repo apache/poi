@@ -60,6 +60,8 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestTrunc.class);
 		result.addTestSuite(TestValue.class);
 		result.addTestSuite(TestXYNumericFunction.class);
+		result.addTestSuite(TestAddress.class);
+		result.addTestSuite(TestClean.class);
 		return result;
 	}
 }
