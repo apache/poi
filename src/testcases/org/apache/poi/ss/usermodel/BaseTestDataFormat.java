@@ -20,6 +20,12 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Tests of implementation of {@link DataFormat}
@@ -59,5 +65,32 @@ public abstract class BaseTestDataFormat extends TestCase {
         assertTrue(customIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX);
         //read and verify the string representation
         assertEquals(customFmt, df.getFormat((short)customIdx));
+    }
+    
+    /**
+     * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
+     */
+    public abstract void test49928();
+    protected final String poundFmt = "\"\u00a3\"#,##0;[Red]\\-\"\u00a3\"#,##0";
+    public void doTest49928Core(Workbook wb){
+        DataFormatter df = new DataFormatter();
+
+        Sheet sheet = wb.getSheetAt(0);
+        Cell cell = sheet.getRow(0).getCell(0);
+        CellStyle style = cell.getCellStyle();
+
+        String poundFmt = "\"\u00a3\"#,##0;[Red]\\-\"\u00a3\"#,##0";
+        // not expected normally, id of a custom format should be greater 
+        // than BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX
+        short  poundFmtIdx = 6;
+
+        assertEquals(poundFmt, style.getDataFormatString());
+        assertEquals(poundFmtIdx, style.getDataFormat());
+        assertEquals("\u00a31", df.formatCellValue(cell));
+
+
+        DataFormat dataFormat = wb.createDataFormat();
+        assertEquals(poundFmtIdx, dataFormat.getFormat(poundFmt));
+        assertEquals(poundFmt, dataFormat.getFormat(poundFmtIdx));
     }
 }
