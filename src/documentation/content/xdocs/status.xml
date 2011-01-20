@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
+           <action dev="poi-developers" type="add">49928 - allow overridden built-in formats in HSSFCellStyle</action>
            <action dev="POI-DEVELOPERS" type="add">50607 - Added implementation for CLEAN(), CHAR() and ADDRESS()</action>
            <action dev="poi-developers" type="add">50587 - Improved documentation on user-defined functions</action>
            <action dev="poi-developers" type="add">Inside ExtractorFactory, support finding embedded OOXML documents and providing extractors for them</action>

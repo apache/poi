@@ -71,9 +71,7 @@ public final class HSSFDataFormat implements DataFormat {
 		Iterator<FormatRecord> i = workbook.getFormats().iterator();
 		while (i.hasNext()) {
 			FormatRecord r = i.next();
-			if (_formats.size() < r.getIndexCode() + 1) {
-				_formats.setSize(r.getIndexCode() + 1);
-			}
+			ensureFormatsSize(r.getIndexCode());
 			_formats.set(r.getIndexCode(), r.getFormatString());
 		}
 	}
@@ -100,7 +98,7 @@ public final class HSSFDataFormat implements DataFormat {
 	 * @return index of format.
 	 */
 	public short getFormat(String pFormat) {
-
+	   // Normalise the format string
 		String format;
 		if (pFormat.toUpperCase().equals("TEXT")) {
 			format = "@";
@@ -108,31 +106,31 @@ public final class HSSFDataFormat implements DataFormat {
 			format = pFormat;
 		}
 
+		// Merge in the built in formats if we haven't already
 		if (!_movedBuiltins) {
 			for (int i=0; i<_builtinFormats.length; i++) {
-				if (_formats.size() < i + 1) {
-					_formats.setSize(i + 1);
+			   ensureFormatsSize(i);
+				if (_formats.get(i) == null) {
+				   _formats.set(i, _builtinFormats[i]);
+				} else {
+				   // The workbook overrides this default format
 				}
-				_formats.set(i, _builtinFormats[i]);
 			}
 			_movedBuiltins = true;
 		}
-		ListIterator<String> i;
-		i = _formats.listIterator();
-		int ind;
-		while (i.hasNext()) {
-			ind = i.nextIndex();
-			if (format.equals(i.next())) {
-				return (short) ind;
-			}
+		
+		// See if we can find it
+		for(int i=0; i<_formats.size(); i++) {
+		   if(format.equals(_formats.get(i))) {
+		      return (short)i;
+		   }
 		}
 
-		ind = _workbook.getFormat(format, true);
-		if (_formats.size() <= ind)
-			_formats.setSize(ind + 1);
-		_formats.set(ind, format);
-
-		return (short) ind;
+		// We can't find it, so add it as a new one
+		short index = _workbook.getFormat(format, true);
+		ensureFormatsSize(index);
+		_formats.set(index, format);
+		return index;
 	}
 
 	/**
@@ -144,10 +142,19 @@ public final class HSSFDataFormat implements DataFormat {
 		if (_movedBuiltins) {
 			return _formats.get(index);
 		}
+		
+		String fmt = _formats.get(index);
 		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
-			return _builtinFormats[index];
+		   // It's in the built in range
+		   if (fmt != null) {
+		      // It's been overriden, use that value
+		      return fmt;
+		   } else {
+		      // Standard built in format
+	         return _builtinFormats[index];
+		   }
 		}
-		return _formats.get(index);
+		return fmt;
 	}
 
 	/**
@@ -165,5 +172,15 @@ public final class HSSFDataFormat implements DataFormat {
 	 */
 	public static int getNumberOfBuiltinBuiltinFormats() {
 		return _builtinFormats.length;
+	}
+	
+	/**
+	 * Ensures that the formats list can hold entries
+	 *  up to and including the entry with this index
+	 */
+	private void ensureFormatsSize(int index) {
+	   if(_formats.size() <= index) {
+	      _formats.setSize(index+1);
+	   }
 	}
 }
