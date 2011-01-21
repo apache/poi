@@ -20,12 +20,6 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFDataFormat;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Tests of implementation of {@link DataFormat}
