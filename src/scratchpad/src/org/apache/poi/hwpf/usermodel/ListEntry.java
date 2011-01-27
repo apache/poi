@@ -37,7 +37,7 @@ public final class ListEntry
   {
     super(papx, parent);
 
-    if(tables != null) {
+    if(tables != null && _props.getIlfo() < tables.getOverrideCount()) {
 	    ListFormatOverride override = tables.getOverride(_props.getIlfo());
 	    _overrideLevel = override.getOverrideLevel(_props.getIlvl());
 	    _level = tables.getLevel(override.getLsid(), _props.getIlvl());
