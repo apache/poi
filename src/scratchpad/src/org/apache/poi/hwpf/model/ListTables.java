@@ -165,6 +165,10 @@ public final class ListTables
     return _overrideList.get(lfoIndex - 1);
   }
 
+  public int getOverrideCount() {
+    return _overrideList.size();
+  }
+
   public int getOverrideIndexFromListID(int lstid)
   {
     int returnVal = -1;
