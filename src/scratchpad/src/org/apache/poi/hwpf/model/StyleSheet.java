@@ -238,6 +238,10 @@ public final class StyleSheet implements HDFType {
 
           }
 
+          if (parentPAP == null) {
+              parentPAP = new ParagraphProperties();
+          }
+
           pap = ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
           sd.setPAP(pap);
       }
