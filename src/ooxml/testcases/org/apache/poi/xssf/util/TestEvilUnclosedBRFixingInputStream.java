@@ -70,6 +70,37 @@ public final class TestEvilUnclosedBRFixingInputStream extends TestCase {
       assertEquals(fixed, result);
    }
    
+   /**
+    * Checks that we can copy with br tags around the buffer boundaries
+    */
+   public void testBufferSize() throws Exception {
+      byte[] orig = "<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>".getBytes("UTF-8");
+      byte[] fixed = "<p><div>Hello<br/> <br/>There!</div> <div>Tags!<br/><br/></div></p>".getBytes("UTF-8");
+      
+      // Vary the buffer size, so that we can end up with the br in the
+      //  overflow or only part in the buffer
+      for(int i=5; i<orig.length; i++) {
+         EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(
+               new ByteArrayInputStream(orig)
+         );
+         
+         ByteArrayOutputStream bout = new ByteArrayOutputStream();
+         boolean going = true;
+         while(going) {
+            byte[] b = new byte[i];
+            int r = inp.read(b);
+            if(r > 0) {
+               bout.write(b, 0, r);
+            } else {
+               going = false;
+            }
+         }
+         
+         byte[] result = bout.toByteArray();
+         assertEquals(fixed, result);
+      }
+   }
+
    protected void assertEquals(byte[] a, byte[] b) {
       assertEquals(a.length, b.length);
       for(int i=0; i<a.length; i++) {
