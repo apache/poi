@@ -79,6 +79,26 @@ public final class BuiltinFormats {
 
 	private final static String[] _formats;
 
+/*
+0 General General 18 Time h:mm AM/PM
+1 Decimal 0 19 Time h:mm:ss AM/PM
+2 Decimal 0.00 20 Time h:mm
+3 Decimal #,##0 21 Time h:mm:ss
+4 Decimal #,##0.00 2232 Date/Time M/D/YY h:mm
+531 Currency "$"#,##0_);("$"#,##0) 37 Account. _(#,##0_);(#,##0)
+631 Currency "$"#,##0_);[Red]("$"#,##0) 38 Account. _(#,##0_);[Red](#,##0)
+731 Currency "$"#,##0.00_);("$"#,##0.00) 39 Account. _(#,##0.00_);(#,##0.00)
+831 Currency "$"#,##0.00_);[Red]("$"#,##0.00) 40 Account. _(#,##0.00_);[Red](#,##0.00)
+9 Percent 0% 4131 Currency _("$"* #,##0_);_("$"* (#,##0);_("$"* "-"_);_(@_)
+10 Percent 0.00% 4231 33 Currency _(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)
+11 Scientific 0.00E+00 4331 Currency _("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)
+12 Fraction # ?/? 4431 33 Currency _(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)
+13 Fraction # ??/?? 45 Time mm:ss
+1432 Date M/D/YY 46 Time [h]:mm:ss
+15 Date D-MMM-YY 47 Time mm:ss.0
+16 Date D-MMM 48 Scientific ##0.0E+0
+17 Date MMM-YY 49 Text @
+* */
 	static {
 		List<String> m = new ArrayList<String>();
 		putFormat(m, 0, "General");
@@ -86,10 +106,10 @@ public final class BuiltinFormats {
 		putFormat(m, 2, "0.00");
 		putFormat(m, 3, "#,##0");
 		putFormat(m, 4, "#,##0.00");
-		putFormat(m, 5, "$#,##0_);($#,##0)");
-		putFormat(m, 6, "$#,##0_);[Red]($#,##0)");
-		putFormat(m, 7, "$#,##0.00_);($#,##0.00)");
-		putFormat(m, 8, "$#,##0.00_);[Red]($#,##0.00)");
+		putFormat(m, 5, "\"$\"#,##0_);(\"$\"#,##0)");
+		putFormat(m, 6, "\"$\"#,##0_);[Red](\"$\"#,##0)");
+		putFormat(m, 7, "\"$\"#,##0.00_);(\"$\"#,##0.00)");
+		putFormat(m, 8, "\"$\"#,##0.00_);[Red](\"$\"#,##0.00)");
 		putFormat(m, 9, "0%");
 		putFormat(m, 0xa, "0.00%");
 		putFormat(m, 0xb, "0.00E+00");
@@ -115,10 +135,10 @@ public final class BuiltinFormats {
 		putFormat(m, 0x26, "#,##0_);[Red](#,##0)");
 		putFormat(m, 0x27, "#,##0.00_);(#,##0.00)");
 		putFormat(m, 0x28, "#,##0.00_);[Red](#,##0.00)");
-		putFormat(m, 0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)");
-		putFormat(m, 0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)");
-		putFormat(m, 0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)");
-		putFormat(m, 0x2c, "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)");
+		putFormat(m, 0x29, "_(\"$\"* #,##0_);_(\"$\"* (#,##0);_(\"$\"* \"-\"_);_(@_)");
+		putFormat(m, 0x2a, "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)");
+		putFormat(m, 0x2b, "_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)");
+		putFormat(m, 0x2c, "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)");
 		putFormat(m, 0x2d, "mm:ss");
 		putFormat(m, 0x2e, "[h]:mm:ss");
 		putFormat(m, 0x2f, "mm:ss.0");
