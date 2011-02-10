@@ -54,10 +54,10 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 	
 	public void testFormats() throws Exception {
 		processFile("MissingBits.xls");
-		
-		assertEquals("_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(41));
-		assertEquals("_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)", listener.getFormatString(42));
-		assertEquals("_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)", listener.getFormatString(43));
+
+		assertEquals("_(\"$\"* #,##0_);_(\"$\"* (#,##0);_(\"$\"* \"-\"_);_(@_)", listener.getFormatString(41));
+		assertEquals("_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(42));
+		assertEquals("_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)", listener.getFormatString(43));
 	}
 	
 	/**
