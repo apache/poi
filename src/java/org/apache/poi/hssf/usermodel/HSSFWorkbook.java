@@ -1389,7 +1389,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             sb.append("!");
             sb.append(parts[i]);
         }
-        name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this, FormulaType.CELL, sheetIndex));
+        name.setNameDefinition(HSSFFormulaParser.parse(sb.toString(), this, FormulaType.NAMEDRANGE, sheetIndex));
     }
 
     /**
