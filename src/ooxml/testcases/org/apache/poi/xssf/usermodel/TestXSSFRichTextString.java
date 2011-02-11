@@ -160,8 +160,8 @@ public final class TestXSSFRichTextString extends TestCase {
 
         TreeMap<Integer, CTRPrElt> formats = str.getFormatMap(st);
         assertEquals(1, formats.size());
-        assertEquals(26, (int)formats.firstEntry().getKey());
-        assertNull(formats.firstEntry().getValue());
+        assertEquals(26, (int)formats.firstKey());
+        assertNull(formats.get( formats.firstKey() ));
 
         CTRPrElt fmt1 = CTRPrElt.Factory.newInstance();
         str.applyFont(formats, 0, 6, fmt1);
