@@ -1650,10 +1650,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
              "new_sheet!$A$1:$C$1", 
              ((Area3DPtg)nr.getNameDefinition()[0]).toFormulaString(HSSFEvaluationWorkbook.create(wb))
        );
-       // TODO - fix me to be Reference not Value!
-if(1==2) {       
        assertEquals('R', nr.getNameDefinition()[0].getRVAType());
-}
     }
     
     /**
