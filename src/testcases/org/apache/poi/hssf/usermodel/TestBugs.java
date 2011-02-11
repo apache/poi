@@ -43,6 +43,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1952,5 +1953,37 @@ if(1==2) {
        assertEquals("Cell A,2", sheet.getRow(0).getCell(0).getStringCellValue());
        assertEquals("Cell A,1", sheet.getRow(1).getCell(0).getStringCellValue());
        assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+    }
+    
+    /**
+     * If you send a file between Excel and OpenOffice enough, something
+     *  will turn the "General" format into "GENERAL"
+     */
+    public void test50756() throws Exception {
+       HSSFWorkbook wb = openSample("50756.xls");
+       HSSFSheet s = wb.getSheetAt(0);
+       HSSFRow r17 = s.getRow(16);
+       HSSFRow r18 = s.getRow(17);
+       HSSFDataFormatter df = new HSSFDataFormatter();
+       
+       assertEquals(10.0, r17.getCell(1).getNumericCellValue());
+       assertEquals(20.0, r17.getCell(2).getNumericCellValue());
+       assertEquals(20.0, r17.getCell(3).getNumericCellValue());
+       assertEquals("GENERAL", r17.getCell(1).getCellStyle().getDataFormatString());
+       assertEquals("GENERAL", r17.getCell(2).getCellStyle().getDataFormatString());
+       assertEquals("GENERAL", r17.getCell(3).getCellStyle().getDataFormatString());
+       assertEquals("10", df.formatCellValue(r17.getCell(1)));
+       assertEquals("20", df.formatCellValue(r17.getCell(2)));
+       assertEquals("20", df.formatCellValue(r17.getCell(3)));
+       
+       assertEquals(16.0, r18.getCell(1).getNumericCellValue());
+       assertEquals(35.0, r18.getCell(2).getNumericCellValue());
+       assertEquals(123.0, r18.getCell(3).getNumericCellValue());
+       assertEquals("GENERAL", r18.getCell(1).getCellStyle().getDataFormatString());
+       assertEquals("GENERAL", r18.getCell(2).getCellStyle().getDataFormatString());
+       assertEquals("GENERAL", r18.getCell(3).getCellStyle().getDataFormatString());
+       assertEquals("16", df.formatCellValue(r18.getCell(1)));
+       assertEquals("35", df.formatCellValue(r18.getCell(2)));
+       assertEquals("123", df.formatCellValue(r18.getCell(3)));
     }
 }
