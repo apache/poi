@@ -46,7 +46,8 @@ public final class Npv implements Function {
         try {
 			double rate = NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             // convert tail arguments into an array of doubles
-            ValueEval[] vargs = Arrays.copyOfRange(args, 1 , args.length);
+            ValueEval[] vargs = new ValueEval[args.length-1];
+            System.arraycopy(args, 1, vargs, 0, vargs.length);
             double[] values = AggregateFunction.ValueCollector.collectValues(vargs);
 
             double result = FinanceLib.npv(rate, values);
