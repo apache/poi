@@ -57,7 +57,6 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.OperandPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
@@ -68,7 +67,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -91,6 +89,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final int MAX_ROW = 0xFFFF;
     private static final short MAX_COLUMN = (short)0x00FF;
+
+    /**
+     * The maximum number of cell styles in a .xls workbook.
+     * The 'official' limit is 4,000, but POI allows a slightly larger number.
+     * This extra delta takes into account built-in styles that are automatically
+     * created for new workbooks
+     *
+     * See http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP005199291.aspx
+     */
+    private static final int MAX_STYLES = 4030;
 
     private static final int DEBUG = POILogger.DEBUG;
 
@@ -1123,12 +1131,19 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
-     * create a new Cell style and add it to the workbook's style table
+     * Create a new Cell style and add it to the workbook's style table.
+     * You can define up to 4000 unique styles in a .xls workbook.
+     *
      * @return the new Cell Style object
+     * @throws IllegalStateException if the maximum number of cell styles exceeded the limit
      */
 
     public HSSFCellStyle createCellStyle()
     {
+        if(workbook.getNumExFormats() == MAX_STYLES) {
+            throw new IllegalStateException("The maximum number of cell styles was exceeded. " +
+                    "You can define up to 4000 styles in a .xls workbook");
+        }
         ExtendedFormatRecord xfr = workbook.createCellXF();
         short index = (short) (getNumCellStyles() - 1);
         HSSFCellStyle style = new HSSFCellStyle(index, xfr, this);

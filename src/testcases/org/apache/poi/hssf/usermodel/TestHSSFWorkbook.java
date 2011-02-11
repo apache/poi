@@ -559,4 +559,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
           assertEquals("replaceMe", cell .getRichStringCellValue().getString());
        }
     }
+    public void testCellStylesLimit() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        int numBuiltInStyles = wb.getNumCellStyles();
+        int MAX_STYLES = 4030;
+        int limit = MAX_STYLES - numBuiltInStyles;
+        for(int i=0; i < limit; i++){
+            HSSFCellStyle style = wb.createCellStyle();
+        }
+
+        assertEquals(MAX_STYLES, wb.getNumCellStyles());
+        try {
+            HSSFCellStyle style = wb.createCellStyle();
+            fail("expected exception");
+        } catch (IllegalStateException e){
+            assertEquals("The maximum number of cell styles was exceeded. " +
+                    "You can define up to 4000 styles in a .xls workbook", e.getMessage());
+        }
+        assertEquals(MAX_STYLES, wb.getNumCellStyles());
+    }
 }
