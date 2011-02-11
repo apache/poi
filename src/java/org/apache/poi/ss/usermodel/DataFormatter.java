@@ -196,7 +196,7 @@ public class DataFormatter {
         if (format != null) {
             return format;
         }
-        if ("General".equals(formatStr) || "@".equals(formatStr)) {
+        if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
             if (DataFormatter.isWholeNumber(cellValue)) {
                 return generalWholeNumFormat;
             }
