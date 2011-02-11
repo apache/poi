@@ -494,8 +494,13 @@ public class XSSFRichTextString implements RichTextString {
             }
 
             if(startIndex > 0 && !formats.containsKey(startIndex)) {
-                Map.Entry<Integer, CTRPrElt> he = formats.higherEntry(startIndex); //TODO TreeMap#higherEntry is JDK 1.6 only!
-                if(he != null) formats.put(startIndex, he.getValue());
+                // If there's a format that starts later in the string, make it start now
+                for(Map.Entry<Integer, CTRPrElt> entry : formats.entrySet()) {
+                   if(entry.getKey() > startIndex) {
+                      formats.put(startIndex, entry.getValue());
+                      break;
+                   }
+                }
             }
             formats.put(endIndex, fmt);
 
