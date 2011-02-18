@@ -620,4 +620,56 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("SUM(\n1,2\n)", c.getCellFormula());
        assertEquals(3.0, c.getNumericCellValue());
     }
+    
+    /**
+     * Moving a cell comment from one cell to another
+     */
+    public void test50795() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50795.xlsx");
+       XSSFSheet sheet = wb.getSheetAt(0);
+       XSSFRow row = sheet.getRow(0);
+
+       XSSFCell cellWith = row.getCell(0);
+       XSSFCell cellWithoutComment = row.getCell(1);
+       
+       assertNotNull(cellWith.getCellComment());
+       assertNull(cellWithoutComment.getCellComment());
+       
+       String exp = "\u0410\u0432\u0442\u043e\u0440:\ncomment";
+       XSSFComment comment = cellWith.getCellComment();
+       assertEquals(exp, comment.getString().getString());
+       
+       
+       // Check we can write it out and read it back as-is
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sheet = wb.getSheetAt(0);
+       row = sheet.getRow(0);
+       cellWith = row.getCell(0);
+       cellWithoutComment = row.getCell(1);
+       
+       // Double check things are as expected
+       assertNotNull(cellWith.getCellComment());
+       assertNull(cellWithoutComment.getCellComment());
+       comment = cellWith.getCellComment();
+       assertEquals(exp, comment.getString().getString());
+
+       
+       // Move the comment
+       cellWithoutComment.setCellComment(comment);
+       
+       
+       // Write out and re-check
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sheet = wb.getSheetAt(0);
+       row = sheet.getRow(0);
+       
+       // Ensure it swapped over
+       cellWith = row.getCell(0);
+       cellWithoutComment = row.getCell(1);
+       assertNull(cellWith.getCellComment());
+       assertNotNull(cellWithoutComment.getCellComment());
+       
+       comment = cellWithoutComment.getCellComment();
+       assertEquals(exp, comment.getString().getString());
+    }
 }
