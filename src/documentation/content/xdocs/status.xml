@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta1" date="2010-??-??">
+           <action dev="poi-developers" type="fix">50786 - Fix XSSFColor to fetch the RGB values of old-style indexed colours</action>
            <action dev="poi-developers" type="fix">50299 - Fix XSSFColor fetching of white and black background themes</action>
            <action dev="poi-developers" type="fix">50795 - Avoid NPE from xmlbeans when moving XSSF Comments from one cell to another</action>
            <action dev="poi-developers" type="fix">46664 - When creating HSSF Print Areas, ensure the named range is reference based not value based</action>

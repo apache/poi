@@ -705,6 +705,26 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
     
     /**
+     * Excel .xls style indexed colours in a .xlsx file
+     */
+    public void test50786() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50786-indexed_colours.xlsx");
+       XSSFSheet s = wb.getSheetAt(0);
+       XSSFRow r = s.getRow(2);
+       
+       // Check we have the right cell
+       XSSFCell c = r.getCell(1);
+       assertEquals("test\u00a0", c.getRichStringCellValue().getString());
+       
+       // It should be light green
+       XSSFCellStyle cs = c.getCellStyle();
+       assertEquals(42, cs.getFillForegroundColor());
+       assertEquals(42, cs.getFillForegroundColorColor().getIndexed());
+       assertNotNull(cs.getFillForegroundColorColor().getRgb());
+       assertEquals("00CCFFCC", cs.getFillForegroundColorColor().getARGBHex());
+    }
+    
+    /**
      * Fonts where their colours come from the theme rather
      *  then being set explicitly still should allow the
      *  fetching of the RGB 
