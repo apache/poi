@@ -672,4 +672,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        comment = cellWithoutComment.getCellComment();
        assertEquals(exp, comment.getString().getString());
     }
+    
+    /**
+     * Fonts where their colours come from the theme rather
+     *  then being set explicitly still should allow the
+     *  fetching of the RGB 
+     */
+    public void DISABLEDtest50784() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx");
+       XSSFSheet s = wb.getSheetAt(0);
+       XSSFRow r = s.getRow(0);
+       
+       // Column 1 has a font with regular colours
+       XSSFCell cr = r.getCell(1);
+       XSSFFont fr = wb.getFontAt( cr.getCellStyle().getFontIndex() );
+       XSSFColor colr =  fr.getXSSFColor();
+       // No theme, has colours
+       assertEquals(0, colr.getTheme());
+       assertNotNull( colr.getRgb() );
+       
+       // Column 0 has a font with colours from a theme
+       XSSFCell ct = r.getCell(0);
+       XSSFFont ft = wb.getFontAt( ct.getCellStyle().getFontIndex() );
+       XSSFColor colt =  ft.getXSSFColor();
+       // Has a theme, which has the colours on it
+       assertEquals(9, colt.getTheme());
+       XSSFColor themeC = wb.getTheme().getThemeColor(colt.getTheme());
+       assertNotNull( themeC.getRgb() );
+       // TODO Fix it so this works
+       assertNotNull( colt.getRgb() );
+       assertEquals( themeC.getRgb(), colt.getRgb() ); // The same colour
+    }
 }
