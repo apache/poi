@@ -53,14 +53,14 @@ public class HSSFColor implements Color {
      *
      * @return a hashtable containing all colors keyed by <tt>Integer</tt> excel-style palette indexes
      */
-    public final static Hashtable getIndexHash() {
+    public final static Hashtable<Integer,HSSFColor> getIndexHash() {
 
         return createColorsByIndexMap();
     }
 
-    private static Hashtable createColorsByIndexMap() {
+    private static Hashtable<Integer,HSSFColor> createColorsByIndexMap() {
         HSSFColor[] colors = getAllColors();
-        Hashtable result = new Hashtable(colors.length * 3 / 2);
+        Hashtable<Integer,HSSFColor> result = new Hashtable<Integer,HSSFColor>(colors.length * 3 / 2);
 
         for (int i = 0; i < colors.length; i++) {
             HSSFColor color = colors[i];
@@ -142,14 +142,14 @@ public class HSSFColor implements Color {
      *
      * @return a hashtable containing all colors keyed by String gnumeric-like triplets
      */
-    public final static Hashtable getTripletHash()
+    public final static Hashtable<String,HSSFColor> getTripletHash()
     {
         return createColorsByHexStringMap();
     }
 
-    private static Hashtable createColorsByHexStringMap() {
+    private static Hashtable<String,HSSFColor> createColorsByHexStringMap() {
         HSSFColor[] colors = getAllColors();
-        Hashtable result = new Hashtable(colors.length * 3 / 2);
+        Hashtable<String,HSSFColor> result = new Hashtable<String,HSSFColor>(colors.length * 3 / 2);
 
         for (int i = 0; i < colors.length; i++) {
             HSSFColor color = colors[i];
