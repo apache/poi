@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.util.Internal;
 
@@ -83,7 +84,22 @@ public class XSSFColor implements Color {
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
     public byte[] getRgb() {
-		return ctColor.getRgb();
+       if(ctColor.isSetIndexed() && ctColor.getIndexed() > 0) {
+          HSSFColor indexed = HSSFColor.getIndexHash().get((int)ctColor.getIndexed());
+          if(indexed != null) {
+             // Convert it to ARGB form
+             byte[] rgb = new byte[4];
+             rgb[0] = 0;
+             rgb[1] = (byte)indexed.getTriplet()[0];
+             rgb[2] = (byte)indexed.getTriplet()[1];
+             rgb[3] = (byte)indexed.getTriplet()[2];
+             return rgb;
+          } else {
+             // Your indexed value isn't a standard one, sorry...
+             return null;
+          }
+       }
+		 return ctColor.getRgb();
 	}
 	
     /**
@@ -99,7 +115,7 @@ public class XSSFColor implements Color {
 	
 	/**
 	 * Return the ARGB value in hex format, eg FF00FF00.
-	 * For indexed colours, returns null.
+	 * Works for both regular and indexed colours. 
 	 */
 	public String getARGBHex() {
 	   StringBuffer sb = new StringBuffer();
