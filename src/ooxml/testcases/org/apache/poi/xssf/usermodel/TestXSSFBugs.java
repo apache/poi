@@ -674,6 +674,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
     
     /**
+     * When the cell background colour is set with one of the first
+     *  two columns of the theme colour palette, the colours are 
+     *  shades of white or black.
+     * For those cases, ensure we don't break on reading the colour
+     */
+    public void test50299() throws Exception {
+       Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50299.xlsx");
+       
+       // Check all the colours
+       for(int sn=0; sn<wb.getNumberOfSheets(); sn++) {
+          Sheet s = wb.getSheetAt(sn);
+          for(Row r : s) {
+             for(Cell c : r) {
+                CellStyle cs = c.getCellStyle();
+                if(cs != null) {
+                   cs.getFillForegroundColor();
+                }
+             }
+          }
+       }
+       
+       // Check one bit in detail
+       // TODO Is this correct, shouldn't one be white and one black?
+       Sheet s = wb.getSheetAt(0);
+       assertEquals(0,  s.getRow(0).getCell(8).getCellStyle().getFillForegroundColor());
+       assertEquals(64, s.getRow(0).getCell(8).getCellStyle().getFillBackgroundColor());
+       assertEquals(0,  s.getRow(1).getCell(8).getCellStyle().getFillForegroundColor());
+       assertEquals(64, s.getRow(1).getCell(8).getCellStyle().getFillBackgroundColor());
+    }
+    
+    /**
      * Fonts where their colours come from the theme rather
      *  then being set explicitly still should allow the
      *  fetching of the RGB 
