@@ -116,7 +116,16 @@ public class XSSFComment implements Comment {
         _comment.setRef(ref.formatAsString());
         _comments.referenceUpdated(oldRef, _comment);
         
-        if(_vmlShape != null) _vmlShape.getClientDataArray(0).setColumnArray(0, new BigInteger(String.valueOf(col)));
+        if(_vmlShape != null) {
+           _vmlShape.getClientDataArray(0).setColumnArray(
+                 new BigInteger[] { new BigInteger(String.valueOf(col)) }
+           );
+           
+           // There is a very odd xmlbeans bug when changing the column
+           //  arrays which can lead to corrupt pointer
+           // This call seems to fix them again... See bug #50795
+           _vmlShape.getClientDataList().toString();
+        }
 	}
 
     /**
