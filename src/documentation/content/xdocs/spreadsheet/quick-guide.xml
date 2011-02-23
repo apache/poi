@@ -1333,17 +1333,26 @@ Examples:
 
     Sheet sheet = wb.createSheet();
     
-    Cell cell = sheet.createRow(3).createCell(5);
+    Rowl row  = sheet.createRow(3);
+    Cell cell = row.createCell(5);
     cell.setCellValue("F4");
     
     Drawing drawing = sheet.createDrawingPatriarch();
 
+    // When the comment box is visible, have it show in a 1x3 space
     ClientAnchor anchor = factory.createClientAnchor();
+    anchor.setCol1(cell.getColumnIndex());
+    anchor.setCol2(cell.getColumnIndex()+1);
+    anchor.setRow1(row.getRowNul());
+    anchor.setRow2(row.getRowNul()+3);
+
+    // Create the comment and set the text+author
     Comment comment = drawing.createCellComment(anchor);
     RichTextString str = factory.createRichTextString("Hello, World!");
     comment.setString(str);
     comment.setAuthor("Apache POI");
-    //assign the comment to the cell
+
+    // Assign the comment to the cell
     cell.setCellComment(comment);
 
     String fname = "comment-xssf.xls";
