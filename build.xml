@@ -124,9 +124,8 @@ under the License.
     <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
-    <property name="ooxml.jsr173.jar" location="${ooxml.lib}/geronimo-stax-api_1.0_spec-1.0.jar"/>
-    <property name="ooxml.jsr173.url"
-              value="${repository.m2}/maven2/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar"/>
+    <property name="ooxml.jsr173.jar" location="${ooxml.lib}/stax-api-1.0.1.jar"/>
+    <property name="ooxml.jsr173.url" value="${repository.m2}/maven2/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -910,7 +909,7 @@ under the License.
             <zipfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
             <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
-              <include name="geronimo-stax-*.jar"/>
+              <include name="stax-api-*.jar"/>
               <include name="xmlbeans-*.jar"/>
             </zipfileset>
             <zipfileset dir="${dist.dir}" prefix="${zipdir}">
@@ -934,7 +933,7 @@ under the License.
             <tarfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
-              <include name="geronimo-stax-*.jar"/>
+              <include name="stax-api-*.jar"/>
               <include name="xmlbeans-*.jar"/>
             </tarfileset>
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
