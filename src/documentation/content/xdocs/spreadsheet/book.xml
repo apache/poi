@@ -40,6 +40,7 @@
         <menu-item label="Pictorial Docs" href="diagrams.html"/>
         <menu-item label="Limitations" href="limitations.html"/>
         <menu-item label="User Defined Functions" href="user-defined-functions.html"/>
+        <menu-item label="ExcelAnt Tests" href="excelant.html"/>
     </menu>
 
     <menu label="Contributer's Guide">

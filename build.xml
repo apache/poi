@@ -109,6 +109,15 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
 
+    <!-- Excelant: -->
+    <property name="excelant.resource.dir" value="src/excelant/resources"/>
+    <property name="excelant.src" location="src/excelant/java"/>
+    <property name="excelant.src.test" location="src/excelant/testcases"/>
+    <property name="excelant.reports.test" location="build/excelant-test-results"/>
+    <property name="excelant.output.dir" location="build/excelant-classes"/>
+    <property name="excelant.output.test.dir" location="build/excelant-test-classes"/>
+    <property name="excelant.testokfile" location="build/excelant-testokfile.txt"/>
+
     <!-- jars in the /lib directory, see the fetch-jars target-->
     <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.jar"/>
     <property name="main.commons-logging.url"
@@ -117,6 +126,8 @@ under the License.
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-3.8.1.jar"/>
     <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/3.8.1/junit-3.8.1.jar"/>
+    <property name="main.ant.jar" location="${main.lib}/ant-1.8.2.jar"/>
+    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
@@ -154,9 +165,9 @@ under the License.
     </propertyset>
 
     <path id="main.classpath">
-        <fileset dir="${main.lib}">
-            <include name="*.jar"/>
-        </fileset>
+        <pathelement location="${main.commons-logging.jar}"/>
+        <pathelement location="${main.log4j.jar}"/>
+        <pathelement location="${main.junit.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -215,6 +226,18 @@ under the License.
         <pathelement location="${scratchpad.output.dir}"/>
     </path>
 
+    <path id="excelant.classpath">
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${main.ant.jar}"/>
+        <pathelement location="${ooxml.output.dir}"/>
+    </path>
+    <path id="test.excelant.classpath">
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${excelant.output.dir}"/>
+        <pathelement location="${excelant.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+    </path>
 
     <!-- Prints POI's Ant usage help -->
     <target name="help" description="Prints Apache POI's Ant usage help">
@@ -247,6 +270,9 @@ under the License.
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
+        <mkdir dir="${excelant.output.dir}"/>
+        <mkdir dir="${excelant.output.test.dir}"/>
+        <mkdir dir="${excelant.reports.test}"/>
         <mkdir dir="${examples.output.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site}"/>
@@ -271,6 +297,7 @@ under the License.
                     <available file="${main.commons-logging.jar}"/>
                     <available file="${main.log4j.jar}"/>
                     <available file="${main.junit.jar}"/>
+                    <available file="${main.ant.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -291,6 +318,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.junit.url}"/>
             <param name="destfile" value="${main.junit.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.ant.url}"/>
+            <param name="destfile" value="${main.ant.jar}"/>
         </antcall>
     </target>
 
@@ -396,7 +427,7 @@ under the License.
     </target>
 
     <target name="compile" depends="init, compile-main,
-    compile-scratchpad, compile-examples"
+            compile-scratchpad, compile-examples, compile-excelant"
             description="Compiles the POI main classes, scratchpad and examples"/>
 
     <target name="compile-all" depends="compile,compile-ooxml-lite"/>
@@ -508,6 +539,36 @@ under the License.
         </javac>
     </target>
 
+    <target name="compile-excelant" depends="compile-main,compile-ooxml">
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${excelant.output.dir}"
+               srcdir="${excelant.src}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath refid="excelant.classpath"/>
+        </javac>
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${excelant.output.test.dir}"
+               srcdir="${excelant.src.test}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="excelant.classpath"/>
+                <pathelement location="${excelant.output.dir}"/>
+                <pathelement path="${main.output.test.dir}"/>
+            </classpath>
+        </javac>
+        <copy todir="${excelant.output.dir}">
+            <fileset dir="${excelant.resource.dir}"/>
+        </copy>
+    </target>
+
     <target name="compile-version" depends="init"
             description="Compiles the version class">
         <!-- Generate the .java file -->
@@ -532,7 +593,7 @@ under the License.
         <delete file="${version.java}"/>
     </target>
 
-    <target name="test" depends="compile,test-main,test-scratchpad,test-ooxml"
+    <target name="test" depends="compile,test-main,test-scratchpad,test-ooxml,test-excelant"
             description="Tests main, scratchpad and ooxml"/>
     <target name="test-all" depends="test,test-ooxml-lite"/>
 
@@ -654,6 +715,37 @@ under the License.
         <ooxml-test-runner classpath="ooxml-lite.classpath"/>
     </target>
     
+    <target name="-test-excelant-check">
+        <uptodate property="excelant.test.notRequired" targetfile="${excelant.testokfile}">
+            <srcfiles dir="${excelant.src}"/>
+            <srcfiles dir="${excelant.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="-test-excelant-write-testfile" unless="excelant.test.failed">
+        <echo file="${excelant.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="test-excelant" depends="compile-excelant,-test-excelant-check"
+            unless="excelant.test.notRequired">
+        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+               failureproperty="excelant.test.failed">
+            <classpath refid="test.excelant.classpath"/>
+            <syspropertyset refid="junit.properties"/>
+            <jvmarg value="${poi.test.locale}"/>
+            <formatter type="plain"/>
+            <batchtest todir="${excelant.reports.test}">
+                <fileset dir="${excelant.src.test}">
+                    <include name="**/Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <delete file="${excelant.testokfile}"/>
+        <antcall target="-test-excelant-write-testfile"/>
+    </target>
+
+
+
     <target name="-check-docs">
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
             <srcfiles dir="${build.site.src}"/>
@@ -800,6 +892,13 @@ under the License.
                 </replacetokens>
             </filterchain>
         </copy>
+        <copy file="maven/poi-excelant.pom" tofile="${dist.dir}/poi-excelant-${version.id}.pom">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="${version.id}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
         <copy file="maven/mvn-deploy.sh" todir="${dist.dir}">
             <filterchain>
                 <replacetokens>
@@ -848,6 +947,11 @@ under the License.
             <fileset dir="${ooxml.lite.output.dir}"/>
             <metainf dir="legal/"/>
         </jar>
+        <jar destfile="${dist.dir}/${jar.name}-excelant-${version.id}-${DSTAMP}.jar"
+             manifest="build/poi-manifest.mf">
+            <fileset dir="${excelant.output.dir}"/>
+            <metainf dir="legal/"/>
+        </jar>
     </target>
 
     <target name="jar-src" description="Sources for Maven">
@@ -871,6 +975,11 @@ under the License.
             <fileset dir="${examples.src}"/>
             <metainf dir="legal/"/>
         </jar>
+        <jar destfile="${dist.dir}/${jar.name}-excelant-${version.id}-sources-${DSTAMP}.jar"
+             manifest="build/poi-manifest.mf">
+            <fileset dir="${excelant.src}"/>
+            <metainf dir="legal/"/>
+        </jar>
     </target>
 
     <target name="assemble" depends="jar,jar-src">
@@ -881,6 +990,7 @@ under the License.
             <include name="${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-examples-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar"/>
+            <include name="${jar.name}-excelant-${version.id}-${DSTAMP}.jar"/>
          </patternset>  
 
         <!-- patterns to exclude from source assemblies -->         
@@ -906,7 +1016,11 @@ under the License.
 
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
             <zipfileset dir="legal/" prefix="${zipdir}"/>
-            <zipfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
+            <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
+              <include name="commons-logging-*.jar"/>
+              <include name="junit-*.jar"/>
+              <include name="log4j-*.jar"/>
+            </zipfileset>
             <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
               <include name="stax-api-*.jar"/>
@@ -930,7 +1044,11 @@ under the License.
                longfile="gnu"
                compression="gzip">
             <tarfileset dir="legal/" prefix="${zipdir}"/>
-            <tarfileset dir="${main.lib}" prefix="${zipdir}/lib" includes="*.jar"/>
+            <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
+              <include name="commons-logging-*.jar"/>
+              <include name="junit-*.jar"/>
+              <include name="log4j-*.jar"/>
+            </zipfileset>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
               <include name="stax-api-*.jar"/>
@@ -999,6 +1117,7 @@ under the License.
       <m2-install artifactId="poi-ooxml"/>
       <m2-install artifactId="poi-examples"/>
       <m2-install artifactId="poi-ooxml-schemas"/>
+      <m2-install artifactId="poi-excelant"/>
     </target>
     
     <!-- Runs Apache Rat against the source code, to spot any files -->
