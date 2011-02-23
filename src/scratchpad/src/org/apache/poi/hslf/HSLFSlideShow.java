@@ -174,9 +174,6 @@ public final class HSLFSlideShow extends POIDocument {
 
 		// Look for any other streams
 		readOtherStreams();
-
-		// Look for Picture Streams:
-		readPictures();
 	}
 	/**
 	 * Constructs a new, empty, Powerpoint document.
@@ -309,7 +306,8 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
 	/**
-	 * Find and read in pictures contained in this presentation
+	 * Find and read in pictures contained in this presentation.
+	 * This is lazily called as and when we want to touch pictures.
 	 */
 	private void readPictures() throws IOException {
         _pictures = new ArrayList<PictureData>();
@@ -472,6 +470,9 @@ public final class HSLFSlideShow extends POIDocument {
 
 
         // Write any pictures, into another stream
+        if(_pictures == null) {
+           readPictures();
+        }
         if (_pictures.size() > 0) {
             ByteArrayOutputStream pict = new ByteArrayOutputStream();
             for (PictureData p : _pictures) {
@@ -526,15 +527,24 @@ public final class HSLFSlideShow extends POIDocument {
      * @return offset of this picture in the Pictures stream
 	 */
 	public int addPicture(PictureData img) {
-		int offset = 0;
-
-        if(_pictures.size() > 0){
-            PictureData prev = _pictures.get(_pictures.size() - 1);
-            offset = prev.getOffset() + prev.getRawData().length + 8;
-        }
-        img.setOffset(offset);
-        _pictures.add(img);
-        return offset;
+	   // Process any existing pictures if we haven't yet
+	   if(_pictures == null) {
+         try {
+            readPictures();
+         } catch(IOException e) {
+            throw new CorruptPowerPointFileException(e.getMessage());
+         }
+	   }
+	   
+	   // Add the new picture in
+      int offset = 0;
+	   if(_pictures.size() > 0) {
+	      PictureData prev = _pictures.get(_pictures.size() - 1);
+	      offset = prev.getOffset() + prev.getRawData().length + 8;
+	   }
+	   img.setOffset(offset);
+	   _pictures.add(img);
+	   return offset;
    }
 
 	/* ******************* fetching methods follow ********************* */
@@ -563,6 +573,14 @@ public final class HSLFSlideShow extends POIDocument {
 	 *  presentation doesn't contain pictures.
 	 */
 	public PictureData[] getPictures() {
+	   if(_pictures == null) {
+	      try {
+	         readPictures();
+	      } catch(IOException e) {
+	         throw new CorruptPowerPointFileException(e.getMessage());
+	      }
+	   }
+	   
 		return _pictures.toArray(new PictureData[_pictures.size()]);
 	}
 
