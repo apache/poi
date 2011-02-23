@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project name="excelant-tests" basedir="." xmlns:poi="antlib:org.apache.poi.ss.excelant">
+
+    <path id="excelant.classpath">
+        <pathelement location="build/classes"/>
+        <pathelement location="build/ooxml-classes"/>
+        <pathelement location="build/excelant-classes"/>
+        <pathelement location="build/excelant-test-classes"/> <!-- test udf is in the test classes -->
+    </path>
+
+    <typedef resource="org/apache/poi/ss/excelant/antlib.xml"
+             classpathref="excelant.classpath"
+             uri="antlib:org.apache.poi.ss.excelant"/>
+
+    <!-- Should fail because the fileName attribute is missing -->
+    <target name="test-nofile">
+        <poi:excelant>
+
+        </poi:excelant>
+    </target>
+
+    <!-- Should fail because the specified file is invalid -->
+    <target name="test-filenotfound">
+        <poi:excelant fileName="invalid.xls">
+
+        </poi:excelant>
+    </target>
+
+    <!-- basic evaluation test -->
+    <target name="test-evaluate">
+        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+            <poi:test showSuccessDetails="true">
+                <poi:setDouble cell="'MortgageCalculator'!$B$1" value="240000"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$2" value ="0.11"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$3" value ="30"/>
+                <poi:evaluate showDelta="true" cell="'MortgageCalculator'!$B$4"
+                              expectedValue="2285.576149" precision="1.0E-4" />
+            </poi:test>
+         </poi:excelant>
+      </target>
+
+    <target name="test-precision">
+        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+            <poi:precision value="1.0E-4"/>
+
+            <poi:test name="global-precision" showFailureDetail="true" showSuccessDetails="true">
+                <poi:setDouble cell="'MortgageCalculator'!$B$1" value="240000"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$2" value ="0.11"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$3" value ="30"/>
+                <poi:evaluate showDelta="true" cell="'MortgageCalculator'!$B$4"
+                              expectedValue="2285.576149"/>
+            </poi:test>
+
+            <poi:test name="custom-precision" showFailureDetail="true" showSuccessDetails="true">
+                <poi:setDouble cell="'MortgageCalculator'!$B$1" value="240000"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$2" value ="0.11"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$3" value ="30"/>
+                <poi:evaluate showDelta="true" cell="'MortgageCalculator'!$B$4"
+                              expectedValue="2285.576149" precision="1.0E-5"/>
+            </poi:test>
+
+            <poi:test name="tiny-precision" showFailureDetail="true" showSuccessDetails="true">
+                <poi:setDouble cell="'MortgageCalculator'!$B$1" value="240000"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$2" value ="0.11"/>
+                <poi:setDouble cell="'MortgageCalculator'!$B$3" value ="30"/>
+                <poi:evaluate showDelta="true" cell="'MortgageCalculator'!$B$4"
+                              expectedValue="2285.576149" precision="1.0E-10"/>
+            </poi:test>
+
+         </poi:excelant>
+      </target>
+
+    <!--
+        By default ExcelAnt does not terminate execution if an error occurs
+     -->
+    <target name="test-passonerror">
+        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+
+            <poi:test name="failonerror" showFailureDetail="true" showSuccessDetails="true">
+                <poi:setDouble cell="'MortageCalculatorFunction'!$D$1" value="1"/>
+                <poi:setDouble cell="'MortageCalculatorFunction'!$D$2" value="2"/>
+                <poi:setFormula cell="'MortageCalculatorFunction'!$D$3" value ="SUM(D1:D2)"/>
+                <poi:evaluate showDelta="true" cell="'MortageCalculatorFunction'!$D$3" expectedValue="2"/>
+            </poi:test>
+
+         </poi:excelant>
+    </target>
+
+    <!--
+        failOnError="true" forces ExcelAnt tot terminate execution if an error occurs
+     -->
+    <target name="test-failonerror">
+        <poi:excelant fileName="test-data/spreadsheet/excelant.xls" failOnError="true">
+
+            <poi:test name="failonerror" showFailureDetail="true" showSuccessDetails="true">
+                <poi:setDouble cell="'MortageCalculatorFunction'!$D$1" value="1"/>
+                <poi:setDouble cell="'MortageCalculatorFunction'!$D$2" value="2"/>
+                <poi:setFormula cell="'MortageCalculatorFunction'!$D$3" value ="SUM(D1:D2)"/>
+                <poi:evaluate showDelta="true" cell="'MortageCalculatorFunction'!$D$3" expectedValue="2"/>
+            </poi:test>
+
+         </poi:excelant>
+    </target>
+
+    <!-- Evaluation of user-defined functions -->
+    <target name="test-udf">
+        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+            <poi:udf functionAlias="calculatePayment"
+                     className="org.apache.poi.ss.examples.formula.CalculateMortgage"/>
+            <poi:test>
+                <poi:setDouble cell="'MortageCalculatorFunction'!$B$1" value="240000"/>
+                <poi:setDouble cell="'MortageCalculatorFunction'!$B$2" value ="0.11"/>
+                <poi:setDouble cell="'MortageCalculatorFunction'!$B$3" value ="30"/>
+                <poi:evaluate showDelta="true" cell="'MortageCalculatorFunction'!$B$4"
+                              expectedValue="2285.576149" precision="1.0E-4" />
+            </poi:test>
+         </poi:excelant>
+      </target>
+
+</project>
