@@ -54,6 +54,11 @@
            with the extension &quot;.doc&quot;, you would actually
            have a POIFS file system with a document file archived
            inside of that file system.</p>
+        <p>Note - this document is a good overview and explanation of
+           the file format, but for the very nitty-gritty details,
+           you should refer to 
+           <link href="http://msdn.microsoft.com/en-us/library/dd942138%28v=prot.13%29.aspx">[MS-CFB].pdf</link>
+           in the (now public) Microsoft Documentation.</p>
       </section>
       <section><title>Document Conventions</title>
         <p>This document utilizes the numeric types as described by
@@ -169,18 +174,22 @@ public int getShort (byte[] rec)
                <em>0x48</em> of the header, there is an int value that
                specifies how many XBAT blocks there are. The XBAT
                blocks begin at the specified index into the array of
-               blocks making up the POIFS file system, and continue in
-               sequence for the specified count of XBAT blocks.</p>
-            <p>Each XBAT block contains the indices of up to 128 BAT
+               blocks making up the POIFS file system, and are chained
+               for the specified count of XBAT blocks.</p>
+            <p>Each XBAT block contains the indices of up to 127 BAT
                blocks, so the document size can be expanded by another
-               8MB for each XBAT block. The BAT blocks indexed by an
+               ~8MB for each XBAT block. The BAT blocks indexed by an
                XBAT block are appended to the end of the list of BAT
                blocks enumerated in the header block. Thus the BAT
                blocks enumerated in the header block are BAT blocks 0
                through 108, the BAT blocks enumerated in the first
-               XBAT block are BAT blocks 109 through 236, the BAT
+               XBAT block are BAT blocks 109 through 235, the BAT
                blocks enumerated in the second XBAT block are BAT
-               blocks 237 through 364, and so on.</p>
+               blocks 236 through 362, and so on.</p>
+             <p>While a normal BAT block holds 128 entries, each XBAT
+               only references 127 BAT blocks. The last, 128th entry
+               in an XBAT is the offset to the next XBAT block in the
+               chain (or -1 if this is the last XBAT).</p>
 	    <p>Through the use of XBAT blocks, the limit on the
 	       overall document size is that imposed by the 4-byte
 	       block indices; if the indices are unsigned ints, the
