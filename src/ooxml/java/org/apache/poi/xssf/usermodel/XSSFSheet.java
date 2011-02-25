@@ -55,6 +55,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
@@ -2953,5 +2954,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
 
         return new XSSFAutoFilter(this);
+    }
+    
+    /**
+     * Returns any tables associated with this Sheet
+     */
+    public List<Table> getTables() {
+       List<Table> tables = new ArrayList<Table>();
+       for(POIXMLDocumentPart p : getRelations()) {
+          if (p.getPackageRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
+             Table table = (Table) p;
+             tables.add(table);
+          }
+       }
+       return tables;
     }
 }
