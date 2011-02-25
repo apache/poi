@@ -185,6 +185,20 @@ public class Table extends POIXMLDocumentPart {
 		}
 		return xmlColumnPr;
 	}
+	
+	/**
+	 * @return the name of the Table, if set
+	 */
+	public String getName() {
+	   return ctTable.getName();
+	}
+
+   /**
+    * @return the display name of the Table, if set
+    */
+   public String getDisplayName() {
+      return ctTable.getDisplayName();
+   }
 
 	/**
 	 * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
