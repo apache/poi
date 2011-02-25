@@ -1452,6 +1452,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     private void extractColorFromTheme(XSSFColor originalColor){
         XSSFColor themeColor = _theme.getThemeColor(originalColor.getTheme());
-        originalColor.setRgb(themeColor.getRgb());
+        // Set the raw colour, not the adjusted one
+        originalColor.setRgb(themeColor.getCTColor().getRgb());
     }
 }

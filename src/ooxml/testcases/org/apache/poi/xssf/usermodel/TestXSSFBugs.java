@@ -696,7 +696,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        }
        
        // Check one bit in detail
-       // TODO Is this correct, shouldn't one be white and one black?
+       // Check that we get back foreground=0 for the theme colours,
+       //  and background=64 for the auto colouring
        Sheet s = wb.getSheetAt(0);
        assertEquals(0,  s.getRow(0).getCell(8).getCellStyle().getFillForegroundColor());
        assertEquals(64, s.getRow(0).getCell(8).getCellStyle().getFillBackgroundColor());
@@ -721,13 +722,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(42, cs.getFillForegroundColor());
        assertEquals(42, cs.getFillForegroundColorColor().getIndexed());
        assertNotNull(cs.getFillForegroundColorColor().getRgb());
-       assertEquals("00CCFFCC", cs.getFillForegroundColorColor().getARGBHex());
+       assertEquals("FFCCFFCC", cs.getFillForegroundColorColor().getARGBHex());
     }
     
     /**
      * Fonts where their colours come from the theme rather
      *  then being set explicitly still should allow the
-     *  fetching of the RGB 
+     *  fetching of the RGB.
+     * TODO Allow XSSFFont to get at the themes table, so it can do
+     *  the same trick that XSSFCellStyle does with theme colours 
      */
     public void DISABLEDtest50784() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx");
