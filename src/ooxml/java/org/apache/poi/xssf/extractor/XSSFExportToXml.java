@@ -134,7 +134,7 @@ public class XSSFExportToXml implements Comparator<String>{
         if (isNamespaceDeclared()) {
             root=doc.createElementNS(getNamespace(),rootElement);
         } else {
-            root=doc.createElement(rootElement);
+            root = doc.createElementNS("", rootElement);
         }
         doc.appendChild(root);
 
@@ -339,7 +339,7 @@ public class XSSFExportToXml implements Comparator<String>{
         NamedNodeMap attributesMap = currentNode.getAttributes();
         Node attribute = attributesMap.getNamedItem(attributeName);
         if (attribute==null) {
-            attribute = doc.createAttribute(attributeName);
+            attribute = doc.createAttributeNS("", attributeName);
             attributesMap.setNamedItem(attribute);
         }
         return attribute;
@@ -350,7 +350,7 @@ public class XSSFExportToXml implements Comparator<String>{
         if (isNamespaceDeclared()) {
             selectedNode =doc.createElementNS(getNamespace(),axisName);
         } else {
-            selectedNode =doc.createElement(axisName);
+            selectedNode = doc.createElementNS("", axisName);
         }
         currentNode.appendChild(selectedNode);
         return selectedNode;
