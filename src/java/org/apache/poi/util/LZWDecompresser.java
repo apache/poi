@@ -35,10 +35,16 @@ public abstract class LZWDecompresser {
    /**
     * Does the mask bit mean it's compressed or uncompressed?
     */
-   private boolean maskMeansCompressed;
+   private final boolean maskMeansCompressed;
+   /**
+    * How much to append to the code length in the stream
+    *  to get the real code length? Normally 2 or 3
+    */
+   private final int codeLengthIncrease;
    
-   protected LZWDecompresser(boolean maskMeansCompressed) {
+   protected LZWDecompresser(boolean maskMeansCompressed, int codeLengthIncrease) {
       this.maskMeansCompressed = maskMeansCompressed;
+      this.codeLengthIncrease = codeLengthIncrease;
    }
    
    /**
@@ -135,7 +141,7 @@ public abstract class LZWDecompresser {
                //  what position of the code to start at
                // (The position is the first 12 bits, the
                //  length is the last 4 bits)
-               len = (dataIPt2 & 15) + 3;
+               len = (dataIPt2 & 15) + codeLengthIncrease;
                pntr = (dataIPt2 & 240)*16 + dataIPt1;
 
                // Adjust the pointer as needed

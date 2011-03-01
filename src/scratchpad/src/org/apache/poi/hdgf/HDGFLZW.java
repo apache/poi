@@ -38,7 +38,7 @@ import org.apache.poi.util.LZWDecompresser;
 public class HDGFLZW extends LZWDecompresser {
    public HDGFLZW() {
       // We're the wrong way round!
-      super(false);
+      super(false, 3);
    }
 
    /**

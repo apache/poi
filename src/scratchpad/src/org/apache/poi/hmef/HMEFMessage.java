@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hmef.Attribute.AttributeID;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -102,5 +104,56 @@ public final class HMEFMessage {
       
       // Handle the next one down
       process(inp, level);
+   }
+   
+   /**
+    * Returns all HMEF/TNEF attributes of the message. 
+    * Note - In a typical message, most of the interesting properties
+    *  are stored as {@link MAPIAttribute}s - see {@link #getMessageMAPIAttributes()} 
+    */
+   public List<Attribute> getMessageAttributes() {
+      return messageAttributes;
+   }
+   
+   /**
+    * Returns all MAPI attributes of the message.
+    * Note - A small number of HMEF/TNEF specific attributes normally
+    *  apply to most messages, see {@link #getMessageAttributes()}
+    */
+   public List<MAPIAttribute> getMessageMAPIAttributes() {
+      return mapiAttributes;
+   }
+   
+   /**
+    * Returns all the Attachments of the message.
+    */
+   public List<Attachment> getAttachments() {
+      return attachments;
+   }
+   
+   /**
+    * Return the message attribute with the given ID,
+    *  or null if there isn't one. 
+    */
+   public Attribute getMessageAttribute(AttributeID id) {
+      for(Attribute attr : messageAttributes) {
+         if(attr.getId() == id) {
+            return attr;
+         }
+      }
+      return null;
+   }
+   
+   /**
+    * Return the message MAPI Attribute with the given ID,
+    *  or null if there isn't one. 
+    */
+   public MAPIAttribute getMessageMAPIAttribute(MAPIProperty id) {
+      for(MAPIAttribute attr : mapiAttributes) {
+         if(attr.getProperty() == id) {
+            return attr;
+         }
+      }
+      return null;
    }
 }

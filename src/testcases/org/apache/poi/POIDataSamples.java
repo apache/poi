@@ -35,6 +35,7 @@ public final class POIDataSamples {
     private static POIDataSamples _instOpenxml4j;
     private static POIDataSamples _instPOIFS;
     private static POIDataSamples _instDDF;
+    private static POIDataSamples _instHMEF;
     private static POIDataSamples _instHPSF;
     private static POIDataSamples _instHPBF;
     private static POIDataSamples _instHSMF;
@@ -97,6 +98,11 @@ public final class POIDataSamples {
     public static POIDataSamples getPublisherInstance(){
         if(_instHPBF == null) _instHPBF = new POIDataSamples("publisher");
         return _instHPBF;
+    }
+
+    public static POIDataSamples getHMEFInstance(){
+        if(_instHMEF == null) _instHMEF = new POIDataSamples("hmef");
+        return _instHMEF;
     }
 
     public static POIDataSamples getHSMFInstance(){

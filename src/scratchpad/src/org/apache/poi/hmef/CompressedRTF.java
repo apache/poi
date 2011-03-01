@@ -54,7 +54,7 @@ public final class CompressedRTF extends LZWDecompresser {
       "{\\colortbl\\red0\\green0\\blue0\n\r\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx";
    
    public CompressedRTF() {
-      super(true);
+      super(true, 2);
    }
 
    public void decompress(InputStream src, OutputStream res) throws IOException {
