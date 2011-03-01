@@ -24,13 +24,12 @@ import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PageOrder;
 import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.ss.usermodel.PrintCellComments;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
  * Tests for {@link XSSFPrintSetup}
  */
 public class TestXSSFPrintSetup extends TestCase {
-
-
     public void testSetGetPaperSize() {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTPageSetup pSetup = worksheet.addNewPageSetup();
@@ -206,5 +205,47 @@ public class TestXSSFPrintSetup extends TestCase {
         printSetup.setCopies((short) 15);
         assertEquals(15, pSetup.getCopies());
     }
+    
+    public void testSetSaveRead() throws Exception {
+       XSSFWorkbook wb = new XSSFWorkbook();
+       XSSFSheet s1 = wb.createSheet();
+       assertEquals(false, s1.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+       
+       XSSFPrintSetup print = s1.getPrintSetup();
+       assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+       
+       print.setCopies((short)3);
+       print.setLandscape(true);
+       assertEquals(3, print.getCopies());
+       assertEquals(true, print.getLandscape());
+       
+       XSSFSheet s2 = wb.createSheet();
+       assertEquals(false, s2.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
+       
+       // Round trip and check
+       wb = XSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+       
+       s1 = wb.getSheetAt(0);
+       s2 = wb.getSheetAt(1);
+       
+       assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+       assertEquals(false, s2.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
+       
+       print = s1.getPrintSetup();
+       assertEquals(3, print.getCopies());
+       assertEquals(true, print.getLandscape());
+    }
 
+    /**
+     * Open a file with print settings, save and check.
+     * Then, change, save, read, check
+     */
+    public void testRoundTrip() {
+       // TODO
+    }
 }

@@ -35,16 +35,23 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
  * Page setup and page margins settings for the worksheet.
  */
 public class XSSFPrintSetup implements PrintSetup {
-
     private CTWorksheet ctWorksheet;
     private CTPageSetup pageSetup;
     private CTPageMargins pageMargins;
 
-
     protected XSSFPrintSetup(CTWorksheet worksheet) {
         this.ctWorksheet = worksheet;
-        this.pageSetup = ctWorksheet.getPageSetup() == null ? ctWorksheet.addNewPageSetup() : ctWorksheet.getPageSetup();
-        this.pageMargins = ctWorksheet.getPageMargins() == null ? ctWorksheet.addNewPageMargins() : ctWorksheet.getPageMargins();
+        
+        if(ctWorksheet.isSetPageSetup()) {
+           this.pageSetup = ctWorksheet.getPageSetup();
+        } else {
+           this.pageSetup = ctWorksheet.addNewPageSetup();
+        }
+        if(ctWorksheet.isSetPageMargins()) {
+           this.pageMargins = ctWorksheet.getPageMargins();
+        } else {
+           this.pageMargins = ctWorksheet.addNewPageMargins();
+        }
     }
 
     /**
