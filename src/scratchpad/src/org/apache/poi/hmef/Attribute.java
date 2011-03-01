@@ -254,4 +254,9 @@ public final class Attribute {
    public byte[] getData() {
       return data;
    }
+   
+   public String toString() {
+      return "Attachment " + getId().toString() + ", type=" + type + 
+             ", data length=" + data.length; 
+   }
 }
