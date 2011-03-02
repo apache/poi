@@ -33,7 +33,7 @@
     </developers>
 
     <changes>
-        <release version="3.8-beta1" date="2010-??-??">
+        <release version="3.8-beta1" date="2011-03-07">
            <action dev="poi-developers" type="add">50610 - Ant tasks for running POI against a workbook</action>
            <action dev="poi-developers" type="add">32903 - Correct XBAT chaining explanation in /poifs/fileformat.html</action>
            <action dev="poi-developers" type="add">50829 - Support for getting the tables associated with a XSSFSheet</action>

@@ -32,8 +32,8 @@
   </header>
 
   <body>
-    <section><title>29 October 2010 - POI 3.7 available</title>
-     <p>The Apache POI team is pleased to announce the release of 3.7. This includes a large number of bug fixes, and some
+    <section><title>7 March 2011 - POI 3.8-beta1 available</title>
+     <p>The Apache POI team is pleased to announce the release of 3.8. This includes a large number of bug fixes, and some
         enhancements (especially text extraction). See the
         <link href="http://www.apache.org/dist/poi/release/bin/RELEASE_NOTES.txt">full release notes</link> for more details.
       </p>
