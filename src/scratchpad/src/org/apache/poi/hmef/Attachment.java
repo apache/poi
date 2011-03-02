@@ -20,8 +20,11 @@ package org.apache.poi.hmef;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.TNEFMAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 
 
 /**
@@ -33,21 +36,59 @@ public final class Attachment {
    private final List<TNEFAttribute> attributes = new ArrayList<TNEFAttribute>();
    private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    
-   
-   
    protected void addAttribute(TNEFAttribute attr) {
       attributes.add(attr);
+      
+      if(attr instanceof TNEFMAPIAttribute) {
+         TNEFMAPIAttribute tnefMAPI = (TNEFMAPIAttribute)attr;
+         mapiAttributes.addAll( tnefMAPI.getMAPIAttributes() );
+      }
    }
    
-   protected void addAttribute(MAPIAttribute attr) {
-      mapiAttributes.add(attr);
+   /**
+    * Return the attachment attribute with the given ID,
+    *  or null if there isn't one. 
+    */
+   public TNEFAttribute getMessageAttribute(TNEFProperty id) {
+      for(TNEFAttribute attr : attributes) {
+         if(attr.getProperty() == id) {
+            return attr;
+         }
+      }
+      return null;
    }
    
+   /**
+    * Return the attachment MAPI Attribute with the given ID,
+    *  or null if there isn't one. 
+    */
+   public MAPIAttribute getMessageMAPIAttribute(MAPIProperty id) {
+      for(MAPIAttribute attr : mapiAttributes) {
+         if(attr.getProperty() == id) {
+            return attr;
+         }
+      }
+      return null;
+   }
+   
+   /**
+    * Returns all HMEF/TNEF attributes of the attachment, 
+    *  such as filename, icon and contents
+    */
    public List<TNEFAttribute> getAttributes() {
       return attributes;
    }
    
+   /**
+    * Returns all MAPI attributes of the attachment, 
+    *  such as extension, encoding, size and position
+    */
    public List<MAPIAttribute> getMAPIAttributes() {
       return mapiAttributes;
+   }
+   
+   public String getFilename() {
+      TNEFAttribute attr = null;
+      return null;
    }
 }

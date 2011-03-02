@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
+import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.TNEFMAPIAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
@@ -59,24 +62,6 @@ public final class HMEFMessage {
       
       // Now begin processing the contents
       process(inp, 0);
-      
-      // Finally expand out the MAPI Attributes
-      for(TNEFAttribute attr : messageAttributes) {
-         if(attr.getProperty() == TNEFProperty.ID_MAPIPROPERTIES) {
-            mapiAttributes.addAll( 
-                  MAPIAttribute.create(attr) 
-            );
-         }
-      }
-      for(Attachment attachment : attachments) {
-         for(TNEFAttribute attr : attachment.getAttributes()) {
-            if(attr.getProperty()== TNEFProperty.ID_MAPIPROPERTIES) {
-               attachment.getMAPIAttributes().addAll(
-                     MAPIAttribute.create(attr) 
-               );
-            }
-         }
-      }
    }
    
    private void process(InputStream inp, int lastLevel) throws IOException {
@@ -87,11 +72,16 @@ public final class HMEFMessage {
       }
     
       // Build the attribute
-      TNEFAttribute attr = new TNEFAttribute(inp);
+      TNEFAttribute attr = TNEFAttribute.create(inp);
       
       // Decide what to attach it to, based on the levels and IDs
       if(level == TNEFProperty.LEVEL_MESSAGE) {
          messageAttributes.add(attr);
+         
+         if(attr instanceof TNEFMAPIAttribute) {
+            TNEFMAPIAttribute tnefMAPI = (TNEFMAPIAttribute)attr;
+            mapiAttributes.addAll( tnefMAPI.getMAPIAttributes() );
+         }
       } else if(level == TNEFProperty.LEVEL_ATTACHMENT) {
          // Previous attachment or a new one?
          if(attachments.size() == 0 || attr.getProperty() == TNEFProperty.ID_ATTACHRENDERDATA) {
@@ -99,7 +89,8 @@ public final class HMEFMessage {
          }
          
          // Save the attribute for it
-         attachments.get(attachments.size()-1).addAttribute(attr);
+         Attachment attach = attachments.get(attachments.size()-1);
+         attach.addAttribute(attr);
       } else {
          throw new IllegalStateException("Unhandled level " + level);
       }
@@ -157,5 +148,41 @@ public final class HMEFMessage {
          }
       }
       return null;
+   }
+   
+   /**
+    * Return the string value of the mapi property, or null
+    *  if it isn't set
+    */
+   private String getString(MAPIProperty id) {
+      MAPIAttribute attr = getMessageMAPIAttribute(id);
+      if(id == null) {
+         return null;
+      }
+      if(attr instanceof MAPIStringAttribute) {
+         return ((MAPIStringAttribute)attr).getDataString();
+      }
+      if(attr instanceof MAPIRtfAttribute) {
+         return ((MAPIRtfAttribute)attr).getDataString();
+      }
+      
+      System.err.println("Warning, no string property found: " + attr.toString());
+      return null;
+   }
+   
+   /**
+    * Returns the Message Subject, or null if the mapi property
+    *  for this isn't set
+    */
+   public String getSubject() {
+      return getString(MAPIProperty.CONVERSATION_TOPIC);
+   }
+   
+   /**
+    * Returns the Message Body, as RTF, or null if the mapi property
+    *  for this isn't set
+    */
+   public String getBody() {
+      return getString(MAPIProperty.RTF_COMPRESSED);
    }
 }

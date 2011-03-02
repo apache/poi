@@ -32,19 +32,18 @@ import org.apache.poi.util.LittleEndian;
  * Note - the types and IDs differ from standard Outlook/MAPI
  *  ones, so we can't just re-use the HSMF ones.
  */
-public final class TNEFAttribute {
+public class TNEFAttribute {
    private final TNEFProperty property;
    private final int type;
    private final byte[] data;
    private final int checksum;
    
    /**
-    * Constructs a single new attribute from
-    *  the contents of the stream
+    * Constructs a single new attribute from the id, type,
+    *  and the contents of the stream
     */
-   public TNEFAttribute(InputStream inp) throws IOException {
-      int id     = LittleEndian.readUShort(inp);
-      this.type  = LittleEndian.readUShort(inp);
+   protected TNEFAttribute(int id, int type, InputStream inp) throws IOException {
+      this.type = type;
       int length = LittleEndian.readInt(inp);
       
       property = TNEFProperty.getBest(id, type);
@@ -52,9 +51,26 @@ public final class TNEFAttribute {
       IOUtils.readFully(inp, data);
       
       checksum = LittleEndian.readUShort(inp);
+   }
+   
+   /**
+    * Creates a new TNEF Attribute by reading data from
+    *  the stream within a {@link HMEFMessage}
+    */
+   public static TNEFAttribute create(InputStream inp) throws IOException {
+      int id   = LittleEndian.readUShort(inp);
+      int type = LittleEndian.readUShort(inp);
       
-      // TODO Handle the MapiProperties attribute in
-      //  a different way, as we need to recurse into it
+      // Create as appropriate
+      if(id == TNEFProperty.ID_MAPIPROPERTIES.id ||
+            id == TNEFProperty.ID_ATTACHMENT.id) {
+         return new TNEFMAPIAttribute(id, type, inp);
+      }
+      if(type == TNEFProperty.TYPE_STRING ||
+           type == TNEFProperty.TYPE_TEXT) {
+         return new TNEFStringAttribute(id, type, inp);
+      }
+      return new TNEFAttribute(id, type, inp); 
    }
 
    public TNEFProperty getProperty() {
@@ -70,7 +86,7 @@ public final class TNEFAttribute {
    }
    
    public String toString() {
-      return "Attachment " + property.toString() + ", type=" + type + 
+      return "Attribute " + property.toString() + ", type=" + type + 
              ", data length=" + data.length; 
    }
 }

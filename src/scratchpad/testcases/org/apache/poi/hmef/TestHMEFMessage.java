@@ -20,8 +20,8 @@ package org.apache.poi.hmef;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.util.LittleEndian;
 
 public final class TestHMEFMessage extends TestCase {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -56,13 +56,9 @@ public final class TestHMEFMessage extends TestCase {
          int mapiAttrCount = attach.getMAPIAttributes().size();
          
          assertEquals(6, attrCount);
-         // TODO
-//         assertTrue("Should be 3-4 attributes, found " + mapiAttrCount, mapiAttrCount >= 20);
-//         assertTrue("Should be 3-4 attributes, found " + mapiAttrCount, mapiAttrCount <= 25);
+         assertTrue("Should be 20-25 mapi attributes, found " + mapiAttrCount, mapiAttrCount >= 20);
+         assertTrue("Should be 20-25 mapi attributes, found " + mapiAttrCount, mapiAttrCount <= 25);
       }
-      
-      
-      // TODO
 	}
 	
 	public void testBasicMessageAttributes() throws Exception {
@@ -88,18 +84,22 @@ public final class TestHMEFMessage extends TestCase {
       assertNull(msg.getMessageAttribute(TNEFProperty.ID_ATTACHDATA));
       
       // Now check the details of one or two
-      // TODO
+      assertEquals(
+            0x010000, 
+            LittleEndian.getInt( msg.getMessageAttribute(TNEFProperty.ID_TNEFVERSION).getData() )
+      );
+      assertEquals(
+            "IPM.Microsoft Mail.Note\0", 
+            new String(msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), "ASCII")
+      );
 	}
    
    public void testBasicMessageMAPIAttributes() throws Exception {
-      // TODO
-   }
-   
-   public void testBasicAttachments() throws Exception {
-      // TODO
-   }
-   
-   public void testMessageAttributeDetails() throws Exception {
-      // TODO
+      HMEFMessage msg = new HMEFMessage(
+            _samples.openResourceAsStream("quick-winmail.dat")
+      );
+      
+      assertEquals("This is a test message", msg.getSubject());
+      assertEquals("{\\rtf1", msg.getBody().substring(0, 6));
    }
 }
