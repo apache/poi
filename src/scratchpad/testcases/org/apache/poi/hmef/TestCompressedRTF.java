@@ -22,7 +22,8 @@ import java.io.ByteArrayInputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hmef.Attribute.AttributeID;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;

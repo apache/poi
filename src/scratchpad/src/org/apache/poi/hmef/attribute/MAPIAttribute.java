@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hmef;
+package org.apache.poi.hmef.attribute;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hmef.Attachment;
+import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.HexDump;
@@ -79,11 +81,11 @@ public class MAPIAttribute {
     * Parses a MAPI Properties TNEF Attribute, and returns
     *  the list of MAPI Attributes contained within it
     */
-   public static List<MAPIAttribute> create(Attribute parent) throws IOException {
-      if(parent.getId() != Attribute.ID_MAPIPROPERTIES) {
+   public static List<MAPIAttribute> create(TNEFAttribute parent) throws IOException {
+      if(parent.getProperty() != TNEFProperty.ID_MAPIPROPERTIES) {
          throw new IllegalArgumentException(
                "Can only create from a MAPIProperty attribute, " +
-               "instead received a " + parent.getId() + " one"
+               "instead received a " + parent.getProperty() + " one"
          );
       }
       ByteArrayInputStream inp = new ByteArrayInputStream(parent.getData());

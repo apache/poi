@@ -20,6 +20,8 @@ package org.apache.poi.hmef;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.TNEFProperty;
 
 public final class TestHMEFMessage extends TestCase {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -70,20 +72,20 @@ public final class TestHMEFMessage extends TestCase {
       
       // Should have version, codepage, class and MAPI
       assertEquals(4, msg.getMessageAttributes().size());
-      assertNotNull(msg.getMessageAttribute(Attribute.ID_TNEFVERSION));
-      assertNotNull(msg.getMessageAttribute(Attribute.ID_OEMCODEPAGE));
-      assertNotNull(msg.getMessageAttribute(Attribute.ID_MESSAGECLASS));
-      assertNotNull(msg.getMessageAttribute(Attribute.ID_MAPIPROPERTIES));
+      assertNotNull(msg.getMessageAttribute(TNEFProperty.ID_TNEFVERSION));
+      assertNotNull(msg.getMessageAttribute(TNEFProperty.ID_OEMCODEPAGE));
+      assertNotNull(msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS));
+      assertNotNull(msg.getMessageAttribute(TNEFProperty.ID_MAPIPROPERTIES));
       
       // Check the order
-      assertEquals(Attribute.ID_TNEFVERSION, msg.getMessageAttributes().get(0).getId());
-      assertEquals(Attribute.ID_OEMCODEPAGE, msg.getMessageAttributes().get(1).getId());
-      assertEquals(Attribute.ID_MESSAGECLASS, msg.getMessageAttributes().get(2).getId());
-      assertEquals(Attribute.ID_MAPIPROPERTIES, msg.getMessageAttributes().get(3).getId());
+      assertEquals(TNEFProperty.ID_TNEFVERSION, msg.getMessageAttributes().get(0).getProperty());
+      assertEquals(TNEFProperty.ID_OEMCODEPAGE, msg.getMessageAttributes().get(1).getProperty());
+      assertEquals(TNEFProperty.ID_MESSAGECLASS, msg.getMessageAttributes().get(2).getProperty());
+      assertEquals(TNEFProperty.ID_MAPIPROPERTIES, msg.getMessageAttributes().get(3).getProperty());
       
       // Check some that aren't there
-      assertNull(msg.getMessageAttribute(Attribute.ID_AIDOWNER));
-      assertNull(msg.getMessageAttribute(Attribute.ID_ATTACHDATA));
+      assertNull(msg.getMessageAttribute(TNEFProperty.ID_AIDOWNER));
+      assertNull(msg.getMessageAttribute(TNEFProperty.ID_ATTACHDATA));
       
       // Now check the details of one or two
       // TODO

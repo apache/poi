@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hmef.Attribute.AttributeID;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 
@@ -38,7 +40,7 @@ public final class HMEFMessage {
    public static final long HEADER_SIGNATURE = 0x223e9f78;
    
    private int fileId; 
-   private List<Attribute> messageAttributes = new ArrayList<Attribute>();
+   private List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
    private List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    private List<Attachment> attachments = new ArrayList<Attachment>();
    
@@ -59,16 +61,16 @@ public final class HMEFMessage {
       process(inp, 0);
       
       // Finally expand out the MAPI Attributes
-      for(Attribute attr : messageAttributes) {
-         if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+      for(TNEFAttribute attr : messageAttributes) {
+         if(attr.getProperty() == TNEFProperty.ID_MAPIPROPERTIES) {
             mapiAttributes.addAll( 
                   MAPIAttribute.create(attr) 
             );
          }
       }
       for(Attachment attachment : attachments) {
-         for(Attribute attr : attachment.getAttributes()) {
-            if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+         for(TNEFAttribute attr : attachment.getAttributes()) {
+            if(attr.getProperty()== TNEFProperty.ID_MAPIPROPERTIES) {
                attachment.getMAPIAttributes().addAll(
                      MAPIAttribute.create(attr) 
                );
@@ -80,19 +82,19 @@ public final class HMEFMessage {
    private void process(InputStream inp, int lastLevel) throws IOException {
       // Fetch the level
       int level = inp.read();
-      if(level == Attribute.LEVEL_END_OF_FILE) {
+      if(level == TNEFProperty.LEVEL_END_OF_FILE) {
          return;
       }
     
       // Build the attribute
-      Attribute attr = new Attribute(inp);
+      TNEFAttribute attr = new TNEFAttribute(inp);
       
       // Decide what to attach it to, based on the levels and IDs
-      if(level == Attribute.LEVEL_MESSAGE) {
+      if(level == TNEFProperty.LEVEL_MESSAGE) {
          messageAttributes.add(attr);
-      } else if(level == Attribute.LEVEL_ATTACHMENT) {
+      } else if(level == TNEFProperty.LEVEL_ATTACHMENT) {
          // Previous attachment or a new one?
-         if(attachments.size() == 0 || attr.getId() == Attribute.ID_ATTACHRENDERDATA) {
+         if(attachments.size() == 0 || attr.getProperty() == TNEFProperty.ID_ATTACHRENDERDATA) {
             attachments.add(new Attachment());
          }
          
@@ -111,7 +113,7 @@ public final class HMEFMessage {
     * Note - In a typical message, most of the interesting properties
     *  are stored as {@link MAPIAttribute}s - see {@link #getMessageMAPIAttributes()} 
     */
-   public List<Attribute> getMessageAttributes() {
+   public List<TNEFAttribute> getMessageAttributes() {
       return messageAttributes;
    }
    
@@ -135,9 +137,9 @@ public final class HMEFMessage {
     * Return the message attribute with the given ID,
     *  or null if there isn't one. 
     */
-   public Attribute getMessageAttribute(AttributeID id) {
-      for(Attribute attr : messageAttributes) {
-         if(attr.getId() == id) {
+   public TNEFAttribute getMessageAttribute(TNEFProperty id) {
+      for(TNEFAttribute attr : messageAttributes) {
+         if(attr.getProperty() == id) {
             return attr;
          }
       }

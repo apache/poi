@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.poi.hmef.Attribute;
 import org.apache.poi.hmef.HMEFMessage;
-import org.apache.poi.hmef.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
@@ -82,17 +83,17 @@ public final class HMEFDumper {
       while(true) {
          // Fetch the level
          level = inp.read();
-         if(level == Attribute.LEVEL_END_OF_FILE) {
+         if(level == TNEFProperty.LEVEL_END_OF_FILE) {
             break;
          }
        
          // Build the attribute
-         Attribute attr = new Attribute(inp);
+         TNEFAttribute attr = new TNEFAttribute(inp);
          
          // Print the attribute into
          System.out.println(
                "Level " + level + " : Type " + attr.getType() +
-               " : ID " + attr.getId().toString()
+               " : ID " + attr.getProperty().toString()
          );
          
          // Print the contents
@@ -124,7 +125,7 @@ public final class HMEFDumper {
          }
          System.out.println();
          
-         if(attr.getId() == Attribute.ID_MAPIPROPERTIES) {
+         if(attr.getProperty() == TNEFProperty.ID_MAPIPROPERTIES) {
             List<MAPIAttribute> attrs = MAPIAttribute.create(attr);
             for(MAPIAttribute ma : attrs) {
                System.out.println(indent + indent + ma);
