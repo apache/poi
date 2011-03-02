@@ -82,7 +82,14 @@ public class MAPIAttribute {
     *  the list of MAPI Attributes contained within it
     */
    public static List<MAPIAttribute> create(TNEFAttribute parent) throws IOException {
-      if(parent.getProperty() != TNEFProperty.ID_MAPIPROPERTIES) {
+      if(parent.getProperty() == TNEFProperty.ID_MAPIPROPERTIES) {
+         // Regular MAPI Properties, normally on the message
+      }
+      else if(parent.getProperty() == TNEFProperty.ID_ATTACHMENT) {
+         // MAPI Properties for an attachment
+      }
+      else {
+         // Something else, oh dear...
          throw new IllegalArgumentException(
                "Can only create from a MAPIProperty attribute, " +
                "instead received a " + parent.getProperty() + " one"

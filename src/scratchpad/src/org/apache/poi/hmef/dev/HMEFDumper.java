@@ -79,6 +79,7 @@ public final class HMEFDumper {
    
    private void dump() throws IOException {
       int level;
+      int attachments = 0;
       
       while(true) {
          // Fetch the level
@@ -88,7 +89,16 @@ public final class HMEFDumper {
          }
        
          // Build the attribute
-         TNEFAttribute attr = new TNEFAttribute(inp);
+         TNEFAttribute attr = TNEFAttribute.create(inp);
+         
+         // Is it a new attachment?
+         if(level == TNEFProperty.LEVEL_ATTACHMENT && 
+               attr.getProperty() == TNEFProperty.ID_ATTACHRENDERDATA) {
+            attachments++;
+            System.out.println();
+            System.out.println("Attachment # " + attachments);
+            System.out.println();
+         }
          
          // Print the attribute into
          System.out.println(
@@ -125,7 +135,8 @@ public final class HMEFDumper {
          }
          System.out.println();
          
-         if(attr.getProperty() == TNEFProperty.ID_MAPIPROPERTIES) {
+         if(attr.getProperty() == TNEFProperty.ID_MAPIPROPERTIES ||
+               attr.getProperty() == TNEFProperty.ID_ATTACHMENT) {
             List<MAPIAttribute> attrs = MAPIAttribute.create(attr);
             for(MAPIAttribute ma : attrs) {
                System.out.println(indent + indent + ma);
