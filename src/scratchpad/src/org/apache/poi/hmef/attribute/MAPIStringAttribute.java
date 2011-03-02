@@ -15,24 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hmef;
+package org.apache.poi.hmef.attribute;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.hmef.Attribute.AttributeID;
+import org.apache.poi.hmef.Attachment;
+import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A pure-MAPI attribute holding a String, which applies 

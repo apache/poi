@@ -20,15 +20,22 @@ package org.apache.poi.hmef;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
+
 
 /**
- * An attachment within a {@link HMEFMessage}
+ * An attachment within a {@link HMEFMessage}. Provides both helper
+ *  methods to get at common parts and attributes of the attachment,
+ *  and list methods to get all of them.
  */
 public final class Attachment {
-   private final List<Attribute> attributes = new ArrayList<Attribute>();
+   private final List<TNEFAttribute> attributes = new ArrayList<TNEFAttribute>();
    private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    
-   protected void addAttribute(Attribute attr) {
+   
+   
+   protected void addAttribute(TNEFAttribute attr) {
       attributes.add(attr);
    }
    
@@ -36,7 +43,7 @@ public final class Attachment {
       mapiAttributes.add(attr);
    }
    
-   public List<Attribute> getAttributes() {
+   public List<TNEFAttribute> getAttributes() {
       return attributes;
    }
    
