@@ -48,44 +48,45 @@ public final class TestCompressedRTF extends TestCase {
        assertTrue(rtfAttr instanceof MAPIRtfAttribute);
        
        // Check the start of the compressed version
-       assertEquals(5907, rtfAttr.getData().length);
+       byte[] data = ((MAPIRtfAttribute)rtfAttr).getRawData();
+       assertEquals(5907, data.length);
        
        // First 16 bytes is header stuff
        // Check it has the length + compressed marker
-       assertEquals(5907-4, LittleEndian.getShort(rtfAttr.getData()));
+       assertEquals(5907-4, LittleEndian.getShort(data));
        assertEquals(
              "LZFu", 
-             StringUtil.getFromCompressedUnicode(rtfAttr.getData(), 8, 4)
+             StringUtil.getFromCompressedUnicode(data, 8, 4)
        );
              
        
        // Now Look at the code
-       assertEquals((byte)0x07, rtfAttr.getData()[16+0]);  // Flag: cccUUUUU
-       assertEquals((byte)0x00, rtfAttr.getData()[16+1]);  //  c1a: offset 0 / 0x000
-       assertEquals((byte)0x06, rtfAttr.getData()[16+2]);  //  c1b: length 6+2  -> {\rtf1\a
-       assertEquals((byte)0x01, rtfAttr.getData()[16+3]);  //  c2a: offset 16 / 0x010
-       assertEquals((byte)0x01, rtfAttr.getData()[16+4]);  //  c2b: length 1+2  ->  def
-       assertEquals((byte)0x0b, rtfAttr.getData()[16+5]);  //  c3a: offset 182 / 0xb6
-       assertEquals((byte)0x60, rtfAttr.getData()[16+6]);  //  c3b: length 0+2  -> la 
-       assertEquals((byte)0x6e, rtfAttr.getData()[16+7]);  // n
-       assertEquals((byte)0x67, rtfAttr.getData()[16+8]);  // g
-       assertEquals((byte)0x31, rtfAttr.getData()[16+9]);  // 1
-       assertEquals((byte)0x30, rtfAttr.getData()[16+10]); // 0
-       assertEquals((byte)0x32, rtfAttr.getData()[16+11]); // 2
+       assertEquals((byte)0x07, data[16+0]);  // Flag: cccUUUUU
+       assertEquals((byte)0x00, data[16+1]);  //  c1a: offset 0 / 0x000
+       assertEquals((byte)0x06, data[16+2]);  //  c1b: length 6+2  -> {\rtf1\a
+       assertEquals((byte)0x01, data[16+3]);  //  c2a: offset 16 / 0x010
+       assertEquals((byte)0x01, data[16+4]);  //  c2b: length 1+2  ->  def
+       assertEquals((byte)0x0b, data[16+5]);  //  c3a: offset 182 / 0xb6
+       assertEquals((byte)0x60, data[16+6]);  //  c3b: length 0+2  -> la 
+       assertEquals((byte)0x6e, data[16+7]);  // n
+       assertEquals((byte)0x67, data[16+8]);  // g
+       assertEquals((byte)0x31, data[16+9]);  // 1
+       assertEquals((byte)0x30, data[16+10]); // 0
+       assertEquals((byte)0x32, data[16+11]); // 2
        
-       assertEquals((byte)0x66, rtfAttr.getData()[16+12]); // Flag:  UccUUccU
-       assertEquals((byte)0x35, rtfAttr.getData()[16+13]); // 5 
-       assertEquals((byte)0x00, rtfAttr.getData()[16+14]); //  c2a: offset 6 / 0x006
-       assertEquals((byte)0x64, rtfAttr.getData()[16+15]); //  c2b: length 4+2  -> \ansi\a
-       assertEquals((byte)0x00, rtfAttr.getData()[16+16]); //  c3a: offset 7 / 0x007
-       assertEquals((byte)0x72, rtfAttr.getData()[16+17]); //  c3b: length 2+2  -> nsi
-       assertEquals((byte)0x63, rtfAttr.getData()[16+18]); // c 
-       assertEquals((byte)0x70, rtfAttr.getData()[16+19]); // p
-       assertEquals((byte)0x0d, rtfAttr.getData()[16+20]); //  c6a: offset 221 / 0x0dd
-       assertEquals((byte)0xd0, rtfAttr.getData()[16+21]); //  c6b: length 0+2  -> g1
-       assertEquals((byte)0x0e, rtfAttr.getData()[16+22]); //  c7a: offset 224 / 0x0e0
-       assertEquals((byte)0x00, rtfAttr.getData()[16+23]); //  c7b: length 0+2  -> 25
-       assertEquals((byte)0x32, rtfAttr.getData()[16+24]); // 2
+       assertEquals((byte)0x66, data[16+12]); // Flag:  UccUUccU
+       assertEquals((byte)0x35, data[16+13]); // 5 
+       assertEquals((byte)0x00, data[16+14]); //  c2a: offset 6 / 0x006
+       assertEquals((byte)0x64, data[16+15]); //  c2b: length 4+2  -> \ansi\a
+       assertEquals((byte)0x00, data[16+16]); //  c3a: offset 7 / 0x007
+       assertEquals((byte)0x72, data[16+17]); //  c3b: length 2+2  -> nsi
+       assertEquals((byte)0x63, data[16+18]); // c 
+       assertEquals((byte)0x70, data[16+19]); // p
+       assertEquals((byte)0x0d, data[16+20]); //  c6a: offset 221 / 0x0dd
+       assertEquals((byte)0xd0, data[16+21]); //  c6b: length 0+2  -> g1
+       assertEquals((byte)0x0e, data[16+22]); //  c7a: offset 224 / 0x0e0
+       assertEquals((byte)0x00, data[16+23]); //  c7b: length 0+2  -> 25
+       assertEquals((byte)0x32, data[16+24]); // 2
     }
 
     /**
@@ -97,12 +98,13 @@ public final class TestCompressedRTF extends TestCase {
              _samples.openResourceAsStream("quick-winmail.dat")
        );
        
-       MAPIAttribute rtfAttr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-       assertNotNull(rtfAttr);
+       MAPIAttribute attr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+       assertNotNull(attr);
+       MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute)attr;
 
        // Truncate to header + flag + data for flag
        byte[] data = new byte[16+12];
-       System.arraycopy(rtfAttr.getData(), 0, data, 0, data.length);
+       System.arraycopy(rtfAttr.getRawData(), 0, data, 0, data.length);
        
        // Decompress it
        CompressedRTF comp = new CompressedRTF();
@@ -124,12 +126,13 @@ System.err.println(decompStr);
              _samples.openResourceAsStream("quick-winmail.dat")
        );
 
-       MAPIAttribute rtfAttr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-       assertNotNull(rtfAttr);
+       MAPIAttribute attr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+       assertNotNull(attr);
+       MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute)attr;
 
        // Truncate to header + flag + data for flag + flag + data
        byte[] data = new byte[16+12+13];
-       System.arraycopy(rtfAttr.getData(), 0, data, 0, data.length);
+       System.arraycopy(rtfAttr.getRawData(), 0, data, 0, data.length);
        
        // Decompress it
        CompressedRTF comp = new CompressedRTF();
