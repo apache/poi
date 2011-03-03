@@ -25,7 +25,9 @@ import java.util.List;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFDateAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.hmef.attribute.TNEFStringAttribute;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
@@ -108,6 +110,14 @@ public final class HMEFDumper {
          
          // Print the contents
          String indent = "  ";
+         
+         if(attr instanceof TNEFStringAttribute) {
+            System.out.println(indent + indent + indent + ((TNEFStringAttribute)attr).getString());
+         }
+         if(attr instanceof TNEFDateAttribute) {
+            System.out.println(indent + indent + indent + ((TNEFDateAttribute)attr).getDate());
+         }
+         
          System.out.println(indent + "Data of length " + attr.getData().length);
          if(attr.getData().length > 0) {
             int len = attr.getData().length;

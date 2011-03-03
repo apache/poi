@@ -25,31 +25,57 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.util.StringUtil;
 
 /**
- * An String attribute which applies to a {@link HMEFMessage}
+ * A String attribute which applies to a {@link HMEFMessage}
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFStringAttribute extends TNEFAttribute {
+   private String data;
+   
    /**
     * Constructs a single new string attribute from the id, type,
     *  and the contents of the stream
     */
    protected TNEFStringAttribute(int id, int type, InputStream inp) throws IOException {
       super(id, type, inp);
+      
+      String tmpData = null;
+      byte[] data = getData();
+      if(getType() == TNEFProperty.TYPE_TEXT) {
+         tmpData = StringUtil.getFromUnicodeLE(data);
+      } else {
+         tmpData = StringUtil.getFromCompressedUnicode(
+              data, 0, data.length
+         );
+      }
+      
+      // Strip off the null terminator if present
+      if(tmpData.endsWith("\0")) {
+         tmpData = tmpData.substring(0, tmpData.length()-1);
+      }
+      this.data = tmpData;
    }
 
    public String getString() {
-      byte[] data = getData();
-      // TODO Verify if these are the right way around
-      if(getType() == TNEFProperty.TYPE_TEXT) {
-         return StringUtil.getFromUnicodeLE(data);
-      }
-      return StringUtil.getFromCompressedUnicode(
-            data, 0, data.length
-      );
+      return this.data;
    }
    
    public String toString() {
       return "Attribute " + getProperty().toString() + ", type=" + getType() + 
              ", data=" + getString(); 
    }
+   
+   /**
+    * Returns the string of a Attribute, converting as appropriate
+    */
+   public static String getAsString(TNEFAttribute attr) {
+      if(attr == null) {
+         return null;
+      }
+      if(attr instanceof TNEFStringAttribute) {
+         return ((TNEFStringAttribute)attr).getString();
+      }
+      
+      System.err.println("Warning, non string property found: " + attr.toString());
+      return null;
+  }
 }

@@ -155,19 +155,7 @@ public final class HMEFMessage {
     *  if it isn't set
     */
    private String getString(MAPIProperty id) {
-      MAPIAttribute attr = getMessageMAPIAttribute(id);
-      if(id == null) {
-         return null;
-      }
-      if(attr instanceof MAPIStringAttribute) {
-         return ((MAPIStringAttribute)attr).getDataString();
-      }
-      if(attr instanceof MAPIRtfAttribute) {
-         return ((MAPIRtfAttribute)attr).getDataString();
-      }
-      
-      System.err.println("Warning, no string property found: " + attr.toString());
-      return null;
+      return MAPIStringAttribute.getAsString( getMessageMAPIAttribute(id) );
    }
    
    /**

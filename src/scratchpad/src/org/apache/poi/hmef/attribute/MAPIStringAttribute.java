@@ -63,4 +63,22 @@ public final class MAPIStringAttribute extends MAPIAttribute {
    public String toString() {
       return getProperty().toString() + " " + data;
    }
+   
+   /**
+    * Returns the string of a Attribute, converting as appropriate
+    */
+   public static String getAsString(MAPIAttribute attr) {
+      if(attr == null) {
+         return null;
+      }
+      if(attr instanceof MAPIStringAttribute) {
+         return ((MAPIStringAttribute)attr).getDataString();
+      }
+      if(attr instanceof MAPIRtfAttribute) {
+         return ((MAPIRtfAttribute)attr).getDataString();
+      }
+      
+      System.err.println("Warning, non string property found: " + attr.toString());
+      return null;
+  }
 }

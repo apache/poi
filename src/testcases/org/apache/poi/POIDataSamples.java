@@ -154,9 +154,15 @@ public final class POIDataSamples {
                     + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
         }
         try {
-            if(sampleFileName.length() > 0 && !sampleFileName.equals(f.getCanonicalFile().getName())){
-                throw new RuntimeException("File name is case-sensitive: requested '" + sampleFileName
+            if(sampleFileName.length() > 0) {
+               String fn = sampleFileName;
+               if(fn.indexOf('/') > 0) {
+                  fn = fn.substring(fn.indexOf('/')+1);
+               }
+               if(!fn.equals(f.getCanonicalFile().getName())){
+                   throw new RuntimeException("File name is case-sensitive: requested '" + fn
                         + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
+               }
             }
         } catch (IOException e){
             throw new RuntimeException(e);
