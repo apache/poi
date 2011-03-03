@@ -18,12 +18,16 @@
 package org.apache.poi.hmef;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hmef.attribute.TNEFAttribute;
+import org.apache.poi.hmef.attribute.TNEFDateAttribute;
 import org.apache.poi.hmef.attribute.TNEFMAPIAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.hmef.attribute.TNEFStringAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 
 
@@ -87,8 +91,68 @@ public final class Attachment {
       return mapiAttributes;
    }
    
+   
+   /**
+    * Return the string value of the mapi property, or null
+    *  if it isn't set
+    */
+   private String getString(MAPIProperty id) {
+      return MAPIStringAttribute.getAsString( getMessageMAPIAttribute(id) );
+   }
+   /**
+    * Returns the string value of the TNEF property, or
+    *  null if it isn't set
+    */
+   private String getString(TNEFProperty id) {
+      return TNEFStringAttribute.getAsString( getMessageAttribute(id) );
+   }
+   
+   /**
+    * Returns the short filename
+    */
    public String getFilename() {
-      TNEFAttribute attr = null;
-      return null;
+      return getString(TNEFProperty.ID_ATTACHTITLE);
+   }
+   /**
+    * Returns the long filename
+    */
+   public String getLongFilename() {
+      return getString(MAPIProperty.ATTACH_LONG_FILENAME);
+   }
+   /**
+    * Returns the file extension
+    */
+   public String getExtension() {
+      return getString(MAPIProperty.ATTACH_EXTENSION);
+   }
+   
+   /**
+    * Return when the file was last modified, if known.
+    */
+   public Date getModifiedDate() {
+      return TNEFDateAttribute.getAsDate(
+            getMessageAttribute(TNEFProperty.ID_ATTACHMODIFYDATE)
+      );
+   }
+   
+   /**
+    * Returns the contents of the attachment.
+    */
+   public byte[] getContents() {
+      TNEFAttribute contents = getMessageAttribute(TNEFProperty.ID_ATTACHDATA);
+      if(contents == null) {
+         throw new IllegalArgumentException("Attachment corrupt - no Data section");
+      }
+      return contents.getData();
+   }
+   
+   /**
+    * Returns the Meta File rendered representation
+    *  of the attachment, or null if not set.
+    */
+   public byte[] getRenderedMetaFile() {
+      TNEFAttribute meta = getMessageAttribute(TNEFProperty.ID_ATTACHMETAFILE);
+      if(meta == null) return null;
+      return meta.getData();
    }
 }

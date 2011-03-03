@@ -165,6 +165,8 @@ public class MAPIAttribute {
             MAPIAttribute attr;
             if(type == Types.UNICODE_STRING || type == Types.ASCII_STRING) {
                attr = new MAPIStringAttribute(prop, type, data);
+            } else if(type == Types.APP_TIME || type == Types.TIME) {
+               attr = new MAPIDateAttribute(prop, type, data);
             } else if(id == MAPIProperty.RTF_COMPRESSED.id) {
                attr = new MAPIRtfAttribute(prop, type, data);
             } else {

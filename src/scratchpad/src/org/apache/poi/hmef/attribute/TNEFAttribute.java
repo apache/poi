@@ -70,6 +70,9 @@ public class TNEFAttribute {
            type == TNEFProperty.TYPE_TEXT) {
          return new TNEFStringAttribute(id, type, inp);
       }
+      if(type == TNEFProperty.TYPE_DATE) {
+         return new TNEFDateAttribute(id, type, inp);
+      }
       return new TNEFAttribute(id, type, inp); 
    }
 
