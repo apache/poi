@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hmef.attribute.MAPIAttribute;
-import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.TNEFMAPIAttribute;

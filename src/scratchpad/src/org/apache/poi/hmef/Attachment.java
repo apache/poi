@@ -53,7 +53,7 @@ public final class Attachment {
     * Return the attachment attribute with the given ID,
     *  or null if there isn't one. 
     */
-   public TNEFAttribute getMessageAttribute(TNEFProperty id) {
+   public TNEFAttribute getAttribute(TNEFProperty id) {
       for(TNEFAttribute attr : attributes) {
          if(attr.getProperty() == id) {
             return attr;
@@ -66,7 +66,7 @@ public final class Attachment {
     * Return the attachment MAPI Attribute with the given ID,
     *  or null if there isn't one. 
     */
-   public MAPIAttribute getMessageMAPIAttribute(MAPIProperty id) {
+   public MAPIAttribute getMAPIAttribute(MAPIProperty id) {
       for(MAPIAttribute attr : mapiAttributes) {
          if(attr.getProperty() == id) {
             return attr;
@@ -97,14 +97,14 @@ public final class Attachment {
     *  if it isn't set
     */
    private String getString(MAPIProperty id) {
-      return MAPIStringAttribute.getAsString( getMessageMAPIAttribute(id) );
+      return MAPIStringAttribute.getAsString( getMAPIAttribute(id) );
    }
    /**
     * Returns the string value of the TNEF property, or
     *  null if it isn't set
     */
    private String getString(TNEFProperty id) {
-      return TNEFStringAttribute.getAsString( getMessageAttribute(id) );
+      return TNEFStringAttribute.getAsString( getAttribute(id) );
    }
    
    /**
@@ -131,7 +131,7 @@ public final class Attachment {
     */
    public Date getModifiedDate() {
       return TNEFDateAttribute.getAsDate(
-            getMessageAttribute(TNEFProperty.ID_ATTACHMODIFYDATE)
+            getAttribute(TNEFProperty.ID_ATTACHMODIFYDATE)
       );
    }
    
@@ -139,7 +139,7 @@ public final class Attachment {
     * Returns the contents of the attachment.
     */
    public byte[] getContents() {
-      TNEFAttribute contents = getMessageAttribute(TNEFProperty.ID_ATTACHDATA);
+      TNEFAttribute contents = getAttribute(TNEFProperty.ID_ATTACHDATA);
       if(contents == null) {
          throw new IllegalArgumentException("Attachment corrupt - no Data section");
       }
@@ -151,7 +151,7 @@ public final class Attachment {
     *  of the attachment, or null if not set.
     */
    public byte[] getRenderedMetaFile() {
-      TNEFAttribute meta = getMessageAttribute(TNEFProperty.ID_ATTACHMETAFILE);
+      TNEFAttribute meta = getAttribute(TNEFProperty.ID_ATTACHMETAFILE);
       if(meta == null) return null;
       return meta.getData();
    }

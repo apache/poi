@@ -87,6 +87,8 @@ public final class TestAttachments extends TestCase {
    public void testAttachmentDetails() throws Exception {
       List<Attachment> attachments = quick.getAttachments();
       
+      // Pick a predictable date format
+      // Note that the 28th April is in summer time in the UK
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
