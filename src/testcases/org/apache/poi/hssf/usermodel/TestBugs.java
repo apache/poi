@@ -22,7 +22,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
@@ -43,7 +46,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1982,5 +1984,39 @@ if(1==2) {
        assertEquals("16", df.formatCellValue(r18.getCell(1)));
        assertEquals("35", df.formatCellValue(r18.getCell(2)));
        assertEquals("123", df.formatCellValue(r18.getCell(3)));
+    }
+    
+    /**
+     * A protected sheet with comments, when written out by
+     *  POI, ends up upsetting excel.
+     * TODO Identify the cause and add extra asserts for
+     *  the bit excel cares about
+     */
+    public void test50833() throws Exception {
+       HSSFWorkbook wb = openSample("50833.xls");
+       HSSFSheet s = wb.getSheetAt(0);
+       assertEquals("Sheet1", s.getSheetName());
+       assertEquals(false, s.getProtect());
+       
+       HSSFCell c = s.getRow(0).getCell(0);
+       assertEquals("test cell value", c.getRichStringCellValue().getString());
+       
+       HSSFComment cmt = c.getCellComment();
+       assertNotNull(cmt);
+       assertEquals("Robert Lawrence", cmt.getAuthor());
+       assertEquals("Robert Lawrence:\ntest comment", cmt.getString().getString());
+       
+       // Reload
+       wb = writeOutAndReadBack(wb);
+       s = wb.getSheetAt(0);
+       c = s.getRow(0).getCell(0);
+       
+       // Re-check the comment
+       cmt = c.getCellComment();
+       assertNotNull(cmt);
+       assertEquals("Robert Lawrence", cmt.getAuthor());
+       assertEquals("Robert Lawrence:\ntest comment", cmt.getString().getString());
+       
+       // TODO Identify what excel doesn't like, and check for that
     }
 }
