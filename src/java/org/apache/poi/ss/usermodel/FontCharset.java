@@ -70,6 +70,8 @@ public enum FontCharset {
     }
 
     public static FontCharset valueOf(int value){
+        if(value >= _table.length)
+           return null;
         return _table[value];
     }
 }

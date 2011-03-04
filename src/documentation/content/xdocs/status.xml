@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="fix">50847 - XSSFFont now accepts the full range of Charsets from FontChartset</action>
            <action dev="poi-developers" type="fix">50786 - Speed up calls to HSSFColor.getIndexHash() by returning a cached, unmodifiable Map. HSSFColor.getModifiableIndexHash() provides access to the old (slow but modifiable) functionality</action>
            <action dev="poi-developers" type="fix">47100 - Change related formulas and named ranges when XSSFWorkbook.setSheetName is called</action>
         </release>
