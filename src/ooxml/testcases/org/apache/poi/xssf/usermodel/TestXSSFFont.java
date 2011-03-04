@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -73,7 +74,22 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		xssfFont.setCharSet(FontCharset.DEFAULT);
 		assertEquals(FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
-		
+
+		// Try with a few less usual ones:
+		// Set with the Charset itself
+      xssfFont.setCharSet(FontCharset.RUSSIAN);
+      assertEquals(FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
+      // And set with the Charset index
+      xssfFont.setCharSet(FontCharset.ARABIC.getValue());
+      assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+      
+      // This one isn't allowed
+      assertEquals(null, FontCharset.valueOf(9999));
+      try {
+         xssfFont.setCharSet(9999);
+         fail("Shouldn't be able to set an invalid charset");
+      } catch(POIXMLException e) {}
+      
 		
 		// Now try with a few sample files
 		
