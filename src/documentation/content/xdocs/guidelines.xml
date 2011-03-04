@@ -138,6 +138,9 @@
      <li>Take a look at all the <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI;bug_status=NEW;bug_status=NEEDINFO">unresolved issues in the bug database</link>, and see if you can help with testing or patches for them</li>
      <li>Add in new features, see <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug database</link> for suggestions.</li>
    </ul>
+
+   <p>The Apache <link href="http://www.apache.org/dev/contributors.html">Contributors Tech Guide</link> gives a good overview how to start contributing patches.</p> 
+
    <p>The Nutch project also have a very useful guide on becoming a 
     new developer in their project. While it is written for their project,
     a large part of it will apply to POI too. You can read it at
@@ -146,15 +149,12 @@
     Project</link> also provides guidance and mentoring for new contributors.</p>
   </section>
   <section><title>Submitting Patches</title>
-   <p>
-     Create patches by getting the latest sources from Subversion.
-     Alter or add files as appropriate.  Then, from the poi directiory,
-     type svn diff > mypatch.patch.  This will capture all of your changes
-     in a patch file of the appropriate format. However, svn diff won't
-     capture any new files you may have added. So, if you've added any 
-     files, create an archive (tar.bz2 preferred as its the smallest) in a 
-     path-preserving archive format, relative to your poi directory. 
-     You'll attach both files in the next step.
+   <p> 
+     Patches are submitted via the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.  
+     Create a new bug, set the subject to [PATCH] followed by a brief description.  Explain you patch and any special instructions and submit/save it.  
+     Next, go back to the bug, and create attachements for the patch files you
+     created.  Be sure to describe not only the files purpose, but its format. 
+     (Is that ZIP or a tgz or a bz2 or what?).
    </p>
    <p>
      Ideally, patches should be submitted early and often. This is for
@@ -169,49 +169,70 @@
      Software Foundation projects, do please try to submit early and often, rather
      than "throwing a large patch over the wall" at the end.
    </p>
-   <p> 
-     Patches are submitted via the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.  
-     Create a new bug, set the subject to [PATCH] followed by a brief description.  Explain you patch and any special instructions and submit/save it.  
-     Next, go back to the bug, and create attachements for the patch files you
-     created.  Be sure to describe not only the files purpose, but its format. 
-     (Is that ZIP or a tgz or a bz2 or what?).
-   </p>
-   <p>
-     Make sure your patches include the @author tag on any files you've altered
-     or created.  Make sure you've documented your changes and altered the 
-     examples/etc to reflect them.  Any new additions should have unit tests.
-     Lastly, ensure that you've provided approriate javadoc.  (see 
-     <link href="http://poi.apache.org/resolutions/res001.html">Coding
-     Standards</link>).  Patches that are of low quality may be rejected or 
-     the contributer may be asked to bring them up to spec.
-   </p>
-   <p>If you use a unix shell, you may find the following following
-    sequence of commands useful for building the files to attach.</p>
+  <p>You may create your patch file using either of the following approaches (the committers recommend the first):</p>
+  <section><title>Approach 1 - use Ant</title>
+  <p>Use Ant to generate a patch file to POI: </p>
    <source>
-# Run this in the root of the checkout, i.e. the directory holding
-#  build.xml and poi.pom
-
-# Build the directory to hold new files
-mkdir /tmp/poi-patch/
-mkdir /tmp/poi-patch/new-files/
-
-# Get changes to existing files
-svn diff > /tmp/poi-patch/diff.txt
-
-# Capture any new files, as svn diff won't include them
-# Preserve the path
-svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
-
-# tar up the new files
-cd /tmp/poi-patch/new-files/
-tar jcvf ../new-files.tar.bz2
-cd ..
-
-# Upload these to bugzilla
-echo "Please upload to bugzilla:"
-echo "   /tmp/poi-patch/diff.txt"
-echo "   /tmp/poi-patch/new-files.tar.bz2"
+    ant -f patch.xml
    </source>
+  <p>
+    This will create a file named patch.tar.gz that will contain a unified diff of files that have been modified 
+    and also include files that have been added. Review the file for completeness and correctness. This approach 
+    is recommended because it standardizes the way in which patch files are constructed. It also eliminates the 
+    chance of you missing to submit new files that constitute part of the patch. 
+  </p>
+  </section>
+    <section><title>Approach 2 - the manual way</title>
+    <p>
+      Patches to existing files should be generated with svn diff filename and save the output to a file. 
+      if you want to get the changes made to multiple files in a directory , just use svn diff. 
+      then, tar and gzip the patch file as well as any new files that you have added. 
+    </p>
+     <p>If you use a unix shell, you may find the following following
+      sequence of commands useful for building the files to attach.</p>
+     <source>
+  # run this in the root of the checkout, i.e. the directory holding
+  #  build.xml and poi.pom
+
+  # build the directory to hold new files
+  mkdir /tmp/poi-patch/
+  mkdir /tmp/poi-patch/new-files/
+
+  # get changes to existing files
+  svn diff > /tmp/poi-patch/diff.txt
+
+  # capture any new files, as svn diff won't include them
+  # preserve the path
+  svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
+
+  # tar up the new files
+  cd /tmp/poi-patch/new-files/
+  tar jcvf ../new-files.tar.bz2
+  cd ..
+
+  # upload these to bugzilla
+  echo "please upload to bugzilla:"
+  echo "   /tmp/poi-patch/diff.txt"
+  echo "   /tmp/poi-patch/new-files.tar.bz2"
+     </source>
+    </section>
+    <section><title>checklist before submitting a patch</title>
+      <ul>
+        <li>added code complies with <link href="http://poi.apache.org/resolutions/res001.html">coding standards</link></li>
+        <li>added code compiles and runs on java 1.5</li>
+        <li>new java files begin with the <link href="http://www.apache.org/foundation/licence-faq.html">
+             apache software license</link> statement.</li> 
+        <li>the code does not depend on gpl or lgpl code.</li> 
+        <li>the code includes the @author tag on any files you've altered or created.</li>
+        <li>existing test cases succeed.</li>
+        <li>new test cases written and succeed.</li>
+        <li>documentation page extended as appropriate.</li>
+        <li>diff files generated using svn diff</li>
+        <li>message to dev contains [patch], task name and patch reason in subject.</li>
+        <li>message body contains a rationale for the patch.</li>
+        <li>message attachment contains the patch file(s).</li>
+      </ul> 
+    </section>
   </section>
 
   <section><title>Mentoring and Committership</title>
