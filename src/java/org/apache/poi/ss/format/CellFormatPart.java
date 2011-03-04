@@ -55,10 +55,9 @@ public class CellFormatPart {
         NAMED_COLORS = new TreeMap<String, Color>(
                 String.CASE_INSENSITIVE_ORDER);
 
-        Map colors = HSSFColor.getIndexHash();
-        for (Object val : colors.values()) {
-            HSSFColor color = (HSSFColor) val;
-            Class type = color.getClass();
+        Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
+        for (HSSFColor color : colors.values()) {
+            Class<? extends HSSFColor> type = color.getClass();
             String name = type.getSimpleName();
             if (name.equals(name.toUpperCase())) {
                 short[] rgb = color.getTriplet();
