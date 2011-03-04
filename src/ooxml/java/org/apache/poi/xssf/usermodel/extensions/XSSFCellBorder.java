@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -30,22 +31,24 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
  * Color is optional.
  */
 public class XSSFCellBorder {
-
+    private ThemesTable _theme;
     private CTBorder border;
 
     /**
      * Creates a Cell Border from the supplied XML definition
      */
-    public XSSFCellBorder(CTBorder border) {
+    public XSSFCellBorder(CTBorder border, ThemesTable theme) {
         this.border = border;
+        this._theme = theme;
     }
 
     /**
-     * Creates a new, empty Cell Border, on the
-     * given Styles Table
+     * Creates a new, empty Cell Border.
+     * You need to attach this to the Styles Table
      */
-    public XSSFCellBorder() {
+    public XSSFCellBorder(ThemesTable theme) {
         border = CTBorder.Factory.newInstance();
+        this._theme = theme;
     }
 
     /**
@@ -97,8 +100,17 @@ public class XSSFCellBorder {
      */
     public XSSFColor getBorderColor(BorderSide side) {
         CTBorderPr borderPr = getBorder(side);
-        return borderPr != null && borderPr.isSetColor() ?
-                new XSSFColor(borderPr.getColor()) : null;
+        
+        if(borderPr != null && borderPr.isSetColor()) { 
+            XSSFColor clr = new XSSFColor(borderPr.getColor());
+            if(_theme != null) {
+               _theme.inheritFromThemeAsRequired(clr);
+            }
+            return clr;
+        } else {
+           // No border set
+           return null;
+        }
     }
 
     /**
@@ -155,5 +167,4 @@ public class XSSFCellBorder {
         XSSFCellBorder cf = (XSSFCellBorder) o;
         return border.toString().equals(cf.getCTBorder().toString());
     }
-
 }

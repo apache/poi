@@ -726,6 +726,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
     
     /**
+     * If the border colours are set with themes, then we 
+     *  should still be able to get colours
+     */
+    public void test50846() throws Exception {
+       // TODO Get file and test
+       //Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50846.xlsx");
+       
+       // Check the style that is theme based
+       
+       // Check the one that isn't
+    }
+    
+    /**
      * Fonts where their colours come from the theme rather
      *  then being set explicitly still should allow the
      *  fetching of the RGB.

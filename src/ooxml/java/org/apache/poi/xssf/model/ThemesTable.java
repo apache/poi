@@ -68,4 +68,27 @@ public class ThemesTable extends POIXMLDocumentPart {
         }
         return null;
     }
+    
+    /**
+     * If the colour is based on a theme, then inherit 
+     *  information (currently just colours) from it as
+     *  required.
+     */
+    public void inheritFromThemeAsRequired(XSSFColor color) {
+       if(color == null) {
+          // Nothing for us to do
+          return;
+       }
+       if(! color.getCTColor().isSetTheme()) {
+          // No theme set, nothing to do
+          return;
+       }
+       
+       // Get the theme colour
+       XSSFColor themeColor = getThemeColor(color.getTheme());
+       // Set the raw colour, not the adjusted one
+       color.setRgb(themeColor.getCTColor().getRgb());
+       
+       // All done
+    }
 }

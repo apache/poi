@@ -19,21 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontScheme;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIntProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
 public final class TestXSSFColor extends TestCase {
    public void testIndexedColour() throws Exception {
