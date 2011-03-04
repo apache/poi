@@ -42,6 +42,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -820,5 +821,61 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        row = sheet.getRow(2);
        cell = row.getCell(2);
        assertEquals(text, cell.getStringCellValue());
+    }
+    
+    /**
+     * Adding sheets when one has a table, then re-ordering
+     */
+    public void test50867() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50867_with_table.xlsx");
+       assertEquals(3, wb.getNumberOfSheets());
+       
+       XSSFSheet s1 = wb.getSheetAt(0);
+       XSSFSheet s2 = wb.getSheetAt(1);
+       XSSFSheet s3 = wb.getSheetAt(2);
+       assertEquals(1, s1.getTables().size());
+       assertEquals(0, s2.getTables().size());
+       assertEquals(0, s3.getTables().size());
+       
+       Table t = s1.getTables().get(0);
+       assertEquals("Tabella1", t.getName());
+       assertEquals("Tabella1", t.getDisplayName());
+       assertEquals("A1:C3", t.getCTTable().getRef());
+       
+       // Add a sheet and re-order
+       XSSFSheet s4 = wb.createSheet("NewSheet");
+       wb.setSheetOrder(s4.getSheetName(), 0);
+       
+       // Check on tables
+       assertEquals(1, s1.getTables().size());
+       assertEquals(0, s2.getTables().size());
+       assertEquals(0, s3.getTables().size());
+       assertEquals(0, s4.getTables().size());
+       
+       // Refetch to get the new order
+       s1 = wb.getSheetAt(0);
+       s2 = wb.getSheetAt(1);
+       s3 = wb.getSheetAt(2);
+       s4 = wb.getSheetAt(3);
+       assertEquals(0, s1.getTables().size());
+       assertEquals(1, s2.getTables().size());
+       assertEquals(0, s3.getTables().size());
+       assertEquals(0, s4.getTables().size());
+       
+       // Save and re-load
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       s1 = wb.getSheetAt(0);
+       s2 = wb.getSheetAt(1);
+       s3 = wb.getSheetAt(2);
+       s4 = wb.getSheetAt(3);
+       assertEquals(0, s1.getTables().size());
+       assertEquals(1, s2.getTables().size());
+       assertEquals(0, s3.getTables().size());
+       assertEquals(0, s4.getTables().size());
+       
+       t = s2.getTables().get(0);
+       assertEquals("Tabella1", t.getName());
+       assertEquals("Tabella1", t.getDisplayName());
+       assertEquals("A1:C3", t.getCTTable().getRef());
     }
 }
