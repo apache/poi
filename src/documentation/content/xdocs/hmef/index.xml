@@ -35,19 +35,15 @@
          <p>HMEF is the POI Project's pure Java implementation of the 
             TNEF (Transport Neurtral Encoding Format), aka winmail.dat,
             which is used by Outlook and Exchange in some situations.</p>
-          <p>Currently, HMEF provides a low-level, read-only api for 
-            accessing core TNEF attributes. It is able to provide access
-            to both TNEF and MAPI attributes, and low level access to
-            attachments. Compressed RTF is not yet fully supported, and
-            user-facing access to common attributes and attachment contents
-            is not yet present.</p>
-          <p>HMEF is currently very much a work-in-progress, and we hope
-            to add a text extractor and attachment extractor in the not
-            too distant future.</p>
-			<p>To get a feel for the contents of a file, and to track down
-			 where data of interest is stored, HMEF comes with
-			 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/src/org/apache/poi/hmef/dev/">HMEFDumper</link>
-			 to print out the contents of the file.</p>
+          <p>Currently, HMEF provides a read-only api for accessing common
+            message and attachment attributes, including the message body
+            and attachment files. In addition, it's possible to have 
+            read-only access to all of the underlying TNEF and MAPI 
+            attributes of the message and attachments.</p>
+          <p>HMEF also provides a command line tool for extracting out
+            the message body and attachment files from a TNEF (winmail.dat)
+            file.</p>
+
         <note> 
           This code currently lives the 
           <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
@@ -55,7 +51,167 @@
           Ensure that you have the scratchpad jar or the scratchpad 
           build area in your classpath before experimenting with this code.
         </note>
+        <note> 
+          This code is a new POI feature, and the first release that will
+          contain it will be POI 3.8 beta 2. Until then, you will need to
+          build your own jars from a <link href="../subversion.html">svn
+          checkout</link>.
+        </note>
+       </section>
 
+       <section>
+         <title>Using HMEF to access TNEF (winmail.dat) files</title>
+
+         <section>
+           <title>Easy extraction of message body and attachment files</title>
+  
+           <p>The class <em>org.apache.poi.hmef.extractor.HMEFContentsExtractor</em>
+             provides both command line and Java extraction. It allows the
+             saving of the message body (an RTF file), and all of the 
+             attachment files, to a single directory as specified.</p>
+
+           <p>From the command line, simply call the class specifying the
+             TNEF file to extract, and the directory to place the extracted
+             files into, eg:</p>
+           <source>
+              java -classpath poi-3.8-FINAL.jar:poi-scratchpad-3.8-FINAL.jar org.apache.poi.hmef.extractor.HMEFContentsExtractor winmail.dat /tmp/extracted/
+           </source>
+
+           <p>From Java, there are two method calls on the class, one to
+             extract the message body RTF to a file, and the other to extract
+             all the attachments to a directory. A typical use would be:</p>
+           <source>
+public void extract(String winmailFilename, String directoryName) throws Exception {
+   HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(winmailFilename));
+      
+   File dir = new File(directoryName);
+   File rtf = new File(dir, "message.rtf");
+   if(! dir.exists()) {
+       throw new FileNotFoundException("Output directory " + dir.getName() + " not found");
+   }
+      
+   System.out.println("Extracting...");
+   ext.extractMessageBody(rtf);
+   ext.extractAttachments(dir);
+   System.out.println("Extraction completed");
+}
+           </source>
+         </section>
+  
+         <section>
+           <title>Attachment attributes and contents</title>
+  
+           <p>To get at your attachments, simply call the
+             <em>getAttachments()</em> method on a <em>HMEFMessage</em>
+             instance, and you'll receive a list of all the attachments.</p>
+           <p>When you have a <em>org.apache.poi.hmef.Attachment</em> object, 
+             there are several helper methods available. These will all
+             return the value of the appropriate underlying attachment
+             attributes, or null if for some reason the attribute isn't
+             present in your file.</p>
+           <ul>
+            <li><em>getFilename()</em> - returns the name of the attachment
+              file, possibly in 8.3 format</li>
+            <li><em>getLongFilename()</em> - returns the full name of the 
+              attachment file</li>
+            <li><em>getExtension()</em> - returns the extension of the
+              attachment file, including the "."</li>
+            <li><em>getModifiedDate()</em> - returns the date that the 
+              attachment file was last edited on</li>
+            <li><em>getContents()</em> - returns a byte array of the contents
+              of the attached file</li>
+            <li><em>getRenderedMetaFile()</em> - returns a byte array of 
+              a windows meta file representation of the attached file</li>
+           </ul>
+         </section>
+  
+         <section>
+           <title>Message attributes and message body</title>
+  
+           <p>A <em>org.apache.poi.hmef.HMEFMessage</em> instance is created
+             from an <em>InputStream</em> of the underlying TNEF (winmail.dat)
+             file.</p>
+           <p>From a <em>HMEFMessage</em>, there are three main methods of
+            interest to call:</p>
+           <ul>
+             <li><em>getBody()</em> - returns a String containing the RTF
+               contents of the message body. 
+               <em>Note - see limitations</em></li>
+             <li><em>getSubject()</em> - returns the message subject</li>
+             <li><em>getAttachments()</em> - returns the list of 
+               <em>Attachment</em> objects for the message</li>
+           </ul>
+         </section>
+  
+         <section>
+           <title>Low level attribute access</title>
+  
+           <p>Both Messages and Attachments contain two kinds of attributes.
+             These are <em>TNEFAttribute</em> and <em>MAPIAttribute</em>.</p>
+           <p>TNEFAttribute is specific to TNEF files in terms of the 
+             available types and properties. In general, Attachments have a
+             few more useful ones of these then Messages.</p>
+           <p>MAPIAttributes hold standard MAPI properties and values, and
+             work in a similar way to <link href="../hsmf/">HSMF 
+             (Outlook)</link> does. There are typically many of these on both
+             Messages and Attachments. <em>Note - see limitations</em></p>
+           <p>Both <em>HMEFMessage</em> and <em>Attachment</em> supports
+             support two different ways of getting to attributes of interest.
+             Firstly, they support list getters, to return all attributes
+             (either TNEF or MAPI). Secondly, they support specific getters by
+             TNEF or MAPI property.</p>
+           <source>
+HMEFMessage msg = new HMEFMessage(new FileInputStream(file));
+for(TNEFAttribute attr : msg.getMessageAttributes) {
+   System.out.println("TNEF : " + attr);
+}
+for(MAPIAttribute attr : msg.getMessageMAPIAttributes) {
+   System.out.println("MAPI : " + attr);
+}
+System.out.println("Subject is " + msg.getMessageMAPIAttribute(MAPIProperty.CONVERSATION_TOPIC));
+
+for(Attachment attach : msg.getAttachments()) {
+   for(TNEFAttribute attr : attach.getAttributes) {
+      System.out.println("A.TNEF : " + attr);
+   }
+   for(MAPIAttribute attr : attach.getMAPIAttributes) {
+      System.out.println("A.MAPI : " + attr);
+   }
+   System.out.println("Filename is " + attach.getAttribute(TNEFProperty.CID_ATTACHTITLE));
+   System.out.println("Extension is " + attach.getMAPIAttribute(MAPIProperty.ATTACH_EXTENSION));
+}
+           </source>
+         </section>
+       </section>
+
+       <section>
+         <title>Investigating a TNEF file</title>
+
+			<p>To get a feel for the contents of a file, and to track down
+			 where data of interest is stored, HMEF comes with
+			 <link href="http://svn.apache.org/repos/asf/poi/trunk/src/scratchpad/src/org/apache/poi/hmef/dev/">HMEFDumper</link>
+			 to print out the contents of the file.</p>
+       </section>
+
+       <section>
+         <title>Limitations</title>
+
+          <p>HMEF is currently a work-in-progress, and not everything
+            works yet. The current limitations are:</p>
+          <ul>
+            <li>Compressed RTF Message Bodies are not correctly 
+              decompressed. This means that a call to 
+              <em>HMEFMessage.getBody()</em> is unlikely to return the
+              correct RTF.</li>
+            <li>Non-standard MAPI properties from the range 0x8000 to 0x8fff
+              may not be being quite correctly turned into attributes. 
+              The values show up, but the name and type may not always
+              be correct.</li>
+            <li>All testing so far has been performed on a small number of
+              English documents. We think we're correctly turning bytes into
+              Java unicode strings, but we need a few non-English sample
+              files in the test suite to verify this!</li>
+          </ul>
        </section>
     </body>
 </document>

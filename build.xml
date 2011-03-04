@@ -748,7 +748,7 @@ under the License.
 
     <target name="-check-docs">
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
-            <srcfiles dir="${build.site.src}"/>
+            <srcfiles dir="${main.documentation}" />
         </uptodate>
     </target>
 
