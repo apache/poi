@@ -192,6 +192,23 @@ public final class TestCellReference extends TestCase {
 		confirmCrInRange(false, "A", "0", v97);
 		confirmCrInRange(false, "A", "0", v2007);
 	}
+	
+	public void testInvalidReference() {
+      try {
+         new CellReference("Sheet1!#REF!");
+         fail("Shouldn't be able to create a #REF! refence");
+      } catch(IllegalArgumentException e) {}
+      
+	   try {
+	      new CellReference("'MySheetName'!#REF!");
+	      fail("Shouldn't be able to create a #REF! refence");
+	   } catch(IllegalArgumentException e) {}
+	   
+	   try {
+	      new CellReference("#REF!");
+	      fail("Shouldn't be able to create a #REF! refence");
+	   } catch(IllegalArgumentException e) {}
+	}
 
 	private static void confirmCrInRange(boolean expResult, String colStr, String rowStr,
 			SpreadsheetVersion sv) {

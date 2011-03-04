@@ -85,6 +85,10 @@ public class CellReference {
 	 * delimited and escaped as per normal syntax rules for formulas.
 	 */
 	public CellReference(String cellRef) {
+      if(cellRef.endsWith("#REF!")) {
+         throw new IllegalArgumentException("Cell reference invalid: " + cellRef);
+      }
+
 		String[] parts = separateRefParts(cellRef);
 		_sheetName = parts[0];
 		String colRef = parts[1];
@@ -335,7 +339,6 @@ public class CellReference {
 	 * name still in ALPHA-26 number format.  The third element is the row.
 	 */
 	private static String[] separateRefParts(String reference) {
-
 		int plingPos = reference.lastIndexOf(SHEET_NAME_DELIMITER);
 		String sheetName = parseSheetName(reference, plingPos);
 		int start = plingPos+1;

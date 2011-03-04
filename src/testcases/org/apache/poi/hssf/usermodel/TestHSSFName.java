@@ -231,7 +231,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         try {
             new AreaReference(name2.getRefersToFormula());
             fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
-        } catch (StringIndexOutOfBoundsException e) { // TODO - use a different exception for this condition
+        } catch (IllegalArgumentException e) { // TODO - use a stronger typed exception for this condition
             // expected during successful test
         }
     }
