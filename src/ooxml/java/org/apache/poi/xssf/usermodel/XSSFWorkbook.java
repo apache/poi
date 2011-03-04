@@ -46,7 +46,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -56,6 +55,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.*;
+import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -1109,14 +1109,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
      *
-     * @param sheet number (0 based)
+     * @param sheetIndex number (0 based)
      */
-    public void setSheetName(int sheet, String name) {
-        validateSheetIndex(sheet);
+    public void setSheetName(int sheetIndex, String name) {
+        validateSheetIndex(sheetIndex);
         WorkbookUtil.validateSheetName(name);
-        if (containsSheet(name, sheet ))
+        if (containsSheet(name, sheetIndex ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
-        workbook.getSheets().getSheetArray(sheet).setName(name);
+
+        XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
+        utils.updateSheetName(sheetIndex, name);
+
+        workbook.getSheets().getSheetArray(sheetIndex).setName(name);
     }
 
     /**

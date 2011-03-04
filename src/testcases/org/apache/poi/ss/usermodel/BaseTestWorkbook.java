@@ -23,6 +23,9 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 /**
  * @author Yegor Kozlov
  */
@@ -417,4 +420,130 @@ public abstract class BaseTestWorkbook extends TestCase {
         c3 = r.getCell(3);
         assertEquals(c3.getCellFormula(), formulaString);
     }
+
+    private Workbook newSetSheetNameTestingWorkbook() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh1 = wb.createSheet("Worksheet");
+        Sheet sh2 = wb.createSheet("Testing 47100");
+        Sheet sh3 = wb.createSheet("To be renamed");
+
+        Name name1 = wb.createName();
+        name1.setNameName("sale_1");
+        name1.setRefersToFormula("Worksheet!$A$1");
+
+        Name name2 = wb.createName();
+        name2.setNameName("sale_2");
+        name2.setRefersToFormula("'Testing 47100'!$A$1");
+
+        Name name3 = wb.createName();
+        name3.setNameName("sale_3");
+        name3.setRefersToFormula("'Testing 47100'!$B$1");
+
+        Name name4 = wb.createName();
+        name4.setNameName("sale_4");
+        name4.setRefersToFormula("'To be renamed'!$A$3");
+
+        sh1.createRow(0).createCell(0).setCellFormula("SUM('Testing 47100'!A1:C1)");
+        sh1.createRow(1).createCell(0).setCellFormula("SUM('Testing 47100'!A1:C1,'To be renamed'!A1:A5)");
+        sh1.createRow(2).createCell(0).setCellFormula("sale_2+sale_3+'Testing 47100'!C1");
+
+        sh2.createRow(0).createCell(0).setCellValue(1);
+        sh2.getRow(0).createCell(1).setCellValue(2);
+        sh2.getRow(0).createCell(2).setCellValue(3);
+
+        sh3.createRow(0).createCell(0).setCellValue(1);
+        sh3.createRow(1).createCell(0).setCellValue(2);
+        sh3.createRow(2).createCell(0).setCellValue(3);
+        sh3.createRow(3).createCell(0).setCellValue(4);
+        sh3.createRow(4).createCell(0).setCellValue(5);
+        sh3.createRow(5).createCell(0).setCellFormula("sale_3");
+        sh3.createRow(6).createCell(0).setCellFormula("'Testing 47100'!C1");
+
+        return wb;
+    }
+
+    /**
+     * Ensure that Workbook#setSheetName updates all dependent formulas and named ranges
+     *
+     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47100">Bugzilla 47100</a>
+     */
+    public final void testSetSheetName() throws Exception {
+
+        Workbook wb = newSetSheetNameTestingWorkbook();
+
+        Sheet sh1 = wb.getSheetAt(0);
+
+        Name sale_2 = wb.getNameAt(1);
+        Name sale_3 = wb.getNameAt(2);
+        Name sale_4 = wb.getNameAt(3);
+
+        assertEquals("sale_2", sale_2.getNameName());
+        assertEquals("'Testing 47100'!$A$1", sale_2.getRefersToFormula());
+        assertEquals("sale_3", sale_3.getNameName());
+        assertEquals("'Testing 47100'!$B$1", sale_3.getRefersToFormula());
+        assertEquals("sale_4", sale_4.getNameName());
+        assertEquals("'To be renamed'!$A$3", sale_4.getRefersToFormula());
+
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        Cell cell0 = sh1.getRow(0).getCell(0);
+        Cell cell1 = sh1.getRow(1).getCell(0);
+        Cell cell2 = sh1.getRow(2).getCell(0);
+
+        assertEquals("SUM('Testing 47100'!A1:C1)", cell0.getCellFormula());
+        assertEquals("SUM('Testing 47100'!A1:C1,'To be renamed'!A1:A5)", cell1.getCellFormula());
+        assertEquals("sale_2+sale_3+'Testing 47100'!C1", cell2.getCellFormula());
+
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+
+        wb.setSheetName(1, "47100 - First");
+        wb.setSheetName(2, "47100 - Second");
+
+        assertEquals("sale_2", sale_2.getNameName());
+        assertEquals("'47100 - First'!$A$1", sale_2.getRefersToFormula());
+        assertEquals("sale_3", sale_3.getNameName());
+        assertEquals("'47100 - First'!$B$1", sale_3.getRefersToFormula());
+        assertEquals("sale_4", sale_4.getNameName());
+        assertEquals("'47100 - Second'!$A$3", sale_4.getRefersToFormula());
+
+        assertEquals("SUM('47100 - First'!A1:C1)", cell0.getCellFormula());
+        assertEquals("SUM('47100 - First'!A1:C1,'47100 - Second'!A1:A5)", cell1.getCellFormula());
+        assertEquals("sale_2+sale_3+'47100 - First'!C1", cell2.getCellFormula());
+
+        evaluator.clearAllCachedResultValues();
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+
+        sh1 = wb.getSheetAt(0);
+
+        sale_2 = wb.getNameAt(1);
+        sale_3 = wb.getNameAt(2);
+        sale_4 = wb.getNameAt(3);
+
+        cell0 = sh1.getRow(0).getCell(0);
+        cell1 = sh1.getRow(1).getCell(0);
+        cell2 = sh1.getRow(2).getCell(0);
+
+        assertEquals("sale_2", sale_2.getNameName());
+        assertEquals("'47100 - First'!$A$1", sale_2.getRefersToFormula());
+        assertEquals("sale_3", sale_3.getNameName());
+        assertEquals("'47100 - First'!$B$1", sale_3.getRefersToFormula());
+        assertEquals("sale_4", sale_4.getNameName());
+        assertEquals("'47100 - Second'!$A$3", sale_4.getRefersToFormula());
+
+        assertEquals("SUM('47100 - First'!A1:C1)", cell0.getCellFormula());
+        assertEquals("SUM('47100 - First'!A1:C1,'47100 - Second'!A1:A5)", cell1.getCellFormula());
+        assertEquals("sale_2+sale_3+'47100 - First'!C1", cell2.getCellFormula());
+
+        evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+    }
+
 }
