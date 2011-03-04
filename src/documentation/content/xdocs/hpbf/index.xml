@@ -45,7 +45,10 @@
               the document (partly supported). Additional low level
               code to process the file format may follow, if there
               is demand and developer interest warrant it.</p>
-			<p>At this time, there is no <em>usermodel</em> api or similar.
+            <p>Text Extraction is available via the 
+              <em>org.apache.poi.hpbf.extractor.PublisherTextExtractor</em>
+              class.</p>
+            <p>At this time, there is no <em>usermodel</em> api or similar.
               There is only low level support for certain parts of
               the file, but by no means all of it.</p>
             <p>Our current understanding of the file format is documented
