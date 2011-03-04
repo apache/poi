@@ -32,7 +32,7 @@
        <section>
          <title>Overview</title>
 
-         <p>HMEF is the POI Project's pure Java implementation of the 
+         <p>HMEF is the POI Project's pure Java implementation of Microsoft's
             TNEF (Transport Neurtral Encoding Format), aka winmail.dat,
             which is used by Outlook and Exchange in some situations.</p>
           <p>Currently, HMEF provides a read-only api for accessing common
