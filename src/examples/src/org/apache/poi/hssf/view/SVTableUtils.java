@@ -31,7 +31,7 @@ import org.apache.poi.hssf.util.*;
  * @author     Jason Height
  */
 public class SVTableUtils {
-  private final static Hashtable colors = HSSFColor.getIndexHash();
+  private final static Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
   /**  Description of the Field */
   public final static Color black = getAWTColor(new HSSFColor.BLACK());
   /**  Description of the Field */

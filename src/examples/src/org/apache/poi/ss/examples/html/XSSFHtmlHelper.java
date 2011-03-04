@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.html;
 
+import java.util.Formatter;
+import java.util.Map;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.util.Formatter;
-import java.util.Hashtable;
 
 /**
  * Implementation of {@link HtmlHelper} for XSSF files.
@@ -33,7 +33,7 @@ import java.util.Hashtable;
 public class XSSFHtmlHelper implements HtmlHelper {
     private final XSSFWorkbook wb;
 
-    private static final Hashtable colors = HSSFColor.getIndexHash();
+    private static final Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
 
     public XSSFHtmlHelper(XSSFWorkbook wb) {
         this.wb = wb;

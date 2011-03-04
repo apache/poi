@@ -18,7 +18,9 @@
 package org.apache.poi.hssf.util;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Color;
 
@@ -37,7 +39,7 @@ import org.apache.poi.ss.usermodel.Color;
  * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
 public class HSSFColor implements Color {
-    // TODO make subclass instances immutable
+    private static Map<Integer,HSSFColor> indexHash; 
 
     /** Creates a new instance of HSSFColor */
     public HSSFColor()
@@ -45,17 +47,26 @@ public class HSSFColor implements Color {
     }
 
     /**
-     * this function returns all colors in a hastable.  Its not implemented as a
-     * static member/staticly initialized because that would be dirty in a
-     * server environment as it is intended.  This means you'll eat the time
-     * it takes to create it once per request but you will not hold onto it
-     * if you have none of those requests.
+     * This function returns all the colours in an unmodifiable Map.
+     * The map is cached on first use.
      *
-     * @return a hashtable containing all colors keyed by <tt>Integer</tt> excel-style palette indexes
+     * @return a Map containing all colours keyed by <tt>Integer</tt> excel-style palette indexes
      */
-    public final static Hashtable<Integer,HSSFColor> getIndexHash() {
+    public final static Map<Integer,HSSFColor> getIndexHash() {
+        if(indexHash == null) {
+           indexHash = Collections.unmodifiableMap( createColorsByIndexMap() );
+        }
 
-        return createColorsByIndexMap();
+        return indexHash;
+    }
+    /**
+     * This function returns all the Colours, stored in a Hashtable that
+     *  can be edited. No caching is performed. If you don't need to edit
+     *  the table, then call {@link #getIndexHash()} which returns a
+     *  statically cached imuatable map of colours.
+     */
+    public final static Hashtable<Integer,HSSFColor> getMutableIndexHash() {
+       return createColorsByIndexMap();
     }
 
     private static Hashtable<Integer,HSSFColor> createColorsByIndexMap() {
