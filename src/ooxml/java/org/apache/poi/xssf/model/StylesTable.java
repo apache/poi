@@ -98,6 +98,9 @@ public class StylesTable extends POIXMLDocumentPart {
 
     public void setTheme(ThemesTable theme) {
         this.theme = theme;
+        for(XSSFFont font : fonts) {
+           font.setThemesTable(theme);
+        }
     }
 
 	/**
@@ -125,6 +128,7 @@ public class StylesTable extends POIXMLDocumentPart {
             if(ctfonts != null){
 				int idx = 0;
 				for (CTFont font : ctfonts.getFontArray()) {
+				   // Create the font and save it. Themes Table supplied later
 					XSSFFont f = new XSSFFont(font, idx);
 					fonts.add(f);
 					idx++;
