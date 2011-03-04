@@ -140,7 +140,7 @@ public class StylesTable extends POIXMLDocumentPart {
             CTBorders ctborders = styleSheet.getBorders();
             if(ctborders != null) {
                 for (CTBorder border : ctborders.getBorderArray()) {
-                    borders.add(new XSSFCellBorder(border));
+                    borders.add(new XSSFCellBorder(border, theme));
                 }
             }
 
@@ -433,7 +433,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		fills.add(new XSSFCellFill(ctFill[1]));
 
 		CTBorder ctBorder = createDefaultBorder();
-		borders.add(new XSSFCellBorder(ctBorder));
+		borders.add(new XSSFCellBorder(ctBorder, theme));
 
 		CTXf styleXf = createDefaultXf();
 		styleXfs.add(styleXf);

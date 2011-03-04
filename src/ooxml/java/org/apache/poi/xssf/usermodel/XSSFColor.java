@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
  * Represents a color in SpreadsheetML
@@ -329,7 +329,7 @@ public class XSSFColor implements Color {
     public CTColor getCTColor(){
         return ctColor;
     }
-
+    
     public int hashCode(){
         return ctColor.toString().hashCode();
     }
