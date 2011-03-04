@@ -1132,6 +1132,7 @@ under the License.
               <exclude name="documentation/content/xdocs/dtd/" />
               <exclude name="documentation/content/xdocs/entity/" />
               <exclude name="scratchpad/testcases/dummy.txt" />
+              <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
            </fileset>
        </rat:report>
