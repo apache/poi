@@ -37,7 +37,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 public class SVTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
   private static final Color black = getAWTColor(new HSSFColor.BLACK());
   private static final Color white = getAWTColor(new HSSFColor.WHITE());
-  private Hashtable colors = HSSFColor.getIndexHash();
+  private Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
 
 
   private HSSFWorkbook wb;
