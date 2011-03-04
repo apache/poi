@@ -26,8 +26,19 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -766,5 +777,48 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertNotNull( themeC.getRgb() );
        assertNotNull( colt.getRgb() );
        assertEquals( themeC.getARGBHex(), colt.getARGBHex() ); // The same colour
+    }
+
+    /**
+     * New lines were being eaten when setting a font on
+     *  a rich text string
+     */
+    public void test48877() throws Exception {
+       String text = "Use \n with word wrap on to create a new line.\n" +
+          "This line finishes with two trailing spaces.  ";
+       
+       Workbook wb = new XSSFWorkbook();
+       Sheet sheet = wb.createSheet();
+
+       Font font1 = wb.createFont();
+       font1.setColor((short) 20);
+
+       Row row = sheet.createRow(2);
+       Cell cell = row.createCell(2);
+
+       RichTextString richTextString =
+          wb.getCreationHelper().createRichTextString(text);
+       
+       // Check the text has the newline
+       assertEquals(text, richTextString.getString());
+       
+       // Apply the font
+       richTextString.applyFont(0, 3, font1);
+       cell.setCellValue(richTextString);
+
+       // To enable newlines you need set a cell styles with wrap=true
+       CellStyle cs = wb.createCellStyle();
+       cs.setWrapText(true);
+       cell.setCellStyle(cs);
+
+       // Check the text has the
+       assertEquals(text, cell.getStringCellValue());
+       
+       // Save the file and re-read it
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sheet = wb.getSheetAt(0);
+       row = sheet.getRow(2);
+       cell = row.getCell(2);
+       assertEquals(text, cell.getStringCellValue());
     }
 }
