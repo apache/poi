@@ -742,10 +742,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Fonts where their colours come from the theme rather
      *  then being set explicitly still should allow the
      *  fetching of the RGB.
-     * TODO Allow XSSFFont to get at the themes table, so it can do
-     *  the same trick that XSSFCellStyle does with theme colours 
      */
-    public void DISABLEDtest50784() throws Exception {
+    public void test50784() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx");
        XSSFSheet s = wb.getSheetAt(0);
        XSSFRow r = s.getRow(0);
@@ -766,8 +764,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(9, colt.getTheme());
        XSSFColor themeC = wb.getTheme().getThemeColor(colt.getTheme());
        assertNotNull( themeC.getRgb() );
-       // TODO Fix it so this works
        assertNotNull( colt.getRgb() );
-       assertEquals( themeC.getRgb(), colt.getRgb() ); // The same colour
+       assertEquals( themeC.getARGBHex(), colt.getARGBHex() ); // The same colour
     }
 }

@@ -18,7 +18,13 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestFont;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FontCharset;
+import org.apache.poi.ss.usermodel.FontFamily;
+import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.ss.usermodel.FontUnderline;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;

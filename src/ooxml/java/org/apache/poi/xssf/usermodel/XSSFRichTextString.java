@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -342,7 +343,11 @@ public class XSSFRichTextString implements RichTextString {
 
         for(int i = 0; i < st.sizeOfRArray(); i++){
             CTRElt r = st.getRArray(i);
-            if(i == index) return new XSSFFont(toCTFont(r.getRPr()));
+            if(i == index) {
+               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
+               fnt.setThemesTable(getThemesTable());
+               return fnt;
+            }
         }
         return null;
     }
@@ -361,7 +366,11 @@ public class XSSFRichTextString implements RichTextString {
         int pos = 0;
         for(int i = 0; i < st.sizeOfRArray(); i++){
             CTRElt r = st.getRArray(i);
-            if(index >= pos && index < pos + r.getT().length()) return new XSSFFont(toCTFont(r.getRPr()));
+            if(index >= pos && index < pos + r.getT().length()) {
+               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
+               fnt.setThemesTable(getThemesTable());
+               return fnt;
+            }
 
             pos += r.getT().length();
         }
@@ -542,5 +551,10 @@ public class XSSFRichTextString implements RichTextString {
             runStartIdx = runEndIdx;
         }
         return st;
+    }
+    
+    private ThemesTable getThemesTable() {
+       if(styles == null) return null;
+       return styles.getTheme();
     }
 }
