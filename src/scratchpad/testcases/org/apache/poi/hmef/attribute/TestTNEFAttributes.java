@@ -20,6 +20,7 @@ package org.apache.poi.hmef.attribute;
 import java.io.ByteArrayInputStream;
 import java.text.DateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -156,12 +157,13 @@ public final class TestTNEFAttributes extends TestCase {
       assertEquals(3, LittleEndian.getUShort(attr.getData(), 12)); // Weds
       
       // Ask for it as a Java date, and have it converted
-      // Pick a predictable format + location. Note location is in summer time!
+      // Pick a predictable format + location + timezone
       TNEFDateAttribute date = (TNEFDateAttribute)attr;
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
-      assertEquals("28-Apr-2010 13:40:56", fmt.format(date.getDate()));
+      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format(date.getDate()));
 	}
 	
 	/** 

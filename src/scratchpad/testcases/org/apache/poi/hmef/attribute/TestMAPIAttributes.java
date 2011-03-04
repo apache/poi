@@ -20,6 +20,7 @@ package org.apache.poi.hmef.attribute;
 import java.io.ByteArrayInputStream;
 import java.text.DateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -151,6 +152,7 @@ public final class TestMAPIAttributes extends TestCase {
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
+      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
       assertEquals("15-Dec-2010 14:46:31", fmt.format(date.getDate()));
       
       // RTF

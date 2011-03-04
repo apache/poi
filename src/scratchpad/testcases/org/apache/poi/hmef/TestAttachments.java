@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -87,18 +88,18 @@ public final class TestAttachments extends TestCase {
    public void testAttachmentDetails() throws Exception {
       List<Attachment> attachments = quick.getAttachments();
       
-      // Pick a predictable date format
-      // Note that the 28th April is in summer time in the UK
+      // Pick a predictable date format + timezone
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
+      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
       
       // They should all have the same date on them
-      assertEquals("28-Apr-2010 13:40:56", fmt.format( attachments.get(0).getModifiedDate()));
-      assertEquals("28-Apr-2010 13:40:56", fmt.format( attachments.get(1).getModifiedDate()));
-      assertEquals("28-Apr-2010 13:40:56", fmt.format( attachments.get(2).getModifiedDate()));
-      assertEquals("28-Apr-2010 13:40:56", fmt.format( attachments.get(3).getModifiedDate()));
-      assertEquals("28-Apr-2010 13:40:56", fmt.format( attachments.get(4).getModifiedDate()));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(0).getModifiedDate()));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(1).getModifiedDate()));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(2).getModifiedDate()));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(3).getModifiedDate()));
+      assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(4).getModifiedDate()));
       
       // They should all have a 3512 byte metafile rendered version
       assertEquals(3512, attachments.get(0).getRenderedMetaFile().length);
