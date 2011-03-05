@@ -37,8 +37,10 @@ import org.apache.poi.util.LZWDecompresser;
  */
 public class HDGFLZW extends LZWDecompresser {
    public HDGFLZW() {
-      // We're the wrong way round!
-      super(false, 3);
+      // Out flag is the wrong way round!
+      // Length wise, we're 3 longer than we say, so the max len is 19
+      // Endian wise, we're little endian, so 0x1234 is pos 0x312
+      super(false, 3, false);
    }
 
    /**
@@ -63,12 +65,13 @@ public class HDGFLZW extends LZWDecompresser {
       }
       return pntr;
    }
-
+   
    /**
     * We want an empty dictionary, so do nothing
     */
    @Override
-   protected void populateDictionary(byte[] dict) {
+   protected int populateDictionary(byte[] dict) {
+      return 0;
    }
 
    /**

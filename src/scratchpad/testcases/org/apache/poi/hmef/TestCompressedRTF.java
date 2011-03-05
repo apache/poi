@@ -93,7 +93,7 @@ public final class TestCompressedRTF extends TestCase {
      * Check that we can decode the first 8 codes
      * (1 flag byte + 8 codes)  
      */
-    public void DISABLEDtestFirstBlock() throws Exception {
+    public void testFirstBlock() throws Exception {
        HMEFMessage msg = new HMEFMessage(
              _samples.openResourceAsStream("quick-winmail.dat")
        );
@@ -112,7 +112,6 @@ public final class TestCompressedRTF extends TestCase {
        String decompStr = new String(decomp, "ASCII");
        
        // Test
-System.err.println(decompStr);       
        assertEquals(block1.length(), decomp.length);
        assertEquals(block1, decompStr);
     }
@@ -121,7 +120,7 @@ System.err.println(decompStr);
      * Check that we can decode the first 16 codes
      * (flag + 8 codes, flag + 8 codes)  
      */
-    public void DISABLEDtestFirstTwoBlocks() throws Exception {
+    public void testFirstTwoBlocks() throws Exception {
        HMEFMessage msg = new HMEFMessage(
              _samples.openResourceAsStream("quick-winmail.dat")
        );
@@ -140,7 +139,6 @@ System.err.println(decompStr);
        String decompStr = new String(decomp, "ASCII");
        
        // Test
-System.err.println(decompStr);       
        assertEquals(block2.length(), decomp.length);
        assertEquals(block2, decompStr);
     }

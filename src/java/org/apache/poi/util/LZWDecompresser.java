@@ -41,23 +41,36 @@ public abstract class LZWDecompresser {
     *  to get the real code length? Normally 2 or 3
     */
    private final int codeLengthIncrease;
+   /**
+    * Does the 12 bits of the position get stored in
+    *  Little Endian or Big Endian form?
+    * This controls whether a pos+length of 0x12 0x34
+    *  becomes a position of 0x123 or 0x312
+    */
+   private final boolean positionIsBigEndian;
    
-   protected LZWDecompresser(boolean maskMeansCompressed, int codeLengthIncrease) {
+   protected LZWDecompresser(boolean maskMeansCompressed, 
+            int codeLengthIncrease, boolean positionIsBigEndian) {
       this.maskMeansCompressed = maskMeansCompressed;
       this.codeLengthIncrease = codeLengthIncrease;
+      this.positionIsBigEndian = positionIsBigEndian;
    }
    
    /**
-    * Populates the dictionary. May not need
-    *  to do anything if all zeros is fine.
+    * Populates the dictionary, and returns where in it
+    *  to begin writing new codes.
+    * Generally, if the dictionary is pre-populated, then new
+    *  codes should be placed at the end of that block.
+    * Equally, if the dictionary is left with all zeros, then
+    *  usually the new codes can go in at the start.
     */
-   protected abstract void populateDictionary(byte[] dict);
+   protected abstract int populateDictionary(byte[] dict);
    
    /**
     * Adjusts the position offset if needed when looking
     *  something up in the dictionary.
     */
-   protected abstract int adjustDictionaryOffset(int offset); 
+   protected abstract int adjustDictionaryOffset(int offset);
    
    /**
     * Decompresses the given input stream, returning the array of bytes
@@ -83,17 +96,10 @@ public abstract class LZWDecompresser {
     *     flag byte
     */
    public void decompress(InputStream src, OutputStream res) throws IOException {
-      // We use 12 bit codes:
-      // * 0-255 are real bytes
-      // * 256-4095 are the substring codes
-      // Java handily initialises our buffer / dictionary
-      //  to all zeros
-      byte[] buffer = new byte[4096];
-      populateDictionary(buffer);
-
       // How far through the output we've got
       // (This is normally used &4095, so it nicely wraps)
-      int pos = 0;
+      // The initial value is set when populating the dictionary
+      int pos;
       // The flag byte is treated as its 8 individual
       //  bits, which tell us if the following 8 codes
       //  are compressed or un-compressed
@@ -102,10 +108,18 @@ public abstract class LZWDecompresser {
       //  processing each bit of the flag byte in turn
       int mask;
 
+      // We use 12 bit codes:
+      // * 0-255 are real bytes
+      // * 256-4095 are the substring codes
+      // Java handily initialises our buffer / dictionary
+      //  to all zeros
+      byte[] buffer = new byte[4096];
+      pos = populateDictionary(buffer);
+
       // These are bytes as looked up in the dictionary
       // It needs to be signed, as it'll get passed on to
       //  the output stream
-      byte[] dataB = new byte[19];
+      byte[] dataB = new byte[16+codeLengthIncrease];
       // This is an unsigned byte read from the stream
       // It needs to be unsigned, so that bit stuff works
       int dataI;
@@ -121,7 +135,7 @@ public abstract class LZWDecompresser {
             // Is this a new code (un-compressed), or
             //  the use of existing codes (compressed)?
             boolean isMaskSet = (flag & mask) > 0;
-            if( isMaskSet && !maskMeansCompressed ) {
+            if( isMaskSet ^ maskMeansCompressed ) {
                // Retrieve the un-compressed code
                if( (dataI = src.read()) != -1) {
                   // Save the byte into the dictionary
@@ -139,11 +153,15 @@ public abstract class LZWDecompresser {
 
                // Build up how long the code sequence is, and
                //  what position of the code to start at
-               // (The position is the first 12 bits, the
-               //  length is the last 4 bits)
+               // (The position is the usually the first 12 bits, 
+               //  and the length is usually the last 4 bits)
                len = (dataIPt2 & 15) + codeLengthIncrease;
-               pntr = (dataIPt2 & 240)*16 + dataIPt1;
-
+               if(positionIsBigEndian) {
+                  pntr = (dataIPt1<<4) + (dataIPt2>>4);
+               } else {
+                  pntr = dataIPt1 + ((dataIPt2&0xF0)<<4);
+               }
+               
                // Adjust the pointer as needed
                pntr = adjustDictionaryOffset(pntr);
 

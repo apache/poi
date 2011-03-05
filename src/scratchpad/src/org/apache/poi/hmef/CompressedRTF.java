@@ -54,7 +54,10 @@ public final class CompressedRTF extends LZWDecompresser {
       "{\\colortbl\\red0\\green0\\blue0\n\r\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx";
    
    public CompressedRTF() {
-      super(true, 2);
+      // Out flag has the normal meaning
+      // Length wise, we're 2 longer than we say, so the max len is 18
+      // Endian wise, we're big endian, so 0x1234 is pos 0x123
+      super(true, 2, true);
    }
 
    public void decompress(InputStream src, OutputStream res) throws IOException {
@@ -80,17 +83,24 @@ public final class CompressedRTF extends LZWDecompresser {
       super.decompress(src, res);
    }
 
+   /**
+    * We use regular dictionary offsets, so no
+    *  need to change anything
+    */
    @Override
    protected int adjustDictionaryOffset(int offset) {
-      // TODO Do we need to change anything?
-      return 0;
+      return offset;
    }
 
    @Override
-   protected void populateDictionary(byte[] dict) {
+   protected int populateDictionary(byte[] dict) {
       try {
+         // Copy in the RTF constants 
          byte[] preload = LZW_RTF_PRELOAD.getBytes("US-ASCII");
          System.arraycopy(preload, 0, dict, 0, preload.length);
+         
+         // Start adding new codes after the constants
+         return preload.length;
       } catch(UnsupportedEncodingException e) {
          throw new RuntimeException("Your JVM is broken as it doesn't support US ASCII");
       }
