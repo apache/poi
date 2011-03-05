@@ -17,19 +17,12 @@
 
 package org.apache.poi.hmef;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.IOUtils;
-
-public final class TestAttachments extends TestCase {
-   private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
+public final class TestAttachments extends HMEFTest {
    private HMEFMessage quick;
    
    @Override
@@ -120,20 +113,5 @@ public final class TestAttachments extends TestCase {
       assertContents("quick.pdf", attachments.get(2));
       assertContents("quick.txt", attachments.get(3));
       assertContents("quick.xml", attachments.get(4));
-   }
-   
-   private void assertContents(String filename, Attachment attachment) 
-         throws IOException {
-      assertEquals(filename, attachment.getLongFilename());
-      
-      byte[] expected = IOUtils.toByteArray(
-            _samples.openResourceAsStream("quick-contents/" + filename)
-      );
-      byte[] actual = attachment.getContents();
-      
-      assertEquals(expected.length, actual.length);
-      for(int i=0; i<expected.length; i++) {
-         assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
-      }
    }
 }

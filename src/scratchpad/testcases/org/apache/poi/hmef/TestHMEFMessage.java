@@ -17,15 +17,12 @@
 
 package org.apache.poi.hmef;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 
-public final class TestHMEFMessage extends TestCase {
-    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
-
+public final class TestHMEFMessage extends HMEFTest {
 	public void testOpen() throws Exception {
 		HMEFMessage msg = new HMEFMessage(
                 _samples.openResourceAsStream("quick-winmail.dat")
@@ -101,5 +98,27 @@ public final class TestHMEFMessage extends TestCase {
       
       assertEquals("This is a test message", msg.getSubject());
       assertEquals("{\\rtf1", msg.getBody().substring(0, 6));
+   }
+
+   /**
+    * Checks that the compressed RTF message contents
+    *  can be correctly extracted
+    * TODO Fix what looks like a padding issue
+    */
+   public void DISABLEDtestMessageContents() throws Exception {
+      HMEFMessage msg = new HMEFMessage(
+            _samples.openResourceAsStream("quick-winmail.dat")
+      );
+      
+      // Firstly by byte
+      MAPIRtfAttribute rtf = (MAPIRtfAttribute)
+         msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+      assertContents("message.rtf", rtf.getData());
+      
+      // Then by String
+      String contents = msg.getBody();
+      // It's all low bytes
+      byte[] contentsBytes = contents.getBytes("ASCII");
+      assertContents("message.rtf", contentsBytes);
    }
 }
