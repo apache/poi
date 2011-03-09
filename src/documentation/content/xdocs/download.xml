@@ -33,6 +33,7 @@
        <link href="index.html">the project homepage</link>.
       </p>
       <ul>
+          <li><link href="download.html#POI-3.8beta1">The latest development release is Apache POI 3.8 Beta 1</link></li> 
           <li><link href="download.html#POI-3.7">The latest stable release is Apache POI 3.7</link></li>
           <li><link href="download.html#archive">Archives of all prior releases</link></li>
       </ul>
@@ -44,6 +45,55 @@
         To insure that you have downloaded the true release you should <link href="download.html#verify">verify the integrity</link> 
         of the files using the signatures and checksums available from this page.
       </p>
+    </section>
+
+    <section id="POI-3.8beta1"><title>7 March 2011 - POI 3.8 beta 1 available</title>
+      <p>The Apache POI team is pleased to announce the release of 3.8 beta 1. 
+         This includes a large number of bug fixes and enhancements. 
+      </p>
+      <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+        People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
+      <p>
+        The POI source release as well as the pre-built binary deployment packages are listed below. 
+        Pre-built versions of all <link href="index.html#components">POI components</link> are available in the central Maven repository
+        under Group ID "org.apache.poi" and Version "3.8-beta1".
+      </p>
+      <section><title>Binary Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/binpoi-bin-3.8-beta1-20110307.tar.gz">poi-bin-3.8-beta1-20110307.tar.gz</link> (
+          14MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.8-beta1-20110307.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: 72e005ff0a5f7915f62910359d311810
+          <br/>
+          SHA1 checksum: 7d348f90b944b910397cacab7f4f59e5316ee476
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.8-beta1-20110307.zip">poi-bin-3.8-beta1-20110307.zip</link> (
+          20MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.7-beta3-20100924.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: 3212efc331be08681d563712f1db864f
+          <br/>
+          SHA1 checksum: b94a9e4f3c12dc9e44492a18ac24e52c8b66710d
+        </li>
+      </ul>
+      </section>
+      <section><title>Source Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.8-beta1-20110307.tar.gz">poi-src-3.8-beta1-20110307.tar.gz</link> (
+          32MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.8-beta1-20110307.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: 58c81d28f9eaa655707ce91b76708fc6
+          <br/>
+          SHA1 checksum: 65354e76c9ec7b0cf5e573438b93641be0a6facd
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/src/poi-src-3.8-beta1-20110307.zip">poi-src-3.8-beta1-20110307.zip</link> (
+          38MB, <link href="http://www.apache.org/dist/poi/dev/src/poi-src-3.8-beta1-20110307.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: 7f7673ac4bb6857c3799d38f8f7c09e9
+          <br/>
+          SHA1 checksum: 247f1878963d233c27426462ce91a0bf95df1e56
+        </li>
+      </ul>
+      </section>
     </section>
 
     <section id="POI-3.7"><title>29 October 2010 - POI 3.7 available</title>
