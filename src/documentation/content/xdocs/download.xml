@@ -60,7 +60,7 @@
       </p>
       <section><title>Binary Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/binpoi-bin-3.8-beta1-20110307.tar.gz">poi-bin-3.8-beta1-20110307.tar.gz</link> (
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/dev/bin/poi-bin-3.8-beta1-20110307.tar.gz">poi-bin-3.8-beta1-20110307.tar.gz</link> (
           14MB, <link href="http://www.apache.org/dist/poi/dev/bin/poi-bin-3.8-beta1-20110307.tar.gz.asc">signed</link>)
           <br/>
           MD5 checksum: 72e005ff0a5f7915f62910359d311810
