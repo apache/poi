@@ -907,8 +907,15 @@ public class HSSFCell implements Cell {
         // Verify it really does belong to our workbook
         style.verifyBelongsToWorkbook(_book);
 
+        short styleIndex;
+        if(style.getUserStyleName() != null) {
+            styleIndex = applyUserCellStyle(style);
+        } else {
+            styleIndex = style.getIndex();
+        }
+
         // Change our cell record to use this style
-        _record.setXFIndex(style.getIndex());
+        _record.setXFIndex(styleIndex);
     }
 
     /**
@@ -1245,4 +1252,49 @@ public class HSSFCell implements Cell {
         notifyArrayFormulaChanging(msg);
     }
 
+    /**
+     * Applying a user-defined style (UDS) is special. Excel does not directly reference user-defined styles, but
+     * instead create a 'proxy' ExtendedFormatRecord referencing the UDS as parent.
+     *
+     * The proceudre to apply a UDS is as follows:
+     *
+     * 1. search for a ExtendedFormatRecord with parentIndex == style.getIndex()
+     *    and xfType ==  ExtendedFormatRecord.XF_CELL.
+     * 2. if not found then create a new ExtendedFormatRecord and copy all attributes from the user-defined style
+     *    and set the parentIndex to be style.getIndex()
+     * 3. return the index of the ExtendedFormatRecord, this will be assigned to the parent cell record
+     *
+     * @param style  the user style to apply
+     *
+     * @return  the index of a ExtendedFormatRecord record that will be referenced by the cell
+     */
+    private short applyUserCellStyle(HSSFCellStyle style){
+        if(style.getUserStyleName() == null) {
+            throw new IllegalArgumentException("Expected user-defined style");
+        }
+
+        InternalWorkbook iwb = _book.getWorkbook();
+        short userXf = -1;
+        int numfmt = iwb.getNumExFormats();
+        for(short i = 0; i < numfmt; i++){
+            ExtendedFormatRecord xf = iwb.getExFormatAt(i);
+            if(xf.getXFType() == ExtendedFormatRecord.XF_CELL && xf.getParentIndex() == style.getIndex() ){
+                userXf = i;
+                break;
+            }
+        }
+        short styleIndex;
+        if (userXf == -1){
+            ExtendedFormatRecord xfr = iwb.createCellXF();
+            xfr.cloneStyleFrom(iwb.getExFormatAt(style.getIndex()));
+            xfr.setIndentionOptions((short)0);
+            xfr.setXFType(ExtendedFormatRecord.XF_CELL);
+            xfr.setParentIndex(style.getIndex());
+            styleIndex = (short)numfmt;
+        } else {
+            styleIndex = userXf;
+        }
+
+        return styleIndex;
+    }
 }

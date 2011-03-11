@@ -17,16 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import junit.framework.TestCase;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.util.TempFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.util.TempFile;
 
 /**
  * Class to test cell styling functionality
@@ -326,5 +325,11 @@ public final class TestCellStyle extends TestCase {
         assertEquals(null, cs3.getUserStyleName());
         assertEquals("style1", cs2.getParentStyle().getUserStyleName());
         assertEquals("style2", cs3.getParentStyle().getUserStyleName());
+
+        // now apply a named style to a new cell
+        HSSFCell c4 = s.getRow(0).createCell(1);
+        c4.setCellStyle(cs2);
+        assertEquals("style1", c4.getCellStyle().getParentStyle().getUserStyleName());
     }
+
 }
