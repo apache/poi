@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
@@ -435,7 +436,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         }
 
         if (isExtendedText() && (extensionLength > 0)) {
-          field_5_ext_rst = new ExtRst(in, extensionLength);
+          field_5_ext_rst = new ExtRst(new ContinuableRecordInput(in), extensionLength);
           if(field_5_ext_rst.getDataSize()+4 != extensionLength) {
              System.err.println("ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize()+4));
           }

@@ -2019,4 +2019,13 @@ if(1==2) {
        
        // TODO Identify what excel doesn't like, and check for that
     }
+
+    public void test50779() throws Exception {
+       HSSFWorkbook wb1 = openSample("50779_1.xls");
+       writeOutAndReadBack(wb1);
+
+        HSSFWorkbook wb2 = openSample("50779_2.xls");
+        writeOutAndReadBack(wb2);
+    }
+
 }
