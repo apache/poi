@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="fix">50779 - fixed RecordFormatException when reading unicode strings with photenic data</action>
            <action dev="poi-developers" type="fix">50718 - More helpful error message when you try to create a CellReference with #REF!</action>
            <action dev="poi-developers" type="fix">50784 - XSSFColors return by XSSFFont now have theme information applied to them</action>
            <action dev="poi-developers" type="fix">50846 - Improve how XSSFColor inherits from Themes</action>
