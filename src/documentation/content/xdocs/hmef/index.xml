@@ -135,8 +135,7 @@ public void extract(String winmailFilename, String directoryName) throws Excepti
             interest to call:</p>
            <ul>
              <li><em>getBody()</em> - returns a String containing the RTF
-               contents of the message body. 
-               <em>Note - see limitations</em></li>
+               contents of the message body. </li>
              <li><em>getSubject()</em> - returns the message subject</li>
              <li><em>getAttachments()</em> - returns the list of 
                <em>Attachment</em> objects for the message</li>
@@ -199,10 +198,6 @@ for(Attachment attach : msg.getAttachments()) {
           <p>HMEF is currently a work-in-progress, and not everything
             works yet. The current limitations are:</p>
           <ul>
-            <li>Compressed RTF Message Bodies are not correctly 
-              decompressed. This means that a call to 
-              <em>HMEFMessage.getBody()</em> is unlikely to return the
-              correct RTF.</li>
             <li>Non-standard MAPI properties from the range 0x8000 to 0x8fff
               may not be being quite correctly turned into attributes. 
               The values show up, but the name and type may not always
