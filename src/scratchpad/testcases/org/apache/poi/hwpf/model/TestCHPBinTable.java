@@ -77,7 +77,7 @@ public final class TestCHPBinTable
     throws Exception
   {
     super.setUp();
-    _hWPFDocFixture = new HWPFDocFixture(this);
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }

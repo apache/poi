@@ -32,12 +32,11 @@ import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.DocumentProperties;
 import org.apache.poi.hwpf.model.EscherRecordHolder;
 import org.apache.poi.hwpf.model.FSPATable;
+import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FontTable;
-import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.PlexOfCps;
 import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
@@ -100,6 +99,9 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /** Holds Office Art objects */
   protected ShapesTable _officeArts;
+  
+  /** Holds the fields PLCFs */
+  protected FieldsTables _fieldsTables;
 
   protected HWPFDocument()
   {
@@ -264,13 +266,7 @@ public final class HWPFDocument extends HWPFDocumentCore
       _rmat = new RevisionMarkAuthorTable(_tableStream, rmarkOffset, rmarkLength);
     }
     
-    PlexOfCps plc = new PlexOfCps(_tableStream, _fib.getFcPlcffldMom(), _fib.getLcbPlcffldMom(), 2);
-    for (int x = 0; x < plc.length(); x++)
-    {
-      GenericPropertyNode node = plc.getProperty(x);
-      byte[] fld = node.getBytes();
-      int breakpoint = 0;
-    }
+    _fieldsTables = new FieldsTables(_tableStream, _fib);
   }
 
   public TextPieceTable getTextTable()
@@ -415,6 +411,13 @@ public final class HWPFDocument extends HWPFDocumentCore
 	  return _officeArts;
   }
 
+  /**
+   * @return FieldsTables object, that is able to extract fields descriptors from this document
+   */
+  public FieldsTables getFieldsTables() {
+      return _fieldsTables;
+  }
+  
   /**
    * Writes out the word file that is represented by an instance of this class.
    *

@@ -25,13 +25,16 @@ import org.apache.poi.POIDataSamples;
 
 public final class HWPFDocFixture
 {
+  public static final String DEFAULT_TEST_FILE = "test.doc";
+  
   public byte[] _tableStream;
   public byte[] _mainStream;
   public FileInformationBlock _fib;
+  private String _testFile;
 
-  public HWPFDocFixture(Object obj)
+  public HWPFDocFixture(Object obj, String testFile)
   {
-
+    _testFile = testFile;
   }
 
   public void setUp()
@@ -39,7 +42,7 @@ public final class HWPFDocFixture
     try
     {
       POIFSFileSystem filesystem = new POIFSFileSystem(
-              POIDataSamples.getDocumentInstance().openResourceAsStream("test.doc"));
+              POIDataSamples.getDocumentInstance().openResourceAsStream(_testFile));
 
       DocumentEntry documentProps =
         (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");

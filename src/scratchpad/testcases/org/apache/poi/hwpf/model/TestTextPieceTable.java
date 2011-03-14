@@ -170,7 +170,7 @@ public final class TestTextPieceTable extends TestCase {
   {
     super.setUp();
 
-    _hWPFDocFixture = new HWPFDocFixture(this);
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
   }
 
