@@ -69,6 +69,7 @@ public final class AllHWPFTests {
 		suite.addTestSuite(TestSectionTable.class);
 		suite.addTestSuite(TestStyleSheet.class);
 		suite.addTestSuite(TestTextPieceTable.class);
+		suite.addTestSuite(TestFieldsTables.class);
 
 		suite.addTestSuite(TestBug46610.class);
 		suite.addTestSuite(TestHeaderStories.class);

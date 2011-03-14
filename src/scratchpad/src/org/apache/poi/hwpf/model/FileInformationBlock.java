@@ -66,7 +66,13 @@ public final class FileInformationBlock extends FIBAbstractType
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFSED));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFLST));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLFLFO));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDATN));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDEDN));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDFTN));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDHDR));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDHDRTXBX));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDMOM));
+      fieldSet.add(Integer.valueOf(FIBFieldHandler.PLCFFLDTXBX));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBFFFN));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBFRMARK));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STTBSAVEDBY));
@@ -456,6 +462,56 @@ public final class FileInformationBlock extends FIBAbstractType
       _fieldHandler.clearFields();
     }
 
+    public int getFcPlcffldAtn()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDATN);
+    }
+
+    public int getLcbPlcffldAtn()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDATN);
+    }
+
+    public int getFcPlcffldEdn()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDEDN);
+    }
+
+    public int getLcbPlcffldEdn()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDEDN);
+    }
+
+    public int getFcPlcffldFtn()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDFTN);
+    }
+
+    public int getLcbPlcffldFtn()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDFTN);
+    }
+
+    public int getFcPlcffldHdr()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDHDR);
+    }
+
+    public int getLcbPlcffldHdr()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDHDR);
+    }
+
+    public int getFcPlcffldHdrtxbx()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDHDRTXBX);
+    }
+
+    public int getLcbPlcffldHdrtxbx()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDHDRTXBX);
+    }
+    
     public int getFcPlcffldMom()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDMOM);
@@ -464,6 +520,16 @@ public final class FileInformationBlock extends FIBAbstractType
     public int getLcbPlcffldMom()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
+    }
+    
+    public int getFcPlcffldTxbx()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDTXBX);
+    }
+
+    public int getLcbPlcffldTxbx()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDTXBX);
     }
 
     public int getFcPlcspaMom()

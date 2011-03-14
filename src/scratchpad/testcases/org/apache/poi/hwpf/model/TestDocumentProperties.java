@@ -66,7 +66,7 @@ public final class TestDocumentProperties
     super.setUp();
     /**@todo verify the constructors*/
 
-    _hWPFDocFixture = new HWPFDocFixture(this);
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
 
