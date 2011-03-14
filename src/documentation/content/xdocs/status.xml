@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="add">HMEF - New component which supports TNEF (Transport Neutral Encoding Format), aka winmail.dat</action>
            <action dev="poi-developers" type="fix">50313 - support for getting HWPFDocument fields</action>
            <action dev="poi-developers" type="fix">50912 - fixed setting named styles to HSSFCells</action>
            <action dev="poi-developers" type="fix">50779 - fixed RecordFormatException when reading unicode strings with photenic data</action>
