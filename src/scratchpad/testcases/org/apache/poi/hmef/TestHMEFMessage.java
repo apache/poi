@@ -103,9 +103,8 @@ public final class TestHMEFMessage extends HMEFTest {
    /**
     * Checks that the compressed RTF message contents
     *  can be correctly extracted
-    * TODO Fix what looks like a padding issue
     */
-   public void DISABLEDtestMessageContents() throws Exception {
+   public void testMessageContents() throws Exception {
       HMEFMessage msg = new HMEFMessage(
             _samples.openResourceAsStream("quick-winmail.dat")
       );
