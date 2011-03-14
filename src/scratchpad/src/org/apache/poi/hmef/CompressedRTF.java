@@ -31,9 +31,6 @@ import org.apache.poi.util.LittleEndian;
  * Within a {@link HMEFMessage}, the content is often
  *  stored in as RTF, but LZW compressed. This class
  *  handles decompressing it for you.
- *  
- * Note - this doesn't quite decompress the data correctly,
- *  more work and unit testing is required...
  */
 public final class CompressedRTF extends LZWDecompresser {
    public static final byte[] COMPRESSED_SIGNATURE =
@@ -52,6 +49,9 @@ public final class CompressedRTF extends LZWDecompresser {
       "{\\rtf1\\ansi\\mac\\deff0\\deftab720{\\fonttbl;}{\\f0\\fnil \\froman \\fswiss " +
       "\\fmodern \\fscript \\fdecor MS Sans SerifSymbolArialTimes New RomanCourier" +
       "{\\colortbl\\red0\\green0\\blue0\n\r\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx";
+
+   private int compressedSize;
+   private int decompressedSize;
    
    public CompressedRTF() {
       // Out flag has the normal meaning
@@ -60,10 +60,18 @@ public final class CompressedRTF extends LZWDecompresser {
       super(true, 2, true);
    }
 
+   /**
+    * Decompresses the whole of the compressed RTF
+    *  stream, outputting the resulting RTF bytes.
+    * Note - will decompress any padding at the end of
+    *  the input, if present, use {@link #getDeCompressedSize()}
+    *  if you need to know how much of the result is
+    *  real. (Padding may be up to 7 bytes).
+    */
    public void decompress(InputStream src, OutputStream res) throws IOException {
       // Validate the header on the front of the RTF
-      int compressedSize = LittleEndian.readInt(src);
-      int uncompressedSize = LittleEndian.readInt(src);
+      compressedSize = LittleEndian.readInt(src);
+      decompressedSize = LittleEndian.readInt(src);
       int compressionType = LittleEndian.readInt(src);
       int dataCRC = LittleEndian.readInt(src);
       
@@ -81,6 +89,21 @@ public final class CompressedRTF extends LZWDecompresser {
 
       // Have it processed
       super.decompress(src, res);
+   }
+   
+   /**
+    * Returns how big the compressed version was.
+    */
+   public int getCompressedSize() {
+      // Return the size less the header
+      return compressedSize - 12;
+   }
+   
+   /**
+    * Returns how big the decompressed version was.
+    */
+   public int getDeCompressedSize() {
+      return decompressedSize;
    }
 
    /**

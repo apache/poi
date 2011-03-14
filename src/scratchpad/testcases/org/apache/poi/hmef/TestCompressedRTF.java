@@ -148,7 +148,7 @@ public final class TestCompressedRTF extends TestCase {
      * Check that we can correctly decode the whole file
      * TODO Fix what looks like a padding issue
      */
-    public void DISABLEDtestFull() throws Exception {
+    public void testFull() throws Exception {
        HMEFMessage msg = new HMEFMessage(
              _samples.openResourceAsStream("quick-winmail.dat")
        );
@@ -160,11 +160,26 @@ public final class TestCompressedRTF extends TestCase {
        byte[] expected = IOUtils.toByteArray(
              _samples.openResourceAsStream("quick-contents/message.rtf")
        );
-       byte[] decomp = rtfAttr.getData();
+       
+       CompressedRTF comp = new CompressedRTF();
+       byte[] data = rtfAttr.getRawData();
+       byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
+       
+       // Check the length was as expected
+       assertEquals(data.length, comp.getCompressedSize() + 16);
+       assertEquals(expected.length, comp.getDeCompressedSize()); 
+       
+       // Will have been padded though
+       assertEquals(expected.length+2, decomp.length);
+       byte[] tmp = new byte[expected.length];
+       System.arraycopy(decomp, 0, tmp, 0, tmp.length);
+       decomp = tmp;
        
        // By byte
        assertEquals(expected.length, decomp.length);
-       assertEquals(expected, decomp);
+       for(int i=0; i<expected.length; i++) {
+          assertEquals(expected[i], decomp[i]);
+       }
        
        // By String
        String expString = new String(expected, "ASCII");

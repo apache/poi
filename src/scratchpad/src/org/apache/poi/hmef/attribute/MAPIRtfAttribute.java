@@ -37,9 +37,17 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
    public MAPIRtfAttribute(MAPIProperty property, int type, byte[] data) throws IOException {
       super(property, type, data);
       
+      // Decompress it, removing any trailing padding as needed
       CompressedRTF rtf = new CompressedRTF();
-      this.decompressed = rtf.decompress(new ByteArrayInputStream(data));
+      byte[] tmp = rtf.decompress(new ByteArrayInputStream(data));
+      if(tmp.length > rtf.getDeCompressedSize()) {
+         this.decompressed = new byte[rtf.getDeCompressedSize()];
+         System.arraycopy(tmp, 0, decompressed, 0, decompressed.length);
+      } else {
+         this.decompressed = tmp;
+      }
       
+      // Turn the RTF data into a more useful string
       this.data = StringUtil.getFromCompressedUnicode(decompressed, 0, decompressed.length);
    }
    
