@@ -1018,8 +1018,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
         name.setRefersToFormula(reference);
 
-        XSSFPrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setValidSettings(false);
+        // If the print setup isn't currently defined, then add it
+        //  in but without printer defaults
+        // If it's already there, leave it as-is!
+        CTWorksheet ctSheet = sheet.getCTWorksheet();
+        if(ctSheet.isSetPageSetup() && ctSheet.isSetPageMargins()) {
+           // Everything we need is already there
+        } else {
+           // Have initial ones put in place
+           XSSFPrintSetup printSetup = sheet.getPrintSetup();
+           printSetup.setValidSettings(false);
+        }
     }
 
     private static String getReferenceBuiltInRecord(String sheetName, int startC, int endC, int startR, int endR) {
