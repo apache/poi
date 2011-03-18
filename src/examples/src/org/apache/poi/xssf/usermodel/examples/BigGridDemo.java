@@ -39,6 +39,8 @@ import org.apache.poi.xssf.usermodel.*;
  * @author Yegor Kozlov
  */
 public class BigGridDemo {
+    private static final String XML_ENCODING = "UTF-8";
+    
     public static void main(String[] args) throws Exception {
 
         // Step 1. Create a template file. Setup sheets and workbook-level objects such as
@@ -58,7 +60,7 @@ public class BigGridDemo {
 
         //Step 2. Generate XML file.
         File tmp = File.createTempFile("sheet", ".xml");
-        Writer fw = new FileWriter(tmp);
+        Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING);
         generate(fw, styles);
         fw.close();
 
@@ -194,7 +196,7 @@ public class BigGridDemo {
         }
 
         public void beginSheet() throws IOException {
-            _out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            _out.write("<?xml version=\"1.0\" encoding=\""+XML_ENCODING+"\"?>" +
                     "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">" );
             _out.write("<sheetData>\n");
         }
