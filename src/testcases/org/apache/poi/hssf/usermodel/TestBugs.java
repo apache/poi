@@ -2028,4 +2028,12 @@ if(1==2) {
         writeOutAndReadBack(wb2);
     }
 
+    /**
+     * The spec says that ChartEndObjectRecord has 6 reserved
+     *  bytes on the end, but we sometimes find files without... 
+     */
+    public void test50939() throws Exception {
+       HSSFWorkbook wb = openSample("50939.xls");
+       assertEquals(2, wb.getNumberOfSheets());
+    }
 }
