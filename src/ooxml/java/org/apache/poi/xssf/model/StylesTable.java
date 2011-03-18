@@ -98,8 +98,14 @@ public class StylesTable extends POIXMLDocumentPart {
 
     public void setTheme(ThemesTable theme) {
         this.theme = theme;
+        
+        // Pass the themes table along to things which need to 
+        //  know about it, but have already been created by now
         for(XSSFFont font : fonts) {
            font.setThemesTable(theme);
+        }
+        for(XSSFCellBorder border : borders) {
+           border.setThemesTable(theme);
         }
     }
 
@@ -144,7 +150,7 @@ public class StylesTable extends POIXMLDocumentPart {
             CTBorders ctborders = styleSheet.getBorders();
             if(ctborders != null) {
                 for (CTBorder border : ctborders.getBorderArray()) {
-                    borders.add(new XSSFCellBorder(border, theme));
+                    borders.add(new XSSFCellBorder(border));
                 }
             }
 
@@ -251,6 +257,7 @@ public class StylesTable extends POIXMLDocumentPart {
 			return idx;
 		}
 		borders.add(border);
+		border.setThemesTable(theme);
 		return borders.size() - 1;
 	}
 
@@ -437,7 +444,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		fills.add(new XSSFCellFill(ctFill[1]));
 
 		CTBorder ctBorder = createDefaultBorder();
-		borders.add(new XSSFCellBorder(ctBorder, theme));
+		borders.add(new XSSFCellBorder(ctBorder));
 
 		CTXf styleXf = createDefaultXf();
 		styleXfs.add(styleXf);

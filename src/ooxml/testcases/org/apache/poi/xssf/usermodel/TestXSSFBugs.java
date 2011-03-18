@@ -742,12 +742,26 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  should still be able to get colours
      */
     public void test50846() throws Exception {
-       // TODO Get file and test
-       //Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50846.xlsx");
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50846-border_colours.xlsx");
        
-       // Check the style that is theme based
+       XSSFSheet sheet = wb.getSheetAt(0);
+       XSSFRow row = sheet.getRow(0);
        
-       // Check the one that isn't
+       // Border from a theme, brown
+       XSSFCell cellT = row.getCell(0);
+       XSSFCellStyle styleT = cellT.getCellStyle();
+       XSSFColor colorT = styleT.getBottomBorderXSSFColor();
+       
+       assertEquals(5, colorT.getTheme());
+       assertEquals("FFC0504D", colorT.getARGBHex());
+       
+       // Border from a style direct, red
+       XSSFCell cellS = row.getCell(1);
+       XSSFCellStyle styleS = cellS.getCellStyle();
+       XSSFColor colorS = styleS.getBottomBorderXSSFColor();
+       
+       assertEquals(0, colorS.getTheme());
+       assertEquals("FFFF0000", colorS.getARGBHex());
     }
     
     /**
