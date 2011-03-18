@@ -892,4 +892,46 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("Tabella1", t.getDisplayName());
        assertEquals("A1:C3", t.getCTTable().getRef());
     }
+    
+    /**
+     * Setting repeating rows and columns shouldn't break
+     *  any print settings that were there before
+     */
+    public void test49253() throws Exception {
+       XSSFWorkbook wb1 = new XSSFWorkbook();
+       XSSFWorkbook wb2 = new XSSFWorkbook();
+       
+       // No print settings before repeating
+       XSSFSheet s1 = wb1.createSheet(); 
+       assertEquals(false, s1.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+       
+       wb1.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+       
+       assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+       
+       XSSFPrintSetup ps1 = s1.getPrintSetup();
+       assertEquals(false, ps1.getValidSettings());
+       assertEquals(false, ps1.getLandscape());
+       
+       
+       // Had valid print settings before repeating
+       XSSFSheet s2 = wb2.createSheet();
+       XSSFPrintSetup ps2 = s2.getPrintSetup();
+       assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
+       
+       ps2.setLandscape(false);
+       assertEquals(true, ps2.getValidSettings());
+       assertEquals(false, ps2.getLandscape());
+       
+       wb2.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+       
+       ps2 = s2.getPrintSetup();
+       assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
+       assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
+       assertEquals(true, ps2.getValidSettings());
+       assertEquals(false, ps2.getLandscape());
+    }
 }

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="fix">49253 - When setting repeating rows and columns for XSSF, don't break the print settings if they were already there</action>
            <action dev="poi-developers" type="fix">49219 - ExternalNameRecord support for DDE Link entries without an operation</action>
            <action dev="poi-developers" type="fix">50846 - More XSSFColor theme improvements, this time for Cell Borders</action>
            <action dev="poi-developers" type="fix">50939 - ChartEndObjectRecord is supposed to have 6 bytes at the end, but handle it not</action>
