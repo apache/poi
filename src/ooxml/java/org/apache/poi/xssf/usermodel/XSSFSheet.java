@@ -448,7 +448,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             pane.setTopLeftCell(new CellReference(rowSplit, 0).formatAsString());
             pane.setActivePane(STPane.BOTTOM_LEFT);
         } else {
-            pane.setTopLeftCell(new CellReference(leftmostColumn, topRow).formatAsString());
+            pane.setTopLeftCell(new CellReference(topRow, leftmostColumn).formatAsString());
             pane.setActivePane(STPane.BOTTOM_RIGHT);
         }
 
