@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -933,5 +934,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
        assertEquals(true, ps2.getValidSettings());
        assertEquals(false, ps2.getLandscape());
+    }
+    
+    /**
+     * CreateFreezePane column/row order check 
+     */
+    public void test49381() throws Exception {
+       Workbook[] wbs = new Workbook[] { new HSSFWorkbook(), new XSSFWorkbook() };
+       int colSplit = 1;
+       int rowSplit = 2;
+       int leftmostColumn = 3;
+       int topRow = 4;
+
+       for(Workbook wb : wbs) {
+          Sheet s = wb.createSheet();
+          
+          // Populate
+          for(int rn=0; rn<= topRow; rn++) {
+             Row r = s.createRow(rn);
+             for(int cn=0; cn<leftmostColumn; cn++) {
+                Cell c = r.createCell(cn, Cell.CELL_TYPE_NUMERIC);
+                c.setCellValue(100*rn + cn);
+             }
+          }
+          
+          // Create the Freeze Pane
+          s.createFreezePane(colSplit, rowSplit, leftmostColumn, topRow);
+          PaneInformation paneInfo = s.getPaneInformation();
+          
+          // Check it
+          assertEquals(colSplit,       paneInfo.getVerticalSplitPosition());
+          assertEquals(rowSplit,       paneInfo.getHorizontalSplitPosition());
+          assertEquals(leftmostColumn, paneInfo.getVerticalSplitLeftColumn());
+          assertEquals(topRow,         paneInfo.getHorizontalSplitTopRow());
+       }
     }
 }
