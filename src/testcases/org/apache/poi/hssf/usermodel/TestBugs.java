@@ -2036,4 +2036,10 @@ if(1==2) {
        HSSFWorkbook wb = openSample("50939.xls");
        assertEquals(2, wb.getNumberOfSheets());
     }
+    
+    public void test49219() throws Exception {
+       HSSFWorkbook wb = openSample("49219.xls");
+       assertEquals(1, wb.getNumberOfSheets());
+       assertEquals("DGATE", wb.getSheetAt(0).getRow(1).getCell(0).getStringCellValue());
+    }
 }

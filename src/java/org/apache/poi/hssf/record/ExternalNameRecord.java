@@ -176,14 +176,16 @@ public final class ExternalNameRecord extends StandardRecord {
             // another switch: the fWantAdvise bit specifies whether the body describes
             // an external defined name or a DDE data item
             if(isAutomaticLink()){
-                //body specifies DDE data item
-                int nColumns = in.readUByte() + 1;
-                int nRows = in.readShort() + 1;
-
-                int totalCount = nRows * nColumns;
-                _ddeValues = ConstantValueParser.parse(in, totalCount);
-                _nColumns = nColumns;
-                _nRows = nRows;
+                if(in.available() > 0) {
+                   //body specifies DDE data item
+                   int nColumns = in.readUByte() + 1;
+                   int nRows = in.readShort() + 1;
+   
+                   int totalCount = nRows * nColumns;
+                   _ddeValues = ConstantValueParser.parse(in, totalCount);
+                   _nColumns = nColumns;
+                   _nRows = nRows;
+                }
             } else {
                 //body specifies an external defined name
                 int formulaLen = in.readUShort();
