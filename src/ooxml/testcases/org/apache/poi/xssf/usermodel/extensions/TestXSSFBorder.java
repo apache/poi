@@ -40,7 +40,7 @@ public class TestXSSFBorder extends TestCase {
 		right.setStyle(STBorderStyle.NONE);
 		bottom.setStyle(STBorderStyle.THIN);
 		
-		XSSFCellBorder cellBorderStyle = new XSSFCellBorder(border, null);
+		XSSFCellBorder cellBorderStyle = new XSSFCellBorder(border);
 		assertEquals("DASH_DOT", cellBorderStyle.getBorderStyle(BorderSide.TOP).toString());
 		
 		assertEquals("NONE", cellBorderStyle.getBorderStyle(BorderSide.RIGHT).toString());

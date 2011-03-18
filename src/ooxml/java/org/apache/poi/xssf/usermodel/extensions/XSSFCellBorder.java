@@ -38,19 +38,34 @@ public class XSSFCellBorder {
      * Creates a Cell Border from the supplied XML definition
      */
     public XSSFCellBorder(CTBorder border, ThemesTable theme) {
-        this.border = border;
+        this(border);
         this._theme = theme;
+    }
+
+    /**
+     * Creates a Cell Border from the supplied XML definition
+     */
+    public XSSFCellBorder(CTBorder border) {
+        this.border = border;
     }
 
     /**
      * Creates a new, empty Cell Border.
      * You need to attach this to the Styles Table
      */
-    public XSSFCellBorder(ThemesTable theme) {
+    public XSSFCellBorder() {
         border = CTBorder.Factory.newInstance();
-        this._theme = theme;
     }
 
+    /**
+     * Records the Themes Table that is associated with
+     *  the current font, used when looking up theme
+     *  based colours and properties.
+     */
+    public void setThemesTable(ThemesTable themes) {
+       this._theme = themes;
+    }
+    
     /**
      * The enumeration value indicating the side being used for a cell border.
      */

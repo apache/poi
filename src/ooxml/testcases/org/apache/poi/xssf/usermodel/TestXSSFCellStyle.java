@@ -59,11 +59,11 @@ public class TestXSSFCellStyle extends TestCase {
 		ctStylesheet = stylesTable.getCTStylesheet();
 
 		ctBorderA = CTBorder.Factory.newInstance();
-		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA, null);
+		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
 		long borderId = stylesTable.putBorder(borderA);
 		assertEquals(1, borderId);
 
-		XSSFCellBorder borderB = new XSSFCellBorder(null);
+		XSSFCellBorder borderB = new XSSFCellBorder();
 		assertEquals(1, stylesTable.putBorder(borderB));
 
 		ctFill = CTFill.Factory.newInstance();
