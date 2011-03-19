@@ -52,7 +52,9 @@ public class DateUtil {
      */
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
-    private static final Pattern date_ptrn3 = Pattern.compile("^[yYmMdDhHsS\\-/,. :\"\\\\]+0?[ampAMP/]*$");
+    private static final Pattern date_ptrn3 = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
+    //  elapsed time patterns: [h],[m] and [s]
+    private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -258,7 +260,12 @@ public class DateUtil {
             sb.append(c);
         }
         fs = sb.toString();
-        
+
+        // short-circuit if it indicates elapsed time: [h], [m] or [s]
+        if(date_ptrn4.matcher(fs).matches()){
+            return true;
+        }
+
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
         fs = date_ptrn1.matcher(fs).replaceAll("");
