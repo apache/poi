@@ -18,8 +18,6 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
 
@@ -27,8 +25,6 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
  * @author Philipp Epp
  */
 public class XWPFPicture {
-	private static final POILogger logger = POILogFactory.getLogger(XWPFPicture.class);
-	
 	protected XWPFParagraph paragraph;
 	private CTPicture ctPic;
     private String description;
