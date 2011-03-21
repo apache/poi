@@ -64,7 +64,7 @@ public class XWPFPicture {
      */
     public XWPFPictureData getPictureData(){
     	String blipId = ctPic.getBlipFill().getBlip().getEmbed();
-    	for(POIXMLDocumentPart part: paragraph.getDocument().getRelations()){
+        for(POIXMLDocumentPart part: ((POIXMLDocumentPart) paragraph.getPart()).getRelations()){
     		  if(part.getPackageRelationship().getId().equals(blipId)){
     			  return (XWPFPictureData)part;
     		  }

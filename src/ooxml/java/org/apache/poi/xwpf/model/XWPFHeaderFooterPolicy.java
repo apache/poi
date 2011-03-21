@@ -107,9 +107,14 @@ public class XWPFHeaderFooterPolicy {
 			// Get the header
 			CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
 			PackagePart hdrPart = doc.getPartById(ref.getId());
-			HdrDocument hdrDoc = HdrDocument.Factory.parse(hdrPart.getInputStream());
-			CTHdrFtr hdrFtr = hdrDoc.getHdr();
-			XWPFHeader hdr = new XWPFHeader(doc, hdrFtr);
+
+            XWPFHeader hdr = null;
+
+            for (POIXMLDocumentPart part : doc.getRelations()) {
+                if (part.getPackagePart().getPartName().equals(hdrPart.getPartName())) {
+                    hdr = (XWPFHeader) part;
+                }
+            }
 
 			// Assign it
 			Enum type = ref.getType();
