@@ -17,10 +17,12 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
@@ -325,5 +327,28 @@ public class TestXWPFRun extends TestCase {
        assertEquals(false, run.isItalic());
        assertEquals(false, run.isStrike());
        assertEquals(null, run.getCTR().getRPr());
+    }
+
+    public void testPictureInHeader() {
+        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
+        XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
+
+        XWPFHeader header = policy.getDefaultHeader();
+
+        int count = 0;
+
+        for (XWPFParagraph p : header.getParagraphs()) {
+            for (XWPFRun r : p.getRuns()) {
+                List<XWPFPicture> pictures = r.getEmbeddedPictures();
+
+                for (XWPFPicture pic : pictures) {
+                    assertNotNull(pic.getPictureData());
+                }
+
+                count+= pictures.size();
+            }
+        }
+
+        assertEquals(1, count);
     }
 }

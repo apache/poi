@@ -133,7 +133,6 @@ public class XWPFHeader extends XWPFHeaderFooter {
 		            }
 		        }
                 cursor.dispose();
-		        getAllPictures();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

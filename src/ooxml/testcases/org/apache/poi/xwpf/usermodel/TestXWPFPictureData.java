@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 
 public class TestXWPFPictureData extends TestCase {
 	   public void testRead(){
@@ -57,6 +58,16 @@ public class TestXWPFPictureData extends TestCase {
 				e.printStackTrace();
 			}
 	    }
+
+        public void testPictureInHeader() {
+            XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
+            XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
+
+            XWPFHeader header = policy.getDefaultHeader();
+
+            List<XWPFPictureData> pictures = header.getAllPictures();
+            assertEquals(1, pictures.size());
+        }
 
 	    public void testNew() throws Exception {
 	        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmptyDocumentWithHeaderFooter.docx");
