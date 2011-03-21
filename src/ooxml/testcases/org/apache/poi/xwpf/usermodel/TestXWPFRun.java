@@ -343,6 +343,7 @@ public class TestXWPFRun extends TestCase {
 
                 for (XWPFPicture pic : pictures) {
                     assertNotNull(pic.getPictureData());
+                    assertEquals("DOZOR", pic.getDescription());
                 }
 
                 count+= pictures.size();
