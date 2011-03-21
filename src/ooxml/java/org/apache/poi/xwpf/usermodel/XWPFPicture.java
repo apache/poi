@@ -31,15 +31,17 @@ public class XWPFPicture {
 	
 	protected XWPFParagraph paragraph;
 	private CTPicture ctPic;
-	 
-	 public XWPFParagraph getParagraph(){
+    private String description;
+
+    public XWPFParagraph getParagraph(){
 		 return paragraph;
 	 }
 	 
 	 public XWPFPicture(CTPicture ctPic, XWPFParagraph paragraph){
 		 this.paragraph = paragraph;
 		 this.ctPic = ctPic;
-	 }
+         description = ctPic.getNvPicPr().getCNvPr().getDescr();
+     }
 	 
 	 /**
 	  * Link Picture with PictureData
@@ -71,5 +73,8 @@ public class XWPFPicture {
     	}
     	return null;
     }
-    
+
+    public String getDescription() {
+        return description;
+    }
 }
