@@ -88,7 +88,7 @@ public class TestXWPFWordExtractor extends TestCase {
                 ps++;
             }
         }
-        assertEquals(103, ps);
+        assertEquals(134, ps);
     }
 
     public void testGetWithHyperlinks() {
@@ -128,7 +128,7 @@ public class TestXWPFWordExtractor extends TestCase {
                         "\n" +
                         "More on page one\n" +
                         "\n\n" +
-                        "End of page 1\n\n" +
+                        "End of page 1\n\n\n" +
                         "This is page two. It also has a three column heading, and a three column footer.\n" +
                         "Footer Left\tFooter Middle\tFooter Right\n",
                 extractor.getText()
@@ -151,7 +151,7 @@ public class TestXWPFWordExtractor extends TestCase {
                         "\n" +
                         "More on page one\n" +
                         "\n\n" +
-                        "End of page 1\n\n" +
+                        "End of page 1\n\n\n" +
                         "This is page two. It also has a three column heading, and a three column footer.\n" +
                         "The footer of the first page\n" +
                         "Footer Left\tFooter Middle\tFooter Right\n",
