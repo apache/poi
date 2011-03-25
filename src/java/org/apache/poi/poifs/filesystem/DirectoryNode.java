@@ -70,8 +70,7 @@ public class DirectoryNode
                   final POIFSFileSystem filesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent);
-       _ofilesystem = filesystem;
+       this(property, parent, filesystem, (NPOIFSFileSystem)null);
     }
     
     /**
@@ -86,14 +85,18 @@ public class DirectoryNode
                   final NPOIFSFileSystem nfilesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent);
-       _nfilesystem = nfilesystem;
+       this(property, parent, (POIFSFileSystem)null, nfilesystem);
     }
     
     private DirectoryNode(final DirectoryProperty property,
-                          final DirectoryNode parent)
+                          final DirectoryNode parent,
+                          final POIFSFileSystem ofilesystem,
+                          final NPOIFSFileSystem nfilesystem)
     {
         super(property, parent);
+        this._ofilesystem = ofilesystem;
+        this._nfilesystem = nfilesystem;
+        
         if (parent == null)
         {
             _path = new POIFSDocumentPath();
