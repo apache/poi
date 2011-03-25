@@ -27,6 +27,7 @@ import org.apache.poi.hpbf.model.qcbits.QCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -44,6 +45,9 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
       this(new HPBFDocument(dir));
    }
    public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
+      this(new HPBFDocument(fs));
+   }
+   public PublisherTextExtractor(NPOIFSFileSystem fs) throws IOException {
       this(new HPBFDocument(fs));
    }
    public PublisherTextExtractor(InputStream is) throws IOException {

@@ -34,6 +34,9 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="add">Added NPOIFS constructors to most POIDocument classes and their extractors, and more widely deprecated the Document(DirectoryNode, POIFSFileSystem) constructor in favour of the more general Document(DirectoryNode) one</action>
+           <action dev="poi-developers" type="fix">Fixed NPOIFS handling of new and empty Document Nodes</action>
+           <action dev="poi-developers" type="fix">Fixed NPOIFS access to Document Nodes not in the top level directory</action>
            <action dev="poi-developers" type="fix">50841 - Improved SpreadSheet DataFormatter to handle scientific notation, invalid dates and format spacers</action>
            <action dev="poi-developers" type="fix">49381 - Correct createFreezePane in XSSF, so that the left row/column matches the documentation + HSSF</action>
            <action dev="poi-developers" type="fix">49253 - When setting repeating rows and columns for XSSF, don't break the print settings if they were already there</action>
