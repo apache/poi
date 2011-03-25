@@ -103,6 +103,9 @@ public class NPOIFSFileSystem extends BlockStore
         _xbat_blocks     = new ArrayList<BATBlock>();
         _bat_blocks     = new ArrayList<BATBlock>();
         _root           = null;
+        
+        // Data needs to initially hold just the header block 
+        _data           = new ByteArrayBackedDataSource(new byte[bigBlockSize.getBigBlockSize()]);
     }
 
     /**

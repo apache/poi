@@ -102,7 +102,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
    public void updateContents(byte[] contents) throws IOException {
       // How many blocks are we going to need?
       int blockSize = blockStore.getBlockStoreBlockSize();
-      int blocks = (int)Math.ceil(contents.length / blockSize);
+      int blocks = (int)Math.ceil( ((double)contents.length) / blockSize );
       
       // Make sure we don't encounter a loop whilst overwriting
       //  the existing blocks
@@ -141,7 +141,9 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
          
          // Write it
          ByteBuffer buffer = blockStore.createBlockIfNeeded(thisBlock);
-         buffer.put(contents, i*blockSize, blockSize);
+         int startAt = i*blockSize;
+         int endAt = Math.min(contents.length - startAt, blockSize);
+         buffer.put(contents, startAt, endAt); 
          
          // Update pointers
          prevBlock = thisBlock;
