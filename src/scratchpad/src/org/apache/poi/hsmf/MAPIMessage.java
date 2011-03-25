@@ -41,6 +41,7 @@ import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -92,7 +93,22 @@ public class MAPIMessage extends POIDocument {
     * @throws IOException
     */
    public MAPIMessage(POIFSFileSystem fs) throws IOException {
-      this(fs.getRoot(), fs);
+      this(fs.getRoot());
+   }
+   /**
+    * Constructor for reading MSG Files from a POIFS filesystem
+    * @param fs
+    * @throws IOException
+    */
+   public MAPIMessage(NPOIFSFileSystem fs) throws IOException {
+      this(fs.getRoot());
+   }
+   /**
+    * @deprecated Use {@link #MAPIMessage(DirectoryNode)} instead
+    */
+   @Deprecated
+   public MAPIMessage(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+      this(poifsDir);
    }
    /**
     * Constructor for reading MSG Files from a certain
@@ -101,7 +117,7 @@ public class MAPIMessage extends POIDocument {
     * @param fs
     * @throws IOException
     */
-   public MAPIMessage(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
+   public MAPIMessage(DirectoryNode poifsDir) throws IOException {
       super(poifsDir);
 
       // Grab all the chunks

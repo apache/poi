@@ -46,6 +46,7 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -129,14 +130,28 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
    /**
+    * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
+    * document and places all the important stuff into data structures.
+    *
+    * @param filesystem the POIFS FileSystem to read from
+    * @throws IOException if there is a problem while parsing the document.
+    */
+   public HSLFSlideShow(NPOIFSFileSystem filesystem) throws IOException
+   {
+      this(filesystem.getRoot());
+   }
+
+   /**
     * Constructs a Powerpoint document from a specific point in a
     *  POIFS Filesystem. Parses the document and places all the
     *  important stuff into data structures.
     *
+    * @deprecated Use {@link #HSLFSlideShow(DirectoryNode)} instead
     * @param dir the POIFS directory to read from
     * @param filesystem the POIFS FileSystem to read from
     * @throws IOException if there is a problem while parsing the document.
     */
+	@Deprecated
    public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
    {
       this(dir);
