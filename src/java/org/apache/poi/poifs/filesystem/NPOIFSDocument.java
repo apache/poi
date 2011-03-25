@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -106,7 +107,12 @@ public final class NPOIFSDocument implements POIFSViewable {
    }
    
    Iterator<ByteBuffer> getBlockIterator() {
-      return _stream.getBlockIterator();
+      if(getSize() > 0) {
+         return _stream.getBlockIterator();
+      } else {
+         List<ByteBuffer> empty = Collections.emptyList();
+         return empty.iterator();
+      }
    }
 
    /**

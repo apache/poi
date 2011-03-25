@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.storage.BATBlock;
 
 /**
  * Tests {@link NPOIFSStream}
@@ -637,5 +638,70 @@ public final class TestNPOIFSStream extends TestCase {
          stream.updateContents(data);
          fail("Loop should have been detected but wasn't!");
       } catch(IllegalStateException e) {}
+   }
+   
+   /**
+    * Tests adding a new stream, writing and reading it.
+    */
+   public void testReadWriteNewStream() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem();
+      NPOIFSStream stream = new NPOIFSStream(fs);
+      
+      // Check our filesystem has a single block
+      //  to hold the BAT
+      assertEquals(1, fs.getFreeBlock());
+      BATBlock bat = fs.getBATBlockAndIndex(0).getBlock();
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(1));
+      
+      // Check the stream as-is
+      assertEquals(POIFSConstants.END_OF_CHAIN, stream.getStartBlock());
+      try {
+         stream.getBlockIterator();
+         fail("Shouldn't be able to get an iterator before writing");
+      } catch(IllegalStateException e) {}
+      
+      // Write in two blocks
+      byte[] data = new byte[512+20];
+      for(int i=0; i<512; i++) {
+         data[i] = (byte)(i%256);
+      }
+      for(int i=512; i<data.length; i++) {
+         data[i] = (byte)(i%256 + 100);
+      }
+      stream.updateContents(data);
+      
+      // Check now
+      assertEquals(3, fs.getFreeBlock());
+      bat = fs.getBATBlockAndIndex(0).getBlock();
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+      assertEquals(2,                           bat.getValueAt(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(3));
+      
+      
+      Iterator<ByteBuffer> it = stream.getBlockIterator();
+      assertEquals(true, it.hasNext());
+      ByteBuffer b = it.next();
+      
+      byte[] read = new byte[512];
+      b.get(read);
+      for(int i=0; i<read.length; i++) {
+         assertEquals("Wrong value at " + i, data[i], read[i]);
+      }
+      
+      assertEquals(true, it.hasNext());
+      b = it.next();
+      
+      read = new byte[512];
+      b.get(read);
+      for(int i=0; i<20; i++) {
+         assertEquals(data[i+512], read[i]);
+      }
+      for(int i=20; i<read.length; i++) {
+         assertEquals(0, read[i]);
+      }
+      
+      assertEquals(false, it.hasNext());
    }
 }
