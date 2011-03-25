@@ -94,7 +94,7 @@ public final class FunctionEval {
 		retval[38] = BooleanFunction.NOT;
 		retval[39] = NumericFunction.MOD;
 
-        retval[46] = AggregateFunction.VAR;
+		retval[46] = AggregateFunction.VAR;
 		retval[48] = TextFunction.TEXT;
 
 		retval[56] = FinanceFunction.PV;
@@ -111,6 +111,9 @@ public final class FunctionEval {
 		retval[68] = CalendarFieldFunction.MONTH;
 		retval[69] = CalendarFieldFunction.YEAR;
 
+		retval[71] = CalendarFieldFunction.HOUR;
+		retval[72] = CalendarFieldFunction.MINUTE;
+		retval[73] = CalendarFieldFunction.SECOND;
 		retval[74] = new Now();
 
 		retval[76] = new Rows();

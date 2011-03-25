@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta2" date="2011-??-??">
+           <action dev="poi-developers" type="add">48968 - Support for HOUR, MINUTE and SECOND date formulas</action>
            <action dev="poi-developers" type="add">Added NPOIFS constructors to most POIDocument classes and their extractors, and more widely deprecated the Document(DirectoryNode, POIFSFileSystem) constructor in favour of the more general Document(DirectoryNode) one</action>
            <action dev="poi-developers" type="fix">Fixed NPOIFS handling of new and empty Document Nodes</action>
            <action dev="poi-developers" type="fix">Fixed NPOIFS access to Document Nodes not in the top level directory</action>
