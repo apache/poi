@@ -29,7 +29,9 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
@@ -148,10 +150,19 @@ public class Decryptor {
     }
 
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        DocumentInputStream dis = fs.createDocumentInputStream("EncryptedPackage");
+       return getDataStream(fs.getRoot());
+    }
 
-        long size = dis.readLong();
+    public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
+       return getDataStream(fs.getRoot());
+    }
 
-        return new CipherInputStream(dis, getCipher());
+    @SuppressWarnings("unused")
+    public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
+       DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
+
+       long size = dis.readLong();
+
+       return new CipherInputStream(dis, getCipher());
     }
 }
