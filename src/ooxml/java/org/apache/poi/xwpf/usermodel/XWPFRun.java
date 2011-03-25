@@ -609,13 +609,19 @@ public class XWPFRun {
                   text.append(((CTText) o).getStringValue());
                }
            }
+           
            if (o instanceof CTPTab) {
                text.append("\t");
+           }
+           if (o instanceof CTBr) {
+              text.append("\n");
            }
            if (o instanceof CTEmpty) {
               // Some inline text elements get returned not as
               //  themselves, but as CTEmpty, owing to some odd
               //  definitions around line 5642 of the XSDs
+              // This bit works around it, and replicates the above
+              //  rules for that case
               String tagName = o.getDomNode().getNodeName();
               if ("w:tab".equals(tagName)) {
                  text.append("\t");
