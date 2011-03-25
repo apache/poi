@@ -18,14 +18,50 @@
 package org.apache.poi.hpbf.extractor;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpbf.HPBFDocument;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 public final class TestPublisherTextExtractor extends TestCase {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
+    
+    private static final String SAMPLE_TEXT = 
+       "This is some text on the first page\n" +
+       "It\u2019s in times new roman, font size 10, all normal\n" +
+       "" +
+       "This is in bold and italic\n" +
+       "It\u2019s Arial, 20 point font\n" +
+       "It\u2019s in the second textbox on the first page\n" +
+       "" +
+       "This is the second page\n\n" +
+       "" +
+       "It is also times new roman, 10 point\n" +
+       "" +
+       "Table on page 2\nTop right\n" +
+       "P2 table left\nP2 table right\n" +
+       "Bottom Left\nBottom Right\n" +
+       "" +
+       "This text is on page two\n" +
+       "#This is a link to Apache POI\n" +
+       "More normal text\n" +
+       "Link to a file\n" +
+       "" +
+       "More text, more hyperlinks\n" +
+       "email link\n" +
+       "Final hyperlink\n" +
+       "Within doc to page 1\n";
+    private static final String SIMPLE_TEXT =
+       "0123456789\n" +
+       "0123456789abcdef\n" +
+       "0123456789abcdef0123456789abcdef\n" +
+       "0123456789\n" +
+       "0123456789abcdef\n" +
+       "0123456789abcdef0123456789abcdef\n" +
+       "0123456789abcdef0123456789abcdef0123456789abcdef\n";
 
 	public void testBasics() throws Exception {
 		HPBFDocument doc = new HPBFDocument(
@@ -43,57 +79,30 @@ public final class TestPublisherTextExtractor extends TestCase {
 	}
 
 	public void testContents() throws Exception {
-		HPBFDocument doc = new HPBFDocument(
-                _samples.openResourceAsStream("Sample.pub")
+	   PublisherTextExtractor ext;
+	   File sample = _samples.getFile("Sample.pub");
+      File simple = _samples.getFile("Simple.pub");
+	   
+	   // Check this complicated file using POIFS
+		HPBFDocument docOPOIFS = new HPBFDocument(
+		      new FileInputStream(sample)
 		);
+      ext = new PublisherTextExtractor(docOPOIFS);
+      assertEquals( SAMPLE_TEXT, ext.getText() );
 
-		PublisherTextExtractor ext =
-			new PublisherTextExtractor(doc);
-		String text = ext.getText();
+      // And with NPOIFS
+      HPBFDocument docNPOIFS = new HPBFDocument(
+            new NPOIFSFileSystem(sample)
+      );
+		ext = new PublisherTextExtractor(docNPOIFS);
+		assertEquals( SAMPLE_TEXT, ext.getText() );
 
-		assertEquals(
-"This is some text on the first page\n" +
-"It\u2019s in times new roman, font size 10, all normal\n" +
-"" +
-"This is in bold and italic\n" +
-"It\u2019s Arial, 20 point font\n" +
-"It\u2019s in the second textbox on the first page\n" +
-"" +
-"This is the second page\n\n" +
-"" +
-"It is also times new roman, 10 point\n" +
-"" +
-"Table on page 2\nTop right\n" +
-"P2 table left\nP2 table right\n" +
-"Bottom Left\nBottom Right\n" +
-"" +
-"This text is on page two\n" +
-"#This is a link to Apache POI\n" +
-"More normal text\n" +
-"Link to a file\n" +
-"" +
-"More text, more hyperlinks\n" +
-"email link\n" +
-"Final hyperlink\n" +
-"Within doc to page 1\n"
-				, text
-		);
-
-		// Now a simpler one
+		
+		// Now a simpler file
 		ext = new PublisherTextExtractor(
-                _samples.openResourceAsStream("Simple.pub")
+		      new FileInputStream(simple)
 		);
-		text = ext.getText();
-		assertEquals(
-"0123456789\n" +
-"0123456789abcdef\n" +
-"0123456789abcdef0123456789abcdef\n" +
-"0123456789\n" +
-"0123456789abcdef\n" +
-"0123456789abcdef0123456789abcdef\n" +
-"0123456789abcdef0123456789abcdef0123456789abcdef\n"
-				, text
-		);
+      assertEquals( SIMPLE_TEXT, ext.getText() );
 	}
 
 	/**
