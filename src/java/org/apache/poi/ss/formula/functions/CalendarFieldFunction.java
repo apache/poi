@@ -29,30 +29,29 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
- * Implementation of Excel functions DAY, MONTH and YEAR
- *
- *
- * @author Guenter Kickinger g.kickinger@gmx.net
+ * Implementation of Excel functions Date parsing functions:
+ *  Date - DAY, MONTH and YEAR
+ *  Time - HOUR, MINUTE and SECOND
  */
 public final class CalendarFieldFunction extends Fixed1ArgFunction {
-
-	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR, false);
-	public static final Function MONTH = new CalendarFieldFunction(Calendar.MONTH, true);
-	public static final Function DAY = new CalendarFieldFunction(Calendar.DAY_OF_MONTH, false);
+	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR);
+	public static final Function MONTH = new CalendarFieldFunction(Calendar.MONTH);
+	public static final Function DAY = new CalendarFieldFunction(Calendar.DAY_OF_MONTH);
+	public static final Function HOUR = new CalendarFieldFunction(Calendar.HOUR_OF_DAY);
+   public static final Function MINUTE = new CalendarFieldFunction(Calendar.MINUTE);
+   public static final Function SECOND = new CalendarFieldFunction(Calendar.SECOND);
 
 	private final int _dateFieldId;
-	private final boolean _needsOneBaseAdjustment;
 
-	private CalendarFieldFunction(int dateFieldId, boolean needsOneBaseAdjustment) {
+	private CalendarFieldFunction(int dateFieldId) {
 		_dateFieldId = dateFieldId;
-		_needsOneBaseAdjustment = needsOneBaseAdjustment;
 	}
 
 	public final ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-		int val;
+		double val;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			val = OperandResolver.coerceValueToInt(ve);
+			val = OperandResolver.coerceValueToDouble(ve);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
@@ -62,26 +61,30 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
 		return new NumberEval(getCalField(val));
 	}
 
-	private int getCalField(int serialDay) {
-		if (serialDay == 0) {
-			// Special weird case
-			// day zero should be 31-Dec-1899,  but Excel seems to think it is 0-Jan-1900
+	private int getCalField(double serialDate) {
+	   // For some reason, a date of 0 in Excel gets shown
+	   //  as the non existant 1900-01-00
+		if(((int)serialDate) == 0) {
 			switch (_dateFieldId) {
 				case Calendar.YEAR: return 1900;
 				case Calendar.MONTH: return 1;
 				case Calendar.DAY_OF_MONTH: return 0;
 			}
-			throw new IllegalStateException("bad date field " + _dateFieldId);
+			// They want time, that's normal
 		}
-		Date d = DateUtil.getJavaDate(serialDay, false); // TODO fix 1900/1904 problem
+
+		// TODO Figure out if we're in 1900 or 1904
+		Date d = DateUtil.getJavaDate(serialDate, false);
 
 		Calendar c = new GregorianCalendar();
 		c.setTime(d);
-
 		int result = c.get(_dateFieldId);
-		if (_needsOneBaseAdjustment) {
+		
+		// Month is a special case due to C semantics
+		if (_dateFieldId == Calendar.MONTH) {
 			result++;
 		}
+		
 		return result;
 	}
 }
