@@ -18,14 +18,13 @@
 package org.apache.poi.hpbf.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
-
-import org.apache.poi.hpbf.HPBFDocument;
-import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
 
-public final class TextPublisherTextExtractor extends TestCase {
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpbf.HPBFDocument;
+
+public final class TestPublisherTextExtractor extends TestCase {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
 	public void testBasics() throws Exception {
