@@ -25,6 +25,7 @@ import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.StringUtil.StringsIterator;
 
@@ -36,10 +37,20 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public OutlookTextExtactor(MAPIMessage msg) {
       super(msg);
    }
+   /**
+    * Use {@link #OutlookTextExtactor(DirectoryNode)} instead
+    */
+   @Deprecated
    public OutlookTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(poifsDir, fs));
    }
+   public OutlookTextExtactor(DirectoryNode poifsDir) throws IOException {
+      this(new MAPIMessage(poifsDir));
+   }
    public OutlookTextExtactor(POIFSFileSystem fs) throws IOException {
+      this(new MAPIMessage(fs));
+   }
+   public OutlookTextExtactor(NPOIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
    }
    public OutlookTextExtactor(InputStream inp) throws IOException {

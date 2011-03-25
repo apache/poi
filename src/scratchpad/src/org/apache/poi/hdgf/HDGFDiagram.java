@@ -31,6 +31,7 @@ import org.apache.poi.hdgf.streams.StringsStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
@@ -56,10 +57,20 @@ public final class HDGFDiagram extends POIDocument {
 	private PointerFactory ptrFactory;
 
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot(), fs);
+		this(fs.getRoot());
 	}
-	public HDGFDiagram(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		super(dir, fs);
+   public HDGFDiagram(NPOIFSFileSystem fs) throws IOException {
+      this(fs.getRoot());
+   }
+   /**
+    * @deprecated Use {@link #HDGFDiagram(DirectoryNode)} instead 
+    */
+   @Deprecated
+   public HDGFDiagram(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+      this(dir);
+   }
+	public HDGFDiagram(DirectoryNode dir) throws IOException {
+		super(dir);
 
 		DocumentEntry docProps =
 			(DocumentEntry)dir.getEntry("VisioDocument");
