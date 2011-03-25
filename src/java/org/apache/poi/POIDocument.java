@@ -20,7 +20,6 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -64,12 +64,18 @@ public abstract class POIDocument {
     protected POIDocument(DirectoryNode dir) {
     	this.directory = dir;
     }
+    /**
+     * @deprecated use {@link POIDocument#POIDocument(DirectoryNode)} instead 
+     */
     @Deprecated
     protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
        this.directory = dir;
-     }
+    }
     protected POIDocument(POIFSFileSystem fs) {
-    	this(fs.getRoot());
+       this(fs.getRoot());
+    }
+    protected POIDocument(NPOIFSFileSystem fs) {
+       this(fs.getRoot());
     }
 
 	/**
@@ -180,7 +186,7 @@ public abstract class POIDocument {
 	 * @param outFS the POIFSFileSystem to write the properties into
 	 * @param writtenEntries a list of POIFS entries to add the property names too
 	 */
-	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
+	protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         SummaryInformation si = getSummaryInformation();
         if(si != null) {
 			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
@@ -231,35 +237,21 @@ public abstract class POIDocument {
 	 * @param excepts is a list of Strings specifying what nodes NOT to copy
 	 */
 	protected void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
-	                          List excepts) throws IOException {
+	                          List<String> excepts) throws IOException {
 		//System.err.println("CopyNodes called");
 
 		DirectoryEntry root = source.getRoot();
 		DirectoryEntry newRoot = target.getRoot();
 
-		Iterator entries = root.getEntries();
-
+		Iterator<Entry> entries = root.getEntries();
 		while (entries.hasNext()) {
-			Entry entry = (Entry)entries.next();
-			if (!isInList(entry.getName(), excepts)) {
+			Entry entry = entries.next();
+			if (!excepts.contains(entry.getName())) {
 				copyNodeRecursively(entry,newRoot);
 			}
 		}
 	}
 		
-	/**
-	 * Checks to see if the String is in the list, used when copying
-	 *  nodes between one POIFS and another
-	 */
-	private boolean isInList(String entry, List list) {
-		for (int k = 0; k < list.size(); k++) {
-			if (list.get(k).equals(entry)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Copies an Entry into a target POIFS directory, recursively
 	 */
@@ -270,10 +262,10 @@ public abstract class POIDocument {
 		DirectoryEntry newTarget = null;
 		if (entry.isDirectoryEntry()) {
 			newTarget = target.createDirectory(entry.getName());
-			Iterator entries = ((DirectoryEntry)entry).getEntries();
+			Iterator<Entry> entries = ((DirectoryEntry)entry).getEntries();
 
 			while (entries.hasNext()) {
-				copyNodeRecursively((Entry)entries.next(),newTarget);
+				copyNodeRecursively(entries.next(),newTarget);
 			}
 		} else {
 			DocumentEntry dentry = (DocumentEntry)entry;

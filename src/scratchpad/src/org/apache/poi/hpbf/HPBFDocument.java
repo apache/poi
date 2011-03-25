@@ -27,6 +27,7 @@ import org.apache.poi.hpbf.model.EscherStm;
 import org.apache.poi.hpbf.model.MainContents;
 import org.apache.poi.hpbf.model.QuillContents;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -44,27 +45,39 @@ public final class HPBFDocument extends POIDocument {
 	 * Opens a new publisher document
 	 */
 	public HPBFDocument(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot(), fs);
+	   this(fs.getRoot());
+	}
+	public HPBFDocument(NPOIFSFileSystem fs) throws IOException {
+	   this(fs.getRoot());
 	}
 	public HPBFDocument(InputStream inp) throws IOException {
-		this(new POIFSFileSystem(inp));
+	   this(new POIFSFileSystem(inp));
 	}
 
 	/**
-	 * Opens an embeded publisher document,
+	 * Opens an embedded publisher document,
+	 *  at the given directory.
+	 * @deprecated Use {@link #HPBFDocument(DirectoryNode)} instead
+	 */
+	@Deprecated
+	public HPBFDocument(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+	   this(dir);
+	}
+	/**
+	 * Opens an embedded publisher document,
 	 *  at the given directory.
 	 */
-	public HPBFDocument(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		super(dir, fs);
+	public HPBFDocument(DirectoryNode dir) throws IOException {
+	   super(dir);
 
-		// Go looking for our interesting child
-		//  streams
-		mainContents = new MainContents(dir);
-		quillContents = new QuillContents(dir);
+	   // Go looking for our interesting child
+	   //  streams
+	   mainContents = new MainContents(dir);
+	   quillContents = new QuillContents(dir);
 
-		// Now the Escher bits
-		escherStm = new EscherStm(dir);
-		escherDelayStm = new EscherDelayStm(dir);
+	   // Now the Escher bits
+	   escherStm = new EscherStm(dir);
+	   escherDelayStm = new EscherDelayStm(dir);
 	}
 
 	public MainContents getMainContents() {

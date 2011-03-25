@@ -1193,7 +1193,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes
-        List excepts = new ArrayList(1);
+        List<String> excepts = new ArrayList<String>(1);
 
         // Write out the Workbook stream
         fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
