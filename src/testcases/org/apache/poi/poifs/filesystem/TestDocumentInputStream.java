@@ -18,11 +18,14 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
 
@@ -364,5 +367,48 @@ public final class TestDocumentInputStream extends TestCase {
         assertEquals(_workbook_size,
                      stream.skip(2 + ( long ) Integer.MAX_VALUE));
         assertEquals(0, stream.available());
+    }
+    
+    /**
+     * Test that we can read files at multiple levels down the tree
+     */
+    public void testReadMultipleTreeLevels() throws Exception {
+       final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
+       File sample = _samples.getFile("Sample.pub");
+       
+       DocumentInputStream stream;
+       
+       NPOIFSFileSystem npoifs = new NPOIFSFileSystem(sample);
+       POIFSFileSystem  opoifs = new POIFSFileSystem(new FileInputStream(sample));
+       
+       // Ensure we have what we expect on the root
+       assertEquals(npoifs, npoifs.getRoot().getNFileSystem());
+       assertEquals(null,   npoifs.getRoot().getFileSystem());
+       assertEquals(opoifs, opoifs.getRoot().getFileSystem());
+       assertEquals(null,   opoifs.getRoot().getNFileSystem());
+       
+       // Check inside
+       for(DirectoryNode root : new DirectoryNode[] { opoifs.getRoot(), npoifs.getRoot() }) {
+          // Top Level
+          Entry top = root.getEntry("Contents");
+          assertEquals(true, top.isDocumentEntry());
+          stream = root.createDocumentInputStream(top);
+          stream.read();
+          
+          // One Level Down
+          DirectoryNode escher = (DirectoryNode)root.getEntry("Escher");
+          Entry one = escher.getEntry("EscherStm");
+          assertEquals(true, one.isDocumentEntry());
+          stream = escher.createDocumentInputStream(one);
+          stream.read();
+          
+          // Two Levels Down
+          DirectoryNode quill = (DirectoryNode)root.getEntry("Quill");
+          DirectoryNode quillSub = (DirectoryNode)quill.getEntry("QuillSub");
+          Entry two = quillSub.getEntry("CONTENTS");
+          assertEquals(true, two.isDocumentEntry());
+          stream = quillSub.createDocumentInputStream(two);
+          stream.read();
+       }
     }
 }
