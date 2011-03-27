@@ -17,46 +17,25 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import junit.framework.AssertionFailedError;
-
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.TempFile;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -2054,16 +2033,18 @@ if(1==2) {
        HSSFWorkbook wb = openSample("48968.xls");
        assertEquals(1, wb.getNumberOfSheets());
        
+       DataFormatter fmt = new DataFormatter();
+
        // Check the dates
        HSSFSheet s = wb.getSheetAt(0);
-       Date d20110325 = s.getRow(0).getCell(0).getDateCellValue(); 
-       Date d19000102 = s.getRow(11).getCell(0).getDateCellValue(); 
-       Date d19000100 = s.getRow(21).getCell(0).getDateCellValue();
-       assertEquals(s.getRow(0).getCell(3).getStringCellValue(), timeToUTC(d20110325));
-       assertEquals(s.getRow(11).getCell(3).getStringCellValue(), timeToUTC(d19000102));
+       Cell cell_d20110325 = s.getRow(0).getCell(0);
+       Cell cell_d19000102 = s.getRow(11).getCell(0);
+       Cell cell_d19000100 = s.getRow(21).getCell(0);
+       assertEquals(s.getRow(0).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d20110325));
+       assertEquals(s.getRow(11).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d19000102));
        // There is no such thing as 00/01/1900...
        assertEquals("00/01/1900 06:14:24", s.getRow(21).getCell(3).getStringCellValue());
-       assertEquals("31/12/1899 06:14:24", timeToUTC(d19000100));
+       assertEquals("31/12/1899 06:14:24", fmt.formatCellValue(cell_d19000100));
        
        // Check the cached values
        assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
@@ -2093,10 +2074,5 @@ if(1==2) {
        assertEquals(39.0+14.0+1,  s.getRow(6).getCell(0).getNumericCellValue());
        assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
        assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue());
-    }
-    private String timeToUTC(Date d) {
-       SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK);
-       fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-       return fmt.format(d);
     }
 }
