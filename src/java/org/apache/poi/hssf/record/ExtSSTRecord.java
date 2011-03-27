@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.cont.ContinuableRecord;
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.LittleEndianOutput;
+
+import java.util.ArrayList;
 
 /**
  * Title:        Extended Static String Table (0x00FF)<p/>
@@ -29,7 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at apache dot org)
  */
-public final class ExtSSTRecord extends StandardRecord {
+public final class ExtSSTRecord extends ContinuableRecord {
     public final static short sid = 0x00FF;
     public static final int DEFAULT_BUCKET_SIZE = 8;
     //Can't seem to find this documented but from the biffviewer it is clear that
@@ -37,7 +41,7 @@ public final class ExtSSTRecord extends StandardRecord {
     public static final int MAX_BUCKETS = 128;
     
     
-    private static final class InfoSubRecord {
+    public static final class InfoSubRecord {
     	public static final int ENCODED_SIZE = 8;
         private int field_1_stream_pos;          // stream pointer to the SST record
         private int field_2_bucket_sst_offset;   // don't really understand this yet.
@@ -85,11 +89,19 @@ public final class ExtSSTRecord extends StandardRecord {
 
     public ExtSSTRecord(RecordInputStream in) {
         _stringsPerBucket = in.readShort();
+
         int nInfos = in.remaining() / InfoSubRecord.ENCODED_SIZE;
-        _sstInfos = new InfoSubRecord[nInfos];
-        for (int i = 0; i < _sstInfos.length; i++) {
-            _sstInfos[i] = new InfoSubRecord(in);
+        ArrayList<InfoSubRecord> lst = new ArrayList<InfoSubRecord>(nInfos);
+
+        while (in.available() > 0) {
+            InfoSubRecord info = new InfoSubRecord(in);
+            lst.add(info);
+
+            if(in.available() == 0 && in.hasNextRecord() && in.getNextSid() == ContinueRecord.sid) {
+                in.nextRecord();
+            }
         }
+        _sstInfos = lst.toArray(new InfoSubRecord[lst.size()]);
     }
 
     public void setNumStringsPerBucket(short numStrings) {
@@ -120,7 +132,7 @@ public final class ExtSSTRecord extends StandardRecord {
         return buffer.toString();
     }
 
-    public void serialize(LittleEndianOutput out) {
+    public void serialize(ContinuableRecordOutput out) {
         out.writeShort(_stringsPerBucket);
         for (int k = 0; k < _sstInfos.length; k++) {
             _sstInfos[k].serialize(out);
@@ -128,6 +140,10 @@ public final class ExtSSTRecord extends StandardRecord {
     }
     protected int getDataSize() {
     	return 2 + InfoSubRecord.ENCODED_SIZE*_sstInfos.length;
+    }
+
+    protected InfoSubRecord[] getInfoSubRecords() {
+        return _sstInfos;
     }
 
     public static final int getNumberOfInfoRecsForStrings(int numStrings) {

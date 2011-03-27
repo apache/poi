@@ -147,7 +147,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
              populateEmpty();
              return;
           }
-          
+
           // Carry on reading in as normal
           short stringDataSize = in.readShort();
           
