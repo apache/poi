@@ -18,6 +18,8 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -27,6 +29,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Memory version of a package part. Use to
@@ -111,7 +114,20 @@ public final class MemoryPackagePart extends PackagePart {
 
 	@Override
 	public boolean load(InputStream ios) throws InvalidFormatException {
-		throw new InvalidFormatException("Method not implemented");
+	   // Grab the data
+	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	   try {
+	      IOUtils.copy(ios, baos);
+	   } catch(IOException e) {
+	      throw new InvalidFormatException(e.getMessage());
+	   }
+	   
+	   // Save it
+	   data = baos.toByteArray();
+	   length = data.length;
+	   
+	   // All done
+	   return true;
 	}
 
 	@Override
