@@ -33,7 +33,7 @@
     </developers>
 
     <changes>
-        <release version="3.8-beta2" date="2011-??-??">
+        <release version="3.8-beta2" date="2011-04-08">
            <action dev="poi-developers" type="add">Implement the load method on MemoryPackagePart</action>
            <action dev="poi-developers" type="add">50967 - Support for continued ExtSSTRecords</action>
            <action dev="poi-developers" type="add">48968 - Support for HOUR, MINUTE and SECOND date formulas</action>
