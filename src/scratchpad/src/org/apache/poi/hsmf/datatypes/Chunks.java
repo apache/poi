@@ -38,7 +38,10 @@ public final class Chunks implements ChunkGroup {
    /** BODY Chunk, for plain/text messages */
    public StringChunk textBodyChunk;
    /** BODY Html Chunk, for html messages */
-   public StringChunk htmlBodyChunk;
+   public StringChunk htmlBodyChunkString;
+   public ByteChunk htmlBodyChunkBinary;
+   /** BODY Rtf Chunk, for Rtf (Rich) messages */
+   public ByteChunk rtfBodyChunk;
    /** Subject link chunk, in plain/text */
    public StringChunk subjectChunk;
    /** Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes */
@@ -119,9 +122,16 @@ public final class Chunks implements ChunkGroup {
       else if(chunk.getChunkId() == MAPIProperty.BODY.id) {
          textBodyChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.BODY_HTML.id && 
-              chunk instanceof StringChunk) {
-         htmlBodyChunk = (StringChunk)chunk;
+      else if(chunk.getChunkId() == MAPIProperty.BODY_HTML.id) {
+         if(chunk instanceof StringChunk) {
+            htmlBodyChunkString = (StringChunk)chunk;
+         }
+         if(chunk instanceof ByteChunk) {
+            htmlBodyChunkBinary = (ByteChunk)chunk;
+         }
+      }
+      else if(chunk.getChunkId() == MAPIProperty.RTF_COMPRESSED.id) {
+         rtfBodyChunk = (ByteChunk)chunk;
       }
       
       // And add to the main list
