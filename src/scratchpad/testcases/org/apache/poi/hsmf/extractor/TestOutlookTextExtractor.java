@@ -199,4 +199,21 @@ public final class TestOutlookTextExtractor extends TestCase {
       // Embeded bits are checked in
       //  TestExtractorFactory
    }
+   
+   public void testEncodings() throws Exception {
+      POIFSFileSystem simple = new POIFSFileSystem(
+            new FileInputStream(samples.getFile("chinese-traditional.msg"))
+      );
+      MAPIMessage msg = new MAPIMessage(simple);
+      OutlookTextExtactor ext = new OutlookTextExtactor(msg);
+      String text = ext.getText();
+      
+      // Check the english bits
+      assertContains(text, "From: Tests Chang@FT");
+      assertContains(text, "tests.chang@fengttt.com");
+      
+      // And check some chinese bits
+      assertContains(text, "(\u5f35\u6bd3\u502b)");
+      assertContains(text, "( MSG \u683c\u5f0f\u6e2c\u8a66 )");
+   }
 }
