@@ -35,6 +35,7 @@ public final class TestBasics extends TestCase {
    private MAPIMessage attachments;
    private MAPIMessage noRecipientAddress;
    private MAPIMessage cyrillic;
+   private MAPIMessage chinese;
 
 	/**
 	 * Initialize this test, load up the blank.msg mapi message.
@@ -48,6 +49,7 @@ public final class TestBasics extends TestCase {
       attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
       noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
       cyrillic = new MAPIMessage(samples.openResourceAsStream("cyrillic_message.msg"));
+      chinese = new MAPIMessage(samples.openResourceAsStream("chinese-traditional.msg"));
 	}
 	
 	/**
@@ -195,5 +197,27 @@ public final class TestBasics extends TestCase {
       
       assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
       assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      
+      // Override it, check it's taken
+      cyrillic.set7BitEncoding("UTF-8");
+      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      
+      
+      // Check with a file that has no headers
+      try {
+         chinese.getHeaders();
+         fail("File doesn't have headers!");
+      } catch(ChunkNotFoundException e) {}
+      
+      String html = chinese.getHmtlBody();
+      assertTrue("Charset not found:\n" + html, html.contains("text/html; charset=big5"));
+      
+      // Defaults to CP1251
+      assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      
+      // But after guessing goes to the correct one, Big 5
+      chinese.guess7BitEncoding();
+      assertEquals("big5", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
    }
 }
