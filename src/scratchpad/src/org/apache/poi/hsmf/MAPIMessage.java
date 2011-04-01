@@ -177,6 +177,16 @@ public class MAPIMessage extends POIDocument {
    }
 
    /**
+    * Gets the html body of this Outlook Message, if this email
+    *  contains a html version.
+    * @return The string representation of the 'html' version of the body, if available.
+    * @throws ChunkNotFoundException
+    */
+   public String getHmtlBody() throws ChunkNotFoundException {
+      return getStringFromChunk(mainChunks.htmlBodyChunk);
+   }
+
+   /**
     * Gets the subject line of the Outlook Message
     * @throws ChunkNotFoundException
     */
@@ -331,28 +341,59 @@ public class MAPIMessage extends POIDocument {
                if(m.matches()) {
                   // Found it! Tell all the string chunks
                   String charset = m.group(1);
-                  
-                  for(Chunk c : mainChunks.getAll()) {
-                     if(c instanceof StringChunk) {
-                        ((StringChunk)c).set7BitEncoding(charset);
-                     }
-                  }
-                  for(Chunk c : nameIdChunks.getAll()) {
-                     if(c instanceof StringChunk) {
-                        ((StringChunk)c).set7BitEncoding(charset);
-                     }
-                  }
-                  for(RecipientChunks rc : recipientChunks) {
-                     for(Chunk c : rc.getAll()) {
-                        if(c instanceof StringChunk) {
-                           ((StringChunk)c).set7BitEncoding(charset);
-                        }
-                     }
-                  }
+                  set7BitEncoding(charset);
+                  return;
                }
             }
          }
       } catch(ChunkNotFoundException e) {}
+      
+      // Nothing suitable in the headers, try HTML
+      try {
+         String html = getHmtlBody();
+         
+         // Look for a content type in the meta headers
+         Pattern p = Pattern.compile(
+               "<META\\s+HTTP-EQUIV=\"Content-Type\"\\s+CONTENT=\"text/html;\\s+charset=(.*?)\""
+         );
+         Matcher m = p.matcher(html);
+         if(m.find()) {
+            // Found it! Tell all the string chunks
+            String charset = m.group(1);
+            set7BitEncoding(charset);
+            return;
+         }
+      } catch(ChunkNotFoundException e) {}
+   }
+
+   /**
+    * Many messages store their strings as unicode, which is
+    *  nice and easy. Some use one-byte encodings for their
+    *  strings, but don't easily store the encoding anywhere
+    *  in the file!
+    * If you know what the encoding is of your file, you can
+    *  use this method to set the 7 bit encoding for all
+    *  the non unicode strings in the file.
+    * @see #guess7BitEncoding()
+    */
+   public void set7BitEncoding(String charset) {
+      for(Chunk c : mainChunks.getAll()) {
+         if(c instanceof StringChunk) {
+            ((StringChunk)c).set7BitEncoding(charset);
+         }
+      }
+      for(Chunk c : nameIdChunks.getAll()) {
+         if(c instanceof StringChunk) {
+            ((StringChunk)c).set7BitEncoding(charset);
+         }
+      }
+      for(RecipientChunks rc : recipientChunks) {
+         for(Chunk c : rc.getAll()) {
+            if(c instanceof StringChunk) {
+               ((StringChunk)c).set7BitEncoding(charset);
+            }
+         }
+      }
    }
    
    /**

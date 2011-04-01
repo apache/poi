@@ -33,6 +33,10 @@
     </developers>
 
     <changes>
+        <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="add">Improve HSMF encoding guessing for 7 bit fields in MAPIMessage</action>
+           <action dev="poi-developers" type="add">Allow HSMF access to the HTML body contents in MAPIMessage</action>
+        </release>
         <release version="3.8-beta2" date="2011-??-??">
            <action dev="poi-developers" type="add">Implement the load method on MemoryPackagePart</action>
            <action dev="poi-developers" type="add">50967 - Support for continued ExtSSTRecords</action>

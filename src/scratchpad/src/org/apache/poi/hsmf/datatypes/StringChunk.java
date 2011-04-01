@@ -30,8 +30,11 @@ import org.apache.poi.util.StringUtil;
  * A Chunk made up of a single string.
  */
 public class StringChunk extends Chunk {
-	private String value;
-	private String encoding7Bit = "CP1252";
+   private static final String DEFAULT_ENCODING = "CP1252"; 
+   private String encoding7Bit = DEFAULT_ENCODING;
+   private String value;
+   /** Only kept around for 7 bit strings */
+   private byte[] rawValue;
 
 	/**
 	 * Creates a String Chunk.
@@ -56,7 +59,7 @@ public class StringChunk extends Chunk {
 	public String get7BitEncoding() {
 	   return encoding7Bit;
 	}
-	
+
 	/**
 	 * Sets the Encoding that will be used to
 	 *  decode any "7 bit" (non unicode) data.
@@ -66,25 +69,33 @@ public class StringChunk extends Chunk {
 	 */
 	public void set7BitEncoding(String encoding) {
 	   this.encoding7Bit = encoding;
+
+	   // Re-read the String if we're a 7 bit one
+	   if(type == Types.ASCII_STRING) {
+	      parseString(rawValue);
+	   }
 	}
-	
+
 	public void readValue(InputStream value) throws IOException {
-      String tmpValue;
-      byte[] data = IOUtils.toByteArray(value);
-      
+	   byte[] data = IOUtils.toByteArray(value);
+	   parseString(data);
+	}
+	private void parseString(byte[] data) {
+	   String tmpValue;
 	   switch(type) {
 	   case Types.ASCII_STRING:
 	      tmpValue = parseAs7BitData(data, encoding7Bit);
-         break;
+	      this.rawValue = data;
+	      break;
 	   case Types.UNICODE_STRING:
 	      tmpValue = StringUtil.getFromUnicodeLE(data);
 	      break;
 	   default:
 	      throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
 	   }
-	   
+
 	   // Clean up
-		this.value = tmpValue.replace("\0", "");
+	   this.value = tmpValue.replace("\0", "");
 	}
 	
 	public void writeValue(OutputStream out) throws IOException {
@@ -121,7 +132,7 @@ public class StringChunk extends Chunk {
     *  and returns the string that that yields.
     */
    protected static String parseAs7BitData(byte[] data) {
-      return parseAs7BitData(data, "CP1252");
+      return parseAs7BitData(data, DEFAULT_ENCODING);
    }
    /**
     * Parses as non-unicode, supposedly 7 bit data

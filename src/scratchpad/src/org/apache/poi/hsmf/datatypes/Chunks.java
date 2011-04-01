@@ -37,6 +37,8 @@ public final class Chunks implements ChunkGroup {
    public StringChunk messageClass;
    /** BODY Chunk, for plain/text messages */
    public StringChunk textBodyChunk;
+   /** BODY Html Chunk, for html messages */
+   public StringChunk htmlBodyChunk;
    /** Subject link chunk, in plain/text */
    public StringChunk subjectChunk;
    /** Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes */
@@ -116,6 +118,10 @@ public final class Chunks implements ChunkGroup {
       }
       else if(chunk.getChunkId() == MAPIProperty.BODY.id) {
          textBodyChunk = (StringChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIProperty.BODY_HTML.id && 
+              chunk instanceof StringChunk) {
+         htmlBodyChunk = (StringChunk)chunk;
       }
       
       // And add to the main list
