@@ -29,11 +29,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks.AttachmentChunksSorter;
+import org.apache.poi.hsmf.datatypes.ByteChunk;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.Types;
@@ -184,7 +187,36 @@ public class MAPIMessage extends POIDocument {
     * @throws ChunkNotFoundException
     */
    public String getHmtlBody() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.htmlBodyChunk);
+      if(mainChunks.htmlBodyChunkBinary != null) {
+         return mainChunks.htmlBodyChunkBinary.getAs7bitString();
+      }
+      return getStringFromChunk(mainChunks.htmlBodyChunkString);
+   }
+
+   /**
+    * Gets the RTF Rich Message body of this Outlook Message, if this email
+    *  contains a RTF (rich) version.
+    * @return The string representation of the 'RTF' version of the body, if available.
+    * @throws ChunkNotFoundException
+    */
+   public String getRtfBody() throws ChunkNotFoundException {
+      ByteChunk chunk = mainChunks.rtfBodyChunk;
+      if(chunk == null) {
+         if(returnNullOnMissingChunk) {
+            return null;
+         } else {
+            throw new ChunkNotFoundException();
+         }
+      }
+      
+      try {
+         MAPIRtfAttribute rtf = new MAPIRtfAttribute(
+               MAPIProperty.RTF_COMPRESSED, Types.BINARY, chunk.getValue()
+         );
+         return rtf.getDataString();
+      } catch(IOException e) {
+         throw new RuntimeException("Shouldn't happen", e);
+      }
    }
 
    /**

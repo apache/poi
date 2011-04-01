@@ -120,7 +120,6 @@ private MAPIMessage mapiMessage;
 		TestCase.assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
 	}
 
-
 	/**
 	 * Check if we can read the subject line of the blank message, we expect ""
 	 *
@@ -130,7 +129,17 @@ private MAPIMessage mapiMessage;
 		String obtained = mapiMessage.getMessageClass();
 		TestCase.assertEquals("IPM.Note", obtained);
 	}
-
-
-
+   
+   /**
+    * Ensure we can get the HTML and RTF versions
+    */
+   public void testReadBodyContents() throws Exception {
+      String html = mapiMessage.getHmtlBody();
+      String rtf = mapiMessage.getRtfBody();
+      assertNotNull(html);
+      assertNotNull(rtf);
+      
+      assertTrue("Wrong text:\n" + html, html.startsWith("<!DOCTYPE"));
+      assertTrue("Wrong text:\n" + rtf,  rtf.startsWith("{\\rtf1"));
+   }
 }
