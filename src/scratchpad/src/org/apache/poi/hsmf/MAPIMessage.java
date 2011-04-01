@@ -362,20 +362,18 @@ public class MAPIMessage extends POIDocument {
    public void guess7BitEncoding() {
       try {
          String[] headers = getHeaders();
-         if(headers == null || headers.length == 0) {
-            return;
-         }
-
-         // Look for a content type with a charset
-         Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?(.*?)[\"']?");
-         for(String header : headers) {
-            if(header.startsWith("Content-Type")) {
-               Matcher m = p.matcher(header);
-               if(m.matches()) {
-                  // Found it! Tell all the string chunks
-                  String charset = m.group(1);
-                  set7BitEncoding(charset);
-                  return;
+         if(headers != null && headers.length > 0) {
+            // Look for a content type with a charset
+            Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?(.*?)[\"']?");
+            for(String header : headers) {
+               if(header.startsWith("Content-Type")) {
+                  Matcher m = p.matcher(header);
+                  if(m.matches()) {
+                     // Found it! Tell all the string chunks
+                     String charset = m.group(1);
+                     set7BitEncoding(charset);
+                     return;
+                  }
                }
             }
          }
@@ -384,17 +382,18 @@ public class MAPIMessage extends POIDocument {
       // Nothing suitable in the headers, try HTML
       try {
          String html = getHmtlBody();
-         
-         // Look for a content type in the meta headers
-         Pattern p = Pattern.compile(
-               "<META\\s+HTTP-EQUIV=\"Content-Type\"\\s+CONTENT=\"text/html;\\s+charset=(.*?)\""
-         );
-         Matcher m = p.matcher(html);
-         if(m.find()) {
-            // Found it! Tell all the string chunks
-            String charset = m.group(1);
-            set7BitEncoding(charset);
-            return;
+         if(html != null && html.length() > 0) {
+            // Look for a content type in the meta headers
+            Pattern p = Pattern.compile(
+                  "<META\\s+HTTP-EQUIV=\"Content-Type\"\\s+CONTENT=\"text/html;\\s+charset=(.*?)\""
+            );
+            Matcher m = p.matcher(html);
+            if(m.find()) {
+               // Found it! Tell all the string chunks
+               String charset = m.group(1);
+               set7BitEncoding(charset);
+               return;
+            }
          }
       } catch(ChunkNotFoundException e) {}
    }
