@@ -34,6 +34,7 @@ public final class TestBasics extends TestCase {
    private MAPIMessage outlook30;
    private MAPIMessage attachments;
    private MAPIMessage noRecipientAddress;
+   private MAPIMessage unicode;
    private MAPIMessage cyrillic;
    private MAPIMessage chinese;
 
@@ -48,6 +49,7 @@ public final class TestBasics extends TestCase {
       outlook30  = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
       attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
       noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
+      unicode = new MAPIMessage(samples.openResourceAsStream("example_received_unicode.msg"));
       cyrillic = new MAPIMessage(samples.openResourceAsStream("cyrillic_message.msg"));
       chinese = new MAPIMessage(samples.openResourceAsStream("chinese-traditional.msg"));
 	}
@@ -180,6 +182,16 @@ public final class TestBasics extends TestCase {
       assertEquals("New Outlook User", noRecipientAddress.getDisplayTo());
       
       noRecipientAddress.setReturnNullOnMissingChunk(false);
+	}
+	
+	/**
+	 * Test the 7 bit detection
+	 */
+	public void test7BitDetection() throws Exception {
+	   assertEquals(false, unicode.has7BitEncodingStrings());
+      assertEquals(true, simple.has7BitEncodingStrings());
+      assertEquals(true, chinese.has7BitEncodingStrings());
+      assertEquals(true, cyrillic.has7BitEncodingStrings());
 	}
 	
    /**
