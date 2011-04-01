@@ -36,6 +36,7 @@ import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
+import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
@@ -394,6 +395,37 @@ public class MAPIMessage extends POIDocument {
             }
          }
       }
+   }
+   
+   /**
+    * Does this file contain any strings that
+    *  are stored as 7 bit rather than unicode?
+    */
+   public boolean has7BitEncodingStrings() {
+      for(Chunk c : mainChunks.getAll()) {
+         if(c instanceof StringChunk) {
+            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               return true;
+            }
+         }
+      }
+      for(Chunk c : nameIdChunks.getAll()) {
+         if(c instanceof StringChunk) {
+            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               return true;
+            }
+         }
+      }
+      for(RecipientChunks rc : recipientChunks) {
+         for(Chunk c : rc.getAll()) {
+            if(c instanceof StringChunk) {
+               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+                  return true;
+               }
+            }
+         }
+      }
+      return false;
    }
    
    /**

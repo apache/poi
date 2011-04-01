@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="add">Add new method to HSMF of MAPIMessage.has7BitEncodingStrings() to make it easier to decide when encoding guessing is needed</action>
            <action dev="poi-developers" type="fix">OutlookTextExtractor now requests 7 bit encoding guessing</action>
            <action dev="poi-developers" type="add">Improve HSMF encoding guessing for 7 bit fields in MAPIMessage</action>
            <action dev="poi-developers" type="add">Allow HSMF access to the HTML body contents in MAPIMessage</action>
