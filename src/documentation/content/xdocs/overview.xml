@@ -249,7 +249,7 @@
         </tr>
         <tr>
           <td>poi-ooxml-schemas (*)</td>
-	  <td>xmlbeans, geronimo-stax-api_1.0_spec</td>
+	  <td>xmlbeans, stax-api-1.0.1</td>
           <td>poi-ooxml-schemas-version-yyyymmdd.jar</td>
         </tr>
         <tr>
@@ -259,7 +259,7 @@
         </tr>
         <tr>
           <td>ooxml-schemas</td>
-	  <td>xmlbeans, geronimo-stax-api_1.0_spec</td>
+	  <td>xmlbeans, stax-api-1.0.1</td>
           <td>ooxml-schemas-1.1.jar</td>
         </tr>
       </table>
@@ -272,6 +272,12 @@
 	The larger ooxml-schemas jar is <link href="faq.html">normally</link> 
    only required for development
       </p>
+      <p>
+   <!-- Include this bit until 3.9 -->
+   The OOXML jars require a stax implementation. Previously we suggested
+   "geronimo-stax-api_1.0_spec", but now "stax-api-1.0.1" is used for
+   better compatibilty with other Apache projects. Any compliant implementation
+   should work fine though.
     </section>
     <section><title>Examples</title>
       <p>
