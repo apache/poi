@@ -443,14 +443,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
         CTPane pane = getPane();
-        if (colSplit > 0) pane.setXSplit(colSplit);
-        if (rowSplit > 0) pane.setYSplit(rowSplit);
+        if (colSplit > 0) { 
+           pane.setXSplit(colSplit);
+        } else {
+           pane.unsetXSplit();
+        }
+        if (rowSplit > 0) {
+           pane.setYSplit(rowSplit);
+        } else {
+           pane.unsetYSplit();
+        }
+        
         pane.setState(STPaneState.FROZEN);
         if (rowSplit == 0) {
-            pane.setTopLeftCell(new CellReference(0, topRow).formatAsString());
+            pane.setTopLeftCell(new CellReference(0, leftmostColumn).formatAsString());
             pane.setActivePane(STPane.TOP_RIGHT);
         } else if (colSplit == 0) {
-            pane.setTopLeftCell(new CellReference(rowSplit, 0).formatAsString());
+            pane.setTopLeftCell(new CellReference(topRow, 0).formatAsString());
             pane.setActivePane(STPane.BOTTOM_LEFT);
         } else {
             pane.setTopLeftCell(new CellReference(topRow, leftmostColumn).formatAsString());

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">50884 - XSSF and HSSF freeze panes now behave the same</action>
            <action dev="poi-developers" type="add">Support for adding a table to a XSSFSheet</action>
            <action dev="poi-developers" type="add">Improve HSMF MAPIMessage access to the HTML and RTF versions of the message body (where available)</action>
            <action dev="poi-developers" type="add">Add new method to HSMF of MAPIMessage.has7BitEncodingStrings() to make it easier to decide when encoding guessing is needed</action>
