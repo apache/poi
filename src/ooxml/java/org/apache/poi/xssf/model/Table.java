@@ -192,12 +192,30 @@ public class Table extends POIXMLDocumentPart {
 	public String getName() {
 	   return ctTable.getName();
 	}
+	
+	/**
+	 * Changes the name of the Table
+	 */
+	public void setName(String name) {
+	   if(name == null) {
+	      ctTable.unsetName();
+	      return;
+	   }
+	   ctTable.setName(name);
+	}
 
    /**
     * @return the display name of the Table, if set
     */
    public String getDisplayName() {
       return ctTable.getDisplayName();
+   }
+
+   /**
+    * Changes the display name of the Table
+    */
+   public void setDisplayName(String name) {
+      ctTable.setDisplayName(name);
    }
 
 	/**
