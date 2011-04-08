@@ -271,37 +271,37 @@ public class POIXMLDocumentPart {
     protected void read(POIXMLFactory factory, Map<PackagePart, POIXMLDocumentPart> context) throws OpenXML4JException {
     	PackageRelationshipCollection rels = packagePart.getRelationships();
     	for (PackageRelationship rel : rels) {
-    		if(rel.getTargetMode() == TargetMode.INTERNAL){
-                URI uri = rel.getTargetURI();
+    	   if(rel.getTargetMode() == TargetMode.INTERNAL){
+    	      URI uri = rel.getTargetURI();
 
-                PackagePart p;
-                if(uri.getRawFragment() != null) {
-                    /*
-                     * For internal references (e.g. '#Sheet1!A1') the package part is null
-                     */
-                    p = null;
-                } else {
-                    PackagePartName relName = PackagingURIHelper.createPartName(uri);
-                    p = packagePart.getPackage().getPart(relName);
-                    if(p == null) {
-                        logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
-                        continue;
-                    }
-                }
+    	      PackagePart p;
+    	      if(uri.getRawFragment() != null) {
+    	         /*
+    	          * For internal references (e.g. '#Sheet1!A1') the package part is null
+    	          */
+    	         p = null;
+    	      } else {
+    	         PackagePartName relName = PackagingURIHelper.createPartName(uri);
+    	         p = packagePart.getPackage().getPart(relName);
+    	         if(p == null) {
+    	            logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
+    	            continue;
+    	         }
+    	      }
 
-                if (!context.containsKey(p)) {
-    				POIXMLDocumentPart childPart = factory.createDocumentPart(this, rel, p);
-    				childPart.parent = this;
-    				addRelation(childPart);
-                    if(p != null){
-                        context.put(p, childPart);
-                        if(p.hasRelationships()) childPart.read(factory, context);
-                    }
-    			}
-    			else {
-    				addRelation(context.get(p));
-    			}
-    		}
+    	      if (!context.containsKey(p)) {
+    	         POIXMLDocumentPart childPart = factory.createDocumentPart(this, rel, p);
+    	         childPart.parent = this;
+    	         addRelation(childPart);
+    	         if(p != null){
+    	            context.put(p, childPart);
+    	            if(p.hasRelationships()) childPart.read(factory, context);
+    	         }
+    	      }
+    	      else {
+    	         addRelation(context.get(p));
+    	      }
+    	   }
     	}
     }
 
