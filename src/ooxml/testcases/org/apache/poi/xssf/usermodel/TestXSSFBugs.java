@@ -892,6 +892,38 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals("Tabella1", t.getName());
        assertEquals("Tabella1", t.getDisplayName());
        assertEquals("A1:C3", t.getCTTable().getRef());
+
+       
+       // Add some more tables, and check
+       t = s2.createTable();
+       t.setName("New 2");
+       t.setDisplayName("New 2");
+       t = s3.createTable();
+       t.setName("New 3");
+       t.setDisplayName("New 3");
+       
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       s1 = wb.getSheetAt(0);
+       s2 = wb.getSheetAt(1);
+       s3 = wb.getSheetAt(2);
+       s4 = wb.getSheetAt(3);
+       assertEquals(0, s1.getTables().size());
+       assertEquals(2, s2.getTables().size());
+       assertEquals(1, s3.getTables().size());
+       assertEquals(0, s4.getTables().size());
+       
+       t = s2.getTables().get(0);
+       assertEquals("Tabella1", t.getName());
+       assertEquals("Tabella1", t.getDisplayName());
+       assertEquals("A1:C3", t.getCTTable().getRef());
+       
+       t = s2.getTables().get(1);
+       assertEquals("New 2", t.getName());
+       assertEquals("New 2", t.getDisplayName());
+       
+       t = s3.getTables().get(0);
+       assertEquals("New 3", t.getName());
+       assertEquals("New 3", t.getDisplayName());
     }
     
     /**

@@ -88,6 +88,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
     private Map<Integer, CTCellFormula> sharedFormulas;
+    private TreeMap<String,Table> tables;
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper;    
 
@@ -151,6 +152,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                sheetComments = (CommentsTable)p;
                break;
             }
+            if(p instanceof Table) {
+               tables.put( p.getPackageRelationship().getId(), (Table)p );
+            }
         }
         
         // Process external hyperlinks for the sheet, if there are any
@@ -171,6 +175,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initRows(CTWorksheet worksheet) {
         _rows = new TreeMap<Integer, XSSFRow>();
+        tables = new TreeMap<String, Table>();
         sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
@@ -2957,16 +2962,31 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
     
     /**
+     * Creates a new Table, and associates it with this Sheet
+     */
+    public Table createTable() {
+       if(! worksheet.isSetTableParts()) {
+          worksheet.addNewTableParts();
+       }
+       
+       CTTableParts tblParts = worksheet.getTableParts();
+       CTTablePart tbl = tblParts.addNewTablePart();
+       
+       Table table = (Table)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tblParts.sizeOfTablePartArray());
+       tbl.setId(table.getPackageRelationship().getId());
+       
+       tables.put(tbl.getId(), table);
+       
+       return table;
+    }
+    
+    /**
      * Returns any tables associated with this Sheet
      */
     public List<Table> getTables() {
-       List<Table> tables = new ArrayList<Table>();
-       for(POIXMLDocumentPart p : getRelations()) {
-          if (p.getPackageRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
-             Table table = (Table) p;
-             tables.add(table);
-          }
-       }
-       return tables;
+       List<Table> tableList = new ArrayList<Table>(
+             tables.values()
+       );
+       return tableList;
     }
 }
