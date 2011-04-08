@@ -33,13 +33,13 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -49,7 +49,11 @@ import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.SSCellRange;
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -61,7 +65,45 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -352,7 +394,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public XSSFDrawing createDrawingPatriarch() {
         XSSFDrawing drawing = null;
-        CTDrawing ctDrawing = worksheet.getDrawing();
+        CTDrawing ctDrawing = getCTDrawing();
         if(ctDrawing == null) {
             //drawingNumber = #drawings.size() + 1
             int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
@@ -392,7 +434,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFVMLDrawing drawing = null;
-        CTLegacyDrawing ctDrawing = worksheet.getLegacyDrawing();
+        CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
         if(ctDrawing == null) {
             if(autoCreate) {
                 //drawingNumber = #drawings.size() + 1
@@ -423,6 +465,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         return drawing;
+    }
+    
+    protected CTDrawing getCTDrawing() {
+       return worksheet.getDrawing();
+    }
+    protected CTLegacyDrawing getCTLegacyDrawing() {
+       return worksheet.getLegacyDrawing();
     }
 
     /**

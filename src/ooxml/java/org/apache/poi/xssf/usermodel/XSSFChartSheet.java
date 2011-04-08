@@ -17,21 +17,26 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.*;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
+import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.ChartsheetDocument;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-
-import javax.xml.namespace.QName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.ChartsheetDocument;
 
 /**
  * High level representation of Sheet Parts that are of type 'chartsheet'.
@@ -72,6 +77,16 @@ public class XSSFChartSheet extends XSSFSheet  {
     }
 
     @Override
+    protected CTDrawing getCTDrawing() {
+       return chartsheet.getDrawing();
+    }
+    
+    @Override
+    protected CTLegacyDrawing getCTLegacyDrawing() {
+       return chartsheet.getLegacyDrawing();
+    }
+    
+    @Override
     protected void write(OutputStream out) throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(
@@ -93,5 +108,4 @@ public class XSSFChartSheet extends XSSFSheet  {
         }
         return out.toByteArray();
     }
-
 }
