@@ -2099,10 +2099,17 @@ if(1==2) {
        c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1, 1)");
        assertEquals("v A1", eval.evaluate(c).getStringValue());
        
+       c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1, )");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+       
+       
        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1)");
        assertEquals("v A1", eval.evaluate(c).getStringValue());
        
        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, 1)");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+       
+       c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, )");
        assertEquals("v A1", eval.evaluate(c).getStringValue());
     }
 }
