@@ -2075,4 +2075,34 @@ if(1==2) {
        assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
        assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue());
     }
+    
+    /**
+     * HLookup and VLookup with optional arguments 
+     */
+    public void test51024() throws Exception {
+       HSSFWorkbook wb = new HSSFWorkbook();
+       HSSFSheet s = wb.createSheet();
+       HSSFRow r1 = s.createRow(0);
+       HSSFRow r2 = s.createRow(1);
+       
+       r1.createCell(0).setCellValue("v A1");
+       r2.createCell(0).setCellValue("v A2");
+       r1.createCell(1).setCellValue("v B1");
+       
+       HSSFCell c = r1.createCell(4);
+       
+       HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+       
+       c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1)");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+       
+       c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1, 1)");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+       
+       c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1)");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+       
+       c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, 1)");
+       assertEquals("v A1", eval.evaluate(c).getStringValue());
+    }
 }
