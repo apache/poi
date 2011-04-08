@@ -19,20 +19,22 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
@@ -55,6 +57,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      */
     private CTDrawing drawing;
     private boolean isNew;
+    
+    protected static final String NAMESPACE_A = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     /**
      * Create a new SpreadsheetML drawing
@@ -111,7 +115,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         */
         if(isNew) xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
         Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
+        map.put(NAMESPACE_A, "a");
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
         xmlOptions.setSaveSuggestedPrefixes(map);
 
@@ -261,6 +265,19 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         shape.setColumn(ca.getCol1());
         shape.setRow(ca.getRow1());
         return shape;
+    }
+    
+    /**
+     * Returns all charts in this drawing.
+     */
+    public List<XSSFChart> getCharts() {
+       List<XSSFChart> charts = new ArrayList<XSSFChart>();
+       for(POIXMLDocumentPart part : getRelations()) {
+          if(part instanceof XSSFChart) {
+             charts.add((XSSFChart)part);
+          }
+       }
+       return charts;
     }
 
     /**

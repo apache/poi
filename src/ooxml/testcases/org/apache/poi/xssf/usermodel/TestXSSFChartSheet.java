@@ -55,4 +55,17 @@ public final class TestXSSFChartSheet extends TestCase {
         assertEquals(0, sheet.getColumnBreaks().length);
         assertEquals(true, sheet.getRowSumsBelow());
     }
+    
+    public void testGetCharts() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx");
+       
+       XSSFSheet ns = wb.getSheetAt(0);
+       XSSFChartSheet cs = (XSSFChartSheet)wb.getSheetAt(2);
+       
+       assertEquals(0, ns.createDrawingPatriarch().getCharts().size());
+       assertEquals(1, cs.createDrawingPatriarch().getCharts().size());
+       
+       XSSFChart chart = cs.createDrawingPatriarch().getCharts().get(0);
+       assertEquals(null, chart.getTitle());
+    }
 }
