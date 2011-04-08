@@ -999,6 +999,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           assertEquals(rowSplit,       paneInfo.getHorizontalSplitPosition());
           assertEquals(leftmostColumn, paneInfo.getVerticalSplitLeftColumn());
           assertEquals(topRow,         paneInfo.getHorizontalSplitTopRow());
+          
+          
+          // Now a row only freezepane
+          s.createFreezePane(0, 3);
+          paneInfo = s.getPaneInformation();
+          
+          assertEquals(0,  paneInfo.getVerticalSplitPosition());
+          assertEquals(3,  paneInfo.getHorizontalSplitPosition());
+          if(wb == wbs[0]) {
+             assertEquals(64, paneInfo.getVerticalSplitLeftColumn()); // HSSF
+          } else {
+             assertEquals(0,  paneInfo.getVerticalSplitLeftColumn()); // XSSF
+          }
+          assertEquals(3,  paneInfo.getHorizontalSplitTopRow());
+          
+          // Now a column only freezepane
+          s.createFreezePane(4, 0);
+          paneInfo = s.getPaneInformation();
+          
+          assertEquals(4,  paneInfo.getVerticalSplitPosition());
+          assertEquals(0,  paneInfo.getHorizontalSplitPosition());
+          assertEquals(4 , paneInfo.getVerticalSplitLeftColumn());
+          assertEquals(0,  paneInfo.getHorizontalSplitTopRow());
        }
     }
 }
