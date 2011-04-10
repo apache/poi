@@ -1024,4 +1024,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           assertEquals(0,  paneInfo.getHorizontalSplitTopRow());
        }
     }
+    
+    /**
+     * Repeatedly writing a file.
+     * Something with the SharedStringsTable currently breaks...
+     */
+    public void DISABLEDtest46662() throws Exception {
+       // New file
+       XSSFWorkbook wb = new XSSFWorkbook();
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       
+       // Simple file
+       wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       XSSFTestDataSamples.writeOutAndReadBack(wb);
+       
+       // Complex file
+       // TODO
+    }
 }
