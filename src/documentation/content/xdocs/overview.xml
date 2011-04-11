@@ -278,6 +278,7 @@
    "geronimo-stax-api_1.0_spec", but now "stax-api-1.0.1" is used for
    better compatibilty with other Apache projects. Any compliant implementation
    should work fine though.
+      </p>
     </section>
     <section><title>Examples</title>
       <p>
