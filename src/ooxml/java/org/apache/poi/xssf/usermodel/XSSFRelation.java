@@ -39,7 +39,6 @@ import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.SingleXmlCells;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.model.ThemesTable;
 
 /**
@@ -146,7 +145,7 @@ public final class XSSFRelation extends POIXMLRelation {
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",
 			"/xl/tables/table#.xml",
-			Table.class
+			XSSFTable.class
 	);
 
     public static final XSSFRelation IMAGES = new XSSFRelation(

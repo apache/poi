@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">Rename/Move xssf.model.Table to xssf.usermodel.XSSFTable as it now has usermodel-like features</action>
            <action dev="poi-developers" type="fix">51061 - Correct target URI for new XSSF Tables</action>
            <action dev="poi-developers" type="add">Initial support for XSSF Charts. Provides easy access to the underlying CTChart object via the Sheet Drawing, but no high level interface onto the chart contents as yet.</action>
            <action dev="poi-developers" type="fix">50884 - XSSF and HSSF freeze panes now behave the same</action>

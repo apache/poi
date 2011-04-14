@@ -43,7 +43,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -852,7 +851,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(0, s2.getTables().size());
        assertEquals(0, s3.getTables().size());
        
-       Table t = s1.getTables().get(0);
+       XSSFTable t = s1.getTables().get(0);
        assertEquals("Tabella1", t.getName());
        assertEquals("Tabella1", t.getDisplayName());
        assertEquals("A1:C3", t.getCTTable().getRef());

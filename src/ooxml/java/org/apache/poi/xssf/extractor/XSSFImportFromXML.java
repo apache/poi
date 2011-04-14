@@ -33,7 +33,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.Table;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -85,7 +85,7 @@ public class XSSFImportFromXML {
 
         List<XSSFSingleXmlCell> singleXmlCells = _map.getRelatedSingleXMLCell();
 
-        List<Table> tables = _map.getRelatedTables();
+        List<XSSFTable> tables = _map.getRelatedTables();
 
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
@@ -107,7 +107,7 @@ public class XSSFImportFromXML {
             cell.setCellValue(textContent);
         }
 
-        for (Table table : tables) {
+        for (XSSFTable table : tables) {
 
             String commonXPath = table.getCommonXpath();
             NodeList result = (NodeList) xpath.evaluate(commonXPath, doc, XPathConstants.NODESET);
