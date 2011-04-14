@@ -138,14 +138,14 @@ public final class XSSFRelation extends POIXMLRelation {
 	public static final XSSFRelation SINGLE_XML_CELLS = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/tableSingleCells",
-			"/tables/tableSingleCells#.xml",
+			"/xl/tables/tableSingleCells#.xml",
 			SingleXmlCells.class
 	);
 
 	public static final XSSFRelation TABLE = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/table",
-			"/tables/table#.xml",
+			"/xl/tables/table#.xml",
 			Table.class
 	);
 
@@ -247,6 +247,12 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/calcChain.xml",
             CalculationChain.class
     );
+    public static final XSSFRelation PRINTER_SETTINGS = new XSSFRelation(
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings",
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings",
+          "/xl/printerSettings/printerSettings#.bin",
+          null
+   );
 
 
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {

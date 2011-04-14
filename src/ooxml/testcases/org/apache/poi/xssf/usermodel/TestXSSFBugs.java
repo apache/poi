@@ -924,6 +924,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        t = s3.getTables().get(0);
        assertEquals("New 3", t.getName());
        assertEquals("New 3", t.getDisplayName());
+       
+       // Check the relationships
+       assertEquals(0, s1.getRelations().size());
+       assertEquals(3, s2.getRelations().size());
+       assertEquals(1, s3.getRelations().size());
+       assertEquals(0, s4.getRelations().size());
+       
+       assertEquals(
+             XSSFRelation.PRINTER_SETTINGS.getContentType(), 
+             s2.getRelations().get(0).getPackagePart().getContentType()
+       );
+       assertEquals(
+             XSSFRelation.TABLE.getContentType(), 
+             s2.getRelations().get(1).getPackagePart().getContentType()
+       );
+       assertEquals(
+             XSSFRelation.TABLE.getContentType(), 
+             s2.getRelations().get(2).getPackagePart().getContentType()
+       );
+       assertEquals(
+             XSSFRelation.TABLE.getContentType(), 
+             s3.getRelations().get(0).getPackagePart().getContentType()
+       );
+       assertEquals(
+             "/xl/tables/table3.xml",
+             s3.getRelations().get(0).getPackagePart().getPartName().toString()
+       );
     }
     
     /**
