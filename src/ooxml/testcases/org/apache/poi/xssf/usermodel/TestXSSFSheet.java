@@ -26,7 +26,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hssf.record.PasswordRecord;
@@ -1050,11 +1049,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
        assertEquals("a", s1.getRow(0).getCell(0).getRichStringCellValue().toString());
        assertEquals(1.0, s1.getRow(1).getCell(0).getNumericCellValue());
        
-       List<Table> tables = s1.getTables();
+       List<XSSFTable> tables = s1.getTables();
        assertNotNull(tables);
        assertEquals(1, tables.size());
        
-       Table table = tables.get(0);
+       XSSFTable table = tables.get(0);
        assertEquals("Tabella1", table.getName());
        assertEquals("Tabella1", table.getDisplayName());
        

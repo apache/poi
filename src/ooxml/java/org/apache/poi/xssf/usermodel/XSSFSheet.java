@@ -59,7 +59,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.Table;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
@@ -130,7 +129,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
     private Map<Integer, CTCellFormula> sharedFormulas;
-    private TreeMap<String,Table> tables;
+    private TreeMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper;    
 
@@ -194,8 +193,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                sheetComments = (CommentsTable)p;
                break;
             }
-            if(p instanceof Table) {
-               tables.put( p.getPackageRelationship().getId(), (Table)p );
+            if(p instanceof XSSFTable) {
+               tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
             }
         }
         
@@ -217,7 +216,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initRows(CTWorksheet worksheet) {
         _rows = new TreeMap<Integer, XSSFRow>();
-        tables = new TreeMap<String, Table>();
+        tables = new TreeMap<String, XSSFTable>();
         sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
@@ -3022,7 +3021,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Creates a new Table, and associates it with this Sheet
      */
-    public Table createTable() {
+    public XSSFTable createTable() {
        if(! worksheet.isSetTableParts()) {
           worksheet.addNewTableParts();
        }
@@ -3033,7 +3032,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        // Table numbers need to be unique in the file, not just
        //  unique within the sheet. Find the next one
        int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
-       Table table = (Table)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
+       XSSFTable table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
        tbl.setId(table.getPackageRelationship().getId());
        
        tables.put(tbl.getId(), table);
@@ -3044,8 +3043,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Returns any tables associated with this Sheet
      */
-    public List<Table> getTables() {
-       List<Table> tableList = new ArrayList<Table>(
+    public List<XSSFTable> getTables() {
+       List<XSSFTable> tableList = new ArrayList<XSSFTable>(
              tables.values()
        );
        return tableList;

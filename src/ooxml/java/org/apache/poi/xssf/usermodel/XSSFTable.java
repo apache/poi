@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.model;
+package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
@@ -47,7 +46,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  *
  * @author Roberto Manicardi
  */
-public class Table extends POIXMLDocumentPart {
+public class XSSFTable extends POIXMLDocumentPart {
 	
 	private CTTable ctTable;
 	private List<XSSFXmlColumnPr> xmlColumnPr;
@@ -56,13 +55,13 @@ public class Table extends POIXMLDocumentPart {
 	private String commonXPath; 
 	
 	
-	public Table() {
+	public XSSFTable() {
 		super();
 		ctTable = CTTable.Factory.newInstance();
 
 	}
 
-	public Table(PackagePart part, PackageRelationship rel)
+	public XSSFTable(PackagePart part, PackageRelationship rel)
 			throws IOException {
 		super(part, rel);
 		readFrom(part.getInputStream());

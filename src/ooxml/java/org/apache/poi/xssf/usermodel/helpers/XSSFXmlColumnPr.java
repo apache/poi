@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.xssf.model.Table;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
@@ -33,11 +33,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
  */
 public class XSSFXmlColumnPr {
 	
-	private Table table;
+	private XSSFTable table;
 	private CTTableColumn ctTableColumn;
 	private CTXmlColumnPr ctXmlColumnPr;
 	
-	public XSSFXmlColumnPr(Table table ,CTTableColumn ctTableColum,CTXmlColumnPr ctXmlColumnPr){
+	public XSSFXmlColumnPr(XSSFTable table ,CTTableColumn ctTableColum,CTXmlColumnPr ctXmlColumnPr){
 		this.table = table;
 		this.ctTableColumn = ctTableColum;
 		this.ctXmlColumnPr = ctXmlColumnPr;
