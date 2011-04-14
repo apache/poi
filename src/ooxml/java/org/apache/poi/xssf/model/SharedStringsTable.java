@@ -20,10 +20,7 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -86,6 +83,14 @@ public class SharedStringsTable extends POIXMLDocumentPart {
 
     private SstDocument _sstDoc;
 
+    private final static XmlOptions options = new XmlOptions();
+    static {
+        options.put( XmlOptions.SAVE_INNER );
+     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
+     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+        options.setSaveImplicitNamespaces(Collections.singletonMap("", "http://schemas.openxmlformats.org/spreadsheetml/2006/main"));
+    }
+
     public SharedStringsTable() {
         super();
         _sstDoc = SstDocument.Factory.newInstance();
@@ -112,13 +117,17 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(st.toString(), cnt);
+                stmap.put(getKey(st), cnt);
                 strings.add(st);
                 cnt++;
             }
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
+    }
+
+    private String getKey(CTRst st) {
+        return st.xmlText(options);
     }
 
     /**
@@ -164,7 +173,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @return index the index of added entry
      */
     public int addEntry(CTRst st) {
-        String s = st.toString();
+        String s = getKey(st);
         count++;
         if (stmap.containsKey(s)) {
             return stmap.get(s);
