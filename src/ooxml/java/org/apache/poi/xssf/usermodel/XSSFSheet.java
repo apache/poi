@@ -3030,7 +3030,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        CTTableParts tblParts = worksheet.getTableParts();
        CTTablePart tbl = tblParts.addNewTablePart();
        
-       Table table = (Table)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tblParts.sizeOfTablePartArray());
+       // Table numbers need to be unique in the file, not just
+       //  unique within the sheet. Find the next one
+       int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
+       Table table = (Table)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
        tbl.setId(table.getPackageRelationship().getId());
        
        tables.put(tbl.getId(), table);
