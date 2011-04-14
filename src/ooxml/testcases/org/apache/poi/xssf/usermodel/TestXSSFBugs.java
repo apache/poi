@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,6 +45,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
@@ -1049,6 +1051,81 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           assertEquals(4 , paneInfo.getVerticalSplitLeftColumn());
           assertEquals(0,  paneInfo.getHorizontalSplitTopRow());
        }
+    }
+    
+    /**
+     * Default Column style
+     */
+    public void test51037() throws Exception {
+       XSSFWorkbook wb = new XSSFWorkbook();
+       XSSFSheet s = wb.createSheet();
+       
+       CellStyle defaultStyle = wb.getCellStyleAt((short)0);
+       assertEquals(0, defaultStyle.getIndex());
+       
+       CellStyle blueStyle = wb.createCellStyle();
+       blueStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+       blueStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+       assertEquals(1, blueStyle.getIndex());
+
+       CellStyle pinkStyle = wb.createCellStyle();
+       pinkStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
+       pinkStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+       assertEquals(2, pinkStyle.getIndex());
+
+       // Starts empty
+       assertEquals(1, s.getCTWorksheet().sizeOfColsArray());
+       CTCols cols = s.getCTWorksheet().getColsArray(0);
+       assertEquals(0, cols.sizeOfColArray());
+       
+       // Add some rows and columns
+       XSSFRow r1 = s.createRow(0);
+       XSSFRow r2 = s.createRow(1);
+       r1.createCell(0);
+       r1.createCell(2);
+       r2.createCell(0);
+       r2.createCell(3);
+       
+       // Check no style is there
+       assertEquals(1, s.getCTWorksheet().sizeOfColsArray());
+       assertEquals(0, cols.sizeOfColArray());
+       
+       assertEquals(defaultStyle, s.getColumnStyle(0));
+       assertEquals(defaultStyle, s.getColumnStyle(2));
+       assertEquals(defaultStyle, s.getColumnStyle(3));
+       
+       
+       // Apply the styles
+       s.setDefaultColumnStyle(0, pinkStyle);
+       s.setDefaultColumnStyle(3, blueStyle);
+       
+       // Check
+       assertEquals(pinkStyle, s.getColumnStyle(0));
+       assertEquals(defaultStyle, s.getColumnStyle(2));
+       assertEquals(blueStyle, s.getColumnStyle(3));
+       
+       assertEquals(1, s.getCTWorksheet().sizeOfColsArray());
+       assertEquals(2, cols.sizeOfColArray());
+       
+       assertEquals(1, cols.getColArray(0).getMin());
+       assertEquals(1, cols.getColArray(0).getMax());
+       assertEquals(pinkStyle.getIndex(), cols.getColArray(0).getStyle());
+       
+       assertEquals(4, cols.getColArray(1).getMin());
+       assertEquals(4, cols.getColArray(1).getMax());
+       assertEquals(blueStyle.getIndex(), cols.getColArray(1).getStyle());
+       
+       
+       // Save, re-load and re-check 
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       s = wb.getSheetAt(0);
+       defaultStyle = wb.getCellStyleAt(defaultStyle.getIndex());
+       blueStyle = wb.getCellStyleAt(blueStyle.getIndex());
+       pinkStyle = wb.getCellStyleAt(pinkStyle.getIndex());
+       
+       assertEquals(pinkStyle, s.getColumnStyle(0));
+       assertEquals(defaultStyle, s.getColumnStyle(2));
+       assertEquals(blueStyle, s.getColumnStyle(3));
     }
     
     /**
