@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -351,5 +352,19 @@ public class TestXWPFRun extends TestCase {
         }
 
         assertEquals(1, count);
+    }
+    
+    public void testAddPicture() throws Exception {
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+       XWPFParagraph p = doc.getParagraphArray(2);
+       XWPFRun r = p.getRuns().get(0);
+       
+       assertEquals(0, doc.getAllPictures().size());
+       assertEquals(0, r.getEmbeddedPictures().size());
+       
+       r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+       
+       assertEquals(1, doc.getAllPictures().size());
+       assertEquals(1, r.getEmbeddedPictures().size());
     }
 }
