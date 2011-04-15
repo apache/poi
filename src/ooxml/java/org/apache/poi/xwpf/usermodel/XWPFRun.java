@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +25,29 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
@@ -49,6 +66,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -94,27 +113,30 @@ public class XWPFRun {
         // (They're a different CTPicture, under the drawingml namespace)
         pictures = new ArrayList<XWPFPicture>();
         for(XmlObject o : pictTextObjs) {
-           XmlObject[] picts = o
-                 .selectPath("declare namespace pic='http://schemas.openxmlformats.org/drawingml/2006/picture' .//pic:pic");
-           for(XmlObject pict : picts) {
-              if(pict instanceof XmlAnyTypeImpl) {
-                 // Pesky XmlBeans bug - see Bugzilla #49934
-                 try {
-                    pict = org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture.Factory.parse(
-                          pict.toString()
-                    );
-                 } catch(XmlException e) {
-                    throw new POIXMLException(e);
-                 }
-              }
-              if(pict instanceof org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture) {
-                 XWPFPicture picture = new XWPFPicture(
-                       (org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture)pict, p
-                 );
-                 pictures.add(picture);
-              }
+           for(CTPicture pict : getCTPictures(o)) {
+              XWPFPicture picture = new XWPFPicture( pict, p );
+              pictures.add(picture);
            }
         }
+    }
+    
+    private List<CTPicture> getCTPictures(XmlObject o) {
+       List<CTPicture> pictures = new ArrayList<CTPicture>(); 
+       XmlObject[] picts = o.selectPath("declare namespace pic='"+CTPicture.type.getName().getNamespaceURI()+"' .//pic:pic");
+       for(XmlObject pict : picts) {
+          if(pict instanceof XmlAnyTypeImpl) {
+             // Pesky XmlBeans bug - see Bugzilla #49934
+             try {
+                pict = CTPicture.Factory.parse( pict.toString() );
+             } catch(XmlException e) {
+                throw new POIXMLException(e);
+             }
+          }
+          if(pict instanceof CTPicture) {
+             pictures.add((CTPicture)pict);
+          }
+       }
+       return pictures;
     }
 
     /**
@@ -561,7 +583,107 @@ public class XWPFRun {
 
     public void removeCarriageReturn() {
 	//TODO
-    }    
+    }   
+    
+    /**
+     * Adds a picture to the run. This method handles
+     *  attaching the picture data to the overall file.
+     *  
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     *  
+     * @param pictureData The raw picture data
+     * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
+    * @throws IOException 
+    * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException 
+    * @throws IOException 
+     */
+    public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
+    throws InvalidFormatException, IOException {
+       XWPFDocument doc = paragraph.document;
+       
+       // Add the picture + relationship
+       int picNumber = doc.addPicture(pictureData, pictureType);
+       XWPFPictureData picData = doc.getAllPackagePictures().get(picNumber);
+       
+       // Create the drawing entry for it
+       try {
+          CTDrawing drawing = run.addNewDrawing();
+          CTInline inline = drawing.addNewInline();
+          
+          // Do the fiddly namespace bits on the inline
+          // (We need full control of what goes where and as what)
+          String xml = 
+             "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+             "<a:graphicData uri=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+             "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
+             "</a:graphicData>" +
+             "</a:graphic>";
+          inline.set(XmlToken.Factory.parse(xml));
+          
+          // Setup the inline
+          inline.setDistT(0);
+          inline.setDistR(0);
+          inline.setDistB(0);
+          inline.setDistL(0);
+          
+          CTNonVisualDrawingProps docPr = inline.addNewDocPr();
+          docPr.setId(picNumber);
+          docPr.setName("Picture " + picNumber);
+          docPr.setDescr(filename);
+          
+          CTPositiveSize2D extent = inline.addNewExtent();
+          extent.setCx(width);
+          extent.setCy(height);
+   
+          // Grab the picture object
+          CTGraphicalObject graphic = inline.getGraphic();
+          CTGraphicalObjectData graphicData = graphic.getGraphicData();
+          CTPicture pic = getCTPictures(graphicData).get(0);
+          
+          // Set it up
+          CTPictureNonVisual nvPicPr = pic.addNewNvPicPr();
+          
+          CTNonVisualDrawingProps cNvPr = nvPicPr.addNewCNvPr();
+          cNvPr.setId(picNumber);
+          cNvPr.setName("Picture " + picNumber);
+          cNvPr.setDescr(filename);
+          
+          CTNonVisualPictureProperties cNvPicPr = nvPicPr.addNewCNvPicPr();
+          cNvPicPr.addNewPicLocks().setNoChangeAspect(true);
+          
+          CTBlipFillProperties blipFill = pic.addNewBlipFill();
+          CTBlip blip = blipFill.addNewBlip();
+          blip.setEmbed( picData.getPackageRelationship().getId() );
+          blipFill.addNewStretch().addNewFillRect();
+          
+          CTShapeProperties spPr = pic.addNewSpPr();
+          CTTransform2D xfrm = spPr.addNewXfrm();
+          
+          CTPoint2D off = xfrm.addNewOff();
+          off.setX(0);
+          off.setY(0);
+          
+          CTPositiveSize2D ext = xfrm.addNewExt();
+          ext.setCx(width);
+          ext.setCy(height);
+          
+          CTPresetGeometry2D prstGeom = spPr.addNewPrstGeom();
+          prstGeom.setPrst(STShapeType.RECT);
+          prstGeom.addNewAvLst();
+          
+          // Finish up
+          XWPFPicture xwpfPicture = new XWPFPicture(pic, paragraph);
+          pictures.add(xwpfPicture);
+          return xwpfPicture;
+       } catch(XmlException e) {
+          throw new IllegalStateException(e);
+       }
+    }
     
     /**
      * Returns the embedded pictures of the run. These

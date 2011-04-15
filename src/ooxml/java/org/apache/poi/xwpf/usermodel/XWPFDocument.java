@@ -928,10 +928,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
    
      /**
-     * Adds a picture to the document.
+     * Adds a picture to the document. Users should normally call
+     *  {@link XWPFRun#addPicture(InputStream, int)}
+     *   
      *
      * @param is                The stream to read image from
-     * @param format            The format of the picture.
+     * @param format            The format of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
+
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException 
@@ -947,10 +950,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     
     /**
-     * Adds a picture to the document.
+     * Adds a picture to the document. Users should normally call
+     *  {@link XWPFRun#addPicture(InputStream, int)}
      *
      * @param pictureData       The bytes to read image from
-     * @param format            The format of the picture.
+     * @param format            The format of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException 
