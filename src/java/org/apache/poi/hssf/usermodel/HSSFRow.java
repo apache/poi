@@ -41,7 +41,7 @@ public final class HSSFRow implements Row {
     public final static int INITIAL_CAPACITY = 5;
 
     private int rowNum;
-    private HSSFCell[] cells=new HSSFCell[INITIAL_CAPACITY];
+    private HSSFCell[] cells;
 
     /**
      * reference to low level representation
@@ -84,6 +84,12 @@ public final class HSSFRow implements Row {
         this.sheet = sheet;
         row = record;
         setRowNum(record.getRowNumber());
+        
+        // Size the initial cell list such that a read only case won't waste
+        //  lots of memory, and a create/read followed by adding new cells can
+        //  add a bit without needing a resize
+        cells = new HSSFCell[record.getLastCol()+INITIAL_CAPACITY];
+        
         // Don't trust colIx boundaries as read by other apps
         // set the RowRecord empty for the moment
         record.setEmpty();
@@ -300,9 +306,10 @@ public final class HSSFRow implements Row {
         // re-allocate cells array as required.
         if(column>=cells.length) {
             HSSFCell[] oldCells=cells;
-            int newSize=oldCells.length*2;
+            // New size based on the same logic as ArrayList
+            int newSize=oldCells.length*3/2+1;
             if(newSize<column+1) {
-                newSize=column+1;
+                newSize=column+INITIAL_CAPACITY;
             }
             cells=new HSSFCell[newSize];
             System.arraycopy(oldCells,0,cells,0,oldCells.length);
