@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -656,6 +657,7 @@ public class TestXSSFCellStyle extends TestCase {
        XSSFWorkbook wbClone = new XSSFWorkbook();
        assertEquals(1, wbClone.getNumberOfFonts());
        assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
+       assertEquals(1, wbClone.getNumCellStyles());
        
        XSSFDataFormat fmtClone = wbClone.createDataFormat();
        XSSFCellStyle clone = wbClone.createCellStyle();
@@ -669,11 +671,24 @@ public class TestXSSFCellStyle extends TestCase {
        clone.cloneStyleFrom(orig);
        
        assertEquals(2, wbClone.getNumberOfFonts());
+       assertEquals(2, wbClone.getNumCellStyles());
        assertEquals(1, wbClone.getStylesSource().getNumberFormats().size());
        
        assertEquals(HSSFCellStyle.ALIGN_RIGHT, clone.getAlignment());
        assertEquals("TestingFont", clone.getFont().getFontName());
        assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
+       assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
+       
+       // Save it and re-check
+       XSSFWorkbook wbReload = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
+       assertEquals(2, wbReload.getNumberOfFonts());
+       assertEquals(2, wbReload.getNumCellStyles());
+       assertEquals(1, wbReload.getStylesSource().getNumberFormats().size());
+       
+       XSSFCellStyle reload = wbReload.getCellStyleAt((short)1);
+       assertEquals(HSSFCellStyle.ALIGN_RIGHT, reload.getAlignment());
+       assertEquals("TestingFont", reload.getFont().getFontName());
+       assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
        assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
    }
 }

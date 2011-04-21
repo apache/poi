@@ -297,6 +297,9 @@ public class StylesTable extends POIXMLDocumentPart {
 		xfs.add(cellXf);
 		return xfs.size();
 	}
+   public void replaceCellXfAt(int idx, CTXf cellXf) {
+      xfs.set(idx, cellXf);
+   }
 
 	public CTXf getCellStyleXfAt(int idx) {
 		return styleXfs.get(idx);
@@ -305,6 +308,10 @@ public class StylesTable extends POIXMLDocumentPart {
 		styleXfs.add(cellStyleXf);
 		return styleXfs.size();
 	}
+	public void replaceCellStyleXfAt(int idx, CTXf cellStyleXf) {
+	   styleXfs.set(idx, cellStyleXf);
+	}
+	
 	/**
 	 * get the size of cell styles
 	 */

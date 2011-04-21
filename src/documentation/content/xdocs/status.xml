@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">50956 - Correct XSSF cell style cloning between workbooks</action>
            <action dev="poi-developers" type="add">Add get/setForceFormulaRecalculation for XSSF, and promote the methods to the common usermodel Sheet</action>
            <action dev="poi-developers" type="fix">Tweak the logic for sizing the HSSFCells array on a HSSFRow to reduce memory over allocation in many use cases</action>
            <action dev="poi-developers" type="add">49765 - Support for adding a picture to a XSSFRun</action>
