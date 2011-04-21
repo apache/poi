@@ -33,6 +33,8 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlToken;
+import org.w3c.dom.Node;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
@@ -144,9 +146,19 @@ public class XSSFCellStyle implements CellStyle {
             } else {
                // Copy the style
                try {
+                  // Remove any children off the current style, to
+                  //  avoid orphaned nodes
+                  if(_cellXf.isSetAlignment())
+                     _cellXf.unsetAlignment();
+                  if(_cellXf.isSetExtLst())
+                     _cellXf.unsetExtLst();
+                  
+                  // Create a new Xf with the same contents
                   _cellXf = CTXf.Factory.parse(
                         src.getCoreXf().toString()
                   );
+                  // Swap it over
+                  _stylesSource.replaceCellXfAt(_cellXfId, _cellXf);
                } catch(XmlException e) {
                   throw new POIXMLException(e);
                }
