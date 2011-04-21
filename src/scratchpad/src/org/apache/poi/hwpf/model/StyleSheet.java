@@ -316,7 +316,12 @@ public final class StyleSheet implements HDFType {
     {
       return NIL_CHP;
     }
-    return (_styleDescriptions[x] != null ? _styleDescriptions[x].getCHP() : null);
+
+    if (x>=_styleDescriptions.length) {
+        return NIL_CHP;
+    }
+
+    return (_styleDescriptions[x] != null ? _styleDescriptions[x].getCHP() : NIL_CHP);
   }
 
   public ParagraphProperties getParagraphStyle(int x)
