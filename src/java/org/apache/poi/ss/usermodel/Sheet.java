@@ -259,6 +259,21 @@ public interface Sheet extends Iterable<Row> {
     Iterator<Row> rowIterator();
 
     /**
+     * Control if Excel should be asked to recalculate all formulas when the
+     *  workbook is opened. 
+     * Calculating the formula values with {@link FormulaEvaluator} is the
+     *  recommended solution, but this may be used for certain cases where
+     *  evaluation in POI is not possible.
+     */
+    void setForceFormulaRecalculation(boolean value);
+
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the
+     *  workbook is opened.  
+     */
+    boolean getForceFormulaRecalculation();
+    
+    /**
      * Flag indicating whether the sheet displays Automatic Page Breaks.
      *
      * @param value <code>true</code> if the sheet displays Automatic Page Breaks.

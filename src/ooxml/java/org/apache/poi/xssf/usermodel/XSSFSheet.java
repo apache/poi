@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -89,6 +90,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
@@ -1454,6 +1456,41 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
+    /**
+     * Control if Excel should be asked to recalculate all formulas when the
+     *  workbook is opened, via the "sheetCalcPr fullCalcOnLoad" option.
+     * Calculating the formula values with {@link FormulaEvaluator} is the
+     *  recommended solution, but this may be used for certain cases where
+     *  evaluation in POI is not possible.
+     */
+    public void setForceFormulaRecalculation(boolean value) {
+       if(worksheet.isSetSheetCalcPr()) {
+          // Change the current setting
+          CTSheetCalcPr calc = worksheet.getSheetCalcPr();
+          calc.setFullCalcOnLoad(value);
+       }
+       else if(value) {
+          // Add the Calc block and set it
+          CTSheetCalcPr calc = worksheet.addNewSheetCalcPr();
+          calc.setFullCalcOnLoad(value);
+       }
+       else {
+          // Not set, requested not, nothing to do
+       }
+    }
+
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the
+     *  workbook is opened.  
+     */
+    public boolean getForceFormulaRecalculation() {
+       if(worksheet.isSetSheetCalcPr()) {
+          CTSheetCalcPr calc = worksheet.getSheetCalcPr();
+          return calc.getFullCalcOnLoad();
+       }
+       return false;
+    }
+    
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
