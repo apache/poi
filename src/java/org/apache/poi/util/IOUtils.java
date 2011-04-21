@@ -110,7 +110,7 @@ public final class IOUtils {
             return (total == 0) ? -1 : total;
          }
          total += got;
-         if (total == b.capacity()) {
+         if (total == b.capacity() || b.position() == b.capacity()) {
             return total;
          }
       }
