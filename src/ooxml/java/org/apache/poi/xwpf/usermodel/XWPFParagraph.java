@@ -1178,7 +1178,7 @@ public class XWPFParagraph implements IBodyElement{
     	 if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
 	    	CTR ctRun = paragraph.insertNewR(pos);
 	    	XWPFRun newRun = new XWPFRun(ctRun, this);
-	    	runs.add(newRun);
+	    	runs.add(pos, newRun);
 	    	return newRun;
     	 }
     	 return null;
