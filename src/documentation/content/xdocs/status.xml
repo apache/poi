@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51113 - Correct XWPFParagraph tracking of inserted runs</action>
            <action dev="poi-developers" type="fix">51111 - Correct XWPFParagraph tracking of new runs</action>
            <action dev="poi-developers" type="fix">51115 - Handle DataFormatter escaping of "." in the same way as "-" and "/"</action>
            <action dev="poi-developers" type="fix">51100 - Fix IOUtils issue for NPOIFS reading from an InputStream where every block is full</action>

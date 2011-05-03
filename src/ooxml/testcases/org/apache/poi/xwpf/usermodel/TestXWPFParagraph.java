@@ -260,6 +260,12 @@ public final class TestXWPFParagraph extends TestCase {
        
        XWPFRun r = p.createRun();
        assertEquals(3, p.getRuns().size());
+       assertEquals(2, p.getRuns().indexOf(r));
+       
+       XWPFRun r2 = p.insertNewRun(1);
+       assertEquals(4, p.getRuns().size());
+       assertEquals(1, p.getRuns().indexOf(r2));
+       assertEquals(3, p.getRuns().indexOf(r));
     }
     
     public void testPictures() throws Exception {
