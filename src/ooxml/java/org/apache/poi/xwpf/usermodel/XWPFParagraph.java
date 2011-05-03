@@ -260,7 +260,9 @@ public class XWPFParagraph implements IBodyElement{
      * @return a new text run
      */
     public XWPFRun createRun() {
-        return new XWPFRun(paragraph.addNewR(), this);
+       XWPFRun run = new XWPFRun(paragraph.addNewR(), this);
+       runs.add(run);
+       return run;
     }
 
     /**
