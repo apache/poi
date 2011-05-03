@@ -252,6 +252,16 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals("10", p.getNumID().toString());
     }
     
+    public void testAddingRuns() throws Exception {
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+     
+       XWPFParagraph p = doc.getParagraphs().get(0);
+       assertEquals(2, p.getRuns().size());
+       
+       XWPFRun r = p.createRun();
+       assertEquals(3, p.getRuns().size());
+    }
+    
     public void testPictures() throws Exception {
        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx");
        assertEquals(7, doc.getParagraphs().size());
