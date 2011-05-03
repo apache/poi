@@ -347,6 +347,7 @@ public class DataFormatter {
         String formatStr = pFormatStr;
         formatStr = formatStr.replaceAll("\\\\-","-");
         formatStr = formatStr.replaceAll("\\\\,",",");
+        formatStr = formatStr.replaceAll("\\\\\\.","."); // . is a special regexp char
         formatStr = formatStr.replaceAll("\\\\ "," ");
         formatStr = formatStr.replaceAll("\\\\/","/"); // weird: m\\/d\\/yyyy 
         formatStr = formatStr.replaceAll(";@", "");

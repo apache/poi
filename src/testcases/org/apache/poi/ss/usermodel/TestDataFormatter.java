@@ -345,6 +345,18 @@ public class TestDataFormatter extends TestCase {
                 df2.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
     }
 
+    public void testEscapes() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+
+       assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy-mm-dd"));
+       assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\-mm\\-dd"));
+       
+       assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy.mm.dd"));
+       assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\.mm\\.dd"));
+       
+       assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy/mm/dd"));
+       assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\/mm\\/dd"));
+    }
 
     public void testOther() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
