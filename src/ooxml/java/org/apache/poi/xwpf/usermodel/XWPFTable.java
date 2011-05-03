@@ -159,6 +159,7 @@ public class XWPFTable implements IBodyElement{
                 .sizeOfTcArray() : 0;
         XWPFTableRow tabRow = new XWPFTableRow(ctTbl.addNewTr(), this);
         addColumn(tabRow, sizeCol);
+        tableRows.add(tabRow);
         return tabRow;
     }
 
