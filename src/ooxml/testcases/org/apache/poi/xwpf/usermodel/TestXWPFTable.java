@@ -94,6 +94,7 @@ public class TestXWPFTable extends TestCase {
 
         //add a new row
         xtab.createRow();
+        assertEquals(4, xtab.getNumberOfRows());
 
         //check number of cols
         assertEquals(2, table.getTrArray(0).sizeOfTcArray());
