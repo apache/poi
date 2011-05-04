@@ -63,9 +63,9 @@ public final class NameCommentRecord extends StandardRecord {
     out.writeShort(field_5_comment_length);
 
     out.writeByte(0);
-    out.write(field_6_name_text.getBytes());
+    StringUtil.putCompressedUnicode(field_6_name_text, out);
     out.writeByte(0);
-    out.write(field_7_comment_text.getBytes());
+    StringUtil.putCompressedUnicode(field_7_comment_text, out);
   }
 
   @Override
