@@ -2112,4 +2112,15 @@ if(1==2) {
        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, )");
        assertEquals("v A1", eval.evaluate(c).getStringValue());
     }
+    
+    /**
+     * Mixture of Ascii and Unicode strings in a 
+     *  NameComment record
+     */
+    public void test51143() throws Exception {
+       HSSFWorkbook wb = openSample("51143.xls");
+       assertEquals(1, wb.getNumberOfSheets());
+       wb = writeOutAndReadBack(wb);
+       assertEquals(1, wb.getNumberOfSheets());
+    }
 }
