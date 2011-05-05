@@ -29,6 +29,7 @@
         <menu-item label="Download" href="download.html"/>
         <menu-item label="Components" href="overview.html"/>
         <menu-item label="Text Extraction" href="text-extraction.html"/>
+        <menu-item label="Encryption support" href="encryption.html"/>
         <menu-item label="Case Studies" href="casestudies.html"/>
         <menu-item label="Legal" href="legal.html"/>
     </menu>
