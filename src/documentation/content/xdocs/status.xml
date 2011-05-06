@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51148 - XWPFDocument now properly tracks paragraphs and tables when adding/removing them</action>
            <action dev="poi-developers" type="fix">51153 - Correct sizing of LbsDataSubRecord with unused padding fields</action>
            <action dev="poi-developers" type="fix">51143 - NameCommentRecord correction for writing non ASCII strings</action>
            <action dev="poi-developers" type="fix">51112 - Correct XWPFTable tracking of new rows</action>

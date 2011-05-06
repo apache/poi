@@ -130,4 +130,65 @@ public final class TestXWPFDocument extends TestCase {
 			e.printStackTrace();
 		}
 	}
+	
+	public void testRemoveBodyElement() {
+	   XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+	   assertEquals(3, doc.getParagraphs().size());
+      assertEquals(3, doc.getBodyElements().size());
+      
+      XWPFParagraph p1 = doc.getParagraphs().get(0);
+      XWPFParagraph p2 = doc.getParagraphs().get(1);
+      XWPFParagraph p3 = doc.getParagraphs().get(2);
+      
+      assertEquals(p1, doc.getBodyElements().get(0));
+      assertEquals(p1, doc.getParagraphs().get(0));
+      assertEquals(p2, doc.getBodyElements().get(1));
+      assertEquals(p2, doc.getParagraphs().get(1));
+      assertEquals(p3, doc.getBodyElements().get(2));
+      assertEquals(p3, doc.getParagraphs().get(2));
+      
+      // Add another
+      XWPFParagraph p4 = doc.createParagraph();
+      
+      assertEquals(4, doc.getParagraphs().size());
+      assertEquals(4, doc.getBodyElements().size());
+      assertEquals(p1, doc.getBodyElements().get(0));
+      assertEquals(p1, doc.getParagraphs().get(0));
+      assertEquals(p2, doc.getBodyElements().get(1));
+      assertEquals(p2, doc.getParagraphs().get(1));
+      assertEquals(p3, doc.getBodyElements().get(2));
+      assertEquals(p3, doc.getParagraphs().get(2));
+      assertEquals(p4, doc.getBodyElements().get(3));
+      assertEquals(p4, doc.getParagraphs().get(3));
+      
+      // Remove the 2nd
+      assertEquals(true, doc.removeBodyElement(1));
+      assertEquals(3, doc.getParagraphs().size());
+      assertEquals(3, doc.getBodyElements().size());
+      
+      assertEquals(p1, doc.getBodyElements().get(0));
+      assertEquals(p1, doc.getParagraphs().get(0));
+      assertEquals(p3, doc.getBodyElements().get(1));
+      assertEquals(p3, doc.getParagraphs().get(1));
+      assertEquals(p4, doc.getBodyElements().get(2));
+      assertEquals(p4, doc.getParagraphs().get(2));
+      
+      // Remove the 1st
+      assertEquals(true, doc.removeBodyElement(0));
+      assertEquals(2, doc.getParagraphs().size());
+      assertEquals(2, doc.getBodyElements().size());
+      
+      assertEquals(p3, doc.getBodyElements().get(0));
+      assertEquals(p3, doc.getParagraphs().get(0));
+      assertEquals(p4, doc.getBodyElements().get(1));
+      assertEquals(p4, doc.getParagraphs().get(1));
+      
+      // Remove the last
+      assertEquals(true, doc.removeBodyElement(1));
+      assertEquals(1, doc.getParagraphs().size());
+      assertEquals(1, doc.getBodyElements().size());
+      
+      assertEquals(p3, doc.getBodyElements().get(0));
+      assertEquals(p3, doc.getParagraphs().get(0));
+	}
 }
