@@ -24,7 +24,10 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument extends TestCase {
 
@@ -95,20 +98,22 @@ public final class TestXWPFDocument extends TestCase {
 		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
 	}
 	
-//	public void testAddParagraph(){
-//		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-//		int pLength = doc.getParagraphs().length;
-//		XWPFParagraph p = doc.insertNewParagraph(3);
-//		assertTrue(p == doc.getParagraphs()[3]);
-//		assertTrue(++pLength == doc.getParagraphs().length);
-//		CTP ctp = p.getCTP();
-//		XWPFParagraph newP = doc.getParagraph(ctp);
-//		assertSame(p, newP);
-//		XmlCursor cursor = doc.getDocument().getBody().getPArray(0).newCursor();
-//		XWPFParagraph cP = doc.insertNewParagraph(cursor);
-//		assertSame(cP, doc.getParagraphs()[0]);
-//		assertTrue(++pLength == doc.getParagraphs().length);	
-//	}
+	public void testAddParagraph(){
+	   XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+	   assertEquals(3, doc.getParagraphs().size());
+
+	   XWPFParagraph p = doc.createParagraph();
+	   assertEquals(p, doc.getParagraphs().get(3));
+	   assertEquals(4, doc.getParagraphs().size());
+
+	   CTP ctp = p.getCTP();
+	   XWPFParagraph newP = doc.getParagraph(ctp);
+	   assertSame(p, newP);
+	   XmlCursor cursor = doc.getDocument().getBody().getPArray(0).newCursor();
+	   XWPFParagraph cP = doc.insertNewParagraph(cursor);
+	   assertSame(cP, doc.getParagraphs().get(0));
+	   assertEquals(5, doc.getParagraphs().size());
+	}
 	
 	public void testAddPicture(){
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
