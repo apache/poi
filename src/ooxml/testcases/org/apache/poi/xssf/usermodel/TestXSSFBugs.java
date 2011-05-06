@@ -37,7 +37,6 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -804,22 +803,26 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        String text = "Use \n with word wrap on to create a new line.\n" +
           "This line finishes with two trailing spaces.  ";
        
-       Workbook wb = new XSSFWorkbook();
-       Sheet sheet = wb.createSheet();
+       XSSFWorkbook wb = new XSSFWorkbook();
+       XSSFSheet sheet = wb.createSheet();
 
        Font font1 = wb.createFont();
        font1.setColor((short) 20);
+       Font font2 = wb.createFont();
+       font2.setColor(Font.COLOR_RED);
+       Font font3 = wb.getFontAt((short)0);
 
-       Row row = sheet.createRow(2);
-       Cell cell = row.createCell(2);
+       XSSFRow row = sheet.createRow(2);
+       XSSFCell cell = row.createCell(2);
 
-       RichTextString richTextString =
+       XSSFRichTextString richTextString =
           wb.getCreationHelper().createRichTextString(text);
        
        // Check the text has the newline
        assertEquals(text, richTextString.getString());
        
        // Apply the font
+       richTextString.applyFont(font3);
        richTextString.applyFont(0, 3, font1);
        cell.setCellValue(richTextString);
 
@@ -837,6 +840,28 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        row = sheet.getRow(2);
        cell = row.getCell(2);
        assertEquals(text, cell.getStringCellValue());
+       
+       // Now add a 2nd, and check again
+       int fontAt = text.indexOf("\n", 6);
+       cell.getRichStringCellValue().applyFont(10, fontAt+1, font2);
+       assertEquals(text, cell.getStringCellValue());
+       
+       assertEquals(4, cell.getRichStringCellValue().numFormattingRuns());
+       assertEquals("Use", cell.getRichStringCellValue().getCTRst().getRList().get(0).getT());
+       
+       String r3 = cell.getRichStringCellValue().getCTRst().getRList().get(2).getT();
+       assertEquals("line.\n", r3.substring(r3.length()-6));
+       
+       // Save and re-check
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sheet = wb.getSheetAt(0);
+       row = sheet.getRow(2);
+       cell = row.getCell(2);
+       assertEquals(text, cell.getStringCellValue());
+       
+//       FileOutputStream out = new FileOutputStream("/tmp/test48877.xlsx");
+//       wb.write(out);
+//       out.close();
     }
     
     /**
