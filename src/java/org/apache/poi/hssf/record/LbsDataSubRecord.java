@@ -381,7 +381,7 @@ public class LbsDataSubRecord extends SubRecord {
         public int getDataSize() {
             int size = 6;
             size += StringUtil.getEncodedSize(_str);
-            size += _unused;
+            if(_unused != null) size++;
             return size;
         }
 
