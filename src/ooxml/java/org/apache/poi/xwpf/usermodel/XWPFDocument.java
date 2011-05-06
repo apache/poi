@@ -254,6 +254,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         comments = new ArrayList<XWPFComment>();
         paragraphs = new ArrayList<XWPFParagraph>();
         tables= new ArrayList<XWPFTable>();
+        bodyElements = new ArrayList<IBodyElement>();
+        footers = new ArrayList<XWPFFooter>();
+        headers = new ArrayList<XWPFHeader>();
+        footnotes = new HashMap<Integer, XWPFFootnote>();
+        endnotes = new HashMap<Integer, XWPFFootnote>();
 
         ctDocument = CTDocument1.Factory.newInstance();
         ctDocument.addNewBody();
@@ -439,6 +444,36 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     
     /**
+     * Finds that for example the 2nd entry in the body list is the 1st paragraph
+     */
+    private int getBodyElementSpecificPos(int pos, List<? extends IBodyElement> list) {
+       // If there's nothing to find, skip it
+       if(list.size() == 0) {
+          return -1;
+       }
+       
+       if(pos >= 0 && pos < bodyElements.size()) {
+          // Ensure the type is correct
+          IBodyElement needle = bodyElements.get(pos);
+          if(needle.getElementType() != list.get(0).getElementType()) {
+             // Wrong type
+             return -1;
+          }
+          
+          // Work back until we find it
+          int startPos = Math.min(pos, list.size()-1);
+          for(int i=startPos; i>=0; i--) {
+             if(list.get(i) == needle) {
+                return i;
+             }
+          }
+       }
+
+       // Couldn't be found
+       return -1;
+    }
+    
+    /**
      * get with the position of a Paragraph in the bodyelement array list 
      * the position of this paragraph in the paragraph array list
      * @param pos position of the paragraph in the bodyelement array list
@@ -447,26 +482,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * 			
      */
     public int getParagraphPos(int pos){
-    	if(pos >= 0 && pos < bodyElements.size()){
-    		if(bodyElements.get(pos).getElementType() == BodyElementType.PARAGRAPH){
-	    		int startPos;
-	    		//find the startpoint for searching
-	    		if(pos < paragraphs.size()){
-	    			startPos = pos;
-	    		}
-	    		else{
-	    			startPos = (paragraphs.size());
-	    		}
-	    		for(int i = startPos; i < 0; i--){
-	    			if(paragraphs.get(i) == bodyElements.get(pos))
-	    				return i;
-	    		}
-	    	}
-    	}
-    	if(paragraphs.size() == 0){
-    		return 0;
-    	}
-    	return -1;
+       return getBodyElementSpecificPos(pos, paragraphs);
     }
     
     /**
@@ -477,27 +493,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * 		   else it will return null. 
      */
     public int getTablePos(int pos){
-    	if(pos >= 0 && pos < bodyElements.size()){
-    		if(bodyElements.get(pos).getElementType() == BodyElementType.TABLE){
-	    		int startPos;
-	    		//find the startpoint for searching
-	    		if(pos < tables.size()){
-	    			startPos = pos;
-	    		}
-	    		else{
-	    			startPos = (tables.size());
-	    		}
-	    		for(int i = startPos; i > 0; i--){
-	    			if(tables.get(i) == bodyElements.get(pos))
-	    				return i;
-	    		}
-	    	}
-    	}
-    	if(tables.size() == 0){
-    		return 0;
-    	}
-    	else
-    		return -1;
+       return getBodyElementSpecificPos(pos, tables);
     }
     
     /**
@@ -650,6 +646,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public XWPFParagraph createParagraph(){
         XWPFParagraph p = new XWPFParagraph(ctDocument.getBody().addNewP(), this);
+        bodyElements.add(p);
         paragraphs.add(p);
         return p;
     }
@@ -660,21 +657,20 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return true if removing was successfully, else return false
      */
     public boolean removeBodyElement(int pos){
-    	if(pos >= 0 && pos < bodyElements.size()){
-    		if(bodyElements.get(pos).getElementType() == BodyElementType.TABLE){
-    			bodyElements.remove(pos);
-    			Integer tablePos = getTablePos(pos);
+    	if(pos >= 0 && pos < bodyElements.size()) {
+    	   BodyElementType type = bodyElements.get(pos).getElementType(); 
+    		if(type == BodyElementType.TABLE){
+    			int tablePos = getTablePos(pos);
     			tables.remove(tablePos);
     			ctDocument.getBody().removeTbl(tablePos);
-    			return true;    			
     		}
-    		if(bodyElements.get(pos).getElementType() == BodyElementType.PARAGRAPH){
-    			bodyElements.remove(pos);
-    			Integer paraPos = getParagraphPos(pos);
+    		if(type == BodyElementType.PARAGRAPH){
+    			int paraPos = getParagraphPos(pos);
     			paragraphs.remove(paraPos);
     			ctDocument.getBody().removeP(paraPos);
-    			return true;    			
     		}
+         bodyElements.remove(pos);
+         return true;            
     	}
     	return false;
     }
@@ -702,7 +698,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return a new table
      */
     public XWPFTable createTable(){
-        return new XWPFTable(ctDocument.getBody().addNewTbl(), this);
+        XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this);
+        bodyElements.add(table);
+        tables.add(table);
+        return table;
     }
 
     /**
@@ -712,7 +711,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return table
      */
     public XWPFTable createTable(int rows, int cols) {
-    	return new XWPFTable(ctDocument.getBody().addNewTbl(), this, rows, cols);
+       XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this, rows, cols);
+       bodyElements.add(table);
+       tables.add(table);
+       return table;
     }
     
     
