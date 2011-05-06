@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -64,7 +65,7 @@ import org.apache.poi.util.POILogger;
  */
 
 public class NPOIFSFileSystem extends BlockStore
-    implements POIFSViewable
+    implements POIFSViewable, Closeable
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(NPOIFSFileSystem.class);

@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -56,7 +57,7 @@ import org.apache.poi.util.POILogFactory;
  * @author Julien Chable, CDubet
  * @version 0.1
  */
-public abstract class OPCPackage implements RelationshipSource {
+public abstract class OPCPackage implements RelationshipSource, Closeable {
 
 	/**
 	 * Logger.
