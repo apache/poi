@@ -649,7 +649,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return a new paragraph
      */
     public XWPFParagraph createParagraph(){
-        return new XWPFParagraph(ctDocument.getBody().addNewP(), this);
+        XWPFParagraph p = new XWPFParagraph(ctDocument.getBody().addNewP(), this);
+        paragraphs.add(p);
+        return p;
     }
     
     /**
