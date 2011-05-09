@@ -202,7 +202,7 @@ public final class WorkbookEvaluator {
 		int sheetIndex = getSheetIndex(cell.getSheet());
 		_cache.notifyDeleteCell(_workbookIx, sheetIndex, cell);
 	}
-
+	
 	private int getSheetIndex(EvaluationSheet sheet) {
 		Integer result = _sheetIndexesBySheet.get(sheet);
 		if (result == null) {
