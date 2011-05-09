@@ -17,21 +17,19 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.Iterator;
-
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.ss.formula.IStabilityClassifier;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Evaluates formula cells.<p/>
@@ -46,6 +44,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class XSSFFormulaEvaluator implements FormulaEvaluator {
 
 	private WorkbookEvaluator _bookEvaluator;
+	private XSSFWorkbook _book;
 
 	public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
 		this(workbook, null, null);
@@ -59,9 +58,11 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
     @Deprecated
     public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
 		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, null);
+		_book = workbook;
 	}
 	private XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
+      _book = workbook;
 	}
 
 	/**
@@ -234,21 +235,22 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 *  cells, and calling evaluateFormulaCell on each one.
 	 */
 	public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
-		XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
-		for(int i=0; i<wb.getNumberOfSheets(); i++) {
-			Sheet sheet = wb.getSheetAt(i);
-
-			for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();) {
-				Row r = rit.next();
-
-				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
-					XSSFCell c = (XSSFCell) cit.next();
-					if (c.getCellType() == XSSFCell.CELL_TYPE_FORMULA)
-						evaluator.evaluateFormulaCell(c);
-				}
-			}
-		}
+	   HSSFFormulaEvaluator.evaluateAllFormulaCells((Workbook)wb);
 	}
+   /**
+    * Loops over all cells in all sheets of the supplied
+    *  workbook.
+    * For cells that contain formulas, their formulas are
+    *  evaluated, and the results are saved. These cells
+    *  remain as formula cells.
+    * For cells that do not contain formulas, no changes
+    *  are made.
+    * This is a helpful wrapper around looping over all
+    *  cells, and calling evaluateFormulaCell on each one.
+    */
+   public void evaluateAll() {
+      HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
+   }
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.

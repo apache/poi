@@ -57,6 +57,16 @@ public interface FormulaEvaluator {
     void notifyUpdateCell(Cell cell);
 
     /**
+    * Loops over all cells in all sheets of the associated workbook.
+    * For cells that contain formulas, their formulas are evaluated, 
+    *  and the results are saved. These cells remain as formula cells.
+    * For cells that do not contain formulas, no changes are made.
+    * This is a helpful wrapper around looping over all cells, and 
+    *  calling evaluateFormulaCell on each one.
+     */
+    void evaluateAll();
+    
+    /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
      * the cell and also its cell type. This method should be preferred over

@@ -197,7 +197,6 @@ if (cell!=null) {
 			<anchor id="EvaluateAll"/>
 			<section><title>Re-calculating all formulas in a Workbook</title>
 				<source>
-
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
 FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -212,6 +211,11 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
     }
 }
         </source>
+
+           <p>Alternately, if you know which of HSSF or XSSF you're working
+            with, then you can call the static 
+            <strong>evaluateAllFormulaCells</strong> method on the appropriate
+            HSSFFormulaEvaluator or XSSFFormulaEvaluator class.</p>
 			</section>
 		</section>
 		

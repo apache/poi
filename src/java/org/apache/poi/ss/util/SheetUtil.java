@@ -61,6 +61,7 @@ public class SheetUtil {
         public void notifyUpdateCell(Cell cell) {}
         public CellValue evaluate(Cell cell) {return null;  }
         public Cell evaluateInCell(Cell cell) { return null; }
+        public void evaluateAll() {}
 
         public int evaluateFormulaCell(Cell cell) {
             return cell.getCachedFormulaResultType();
