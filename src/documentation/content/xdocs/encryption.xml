@@ -33,7 +33,7 @@
 	<p>Apache POI contains support for reading few variants of encrypted office files: </p>
 	<ul>
 		<li>XLS - RC4 Encryption</li>
-		<li>XML-based formats (XLSX, DOCX and etc) - AES Encryption</li>
+		<li>XML-based formats (XLSX, DOCX and etc) - AES and Agile Encryption</li>
 	</ul>
 
 	<p>Some "write-protected" files are encrypted with build-in password, POI can read that files too.</p>
@@ -52,7 +52,7 @@
 
 	<source>
 EncryptionInfo info = new EncryptionInfo(filesystem);
-Decryptor d = new Decryptor(info);
+Decryptor d = Decryptor.getInstance(info);
 
 try {
     if (!d.verifyPassword(password)) {
