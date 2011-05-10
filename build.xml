@@ -122,6 +122,9 @@ under the License.
     <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.jar"/>
     <property name="main.commons-logging.url"
               value="${repository.m2}/maven2/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
+    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.5.jar"/>
+    <property name="main.commons-codec.url"
+              value="${repository.m2}/maven2/commons-codec/commons-codec/1.5/commons-codec-1.5.jar"/>
     <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.13.jar"/>
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-3.8.1.jar"/>
@@ -166,6 +169,7 @@ under the License.
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
+        <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.log4j.jar}"/>
         <pathelement location="${main.junit.jar}"/>
     </path>
@@ -295,6 +299,7 @@ under the License.
             <or>
                 <and>
                     <available file="${main.commons-logging.jar}"/>
+                    <available file="${main.commons-codec.jar}"/>
                     <available file="${main.log4j.jar}"/>
                     <available file="${main.junit.jar}"/>
                     <available file="${main.ant.jar}"/>
@@ -310,6 +315,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.commons-logging.url}"/>
             <param name="destfile" value="${main.commons-logging.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.commons-codec.url}"/>
+            <param name="destfile" value="${main.commons-codec.jar}"/>
         </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.log4j.url}"/>

@@ -27,14 +27,15 @@ import java.util.zip.ZipInputStream;
 
 /**
  *  @author Maxim Valyanskiy
+ *  @author Gary King
  */
-public class DecryptorTest extends TestCase {
+public class TestDecryptor extends TestCase {
     public void testPasswordVerification() throws IOException, GeneralSecurityException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);
 
-        Decryptor d = new Decryptor(info);
+        Decryptor d = Decryptor.getInstance(info);
 
         assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
     }
@@ -44,9 +45,23 @@ public class DecryptorTest extends TestCase {
 
         EncryptionInfo info = new EncryptionInfo(fs);
 
-        Decryptor d = new Decryptor(info);
+        Decryptor d = Decryptor.getInstance(info);
 
         d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+
+        zipOk(fs, d);
+    }
+
+    public void testAgile() throws IOException, GeneralSecurityException {
+        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
+
+        EncryptionInfo info = new EncryptionInfo(fs);
+
+        assertTrue(info.getVersionMajor() == 4 && info.getVersionMinor() == 4);
+
+        Decryptor d = Decryptor.getInstance(info);
+
+        assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
 
         zipOk(fs, d);
     }

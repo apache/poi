@@ -16,15 +16,16 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.IOException;
 
 /**
  *  @author Maxim Valyanskiy
+ *  @author Gary King
  */
 public class EncryptionInfo {
     private final int versionMajor;
@@ -37,24 +38,30 @@ public class EncryptionInfo {
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
-    public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
-       this(fs.getRoot());
-    }
     public EncryptionInfo(DirectoryNode dir) throws IOException {
         DocumentInputStream dis = dir.createDocumentInputStream("EncryptionInfo");
-
         versionMajor = dis.readShort();
         versionMinor = dis.readShort();
+
         encryptionFlags = dis.readInt();
 
-        int hSize = dis.readInt();
-
-        header = new EncryptionHeader(dis);
-
-        if (header.getAlgorithm()==EncryptionHeader.ALGORITHM_RC4) {
-            verifier = new EncryptionVerifier(dis, 20);
+        if (versionMajor == 4 && versionMinor == 4 && encryptionFlags == 0x40) {
+            StringBuilder builder = new StringBuilder();
+            byte[] xmlDescriptor = new byte[dis.available()];
+            dis.read(xmlDescriptor);
+            for (byte b : xmlDescriptor)
+                builder.append((char)b);
+            String descriptor = builder.toString();
+            header = new EncryptionHeader(descriptor);
+            verifier = new EncryptionVerifier(descriptor);
         } else {
-            verifier = new EncryptionVerifier(dis, 32);            
+            int hSize = dis.readInt();
+            header = new EncryptionHeader(dis);
+            if (header.getAlgorithm()==EncryptionHeader.ALGORITHM_RC4) {
+                verifier = new EncryptionVerifier(dis, 20);
+            } else {
+                verifier = new EncryptionVerifier(dis, 32);
+            }
         }
     }
 
