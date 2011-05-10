@@ -19,150 +19,74 @@ package org.apache.poi.poifs.crypt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.LittleEndian;
 
-/**
- *  @author Maxim Valyanskiy
- */
-public class Decryptor {
+public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
 
-    private final EncryptionInfo info;
-    private byte[] passwordHash;
+    public abstract InputStream getDataStream(DirectoryNode dir)
+        throws IOException, GeneralSecurityException;
 
-    public Decryptor(EncryptionInfo info) {
-        this.info = info;
+    public abstract boolean verifyPassword(String password)
+        throws GeneralSecurityException;
+
+    public static Decryptor getInstance(EncryptionInfo info) {
+        int major = info.getVersionMajor();
+        int minor = info.getVersionMinor();
+
+        if (major == 4 && minor == 4)
+            return new AgileDecryptor(info);
+        else if (minor == 2 && (major == 3 || major == 4))
+            return new EcmaDecryptor(info);
+        else
+            throw new EncryptedDocumentException("Unsupported version");
     }
 
-    private void generatePasswordHash(String password) throws NoSuchAlgorithmException {
+    public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
+        return getDataStream(fs.getRoot());
+    }
+
+    public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
+        return getDataStream(fs.getRoot());
+    }
+
+    protected static int getBlockSize(int algorithm) {
+        switch (algorithm) {
+        case EncryptionHeader.ALGORITHM_AES_128: return 16;
+        case EncryptionHeader.ALGORITHM_AES_192: return 24;
+        case EncryptionHeader.ALGORITHM_AES_256: return 32;
+        }
+        throw new EncryptedDocumentException("Unknown block size");
+    }
+
+    protected byte[] hashPassword(EncryptionInfo info,
+                                  String password) throws NoSuchAlgorithmException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        
-        byte[] passwordBytes;
+        byte[] bytes;
         try {
-           passwordBytes = password.getBytes("UTF-16LE");
-        } catch(UnsupportedEncodingException e) {
-           throw new RuntimeException("Your JVM is broken - UTF16 not found!");
+            bytes = password.getBytes("UTF-16LE");
+        } catch (UnsupportedEncodingException e) {
+            throw new EncryptedDocumentException("UTF16 not supported");
         }
 
         sha1.update(info.getVerifier().getSalt());
-        byte[] hash = sha1.digest(passwordBytes);
-
+        byte[] hash = sha1.digest(bytes);
         byte[] iterator = new byte[4];
-        for (int i = 0; i<50000; i++) {
-            sha1.reset();
 
+        for (int i = 0; i < info.getVerifier().getSpinCount(); i++) {
+            sha1.reset();
             LittleEndian.putInt(iterator, i);
             sha1.update(iterator);
             hash = sha1.digest(hash);
         }
 
-        passwordHash = hash;
-    }
-
-    private byte[] generateKey(int block) throws NoSuchAlgorithmException {
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-
-        sha1.update(passwordHash);
-        byte[] blockValue = new byte[4];
-        LittleEndian.putInt(blockValue, block);
-        byte[] finalHash = sha1.digest(blockValue);
-
-        int requiredKeyLength = info.getHeader().getKeySize()/8;
-
-        byte[] buff = new byte[64];
-
-        Arrays.fill(buff, (byte) 0x36);
-
-        for (int i=0; i<finalHash.length; i++) {
-            buff[i] = (byte) (buff[i] ^ finalHash[i]);
-        }
-
-        sha1.reset();
-        byte[] x1 = sha1.digest(buff);
-
-        Arrays.fill(buff, (byte) 0x5c);
-        for (int i=0; i<finalHash.length; i++) {
-            buff[i] = (byte) (buff[i] ^ finalHash[i]);
-        }
-
-        sha1.reset();
-        byte[] x2 = sha1.digest(buff);
-
-        byte[] x3 = new byte[x1.length + x2.length];
-        System.arraycopy(x1, 0, x3, 0, x1.length);
-        System.arraycopy(x2, 0, x3, x1.length, x2.length);
-
-        return truncateOrPad(x3, requiredKeyLength);
-    }
-
-    public boolean verifyPassword(String password) throws GeneralSecurityException {
-        generatePasswordHash(password);
-
-        Cipher cipher = getCipher();
-
-        byte[] verifier = cipher.doFinal(info.getVerifier().getVerifier());
-
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        byte[] calcVerifierHash = sha1.digest(verifier);
-
-        byte[] verifierHash = truncateOrPad(cipher.doFinal(info.getVerifier().getVerifierHash()), calcVerifierHash.length);
-
-        return Arrays.equals(calcVerifierHash, verifierHash);
-    }
-    
-    /**
-     * Returns a byte array of the requested length,
-     *  truncated or zero padded as needed.
-     * Behaves like Arrays.copyOf in Java 1.6
-     */
-    private byte[] truncateOrPad(byte[] source, int length) {
-       byte[] result = new byte[length];
-       System.arraycopy(source, 0, result, 0, Math.min(length, source.length));
-       if(length > source.length) {
-          for(int i=source.length; i<length; i++) {
-             result[i] = 0;
-          }
-       }
-       return result;
-    }
-
-    private Cipher getCipher() throws GeneralSecurityException {
-        byte[] key = generateKey(0);
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-        SecretKey skey = new SecretKeySpec(key, "AES");
-        cipher.init(Cipher.DECRYPT_MODE, skey);
-
-        return cipher;
-    }
-
-    public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
-       return getDataStream(fs.getRoot());
-    }
-
-    public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
-       return getDataStream(fs.getRoot());
-    }
-
-    @SuppressWarnings("unused")
-    public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
-       DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
-
-       long size = dis.readLong();
-
-       return new CipherInputStream(dis, getCipher());
+        return hash;
     }
 }

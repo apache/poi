@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  *  @author Maxim Valyanskiy
  */
-public class EncryptionInfoTest extends TestCase {
+public class TestEncryptionInfo extends TestCase {
     public void testEncryptionInfo() throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
 

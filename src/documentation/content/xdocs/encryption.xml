@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+
+<document>
+  <header>
+    <title>Apache POI - Encryption support</title>
+    <authors>
+      <person id="maxcom" name="Maxim Valyanskiy" email="maxcom@apache.org"/>
+    </authors>
+  </header>
+
+   <body>
+    <section><title>Overview</title>
+	<p>Apache POI contains support for reading few variants of encrypted office files: </p>
+	<ul>
+		<li>XLS - RC4 Encryption</li>
+		<li>XML-based formats (XLSX, DOCX and etc) - AES Encryption</li>
+	</ul>
+
+	<p>Some "write-protected" files are encrypted with build-in password, POI can read that files too.</p>
+    </section>	
+
+    <section><title>XLS</title>
+    	<p>When HSSF receive encrypted file, it tries to decode it with MSOffice build-in password. 
+	Use static method setCurrentUserPassword(String password) of org.apache.poi.hssf.record.crypto.Biff8EncryptionKey to
+	set password. It sets thread local variable. Do not forget to reset it to null after text extraction.
+	</p>
+    </section>
+
+    <section><title>XML-based formats</title>
+	<p>XML-based formats are stored in OLE-package stream "EncryptedPackage". Use org.apache.poi.poifs.crypt.Decryptor
+	to decode file:</p>
+
+	<source>
+EncryptionInfo info = new EncryptionInfo(filesystem);
+Decryptor d = new Decryptor(info);
+
+try {
+    if (!d.verifyPassword(password)) {
+        throw new RuntimeException("Unable to process: document is encrypted");
+    }
+
+    InputStream dataStream = d.getDataStream(filesystem);
+
+    // parse dataStream
+
+} catch (GeneralSecurityException ex) {
+    throw new RuntimeException("Unable to process encrypted document", ex);
+}
+	</source>
+
+	<p>If you want to read file encrypted with build-in password, use Decryptor.DEFAULT_PASSWORD.</p>
+     </section>
+  </body>
+
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+    </legal>
+  </footer>
+</document>
+
+
+
+
