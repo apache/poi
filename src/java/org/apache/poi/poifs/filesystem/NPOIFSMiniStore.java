@@ -69,16 +69,13 @@ public class NPOIFSMiniStore extends BlockStore
           it.next();
        }
        ByteBuffer dataBlock = it.next();
-       
-       // Our blocks are small, so duplicating it is fine 
-       byte[] data = new byte[POIFSConstants.SMALL_BLOCK_SIZE];
+
+       // Position ourselves, and take a slice 
        dataBlock.position(
              dataBlock.position() + bigBlockOffset
        );
-       dataBlock.get(data, 0, data.length);
-       
-       // Return a ByteBuffer on this
-       ByteBuffer miniBuffer = ByteBuffer.wrap(data);
+       ByteBuffer miniBuffer = dataBlock.slice();
+       miniBuffer.limit(POIFSConstants.SMALL_BLOCK_SIZE);
        return miniBuffer;
     }
     
