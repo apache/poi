@@ -731,8 +731,61 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x04, b182.get(1));
 
       
-      // Write lots, so it needs another big block 
-      // TODO
+      // Write lots, so it needs another big block
+      ministore.getBlockAt(183);
+      try {
+         ministore.getBlockAt(184);
+         fail("Block 184 should be off the end of the list");
+      } catch(IndexOutOfBoundsException e) {}
+      
+      data = new byte[64*6 + 12];
+      for(int i=0; i<data.length; i++) {
+         data[i] = (byte)(i+1);
+      }
+      stream = new NPOIFSStream(ministore, 178);
+      stream.updateContents(data);
+      
+      // Should have added 2 more blocks to the chain
+      assertEquals(179, ministore.getNextBlock(178));
+      assertEquals(180, ministore.getNextBlock(179));
+      assertEquals(181, ministore.getNextBlock(180));
+      assertEquals(182, ministore.getNextBlock(181));
+      assertEquals(183, ministore.getNextBlock(182));
+      assertEquals(184, ministore.getNextBlock(183));
+      assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(184));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(185));
+      
+      // Block 184 should exist
+      ministore.getBlockAt(183);
+      ministore.getBlockAt(184);
+      ministore.getBlockAt(185);
+      
+      // Check contents
+      stream = new NPOIFSStream(ministore, 178);
+      it = stream.getBlockIterator();
+      b178 = it.next();
+      b179 = it.next();
+      b180 = it.next();
+      b181 = it.next();
+      b182 = it.next();
+      ByteBuffer b183 = it.next();
+      ByteBuffer b184 = it.next();
+      assertEquals(false, it.hasNext());
+      
+      assertEquals((byte)0x01, b178.get(0));
+      assertEquals((byte)0x02, b178.get(1));
+      assertEquals((byte)0x41, b179.get(0));
+      assertEquals((byte)0x42, b179.get(1));
+      assertEquals((byte)0x81, b180.get(0));
+      assertEquals((byte)0x82, b180.get(1));
+      assertEquals((byte)0xc1, b181.get(0));
+      assertEquals((byte)0xc2, b181.get(1));
+      assertEquals((byte)0x01, b182.get(0));
+      assertEquals((byte)0x02, b182.get(1));
+      assertEquals((byte)0x41, b183.get(0));
+      assertEquals((byte)0x42, b183.get(1));
+      assertEquals((byte)0x81, b184.get(0));
+      assertEquals((byte)0x82, b184.get(1));
    }
 
    /**
