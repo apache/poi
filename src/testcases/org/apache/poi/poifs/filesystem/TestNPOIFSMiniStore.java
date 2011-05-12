@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -245,7 +246,80 @@ public final class TestNPOIFSMiniStore extends TestCase {
     *  big blocks that make up the ministream as needed
     */
    public void testCreateBlockIfNeeded() throws Exception {
-      // TODO Add underlying implementation
-      // TODO Add unit test
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      NPOIFSMiniStore ministore = fs.getMiniStore();
+      
+      // 178 -> 179 -> 180, 181+ is free
+      assertEquals(179                        , ministore.getNextBlock(178));
+      assertEquals(180                        , ministore.getNextBlock(179));
+      assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(180));
+      for(int i=181; i<256; i++) {
+         assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(i));
+      }
+      
+      // However, the ministore data only covers blocks to 183
+      for(int i=0; i<=183; i++) {
+         ministore.getBlockAt(i);
+      }
+      try {
+         ministore.getBlockAt(184);
+         fail("No block at 184");
+      } catch(IndexOutOfBoundsException e) {}
+      
+      // The ministore itself is made up of 23 big blocks
+      Iterator<ByteBuffer> it = new NPOIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
+      int count = 0;
+      while(it.hasNext()) {
+         count++;
+         it.next();
+      }
+      assertEquals(23, count);
+      
+      // Ask it to get block 184 with creating, it will do
+      ministore.createBlockIfNeeded(184);
+      
+      // The ministore should be one big block bigger now
+      it = new NPOIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
+      count = 0;
+      while(it.hasNext()) {
+         count++;
+         it.next();
+      }
+      assertEquals(24, count);
+      
+      // The mini block block counts now run to 191
+      for(int i=0; i<=191; i++) {
+         ministore.getBlockAt(i);
+      }
+      try {
+         ministore.getBlockAt(192);
+         fail("No block at 192");
+      } catch(IndexOutOfBoundsException e) {}
+      
+      
+      // Now try writing through to 192, check that the SBAT and blocks are there
+      byte[] data = new byte[15*64];
+      NPOIFSStream stream = new NPOIFSStream(ministore, 178);
+      stream.updateContents(data);
+      
+      // Check now
+      assertEquals(179                        , ministore.getNextBlock(178));
+      assertEquals(180                        , ministore.getNextBlock(179));
+      assertEquals(181                        , ministore.getNextBlock(180));
+      assertEquals(182                        , ministore.getNextBlock(181));
+      assertEquals(183                        , ministore.getNextBlock(182));
+      assertEquals(184                        , ministore.getNextBlock(183));
+      assertEquals(185                        , ministore.getNextBlock(184));
+      assertEquals(186                        , ministore.getNextBlock(185));
+      assertEquals(187                        , ministore.getNextBlock(186));
+      assertEquals(188                        , ministore.getNextBlock(187));
+      assertEquals(189                        , ministore.getNextBlock(188));
+      assertEquals(190                        , ministore.getNextBlock(189));
+      assertEquals(191                        , ministore.getNextBlock(190));
+      assertEquals(192                        , ministore.getNextBlock(191));
+      assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(192));
+      for(int i=193; i<256; i++) {
+         assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(i));
+      }
    }
 }
