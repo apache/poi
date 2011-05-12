@@ -828,12 +828,12 @@ public final class TestNPOIFSStream extends TestCase {
       NPOIFSFileSystem fs = new NPOIFSFileSystem();
       NPOIFSStream stream = new NPOIFSStream(fs);
       
-      // Check our filesystem has a single block
-      //  to hold the BAT
-      assertEquals(1, fs.getFreeBlock());
+      // Check our filesystem has a BAT and the Properties
+      assertEquals(2, fs.getFreeBlock());
       BATBlock bat = fs.getBATBlockAndIndex(0).getBlock();
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(2));
       
       // Check the stream as-is
       assertEquals(POIFSConstants.END_OF_CHAIN, stream.getStartBlock());
@@ -853,12 +853,13 @@ public final class TestNPOIFSStream extends TestCase {
       stream.updateContents(data);
       
       // Check now
-      assertEquals(3, fs.getFreeBlock());
+      assertEquals(4, fs.getFreeBlock());
       bat = fs.getBATBlockAndIndex(0).getBlock();
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
-      assertEquals(2,                           bat.getValueAt(1));
-      assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(3));
+      assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+      assertEquals(3,                           bat.getValueAt(2));
+      assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(3));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(4));
       
       
       Iterator<ByteBuffer> it = stream.getBlockIterator();

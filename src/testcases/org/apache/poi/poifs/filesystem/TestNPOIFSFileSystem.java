@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -534,8 +536,31 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Then, add some streams, write and read
     */
    public void testCreateWriteRead() throws Exception {
+      NPOIFSFileSystem fs = new NPOIFSFileSystem();
+      
+      // Initially has a BAT but not SBAT
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+      
+      // Check that the SBAT is empty
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+
+      // Write and read it
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      fs.writeFilesystem(baos);
+      fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+      
+      // Check it's still like that
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+
+      // Now add a normal stream and a mini stream
       // TODO
-      // TODO
+      
+      // TODO The rest of the test
    }
    
    // TODO Directory/Document write tests
