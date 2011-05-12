@@ -93,20 +93,38 @@ public class NPOIFSFileSystem extends BlockStore
     private POIFSBigBlockSize bigBlockSize = 
        POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
 
+    private NPOIFSFileSystem(boolean newFS)
+    {
+        _header         = new HeaderBlock(bigBlockSize);
+        _property_table = new NPropertyTable(_header);
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
+        _xbat_blocks    = new ArrayList<BATBlock>();
+        _bat_blocks     = new ArrayList<BATBlock>();
+        _root           = null;
+        
+        if(newFS) {
+           // Data needs to initially hold just the header block,
+           //  a single bat block, and an empty properties section
+           _data        = new ByteArrayBackedDataSource(new byte[bigBlockSize.getBigBlockSize()*3]);
+        }
+    }
+    
     /**
      * Constructor, intended for writing
      */
     public NPOIFSFileSystem()
     {
-        _header         = new HeaderBlock(bigBlockSize);
-        _property_table = new NPropertyTable(_header);
-        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
-        _xbat_blocks     = new ArrayList<BATBlock>();
-        _bat_blocks     = new ArrayList<BATBlock>();
-        _root           = null;
+       this(true);
+       
+        // Mark us as having a single empty BAT at offset 0
+        _header.setBATCount(1);
+        _header.setBATArray(new int[] { 0 });
+        _bat_blocks.add(BATBlock.createEmptyBATBlock(bigBlockSize, false));
+        setNextBlock(0, POIFSConstants.FAT_SECTOR_BLOCK);
         
-        // Data needs to initially hold just the header block 
-        _data           = new ByteArrayBackedDataSource(new byte[bigBlockSize.getBigBlockSize()]);
+        // Now associate the properties with the empty block
+        _property_table.setStartBlock(1);
+        setNextBlock(1, POIFSConstants.END_OF_CHAIN);
     }
 
     /**
@@ -169,7 +187,7 @@ public class NPOIFSFileSystem extends BlockStore
     private NPOIFSFileSystem(FileChannel channel, boolean closeChannelOnError)
          throws IOException
     {
-       this();
+       this(false);
 
        try {
           // Get the header
@@ -230,7 +248,7 @@ public class NPOIFSFileSystem extends BlockStore
     public NPOIFSFileSystem(InputStream stream)
         throws IOException
     {
-        this();
+        this(false);
         
         ReadableByteChannel channel = null;
         boolean success = false;
@@ -674,7 +692,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
        // HeaderBlock
        HeaderBlockWriter hbw = new HeaderBlockWriter(_header);
-       hbw.writeBlock( getBlockAt(0) );
+       hbw.writeBlock( getBlockAt(-1) );
        
        // BATs
        for(BATBlock bat : _bat_blocks) {
