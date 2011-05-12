@@ -75,6 +75,9 @@ try {
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
     </legal>
   </footer>
 </document>
