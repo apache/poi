@@ -203,6 +203,9 @@ sub   4096g/7B45A98A 2007-06-18 [expires: 2012-06-16]
   <footer>
     <legal>
       Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
     </legal>
   </footer>
 </document>

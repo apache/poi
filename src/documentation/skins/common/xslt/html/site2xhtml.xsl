@@ -98,7 +98,9 @@ footer, searchbar, css etc.  As input, it takes XML of the form:
 
         <xsl:comment>================= start Footer ==================</xsl:comment>
         Copyright &#169; <xsl:value-of select="$config/year"/>&#160;<xsl:value-of
-          select="$config/vendor"/> All rights reserved.
+          select="$config/vendor"/> All rights reserved.<br />
+          Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+          POI project logo are trademarks of The Apache Software Foundation.
         <script language="JavaScript" type="text/javascript"><![CDATA[<!--
           document.write(" - "+"Last Published: " + document.lastModified);
           //  -->]]></script>
