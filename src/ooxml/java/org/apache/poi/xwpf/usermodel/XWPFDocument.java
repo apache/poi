@@ -583,35 +583,39 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 		return false;
 		
 	}
+	
+	private int getPosOfBodyElement(IBodyElement needle) {
+	   BodyElementType type = needle.getElementType();
+      IBodyElement current; 
+	   for(int i=0; i<bodyElements.size(); i++) {
+	      current = bodyElements.get(i);
+	      if(current.getElementType() == type) {
+	         if(current.equals(needle)) {
+	            return i;
+	         }
+	      }
+	   }
+	   return -1;
+	}
 
 	/**
-	 * get position of the paragraph
-	 * @param p
+	 * Get the position of the paragraph, within the list
+	 *  of all the body elements.
+	 * @param p The paragraph to find
+	 * @return The location, or -1 if the paragraph couldn't be found 
 	 */
-	public Integer getPosOfParagraph(XWPFParagraph p){
-    	int i, pos = 0;
-    	for (i = 0 ; i < bodyElements.size() ; i++) {
-    		if (bodyElements.get(i) instanceof XWPFParagraph){
-    			if (bodyElements.get(i).equals(p)){
-    				return pos;
-    			}
-    			pos++;
-    		}
-		}
-    	return null;
+	public int getPosOfParagraph(XWPFParagraph p){
+	   return getPosOfBodyElement(p);
     }
 	
-	public Integer getPosOfTable(XWPFTable t){
-		int i, pos = 0;
-		for(i = 0; i < bodyElements.size(); i++){
-			if(bodyElements.get(i).getElementType() == BodyElementType.TABLE){
-				if (bodyElements.get(i) == t){
-					return pos;
-				}
-				pos++;
-			}
-		}
-		return null;
+	/**
+	 * Get the position of the table, within the list of
+	 *  all the body elements.
+	 * @param t The table to find
+	 * @return The location, or -1 if the table couldn't be found
+	 */
+	public int getPosOfTable(XWPFTable t){
+      return getPosOfBodyElement(t);
 	}
 
     /**
@@ -728,7 +732,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             String parStyle = par.getStyle();
             if (parStyle != null && parStyle.substring(0, 7).equals("Heading")) {
                 try {
-                    int level = Integer.valueOf(parStyle.substring("Heading".length()));
+                    int level = Integer.valueOf(parStyle.substring("Heading".length())).intValue();
                     toc.addRow(level, par.getText(), 1, "112723803");
                 }
                 catch (NumberFormatException e) {

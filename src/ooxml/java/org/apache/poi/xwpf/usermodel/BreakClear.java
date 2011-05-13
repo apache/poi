@@ -86,26 +86,25 @@ public enum BreakClear {
     private final int value;
 
     private BreakClear(int val) {
-	value = val;
+       value = val;
     }
 
     public int getValue() {
-	return value;
+       return value;
     }
 
     private static Map<Integer, BreakClear> imap = new HashMap<Integer, BreakClear>();
     static {
-	for (BreakClear p : values()) {
-	    imap.put(p.getValue(), p);
-	}
+       for (BreakClear p : values()) {
+          imap.put(new Integer(p.getValue()), p);
+       }
     }
 
     public static BreakClear valueOf(int type) {
-	BreakClear bType = imap.get(type);
-	if (bType == null)
-	    throw new IllegalArgumentException("Unknown break clear type: "
-		    + type);
-	return bType;
+       BreakClear bType = imap.get(new Integer(type));
+       if (bType == null)
+          throw new IllegalArgumentException("Unknown break clear type: "
+                + type);
+       return bType;
     }
-
 }

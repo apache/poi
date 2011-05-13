@@ -105,6 +105,9 @@ public final class TestXWPFDocument extends TestCase {
 	   XWPFParagraph p = doc.createParagraph();
 	   assertEquals(p, doc.getParagraphs().get(3));
 	   assertEquals(4, doc.getParagraphs().size());
+	   
+	   assertEquals(3, doc.getParagraphPos(3));
+      assertEquals(3, doc.getPosOfParagraph(p));
 
 	   CTP ctp = p.getCTP();
 	   XWPFParagraph newP = doc.getParagraph(ctp);

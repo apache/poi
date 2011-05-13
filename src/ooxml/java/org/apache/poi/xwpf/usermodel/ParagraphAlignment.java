@@ -53,12 +53,12 @@ public enum ParagraphAlignment {
     private static Map<Integer, ParagraphAlignment> imap = new HashMap<Integer, ParagraphAlignment>();
     static{
         for (ParagraphAlignment p : values()) {
-            imap.put(p.getValue(), p);
+            imap.put(new Integer(p.getValue()), p);
         }
     }
 
     public static ParagraphAlignment valueOf(int type){
-        ParagraphAlignment err = imap.get(type);
+        ParagraphAlignment err = imap.get(new Integer(type));
         if(err == null) throw new IllegalArgumentException("Unknown paragraph alignment: " + type);
         return err;
     }

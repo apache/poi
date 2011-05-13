@@ -138,26 +138,25 @@ public enum UnderlinePatterns {
     private final int value;
 
     private UnderlinePatterns(int val) {
-	value = val;
+       value = val;
     }
 
     public int getValue() {
-	return value;
+       return value;
     }
 
     private static Map<Integer, UnderlinePatterns> imap = new HashMap<Integer, UnderlinePatterns>();
     static {
-	for (UnderlinePatterns p : values()) {
-	    imap.put(p.getValue(), p);
-	}
+       for (UnderlinePatterns p : values()) {
+          imap.put(new Integer(p.getValue()), p);
+       }
     }
 
     public static UnderlinePatterns valueOf(int type) {
-	UnderlinePatterns align = imap.get(type);
-	if (align == null)
-	    throw new IllegalArgumentException("Unknown underline pattern: "
-		    + type);
-	return align;
+       UnderlinePatterns align = imap.get(new Integer(type));
+       if (align == null)
+          throw new IllegalArgumentException("Unknown underline pattern: "
+                + type);
+       return align;
     }
-
 }

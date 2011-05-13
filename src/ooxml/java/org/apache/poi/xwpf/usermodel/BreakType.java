@@ -59,26 +59,25 @@ public enum BreakType {
     private final int value;
 
     private BreakType(int val) {
-	value = val;
+       value = val;
     }
 
     public int getValue() {
-	return value;
+       return value;
     }
 
     private static Map<Integer, BreakType> imap = new HashMap<Integer, BreakType>();
     static {
-	for (BreakType p : values()) {
-	    imap.put(p.getValue(), p);
-	}
+       for (BreakType p : values()) {
+          imap.put(new Integer(p.getValue()), p);
+       }
     }
 
     public static BreakType valueOf(int type) {
-	BreakType bType = imap.get(type);
-	if (bType == null)
-	    throw new IllegalArgumentException("Unknown break type: "
-		    + type);
-	return bType;
+       BreakType bType = imap.get(new Integer(type));
+       if (bType == null)
+          throw new IllegalArgumentException("Unknown break type: "
+                + type);
+       return bType;
     }
-
 }
