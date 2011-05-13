@@ -73,6 +73,11 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.5</version>
+    </dependency>
   </dependencies>
 
 </project>
