@@ -41,13 +41,14 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     protected static final POIXMLRelation[] RELATIONS;
     static {
-        RELATIONS = new POIXMLRelation[8];
+        RELATIONS = new POIXMLRelation[9];
         RELATIONS[Document.PICTURE_TYPE_EMF] =  XWPFRelation.IMAGE_EMF;
         RELATIONS[Document.PICTURE_TYPE_WMF] =  XWPFRelation.IMAGE_WMF;
         RELATIONS[Document.PICTURE_TYPE_PICT] = XWPFRelation.IMAGE_PICT;
         RELATIONS[Document.PICTURE_TYPE_JPEG] = XWPFRelation.IMAGE_JPEG;
         RELATIONS[Document.PICTURE_TYPE_PNG] =  XWPFRelation.IMAGE_PNG;
         RELATIONS[Document.PICTURE_TYPE_DIB] =  XWPFRelation.IMAGE_DIB;
+        RELATIONS[Document.PICTURE_TYPE_GIF] =  XWPFRelation.IMAGE_GIF;
     }
     /**
      * Create a new XWPFGraphicData node
