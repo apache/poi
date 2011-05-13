@@ -50,26 +50,25 @@ public enum VerticalAlign {
     private final int value;
 
     private VerticalAlign(int val) {
-	value = val;
+       value = val;
     }
 
     public int getValue() {
-	return value;
+       return value;
     }
 
     private static Map<Integer, VerticalAlign> imap = new HashMap<Integer, VerticalAlign>();
     static {
-	for (VerticalAlign p : values()) {
-	    imap.put(p.getValue(), p);
-	}
+       for (VerticalAlign p : values()) {
+          imap.put(new Integer(p.getValue()), p);
+       }
     }
 
     public static VerticalAlign valueOf(int type) {
-	VerticalAlign align = imap.get(type);
-	if (align == null)
-	    throw new IllegalArgumentException("Unknown vertical alignment: "
-		    + type);
-	return align;
+       VerticalAlign align = imap.get(new Integer(type));
+       if (align == null)
+          throw new IllegalArgumentException("Unknown vertical alignment: "
+                + type);
+       return align;
     }
-
 }
