@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.xssf.usermodel.XSSFShape;
-
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
  * top-left and bottom-right cell.
@@ -125,7 +123,7 @@ public interface ClientAnchor {
      * 
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @return the x coordinate within the first cell
      */
@@ -136,7 +134,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @param dx1 the x coordinate within the first cell
      */
@@ -147,7 +145,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @return the y coordinate within the first cell
      */
@@ -158,7 +156,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @param dy1 the y coordinate within the first cell
      */
@@ -169,7 +167,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @return the y coordinate within the second cell
      */
@@ -180,7 +178,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @param dy2 the y coordinate within the second cell
      */
@@ -191,7 +189,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @return the x coordinate within the second cell
      */
@@ -202,7 +200,7 @@ public interface ClientAnchor {
      *
      * Note - XSSF and HSSF have a slightly different coordinate
      *  system, values in XSSF are larger by a factor of
-     *  {@link XSSFShape#EMU_PER_PIXEL}
+     *  {@link org.apache.poi.xssf.usermodel.XSSFShape#EMU_PER_PIXEL}
      *
      * @param dx2 the x coordinate within the second cell
      */
