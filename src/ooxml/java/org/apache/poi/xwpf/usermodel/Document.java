@@ -34,5 +34,8 @@ public interface Document {
 
     /** Device independent bitmap */
     public static final int PICTURE_TYPE_DIB = 7;
+
+    /** GIF image format */
+    public static final int PICTURE_TYPE_GIF = 8;
 	
 }

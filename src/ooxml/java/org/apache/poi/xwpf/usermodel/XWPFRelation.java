@@ -162,7 +162,12 @@ public final class XWPFRelation extends POIXMLRelation {
 		"/word/media/image#.dib",
 		XWPFPictureData.class
 	);
-    
+	public static final XWPFRelation IMAGE_GIF = new XWPFRelation(
+	      "image/gif",
+	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+	      "/word/media/image#.gif",
+	      XWPFPictureData.class
+	);
     public static final XWPFRelation IMAGES = new XWPFRelation(
     		null,
     		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
