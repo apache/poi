@@ -194,9 +194,6 @@ public class HSSFCell implements Cell {
                 _stringValue=new HSSFRichTextString(((FormulaRecordAggregate) cval).getStringValue());
                 break;
         }
-        ExtendedFormatRecord xf = book.getWorkbook().getExFormatAt(cval.getXFIndex());
-
-        setCellStyle(new HSSFCellStyle(cval.getXFIndex(), xf, book));
     }
 
 
