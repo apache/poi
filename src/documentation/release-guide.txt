@@ -100,34 +100,22 @@ where $TAG is the release tag specified in build.xml in the version.id property,
 cd build/dist
 ./multisign.sh
 
-   8. Upload to your area at people.apache.org, e.g. public_html/poi
-
-Make sure that the all files have read permission. 
+   8. Upload to the dev svn dist repo, 
+      https://dist.apache.org/repos/dist/dev/poi/ eg
+      https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/
 
  (III) After the vote:
 
+In the release area of the dist repo:
+    https://dist.apache.org/repos/dist/release/poi/release/   (FINAL)
+    https://dist.apache.org/repos/dist/release/poi/dev/       (Alpha/Beta)
+Remove the previous release
+
+Next, svn move the files from the /dist/dev/ area to the appropriate
+/dist/release/ area
+
+
 Log-in on people.apache.org
-
-1. Go to ~/POI-3.1-BETA1
-
-zap previous version first.
-
-{code}
-cd ~/POI-3.1-BETA1/main
-{code}
-
-BETA and ALPHA releases:
-
-{code}
-cp *-src-* /www/www.apache.org/dist/poi/dev/src
-cp *-bin-* /www/www.apache.org/dist/poi/dev/bin
-{code}
-
-FINAL release:
-{code}
-cp *-src-* /www/www.apache.org/dist/poi/release/src
-cp *-bin-* /www/www.apache.org/dist/poi/release/bin
-{code}
 
 deploy Maven artifacts
 {code}

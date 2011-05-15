@@ -32,23 +32,29 @@ Note - this file should be read in conjunction with the
    -redirect from its name
 - sign and checksum distributions as per
     http://www.apache.org/dev/mirror-step-by-step.html
-- upload to your area of people.apache.org under /<version>-RC-<x>/
-   (eg 3.0.1-RC-2)
+- upload the files to the POI dev dist area under /<version>-RC-<x>/
+    eg https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/ for
+    3.8 Release Candidate 2 
 - add a README.txt to the directory that states the files are a
    release candidate pending a vote, despite their name being -FINAL
 - include the URL of this in the release vote (goes to dev, not user)
-   (eg http://people.apache.org/~nick/3.0.1-RC-2/)
+   (eg https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/)
 
 - wait for release vote to pass
 - send notification of vote passing to private@
 
-- move distributions from your area of people.apache.org to the 
-   distribution directories on www.apache.org/dist/poi/ and
+- move the regular distributions from the dev area of the dist svn to the 
+  release area of svn
+- remove the old distribition from the release area of svn
+- ensure that the artificats show up on www.apache.org/dist/poi/ (they
+  should appear within a minute)
+
+- copy the maven distribution from a checkout of the dev area of the dist
+   svn, to the distribution directories on 
    people.apache.org/repo/m1-ibiblio-rsync-repository/org.apache.poi/
-- move the redirection pom from your area of people.apache.org to
-   people.apache.org/repo/m1-ibiblio-rsync-repository/poi/poms/
-- copy the new distributions to archive.apache.org
-- remove the old distributions from www.apache.org/dist/
+- copy the maven redirection pom from a checkout of the dev area of the
+   dist svn, to people.apache.org/repo/m1-ibiblio-rsync-repository/poi/poms/
+
 - wait for the distributions to appear on your favourite mirror
 
 - generate announcements
