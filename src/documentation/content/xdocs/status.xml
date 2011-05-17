@@ -34,7 +34,8 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
-           <action dev="poi-developers" type="add">51171 - Improved performance of opening large .xls files</action>
+           <action dev="poi-developers" type="add">51160 - Initial version of SXSSF, a low memory foortprint API to produce xlsx files</action>
+           <action dev="poi-developers" type="fix">51171 - Improved performance of opening large .xls files</action>
            <action dev="poi-developers" type="add">51172 - Add XWPF support for GIF pictures</action>
            <action dev="poi-developers" type="add">NPOIFS Mini Streams now support extending the underlying big block stream to fit more data</action>
            <action dev="poi-developers" type="fix">51148 - XWPFDocument now properly tracks paragraphs and tables when adding/removing them</action>
