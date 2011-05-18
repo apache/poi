@@ -239,7 +239,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         int dy2 = 0;
 
         if(anchor.getDy1() > 0){
-            h += getRowHeightInPixels(row2) - anchor.getDy1();
+            h += getRowHeightInPixels(row2) - anchor.getDy1()/EMU_PER_PIXEL;
             row2++;
         }
 
@@ -250,7 +250,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         }
 
         if(h > scaledHeight) {
-            double ch = getRowHeightInPixels(row2 + 1);
+            double ch = getRowHeightInPixels(row2);
             double delta = h - scaledHeight;
             dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
         }
