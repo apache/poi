@@ -39,7 +39,7 @@ public abstract class BaseTestCell extends TestCase {
 		_testDataProvider = testDataProvider;
 	}
 
-	public final void testSetValues() {
+	public void testSetValues() {
 		Workbook book = _testDataProvider.createWorkbook();
 		Sheet sheet = book.createSheet("test");
 		Row row = sheet.createRow(0);
@@ -127,7 +127,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
 	 */
-	public final void testBoolErr() {
+	public void testBoolErr() {
 
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet s = wb.createSheet("testSheet1");
@@ -168,7 +168,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 * test that Cell Styles being applied to formulas remain intact
 	 */
-	public final void testFormulaStyle() {
+	public void testFormulaStyle() {
 
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet s = wb.createSheet("testSheet1");
@@ -209,7 +209,7 @@ public abstract class BaseTestCell extends TestCase {
 	}
 
 	/**tests the toString() method of HSSFCell*/
-	public final void testToString() {
+	public void testToString() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Row r = wb.createSheet("Sheet1").createRow(0);
 		CreationHelper factory = wb.getCreationHelper();
@@ -240,7 +240,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 *  Test that setting cached formula result keeps the cell type
 	 */
-	public final void testSetFormulaValue() {
+	public void testSetFormulaValue() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet s = wb.createSheet();
 		Row r = s.createRow(0);
@@ -274,7 +274,7 @@ public abstract class BaseTestCell extends TestCase {
 	}
 
 
-	public final void testChangeTypeStringToBool() {
+	public void testChangeTypeStringToBool() {
 		Cell cell = createACell();
 
 		cell.setCellValue("TRUE");
@@ -300,7 +300,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("FALSE", cell.getRichStringCellValue().getString());
 	}
 
-	public final void testChangeTypeBoolToString() {
+	public void testChangeTypeBoolToString() {
 		Cell cell = createACell();
 
 		cell.setCellValue(true);
@@ -316,7 +316,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("TRUE", cell.getRichStringCellValue().getString());
 	}
 
-	public final void testChangeTypeErrorToNumber() {
+	public void testChangeTypeErrorToNumber() {
 		Cell cell = createACell();
 		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
 		try {
@@ -327,7 +327,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals(2.5, cell.getNumericCellValue(), 0.0);
 	}
 
-	public final void testChangeTypeErrorToBoolean() {
+	public void testChangeTypeErrorToBoolean() {
 		Cell cell = createACell();
 		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
 		cell.setCellValue(true);
@@ -348,7 +348,7 @@ public abstract class BaseTestCell extends TestCase {
 	 * {@link FormulaEvaluator#evaluateInCell(Cell)} with a
 	 * string result type.
 	 */
-	public final void testConvertStringFormulaCell() {
+	public void testConvertStringFormulaCell() {
 		Cell cellA1 = createACell();
 		cellA1.setCellFormula("\"abc\"");
 
@@ -370,7 +370,7 @@ public abstract class BaseTestCell extends TestCase {
 	 * similar to {@link #testConvertStringFormulaCell()} but  checks at a
 	 * lower level that {#link {@link Cell#setCellType(int)} works properly
 	 */
-	public final void testSetTypeStringOnFormulaCell() {
+	public void testSetTypeStringOnFormulaCell() {
 		Cell cellA1 = createACell();
 		FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
 
@@ -465,7 +465,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("SUM(A1:B1)", cell.getCellFormula());
 	}
 
-	public final void testSetStringInFormulaCell_bug44606() {
+	public void testSetStringInFormulaCell_bug44606() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
 		cell.setCellFormula("B1&C1");
