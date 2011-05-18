@@ -108,7 +108,20 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 			super(entry.getName());
 			
 			// Grab the de-compressed contents for later
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos;
+
+            long entrySize = entry.getSize();
+
+            if (entrySize !=-1) {
+                if (entrySize>=Integer.MAX_VALUE) {
+                    throw new IOException("ZIP entry size is too large");
+                }
+
+                baos = new ByteArrayOutputStream((int) entrySize);
+            } else {
+    			baos = new ByteArrayOutputStream();
+            }
+
 			byte[] buffer = new byte[4096];
 			int read = 0;
 			while( (read = inp.read(buffer)) != -1 ) {
