@@ -35,9 +35,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.io.File;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
@@ -54,8 +52,8 @@ public class SXSSFWorkbook implements Workbook
 {
     XSSFWorkbook _wb=new XSSFWorkbook();
 
-    Hashtable<SXSSFSheet,XSSFSheet> _sxFromXHash=new Hashtable<SXSSFSheet,XSSFSheet>();
-    Hashtable<XSSFSheet,SXSSFSheet> _xFromSxHash=new Hashtable<XSSFSheet,SXSSFSheet>();
+    HashMap<SXSSFSheet,XSSFSheet> _sxFromXHash=new HashMap<SXSSFSheet,XSSFSheet>();
+    HashMap<XSSFSheet,SXSSFSheet> _xFromSxHash=new HashMap<XSSFSheet,SXSSFSheet>();
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
@@ -84,10 +82,8 @@ public class SXSSFWorkbook implements Workbook
     }
     private XSSFSheet getSheetFromZipEntryName(String sheetRef)
     {
-        Enumeration<XSSFSheet> sheets=_sxFromXHash.elements();
-        while(sheets.hasMoreElements())
+        for(XSSFSheet sheet : _sxFromXHash.values())
         {
-            XSSFSheet sheet=sheets.nextElement();
             if(sheetRef.equals(sheet.getPackagePart().getPartName().getName().substring(1))) return sheet;
         }
         return null;
