@@ -160,7 +160,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		} catch (InvalidFormatException e) {
 			// Should never happen
 			throw new OpenXML4JRuntimeException(
-					"Package.init() : this exception should never happen, if you read this message please send a mail to the developers team.");
+					"Package.init() : this exception should never happen, " +
+					"if you read this message please send a mail to the developers team. : " +
+					e.getMessage()
+			);
 		}
 	}
 
