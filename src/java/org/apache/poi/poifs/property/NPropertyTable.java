@@ -116,7 +116,9 @@ public final class NPropertyTable extends PropertyTableBase {
        // TODO - Use a streaming write
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        for(Property property : _properties) {
-          property.writeData(baos);
+          if(property != null) {
+             property.writeData(baos);
+          }
        }
        stream.updateContents(baos.toByteArray());
        
