@@ -31,63 +31,33 @@ public class TestSXSSFCell extends BaseTestCell {
         super(SXSSFITestDataProvider.instance);
     }
 
-    @Override
-    public void testSetValues() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testBoolErr() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testFormulaStyle() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testToString() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testSetFormulaValue() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testChangeTypeStringToBool() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testChangeTypeBoolToString() {
-        // TODO fix me
-    }
-
+    /**
+     * this test involves evaluation of formulas which isn't supported for SXSSF
+     */
     @Override
     public void testConvertStringFormulaCell() {
-        // TODO fix me
+        try {
+            super.testConvertStringFormulaCell();
+            fail("expected exception");
+        } catch (IllegalArgumentException e){
+            assertEquals(
+                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
+                    "Only XSSFCells can be evaluated.", e.getMessage());
+        }
     }
 
+    /**
+     * this test involves evaluation of formulas which isn't supported for SXSSF
+     */
     @Override
     public void testSetTypeStringOnFormulaCell() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testChangeTypeFormulaToBoolean() {
-        // TODO fix me
-    }
-
-    @Override
-    public void test40296() {
-        // TODO fix me
-    }
-
-    @Override
-    public void testNanAndInfinity() {
-        // TODO fix me
+        try {
+            super.testSetTypeStringOnFormulaCell();
+            fail("expected exception");
+        } catch (IllegalArgumentException e){
+            assertEquals(
+                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
+                    "Only XSSFCells can be evaluated.", e.getMessage());
+        }
     }
 }

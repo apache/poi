@@ -256,6 +256,11 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
+        if(!(cell instanceof XSSFCell)){
+            throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
+                    " Only XSSFCells can be evaluated.");
+        }
+
 		ValueEval eval = _bookEvaluator.evaluate(new XSSFEvaluationCell((XSSFCell) cell));
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;

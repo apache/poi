@@ -17,19 +17,16 @@
 
 package org.apache.poi.xssf.streaming;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -132,9 +129,11 @@ public class SXSSFCell implements Cell
      */
     public int getCachedFormulaResultType()
     {
-//TODO: Implement this correctly
-        assert false;
-        return CELL_TYPE_NUMERIC;
+        if (_value.getType() != CELL_TYPE_FORMULA) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+
+        return ((FormulaValue)_value).getFormulaType();
     }
 
     /**
@@ -146,11 +145,19 @@ public class SXSSFCell implements Cell
      */
     public void setCellValue(double value)
     {
-        ensureTypeOrFormulaType(CELL_TYPE_NUMERIC);
-        if(_value.getType()==CELL_TYPE_FORMULA)
-            ((NumericFormulaValue)_value).setPreEvaluatedValue(value);
-        else
-            ((NumericValue)_value).setValue(value);
+        if(Double.isInfinite(value)) {
+            // Excel does not support positive/negative infinities,
+            // rather, it gives a #DIV/0! error in these cases.
+            setCellErrorValue(FormulaError.DIV0.getCode());
+        } else if (Double.isNaN(value)){
+            setCellErrorValue(FormulaError.NUM.getCode());
+        } else {
+            ensureTypeOrFormulaType(CELL_TYPE_NUMERIC);
+            if(_value.getType()==CELL_TYPE_FORMULA)
+                ((NumericFormulaValue)_value).setPreEvaluatedValue(value);
+            else
+                ((NumericValue)_value).setValue(value);
+        }
     }
 
     /**
@@ -244,6 +251,11 @@ public class SXSSFCell implements Cell
      */
     public void setCellFormula(String formula) throws FormulaParseException
     {
+        if(formula == null) {
+            setType(Cell.CELL_TYPE_BLANK);
+            return;
+        }
+
         ensureFormulaType(computeTypeFromFormula(formula));
         ((FormulaValue)_value).setValue(formula);
     }
@@ -328,9 +340,16 @@ public class SXSSFCell implements Cell
     public RichTextString getRichStringCellValue()
     {
         int cellType = getCellType();
-        if(!(getCellType()==CELL_TYPE_STRING&&((StringValue)_value).isRichText()))
+        if(getCellType() != CELL_TYPE_STRING)
             throw typeMismatch(CELL_TYPE_STRING, cellType, false);
-        return ((RichTextValue)_value).getValue();
+
+        StringValue sval = (StringValue)_value;
+        if(sval.isRichText())
+            return ((RichTextValue)_value).getValue();
+        else {
+            String plainText = getStringCellValue();
+            return getSheet().getWorkbook().getCreationHelper().createRichTextString(plainText);
+        }
     }
 
 
@@ -490,7 +509,12 @@ public class SXSSFCell implements Cell
      */
     public CellStyle getCellStyle()
     {
-        return _style;
+        if(_style == null){
+            SXSSFWorkbook wb = (SXSSFWorkbook)getRow().getSheet().getWorkbook();
+            return wb.getCellStyleAt((short)0);
+        } else {
+            return _style;
+        }
     }
 
     /**
@@ -568,6 +592,37 @@ public class SXSSFCell implements Cell
         return false;
     }
 //end of interface implementation
+
+    /**
+     * Returns a string representation of the cell
+     * <p>
+     * Formula cells return the formula string, rather than the formula result.
+     * Dates are displayed in dd-MMM-yyyy format
+     * Errors are displayed as #ERR&lt;errIdx&gt;
+     * </p>
+     */
+    public String toString() {
+        switch (getCellType()) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return getBooleanCellValue() ? "TRUE" : "FALSE";
+            case CELL_TYPE_ERROR:
+                return ErrorEval.getText(getErrorCellValue());
+            case CELL_TYPE_FORMULA:
+                return getCellFormula();
+            case CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(this)) {
+                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                    return sdf.format(getDateCellValue());
+                }
+                return getNumericCellValue() + "";
+            case CELL_TYPE_STRING:
+                return getRichStringCellValue().toString();
+            default:
+                return "Unknown Cell Type: " + getCellType();
+        }
+    }
 
     void removeProperty(int type)
     {
@@ -693,7 +748,13 @@ public class SXSSFCell implements Cell
             }
             case CELL_TYPE_STRING:
             {
-                _value=new PlainStringValue();
+                PlainStringValue sval = new PlainStringValue();
+                if(_value != null){
+                    // if a cell is not blank then convert the old value to string
+                    String str = convertCellValueToString();
+                    sval.setValue(str);
+                }
+                _value = sval;
                 break;
             }
             case CELL_TYPE_FORMULA:
@@ -708,7 +769,13 @@ public class SXSSFCell implements Cell
             }
             case CELL_TYPE_BOOLEAN:
             {
-                _value=new BooleanValue();
+                BooleanValue bval = new BooleanValue();
+                if(_value != null){
+                    // if a cell is not blank then convert the old value to string
+                    boolean val = convertCellValueToBoolean();
+                    bval.setValue(val);
+                }
+                _value = bval;
                 break;
             }
             case CELL_TYPE_ERROR:
@@ -781,6 +848,49 @@ public class SXSSFCell implements Cell
         }
         return "#unknown cell type (" + cellTypeCode + ")#";
     }
+    private boolean convertCellValueToBoolean() {
+        int cellType = getCellType();
+
+        if (cellType == CELL_TYPE_FORMULA) {
+            cellType = getCachedFormulaResultType();
+        }
+
+        switch (cellType) {
+            case CELL_TYPE_BOOLEAN:
+                return getBooleanCellValue();
+            case CELL_TYPE_STRING:
+
+                String text = getStringCellValue();
+                return Boolean.parseBoolean(text);
+            case CELL_TYPE_NUMERIC:
+                return getNumericCellValue() != 0;
+            case CELL_TYPE_ERROR:
+            case CELL_TYPE_BLANK:
+                return false;
+        }
+        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+    }
+    private String convertCellValueToString() {
+        int cellType = getCellType();
+
+        switch (cellType) {
+            case CELL_TYPE_BLANK:
+                return "";
+            case CELL_TYPE_BOOLEAN:
+                return getBooleanCellValue() ? "TRUE" : "FALSE";
+            case CELL_TYPE_STRING:
+                return getStringCellValue();
+            case CELL_TYPE_NUMERIC:
+            case CELL_TYPE_ERROR:
+                byte errVal = getErrorCellValue();
+                return FormulaError.forInt(errVal).getString();
+            case CELL_TYPE_FORMULA:
+                return "";
+            default:
+                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
+        }
+    }
+
 //END OF COPIED CODE
 
     static abstract class Property
@@ -870,7 +980,7 @@ public class SXSSFCell implements Cell
             return false;
         }
     }
-    static class RichTextValue implements Value
+    static class RichTextValue extends StringValue
     {
         RichTextString _value;
         public int getType()

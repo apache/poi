@@ -27,20 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.AutoFilter;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -125,6 +112,10 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void removeRow(Row row)
     {
+        if (row.getSheet() != this) {
+            throw new IllegalArgumentException("Specified row does not belong to this sheet");
+        }
+
         for(Iterator<Map.Entry<Integer,SXSSFRow>> iter=_rows.entrySet().iterator();iter.hasNext();)
         {
             Map.Entry<Integer,SXSSFRow> entry=iter.next();
@@ -165,10 +156,9 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public int getFirstRowNum()
     {
-        if(_writer.getNumberOfFlushedRows()>0)
+        if(_writer.getNumberOfFlushedRows() > 0)
             return _writer.getLowestIndexOfFlushedRows();
-        Integer firstKey=_rows.firstKey();
-        return firstKey==null?-1:firstKey.intValue();
+        return _rows.size() == 0 ? 0 : _rows.firstKey();
     }
 
     /**
@@ -178,8 +168,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public int getLastRowNum()
     {
-        Integer lastKey=_rows.lastKey();
-        return lastKey==null?-1:lastKey.intValue();
+        return _rows.size() == 0 ? 0 : _rows.lastKey();
     }
 
     /**
@@ -1306,6 +1295,8 @@ public class SXSSFSheet implements Sheet, Cloneable
             _out.write("<row r=\""+(rownum+1)+"\"");
             if(row.hasCustomHeight())
                 _out.write(" customHeight=\"true\"  ht=\""+row.getHeightInPoints()+"\"");
+            if(row.getZeroHeight())
+                _out.write(" hidden=\"true\"");
             _out.write(">\n");
             this._rownum = rownum;
             _rowContainedNullCells=false;
@@ -1326,17 +1317,30 @@ public class SXSSFSheet implements Sheet, Cloneable
             String ref = new CellReference(_rownum, columnIndex).formatAsString();
             _out.write("<c r=\""+ref+"\"");
             CellStyle cellStyle=cell.getCellStyle();
-            if(cellStyle!=null) _out.write(" s=\""+cellStyle.getIndex()+"\"");
+            if(cellStyle.getIndex() != 0) _out.write(" s=\""+cellStyle.getIndex()+"\"");
             int cellType=cell.getCellType();
             switch(cellType)
             {
                 case Cell.CELL_TYPE_BLANK:
                 {
-//TODO: What needs to be done here?
+                    _out.write(">");
+                    break;
                 }
                 case Cell.CELL_TYPE_FORMULA:
                 {
-//TODO: What needs to be done here?
+                    _out.write(">");
+                    _out.write("<f>");
+                    outputQuotedString(cell.getCellFormula());
+                    _out.write("</f>");
+                    switch (cell.getCachedFormulaResultType()){
+                        case Cell.CELL_TYPE_NUMERIC:
+                            double nval = cell.getNumericCellValue();
+                            if(!Double.isNaN(nval)){
+                                _out.write("<v>"+nval+"</v>");
+                            }
+                            break;
+                    }
+                    break;
                 }
                 case Cell.CELL_TYPE_STRING:
                 {
@@ -1354,15 +1358,16 @@ public class SXSSFSheet implements Sheet, Cloneable
                 }
                 case Cell.CELL_TYPE_BOOLEAN:
                 {
-                    _out.write(" t=\"n\">");
+                    _out.write(" t=\"b\">");
                     _out.write("<v>"+(cell.getBooleanCellValue()?"1":"0")+"</v>");
                     break;
                 }
                 case Cell.CELL_TYPE_ERROR:
                 {
-//TODO: What needs to be done here?
-                    _out.write(" t=\"inlineStr\">");
-                    _out.write("<is><t></t></is>");
+                    FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
+
+                    _out.write(" t=\"e\">");
+                    _out.write("<v>" +  error.getString() +"</v>");
                     break;
                 }
                 default:

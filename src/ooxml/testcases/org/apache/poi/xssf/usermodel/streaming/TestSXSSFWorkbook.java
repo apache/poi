@@ -28,18 +28,32 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 		super(SXSSFITestDataProvider.instance);
 	}
 
+    /**
+     * cloning of sheets is not supported in SXSSF
+     */
     @Override
     public void testCloneSheet() {
-        // TODO figure out why the base class failes and remove me
+        try {
+            super.testCloneSheet();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
     }
 
-    @Override
-    public void testUnicodeInAll() {
-        // TODO figure out why the base class failes and remove me
-    }
-
+    /**
+     * this test involves evaluation of formulas which isn't supported for SXSSF
+     */
     @Override
     public void testSetSheetName() {
-        // this test involves formula evaluation which isn't supportd by SXSSF
+        try {
+            super.testSetSheetName();
+            fail("expected exception");
+        } catch (Exception e){
+            assertEquals(
+                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
+                    "Only XSSFCells can be evaluated.", e.getMessage());
+        }
     }
+
 }
