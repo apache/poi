@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.IOException;
@@ -36,6 +36,9 @@ public class EncryptionInfo {
     private final EncryptionVerifier verifier;
 
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
+       this(fs.getRoot());
+    }
+    public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
     public EncryptionInfo(DirectoryNode dir) throws IOException {
