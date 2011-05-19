@@ -327,7 +327,7 @@ public class SXSSFWorkbook implements Workbook
      */
     public Sheet cloneSheet(int sheetNum)
     {
-        return createAndRegisterSXSSFSheet(_wb.cloneSheet(sheetNum));
+        throw new RuntimeException("NotImplemented");
     }
 
 

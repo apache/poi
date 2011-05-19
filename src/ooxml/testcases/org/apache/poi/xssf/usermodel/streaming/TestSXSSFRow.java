@@ -19,10 +19,8 @@
 
 package org.apache.poi.xssf.usermodel.streaming;
 
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
  * Tests for XSSFRow
@@ -31,45 +29,5 @@ public final class TestSXSSFRow extends BaseTestRow {
 
     public TestSXSSFRow() {
         super(SXSSFITestDataProvider.instance);
-    }
-
-    public void testRowBounds() {
-        //TODO fix me
-        //baseTestRowBounds(SpreadsheetVersion.EXCEL2007.getLastRowIndex());
-    }
-
-    public void testCellBounds() {
-        //TODO fix me
-        //baseTestCellBounds(SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
-    }
-
-    @Override
-    public void testLastAndFirstColumns() {
-        //TODO fix me
-    }
-
-    @Override
-    public void testRemoveCell() {
-        //TODO fix me
-    }
-
-    @Override
-    public void testLastCellNumIsCorrectAfterAddCell_bug43901() {
-        //TODO fix me
-    }
-
-    @Override
-    public void testGetCellPolicy() {
-        //TODO fix me
-    }
-
-    @Override
-    public void testRowHeight() {
-        //TODO fix me
-    }
-
-    @Override
-    public void testCellIterator() {
-        //TODO fix me
     }
 }

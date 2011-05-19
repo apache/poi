@@ -29,28 +29,58 @@ public class TestSXSSFSheet extends BaseTestSheet {
         super(SXSSFITestDataProvider.instance);
     }
 
+    /**
+     * cloning of sheets is not supported in SXSSF
+     */
     @Override
-    public void testRemoveRow(){
-        // TODO fix me
+    public void testCloneSheet() {
+        try {
+            super.testCloneSheet();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
     }
 
     @Override
-    public void testCloneSheet(){
-        // TODO fix me
+    public void testCloneSheetMultipleTimes() {
+        try {
+            super.testCloneSheetMultipleTimes();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
     }
-
+    /**
+     * shifting rows is not supported in SXSSF
+     */
     @Override
     public void testShiftMerged(){
-        // TODO fix me
+        try {
+            super.testShiftMerged();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
     }
 
+    /**
+     *  Bug 35084: cloning cells with formula
+     *
+     *  The test is disabled because cloning of sheets is not supported in SXSSF
+     */
     @Override
     public void test35084(){
-        // TODO fix me
+        try {
+            super.test35084();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
     }
 
     @Override
     public void testDefaultColumnStyle() {
-        // TODO fix me
+        //TODO column styles are not yet supported by XSSF
     }
 }

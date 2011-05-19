@@ -35,8 +35,7 @@ public class SXSSFRow implements Row
     SXSSFCell[] _cells;
     int _maxColumn=-1;
     short _height=-1;
-//TODO: Need to set the correct default value for _zHeight
-    boolean _zHeight;
+    boolean _zHeight = false;
 
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
@@ -150,9 +149,29 @@ public class SXSSFRow implements Row
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
      */
-    public Cell getCell(int cellnum)
-    {
-        return cellnum>_maxColumn?null:_cells[cellnum];
+    public Cell getCell(int cellnum) {
+        if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
+
+        Cell cell = cellnum > _maxColumn ? null : _cells[cellnum];
+
+        MissingCellPolicy policy = _sheet.getWorkbook().getMissingCellPolicy();
+        if(policy == RETURN_NULL_AND_BLANK) {
+            return cell;
+        }
+        if (policy == RETURN_BLANK_AS_NULL) {
+            if (cell == null) return cell;
+            if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+                return null;
+            }
+            return cell;
+        }
+        if (policy == CREATE_NULL_AS_BLANK) {
+            if (cell == null) {
+                return createCell((short) cellnum, Cell.CELL_TYPE_BLANK);
+            }
+            return cell;
+        }
+        throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     /**
@@ -226,7 +245,7 @@ public class SXSSFRow implements Row
      */
     public short getLastCellNum()
     {
-        return (short)(_maxColumn+1);
+        return _maxColumn == -1 ? -1 : (short)(_maxColumn+1);
     }
 
     /**
@@ -337,6 +356,16 @@ public class SXSSFRow implements Row
     public class FilledCellIterator implements Iterator<Cell>
     {
         int pos=0;
+
+        FilledCellIterator(){
+            for (int i = 0; i <= _maxColumn; i++) {
+                if (_cells[i] != null) {
+                    pos = i;
+                    break;
+                }
+            }
+        }
+
         public boolean hasNext()
         {
             return pos <= _maxColumn;
