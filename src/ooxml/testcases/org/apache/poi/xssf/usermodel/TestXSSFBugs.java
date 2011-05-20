@@ -1173,4 +1173,45 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        // Complex file
        // TODO
     }
+    
+    /**
+     * Colours and styles when the list has gaps in it 
+     */
+    public void test51222() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51222.xlsx");
+       XSSFSheet s = wb.getSheetAt(0);
+       
+       XSSFCell cA4_EEECE1 = s.getRow(3).getCell(0);
+       XSSFCell cA5_1F497D = s.getRow(4).getCell(0);
+       
+       // Check the text
+       assertEquals("A4", cA4_EEECE1.getRichStringCellValue().getString());
+       assertEquals("A5", cA5_1F497D.getRichStringCellValue().getString());
+       
+       // Check the styles assigned to them
+       assertEquals(4, cA4_EEECE1.getCTCell().getS());
+       assertEquals(5, cA5_1F497D.getCTCell().getS());
+       
+       // Check we look up the correct style
+       assertEquals(4, cA4_EEECE1.getCellStyle().getIndex());
+       assertEquals(5, cA5_1F497D.getCellStyle().getIndex());
+       
+       // Check the fills on them at the low level
+       assertEquals(5, cA4_EEECE1.getCellStyle().getCoreXf().getFillId());
+       assertEquals(6, cA5_1F497D.getCellStyle().getCoreXf().getFillId());
+
+       // These should reference themes 2 and 3
+       assertEquals(2, wb.getStylesSource().getFillAt(5).getCTFill().getPatternFill().getFgColor().getTheme());
+       assertEquals(3, wb.getStylesSource().getFillAt(6).getCTFill().getPatternFill().getFgColor().getTheme());
+       
+       // Ensure we get the right colours for these themes
+       // TODO fix
+//       assertEquals("FFEEECE1", wb.getTheme().getThemeColor(2).getARGBHex());
+//       assertEquals("FF1F497D", wb.getTheme().getThemeColor(3).getARGBHex());
+       
+       // Finally check the colours on the styles
+       // TODO fix
+//       assertEquals("FFEEECE1", cA4_EEECE1.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
+//       assertEquals("FF1F497D", cA5_1F497D.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
+    }
 }
