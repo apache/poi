@@ -90,12 +90,12 @@ public final class XSSFRelation extends POIXMLRelation {
 			"/xl/worksheets/sheet#.xml",
 			XSSFSheet.class
 	);
-   public static final XSSFRelation CHARTSHEET = new XSSFRelation(
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet",
-            "/xl/chartsheets/sheet#.xml",
-            XSSFChartSheet.class
-   );
+	public static final XSSFRelation CHARTSHEET = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/chartsheet",
+			"/xl/chartsheets/sheet#.xml",
+			XSSFChartSheet.class
+	);
 	public static final XSSFRelation SHARED_STRINGS = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",

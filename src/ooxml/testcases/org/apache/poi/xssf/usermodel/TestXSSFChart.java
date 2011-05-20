@@ -55,4 +55,20 @@ public final class TestXSSFChart extends TestCase {
        chart = s3.createDrawingPatriarch().getCharts().get(0);
        assertEquals("Sheet 3 Chart with Title", chart.getTitle().getString());
     }
+
+	public void testAddChartsToNewWorkbook() throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet s1 = wb.createSheet();
+		XSSFDrawing d1 = s1.createDrawingPatriarch();
+		XSSFClientAnchor a1 = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+		XSSFChart c1 = d1.createChart(a1);
+
+		assertEquals(1, d1.getCharts().size());
+		assertNotNull(c1.getGraphicFrame());
+		assertNotNull(c1.getOrCreateLegend());
+
+		XSSFClientAnchor a2 = new XSSFClientAnchor(0, 0, 0, 0, 1, 11, 10, 60);
+		XSSFChart c2 = d1.createChart(a2);
+		assertEquals(2, d1.getCharts().size());
+	}
 }
