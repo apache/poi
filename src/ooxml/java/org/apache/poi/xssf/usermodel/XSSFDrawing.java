@@ -44,6 +44,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 /**
@@ -57,8 +58,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      */
     private CTDrawing drawing;
     private boolean isNew;
+    private long numOfGraphicFrames = 0L;
     
     protected static final String NAMESPACE_A = "http://schemas.openxmlformats.org/drawingml/2006/main";
+    protected static final String NAMESPACE_C = "http://schemas.openxmlformats.org/drawingml/2006/chart";
 
     /**
      * Create a new SpreadsheetML drawing
@@ -125,6 +128,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         out.close();
     }
 
+	public XSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2,
+			int col1, int row1, int col2, int row2) {
+		return new XSSFClientAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);
+	}
+
     /**
      * Constructs a textbox under the drawing.
      *
@@ -168,6 +176,31 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     public XSSFPicture createPicture(ClientAnchor anchor, int pictureIndex){
         return createPicture((XSSFClientAnchor)anchor, pictureIndex);
     }
+
+	/**
+	 * Creates a chart.
+	 * @param anchor the client anchor describes how this chart is attached to
+	 *               the sheet.
+	 * @return the newly created chart
+	 * @see org.apache.poi.xssf.usermodel.XSSFDrawing#createChart(ClientAnchor)
+	 */
+    public XSSFChart createChart(XSSFClientAnchor anchor) {
+        int chartNumber = getPackagePart().getPackage().
+            getPartsByContentType(XSSFRelation.CHART.getContentType()).size() + 1;
+
+        XSSFChart chart = (XSSFChart) createRelationship(
+                XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber);
+        String chartRelId = chart.getPackageRelationship().getId();
+
+        XSSFGraphicFrame frame = createGraphicFrame(anchor);
+        frame.setChart(chart, chartRelId);
+
+        return chart;
+    }
+
+	public XSSFChart createChart(ClientAnchor anchor) {
+		return createChart((XSSFClientAnchor)anchor);
+	}
 
     /**
      * Add the indexed picture to this drawing relations
@@ -240,13 +273,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         return shape;
     }
 
-    /**
-     * Creates a cell comment.
-     *
-     * @param anchor    the client anchor describes how this comment is attached
-     *                  to the sheet.
-     * @return  the newly created comment.
-     */
+	/**
+	 * Creates a comment.
+	 * @param anchor the client anchor describes how this comment is attached
+	 *               to the sheet.
+	 * @return the newly created comment.
+	 */
     public XSSFComment createCellComment(ClientAnchor anchor) {
         XSSFClientAnchor ca = (XSSFClientAnchor)anchor;
         XSSFSheet sheet = (XSSFSheet)getParent();
@@ -265,6 +297,26 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         shape.setColumn(ca.getCol1());
         shape.setRow(ca.getRow1());
         return shape;
+    }
+
+    /**
+     * Creates a new graphic frame.
+     *
+     * @param anchor    the client anchor describes how this frame is attached
+     *                  to the sheet
+     * @return  the newly created graphic frame
+     */
+    private XSSFGraphicFrame createGraphicFrame(XSSFClientAnchor anchor) {
+        CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
+        CTGraphicalObjectFrame ctGraphicFrame = ctAnchor.addNewGraphicFrame();
+        ctGraphicFrame.set(XSSFGraphicFrame.prototype());
+
+        long frameId = numOfGraphicFrames++;
+        XSSFGraphicFrame graphicFrame = new XSSFGraphicFrame(this, ctGraphicFrame);
+        graphicFrame.setAnchor(anchor);
+        graphicFrame.setId(frameId);
+        graphicFrame.setName("Diagramm" + frameId);
+        return graphicFrame;
     }
     
     /**

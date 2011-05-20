@@ -80,10 +80,24 @@ public class CellRangeAddress extends CellRangeAddressBase {
      *         like single cell references (e.g. 'A1' instead of 'A1:A1').
      */
     public String formatAsString() {
+        return formatAsString(null, false);
+    }
+
+    /**
+     * @return the text format of this range using specified sheet name.
+     */
+    public String formatAsString(String sheetName, boolean useAbsoluteAddress) {
         StringBuffer sb = new StringBuffer();
-        CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn());
-        CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn());
+        if (sheetName != null) {
+            sb.append(sheetName);
+            sb.append("!");
+        }
+        CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn(),
+                useAbsoluteAddress, useAbsoluteAddress);
+        CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn(),
+                useAbsoluteAddress, useAbsoluteAddress);
         sb.append(cellRefFrom.formatAsString());
+
         //for a single-cell reference return A1 instead of A1:A1
         if(!cellRefFrom.equals(cellRefTo)){
             sb.append(':');
