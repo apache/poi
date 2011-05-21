@@ -37,7 +37,7 @@ public class ScatterChart {
 	public static void main(String[]args) throws Exception {
 		Workbook wb = new XSSFWorkbook();
 		CreationHelper creationHelper = wb.getCreationHelper();
-		Sheet sheet = wb.createSheet("new sheet");
+		Sheet sheet = wb.createSheet("Sheet 1");
 		final int NUM_OF_ROWS = 3;
 		final int NUM_OF_COLUMNS = 10;
 
@@ -57,7 +57,7 @@ public class ScatterChart {
 
 		Chart chart = drawing.createChart(anchor);
 		ChartLegend legend = chart.getOrCreateLegend();
-		legend.setPosition(LegendPosition.RIGHT);
+		legend.setPosition(LegendPosition.TOP_RIGHT);
 
 		ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
 
@@ -65,12 +65,12 @@ public class ScatterChart {
 		ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
 
 		ScatterChartSerie firstSerie = data.addSerie();
-		firstSerie.setXValues(sheet, new CellRangeAddress(0, 0, NUM_OF_COLUMNS + 1, NUM_OF_COLUMNS + 1));
-		firstSerie.setYValues(sheet, new CellRangeAddress(1, 1, NUM_OF_COLUMNS + 1, NUM_OF_COLUMNS + 1));
+		firstSerie.setXValues(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
+		firstSerie.setYValues(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
 
 		ScatterChartSerie secondSerie = data.addSerie();
-		secondSerie.setXValues(sheet, new CellRangeAddress(0, 0, NUM_OF_COLUMNS + 1, NUM_OF_COLUMNS + 1));
-		secondSerie.setYValues(sheet, new CellRangeAddress(2, 2, NUM_OF_COLUMNS + 1, NUM_OF_COLUMNS + 1));
+		secondSerie.setXValues(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
+		secondSerie.setYValues(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
 		chart.plot(data, bottomAxis, leftAxis);
 
