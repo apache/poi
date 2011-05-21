@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
@@ -89,7 +90,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
     public String formatAsString(String sheetName, boolean useAbsoluteAddress) {
         StringBuffer sb = new StringBuffer();
         if (sheetName != null) {
-            sb.append(sheetName);
+            sb.append(SheetNameFormatter.format(sheetName));
             sb.append("!");
         }
         CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn(),
