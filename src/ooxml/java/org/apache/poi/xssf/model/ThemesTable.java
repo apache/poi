@@ -87,7 +87,8 @@ public class ThemesTable extends POIXMLDocumentPart {
        // Get the theme colour
        XSSFColor themeColor = getThemeColor(color.getTheme());
        // Set the raw colour, not the adjusted one
-       color.setRgb(themeColor.getCTColor().getRgb());
+       // Do a raw set, no adjusting at the XSSFColor layer either
+       color.getCTColor().setRgb(themeColor.getCTColor().getRgb());
        
        // All done
     }

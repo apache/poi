@@ -97,6 +97,21 @@ public final class TestXSSFColor extends TestCase {
       assertEquals(0, rgb3.getRgbWithTint()[0]);
       assertEquals(0,  rgb3.getRgbWithTint()[1]);
       assertEquals(0,  rgb3.getRgbWithTint()[2]);
+      
+      // Set the colour to black, will get translated internally
+      // (Excel stores 3 colour white and black wrong!)
+      rgb3.setRgb(new byte[] {-1,-1,-1});
+      assertEquals("FFFFFFFF", rgb3.getARGBHex());
+      assertEquals(0, rgb3.getCTColor().getRgb()[0]);
+      assertEquals(0, rgb3.getCTColor().getRgb()[1]);
+      assertEquals(0, rgb3.getCTColor().getRgb()[2]);
+      
+      // Set another, is fine
+      rgb3.setRgb(new byte[] {16,17,18});
+      assertEquals("FF101112", rgb3.getARGBHex());
+      assertEquals(0x10, rgb3.getCTColor().getRgb()[0]);
+      assertEquals(0x11, rgb3.getCTColor().getRgb()[1]);
+      assertEquals(0x12, rgb3.getCTColor().getRgb()[2]);
    }
    
    public void testARGBColour() throws Exception {
