@@ -27,6 +27,8 @@ import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -39,6 +41,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public final static short sid = 0x01B8;
+    private POILogger logger = POILogFactory.getLogger(getClass());
 
     static final class GUID {
 		/*
@@ -525,7 +528,10 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if (in.remaining() > 0) {
-            System.out.println(HexDump.toHex(in.readRemainder()));
+           logger.log(POILogger.WARN, 
+                 "Hyperlink data remains: " + in.remaining() +
+                 " : " +HexDump.toHex(in.readRemainder())
+           );
         }
     }
 
