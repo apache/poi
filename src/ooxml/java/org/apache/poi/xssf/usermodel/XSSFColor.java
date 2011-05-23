@@ -79,6 +79,27 @@ public class XSSFColor implements Color {
 	public void setIndexed(int indexed) {
 		ctColor.setIndexed(indexed);
 	}
+	
+	/**
+    * For RGB colours, but not ARGB (we think...)
+    * Excel gets black and white the wrong way around, so switch them 
+	 */
+	private byte[] correctRGB(byte[] rgb) {
+	   if(rgb.length == 4) {
+	      // Excel doesn't appear to get these wrong
+	      // Nothing to change
+	      return rgb;
+	   } else {
+         // Excel gets black and white the wrong way around, so switch them 
+         if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
+            rgb = new byte[] {-1, -1, -1};
+         }
+         else if (rgb[0] == -1 && rgb[1] == -1 && rgb[2] == -1) {
+            rgb = new byte[] {0, 0, 0};
+         }
+         return rgb;
+	   }
+	}
 
    /**
     * Standard Red Green Blue ctColor value (RGB).
@@ -138,20 +159,8 @@ public class XSSFColor implements Color {
          // Grab the colour
          rgb = ctColor.getRgb();
 
-         if(rgb.length == 4) {
-            // Good to go, return it as-is
-            return rgb;
-         }
-         
-         // For RGB colours, but not ARGB (we think...)
-         // Excel gets black and white the wrong way around, so switch them 
-         if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
-            rgb = new byte[] {-1, -1, -1};
-         }
-         else if (rgb[0] == -1 && rgb[1] == -1 && rgb[2] == -1) {
-            rgb = new byte[] {0, 0, 0};
-         }
-         return rgb;
+         // Correct it as needed, and return
+         return correctRGB(rgb);
     }
 
     /**
@@ -211,9 +220,10 @@ public class XSSFColor implements Color {
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
 	public void setRgb(byte[] rgb) {
-		ctColor.setRgb(rgb);
+	   // Correct it and save
+		ctColor.setRgb(correctRGB(rgb));
 	}
-
+	
     /**
      * Index into the <clrScheme> collection, referencing a particular <sysClr> or
      *  <srgbClr> value expressed in the Theme part.
