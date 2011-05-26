@@ -18,8 +18,6 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +72,7 @@ public final class SharedValueManager {
 		public void add(FormulaRecordAggregate agg) {
 			if (_numberOfFormulas == 0) {
 				if (_firstCell.getRow() != agg.getRow() || _firstCell.getCol() != agg.getColumn()) {
-					throw new IllegalStateException("shared formula coding error");
+					throw new IllegalStateException("shared formula coding error: "+_firstCell.getCol()+'/'+_firstCell.getRow()+" != "+agg.getColumn()+'/'+agg.getRow());
 				}
 			}
 			if (_numberOfFormulas >= _frAggs.length) {
@@ -100,16 +98,6 @@ public final class SharedValueManager {
 			sb.append("]");
 			return sb.toString();
 		}
-
-		/**
-		 * Note - the 'first cell' of a shared formula group is not always the top-left cell
-		 * of the enclosing range.
-		 * @return <code>true</code> if the specified coordinates correspond to the 'first cell'
-		 * of this shared formula group.
-		 */
-		public boolean isFirstCell(int row, int column) {
-			return _firstCell.getRow() == row && _firstCell.getCol() == column;
-		}
 	}
 
 	/**
@@ -124,7 +112,7 @@ public final class SharedValueManager {
 	private final TableRecord[] _tableRecords;
 	private final Map<SharedFormulaRecord, SharedFormulaGroup> _groupsBySharedFormulaRecord;
 	/** cached for optimization purposes */
-	private SharedFormulaGroup[] _groups;
+    private Map<Integer,SharedFormulaGroup> _groupsCache;
 
 	private SharedValueManager(SharedFormulaRecord[] sharedFormulaRecords,
 			CellReference[] firstCells, ArrayRecord[] arrayRecords, TableRecord[] tableRecords) {
@@ -169,56 +157,30 @@ public final class SharedValueManager {
 	 * @return never <code>null</code>
 	 */
 	public SharedFormulaRecord linkSharedFormulaRecord(CellReference firstCell, FormulaRecordAggregate agg) {
-
-		SharedFormulaGroup result = findFormulaGroup(getGroups(), firstCell);
+		SharedFormulaGroup result = findFormulaGroupForCell(firstCell);
 		result.add(agg);
 		return result.getSFR();
 	}
 
-	private static SharedFormulaGroup findFormulaGroup(SharedFormulaGroup[] groups, CellReference firstCell) {
-		int row = firstCell.getRow();
-		int column = firstCell.getCol();
-		// Traverse the list of shared formulas and try to find the correct one for us
+    private SharedFormulaGroup findFormulaGroupForCell(final CellReference cellRef) {
+        if(null == _groupsCache) {
+            _groupsCache = new HashMap<Integer,SharedFormulaGroup>(_groupsBySharedFormulaRecord.size());
+            for(SharedFormulaGroup group: _groupsBySharedFormulaRecord.values()) {
+                _groupsCache.put(getKeyForCache(group._firstCell),group);
+            }
+        }
+        SharedFormulaGroup sfg = _groupsCache.get(getKeyForCache(cellRef));
+        if(null == sfg) {
+            // TODO - fix file "15228.xls" so it opens in Excel after rewriting with POI
+            throw new RuntimeException("Failed to find a matching shared formula record");
+        }
+        return sfg;
+    }
 
-		// perhaps this could be optimised to some kind of binary search
-		for (int i = 0; i < groups.length; i++) {
-			SharedFormulaGroup svg = groups[i];
-			if (svg.isFirstCell(row, column)) {
-				return svg;
-			}
-		}
-		// TODO - fix file "15228.xls" so it opens in Excel after rewriting with POI
-		throw new RuntimeException("Failed to find a matching shared formula record");
-	}
-
-	private SharedFormulaGroup[] getGroups() {
-		if (_groups == null) {
-			SharedFormulaGroup[] groups = new SharedFormulaGroup[_groupsBySharedFormulaRecord.size()];
-			_groupsBySharedFormulaRecord.values().toArray(groups);
-			Arrays.sort(groups, SVGComparator); // make search behaviour more deterministic
-			_groups = groups;
-		}
-		return _groups;
-	}
-
-	private static final Comparator<SharedFormulaGroup> SVGComparator = new Comparator<SharedFormulaGroup>() {
-
-		public int compare(SharedFormulaGroup a, SharedFormulaGroup b) {
-			CellRangeAddress8Bit rangeA = a.getSFR().getRange();
-			CellRangeAddress8Bit rangeB = b.getSFR().getRange();
-
-			int cmp;
-			cmp = rangeA.getFirstRow() - rangeB.getFirstRow();
-			if (cmp != 0) {
-				return cmp;
-			}
-			cmp = rangeA.getFirstColumn() - rangeB.getFirstColumn();
-			if (cmp != 0) {
-				return cmp;
-			}
-			return 0;
-		}
-	};
+    private Integer getKeyForCache(final CellReference cellRef) {
+        // The HSSF has a max of 2^16 rows and 2^8 cols
+        return new Integer((cellRef.getCol()+1)<<16 | cellRef.getRow());
+    }
 
 	/**
 	 * Gets the {@link SharedValueRecordBase} record if it should be encoded immediately after the
@@ -248,15 +210,13 @@ public final class SharedValueManager {
 			// not the first formula cell in the group
 			return null;
 		}
-		SharedFormulaGroup[] groups = getGroups();
-		for (int i = 0; i < groups.length; i++) {
-			// note - logic for finding correct shared formula group is slightly
-			// more complicated since the first cell
-			SharedFormulaGroup sfg = groups[i];
-			if (sfg.isFirstCell(row, column)) {
-				return sfg.getSFR();
-			}
-		}
+
+        if(!_groupsBySharedFormulaRecord.isEmpty()) {
+            SharedFormulaGroup sfg = findFormulaGroupForCell(firstCell);
+            if(null != sfg) {
+                return sfg.getSFR();
+            }
+        }
 
 		// Since arrays and tables cannot be sparse (all cells in range participate)
 		// The first cell will be the top left in the range.  So we can match the
@@ -284,7 +244,7 @@ public final class SharedValueManager {
 		if (svg == null) {
 			throw new IllegalStateException("Failed to find formulas for shared formula");
 		}
-		_groups = null; // be sure to reset cached value
+		_groupsCache = null; // be sure to reset cached value
 		svg.unlinkSharedFormulas();
 	}
 
