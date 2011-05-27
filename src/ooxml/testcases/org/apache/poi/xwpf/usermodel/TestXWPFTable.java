@@ -17,9 +17,11 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -130,4 +132,30 @@ public class TestXWPFTable extends TestCase {
         assertEquals(20, row.getHeight());
     }
 
+    public void testCreateTable() throws Exception {
+       // open an empty document
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+
+       // create a table with 5 rows and 7 coloumns
+       int noRows = 5; 
+       int noCols = 7;
+       XWPFTable table = doc.createTable(noRows,noCols);
+
+       // assert the table is empty
+       List<XWPFTableRow> rows = table.getRows();
+       assertEquals("Table has less rows than requested.", noRows, rows.size());
+       for (XWPFTableRow xwpfRow : rows)
+       {
+          assertNotNull(xwpfRow);
+          for (int i = 0 ; i < 7 ; i++)
+          {
+             XWPFTableCell xwpfCell = xwpfRow.getCell(i);
+             assertNotNull(xwpfCell);
+             assertEquals("Empty cells should not have one paragraph.",1,xwpfCell.getParagraphs().size());
+             xwpfCell = xwpfRow.getCell(i);
+             assertEquals("Calling 'getCell' must not modify cells content.",1,xwpfCell.getParagraphs().size());
+          }
+       }
+       doc.getPackage().revert();
+    }
 }
