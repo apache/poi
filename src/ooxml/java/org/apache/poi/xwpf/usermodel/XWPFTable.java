@@ -51,7 +51,6 @@ public class XWPFTable implements IBodyElement{
         this(table, part);
         for (int i = 0; i < row; i++) {
             XWPFTableRow tabRow = (getRow(i) == null) ? createRow() : getRow(i);
-            tableRows.add(tabRow);
             for (int k = 0; k < col; k++) {
                 XWPFTableCell tabCell = (tabRow.getCell(k) == null) ? tabRow
                         .createCell() : null;
