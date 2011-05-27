@@ -18,6 +18,8 @@ package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
 
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.Slide;
@@ -27,6 +29,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdList;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -42,6 +45,7 @@ public class XMLSlideShow implements SlideShow {
 		this.slideShow = xml;
 		
 		// Build the main masters list - TODO
+		CTSlideMasterIdList masterIds = slideShow.getSlideMasterReferences();
 		
 		// Build the slides list
 		CTSlideIdList slideIds = slideShow.getSlideReferences();
@@ -53,6 +57,10 @@ public class XMLSlideShow implements SlideShow {
 		}
 		
 		// Build the notes list - TODO
+	}
+	
+	public XMLSlideShow(OPCPackage pkg) throws XmlException, IOException, OpenXML4JException {
+	   this(new XSLFSlideShow(pkg));
 	}
 	
 	public XSLFSlideShow _getXSLFSlideShow() {

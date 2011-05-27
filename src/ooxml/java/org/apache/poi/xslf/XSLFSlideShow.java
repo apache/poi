@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -46,8 +47,9 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
 
 /**
- * Experimental class to do low level processing
- *  of pptx files.
+ * Experimental class to do low level processing of pptx files.
+ * 
+ * Most users should use the higher level {@link XMLSlideShow} instead.
  *  
  * If you are using these low level classes, then you
  *  will almost certainly need to refer to the OOXML
@@ -113,6 +115,7 @@ public class XSLFSlideShow extends POIXMLDocument {
        }
        return getPresentation().getSldIdLst();
 	}
+    
 	/**
 	 * Returns the references from the presentation to its
 	 *  slide masters.
