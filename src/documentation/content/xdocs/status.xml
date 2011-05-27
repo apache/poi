@@ -1008,7 +1008,10 @@
             <action dev="POI-DEVELOPERS" type="add" context="All">Early stages of HSF development (not ready for development)</action>
             <action dev="POI-DEVELOPERS" type="add" context="All">Initial low level record support for charting (not complete)</action>
         </release>
-        <release version="1.1.0" date="Release date not recorded">
+        <release version="1.2.0" date="2002-01-19">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="1.1.0" date="2002-01-04">
             <action dev="POI-DEVELOPERS" type="update" context="All">Created new event model</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Optimizations made to HSSF including aggregate records for
                 values, rows, etc.</action>
@@ -1016,10 +1019,16 @@
                 array copies)</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">minor re-factoring and bug fixes.</action>
         </release>
-        <release version="1.0.0" date="Release date not recorded">
+        <release version="1.0.2" date="2002-01-11">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="1.0.1" date="2002-01-04">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="1.0.0" date="2001-12-30">
             <action dev="POI-DEVELOPERS" type="update" context="All">Minor documentation updates.</action>
         </release>
-        <release version="0.14.0" date="Release date not recorded">
+        <release version="0.14.0" date="2001-12-22">
             <action dev="POI-DEVELOPERS" type="update" context="All">Added DataFormat helper class and exposed set and get format
                 on HSSFCellStyle</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Fixed column width apis (unit wise) and various javadoc on
@@ -1028,10 +1037,10 @@
                 write a unit test for this ;-p).</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Some optimization on sheet creation.</action>
         </release>
-        <release version="0.13.0" date="Release date not recorded">
+        <release version="0.13.0" date="2001-12-16">
             <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
         </release>
-        <release version="0.12.0" date="Release date not recorded">
+        <release version="0.12.0" date="2001-12-12">
             <action dev="POI-DEVELOPERS" type="update" context="All">Added MulBlank, Blank, ColInfo</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Added log4j facility and removed all sys.out type logging</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Added support for adding font's, styles and corresponding
@@ -1042,11 +1051,11 @@
                 from HSSFCell.setStringValue, etc when the encoding is set)</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">added support for adding/removing and naming sheets.</action>
         </release>
-        <release version="0.11.0" date="Release date not recorded">
+        <release version="0.11.0" date="2001-12-08">
             <action dev="POI-DEVELOPERS" type="update" context="All">Bugfix release. We were throwing an exception when reading
                 RKRecord objects.</action>
         </release>
-        <release version="0.10.0" date="Release date not recorded">
+        <release version="0.10.0" date="2001-12-02">
             <action dev="POI-DEVELOPERS" type="update" context="All">Got continuation records to work (read/write)</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Added various pre-support for formulas</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Massive API reorganization, repackaging.</action>
@@ -1054,7 +1063,7 @@
                 HSSF Output.</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Better API support for modification.</action>
         </release>
-        <release version="0.7 (and interim releases)" date="Release date not recorded">
+        <release version="0.7 (and interim releases)" date="2001-11-17">
             <action dev="POI-DEVELOPERS" type="update" context="All">Added encoding flag to high and low level api to use utf-16
                 when needed (HSSFCell.setEncoding())</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">added read only support for Label records (which are
@@ -1063,11 +1072,26 @@
             <action dev="POI-DEVELOPERS" type="update" context="All">BiffViewer class added for validating HSSF &amp; POI and/or
                 HSSF Output.</action>
         </release>
-        <release version="0.6 (release)" date="Release date not recorded">
+        <release version="0.6" date="2001-11-11">
             <action dev="POI-DEVELOPERS" type="update" context="All">Support for read/write and modify.</action>
             <action dev="POI-DEVELOPERS" type="update" context="All">Read only support for MulRK records (converted to Number when
                 writing)
             </action>
+        </release>
+        <release version="0.5" date="2001-11-05">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="0.4" date="2001-10-31">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="0.3" date="2001-10-26">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="0.2" date="2001-09-24">
+            <action dev="POI-DEVELOPERS" type="update" context="All">Changes not recorded.</action>
+        </release>
+        <release version="0.1" date="2001-08-28">
+            <action dev="POI-DEVELOPERS" type="update" context="All">First ever public release</action>
         </release>
 
     </changes>
