@@ -62,6 +62,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
@@ -645,6 +646,23 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
+     * Gets the index of the relation we're trying to create
+     * @param relation
+     * @return i
+     */
+    private int getRelationIndex(XWPFRelation relation) {
+        List<POIXMLDocumentPart> relations = getRelations();
+        int i = 1;
+        for (Iterator<POIXMLDocumentPart> it = relations.iterator(); it.hasNext() ; ) {
+           POIXMLDocumentPart item = it.next();
+           if (item.getPackageRelationship().getRelationshipType().equals(relation.getRelation())) {
+              i++;
+           }
+        }
+        return i;
+    }
+
+    /**
      * Appends a new paragraph to this document
      * @return a new paragraph
      */
@@ -654,7 +672,58 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         paragraphs.add(p);
         return p;
     }
-    
+
+    /**
+     * Creates an empty numbering if one does not already exist and sets the numbering member
+     * @return numbering
+     */
+    public XWPFNumbering createNumbering() {
+        if(numbering == null) {
+            NumberingDocument numberingDoc = NumberingDocument.Factory.newInstance();
+
+            XWPFRelation relation = XWPFRelation.NUMBERING;
+            int i = getRelationIndex(relation);
+
+            XWPFNumbering wrapper = (XWPFNumbering)createRelationship(relation, XWPFFactory.getInstance(), i);
+            wrapper.setNumbering(numberingDoc.addNewNumbering());
+            numbering = wrapper;
+        }
+
+        return numbering;
+    }
+
+    /**
+     * Creates an empty styles for the document if one does not already exist
+     * @return styles
+     */
+    public XWPFStyles createStyles() {
+       if(styles == null) {
+          StylesDocument stylesDoc = StylesDocument.Factory.newInstance();
+
+          XWPFRelation relation = XWPFRelation.STYLES;
+          int i = getRelationIndex(relation);
+
+          XWPFStyles wrapper = (XWPFStyles)createRelationship(relation, XWPFFactory.getInstance(), i);
+          wrapper.setStyles(stylesDoc.addNewStyles());
+          styles = wrapper;
+       }
+
+       return styles;
+    }
+
+
+    public XWPFFootnote addEndnote(CTFtnEdn note) {
+       XWPFFootnote footnote = new XWPFFootnote(this, note); 
+       footnotes.put(note.getId().intValue(), footnote);
+       return footnote;
+    }
+
+    public XWPFFootnote addFootnote(CTFtnEdn note) {
+       XWPFFootnote endnote = new XWPFFootnote(this, note); 
+       endnotes.put(note.getId().intValue(), endnote);
+       return endnote;
+    }
+
     /**
      * remove a BodyElement from bodyElements array list 
      * @param pos

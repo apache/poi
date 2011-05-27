@@ -57,7 +57,16 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 		isNew = true;
 		onDocumentRead();
 	}
-	
+
+	/**
+	 * create a new XWPFNumbering object for use in a new document
+	 */
+	public XWPFNumbering(){
+		abstractNums = new ArrayList<XWPFAbstractNum>();
+		nums = new ArrayList<XWPFNum>();
+		isNew = true;
+	}
+
 	/**
 	 * read numbering form an existing package
 	 */
@@ -108,6 +117,14 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         out.close();
     }
 
+
+	/**
+	 * Sets the ctNumbering
+	 * @param numbering
+	 */
+	public void setNumbering(CTNumbering numbering){
+		ctNumbering = numbering;
+	}
 	
 	
 	/**
@@ -149,6 +166,19 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 		return ctNum.getNumId();
 	}
 	
+	/**
+	 * Add a new num with an abstractNumID and a numID
+	 * @param abstractNumId
+	 * @param numID
+	 */
+	public void addNum(BigInteger abstractNumID, BigInteger numID){
+		CTNum ctNum = this.ctNumbering.addNewNum();
+		ctNum.addNewAbstractNumId();
+		ctNum.getAbstractNumId().setVal(abstractNumID);
+		ctNum.setNumId(numID);
+		XWPFNum num = new XWPFNum(ctNum, this);
+		nums.add(num);
+	}
 	
 	/**
 	 * get Num by NumID
@@ -207,9 +237,13 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 */
 	public BigInteger addAbstractNum(XWPFAbstractNum abstractNum){
 		int pos = abstractNums.size();
-		ctNumbering.addNewAbstractNum();
-		abstractNum.getAbstractNum().setAbstractNumId(BigInteger.valueOf(pos));
-		ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
+		if(abstractNum.getAbstractNum() != null){ // Use the current CTAbstractNum if it exists
+			ctNumbering.addNewAbstractNum().set(abstractNum.getAbstractNum());
+		} else {
+			ctNumbering.addNewAbstractNum();
+			abstractNum.getAbstractNum().setAbstractNumId(BigInteger.valueOf(pos));
+			ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
+		}
 		abstractNums.add(abstractNum);
 		return abstractNum.getCTAbstractNum().getAbstractNumId();
 	}

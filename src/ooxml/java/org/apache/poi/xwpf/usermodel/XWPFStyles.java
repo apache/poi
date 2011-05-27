@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.lang.String;
 
 import javax.xml.namespace.QName;
 
@@ -38,6 +39,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
 /**
  * @author Philipp Epp
  *
@@ -58,6 +64,14 @@ public class XWPFStyles extends POIXMLDocumentPart{
 		super(part, rel);
 		onDocumentRead();
 	}
+
+	/**
+	 * Construct XWPFStyles from scratch for a new document.
+	 */
+	public XWPFStyles() {
+		listStyle = new ArrayList<XWPFStyle>();
+	}
+
 	/**
 	 * Read document
 	 */
@@ -95,7 +109,13 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	    }
 
 	
-
+    /**
+     * Sets the ctStyles
+     * @param styles
+     */
+    public void setStyles(CTStyles styles) {
+       ctStyles = styles;
+    }
 	
 	 /**
 	  * checks whether style with styleID exist
@@ -173,6 +193,97 @@ public class XWPFStyles extends POIXMLDocumentPart{
 		return usedStyleList;
 	}
 	
+	/**
+	 * Sets the default spelling language on ctStyles DocDefaults parameter
+	 * @param strSpellingLanguage
+	 */
+	public void setSpellingLanguage(String strSpellingLanguage) {
+		CTDocDefaults docDefaults = null;
+		CTRPr runProps = null;
+		CTLanguage lang = null;
+
+		// Just making sure we use the members that have already been defined
+		if(ctStyles.isSetDocDefaults()) {
+			docDefaults = ctStyles.getDocDefaults();
+			if(docDefaults.isSetRPrDefault()) {
+				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
+				if(RPrDefault.isSetRPr()) {
+					runProps = RPrDefault.getRPr();
+					if(runProps.isSetLang())
+						lang = runProps.getLang();
+				}
+			}
+		}
+
+		if(docDefaults == null)
+			docDefaults = ctStyles.addNewDocDefaults();
+		if(runProps == null)
+			runProps = docDefaults.addNewRPrDefault().addNewRPr();
+		if(lang == null)
+			lang = runProps.addNewLang();
+
+		lang.setVal(strSpellingLanguage);
+		lang.setBidi(strSpellingLanguage);
+	}
+
+	/**
+	 * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
+	 * @param strEastAsia
+	 */
+	public void setEastAsia(String strEastAsia) {
+		CTDocDefaults docDefaults = null;
+		CTRPr runProps = null;
+		CTLanguage lang = null;
+
+		// Just making sure we use the members that have already been defined
+		if(ctStyles.isSetDocDefaults()) {
+			docDefaults = ctStyles.getDocDefaults();
+			if(docDefaults.isSetRPrDefault()) {
+				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
+				if(RPrDefault.isSetRPr()) {
+					runProps = RPrDefault.getRPr();
+					if(runProps.isSetLang())
+						lang = runProps.getLang();
+				}
+			}
+		}
+
+		if(docDefaults == null)
+			docDefaults = ctStyles.addNewDocDefaults();
+		if(runProps == null)
+			runProps = docDefaults.addNewRPrDefault().addNewRPr();
+		if(lang == null)
+			lang = runProps.addNewLang();
+
+		lang.setEastAsia(strEastAsia);
+	}
+
+	/**
+	 * Sets the default font on ctStyles DocDefaults parameter
+	 * @param fonts
+	 */
+	public void setDefaultFonts(CTFonts fonts) {
+		CTDocDefaults docDefaults = null;
+		CTRPr runProps = null;
+
+		// Just making sure we use the members that have already been defined
+		if(ctStyles.isSetDocDefaults()) {
+			docDefaults = ctStyles.getDocDefaults();
+			if(docDefaults.isSetRPrDefault()) {
+				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
+				if(RPrDefault.isSetRPr()) {
+					runProps = RPrDefault.getRPr();
+				}
+			}
+		}
+
+		if(docDefaults == null)
+			docDefaults = ctStyles.addNewDocDefaults();
+		if(runProps == null)
+			runProps = docDefaults.addNewRPrDefault().addNewRPr();
+
+		runProps.setRFonts(fonts);
+	}
 	
 	
 	/**
