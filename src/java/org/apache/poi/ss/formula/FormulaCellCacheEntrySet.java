@@ -76,8 +76,7 @@ final class FormulaCellCacheEntrySet {
 
 
 	private static boolean addInternal(CellCacheEntry[] arr, CellCacheEntry cce) {
-
-		int startIx = cce.hashCode() % arr.length;
+		int startIx = Math.abs(cce.hashCode() % arr.length);
 
 		for(int i=startIx; i<arr.length; i++) {
 			CellCacheEntry item = arr[i];
@@ -130,7 +129,7 @@ final class FormulaCellCacheEntrySet {
 		// else - usual case
 		// delete single element (without re-hashing)
 
-		int startIx = cce.hashCode() % arr.length;
+		int startIx = Math.abs(cce.hashCode() % arr.length);
 
 		// note - can't exit loops upon finding null because of potential previous deletes
 		for(int i=startIx; i<arr.length; i++) {

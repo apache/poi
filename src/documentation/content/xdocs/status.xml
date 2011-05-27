@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51273 - Formula Value Cache fix for repeated evaluations</action>
            <action dev="poi-developers" type="add">51171 - Improved performance of SharedValueManager </action>
            <action dev="poi-developers" type="fix">51236 - XSSF set colour support for black/white to match getter</action>
            <action dev="poi-developers" type="add">51196 - Initial support for Spreadsheet Chart API</action>
