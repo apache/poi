@@ -960,6 +960,20 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public void removeProtectionEnforcement() {
         settings.removeEnforcement();
     }
+    
+    /**
+     * Return the zoom level, as a percentage
+     */
+    public long getZoomPercent() {
+       return settings.getZoomPercent();
+    }
+    
+    /**
+     * Sets the zoom level, as a percentage
+     */
+    public void setZoomPercent(long zoomPercent) {
+       settings.setZoomPercent(zoomPercent);
+    }
 
 	/**
 	 * inserts an existing XWPFTable to the arrays bodyElements and tables

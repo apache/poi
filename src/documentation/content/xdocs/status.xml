@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta3" date="2011-??-??">
+           <action dev="poi-developers" type="add">51188 - Support for getting and setting XPWF zoom settings</action>
            <action dev="poi-developers" type="add">51134 - Support for adding Numbering and Styles to a XWPF document that doesn't already have them</action>
            <action dev="poi-developers" type="fix">51273 - Formula Value Cache fix for repeated evaluations</action>
            <action dev="poi-developers" type="add">51171 - Improved performance of SharedValueManager </action>
