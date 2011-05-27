@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSettings;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTZoom;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.SettingsDocument;
@@ -48,6 +50,46 @@ public class XWPFSettings extends POIXMLDocumentPart {
         ctSettings = CTSettings.Factory.newInstance();
     }
 
+    /**
+     * Set zoom.<br/>
+     * In the zoom tag inside settings.xml file <br/>
+     * it sets the value of zoom
+     * <br/>
+     * sample snippet from settings.xml 
+     * <pre>
+     *    &lt;w:zoom w:percent="50" /&gt; 
+     * <pre>
+     * @return percentage as an integer of zoom level
+     */
+    public long getZoomPercent() {
+       CTZoom zoom; 
+       if (!ctSettings.isSetZoom()) {
+          zoom = ctSettings.addNewZoom();
+       } else {
+          zoom = ctSettings.getZoom();
+       }
+
+       return zoom.getPercent().longValue();
+    }
+
+    /**
+     * Set zoom.<br/>
+     * In the zoom tag inside settings.xml file <br/>
+     * it sets the value of zoom
+     * <br/>
+     * sample snippet from settings.xml 
+     * <pre>
+     *    &lt;w:zoom w:percent="50" /&gt; 
+     * <pre>
+     * @return percentage as an integer of zoom level
+     */
+    public void setZoomPercent(long zoomPercent) {
+       if (! ctSettings.isSetZoom()) {
+          ctSettings.addNewZoom();
+       }
+       CTZoom zoom = ctSettings.getZoom();
+       zoom.setPercent(BigInteger.valueOf(zoomPercent));
+    }
 
     /**
      * Verifies the documentProtection tag inside settings.xml file <br/>

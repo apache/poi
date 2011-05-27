@@ -200,8 +200,30 @@ public final class TestXWPFDocument extends TestCase {
       assertEquals(p3, doc.getParagraphs().get(0));
 	}
 	
-	public void testGIFSupport() throws Exception
-	{
+	public void testSettings() throws Exception {
+	   XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithGIF.docx");
+	   assertEquals(120, doc.getZoomPercent());
+	   assertEquals(false, doc.isEnforcedCommentsProtection());
+      assertEquals(false, doc.isEnforcedFillingFormsProtection());
+      assertEquals(false, doc.isEnforcedReadonlyProtection());
+      assertEquals(false, doc.isEnforcedTrackedChangesProtection());
+      
+      doc.setZoomPercent(124);
+      
+      // Only one enforcement allowed, last one wins!
+      doc.enforceFillingFormsProtection();
+      doc.enforceReadonlyProtection();
+      
+      doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+      
+      assertEquals(124, doc.getZoomPercent());
+      assertEquals(false, doc.isEnforcedCommentsProtection());
+      assertEquals(false, doc.isEnforcedFillingFormsProtection());
+      assertEquals(true, doc.isEnforcedReadonlyProtection());
+      assertEquals(false, doc.isEnforcedTrackedChangesProtection());
+	}
+	
+	public void testGIFSupport() throws Exception {
 	    XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithGIF.docx");
 	    ArrayList<PackagePart> gifParts = doc.getPackage().getPartsByContentType(XWPFRelation.IMAGE_GIF.getContentType());
 	    assertEquals("Expected exactly one GIF part in package.",1,gifParts.size());
