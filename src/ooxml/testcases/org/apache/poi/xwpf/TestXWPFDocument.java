@@ -17,14 +17,19 @@
 
 package org.apache.poi.xwpf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -193,5 +198,26 @@ public final class TestXWPFDocument extends TestCase {
       
       assertEquals(p3, doc.getBodyElements().get(0));
       assertEquals(p3, doc.getParagraphs().get(0));
+	}
+	
+	public void testGIFSupport() throws Exception
+	{
+	    XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithGIF.docx");
+	    ArrayList<PackagePart> gifParts = doc.getPackage().getPartsByContentType(XWPFRelation.IMAGE_GIF.getContentType());
+	    assertEquals("Expected exactly one GIF part in package.",1,gifParts.size());
+	    PackagePart gifPart = gifParts.get(0);
+	    
+	    List<POIXMLDocumentPart> relations = doc.getRelations();
+	    POIXMLDocumentPart gifDocPart = null;
+	    for (POIXMLDocumentPart docPart : relations)
+        {
+            if (gifPart == docPart.getPackagePart())
+            {
+                assertNull("More than one POIXMLDocumentPart for GIF PackagePart.",gifDocPart);
+                gifDocPart = docPart;
+            }
+        }
+	    assertNotNull("GIF part not related to document.xml PackagePart",gifDocPart);
+	    assertTrue("XWPFRelation for GIF image was not recognized properly, as the POIXMLDocumentPart created was of a wrong type.",XWPFRelation.IMAGE_GIF.getRelationClass().isInstance(gifDocPart));
 	}
 }
