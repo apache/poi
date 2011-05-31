@@ -23,6 +23,8 @@
    xmlns:field="org.apache.poi.hdf.generator.HDFFieldIterator"
    xmlns:java="java" >
 
+    <xsl:output method="text"/>
+
 <xsl:template match="record">
 
 <xsl:if test="@package">
@@ -74,6 +76,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 <xsl:text>        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>;
 </xsl:for-each>
     }
+</xsl:if>
 
     public String toString()
     {
@@ -84,7 +87,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
         buffer.append("[/<xsl:value-of select="@name"/>]\n");
         return buffer.toString();
     }
-</xsl:if>
+
     /**
      * Size of record (exluding 4 byte header)
      */
