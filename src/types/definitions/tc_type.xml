@@ -32,6 +32,10 @@
         <bit number="5" mask="0x0020" name="fVertMerge"/>
         <bit number="6" mask="0x0040" name="fVertRestart"/>
         <bit number="7" mask="0x0180" name="vertAlign"/>
+        <bit number="8" mask="0x0E00" name="ftsWidth"/>
+        <bit number="9" mask="0x1000" name="fFitText"/>
+        <bit number="10" mask="0x2000" name="fNoWrap"/>
+        <bit number="11" mask="0xC000" name="fUnused"/>
       </field>
       <field type="short" size="2" name="unused"/>
       <field type="BorderCode" size="4" name="brcTop"/>

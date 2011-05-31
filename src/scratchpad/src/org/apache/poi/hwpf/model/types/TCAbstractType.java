@@ -18,11 +18,11 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Table Cell Descriptor.
@@ -32,16 +32,19 @@ import org.apache.poi.hwpf.usermodel.*;
  * @author S. Ryan Ackley
  */
 public abstract class TCAbstractType implements HDFType {
-
     protected  short field_1_rgf;
-        private static BitField  fFirstMerged = BitFieldFactory.getInstance(0x0001);
-        private static BitField  fMerged = BitFieldFactory.getInstance(0x0002);
-        private static BitField  fVertical = BitFieldFactory.getInstance(0x0004);
-        private static BitField  fBackward = BitFieldFactory.getInstance(0x0008);
-        private static BitField  fRotateFont = BitFieldFactory.getInstance(0x0010);
-        private static BitField  fVertMerge = BitFieldFactory.getInstance(0x0020);
-        private static BitField  fVertRestart = BitFieldFactory.getInstance(0x0040);
-        private static BitField  vertAlign = BitFieldFactory.getInstance(0x0180);
+    private static BitField fFirstMerged = BitFieldFactory.getInstance(0x0001);
+    private static BitField fMerged = BitFieldFactory.getInstance(0x0002);
+    private static BitField fVertical = BitFieldFactory.getInstance(0x0004);
+    private static BitField fBackward = BitFieldFactory.getInstance(0x0008);
+    private static BitField fRotateFont = BitFieldFactory.getInstance(0x0010);
+    private static BitField fVertMerge = BitFieldFactory.getInstance(0x0020);
+    private static BitField fVertRestart = BitFieldFactory.getInstance(0x0040);
+    private static BitField vertAlign = BitFieldFactory.getInstance(0x0180);
+    private static BitField ftsWidth = new BitField(0x0E00);
+    private static BitField fFitText = new BitField(0x1000);
+    private static BitField fNoWrap = new BitField(0x2000);
+    private static BitField fUnused = new BitField(0xC000);
     protected  short field_2_unused;
     protected  BorderCode field_3_brcTop;
     protected  BorderCode field_4_brcLeft;
@@ -91,6 +94,10 @@ public abstract class TCAbstractType implements HDFType {
         buffer.append("         .fVertMerge               = ").append(isFVertMerge()).append('\n');
         buffer.append("         .fVertRestart             = ").append(isFVertRestart()).append('\n');
         buffer.append("         .vertAlign                = ").append(getVertAlign()).append('\n');
+        buffer.append("         .ftsWidth                 = ").append(getFtsWidth()).append('\n');
+        buffer.append("         .fFitText                 = ").append(isFFitText()).append('\n');
+        buffer.append("         .fNoWrap                  = ").append(isFNoWrap()).append('\n');
+        buffer.append("         .fUnused                  = ").append(getFUnused()).append('\n');
 
         buffer.append("    .unused               = ");
         buffer.append(" (").append(getUnused()).append(" )\n");
@@ -358,6 +365,67 @@ public abstract class TCAbstractType implements HDFType {
      */
     public byte getVertAlign()
     {
-        return ( byte )vertAlign.getValue(field_1_rgf);
+        return (byte)vertAlign.getValue(field_1_rgf);
+    }
+
+    /**
+     * Sets the ftsWidth field value
+     */
+    public void setFtsWidth(byte value) {
+       field_1_rgf = (short)ftsWidth.setValue(field_1_rgf, value);
+    }
+
+    /**
+     * @return the ftsWidth field value
+     */
+    public byte getFtsWidth() {
+       return (byte)ftsWidth.getValue(field_1_rgf);
+    }
+    
+    /**
+     * Sets the fFitText field value.
+     * 
+     */
+    public void setFFitText(boolean value) {
+       field_1_rgf = (short)fFitText.setBoolean(field_1_rgf, value);
+    }
+
+    /**
+     * @return  the fFitText field value.
+     */
+    public boolean isFFitText() {
+       return fFitText.isSet(field_1_rgf);
+    }
+    
+    /**
+     * Sets the fNoWrap field value.
+     * 
+     */
+    public void setFNoWrap(boolean value) {
+       field_1_rgf = (short)fNoWrap.setBoolean(field_1_rgf, value);
+    }
+
+    /**
+     * 
+     * @return  the fNoWrap field value.
+     */
+    public boolean isFNoWrap() {
+       return fNoWrap.isSet(field_1_rgf);
+    }
+    
+    /**
+     * Sets the fUnused field value.
+     * 
+     */
+    public void setFUnused(byte value) {
+       field_1_rgf = (short)fUnused.setValue(field_1_rgf, value);
+    }
+
+    /**
+     * 
+     * @return  the fUnused field value.
+     */
+    public byte getFUnused() {
+       return ( byte )fUnused.getValue(field_1_rgf);
     }
 }

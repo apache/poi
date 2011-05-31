@@ -33,6 +33,9 @@
     </developers>
 
     <changes>
+        <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51292 - Additional HWPF Table Cell Descriptor values</action>
+        </release>
         <release version="3.8-beta3" date="2011-??-??">
            <action dev="poi-developers" type="fix">51098 - Correct calculate image width/height, if image fits into one cell</action>
            <action dev="poi-developers" type="fix">47147 - Correct extra paragraphs from XWPF Table Cells</action>
