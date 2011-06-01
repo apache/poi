@@ -42,7 +42,6 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     public XWPFSettings(PackagePart part, PackageRelationship rel) throws IOException {
         super(part, rel);
-        readFrom(part.getInputStream());
     }
 
     public XWPFSettings() {
@@ -50,19 +49,26 @@ public class XWPFSettings extends POIXMLDocumentPart {
         ctSettings = CTSettings.Factory.newInstance();
     }
 
+    @Override
+    protected void onDocumentRead() throws IOException
+    {
+        super.onDocumentRead();
+        readFrom(getPackagePart().getInputStream());
+    }
+
     /**
      * Set zoom.<br/>
      * In the zoom tag inside settings.xml file <br/>
      * it sets the value of zoom
      * <br/>
-     * sample snippet from settings.xml 
+     * sample snippet from settings.xml
      * <pre>
-     *    &lt;w:zoom w:percent="50" /&gt; 
+     *    &lt;w:zoom w:percent="50" /&gt;
      * <pre>
      * @return percentage as an integer of zoom level
      */
     public long getZoomPercent() {
-       CTZoom zoom; 
+       CTZoom zoom;
        if (!ctSettings.isSetZoom()) {
           zoom = ctSettings.addNewZoom();
        } else {

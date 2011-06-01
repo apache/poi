@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;
@@ -25,7 +26,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 public class TestXWPFNumbering extends TestCase {
 	
-	public void testCompareAbstractNum(){
+	public void testCompareAbstractNum() throws IOException{
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
 		XWPFNumbering numbering = doc.getNumbering();
 		BigInteger numId = BigInteger.valueOf(1);

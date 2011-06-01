@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class TestXWPFStyles extends TestCase {
 //		super.setUp();
 //	}
 	
-	public void testGetUsedStyles(){
+	public void testGetUsedStyles() throws IOException{
 		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
 		List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
 		XWPFStyles styles = sampleDoc.getStyles();

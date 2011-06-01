@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -198,8 +199,9 @@ public class TestXWPFRun extends TestCase {
     /**
      * Test that on an existing document, we do the
      *  right thing with it
+     * @throws IOException 
      */
-    public void testExisting() {
+    public void testExisting() throws IOException {
        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
        XWPFParagraph p;
        XWPFRun run;
@@ -330,7 +332,7 @@ public class TestXWPFRun extends TestCase {
        assertEquals(null, run.getCTR().getRPr());
     }
 
-    public void testPictureInHeader() {
+    public void testPictureInHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 

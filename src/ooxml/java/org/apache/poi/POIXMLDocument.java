@@ -30,10 +30,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 
@@ -81,33 +79,6 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     }
 
     /**
-     * Get the PackagePart that is the target of a relationship.
-     *
-     * @param rel The relationship
-     * @return The target part
-     * @throws InvalidFormatException
-     */
-    protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
-        return getTargetPart(getPackage(), rel);
-    }
-    /**
-     * Get the PackagePart that is the target of a relationship.
-     *
-     * @param rel The relationship
-     * @param pkg The package to fetch from
-     * @return The target part
-     * @throws InvalidFormatException
-     */
-    protected static PackagePart getTargetPart(OPCPackage pkg, PackageRelationship rel) throws InvalidFormatException {
-        PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-        PackagePart part = pkg.getPart(relName);
-        if (part == null) {
-            throw new IllegalArgumentException("No part found for relationship " + rel);
-        }
-        return part;
-    }
-
-    /**
      * Retrieves all the PackageParts which are defined as
      *  relationships of the base document with the
      *  specified content type.
@@ -124,8 +95,6 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
         }
         return parts;
     }
-
-
 
     /**
      * Checks that the supplied InputStream (which MUST
@@ -153,10 +122,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
 
         // Did it match the ooxml zip signature?
         return (
-            header[0] == POIFSConstants.OOXML_FILE_HEADER[0] &&
-            header[1] == POIFSConstants.OOXML_FILE_HEADER[1] &&
-            header[2] == POIFSConstants.OOXML_FILE_HEADER[2] &&
-            header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
+                header[0] == POIFSConstants.OOXML_FILE_HEADER[0] &&
+                header[1] == POIFSConstants.OOXML_FILE_HEADER[1] &&
+                header[2] == POIFSConstants.OOXML_FILE_HEADER[2] &&
+                header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
         );
     }
 
@@ -181,14 +150,14 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
 
     protected final void load(POIXMLFactory factory) throws IOException {
-    	Map<PackagePart, POIXMLDocumentPart> context = new HashMap<PackagePart, POIXMLDocumentPart>();
+        Map<PackagePart, POIXMLDocumentPart> context = new HashMap<PackagePart, POIXMLDocumentPart>();
         try {
             read(factory, context);
         } catch (OpenXML4JException e){
             throw new POIXMLException(e);
         }
-    	onDocumentRead();
-    	context.clear();
+        onDocumentRead();
+        context.clear();
     }
 
     /**

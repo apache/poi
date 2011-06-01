@@ -35,7 +35,7 @@ import org.apache.poi.util.PackageHelper;
 /**
  * Test recursive read and write of OPC packages
  */
-public final class TestPOIXMLDocument extends TestCase {
+public final class TestPOIXMLDocumentPart extends TestCase {
 
     private static class OPCParser extends POIXMLDocument {
 
@@ -140,16 +140,5 @@ public final class TestPOIXMLDocument extends TestCase {
         assertReadWrite(
                 PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"))
                 );
-    }
-
-    public void testRelationOrder() throws Exception {
-        OPCPackage pkg = PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"));
-        OPCParser doc = new OPCParser(pkg);
-        doc.parse(new TestFactory());
-
-        for(POIXMLDocumentPart rel : doc.getRelations()){
-            System.out.println(rel);
-        }
-
     }
 }

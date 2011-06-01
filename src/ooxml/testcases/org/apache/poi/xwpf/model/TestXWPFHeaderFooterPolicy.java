@@ -17,6 +17,8 @@
 
 package org.apache.poi.xwpf.model;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -33,9 +35,9 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
 	private XWPFDocument oddEven;
 	private XWPFDocument diffFirst;
 
-	protected void setUp() {
+	protected void setUp() throws IOException {
 
-		noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
+	    noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
 		header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
 		headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
 		footer = XWPFTestDataSamples.openSampleDocument("FancyFoot.docx");

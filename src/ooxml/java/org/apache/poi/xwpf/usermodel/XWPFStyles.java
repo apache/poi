@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.String;
 
 import javax.xml.namespace.QName;
 
@@ -49,11 +48,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
  *
  */
 public class XWPFStyles extends POIXMLDocumentPart{
-	private CTStyles ctStyles;
-	protected XWPFLatentStyles latentStyles;
-	protected List<XWPFStyle> listStyle;
-	
-	/**
+    
+    private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
+    private CTStyles ctStyles;
+    XWPFLatentStyles latentStyles;
+
+    /**
      * Construct XWPFStyles from a package part
      *
      * @param part the package part holding the data of the styles,
@@ -62,14 +62,12 @@ public class XWPFStyles extends POIXMLDocumentPart{
 
 	public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException{
 		super(part, rel);
-		onDocumentRead();
 	}
 
 	/**
 	 * Construct XWPFStyles from scratch for a new document.
 	 */
 	public XWPFStyles() {
-		listStyle = new ArrayList<XWPFStyle>();
 	}
 
 	/**
@@ -77,7 +75,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	 */
 	 @Override
 	protected void onDocumentRead ()throws IOException{
-		listStyle = new ArrayList<XWPFStyle>();
 		StylesDocument stylesDoc;
 		try {
 			InputStream is = getPackagePart().getInputStream();
@@ -98,7 +95,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	    protected void commit() throws IOException {
 	        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
 	        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
-	        Map map = new HashMap();
+	        Map<String,String> map = new HashMap<String,String>();
 	        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
 	        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
 	        xmlOptions.setSaveSuggestedPrefixes(map);

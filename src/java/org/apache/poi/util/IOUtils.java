@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public final class IOUtils {
 	private IOUtils() {
@@ -129,4 +131,10 @@ public final class IOUtils {
 			}
 		}
 	}
+
+    public static long calculateChecksum(byte[] data) {
+        Checksum sum = new CRC32();
+        sum.update(data, 0, data.length);
+        return sum.getValue();
+    }
 }
