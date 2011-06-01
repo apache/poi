@@ -34,10 +34,11 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51265 - Enhanced Handling of Picture Parts in XWPF</action>
            <action dev="poi-developers" type="add">51292 - Additional HWPF Table Cell Descriptor values</action>
         </release>
-        <release version="3.8-beta3" date="2011-??-??">
-           <action dev="poi-developers" type="fix">51098 - Correct calculate image width/height, if image fits into one cell</action>
+        <release version="3.8-beta3" date="2011-06-06">
+           <action dev="poi-developers" type="fix">51098 - Correctly calculate image width/height, if image fits into one cell</action>
            <action dev="poi-developers" type="fix">47147 - Correct extra paragraphs from XWPF Table Cells</action>
            <action dev="poi-developers" type="add">51188 - Support for getting and setting XPWF zoom settings</action>
            <action dev="poi-developers" type="add">51134 - Support for adding Numbering and Styles to a XWPF document that doesn't already have them</action>

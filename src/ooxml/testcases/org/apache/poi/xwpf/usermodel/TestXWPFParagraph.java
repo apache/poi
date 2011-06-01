@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -49,8 +50,9 @@ public final class TestXWPFParagraph extends TestCase {
 
     /**
      * Check that we get the right paragraph from the header
+     * @throws IOException 
      */
-    public void disabled_testHeaderParagraph() {
+    public void disabled_testHeaderParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
 
         XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
@@ -67,8 +69,9 @@ public final class TestXWPFParagraph extends TestCase {
 
     /**
      * Check that we get the right paragraphs from the document
+     * @throws IOException 
      */
-    public void disabled_testDocumentParagraph() {
+    public void disabled_testDocumentParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
         List<XWPFParagraph> ps = xml.getParagraphs();
         assertEquals(10, ps.size());
@@ -231,7 +234,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(STOnOff.TRUE, ppr.getPageBreakBefore().getVal());
     }
 
-    public void testBookmarks() {
+    public void testBookmarks() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bookmarks.docx");
         XWPFParagraph paragraph = doc.getParagraphs().get(0);
         assertEquals("Sample Word Document", paragraph.getText());

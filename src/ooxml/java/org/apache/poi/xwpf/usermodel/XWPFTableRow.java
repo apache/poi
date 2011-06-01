@@ -52,7 +52,7 @@ public class XWPFTableRow {
      * @return the newly created XWPFTableCell
      */
     public XWPFTableCell createCell() {
-        XWPFTableCell tableCell = new XWPFTableCell(ctRow.addNewTc(), this, table.getPart());
+        XWPFTableCell tableCell = new XWPFTableCell(ctRow.addNewTc(), this, table.getBody());
         tableCells.add(tableCell);
         return tableCell;
     }
@@ -69,7 +69,7 @@ public class XWPFTableRow {
      */
     public XWPFTableCell addNewTableCell(){
     	CTTc cell = ctRow.addNewTc();
-    	XWPFTableCell tableCell = new XWPFTableCell(cell, this, table.getPart());
+    	XWPFTableCell tableCell = new XWPFTableCell(cell, this, table.getBody());
     	tableCells.add(tableCell);
     	return tableCell;
     }
@@ -123,7 +123,7 @@ public class XWPFTableRow {
     	if(tableCells == null){
     		List<XWPFTableCell> cells = new ArrayList<XWPFTableCell>();
     		for (CTTc tableCell : ctRow.getTcList()) {
-    			cells.add(new XWPFTableCell(tableCell, this, table.getPart()));
+    			cells.add(new XWPFTableCell(tableCell, this, table.getBody()));
     		}
     		this.tableCells = cells;
     	}

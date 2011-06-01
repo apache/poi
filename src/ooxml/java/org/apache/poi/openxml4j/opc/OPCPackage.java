@@ -31,7 +31,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -551,6 +554,25 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			retArr.add(getPart(rel));
 		}
 		return retArr;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<PackagePart> getPartsByName(final Pattern namePattern) {
+	    if (namePattern == null) {
+	        throw new IllegalArgumentException("name pattern must not be null");
+	    }
+	    ArrayList<PackagePart> result = new ArrayList<PackagePart>();
+	    for (PackagePart part : partList.values()) {
+	        PackagePartName partName = part.getPartName();
+	        String name = partName.getName();
+	        Matcher matcher = namePattern.matcher(name);
+	        if (matcher.matches()) {
+	            result.add(part);
+	        }
+	    }
+	    return result;
 	}
 
 	/**

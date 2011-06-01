@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
@@ -29,23 +31,21 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  */
 public class XWPFTestDataSamples {
 
-    public static XWPFDocument openSampleDocument(String sampleName) {
+    public static XWPFDocument openSampleDocument(String sampleName) throws IOException {
         InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleName);
-        try {
-            return new XWPFDocument(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new XWPFDocument(is);
     }
 
-    public static XWPFDocument writeOutAndReadBack(XWPFDocument doc) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            doc.write(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            return new XWPFDocument(bais);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static XWPFDocument writeOutAndReadBack(XWPFDocument doc) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+        doc.write(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        return new XWPFDocument(bais);
+    }
+
+    public static byte[] getImage(String filename) throws IOException {
+        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(filename);
+        byte[] result = IOUtils.toByteArray(is);
+        return result;
     }
 }

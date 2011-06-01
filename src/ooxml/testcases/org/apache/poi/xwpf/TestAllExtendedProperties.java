@@ -17,6 +17,8 @@
 
 package org.apache.poi.xwpf;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
@@ -41,7 +43,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
  * 
  */
 public final class TestAllExtendedProperties extends TestCase {
-	public void testGetAllExtendedProperties() {
+	public void testGetAllExtendedProperties() throws IOException {
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx");
 		CTProperties ctProps = doc.getProperties().getExtendedProperties().getUnderlyingProperties();
 		assertEquals("Microsoft Office Word",ctProps.getApplication());

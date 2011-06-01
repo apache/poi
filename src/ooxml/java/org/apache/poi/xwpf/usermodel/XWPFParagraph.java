@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -50,17 +51,16 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
-
 /**
  * Sketch of XWPF paragraph class
  */
-public class XWPFParagraph implements IBodyElement{
+public class XWPFParagraph implements IBodyElement {
     private final CTP paragraph;
     protected IBody part;
     /** For access to the document's hyperlink, comments, tables etc */
     protected XWPFDocument document;
     protected List<XWPFRun> runs;
-    
+
     private StringBuffer footnoteText = new StringBuffer();
 
     public XWPFParagraph(CTP prgrph, IBody part) {
@@ -260,9 +260,9 @@ public class XWPFParagraph implements IBodyElement{
      * @return a new text run
      */
     public XWPFRun createRun() {
-       XWPFRun run = new XWPFRun(paragraph.addNewR(), this);
-       runs.add(run);
-       return run;
+        XWPFRun xwpfRun = new XWPFRun(paragraph.addNewR(), this);
+        runs.add(xwpfRun);
+        return xwpfRun;
     }
 
     /**
@@ -1233,53 +1233,65 @@ public class XWPFParagraph implements IBodyElement{
     	 return false;
     }
 
-	/**
-	 * returns the type of the BodyElement Paragraph
-	 * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
-	 */
-	public BodyElementType getElementType() {
-		return BodyElementType.PARAGRAPH;
-	}
+    /**
+     * returns the type of the BodyElement Paragraph
+     * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
+     */
+    public BodyElementType getElementType() {
+        return BodyElementType.PARAGRAPH;
+    }
 
-	/**
-	 * returns the part of the bodyElement
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
-	 */
-	public IBody getPart() {
-		if(part != null){
-			return part.getPart();
-		}
-		return null;
-	}
+    @Override
+    public IBody getBody()
+    {
+        return part;
+    }
 
-	/**
-	 * returns the partType of the bodyPart which owns the bodyElement
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
-	 */
-	public BodyType getPartType() {
-		return part.getPartType();
-	}
-	
-	/**
-	 * adds a new Run to the Paragraph
-	 */
-	public void addRun(XWPFRun r){
-		runs.add(r);
-	}
-	
-	/**
-	 * return the XWPFRun-Element which owns the CTR run-Element
-	 */
-	public XWPFRun getRun(CTR r){
-		for(int i=0; i < getRuns().size(); i++){
-			if(getRuns().get(i).getCTR() == r) return getRuns().get(i); 
-		}
-		return null;
-	}
-	
+    /**
+     * returns the part of the bodyElement
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     */
+    public POIXMLDocumentPart getPart() {
+        if(part != null){
+            return part.getPart();
+        }
+        return null;
+    }
 
+    /**
+     * returns the partType of the bodyPart which owns the bodyElement
+     * 
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     */
+    public BodyType getPartType() {
+        return part.getPartType();
+    }
+
+    /**
+     * adds a new Run to the Paragraph
+     * 
+     * @param r
+     * @return
+     */
+    public void addRun(XWPFRun r) {
+        if (!runs.contains(r)) {
+            runs.add(r);
+        }
+    }
+
+    /**
+     * return the XWPFRun-Element which owns the CTR run-Element
+     * 
+     * @param r
+     * @return
+     */
+    public XWPFRun getRun(CTR r) {
+        for (int i = 0; i < getRuns().size(); i++) {
+            if (getRuns().get(i).getCTR() == r) {
+                return getRuns().get(i);
+            }
+        }
+        return null;
+    }
 
 }//end class
-
-
-

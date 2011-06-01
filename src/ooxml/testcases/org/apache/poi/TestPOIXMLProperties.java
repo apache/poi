@@ -17,16 +17,21 @@
 
 package org.apache.poi;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.openxml4j.util.Nullable;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -35,7 +40,7 @@ public final class TestPOIXMLProperties extends TestCase {
 	private POIXMLProperties _props;
 	private CoreProperties _coreProperties;
 
-	public void setUp() {
+	public void setUp() throws IOException {
 		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
 		_props = sampleDoc.getProperties();
 		_coreProperties = _props.getCoreProperties();
@@ -152,7 +157,7 @@ public final class TestPOIXMLProperties extends TestCase {
 		assertEquals("Hello World", title);
 	}
 
-    public void testTransitiveSetters() {
+    public void testTransitiveSetters() throws IOException {
 		XWPFDocument doc = new XWPFDocument();
         CoreProperties cp = doc.getProperties().getCoreProperties();
 

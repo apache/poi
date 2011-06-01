@@ -25,28 +25,25 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
  * @author Philipp Epp
  */
 public class XWPFPicture {
-	protected XWPFParagraph paragraph;
-	private CTPicture ctPic;
-    private String description;
 
-    public XWPFParagraph getParagraph(){
-		 return paragraph;
-	 }
-	 
-	 public XWPFPicture(CTPicture ctPic, XWPFParagraph paragraph){
-		 this.paragraph = paragraph;
-		 this.ctPic = ctPic;
-         description = ctPic.getNvPicPr().getCNvPr().getDescr();
-     }
-	 
-	 /**
-	  * Link Picture with PictureData
-	  * @param rel
-	  */
-	 public void setPictureReference(PackageRelationship rel){
-		 ctPic.getBlipFill().getBlip().setEmbed(rel.getId());
-	 }
-	 
+    private CTPicture ctPic;
+    private String description;
+    private XWPFRun run;
+
+    public XWPFPicture(CTPicture ctPic, XWPFRun run){
+        this.run = run;
+        this.ctPic = ctPic;
+        description = ctPic.getNvPicPr().getCNvPr().getDescr();
+    }
+
+    /**
+     * Link Picture with PictureData
+     * @param rel
+     */
+    public void setPictureReference(PackageRelationship rel){
+        ctPic.getBlipFill().getBlip().setEmbed(rel.getId());
+    }
+
     /**
      * Return the underlying CTPicture bean that holds all properties for this picture
      *
@@ -55,19 +52,22 @@ public class XWPFPicture {
     public CTPicture getCTPicture(){
         return ctPic;
     }
-    
+
     /**
      * Get the PictureData of the Picture, if present.
      * Note - not all kinds of picture have data
      */
     public XWPFPictureData getPictureData(){
-    	String blipId = ctPic.getBlipFill().getBlip().getEmbed();
-        for(POIXMLDocumentPart part: ((POIXMLDocumentPart) paragraph.getPart()).getRelations()){
-    		  if(part.getPackageRelationship().getId().equals(blipId)){
-    			  return (XWPFPictureData)part;
-    		  }
-    	}
-    	return null;
+        String blipId = ctPic.getBlipFill().getBlip().getEmbed();
+        POIXMLDocumentPart part = run.getParagraph().getPart();
+        if (part != null)
+        {
+            POIXMLDocumentPart relatedPart = part.getRelationById(blipId);
+            if (relatedPart instanceof XWPFPictureData) {
+                return (XWPFPictureData) relatedPart;
+            }
+        }
+        return null;
     }
 
     public String getDescription() {

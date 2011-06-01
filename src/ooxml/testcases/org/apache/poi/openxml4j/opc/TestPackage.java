@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.TreeMap;
-import java.util.Iterator;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -509,4 +509,23 @@ public final class TestPackage extends TestCase {
 		f.setAccessible(true);
 		return (ContentTypeManager)f.get(pkg);
 	}
+
+    public void testGetPartsByName() throws Exception {
+        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+
+        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
+        List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
+        HashMap<String, PackagePart>  selected = new HashMap<String, PackagePart>();
+
+        for(PackagePart p : rs)
+            selected.put(p.getPartName().getName(), p);
+
+        assertEquals(6, selected.size());
+        assertTrue(selected.containsKey("/word/document.xml"));
+        assertTrue(selected.containsKey("/word/fontTable.xml"));
+        assertTrue(selected.containsKey("/word/settings.xml"));
+        assertTrue(selected.containsKey("/word/styles.xml"));
+        assertTrue(selected.containsKey("/word/theme/theme1.xml"));
+        assertTrue(selected.containsKey("/word/webSettings.xml"));
+    }
 }

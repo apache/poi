@@ -17,6 +17,8 @@
 
 package org.apache.poi.xwpf.model;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -32,10 +34,10 @@ public class TestXWPFDecorators extends TestCase {
    private XWPFDocument hyperlink;
    private XWPFDocument comments;
 
-   protected void setUp() {
-      simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
-      hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
-      comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
+   protected void setUp() throws IOException {
+        simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+        comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
    }
 
    public void testHyperlink() {

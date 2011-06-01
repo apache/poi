@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.xwpf.extractor.TestXWPFWordExtractor;
 import org.apache.poi.xwpf.model.TestXWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.TestXWPFDocument;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeader;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeadings;
 import org.apache.poi.xwpf.usermodel.TestXWPFNumbering;

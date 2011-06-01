@@ -19,17 +19,16 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
@@ -46,38 +45,34 @@ public class XWPFFooter extends XWPFHeaderFooter {
         super();
     }
 
-	public XWPFFooter(XWPFDocument doc, CTHdrFtr hdrFtr) throws IOException {
-		super(doc, hdrFtr);
-		bodyElements = new ArrayList<IBodyElement>();
-		paragraphs = new ArrayList<XWPFParagraph>();
-		tables = new ArrayList<XWPFTable>();
-		XmlCursor cursor = headerFooter.newCursor();
+    public XWPFFooter(XWPFDocument doc, CTHdrFtr hdrFtr) throws IOException {
+        super(doc, hdrFtr);
+        XmlCursor cursor = headerFooter.newCursor();
         cursor.selectPath("./*");
         while (cursor.toNextSelection()) {
             XmlObject o = cursor.getObject();
             if (o instanceof CTP) {
-            	XWPFParagraph p = new XWPFParagraph((CTP)o, this);
-            	paragraphs.add(p);
-            	bodyElements.add(p);
+                XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                paragraphs.add(p);
+                bodyElements.add(p);
             }
             if (o instanceof CTTbl) {
-            	XWPFTable t = new XWPFTable((CTTbl)o, this);
-            	tables.add(t);
-            	bodyElements.add(t);
+                XWPFTable t = new XWPFTable((CTTbl)o, this);
+                tables.add(t);
+                bodyElements.add(t);
             }
         }
         cursor.dispose();
-        getAllPictures();
-	}
+    }
 
-	public XWPFFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
-		super(parent, part, rel);
-	}
-	
-	/**
-	 * save and commit footer
-	 */
-	@Override
+    public XWPFFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
+        super(parent, part, rel);
+    }
+
+    /**
+     * save and commit footer
+     */
+    @Override
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "ftr"));
@@ -97,58 +92,44 @@ public class XWPFFooter extends XWPFHeaderFooter {
         super._getHdrFtr().save(out, xmlOptions);
         out.close();
     }
-	
-	  @Override  
-	    protected void onDocumentRead(){
-		  	bodyElements = new ArrayList<IBodyElement>();
-	        paragraphs = new ArrayList<XWPFParagraph>();
-	        tables= new ArrayList<XWPFTable>();
-	        FtrDocument ftrDocument = null;
-			InputStream is;
-			try {
-				is = getPackagePart().getInputStream();
-				ftrDocument = FtrDocument.Factory.parse(is);
-				headerFooter = ftrDocument.getFtr();
-		        // parse the document with cursor and add
-		        // the XmlObject to its lists
-				XmlCursor cursor = headerFooter.newCursor();
-		        cursor.selectPath("./*");
-		        while (cursor.toNextSelection()) {
-		            XmlObject o = cursor.getObject();
-		            if (o instanceof CTP) {
-		            	XWPFParagraph p = new XWPFParagraph((CTP)o, this);
-		            	paragraphs.add(p);
-		            	bodyElements.add(p);
-		            }
-		            if (o instanceof CTTbl) {
-		            	XWPFTable t = new XWPFTable((CTTbl)o, this);
-		            	tables.add(t);
-		            	bodyElements.add(t);
-		            }
-		        }
-                cursor.dispose();
-		        getAllPictures();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (XmlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	  }
-		/**
-		 * returns the Part, to which the body belongs, which you need for adding relationship to other parts
-		 * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
-		 */
-		public IBody getPart() {
-			return this;
-		}
 
-		/**
-		 * get the PartType of the body
-		 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
-		 */
-		public BodyType getPartType() {
-			return BodyType.FOOTER;
-		}
+    @Override  
+    protected void onDocumentRead() throws IOException{
+        super.onDocumentRead();
+        FtrDocument ftrDocument = null;
+        InputStream is;
+        try {
+            is = getPackagePart().getInputStream();
+            ftrDocument = FtrDocument.Factory.parse(is);
+            headerFooter = ftrDocument.getFtr();
+            // parse the document with cursor and add
+            // the XmlObject to its lists
+            XmlCursor cursor = headerFooter.newCursor();
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTP) {
+                    XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                    paragraphs.add(p);
+                    bodyElements.add(p);
+                }
+                if (o instanceof CTTbl) {
+                    XWPFTable t = new XWPFTable((CTTbl)o, this);
+                    tables.add(t);
+                    bodyElements.add(t);
+                }
+            }
+            cursor.dispose();
+        } catch (Exception e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * get the PartType of the body
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     */
+    public BodyType getPartType() {
+        return BodyType.FOOTER;
+    }
 }

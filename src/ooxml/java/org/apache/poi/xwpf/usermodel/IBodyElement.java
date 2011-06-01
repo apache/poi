@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.POIXMLDocumentPart;
 
 /**
  * 9 Jan 2010
@@ -24,7 +25,8 @@ package org.apache.poi.xwpf.usermodel;
  *
  */
 public interface IBodyElement{
-	IBody getPart();
+	IBody getBody();
+    POIXMLDocumentPart getPart();
 	BodyType getPartType();
 	BodyElementType getElementType();
 }
