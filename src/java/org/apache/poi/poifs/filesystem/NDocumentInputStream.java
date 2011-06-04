@@ -61,7 +61,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 	 */
 	public NDocumentInputStream(DocumentEntry document) throws IOException {
 		if (!(document instanceof DocumentNode)) {
-			throw new IOException("Cannot open internal document storage");
+			throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
 		}
 		_current_offset = 0;
 		_current_block_count = 0;
@@ -111,7 +111,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
    @Override
 	public void mark(int ignoredReadlimit) {
 		_marked_offset = _current_offset;
-		_marked_offset_count = _current_block_count;
+		_marked_offset_count = Math.max(0, _current_block_count - 1);
 	}
 
    @Override

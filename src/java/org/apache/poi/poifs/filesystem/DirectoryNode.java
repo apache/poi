@@ -389,7 +389,11 @@ public class DirectoryNode
                                         final InputStream stream)
         throws IOException
     {
-        return createDocument(new POIFSDocument(name, stream));
+        if(_nfilesystem != null) {
+           return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
+        } else {
+           return createDocument(new POIFSDocument(name, stream));
+        }
     }
 
     /**
