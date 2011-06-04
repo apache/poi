@@ -1241,7 +1241,6 @@ public class XWPFParagraph implements IBodyElement {
         return BodyElementType.PARAGRAPH;
     }
 
-    @Override
     public IBody getBody()
     {
         return part;

@@ -289,7 +289,6 @@ public class XWPFTable implements IBodyElement{
 		return BodyElementType.TABLE;
 	}
 
-    @Override
     public IBody getBody()
     {
         return part;
