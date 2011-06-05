@@ -191,232 +191,226 @@ public final class TestDocumentInputStream extends TestCase {
      * test simple read method
      */
     public void testReadSingleByte() throws IOException {
-        DocumentInputStream stream    = new DocumentInputStream(_workbook_o);
-        int                 remaining = _workbook_size;
+       DocumentInputStream[] streams = new DocumentInputStream[] {
+             new DocumentInputStream(_workbook_o),
+             new NDocumentInputStream(_workbook_n)
+       };
+       for(DocumentInputStream stream : streams) {
+          int remaining = _workbook_size;
 
-        for (int j = 0; j < _workbook_size; j++)
-        {
-	    int b = stream.read();
-	    assertTrue("checking sign of " + j, b >= 0);
-            assertEquals("validating byte " + j, _workbook_data[ j ],
-                         ( byte ) b);
-            remaining--;
-            assertEquals("checking remaining after reading byte " + j,
-                         remaining, stream.available());
-        }
-        assertEquals(-1, stream.read());
-        stream.close();
-        try
-        {
-            stream.read();
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
+          // Try and read each byte in turn
+          for (int j = 0; j < _workbook_size; j++) {
+             int b = stream.read();
+             assertTrue("checking sign of " + j, b >= 0);
+             assertEquals("validating byte " + j, _workbook_data[ j ],
+                   ( byte ) b);
+             remaining--;
+             assertEquals("checking remaining after reading byte " + j,
+                   remaining, stream.available());
+          }
+          
+          // Ensure we fell off the end
+          assertEquals(-1, stream.read());
+          
+          // Check that after close we can no longer read
+          stream.close();
+          try {
+             stream.read();
+             fail("Should have caught IOException");
+          } catch (IOException ignored) {
+             // as expected
+          }
+       }
     }
 
     /**
      * Test buffered read
      */
     public void testBufferRead() throws IOException {
-        DocumentInputStream stream = new DocumentInputStream(_workbook_o);
+       DocumentInputStream[] streams = new DocumentInputStream[] {
+             new DocumentInputStream(_workbook_o),
+             new NDocumentInputStream(_workbook_n)
+       };
+       for(DocumentInputStream stream : streams) {
+          // Need to give a byte array to read
+          try {
+             stream.read(null);
+             fail("Should have caught NullPointerException");
+          } catch (NullPointerException ignored) {
+             // as expected
+          }
 
-        try
-        {
-            stream.read(null);
-            fail("Should have caught NullPointerException");
-        }
-        catch (NullPointerException ignored)
-        {
+          // test reading zero length buffer
+          assertEquals(0, stream.read(new byte[ 0 ]));
+          assertEquals(_workbook_size, stream.available());
+          byte[] buffer = new byte[ _buffer_size ];
+          int    offset = 0;
 
-            // as expected
-        }
-
-        // test reading zero length buffer
-        assertEquals(0, stream.read(new byte[ 0 ]));
-        assertEquals(_workbook_size, stream.available());
-        byte[] buffer = new byte[ _buffer_size ];
-        int    offset = 0;
-
-        while (stream.available() >= buffer.length)
-        {
-            assertEquals(_buffer_size, stream.read(buffer));
-            for (int j = 0; j < buffer.length; j++)
-            {
+          while (stream.available() >= buffer.length)
+          {
+             assertEquals(_buffer_size, stream.read(buffer));
+             for (int j = 0; j < buffer.length; j++)
+             {
                 assertEquals("in main loop, byte " + offset,
-                             _workbook_data[ offset ], buffer[ j ]);
+                      _workbook_data[ offset ], buffer[ j ]);
                 offset++;
-            }
-            assertEquals("offset " + offset, _workbook_size - offset,
-                         stream.available());
-        }
-        assertEquals(_workbook_size % _buffer_size, stream.available());
-        Arrays.fill(buffer, ( byte ) 0);
-        int count = stream.read(buffer);
+             }
+             assertEquals("offset " + offset, _workbook_size - offset,
+                   stream.available());
+          }
+          assertEquals(_workbook_size % _buffer_size, stream.available());
+          Arrays.fill(buffer, ( byte ) 0);
+          int count = stream.read(buffer);
 
-        assertEquals(_workbook_size % _buffer_size, count);
-        for (int j = 0; j < count; j++)
-        {
-            assertEquals("past main loop, byte " + offset,
-                         _workbook_data[ offset ], buffer[ j ]);
-            offset++;
-        }
-        assertEquals(_workbook_size, offset);
-        for (int j = count; j < buffer.length; j++)
-        {
-            assertEquals("checking remainder, byte " + j, 0, buffer[ j ]);
-        }
-        assertEquals(-1, stream.read(buffer));
-        stream.close();
-        try
-        {
-            stream.read(buffer);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
+          assertEquals(_workbook_size % _buffer_size, count);
+          for (int j = 0; j < count; j++)
+          {
+             assertEquals("past main loop, byte " + offset,
+                   _workbook_data[ offset ], buffer[ j ]);
+             offset++;
+          }
+          assertEquals(_workbook_size, offset);
+          for (int j = count; j < buffer.length; j++)
+          {
+             assertEquals("checking remainder, byte " + j, 0, buffer[ j ]);
+          }
+          assertEquals(-1, stream.read(buffer));
+          stream.close();
+          try {
+             stream.read(buffer);
+             fail("Should have caught IOException");
+          } catch (IOException ignored) {
+             // as expected
+          }
+       }
     }
 
     /**
      * Test complex buffered read
      */
     public void testComplexBufferRead() throws IOException {
-        DocumentInputStream stream = new DocumentInputStream(_workbook_o);
+       DocumentInputStream[] streams = new DocumentInputStream[] {
+             new DocumentInputStream(_workbook_o),
+             new NDocumentInputStream(_workbook_n)
+       };
+       for(DocumentInputStream stream : streams) {
+          try {
+             stream.read(null, 0, 1);
+             fail("Should have caught NullPointerException");
+          } catch (IllegalArgumentException ignored) {
+             // as expected
+          }
 
-        try {
-            stream.read(null, 0, 1);
-            fail("Should have caught NullPointerException");
-        } catch (IllegalArgumentException ignored) {
-            // as expected
-        }
+          // test illegal offsets and lengths
+          try {
+             stream.read(new byte[ 5 ], -4, 0);
+             fail("Should have caught IndexOutOfBoundsException");
+          } catch (IndexOutOfBoundsException ignored) {
+             // as expected
+          }
+          try {
+             stream.read(new byte[ 5 ], 0, -4);
+             fail("Should have caught IndexOutOfBoundsException");
+          } catch (IndexOutOfBoundsException ignored) {
+             // as expected
+          }
+          try {
+             stream.read(new byte[ 5 ], 0, 6);
+             fail("Should have caught IndexOutOfBoundsException");
+          } catch (IndexOutOfBoundsException ignored) {
+             // as expected
+          }
 
-        // test illegal offsets and lengths
-        try
-        {
-            stream.read(new byte[ 5 ], -4, 0);
-            fail("Should have caught IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ignored)
-        {
+          // test reading zero
+          assertEquals(0, stream.read(new byte[ 5 ], 0, 0));
+          assertEquals(_workbook_size, stream.available());
+          byte[] buffer = new byte[ _workbook_size ];
+          int    offset = 0;
 
-            // as expected
-        }
-        try
-        {
-            stream.read(new byte[ 5 ], 0, -4);
-            fail("Should have caught IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ignored)
-        {
-
-            // as expected
-        }
-        try
-        {
-            stream.read(new byte[ 5 ], 0, 6);
-            fail("Should have caught IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException ignored)
-        {
-
-            // as expected
-        }
-
-        // test reading zero
-        assertEquals(0, stream.read(new byte[ 5 ], 0, 0));
-        assertEquals(_workbook_size, stream.available());
-        byte[] buffer = new byte[ _workbook_size ];
-        int    offset = 0;
-
-        while (stream.available() >= _buffer_size)
-        {
-            Arrays.fill(buffer, ( byte ) 0);
-            assertEquals(_buffer_size,
-                         stream.read(buffer, offset, _buffer_size));
-            for (int j = 0; j < offset; j++)
-            {
+          while (stream.available() >= _buffer_size)
+          {
+             Arrays.fill(buffer, ( byte ) 0);
+             assertEquals(_buffer_size,
+                   stream.read(buffer, offset, _buffer_size));
+             for (int j = 0; j < offset; j++)
+             {
                 assertEquals("checking byte " + j, 0, buffer[ j ]);
-            }
-            for (int j = offset; j < (offset + _buffer_size); j++)
-            {
+             }
+             for (int j = offset; j < (offset + _buffer_size); j++)
+             {
                 assertEquals("checking byte " + j, _workbook_data[ j ],
-                             buffer[ j ]);
-            }
-            for (int j = offset + _buffer_size; j < buffer.length; j++)
-            {
+                      buffer[ j ]);
+             }
+             for (int j = offset + _buffer_size; j < buffer.length; j++)
+             {
                 assertEquals("checking byte " + j, 0, buffer[ j ]);
-            }
-            offset += _buffer_size;
-            assertEquals("offset " + offset, _workbook_size - offset,
-                         stream.available());
-        }
-        assertEquals(_workbook_size % _buffer_size, stream.available());
-        Arrays.fill(buffer, ( byte ) 0);
-        int count = stream.read(buffer, offset,
-                                _workbook_size % _buffer_size);
+             }
+             offset += _buffer_size;
+             assertEquals("offset " + offset, _workbook_size - offset,
+                   stream.available());
+          }
+          assertEquals(_workbook_size % _buffer_size, stream.available());
+          Arrays.fill(buffer, ( byte ) 0);
+          int count = stream.read(buffer, offset,
+                _workbook_size % _buffer_size);
 
-        assertEquals(_workbook_size % _buffer_size, count);
-        for (int j = 0; j < offset; j++)
-        {
-            assertEquals("checking byte " + j, 0, buffer[ j ]);
-        }
-        for (int j = offset; j < buffer.length; j++)
-        {
-            assertEquals("checking byte " + j, _workbook_data[ j ],
-                         buffer[ j ]);
-        }
-        assertEquals(_workbook_size, offset + count);
-        for (int j = count; j < offset; j++)
-        {
-            assertEquals("byte " + j, 0, buffer[ j ]);
-        }
-        assertEquals(-1, stream.read(buffer, 0, 1));
-        stream.close();
-        try
-        {
-            stream.read(buffer, 0, 1);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
+          assertEquals(_workbook_size % _buffer_size, count);
+          for (int j = 0; j < offset; j++)
+          {
+             assertEquals("checking byte " + j, 0, buffer[ j ]);
+          }
+          for (int j = offset; j < buffer.length; j++)
+          {
+             assertEquals("checking byte " + j, _workbook_data[ j ],
+                   buffer[ j ]);
+          }
+          assertEquals(_workbook_size, offset + count);
+          for (int j = count; j < offset; j++)
+          {
+             assertEquals("byte " + j, 0, buffer[ j ]);
+          }
+          
+          assertEquals(-1, stream.read(buffer, 0, 1));
+          stream.close();
+          try {
+             stream.read(buffer, 0, 1);
+             fail("Should have caught IOException");
+          } catch (IOException ignored) {
+             // as expected
+          }
+       }
     }
 
     /**
      * Tests that we can skip within the stream
      */
     public void testSkip() throws IOException {
-        DocumentInputStream stream = new DocumentInputStream(_workbook_o);
+       DocumentInputStream[] streams = new DocumentInputStream[] {
+             new DocumentInputStream(_workbook_o),
+             new NDocumentInputStream(_workbook_n)
+       };
+       for(DocumentInputStream stream : streams) {
+          assertEquals(_workbook_size, stream.available());
+          int count = stream.available();
 
-        assertEquals(_workbook_size, stream.available());
-        int count = stream.available();
-
-        while (stream.available() >= _buffer_size)
-        {
-            assertEquals(_buffer_size, stream.skip(_buffer_size));
-            count -= _buffer_size;
-            assertEquals(count, stream.available());
-        }
-        assertEquals(_workbook_size % _buffer_size,
-                     stream.skip(_buffer_size));
-        assertEquals(0, stream.available());
-        stream.reset();
-        assertEquals(_workbook_size, stream.available());
-        assertEquals(_workbook_size, stream.skip(_workbook_size * 2));
-        assertEquals(0, stream.available());
-        stream.reset();
-        assertEquals(_workbook_size, stream.available());
-        assertEquals(_workbook_size,
-                     stream.skip(2 + ( long ) Integer.MAX_VALUE));
-        assertEquals(0, stream.available());
+          while (stream.available() >= _buffer_size) {
+             assertEquals(_buffer_size, stream.skip(_buffer_size));
+             count -= _buffer_size;
+             assertEquals(count, stream.available());
+          }
+          assertEquals(_workbook_size % _buffer_size,
+                stream.skip(_buffer_size));
+          assertEquals(0, stream.available());
+          stream.reset();
+          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size, stream.skip(_workbook_size * 2));
+          assertEquals(0, stream.available());
+          stream.reset();
+          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size,
+                stream.skip(2 + ( long ) Integer.MAX_VALUE));
+          assertEquals(0, stream.available());
+       }
     }
     
     /**
