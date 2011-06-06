@@ -266,7 +266,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  low level models.  If you're reading in a workbook...start here.
      *
      * @param directory the POI filesystem directory to process from
-     * @param fs the POI filesystem that contains the Workbook stream.
      * @param preserveNodes whether to preseve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem

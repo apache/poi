@@ -48,8 +48,8 @@ public abstract class PropertyTableBase implements BATManaged {
      * to extract the property table from it). Populates the
      * properties thoroughly
      *
-     * @param startBlock the first block of the property table
-     * @param blockList the list of blocks
+     * @param header_block the first block to read from
+     * @param properties the list to populate
      *
      * @exception IOException if anything goes wrong (which should be
      *            a result of the input being NFG)

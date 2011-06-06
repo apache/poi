@@ -180,7 +180,7 @@ public class DirectoryNode
     /**
      * open a document in the directory's entry's list of entries
      *
-     * @param documentEntry the document to be opened
+     * @param document the document to be opened
      *
      * @return a newly opened DocumentInputStream or NDocumentInputStream
      *

@@ -226,7 +226,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * Adds a picture to the document.
      *
-     * @param is                The stream to read image from
+     * @param pictureData       The picture data
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .

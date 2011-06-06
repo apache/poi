@@ -75,7 +75,7 @@ public final class Irr implements Function {
      * </p>
      * <p>
      *   The implementation is inspired by the NewtonSolver from the Apache Commons-Math library,
-     *   @see {http://commons.apache.org/}
+     *   @see <a href="http://commons.apache.org">http://commons.apache.org</a>
      * </p>
      *
      * @param values        the income values.
@@ -83,8 +83,10 @@ public final class Irr implements Function {
      * @return the irr value. The method returns <code>Double.NaN</code>
      *  if the maximum iteration count is exceeded
      *
-     * @see {http://en.wikipedia.org/wiki/Internal_rate_of_return#Numerical_solution}
-     * @see {http://en.wikipedia.org/wiki/Newton%27s_method}
+     * @see <a href="http://en.wikipedia.org/wiki/Internal_rate_of_return#Numerical_solution">
+     *     http://en.wikipedia.org/wiki/Internal_rate_of_return#Numerical_solution</a>
+     * @see <a href="http://en.wikipedia.org/wiki/Newton%27s_method">
+     *     http://en.wikipedia.org/wiki/Newton%27s_method</a>
      */
     public static double irr(double[] values, double guess) {
         int maxIterationCount = 20;

@@ -1270,7 +1270,6 @@ public class XWPFParagraph implements IBodyElement {
      * adds a new Run to the Paragraph
      * 
      * @param r
-     * @return
      */
     public void addRun(XWPFRun r) {
         if (!runs.contains(r)) {
@@ -1282,7 +1281,6 @@ public class XWPFParagraph implements IBodyElement {
      * return the XWPFRun-Element which owns the CTR run-Element
      * 
      * @param r
-     * @return
      */
     public XWPFRun getRun(CTR r) {
         for (int i = 0; i < getRuns().size(); i++) {
