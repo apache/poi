@@ -152,7 +152,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    *  in a POIFSFileSystem, probably not the default.
    * Used typically to open embeded documents.
    *
-   * @param pfilesystem The POIFSFileSystem that contains the Word document.
+   * @param directory The DirectoryNode that contains the Word document.
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */

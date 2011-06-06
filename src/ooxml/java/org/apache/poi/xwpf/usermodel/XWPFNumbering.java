@@ -166,7 +166,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	
 	/**
 	 * Add a new num with an abstractNumID and a numID
-	 * @param abstractNumId
+	 * @param abstractNumID
 	 * @param numID
 	 */
 	public void addNum(BigInteger abstractNumID, BigInteger numID){

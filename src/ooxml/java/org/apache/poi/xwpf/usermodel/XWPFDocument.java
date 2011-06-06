@@ -495,7 +495,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * add a new paragraph at position of the cursor. The cursor must be on the
+     * Add a new paragraph at position of the cursor. The cursor must be on the
      * {@link TokenType#START} tag of an subelement of the documents body. When
      * this method is done, the cursor passed as parameter points to the
      * {@link TokenType#END} of the newly inserted paragraph.

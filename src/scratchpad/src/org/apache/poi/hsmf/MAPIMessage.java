@@ -118,7 +118,6 @@ public class MAPIMessage extends POIDocument {
     * Constructor for reading MSG Files from a certain
     *  point within a POIFS filesystem
     * @param poifsDir
-    * @param fs
     * @throws IOException
     */
    public MAPIMessage(DirectoryNode poifsDir) throws IOException {

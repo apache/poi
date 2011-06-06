@@ -87,7 +87,6 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * <pre>
      *    &lt;w:zoom w:percent="50" /&gt; 
      * <pre>
-     * @return percentage as an integer of zoom level
      */
     public void setZoomPercent(long zoomPercent) {
        if (! ctSettings.isSetZoom()) {

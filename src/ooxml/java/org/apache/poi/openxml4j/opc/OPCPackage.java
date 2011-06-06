@@ -556,9 +556,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		return retArr;
 	}
 
-	/**
-	 * @return
-	 */
 	public List<PackagePart> getPartsByName(final Pattern namePattern) {
 	    if (namePattern == null) {
 	        throw new IllegalArgumentException("name pattern must not be null");
