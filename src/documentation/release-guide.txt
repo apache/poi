@@ -102,24 +102,20 @@ cd build/dist
 
    8. Upload to the dev svn dist repo, 
       https://dist.apache.org/repos/dist/dev/poi/ eg
-      https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/
+      https://dist.apache.org/repos/dist/dev/poi/3.8-RC3/
 
 How to upload:
 
-8a  svn co https://dist.apache.org/repos/dist/dev/poi
-8b  add .gz and .zip  packages along with checksums. 
+svn co https://dist.apache.org/repos/dist/dev/poi
+mkdir 3.8-RC3/
+svn add 3.8-RC3
 
-you should have a similar structure of files:
-$ ls
-README.html                             poi-bin-3.8-beta3-20110606.zip         poi-src-3.8-beta3-20110606.tar.gz.md5
-maven                                   poi-bin-3.8-beta3-20110606.zip.asc     poi-src-3.8-beta3-20110606.tar.gz.sha1
-poi-bin-3.8-beta3-20110606.tar.gz       poi-bin-3.8-beta3-20110606.zip.md5     poi-src-3.8-beta3-20110606.zip
-poi-bin-3.8-beta3-20110606.tar.gz.asc   poi-bin-3.8-beta3-20110606.zip.sha1    poi-src-3.8-beta3-20110606.zip.asc
-poi-bin-3.8-beta3-20110606.tar.gz.md5   poi-src-3.8-beta3-20110606.tar.gz      poi-src-3.8-beta3-20110606.zip.md5
-poi-bin-3.8-beta3-20110606.tar.gz.sha1  poi-src-3.8-beta3-20110606.tar.gz.asc  poi-src-3.8-beta3-20110606.zip.sha1
+then add .gz and .zip  packages along with checksums. 
+
+ binaries should be in ./bin, sources in ./src sub-directories
 
 8c. commit
-After commit the files should be acessible at https://dist.apache.org/repos/dist/dev/poi/
+After commit the files should be acessible at https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/
 
 
  (III) After the vote:

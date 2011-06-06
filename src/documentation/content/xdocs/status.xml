@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51305 - Add sprmTCellPaddingDefault support in HWPF</action>
            <action dev="poi-developers" type="add">51265 - Enhanced Handling of Picture Parts in XWPF</action>
            <action dev="poi-developers" type="add">51292 - Additional HWPF Table Cell Descriptor values</action>
         </release>

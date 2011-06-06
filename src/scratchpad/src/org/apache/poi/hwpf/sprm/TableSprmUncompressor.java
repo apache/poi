@@ -17,10 +17,9 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
-
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
+import org.apache.poi.hwpf.usermodel.TableProperties;
 import org.apache.poi.util.LittleEndian;
 
 public final class TableSprmUncompressor
@@ -251,6 +250,37 @@ public final class TableSprmUncompressor
       case 0x2a:
       case 0x2b:
       case 0x2c:
+        break;
+      case 0x34:
+        // sprmTCellPaddingDefault -- (0xd634)
+        // TODO: extract into CSSA structure
+        byte itcFirst = sprm.getGrpprl()[sprm.getGrpprlOffset()];
+        byte itcLim = sprm.getGrpprl()[sprm.getGrpprlOffset() + 1];
+        byte grfbrc = sprm.getGrpprl()[sprm.getGrpprlOffset() + 2];
+        byte ftsWidth = sprm.getGrpprl()[sprm.getGrpprlOffset() + 3];
+        short wWidth = LittleEndian.getShort(sprm.getGrpprl(),
+            sprm.getGrpprlOffset() + 4);
+
+        for (int c = itcFirst; c < itcLim; c++) {
+          TableCellDescriptor tableCellDescriptor = newTAP.getRgtc()[c];
+
+          if ((grfbrc & 0x01) != 0) {
+            tableCellDescriptor.setFtsCellPaddingTop(ftsWidth);
+            tableCellDescriptor.setWCellPaddingTop(wWidth);
+          }
+          if ((grfbrc & 0x02) != 0) {
+            tableCellDescriptor.setFtsCellPaddingLeft(ftsWidth);
+            tableCellDescriptor.setWCellPaddingLeft(wWidth);
+          }
+          if ((grfbrc & 0x04) != 0) {
+            tableCellDescriptor.setFtsCellPaddingBottom(ftsWidth);
+            tableCellDescriptor.setWCellPaddingBottom(wWidth);
+          }
+          if ((grfbrc & 0x08) != 0) {
+            tableCellDescriptor.setFtsCellPaddingRight(ftsWidth);
+            tableCellDescriptor.setWCellPaddingRight(wWidth);
+          }
+        }
         break;
       default:
         break;
