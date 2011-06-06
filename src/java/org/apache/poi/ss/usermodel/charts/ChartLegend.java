@@ -22,7 +22,7 @@ package org.apache.poi.ss.usermodel.charts;
  *
  * @author Roman Kashitsyn
  */
-public interface ChartLegend {
+public interface ChartLegend extends ManuallyPositionable {
 	
 	/**
 	 * @return legend position
@@ -33,5 +33,4 @@ public interface ChartLegend {
 	 * @param position new legend position
 	 */
 	void setPosition(LegendPosition position);
-
 }

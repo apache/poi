@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.DataMarker;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
 
@@ -39,9 +40,9 @@ public final class TestXSSFScatterChartData  extends TestCase {
 		ScatterChartData scatterChartData =
 				XSSFChartDataFactory.getInstance().createScatterChartData();
 
-		ScatterChartSerie serie = scatterChartData.addSerie();
-		serie.setXValues(sheet, new CellRangeAddress(0,0,1,10));
-		serie.setYValues(sheet, new CellRangeAddress(1,1,1,10));
+		DataMarker xMarker = new DataMarker(sheet, new CellRangeAddress(0,0,1,10));
+		DataMarker yMarker = new DataMarker(sheet, new CellRangeAddress(1,1,1,10));
+		ScatterChartSerie serie = scatterChartData.addSerie(xMarker, yMarker);
 
 		assertEquals(scatterChartData.getSeries().size(), 1);
 

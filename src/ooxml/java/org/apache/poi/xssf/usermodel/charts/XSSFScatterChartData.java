@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.DataMarker;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
 import org.apache.poi.ss.usermodel.charts.ScatterChartSerie;
 import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
@@ -66,10 +66,8 @@ public class XSSFScatterChartData implements ScatterChartData {
 		private int id;
 		private int order;
 		private boolean useCache;
-		private Sheet xSheet;
-		private Sheet ySheet;
-		private CellRangeAddress xAddress;
-		private CellRangeAddress yAddress;
+		private DataMarker xMarker;
+		private DataMarker yMarker;
 
 		public Serie(int id, int order) {
 			super();
@@ -78,14 +76,12 @@ public class XSSFScatterChartData implements ScatterChartData {
 			this.useCache = false;
 		}
 
-		public void setXValues(Sheet sheet, CellRangeAddress address) {
-			this.xSheet = sheet;
-			this.xAddress = address;
+		public void setXValues(DataMarker marker) {
+			xMarker = marker;
 		}
 
-		public void setYValues(Sheet sheet, CellRangeAddress address) {
-			this.ySheet = sheet;
-			this.yAddress = address;
+		public void setYValues(DataMarker marker) {
+			yMarker = marker;
 		}
 
 		/**
@@ -102,17 +98,19 @@ public class XSSFScatterChartData implements ScatterChartData {
 
 			CTAxDataSource xVal = scatterSer.addNewXVal();
 			CTNumRef numRef = xVal.addNewNumRef();
-			numRef.setF(xAddress.formatAsString(xSheet.getSheetName(), true));
+			numRef.setF(xMarker.formatAsString());
 
 			CTNumDataSource yVal = scatterSer.addNewYVal();
 			numRef = yVal.addNewNumRef();
-			numRef.setF(yAddress.formatAsString(ySheet.getSheetName(), true));
+			numRef.setF(yMarker.formatAsString());
 		}
 	}
 
-	public XSSFScatterChartData.Serie addSerie() {
+	public XSSFScatterChartData.Serie addSerie(DataMarker xMarker, DataMarker yMarker) {
 		int numOfSeries = series.size();
 		Serie newSerie = new Serie(numOfSeries, numOfSeries);
+		newSerie.setXValues(xMarker);
+		newSerie.setYValues(yMarker);
 		series.add(newSerie);
 		return newSerie;
 	}

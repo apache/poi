@@ -48,6 +48,11 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		createAxis(id, pos);
 	}
 
+	public XSSFValueAxis(XSSFChart chart, CTValAx ctValAx) {
+		super(chart);
+		this.ctValAx = ctValAx;
+	}
+
 	public long getId() {
 		return ctValAx.getAxId().getVal();
 	}
