@@ -17,7 +17,7 @@
    limitations under the License.
    ====================================================================
 -->
-<record fromfile="true" id="0x101B" name="TC" package="org.apache.poi.hwpf.model.types">
+<record fromfile="false" id="0x101B" name="TC" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Table Cell Descriptor.</description>
@@ -37,7 +37,23 @@
         <bit number="10" mask="0x2000" name="fNoWrap"/>
         <bit number="11" mask="0xC000" name="fUnused"/>
       </field>
-      <field type="short" size="2" name="unused"/>
+      <field type="short" size="2" name="wWidth"/>
+      <field type="short" size="2" name="wCellPaddingLeft"/>
+      <field type="short" size="2" name="wCellPaddingTop"/>
+      <field type="short" size="2" name="wCellPaddingBottom"/>
+      <field type="short" size="2" name="wCellPaddingRight"/>
+      <field type="byte" size="1" name="ftsCellPaddingLeft"/>
+      <field type="byte" size="1" name="ftsCellPaddingTop"/>
+      <field type="byte" size="1" name="ftsCellPaddingBottom"/>
+      <field type="byte" size="1" name="ftsCellPaddingRight"/>
+      <field type="short" size="2" name="wCellSpacingLeft"/>
+      <field type="short" size="2" name="wCellSpacingTop"/>
+      <field type="short" size="2" name="wCellSpacingBottom"/>
+      <field type="short" size="2" name="wCellSpacingRight"/>
+      <field type="byte" size="1" name="ftsCellSpacingLeft"/>
+      <field type="byte" size="1" name="ftsCellSpacingTop"/>
+      <field type="byte" size="1" name="ftsCellSpacingBottom"/>
+      <field type="byte" size="1" name="ftsCellSpacingRight"/>
       <field type="BorderCode" size="4" name="brcTop"/>
       <field type="BorderCode" size="4" name="brcLeft"/>
       <field type="BorderCode" size="4" name="brcBottom"/>
