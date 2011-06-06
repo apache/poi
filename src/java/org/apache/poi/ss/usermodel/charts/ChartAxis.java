@@ -101,7 +101,7 @@ public interface ChartAxis {
 	AxisOrientation getOrientation();
 
 	/**
-	 * @param axis orientation
+	 * @param orientation axis orientation
 	 */
 	void setOrientation(AxisOrientation orientation);
 

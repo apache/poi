@@ -75,6 +75,13 @@ public final class XSSFChartLegend implements ChartLegend {
 		}
 	}
 
+	public XSSFManualLayout getManualLayout() {
+		if (!legend.isSetLayout()) {
+			legend.addNewLayout();
+		}
+		return new XSSFManualLayout(legend.getLayout());
+	}
+
 	private STLegendPos.Enum fromLegendPosition(LegendPosition position) {
 		switch (position) {
 			case BOTTOM: return STLegendPos.B;

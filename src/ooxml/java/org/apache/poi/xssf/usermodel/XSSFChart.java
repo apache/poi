@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.ss.usermodel.charts.ChartData;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
@@ -49,6 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayout;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTManualLayout;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
@@ -90,7 +92,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	/**
-	 * Construct a SpreadsheetML chart from a package part
+	 * Construct a SpreadsheetML chart from a package part.
 	 *
 	 * @param part the package part holding the chart data,
 	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
@@ -105,7 +107,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	/**
-	 * Construct a new CTChartSpace bean. By default, it's just an empty placeholder for chart objects
+	 * Construct a new CTChartSpace bean.
+	 * By default, it's just an empty placeholder for chart objects.
 	 *
 	 * @return a new CTChartSpace bean
 	 */
@@ -113,16 +116,10 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		chartSpace = CTChartSpace.Factory.newInstance();
 		chart = chartSpace.addNewChart();
 		CTPlotArea plotArea = chart.addNewPlotArea();
-		CTLayout layout = plotArea.addNewLayout();
-		CTManualLayout manualLayout = layout.addNewManualLayout();
-		manualLayout.addNewLayoutTarget().setVal(STLayoutTarget.INNER);
-		manualLayout.addNewXMode().setVal(STLayoutMode.EDGE);
-		manualLayout.addNewYMode().setVal(STLayoutMode.EDGE);
-		manualLayout.addNewX().setVal(0);
-		manualLayout.addNewY().setVal(0);
-		manualLayout.addNewW().setVal(0.65);
-		manualLayout.addNewH().setVal(0.8);
+
+		plotArea.addNewLayout();
 		chart.addNewPlotVisOnly().setVal(true);
+
 		CTPrintSettings printSettings = chartSpace.addNewPrintSettings();
 		printSettings.addNewHeaderFooter();
 
@@ -220,39 +217,14 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	public List<? extends XSSFChartAxis> getAxis() {
+		if (axis.isEmpty() && hasAxis()) {
+			parseAxis();
+		}
 		return axis;
 	}
 
-	/**
-	 * Sets the width ratio of the chart.
-	 * Chart width is ratio multiplied by parent frame width.
-	 * @param ratio a number between 0 and 1.
-	 */
-	public void setWidthRatio(double ratio) {
-		chart.getPlotArea().getLayout().getManualLayout().getW().setVal(ratio);
-	}
-
-	/**
-	 * @return relative chart width
-	 */
-	public double getWidthRatio() {
-		return chart.getPlotArea().getLayout().getManualLayout().getW().getVal();
-	}
-
-	/**
-	 * Sets the height ratio of the chart.
-	 * Chart height is ratio multiplied by parent frame height.
-	 * @param ratio a number between 0 and 1.
-	 */
-	public void setHeightRatio(double ratio) {
-		chart.getPlotArea().getLayout().getManualLayout().getH().setVal(ratio);
-	}
-
-	/**
-	 * @return relative chart height
-	 */
-	public double getHeightRatio() {
-		return chart.getPlotArea().getLayout().getManualLayout().getH().getVal();
+	public XSSFManualLayout getManualLayout() {
+		return new XSSFManualLayout(this);
 	}
 
 	/**
@@ -304,6 +276,27 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	public void deleteLegend() {
 		if (chart.isSetLegend()) {
 			chart.unsetLegend();
+		}
+	}
+
+	private boolean hasAxis() {
+		CTPlotArea ctPlotArea = chart.getPlotArea();
+		int totalAxisCount =
+			ctPlotArea.sizeOfValAxArray()  +
+			ctPlotArea.sizeOfCatAxArray()  +
+			ctPlotArea.sizeOfDateAxArray() +
+			ctPlotArea.sizeOfSerAxArray();
+		return totalAxisCount > 0;
+	}
+
+	private void parseAxis() {
+		// TODO: add other axis types
+		parseValueAxis();
+	}
+
+	private void parseValueAxis() {
+		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+			axis.add(new XSSFValueAxis(this, valAx));
 		}
 	}
 

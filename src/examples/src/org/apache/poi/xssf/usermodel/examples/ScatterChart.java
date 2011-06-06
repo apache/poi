@@ -64,13 +64,13 @@ public class ScatterChart {
 		ValueAxis bottomAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
 		ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
 
-		ScatterChartSerie firstSerie = data.addSerie();
-		firstSerie.setXValues(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
-		firstSerie.setYValues(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
+		DataMarker xMarker = new DataMarker(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
+		DataMarker y1Marker = new DataMarker(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
+		DataMarker y2Marker = new DataMarker(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
-		ScatterChartSerie secondSerie = data.addSerie();
-		secondSerie.setXValues(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
-		secondSerie.setYValues(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
+		
+		data.addSerie(xMarker, y1Marker);
+		data.addSerie(xMarker, y2Marker);
 
 		chart.plot(data, bottomAxis, leftAxis);
 

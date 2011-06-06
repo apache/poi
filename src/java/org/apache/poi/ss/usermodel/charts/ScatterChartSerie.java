@@ -18,7 +18,7 @@
 package org.apache.poi.ss.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.DataMarker;
 import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
 
 /**
@@ -27,15 +27,13 @@ import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
 public interface ScatterChartSerie {
 
 	/**
-	 * @param sheet a sheet to take range from
-	 * @param address a column or a row with values
+	 * @param xMarker data marker to use for X values.
 	 */
-	void setXValues(Sheet sheet, CellRangeAddress address);
-	
+	void setXValues(DataMarker xMarker);
+
 	/**'
-	 * @param sheet a sheet to take range from
-	 * @param address a column or a row with values
+	 * @param yMarker data marker to use for Y values.
 	 */
-	void setYValues(Sheet sheet, CellRangeAddress address);
+	void setYValues(DataMarker yMarker);
 
 }
