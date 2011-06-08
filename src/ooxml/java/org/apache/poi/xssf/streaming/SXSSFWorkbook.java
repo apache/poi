@@ -50,10 +50,55 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 */
 public class SXSSFWorkbook implements Workbook
 {
+    /**
+     * Specifies how many rows can be accessed at most via getRow().
+     * When a new node is created via createRow() and the total number
+     * of unflushed records would exeed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via getRow() anymore.
+     */
+    public static final int DEFAULT_WINDOW_SIZE = 100;
+
     XSSFWorkbook _wb=new XSSFWorkbook();
 
     HashMap<SXSSFSheet,XSSFSheet> _sxFromXHash=new HashMap<SXSSFSheet,XSSFSheet>();
     HashMap<XSSFSheet,SXSSFSheet> _xFromSxHash=new HashMap<XSSFSheet,SXSSFSheet>();
+
+    int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
+
+    /**
+     * Construct a new workbook
+     */
+    public SXSSFWorkbook(){
+
+    }
+
+    /**
+     * Construct an empty workbook and specify the window for row access.
+     * <p>
+     * When a new node is created via createRow() and the total number
+     * of unflushed records would exeed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via getRow() anymore.
+     * </p>
+     * <p>
+     * A value of -1 indicates unlimited access. In this case all
+     * records that have not been flushed by a call to flush() are available
+     * for random access.
+     * <p>
+     * <p></p>
+     * A value of 0 is not allowed because it would flush any newly created row
+     * without having a chance to specify any cells.
+     * </p>
+     *
+     * @param rowAccessWindowSize
+     */
+    public SXSSFWorkbook(int rowAccessWindowSize){
+        if(rowAccessWindowSize == 0 || rowAccessWindowSize < -1) {
+            throw new IllegalArgumentException("rowAccessWindowSize must be greater than 0 or -1");
+        }
+        _randomAccessWindowSize = rowAccessWindowSize;
+    }
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
@@ -303,6 +348,7 @@ public class SXSSFWorkbook implements Workbook
         {
             throw new RuntimeException(ioe);
         }
+        sxSheet.setRandomAccessWindowSize(_randomAccessWindowSize);
         registerSheetMapping(sxSheet,xSheet);
         return sxSheet;
     }

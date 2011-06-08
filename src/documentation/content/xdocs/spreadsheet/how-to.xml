@@ -58,6 +58,7 @@
              <li><link href="#event_api">Event API (HSSF Only)</link></li>
              <li><link href="#record_aware_event_api">Event API with extensions to be Record Aware (HSSF Only)</link></li>
              <li><link href="#xssf_sax_api">XSSF and SAX (Event API)</link></li>
+             <li><link href="#sxssf">SXSSF (Streaming User API)</link></li>
              <li><link href="#low_level_api">Low Level API</link></li>
            </ul>
         </section>
@@ -620,6 +621,74 @@ public class ExampleEventUserModel {
 		howto.processAllSheets(args[0]);
 	}
 }
+]]></source>
+     </section>
+     <anchor id="sxssf"/>
+     <section><title>SXSSF (Streaming Usermodel API)</title>
+    <p>
+    XSSF is an API-compatible streaming extension of XSSF to be used when
+    very large spreadsheets have to be produced, and heap space is limited.
+    SXSSF achieves its low memory footprint by limiting access to the rows that
+    are within a sliding window, while XSSF gives access to all rows in the
+    document. Older rows that are no longer in the window become inaccessible,
+    as they are written to the disk.
+    </p>
+   <p>
+    When a new row is created via createRow() and the total number
+    of unflushed records would exeed the specified window size, then the
+    row with the lowest index value is flushed and cannot be accessed
+    via getRow() anymore.
+    </p>
+    <p>
+    A value of -1 indicates unlimited access. In this case all
+    records that have not been flushed by a call to flush() are available
+    for random access.
+    </p>
+       
+<source><![CDATA[
+package com.dinom.excel;
+
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
+public class Main {
+    public static void main(String[] args) throws Throwable {
+        Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
+        Sheet sh = wb.createSheet();
+        for(int rownum = 0; rownum < 100000; rownum++){
+            Row row = sh.createRow(rownum);
+            for(int cellnum = 0; cellnum < 1000; cellnum++){
+                Cell cell = row.createCell(cellnum);
+                String address = new CellReference(cell).formatAsString();
+                cell.setCellValue(address);
+            }
+
+            // previous row is withing the window and accessible
+            Row prev = sheet.getRow(rownum - 1);
+
+        }
+
+        // attempt to access flushed rows results in a exception:
+        try {
+           Row firstRow = sheet.getRow(0);
+        } catch (Exception e){
+           System.out.println("cannot access flushed rows"); 
+        }
+
+        FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
+        wb.write(out);
+        out.close();
+
+
+    }
+
+}
+
 ]]></source>
      </section>
 

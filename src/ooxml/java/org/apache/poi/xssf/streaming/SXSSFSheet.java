@@ -17,15 +17,10 @@
 
 package org.apache.poi.xssf.streaming;
 
+import java.io.*;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Map;
-import java.io.Writer;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
@@ -46,7 +41,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     XSSFSheet _sh;
     TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
     SheetDataWriter _writer;
-    int _randomAccessWindowSize=5000;
+    int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
 
     public SXSSFSheet(SXSSFWorkbook workbook,XSSFSheet xSheet) throws IOException
     {
@@ -1243,7 +1238,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         {
             _fd = File.createTempFile("sheet", ".xml");
             _fd.deleteOnExit();
-            _out = new FileWriter(_fd);
+            _out = new BufferedWriter(new FileWriter(_fd));
             _out.write("<sheetData>\n");
         }
         public int getNumberOfFlushedRows()
@@ -1262,9 +1257,10 @@ public class SXSSFSheet implements Sheet, Cloneable
         {
             _fd.delete();
         }
-        public InputStream getWorksheetXMLInputStream() throws IOException 
+        public InputStream getWorksheetXMLInputStream() throws IOException
         {
             _out.write("</sheetData>");
+            _out.flush();
             _out.close();
             return new FileInputStream(_fd);
         }
@@ -1275,7 +1271,7 @@ public class SXSSFSheet implements Sheet, Cloneable
          * @param rownum 0-based row number
          * @param row a row
          */
-        public void writeRow(int rownum,SXSSFRow row) throws IOException 
+        public void writeRow(int rownum,SXSSFRow row) throws IOException
         {
             if(_numberOfFlushedRows==0)
                 _lowestIndexOfFlushedRows=rownum;
