@@ -658,6 +658,7 @@ public class ExampleEventUserModel {
 
 <source><![CDATA[
 
+import junit.framework.Assert;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -676,14 +677,18 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
                 cell.setCellValue(address);
             }
 
-
-            for(Row rowInMemory : sh) {
-                // the row iterator iterates over rows in memory, i.e. over the last 100 rows
-                System.out.println("Row in memory: " + rowInMemory.getRowNum());
-            }
-
         }
 
+        // Rows with rownum < 900 are flushed and not accessible
+        for(int rownum = 0; rownum < 900; rownum++){
+          Assert.assertNull(sh.getRow(rownum));
+        }
+
+        // ther last 100 rows are still in memory
+        for(int rownum = 900; rownum < 1000; rownum++){
+            Assert.assertNotNull(sh.getRow(rownum));
+        }
+        
         FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
         wb.write(out);
         out.close();
@@ -691,7 +696,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 
 ]]></source>
-<p>The next example turns off auto-flashing (windowSize=-1) and the code manually controls how portions of data are written to disk</p>
+<p>The next example turns off auto-flushing (windowSize=-1) and the code manually controls how portions of data are written to disk</p>
 <source><![CDATA[
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -702,7 +707,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
     public static void main(String[] args) throws Throwable {
-        Workbook wb = new SXSSFWorkbook(-1); // turn off auto-flashing and accumulate all rows in memory
+        Workbook wb = new SXSSFWorkbook(-1); // turn off auto-flushing and accumulate all rows in memory
         Sheet sh = wb.createSheet();
         for(int rownum = 0; rownum < 1000; rownum++){
             Row row = sh.createRow(rownum);
