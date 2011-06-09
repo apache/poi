@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Map;
 
+import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
@@ -1179,20 +1180,34 @@ public class SXSSFSheet implements Sheet, Cloneable
      * A value of 0 is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      */
-    void setRandomAccessWindowSize(int value)
+    public void setRandomAccessWindowSize(int value)
     {
-         assert value!=0;
+         if(value == 0 || value < -1) {
+             throw new IllegalArgumentException("RandomAccessWindowSize must be either -1 or a positive integer");
+         }
          _randomAccessWindowSize=value;
     }
+
     /**
      * Specifies how many rows can be accessed at most via getRow().
      * The exeeding rows (if any) are flushed to the disk while rows
      * with lower index values are flushed first.
      */
-    void flushRows(int remaining) throws IOException
+    public void flushRows(int remaining) throws IOException
     {
-        while(_rows.size()>remaining) flushOneRow();
+        while(_rows.size() > remaining) flushOneRow();
     }
+
+    /**
+     * Flush all rows to disk. After this call no rows can be accessed via getRow()
+     *
+     * @throws IOException
+     */
+    public void flushRows() throws IOException
+    {
+        this.flushRows(0);
+    }
+
     private void flushOneRow() throws IOException
     {
         Map.Entry<Integer,SXSSFRow> firstEntry=_rows.firstEntry();

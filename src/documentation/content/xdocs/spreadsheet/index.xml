@@ -79,10 +79,10 @@
         </section>
 
 <section>
-<title>SXSSF (SInce POI 3.8 beta3)</title>
+<title>SXSSF (Since POI 3.8 beta3)</title>
 <p>Since 3.8-beta3, POI provides a low-memory footprint SXSSF API built on top of XSSF.</p> 
 <p>
-XSSF is an API-compatible streaming extension of XSSF to be used when
+SXSSF is an API-compatible streaming extension of XSSF to be used when
 very large spreadsheets have to be produced, and heap space is limited.
 SXSSF achieves its low memory footprint by limiting access to the rows that
 are within a sliding window, while XSSF gives access to all rows in the
@@ -90,7 +90,10 @@ document. Older rows that are no longer in the window become inaccessible,
 as they are written to the disk.
 </p>
 <p>
-In auto-flush mode the size of the access window can be specified, to hold a certain number of rows in memory. When that value is reached, the creationof an additional row causes the row with the lowest index to to be removed from the access window and written to disk.. Or, the window size can be set to grow dynamically; it can be trimmed periodically by an explicit call to flush(int keepRows) as needed.
+In auto-flush mode the size of the access window can be specified, to hold a certain number of rows in memory. 
+When that value is reached, the creation of an additional row causes the row with the lowest index to to be 
+removed from the access window and written to disk. Or, the window size can be set to grow dynamically; 
+it can be trimmed periodically by an explicit call to flushRows(int keepRows) as needed.
 </p>
 <p>
 Due to the streaming nature of the implementation, there are the following
@@ -101,6 +104,8 @@ limitations when compared to XSSF:
   <li>Sheet.clone() is not supported.</li>
   <li>Formula evaluation is not supported</li>
  </ul>
+
+ <p> See more details at <link href="how-to.html#sxssf">SXSSF How-To</link></p>
 
 <p>The table below synopsizes the comparative features of POI's Spreadsheet API:</p> 
             <p><em>Spreadsheet API Feature Summary</em></p>

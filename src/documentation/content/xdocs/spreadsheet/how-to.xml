@@ -626,29 +626,38 @@ public class ExampleEventUserModel {
      <anchor id="sxssf"/>
      <section><title>SXSSF (Streaming Usermodel API)</title>
     <p>
-    XSSF is an API-compatible streaming extension of XSSF to be used when
+    SXSSF (package: org.apache.poi.xssf.streaming)  is an API-compatible streaming extension of XSSF to be used when
     very large spreadsheets have to be produced, and heap space is limited.
     SXSSF achieves its low memory footprint by limiting access to the rows that
     are within a sliding window, while XSSF gives access to all rows in the
     document. Older rows that are no longer in the window become inaccessible,
     as they are written to the disk.
     </p>
-   <p>
+    <p>
+    You can specify the window size at workbook construction time via <em>new SXSSFWorkbook(int windowSize)</em>
+    or you can set it per-sheet via <em>SXSSFSheet#setRandomAccessWindowSize(int windowSize)</em>
+    </p>
+    <p>
     When a new row is created via createRow() and the total number
-    of unflushed records would exeed the specified window size, then the
+    of unflushed records would exceed the specified window size, then the
     row with the lowest index value is flushed and cannot be accessed
     via getRow() anymore.
     </p>
     <p>
-    A value of -1 indicates unlimited access. In this case all
-    records that have not been flushed by a call to flush() are available
-    for random access.
+     The default window size is <em>100</em> and defined by SXSSFWorkbook.DEFAULT_WINDOW_SIZE. 
     </p>
-       
-<source><![CDATA[
-package com.dinom.excel;
+    <p>
+    A windowSize of -1 indicates unlimited access. In this case all
+    records that have not been flushed by a call to flushRows() are available
+    for random access. 
+    </p>
+    <p> The example below writes a sheet with a window of 100 rows. When the row count reaches 101, 
+        the row with rownum=0 is flushed to disk and removed from memory, when rownum reaches 102 then the row with rownum=1 is flushed, etc.
+    </p> 
 
-import org.apache.poi.ss.SpreadsheetVersion;
+
+<source><![CDATA[
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -656,38 +665,68 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-public class Main {
     public static void main(String[] args) throws Throwable {
-        Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
+        Workbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
         Sheet sh = wb.createSheet();
-        for(int rownum = 0; rownum < 100000; rownum++){
+        for(int rownum = 0; rownum < 1000; rownum++){
             Row row = sh.createRow(rownum);
-            for(int cellnum = 0; cellnum < 1000; cellnum++){
+            for(int cellnum = 0; cellnum < 10; cellnum++){
                 Cell cell = row.createCell(cellnum);
                 String address = new CellReference(cell).formatAsString();
                 cell.setCellValue(address);
             }
 
-            // previous row is withing the window and accessible
-            Row prev = sheet.getRow(rownum - 1);
 
-        }
+            for(Row rowInMemory : sh) {
+                // the row iterator iterates over rows in memory, i.e. over the last 100 rows
+                System.out.println("Row in memory: " + rowInMemory.getRowNum());
+            }
 
-        // attempt to access flushed rows results in a exception:
-        try {
-           Row firstRow = sheet.getRow(0);
-        } catch (Exception e){
-           System.out.println("cannot access flushed rows"); 
         }
 
         FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
         wb.write(out);
         out.close();
-
-
     }
 
-}
+
+]]></source>
+<p>The next example turns off auto-flashing (windowSize=-1) and the code manually controls how portions of data are written to disk</p>
+<source><![CDATA[
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
+    public static void main(String[] args) throws Throwable {
+        Workbook wb = new SXSSFWorkbook(-1); // turn off auto-flashing and accumulate all rows in memory
+        Sheet sh = wb.createSheet();
+        for(int rownum = 0; rownum < 1000; rownum++){
+            Row row = sh.createRow(rownum);
+            for(int cellnum = 0; cellnum < 10; cellnum++){
+                Cell cell = row.createCell(cellnum);
+                String address = new CellReference(cell).formatAsString();
+                cell.setCellValue(address);
+            }
+
+           // manually control how rows are flushed to disk 
+           if(rownum % 100 == 0) {
+                ((SXSSFSheet)sh).flushRows(100); // retain 100 last rows and flush all others
+
+                // ((SXSSFSheet)sh).flushRows() is a shortcut for ((SXSSFSheet)sh).flushRows(0),
+                // this method flushes all rows
+           }
+
+        }
+
+        FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
+        wb.write(out);
+        out.close();
+    }
+
 
 ]]></source>
      </section>
