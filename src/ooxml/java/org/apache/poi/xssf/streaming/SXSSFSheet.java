@@ -26,6 +26,7 @@ import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import org.apache.poi.hssf.util.PaneInformation;
@@ -1049,7 +1050,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void autoSizeColumn(int column)
     {
-        _sh.autoSizeColumn(column);
+        autoSizeColumn(column, false);
     }
 
     /**
@@ -1067,7 +1068,10 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void autoSizeColumn(int column, boolean useMergedCells)
     {
-        _sh.autoSizeColumn(column, useMergedCells);
+        double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
+        if(width != -1){
+            setColumnWidth(column, (int)(width*256));
+        }
     }
 
     /**
