@@ -41,7 +41,14 @@ public final class Picture
   static final int PICT_HEADER_OFFSET = 0x4;
   static final int MFPMM_OFFSET = 0x6;
   static final int PICF_SHAPE_OFFSET = 0xE;
-  static final int PICMD_OFFSET = 0x1C;
+  static final int DXAGOAL_OFFSET = 0x1C;
+  static final int DYAGOAL_OFFSET = 0x1E;
+  static final int MX_OFFSET = 0x20;
+  static final int MY_OFFSET = 0x22;
+  static final int DXACROPLEFT_OFFSET = 0x24;
+  static final int DYACROPTOP_OFFSET = 0x26;
+  static final int DXACROPRIGHT_OFFSET = 0x28;
+  static final int DYACROPBOTTOM_OFFSET = 0x2A;
   static final int UNKNOWN_HEADER_SIZE = 0x49;
 
   public static final byte[] GIF = new byte[]{'G', 'I', 'F'};
@@ -74,6 +81,13 @@ public final class Picture
   private int height = -1;
   private int width = -1;
 
+  private int dxaGoal = -1;
+  private int dyaGoal = -1;
+
+  private int dxaCropLeft = -1;
+  private int dyaCropTop = -1;
+  private int dxaCropRight = -1;
+  private int dyaCropBottom = -1;
 
   public Picture(int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes)
   {
@@ -87,8 +101,16 @@ public final class Picture
 
     }
 
-    this.aspectRatioX = extractAspectRatioX(_dataStream, dataBlockStartOfsset);
-    this.aspectRatioY = extractAspectRatioY(_dataStream, dataBlockStartOfsset);
+    this.dxaGoal = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXAGOAL_OFFSET);
+    this.dyaGoal = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYAGOAL_OFFSET);
+
+    this.aspectRatioX = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+MX_OFFSET)/10;
+    this.aspectRatioY = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+MY_OFFSET)/10;
+
+    this.dxaCropLeft = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXACROPLEFT_OFFSET);
+    this.dyaCropTop = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYACROPTOP_OFFSET);
+    this.dxaCropRight = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXACROPRIGHT_OFFSET);
+    this.dyaCropBottom = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYACROPBOTTOM_OFFSET);
 
     if (fillBytes)
     {
@@ -114,16 +136,6 @@ public final class Picture
     } else if ("png".equalsIgnoreCase(ext)) {
       fillPNGWidthHeight();
     }
-  }
-
-  private static int extractAspectRatioX(byte[] _dataStream, int dataBlockStartOffset)
-  {
-    return LittleEndian.getShort(_dataStream, dataBlockStartOffset+0x20)/10;
-  }
-
-  private static int extractAspectRatioY(byte[] _dataStream, int dataBlockStartOffset)
-  {
-    return LittleEndian.getShort(_dataStream, dataBlockStartOffset+0x22)/10;
   }
 
   /**
@@ -154,7 +166,7 @@ public final class Picture
       out.write(_dataStream, pictureBytesStartOffset, size);
     }
   }
-  
+
   /**
    * @return The offset of this picture in the picture bytes, used
    *  when matching up with {@link CharacterRun#getPicOffset()}
@@ -193,22 +205,67 @@ public final class Picture
     return size;
   }
 
-  /**
-   * returns horizontal aspect ratio for picture provided by user
-   */
-  public int getAspectRatioX()
-  {
-    return aspectRatioX;
-  }
-  /**
-   * returns vertical aspect ratio for picture provided by user
-   */
-  public int getAspectRatioY()
-  {
-    return aspectRatioY;
-  }
+    /**
+     * @return the horizontal aspect ratio for picture provided by user
+     */
+    public int getAspectRatioX() {
+        return aspectRatioX;
+    }
 
-  /**
+    /**
+     * @retrn the vertical aspect ratio for picture provided by user
+     */
+    public int getAspectRatioY() {
+        return aspectRatioY;
+    }
+
+    /**
+     * Gets the initial width of the picture, in twips, prior to cropping or scaling.
+     *
+     * @return the initial width of the picture in twips
+     */
+    public int getDxaGoal() {
+        return dxaGoal;
+    }
+
+    /**
+     * Gets the initial height of the picture, in twips, prior to cropping or scaling.
+     *
+     * @return the initial width of the picture in twips
+     */
+    public int getDyaGoal() {
+        return dyaGoal;
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the left in twips
+     */
+    public int getDxaCropLeft() {
+        return dxaCropLeft;
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the top in twips
+     */
+    public int getDyaCropTop() {
+        return dyaCropTop;
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the right in twips
+     */
+    public int getDxaCropRight() {
+        return dxaCropRight;
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the bottom in twips
+     */
+    public int getDyaCropBottom() {
+        return dyaCropBottom;
+    }
+
+    /**
    * tries to suggest extension for picture's file by matching signatures of popular image formats to first bytes
    * of picture's contents
    * @return suggested file extension
@@ -222,7 +279,7 @@ public final class Picture
     }
     return extension;
   }
-  
+
   /**
    * Returns the mime type for the image
    */
@@ -361,10 +418,10 @@ public final class Picture
   {
     int realPicoffset = dataBlockStartOffset;
     final int dataBlockEndOffset = dataBlockSize + dataBlockStartOffset;
-    
+
     // Skip over the PICT block
     int PICTFBlockSize = LittleEndian.getShort(_dataStream, dataBlockStartOffset +PICT_HEADER_OFFSET); // Should be 68 bytes
-    
+
     // Now the PICTF1
     int PICTF1BlockOffset = PICTFBlockSize + PICT_HEADER_OFFSET;
     short MM_TYPE = LittleEndian.getShort(_dataStream, dataBlockStartOffset + PICT_HEADER_OFFSET + 2);
