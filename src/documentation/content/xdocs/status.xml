@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51356 - Support autoSizeColumn in SXSSF</action>
            <action dev="poi-developers" type="add">51335 - Parse picture goal and crop sizes in HWPF</action>
            <action dev="poi-developers" type="add">51305 - Add sprmTCellPaddingDefault support in HWPF</action>
            <action dev="poi-developers" type="add">51265 - Enhanced Handling of Picture Parts in XWPF</action>
