@@ -270,8 +270,6 @@ public final class TestDocumentInputStream extends TestCase {
                  stream.available());
            for (int j = buffer.length; j < (2 * buffer.length); j++)
            {
-              // TODO FIX ME
-              if(!(stream instanceof NDocumentInputStream))
               assertEquals("checking byte " + j, _workbook_data[ j ],
                     buffer[ j - buffer.length ]);
            }
