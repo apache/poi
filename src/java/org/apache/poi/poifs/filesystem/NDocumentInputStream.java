@@ -184,7 +184,10 @@ public final class NDocumentInputStream extends DocumentInputStream {
          _current_block_count++;
          
    		// Skip to the right place in it
-   		_buffer.position(_marked_offset - _current_offset);
+         // (It should be positioned already at the start of the block,
+         //  we need to move further inside the block)
+         int skipBy = _marked_offset - _current_offset;
+   		_buffer.position(_buffer.position() + skipBy);
       }
 
       // All done

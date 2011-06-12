@@ -77,6 +77,14 @@ public final class TestDocumentInputStream extends TestCase {
         System.arraycopy(_workbook_data, 0, _workbook_data_only, 0, _workbook_size);
         
         NPOIFSFileSystem npoifs = new NPOIFSFileSystem();
+        // Make it easy when debugging to see what isn't the doc
+        byte[] minus1 = new byte[512];
+        Arrays.fill(minus1, (byte)-1);
+        npoifs.getBlockAt(-1).put(minus1);
+        npoifs.getBlockAt(0).put(minus1);
+        npoifs.getBlockAt(1).put(minus1);
+        
+        // Create the NPOIFS document
         _workbook_n = (DocumentNode)npoifs.createDocument(
               new ByteArrayInputStream(_workbook_data_only),
               "Workbook"
@@ -127,13 +135,15 @@ public final class TestDocumentInputStream extends TestCase {
      * test mark/reset/markSupported.
      */
     public void testMarkFunctions() throws IOException {
+        byte[] buffer = new byte[ _workbook_size / 5 ];
+        byte[] small_buffer = new byte[212];
+       
         DocumentInputStream[] streams = new DocumentInputStream[] {
               new DocumentInputStream(_workbook_o),
               new NDocumentInputStream(_workbook_n)
         };
         for(DocumentInputStream stream : streams) {
            // Read a fifth of it, and check all's correct
-           byte[] buffer = new byte[ _workbook_size / 5 ];
            stream.read(buffer);
            for (int j = 0; j < buffer.length; j++) {
               assertEquals(
@@ -148,7 +158,89 @@ public final class TestDocumentInputStream extends TestCase {
            stream.reset();
            assertEquals(_workbook_size, stream.available());
            
-           // Read all of it again, check it begain at the start again
+           
+           // Read part of a block
+           stream.read(small_buffer);
+           for (int j = 0; j < small_buffer.length; j++) {
+              assertEquals(
+                    "checking byte " + j, 
+                    _workbook_data[ j ], small_buffer[ j ]
+              );
+           }
+           assertEquals(_workbook_size - small_buffer.length, stream.available());
+           stream.mark(0);
+           
+           // Read the next part
+           stream.read(small_buffer);
+           for (int j = 0; j < small_buffer.length; j++) {
+              assertEquals(
+                    "checking byte " + j, 
+                    _workbook_data[ j+small_buffer.length ], small_buffer[ j ]
+              );
+           }
+           assertEquals(_workbook_size - 2*small_buffer.length, stream.available());
+           
+           // Reset, check it goes back to where it was
+           stream.reset();
+           assertEquals(_workbook_size - small_buffer.length, stream.available());
+           
+           // Read 
+           stream.read(small_buffer);
+           for (int j = 0; j < small_buffer.length; j++) {
+              assertEquals(
+                    "checking byte " + j, 
+                    _workbook_data[ j+small_buffer.length ], small_buffer[ j ]
+              );
+           }
+           assertEquals(_workbook_size - 2*small_buffer.length, stream.available());
+           
+           
+           // Now read at various points
+           Arrays.fill(small_buffer, ( byte ) 0);
+           stream.read(small_buffer, 6, 8);
+           stream.read(small_buffer, 100, 10);
+           stream.read(small_buffer, 150, 12);
+           int pos = small_buffer.length * 2;
+           for (int j = 0; j < small_buffer.length; j++) {
+              byte exp = 0;
+              if(j>= 6 && j<6+8) {
+                 exp = _workbook_data[pos];
+                 pos++;
+              }
+              if(j>= 100 && j<100+10) {
+                 exp = _workbook_data[pos];
+                 pos++;
+              }
+              if(j>= 150 && j<150+12) {
+                 exp = _workbook_data[pos];
+                 pos++;
+              }
+              
+              assertEquals("checking byte " + j, exp, small_buffer[j]);
+           }
+        }
+           
+        // Now repeat it with spanning multiple blocks
+        streams = new DocumentInputStream[] {
+              new DocumentInputStream(_workbook_o),
+              new NDocumentInputStream(_workbook_n)
+        };
+        for(DocumentInputStream stream : streams) {
+           // Read several blocks work
+           buffer = new byte[ _workbook_size / 5 ];
+           stream.read(buffer);
+           for (int j = 0; j < buffer.length; j++) {
+              assertEquals(
+                    "checking byte " + j, 
+                    _workbook_data[ j ], buffer[ j ]
+              );
+           }
+           assertEquals(_workbook_size - buffer.length, stream.available());
+           
+           // Read all of it again, check it began at the start again
+           stream.reset();
+           assertEquals(_workbook_size, stream.available());
+           
            stream.read(buffer);
            for (int j = 0; j < buffer.length; j++) {
               assertEquals(
