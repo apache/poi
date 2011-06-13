@@ -53,7 +53,7 @@ public class DirectoryChunk extends Chunk {
      *  object to process it with.
      */
     public MAPIMessage getAsEmbededMessage() throws IOException {
-        return new MAPIMessage(dir, dir.getFileSystem());
+        return new MAPIMessage(dir);
     }
 
     @Override
