@@ -672,6 +672,9 @@ public class TestMathX extends AbstractNumericTestCase {
         
         d = 150.0; p = -2;
         assertEquals("round ", 200, MathX.round(d, p));
+
+        d = 2162.615d; p = 2;
+        assertEquals("round ", 2162.62d, MathX.round(d, p));
     }
 
     public void testRoundDown() {
