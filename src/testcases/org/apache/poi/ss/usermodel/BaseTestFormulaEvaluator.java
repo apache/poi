@@ -281,4 +281,23 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
         assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
     }
 
+
+    public void testRounding_bug51339() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("Sheet1");
+        Row row = sheet.createRow(0);
+        Cell cellA1 = row.createCell(0);
+        cellA1.setCellValue(2162.615d);
+        Cell cellB1 = row.createCell(1);
+        cellB1.setCellFormula("round(a1,2)");
+        Cell cellC1 = row.createCell(2);
+        cellC1.setCellFormula("roundup(a1,2)");
+        Cell cellD1 = row.createCell(3);
+        cellD1.setCellFormula("rounddown(a1,2)");
+        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+        assertEquals(2162.62, fe.evaluateInCell(cellB1).getNumericCellValue(), 0.0);
+        assertEquals(2162.62, fe.evaluateInCell(cellC1).getNumericCellValue(), 0.0);
+        assertEquals(2162.61, fe.evaluateInCell(cellD1).getNumericCellValue(), 0.0);
+    }
 }
