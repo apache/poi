@@ -37,6 +37,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
@@ -141,9 +142,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * @return      the newly created textbox.
      */
     public XSSFTextBox createTextbox(XSSFClientAnchor anchor){
+        long shapeId = newShapeId();
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
         CTShape ctShape = ctAnchor.addNewSp();
         ctShape.set(XSSFSimpleShape.prototype());
+        ctShape.getNvSpPr().getCNvPr().setId(shapeId);
         XSSFTextBox shape = new XSSFTextBox(this, ctShape);
         shape.anchor = anchor;
         return shape;
@@ -163,9 +166,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     {
         PackageRelationship rel = addPictureReference(pictureIndex);
 
+        long shapeId = newShapeId();
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
         CTPicture ctShape = ctAnchor.addNewPic();
         ctShape.set(XSSFPicture.prototype());
+
+        ctShape.getNvPicPr().getCNvPr().setId(shapeId);
 
         XSSFPicture shape = new XSSFPicture(this, ctShape);
         shape.anchor = anchor;
@@ -227,9 +233,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      */
     public XSSFSimpleShape createSimpleShape(XSSFClientAnchor anchor)
     {
+        long shapeId = newShapeId();
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
         CTShape ctShape = ctAnchor.addNewSp();
         ctShape.set(XSSFSimpleShape.prototype());
+        ctShape.getNvSpPr().getCNvPr().setId(shapeId);
         XSSFSimpleShape shape = new XSSFSimpleShape(this, ctShape);
         shape.anchor = anchor;
         return shape;
@@ -353,5 +361,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         }
         ctAnchor.setEditAs(aditAs);
         return ctAnchor;
+    }
+
+    private long newShapeId(){
+        return drawing.sizeOfTwoCellAnchorArray() + 1;
     }
 }
