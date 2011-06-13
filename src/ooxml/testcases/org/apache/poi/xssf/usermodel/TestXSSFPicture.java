@@ -69,4 +69,27 @@ public final class TestXSSFPicture extends BaseTestPicture {
         // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
         assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
     }
+
+    /**
+     * test that ShapeId in CTNonVisualDrawingProps is incremented
+     *
+     * See Bugzilla 50458
+     */
+    public void testShapeId(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+        XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        byte[] jpegData = "picture1".getBytes();
+        int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
+
+        XSSFPicture shape1 = drawing.createPicture(anchor, jpegIdx);
+        assertEquals(1, shape1.getCTPicture().getNvPicPr().getCNvPr().getId());
+
+        jpegData = "picture2".getBytes();
+        jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
+        XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
+        assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
+    }
 }
