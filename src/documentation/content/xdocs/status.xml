@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51351 - Word to XSL-FO converter</action>
            <action dev="poi-developers" type="add">50458 - Fixed missing shapeId in XSSF drawings </action>
            <action dev="poi-developers" type="add">51339 - Fixed arithmetic rounding in formula evaluation </action>
            <action dev="poi-developers" type="add">51356 - Support autoSizeColumn in SXSSF</action>
