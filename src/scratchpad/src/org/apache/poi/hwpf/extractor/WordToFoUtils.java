@@ -9,6 +9,7 @@ import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
@@ -179,6 +180,31 @@ public class WordToFoUtils {
 	}
     }
 
+    public static String getJustification(int js) {
+        switch (js) {
+        case 0:
+            return "start";
+        case 1:
+            return "center";
+        case 2:
+            return "end";
+        case 3:
+        case 4:
+            return "justify";
+        case 5:
+            return "center";
+        case 6:
+            return "left";
+        case 7:
+            return "start";
+        case 8:
+            return "end";
+        case 9:
+            return "justify";
+        }
+        return "";
+    }
+
     public static String getListItemNumberLabel(int number, int format) {
 
 	if (format != 0)
@@ -244,48 +270,51 @@ public class WordToFoUtils {
     }
 
     public static void setCharactersProperties(final CharacterRun characterRun,
-	    final Element inline) {
-	final CharacterProperties clonedProperties = characterRun
-		.cloneProperties();
-	StringBuilder textDecorations = new StringBuilder();
+            final Element inline) {
+        final CharacterProperties clonedProperties = characterRun
+                .cloneProperties();
+        StringBuilder textDecorations = new StringBuilder();
 
-	setBorder(inline, clonedProperties.getBrc(), EMPTY);
+        setBorder(inline, clonedProperties.getBrc(), EMPTY);
 
-	if (characterRun.isCapitalized()) {
-	    inline.setAttribute("text-transform", "uppercase");
-	}
-	if (characterRun.isHighlighted()) {
-	    inline.setAttribute("background-color",
-		    getColor(clonedProperties.getIcoHighlight()));
-	}
-	if (characterRun.isStrikeThrough()) {
-	    if (textDecorations.length() > 0)
-		textDecorations.append(" ");
-	    textDecorations.append("line-through");
-	}
-	if (characterRun.isShadowed()) {
-	    inline.setAttribute("text-shadow", characterRun.getFontSize() / 24
-		    + "pt");
-	}
-	if (characterRun.isSmallCaps()) {
-	    inline.setAttribute("font-variant", "small-caps");
-	}
-	if (characterRun.getSubSuperScriptIndex() == 1) {
-	    inline.setAttribute("baseline-shift", "super");
-	    inline.setAttribute("font-size", "smaller");
-	}
-	if (characterRun.getSubSuperScriptIndex() == 2) {
-	    inline.setAttribute("baseline-shift", "sub");
-	    inline.setAttribute("font-size", "smaller");
-	}
-	if (characterRun.getUnderlineCode() > 0) {
-	    if (textDecorations.length() > 0)
-		textDecorations.append(" ");
-	    textDecorations.append("underline");
-	}
-	if (textDecorations.length() > 0) {
-	    inline.setAttribute("text-decoration", textDecorations.toString());
-	}
+        if (characterRun.isCapitalized()) {
+            inline.setAttribute("text-transform", "uppercase");
+        }
+        if (characterRun.isHighlighted()) {
+            inline.setAttribute("background-color",
+                    getColor(clonedProperties.getIcoHighlight()));
+        }
+        if (characterRun.isStrikeThrough()) {
+            if (textDecorations.length() > 0)
+                textDecorations.append(" ");
+            textDecorations.append("line-through");
+        }
+        if (characterRun.isShadowed()) {
+            inline.setAttribute("text-shadow", characterRun.getFontSize() / 24
+                    + "pt");
+        }
+        if (characterRun.isSmallCaps()) {
+            inline.setAttribute("font-variant", "small-caps");
+        }
+        if (characterRun.getSubSuperScriptIndex() == 1) {
+            inline.setAttribute("baseline-shift", "super");
+            inline.setAttribute("font-size", "smaller");
+        }
+        if (characterRun.getSubSuperScriptIndex() == 2) {
+            inline.setAttribute("baseline-shift", "sub");
+            inline.setAttribute("font-size", "smaller");
+        }
+        if (characterRun.getUnderlineCode() > 0) {
+            if (textDecorations.length() > 0)
+                textDecorations.append(" ");
+            textDecorations.append("underline");
+        }
+        if (characterRun.isVanished()) {
+            inline.setAttribute("visibility", "hidden");
+        }
+        if (textDecorations.length() > 0) {
+            inline.setAttribute("text-decoration", textDecorations.toString());
+        }
     }
 
     public static void setFontFamily(final Element element,
@@ -335,40 +364,10 @@ public class WordToFoUtils {
     }
 
     public static void setJustification(Paragraph paragraph,
-	    final Element element) {
-	final int justification = paragraph.getJustification();
-	switch (justification) {
-	case 0:
-	    element.setAttribute("text-align", "start");
-	    break;
-	case 1:
-	    element.setAttribute("text-align", "center");
-	    break;
-	case 2:
-	    element.setAttribute("text-align", "end");
-	    break;
-	case 3:
-	    element.setAttribute("text-align", "justify");
-	    break;
-	case 4:
-	    element.setAttribute("text-align", "justify");
-	    break;
-	case 5:
-	    element.setAttribute("text-align", "center");
-	    break;
-	case 6:
-	    element.setAttribute("text-align", "left");
-	    break;
-	case 7:
-	    element.setAttribute("text-align", "start");
-	    break;
-	case 8:
-	    element.setAttribute("text-align", "end");
-	    break;
-	case 9:
-	    element.setAttribute("text-align", "justify");
-	    break;
-	}
+            final Element element) {
+        String justification = getJustification(paragraph.getJustification());
+        if (isNotEmpty(justification))
+            element.setAttribute("text-align", justification);
     }
 
     public static void setParagraphProperties(Paragraph paragraph, Element block) {
@@ -397,6 +396,53 @@ public class WordToFoUtils {
 
 	block.setAttribute("linefeed-treatment", "preserve");
 	block.setAttribute("white-space-collapse", "false");
+    }
+
+    public static void setPictureProperties(Picture picture,
+            Element graphicElement) {
+        final int aspectRatioX = picture.getAspectRatioX();
+        final int aspectRatioY = picture.getAspectRatioY();
+
+        if (aspectRatioX > 0) {
+            graphicElement.setAttribute("content-width", ((picture.getDxaGoal()
+                    * aspectRatioX / 100) / WordToFoUtils.TWIPS_PER_PT)
+                    + "pt");
+        } else
+            graphicElement.setAttribute("content-width",
+                    (picture.getDxaGoal() / WordToFoUtils.TWIPS_PER_PT) + "pt");
+
+        if (aspectRatioY > 0)
+            graphicElement
+                    .setAttribute("content-height", ((picture.getDyaGoal()
+                            * aspectRatioY / 100) / WordToFoUtils.TWIPS_PER_PT)
+                            + "pt");
+        else
+            graphicElement.setAttribute("content-height",
+                    (picture.getDyaGoal() / WordToFoUtils.TWIPS_PER_PT) + "pt");
+
+        if (aspectRatioX <= 0 || aspectRatioY <= 0) {
+            graphicElement.setAttribute("scaling", "uniform");
+        } else {
+            graphicElement.setAttribute("scaling", "non-uniform");
+        }
+
+        graphicElement.setAttribute("vertical-align", "text-bottom");
+
+        if (picture.getDyaCropTop() != 0 || picture.getDxaCropRight() != 0
+                || picture.getDyaCropBottom() != 0
+                || picture.getDxaCropLeft() != 0) {
+            int rectTop = picture.getDyaCropTop() / WordToFoUtils.TWIPS_PER_PT;
+            int rectRight = picture.getDxaCropRight()
+                    / WordToFoUtils.TWIPS_PER_PT;
+            int rectBottom = picture.getDyaCropBottom()
+                    / WordToFoUtils.TWIPS_PER_PT;
+            int rectLeft = picture.getDxaCropLeft()
+                    / WordToFoUtils.TWIPS_PER_PT;
+            graphicElement.setAttribute("clip", "rect(" + rectTop + "pt, "
+                    + rectRight + "pt, " + rectBottom + "pt, " + rectLeft
+                    + "pt)");
+            graphicElement.setAttribute("oveerflow", "hidden");
+        }
     }
 
     public static void setTableCellProperties(TableRow tableRow,

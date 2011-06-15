@@ -279,63 +279,95 @@ public class WordToFoExtractor {
 	}
     }
 
-    @SuppressWarnings("unused")
-    protected void processImage(Element currentBlock, Picture picture) {
-	// no default implementation -- skip
+    /**
+     * This method shall store image bytes in external file and convert it if
+     * necessary. Images shall be stored using PNG format (for bitmap) or SVG
+     * (for vector). Other formats may be not supported by your XSL FO
+     * processor.
+     * <p>
+     * Please note the
+     * {@link WordToFoUtils#setPictureProperties(Picture, Element)} method.
+     * 
+     * @param currentBlock
+     *            currently processed FO element, like <tt>fo:block</tt>. Shall
+     *            be used as parent of newly created
+     *            <tt>fo:external-graphic</tt> or
+     *            <tt>fo:instream-foreign-object</tt>
+     * @param inlined
+     *            if image is inlined
+     * @param picture
+     *            HWPF object, contained picture data and properties
+     */
+    protected void processImage(Element currentBlock, boolean inlined,
+            Picture picture) {
+        // no default implementation -- skip
     }
 
     protected void processParagraph(HWPFDocument hwpfDocument,
-	    Element parentFopElement, int currentTableLevel,
-	    Paragraph paragraph, String bulletText) {
-	final Element block = createBlock();
-	parentFopElement.appendChild(block);
+            Element parentFopElement, int currentTableLevel,
+            Paragraph paragraph, String bulletText) {
+        final Element block = createBlock();
+        parentFopElement.appendChild(block);
 
-	WordToFoUtils.setParagraphProperties(paragraph, block);
+        WordToFoUtils.setParagraphProperties(paragraph, block);
 
-	final int charRuns = paragraph.numCharacterRuns();
+        final int charRuns = paragraph.numCharacterRuns();
 
-	if (charRuns == 0) {
-	    return;
-	}
+        if (charRuns == 0) {
+            return;
+        }
 
-	final String pFontName;
-	final int pFontSize;
-	final boolean pBold;
-	final boolean pItalic;
-	{
-	    CharacterRun characterRun = paragraph.getCharacterRun(0);
-	    pFontSize = characterRun.getFontSize() / 2;
-	    pFontName = characterRun.getFontName();
-	    pBold = characterRun.isBold();
-	    pItalic = characterRun.isItalic();
-	}
-	WordToFoUtils.setFontFamily(block, pFontName);
-	WordToFoUtils.setFontSize(block, pFontSize);
-	WordToFoUtils.setBold(block, pBold);
-	WordToFoUtils.setItalic(block, pItalic);
+        final String pFontName;
+        final int pFontSize;
+        final boolean pBold;
+        final boolean pItalic;
+        {
+            CharacterRun characterRun = paragraph.getCharacterRun(0);
+            pFontSize = characterRun.getFontSize() / 2;
+            pFontName = characterRun.getFontName();
+            pBold = characterRun.isBold();
+            pItalic = characterRun.isItalic();
+        }
+        WordToFoUtils.setFontFamily(block, pFontName);
+        WordToFoUtils.setFontSize(block, pFontSize);
+        WordToFoUtils.setBold(block, pBold);
+        WordToFoUtils.setItalic(block, pItalic);
 
-	StringBuilder lineText = new StringBuilder();
+        StringBuilder lineText = new StringBuilder();
 
-	if (WordToFoUtils.isNotEmpty(bulletText)) {
-	    Element inline = createInline();
-	    block.appendChild(inline);
+        if (WordToFoUtils.isNotEmpty(bulletText)) {
+            Element inline = createInline();
+            block.appendChild(inline);
 
-	    Text textNode = createText(bulletText);
-	    inline.appendChild(textNode);
+            Text textNode = createText(bulletText);
+            inline.appendChild(textNode);
 
-	    lineText.append(bulletText);
-	}
+            lineText.append(bulletText);
+        }
 
-	for (int c = 0; c < charRuns; c++) {
-	    CharacterRun characterRun = paragraph.getCharacterRun(c);
+        for (int c = 0; c < charRuns; c++) {
+            CharacterRun characterRun = paragraph.getCharacterRun(c);
+
+            if (hwpfDocument.getPicturesTable().hasPicture(characterRun)) {
+                Picture picture = hwpfDocument.getPicturesTable()
+                        .extractPicture(characterRun, true);
+
+                processImage(block, characterRun.text().charAt(0) == 0x01,
+                        picture);
+                continue;
+            }
 
 	    String text = characterRun.text();
 	    if (text.getBytes().length == 0)
 		continue;
 
-	    if (text.getBytes()[0] == FIELD_BEGIN_MARK) {
-		int skipTo = tryImageWithinField(hwpfDocument, paragraph, c,
-			block);
+            if (text.getBytes()[0] == FIELD_BEGIN_MARK) {
+                /*
+                 * check if we have a field with calculated image as a result.
+                 * MathType equation, for example.
+                 */
+                int skipTo = tryImageWithinField(hwpfDocument, paragraph, c,
+                        block);
 
 		if (skipTo != c) {
 		    c = skipTo;
@@ -550,59 +582,61 @@ public class WordToFoExtractor {
     }
 
     protected int tryImageWithinField(HWPFDocument hwpfDocument,
-	    Paragraph paragraph, int beginMark, Element currentBlock) {
-	int separatorMark = -1;
-	int pictureMark = -1;
-	int endMark = -1;
-	for (int c = beginMark + 1; c < paragraph.numCharacterRuns(); c++) {
-	    CharacterRun characterRun = paragraph.getCharacterRun(c);
+            Paragraph paragraph, int beginMark, Element currentBlock) {
+        int separatorMark = -1;
+        int pictureMark = -1;
+        int pictureChar = Integer.MIN_VALUE;
+        int endMark = -1;
+        for (int c = beginMark + 1; c < paragraph.numCharacterRuns(); c++) {
+            CharacterRun characterRun = paragraph.getCharacterRun(c);
 
-	    String text = characterRun.text();
-	    if (text.getBytes().length == 0)
-		continue;
+            String text = characterRun.text();
+            if (text.getBytes().length == 0)
+                continue;
 
-	    if (text.getBytes()[0] == FIELD_SEPARATOR_MARK) {
-		if (separatorMark != -1) {
-		    // double;
-		    return beginMark;
-		}
+            if (text.getBytes()[0] == FIELD_SEPARATOR_MARK) {
+                if (separatorMark != -1) {
+                    // double;
+                    return beginMark;
+                }
 
-		separatorMark = c;
-		continue;
-	    }
+                separatorMark = c;
+                continue;
+            }
 
-	    if (text.getBytes()[0] == FIELD_END_MARK) {
-		if (endMark != -1) {
-		    // double;
-		    return beginMark;
-		}
+            if (text.getBytes()[0] == FIELD_END_MARK) {
+                if (endMark != -1) {
+                    // double;
+                    return beginMark;
+                }
 
-		endMark = c;
-		break;
-	    }
+                endMark = c;
+                break;
+            }
 
-	    if (hwpfDocument.getPicturesTable().hasPicture(characterRun)) {
-		if (pictureMark != -1) {
-		    // double;
-		    return beginMark;
-		}
+            if (hwpfDocument.getPicturesTable().hasPicture(characterRun)) {
+                if (c != -1) {
+                    // double;
+                    return beginMark;
+                }
 
-		pictureMark = c;
-		continue;
-	    }
-	}
+                pictureMark = c;
+                pictureChar = characterRun.text().charAt(0);
+                continue;
+            }
+        }
 
-	if (separatorMark == -1 || pictureMark == -1 || endMark == -1)
-	    return beginMark;
+        if (separatorMark == -1 || pictureMark == -1 || endMark == -1)
+            return beginMark;
 
-	final CharacterRun pictureRun = paragraph.getCharacterRun(pictureMark);
-	final Picture picture = hwpfDocument.getPicturesTable().extractPicture(
-		pictureRun, true);
-	processImage(currentBlock, picture);
+        final CharacterRun pictureRun = paragraph.getCharacterRun(pictureMark);
+        final Picture picture = hwpfDocument.getPicturesTable().extractPicture(
+                pictureRun, true);
 
-	return endMark;
+        processImage(currentBlock, pictureChar == 0x01, picture);
+
+        return endMark;
     }
-
 
     /**
      * Java main() interface to interact with WordToFoExtractor
