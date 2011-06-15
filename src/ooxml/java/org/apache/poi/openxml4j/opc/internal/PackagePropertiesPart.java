@@ -292,7 +292,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * @return A string representation of the last printed date.
 	 */
 	public String getLastPrintedPropertyString() {
-		return getDateValue(created);
+		return getDateValue(lastPrinted);
 	}
 
 	/**

@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
@@ -123,4 +124,60 @@ public final class TestPackageCoreProperties extends TestCase {
 		assertEquals("MyTitle", props.getTitleProperty().getValue());
 		assertEquals("2", props.getVersionProperty().getValue());
 	}
+
+    public void testCoreProperties_bug51374() throws Exception {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String strDate = "2007-05-12T08:00:00Z";
+        Date date = df.parse(strDate);
+
+        OPCPackage pkg = new ZipPackage();
+        PackagePropertiesPart props = (PackagePropertiesPart)pkg.getPackageProperties();
+
+        // created
+        assertEquals("", props.getCreatedPropertyString());
+        assertNull(props.getCreatedProperty().getValue());
+        props.setCreatedProperty((String)null);
+        assertEquals("", props.getCreatedPropertyString());
+        assertNull(props.getCreatedProperty().getValue());
+        props.setCreatedProperty(new Nullable<Date>());
+        assertEquals("", props.getCreatedPropertyString());
+        assertNull(props.getCreatedProperty().getValue());
+        props.setCreatedProperty(new Nullable<Date>(date));
+        assertEquals(strDate, props.getCreatedPropertyString());
+        assertEquals(date, props.getCreatedProperty().getValue());
+        props.setCreatedProperty(strDate);
+        assertEquals(strDate, props.getCreatedPropertyString());
+        assertEquals(date, props.getCreatedProperty().getValue());
+
+        // lastPrinted
+        assertEquals("", props.getLastPrintedPropertyString());
+        assertNull(props.getLastPrintedProperty().getValue());
+        props.setLastPrintedProperty((String)null);
+        assertEquals("", props.getLastPrintedPropertyString());
+        assertNull(props.getLastPrintedProperty().getValue());
+        props.setLastPrintedProperty(new Nullable<Date>());
+        assertEquals("", props.getLastPrintedPropertyString());
+        assertNull(props.getLastPrintedProperty().getValue());
+        props.setLastPrintedProperty(new Nullable<Date>(date));
+        assertEquals(strDate, props.getLastPrintedPropertyString());
+        assertEquals(date, props.getLastPrintedProperty().getValue());
+        props.setLastPrintedProperty(strDate);
+        assertEquals(strDate, props.getLastPrintedPropertyString());
+        assertEquals(date, props.getLastPrintedProperty().getValue());
+
+        // modified
+        assertNull(props.getModifiedProperty().getValue());
+        props.setModifiedProperty((String)null);
+        assertNull(props.getModifiedProperty().getValue());
+        props.setModifiedProperty(new Nullable<Date>());
+        assertNull(props.getModifiedProperty().getValue());
+        props.setModifiedProperty(new Nullable<Date>(date));
+        assertEquals(strDate, props.getModifiedPropertyString());
+        assertEquals(date, props.getModifiedProperty().getValue());
+        props.setModifiedProperty(strDate);
+        assertEquals(strDate, props.getModifiedPropertyString());
+        assertEquals(date, props.getModifiedProperty().getValue());
+    }
+
 }
