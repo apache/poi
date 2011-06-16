@@ -306,4 +306,24 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         fmla.append(")");
         return fmla.toString();
     }
+
+    public final void testAutoSize_bug506819() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("Sheet1");
+        Row row = sheet.createRow(0);
+        Cell cell0 = row.createCell(0);
+
+        String longValue = "www.hostname.com, www.hostname.com, " +
+                "www.hostname.com, www.hostname.com, www.hostname.com, " +
+                "www.hostname.com, www.hostname.com, www.hostname.com, " +
+                "www.hostname.com, www.hostname.com, www.hostname.com, " +
+                "www.hostname.com, www.hostname.com, www.hostname.com, " +
+                "www.hostname.com, www.hostname.com, www.hostname.com, www.hostname.com";
+
+        cell0.setCellValue(longValue);
+
+        sheet.autoSizeColumn(0);
+        assertEquals(255*256, sheet.getColumnWidth(0)); // maximum column width is 255 characters
+        sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 506819 reports exception at this point
+    }
 }
