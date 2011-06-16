@@ -381,10 +381,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public void autoSizeColumn(int column, boolean useMergedCells) {
         double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
-        if(width != -1){
+
+        if (width != -1) {
+            width *= 256;
+            int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
+            if (width > maxColumnWidth) {
+                width = maxColumnWidth;
+            }
+            setColumnWidth(column, (int)(width));
             columnHelper.setColBestFit(column, true);
-            columnHelper.setCustomWidth(column, true);
-            columnHelper.setColWidth(column, width);
         }
     }
 

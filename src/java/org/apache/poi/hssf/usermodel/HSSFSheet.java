@@ -1764,7 +1764,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public void autoSizeColumn(int column, boolean useMergedCells) {
         double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
-        if(width != -1) setColumnWidth(column, (int) (256*width));
+
+        if (width != -1) {
+            width *= 256;
+            int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
+            if (width > maxColumnWidth) {
+                width = maxColumnWidth;
+            }
+            setColumnWidth(column, (int)(width));
+        }
+
     }
 
     /**
