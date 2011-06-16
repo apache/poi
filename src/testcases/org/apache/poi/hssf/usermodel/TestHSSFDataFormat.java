@@ -19,9 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.BaseTestDataFormat;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests for {@link HSSFDataFormat}
@@ -49,4 +48,24 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
         assertTrue(customFmtIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
         assertEquals("\u00a3##.00[Yellow]", dataFormat.getFormat(customFmtIdx));
     }
+
+    /**
+     * Bug 51378: getDataFormatString method call crashes when reading the test file
+     */
+    public void test51378(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("12561-1.xls");
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            HSSFSheet sheet = wb.getSheetAt(i);
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    CellStyle style = cell.getCellStyle();
+
+                    String fmt = style.getDataFormatString();
+                    if(fmt == null)
+                        System.out.println(cell + ": " + fmt);
+                }
+            }
+        }
+    }
+
 }

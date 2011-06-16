@@ -142,8 +142,14 @@ public final class HSSFDataFormat implements DataFormat {
 		if (_movedBuiltins) {
 			return _formats.get(index);
 		}
-		
-		String fmt = _formats.get(index);
+
+        if(index == -1) {
+            // YK: formatIndex can be -1, for example, for cell in column Y in test-data/spreadsheet/45322.xls
+            // return null for those
+            return null;
+        }
+
+		String fmt = _formats.size() > index ? _formats.get(index) : null;
 		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
 		   // It's in the built in range
 		   if (fmt != null) {
