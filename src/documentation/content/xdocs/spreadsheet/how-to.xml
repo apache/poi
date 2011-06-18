@@ -625,6 +625,10 @@ public class ExampleEventUserModel {
      </section>
      <anchor id="sxssf"/>
      <section><title>SXSSF (Streaming Usermodel API)</title>
+    <note>
+      SXSSF is a brand new contribution and some features were added after it was first introduced in POI 3.8-beta3.
+      Users are advised to try the latest build from trunk. Instructions how to build are <link href="../howtobuild.html">here</link>.
+    </note>
     <p>
     SXSSF (package: org.apache.poi.xssf.streaming)  is an API-compatible streaming extension of XSSF to be used when
     very large spreadsheets have to be produced, and heap space is limited.
