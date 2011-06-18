@@ -346,8 +346,7 @@ public final class ParagraphSprmUncompressor
         }
         break;
       case 0x41:
-
-        // undocumented
+        // sprmPFBiDi 
         break;
       case 0x43:
 
@@ -387,7 +386,8 @@ public final class ParagraphSprmUncompressor
         newPAP.setFTtpEmbedded((byte)sprm.getOperand());
         break;
       case 0x61:
-        // Logicial justification of the paragraph, eg left, centre, right
+        // sprmPJc 
+        newPAP.setJustificationLogical((byte) sprm.getOperand());
         break;
       default:
         break;
