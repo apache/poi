@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">48408 - Improved documentation for Sheet.setColumnWidth </action>
            <action dev="poi-developers" type="add">51390 - Added handling of additional properties to HWPF ParagraphSprmCompressor</action>
            <action dev="poi-developers" type="add">51389 - Support for sprmPJc paragraph SPRM in HWPF</action>
            <action dev="poi-developers" type="fix">48469 - New Case Study for PI web site  </action>
