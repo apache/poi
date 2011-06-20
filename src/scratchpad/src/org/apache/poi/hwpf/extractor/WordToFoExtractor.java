@@ -16,7 +16,6 @@
  *    limitations under the License.
  * ====================================================================
  */
-
 package org.apache.poi.hwpf.extractor;
 
 import java.io.File;
@@ -25,6 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -46,6 +48,8 @@ import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -55,7 +59,30 @@ import static org.apache.poi.hwpf.extractor.WordToFoUtils.TWIPS_PER_INCH;
 /**
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class WordToFoExtractor {
+public class WordToFoExtractor extends AbstractToFoExtractor
+{
+
+    /**
+     * Holds properties values, applied to current <tt>fo:block</tt> element.
+     * Those properties shall not be doubled in children <tt>fo:inline</tt>
+     * elements.
+     */
+    private static class BlockProperies
+    {
+        final boolean pBold;
+        final String pFontName;
+        final int pFontSize;
+        final boolean pItalic;
+
+        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
+                boolean pItalic )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
+            this.pBold = pBold;
+            this.pItalic = pItalic;
+        }
+    }
 
     private static final byte BEL_MARK = 7;
 
@@ -65,218 +92,311 @@ public class WordToFoExtractor {
 
     private static final byte FIELD_SEPARATOR_MARK = 20;
 
-    private static final String NS_XSLFO = "http://www.w3.org/1999/XSL/Format";
+    private static final POILogger logger = POILogFactory
+            .getLogger( WordToFoExtractor.class );
 
-    private static HWPFDocument loadDoc(File docFile) throws IOException {
-	final FileInputStream istream = new FileInputStream(docFile);
-	try {
-	    return new HWPFDocument(istream);
-	} finally {
-	    try {
-		istream.close();
-	    } catch (Exception exc) {
-		// no op
-	    }
-	}
+    private static HWPFDocument loadDoc( File docFile ) throws IOException
+    {
+        final FileInputStream istream = new FileInputStream( docFile );
+        try
+        {
+            return new HWPFDocument( istream );
+        }
+        finally
+        {
+            try
+            {
+                istream.close();
+            }
+            catch ( Exception exc )
+            {
+                logger.log( POILogger.ERROR,
+                        "Unable to close FileInputStream: " + exc, exc );
+            }
+        }
     }
 
-    static Document process(File docFile) throws Exception {
-	final HWPFDocument hwpfDocument = loadDoc(docFile);
-	WordToFoExtractor wordToFoExtractor = new WordToFoExtractor(
-		DocumentBuilderFactory.newInstance().newDocumentBuilder()
-			.newDocument());
-	wordToFoExtractor.processDocument(hwpfDocument);
-	return wordToFoExtractor.getDocument();
+    /**
+     * Java main() interface to interact with WordToFoExtractor
+     * 
+     * <p>
+     * Usage: WordToFoExtractor infile outfile
+     * </p>
+     * Where infile is an input .doc file ( Word 97-2007) which will be rendered
+     * as XSL-FO into outfile
+     * 
+     */
+    public static void main( String[] args )
+    {
+        if ( args.length < 2 )
+        {
+            System.err
+                    .println( "Usage: WordToFoExtractor <inputFile.doc> <saveTo.fo>" );
+            return;
+        }
+
+        System.out.println( "Converting " + args[0] );
+        System.out.println( "Saving output to " + args[1] );
+        try
+        {
+            Document doc = WordToFoExtractor.process( new File( args[0] ) );
+
+            FileWriter out = new FileWriter( args[1] );
+            DOMSource domSource = new DOMSource( doc );
+            StreamResult streamResult = new StreamResult( out );
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer serializer = tf.newTransformer();
+            // TODO set encoding from a command argument
+            serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+            serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
+            serializer.transform( domSource, streamResult );
+            out.close();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
     }
 
-    private final Document document;
-
-    private final Element layoutMasterSet;
-
-    private final Element root;
-
-    public WordToFoExtractor(Document document) throws Exception {
-	this.document = document;
-
-	root = document.createElementNS(NS_XSLFO, "fo:root");
-	document.appendChild(root);
-
-	layoutMasterSet = document.createElementNS(NS_XSLFO,
-		"fo:layout-master-set");
-	root.appendChild(layoutMasterSet);
+    static Document process( File docFile ) throws Exception
+    {
+        final HWPFDocument hwpfDocument = loadDoc( docFile );
+        WordToFoExtractor wordToFoExtractor = new WordToFoExtractor(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+        wordToFoExtractor.processDocument( hwpfDocument );
+        return wordToFoExtractor.getDocument();
     }
 
-    protected Element addFlowToPageSequence(final Element pageSequence,
-	    String flowName) {
-	final Element flow = document.createElementNS(NS_XSLFO, "fo:flow");
-	flow.setAttribute("flow-name", flowName);
-	pageSequence.appendChild(flow);
+    private final Stack<BlockProperies> blocksProperies = new Stack<BlockProperies>();
 
-	return flow;
+    /**
+     * Creates new instance of {@link WordToFoExtractor}. Can be used for output
+     * several {@link HWPFDocument}s into single FO document.
+     * 
+     * @param document
+     *            XML DOM Document used as XSL FO document. Shall support
+     *            namespaces
+     */
+    public WordToFoExtractor( Document document )
+    {
+        super( document );
     }
 
-    protected Element addListItem(Element listBlock) {
-	Element result = createListItem();
-	listBlock.appendChild(result);
-	return result;
+    protected String createPageMaster( SectionProperties sep, String type,
+            int section )
+    {
+        float height = sep.getYaPage() / TWIPS_PER_INCH;
+        float width = sep.getXaPage() / TWIPS_PER_INCH;
+        float leftMargin = sep.getDxaLeft() / TWIPS_PER_INCH;
+        float rightMargin = sep.getDxaRight() / TWIPS_PER_INCH;
+        float topMargin = sep.getDyaTop() / TWIPS_PER_INCH;
+        float bottomMargin = sep.getDyaBottom() / TWIPS_PER_INCH;
+
+        // add these to the header
+        String pageMasterName = type + "-page" + section;
+
+        Element pageMaster = addSimplePageMaster( pageMasterName );
+        pageMaster.setAttribute( "page-height", height + "in" );
+        pageMaster.setAttribute( "page-width", width + "in" );
+
+        Element regionBody = addRegionBody( pageMaster );
+        regionBody.setAttribute( "margin", topMargin + "in " + rightMargin
+                + "in " + bottomMargin + "in " + leftMargin + "in" );
+
+        /*
+         * 6.4.14 fo:region-body
+         * 
+         * The values of the padding and border-width traits must be "0".
+         */
+        // WordToFoUtils.setBorder(regionBody, sep.getBrcTop(), "top");
+        // WordToFoUtils.setBorder(regionBody, sep.getBrcBottom(), "bottom");
+        // WordToFoUtils.setBorder(regionBody, sep.getBrcLeft(), "left");
+        // WordToFoUtils.setBorder(regionBody, sep.getBrcRight(), "right");
+
+        if ( sep.getCcolM1() > 0 )
+        {
+            regionBody
+                    .setAttribute( "column-count", "" + (sep.getCcolM1() + 1) );
+            if ( sep.getFEvenlySpaced() )
+            {
+                regionBody.setAttribute( "column-gap",
+                        (sep.getDxaColumns() / TWIPS_PER_INCH) + "in" );
+            }
+            else
+            {
+                regionBody.setAttribute( "column-gap", "0.25in" );
+            }
+        }
+
+        return pageMasterName;
     }
 
-    protected Element addListItemBody(Element listItem) {
-	Element result = createListItemBody();
-	listItem.appendChild(result);
-	return result;
+    protected boolean processCharacters( HWPFDocument hwpfDocument,
+            int currentTableLevel, Paragraph paragraph, final Element block,
+            final int start, final int end )
+    {
+        boolean haveAnyText = false;
+
+        for ( int c = start; c < end; c++ )
+        {
+            CharacterRun characterRun = paragraph.getCharacterRun( c );
+
+            if ( hwpfDocument.getPicturesTable().hasPicture( characterRun ) )
+            {
+                Picture picture = hwpfDocument.getPicturesTable()
+                        .extractPicture( characterRun, true );
+
+                processImage( block, characterRun.text().charAt( 0 ) == 0x01,
+                        picture );
+                continue;
+            }
+
+            String text = characterRun.text();
+            if ( text.getBytes().length == 0 )
+                continue;
+
+            if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
+            {
+                int skipTo = tryField( hwpfDocument, paragraph,
+                        currentTableLevel, c, block );
+
+                if ( skipTo != c )
+                {
+                    c = skipTo;
+                    continue;
+                }
+
+                continue;
+            }
+            if ( text.getBytes()[0] == FIELD_SEPARATOR_MARK )
+            {
+                // shall not appear without FIELD_BEGIN_MARK
+                continue;
+            }
+            if ( text.getBytes()[0] == FIELD_END_MARK )
+            {
+                // shall not appear without FIELD_BEGIN_MARK
+                continue;
+            }
+
+            if ( characterRun.isSpecialCharacter() || characterRun.isObj()
+                    || characterRun.isOle2() )
+            {
+                continue;
+            }
+
+            BlockProperies blockProperies = this.blocksProperies.peek();
+            Element inline = createInline();
+            if ( characterRun.isBold() != blockProperies.pBold )
+            {
+                WordToFoUtils.setBold( inline, characterRun.isBold() );
+            }
+            if ( characterRun.isItalic() != blockProperies.pItalic )
+            {
+                WordToFoUtils.setItalic( inline, characterRun.isItalic() );
+            }
+            if ( !WordToFoUtils.equals( characterRun.getFontName(),
+                    blockProperies.pFontName ) )
+            {
+                WordToFoUtils
+                        .setFontFamily( inline, characterRun.getFontName() );
+            }
+            if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
+            {
+                WordToFoUtils.setFontSize( inline,
+                        characterRun.getFontSize() / 2 );
+            }
+            WordToFoUtils.setCharactersProperties( characterRun, inline );
+            block.appendChild( inline );
+
+            if ( text.endsWith( "\r" )
+                    || (text.charAt( text.length() - 1 ) == BEL_MARK && currentTableLevel != 0) )
+                text = text.substring( 0, text.length() - 1 );
+
+            Text textNode = createText( text );
+            inline.appendChild( textNode );
+
+            haveAnyText |= text.trim().length() != 0;
+        }
+
+        return haveAnyText;
     }
 
-    protected Element addListItemLabel(Element listItem, String text) {
-	Element result = createListItemLabel(text);
-	listItem.appendChild(result);
-	return result;
+    public void processDocument( HWPFDocument hwpfDocument )
+    {
+        final Range range = hwpfDocument.getRange();
+
+        for ( int s = 0; s < range.numSections(); s++ )
+        {
+            processSection( hwpfDocument, range.getSection( s ), s );
+        }
     }
 
-    protected Element addPageSequence(String pageMaster) {
-	final Element pageSequence = document.createElementNS(NS_XSLFO,
-		"fo:page-sequence");
-	pageSequence.setAttribute("master-reference", pageMaster);
-	root.appendChild(pageSequence);
-	return pageSequence;
+    protected void processField( HWPFDocument hwpfDocument,
+            Element currentBlock, Paragraph paragraph, int currentTableLevel,
+            int beginMark, int separatorMark, int endMark )
+    {
+
+        Pattern hyperlinkPattern = Pattern
+                .compile( "[ \\t\\r\\n]*HYPERLINK \"(.*)\"[ \\t\\r\\n]*" );
+        Pattern pagerefPattern = Pattern
+                .compile( "[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h[ \\t\\r\\n]*" );
+
+        if ( separatorMark - beginMark > 1 )
+        {
+            CharacterRun firstAfterBegin = paragraph
+                    .getCharacterRun( beginMark + 1 );
+
+            final Matcher hyperlinkMatcher = hyperlinkPattern
+                    .matcher( firstAfterBegin.text() );
+            if ( hyperlinkMatcher.matches() )
+            {
+                String hyperlink = hyperlinkMatcher.group( 1 );
+                processHyperlink( hwpfDocument, currentBlock, paragraph,
+                        currentTableLevel, hyperlink, separatorMark + 1,
+                        endMark );
+                return;
+            }
+
+            final Matcher pagerefMatcher = pagerefPattern
+                    .matcher( firstAfterBegin.text() );
+            if ( pagerefMatcher.matches() )
+            {
+                String pageref = pagerefMatcher.group( 1 );
+                processPageref( hwpfDocument, currentBlock, paragraph,
+                        currentTableLevel, pageref, separatorMark + 1, endMark );
+                return;
+            }
+        }
+
+        StringBuilder debug = new StringBuilder( "Unsupported field type: \n" );
+        for ( int i = beginMark; i <= endMark; i++ )
+        {
+            debug.append( "\t" );
+            debug.append( paragraph.getCharacterRun( i ) );
+            debug.append( "\n" );
+        }
+        logger.log( POILogger.WARN, debug );
+
+        // just output field value
+        if ( separatorMark + 1 < endMark )
+            processCharacters( hwpfDocument, currentTableLevel, paragraph,
+                    currentBlock, separatorMark + 1, endMark );
+
+        return;
     }
 
-    protected Element addRegionBody(Element pageMaster) {
-	final Element regionBody = document.createElementNS(NS_XSLFO,
-		"fo:region-body");
-	pageMaster.appendChild(regionBody);
+    protected void processHyperlink( HWPFDocument hwpfDocument,
+            Element currentBlock, Paragraph paragraph, int currentTableLevel,
+            String hyperlink, int beginTextInclusive, int endTextExclusive )
+    {
+        Element basicLink = createBasicLinkExternal( hyperlink );
+        currentBlock.appendChild( basicLink );
 
-	return regionBody;
-    }
-
-    protected Element addSimplePageMaster(String masterName) {
-	final Element simplePageMaster = document.createElementNS(NS_XSLFO,
-		"fo:simple-page-master");
-	simplePageMaster.setAttribute("master-name", masterName);
-	layoutMasterSet.appendChild(simplePageMaster);
-
-	return simplePageMaster;
-    }
-
-    protected Element addTable(Element flow) {
-	final Element table = document.createElementNS(NS_XSLFO, "fo:table");
-	flow.appendChild(table);
-	return table;
-    }
-
-    protected Element createBlock() {
-	return document.createElementNS(NS_XSLFO, "fo:block");
-    }
-
-    protected Element createExternalGraphic(String source) {
-	Element result = document.createElementNS(NS_XSLFO,
-		"fo:external-graphic");
-	result.setAttribute("src", "url('" + source + "')");
-	return result;
-    }
-
-    protected Element createInline() {
-	return document.createElementNS(NS_XSLFO, "fo:inline");
-    }
-
-    protected Element createLeader() {
-	return document.createElementNS(NS_XSLFO, "fo:leader");
-    }
-
-    protected Element createListBlock() {
-	return document.createElementNS(NS_XSLFO, "fo:list-block");
-    }
-
-    protected Element createListItem() {
-	return document.createElementNS(NS_XSLFO, "fo:list-item");
-    }
-
-    protected Element createListItemBody() {
-	return document.createElementNS(NS_XSLFO, "fo:list-item-body");
-    }
-
-    protected Element createListItemLabel(String text) {
-	Element result = document.createElementNS(NS_XSLFO,
-		"fo:list-item-label");
-	Element block = createBlock();
-	block.appendChild(document.createTextNode(text));
-	result.appendChild(block);
-	return result;
-    }
-
-    protected String createPageMaster(SectionProperties sep, String type,
-	    int section) {
-	float height = sep.getYaPage() / TWIPS_PER_INCH;
-	float width = sep.getXaPage() / TWIPS_PER_INCH;
-	float leftMargin = sep.getDxaLeft() / TWIPS_PER_INCH;
-	float rightMargin = sep.getDxaRight() / TWIPS_PER_INCH;
-	float topMargin = sep.getDyaTop() / TWIPS_PER_INCH;
-	float bottomMargin = sep.getDyaBottom() / TWIPS_PER_INCH;
-
-	// add these to the header
-	String pageMasterName = type + "-page" + section;
-
-	Element pageMaster = addSimplePageMaster(pageMasterName);
-	pageMaster.setAttribute("page-height", height + "in");
-	pageMaster.setAttribute("page-width", width + "in");
-
-	Element regionBody = addRegionBody(pageMaster);
-	regionBody.setAttribute("margin", topMargin + "in " + rightMargin
-		+ "in " + bottomMargin + "in " + leftMargin + "in");
-
-	/*
-	 * 6.4.14 fo:region-body
-	 *
-	 * The values of the padding and border-width traits must be "0".
-	 */
-	// WordToFoUtils.setBorder(regionBody, sep.getBrcTop(), "top");
-	// WordToFoUtils.setBorder(regionBody, sep.getBrcBottom(), "bottom");
-	// WordToFoUtils.setBorder(regionBody, sep.getBrcLeft(), "left");
-	// WordToFoUtils.setBorder(regionBody, sep.getBrcRight(), "right");
-
-	if (sep.getCcolM1() > 0) {
-	    regionBody.setAttribute("column-count", "" + (sep.getCcolM1() + 1));
-	    if (sep.getFEvenlySpaced()) {
-		regionBody.setAttribute("column-gap",
-			(sep.getDxaColumns() / TWIPS_PER_INCH) + "in");
-	    } else {
-		regionBody.setAttribute("column-gap", "0.25in");
-	    }
-	}
-
-	return pageMasterName;
-    }
-
-    protected Element createTableBody() {
-	return document.createElementNS(NS_XSLFO, "fo:table-body");
-    }
-
-    protected Element createTableCell() {
-	return document.createElementNS(NS_XSLFO, "fo:table-cell");
-    }
-
-    protected Element createTableHeader() {
-	return document.createElementNS(NS_XSLFO, "fo:table-header");
-    }
-
-    protected Element createTableRow() {
-	return document.createElementNS(NS_XSLFO, "fo:table-row");
-    }
-
-    protected Text createText(String data) {
-	return document.createTextNode(data);
-    }
-
-    public Document getDocument() {
-	return document;
-    }
-
-    public void processDocument(HWPFDocument hwpfDocument) {
-	final Range range = hwpfDocument.getRange();
-
-	for (int s = 0; s < range.numSections(); s++) {
-	    processSection(hwpfDocument, range.getSection(s), s);
-	}
+        if ( beginTextInclusive < endTextExclusive )
+            processCharacters( hwpfDocument, currentTableLevel, paragraph,
+                    basicLink, beginTextInclusive, endTextExclusive );
     }
 
     /**
@@ -298,304 +418,304 @@ public class WordToFoExtractor {
      * @param picture
      *            HWPF object, contained picture data and properties
      */
-    protected void processImage(Element currentBlock, boolean inlined,
-            Picture picture) {
+    protected void processImage( Element currentBlock, boolean inlined,
+            Picture picture )
+    {
         // no default implementation -- skip
+        currentBlock.appendChild( document.createComment( "Image link to '"
+                + picture.suggestFullFileName() + "' can be here" ) );
     }
 
-    protected void processParagraph(HWPFDocument hwpfDocument,
-            Element parentFopElement, int currentTableLevel,
-            Paragraph paragraph, String bulletText) {
-        final Element block = createBlock();
-        parentFopElement.appendChild(block);
+    protected void processPageref( HWPFDocument hwpfDocument,
+            Element currentBlock, Paragraph paragraph, int currentTableLevel,
+            String pageref, int beginTextInclusive, int endTextExclusive )
+    {
+        Element basicLink = createBasicLinkInternal( pageref );
+        currentBlock.appendChild( basicLink );
 
-        WordToFoUtils.setParagraphProperties(paragraph, block);
+        if ( beginTextInclusive < endTextExclusive )
+            processCharacters( hwpfDocument, currentTableLevel, paragraph,
+                    basicLink, beginTextInclusive, endTextExclusive );
+    }
+
+    protected void processParagraph( HWPFDocument hwpfDocument,
+            Element parentFopElement, int currentTableLevel,
+            Paragraph paragraph, String bulletText )
+    {
+        final Element block = createBlock();
+        parentFopElement.appendChild( block );
+
+        WordToFoUtils.setParagraphProperties( paragraph, block );
 
         final int charRuns = paragraph.numCharacterRuns();
 
-        if (charRuns == 0) {
+        if ( charRuns == 0 )
+        {
             return;
         }
 
-        final String pFontName;
-        final int pFontSize;
-        final boolean pBold;
-        final boolean pItalic;
         {
-            CharacterRun characterRun = paragraph.getCharacterRun(0);
-            pFontSize = characterRun.getFontSize() / 2;
-            pFontName = characterRun.getFontName();
-            pBold = characterRun.isBold();
-            pItalic = characterRun.isItalic();
+            final String pFontName;
+            final int pFontSize;
+            final boolean pBold;
+            final boolean pItalic;
+            {
+                CharacterRun characterRun = paragraph.getCharacterRun( 0 );
+                pFontSize = characterRun.getFontSize() / 2;
+                pFontName = characterRun.getFontName();
+                pBold = characterRun.isBold();
+                pItalic = characterRun.isItalic();
+            }
+            WordToFoUtils.setFontFamily( block, pFontName );
+            WordToFoUtils.setFontSize( block, pFontSize );
+            WordToFoUtils.setBold( block, pBold );
+            WordToFoUtils.setItalic( block, pItalic );
+
+            blocksProperies.push( new BlockProperies( pFontName, pFontSize,
+                    pBold, pItalic ) );
         }
-        WordToFoUtils.setFontFamily(block, pFontName);
-        WordToFoUtils.setFontSize(block, pFontSize);
-        WordToFoUtils.setBold(block, pBold);
-        WordToFoUtils.setItalic(block, pItalic);
+        try
+        {
+            boolean haveAnyText = false;
 
-        StringBuilder lineText = new StringBuilder();
+            if ( WordToFoUtils.isNotEmpty( bulletText ) )
+            {
+                Element inline = createInline();
+                block.appendChild( inline );
 
-        if (WordToFoUtils.isNotEmpty(bulletText)) {
-            Element inline = createInline();
-            block.appendChild(inline);
+                Text textNode = createText( bulletText );
+                inline.appendChild( textNode );
 
-            Text textNode = createText(bulletText);
-            inline.appendChild(textNode);
+                haveAnyText |= bulletText.trim().length() != 0;
+            }
 
-            lineText.append(bulletText);
+            haveAnyText = processCharacters( hwpfDocument, currentTableLevel,
+                    paragraph, block, 0, charRuns );
+
+            if ( !haveAnyText )
+            {
+                Element leader = createLeader();
+                block.appendChild( leader );
+            }
+        }
+        finally
+        {
+            blocksProperies.pop();
         }
 
-        for (int c = 0; c < charRuns; c++) {
-            CharacterRun characterRun = paragraph.getCharacterRun(c);
+        return;
+    }
 
-            if (hwpfDocument.getPicturesTable().hasPicture(characterRun)) {
-                Picture picture = hwpfDocument.getPicturesTable()
-                        .extractPicture(characterRun, true);
+    protected void processSection( HWPFDocument hwpfDocument, Section section,
+            int sectionCounter )
+    {
+        String regularPage = createPageMaster(
+                WordToFoUtils.getSectionProperties( section ), "page",
+                sectionCounter );
 
-                processImage(block, characterRun.text().charAt(0) == 0x01,
-                        picture);
+        Element pageSequence = addPageSequence( regularPage );
+        Element flow = addFlowToPageSequence( pageSequence, "xsl-region-body" );
+
+        processSectionParagraphes( hwpfDocument, flow, section, 0 );
+    }
+
+    protected void processSectionParagraphes( HWPFDocument hwpfDocument,
+            Element flow, Range range, int currentTableLevel )
+    {
+        final Map<Integer, Table> allTables = new HashMap<Integer, Table>();
+        for ( TableIterator tableIterator = WordToFoUtils.newTableIterator(
+                range, currentTableLevel + 1 ); tableIterator.hasNext(); )
+        {
+            Table next = tableIterator.next();
+            allTables.put( Integer.valueOf( next.getStartOffset() ), next );
+        }
+
+        final ListTables listTables = hwpfDocument.getListTables();
+        int currentListInfo = 0;
+
+        final int paragraphs = range.numParagraphs();
+        for ( int p = 0; p < paragraphs; p++ )
+        {
+            Paragraph paragraph = range.getParagraph( p );
+
+            if ( allTables.containsKey( Integer.valueOf( paragraph
+                    .getStartOffset() ) ) )
+            {
+                Table table = allTables.get( Integer.valueOf( paragraph
+                        .getStartOffset() ) );
+                processTable( hwpfDocument, flow, table, currentTableLevel + 1 );
                 continue;
             }
 
-	    String text = characterRun.text();
-	    if (text.getBytes().length == 0)
-		continue;
+            if ( paragraph.isInTable()
+                    && paragraph.getTableLevel() != currentTableLevel )
+            {
+                continue;
+            }
 
-            if (text.getBytes()[0] == FIELD_BEGIN_MARK) {
-                /*
-                 * check if we have a field with calculated image as a result.
-                 * MathType equation, for example.
-                 */
-                int skipTo = tryImageWithinField(hwpfDocument, paragraph, c,
-                        block);
+            if ( paragraph.getIlfo() != currentListInfo )
+            {
+                currentListInfo = paragraph.getIlfo();
+            }
 
-		if (skipTo != c) {
-		    c = skipTo;
-		    continue;
-		}
-		continue;
-	    }
-	    if (text.getBytes()[0] == FIELD_SEPARATOR_MARK) {
-		continue;
-	    }
-	    if (text.getBytes()[0] == FIELD_END_MARK) {
-		continue;
-	    }
+            if ( currentListInfo != 0 )
+            {
+                final ListFormatOverride listFormatOverride = listTables
+                        .getOverride( paragraph.getIlfo() );
 
-	    if (characterRun.isSpecialCharacter() || characterRun.isObj()
-		    || characterRun.isOle2()) {
-		continue;
-	    }
+                String label = WordToFoUtils.getBulletText( listTables,
+                        paragraph, listFormatOverride.getLsid() );
 
-	    Element inline = createInline();
-	    if (characterRun.isBold() != pBold) {
-		WordToFoUtils.setBold(inline, characterRun.isBold());
-	    }
-	    if (characterRun.isItalic() != pItalic) {
-		WordToFoUtils.setItalic(inline, characterRun.isItalic());
-	    }
-	    if (!WordToFoUtils.equals(characterRun.getFontName(), pFontName)) {
-		WordToFoUtils.setFontFamily(inline, characterRun.getFontName());
-	    }
-	    if (characterRun.getFontSize() / 2 != pFontSize) {
-		WordToFoUtils.setFontSize(inline,
-			characterRun.getFontSize() / 2);
-	    }
-	    WordToFoUtils.setCharactersProperties(characterRun, inline);
-	    block.appendChild(inline);
-
-	    if (text.endsWith("\r")
-		    || (text.charAt(text.length() - 1) == BEL_MARK && currentTableLevel != 0))
-		text = text.substring(0, text.length() - 1);
-
-	    Text textNode = createText(text);
-	    inline.appendChild(textNode);
-
-	    lineText.append(text);
-	}
-
-	if (lineText.toString().trim().length() == 0) {
-	    Element leader = createLeader();
-	    block.appendChild(leader);
-	}
-
-	return;
-    }
-
-    protected void processSection(HWPFDocument hwpfDocument, Section section,
-	    int sectionCounter) {
-	String regularPage = createPageMaster(
-		WordToFoUtils.getSectionProperties(section), "page",
-		sectionCounter);
-
-	Element pageSequence = addPageSequence(regularPage);
-	Element flow = addFlowToPageSequence(pageSequence, "xsl-region-body");
-
-	processSectionParagraphes(hwpfDocument, flow, section, 0);
-    }
-
-    protected void processSectionParagraphes(HWPFDocument hwpfDocument,
-	    Element flow, Range range, int currentTableLevel) {
-	final Map<Integer, Table> allTables = new HashMap<Integer, Table>();
-	for (TableIterator tableIterator = WordToFoUtils.newTableIterator(
-		range, currentTableLevel + 1); tableIterator.hasNext();) {
-	    Table next = tableIterator.next();
-	    allTables.put(Integer.valueOf(next.getStartOffset()), next);
-	}
-
-	final ListTables listTables = hwpfDocument.getListTables();
-	int currentListInfo = 0;
-
-	final int paragraphs = range.numParagraphs();
-	for (int p = 0; p < paragraphs; p++) {
-	    Paragraph paragraph = range.getParagraph(p);
-
-	    if (allTables.containsKey(Integer.valueOf(paragraph
-		    .getStartOffset()))) {
-		Table table = allTables.get(Integer.valueOf(paragraph
-			.getStartOffset()));
-		processTable(hwpfDocument, flow, table, currentTableLevel + 1);
-		continue;
-	    }
-
-	    if (paragraph.isInTable()
-		    && paragraph.getTableLevel() != currentTableLevel) {
-		continue;
-	    }
-
-	    if (paragraph.getIlfo() != currentListInfo) {
-		currentListInfo = paragraph.getIlfo();
-	    }
-
-	    if (currentListInfo != 0) {
-		final ListFormatOverride listFormatOverride = listTables
-			.getOverride(paragraph.getIlfo());
-
-		String label = WordToFoUtils.getBulletText(listTables,
-			paragraph, listFormatOverride.getLsid());
-
-		processParagraph(hwpfDocument, flow, currentTableLevel,
-			paragraph, label);
-	    } else {
-		processParagraph(hwpfDocument, flow, currentTableLevel,
-			paragraph, WordToFoUtils.EMPTY);
-	    }
-	}
+                processParagraph( hwpfDocument, flow, currentTableLevel,
+                        paragraph, label );
+            }
+            else
+            {
+                processParagraph( hwpfDocument, flow, currentTableLevel,
+                        paragraph, WordToFoUtils.EMPTY );
+            }
+        }
 
     }
 
-    protected void processTable(HWPFDocument hwpfDocument, Element flow,
-	    Table table, int thisTableLevel) {
-	Element tableElement = addTable(flow);
+    protected void processTable( HWPFDocument hwpfDocument, Element flow,
+            Table table, int thisTableLevel )
+    {
+        Element tableElement = addTable( flow );
 
-	Element tableHeader = createTableHeader();
-	Element tableBody = createTableBody();
+        Element tableHeader = createTableHeader();
+        Element tableBody = createTableBody();
 
-	final int tableRows = table.numRows();
+        final int tableRows = table.numRows();
 
-	int maxColumns = Integer.MIN_VALUE;
-	for (int r = 0; r < tableRows; r++) {
-	    maxColumns = Math.max(maxColumns, table.getRow(r).numCells());
-	}
+        int maxColumns = Integer.MIN_VALUE;
+        for ( int r = 0; r < tableRows; r++ )
+        {
+            maxColumns = Math.max( maxColumns, table.getRow( r ).numCells() );
+        }
 
-	for (int r = 0; r < tableRows; r++) {
-	    TableRow tableRow = table.getRow(r);
+        for ( int r = 0; r < tableRows; r++ )
+        {
+            TableRow tableRow = table.getRow( r );
 
-	    Element tableRowElement = createTableRow();
-	    WordToFoUtils.setTableRowProperties(tableRow, tableRowElement);
+            Element tableRowElement = createTableRow();
+            WordToFoUtils.setTableRowProperties( tableRow, tableRowElement );
 
-	    final int rowCells = tableRow.numCells();
-	    for (int c = 0; c < rowCells; c++) {
-		TableCell tableCell = tableRow.getCell(c);
+            final int rowCells = tableRow.numCells();
+            for ( int c = 0; c < rowCells; c++ )
+            {
+                TableCell tableCell = tableRow.getCell( c );
 
-		if (tableCell.isMerged() && !tableCell.isFirstMerged())
-		    continue;
+                if ( tableCell.isMerged() && !tableCell.isFirstMerged() )
+                    continue;
 
-		if (tableCell.isVerticallyMerged()
-			&& !tableCell.isFirstVerticallyMerged())
-		    continue;
+                if ( tableCell.isVerticallyMerged()
+                        && !tableCell.isFirstVerticallyMerged() )
+                    continue;
 
-		Element tableCellElement = createTableCell();
-		WordToFoUtils.setTableCellProperties(tableRow, tableCell,
-			tableCellElement, r == 0, r == tableRows - 1, c == 0,
-			c == rowCells - 1);
+                Element tableCellElement = createTableCell();
+                WordToFoUtils.setTableCellProperties( tableRow, tableCell,
+                        tableCellElement, r == 0, r == tableRows - 1, c == 0,
+                        c == rowCells - 1 );
 
-		if (tableCell.isFirstMerged()) {
-		    int count = 0;
-		    for (int c1 = c; c1 < rowCells; c1++) {
-			TableCell nextCell = tableRow.getCell(c1);
-			if (nextCell.isMerged())
-			    count++;
-			if (!nextCell.isMerged())
-			    break;
-		    }
-		    tableCellElement.setAttribute("number-columns-spanned", ""
-			    + count);
-		} else {
-		    if (c == rowCells - 1 && c != maxColumns - 1) {
-			tableCellElement.setAttribute("number-columns-spanned",
-				"" + (maxColumns - c));
-		    }
-		}
+                if ( tableCell.isFirstMerged() )
+                {
+                    int count = 0;
+                    for ( int c1 = c; c1 < rowCells; c1++ )
+                    {
+                        TableCell nextCell = tableRow.getCell( c1 );
+                        if ( nextCell.isMerged() )
+                            count++;
+                        if ( !nextCell.isMerged() )
+                            break;
+                    }
+                    tableCellElement.setAttribute( "number-columns-spanned", ""
+                            + count );
+                }
+                else
+                {
+                    if ( c == rowCells - 1 && c != maxColumns - 1 )
+                    {
+                        tableCellElement
+                                .setAttribute( "number-columns-spanned", ""
+                                        + (maxColumns - c) );
+                    }
+                }
 
-		if (tableCell.isFirstVerticallyMerged()) {
-		    int count = 0;
-		    for (int r1 = r; r1 < tableRows; r1++) {
-			TableRow nextRow = table.getRow(r1);
-			if (nextRow.numCells() < c)
-			    break;
-			TableCell nextCell = nextRow.getCell(c);
-			if (nextCell.isVerticallyMerged())
-			    count++;
-			if (!nextCell.isVerticallyMerged())
-			    break;
-		    }
-		    tableCellElement.setAttribute("number-rows-spanned", ""
-			    + count);
-		}
+                if ( tableCell.isFirstVerticallyMerged() )
+                {
+                    int count = 0;
+                    for ( int r1 = r; r1 < tableRows; r1++ )
+                    {
+                        TableRow nextRow = table.getRow( r1 );
+                        if ( nextRow.numCells() < c )
+                            break;
+                        TableCell nextCell = nextRow.getCell( c );
+                        if ( nextCell.isVerticallyMerged() )
+                            count++;
+                        if ( !nextCell.isVerticallyMerged() )
+                            break;
+                    }
+                    tableCellElement.setAttribute( "number-rows-spanned", ""
+                            + count );
+                }
 
-		processSectionParagraphes(hwpfDocument, tableCellElement,
-			tableCell, thisTableLevel);
+                processSectionParagraphes( hwpfDocument, tableCellElement,
+                        tableCell, thisTableLevel );
 
-		if (!tableCellElement.hasChildNodes()) {
-		    tableCellElement.appendChild(createBlock());
-		}
+                if ( !tableCellElement.hasChildNodes() )
+                {
+                    tableCellElement.appendChild( createBlock() );
+                }
 
-		tableRowElement.appendChild(tableCellElement);
-	    }
+                tableRowElement.appendChild( tableCellElement );
+            }
 
-	    if (tableRow.isTableHeader()) {
-		tableHeader.appendChild(tableRowElement);
-	    } else {
-		tableBody.appendChild(tableRowElement);
-	    }
-	}
+            if ( tableRow.isTableHeader() )
+            {
+                tableHeader.appendChild( tableRowElement );
+            }
+            else
+            {
+                tableBody.appendChild( tableRowElement );
+            }
+        }
 
-	if (tableHeader.hasChildNodes()) {
-	    tableElement.appendChild(tableHeader);
-	}
-	if (tableBody.hasChildNodes()) {
-	    tableElement.appendChild(tableBody);
-	} else {
-	    System.err.println("Table without body");
-	}
+        if ( tableHeader.hasChildNodes() )
+        {
+            tableElement.appendChild( tableHeader );
+        }
+        if ( tableBody.hasChildNodes() )
+        {
+            tableElement.appendChild( tableBody );
+        }
+        else
+        {
+            logger.log(
+                    POILogger.WARN,
+                    "Table without body starting on offset "
+                            + table.getStartOffset() + " -- "
+                            + table.getEndOffset() );
+        }
     }
 
-    protected int tryImageWithinField(HWPFDocument hwpfDocument,
-            Paragraph paragraph, int beginMark, Element currentBlock) {
+    protected int tryField( HWPFDocument hwpfDocument, Paragraph paragraph,
+            int currentTableLevel, int beginMark, Element currentBlock )
+    {
         int separatorMark = -1;
-        int pictureMark = -1;
-        int pictureChar = Integer.MIN_VALUE;
         int endMark = -1;
-        for (int c = beginMark + 1; c < paragraph.numCharacterRuns(); c++) {
-            CharacterRun characterRun = paragraph.getCharacterRun(c);
+        for ( int c = beginMark + 1; c < paragraph.numCharacterRuns(); c++ )
+        {
+            CharacterRun characterRun = paragraph.getCharacterRun( c );
 
             String text = characterRun.text();
-            if (text.getBytes().length == 0)
+            if ( text.getBytes().length == 0 )
                 continue;
 
-            if (text.getBytes()[0] == FIELD_SEPARATOR_MARK) {
-                if (separatorMark != -1) {
+            if ( text.getBytes()[0] == FIELD_SEPARATOR_MARK )
+            {
+                if ( separatorMark != -1 )
+                {
                     // double;
                     return beginMark;
                 }
@@ -604,8 +724,10 @@ public class WordToFoExtractor {
                 continue;
             }
 
-            if (text.getBytes()[0] == FIELD_END_MARK) {
-                if (endMark != -1) {
+            if ( text.getBytes()[0] == FIELD_END_MARK )
+            {
+                if ( endMark != -1 )
+                {
                     // double;
                     return beginMark;
                 }
@@ -614,63 +736,14 @@ public class WordToFoExtractor {
                 break;
             }
 
-            if (hwpfDocument.getPicturesTable().hasPicture(characterRun)) {
-                if (c != -1) {
-                    // double;
-                    return beginMark;
-                }
-
-                pictureMark = c;
-                pictureChar = characterRun.text().charAt(0);
-                continue;
-            }
         }
 
-        if (separatorMark == -1 || pictureMark == -1 || endMark == -1)
+        if ( separatorMark == -1 || endMark == -1 )
             return beginMark;
 
-        final CharacterRun pictureRun = paragraph.getCharacterRun(pictureMark);
-        final Picture picture = hwpfDocument.getPicturesTable().extractPicture(
-                pictureRun, true);
-
-        processImage(currentBlock, pictureChar == 0x01, picture);
+        processField( hwpfDocument, currentBlock, paragraph, currentTableLevel,
+                beginMark, separatorMark, endMark );
 
         return endMark;
     }
-
-    /**
-     * Java main() interface to interact with WordToFoExtractor
-     *
-     * <p>
-     *     Usage: WordToFoExtractor infile outfile
-     * </p>
-     * Where infile is an input .doc file ( Word 97-2007)
-     * which will be rendered as XSL-FO into outfile
-     *
-     */
-    public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: WordToFoExtractor <inputFile.doc> <saveTo.fo>");
-            return;
-        }
-
-        System.out.println("Converting " + args[0]);
-        System.out.println("Saving output to " + args[1]);
-        try {
-            Document doc = WordToFoExtractor.process(new File(args[0]));
-
-            FileWriter out = new FileWriter(args[1]);
-            DOMSource domSource = new DOMSource(doc);
-            StreamResult streamResult = new StreamResult(out);
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer serializer = tf.newTransformer();
-            serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");  // TODO set encoding from a command argument
-            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-            serializer.transform(domSource, streamResult);
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
