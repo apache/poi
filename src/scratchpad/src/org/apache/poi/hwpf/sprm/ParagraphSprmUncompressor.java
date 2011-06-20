@@ -347,6 +347,7 @@ public final class ParagraphSprmUncompressor
         break;
       case 0x41:
         // sprmPFBiDi 
+        newPAP.setFBiDi((byte) sprm.getOperand());
         break;
       case 0x43:
 
