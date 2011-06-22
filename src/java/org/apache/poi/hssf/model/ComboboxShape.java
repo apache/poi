@@ -50,7 +50,7 @@ public class ComboboxShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
-        c.setObjectId(shapeId);
+        c.setObjectId(  getCmoObjectId(shapeId) );
         c.setLocked(true);
         c.setPrintable(false);
         c.setAutofill(true);

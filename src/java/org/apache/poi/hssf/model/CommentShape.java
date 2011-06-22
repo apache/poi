@@ -136,4 +136,10 @@ public final class CommentShape extends TextboxShape {
     {
         return _note;
     }
+
+    @Override
+    int getCmoObjectId(int shapeId){
+        return shapeId;
+    }
+
 }
