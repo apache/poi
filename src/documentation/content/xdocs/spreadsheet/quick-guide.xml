@@ -175,7 +175,7 @@
     row.createCell(2).setCellValue(Calendar.getInstance());
     row.createCell(3).setCellValue("a string");
     row.createCell(4).setCellValue(true);
-    row.createCell(5).setCellType(HSSFCell.CELL_TYPE_ERROR);
+    row.createCell(5).setCellType(Cell.CELL_TYPE_ERROR);
 
     // Write the output to a file
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -193,13 +193,13 @@
         Row row = sheet.createRow((short) 2);
         row.setHeightInPoints(30);
 
-        createCell(wb, row, (short) 0, XSSFCellStyle.ALIGN_CENTER, XSSFCellStyle.VERTICAL_BOTTOM);
-        createCell(wb, row, (short) 1, XSSFCellStyle.ALIGN_CENTER_SELECTION, XSSFCellStyle.VERTICAL_BOTTOM);
-        createCell(wb, row, (short) 2, XSSFCellStyle.ALIGN_FILL, XSSFCellStyle.VERTICAL_CENTER);
-        createCell(wb, row, (short) 3, XSSFCellStyle.ALIGN_GENERAL, XSSFCellStyle.VERTICAL_CENTER);
-        createCell(wb, row, (short) 4, XSSFCellStyle.ALIGN_JUSTIFY, XSSFCellStyle.VERTICAL_JUSTIFY);
-        createCell(wb, row, (short) 5, XSSFCellStyle.ALIGN_LEFT, XSSFCellStyle.VERTICAL_TOP);
-        createCell(wb, row, (short) 6, XSSFCellStyle.ALIGN_RIGHT, XSSFCellStyle.VERTICAL_TOP);
+        createCell(wb, row, (short) 0, CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 1, CellStyle.ALIGN_CENTER_SELECTION, CellStyle.VERTICAL_BOTTOM);
+        createCell(wb, row, (short) 2, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 3, CellStyle.ALIGN_GENERAL, CellStyle.VERTICAL_CENTER);
+        createCell(wb, row, (short) 4, CellStyle.ALIGN_JUSTIFY, CellStyle.VERTICAL_JUSTIFY);
+        createCell(wb, row, (short) 5, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_TOP);
+        createCell(wb, row, (short) 6, CellStyle.ALIGN_RIGHT, CellStyle.VERTICAL_TOP);
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("xssf-align.xlsx");
@@ -218,7 +218,7 @@
      */
     private static void createCell(Workbook wb, Row row, short column, short halign, short valign) {
         Cell cell = row.createCell(column);
-        cell.setCellValue(new XSSFRichTextString("Align It"));
+        cell.setCellValue("Align It");
         CellStyle cellStyle = wb.createCellStyle();
         cellStyle.setAlignment(halign);
         cellStyle.setVerticalAlignment(valign);
@@ -675,11 +675,11 @@ Examples:
                 <anchor id="FooterPageNumbers"/>
                 <section><title>Set Page Numbers on Footer</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("format sheet");
-    HSSFFooter footer = sheet.getFooter()
+    Workbook wb = new HSSFWorkbook(); // or new XSSFWorkbook();
+    Sheet sheet = wb.createSheet("format sheet");
+    Footer footer = sheet.getFooter();
 
-    footer.setRight( "Page " + HSSFFooter.page() + " of " + HSSFFooter.numPages() );
+    footer.setRight( "Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages() );
 
 
 
@@ -700,38 +700,38 @@ Examples:
                         creating new styles.
                     </p>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet( "new sheet" );
+    Workbook wb = new HSSFWorkbook();  // or new XSSFWorkbook()
+    Sheet sheet1 = wb.createSheet( "new sheet" );
 
     // Create a merged region
-    HSSFRow row = sheet1.createRow( (short) 1 );
-    HSSFRow row2 = sheet1.createRow( (short) 2 );
-    HSSFCell cell = row.createCell( (short) 1 );
+    Row row = sheet1.createRow( 1 );
+    Row row2 = sheet1.createRow( 2 );
+    Cell cell = row.createCell( 1 );
     cell.setCellValue( "This is a test of merging" );
-    Region region = new Region( 1, (short) 1, 4, (short) 4 );
+    CellRangeAddress region = CellRangeAddress.valueOf("B2:E5");
     sheet1.addMergedRegion( region );
 
     // Set the border and border colors.
     final short borderMediumDashed = HSSFCellStyle.BORDER_MEDIUM_DASHED;
-    HSSFRegionUtil.setBorderBottom( borderMediumDashed,
+    RegionUtil.setBorderBottom( borderMediumDashed,
         region, sheet1, wb );
-    HSSFRegionUtil.setBorderTop( borderMediumDashed,
+    RegionUtil.setBorderTop( borderMediumDashed,
         region, sheet1, wb );
-    HSSFRegionUtil.setBorderLeft( borderMediumDashed,
+    RegionUtil.setBorderLeft( borderMediumDashed,
         region, sheet1, wb );
-    HSSFRegionUtil.setBorderRight( borderMediumDashed,
+    RegionUtil.setBorderRight( borderMediumDashed,
         region, sheet1, wb );
-    HSSFRegionUtil.setBottomBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
-    HSSFRegionUtil.setTopBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
-    HSSFRegionUtil.setLeftBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
-    HSSFRegionUtil.setRightBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+    RegionUtil.setBottomBorderColor(IndexedColors.AQUA.getIndex(), region, sheet1, wb);
+    RegionUtil.setTopBorderColor(IndexedColors.AQUA.getIndex(), region, sheet1, wb);
+    RegionUtil.setLeftBorderColor(IndexedColors.AQUA.getIndex(), region, sheet1, wb);
+    RegionUtil.setRightBorderColor(IndexedColors.AQUA.getIndex(), region, sheet1, wb);
 
     // Shows some usages of HSSFCellUtil
-    HSSFCellStyle style = wb.createCellStyle();
+    CellStyle style = wb.createCellStyle();
     style.setIndention((short)4);
-    HSSFCellUtil.createCell(row, 8, "This is the value of the cell", style);
-    HSSFCell cell2 = HSSFCellUtil.createCell( row2, 8, "This is the value of the cell");
-    HSSFCellUtil.setAlignment(cell2, wb, HSSFCellStyle.ALIGN_CENTER);
+    CellUtil.createCell(row, 8, "This is the value of the cell", style);
+    Cell cell2 = CellUtil.createCell( row2, 8, "This is the value of the cell");
+    CellUtil.setAlignment(cell2, wb, HSSFCellStyle.ALIGN_CENTER);
 
     // Write out the workbook
     FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
@@ -1469,44 +1469,40 @@ Examples:
      </section>
      <anchor id="Validation"/>
      <section><title>Data Validations</title>
-        <note>
-          Currently - as of version 3.5 - the XSSF stream does not support data validations and neither it nor the HSSF stream 
-          allow data validations to be recovered from sheets
-        </note>
          <p><strong>Check the value a user enters into a cell against one or more predefined value(s).</strong></p>
          <p>The following code will limit the value the user can enter into cell A1 to one of three integer values, 10, 20 or 30.</p>
         <source>
-  HSSFWorkbook workbook = new HSSFWorkbook();
-  HSSFSheet sheet = workbook.createSheet("Data Validation");
-  CellRangeAddressList addressList = new CellRangeAddressList(
-      0, 0, 0, 0);
-  DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
-      new String[]{"10", "20", "30"});
-  HSSFDataValidation dataValidation = new HSSFDataValidation
-      (addressList, dvConstraint);
-  datavalidation.setSuppressDropDownArrow(true);
-  sheet.addValidationData(dataValidation);
+    Workbook workbook = new HSSFWorkbook();
+    Sheet sheet = workbook.createSheet("Data Validation");
+    CellRangeAddressList addressList = new CellRangeAddressList(
+        0, 0, 0, 0);
+    DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
+        new String[]{"10", "20", "30"});
+    DataValidation dataValidation = new HSSFDataValidation
+        (addressList, dvConstraint);
+    dataValidation.setSuppressDropDownArrow(true);
+    sheet.addValidationData(dataValidation);
         </source>
         <p><strong> Drop Down Lists:</strong></p>
         <p>This code will do the same but offer the user a drop down list to select a value from.</p>
         <source>
-  HSSFWorkbook workbook = new HSSFWorkbook();
-  HSSFSheet sheet = workbook.createSheet("Data Validation");
-  CellRangeAddressList addressList = new CellRangeAddressList(
-      0, 0, 0, 0);
-  DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
-      new String[]{"10", "20", "30"});
-  HSSFDataValidation dataValidation = new HSSFDataValidation
-      (addressList, dvConstraint);
-  datavalidation.setSuppressDropDownArrow(false);
-  sheet.addValidationData(dataValidation);
-        </source>
+   Workbook workbook = new HSSFWorkbook();
+   Sheet sheet = workbook.createSheet("Data Validation");
+   CellRangeAddressList addressList = new CellRangeAddressList(
+       0, 0, 0, 0);
+   DVConstraint dvConstraint = DVConstraint.createExplicitListConstraint(
+       new String[]{"10", "20", "30"});
+   DataValidation dataValidation = new HSSFDataValidation
+       (addressList, dvConstraint);
+   dataValidation.setSuppressDropDownArrow(false);
+   sheet.addValidationData(dataValidation);
+         </source>
         <p><strong>Messages On Error:</strong></p>
         <p>To create a message box that will be shown to the user if the value they enter is invalid.</p>
         <source>
-  dataValidation.setErrorStyle(HSSFDataValidation.ErrorStyle.STOP);
+  dataValidation.setErrorStyle(DataValidation.ErrorStyle.STOP);
   dataValidation.createErrorBox("Box Title", "Message Text");
-        </source>
+    </source>
         <p>Replace 'Box Title' with the text you wish to display in the message box's title bar 
           and 'Message Text' with the text of your error message.</p>
         <p><strong>Prompts:</strong></p>
@@ -1547,7 +1543,7 @@ Examples:
       </source>
       <p>or</p>
       <source>
-  HSSFNamedRange namedRange = workbook.createName();
+  Name namedRange = workbook.createName();
   namedRange.setNameName("list1");
   namedRange.setRefersToFormula("$A$1:$A$3");
   dvConstraint = DVConstraint.createFormulaListConstraint("list1");
@@ -1556,7 +1552,7 @@ Examples:
       <p>The data does not have to be as the data validation. To select the data from a different sheet however, the sheet 
         must be given a name when created and that name should be used in the formula. So assuming the existence of a sheet named 'Data Sheet' this will work:</p>        
       <source>
-  HSSFNamedRange namedRange = workbook.createName();
+  Name namedRange = workbook.createName();
   namedRange.setNameName("list1");
   namedRange.setRefersToFormula("'Data Sheet'!$A$1:$A$3");
   dvConstraint = DVConstraint.createFormulaListConstraint("list1");
@@ -1567,7 +1563,7 @@ Examples:
       </source>
       <p>whilst this will not:</p>
       <source>
-  HSSFNamedRange namedRange = workbook.createName();
+  Name namedRange = workbook.createName();
   namedRange.setNameName("list1");
   namedRange.setRefersToFormula("'Sheet1'!$A$1:$A$3");
   dvConstraint = DVConstraint.createFormulaListConstraint("list1");
