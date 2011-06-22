@@ -59,7 +59,7 @@ public class TextboxShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType( (short) ( (HSSFSimpleShape) shape ).getShapeType() );
-        c.setObjectId( shapeId );
+        c.setObjectId( getCmoObjectId(shapeId) );
         c.setLocked( true );
         c.setPrintable( true );
         c.setAutofill( true );
@@ -166,4 +166,5 @@ public class TextboxShape
     {
         return escherTextbox;
     }
+
 }
