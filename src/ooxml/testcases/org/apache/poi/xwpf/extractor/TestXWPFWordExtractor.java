@@ -270,4 +270,15 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(text.length() > 0);
         assertTrue(text.contains("FldSimple.docx"));
     }
+
+    /**
+     * Test for parsing document with drawings to prevent
+     * NoClassDefFoundError for CTAnchor in XWPFRun
+     */
+    public void testDrawings() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("drawing.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        String text = extractor.getText();
+        assertTrue(text.length() > 0);
+    }
 }
