@@ -560,14 +560,29 @@ public class WordToFoExtractor extends AbstractToFoExtractor
 
             if ( currentListInfo != 0 )
             {
-                final ListFormatOverride listFormatOverride = listTables
-                        .getOverride( paragraph.getIlfo() );
+                if ( listTables != null )
+                {
+                    final ListFormatOverride listFormatOverride = listTables
+                            .getOverride( paragraph.getIlfo() );
 
-                String label = WordToFoUtils.getBulletText( listTables,
-                        paragraph, listFormatOverride.getLsid() );
+                    String label = WordToFoUtils.getBulletText( listTables,
+                            paragraph, listFormatOverride.getLsid() );
 
-                processParagraph( hwpfDocument, flow, currentTableLevel,
-                        paragraph, label );
+                    processParagraph( hwpfDocument, flow, currentTableLevel,
+                            paragraph, label );
+                }
+                else
+                {
+                    logger.log( POILogger.WARN,
+                            "Paragraph #" + paragraph.getStartOffset() + "-"
+                                    + paragraph.getEndOffset()
+                                    + " has reference to list structure #"
+                                    + currentListInfo
+                                    + ", but listTables not defined in file" );
+
+                    processParagraph( hwpfDocument, flow, currentTableLevel,
+                            paragraph, WordToFoUtils.EMPTY );
+                }
             }
             else
             {
@@ -581,8 +596,6 @@ public class WordToFoExtractor extends AbstractToFoExtractor
     protected void processTable( HWPFDocument hwpfDocument, Element flow,
             Table table, int thisTableLevel )
     {
-        Element tableElement = addTable( flow );
-
         Element tableHeader = createTableHeader();
         Element tableBody = createTableBody();
 
@@ -681,6 +694,7 @@ public class WordToFoExtractor extends AbstractToFoExtractor
             }
         }
 
+        final Element tableElement = createTable();
         if ( tableHeader.hasChildNodes() )
         {
             tableElement.appendChild( tableHeader );
@@ -688,6 +702,7 @@ public class WordToFoExtractor extends AbstractToFoExtractor
         if ( tableBody.hasChildNodes() )
         {
             tableElement.appendChild( tableBody );
+            flow.appendChild( tableElement );
         }
         else
         {
