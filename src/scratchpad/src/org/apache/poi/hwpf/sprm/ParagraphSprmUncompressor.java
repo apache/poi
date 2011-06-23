@@ -24,6 +24,8 @@ import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +35,9 @@ import java.util.ArrayList;
 public final class ParagraphSprmUncompressor
   extends SprmUncompressor
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( ParagraphSprmUncompressor.class );
+
   public ParagraphSprmUncompressor()
   {
   }
@@ -60,7 +65,17 @@ public final class ParagraphSprmUncompressor
       // table row
       if (sprm.getType() == SprmOperation.PAP_TYPE)
       {
-        unCompressPAPOperation(newProperties, sprm);
+          try
+          {
+              unCompressPAPOperation( newProperties, sprm );
+          }
+          catch ( Exception exc )
+          {
+              logger.log(
+                      POILogger.ERROR,
+                      "Unable to apply SPRM operation '"
+                              + sprm.getOperation() + "': ", exc );
+          }
       }
     }
 
