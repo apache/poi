@@ -102,13 +102,6 @@ public abstract class AbstractToFoExtractor
         return simplePageMaster;
     }
 
-    protected Element addTable( Element flow )
-    {
-        final Element table = document.createElementNS( NS_XSLFO, "fo:table" );
-        flow.appendChild( table );
-        return table;
-    }
-
     protected Element createBasicLinkExternal( String externalDestination )
     {
         final Element basicLink = document.createElementNS( NS_XSLFO,
@@ -171,6 +164,11 @@ public abstract class AbstractToFoExtractor
         block.appendChild( document.createTextNode( text ) );
         result.appendChild( block );
         return result;
+    }
+
+    protected Element createTable()
+    {
+        return document.createElementNS( NS_XSLFO, "fo:table" );
     }
 
     protected Element createTableBody()
