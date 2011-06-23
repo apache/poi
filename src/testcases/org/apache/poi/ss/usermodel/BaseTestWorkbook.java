@@ -99,6 +99,22 @@ public abstract class BaseTestWorkbook extends TestCase {
             // expected during successful test
         }
 
+        //try to assign an invalid name to the 2nd sheet
+        try {
+            wb.createSheet(null);
+            fail("should have thrown exceptiuon due to invalid sheet name");
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
+        }
+
+        try {
+            wb.setSheetName(2, null);
+
+            fail("should have thrown exceptiuon due to invalid sheet name");
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
+        }
+
         //check
         assertEquals(0, wb.getSheetIndex("sheet0"));
         assertEquals(1, wb.getSheetIndex("sheet1"));
@@ -129,9 +145,14 @@ public abstract class BaseTestWorkbook extends TestCase {
         Workbook wb = _testDataProvider.createWorkbook();
 
         String sheetName1 = "My very long sheet name which is longer than 31 chars";
+        String truncatedSheetName1 = sheetName1.substring(0, 31);
         Sheet sh1 = wb.createSheet(sheetName1);
-        assertEquals(sheetName1, sh1.getSheetName());
-        assertSame(sh1, wb.getSheet(sheetName1));
+        assertEquals(truncatedSheetName1, sh1.getSheetName());
+        assertSame(sh1, wb.getSheet(truncatedSheetName1));
+        // now via wb.setSheetName
+        wb.setSheetName(0, sheetName1);
+        assertEquals(truncatedSheetName1, sh1.getSheetName());
+        assertSame(sh1, wb.getSheet(truncatedSheetName1));
 
         String sheetName2 = "My very long sheet name which is longer than 31 chars " +
                 "and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)";
@@ -144,15 +165,16 @@ public abstract class BaseTestWorkbook extends TestCase {
         }
 
         String sheetName3 = "POI allows creating sheets with names longer than 31 characters";
+        String truncatedSheetName3 = sheetName3.substring(0, 31);
         Sheet sh3 = wb.createSheet(sheetName3);
-        assertEquals(sheetName3, sh3.getSheetName());
-        assertSame(sh3, wb.getSheet(sheetName3));
+        assertEquals(truncatedSheetName3, sh3.getSheetName());
+        assertSame(sh3, wb.getSheet(truncatedSheetName3));
 
         //serialize and read again
         wb = _testDataProvider.writeOutAndReadBack(wb);
         assertEquals(2, wb.getNumberOfSheets());
-        assertEquals(0, wb.getSheetIndex(sheetName1));
-        assertEquals(1, wb.getSheetIndex(sheetName3));
+        assertEquals(0, wb.getSheetIndex(truncatedSheetName1));
+        assertEquals(1, wb.getSheetIndex(truncatedSheetName3));
     }
 
     public void testRemoveSheetAt() {

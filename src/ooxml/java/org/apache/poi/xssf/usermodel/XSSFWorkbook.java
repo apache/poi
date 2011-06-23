@@ -494,16 +494,60 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Create an XSSFSheet for this workbook, adds it to the sheets and returns
-     * the high level representation.  Use this to create new sheets.
+     * Create a new sheet for this Workbook and return the high level representation.
+     * Use this to create new sheets.
      *
-     * @param sheetname  sheetname to set for the sheet, can't be duplicate, greater than 31 chars or contain /\?*[]
-     * @return XSSFSheet representing the new sheet.
-     * @throws IllegalArgumentException if the sheetname is invalid or the workbook already contains a sheet of this name
+     * <p>
+     *     Note that Excel allows sheet names up to 31 chars in length but other applications
+     *     (such as OpenOffice) allow more. Some versions of Excel crash with names longer than 31 chars,
+     *     others - truncate such names to 31 character.
+     * </p>
+     * <p>
+     *     POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
+     *     Example:
+     *
+     *     <pre><code>
+     *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
+     *     assert 31 == sheet.getSheetName().length();
+     *     assert "My very long sheet name which i" == sheet.getSheetName();
+     *     </code></pre>
+     * </p>
+     *
+     * Except the 31-character constraint, Excel applies some other rules:
+     * <p>
+     * Sheet name MUST be unique in the workbook and MUST NOT contain the any of the following characters:
+     * <ul>
+     * <li> 0x0000 </li>
+     * <li> 0x0003 </li>
+     * <li> colon (:) </li>
+     * <li> backslash (\) </li>
+     * <li> asterisk (*) </li>
+     * <li> question mark (?) </li>
+     * <li> forward slash (/) </li>
+     * <li> opening square bracket ([) </li>
+     * <li> closing square bracket (]) </li>
+     * </ul>
+     * The string MUST NOT begin or end with the single quote (') character.
+     * </p>
+     *
+     * @param sheetname  sheetname to set for the sheet.
+     * @return Sheet representing the new sheet.
+     * @throws IllegalArgumentException if the name is null or invalid
+     *  or workbook already contains a sheet with this name
+     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
      */
     public XSSFSheet createSheet(String sheetname) {
+        if (sheetname == null) {
+            throw new IllegalArgumentException("sheetName must not be null");
+        }
+
         if (containsSheet( sheetname, sheets.size() ))
                throw new IllegalArgumentException( "The workbook already contains a sheet of this name");
+
+        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+        WorkbookUtil.validateSheetName(sheetname);
 
         CTSheet sheet = addSheet(sheetname);
 
@@ -525,8 +569,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     private CTSheet addSheet(String sheetname) {
-        WorkbookUtil.validateSheetName(sheetname);
-
         CTSheet sheet = workbook.getSheets().addNewSheet();
         sheet.setName(sheetname);
         return sheet;
@@ -1115,21 +1157,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     /**
      * Set the sheet name.
-     * Will throw IllegalArgumentException if the name is greater than 31 chars
-     * or contains /\?*[]
      *
-     * @param sheetIndex number (0 based)
+     * @param sheetIndex sheet number (0 based)
+     * @param sheetname  the new sheet name
+     * @throws IllegalArgumentException if the name is null or invalid
+     *  or workbook already contains a sheet with this name
+     * @see {@link #createSheet(String)}
+     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
      */
-    public void setSheetName(int sheetIndex, String name) {
+    public void setSheetName(int sheetIndex, String sheetname) {
         validateSheetIndex(sheetIndex);
-        WorkbookUtil.validateSheetName(name);
-        if (containsSheet(name, sheetIndex ))
+
+        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        if(sheetname != null && sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+        WorkbookUtil.validateSheetName(sheetname);
+
+        if (containsSheet(sheetname, sheetIndex ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
         XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
-        utils.updateSheetName(sheetIndex, name);
+        utils.updateSheetName(sheetIndex, sheetname);
 
-        workbook.getSheets().getSheetArray(sheetIndex).setName(name);
+        workbook.getSheets().getSheetArray(sheetIndex).setName(sheetname);
     }
 
     /**

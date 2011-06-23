@@ -89,6 +89,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -579,6 +580,10 @@ public final class InternalWorkbook {
      */
     public void setSheetName(int sheetnum, String sheetname) {
         checkSheets(sheetnum);
+
+        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+
         BoundSheetRecord sheet = boundsheets.get(sheetnum);
         sheet.setSheetname(sheetname);
     }
