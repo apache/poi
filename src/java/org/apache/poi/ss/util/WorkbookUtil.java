@@ -104,9 +104,11 @@ public class WorkbookUtil {
             throw new IllegalArgumentException("sheetName must not be null");
         }
         int len = sheetName.length();
-        if (len < 1) {
-            throw new IllegalArgumentException("sheetName must not be empty string");
+        if (len < 1 || len > 31) {
+            throw new IllegalArgumentException("sheetName '" + sheetName
+                    + "' is invalid - character count MUST be greater than or equal to 1 and less than or equal to 31");
         }
+
         for (int i=0; i<len; i++) {
             char ch = sheetName.charAt(i);
             switch (ch) {

@@ -92,14 +92,31 @@
                 <anchor id="NewSheet"/>
                 <section><title>New Sheet</title>
                     <source>
-    Workbook wb = new HSSFWorkbook();
-    //Workbook wb = new XSSFWorkbook();
+    Workbook wb = new HSSFWorkbook();  // or new XSSFWorkbook();
     Sheet sheet1 = wb.createSheet("new sheet");
     Sheet sheet2 = wb.createSheet("second sheet");
+
+    // Note that sheet name is Excel must not exceed 31 characters
+    // and must not contain any of the any of the following characters:
+    // 0x0000
+    // 0x0003
+    // colon (:)
+    // backslash (\)
+    // asterisk (*)
+    // question mark (?)
+    // forward slash (/)
+    // opening square bracket ([)
+    // closing square bracket (])
+
+    // You can use org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+    // for a safe way to create valid names, this utility replaces invalid characters with a space (' ')
+    String safeName = WorkbookUtil.createSafeSheetName("[O'Brien's sales*?]"); // returns " O'Brien's sales   "
+    Sheet sheet3 = wb.createSheet(safeName);
+
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
-                    </source>
+                     </source>
                 </section>
                 <anchor id="CreateCells"/>
                 <section><title>Creating Cells</title>
@@ -271,15 +288,15 @@
                 so using Java 1.5 you can simply take advantage
                 of the built in "foreach" support - see below.</p>
 				<source>
-	Sheet sheet = wb.getSheetAt(0);
-	for (Iterator&lt;Row&gt; rit = sheet.rowIterator(); rit.hasNext(); ) {
-		Row row = rit.next();
-		for (Iterator&lt;Cell&gt; cit = row.cellIterator(); cit.hasNext(); ) {
-			Cell cell = cit.next();
-			// Do something here
-		}
-	}
-				</source>
+    sheet sheet = wb.getsheetat(0);
+    for (iterator&lt;row&gt; rit = sheet.rowiterator(); rit.hasnext(); ) {
+      row row = rit.next();
+      for (iterator&lt;cell&gt; cit = row.celliterator(); cit.hasnext(); ) {
+        cell cell = cit.next();
+        // do something here
+      }
+    }
+        </source>
                 </section>
                 <section><title>Iterate over rows and cells using Java 1.5 foreach loops</title>
 				<p>Sometimes, you'd like to just iterate over all the rows in
@@ -293,12 +310,12 @@
 				the cells, and for Sheet gives the 
 				<em>rowIterator()</em> to iterator over all the rows.</p>
 				<source>
-	Sheet sheet = wb.getSheetAt(0);
-	for (Row row : sheet) {
-		for (Cell cell : row) {
-			// Do something here
-		}
-	}
+    Sheet sheet = wb.getSheetAt(0);
+    for (Row row : sheet) {
+      for (Cell cell : row) {
+        // Do something here
+      }
+    }
 				</source>
                 </section>
 
@@ -314,37 +331,37 @@
                     in one sheet, print out the cell's reference
                     (eg A3), and then the cell's contents.</p>
 				<source>
-// import org.apache.poi.ss.usermodel.*;
+    // import org.apache.poi.ss.usermodel.*;
 
-Sheet sheet1 = wb.getSheetAt(0);
-for (Row row : sheet1) {
-	for (Cell cell : row) {
-		CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
-		System.out.print(cellRef.formatAsString());
-		System.out.print(" - ");
-		
-		switch(cell.getCellType()) {
-      case Cell.CELL_TYPE_STRING:
-        System.out.println(cell.getRichStringCellValue().getString());
-        break;
-      case Cell.CELL_TYPE_NUMERIC:
-        if(DateUtil.isCellDateFormatted(cell)) {
-          System.out.println(cell.getDateCellValue());
-        } else {
-          System.out.println(cell.getNumericCellValue());
+    Sheet sheet1 = wb.getSheetAt(0);
+    for (Row row : sheet1) {
+        for (Cell cell : row) {
+            CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
+            System.out.print(cellRef.formatAsString());
+            System.out.print(" - ");
+
+            switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_STRING:
+                    System.out.println(cell.getRichStringCellValue().getString());
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        System.out.println(cell.getDateCellValue());
+                    } else {
+                        System.out.println(cell.getNumericCellValue());
+                    }
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                    System.out.println(cell.getBooleanCellValue());
+                    break;
+                case Cell.CELL_TYPE_FORMULA:
+                    System.out.println(cell.getCellFormula());
+                    break;
+                default:
+                    System.out.println();
+            }
         }
-        break;
-      case Cell.CELL_TYPE_BOOLEAN:
-        System.out.println(cell.getBooleanCellValue());
-        break;
-      case Cell.CELL_TYPE_FORMULA:
-        System.out.println(cell.getCellFormula());
-        break;
-      default:
-        System.out.println();
-		}
-	}
-}
+    }
 				</source>
                 </section>
 
@@ -353,13 +370,13 @@ for (Row row : sheet1) {
 					<p>For most text extraction requirements, the standard
 					ExcelExtractor class should provide all you need.</p>
 					<source>
-	InputStream inp = new FileInputStream("workbook.xls");
-	HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(inp));
-	ExcelExtractor extractor = new ExcelExtractor(wb);
+    InputStream inp = new FileInputStream("workbook.xls");
+    HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(inp));
+    ExcelExtractor extractor = new ExcelExtractor(wb);
 
-	extractor.setFormulasNotResults(true);
-	extractor.setIncludeSheetNames(false);
-	String text = extractor.getText();
+    extractor.setFormulasNotResults(true);
+    extractor.setIncludeSheetNames(false);
+    String text = extractor.getText();
 					</source>
 					<p>For very fancy text extraction, XLS to CSV etc, 
 					take a look at
@@ -458,29 +475,29 @@ Examples:
 </p>
 <p><strong>Wrong:</strong></p>
 <source>
-        for (int i = 0; i &lt; 10000; i++) {
-            Row row = sheet.createRow(i);
-            Cell cell = row.createCell((short) 0);
-
-            CellStyle style = workbook.createCellStyle();
-            Font font = workbook.createFont();
-            font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-            style.setFont(font);
-            cell.setCellStyle(style);
-        }
-</source>
-<p><strong>Correct:</strong></p>
-<source>
+    for (int i = 0; i &lt; 10000; i++) {
+        Row row = sheet.createRow(i);
+        Cell cell = row.createCell((short) 0);
 
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         style.setFont(font);
-        for (int i = 0; i &lt; 10000; i++) {
-            Row row = sheet.createRow(i);
-            Cell cell = row.createCell((short) 0);
-            cell.setCellStyle(style);
-        }
+        cell.setCellStyle(style);
+    }
+</source>
+<p><strong>Correct:</strong></p>
+<source>
+
+    CellStyle style = workbook.createCellStyle();
+    Font font = workbook.createFont();
+    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+    style.setFont(font);
+    for (int i = 0; i &lt; 10000; i++) {
+        Row row = sheet.createRow(i);
+        Cell cell = row.createCell((short) 0);
+        cell.setCellStyle(style);
+    }
 </source>
   
                 </section>
@@ -1390,7 +1407,7 @@ Examples:
       If your workbook has many formulas then it is a good idea to evaluate them before auto-sizing.
     </p>
         <warning>
-    To calculate column width HSSFSheet.autoSizeColumn uses Java2D classes
+    To calculate column width Sheet.autoSizeColumn uses Java2D classes
     that throw exception if graphical environment is not available. In case if graphical environment
     is not available, you must tell Java that you are running in headless mode and
     set the following system property: <code> java.awt.headless=true </code>.
@@ -1691,7 +1708,6 @@ Examples:
         new CellRangeAddress(2, 4, 0, 0), // A3:A5
     };
 
-    sheetCF.addConditionalFormatting(regions, cfRules);
     sheetCF.addConditionalFormatting(regions, cfRules);
        </source>
      </section>  

@@ -131,12 +131,16 @@ public interface Workbook {
      * Set the sheet name.
      *
      * @param sheet number (0 based)
-     * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
+     * @throws IllegalArgumentException if the name is null or invalid
+     *  or workbook already contains a sheet with this name
+     * @see {@link #createSheet(String)}
+     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
      */
     void setSheetName(int sheet, String name);
 
     /**
-     * Set the sheet name
+     * Get the sheet name
      *
      * @param sheet sheet number (0 based)
      * @return Sheet name
@@ -168,12 +172,48 @@ public interface Workbook {
     Sheet createSheet();
 
     /**
-     * Create an Sheet for this Workbook, adds it to the sheets and returns
-     * the high level representation.  Use this to create new sheets.
+     * Create a new sheet for this Workbook and return the high level representation.
+     * Use this to create new sheets.
+     *
+     * <p>
+     *     Note that Excel allows sheet names up to 31 chars in length but other applications
+     *     (such as OpenOffice) allow more. Some versions of Excel crash with names longer than 31 chars,
+     *     others - truncate such names to 31 character.
+     * </p>
+     * <p>
+     *     POI's SpreadsheetAPI silently truncates the input argument to 31 characters.
+     *     Example:
+     *
+     *     <pre><code>
+     *     Sheet sheet = workbook.createSheet("My very long sheet name which is longer than 31 chars"); // will be truncated
+     *     assert 31 == sheet.getSheetName().length();
+     *     assert "My very long sheet name which i" == sheet.getSheetName();
+     *     </code></pre>
+     * </p>
+     *
+     * Except the 31-character constraint, Excel applies some other rules:
+     * <p>
+     * Sheet name MUST be unique in the workbook and MUST NOT contain the any of the following characters:
+     * <ul>
+     * <li> 0x0000 </li>
+     * <li> 0x0003 </li>
+     * <li> colon (:) </li>
+     * <li> backslash (\) </li>
+     * <li> asterisk (*) </li>
+     * <li> question mark (?) </li>
+     * <li> forward slash (/) </li>
+     * <li> opening square bracket ([) </li>
+     * <li> closing square bracket (]) </li>
+     * </ul>
+     * The string MUST NOT begin or end with the single quote (') character.
+     * </p>
      *
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
-     * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
+     * @throws IllegalArgumentException if the name is null or invalid
+     *  or workbook already contains a sheet with this name
+     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
      */
     Sheet createSheet(String sheetname);
 
