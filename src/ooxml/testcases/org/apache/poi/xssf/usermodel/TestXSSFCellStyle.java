@@ -526,15 +526,15 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetSetHidden() {
 		assertFalse(cellStyle.getHidden());
-		cellXf.getProtection().setHidden(true);
+		cellStyle.setHidden(true);
 		assertTrue(cellStyle.getHidden());
 		cellStyle.setHidden(false);
 		assertFalse(cellStyle.getHidden());
 	}
 
 	public void testGetSetLocked() {
-		assertFalse(cellStyle.getLocked());
-		cellXf.getProtection().setLocked(true);
+		assertTrue(cellStyle.getLocked());
+		cellStyle.setLocked(true);
 		assertTrue(cellStyle.getLocked());
 		cellStyle.setLocked(false);
 		assertFalse(cellStyle.getLocked());

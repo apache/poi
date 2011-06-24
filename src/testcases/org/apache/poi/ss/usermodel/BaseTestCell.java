@@ -544,4 +544,39 @@ public abstract class BaseTestCell extends TestCase {
         assertEquals(Cell.CELL_TYPE_ERROR, cell2.getCellType());
         assertEquals(ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
     }
+
+    public void testDefaultStyleProperties() {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+        CellStyle style = cell.getCellStyle();
+
+        assertTrue(style.getLocked());
+        assertFalse(style.getHidden());
+        assertEquals(0, style.getIndention());
+        assertEquals(0, style.getFontIndex());
+        assertEquals(0, style.getAlignment());
+        assertEquals(0, style.getDataFormat());
+        assertEquals(false, style.getWrapText());
+
+        CellStyle style2 = wb.createCellStyle();
+        assertTrue(style2.getLocked());
+        assertFalse(style2.getHidden());
+        style2.setLocked(false);
+        style2.setHidden(true);
+        assertFalse(style2.getLocked());
+        assertTrue(style2.getHidden());
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        style = cell.getCellStyle();
+        assertFalse(style2.getLocked());
+        assertTrue(style2.getHidden());
+
+        style2.setLocked(true);
+        style2.setHidden(false);
+        assertTrue(style2.getLocked());
+        assertFalse(style2.getHidden());
+    }
+
 }

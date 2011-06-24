@@ -565,7 +565,10 @@ public class XSSFCellStyle implements CellStyle {
      * @return boolean -  whether the cell using this style is hidden
      */
     public boolean getHidden() {
-        return getCellProtection().getHidden();
+        if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetHidden()) {
+            return false;
+        }
+        return _cellXf.getProtection().getHidden();
     }
 
     /**
@@ -619,7 +622,10 @@ public class XSSFCellStyle implements CellStyle {
      * @return whether the cell using this style are locked
      */
     public boolean getLocked() {
-        return getCellProtection().getLocked();
+        if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetLocked()) {
+            return true;
+        }
+        return _cellXf.getProtection().getLocked();
     }
 
     /**
@@ -1169,7 +1175,10 @@ public class XSSFCellStyle implements CellStyle {
      * @param hidden - whether the cell using this style should be hidden
      */
     public void setHidden(boolean hidden) {
-        getCellProtection().setHidden(hidden);
+        if (!_cellXf.isSetProtection()) {
+             _cellXf.addNewProtection();
+         }
+        _cellXf.getProtection().setHidden(hidden);
     }
 
     /**
@@ -1218,7 +1227,10 @@ public class XSSFCellStyle implements CellStyle {
      * @param locked -  whether the cell using this style should be locked
      */
     public void setLocked(boolean locked) {
-        getCellProtection().setLocked(locked);
+        if (!_cellXf.isSetProtection()) {
+             _cellXf.addNewProtection();
+         }
+        _cellXf.getProtection().setLocked(locked);
     }
 
     /**
@@ -1386,17 +1398,6 @@ public class XSSFCellStyle implements CellStyle {
             return (int) _cellXf.getFontId();
         }
         return (int) _cellStyleXf.getFontId();
-    }
-
-    /**
-     * get a cellProtection from the supplied XML definition
-     * @return CTCellProtection
-     */
-    private CTCellProtection getCellProtection() {
-        if (_cellXf.getProtection() == null) {
-            _cellXf.addNewProtection();
-        }
-        return _cellXf.getProtection();
     }
 
     /**
