@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">49564 - Fixed default behaviour of XSSFCellStyle.getLocked() </action>
            <action dev="poi-developers" type="fix">48314 - Fixed setting column and row breaks in XSSF</action>
            <action dev="poi-developers" type="add">51424 - Ignore exceptions in ParagraphSprmUncompressor</action>
            <action dev="poi-developers" type="fix">51415 - Fixed Workbook.createSheet(sheetName) to truncate names longer than 31 characters</action>
