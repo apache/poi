@@ -392,4 +392,18 @@ public final class TestBugs extends TestCase {
         	// Good
         }
     }
+    
+    /**
+     * Changing text from Ascii to Unicode
+     */
+    public void test49648() throws Exception {
+       SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("49648.ppt"));
+       for(Slide slide : ppt.getSlides()) {
+          for(TextRun run : slide.getTextRuns()) {
+             String text = run.getRawText();
+             text.replace("{txtTot}", "With \u0123\u1234\u5678 unicode");
+             run.setRawText(text);
+          }
+       }
+    }
 }
