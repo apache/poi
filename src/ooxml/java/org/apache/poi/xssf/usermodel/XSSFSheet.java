@@ -622,16 +622,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId();
+            breaks[i] = (int)brk.getId() - 1;
         }
         return breaks;
-    }
-
-    private CTPageBreak getSheetTypeColumnBreaks() {
-        if (worksheet.getColBreaks() == null) {
-            worksheet.setColBreaks(CTPageBreak.Factory.newInstance());
-        }
-        return worksheet.getColBreaks();
     }
 
     /**
@@ -1077,7 +1070,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId();
+            breaks[i] = (int)brk.getId() - 1;
         }
         return breaks;
     }
@@ -1383,12 +1376,25 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Sets a page break at the indicated row
+     * Breaks occur above the specified row and left of the specified column inclusive.
+     *
+     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+     * and rows starting with rownum=4 in the second.
+     *
+     * @param row the row to break, inclusive
      */
     public void setRowBreak(int row) {
         CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
         if (! isRowBroken(row)) {
             CTBreak brk = pgBreak.addNewBrk();
-            brk.setId(row);
+            brk.setId(row + 1); // this is id of the row element which is 1-based: <row r="1" ... >
+            brk.setMan(true);
+            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastColumnIndex()); //end column of the break
+
+            pgBreak.setCount(pgBreak.sizeOfBrkArray());
+            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
         }
     }
 
@@ -1397,10 +1403,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeColumnBreak(int column) {
-        CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
+        if (!worksheet.isSetColBreaks()) {
+            // no breaks
+            return;
+        }
+
+        CTPageBreak pgBreak = worksheet.getColBreaks();
+        CTBreak[] brkArray = pgBreak.getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == column) {
-                getSheetTypeColumnBreaks().removeBrk(i);
+            if (brkArray[i].getId() == (column + 1)) {
+                pgBreak.removeBrk(i);
             }
         }
     }
@@ -1452,10 +1464,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeRowBreak(int row) {
-        CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
+        if(!worksheet.isSetRowBreaks()) {
+            return;
+        }
+        CTPageBreak pgBreak = worksheet.getRowBreaks();
         CTBreak[] brkArray = pgBreak.getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == row) {
+            if (brkArray[i].getId() == (row + 1)) {
                 pgBreak.removeBrk(i);
             }
         }
@@ -1537,14 +1552,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Sets a page break at the indicated column
+     * Sets a page break at the indicated column.
+     * Breaks occur above the specified row and left of the specified column inclusive.
      *
-     * @param column the column to break
+     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+     * and rows starting with rownum=4 in the second.
+     *
+     * @param column the column to break, inclusive
      */
     public void setColumnBreak(int column) {
         if (! isColumnBroken(column)) {
-            CTBreak brk = getSheetTypeColumnBreaks().addNewBrk();
-            brk.setId(column);
+            CTPageBreak pgBreak = worksheet.isSetColBreaks() ? worksheet.getColBreaks() : worksheet.addNewColBreaks();
+            CTBreak brk = pgBreak.addNewBrk();
+            brk.setId(column + 1);  // this is id of the row element which is 1-based: <row r="1" ... >
+            brk.setMan(true);
+            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastRowIndex()); //end row of the break
+
+            pgBreak.setCount(pgBreak.sizeOfBrkArray());
+            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
         }
     }
 

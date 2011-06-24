@@ -673,7 +673,14 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Sets a page break at the indicated row
-     * @param row FIXME: Document this!
+     * Breaks occur above the specified row and left of the specified column inclusive.
+     *
+     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+     * and rows starting with rownum=4 in the second.
+     *
+     * @param row the row to break, inclusive
      */
     void setRowBreak(int row);
 
@@ -703,8 +710,15 @@ public interface Sheet extends Iterable<Row> {
     int[] getColumnBreaks();
 
     /**
-     * Sets a page break at the indicated column
-     * @param column
+     * Sets a page break at the indicated column.
+     * Breaks occur above the specified row and left of the specified column inclusive.
+     *
+     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+     * and rows starting with rownum=4 in the second.
+     *
+     * @param column the column to break, inclusive
      */
     void setColumnBreak(int column);
 
