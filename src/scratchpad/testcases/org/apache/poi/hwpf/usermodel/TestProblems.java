@@ -17,12 +17,21 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import junit.framework.AssertionFailedError;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.util.IOUtils;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Test various problem documents
@@ -418,4 +427,268 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(119, cell.getEndOffset());
       assertEquals("Row 3/Cell 3\u0007", cell.text());
    }
+
+    static void fixed(String bugzillaId) {
+        fail("Bug " + bugzillaId + " seems to be fixed. " +
+                "Please resolve the issue in Bugzilla and remove fail() from the test");
+
+    }
+
+    /**
+     * Bug 33519 - HWPF fails to read a file
+     */
+    public void test33519() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug33519.doc");
+        WordExtractor extractor = new WordExtractor(doc);
+        String text = extractor.getText();
+    }
+
+    /**
+     * Bug 34898 - WordExtractor doesn't read the whole string from the file
+     */
+    public void test34898() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug34898.doc");
+        WordExtractor extractor = new WordExtractor(doc);
+        assertEquals("\u30c7\u30a3\u30ec\u30af\u30c8\u30ea", extractor.getText().trim());
+    }
+
+    /**
+     * [FAILING] Bug 44331 - Output is corrupted
+     */
+    public void test44431() {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug44431.doc");
+        WordExtractor extractor1 = new WordExtractor(doc1);
+
+        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
+        WordExtractor extractor2 = new WordExtractor(doc2);
+        try {
+            assertEquals(extractor1.getFooterText(), extractor2.getFooterText());
+            assertEquals(extractor1.getHeaderText(), extractor2.getHeaderText());
+            assertEquals(extractor1.getParagraphText(), extractor2.getParagraphText());
+
+            assertEquals(extractor1.getText(), extractor2.getText());
+
+            fixed("44431");
+        } catch (AssertionFailedError e) {
+            // expected exception
+        }
+    }
+
+    /**
+     * [FAILING] Bug 46817 - Text from tables is not extracted
+     */
+    public void test46817() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46817.doc");
+        WordExtractor extractor = new WordExtractor(doc);
+        String text = extractor.getText().trim();
+        try {
+            assertTrue(text.contains("Nazwa wykonawcy"));
+            assertTrue(text.contains("kujawsko-pomorskie"));
+            assertTrue(text.contains("ekomel@ekomel.com.pl"));
+
+            fixed("46817");
+        } catch (AssertionFailedError e) {
+            // expected exception
+        }
+    }
+
+    /**
+     * Bug 46220 - images are not properly extracted
+     */
+    public void test46220() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46220.doc");
+        // reference checksums as in Bugzilla
+        String[] md5 = {
+                "851be142bce6d01848e730cb6903f39e",
+                "7fc6d8fb58b09ababd036d10a0e8c039",
+                "a7dc644c40bc2fbf17b2b62d07f99248",
+                "72d07b8db5fad7099d90bc4c304b4666"
+        };
+        List<Picture> pics = doc.getPicturesTable().getAllPictures();
+        assertEquals(4, pics.size());
+        for (int i = 0; i < pics.size(); i++) {
+            Picture pic = pics.get(i);
+            byte[] data = pic.getRawContent();
+            // use Apache Commons Codec utils to compute md5
+            assertEquals(md5[i], DigestUtils.md5Hex(data));
+        }
+    }
+
+    /**
+     * Bug 45473 - HWPF cannot read file after save
+     */
+    public void test45473() {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug45473.doc");
+        String text1 = new WordExtractor(doc1).getText().trim();
+
+        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
+        String text2 = new WordExtractor(doc2).getText().trim();
+
+        // the text in the saved document has some differences in line separators but we tolerate that
+        assertEquals(text1.replaceAll("\n", ""), text2.replaceAll("\n", ""));
+    }
+
+    /**
+     * [FAILING] Bug 47287 - StringIndexOutOfBoundsException in CharacterRun.replaceText()
+     */
+    public void test47287() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47287.doc");
+        String[] values = {
+                "1-1",
+                "1-2",
+                "1-3",
+                "1-4",
+                "1-5",
+                "1-6",
+                "1-7",
+                "1-8",
+                "1-9",
+                "1-10",
+                "1-11",
+                "1-12",
+                "1-13",
+                "1-14",
+                "1-15",
+        };
+        int usedVal = 0;
+        try {
+            String PLACEHOLDER = "\u2002\u2002\u2002\u2002\u2002";
+            Range r = doc.getRange();
+            for (int x = 0; x < r.numSections(); x++) {
+                Section s = r.getSection(x);
+                for (int y = 0; y < s.numParagraphs(); y++) {
+                    Paragraph p = s.getParagraph(y);
+
+                    for (int z = 0; z < p.numCharacterRuns(); z++) {
+                        boolean isFound = false;
+
+                        //character run
+                        CharacterRun run = p.getCharacterRun(z);
+                        //character run text
+                        String text = run.text();
+                        String oldText = text;
+                        int c = text.indexOf("FORMTEXT ");
+                        if (c < 0) {
+                            int k = text.indexOf(PLACEHOLDER);
+                            if (k >= 0) {
+                                text = text.substring(0, k) + values[usedVal] + text.substring(k + PLACEHOLDER.length());
+                                usedVal++;
+                                isFound = true;
+                            }
+                        } else {
+                            for (; c >= 0; c = text.indexOf("FORMTEXT ", c + "FORMTEXT ".length())) {
+                                int k = text.indexOf(PLACEHOLDER, c);
+                                if (k >= 0) {
+                                    text = text.substring(0, k) + values[usedVal] + text.substring(k + PLACEHOLDER.length());
+                                    usedVal++;
+                                    isFound = true;
+                                }
+                            }
+                        }
+                        if (isFound) {
+                            run.replaceText(oldText, text, 0);
+                        }
+
+                    }
+                }
+            }
+            fixed("47287");
+        } catch (StringIndexOutOfBoundsException e) {
+            // expected exception
+        }
+    }
+
+
+    private static void insertTable(int rows, int columns) {
+        // POI apparently can't create a document from scratch,
+        // so we need an existing empty dummy document
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
+
+        Range range = doc.getRange();
+        Table table = range.insertBefore(new TableProperties(columns), rows);
+
+        for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
+            TableRow row = table.getRow(rowIdx);
+            for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
+                TableCell cell = row.getCell(colIdx);
+                Paragraph par = cell.getParagraph(0);
+                par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
+            }
+        }
+    }
+
+    /**
+     * [FAILING] Bug 47563 - HWPF failing while creating tables,
+     */
+    public void test47563() {
+        try {
+            insertTable(1, 5);
+            insertTable(1, 6);
+            insertTable(5, 1);
+            insertTable(6, 1);
+            insertTable(2, 2);
+            insertTable(3, 2);
+            insertTable(2, 3);
+            insertTable(3, 3);
+
+            fixed("47563");
+        } catch (Exception e) {
+            // expected exception
+        }
+    }
+
+    /**
+     * Bug 4774 - text extracted by WordExtractor is broken
+     */
+    public void test47742() throws Exception {
+
+        // (1) extract text from MS Word document via POI
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47742.doc");
+        String foundText = new WordExtractor(doc).getText();
+
+        // (2) read text from text document (retrieved by saving the word
+        // document as text file using encoding UTF-8)
+        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream("Bug47742-text.txt");
+        byte[] expectedBytes = IOUtils.toByteArray(is);
+        String expectedText = new String(expectedBytes, "utf-8").substring(1); // strip-off the unicode marker
+
+        assertEquals(expectedText, foundText);
+    }
+
+    /**
+     * [FAILING] Bug 47958 - Exception during Escher walk of pictures
+     */
+    public void test47958() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47958.doc");
+        try {
+            for (Picture pic : doc.getPicturesTable().getAllPictures()) {
+                System.out.println(pic.suggestFullFileName());
+            }
+            fixed("47958");
+        } catch (Exception e) {
+            // expected exception
+        }
+    }
+
+    /**
+     * Bug 50936  - HWPF fails to read a file
+     */
+    public void test50936() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug50936.doc");
+    }
+
+    /**
+     * [FAILING] Bug 50955 -  error while retrieving the text file
+     */
+    public void test50955() {
+        try {
+            HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug50955.doc");
+            Word6Extractor extractor = new Word6Extractor(doc);
+            String text = extractor.getText();
+            fixed("50955");
+        } catch (Exception e) {
+            // expected exception
+        }
+    }
+
 }
