@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">50474 - Example demonstrating how to update Excel workbook embedded in a WordprocessingML document </action>
            <action dev="poi-developers" type="fix">51431 - Avoid IndexOutOfBoundException when removing freeze panes in XSSF </action>
            <action dev="poi-developers" type="fix">48877 - Fixed XSSFRichTextString to respect leading and trailing line breaks </action>
            <action dev="poi-developers" type="fix">49564 - Fixed default behaviour of XSSFCellStyle.getLocked() </action>
