@@ -21,11 +21,14 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Tests for {@link HSSFDataFormat}
  */
 public final class TestHSSFDataFormat extends BaseTestDataFormat {
+    private static POILogger _logger = POILogFactory.getLogger(TestHSSFDataFormat.class);
 
     public TestHSSFDataFormat() {
         super(HSSFITestDataProvider.instance);
@@ -61,8 +64,9 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
                     CellStyle style = cell.getCellStyle();
 
                     String fmt = style.getDataFormatString();
-                    if(fmt == null)
-                        System.out.println(cell + ": " + fmt);
+                    if(fmt == null) {
+                        _logger.log(POILogger.WARN, cell + ": " + fmt);
+                    }
                 }
             }
         }

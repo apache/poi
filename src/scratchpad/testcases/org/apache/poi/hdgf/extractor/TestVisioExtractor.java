@@ -115,10 +115,12 @@ public final class TestVisioExtractor extends TestCase {
 		// Check
 		capture.flush();
 		String text = baos.toString();
-		assertEquals(
+        // YK: stdout can contain lots of other stuff if logging is sent to console
+        // ( -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger)
+		assertTrue( text.contains(
 		      "text\nView\n" +
 		      "Test View\nI am a test view\n" +
-		      "Some random text, on a page\n", 
-		      text);
+		      "Some random text, on a page\n"
+		      ));
 	}
 }

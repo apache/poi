@@ -66,6 +66,12 @@ under the License.
     <property name="jdk.version.class" value="1.5" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
+    <!-- 
+        Logging is suppressed by default. 
+        To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger  
+    -->
+    <property name="org.apache.poi.util.POILogger" value="org.apache.poi.util.NullLogger"/>
+
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
     <property name="java.source.encoding" value="ASCII"/>
 
@@ -165,6 +171,7 @@ under the License.
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
+        <propertyref name="org.apache.poi.util.POILogger"/>
     </propertyset>
 
     <path id="main.classpath">
