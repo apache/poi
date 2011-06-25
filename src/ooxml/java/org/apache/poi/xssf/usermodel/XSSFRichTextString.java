@@ -440,17 +440,21 @@ public class XSSFRichTextString implements RichTextString {
     }
 
     /**
-     * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
+     * Add the xml:spaces="preserve" attribute if the string has leading or trailing spaces
      *
      * @param xs    the string to check
      */
     protected static void preserveSpaces(STXstring xs) {
         String text = xs.getStringValue();
-        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
-            XmlCursor c = xs.newCursor();
-            c.toNextToken();
-            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
-            c.dispose();
+        if (text != null && text.length() > 0) {
+            char firstChar = text.charAt(0);
+            char lastChar  = text.charAt(text.length() - 1);
+            if(Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar)) {
+                XmlCursor c = xs.newCursor();
+                c.toNextToken();
+                c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+                c.dispose();
+            }
         }
     }
 
