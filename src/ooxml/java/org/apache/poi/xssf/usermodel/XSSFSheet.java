@@ -1935,7 +1935,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * <p>
      * Character width is defined as the maximum digit width
-     * of the numbers <code>0, 1, 2, … 9</code> as rendered
+     * of the numbers <code>0, 1, 2, ... 9</code> as rendered
      * using the default font (first font in the workbook).
      * <br/>
      * Unless you are using a very special font, the default character is '0' (zero),

@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import java.util.Arrays;
 
 /**
@@ -30,6 +33,7 @@ import java.util.Arrays;
  */
 public abstract class PropertyNode implements Comparable, Cloneable
 {
+  private final static POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
   protected Object _buf;
   /** The start, in characters */
   private int _cpStart;
@@ -49,7 +53,7 @@ public abstract class PropertyNode implements Comparable, Cloneable
       _buf = buf;
 
       if(_cpStart < 0) {
-    	  System.err.println("A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
+    	  _logger.log(POILogger.WARN, "A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
     	  _cpStart = 0;
       }
   }

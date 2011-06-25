@@ -29,8 +29,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
 import org.apache.poi.poifs.filesystem.POIFSWriterListener;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public final class TestEmptyDocument extends TestCase {
+    private static POILogger _logger = POILogFactory.getLogger(TestEmptyDocument.class);
 
 	public void testSingleEmptyDocument() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
@@ -47,7 +50,7 @@ public final class TestEmptyDocument extends TestCase {
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Foo", 0, new POIFSWriterListener() {
 			public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-				System.out.println("written");
+				_logger.log(POILogger.WARN, "written");
 			}
 		});
 

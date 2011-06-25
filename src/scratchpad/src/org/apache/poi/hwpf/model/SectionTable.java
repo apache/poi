@@ -23,12 +23,15 @@ import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.*;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * @author Ryan Ackley
  */
 public class SectionTable
 {
+  private final static POILogger _logger = POILogFactory.getLogger(SectionTable.class);
   private static final int SED_SIZE = 12;
 
   protected ArrayList<SEPX> _sections = new ArrayList<SEPX>();
@@ -92,7 +95,7 @@ public class SectionTable
     	}
     }
     if(! matchAt && matchHalf) {
-    	System.err.println("Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
+    	_logger.log(POILogger.WARN, "Your document seemed to be mostly unicode, but the section definition was in bytes! Trying anyway, but things may well go wrong!");
         for(int i=0; i<_sections.size(); i++) {
         	SEPX s = _sections.get(i);
             GenericPropertyNode node = sedPlex.getProperty(i);

@@ -533,7 +533,8 @@ public class SXSSFWorkbook implements Workbook
     public void write(OutputStream stream) throws IOException
     {
         //Save the template
-        File tmplFile = File.createTempFile("template", ".xlsx");
+        File tmplFile = File.createTempFile("poi-sxxsf-template", ".xlsx");
+        tmplFile.deleteOnExit();
         FileOutputStream os = new FileOutputStream(tmplFile);
         _wb.write(os);
         os.close();

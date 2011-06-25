@@ -148,7 +148,7 @@ public final class TestPOIXMLDocument extends TestCase {
         doc.parse(new TestFactory());
 
         for(POIXMLDocumentPart rel : doc.getRelations()){
-            System.out.println(rel);
+            //TODO finish me
         }
 
     }
