@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -653,5 +654,53 @@ public abstract class BaseTestSheet extends TestCase {
 
     }
 
+    public void testCreateFreezePane() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        // create a workbook
+        Sheet sheet = wb.createSheet();
+        assertNull(sheet.getPaneInformation());
+        sheet.createFreezePane(0, 0);
+        // still null
+        assertNull(sheet.getPaneInformation());
+
+        sheet.createFreezePane(2, 3);
+
+        PaneInformation info = sheet.getPaneInformation();
+
+
+        assertEquals(PaneInformation.PANE_LOWER_RIGHT, info.getActivePane());
+        assertEquals(3, info.getHorizontalSplitPosition());
+        assertEquals(3, info.getHorizontalSplitTopRow());
+        assertEquals(2, info.getVerticalSplitLeftColumn());
+        assertEquals(2, info.getVerticalSplitPosition());
+
+        sheet.createFreezePane(0, 0);
+        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
+        assertNull(sheet.getPaneInformation());
+
+        sheet.createFreezePane(0, 3);
+
+        info = sheet.getPaneInformation();
+
+        assertEquals(PaneInformation.PANE_LOWER_LEFT, info.getActivePane());
+        assertEquals(3, info.getHorizontalSplitPosition());
+        assertEquals(3, info.getHorizontalSplitTopRow());
+        assertEquals(0, info.getVerticalSplitLeftColumn());
+        assertEquals(0, info.getVerticalSplitPosition());
+
+        sheet.createFreezePane(3, 0);
+
+        info = sheet.getPaneInformation();
+
+        assertEquals(PaneInformation.PANE_UPPER_RIGHT, info.getActivePane());
+        assertEquals(0, info.getHorizontalSplitPosition());
+        assertEquals(0, info.getHorizontalSplitTopRow());
+        assertEquals(3, info.getVerticalSplitLeftColumn());
+        assertEquals(3, info.getVerticalSplitPosition());
+
+        sheet.createFreezePane(0, 0);
+        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
+        assertNull(sheet.getPaneInformation());
+    }
 
 }

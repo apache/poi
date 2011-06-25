@@ -213,7 +213,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
     }
 
-    public void testCreateFreezePane() {
+    public void testCreateFreezePane_XSSF() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();

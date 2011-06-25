@@ -491,22 +491,40 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+     *
+     * <p>
+     *     If both colSplit and rowSplit are zero then the existing freeze pane is removed
+     * </p>
+     *
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
-     * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
+     * @param topRow        Top row visible in bottom pane
      */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        CTPane pane = getPane();
-        if (colSplit > 0) { 
+        CTSheetView ctView = getDefaultSheetView();
+
+        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
+        if(colSplit == 0 && rowSplit == 0){
+            if(ctView.isSetPane()) ctView.unsetPane();
+            ctView.setSelectionArray(null);
+            return;
+        }
+
+        if (!ctView.isSetPane()) {
+            ctView.addNewPane();
+        }
+        CTPane pane = ctView.getPane();
+
+        if (colSplit > 0) {
            pane.setXSplit(colSplit);
         } else {
-           pane.unsetXSplit();
+           if(pane.isSetXSplit()) pane.unsetXSplit();
         }
         if (rowSplit > 0) {
            pane.setYSplit(rowSplit);
         } else {
-           pane.unsetYSplit();
+           if(pane.isSetYSplit()) pane.unsetYSplit();
         }
         
         pane.setState(STPaneState.FROZEN);
@@ -521,7 +539,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             pane.setActivePane(STPane.BOTTOM_RIGHT);
         }
 
-        CTSheetView ctView = getDefaultSheetView();
         ctView.setSelectionArray(null);
         CTSelection sel = ctView.addNewSelection();
         sel.setPane(pane.getActivePane());
@@ -976,11 +993,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return null if no pane configured, or the pane information.
      */
     public PaneInformation getPaneInformation() {
-        CTPane pane = getPane();
+        CTPane pane = getDefaultSheetView().getPane();
+        // no pane configured
+        if(pane == null)  return null;
+
         CellReference cellRef = pane.isSetTopLeftCell() ? new CellReference(pane.getTopLeftCell()) : null;
         return new PaneInformation((short)pane.getXSplit(), (short)pane.getYSplit(),
                 (short)(cellRef == null ? 0 : cellRef.getRow()),(cellRef == null ? 0 : cellRef.getCol()),
-                (byte)pane.getActivePane().intValue(), pane.getState() == STPaneState.FROZEN);
+                (byte)(pane.getActivePane().intValue() - 1), pane.getState() == STPaneState.FROZEN);
     }
 
     /**
