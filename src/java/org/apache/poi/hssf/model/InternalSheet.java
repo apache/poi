@@ -1315,6 +1315,9 @@ public final class InternalSheet {
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
+     *
+     * <p>If both colSplit and rowSplit are zero then the existing freeze pane is removed</p>
+     *
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      * @param topRow        Top row visible in bottom pane
@@ -1324,6 +1327,15 @@ public final class InternalSheet {
         int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
         if (paneLoc != -1)
             _records.remove(paneLoc);
+
+        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
+        if(colSplit == 0 && rowSplit == 0){
+            windowTwo.setFreezePanes(false);
+            windowTwo.setFreezePanesNoSplit(false);
+            SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
+            sel.setPane(PaneInformation.PANE_UPPER_LEFT);
+            return;
+        }
 
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord pane = new PaneRecord();
@@ -1335,7 +1347,7 @@ public final class InternalSheet {
             pane.setTopRow((short)0);
             pane.setActivePane((short)1);
         } else if (colSplit == 0) {
-            pane.setLeftColumn((short)64);
+            pane.setLeftColumn((short)0);
             pane.setActivePane((short)2);
         } else {
             pane.setActivePane((short)0);

@@ -1020,64 +1020,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(true, ps2.getValidSettings());
        assertEquals(false, ps2.getLandscape());
     }
-    
-    /**
-     * CreateFreezePane column/row order check 
-     */
-    public void test49381() throws Exception {
-       Workbook[] wbs = new Workbook[] { new HSSFWorkbook(), new XSSFWorkbook() };
-       int colSplit = 1;
-       int rowSplit = 2;
-       int leftmostColumn = 3;
-       int topRow = 4;
 
-       for(Workbook wb : wbs) {
-          Sheet s = wb.createSheet();
-          
-          // Populate
-          for(int rn=0; rn<= topRow; rn++) {
-             Row r = s.createRow(rn);
-             for(int cn=0; cn<leftmostColumn; cn++) {
-                Cell c = r.createCell(cn, Cell.CELL_TYPE_NUMERIC);
-                c.setCellValue(100*rn + cn);
-             }
-          }
-          
-          // Create the Freeze Pane
-          s.createFreezePane(colSplit, rowSplit, leftmostColumn, topRow);
-          PaneInformation paneInfo = s.getPaneInformation();
-          
-          // Check it
-          assertEquals(colSplit,       paneInfo.getVerticalSplitPosition());
-          assertEquals(rowSplit,       paneInfo.getHorizontalSplitPosition());
-          assertEquals(leftmostColumn, paneInfo.getVerticalSplitLeftColumn());
-          assertEquals(topRow,         paneInfo.getHorizontalSplitTopRow());
-          
-          
-          // Now a row only freezepane
-          s.createFreezePane(0, 3);
-          paneInfo = s.getPaneInformation();
-          
-          assertEquals(0,  paneInfo.getVerticalSplitPosition());
-          assertEquals(3,  paneInfo.getHorizontalSplitPosition());
-          if(wb == wbs[0]) {
-             assertEquals(64, paneInfo.getVerticalSplitLeftColumn()); // HSSF
-          } else {
-             assertEquals(0,  paneInfo.getVerticalSplitLeftColumn()); // XSSF
-          }
-          assertEquals(3,  paneInfo.getHorizontalSplitTopRow());
-          
-          // Now a column only freezepane
-          s.createFreezePane(4, 0);
-          paneInfo = s.getPaneInformation();
-          
-          assertEquals(4,  paneInfo.getVerticalSplitPosition());
-          assertEquals(0,  paneInfo.getHorizontalSplitPosition());
-          assertEquals(4 , paneInfo.getVerticalSplitLeftColumn());
-          assertEquals(0,  paneInfo.getHorizontalSplitTopRow());
-       }
-    }
-    
     /**
      * Default Column style
      */
