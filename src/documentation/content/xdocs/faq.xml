@@ -22,7 +22,7 @@
 <faqs title="Frequently Asked Questions">
   <faq>
     <question>
-      My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException"
+      My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException" or "IncompatibleClassChangeError"
     </question>
     <answer>
       <p>You almost certainly have an older version of POI 
