@@ -60,19 +60,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -1584,5 +1572,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         _udfFinder.add(toopack);
     }
 
-
+    /**
+     * Whether the application shall perform a full recalculation when the workbook is opened.
+     * <p>
+     * Typically you want to force formula recalculation when you modify cell formulas or values
+     * of a workbook previously created by Excel. When set to true, this flag will tell Excel
+     * that it needs to recalculate all formulas in the workbook the next time the file is opened.
+     * </p>
+     * <p>
+     * Note, that recalculation updates cached formula results and, thus, modifies the workbook.
+     * Depending on the version, Excel may prompt you with "Do you want to save the changes in <em>filename</em>?"
+     * on close.
+     * </p>
+     *
+     * @param value true if the application will perform a full recalculation of
+     * workbook values when the workbook is opened
+     * @since 3.8
+     */
+   public void setForceFormulaRecalculation(boolean value){
+        CTWorkbook ctWorkbook = getCTWorkbook();
+        CTCalcPr calcPr = ctWorkbook.isSetCalcPr() ? ctWorkbook.getCalcPr() : ctWorkbook.addNewCalcPr();
+        // when set to 0, will tell Excel that it needs to recalculate all formulas
+        // in the workbook the next time the file is opened.
+        calcPr.setCalcId(0);
+    }
 }

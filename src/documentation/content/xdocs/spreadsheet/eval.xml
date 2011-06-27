@@ -219,6 +219,59 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
 			</section>
 		</section>
 		
+		<anchor id="recalculation"/>
+		<section><title>Recalculation of Formulas</title>
+      <p>
+        In certain cases  you may want to force Excel to re-calculate formulas when the workbook is opened.
+        Consider the following example:
+      </p>  
+      <p>
+        Open Excel and create a new workbook. On the first sheet set A1=1, B1=1, C1=A1+B1. 
+        Excel automatically calculates formulas and the value in C1 is 2. So far so good.
+      </p>  
+      <p>
+        Now modify the workbook with POI:
+      </p>
+      <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  FileOutputStream out = new FileOutputStream("workbook2.xls");
+  wb.write(out);
+  out.close();
+      </source>      
+      <p>
+        Now open workbook2.xls in Excel and the value in C1 is still 2 while you expected 3. Wrong? No!
+        The point is that Excel caches previously calculated results and you need to trigger recalculation to updated them. 
+        It is not an issue when you are creating new workbooks from scratch, but important to remember when you are modifing 
+        existing workbooks with formulas. This can be done in two ways:  
+      </p>   
+      <p>
+        1. Re-evaluate  formuals with POI's FormulaEvaluator:
+      </p>   
+        <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        </source>        
+      <p>
+        2. Delegate re-calculation to Excel. The application will perform a full recalculation when the workbook is opened:
+      </p>           
+        <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  wb.setForceFormulaRecalculation(true);
+        </source>        
+		</section>
+
 		<anchor id="Performance"/>
 		<section><title>Performance Notes</title>
 			<ul>

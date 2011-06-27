@@ -818,5 +818,22 @@ public class SXSSFWorkbook implements Workbook
     {
         _wb.addToolPack(toopack);
     }
+
+    /**
+     * Whether the application shall perform a full recalculation when the workbook is opened.
+     * <p>
+     * Typically you want to force formula recalculation when you modify cell formulas or values
+     * of a workbook previously created by Excel. When set to 0, this flag will tell Excel
+     * that it needs to recalculate all formulas in the workbook the next time the file is opened.
+     * </p>
+     *
+     * @param value true if the application will perform a full recalculation of
+     * workbook values when the workbook is opened
+     * @since 3.8
+     */
+    public void setForceFormulaRecalculation(boolean value){
+        _wb.setForceFormulaRecalculation(value);
+    }
+
 //end of interface implementation
 }

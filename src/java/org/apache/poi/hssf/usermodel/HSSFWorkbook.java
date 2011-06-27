@@ -39,20 +39,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.LabelRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -1780,6 +1767,29 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public void addToolPack(UDFFinder toopack){
         AggregatingUDFFinder udfs = (AggregatingUDFFinder)_udfFinder;
         udfs.add(toopack);
+    }
+
+    /**
+     * Whether the application shall perform a full recalculation when the workbook is opened.
+     * <p>
+     * Typically you want to force formula recalculation when you modify cell formulas or values
+     * of a workbook previously created by Excel. When set to true, this flag will tell Excel
+     * that it needs to recalculate all formulas in the workbook the next time the file is opened.
+     * </p>
+     * <p>
+     * Note, that recalculation updates cached formula results and, thus, modifies the workbook.
+     * Depending on the version, Excel may prompt you with "Do you want to save the changes in <em>filename</em>?"
+     * on close.
+     * </p>
+     *
+     * @param value true if the application will perform a full recalculation of
+     * workbook values when the workbook is opened
+     * @since 3.8
+     */
+    public void setForceFormulaRecalculation(boolean value){
+        InternalWorkbook iwb = getWorkbook();
+        RecalcIdRecord recalc = iwb.getRecalcId();
+        recalc.setEngineId(0);
     }
 
 }

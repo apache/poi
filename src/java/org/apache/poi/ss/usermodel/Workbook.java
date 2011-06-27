@@ -545,4 +545,23 @@ public interface Workbook {
      */
     void addToolPack(UDFFinder toopack);
 
+    /**
+     * Whether the application shall perform a full recalculation when the workbook is opened.
+     * <p>
+     * Typically you want to force formula recalculation when you modify cell formulas or values
+     * of a workbook previously created by Excel. When set to true, this flag will tell Excel
+     * that it needs to recalculate all formulas in the workbook the next time the file is opened.
+     * </p>
+     * <p>
+     * Note, that recalculation updates cached formula results and, thus, modifies the workbook.
+     * Depending on the version, Excel may prompt you with "Do you want to save the changes in <em>filename</em>?"
+     * on close.
+     * </p>
+     *
+     * @param value true if the application will perform a full recalculation of
+     * workbook values when the workbook is opened
+     * @since 3.8
+     */
+    public void setForceFormulaRecalculation(boolean value);
+
 }

@@ -1018,36 +1018,32 @@ public final class InternalWorkbook {
         {
 
             Record record = records.get( k );
-            // Let's skip RECALCID records, as they are only use for optimization
-            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
+            int len = 0;
+            if (record instanceof SSTRecord)
             {
-                int len = 0;
-                if (record instanceof SSTRecord)
-                {
-                    sst = (SSTRecord)record;
-                    sstPos = pos;
-                }
-                if (record.getSid() == ExtSSTRecord.sid && sst != null)
-                {
-                    record = sst.createExtSSTRecord(sstPos + offset);
-                }
-                if (record instanceof BoundSheetRecord) {
-                     if(!wroteBoundSheets) {
-                        for (int i = 0; i < boundsheets.size(); i++) {
-                            len+= getBoundSheetRec(i)
-                                             .serialize(pos+offset+len, data);
-                        }
-                        wroteBoundSheets = true;
-                     }
-                } else {
-                   len = record.serialize( pos + offset, data );
-                }
-                /////  DEBUG BEGIN /////
+                sst = (SSTRecord)record;
+                sstPos = pos;
+            }
+            if (record.getSid() == ExtSSTRecord.sid && sst != null)
+            {
+                record = sst.createExtSSTRecord(sstPos + offset);
+            }
+            if (record instanceof BoundSheetRecord) {
+                 if(!wroteBoundSheets) {
+                    for (int i = 0; i < boundsheets.size(); i++) {
+                        len+= getBoundSheetRec(i)
+                                         .serialize(pos+offset+len, data);
+                    }
+                    wroteBoundSheets = true;
+                 }
+            } else {
+               len = record.serialize( pos + offset, data );
+            }
+            /////  DEBUG BEGIN /////
 //                if (len != record.getRecordSize())
 //                    throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize());
-                /////  DEBUG END /////
-                pos += len;   // rec.length;
-            }
+            /////  DEBUG END /////
+            pos += len;   // rec.length;
         }
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "Exiting serialize workbook" );
@@ -1062,16 +1058,12 @@ public final class InternalWorkbook {
         for ( int k = 0; k < records.size(); k++ )
         {
             Record record = records.get( k );
-            // Let's skip RECALCID records, as they are only use for optimization
-            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
-            {
-                if (record instanceof SSTRecord)
-                    sst = (SSTRecord)record;
-                if (record.getSid() == ExtSSTRecord.sid && sst != null)
-                    retval += sst.calcExtSSTRecordSize();
-                else
-                    retval += record.getRecordSize();
-            }
+            if (record instanceof SSTRecord)
+                sst = (SSTRecord)record;
+            if (record.getSid() == ExtSSTRecord.sid && sst != null)
+                retval += sst.calcExtSSTRecordSize();
+            else
+                retval += record.getRecordSize();
         }
         return retval;
     }
@@ -2395,4 +2387,19 @@ public final class InternalWorkbook {
         }
     }
 
+    /**
+     * Get or create RecalcIdRecord
+     *
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#setForceFormulaRecalculation(boolean)
+     */
+    public RecalcIdRecord getRecalcId(){
+        RecalcIdRecord record = (RecalcIdRecord)findFirstRecordBySid(RecalcIdRecord.sid);
+        if(record == null){
+            record = new RecalcIdRecord();
+            // typically goes after the Country record
+            int pos = findFirstRecordLocBySid(CountryRecord.sid);
+            records.add(pos + 1, record);
+        }
+        return record;
+    }
 }

@@ -32,6 +32,8 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 
 public final class TestXSSFWorkbook extends BaseTestWorkbook {
@@ -405,4 +407,21 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	        fail("Shouldn't be able to get style at 3 that doesn't exist");
 	    } catch(IndexOutOfBoundsException e) {}
 	}
+
+    public void testRecalcId() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        CTWorkbook ctWorkbook = wb.getCTWorkbook();
+        assertFalse(ctWorkbook.isSetCalcPr());
+
+        wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
+
+        CTCalcPr calcPr = ctWorkbook.getCalcPr();
+        assertNotNull(calcPr);
+        assertEquals(0, (int) calcPr.getCalcId());
+
+        calcPr.setCalcId(100);
+        wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
+        assertEquals(0, (int) calcPr.getCalcId());
+    }
+
 }

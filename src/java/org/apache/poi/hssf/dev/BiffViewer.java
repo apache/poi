@@ -242,6 +242,7 @@ public final class BiffViewer {
 			case TextRecord.sid:           return new TextRecord(in);
 			case TickRecord.sid:           return new TickRecord(in);
 			case TopMarginRecord.sid:      return new TopMarginRecord(in);
+            case UncalcedRecord.sid:       return new UncalcedRecord(in);
 			case UnitsRecord.sid:          return new UnitsRecord(in);
 			case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
 			case VCenterRecord.sid:        return new VCenterRecord(in);

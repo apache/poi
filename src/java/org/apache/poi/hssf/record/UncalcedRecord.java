@@ -30,7 +30,10 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class UncalcedRecord extends StandardRecord  {
 	public final static short sid = 0x005E;
 
+    private short _reserved;
+
 	public UncalcedRecord() {
+        _reserved = 0;
 	}
 
 	public short getSid() {
@@ -38,18 +41,19 @@ public final class UncalcedRecord extends StandardRecord  {
 	}
 
 	public UncalcedRecord(RecordInputStream in) {
-		in.readShort(); // unused
+		_reserved = in.readShort(); // unused
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[UNCALCED]\n");
+        buffer.append("    _reserved: ").append(_reserved).append('\n');
 		buffer.append("[/UNCALCED]\n");
 		return buffer.toString();
 	}
 
 	public void serialize(LittleEndianOutput out) {
-		out.writeShort(0);
+		out.writeShort(_reserved);
 	}
 
 	protected int getDataSize() {
