@@ -35,7 +35,20 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class RecalcIdRecord extends StandardRecord {
     public final static short sid = 0x01C1;
     private final int _reserved0;
-    private final int _engineId;
+
+    /**
+     * An unsigned integer that specifies the recalculation engine identifier
+     * of the recalculation engine that performed the last recalculation.
+     * If the value is less than the recalculation engine identifier associated with the application,
+     * the application will recalculate the results of all formulas on
+     * this workbook immediately after loading the file
+     */
+    private int _engineId;
+
+    public RecalcIdRecord() {
+        _reserved0 = 0;
+        _engineId = 0;
+    }
 
     public RecalcIdRecord(RecordInputStream in) {
     	in.readUShort(); // field 'rt' should have value 0x01C1, but Excel doesn't care during reading
@@ -45,6 +58,14 @@ public final class RecalcIdRecord extends StandardRecord {
 
     public boolean isNeeded() {
         return true;
+    }
+
+    public void setEngineId(int val) {
+        _engineId = val;
+    }
+
+    public int getEngineId() {
+        return _engineId;
     }
 
     public String toString() {

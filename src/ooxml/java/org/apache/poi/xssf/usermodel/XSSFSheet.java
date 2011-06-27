@@ -1497,11 +1497,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Control if Excel should be asked to recalculate all formulas when the
-     *  workbook is opened, via the "sheetCalcPr fullCalcOnLoad" option.
-     * Calculating the formula values with {@link FormulaEvaluator} is the
+     * Control if Excel should be asked to recalculate all formulas on this sheet
+     * when the workbook is opened.
+     *
+     *  <p>
+     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
+     *  </p>
+     *
+     *  <p>
+     *  It is recommended to force recalcuation of formulas on workbook level using
+     *  {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
+     *  to ensure that all cross-worksheet formuals and external dependencies are updated.
+     *  </p>
+     * @param value true if the application will perform a full recalculation of
+     * this worksheet values when the workbook is opened
+     *
+     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
     public void setForceFormulaRecalculation(boolean value) {
        if(worksheet.isSetSheetCalcPr()) {

@@ -299,11 +299,22 @@ public interface Sheet extends Iterable<Row> {
     Iterator<Row> rowIterator();
 
     /**
-     * Control if Excel should be asked to recalculate all formulas when the
-     *  workbook is opened. 
-     * Calculating the formula values with {@link FormulaEvaluator} is the
+     * Control if Excel should be asked to recalculate all formulas on this sheet
+     * when the workbook is opened.
+     *
+     *  <p>
+     *  Calculating the formula values with {@link FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
+     *  </p>
+     *
+     *  To force recalcuation of formulas in the entire workbook
+     *  use {@link Workbook#setForceFormulaRecalculation(boolean)} instead.
+     *
+     * @param value true if the application will perform a full recalculation of
+     * this worksheet values when the workbook is opened
+     *
+     * @see Workbook#setForceFormulaRecalculation(boolean)
      */
     void setForceFormulaRecalculation(boolean value);
 

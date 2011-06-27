@@ -19,7 +19,9 @@ package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.RecalcIdRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -113,5 +115,26 @@ public final class TestWorkbook extends TestCase {
         assertNotNull(wb.getNameXPtg("myFunc2", udff));
 
         assertNull(wb.getNameXPtg("myFunc3", udff));  // myFunc3 is unknown
+    }
+
+    public void testRecalcId(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        InternalWorkbook iwb = TestHSSFWorkbook.getInternalWorkbook(wb);
+        int countryPos = iwb.findFirstRecordLocBySid(CountryRecord.sid);
+        assertTrue(countryPos != -1);
+        // RecalcIdRecord is not present in new workbooks
+        assertEquals(null, iwb.findFirstRecordBySid(RecalcIdRecord.sid));
+        RecalcIdRecord record = iwb.getRecalcId();
+        assertNotNull(record);
+        assertSame(record, iwb.getRecalcId());
+
+        assertSame(record, iwb.findFirstRecordBySid(RecalcIdRecord.sid));
+        assertEquals(countryPos + 1, iwb.findFirstRecordLocBySid(RecalcIdRecord.sid));
+
+        record.setEngineId(100);
+        assertEquals(100, record.getEngineId());
+
+        wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
+        assertEquals(0, record.getEngineId());
     }
 }

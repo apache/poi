@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51422 - Support using RecalcIdRecord to trigger a full formula recalculation on load  </action>
            <action dev="poi-developers" type="add">50474 - Example demonstrating how to update Excel workbook embedded in a WordprocessingML document </action>
            <action dev="poi-developers" type="fix">51431 - Avoid IndexOutOfBoundException when removing freeze panes in XSSF </action>
            <action dev="poi-developers" type="fix">48877 - Fixed XSSFRichTextString to respect leading and trailing line breaks </action>
@@ -45,7 +46,7 @@
            <action dev="poi-developers" type="fix">48408 - Improved documentation for Sheet.setColumnWidth </action>
            <action dev="poi-developers" type="add">51390 - Added handling of additional properties to HWPF ParagraphSprmCompressor</action>
            <action dev="poi-developers" type="add">51389 - Support for sprmPJc paragraph SPRM in HWPF</action>
-           <action dev="poi-developers" type="fix">48469 - New Case Study for PI web site  </action>
+           <action dev="poi-developers" type="fix">48469 - New Case Study for POI web site  </action>
            <action dev="poi-developers" type="fix">50681 - Avoid exceptions in HSSFDataFormat.getDataFormatString()  </action>
            <action dev="poi-developers" type="fix">50681 - Fixed autosizing columns beyond 255 character limit </action>
            <action dev="poi-developers" type="fix">51374 - Fixed incorrect setting of lastPrinted OOXML core property </action>
