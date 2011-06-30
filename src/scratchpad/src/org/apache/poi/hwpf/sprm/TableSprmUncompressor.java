@@ -21,10 +21,14 @@ import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.TableProperties;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public final class TableSprmUncompressor
   extends SprmUncompressor
 {
+  private static final POILogger logger = POILogFactory.getLogger( TableSprmUncompressor.class );
+
   public TableSprmUncompressor()
   {
   }
@@ -44,7 +48,16 @@ public final class TableSprmUncompressor
       //uncompress the right type of sprm.
       if (sprm.getType() == SprmOperation.TAP_TYPE)
       {
-        unCompressTAPOperation(newProperties, sprm);
+        try {
+            unCompressTAPOperation(newProperties, sprm);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+              logger.log(
+                      POILogger.ERROR,
+                      "Unable to apply SPRM operation '"
+                              + sprm.getOperation() + "': ",
+                      ex
+              );
+        }
       }
     }
 
