@@ -564,4 +564,11 @@ public interface Workbook {
      */
     public void setForceFormulaRecalculation(boolean value);
 
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
+     *
+     * @since 3.8
+     */
+    boolean getForceFormulaRecalculation();
+
 }

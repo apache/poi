@@ -410,6 +410,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
     public void testRecalcId() {
         XSSFWorkbook wb = new XSSFWorkbook();
+        assertFalse(wb.getForceFormulaRecalculation());
         CTWorkbook ctWorkbook = wb.getCTWorkbook();
         assertFalse(ctWorkbook.isSetCalcPr());
 
@@ -420,8 +421,11 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertEquals(0, (int) calcPr.getCalcId());
 
         calcPr.setCalcId(100);
+        assertTrue(wb.getForceFormulaRecalculation());
+
         wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
         assertEquals(0, (int) calcPr.getCalcId());
+        assertFalse(wb.getForceFormulaRecalculation());
     }
 
 }

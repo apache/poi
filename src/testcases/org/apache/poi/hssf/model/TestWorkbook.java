@@ -119,6 +119,8 @@ public final class TestWorkbook extends TestCase {
 
     public void testRecalcId(){
         HSSFWorkbook wb = new HSSFWorkbook();
+        assertFalse(wb.getForceFormulaRecalculation());
+
         InternalWorkbook iwb = TestHSSFWorkbook.getInternalWorkbook(wb);
         int countryPos = iwb.findFirstRecordLocBySid(CountryRecord.sid);
         assertTrue(countryPos != -1);
@@ -133,8 +135,10 @@ public final class TestWorkbook extends TestCase {
 
         record.setEngineId(100);
         assertEquals(100, record.getEngineId());
+        assertTrue(wb.getForceFormulaRecalculation());
 
         wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
         assertEquals(0, record.getEngineId());
+        assertFalse(wb.getForceFormulaRecalculation());
     }
 }

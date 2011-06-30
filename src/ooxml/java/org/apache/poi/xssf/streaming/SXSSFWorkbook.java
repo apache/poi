@@ -835,5 +835,12 @@ public class SXSSFWorkbook implements Workbook
         _wb.setForceFormulaRecalculation(value);
     }
 
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
+     */
+    public boolean getForceFormulaRecalculation(){
+        return _wb.getForceFormulaRecalculation();
+    }
+
 //end of interface implementation
 }

@@ -1596,4 +1596,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         // in the workbook the next time the file is opened.
         calcPr.setCalcId(0);
     }
+
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
+     *
+     * @since 3.8
+     */
+    public boolean getForceFormulaRecalculation(){
+        CTWorkbook ctWorkbook = getCTWorkbook();
+        CTCalcPr calcPr = ctWorkbook.getCalcPr();
+        return calcPr != null && calcPr.getCalcId() != 0;
+    }
+
 }

@@ -1792,4 +1792,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         recalc.setEngineId(0);
     }
 
+    /**
+     * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
+     *
+     * @since 3.8
+     */
+    public boolean getForceFormulaRecalculation(){
+        InternalWorkbook iwb = getWorkbook();
+        RecalcIdRecord recalc = (RecalcIdRecord)iwb.findFirstRecordBySid(RecalcIdRecord.sid);
+        return recalc != null && recalc.getEngineId() != 0;
+    }
+
+
 }
