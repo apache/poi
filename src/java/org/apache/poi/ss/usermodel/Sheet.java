@@ -319,7 +319,7 @@ public interface Sheet extends Iterable<Row> {
     void setForceFormulaRecalculation(boolean value);
 
     /**
-     * Whether Excel will be asked to recalculate all formulas when the
+     * Whether Excel will be asked to recalculate all formulas in this sheet when the
      *  workbook is opened.  
      */
     boolean getForceFormulaRecalculation();
