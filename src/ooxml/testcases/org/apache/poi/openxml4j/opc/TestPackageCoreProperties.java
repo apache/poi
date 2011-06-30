@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParsePosition;
@@ -178,6 +180,21 @@ public final class TestPackageCoreProperties extends TestCase {
         props.setModifiedProperty(strDate);
         assertEquals(strDate, props.getModifiedPropertyString());
         assertEquals(date, props.getModifiedProperty().getValue());
+    }
+
+    public void testGetPropertiesLO() throws Exception {
+        // Open the package
+        OPCPackage pkg1 = OPCPackage.open(OpenXML4JTestDataSamples.openSampleStream("51444.xlsx"));
+        PackageProperties props1 = pkg1.getPackageProperties();
+        assertEquals(null, props1.getTitleProperty().getValue());
+        props1.setTitleProperty("Bug 51444 fixed");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        pkg1.save(out);
+        out.close();
+
+        OPCPackage pkg2 = OPCPackage.open(new ByteArrayInputStream(out.toByteArray()));
+        PackageProperties props2 = pkg2.getPackageProperties();
+        props2.setTitleProperty("Bug 51444 fixed");
     }
 
 }
