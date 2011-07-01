@@ -17,8 +17,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
@@ -52,10 +55,19 @@ public class XSLFCommonSlideData {
         for (CTGraphicalObjectFrame frame: gs.getGraphicFrameList()) {
             CTGraphicalObjectData data = frame.getGraphic().getGraphicData();
             XmlCursor c = data.newCursor();
-            c.selectPath("./*");
+            c.selectPath("declare namespace pic='"+CTTable.type.getName().getNamespaceURI()+"' .//pic:tbl");
 
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
+
+                if (o instanceof XmlAnyTypeImpl) {
+                    // Pesky XmlBeans bug - see Bugzilla #49934
+                    try {
+                        o = CTTable.Factory.parse(o.toString());
+                    } catch (XmlException e) {
+                        throw new POIXMLException(e);
+                    }
+                }
 
                 if (o instanceof CTTable) {
                     DrawingTable table = new DrawingTable((CTTable) o);
