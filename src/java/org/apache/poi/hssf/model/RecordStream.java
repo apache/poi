@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.Record;
  */
 public final class RecordStream {
 
-	private final List _list;
+	private final List<Record> _list;
 	private int _nextIndex;
 	private int _countRead;
 	private final int _endIx;
@@ -35,14 +35,14 @@ public final class RecordStream {
 	/**
 	 * Creates a RecordStream bounded by startIndex and endIndex
 	 */
-	public RecordStream(List inputList, int startIndex, int endIx) {
+	public RecordStream(List<Record> inputList, int startIndex, int endIx) {
 		_list = inputList;
 		_nextIndex = startIndex;
 		_endIx = endIx;
 		_countRead = 0;
 	}
 
-	public RecordStream(List records, int startIx) {
+	public RecordStream(List<Record> records, int startIx) {
 		this(records, startIx, records.size());
 	}
 
@@ -61,7 +61,7 @@ public final class RecordStream {
 	/**
 	 * @return the {@link Class} of the next Record. <code>null</code> if this stream is exhausted.
 	 */
-	public Class peekNextClass() {
+	public Class<? extends Record> peekNextClass() {
 		if(!hasNext()) {
 			return null;
 		}

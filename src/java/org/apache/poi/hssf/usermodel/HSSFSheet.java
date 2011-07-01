@@ -142,7 +142,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             row = sheet.getNextRow();
         }
 
-        CellValueRecordInterface[] cvals = sheet.getValueRecords();
+        Iterator<CellValueRecordInterface> iter = sheet.getCellValueIterator();
         long timestart = System.currentTimeMillis();
 
         if (log.check( POILogger.DEBUG ))
@@ -151,8 +151,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         HSSFRow lastrow = null;
 
         // Add every cell to its row
-        for (int i = 0; i < cvals.length; i++) {
-            CellValueRecordInterface cval = cvals[i];
+        while (iter.hasNext()) {
+            CellValueRecordInterface cval = iter.next();
 
             long cellstart = System.currentTimeMillis();
             HSSFRow hrow = lastrow;
