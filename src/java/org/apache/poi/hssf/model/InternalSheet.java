@@ -360,13 +360,13 @@ public final class InternalSheet {
 
     private static final class RecordCloner implements RecordVisitor {
 
-        private final List<RecordBase> _destList;
+        private final List<Record> _destList;
 
-        public RecordCloner(List<RecordBase> destList) {
+        public RecordCloner(List<Record> destList) {
             _destList = destList;
         }
         public void visitRecord(Record r) {
-            _destList.add((RecordBase)r.clone());
+            _destList.add((Record)r.clone());
         }
     }
 
@@ -378,7 +378,7 @@ public final class InternalSheet {
      * belongs to a sheet.
      */
     public InternalSheet cloneSheet() {
-        List<RecordBase> clonedRecords = new ArrayList<RecordBase>(_records.size());
+        List<Record> clonedRecords = new ArrayList<Record>(_records.size());
         for (int i = 0; i < _records.size(); i++) {
             RecordBase rb = _records.get(i);
             if (rb instanceof RecordAggregate) {
@@ -723,10 +723,10 @@ public final class InternalSheet {
     public void removeRow(RowRecord row) {
         _rowsAggregate.removeRow(row);
     }
-
+    
     /**
-     * get the NEXT value record (from LOC).  The first record that is a value record
-     * (starting at LOC) will be returned.
+     * Get all the value records (from LOC). Records will be returned from the first
+     *  record (starting at LOC) which is a value record.
      *
      * <P>
      * This method is "loc" sensitive.  Meaning you need to set LOC to where you
@@ -735,8 +735,27 @@ public final class InternalSheet {
      * at what this sets it to.  For this method, set loc to dimsloc to start with,
      * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
      *
-     * @return CellValueRecordInterface representing the next value record or NULL if there are no more
+     * @return Iterator of CellValueRecordInterface representing the value records
      */
+    public Iterator<CellValueRecordInterface> getCellValueIterator(){
+    	return _rowsAggregate.getCellValueIterator();
+    }
+
+    /**
+     * Get all the value records (from LOC). Records will be returned from the first
+     *  record (starting at LOC) which is a value record.
+     *
+     * <P>
+     * This method is "loc" sensitive.  Meaning you need to set LOC to where you
+     * want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
+     * When adding several rows you can just start at the last one by leaving loc
+     * at what this sets it to.  For this method, set loc to dimsloc to start with,
+     * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
+     *
+     * @return Array of CellValueRecordInterface representing the remaining value records
+     * @deprecated use {@link #getValueIterator()} instead
+     */
+    @Deprecated
     public CellValueRecordInterface[] getValueRecords() {
         return _rowsAggregate.getValueRecords();
     }

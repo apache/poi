@@ -34,7 +34,8 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
-           <action dev="poi-developers" type="add">51444 - Prevent corrupted output when saving files created by LibreOffice 3.3 </action>
+           <action dev="poi-developers" type="add">51460 - Improve HSSF performance when loading very long rows, by switching the CellValue array to an iterator</action>
+           <action dev="poi-developers" type="fix">51444 - Prevent corrupted output when saving files created by LibreOffice 3.3 </action>
            <action dev="poi-developers" type="add">51422 - Support using RecalcIdRecord to trigger a full formula recalculation on load  </action>
            <action dev="poi-developers" type="add">50474 - Example demonstrating how to update Excel workbook embedded in a WordprocessingML document </action>
            <action dev="poi-developers" type="fix">51431 - Avoid IndexOutOfBoundException when removing freeze panes in XSSF </action>

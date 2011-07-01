@@ -447,7 +447,17 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
 		return startHidden;
 	}
+	
+	/**
+	 * Returns an iterator for the cell values
+	 */
+	public Iterator<CellValueRecordInterface> getCellValueIterator() {
+		return _valuesAgg.iterator();
+	}
 
+	/**
+	 * @deprecated use {@link #getCellValueIterator()} instead
+	 */
 	public CellValueRecordInterface[] getValueRecords() {
 		return _valuesAgg.getValueRecords();
 	}

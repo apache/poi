@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
@@ -40,7 +41,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class ValueRecordsAggregate {
+public final class ValueRecordsAggregate implements Iterable<CellValueRecordInterface> {
 	private static final int MAX_ROW_INDEX = 0XFFFF;
 	private static final int INDEX_NOT_SET = -1;
 	private int firstcell = INDEX_NOT_SET;
@@ -302,9 +303,66 @@ public final class ValueRecordsAggregate {
 	}
 
 	/**
+	 * iterator for CellValueRecordInterface
+	 */
+	class ValueIterator implements Iterator<CellValueRecordInterface> {
+
+		int curRowIndex = 0, curColIndex = -1;
+		int nextRowIndex = 0, nextColIndex = -1;
+
+		public ValueIterator() {
+			getNextPos();
+		}
+
+		void getNextPos() {
+			if (nextRowIndex >= records.length)
+				return; // no next already
+
+			while (nextRowIndex < records.length) {
+				++nextColIndex;
+				if (records[nextRowIndex] == null || nextColIndex >= records[nextRowIndex].length) {
+					++nextRowIndex;
+					nextColIndex = -1;
+					continue;
+				}
+
+				if (records[nextRowIndex][nextColIndex] != null)
+					return; // next cell found
+			}
+			// no next found
+		}
+
+		public boolean hasNext() {
+			return nextRowIndex < records.length;
+		}
+
+		public CellValueRecordInterface next() {
+			if (!hasNext())
+				throw new IndexOutOfBoundsException("iterator has no next");
+
+			curRowIndex = nextRowIndex;
+			curColIndex = nextColIndex;
+			final CellValueRecordInterface ret = records[curRowIndex][curColIndex];
+			getNextPos();
+			return ret;
+		}
+
+		public void remove() {
+			records[curRowIndex][curColIndex] = null;
+		}
+	}
+
+	/** value iterator */
+	public Iterator<CellValueRecordInterface> iterator() {
+		return new ValueIterator();
+	}
+
+	/**
 	 * Gets all the cell records contained in this aggregate. 
 	 * Note {@link BlankRecord}s appear separate (not in {@link MulBlankRecord}s).
+	 * @deprecated use {@link #iterator()} instead
 	 */
+	@Deprecated
 	public CellValueRecordInterface[] getValueRecords() {
 		List<CellValueRecordInterface> temp = new ArrayList<CellValueRecordInterface>();
 
