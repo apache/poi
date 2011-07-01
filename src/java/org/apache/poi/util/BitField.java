@@ -71,7 +71,7 @@ public class BitField
 
     public int getValue(final int holder)
     {
-        return getRawValue(holder) >> _shift_count;
+        return getRawValue(holder) >>> _shift_count;
     }
 
     /**

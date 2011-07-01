@@ -188,4 +188,13 @@ public final class TestBitField extends TestCase {
         assertEquals(bf_single.clearShort(( short ) -1),
                      bf_single.setShortBoolean(( short ) -1, false));
     }
+    
+    public void testSetLargeValues() {
+       final BitField bf1 = new BitField(0xF), bf2 = new BitField(0xF0000000);
+       int a = 0;
+       a = bf1.setValue(a, 9);
+       a = bf2.setValue(a, 9);
+       assertEquals(9, bf1.getValue(a));
+       assertEquals(9, bf2.getValue(a));
+    }
 }
