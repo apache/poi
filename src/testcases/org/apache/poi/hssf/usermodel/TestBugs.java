@@ -25,6 +25,8 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -2122,5 +2124,21 @@ if(1==2) {
        assertEquals(1, wb.getNumberOfSheets());
        wb = writeOutAndReadBack(wb);
        assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * File with exactly 256 data blocks (+header block)
+     *  shouldn't break on POIFS loading 
+     */
+    public void test51461() throws Exception {
+       byte[] data = HSSFITestDataProvider.instance.getTestDataFileContent("51461.xls");
+       
+       HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
+             new ByteArrayInputStream(data)).getRoot(), false);
+       HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+             new ByteArrayInputStream(data)).getRoot(), false);
+       
+       assertEquals(2, wbPOIFS.getNumberOfSheets());
+       assertEquals(2, wbNPOIFS.getNumberOfSheets());
     }
 }
