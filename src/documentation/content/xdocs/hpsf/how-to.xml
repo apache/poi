@@ -352,8 +352,8 @@ else
      only difference is that they are not located in the POI filesystem's root
      but in a <strong>nested directory</strong> instead. Just register a
      <code>POIFSReaderListener</code> for the property set streams you are
-     interested in. For example, the <em>POIBrowser</em> application in the
-     contrib section tries to open each and every document in a POI filesystem
+     interested in. For example, the <em>POIBrowser</em> application
+     tries to open each and every document in a POI filesystem
      as a property set stream. If this operation was successful it displays the
      properties.</p>
    </section>

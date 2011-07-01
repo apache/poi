@@ -282,33 +282,38 @@
     </section>
     <section><title>Examples</title>
       <p>
-	Small sample programs using the POI API are available in the
+	    Small sample programs using the POI API are available in the
         <em>src/examples</em> directory of the source distribution. Before
         studying the source code you might want to have a look at the
         "Examples" section of the <link href="apidocs/overview-summary.html">POI API
-          documentation</link>.
+        documentation</link>.
       </p>
+        <section><title>POI Browser</title>
+          <p>
+            The POI Browser is a very simple Swing GUI tool that displays the
+            internal structure of a Microsoft Office file and especially the
+            property set streams. Further information and  instructions how to
+            execute it can be found in the <link
+          href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/poifs/poibrowser/POIBrowser.java">POI
+              source code</link>.
+          </p>
+        </section>
       <p>
-	Also note that we now include all of the examples in the distribution.
+        All of the examples are inclided in POI distributions as a poi-examples artifact.
       </p>
     </section>
     <section><title>Contributed Software</title>
       <p>
-	Besides the "official" components outlined above there is some further
-	software distributed with POI. This is called "contributed" software. It
+	    Besides the "official" components outlined above there is some further
+	    software distributed with POI. This is called "contributed" software. It
         is not explicitly recommended or even maintained by the POI team, but
         it might still be useful to you.
       </p>
-      <section><title>POI Browser</title>
-        <p>
-	  The POI Browser is a very simple Swing GUI tool that displays the
-          internal structure of a Microsoft Office file and especially the
-          property set streams. Further information and  instructions how to
-          execute it can be found in the <link
-	    href="apidocs/org/apache/poi/contrib/poibrowser/package-summary.html#package_description">POI
-            Browser package description</link>.
-	</p>
-      </section>
+      <p>
+          See <link href="poi-ruby.html">POI Ruby Bindings</link>  and other code in the
+          <link
+         href="http://svn.apache.org/repos/asf/poi/trunk/src/contrib/">poi-contrib module</link>
+      </p>
     </section>
   </body>
   <footer>
