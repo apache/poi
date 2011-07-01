@@ -336,7 +336,7 @@
     Sheet sheet1 = wb.getSheetAt(0);
     for (Row row : sheet1) {
         for (Cell cell : row) {
-            CellReference cellRef = new CellReference(row.getRowNum(), cell.getCellNum());
+            CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
             System.out.print(cellRef.formatAsString());
             System.out.print(" - ");
 
@@ -711,7 +711,7 @@ Examples:
                 <anchor id="ConvenienceFunctions"/>
                 <section><title>Using the Convenience Functions</title>
                     <p>
-                        The convenience functions live in contrib and provide
+                        The convenience functions  provide
                         utility features such as setting borders around merged
                         regions and changing style attributes without explicitly
                         creating new styles.

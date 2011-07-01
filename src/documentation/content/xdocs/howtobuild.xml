@@ -91,11 +91,11 @@
                 </tr>
                 <tr>
                     <td>compile</td>
-                    <td>Compiles all files from main, contrib and scratchpad</td>
+                    <td>Compiles all files from main, ooxml and scratchpad</td>
                 </tr>
                 <tr>
                     <td>test</td>
-                    <td>Run all unit tests from main, ooxml, contrib and scratchpad</td>
+                    <td>Run all unit tests from main, ooxml and scratchpad</td>
                 </tr>
                 <tr>
                     <td>jar</td>
