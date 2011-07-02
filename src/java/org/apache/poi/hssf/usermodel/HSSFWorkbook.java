@@ -42,6 +42,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.OperandPtg;
@@ -414,8 +415,17 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
 
     public void setSheetOrder(String sheetname, int pos ) {
-        _sheets.add(pos,_sheets.remove(getSheetIndex(sheetname)));
+        int oldSheetIndex = getSheetIndex(sheetname);
+        _sheets.add(pos,_sheets.remove(oldSheetIndex));
         workbook.setSheetOrder(sheetname, pos);
+
+        FormulaShifter shifter = FormulaShifter.createForSheetShift(oldSheetIndex, pos);
+        for (HSSFSheet sheet : _sheets) {
+            sheet.getSheet().updateFormulasAfterCellShift(shifter, /* not used */ -1 );
+        }
+
+        workbook.updateNamesAfterCellShift(shifter);
+
     }
 
     private void validateSheetIndex(int index) {
