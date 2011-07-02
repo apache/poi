@@ -46,7 +46,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
-import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * Tests {@link org.apache.poi.ss.formula.EvaluationCache}.  Makes sure that where possible (previously calculated) cached
@@ -696,4 +696,82 @@ public class TestEvaluationCache extends TestCase {
 			ps.println('"' + log[i] + "\",");
 		}
 	}
+
+    private static void testPlainValueCache(Workbook wb, int numberOfSheets) {
+
+        Row row;
+        Cell cell;
+
+        //create summary sheet
+        Sheet summary = wb.createSheet("summary");
+        wb.setActiveSheet(wb.getSheetIndex(summary));
+
+        //formula referring all sheets created below
+        row = summary.createRow(0);
+        Cell summaryCell = row.createCell(0);
+        summaryCell.setCellFormula("SUM(A2:A" + (numberOfSheets + 2) + ")");
+
+
+        //create sheets with cells having (different) numbers
+        // and add a row to summary
+        for (int i = 1; i < numberOfSheets; i++) {
+            Sheet sheet = wb.createSheet("new" + i);
+
+            row = sheet.createRow(0);
+            cell = row.createCell(0);
+            cell.setCellValue(i);
+
+            row = summary.createRow(i);
+            cell = row.createCell(0);
+            cell.setCellFormula("new" + i + "!A1");
+
+        }
+
+
+        //calculate
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluator.evaluateFormulaCell(summaryCell);
+    }
+
+
+    public void testPlainValueCache()  {
+
+        Workbook wb = new HSSFWorkbook();
+        int numberOfSheets = 4098; // Bug 51448 reported that  Evaluation Cache got messed up after 256 sheets
+
+        Row row;
+        Cell cell;
+
+        //create summary sheet
+        Sheet summary = wb.createSheet("summary");
+        wb.setActiveSheet(wb.getSheetIndex(summary));
+
+        //formula referring all sheets created below
+        row = summary.createRow(0);
+        Cell summaryCell = row.createCell(0);
+        summaryCell.setCellFormula("SUM(A2:A" + (numberOfSheets + 2) + ")");
+
+
+        //create sheets with cells having (different) numbers
+        // and add a row to summary
+        for (int i = 1; i < numberOfSheets; i++) {
+            Sheet sheet = wb.createSheet("new" + i);
+
+            row = sheet.createRow(0);
+            cell = row.createCell(0);
+            cell.setCellValue(i);
+
+            row = summary.createRow(i);
+            cell = row.createCell(0);
+            cell.setCellFormula("new" + i + "!A1");
+
+        }
+
+
+        //calculate
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluator.evaluateFormulaCell(summaryCell);
+        assertEquals(8394753.0, summaryCell.getNumericCellValue());
+    }
+
 }

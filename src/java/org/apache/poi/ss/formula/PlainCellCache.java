@@ -28,7 +28,7 @@ final class PlainCellCache {
 
 	public static final class Loc {
 
-		private final int _bookSheetColumn;
+		private final long _bookSheetColumn;
 
 		private final int _rowIndex;
 
@@ -37,18 +37,19 @@ final class PlainCellCache {
 			_rowIndex = rowIndex;
 		}
 
-		public static int toBookSheetColumn(int bookIndex, int sheetIndex, int columnIndex) {
-			return ((bookIndex & 0x00FF) << 24) + ((sheetIndex & 0x00FF) << 16)
-					+ ((columnIndex & 0xFFFF) << 0);
+		public static long toBookSheetColumn(int bookIndex, int sheetIndex, int columnIndex) {
+			return ((bookIndex   & 0xFFFFl) << 48)  +
+                   ((sheetIndex  & 0xFFFFl) << 32) +
+                   ((columnIndex & 0xFFFFl) << 0);
 		}
 
-		public Loc(int bookSheetColumn, int rowIndex) {
+		public Loc(long bookSheetColumn, int rowIndex) {
 			_bookSheetColumn = bookSheetColumn;
 			_rowIndex = rowIndex;
 		}
 
 		public int hashCode() {
-			return _bookSheetColumn + 17 * _rowIndex;
+			return (int)(_bookSheetColumn ^ (_bookSheetColumn >>> 32)) + 17 * _rowIndex;
 		}
 
 		public boolean equals(Object obj) {
@@ -60,9 +61,18 @@ final class PlainCellCache {
 		public int getRowIndex() {
 			return _rowIndex;
 		}
+
 		public int getColumnIndex() {
-			return _bookSheetColumn & 0x000FFFF;
+            return (int)(_bookSheetColumn & 0x000FFFF);
 		}
+
+        public int getSheetIndex() {
+            return (int)((_bookSheetColumn >> 32) & 0xFFFF);
+        }
+
+        public int getBookIndex() {
+            return (int)((_bookSheetColumn >> 48) & 0xFFFF);
+        }
 	}
 
 	private Map<Loc, PlainValueCellCacheEntry> _plainValueEntriesByLoc;
