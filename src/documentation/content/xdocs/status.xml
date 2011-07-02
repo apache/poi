@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51448 - Avoid exception when evaluating workbooks with more than 256 sheets </action>
            <action dev="poi-developers" type="fix">51458 - Correct BitField wrapping when setting large values</action>
            <action dev="poi-developers" type="add">51460 - Improve HSSF performance when loading very long rows, by switching the CellValue array to an iterator</action>
            <action dev="poi-developers" type="fix">51444 - Prevent corrupted output when saving files created by LibreOffice 3.3 </action>
