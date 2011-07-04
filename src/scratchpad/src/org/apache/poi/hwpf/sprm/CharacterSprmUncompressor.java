@@ -17,14 +17,19 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public final class CharacterSprmUncompressor
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( CharacterSprmUncompressor.class );
+
   public CharacterSprmUncompressor()
   {
   }
@@ -47,6 +52,12 @@ public final class CharacterSprmUncompressor
     while (sprmIt.hasNext())
     {
       SprmOperation sprm = sprmIt.next();
+
+      if (sprm.getType() != 2) {
+        logger.log( POILogger.WARN, "Non-CHP SPRM returned by SprmIterator" );
+        continue;
+      }
+
       unCompressCHPOperation(parent, newProperties, sprm);
     }
 
