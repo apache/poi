@@ -1,489 +1,323 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 package org.apache.poi.hwpf.extractor;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.hwpf.usermodel.Section;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.TableCell;
-import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.w3c.dom.Element;
 
-public class WordToFoUtils {
-    static final String EMPTY = "";
-
-    public static final float TWIPS_PER_INCH = 1440.0f;
-
-    public static final int TWIPS_PER_PT = 20;
-
-    static boolean equals(String str1, String str2) {
-	return str1 == null ? str2 == null : str1.equals(str2);
+public class WordToFoUtils extends AbstractWordUtils
+{
+    public static void setBold( final Element element, final boolean bold )
+    {
+        element.setAttribute( "font-weight", bold ? "bold" : "normal" );
     }
 
-    public static String getBorderType(BorderCode borderCode) {
-	if (borderCode == null)
-	    throw new IllegalArgumentException("borderCode is null");
+    public static void setBorder( Element element, BorderCode borderCode,
+            String where )
+    {
+        if ( element == null )
+            throw new IllegalArgumentException( "element is null" );
 
-	switch (borderCode.getBorderType()) {
-	case 1:
-	case 2:
-	    return "solid";
-	case 3:
-	    return "double";
-	case 5:
-	    return "solid";
-	case 6:
-	    return "dotted";
-	case 7:
-	case 8:
-	    return "dashed";
-	case 9:
-	    return "dotted";
-	case 10:
-	case 11:
-	case 12:
-	case 13:
-	case 14:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
-	case 19:
-	    return "double";
-	case 20:
-	    return "solid";
-	case 21:
-	    return "double";
-	case 22:
-	    return "dashed";
-	case 23:
-	    return "dashed";
-	case 24:
-	    return "ridge";
-	case 25:
-	    return "grooved";
-	default:
-	    return "solid";
-	}
-    }
+        if ( borderCode == null || borderCode.getBorderType() == 0 )
+            return;
 
-    public static String getBorderWidth(BorderCode borderCode) {
-	int lineWidth = borderCode.getLineWidth();
-	int pt = lineWidth / 8;
-	int pte = lineWidth - pt * 8;
-
-	StringBuilder stringBuilder = new StringBuilder();
-	stringBuilder.append(pt);
-	stringBuilder.append(".");
-	stringBuilder.append(1000 / 8 * pte);
-	stringBuilder.append("pt");
-	return stringBuilder.toString();
-    }
-
-    public static String getBulletText(ListTables listTables,
-	    Paragraph paragraph, int listId) {
-	final ListLevel listLevel = listTables.getLevel(listId,
-		paragraph.getIlvl());
-
-	if (listLevel.getNumberText() == null)
-	    return EMPTY;
-
-	StringBuffer bulletBuffer = new StringBuffer();
-	char[] xst = listLevel.getNumberText().toCharArray();
-	for (char element : xst) {
-	    if (element < 9) {
-		ListLevel numLevel = listTables.getLevel(listId, element);
-
-		int num = numLevel.getStartAt();
-		bulletBuffer.append(NumberFormatter.getNumber(num,
-			listLevel.getNumberFormat()));
-
-		if (numLevel == listLevel) {
-		    numLevel.setStartAt(numLevel.getStartAt() + 1);
-		}
-
-	    } else {
-		bulletBuffer.append(element);
-	    }
-	}
-
-	byte follow = getIxchFollow(listLevel);
-	switch (follow) {
-	case 0:
-	    bulletBuffer.append("\t");
-	    break;
-	case 1:
-	    bulletBuffer.append(" ");
-	    break;
-	default:
-	    break;
-	}
-
-	return bulletBuffer.toString();
-    }
-
-    public static String getColor(int ico) {
-	switch (ico) {
-	case 1:
-	    return "black";
-	case 2:
-	    return "blue";
-	case 3:
-	    return "cyan";
-	case 4:
-	    return "green";
-	case 5:
-	    return "magenta";
-	case 6:
-	    return "red";
-	case 7:
-	    return "yellow";
-	case 8:
-	    return "white";
-	case 9:
-	    return "darkblue";
-	case 10:
-	    return "darkcyan";
-	case 11:
-	    return "darkgreen";
-	case 12:
-	    return "darkmagenta";
-	case 13:
-	    return "darkred";
-	case 14:
-	    return "darkyellow";
-	case 15:
-	    return "darkgray";
-	case 16:
-	    return "lightgray";
-	default:
-	    return "black";
-	}
-    }
-
-    public static byte getIxchFollow(ListLevel listLevel) {
-	try {
-	    Field field = ListLevel.class.getDeclaredField("_ixchFollow");
-	    field.setAccessible(true);
-	    return ((Byte) field.get(listLevel)).byteValue();
-	} catch (Exception exc) {
-	    throw new Error(exc);
-	}
-    }
-
-    public static String getJustification(int js) {
-        switch (js) {
-        case 0:
-            return "start";
-        case 1:
-            return "center";
-        case 2:
-            return "end";
-        case 3:
-        case 4:
-            return "justify";
-        case 5:
-            return "center";
-        case 6:
-            return "left";
-        case 7:
-            return "start";
-        case 8:
-            return "end";
-        case 9:
-            return "justify";
+        if ( isEmpty( where ) )
+        {
+            element.setAttribute( "border-style", getBorderType( borderCode ) );
+            element.setAttribute( "border-color",
+                    getColor( borderCode.getColor() ) );
+            element.setAttribute( "border-width", getBorderWidth( borderCode ) );
         }
-        return "";
+        else
+        {
+            element.setAttribute( "border-" + where + "-style",
+                    getBorderType( borderCode ) );
+            element.setAttribute( "border-" + where + "-color",
+                    getColor( borderCode.getColor() ) );
+            element.setAttribute( "border-" + where + "-width",
+                    getBorderWidth( borderCode ) );
+        }
     }
 
-    public static String getListItemNumberLabel(int number, int format) {
-
-	if (format != 0)
-	    System.err.println("NYI: toListItemNumberLabel(): " + format);
-
-	return String.valueOf(number);
-    }
-
-    public static SectionProperties getSectionProperties(Section section) {
-	try {
-	    Field field = Section.class.getDeclaredField("_props");
-	    field.setAccessible(true);
-	    return (SectionProperties) field.get(section);
-	} catch (Exception exc) {
-	    throw new Error(exc);
-	}
-    }
-
-    static boolean isEmpty(String str) {
-	return str == null || str.length() == 0;
-    }
-
-    static boolean isNotEmpty(String str) {
-	return !isEmpty(str);
-    }
-
-    public static TableIterator newTableIterator(Range range, int level) {
-	try {
-	    Constructor<TableIterator> constructor = TableIterator.class
-		    .getDeclaredConstructor(Range.class, int.class);
-	    constructor.setAccessible(true);
-	    return constructor.newInstance(range, Integer.valueOf(level));
-	} catch (Exception exc) {
-	    throw new Error(exc);
-	}
-    }
-
-    public static void setBold(final Element element, final boolean bold) {
-	element.setAttribute("font-weight", bold ? "bold" : "normal");
-    }
-
-    public static void setBorder(Element element, BorderCode borderCode,
-	    String where) {
-	if (element == null)
-	    throw new IllegalArgumentException("element is null");
-
-	if (borderCode == null)
-	    return;
-
-	if (isEmpty(where)) {
-	    element.setAttribute("border-style", getBorderType(borderCode));
-	    element.setAttribute("border-color",
-		    getColor(borderCode.getColor()));
-	    element.setAttribute("border-width", getBorderWidth(borderCode));
-	} else {
-	    element.setAttribute("border-" + where + "-style",
-		    getBorderType(borderCode));
-	    element.setAttribute("border-" + where + "-color",
-		    getColor(borderCode.getColor()));
-	    element.setAttribute("border-" + where + "-width",
-		    getBorderWidth(borderCode));
-	}
-    }
-
-    public static void setCharactersProperties(final CharacterRun characterRun,
-            final Element inline) {
+    public static void setCharactersProperties(
+            final CharacterRun characterRun, final Element inline )
+    {
         final CharacterProperties clonedProperties = characterRun
                 .cloneProperties();
         StringBuilder textDecorations = new StringBuilder();
 
-        setBorder(inline, clonedProperties.getBrc(), EMPTY);
+        setBorder( inline, clonedProperties.getBrc(), EMPTY );
 
-        if (characterRun.isCapitalized()) {
-            inline.setAttribute("text-transform", "uppercase");
+        if ( characterRun.isCapitalized() )
+        {
+            inline.setAttribute( "text-transform", "uppercase" );
         }
-        if (characterRun.isHighlighted()) {
-            inline.setAttribute("background-color",
-                    getColor(clonedProperties.getIcoHighlight()));
+        if ( characterRun.isHighlighted() )
+        {
+            inline.setAttribute( "background-color",
+                    getColor( clonedProperties.getIcoHighlight() ) );
         }
-        if (characterRun.isStrikeThrough()) {
-            if (textDecorations.length() > 0)
-                textDecorations.append(" ");
-            textDecorations.append("line-through");
+        if ( characterRun.isStrikeThrough() )
+        {
+            if ( textDecorations.length() > 0 )
+                textDecorations.append( " " );
+            textDecorations.append( "line-through" );
         }
-        if (characterRun.isShadowed()) {
-            inline.setAttribute("text-shadow", characterRun.getFontSize() / 24
-                    + "pt");
+        if ( characterRun.isShadowed() )
+        {
+            inline.setAttribute( "text-shadow", characterRun.getFontSize() / 24
+                    + "pt" );
         }
-        if (characterRun.isSmallCaps()) {
-            inline.setAttribute("font-variant", "small-caps");
+        if ( characterRun.isSmallCaps() )
+        {
+            inline.setAttribute( "font-variant", "small-caps" );
         }
-        if (characterRun.getSubSuperScriptIndex() == 1) {
-            inline.setAttribute("baseline-shift", "super");
-            inline.setAttribute("font-size", "smaller");
+        if ( characterRun.getSubSuperScriptIndex() == 1 )
+        {
+            inline.setAttribute( "baseline-shift", "super" );
+            inline.setAttribute( "font-size", "smaller" );
         }
-        if (characterRun.getSubSuperScriptIndex() == 2) {
-            inline.setAttribute("baseline-shift", "sub");
-            inline.setAttribute("font-size", "smaller");
+        if ( characterRun.getSubSuperScriptIndex() == 2 )
+        {
+            inline.setAttribute( "baseline-shift", "sub" );
+            inline.setAttribute( "font-size", "smaller" );
         }
-        if (characterRun.getUnderlineCode() > 0) {
-            if (textDecorations.length() > 0)
-                textDecorations.append(" ");
-            textDecorations.append("underline");
+        if ( characterRun.getUnderlineCode() > 0 )
+        {
+            if ( textDecorations.length() > 0 )
+                textDecorations.append( " " );
+            textDecorations.append( "underline" );
         }
-        if (characterRun.isVanished()) {
-            inline.setAttribute("visibility", "hidden");
+        if ( characterRun.isVanished() )
+        {
+            inline.setAttribute( "visibility", "hidden" );
         }
-        if (textDecorations.length() > 0) {
-            inline.setAttribute("text-decoration", textDecorations.toString());
+        if ( textDecorations.length() > 0 )
+        {
+            inline.setAttribute( "text-decoration", textDecorations.toString() );
         }
     }
 
-    public static void setFontFamily(final Element element,
-	    final String fontFamily) {
-	element.setAttribute("font-family", fontFamily);
+    public static void setFontFamily( final Element element,
+            final String fontFamily )
+    {
+        if ( isEmpty( fontFamily ) )
+            return;
+
+        element.setAttribute( "font-family", fontFamily );
     }
 
-    public static void setFontSize(final Element element, final int fontSize) {
-	element.setAttribute("font-size", String.valueOf(fontSize));
+    public static void setFontSize( final Element element, final int fontSize )
+    {
+        element.setAttribute( "font-size", String.valueOf( fontSize ) );
     }
 
-    public static void setIndent(Paragraph paragraph, Element block) {
-	if (paragraph.getFirstLineIndent() != 0) {
-	    block.setAttribute(
-		    "text-indent",
-		    String.valueOf(paragraph.getFirstLineIndent()
-			    / TWIPS_PER_PT)
-			    + "pt");
-	}
-	if (paragraph.getIndentFromLeft() != 0) {
-	    block.setAttribute(
-		    "start-indent",
-		    String.valueOf(paragraph.getIndentFromLeft() / TWIPS_PER_PT)
-			    + "pt");
-	}
-	if (paragraph.getIndentFromRight() != 0) {
-	    block.setAttribute(
-		    "end-indent",
-		    String.valueOf(paragraph.getIndentFromRight()
-			    / TWIPS_PER_PT)
-			    + "pt");
-	}
-	if (paragraph.getSpacingBefore() != 0) {
-	    block.setAttribute("space-before",
-		    String.valueOf(paragraph.getSpacingBefore() / TWIPS_PER_PT)
-			    + "pt");
-	}
-	if (paragraph.getSpacingAfter() != 0) {
-	    block.setAttribute("space-after",
-		    String.valueOf(paragraph.getSpacingAfter() / TWIPS_PER_PT)
-			    + "pt");
-	}
+    public static void setIndent( Paragraph paragraph, Element block )
+    {
+        if ( paragraph.getFirstLineIndent() != 0 )
+        {
+            block.setAttribute(
+                    "text-indent",
+                    String.valueOf( paragraph.getFirstLineIndent()
+                            / TWIPS_PER_PT )
+                            + "pt" );
+        }
+        if ( paragraph.getIndentFromLeft() != 0 )
+        {
+            block.setAttribute(
+                    "start-indent",
+                    String.valueOf( paragraph.getIndentFromLeft()
+                            / TWIPS_PER_PT )
+                            + "pt" );
+        }
+        if ( paragraph.getIndentFromRight() != 0 )
+        {
+            block.setAttribute(
+                    "end-indent",
+                    String.valueOf( paragraph.getIndentFromRight()
+                            / TWIPS_PER_PT )
+                            + "pt" );
+        }
+        if ( paragraph.getSpacingBefore() != 0 )
+        {
+            block.setAttribute(
+                    "space-before",
+                    String.valueOf( paragraph.getSpacingBefore() / TWIPS_PER_PT )
+                            + "pt" );
+        }
+        if ( paragraph.getSpacingAfter() != 0 )
+        {
+            block.setAttribute( "space-after",
+                    String.valueOf( paragraph.getSpacingAfter() / TWIPS_PER_PT )
+                            + "pt" );
+        }
     }
 
-    public static void setItalic(final Element element, final boolean italic) {
-	element.setAttribute("font-style", italic ? "italic" : "normal");
+    public static void setItalic( final Element element, final boolean italic )
+    {
+        element.setAttribute( "font-style", italic ? "italic" : "normal" );
     }
 
-    public static void setJustification(Paragraph paragraph,
-            final Element element) {
-        String justification = getJustification(paragraph.getJustification());
-        if (isNotEmpty(justification))
-            element.setAttribute("text-align", justification);
+    public static void setJustification( Paragraph paragraph,
+            final Element element )
+    {
+        String justification = getJustification( paragraph.getJustification() );
+        if ( isNotEmpty( justification ) )
+            element.setAttribute( "text-align", justification );
     }
 
-    public static void setParagraphProperties(Paragraph paragraph, Element block) {
-	setIndent(paragraph, block);
-	setJustification(paragraph, block);
+    public static void setParagraphProperties( Paragraph paragraph,
+            Element block )
+    {
+        setIndent( paragraph, block );
+        setJustification( paragraph, block );
 
-	setBorder(block, paragraph.getBottomBorder(), "bottom");
-	setBorder(block, paragraph.getLeftBorder(), "left");
-	setBorder(block, paragraph.getRightBorder(), "right");
-	setBorder(block, paragraph.getTopBorder(), "top");
+        setBorder( block, paragraph.getBottomBorder(), "bottom" );
+        setBorder( block, paragraph.getLeftBorder(), "left" );
+        setBorder( block, paragraph.getRightBorder(), "right" );
+        setBorder( block, paragraph.getTopBorder(), "top" );
 
-	if (paragraph.pageBreakBefore()) {
-	    block.setAttribute("break-before", "page");
-	}
+        if ( paragraph.pageBreakBefore() )
+        {
+            block.setAttribute( "break-before", "page" );
+        }
 
-	block.setAttribute("hyphenate",
-		String.valueOf(paragraph.isAutoHyphenated()));
+        block.setAttribute( "hyphenate",
+                String.valueOf( paragraph.isAutoHyphenated() ) );
 
-	if (paragraph.keepOnPage()) {
-	    block.setAttribute("keep-together.within-page", "always");
-	}
+        if ( paragraph.keepOnPage() )
+        {
+            block.setAttribute( "keep-together.within-page", "always" );
+        }
 
-	if (paragraph.keepWithNext()) {
-	    block.setAttribute("keep-with-next.within-page", "always");
-	}
+        if ( paragraph.keepWithNext() )
+        {
+            block.setAttribute( "keep-with-next.within-page", "always" );
+        }
 
-	block.setAttribute("linefeed-treatment", "preserve");
-	block.setAttribute("white-space-collapse", "false");
+        block.setAttribute( "linefeed-treatment", "preserve" );
+        block.setAttribute( "white-space-collapse", "false" );
     }
 
-    public static void setPictureProperties(Picture picture,
-            Element graphicElement) {
+    public static void setPictureProperties( Picture picture,
+            Element graphicElement )
+    {
         final int aspectRatioX = picture.getAspectRatioX();
         final int aspectRatioY = picture.getAspectRatioY();
 
-        if (aspectRatioX > 0) {
-            graphicElement.setAttribute("content-width", ((picture.getDxaGoal()
-                    * aspectRatioX / 100) / WordToFoUtils.TWIPS_PER_PT)
-                    + "pt");
-        } else
-            graphicElement.setAttribute("content-width",
-                    (picture.getDxaGoal() / WordToFoUtils.TWIPS_PER_PT) + "pt");
-
-        if (aspectRatioY > 0)
+        if ( aspectRatioX > 0 )
+        {
             graphicElement
-                    .setAttribute("content-height", ((picture.getDyaGoal()
-                            * aspectRatioY / 100) / WordToFoUtils.TWIPS_PER_PT)
-                            + "pt");
+                    .setAttribute( "content-width", ( ( picture.getDxaGoal()
+                            * aspectRatioX / 100 ) / TWIPS_PER_PT )
+                            + "pt" );
+        }
         else
-            graphicElement.setAttribute("content-height",
-                    (picture.getDyaGoal() / WordToFoUtils.TWIPS_PER_PT) + "pt");
+            graphicElement.setAttribute( "content-width",
+                    ( picture.getDxaGoal() / TWIPS_PER_PT ) + "pt" );
 
-        if (aspectRatioX <= 0 || aspectRatioY <= 0) {
-            graphicElement.setAttribute("scaling", "uniform");
-        } else {
-            graphicElement.setAttribute("scaling", "non-uniform");
+        if ( aspectRatioY > 0 )
+            graphicElement
+                    .setAttribute( "content-height", ( ( picture.getDyaGoal()
+                            * aspectRatioY / 100 ) / TWIPS_PER_PT )
+                            + "pt" );
+        else
+            graphicElement.setAttribute( "content-height",
+                    ( picture.getDyaGoal() / TWIPS_PER_PT ) + "pt" );
+
+        if ( aspectRatioX <= 0 || aspectRatioY <= 0 )
+        {
+            graphicElement.setAttribute( "scaling", "uniform" );
+        }
+        else
+        {
+            graphicElement.setAttribute( "scaling", "non-uniform" );
         }
 
-        graphicElement.setAttribute("vertical-align", "text-bottom");
+        graphicElement.setAttribute( "vertical-align", "text-bottom" );
 
-        if (picture.getDyaCropTop() != 0 || picture.getDxaCropRight() != 0
+        if ( picture.getDyaCropTop() != 0 || picture.getDxaCropRight() != 0
                 || picture.getDyaCropBottom() != 0
-                || picture.getDxaCropLeft() != 0) {
-            int rectTop = picture.getDyaCropTop() / WordToFoUtils.TWIPS_PER_PT;
-            int rectRight = picture.getDxaCropRight()
-                    / WordToFoUtils.TWIPS_PER_PT;
-            int rectBottom = picture.getDyaCropBottom()
-                    / WordToFoUtils.TWIPS_PER_PT;
-            int rectLeft = picture.getDxaCropLeft()
-                    / WordToFoUtils.TWIPS_PER_PT;
-            graphicElement.setAttribute("clip", "rect(" + rectTop + "pt, "
+                || picture.getDxaCropLeft() != 0 )
+        {
+            int rectTop = picture.getDyaCropTop() / TWIPS_PER_PT;
+            int rectRight = picture.getDxaCropRight() / TWIPS_PER_PT;
+            int rectBottom = picture.getDyaCropBottom() / TWIPS_PER_PT;
+            int rectLeft = picture.getDxaCropLeft() / TWIPS_PER_PT;
+            graphicElement.setAttribute( "clip", "rect(" + rectTop + "pt, "
                     + rectRight + "pt, " + rectBottom + "pt, " + rectLeft
-                    + "pt)");
-            graphicElement.setAttribute("oveerflow", "hidden");
+                    + "pt)" );
+            graphicElement.setAttribute( "oveerflow", "hidden" );
         }
     }
 
-    public static void setTableCellProperties(TableRow tableRow,
-	    TableCell tableCell, Element element, boolean toppest,
-	    boolean bottomest, boolean leftest, boolean rightest) {
-	element.setAttribute("width", (tableCell.getWidth() / TWIPS_PER_INCH)
-		+ "in");
-	element.setAttribute("padding-start",
-		(tableRow.getGapHalf() / TWIPS_PER_INCH) + "in");
-	element.setAttribute("padding-end",
-		(tableRow.getGapHalf() / TWIPS_PER_INCH) + "in");
+    public static void setTableCellProperties( TableRow tableRow,
+            TableCell tableCell, Element element, boolean toppest,
+            boolean bottomest, boolean leftest, boolean rightest )
+    {
+        element.setAttribute( "width", ( tableCell.getWidth() / TWIPS_PER_INCH )
+                + "in" );
+        element.setAttribute( "padding-start",
+                ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in" );
+        element.setAttribute( "padding-end",
+                ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in" );
 
-	BorderCode top = tableCell.getBrcTop() != null ? tableCell.getBrcTop()
-		: toppest ? tableRow.getTopBorder() : tableRow
-			.getHorizontalBorder();
-	BorderCode bottom = tableCell.getBrcBottom() != null ? tableCell
-		.getBrcBottom() : bottomest ? tableRow.getBottomBorder()
-		: tableRow.getHorizontalBorder();
+        BorderCode top = tableCell.getBrcTop() != null
+                && tableCell.getBrcTop().getBorderType() != 0 ? tableCell
+                .getBrcTop() : toppest ? tableRow.getTopBorder() : tableRow
+                .getHorizontalBorder();
+        BorderCode bottom = tableCell.getBrcBottom() != null
+                && tableCell.getBrcBottom().getBorderType() != 0 ? tableCell
+                .getBrcBottom() : bottomest ? tableRow.getBottomBorder()
+                : tableRow.getHorizontalBorder();
 
-	BorderCode left = tableCell.getBrcLeft() != null ? tableCell
-		.getBrcLeft() : leftest ? tableRow.getLeftBorder() : tableRow
-		.getVerticalBorder();
-	BorderCode right = tableCell.getBrcRight() != null ? tableCell
-		.getBrcRight() : rightest ? tableRow.getRightBorder()
-		: tableRow.getVerticalBorder();
+        BorderCode left = tableCell.getBrcLeft() != null
+                && tableCell.getBrcLeft().getBorderType() != 0 ? tableCell
+                .getBrcLeft() : leftest ? tableRow.getLeftBorder() : tableRow
+                .getVerticalBorder();
+        BorderCode right = tableCell.getBrcRight() != null
+                && tableCell.getBrcRight().getBorderType() != 0 ? tableCell
+                .getBrcRight() : rightest ? tableRow.getRightBorder()
+                : tableRow.getVerticalBorder();
 
-	setBorder(element, bottom, "bottom");
-	setBorder(element, left, "left");
-	setBorder(element, right, "right");
-	setBorder(element, top, "top");
+        setBorder( element, bottom, "bottom" );
+        setBorder( element, left, "left" );
+        setBorder( element, right, "right" );
+        setBorder( element, top, "top" );
     }
 
-    public static void setTableRowProperties(TableRow tableRow,
-	    Element tableRowElement) {
-	if (tableRow.getRowHeight() > 0) {
-	    tableRowElement.setAttribute("height",
-		    (tableRow.getRowHeight() / TWIPS_PER_INCH) + "in");
-	}
-	if (!tableRow.cantSplit()) {
-	    tableRowElement.setAttribute("keep-together", "always");
-	}
+    public static void setTableRowProperties( TableRow tableRow,
+            Element tableRowElement )
+    {
+        if ( tableRow.getRowHeight() > 0 )
+        {
+            tableRowElement.setAttribute( "height",
+                    ( tableRow.getRowHeight() / TWIPS_PER_INCH ) + "in" );
+        }
+        if ( !tableRow.cantSplit() )
+        {
+            tableRowElement.setAttribute( "keep-together", "always" );
+        }
     }
 
 }
