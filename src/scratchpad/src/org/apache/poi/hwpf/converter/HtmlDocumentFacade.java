@@ -42,6 +42,11 @@ public class HtmlDocumentFacade
         html.appendChild( body );
     }
 
+    public Element createHeader1()
+    {
+        return document.createElement( "h1" );
+    }
+
     public Element createHyperlink( String internalDestination )
     {
         final Element basicLink = document.createElement( "a" );
@@ -99,9 +104,19 @@ public class HtmlDocumentFacade
         return document.createElement( "ul" );
     }
 
+    public Element getBody()
+    {
+        return body;
+    }
+
     public Document getDocument()
     {
         return document;
+    }
+
+    public Element getHead()
+    {
+        return head;
     }
 
 }

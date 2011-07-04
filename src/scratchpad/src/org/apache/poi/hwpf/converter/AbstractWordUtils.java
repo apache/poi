@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,31 +41,14 @@ import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.IOUtils;
 
 public class AbstractWordUtils
 {
     static final String EMPTY = "";
 
-    private static final POILogger logger = POILogFactory
-            .getLogger( AbstractWordUtils.class );
-
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
-
-    static void closeQuietly( final Closeable closeable )
-    {
-        try
-        {
-            closeable.close();
-        }
-        catch ( Exception exc )
-        {
-            logger.log( POILogger.ERROR, "Unable to close resource: " + exc,
-                    exc );
-        }
-    }
 
     static boolean equals( String str1, String str2 )
     {
@@ -367,7 +349,7 @@ public class AbstractWordUtils
         }
         finally
         {
-            closeQuietly( istream );
+            IOUtils.closeQuietly( istream );
         }
     }
 
