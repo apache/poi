@@ -1,37 +1,34 @@
-/*
- *  ====================================================================
- *    Licensed to the Apache Software Foundation (ASF) under one or more
- *    contributor license agreements.  See the NOTICE file distributed with
- *    this work for additional information regarding copyright ownership.
- *    The ASF licenses this file to You under the Apache License, Version 2.0
- *    (the "License"); you may not use this file except in compliance with
- *    the License.  You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- * ====================================================================
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 package org.apache.poi.hwpf.extractor;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-public abstract class AbstractToFoExtractor
+public class FoDocumentFacade
 {
-
     private static final String NS_XSLFO = "http://www.w3.org/1999/XSL/Format";
 
     protected final Document document;
     protected final Element layoutMasterSet;
     protected final Element root;
 
-    public AbstractToFoExtractor( Document document )
+    public FoDocumentFacade( Document document )
     {
         this.document = document;
 
@@ -43,7 +40,7 @@ public abstract class AbstractToFoExtractor
         root.appendChild( layoutMasterSet );
     }
 
-    protected Element addFlowToPageSequence( final Element pageSequence,
+    public Element addFlowToPageSequence( final Element pageSequence,
             String flowName )
     {
         final Element flow = document.createElementNS( NS_XSLFO, "fo:flow" );
@@ -53,28 +50,28 @@ public abstract class AbstractToFoExtractor
         return flow;
     }
 
-    protected Element addListItem( Element listBlock )
+    public Element addListItem( Element listBlock )
     {
         Element result = createListItem();
         listBlock.appendChild( result );
         return result;
     }
 
-    protected Element addListItemBody( Element listItem )
+    public Element addListItemBody( Element listItem )
     {
         Element result = createListItemBody();
         listItem.appendChild( result );
         return result;
     }
 
-    protected Element addListItemLabel( Element listItem, String text )
+    public Element addListItemLabel( Element listItem, String text )
     {
         Element result = createListItemLabel( text );
         listItem.appendChild( result );
         return result;
     }
 
-    protected Element addPageSequence( String pageMaster )
+    public Element addPageSequence( String pageMaster )
     {
         final Element pageSequence = document.createElementNS( NS_XSLFO,
                 "fo:page-sequence" );
@@ -83,7 +80,7 @@ public abstract class AbstractToFoExtractor
         return pageSequence;
     }
 
-    protected Element addRegionBody( Element pageMaster )
+    public Element addRegionBody( Element pageMaster )
     {
         final Element regionBody = document.createElementNS( NS_XSLFO,
                 "fo:region-body" );
@@ -92,7 +89,7 @@ public abstract class AbstractToFoExtractor
         return regionBody;
     }
 
-    protected Element addSimplePageMaster( String masterName )
+    public Element addSimplePageMaster( String masterName )
     {
         final Element simplePageMaster = document.createElementNS( NS_XSLFO,
                 "fo:simple-page-master" );
@@ -110,7 +107,7 @@ public abstract class AbstractToFoExtractor
         return basicLink;
     }
 
-    protected Element createBasicLinkInternal( String internalDestination )
+    public Element createBasicLinkInternal( String internalDestination )
     {
         final Element basicLink = document.createElementNS( NS_XSLFO,
                 "fo:basic-link" );
@@ -118,12 +115,12 @@ public abstract class AbstractToFoExtractor
         return basicLink;
     }
 
-    protected Element createBlock()
+    public Element createBlock()
     {
         return document.createElementNS( NS_XSLFO, "fo:block" );
     }
 
-    protected Element createExternalGraphic( String source )
+    public Element createExternalGraphic( String source )
     {
         Element result = document.createElementNS( NS_XSLFO,
                 "fo:external-graphic" );
@@ -131,32 +128,32 @@ public abstract class AbstractToFoExtractor
         return result;
     }
 
-    protected Element createInline()
+    public Element createInline()
     {
         return document.createElementNS( NS_XSLFO, "fo:inline" );
     }
 
-    protected Element createLeader()
+    public Element createLeader()
     {
         return document.createElementNS( NS_XSLFO, "fo:leader" );
     }
 
-    protected Element createListBlock()
+    public Element createListBlock()
     {
         return document.createElementNS( NS_XSLFO, "fo:list-block" );
     }
 
-    protected Element createListItem()
+    public Element createListItem()
     {
         return document.createElementNS( NS_XSLFO, "fo:list-item" );
     }
 
-    protected Element createListItemBody()
+    public Element createListItemBody()
     {
         return document.createElementNS( NS_XSLFO, "fo:list-item-body" );
     }
 
-    protected Element createListItemLabel( String text )
+    public Element createListItemLabel( String text )
     {
         Element result = document.createElementNS( NS_XSLFO,
                 "fo:list-item-label" );
