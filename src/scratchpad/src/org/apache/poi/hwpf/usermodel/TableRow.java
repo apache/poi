@@ -82,7 +82,7 @@ public final class TableRow
 
   public void setRowJustification(int jc)
   {
-    _tprops.setJc(jc);
+    _tprops.setJc((short) jc);
     _papx.updateSprm(SPRM_TJC, (short)jc);
   }
 
