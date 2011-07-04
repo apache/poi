@@ -781,28 +781,36 @@ public class Range { // TODO -instantiable superclass
 	 *            The index of the character run to get.
 	 * @return The character run at the specified index in this range.
 	 */
-	public CharacterRun getCharacterRun(int index) {
-		initCharacterRuns();
-		CHPX chpx = _characters.get(index + _charStart);
-        
-        if (chpx == null) {
+    public CharacterRun getCharacterRun( int index )
+    {
+        initCharacterRuns();
+        CHPX chpx = _characters.get( index + _charStart );
+        return getCharacterRun( chpx );
+    }
+
+    private CharacterRun getCharacterRun( CHPX chpx )
+    {
+        if ( chpx == null )
+        {
             return null;
         }
 
-		int[] point = findRange(_paragraphs, _parStart, Math.max(chpx.getStart(), _start), chpx
-				.getEnd());
+        int[] point = findRange( _paragraphs, _parStart,
+                Math.max( chpx.getStart(), _start ), chpx.getEnd() );
 
-        if (point[0] >= _paragraphs.size()) {
+        if ( point[0] >= _paragraphs.size() )
+        {
             return null;
         }
 
-		PAPX papx = _paragraphs.get(point[0]);
-		short istd = papx.getIstd();
+        PAPX papx = _paragraphs.get( point[0] );
+        short istd = papx.getIstd();
 
-		CharacterRun chp = new CharacterRun(chpx, _doc.getStyleSheet(), istd, this);
+        CharacterRun chp = new CharacterRun( chpx, _doc.getStyleSheet(), istd,
+                this );
 
-		return chp;
-	}
+        return chp;
+    }
 
 	/**
 	 * Gets the section at index. The index is relative to this range.
@@ -1077,10 +1085,16 @@ public class Range { // TODO -instantiable superclass
 		}
 	}
 
+	/**
+	 * @return Starting character offset of the range
+	 */
 	public int getStartOffset() {
 		return _start;
 	}
 
+	/**
+	 * @return The ending character offset of this range
+	 */
 	public int getEndOffset() {
 		return _end;
 	}
