@@ -57,11 +57,17 @@ public final class CHPX extends BytePropertyNode
 
   public CharacterProperties getCharacterProperties(StyleSheet ss, short istd)
   {
-    CharacterProperties baseStyle = ss.getCharacterStyle(istd);
+    CharacterProperties baseStyle;
+    if (ss == null) {
+      //old document format
+      baseStyle = new CharacterProperties();
+    } else {
+      baseStyle = ss.getCharacterStyle(istd);
+    }
     CharacterProperties props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
     return props;
   }
-  
+
   public String toString() {
       return "CHPX from " + getStart() + " to " + getEnd() + 
          " (in bytes " + getStartBytes() + " to " + getEndBytes() + ")";
