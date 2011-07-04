@@ -426,6 +426,10 @@ public final class CharacterRun
 
   public String getFontName()
   {
+    if (_doc.getFontTable() == null)
+      // old word format
+      return null;
+
     return _doc.getFontTable().getMainFont(_props.getFtcAscii());
   }
 
