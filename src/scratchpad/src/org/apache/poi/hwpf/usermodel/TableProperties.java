@@ -19,59 +19,80 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.types.TAPAbstractType;
 
-public final class TableProperties
-  extends TAPAbstractType
-    implements Cloneable
+public final class TableProperties extends TAPAbstractType implements Cloneable
 {
 
-  public TableProperties()
-  {
+    public TableProperties()
+    {
 
-  }
-  public TableProperties(int columns)
-  {
-    field_7_itcMac = (short)columns;
-    field_10_rgshd = new ShadingDescriptor[columns];
-    for (int x = 0; x < columns; x++)
-    {
-      field_10_rgshd[x] = new ShadingDescriptor();
     }
-    field_11_brcBottom =  new BorderCode();
-    field_12_brcTop = new BorderCode();
-    field_13_brcLeft = new BorderCode();
-    field_14_brcRight = new BorderCode();
-    field_15_brcVertical = new BorderCode();
-    field_16_brcHorizontal = new BorderCode();
-    field_8_rgdxaCenter = new short[columns];
-    field_9_rgtc = new TableCellDescriptor[columns];
-    for (int x = 0; x < columns; x++)
-    {
-      field_9_rgtc[x] = new TableCellDescriptor();
-    }
-  }
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    TableProperties tap = (TableProperties)super.clone();
-    tap.field_10_rgshd = new ShadingDescriptor[field_10_rgshd.length];
-    for (int x = 0; x < field_10_rgshd.length; x++)
+    public TableProperties( short columns )
     {
-      tap.field_10_rgshd[x] = (ShadingDescriptor)field_10_rgshd[x].clone();
+        setTlp( new TableAutoformatLookSpecifier() );
+        setItcMac( columns );
+        setRgshd( new ShadingDescriptor[columns] );
+
+        for ( int x = 0; x < columns; x++ )
+        {
+            getRgshd()[x] = new ShadingDescriptor();
+        }
+
+        setBrcBottom( new BorderCode() );
+        setBrcHorizontal( new BorderCode() );
+        setBrcLeft( new BorderCode() );
+        setBrcRight( new BorderCode() );
+        setBrcTop( new BorderCode() );
+        setBrcVertical( new BorderCode() );
+
+        setRgbrcInsideDefault_0( new BorderCode() );
+        setRgbrcInsideDefault_1( new BorderCode() );
+
+        TableCellDescriptor[] tableCellDescriptors = new TableCellDescriptor[columns];
+        for ( int x = 0; x < columns; x++ )
+        {
+            tableCellDescriptors[x] = new TableCellDescriptor();
+        }
+        setRgtc( tableCellDescriptors );
+
+        setRgdxaCenter( new short[columns] );
+        setRgdxaCenterPrint( new short[columns] );
     }
-    tap.field_11_brcBottom = (BorderCode)field_11_brcBottom.clone();
-    tap.field_12_brcTop = (BorderCode)field_12_brcTop.clone();
-    tap.field_13_brcLeft = (BorderCode)field_13_brcLeft.clone();
-    tap.field_14_brcRight = (BorderCode)field_14_brcRight.clone();
-    tap.field_15_brcVertical = (BorderCode)field_15_brcVertical.clone();
-    tap.field_16_brcHorizontal = (BorderCode)field_16_brcHorizontal.clone();
-    tap.field_8_rgdxaCenter = field_8_rgdxaCenter.clone();
-    tap.field_9_rgtc = new TableCellDescriptor[field_9_rgtc.length];
-    for (int x = 0; x < field_9_rgtc.length; x++)
+
+    public Object clone() throws CloneNotSupportedException
     {
-      tap.field_9_rgtc[x] = (TableCellDescriptor)field_9_rgtc[x].clone();
+        TableProperties tap = (TableProperties) super.clone();
+
+        tap.setTlp( getTlp().clone() );
+        tap.setRgshd( new ShadingDescriptor[getRgshd().length] );
+        for ( int x = 0; x < getRgshd().length; x++ )
+        {
+            tap.getRgshd()[x] = (ShadingDescriptor) getRgshd()[x].clone();
+        }
+
+        tap.setBrcBottom( (BorderCode) getBrcBottom().clone() );
+        tap.setBrcHorizontal( (BorderCode) getBrcHorizontal().clone() );
+        tap.setBrcLeft( (BorderCode) getBrcLeft().clone() );
+        tap.setBrcRight( (BorderCode) getBrcRight().clone() );
+        tap.setBrcTop( (BorderCode) getBrcTop().clone() );
+        tap.setBrcVertical( (BorderCode) getBrcVertical().clone() );
+
+        tap.setShdTable( (ShadingDescriptor) getShdTable().clone() );
+
+        tap.setRgbrcInsideDefault_0( (BorderCode) getRgbrcInsideDefault_0()
+                .clone() );
+        tap.setRgbrcInsideDefault_1( (BorderCode) getRgbrcInsideDefault_1()
+                .clone() );
+
+        tap.setRgdxaCenter( getRgdxaCenter().clone() );
+        tap.setRgdxaCenterPrint( getRgdxaCenterPrint().clone() );
+
+        tap.setRgtc( new TableCellDescriptor[getRgtc().length] );
+        for ( int x = 0; x < getRgtc().length; x++ )
+        {
+            tap.getRgtc()[x] = (TableCellDescriptor) getRgtc()[x].clone();
+        }
+        return tap;
     }
-    return tap;
-  }
 
 }

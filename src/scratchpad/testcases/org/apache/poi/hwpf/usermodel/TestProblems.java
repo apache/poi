@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.InputStream;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -29,9 +32,6 @@ import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.util.IOUtils;
-
-import java.io.InputStream;
-import java.util.List;
 
 /**
  * Test various problem documents
@@ -605,7 +605,7 @@ public final class TestProblems extends HWPFTestCase {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
 
         Range range = doc.getRange();
-        Table table = range.insertBefore(new TableProperties(columns), rows);
+        Table table = range.insertBefore(new TableProperties((short) columns), rows);
 
         for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
             TableRow row = table.getRow(rowIdx);

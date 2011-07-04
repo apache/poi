@@ -17,13 +17,14 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
+import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.util.LittleEndian;
 
 public final class TableSprmCompressor
 {
@@ -99,10 +100,13 @@ public final class TableSprmCompressor
 //      }
 //      size += SprmUtils.addSpecialSprm((short)0xD609, buf, sprmList);
     }
-    if (newTAP.getTlp() != 0)
-    {
-      size += SprmUtils.addSprm((short)0x740a, newTAP.getTlp(), null, sprmList);
-    }
+
+        if ( newTAP.getTlp() != null )
+        {
+            byte[] buf = new byte[TableAutoformatLookSpecifier.SIZE];
+            newTAP.getTlp().serialize( buf, 0 );
+            size += SprmUtils.addSprm( (short) 0x740a, 0, buf, sprmList );
+        }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }

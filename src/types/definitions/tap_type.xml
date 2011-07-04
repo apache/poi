@@ -26,8 +26,8 @@
     <author>S. Ryan Ackley</author>
     <fields>
         <!-- page 198 -->
-        <field type="int" size="4" name="istd" description="Table style for the Table"/>
-        <field type="int" size="2" name="jc"
+        <field type="short" size="2" name="istd" description="Table style for the Table"/>
+        <field type="short" size="2" name="jc"
             description="Justification code. specifies how table row should be justified within its column. 0 -- left justify, 1 -- center, 2 -- right justify"/>
         <field type="int" size="4" name="dxaGapHalf"
             description="Measures half of the white space that will be maintained between text in adjacent columns of a table row. A dxaGapHalf width of white space will be maintained on both sides of a column boundary."/>
@@ -39,7 +39,8 @@
             description="When 1, table row may not be split across page bounds. Used for Word 2000 and Word 97."/>
         <field type="boolean" size="0" name="fTableHeader"
             description="When 1, table row is to be used as the header of the table"/>
-        <field type="int" size="4" name="tlp" description="Table look specifier (see TLP definition)"/>
+
+        <field type="TableAutoformatLookSpecifier" size="4" name="tlp" description="Table look specifier"/>
 
         <field type="short" size="2" name="wWidth" description="Preferred table width"/>
         <field type="short" size="2" name="wWidthIndent" description="Left Indent"/>
@@ -116,7 +117,7 @@
         <field type="int" size="4" name="dxaRTEWrapWidth" description="Used internally by Word"/>
         <field type="int" size="4" name="dxaColWidthWwd" description="Used internally by Word"/>
 
-        <field type="int" size="2" name="pctWwd"
+        <field type="short" size="2" name="pctWwd"
             description="Used internally by Word: percent of Window size for AutoFit in WebView"/>
 
         <field type="int" size="2" name="viewFlags" description="Used internally by Word">
@@ -131,6 +132,12 @@
             <bit number="6" mask="0xffe0" name="viewFlags_unused2" description="Not used"/>
         </field>
 
+        <field type="short[]" size="130" name="rgdxaCenter"
+            description="rgdxaCenter[0] is the left boundary of cell 0 measured relative to margin rgdxaCenter[tap.itcMac - 1] is left boundary of last cell rgdxaCenter[tap.itcMac] is right boundary of last cell."/>
+        <field type="short[]" size="130" name="rgdxaCenterPrint" description="Used internally by Word"/>
+
+        <field type="ShadingDescriptor" size="10" name="shdTable" description="Table shading"/>
+
         <!-- rgbrcTable[ibrcTableMax]; Array of borders; ibrcTableMax==6 -->
         <field type="BorderCode" size="4" name="brcBottom"/>
         <field type="BorderCode" size="4" name="brcTop"/>
@@ -141,10 +148,10 @@
 
         <!-- mpibrcwCellPaddingDefault[cbrcTc]; Array of default cell margins. Index into the next four
             properties. -->
-        <field type="int" size="2" name="wCellPaddingDefaultTop" description="Default top cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingDefaultLeft" description="Default left cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingDefaultBottom" description="Default bottom cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingDefaultRight" description="Default right cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingDefaultTop" description="Default top cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingDefaultLeft" description="Default left cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingDefaultBottom" description="Default bottom cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingDefaultRight" description="Default right cell margin/padding"/>
 
         <!-- mpibrcftsCellPaddingDefault[cbrcTc]; Array of default cell margin units. Index into the
             next four properties -->
@@ -159,10 +166,10 @@
 
         <!-- mpibrcwCellSpacingDefault[cbrcTc]; Array of default cell spacing. Index into the next four
             properties -->
-        <field type="int" size="2" name="wCellSpacingDefaultTop" description="Default top cell spacings"/>
-        <field type="int" size="2" name="wCellSpacingDefaultLeft" description="Default left cell spacings"/>
-        <field type="int" size="2" name="wCellSpacingDefaultBottom" description="Default bottom cell spacings"/>
-        <field type="int" size="2" name="wCellSpacingDefaultRight" description="Default right cell spacings"/>
+        <field type="short" size="2" name="wCellSpacingDefaultTop" description="Default top cell spacings"/>
+        <field type="short" size="2" name="wCellSpacingDefaultLeft" description="Default left cell spacings"/>
+        <field type="short" size="2" name="wCellSpacingDefaultBottom" description="Default bottom cell spacings"/>
+        <field type="short" size="2" name="wCellSpacingDefaultRight" description="Default right cell spacings"/>
 
         <!-- mpibrcftsCellSpacingDefault[cbrcTc]; Array of default cell spacing units. Index into the
             next four properties -->
@@ -177,10 +184,10 @@
 
         <!-- mpibrcwCellPaddingOuter[cbrcTc]; Array of default outer cell margins. Index into the next
             four properties. -->
-        <field type="int" size="2" name="wCellPaddingOuterTop" description="Default outer top cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingOuterLeft" description="Default outer left cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingOuterBottom" description="Default outer bottom cell margin/padding"/>
-        <field type="int" size="2" name="wCellPaddingOuterRight" description="Default outer right cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingOuterTop" description="Default outer top cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingOuterLeft" description="Default outer left cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingOuterBottom" description="Default outer bottom cell margin/padding"/>
+        <field type="short" size="2" name="wCellPaddingOuterRight" description="Default outer right cell margin/padding"/>
 
         <!-- mpibrcftsCellPaddingOuter[cbrcTc]; Array of default outer cell margin units. Index into
             the next four properties -->
@@ -195,10 +202,10 @@
 
         <!-- mpibrcwCellSpacingOuter[cbrcTc]; Array of default outer cell spacing. Index into the next
             four properties. -->
-        <field type="int" size="2" name="wCellSpacingOuterTop" description="Default outer top cell spacing"/>
-        <field type="int" size="2" name="wCellSpacingOuterLeft" description="Default outer left cell spacing"/>
-        <field type="int" size="2" name="wCellSpacingOuterBottom" description="Default outer bottom cell spacing"/>
-        <field type="int" size="2" name="wCellSpacingOuterRight" description="Default outer right cell spacing"/>
+        <field type="short" size="2" name="wCellSpacingOuterTop" description="Default outer top cell spacing"/>
+        <field type="short" size="2" name="wCellSpacingOuterLeft" description="Default outer left cell spacing"/>
+        <field type="short" size="2" name="wCellSpacingOuterBottom" description="Default outer bottom cell spacing"/>
+        <field type="short" size="2" name="wCellSpacingOuterRight" description="Default outer right cell spacing"/>
 
         <!-- mpibrcftsCellSpacingOuter[cbrcTc]; Array of default outer cell spacing units. Index into
             the next four properties. -->
@@ -224,9 +231,10 @@
         <!-- TODO: rsid -->
         <!-- TODO: tcDefault -->
 
-        <field type="int" size="1" name="cHorzBands"
+        <field type="short" size="1" name="cHorzBands"
             description="Size of each horizontal style band, in number of rows"/>
-        <field type="int" size="1" name="cVertBands" description="Size of a vertical style band, in number of columns"/>
+        <field type="short" size="1" name="cVertBands"
+            description="Size of a vertical style band, in number of columns"/>
 
         <field type="BorderCode" size="8" name="rgbrcInsideDefault_0"
             description="Border definition for inside horizontal borders"/>
