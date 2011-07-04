@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -54,7 +54,7 @@ import org.w3c.dom.Text;
 /**
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class WordToFoExtractor extends AbstractWordExtractor
+public class WordToFoConverter extends AbstractWordConverter
 {
 
     /**
@@ -80,7 +80,7 @@ public class WordToFoExtractor extends AbstractWordExtractor
     }
 
     private static final POILogger logger = POILogFactory
-            .getLogger( WordToFoExtractor.class );
+            .getLogger( WordToFoConverter.class );
 
     public static String getBorderType( BorderCode borderCode )
     {
@@ -132,21 +132,20 @@ public class WordToFoExtractor extends AbstractWordExtractor
     }
 
     /**
-     * Java main() interface to interact with WordToFoExtractor
+     * Java main() interface to interact with {@link WordToFoConverter}
      * 
      * <p>
-     * Usage: WordToFoExtractor infile outfile
+     * Usage: WordToFoConverter infile outfile
      * </p>
      * Where infile is an input .doc file ( Word 97-2007) which will be rendered
      * as XSL-FO into outfile
-     * 
      */
     public static void main( String[] args )
     {
         if ( args.length < 2 )
         {
             System.err
-                    .println( "Usage: WordToFoExtractor <inputFile.doc> <saveTo.fo>" );
+                    .println( "Usage: WordToFoConverter <inputFile.doc> <saveTo.fo>" );
             return;
         }
 
@@ -154,7 +153,7 @@ public class WordToFoExtractor extends AbstractWordExtractor
         System.out.println( "Saving output to " + args[1] );
         try
         {
-            Document doc = WordToFoExtractor.process( new File( args[0] ) );
+            Document doc = WordToFoConverter.process( new File( args[0] ) );
 
             FileWriter out = new FileWriter( args[1] );
             DOMSource domSource = new DOMSource( doc );
@@ -176,11 +175,11 @@ public class WordToFoExtractor extends AbstractWordExtractor
     static Document process( File docFile ) throws Exception
     {
         final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile );
-        WordToFoExtractor wordToFoExtractor = new WordToFoExtractor(
+        WordToFoConverter wordToFoConverter = new WordToFoConverter(
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .newDocument() );
-        wordToFoExtractor.processDocument( hwpfDocument );
-        return wordToFoExtractor.getDocument();
+        wordToFoConverter.processDocument( hwpfDocument );
+        return wordToFoConverter.getDocument();
     }
 
     private final Stack<BlockProperies> blocksProperies = new Stack<BlockProperies>();
@@ -188,14 +187,14 @@ public class WordToFoExtractor extends AbstractWordExtractor
     protected final FoDocumentFacade foDocumentFacade;
 
     /**
-     * Creates new instance of {@link WordToFoExtractor}. Can be used for output
+     * Creates new instance of {@link WordToFoConverter}. Can be used for output
      * several {@link HWPFDocument}s into single FO document.
      * 
      * @param document
      *            XML DOM Document used as XSL FO document. Shall support
      *            namespaces
      */
-    public WordToFoExtractor( Document document )
+    public WordToFoConverter( Document document )
     {
         this.foDocumentFacade = new FoDocumentFacade( document );
     }

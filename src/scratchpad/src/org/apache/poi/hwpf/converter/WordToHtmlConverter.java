@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -44,12 +44,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import static org.apache.poi.hwpf.extractor.AbstractWordUtils.TWIPS_PER_INCH;
+import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 
 /**
+ * Converts Word files (95-2007) into HTML files.
+ * <p>
+ * This implementation doesn't create images or links to them. This can be
+ * changed by overriding {@link #processImage(Element, boolean, Picture)}
+ * method.
+ * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class WordToHtmlExtractor extends AbstractWordExtractor
+public class WordToHtmlConverter extends AbstractWordConverter
 {
 
     /**
@@ -69,7 +75,7 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
     }
 
     private static final POILogger logger = POILogFactory
-            .getLogger( WordToHtmlExtractor.class );
+            .getLogger( WordToHtmlConverter.class );
 
     private static String getSectionStyle( Section section )
     {
@@ -100,10 +106,10 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
     }
 
     /**
-     * Java main() interface to interact with WordToHtmlExtractor
+     * Java main() interface to interact with {@link WordToHtmlConverter}
      * 
      * <p>
-     * Usage: WordToHtmlExtractor infile outfile
+     * Usage: WordToHtmlConverter infile outfile
      * </p>
      * Where infile is an input .doc file ( Word 95-2007) which will be rendered
      * as HTML into outfile
@@ -113,7 +119,7 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
         if ( args.length < 2 )
         {
             System.err
-                    .println( "Usage: WordToHtmlExtractor <inputFile.doc> <saveTo.html>" );
+                    .println( "Usage: WordToHtmlConverter <inputFile.doc> <saveTo.html>" );
             return;
         }
 
@@ -121,7 +127,7 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
         System.out.println( "Saving output to " + args[1] );
         try
         {
-            Document doc = WordToHtmlExtractor.process( new File( args[0] ) );
+            Document doc = WordToHtmlConverter.process( new File( args[0] ) );
 
             FileWriter out = new FileWriter( args[1] );
             DOMSource domSource = new DOMSource( doc );
@@ -145,11 +151,11 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
     static Document process( File docFile ) throws Exception
     {
         final HWPFDocumentCore wordDocument = WordToHtmlUtils.loadDoc( docFile );
-        WordToHtmlExtractor wordToHtmlExtractor = new WordToHtmlExtractor(
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .newDocument() );
-        wordToHtmlExtractor.processDocument( wordDocument );
-        return wordToHtmlExtractor.getDocument();
+        wordToHtmlConverter.processDocument( wordDocument );
+        return wordToHtmlConverter.getDocument();
     }
 
     private final Stack<BlockProperies> blocksProperies = new Stack<BlockProperies>();
@@ -157,13 +163,13 @@ public class WordToHtmlExtractor extends AbstractWordExtractor
     private final HtmlDocumentFacade htmlDocumentFacade;
 
     /**
-     * Creates new instance of {@link WordToHtmlExtractor}. Can be used for
+     * Creates new instance of {@link WordToHtmlConverter}. Can be used for
      * output several {@link HWPFDocument}s into single HTML document.
      * 
      * @param document
      *            XML DOM Document used as HTML document
      */
-    public WordToHtmlExtractor( Document document )
+    public WordToHtmlConverter( Document document )
     {
         this.htmlDocumentFacade = new HtmlDocumentFacade( document );
     }

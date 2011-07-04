@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public abstract class AbstractWordExtractor
+public abstract class AbstractWordConverter
 {
     private static final byte BEL_MARK = 7;
 
@@ -49,7 +49,7 @@ public abstract class AbstractWordExtractor
     private static final byte FIELD_SEPARATOR_MARK = 20;
 
     private static final POILogger logger = POILogFactory
-            .getLogger( AbstractWordExtractor.class );
+            .getLogger( AbstractWordConverter.class );
 
     public abstract Document getDocument();
 
