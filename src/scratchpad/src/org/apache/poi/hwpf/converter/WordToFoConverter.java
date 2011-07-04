@@ -34,7 +34,6 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -81,55 +80,6 @@ public class WordToFoConverter extends AbstractWordConverter
 
     private static final POILogger logger = POILogFactory
             .getLogger( WordToFoConverter.class );
-
-    public static String getBorderType( BorderCode borderCode )
-    {
-        if ( borderCode == null )
-            throw new IllegalArgumentException( "borderCode is null" );
-
-        switch ( borderCode.getBorderType() )
-        {
-        case 1:
-        case 2:
-            return "solid";
-        case 3:
-            return "double";
-        case 5:
-            return "solid";
-        case 6:
-            return "dotted";
-        case 7:
-        case 8:
-            return "dashed";
-        case 9:
-            return "dotted";
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-        case 18:
-        case 19:
-            return "double";
-        case 20:
-            return "solid";
-        case 21:
-            return "double";
-        case 22:
-            return "dashed";
-        case 23:
-            return "dashed";
-        case 24:
-            return "ridge";
-        case 25:
-            return "grooved";
-        default:
-            return "solid";
-        }
-    }
 
     /**
      * Java main() interface to interact with {@link WordToFoConverter}
