@@ -87,7 +87,7 @@ public class Paragraph extends Range implements Cloneable {
   protected Paragraph(int startIdx, int endIdx, Table parent)
   {
     super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
-    PAPX papx = (PAPX)_paragraphs.get(_parEnd - 1);
+    PAPX papx = _paragraphs.get(_parEnd - 1);
     _props = papx.getParagraphProperties(_doc.getStyleSheet());
     _papx = papx.getSprmBuf();
     _istd = papx.getIstd();
