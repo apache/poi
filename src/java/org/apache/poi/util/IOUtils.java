@@ -18,6 +18,7 @@
 package org.apache.poi.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +28,10 @@ import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 public final class IOUtils {
+
+    private static final POILogger logger = POILogFactory
+            .getLogger( IOUtils.class );
+
 	private IOUtils() {
 		// no instances of this class
 	}
@@ -136,5 +141,25 @@ public final class IOUtils {
         Checksum sum = new CRC32();
         sum.update(data, 0, data.length);
         return sum.getValue();
+    }
+
+    /**
+     * Quietly (no exceptions) close Closable resource. In case of error it will
+     * be printed to {@link IOUtils} class logger.
+     * 
+     * @param closeable
+     *            resource to close
+     */
+    public static void closeQuietly( final Closeable closeable )
+    {
+        try
+        {
+            closeable.close();
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.ERROR, "Unable to close resource: " + exc,
+                    exc );
+        }
     }
 }
