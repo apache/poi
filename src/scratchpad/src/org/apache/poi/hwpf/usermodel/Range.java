@@ -22,23 +22,23 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 
+import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
 import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.PropertyNode;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.SEPX;
-import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.PropertyNode;
+import org.apache.poi.hwpf.model.SEPX;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.TextPiece;
 
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.lang.ref.WeakReference;
 
 /**
  * This class is the central class of the HWPF object model. All properties that
@@ -64,7 +64,7 @@ public class Range { // TODO -instantiable superclass
 	public static final int TYPE_UNDEFINED = 6;
 
 	/** Needed so inserts and deletes will ripple up through containing Ranges */
-	private WeakReference _parent;
+	private WeakReference<Range> _parent;
 
 	/** The starting character offset of this range. */
 	protected int _start;
@@ -148,7 +148,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = _doc.getParagraphTable().getParagraphs();
 		_characters = _doc.getCharacterTable().getTextRuns();
 		_text = _doc.getTextTable().getTextPieces();
-		_parent = new WeakReference(null);
+		_parent = new WeakReference<Range>(null);
 
 		sanityCheckStartEnd();
 	}
@@ -171,7 +171,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference(parent);
+		_parent = new WeakReference<Range>(parent);
 
 		sanityCheckStartEnd();
 	}
@@ -195,7 +195,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference(parent);
+		_parent = new WeakReference<Range>(parent);
 
 		switch (idxType) {
 			case TYPE_PARAGRAPH:
@@ -1079,7 +1079,7 @@ public class Range { // TODO -instantiable superclass
 		_end += length;
 
 		reset();
-		Range parent = (Range) _parent.get();
+		Range parent = _parent.get();
 		if (parent != null) {
 			parent.adjustForInsert(length);
 		}
