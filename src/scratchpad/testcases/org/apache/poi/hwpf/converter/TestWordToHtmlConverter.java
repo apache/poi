@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.io.StringWriter;
 
@@ -30,11 +30,11 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 
 /**
- * Test cases for {@link WordToFoExtractor}
+ * Test cases for {@link WordToFoConverter}
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestWordToHtmlExtractor extends TestCase
+public class TestWordToHtmlConverter extends TestCase
 {
     private static String getHtmlText( final String sampleFileName )
             throws Exception
@@ -42,10 +42,10 @@ public class TestWordToHtmlExtractor extends TestCase
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
-        WordToHtmlExtractor wordToHtmlExtractor = new WordToHtmlExtractor(
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .newDocument() );
-        wordToHtmlExtractor.processDocument( hwpfDocument );
+        wordToHtmlConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
 
@@ -55,7 +55,7 @@ public class TestWordToHtmlExtractor extends TestCase
         transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
         transformer.setOutputProperty( OutputKeys.METHOD, "html" );
         transformer.transform(
-                new DOMSource( wordToHtmlExtractor.getDocument() ),
+                new DOMSource( wordToHtmlConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
         String result = stringWriter.toString();

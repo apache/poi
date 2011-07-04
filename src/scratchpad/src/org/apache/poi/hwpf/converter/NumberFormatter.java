@@ -17,24 +17,27 @@
  * ====================================================================
  */
 
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 /**
  * Comment me
- *
+ * 
  * @author Ryan Ackley
  */
-public final class NumberFormatter {
+public final class NumberFormatter
+{
 
-    private static String[] C_LETTERS = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i",
-            "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "y", "z" };
+    private static String[] C_LETTERS = new String[] { "a", "b", "c", "d", "e",
+            "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
+            "s", "t", "u", "v", "x", "y", "z" };
 
-    private static String[] C_ROMAN = new String[] { "i", "ii", "iii", "iv", "v", "vi", "vii",
-            "viii", "ix", "x", "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix",
-            "xx", "xxi", "xxii", "xxiii", "xxiv", "xxv", "xxvi", "xxvii", "xxviii", "xxix", "xxx",
-            "xxxi", "xxxii", "xxxiii", "xxxiv", "xxxv", "xxxvi", "xxxvii", "xxxvii", "xxxviii",
-            "xxxix", "xl", "xli", "xlii", "xliii", "xliv", "xlv", "xlvi", "xlvii", "xlviii",
-            "xlix", "l" };
+    private static String[] C_ROMAN = new String[] { "i", "ii", "iii", "iv",
+            "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "xiii", "xiv",
+            "xv", "xvi", "xvii", "xviii", "xix", "xx", "xxi", "xxii", "xxiii",
+            "xxiv", "xxv", "xxvi", "xxvii", "xxviii", "xxix", "xxx", "xxxi",
+            "xxxii", "xxxiii", "xxxiv", "xxxv", "xxxvi", "xxxvii", "xxxvii",
+            "xxxviii", "xxxix", "xl", "xli", "xlii", "xliii", "xliv", "xlv",
+            "xlvi", "xlvii", "xlviii", "xlix", "l" };
 
     private final static int T_ARABIC = 0;
     private final static int T_LOWER_LETTER = 4;
@@ -43,8 +46,10 @@ public final class NumberFormatter {
     private final static int T_UPPER_LETTER = 3;
     private final static int T_UPPER_ROMAN = 1;
 
-    public static String getNumber(int num, int style) {
-        switch (style) {
+    public static String getNumber( int num, int style )
+    {
+        switch ( style )
+        {
         case T_UPPER_ROMAN:
             return C_ROMAN[num - 1].toUpperCase();
         case T_LOWER_ROMAN:
@@ -56,7 +61,7 @@ public final class NumberFormatter {
         case T_ARABIC:
         case T_ORDINAL:
         default:
-            return String.valueOf(num);
+            return String.valueOf( num );
         }
     }
 }

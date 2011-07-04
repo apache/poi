@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -35,7 +35,7 @@ import junit.framework.TestSuite;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 
-public class TestWordToExtractorSuite
+public class TestWordToConverterSuite
 {
     /**
      * YK: a quick hack to exclude failing documents from the suite.
@@ -87,14 +87,14 @@ public class TestWordToExtractorSuite
         }
         catch ( Exception exc )
         {
-            // unable to parse file -- not WordToFoExtractor fault
+            // unable to parse file -- not WordToFoConverter fault
             return;
         }
 
-        WordToFoExtractor wordToFoExtractor = new WordToFoExtractor(
+        WordToFoConverter wordToFoConverter = new WordToFoConverter(
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .newDocument() );
-        wordToFoExtractor.processDocument( hwpfDocument );
+        wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
 
@@ -103,7 +103,7 @@ public class TestWordToExtractorSuite
         transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
         transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
         transformer.transform(
-                new DOMSource( wordToFoExtractor.getDocument() ),
+                new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
         if ( html )

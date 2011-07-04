@@ -16,7 +16,7 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.hwpf.converter;
 
 import java.io.StringWriter;
 
@@ -32,11 +32,11 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 
 /**
- * Test cases for {@link WordToFoExtractor}
+ * Test cases for {@link WordToFoConverter}
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestWordToFoExtractor extends TestCase
+public class TestWordToFoConverter extends TestCase
 {
     private static String getFoText( final String sampleFileName )
             throws Exception
@@ -44,10 +44,10 @@ public class TestWordToFoExtractor extends TestCase
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
-        WordToFoExtractor wordToFoExtractor = new WordToFoExtractor(
+        WordToFoConverter wordToFoConverter = new WordToFoConverter(
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()
                         .newDocument() );
-        wordToFoExtractor.processDocument( hwpfDocument );
+        wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
 
@@ -55,11 +55,20 @@ public class TestWordToFoExtractor extends TestCase
                 .newTransformer();
         transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
         transformer.transform(
-                new DOMSource( wordToFoExtractor.getDocument() ),
+                new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
         String result = stringWriter.toString();
         return result;
+    }
+
+    public void testEquation() throws Exception
+    {
+        final String sampleFileName = "equation.doc";
+        String result = getFoText( sampleFileName );
+
+        assertTrue( result
+                .contains( "<!--Image link to '0.emf' can be here-->" ) );
     }
 
     public void testHyperlink() throws Exception
@@ -70,15 +79,6 @@ public class TestWordToFoExtractor extends TestCase
         assertTrue( result
                 .contains( "<fo:basic-link external-destination=\"http://testuri.org/\">" ) );
         assertTrue( result.contains( "Hyperlink text" ) );
-    }
-
-    public void testEquation() throws Exception
-    {
-        final String sampleFileName = "equation.doc";
-        String result = getFoText( sampleFileName );
-
-        assertTrue( result
-                .contains( "<!--Image link to '0.emf' can be here-->" ) );
     }
 
     public void testPageref() throws Exception
