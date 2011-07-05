@@ -92,6 +92,11 @@ public class TestWordToHtmlConverter extends TestCase
         assertTrue( result.contains( "Hyperlink text" ) );
     }
 
+    public void testInnerTable() throws Exception
+    {
+        getHtmlText( "innertable.doc" );
+    }
+
     public void testPageref() throws Exception
     {
         String result = getHtmlText( "pageref.doc" );

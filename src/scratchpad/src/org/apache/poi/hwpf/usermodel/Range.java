@@ -17,11 +17,12 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.util.LittleEndian;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
-
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
 import org.apache.poi.hwpf.model.FileInformationBlock;
@@ -31,14 +32,10 @@ import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.SEPX;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
-
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.NoSuchElementException;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * This class is the central class of the HWPF object model. All properties that
@@ -882,19 +879,29 @@ public class Range { // TODO -instantiable superclass
 		}
 
 		r.initAll();
+		int tableLevel = paragraph.getTableLevel();
 		int tableEnd = r._parEnd;
 
-		if (r._parStart != 0 && getParagraph(r._parStart - 1).isInTable()
-				&& getParagraph(r._parStart - 1)._sectionEnd >= r._sectionStart) {
-			throw new IllegalArgumentException("This paragraph is not the first one in the table");
-		}
+        if ( r._parStart != 0 )
+        {
+            Paragraph previous = new Paragraph(
+                    _paragraphs.get( r._parStart - 1 ), this );
+            if ( previous.isInTable() && //
+                    previous.getTableLevel() == tableLevel //
+                    && previous._sectionEnd >= r._sectionStart )
+            {
+                throw new IllegalArgumentException(
+                        "This paragraph is not the first one in the table" );
+            }
+        }
 
-		int limit = _paragraphs.size();
-		for (; tableEnd < limit; tableEnd++) {
-			if (!getParagraph(tableEnd).isInTable()) {
-				break;
-			}
-		}
+        int limit = _paragraphs.size();
+        for ( ; tableEnd < limit; tableEnd++ )
+        {
+            Paragraph next = new Paragraph( _paragraphs.get( tableEnd ), this );
+            if ( !next.isInTable() || next.getTableLevel() < tableLevel )
+                break;
+        }
 
 		initAll();
 		if (tableEnd > _parEnd) {
