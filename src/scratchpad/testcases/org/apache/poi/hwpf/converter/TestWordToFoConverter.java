@@ -71,6 +71,15 @@ public class TestWordToFoConverter extends TestCase
                 .contains( "<!--Image link to '0.emf' can be here-->" ) );
     }
 
+    public void testInnerTable() throws Exception
+    {
+        final String sampleFileName = "innertable.doc";
+        String result = getFoText( sampleFileName );
+
+        assertTrue( result
+                .contains( "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" ) );
+    }
+
     public void testHyperlink() throws Exception
     {
         final String sampleFileName = "hyperlink.doc";
