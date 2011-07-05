@@ -326,7 +326,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         div.setAttribute( "style", getSectionStyle( section ) );
         htmlDocumentFacade.body.appendChild( div );
 
-        processSectionParagraphes( wordDocument, div, section, 0 );
+        processSectionParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
     }
 
     @Override
@@ -337,11 +337,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 getSectionStyle( section ) );
 
         processSectionParagraphes( wordDocument, htmlDocumentFacade.body,
-                section, 0 );
+                section, Integer.MIN_VALUE );
     }
 
     protected void processTable( HWPFDocumentCore hwpfDocument, Element flow,
-            Table table, int thisTableLevel )
+            Table table )
     {
         Element tableHeader = htmlDocumentFacade.createTableHeader();
         Element tableBody = htmlDocumentFacade.createTableBody();
@@ -429,7 +429,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 }
 
                 processSectionParagraphes( hwpfDocument, tableCellElement,
-                        tableCell, thisTableLevel );
+                        tableCell, table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )
                 {

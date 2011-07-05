@@ -18,9 +18,7 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,17 +30,13 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
-import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -374,85 +368,11 @@ public class WordToFoConverter extends AbstractWordConverter
         Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
                 "xsl-region-body" );
 
-        processSectionParagraphes( wordDocument, flow, section, 0 );
-    }
-
-    protected void processSectionParagraphes( HWPFDocument wordDocument,
-            Element flow, Range range, int currentTableLevel )
-    {
-        final Map<Integer, Table> allTables = new HashMap<Integer, Table>();
-        for ( TableIterator tableIterator = WordToFoUtils.newTableIterator(
-                range, currentTableLevel + 1 ); tableIterator.hasNext(); )
-        {
-            Table next = tableIterator.next();
-            allTables.put( Integer.valueOf( next.getStartOffset() ), next );
-        }
-
-        final ListTables listTables = wordDocument.getListTables();
-        int currentListInfo = 0;
-
-        final int paragraphs = range.numParagraphs();
-        for ( int p = 0; p < paragraphs; p++ )
-        {
-            Paragraph paragraph = range.getParagraph( p );
-
-            if ( allTables.containsKey( Integer.valueOf( paragraph
-                    .getStartOffset() ) ) )
-            {
-                Table table = allTables.get( Integer.valueOf( paragraph
-                        .getStartOffset() ) );
-                processTable( wordDocument, flow, table, currentTableLevel + 1 );
-                continue;
-            }
-
-            if ( paragraph.isInTable()
-                    && paragraph.getTableLevel() != currentTableLevel )
-            {
-                continue;
-            }
-
-            if ( paragraph.getIlfo() != currentListInfo )
-            {
-                currentListInfo = paragraph.getIlfo();
-            }
-
-            if ( currentListInfo != 0 )
-            {
-                if ( listTables != null )
-                {
-                    final ListFormatOverride listFormatOverride = listTables
-                            .getOverride( paragraph.getIlfo() );
-
-                    String label = WordToFoUtils.getBulletText( listTables,
-                            paragraph, listFormatOverride.getLsid() );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, label );
-                }
-                else
-                {
-                    logger.log( POILogger.WARN,
-                            "Paragraph #" + paragraph.getStartOffset() + "-"
-                                    + paragraph.getEndOffset()
-                                    + " has reference to list structure #"
-                                    + currentListInfo
-                                    + ", but listTables not defined in file" );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, WordToFoUtils.EMPTY );
-                }
-            }
-            else
-            {
-                processParagraph( wordDocument, flow, currentTableLevel,
-                        paragraph, WordToFoUtils.EMPTY );
-            }
-        }
-
+        processSectionParagraphes( wordDocument, flow, section, Integer.MIN_VALUE );
     }
 
     protected void processTable( HWPFDocumentCore wordDocument, Element flow,
-            Table table, int thisTableLevel )
+            Table table )
     {
         Element tableHeader = foDocumentFacade.createTableHeader();
         Element tableBody = foDocumentFacade.createTableBody();
@@ -532,7 +452,7 @@ public class WordToFoConverter extends AbstractWordConverter
                 }
 
                 processSectionParagraphes( wordDocument, tableCellElement,
-                        tableCell, thisTableLevel );
+                        tableCell, table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )
                 {
