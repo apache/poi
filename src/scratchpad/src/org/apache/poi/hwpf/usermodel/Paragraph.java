@@ -131,12 +131,12 @@ public class Paragraph extends Range implements Cloneable {
 
   public int getTableLevel()
   {
-    return _props.getTableLevel();
+    return _props.getItap();
   }
 
   public boolean isEmbeddedCellMark()
   {
-    return _props.getEmbeddedCellMark() != 0;
+    return _props.getFInnerTableCell() != 0;
   }
 
   public int getJustification()

@@ -96,9 +96,11 @@
         <field type="byte" size="1" name="fUsePgsuSettings"/>
         <field type="byte" size="1" name="fAdjustRight"/>
 
-        <!-- itap? -->
-        <!-- fInnerTableCell? -->
-        <!-- fOpenTch? -->
+        <field type="int" size="4" name="itap" description="Table nesting level"/>
+        <field type="byte" size="1" name="fInnerTableCell" description="When 1, the end of paragraph mark is really an end of cell mark for a nested table cell"/>
+        <field type="byte" size="1" name="fOpenTch" description="Ensure the Table Cell char doesn't show up as zero height"/>
+        <!-- not part of properties structure, but used anyway. See sprmPFInnerTtp doc. -->
+        <field type="byte" size="1" name="fTtpEmbedded" description="Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table."/>
         
         <field type="short" size="2" name="dxcRight" description="Right indent in character units"/>
         <field type="short" size="2" name="dxcLeft" description="Left indent in character units"/>
@@ -134,10 +136,5 @@
         <field type="byte[]" size="128" name="rgtbd"/>
         <field type="byte[]" size="128" name="numrm"/>
         <field type="byte[]" size="4" name="ptap"/>
-
-        <!-- Unknown old fields -->
-        <field type="byte" size="1" name="tableLevel"/>
-        <field type="byte" size="1" name="fTtpEmbedded"/>
-        <field type="byte" size="1" name="embeddedCellMark"/>
     </fields>
 </record>
