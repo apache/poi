@@ -300,18 +300,40 @@ public final class HWPFDocument extends HWPFDocumentCore
    * Returns the range which covers the whole of the
    *  document, but excludes any headers and footers.
    */
-  public Range getRange() {
-	  // First up, trigger a full-recalculate
-	  // Needed in case of deletes etc
-	  getOverallRange();
+    public Range getRange()
+    {
+        // First up, trigger a full-recalculate
+        // Needed in case of deletes etc
+        getOverallRange();
 
-	  // Now, return the real one
-	  return new Range(
-			  _cpSplit.getMainDocumentStart(),
-			  _cpSplit.getMainDocumentEnd(),
-			  this
-      );
-  }
+        if ( getFileInformationBlock().isFComplex() )
+        {
+            /*
+             * Page 31:
+             * 
+             * main document must be found by examining the piece table entries
+             * from the 0th piece table entry from the piece table entry that
+             * describes cp=fib.ccpText.
+             */
+            // TODO: review
+            return new Range( _cpSplit.getMainDocumentStart(),
+                    _cpSplit.getMainDocumentEnd(), this );
+        }
+
+        /*
+         * Page 31:
+         * 
+         * "In a non-complex file, this means text of the: main document begins
+         * at fib.fcMin in the file and continues through
+         * fib.fcMin+fib.ccpText."
+         */
+        int bytesStart = getFileInformationBlock().getFcMin();
+
+        int charsStart = getTextTable().getCharIndex( bytesStart );
+        int charsEnd = charsStart + getFileInformationBlock().getCcpText();
+
+        return new Range( charsStart, charsEnd, this );
+    }
 
   /**
    * Returns the range which covers all the Footnotes.
