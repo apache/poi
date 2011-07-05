@@ -90,10 +90,10 @@ public class Range { // TODO -instantiable superclass
 	/** All paragraphs that belong to the document this Range belongs to. */
 	protected List<PAPX> _paragraphs;
 
-	/** The start index in the paragraphs list for this Range */
+	/** The start index in the paragraphs list for this Range, inclusive */
 	protected int _parStart;
 
-	/** The end index in the paragraphs list for this Range. */
+	/** The end index in the paragraphs list for this Range, exclusive */
 	protected int _parEnd;
 
 	/** Have we loaded the characterRun indexes yet. */
@@ -178,9 +178,9 @@ public class Range { // TODO -instantiable superclass
 	 * lists.
 	 *
 	 * @param startIdx
-	 *            The starting index in the list.
+	 *            The starting index in the list, inclusive
 	 * @param endIdx
-	 *            The ending index in the list.
+	 *            The ending index in the list, exclusive
 	 * @param idxType
 	 *            The list type.
 	 * @param parent
@@ -199,27 +199,27 @@ public class Range { // TODO -instantiable superclass
 				_parStart = parent._parStart + startIdx;
 				_parEnd = parent._parStart + endIdx;
 				_start = _paragraphs.get(_parStart).getStart();
-				_end = _paragraphs.get(_parEnd).getEnd();
+				_end = _paragraphs.get(_parEnd - 1).getEnd();
 				_parRangeFound = true;
 				break;
 			case TYPE_CHARACTER:
 				_charStart = parent._charStart + startIdx;
 				_charEnd = parent._charStart + endIdx;
-				_start = _characters.get(_charStart).getStart();
+				_start = _characters.get(_charStart - 1).getStart();
 				_end = _characters.get(_charEnd).getEnd();
 				_charRangeFound = true;
 				break;
 			case TYPE_SECTION:
 				_sectionStart = parent._sectionStart + startIdx;
 				_sectionEnd = parent._sectionStart + endIdx;
-				_start = _sections.get(_sectionStart).getStart();
+				_start = _sections.get(_sectionStart - 1).getStart();
 				_end = _sections.get(_sectionEnd).getEnd();
 				_sectionRangeFound = true;
 				break;
 			case TYPE_TEXT:
 				_textStart = parent._textStart + startIdx;
 				_textEnd = parent._textStart + endIdx;
-				_start = _text.get(_textStart).getStart();
+				_start = _text.get(_textStart - 1).getStart();
 				_end = _text.get(_textEnd).getEnd();
 				_textRangeFound = true;
 				break;
@@ -832,7 +832,13 @@ public class Range { // TODO -instantiable superclass
 	 */
 
 	public Paragraph getParagraph(int index) {
-		initParagraphs();
+        initParagraphs();
+
+        if ( index + _parStart >= _parEnd )
+            throw new IndexOutOfBoundsException( "Paragraph #" + index + " ("
+                    + (index + _parStart) + ") not in range [" + _parStart
+                    + "; " + _parEnd + ")" );
+
 		PAPX papx = _paragraphs.get(index + _parStart);
 
 		ParagraphProperties props = papx.getParagraphProperties(_doc.getStyleSheet());
@@ -880,7 +886,7 @@ public class Range { // TODO -instantiable superclass
 
 		r.initAll();
 		int tableLevel = paragraph.getTableLevel();
-		int tableEnd = r._parEnd;
+		int tableEndInclusive = r._parEnd ;
 
         if ( r._parStart != 0 )
         {
@@ -895,25 +901,31 @@ public class Range { // TODO -instantiable superclass
             }
         }
 
+        final Range overallrange = getDocument() instanceof HWPFDocument ? ((HWPFDocument) getDocument())
+                .getOverallRange() : getDocument().getRange();
         int limit = _paragraphs.size();
-        for ( ; tableEnd < limit; tableEnd++ )
+        for ( ; tableEndInclusive < limit - 1; tableEndInclusive++ )
         {
-            Paragraph next = new Paragraph( _paragraphs.get( tableEnd ), this );
+            Paragraph next = new Paragraph( _paragraphs.get( tableEndInclusive + 1 ),
+                    overallrange );
             if ( !next.isInTable() || next.getTableLevel() < tableLevel )
                 break;
         }
 
-		initAll();
-		if (tableEnd > _parEnd) {
-			throw new ArrayIndexOutOfBoundsException(
-					"The table's bounds fall outside of this Range");
-		}
-		if (tableEnd < 0) {
-			throw new ArrayIndexOutOfBoundsException(
-					"The table's end is negative, which isn't allowed!");
-		}
-		return new Table(r._parStart, tableEnd, r._doc.getRange(), paragraph.getTableLevel());
-	}
+        initAll();
+        if ( tableEndInclusive + 1 > _parEnd )
+        {
+            throw new ArrayIndexOutOfBoundsException(
+                    "The table's bounds fall outside of this Range" );
+        }
+        if ( tableEndInclusive < 0 )
+        {
+            throw new ArrayIndexOutOfBoundsException(
+                    "The table's end is negative, which isn't allowed!" );
+        }
+        return new Table( r._parStart, tableEndInclusive + 1, r._doc.getRange(),
+                paragraph.getTableLevel() );
+    }
 
 	/**
 	 * loads all of the list indexes.
@@ -989,7 +1001,11 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private int[] findRange(List<? extends PropertyNode> rpl, int min, int start, int end) {
 		int x = min;
-		PropertyNode node = rpl.get(x);
+
+        if ( rpl.size() == min )
+            return new int[] { min, min };
+
+        PropertyNode node = rpl.get( x );
 
 		while (node==null || (node.getEnd() <= start && x < rpl.size() - 1)) {
 			x++;

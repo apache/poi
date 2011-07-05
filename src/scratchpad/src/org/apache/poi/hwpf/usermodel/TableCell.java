@@ -25,14 +25,16 @@ public final class TableCell
   private int _leftEdge;
   private int _width;
 
-  public TableCell(int startIdx, int endIdx, TableRow parent, int levelNum, TableCellDescriptor tcd, int leftEdge, int width)
-  {
-    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
-    _tcd = tcd;
-    _leftEdge = leftEdge;
-    _width = width;
-    _levelNum = levelNum;
-  }
+    public TableCell( int startIdxInclusive, int endIdxExclusive,
+            TableRow parent, int levelNum, TableCellDescriptor tcd,
+            int leftEdge, int width )
+    {
+        super( startIdxInclusive, endIdxExclusive, Range.TYPE_PARAGRAPH, parent );
+        _tcd = tcd;
+        _leftEdge = leftEdge;
+        _width = width;
+        _levelNum = levelNum;
+    }
 
   public boolean isFirstMerged()
   {

@@ -68,18 +68,13 @@ public class TestWordToHtmlConverter extends TestCase
         assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
     }
 
-    public void testBug33519() throws Exception
-    {
-        getHtmlText( "Bug33519.doc" );
-    }
-
     public void testBug46610_2() throws Exception
     {
         String result = getHtmlText( "Bug46610_2.doc" );
         assertTrue( result
                 .contains( "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678" ) );
     }
-    
+
     public void testBug46817() throws Exception
     {
         String result = getHtmlText( "Bug46817.doc" );
