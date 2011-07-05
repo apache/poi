@@ -197,6 +197,9 @@ public final class BorderCode implements Cloneable {
     @Override
     public String toString()
     {
+        if ( isEmpty() )
+            return "[BRC] EMPTY";
+
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( "[BRC]\n" );

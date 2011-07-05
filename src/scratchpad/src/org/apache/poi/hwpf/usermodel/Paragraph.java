@@ -517,4 +517,20 @@ public class Paragraph extends Range implements Cloneable {
     return retVal;
   }
 
+    @Override
+    public String toString()
+    {
+        return toString( true );
+    }
+
+    public String toString( boolean withPapx )
+    {
+        return "Paragraph ("
+                + getStartOffset()
+                + "--"
+                + getEndOffset()
+                + ")"
+                + ( withPapx ? "\n"
+                        + _props.toString().replaceAll( "\n", "\n\t" ) : "" );
+    }
 }

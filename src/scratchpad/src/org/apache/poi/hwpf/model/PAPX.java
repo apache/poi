@@ -18,12 +18,11 @@
 package org.apache.poi.hwpf.model;
 
 
-import org.apache.poi.util.LittleEndian;
-
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmOperation;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * DANGER - works in bytes!
@@ -145,4 +144,10 @@ public final class PAPX extends BytePropertyNode {
     }
     return false;
   }
+
+    public String toString()
+    {
+        return "PAPX from " + getStart() + " to " + getEnd() + " (in bytes "
+                + getStartBytes() + " to " + getEndBytes() + ")";
+    }
 }
