@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Map;
 
-import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 
@@ -1402,6 +1401,10 @@ public class SXSSFSheet implements Sheet, Cloneable
 //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
         protected void outputQuotedString(String s) throws IOException
         {
+            if(s == null || s.length() == 0) {
+               return;
+            }
+            
             char[] chars=s.toCharArray();
             int last = 0;
             int length=s.length();
