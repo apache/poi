@@ -240,7 +240,7 @@ public class TextPieceTable implements CharIndexTranslator {
         for(TextPiece tp : _textPiecesFCOrder) {
 			int pieceStart = tp.getPieceDescriptor().getFilePosition();
 
-            if (bytePos > pieceStart + tp.bytesLength()) {
+            if (bytePos >= pieceStart + tp.bytesLength()) {
                 continue;
             }
 
