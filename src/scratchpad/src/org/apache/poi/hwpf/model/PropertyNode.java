@@ -56,6 +56,10 @@ public abstract class PropertyNode implements Comparable, Cloneable
     	  _logger.log(POILogger.WARN, "A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
     	  _cpStart = 0;
       }
+
+      if ( fcStart > fcEnd )
+          throw new IllegalArgumentException( "fcStart (" + fcStart
+                  + ") > fcEnd (" + fcEnd + ")" );
   }
 
   /**
