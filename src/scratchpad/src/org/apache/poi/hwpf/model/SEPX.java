@@ -58,4 +58,10 @@ public final class SEPX extends BytePropertyNode
     }
     return false;
   }
+
+    public String toString()
+    {
+        return "SEPX from " + getStart() + " to " + getEnd() + " (in bytes "
+                + getStartBytes() + " to " + getEndBytes() + ")";
+    }
 }
