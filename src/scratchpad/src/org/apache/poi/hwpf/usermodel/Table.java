@@ -19,44 +19,51 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 
-public final class Table
-  extends Range
+public final class Table extends Range
 {
-  ArrayList _rows;
+    private ArrayList<TableRow> _rows;
 
-  Table(int startIdx, int endIdx, Range parent, int levelNum)
-  {
-    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
-    _rows = new ArrayList();
-    int numParagraphs = numParagraphs();
+    private int _tableLevel;
 
-    int rowStart = 0;
-    int rowEnd = 0;
-
-    while (rowEnd < numParagraphs)
+    Table( int startIdx, int endIdx, Range parent, int levelNum )
     {
-      Paragraph p = getParagraph(rowEnd);
-      rowEnd++;
-      if (p.isTableRowEnd() && p.getTableLevel() == levelNum)
-      {
-        _rows.add(new TableRow(rowStart, rowEnd, this, levelNum));
-        rowStart = rowEnd;
-      }
+        super( startIdx, endIdx, Range.TYPE_PARAGRAPH, parent );
+        _rows = new ArrayList<TableRow>();
+        _tableLevel = levelNum;
+
+        int rowStart = 0;
+        int rowEnd = 0;
+
+        int numParagraphs = numParagraphs();
+        while ( rowEnd < numParagraphs )
+        {
+            Paragraph p = getParagraph( rowEnd );
+            rowEnd++;
+            if ( p.isTableRowEnd() && p.getTableLevel() == levelNum )
+            {
+                _rows.add( new TableRow( rowStart, rowEnd, this, levelNum ) );
+                rowStart = rowEnd;
+            }
+        }
     }
-  }
 
-  public int numRows()
-  {
-    return _rows.size();
-  }
+    public TableRow getRow( int index )
+    {
+        return _rows.get( index );
+    }
 
-  public int type()
-  {
-    return TYPE_TABLE;
-  }
+    public int getTableLevel()
+    {
+        return _tableLevel;
+    }
 
-  public TableRow getRow(int index)
-  {
-    return (TableRow)_rows.get(index);
-  }
+    public int numRows()
+    {
+        return _rows.size();
+    }
+
+    public int type()
+    {
+        return TYPE_TABLE;
+    }
 }
