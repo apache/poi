@@ -68,7 +68,10 @@ public class PAPBinTable
       for (int y = 0; y < fkpSize; y++)
       {
     	PAPX papx = pfkp.getPAPX(y);
-        _paragraphs.add(papx);
+
+    	//we don't need PAPX if they are references nowhere
+    	if (tpt.isIndexInTable( papx.getStartBytes() ))
+    	    _paragraphs.add(papx);
       }
     }
     _dataStream = dataStream;
