@@ -62,6 +62,11 @@ public class TestWordToHtmlConverter extends TestCase
         return result;
     }
 
+    public void testBug33519() throws Exception
+    {
+        getHtmlText( "Bug33519.doc" );
+    }
+
     public void testBug46610_2() throws Exception
     {
         String result = getHtmlText( "Bug46610_2.doc" );
