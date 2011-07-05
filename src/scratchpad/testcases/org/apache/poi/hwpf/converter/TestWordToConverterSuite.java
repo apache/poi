@@ -44,7 +44,7 @@ public class TestWordToConverterSuite
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite(TestWordToConverterSuite.class.getName());
 
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../document" );
