@@ -50,8 +50,8 @@ public final class TableRow
       Paragraph p = getParagraph(start);
       String s = p.text();
 
-      while (! ( (s.charAt(s.length() - 1) == TABLE_CELL_MARK) ||
-                p.isEmbeddedCellMark() && p.getTableLevel() == levelNum))
+      while (! ( s.length() > 0 && (s.charAt(s.length() - 1) == TABLE_CELL_MARK) ||
+                p.isEmbeddedCellMark() && p.getTableLevel() == levelNum) && end < endIdx)
       {
         end++;
         p = getParagraph(end);
