@@ -38,6 +38,11 @@ public abstract class BytePropertyNode extends PropertyNode {
 				translator.getCharIndex(fcEnd, translator.getCharIndex(fcStart)),
 				buf
 		);
+
+        if ( fcStart > fcEnd )
+            throw new IllegalArgumentException( "fcStart (" + fcStart
+                    + ") > fcEnd (" + fcEnd + ")" );
+
                 this.startBytes = fcStart;
                 this.endBytes = fcEnd;
 	}
