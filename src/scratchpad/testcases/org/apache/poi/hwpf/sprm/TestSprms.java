@@ -27,35 +27,73 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Range;
 
-public class TestSprms extends TestCase {
-    /**
-     * Test correct processing of "sprmPJc" by uncompressor
-     */
-    public void testSprmPJc() throws IOException {
-        InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream("Bug49820.doc");
-        HWPFDocument hwpfDocument = new HWPFDocument(resourceAsStream);
-        assertEquals(1, hwpfDocument.getStyleSheet().getParagraphStyle(8)
-                .getJustification());
-        resourceAsStream.close();
+public class TestSprms extends TestCase
+{
+    private static HWPFDocument reload( HWPFDocument hwpfDocument )
+            throws IOException
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        hwpfDocument.write( baos );
+        return new HWPFDocument( new ByteArrayInputStream( baos.toByteArray() ) );
     }
 
     /**
-     * Test correct processing of "sprmPJc" by compressor and uncompressor
+     * Test correct processing of "sprmPItap" (0x6649) and "sprmPFInTable"
+     * (0x2416)
      */
-    public void testSprmPJcResave() throws IOException {
+    public void testInnerTable() throws Exception
+    {
         InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream("Bug49820.doc");
-        HWPFDocument hwpfDocument = new HWPFDocument(resourceAsStream);
+                .openResourceAsStream( "innertable.doc" );
+        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream );
         resourceAsStream.close();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        hwpfDocument.write(baos);
-        hwpfDocument = new HWPFDocument(
-                new ByteArrayInputStream(baos.toByteArray()));
+        testInnerTable( hwpfDocument );
+        hwpfDocument = reload( hwpfDocument );
+        testInnerTable( hwpfDocument );
+    }
 
-        assertEquals(1, hwpfDocument.getStyleSheet().getParagraphStyle(8)
-                .getJustification());
+    private void testInnerTable( HWPFDocument hwpfDocument )
+    {
+        Range range = hwpfDocument.getRange();
+        for ( int p = 0; p < range.numParagraphs(); p++ )
+        {
+            Paragraph paragraph = range.getParagraph( p );
+            char first = paragraph.text().toLowerCase().charAt( 0 );
+            if ( '1' <= first && first < '4' )
+            {
+                assertTrue( paragraph.isInTable() );
+                assertEquals( 2, paragraph.getTableLevel() );
+            }
+
+            if ( 'a' <= first && first < 'z' )
+            {
+                assertTrue( paragraph.isInTable() );
+                assertEquals( 1, paragraph.getTableLevel() );
+            }
+        }
+    }
+
+    /**
+     * Test correct processing of "sprmPJc" by uncompressor
+     */
+    public void testSprmPJc() throws IOException
+    {
+        InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream( "Bug49820.doc" );
+        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream );
+        resourceAsStream.close();
+
+        assertEquals( 1, hwpfDocument.getStyleSheet().getParagraphStyle( 8 )
+                .getJustification() );
+
+        hwpfDocument = reload( hwpfDocument );
+
+        assertEquals( 1, hwpfDocument.getStyleSheet().getParagraphStyle( 8 )
+                .getJustification() );
+
     }
 }
