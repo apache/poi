@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51474 - SXSSF handling for null strings</action>
            <action dev="poi-developers" type="fix">48294 - Fixed HSSFWorkbook.setSheetOrder() to respect inter-sheet references </action>
            <action dev="poi-developers" type="fix">51448 - Avoid exception when evaluating workbooks with more than 256 sheets </action>
            <action dev="poi-developers" type="fix">51458 - Correct BitField wrapping when setting large values</action>
