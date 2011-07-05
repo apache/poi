@@ -40,6 +40,7 @@ public final class SprmOperation
   final static public int PAP_TYPE = 1;
   final static public int TAP_TYPE = 5;
 
+  private short _value;
   private int _type;
   private int _operation;
   private int _gOffset;
@@ -51,14 +52,14 @@ public final class SprmOperation
   {
     _grpprl = grpprl;
 
-    short sprmStart = LittleEndian.getShort(grpprl, offset);
+    _value = LittleEndian.getShort(grpprl, offset);
 
     _gOffset = offset + 2;
 
-    _operation = OP_BITFIELD.getValue(sprmStart);
-    _type = TYPE_BITFIELD.getValue(sprmStart);
-    _sizeCode = SIZECODE_BITFIELD.getValue(sprmStart);
-    _size = initSize(sprmStart);
+    _operation = OP_BITFIELD.getValue(_value);
+    _type = TYPE_BITFIELD.getValue(_value);
+    _sizeCode = SIZECODE_BITFIELD.getValue(_value);
+    _size = initSize(_value);
   }
 
   public static int getOperationFromOpcode(short opcode)
@@ -159,4 +160,10 @@ public final class SprmOperation
         throw new IllegalArgumentException("SPRM contains an invalid size code");
     }
   }
+
+    @Override
+    public String toString()
+    {
+        return "[SPRM] (0x" + Integer.toHexString( _value & 0xffff ) + ")";
+    }
 }
