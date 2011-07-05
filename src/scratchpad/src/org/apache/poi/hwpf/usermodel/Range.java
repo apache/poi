@@ -1001,22 +1001,32 @@ public class Range { // TODO -instantiable superclass
 			node = rpl.get(x);
 		}
 
-        if (node.getStart()>end) {
-            return new int[] {0, 0};
+        if ( node.getStart() > end )
+        {
+            return new int[] { 0, 0 };
         }
 
-		if (node.getEnd() <= start) {
-			return new int[] { rpl.size(), rpl.size() };
-		}
+        if ( node.getEnd() <= start )
+        {
+            return new int[] { rpl.size(), rpl.size() };
+        }
 
-		int y = x;
-		node = rpl.get(y);
-		while (node==null || (node.getEnd() < end && y < rpl.size() - 1)) {
-			y++;
-			node = rpl.get(y);
-		}
-		return new int[] { x, y + 1 };
-	}
+        for ( int y = x; y < rpl.size(); y++ )
+        {
+            node = rpl.get( y );
+            if ( node == null )
+                continue;
+
+            if ( node.getStart() < end && node.getEnd() <= end )
+                continue;
+
+            if ( node.getStart() < end )
+                return new int[] { x, y +1 };
+
+            return new int[] { x, y };
+        }
+        return new int[] { x, rpl.size() };
+    }
 
 	/**
 	 * resets the list indexes.
@@ -1109,4 +1119,11 @@ public class Range { // TODO -instantiable superclass
 	protected HWPFDocumentCore getDocument() {
 		return _doc;
 	}
+
+    @Override
+    public String toString()
+    {
+        return "Range from " + getStartOffset() + " to " + getEndOffset()
+                + " (chars)";
+    }
 }
