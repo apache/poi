@@ -16,9 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +30,6 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
-import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -233,14 +230,6 @@ public abstract class AbstractWordConverter
     protected void processSectionParagraphes( HWPFDocumentCore wordDocument,
             Element flow, Range range, int currentTableLevel )
     {
-        final Map<Integer, Table> allTables = new HashMap<Integer, Table>();
-        for ( TableIterator tableIterator = AbstractWordUtils.newTableIterator(
-                range, currentTableLevel + 1 ); tableIterator.hasNext(); )
-        {
-            Table next = tableIterator.next();
-            allTables.put( Integer.valueOf( next.getStartOffset() ), next );
-        }
-
         final ListTables listTables = wordDocument.getListTables();
         int currentListInfo = 0;
 
@@ -249,18 +238,14 @@ public abstract class AbstractWordConverter
         {
             Paragraph paragraph = range.getParagraph( p );
 
-            if ( allTables.containsKey( Integer.valueOf( paragraph
-                    .getStartOffset() ) ) )
-            {
-                Table table = allTables.get( Integer.valueOf( paragraph
-                        .getStartOffset() ) );
-                processTable( wordDocument, flow, table, currentTableLevel + 1 );
-                continue;
-            }
-
             if ( paragraph.isInTable()
                     && paragraph.getTableLevel() != currentTableLevel )
             {
+                Table table = range.getTable( paragraph );
+                processTable( wordDocument, flow, table );
+
+                p += table.numParagraphs();
+                p--;
                 continue;
             }
 
@@ -311,7 +296,7 @@ public abstract class AbstractWordConverter
     }
 
     protected abstract void processTable( HWPFDocumentCore wordDocument,
-            Element flow, Table table, int newTableLevel );
+            Element flow, Table table );
 
     protected int tryField( HWPFDocumentCore wordDocument, Paragraph paragraph,
             int currentTableLevel, List<CharacterRun> characterRuns,

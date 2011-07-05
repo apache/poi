@@ -77,6 +77,13 @@ public class TestWordToHtmlConverter extends TestCase
                 .contains( "<!--Image link to '0.emf' can be here-->" ) );
     }
 
+    public void testAIOOBTap() throws Exception
+    {
+        String result = getHtmlText( "AIOOB-Tap.doc" );
+
+        assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
+    }
+
     public void testHyperlink() throws Exception
     {
         String result = getHtmlText( "hyperlink.doc" );
