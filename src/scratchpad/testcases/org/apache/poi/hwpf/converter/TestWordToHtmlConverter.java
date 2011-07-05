@@ -62,6 +62,12 @@ public class TestWordToHtmlConverter extends TestCase
         return result;
     }
 
+    public void testAIOOBTap() throws Exception
+    {
+        String result = getHtmlText( "AIOOB-Tap.doc" );
+        assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
+    }
+
     public void testBug33519() throws Exception
     {
         getHtmlText( "Bug33519.doc" );
@@ -73,6 +79,12 @@ public class TestWordToHtmlConverter extends TestCase
         assertTrue( result
                 .contains( "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678" ) );
     }
+    
+    public void testBug46817() throws Exception
+    {
+        String result = getHtmlText( "Bug46817.doc" );
+        assertTrue( result.contains( "<table>" ) );
+    }
 
     public void testEquation() throws Exception
     {
@@ -80,13 +92,6 @@ public class TestWordToHtmlConverter extends TestCase
 
         assertTrue( result
                 .contains( "<!--Image link to '0.emf' can be here-->" ) );
-    }
-
-    public void testAIOOBTap() throws Exception
-    {
-        String result = getHtmlText( "AIOOB-Tap.doc" );
-
-        assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
     }
 
     public void testHyperlink() throws Exception
@@ -100,6 +105,13 @@ public class TestWordToHtmlConverter extends TestCase
     public void testInnerTable() throws Exception
     {
         getHtmlText( "innertable.doc" );
+    }
+
+    public void testMBD001D0B89() throws Exception
+    {
+        String result = getHtmlText( "MBD001D0B89.doc" );
+
+        assertTrue( result.contains( "<table>" ) );
     }
 
     public void testPageref() throws Exception
