@@ -649,7 +649,7 @@ public class Range { // TODO -instantiable superclass
 	public Table insertBefore(TableProperties props, int rows) {
 		ParagraphProperties parProps = new ParagraphProperties();
 		parProps.setFInTable((byte) 1);
-		parProps.setTableLevel((byte) 1);
+		parProps.setItap( 1 );
 
 		int columns = props.getItcMac();
 		for (int x = 0; x < rows; x++) {

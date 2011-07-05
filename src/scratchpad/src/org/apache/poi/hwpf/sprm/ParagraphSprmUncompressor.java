@@ -17,20 +17,20 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
+import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.ArrayList;
 
 public final class ParagraphSprmUncompressor
   extends SprmUncompressor
@@ -192,9 +192,10 @@ public final class ParagraphSprmUncompressor
         // fast saved only
         //applySprmPChgTabs (newPAP, varParam, opSize);
         break;
-      case 0x16:
-        newPAP.setFInTable ((byte) sprm.getOperand());
-        break;
+        case 0x16:
+            // sprmPFInTable -- 0x2416
+            newPAP.setFInTable( (byte) sprm.getOperand() );
+            break;
       case 0x17:
         newPAP.setFTtp ((byte) sprm.getOperand());
         break;
@@ -392,15 +393,22 @@ public final class ParagraphSprmUncompressor
       case 0x48:
         newPAP.setFAdjustRight ((byte) sprm.getOperand());
         break;
-      case 0x49:
-        newPAP.setTableLevel((byte)sprm.getOperand());
-        break;
-      case 0x4b:
-        newPAP.setEmbeddedCellMark((byte)sprm.getOperand());
-        break;
-      case 0x4c:
-        newPAP.setFTtpEmbedded((byte)sprm.getOperand());
-        break;
+        case 0x49:
+            // sprmPItap -- 0x6649
+            newPAP.setItap( sprm.getOperand() );
+            break;
+        case 0x4a:
+            // sprmPDtap -- 0x664a
+            newPAP.setItap( (byte) ( newPAP.getItap() + sprm.getOperand() ) );
+            break;
+        case 0x4b:
+            // sprmPFInnerTableCell -- 0x244b
+            newPAP.setFInnerTableCell( (byte) sprm.getOperand() );
+            break;
+        case 0x4c:
+            // sprmPFInnerTtp -- 0x244c
+            newPAP.setFTtpEmbedded( (byte) sprm.getOperand() );
+            break;
       case 0x61:
         // sprmPJc 
         newPAP.setJustificationLogical((byte) sprm.getOperand());

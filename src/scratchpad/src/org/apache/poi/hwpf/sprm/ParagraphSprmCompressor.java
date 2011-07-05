@@ -17,13 +17,12 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.apache.poi.util.LittleEndian;
+import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.util.LittleEndian;
 
 public final class ParagraphSprmCompressor
 {
@@ -363,10 +362,10 @@ public final class ParagraphSprmCompressor
       // sprmPNumRM
       size += SprmUtils.addSprm((short)0xC645, 0, newPAP.getNumrm(), sprmList);
     }
-    if (newPAP.getEmbeddedCellMark() != oldPAP.getEmbeddedCellMark())
+    if (newPAP.getFInnerTableCell() != oldPAP.getFInnerTableCell())
     {
       // sprmPFInnerTableCell
-      size += SprmUtils.addSprm((short)0x244b, newPAP.getEmbeddedCellMark(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x244b, newPAP.getFInnerTableCell(), null, sprmList);
     }
     if (newPAP.getFTtpEmbedded() != oldPAP.getFTtpEmbedded())
     {
@@ -375,10 +374,10 @@ public final class ParagraphSprmCompressor
     }
 
     // Page 55 of public specification begins
-    if (newPAP.getTableLevel() != oldPAP.getTableLevel())
+    if (newPAP.getItap() != oldPAP.getItap())
     {
       // sprmPItap
-      size += SprmUtils.addSprm((short)0x6649, newPAP.getTableLevel(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x6649, newPAP.getItap(), null, sprmList);
     }
 
     return SprmUtils.getGrpprl(sprmList, size);

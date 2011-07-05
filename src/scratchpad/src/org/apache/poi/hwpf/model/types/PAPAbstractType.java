@@ -19,12 +19,13 @@ package org.apache.poi.hwpf.model.types;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.DateAndTime;
+import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
+import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.util.BitField;
 
 /**
  * Paragraph Properties.
@@ -89,36 +90,37 @@ public abstract class PAPAbstractType
     protected  byte field_47_fCrLf;
     protected  byte field_48_fUsePgsuSettings;
     protected  byte field_49_fAdjustRight;
-    protected  short field_50_dxcRight;
-    protected  short field_51_dxcLeft;
-    protected  short field_52_dxcLeft1;
-    protected  byte field_53_fDyaBeforeAuto;
-    protected  byte field_54_fDyaAfterAuto;
-    protected  int field_55_dxaRight;
-    protected  int field_56_dxaLeft;
-    protected  int field_57_dxaLeft1;
-    protected  byte field_58_jc;
-    protected  byte field_59_fNoAllowOverlap;
-    protected  BorderCode field_60_brcTop;
-    protected  BorderCode field_61_brcLeft;
-    protected  BorderCode field_62_brcBottom;
-    protected  BorderCode field_63_brcRight;
-    protected  BorderCode field_64_brcBetween;
-    protected  BorderCode field_65_brcBar;
-    protected  ShadingDescriptor field_66_shd;
-    protected  byte[] field_67_anld;
-    protected  byte[] field_68_phe;
-    protected  int field_69_fPropRMark;
-    protected  int field_70_ibstPropRMark;
-    protected  DateAndTime field_71_dttmPropRMark;
-    protected  int field_72_itbdMac;
-    protected  int[] field_73_rgdxaTab;
-    protected  byte[] field_74_rgtbd;
-    protected  byte[] field_75_numrm;
-    protected  byte[] field_76_ptap;
-    protected  byte field_77_tableLevel;
-    protected  byte field_78_fTtpEmbedded;
-    protected  byte field_79_embeddedCellMark;
+    protected  int field_50_itap;
+    protected  byte field_51_fInnerTableCell;
+    protected  byte field_52_fOpenTch;
+    protected  byte field_53_fTtpEmbedded;
+    protected  short field_54_dxcRight;
+    protected  short field_55_dxcLeft;
+    protected  short field_56_dxcLeft1;
+    protected  byte field_57_fDyaBeforeAuto;
+    protected  byte field_58_fDyaAfterAuto;
+    protected  int field_59_dxaRight;
+    protected  int field_60_dxaLeft;
+    protected  int field_61_dxaLeft1;
+    protected  byte field_62_jc;
+    protected  byte field_63_fNoAllowOverlap;
+    protected  BorderCode field_64_brcTop;
+    protected  BorderCode field_65_brcLeft;
+    protected  BorderCode field_66_brcBottom;
+    protected  BorderCode field_67_brcRight;
+    protected  BorderCode field_68_brcBetween;
+    protected  BorderCode field_69_brcBar;
+    protected  ShadingDescriptor field_70_shd;
+    protected  byte[] field_71_anld;
+    protected  byte[] field_72_phe;
+    protected  int field_73_fPropRMark;
+    protected  int field_74_ibstPropRMark;
+    protected  DateAndTime field_75_dttmPropRMark;
+    protected  int field_76_itbdMac;
+    protected  int[] field_77_rgdxaTab;
+    protected  byte[] field_78_rgtbd;
+    protected  byte[] field_79_numrm;
+    protected  byte[] field_80_ptap;
 
 
     public PAPAbstractType()
@@ -283,6 +285,18 @@ public abstract class PAPAbstractType
         buffer.append("    .fAdjustRight         = ");
         buffer.append(" (").append(getFAdjustRight()).append(" )\n");
 
+        buffer.append("    .itap                 = ");
+        buffer.append(" (").append(getItap()).append(" )\n");
+
+        buffer.append("    .fInnerTableCell      = ");
+        buffer.append(" (").append(getFInnerTableCell()).append(" )\n");
+
+        buffer.append("    .fOpenTch             = ");
+        buffer.append(" (").append(getFOpenTch()).append(" )\n");
+
+        buffer.append("    .fTtpEmbedded         = ");
+        buffer.append(" (").append(getFTtpEmbedded()).append(" )\n");
+
         buffer.append("    .dxcRight             = ");
         buffer.append(" (").append(getDxcRight()).append(" )\n");
 
@@ -364,15 +378,6 @@ public abstract class PAPAbstractType
         buffer.append("    .ptap                 = ");
         buffer.append(" (").append(getPtap()).append(" )\n");
 
-        buffer.append("    .tableLevel           = ");
-        buffer.append(" (").append(getTableLevel()).append(" )\n");
-
-        buffer.append("    .fTtpEmbedded         = ");
-        buffer.append(" (").append(getFTtpEmbedded()).append(" )\n");
-
-        buffer.append("    .embeddedCellMark     = ");
-        buffer.append(" (").append(getEmbeddedCellMark()).append(" )\n");
-
         buffer.append("[/PAP]\n");
         return buffer.toString();
     }
@@ -382,7 +387,7 @@ public abstract class PAPAbstractType
      */
     public int getSize()
     {
-        return 4 +  + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 2 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 84 + 12 + 1 + 2 + 4 + 2 + 128 + 128 + 128 + 4 + 1 + 1 + 1;
+        return 4 +  + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 2 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 84 + 12 + 1 + 2 + 4 + 2 + 128 + 128 + 128 + 4;
     }
 
 
@@ -1172,451 +1177,51 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dxcRight field for the PAP record.
+     * Get the itap field for the PAP record.
      */
-    public short getDxcRight()
+    public int getItap()
     {
-        return field_50_dxcRight;
+        return field_50_itap;
     }
 
     /**
-     * Set the dxcRight field for the PAP record.
+     * Set the itap field for the PAP record.
      */
-    public void setDxcRight(short field_50_dxcRight)
+    public void setItap(int field_50_itap)
     {
-        this.field_50_dxcRight = field_50_dxcRight;
+        this.field_50_itap = field_50_itap;
     }
 
     /**
-     * Get the dxcLeft field for the PAP record.
+     * Get the fInnerTableCell field for the PAP record.
      */
-    public short getDxcLeft()
+    public byte getFInnerTableCell()
     {
-        return field_51_dxcLeft;
+        return field_51_fInnerTableCell;
     }
 
     /**
-     * Set the dxcLeft field for the PAP record.
+     * Set the fInnerTableCell field for the PAP record.
      */
-    public void setDxcLeft(short field_51_dxcLeft)
+    public void setFInnerTableCell(byte field_51_fInnerTableCell)
     {
-        this.field_51_dxcLeft = field_51_dxcLeft;
+        this.field_51_fInnerTableCell = field_51_fInnerTableCell;
     }
 
     /**
-     * Get the dxcLeft1 field for the PAP record.
+     * Get the fOpenTch field for the PAP record.
      */
-    public short getDxcLeft1()
+    public byte getFOpenTch()
     {
-        return field_52_dxcLeft1;
+        return field_52_fOpenTch;
     }
 
     /**
-     * Set the dxcLeft1 field for the PAP record.
+     * Set the fOpenTch field for the PAP record.
      */
-    public void setDxcLeft1(short field_52_dxcLeft1)
+    public void setFOpenTch(byte field_52_fOpenTch)
     {
-        this.field_52_dxcLeft1 = field_52_dxcLeft1;
-    }
-
-    /**
-     * Get the fDyaBeforeAuto field for the PAP record.
-     */
-    public byte getFDyaBeforeAuto()
-    {
-        return field_53_fDyaBeforeAuto;
-    }
-
-    /**
-     * Set the fDyaBeforeAuto field for the PAP record.
-     */
-    public void setFDyaBeforeAuto(byte field_53_fDyaBeforeAuto)
-    {
-        this.field_53_fDyaBeforeAuto = field_53_fDyaBeforeAuto;
-    }
-
-    /**
-     * Get the fDyaAfterAuto field for the PAP record.
-     */
-    public byte getFDyaAfterAuto()
-    {
-        return field_54_fDyaAfterAuto;
-    }
-
-    /**
-     * Set the fDyaAfterAuto field for the PAP record.
-     */
-    public void setFDyaAfterAuto(byte field_54_fDyaAfterAuto)
-    {
-        this.field_54_fDyaAfterAuto = field_54_fDyaAfterAuto;
-    }
-
-    /**
-     * Get the dxaRight field for the PAP record.
-     */
-    public int getDxaRight()
-    {
-        return field_55_dxaRight;
-    }
-
-    /**
-     * Set the dxaRight field for the PAP record.
-     */
-    public void setDxaRight(int field_55_dxaRight)
-    {
-        this.field_55_dxaRight = field_55_dxaRight;
-    }
-
-    /**
-     * Get the dxaLeft field for the PAP record.
-     */
-    public int getDxaLeft()
-    {
-        return field_56_dxaLeft;
-    }
-
-    /**
-     * Set the dxaLeft field for the PAP record.
-     */
-    public void setDxaLeft(int field_56_dxaLeft)
-    {
-        this.field_56_dxaLeft = field_56_dxaLeft;
-    }
-
-    /**
-     * Get the dxaLeft1 field for the PAP record.
-     */
-    public int getDxaLeft1()
-    {
-        return field_57_dxaLeft1;
-    }
-
-    /**
-     * Set the dxaLeft1 field for the PAP record.
-     */
-    public void setDxaLeft1(int field_57_dxaLeft1)
-    {
-        this.field_57_dxaLeft1 = field_57_dxaLeft1;
-    }
-
-    /**
-     * Get the jc field for the PAP record.
-     */
-    public byte getJc()
-    {
-        return field_58_jc;
-    }
-
-    /**
-     * Set the jc field for the PAP record.
-     */
-    public void setJc(byte field_58_jc)
-    {
-        this.field_58_jc = field_58_jc;
-    }
-
-    /**
-     * Get the fNoAllowOverlap field for the PAP record.
-     */
-    public byte getFNoAllowOverlap()
-    {
-        return field_59_fNoAllowOverlap;
-    }
-
-    /**
-     * Set the fNoAllowOverlap field for the PAP record.
-     */
-    public void setFNoAllowOverlap(byte field_59_fNoAllowOverlap)
-    {
-        this.field_59_fNoAllowOverlap = field_59_fNoAllowOverlap;
-    }
-
-    /**
-     * Get the brcTop field for the PAP record.
-     */
-    public BorderCode getBrcTop()
-    {
-        return field_60_brcTop;
-    }
-
-    /**
-     * Set the brcTop field for the PAP record.
-     */
-    public void setBrcTop(BorderCode field_60_brcTop)
-    {
-        this.field_60_brcTop = field_60_brcTop;
-    }
-
-    /**
-     * Get the brcLeft field for the PAP record.
-     */
-    public BorderCode getBrcLeft()
-    {
-        return field_61_brcLeft;
-    }
-
-    /**
-     * Set the brcLeft field for the PAP record.
-     */
-    public void setBrcLeft(BorderCode field_61_brcLeft)
-    {
-        this.field_61_brcLeft = field_61_brcLeft;
-    }
-
-    /**
-     * Get the brcBottom field for the PAP record.
-     */
-    public BorderCode getBrcBottom()
-    {
-        return field_62_brcBottom;
-    }
-
-    /**
-     * Set the brcBottom field for the PAP record.
-     */
-    public void setBrcBottom(BorderCode field_62_brcBottom)
-    {
-        this.field_62_brcBottom = field_62_brcBottom;
-    }
-
-    /**
-     * Get the brcRight field for the PAP record.
-     */
-    public BorderCode getBrcRight()
-    {
-        return field_63_brcRight;
-    }
-
-    /**
-     * Set the brcRight field for the PAP record.
-     */
-    public void setBrcRight(BorderCode field_63_brcRight)
-    {
-        this.field_63_brcRight = field_63_brcRight;
-    }
-
-    /**
-     * Get the brcBetween field for the PAP record.
-     */
-    public BorderCode getBrcBetween()
-    {
-        return field_64_brcBetween;
-    }
-
-    /**
-     * Set the brcBetween field for the PAP record.
-     */
-    public void setBrcBetween(BorderCode field_64_brcBetween)
-    {
-        this.field_64_brcBetween = field_64_brcBetween;
-    }
-
-    /**
-     * Get the brcBar field for the PAP record.
-     */
-    public BorderCode getBrcBar()
-    {
-        return field_65_brcBar;
-    }
-
-    /**
-     * Set the brcBar field for the PAP record.
-     */
-    public void setBrcBar(BorderCode field_65_brcBar)
-    {
-        this.field_65_brcBar = field_65_brcBar;
-    }
-
-    /**
-     * Get the shd field for the PAP record.
-     */
-    public ShadingDescriptor getShd()
-    {
-        return field_66_shd;
-    }
-
-    /**
-     * Set the shd field for the PAP record.
-     */
-    public void setShd(ShadingDescriptor field_66_shd)
-    {
-        this.field_66_shd = field_66_shd;
-    }
-
-    /**
-     * Get the anld field for the PAP record.
-     */
-    public byte[] getAnld()
-    {
-        return field_67_anld;
-    }
-
-    /**
-     * Set the anld field for the PAP record.
-     */
-    public void setAnld(byte[] field_67_anld)
-    {
-        this.field_67_anld = field_67_anld;
-    }
-
-    /**
-     * Get the phe field for the PAP record.
-     */
-    public byte[] getPhe()
-    {
-        return field_68_phe;
-    }
-
-    /**
-     * Set the phe field for the PAP record.
-     */
-    public void setPhe(byte[] field_68_phe)
-    {
-        this.field_68_phe = field_68_phe;
-    }
-
-    /**
-     * Get the fPropRMark field for the PAP record.
-     */
-    public int getFPropRMark()
-    {
-        return field_69_fPropRMark;
-    }
-
-    /**
-     * Set the fPropRMark field for the PAP record.
-     */
-    public void setFPropRMark(int field_69_fPropRMark)
-    {
-        this.field_69_fPropRMark = field_69_fPropRMark;
-    }
-
-    /**
-     * Get the ibstPropRMark field for the PAP record.
-     */
-    public int getIbstPropRMark()
-    {
-        return field_70_ibstPropRMark;
-    }
-
-    /**
-     * Set the ibstPropRMark field for the PAP record.
-     */
-    public void setIbstPropRMark(int field_70_ibstPropRMark)
-    {
-        this.field_70_ibstPropRMark = field_70_ibstPropRMark;
-    }
-
-    /**
-     * Get the dttmPropRMark field for the PAP record.
-     */
-    public DateAndTime getDttmPropRMark()
-    {
-        return field_71_dttmPropRMark;
-    }
-
-    /**
-     * Set the dttmPropRMark field for the PAP record.
-     */
-    public void setDttmPropRMark(DateAndTime field_71_dttmPropRMark)
-    {
-        this.field_71_dttmPropRMark = field_71_dttmPropRMark;
-    }
-
-    /**
-     * Get the itbdMac field for the PAP record.
-     */
-    public int getItbdMac()
-    {
-        return field_72_itbdMac;
-    }
-
-    /**
-     * Set the itbdMac field for the PAP record.
-     */
-    public void setItbdMac(int field_72_itbdMac)
-    {
-        this.field_72_itbdMac = field_72_itbdMac;
-    }
-
-    /**
-     * Get the rgdxaTab field for the PAP record.
-     */
-    public int[] getRgdxaTab()
-    {
-        return field_73_rgdxaTab;
-    }
-
-    /**
-     * Set the rgdxaTab field for the PAP record.
-     */
-    public void setRgdxaTab(int[] field_73_rgdxaTab)
-    {
-        this.field_73_rgdxaTab = field_73_rgdxaTab;
-    }
-
-    /**
-     * Get the rgtbd field for the PAP record.
-     */
-    public byte[] getRgtbd()
-    {
-        return field_74_rgtbd;
-    }
-
-    /**
-     * Set the rgtbd field for the PAP record.
-     */
-    public void setRgtbd(byte[] field_74_rgtbd)
-    {
-        this.field_74_rgtbd = field_74_rgtbd;
-    }
-
-    /**
-     * Get the numrm field for the PAP record.
-     */
-    public byte[] getNumrm()
-    {
-        return field_75_numrm;
-    }
-
-    /**
-     * Set the numrm field for the PAP record.
-     */
-    public void setNumrm(byte[] field_75_numrm)
-    {
-        this.field_75_numrm = field_75_numrm;
-    }
-
-    /**
-     * Get the ptap field for the PAP record.
-     */
-    public byte[] getPtap()
-    {
-        return field_76_ptap;
-    }
-
-    /**
-     * Set the ptap field for the PAP record.
-     */
-    public void setPtap(byte[] field_76_ptap)
-    {
-        this.field_76_ptap = field_76_ptap;
-    }
-
-    /**
-     * Get the tableLevel field for the PAP record.
-     */
-    public byte getTableLevel()
-    {
-        return field_77_tableLevel;
-    }
-
-    /**
-     * Set the tableLevel field for the PAP record.
-     */
-    public void setTableLevel(byte field_77_tableLevel)
-    {
-        this.field_77_tableLevel = field_77_tableLevel;
+        this.field_52_fOpenTch = field_52_fOpenTch;
     }
 
     /**
@@ -1624,31 +1229,447 @@ public abstract class PAPAbstractType
      */
     public byte getFTtpEmbedded()
     {
-        return field_78_fTtpEmbedded;
+        return field_53_fTtpEmbedded;
     }
 
     /**
      * Set the fTtpEmbedded field for the PAP record.
      */
-    public void setFTtpEmbedded(byte field_78_fTtpEmbedded)
+    public void setFTtpEmbedded(byte field_53_fTtpEmbedded)
     {
-        this.field_78_fTtpEmbedded = field_78_fTtpEmbedded;
+        this.field_53_fTtpEmbedded = field_53_fTtpEmbedded;
     }
 
     /**
-     * Get the embeddedCellMark field for the PAP record.
+     * Get the dxcRight field for the PAP record.
      */
-    public byte getEmbeddedCellMark()
+    public short getDxcRight()
     {
-        return field_79_embeddedCellMark;
+        return field_54_dxcRight;
     }
 
     /**
-     * Set the embeddedCellMark field for the PAP record.
+     * Set the dxcRight field for the PAP record.
      */
-    public void setEmbeddedCellMark(byte field_79_embeddedCellMark)
+    public void setDxcRight(short field_54_dxcRight)
     {
-        this.field_79_embeddedCellMark = field_79_embeddedCellMark;
+        this.field_54_dxcRight = field_54_dxcRight;
+    }
+
+    /**
+     * Get the dxcLeft field for the PAP record.
+     */
+    public short getDxcLeft()
+    {
+        return field_55_dxcLeft;
+    }
+
+    /**
+     * Set the dxcLeft field for the PAP record.
+     */
+    public void setDxcLeft(short field_55_dxcLeft)
+    {
+        this.field_55_dxcLeft = field_55_dxcLeft;
+    }
+
+    /**
+     * Get the dxcLeft1 field for the PAP record.
+     */
+    public short getDxcLeft1()
+    {
+        return field_56_dxcLeft1;
+    }
+
+    /**
+     * Set the dxcLeft1 field for the PAP record.
+     */
+    public void setDxcLeft1(short field_56_dxcLeft1)
+    {
+        this.field_56_dxcLeft1 = field_56_dxcLeft1;
+    }
+
+    /**
+     * Get the fDyaBeforeAuto field for the PAP record.
+     */
+    public byte getFDyaBeforeAuto()
+    {
+        return field_57_fDyaBeforeAuto;
+    }
+
+    /**
+     * Set the fDyaBeforeAuto field for the PAP record.
+     */
+    public void setFDyaBeforeAuto(byte field_57_fDyaBeforeAuto)
+    {
+        this.field_57_fDyaBeforeAuto = field_57_fDyaBeforeAuto;
+    }
+
+    /**
+     * Get the fDyaAfterAuto field for the PAP record.
+     */
+    public byte getFDyaAfterAuto()
+    {
+        return field_58_fDyaAfterAuto;
+    }
+
+    /**
+     * Set the fDyaAfterAuto field for the PAP record.
+     */
+    public void setFDyaAfterAuto(byte field_58_fDyaAfterAuto)
+    {
+        this.field_58_fDyaAfterAuto = field_58_fDyaAfterAuto;
+    }
+
+    /**
+     * Get the dxaRight field for the PAP record.
+     */
+    public int getDxaRight()
+    {
+        return field_59_dxaRight;
+    }
+
+    /**
+     * Set the dxaRight field for the PAP record.
+     */
+    public void setDxaRight(int field_59_dxaRight)
+    {
+        this.field_59_dxaRight = field_59_dxaRight;
+    }
+
+    /**
+     * Get the dxaLeft field for the PAP record.
+     */
+    public int getDxaLeft()
+    {
+        return field_60_dxaLeft;
+    }
+
+    /**
+     * Set the dxaLeft field for the PAP record.
+     */
+    public void setDxaLeft(int field_60_dxaLeft)
+    {
+        this.field_60_dxaLeft = field_60_dxaLeft;
+    }
+
+    /**
+     * Get the dxaLeft1 field for the PAP record.
+     */
+    public int getDxaLeft1()
+    {
+        return field_61_dxaLeft1;
+    }
+
+    /**
+     * Set the dxaLeft1 field for the PAP record.
+     */
+    public void setDxaLeft1(int field_61_dxaLeft1)
+    {
+        this.field_61_dxaLeft1 = field_61_dxaLeft1;
+    }
+
+    /**
+     * Get the jc field for the PAP record.
+     */
+    public byte getJc()
+    {
+        return field_62_jc;
+    }
+
+    /**
+     * Set the jc field for the PAP record.
+     */
+    public void setJc(byte field_62_jc)
+    {
+        this.field_62_jc = field_62_jc;
+    }
+
+    /**
+     * Get the fNoAllowOverlap field for the PAP record.
+     */
+    public byte getFNoAllowOverlap()
+    {
+        return field_63_fNoAllowOverlap;
+    }
+
+    /**
+     * Set the fNoAllowOverlap field for the PAP record.
+     */
+    public void setFNoAllowOverlap(byte field_63_fNoAllowOverlap)
+    {
+        this.field_63_fNoAllowOverlap = field_63_fNoAllowOverlap;
+    }
+
+    /**
+     * Get the brcTop field for the PAP record.
+     */
+    public BorderCode getBrcTop()
+    {
+        return field_64_brcTop;
+    }
+
+    /**
+     * Set the brcTop field for the PAP record.
+     */
+    public void setBrcTop(BorderCode field_64_brcTop)
+    {
+        this.field_64_brcTop = field_64_brcTop;
+    }
+
+    /**
+     * Get the brcLeft field for the PAP record.
+     */
+    public BorderCode getBrcLeft()
+    {
+        return field_65_brcLeft;
+    }
+
+    /**
+     * Set the brcLeft field for the PAP record.
+     */
+    public void setBrcLeft(BorderCode field_65_brcLeft)
+    {
+        this.field_65_brcLeft = field_65_brcLeft;
+    }
+
+    /**
+     * Get the brcBottom field for the PAP record.
+     */
+    public BorderCode getBrcBottom()
+    {
+        return field_66_brcBottom;
+    }
+
+    /**
+     * Set the brcBottom field for the PAP record.
+     */
+    public void setBrcBottom(BorderCode field_66_brcBottom)
+    {
+        this.field_66_brcBottom = field_66_brcBottom;
+    }
+
+    /**
+     * Get the brcRight field for the PAP record.
+     */
+    public BorderCode getBrcRight()
+    {
+        return field_67_brcRight;
+    }
+
+    /**
+     * Set the brcRight field for the PAP record.
+     */
+    public void setBrcRight(BorderCode field_67_brcRight)
+    {
+        this.field_67_brcRight = field_67_brcRight;
+    }
+
+    /**
+     * Get the brcBetween field for the PAP record.
+     */
+    public BorderCode getBrcBetween()
+    {
+        return field_68_brcBetween;
+    }
+
+    /**
+     * Set the brcBetween field for the PAP record.
+     */
+    public void setBrcBetween(BorderCode field_68_brcBetween)
+    {
+        this.field_68_brcBetween = field_68_brcBetween;
+    }
+
+    /**
+     * Get the brcBar field for the PAP record.
+     */
+    public BorderCode getBrcBar()
+    {
+        return field_69_brcBar;
+    }
+
+    /**
+     * Set the brcBar field for the PAP record.
+     */
+    public void setBrcBar(BorderCode field_69_brcBar)
+    {
+        this.field_69_brcBar = field_69_brcBar;
+    }
+
+    /**
+     * Get the shd field for the PAP record.
+     */
+    public ShadingDescriptor getShd()
+    {
+        return field_70_shd;
+    }
+
+    /**
+     * Set the shd field for the PAP record.
+     */
+    public void setShd(ShadingDescriptor field_70_shd)
+    {
+        this.field_70_shd = field_70_shd;
+    }
+
+    /**
+     * Get the anld field for the PAP record.
+     */
+    public byte[] getAnld()
+    {
+        return field_71_anld;
+    }
+
+    /**
+     * Set the anld field for the PAP record.
+     */
+    public void setAnld(byte[] field_71_anld)
+    {
+        this.field_71_anld = field_71_anld;
+    }
+
+    /**
+     * Get the phe field for the PAP record.
+     */
+    public byte[] getPhe()
+    {
+        return field_72_phe;
+    }
+
+    /**
+     * Set the phe field for the PAP record.
+     */
+    public void setPhe(byte[] field_72_phe)
+    {
+        this.field_72_phe = field_72_phe;
+    }
+
+    /**
+     * Get the fPropRMark field for the PAP record.
+     */
+    public int getFPropRMark()
+    {
+        return field_73_fPropRMark;
+    }
+
+    /**
+     * Set the fPropRMark field for the PAP record.
+     */
+    public void setFPropRMark(int field_73_fPropRMark)
+    {
+        this.field_73_fPropRMark = field_73_fPropRMark;
+    }
+
+    /**
+     * Get the ibstPropRMark field for the PAP record.
+     */
+    public int getIbstPropRMark()
+    {
+        return field_74_ibstPropRMark;
+    }
+
+    /**
+     * Set the ibstPropRMark field for the PAP record.
+     */
+    public void setIbstPropRMark(int field_74_ibstPropRMark)
+    {
+        this.field_74_ibstPropRMark = field_74_ibstPropRMark;
+    }
+
+    /**
+     * Get the dttmPropRMark field for the PAP record.
+     */
+    public DateAndTime getDttmPropRMark()
+    {
+        return field_75_dttmPropRMark;
+    }
+
+    /**
+     * Set the dttmPropRMark field for the PAP record.
+     */
+    public void setDttmPropRMark(DateAndTime field_75_dttmPropRMark)
+    {
+        this.field_75_dttmPropRMark = field_75_dttmPropRMark;
+    }
+
+    /**
+     * Get the itbdMac field for the PAP record.
+     */
+    public int getItbdMac()
+    {
+        return field_76_itbdMac;
+    }
+
+    /**
+     * Set the itbdMac field for the PAP record.
+     */
+    public void setItbdMac(int field_76_itbdMac)
+    {
+        this.field_76_itbdMac = field_76_itbdMac;
+    }
+
+    /**
+     * Get the rgdxaTab field for the PAP record.
+     */
+    public int[] getRgdxaTab()
+    {
+        return field_77_rgdxaTab;
+    }
+
+    /**
+     * Set the rgdxaTab field for the PAP record.
+     */
+    public void setRgdxaTab(int[] field_77_rgdxaTab)
+    {
+        this.field_77_rgdxaTab = field_77_rgdxaTab;
+    }
+
+    /**
+     * Get the rgtbd field for the PAP record.
+     */
+    public byte[] getRgtbd()
+    {
+        return field_78_rgtbd;
+    }
+
+    /**
+     * Set the rgtbd field for the PAP record.
+     */
+    public void setRgtbd(byte[] field_78_rgtbd)
+    {
+        this.field_78_rgtbd = field_78_rgtbd;
+    }
+
+    /**
+     * Get the numrm field for the PAP record.
+     */
+    public byte[] getNumrm()
+    {
+        return field_79_numrm;
+    }
+
+    /**
+     * Set the numrm field for the PAP record.
+     */
+    public void setNumrm(byte[] field_79_numrm)
+    {
+        this.field_79_numrm = field_79_numrm;
+    }
+
+    /**
+     * Get the ptap field for the PAP record.
+     */
+    public byte[] getPtap()
+    {
+        return field_80_ptap;
+    }
+
+    /**
+     * Set the ptap field for the PAP record.
+     */
+    public void setPtap(byte[] field_80_ptap)
+    {
+        this.field_80_ptap = field_80_ptap;
     }
 
     /**
@@ -1716,7 +1737,3 @@ public abstract class PAPAbstractType
 
 
 }  // END OF CLASS
-
-
-
-
