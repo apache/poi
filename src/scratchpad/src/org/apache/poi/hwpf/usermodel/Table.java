@@ -25,9 +25,9 @@ public final class Table extends Range
 
     private int _tableLevel;
 
-    Table( int startIdx, int endIdx, Range parent, int levelNum )
+    Table( int startIdxInclusive, int endIdxExclusive, Range parent, int levelNum )
     {
-        super( startIdx, endIdx, Range.TYPE_PARAGRAPH, parent );
+        super( startIdxInclusive, endIdxExclusive, Range.TYPE_PARAGRAPH, parent );
         _rows = new ArrayList<TableRow>();
         _tableLevel = levelNum;
 
@@ -41,8 +41,8 @@ public final class Table extends Range
             rowEnd++;
             if ( p.isTableRowEnd() && p.getTableLevel() == levelNum )
             {
-                _rows.add( new TableRow( rowStart, rowEnd, this, levelNum ) );
-                rowStart = rowEnd;
+                _rows.add( new TableRow( rowStart, rowEnd + 1, this, levelNum ) );
+                rowStart = rowEnd + 1;
             }
         }
     }

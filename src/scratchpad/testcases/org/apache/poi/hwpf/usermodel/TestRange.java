@@ -79,14 +79,14 @@ public final class TestRange extends TestCase
         assertEquals( range.getStartOffset(), 0 );
         assertEquals( range.getEndOffset(), 766 );
 
-        Paragraph lastInMainRange = range.getParagraph( range.numParagraphs() );
+        Paragraph lastInMainRange = range.getParagraph( range.numParagraphs() - 1);
         assertTrue( lastInMainRange.getEndOffset() <= 766 );
 
         Section section = range.getSection( 0 );
         assertTrue( section.getEndOffset() <= 766 );
 
         Paragraph lastInMainSection = section.getParagraph( section
-                .numParagraphs() );
+                .numParagraphs() - 1);
         assertTrue( lastInMainSection.getEndOffset() <= 766 );
     }
 }

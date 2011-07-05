@@ -241,6 +241,14 @@ public abstract class AbstractWordConverter
             if ( paragraph.isInTable()
                     && paragraph.getTableLevel() != currentTableLevel )
             {
+                if ( paragraph.getTableLevel() < currentTableLevel )
+                    throw new IllegalStateException(
+                            "Trying to process table cell with higher level ("
+                                    + paragraph.getTableLevel()
+                                    + ") than current table level ("
+                                    + currentTableLevel
+                                    + ") as inner table part" );
+
                 Table table = range.getTable( paragraph );
                 processTable( wordDocument, flow, table );
 
