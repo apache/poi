@@ -101,7 +101,7 @@ public final class TableSprmCompressor
 //      size += SprmUtils.addSpecialSprm((short)0xD609, buf, sprmList);
     }
 
-        if ( newTAP.getTlp() != null )
+        if ( newTAP.getTlp() != null && !newTAP.getTlp().isEmpty() )
         {
             byte[] buf = new byte[TableAutoformatLookSpecifier.SIZE];
             newTAP.getTlp().serialize( buf, 0 );
