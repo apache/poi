@@ -23,4 +23,36 @@ public class TableAutoformatLookSpecifier extends TLPAbstractType
     {
         return (TableAutoformatLookSpecifier) super.clone();
     }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        TableAutoformatLookSpecifier other = (TableAutoformatLookSpecifier) obj;
+        if ( field_1_itl != other.field_1_itl )
+            return false;
+        if ( field_2_tlp_flags != other.field_2_tlp_flags )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_itl;
+        result = prime * result + field_2_tlp_flags;
+        return result;
+    }
+
+    public boolean isEmpty()
+    {
+        return field_1_itl == 0 && field_2_tlp_flags == 0;
+    }
 }
