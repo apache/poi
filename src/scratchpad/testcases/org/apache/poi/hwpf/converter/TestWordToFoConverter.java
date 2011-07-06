@@ -62,6 +62,16 @@ public class TestWordToFoConverter extends TestCase
         return result;
     }
 
+    public void testDocumentProperties() throws Exception
+    {
+        String result = getFoText( "documentProperties.doc" );
+
+        assertTrue( result
+                .contains( "<dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\">This is document title</dc:title>" ) );
+        assertTrue( result
+                .contains( "<pdf:Keywords xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">This is document keywords</pdf:Keywords>" ) );
+    }
+
     public void testEquation() throws Exception
     {
         final String sampleFileName = "equation.doc";

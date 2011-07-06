@@ -30,7 +30,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 
 /**
- * Test cases for {@link WordToFoConverter}
+ * Test cases for {@link WordToHtmlConverter}
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
@@ -79,6 +79,15 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "Bug46817.doc" );
         assertTrue( result.contains( "<table>" ) );
+    }
+
+    public void testDocumentProperties() throws Exception
+    {
+        String result = getHtmlText( "documentProperties.doc" );
+
+        assertTrue( result.contains( "<title>This is document title</title>" ) );
+        assertTrue( result
+                .contains( "<meta content=\"This is document keywords\" name=\"keywords\">" ) );
     }
 
     public void testEquation() throws Exception

@@ -18,14 +18,20 @@ package org.apache.poi.hwpf.converter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 public class FoDocumentFacade
 {
+    private static final String NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
     private static final String NS_XSLFO = "http://www.w3.org/1999/XSL/Format";
 
+    protected final Element declarations;
     protected final Document document;
     protected final Element layoutMasterSet;
+    protected Element propertiesRoot;
     protected final Element root;
 
     public FoDocumentFacade( Document document )
@@ -38,6 +44,9 @@ public class FoDocumentFacade
         layoutMasterSet = document.createElementNS( NS_XSLFO,
                 "fo:layout-master-set" );
         root.appendChild( layoutMasterSet );
+
+        declarations = document.createElementNS( NS_XSLFO, "fo:declarations" );
+        root.appendChild( declarations );
     }
 
     public Element addFlowToPageSequence( final Element pageSequence,
@@ -196,6 +205,118 @@ public class FoDocumentFacade
     public Document getDocument()
     {
         return document;
+    }
+
+    protected Element getOrCreatePropertiesRoot()
+    {
+        if ( propertiesRoot != null )
+            return propertiesRoot;
+
+        // See http://xmlgraphics.apache.org/fop/0.95/metadata.html
+
+        Element xmpmeta = document.createElementNS( "adobe:ns:meta",
+                "x:xmpmeta" );
+        declarations.appendChild( xmpmeta );
+
+        Element rdf = document.createElementNS( NS_RDF, "rdf:RDF" );
+        xmpmeta.appendChild( rdf );
+
+        propertiesRoot = document.createElementNS( NS_RDF, "rdf:Description" );
+        rdf.appendChild( propertiesRoot );
+
+        return propertiesRoot;
+    }
+
+    public void setCreator( String value )
+    {
+        setDublinCoreProperty( "creator", value );
+    }
+
+    public void setCreatorTool( String value )
+    {
+        setXmpProperty( "CreatorTool", value );
+    }
+
+    public void setDescription( String value )
+    {
+        Element element = setDublinCoreProperty( "description", value );
+
+        if ( element != null )
+        {
+            element.setAttributeNS( "http://www.w3.org/XML/1998/namespace",
+                    "xml:lang", "x-default" );
+        }
+    }
+
+    public Element setDublinCoreProperty( String name, String value )
+    {
+        return setProperty( "http://purl.org/dc/elements/1.1/", "dc", name,
+                value );
+    }
+
+    public void setKeywords( String value )
+    {
+        setPdfProperty( "Keywords", value );
+    }
+
+    public Element setPdfProperty( String name, String value )
+    {
+        return setProperty( "http://ns.adobe.com/pdf/1.3/", "pdf", name, value );
+    }
+
+    public void setProducer( String value )
+    {
+        setPdfProperty( "Producer", value );
+    }
+
+    protected Element setProperty( String namespace, String prefix,
+            String name, String value )
+    {
+        Element propertiesRoot = getOrCreatePropertiesRoot();
+        NodeList existingChildren = propertiesRoot.getChildNodes();
+        for ( int i = 0; i < existingChildren.getLength(); i++ )
+        {
+            Node child = existingChildren.item( i );
+            if ( child.getNodeType() == Node.ELEMENT_NODE )
+            {
+                Element childElement = (Element) child;
+                if ( WordToFoUtils.isNotEmpty( childElement.getNamespaceURI() )
+                        && WordToFoUtils.isNotEmpty( childElement
+                                .getLocalName() )
+                        && namespace.equals( childElement.getNamespaceURI() )
+                        && name.equals( childElement.getLocalName() ) )
+                {
+                    propertiesRoot.removeChild( childElement );
+                    break;
+                }
+            }
+        }
+
+        if ( WordToFoUtils.isNotEmpty( value ) )
+        {
+            Element property = document.createElementNS( namespace, prefix
+                    + ":" + name );
+            property.appendChild( document.createTextNode( value ) );
+            propertiesRoot.appendChild( property );
+            return property;
+        }
+
+        return null;
+    }
+
+    public void setSubject( String value )
+    {
+        setDublinCoreProperty( "title", value );
+    }
+
+    public void setTitle( String value )
+    {
+        setDublinCoreProperty( "title", value );
+    }
+
+    public Element setXmpProperty( String name, String value )
+    {
+        return setProperty( "http://ns.adobe.com/xap/1.0/", "xmp", name, value );
     }
 
 }

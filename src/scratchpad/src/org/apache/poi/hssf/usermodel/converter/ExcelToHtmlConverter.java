@@ -30,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
@@ -347,6 +348,23 @@ public class ExcelToHtmlConverter
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
     }
 
+    protected void processDocumentInformation(
+            SummaryInformation summaryInformation )
+    {
+        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getTitle() ) )
+            htmlDocumentFacade.setTitle( summaryInformation.getTitle() );
+
+        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+            htmlDocumentFacade.addAuthor( summaryInformation.getAuthor() );
+
+        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+            htmlDocumentFacade.addKeywords( summaryInformation.getKeywords() );
+
+        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
+            htmlDocumentFacade
+                    .addDescription( summaryInformation.getComments() );
+    }
+
     protected boolean processRow( HSSFRow row, Element tableRowElement )
     {
         boolean emptyRow = true;
@@ -451,6 +469,13 @@ public class ExcelToHtmlConverter
 
     public void processWorkbook( HSSFWorkbook workbook )
     {
+        final SummaryInformation summaryInformation = workbook
+                .getSummaryInformation();
+        if ( summaryInformation != null )
+        {
+            processDocumentInformation( summaryInformation );
+        }
+
         for ( short i = 0; i < workbook.getNumCellStyles(); i++ )
         {
             HSSFCellStyle cellStyle = workbook.getCellStyleAt( i );
