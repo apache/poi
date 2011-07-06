@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
@@ -230,6 +231,23 @@ public class WordToFoConverter extends AbstractWordConverter
         inline.appendChild( textNode );
     }
 
+    @Override
+    protected void processDocumentInformation(
+            SummaryInformation summaryInformation )
+    {
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getTitle() ) )
+            foDocumentFacade.setTitle( summaryInformation.getTitle() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+            foDocumentFacade.setCreator( summaryInformation.getAuthor() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+            foDocumentFacade.setKeywords( summaryInformation.getKeywords() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
+            foDocumentFacade.setDescription( summaryInformation.getComments() );
+    }
+
     protected void processHyperlink( HWPFDocumentCore hwpfDocument,
             Element currentBlock, Paragraph paragraph,
             List<CharacterRun> characterRuns, int currentTableLevel,
@@ -368,7 +386,8 @@ public class WordToFoConverter extends AbstractWordConverter
         Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
                 "xsl-region-body" );
 
-        processSectionParagraphes( wordDocument, flow, section, Integer.MIN_VALUE );
+        processSectionParagraphes( wordDocument, flow, section,
+                Integer.MIN_VALUE );
     }
 
     protected void processTable( HWPFDocumentCore wordDocument, Element flow,

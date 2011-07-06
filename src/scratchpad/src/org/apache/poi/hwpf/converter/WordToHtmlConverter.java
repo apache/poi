@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
@@ -207,6 +208,24 @@ public class WordToHtmlConverter extends AbstractWordConverter
         span.appendChild( textNode );
     }
 
+    @Override
+    protected void processDocumentInformation(
+            SummaryInformation summaryInformation )
+    {
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getTitle() ) )
+            htmlDocumentFacade.setTitle( summaryInformation.getTitle() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+            htmlDocumentFacade.addAuthor( summaryInformation.getAuthor() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+            htmlDocumentFacade.addKeywords( summaryInformation.getKeywords() );
+
+        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
+            htmlDocumentFacade
+                    .addDescription( summaryInformation.getComments() );
+    }
+
     protected void processHyperlink( HWPFDocumentCore wordDocument,
             Element currentBlock, Paragraph paragraph,
             List<CharacterRun> characterRuns, int currentTableLevel,
@@ -326,7 +345,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
         div.setAttribute( "style", getSectionStyle( section ) );
         htmlDocumentFacade.body.appendChild( div );
 
-        processSectionParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
+        processSectionParagraphes( wordDocument, div, section,
+                Integer.MIN_VALUE );
     }
 
     @Override

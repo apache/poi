@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.ListFormatOverride;
@@ -127,12 +128,22 @@ public abstract class AbstractWordConverter
 
     public void processDocument( HWPFDocumentCore wordDocument )
     {
+        final SummaryInformation summaryInformation = wordDocument
+                .getSummaryInformation();
+        if ( summaryInformation != null )
+        {
+            processDocumentInformation( summaryInformation );
+        }
+
         final Range range = wordDocument.getRange();
         for ( int s = 0; s < range.numSections(); s++ )
         {
             processSection( wordDocument, range.getSection( s ), s );
         }
     }
+
+    protected abstract void processDocumentInformation(
+            SummaryInformation summaryInformation );
 
     protected void processField( HWPFDocumentCore wordDocument,
             Element currentBlock, Paragraph paragraph, int currentTableLevel,

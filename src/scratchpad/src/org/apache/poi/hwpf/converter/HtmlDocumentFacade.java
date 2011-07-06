@@ -28,6 +28,9 @@ public class HtmlDocumentFacade
     protected final Element head;
     protected final Element html;
 
+    protected Element title;
+    protected Text titleText;
+
     public HtmlDocumentFacade( Document document )
     {
         this.document = document;
@@ -40,6 +43,29 @@ public class HtmlDocumentFacade
 
         html.appendChild( head );
         html.appendChild( body );
+    }
+
+    public void addAuthor( String value )
+    {
+        addMeta( "author", value );
+    }
+
+    public void addDescription( String value )
+    {
+        addMeta( "description", value );
+    }
+
+    public void addKeywords( String value )
+    {
+        addMeta( "keywords", value );
+    }
+
+    public void addMeta( final String name, String value )
+    {
+        Element meta = document.createElement( "meta" );
+        meta.setAttribute( "name", name );
+        meta.setAttribute( "content", value );
+        head.appendChild( meta );
     }
 
     public Element createHeader1()
@@ -119,4 +145,31 @@ public class HtmlDocumentFacade
         return head;
     }
 
+    public String getTitle()
+    {
+        if ( title == null )
+            return null;
+
+        return titleText.getTextContent();
+    }
+
+    public void setTitle( String titleText )
+    {
+        if ( WordToHtmlUtils.isEmpty( titleText ) && this.title != null )
+        {
+            this.head.removeChild( this.title );
+            this.title = null;
+            this.titleText = null;
+        }
+
+        if ( this.title == null )
+        {
+            this.title = document.createElement( "title" );
+            this.titleText = document.createTextNode( titleText );
+            this.title.appendChild( this.titleText );
+            this.head.appendChild( title );
+        }
+
+        this.titleText.setData( titleText );
+    }
 }
