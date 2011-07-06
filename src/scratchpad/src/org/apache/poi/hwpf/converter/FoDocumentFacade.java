@@ -222,6 +222,7 @@ public class FoDocumentFacade
         xmpmeta.appendChild( rdf );
 
         propertiesRoot = document.createElementNS( NS_RDF, "rdf:Description" );
+        propertiesRoot.setAttributeNS( NS_RDF, "rdf:about", "" );
         rdf.appendChild( propertiesRoot );
 
         return propertiesRoot;
@@ -261,7 +262,8 @@ public class FoDocumentFacade
 
     public Element setPdfProperty( String name, String value )
     {
-        return setProperty( "http://ns.adobe.com/pdf/1.3/", "pdf", name, value );
+//        return setProperty( "http://ns.adobe.com/pdf/1.3/", "pdf", name, value );
+        return null;
     }
 
     public void setProducer( String value )
@@ -316,7 +318,8 @@ public class FoDocumentFacade
 
     public Element setXmpProperty( String name, String value )
     {
-        return setProperty( "http://ns.adobe.com/xap/1.0/", "xmp", name, value );
+//        return setProperty( "http://ns.adobe.com/xap/1.0/", "xmp", name, value );
+        return null;
     }
 
 }
