@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-public final class CharacterSprmUncompressor
+public final class CharacterSprmUncompressor extends SprmUncompressor
 {
     private static final POILogger logger = POILogFactory
             .getLogger( CharacterSprmUncompressor.class );
@@ -570,19 +570,6 @@ public final class CharacterSprmUncompressor
         // sprmCRgLid1
         break;
     }
-  }
-
-  /**
-   * Converts an int into a boolean. If the int is non-zero, it returns true.
-   * Otherwise it returns false.
-   *
-   * @param x The int to convert.
-   *
-   * @return A boolean whose value depends on x.
-   */
-  public static boolean getFlag (int x)
-  {
-    return x != 0;
   }
 
   private static boolean getCHPFlag (byte x, boolean oldVal)
