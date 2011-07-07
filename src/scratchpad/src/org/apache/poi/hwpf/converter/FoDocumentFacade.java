@@ -262,8 +262,7 @@ public class FoDocumentFacade
 
     public Element setPdfProperty( String name, String value )
     {
-//        return setProperty( "http://ns.adobe.com/pdf/1.3/", "pdf", name, value );
-        return null;
+        return setProperty( "http://ns.adobe.com/pdf/1.3/", "pdf", name, value );
     }
 
     public void setProducer( String value )
@@ -318,8 +317,7 @@ public class FoDocumentFacade
 
     public Element setXmpProperty( String name, String value )
     {
-//        return setProperty( "http://ns.adobe.com/xap/1.0/", "xmp", name, value );
-        return null;
+        return setProperty( "http://ns.adobe.com/xap/1.0/", "xmp", name, value );
     }
 
 }
