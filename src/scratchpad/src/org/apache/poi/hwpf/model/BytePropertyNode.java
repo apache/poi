@@ -24,7 +24,9 @@ package org.apache.poi.hwpf.model;
  * It handles the conversion as required between bytes
  *  and characters.
  */
-public abstract class BytePropertyNode extends PropertyNode {
+public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
+        PropertyNode<T>
+{
         private final int startBytes;
         private final int endBytes;
 

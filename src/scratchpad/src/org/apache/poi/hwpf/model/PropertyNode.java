@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import java.util.Arrays;
 
 /**
  * Represents a lightweight node in the Trees used to store content
@@ -31,7 +31,7 @@ import java.util.Arrays;
  *
  * @author Ryan Ackley
  */
-public abstract class PropertyNode implements Comparable, Cloneable
+public abstract class PropertyNode<T extends PropertyNode<T>>  implements Comparable<T>, Cloneable
 {
   private final static POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
   protected Object _buf;
@@ -114,16 +114,22 @@ public abstract class PropertyNode implements Comparable, Cloneable
 
   protected boolean limitsAreEqual(Object o)
   {
-    return ((PropertyNode)o).getStart() == _cpStart &&
-           ((PropertyNode)o).getEnd() == _cpEnd;
+    return ((PropertyNode<?>)o).getStart() == _cpStart &&
+           ((PropertyNode<?>)o).getEnd() == _cpEnd;
 
   }
+
+    @Override
+    public int hashCode()
+    {
+        return this._cpStart * 31 + this._buf.hashCode();
+    }
 
   public boolean equals(Object o)
   {
     if (limitsAreEqual(o))
     {
-      Object testBuf = ((PropertyNode)o)._buf;
+      Object testBuf = ((PropertyNode<?>)o)._buf;
       if (testBuf instanceof byte[] && _buf instanceof byte[])
       {
         return Arrays.equals((byte[])testBuf, (byte[])_buf);
@@ -133,18 +139,18 @@ public abstract class PropertyNode implements Comparable, Cloneable
     return false;
   }
 
-  public Object clone()
+  public T clone()
     throws CloneNotSupportedException
   {
-    return super.clone();
+    return (T) super.clone();
   }
 
   /**
    * Used for sorting in collections.
    */
-  public int compareTo(Object o)
+  public int compareTo(T o)
   {
-      int cpEnd = ((PropertyNode)o).getEnd();
+      int cpEnd = o.getEnd();
       if(_cpEnd == cpEnd)
       {
         return 0;

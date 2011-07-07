@@ -17,12 +17,12 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-
 import java.lang.ref.SoftReference;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+
 public final class CachedPropertyNode
-  extends PropertyNode
+  extends PropertyNode<CachedPropertyNode>
 {
   protected SoftReference _propCache;
 
