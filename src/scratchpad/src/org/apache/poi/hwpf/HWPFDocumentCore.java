@@ -149,12 +149,18 @@ public abstract class HWPFDocumentCore extends POIDocument
     }
   }
 
-  /**
-   * Returns the range which covers the whole of the
-   *  document, but excludes any headers and footers.
-   */
-  public abstract Range getRange();
-  
+    /**
+     * Returns the range which covers the whole of the document, but excludes
+     * any headers and footers.
+     */
+    public abstract Range getRange();
+
+    /**
+     * Returns the range that covers all text in the file, including main text,
+     * footnotes, headers and comments
+     */
+    public abstract Range getOverallRange();
+
   public abstract TextPieceTable getTextTable();
   
   public CHPBinTable getCharacterTable()

@@ -284,11 +284,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     return _dop;
   }
 
-  /**
-   * Returns the range that covers all text in the
-   *  file, including main text, footnotes, headers
-   *  and comments
-   */
   public Range getOverallRange() {
 	  // hack to get the ending cp of the document, Have to revisit this.
       PropertyNode p =  _tpt.getTextPieces().get(_tpt.getTextPieces().size() - 1);

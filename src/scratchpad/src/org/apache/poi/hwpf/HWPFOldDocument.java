@@ -109,12 +109,16 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 _fib.getFcMin(), tpt
         );
     }
-    
-    public Range getRange() {
+
+    public Range getOverallRange()
+    {
         // Life is easy when we have no footers, headers or unicode!
-        return new Range(
-                0, _fib.getFcMac() - _fib.getFcMin(), this
-        );
+        return new Range( 0, _fib.getFcMac() - _fib.getFcMin(), this );
+    }
+
+    public Range getRange()
+    {
+        return getOverallRange();
     }
 
     public TextPieceTable getTextTable()
