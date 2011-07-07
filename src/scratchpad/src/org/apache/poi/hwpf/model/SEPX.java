@@ -23,7 +23,7 @@ import org.apache.poi.hwpf.usermodel.SectionProperties;
 
 /**
  */
-public final class SEPX extends BytePropertyNode
+public final class SEPX extends BytePropertyNode<SEPX>
 {
 
   SectionDescriptor _sed;

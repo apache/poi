@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Ryan Ackley
  */
 
-public final class PAPX extends BytePropertyNode {
+public final class PAPX extends BytePropertyNode<PAPX> {
 
   private ParagraphHeight _phe;
   private int _hugeGrpprlOffset = -1;

@@ -18,7 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 public final class GenericPropertyNode
-  extends PropertyNode
+  extends PropertyNode<GenericPropertyNode>
 {
   public GenericPropertyNode(int start, int end, byte[] buf)
   {

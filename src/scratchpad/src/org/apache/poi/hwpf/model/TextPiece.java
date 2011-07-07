@@ -28,7 +28,7 @@ import java.io.UnsupportedEncodingException;
  * @author Ryan Ackley
  */
 
-public final class TextPiece extends PropertyNode implements Comparable
+public final class TextPiece extends PropertyNode<TextPiece>
 {
   private boolean _usesUnicode;
 

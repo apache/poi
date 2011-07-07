@@ -17,9 +17,9 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.usermodel.CharacterProperties;
 
 /**
  * DANGER - works in bytes!
@@ -31,7 +31,7 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
  * @author Ryan Ackley
  */
 
-public final class CHPX extends BytePropertyNode
+public final class CHPX extends BytePropertyNode<CHPX>
 {
 
   public CHPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] grpprl)
