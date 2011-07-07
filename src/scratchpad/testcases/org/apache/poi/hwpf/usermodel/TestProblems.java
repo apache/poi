@@ -525,75 +525,79 @@ public final class TestProblems extends HWPFTestCase {
     }
 
     /**
-     * [FAILING] Bug 47287 - StringIndexOutOfBoundsException in CharacterRun.replaceText()
+     * [RESOLVED FIXED] Bug 47287 - StringIndexOutOfBoundsException in
+     * CharacterRun.replaceText()
      */
-    public void test47287() {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug47287.doc");
-        String[] values = {
-                "1-1",
-                "1-2",
-                "1-3",
-                "1-4",
-                "1-5",
-                "1-6",
-                "1-7",
-                "1-8",
-                "1-9",
-                "1-10",
-                "1-11",
-                "1-12",
-                "1-13",
-                "1-14",
-                "1-15",
-        };
+    public void test47287()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug47287.doc" );
+        String[] values = { "1-1", "1-2", "1-3", "1-4", "1-5", "1-6", "1-7",
+                "1-8", "1-9", "1-10", "1-11", "1-12", "1-13", "1-14", "1-15", };
         int usedVal = 0;
-        try {
-            String PLACEHOLDER = "\u2002\u2002\u2002\u2002\u2002";
-            Range r = doc.getRange();
-            for (int x = 0; x < r.numSections(); x++) {
-                Section s = r.getSection(x);
-                for (int y = 0; y < s.numParagraphs(); y++) {
-                    Paragraph p = s.getParagraph(y);
+        String PLACEHOLDER = "\u2002\u2002\u2002\u2002\u2002";
+        Range r = doc.getRange();
+        for ( int x = 0; x < r.numSections(); x++ )
+        {
+            Section s = r.getSection( x );
+            for ( int y = 0; y < s.numParagraphs(); y++ )
+            {
+                Paragraph p = s.getParagraph( y );
 
-                    for (int z = 0; z < p.numCharacterRuns(); z++) {
-                        boolean isFound = false;
+                for ( int z = 0; z < p.numCharacterRuns(); z++ )
+                {
+                    boolean isFound = false;
 
-                        //character run
-                        CharacterRun run = p.getCharacterRun(z);
-                        //character run text
-                        String text = run.text();
-                        String oldText = text;
-                        int c = text.indexOf("FORMTEXT ");
-                        if (c < 0) {
-                            int k = text.indexOf(PLACEHOLDER);
-                            if (k >= 0) {
-                                text = text.substring(0, k) + values[usedVal] + text.substring(k + PLACEHOLDER.length());
+                    // character run
+                    CharacterRun run = p.getCharacterRun( z );
+                    // character run text
+                    String text = run.text();
+                    String oldText = text;
+                    int c = text.indexOf( "FORMTEXT " );
+                    if ( c < 0 )
+                    {
+                        int k = text.indexOf( PLACEHOLDER );
+                        if ( k >= 0 )
+                        {
+                            text = text.substring( 0, k ) + values[usedVal]
+                                    + text.substring( k + PLACEHOLDER.length() );
+                            usedVal++;
+                            isFound = true;
+                        }
+                    }
+                    else
+                    {
+                        for ( ; c >= 0; c = text.indexOf( "FORMTEXT ", c
+                                + "FORMTEXT ".length() ) )
+                        {
+                            int k = text.indexOf( PLACEHOLDER, c );
+                            if ( k >= 0 )
+                            {
+                                text = text.substring( 0, k )
+                                        + values[usedVal]
+                                        + text.substring( k
+                                                + PLACEHOLDER.length() );
                                 usedVal++;
                                 isFound = true;
                             }
-                        } else {
-                            for (; c >= 0; c = text.indexOf("FORMTEXT ", c + "FORMTEXT ".length())) {
-                                int k = text.indexOf(PLACEHOLDER, c);
-                                if (k >= 0) {
-                                    text = text.substring(0, k) + values[usedVal] + text.substring(k + PLACEHOLDER.length());
-                                    usedVal++;
-                                    isFound = true;
-                                }
-                            }
                         }
-                        if (isFound) {
-                            run.replaceText(oldText, text, 0);
-                        }
-
                     }
+                    if ( isFound )
+                    {
+                        run.replaceText( oldText, text, 0 );
+                    }
+
                 }
             }
-            fixed("47287");
-        } catch (StringIndexOutOfBoundsException e) {
-            // expected exception
         }
-    }
 
+        String docText = r.text();
+
+        assertTrue( docText.contains( "1-1" ) );
+        assertTrue( docText.contains( "1-12" ) );
+
+        assertFalse( docText.contains( "1-13" ) );
+        assertFalse( docText.contains( "1-15" ) );
+    }
 
     private static void insertTable(int rows, int columns) {
         // POI apparently can't create a document from scratch,
