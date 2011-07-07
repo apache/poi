@@ -292,6 +292,27 @@ public class TextPieceTable implements CharIndexTranslator {
         return false;
     }
 
+    boolean isIndexInTable( int startBytePos, int endBytePos )
+    {
+        for(TextPiece tp : _textPiecesFCOrder) {
+            int pieceStart = tp.getPieceDescriptor().getFilePosition();
+
+            if (startBytePos > pieceStart + tp.bytesLength()) {
+                continue;
+            }
+
+            int left = Math.max( startBytePos, pieceStart );
+            int right = Math.min( endBytePos, pieceStart + tp.bytesLength() );
+
+            if (left >= right)
+                return false;
+
+            return true;
+        }
+
+        return false;
+    }
+
     private static class FCComparator implements Comparator<TextPiece> {
         public int compare(TextPiece textPiece, TextPiece textPiece1) {
             if (textPiece.getPieceDescriptor().fc>textPiece1.getPieceDescriptor().fc) {

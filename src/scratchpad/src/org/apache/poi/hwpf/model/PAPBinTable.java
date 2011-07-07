@@ -70,7 +70,7 @@ public class PAPBinTable
     	PAPX papx = pfkp.getPAPX(y);
 
     	//we don't need PAPX if they are references nowhere
-    	if (tpt.isIndexInTable( papx.getStartBytes() ))
+    	if (tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
     	    _paragraphs.add(papx);
       }
     }
