@@ -124,6 +124,10 @@ public class Paragraph extends Range implements Cloneable {
     return _props.getFInTable() != 0;
   }
 
+  /**
+   * @return <tt>true</tt>, if table trailer paragraph (last in table row),
+   *         <tt>false</tt> otherwise
+   */
   public boolean isTableRowEnd()
   {
     return _props.getFTtp() != 0 || _props.getFTtpEmbedded() != 0;
@@ -134,10 +138,14 @@ public class Paragraph extends Range implements Cloneable {
     return _props.getItap();
   }
 
-  public boolean isEmbeddedCellMark()
-  {
-    return _props.getFInnerTableCell() != 0;
-  }
+    /**
+     * @return <tt>true</tt>, if the end of paragraph mark is really an end of
+     *         cell mark for a nested table cell, <tt>false</tt> otherwise
+     */
+    public boolean isEmbeddedCellMark()
+    {
+        return _props.getFInnerTableCell() != 0;
+    }
 
   public int getJustification()
   {
