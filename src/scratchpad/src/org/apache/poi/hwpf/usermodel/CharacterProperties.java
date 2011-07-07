@@ -78,22 +78,23 @@ public final class CharacterProperties
 
   int _ico24 = -1; // default to -1 so we can ignore it for word 97 files
 
-  public CharacterProperties()
-  {
-    field_17_fcPic = -1;
-    field_22_dttmRMark = new DateAndTime();
-    field_23_dttmRMarkDel = new DateAndTime();
-    field_36_dttmPropRMark = new DateAndTime();
-    field_40_dttmDispFldRMark = new DateAndTime();
-    field_41_xstDispFldRMark = new byte[36];
-    field_42_shd = new ShadingDescriptor();
-    field_43_brc = new BorderCode();
-    field_7_hps = 20;
-    field_24_istd = 10;
-    field_16_wCharScale = 100;
-    field_13_lidDefault = 0x0400;
-    field_14_lidFE = 0x0400;
-  }
+    public CharacterProperties()
+    {
+        setDttmRMark( new DateAndTime() );
+        setDttmRMarkDel( new DateAndTime() );
+        setDttmPropRMark( new DateAndTime() );
+        setDttmDispFldRMark( new DateAndTime() );
+        setXstDispFldRMark( new byte[36] );
+        setShd( new ShadingDescriptor() );
+        setBrc( new BorderCode() );
+
+        setFcPic( -1 );
+        setHps( 20 );
+        setIstd( 10 );
+        setWCharScale( 100 );
+        setLidDefault( 0x0400 );
+        setLidFE( 0x0400 );
+    }
 
   public boolean isMarkedDeleted()
   {
@@ -323,7 +324,7 @@ public final class CharacterProperties
   {
     if ( _ico24 == -1 )
     {
-      switch(field_11_ico) // convert word 97 colour numbers to 0xBBGGRR value
+      switch(getIco()) // convert word 97 colour numbers to 0xBBGGRR value
       {
         case 0: // auto
           return -1;
@@ -372,19 +373,20 @@ public final class CharacterProperties
     _ico24 = colour24 & 0xFFFFFF; // only keep the 24bit 0xBBGGRR colour
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    CharacterProperties cp = (CharacterProperties)super.clone();
-    cp.field_22_dttmRMark = (DateAndTime)field_22_dttmRMark.clone();
-    cp.field_23_dttmRMarkDel = (DateAndTime)field_23_dttmRMarkDel.clone();
-    cp.field_36_dttmPropRMark = (DateAndTime)field_36_dttmPropRMark.clone();
-    cp.field_40_dttmDispFldRMark = (DateAndTime)field_40_dttmDispFldRMark.clone();
-    cp.field_41_xstDispFldRMark = field_41_xstDispFldRMark.clone();
-    cp.field_42_shd = (ShadingDescriptor)field_42_shd.clone();
+    public Object clone() throws CloneNotSupportedException
+    {
+        CharacterProperties cp = (CharacterProperties) super.clone();
 
-    cp._ico24 = _ico24;
+        cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
+        cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
+        cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
+        cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
+        cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
+        cp.setShd( (ShadingDescriptor) getShd().clone() );
+        cp.setBrc( (BorderCode) getBrc().clone() );
 
-    return cp;
-  }
+        cp._ico24 = _ico24;
+
+        return cp;
+    }
 }

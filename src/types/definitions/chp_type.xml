@@ -23,7 +23,6 @@
     <description>Character Properties.</description>
     <author>S. Ryan Ackley</author>
     <fields>
-      <field type="short" size="2" name="chse"/>
       <field type="int" size="2" name="format_flags">
         <bit number="0" mask="0x0001" name="fBold"/>
         <bit number="1" mask="0x0002" name="fItalic"/>
@@ -78,14 +77,28 @@
       <field type="byte" size="1" name="chYsr"/>
       <field type="int" size="2" name="hpsKern"/>
       <field type="short" size="2" name="Highlight">
-        <bit number="0" mask="0x001f" name="icoHighlight"/>
-        <bit number="1" mask="0x0020" name="fHighlight"/>
-        <bit number="2" mask="0x01c0" name="kcd"/>
-        <bit number="3" mask="0x0200" name="fNavHighlight"/>
-        <bit number="4" mask="0x0400" name="fChsDiff"/>
-        <bit number="5" mask="0x0800" name="fMacChs"/>
-        <bit number="6" mask="0x1000" name="fFtcAsciSym"/>
+        <bit number="0" mask="0x001f" name="icoHighlight" description="Highlight color (see chp.ico)"/>
+        <bit number="1" mask="0x0020" name="fHighlight" description="When 1, characters are highlighted with color specified by chp.icoHighlight"/>
+        <bit number="2" mask="0x0040" name="fNavHighlight" description="Used internally by Word"/>
       </field>
+      <field type="short" size="2" name="InternalFlags">
+        <bit number="0" mask="0x000f" name="iatrUndetType" description="Used internally by Word"/>
+        <bit number="1" mask="0x0010" name="fUlGap" description="Used internally by Word 8"/>
+        <bit number="2" mask="0x0800" name="fScriptAnchor" description="Used internally by Word"/>
+        <bit number="3" mask="0x1000" name="fFixedObj" description="Used internally by Word"/>
+        <bit number="4" mask="0x2000" name="spare2" description="Not used"/>
+      </field>
+      <field type="short" size="2" name="EncodingFlags">
+        <bit number="0" mask="0x0001" name="fChsDiff" description="Pre-Unicode files, char's char set different from FIB char set"/>
+        <bit number="1" mask="0x0002" name="fMacChs" description="fTrue if char's are Macintosh char set"/>
+        <bit number="2" mask="0x0004" name="fFtcAsciSym" description="Used internally by Word"/>
+        <bit number="3" mask="0x0008" name="fFtcReq" description="Used internally by Word"/>
+        <bit number="4" mask="0x0010" name="fLangApplied" description="Used internally by Word"/>
+        <bit number="5" mask="0x0020" name="fSpareLangApplied" description="Used internally by Word"/>
+        <bit number="6" mask="0x0040" name="fForcedCvAuto" description="Used internally by Word"/>
+      </field>
+      <!-- Not documented, but referenced by sprmCChs -->
+      <field type="short" size="2" name="chse" description="used to record a character set id for text that was pasted into the Word document that used a character set different than Word‘s default character set"/>
       <field type="short" size="2" name="fPropMark"/>
       <field type="int" size="2" name="ibstPropRMark"/>
       <field type="DateAndTime" size="4" name="dttmPropRMark"/>
