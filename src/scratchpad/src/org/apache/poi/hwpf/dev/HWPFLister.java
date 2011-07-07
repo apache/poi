@@ -32,6 +32,7 @@ import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
@@ -242,9 +243,12 @@ public final class HWPFLister
         {
             System.out.println( chpx );
 
+            System.out.println( chpx.getCharacterProperties(
+                    _doc.getStyleSheet(), (short) StyleSheet.NIL_STYLE ) );
+
             if ( withSprms )
             {
-                SprmIterator sprmIt = new SprmIterator( chpx.getGrpprl(), 2 );
+                SprmIterator sprmIt = new SprmIterator( chpx.getGrpprl(), 0 );
                 while ( sprmIt.hasNext() )
                 {
                     SprmOperation sprm = sprmIt.next();
