@@ -51,14 +51,15 @@ public final class TableRow extends Paragraph
         final short expectedCellsCount = _tprops.getItcMac();
 
         int lastCellStart = 0;
-        List<TableCell> cells = new ArrayList<TableCell>( expectedCellsCount );
-        for ( int p = 0; p < (endIdxExclusive - startIdxInclusive); p++ )
+        List<TableCell> cells = new ArrayList<TableCell>(
+                expectedCellsCount + 1 );
+        for ( int p = 0; p < ( endIdxExclusive - startIdxInclusive ); p++ )
         {
             Paragraph paragraph = getParagraph( p );
             String s = paragraph.text();
 
-            if ( s.length() > 0
-                    && s.charAt( s.length() - 1 ) == TABLE_CELL_MARK
+            if ( ( ( s.length() > 0 && s.charAt( s.length() - 1 ) == TABLE_CELL_MARK ) || paragraph
+                    .isEmbeddedCellMark() )
                     && paragraph.getTableLevel() == levelNum )
             {
                 TableCellDescriptor tableCellDescriptor = _tprops.getRgtc() != null
@@ -79,7 +80,7 @@ public final class TableRow extends Paragraph
             }
         }
 
-        if ( lastCellStart < (endIdxExclusive - startIdxInclusive - 1) )
+        if ( lastCellStart < ( endIdxExclusive - startIdxInclusive - 1 ) )
         {
             TableCellDescriptor tableCellDescriptor = _tprops.getRgtc() != null
                     && _tprops.getRgtc().length > cells.size() ? _tprops
@@ -92,9 +93,18 @@ public final class TableRow extends Paragraph
                     .getRgdxaCenter()[cells.size() + 1] : 0;
 
             TableCell tableCell = new TableCell( lastCellStart,
-                    (endIdxExclusive - startIdxInclusive - 1), this, levelNum,
-                    tableCellDescriptor, leftEdge, rightEdge - leftEdge );
+                    ( endIdxExclusive - startIdxInclusive - 1 ), this,
+                    levelNum, tableCellDescriptor, leftEdge, rightEdge
+                            - leftEdge );
             cells.add( tableCell );
+        }
+
+        TableCell lastCell = cells.get( cells.size() - 1 );
+        if ( lastCell.numParagraphs() == 1
+                && ( lastCell.getParagraph( 0 ).isTableRowEnd() ) )
+        {
+            // remove "fake" cell
+            cells.remove( cells.size() - 1 );
         }
 
         if ( cells.size() != expectedCellsCount )
@@ -152,7 +162,7 @@ public final class TableRow extends Paragraph
     public void setCantSplit( boolean cantSplit )
     {
         _tprops.setFCantSplit( cantSplit );
-        _papx.updateSprm( SPRM_FCANTSPLIT, (byte) (cantSplit ? 1 : 0) );
+        _papx.updateSprm( SPRM_FCANTSPLIT, (byte) ( cantSplit ? 1 : 0 ) );
     }
 
     public boolean isTableHeader()
@@ -163,7 +173,7 @@ public final class TableRow extends Paragraph
     public void setTableHeader( boolean tableHeader )
     {
         _tprops.setFTableHeader( tableHeader );
-        _papx.updateSprm( SPRM_FTABLEHEADER, (byte) (tableHeader ? 1 : 0) );
+        _papx.updateSprm( SPRM_FTABLEHEADER, (byte) ( tableHeader ? 1 : 0 ) );
     }
 
     public int numCells()
