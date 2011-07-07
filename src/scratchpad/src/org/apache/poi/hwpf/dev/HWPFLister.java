@@ -19,12 +19,16 @@ package org.apache.poi.hwpf.dev;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.HWPFOldDocument;
+import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.TextPiece;
@@ -32,6 +36,8 @@ import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Used by developers to list out key information on a HWPF file. End users will
@@ -42,6 +48,34 @@ import org.apache.poi.hwpf.usermodel.Range;
  */
 public final class HWPFLister
 {
+    private static HWPFDocumentCore loadDoc( File docFile ) throws IOException
+    {
+        final FileInputStream istream = new FileInputStream( docFile );
+        try
+        {
+            return loadDoc( istream );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( istream );
+        }
+    }
+
+    private static HWPFDocumentCore loadDoc( InputStream inputStream )
+            throws IOException
+    {
+        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore
+                .verifyAndBuildPOIFS( inputStream );
+        try
+        {
+            return new HWPFDocument( poifsFileSystem );
+        }
+        catch ( OldWordFileFormatException exc )
+        {
+            return new HWPFOldDocument( poifsFileSystem );
+        }
+    }
+
     public static void main( String[] args ) throws Exception
     {
         if ( args.length == 0 )
@@ -91,7 +125,7 @@ public final class HWPFLister
                 writereadback = true;
         }
 
-        HWPFDocument doc = new HWPFDocument( new FileInputStream( args[0] ) );
+        HWPFDocumentCore doc = loadDoc( new File( args[0] ) );
         if ( writereadback )
             doc = writeOutAndReadBack( doc );
 
@@ -118,7 +152,8 @@ public final class HWPFLister
         }
     }
 
-    private static HWPFDocument writeOutAndReadBack( HWPFDocument original )
+    private static HWPFDocumentCore writeOutAndReadBack(
+            HWPFDocumentCore original )
     {
         try
         {
@@ -126,7 +161,7 @@ public final class HWPFLister
             original.write( baos );
             ByteArrayInputStream bais = new ByteArrayInputStream(
                     baos.toByteArray() );
-            return new HWPFDocument( bais );
+            return loadDoc( bais );
         }
         catch ( IOException e )
         {
