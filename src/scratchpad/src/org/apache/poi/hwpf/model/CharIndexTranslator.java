@@ -19,6 +19,15 @@ package org.apache.poi.hwpf.model;
 
 public interface CharIndexTranslator {
     /**
+     * Calculates the byte index of the given char index.
+     * 
+     * @param charPos
+     *            The char position
+     * @return The byte index
+     */
+    int getByteIndex( int charPos );
+
+    /**
      * Calculates the char index of the given byte index.
      * Look forward if index is not in table
      *
@@ -36,7 +45,7 @@ public interface CharIndexTranslator {
      * @return the char index
      */
     int getCharIndex(int bytePos, int startCP);
-
+    
     /**
      * Check if index is in table
      *

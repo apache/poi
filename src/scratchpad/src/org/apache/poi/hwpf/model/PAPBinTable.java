@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
-import org.apache.poi.hwpf.model.io.*;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
@@ -223,7 +223,7 @@ public class PAPBinTable
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(_dataStream);
       pfkp.fill(overflow);
 
-      byte[] bufFkp = pfkp.toByteArray(fcMin);
+      byte[] bufFkp = pfkp.toByteArray(tpt, fcMin);
       docStream.write(bufFkp);
       overflow = pfkp.getOverflow();
 

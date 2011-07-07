@@ -17,11 +17,11 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.LittleEndian;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -137,7 +137,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      * @param fcMin The file offset in the main stream where text begins.
      * @return A byte array representing this data structure.
      */
-    protected byte[] toByteArray(int fcMin)
+    protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
     {
       byte[] buf = new byte[512];
       int size = _papxList.size();
@@ -152,7 +152,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
       int index = 0;
       for (; index < size; index++)
       {
-        byte[] grpprl = ((PAPX)_papxList.get(index)).getGrpprl();
+        byte[] grpprl = _papxList.get(index).getGrpprl();
         int grpprlLength = grpprl.length;
 
         // is grpprl huge?
@@ -255,7 +255,10 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
           grpprlOffset -= (grpprl.length + (2 - grpprl.length % 2));
           grpprlOffset -= (grpprlOffset % 2);
         }
-        LittleEndian.putInt(buf, fcOffset, papx.getStartBytes() + fcMin);
+            // LittleEndian.putInt( buf, fcOffset,
+            // papx.getStartBytes() );
+            LittleEndian.putInt( buf, fcOffset,
+                    translator.getByteIndex( papx.getStart() ) );
         buf[bxOffset] = (byte)(grpprlOffset/2);
         System.arraycopy(phe, 0, buf, bxOffset + 1, phe.length);
 
@@ -283,7 +286,9 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
 
       }
 
-      LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
+        // LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
+        LittleEndian.putInt( buf, fcOffset,
+                translator.getByteIndex( papx.getEnd() ) );
       return buf;
     }
 

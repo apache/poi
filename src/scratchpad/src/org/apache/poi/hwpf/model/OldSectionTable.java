@@ -74,6 +74,11 @@ public final class OldSectionTable extends SectionTable
         this.tpt = tpt;
      }
 
+        public int getByteIndex( int charPos )
+        {
+            return charPos;
+        }
+
      public int getCharIndex(int bytePos, int startCP) {
         return bytePos;
      }
