@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">47563 - Exception when working with table</action>
            <action dev="poi-developers" type="fix">47287 - StringIndexOutOfBoundsException in CharacterRun.replaceText()</action>
            <action dev="poi-developers" type="fix">46817 - Regression: Text from some table cells missing</action>
            <action dev="poi-developers" type="add">Add getOverallRange() method to HWPFDocumentCore</action>
