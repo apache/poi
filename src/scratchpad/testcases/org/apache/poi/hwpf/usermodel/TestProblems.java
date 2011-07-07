@@ -474,21 +474,18 @@ public final class TestProblems extends HWPFTestCase {
     }
 
     /**
-     * [FAILING] Bug 46817 - Text from tables is not extracted
+     * [RESOLVED FIXED] Bug 46817 - Regression: Text from some table cells
+     * missing
      */
-    public void test46817() {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug46817.doc");
-        WordExtractor extractor = new WordExtractor(doc);
+    public void test46817()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug46817.doc" );
+        WordExtractor extractor = new WordExtractor( doc );
         String text = extractor.getText().trim();
-        try {
-            assertTrue(text.contains("Nazwa wykonawcy"));
-            assertTrue(text.contains("kujawsko-pomorskie"));
-            assertTrue(text.contains("ekomel@ekomel.com.pl"));
 
-            fixed("46817");
-        } catch (AssertionFailedError e) {
-            // expected exception
-        }
+        assertTrue( text.contains( "Nazwa wykonawcy" ) );
+        assertTrue( text.contains( "kujawsko-pomorskie" ) );
+        assertTrue( text.contains( "ekomel@ekomel.com.pl" ) );
     }
 
     /**
