@@ -692,6 +692,53 @@ public final class TestProblems extends HWPFTestCase {
     }
 
     /**
+     * [RESOLVED FIXED] Bug 48065 - Problems with save output of HWPF (losing
+     * formatting)
+     */
+    public void test48065()
+    {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile( "Bug48065.doc" );
+        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack( doc1 );
+
+        Range expected = doc1.getRange();
+        Range actual = doc2.getRange();
+
+        assertEquals(
+                expected.text().replace( "\r", "\n" ).replaceAll( "\n\n", "\n" ),
+                actual.text().replace( "\r", "\n" ).replaceAll( "\n\n", "\n" ) );
+
+        assertEquals( expected.numParagraphs(), actual.numParagraphs() );
+        for ( int p = 0; p < expected.numParagraphs(); p++ )
+        {
+            Paragraph expParagraph = expected.getParagraph( p );
+            Paragraph actParagraph = actual.getParagraph( p );
+
+            assertEquals( expParagraph.text(), actParagraph.text() );
+            assertEquals( expParagraph.isInTable(), actParagraph.isInTable() );
+            assertEquals( expParagraph.isTableRowEnd(),
+                    actParagraph.isTableRowEnd() );
+
+            if ( expParagraph.isInTable() && actParagraph.isInTable() )
+            {
+                Table expTable, actTable;
+                try
+                {
+                    expTable = expected.getTable( expParagraph );
+                    actTable = actual.getTable( actParagraph );
+                }
+                catch ( Exception exc )
+                {
+                    continue;
+                }
+
+                assertEquals( expTable.numRows(), actTable.numRows() );
+                assertEquals( expTable.numParagraphs(),
+                        actTable.numParagraphs() );
+            }
+        }
+    }
+
+    /**
      * Bug 50936  - HWPF fails to read a file
      */
     public void test50936() {
