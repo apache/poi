@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">46817 - Regression: Text from some table cells missing</action>
            <action dev="poi-developers" type="add">Add getOverallRange() method to HWPFDocumentCore</action>
            <action dev="poi-developers" type="fix">PAPX referenced outside of TextPiecesTable are ignored now and not loaded</action>
            <action dev="poi-developers" type="fix">Fix main part range (and section) detection for files with additional parts (like footers/headers).</action>
@@ -45,7 +46,7 @@
            <action dev="poi-developers" type="add">Add Excel-to-HTML converter (2007 versions)</action>
            <action dev="poi-developers" type="add">Add Word-to-HTML converter (95-2007 versions)</action>
            <action dev="poi-developers" type="fix">Skip wrong-type SPRMs when characters SPRM is expected</action>
-           <action dev="poi-developers" type="add">Add toStrings() methods to internal HWPF structures: BorderCode, PAPX, Paragraph, Section, SEPX, SprmOperation, etc.</action>
+           <action dev="poi-developers" type="add">Add toStrings() methods to internal HWPF structures: BorderCode, PAPX, Paragraph, PieceDescriptor, Section, SEPX, SprmOperation, TextPiece etc.</action>
            <action dev="poi-developers" type="fix">51474 - SXSSF handling for null strings</action>
            <action dev="poi-developers" type="fix">48294 - Fixed HSSFWorkbook.setSheetOrder() to respect inter-sheet references </action>
            <action dev="poi-developers" type="fix">51448 - Avoid exception when evaluating workbooks with more than 256 sheets </action>
