@@ -114,7 +114,7 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(0, row._parStart);
       assertEquals(5, row._parEnd);
       assertEquals(0, row.getStartOffset());
-      assertEquals(87, row.getEndOffset());
+      assertEquals(86, row.getEndOffset());
 
 
       // get the first cell
