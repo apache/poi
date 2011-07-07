@@ -599,42 +599,63 @@ public final class TestProblems extends HWPFTestCase {
         assertFalse( docText.contains( "1-15" ) );
     }
 
-    private static void insertTable(int rows, int columns) {
+    private static void insertTable( int rows, int columns )
+    {
         // POI apparently can't create a document from scratch,
         // so we need an existing empty dummy document
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "empty.doc" );
 
         Range range = doc.getRange();
-        Table table = range.insertBefore(new TableProperties((short) columns), rows);
+        Table table = range.insertBefore(
+                new TableProperties( (short) columns ), rows );
+        table.sanityCheck();
+        range.sanityCheck();
 
-        for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
-            TableRow row = table.getRow(rowIdx);
-            for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
-                TableCell cell = row.getCell(colIdx);
-                Paragraph par = cell.getParagraph(0);
-                par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
+        for ( int rowIdx = 0; rowIdx < table.numRows(); rowIdx++ )
+        {
+            TableRow row = table.getRow( rowIdx );
+            row.sanityCheck();
+            for ( int colIdx = 0; colIdx < row.numCells(); colIdx++ )
+            {
+                TableCell cell = row.getCell( colIdx );
+                cell.sanityCheck();
+
+                Paragraph par = cell.getParagraph( 0 );
+                par.sanityCheck();
+
+                par.insertBefore( "" + ( rowIdx * row.numCells() + colIdx ) );
+
+                par.sanityCheck();
+                cell.sanityCheck();
+                row.sanityCheck();
+                table.sanityCheck();
+                range.sanityCheck();
             }
+        }
+
+        String text = range.text();
+        int mustBeAfter = 0;
+        for ( int i = 0; i < rows * columns; i++ )
+        {
+            int next = text.indexOf( Integer.toString( i ), mustBeAfter );
+            assertFalse( next == -1 );
+            mustBeAfter = next;
         }
     }
 
     /**
-     * [FAILING] Bug 47563 - HWPF failing while creating tables,
+     * [RESOLVED FIXED] Bug 47563 - Exception when working with table
      */
-    public void test47563() {
-        try {
-            insertTable(1, 5);
-            insertTable(1, 6);
-            insertTable(5, 1);
-            insertTable(6, 1);
-            insertTable(2, 2);
-            insertTable(3, 2);
-            insertTable(2, 3);
-            insertTable(3, 3);
-
-            fixed("47563");
-        } catch (Exception e) {
-            // expected exception
-        }
+    public void test47563()
+    {
+        insertTable( 1, 5 );
+        insertTable( 1, 6 );
+        insertTable( 5, 1 );
+        insertTable( 6, 1 );
+        insertTable( 2, 2 );
+        insertTable( 3, 2 );
+        insertTable( 2, 3 );
+        insertTable( 3, 3 );
     }
 
     /**

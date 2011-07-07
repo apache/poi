@@ -1046,7 +1046,7 @@ public class Range { // TODO -instantiable superclass
 	/**
 	 * resets the list indexes.
 	 */
-	private void reset() {
+	protected void reset() {
 		_textRangeFound = false;
 		_charRangeFound = false;
 		_parRangeFound = false;
@@ -1140,5 +1140,39 @@ public class Range { // TODO -instantiable superclass
     {
         return "Range from " + getStartOffset() + " to " + getEndOffset()
                 + " (chars)";
+    }
+
+    /**
+     * Method for debug purposes. Checks that all resolved elements are inside
+     * of current range.
+     */
+    public void sanityCheck()
+    {
+        if ( _charRangeFound )
+        {
+            for ( int c = _charStart; c < _charEnd; c++ )
+            {
+                CHPX chpx = _characters.get( c );
+
+                int left = Math.max( this._start, chpx.getStart() );
+                int right = Math.min( this._end, chpx.getEnd() );
+
+                if ( left >= right )
+                    throw new AssertionError();
+            }
+        }
+        if ( _parRangeFound )
+        {
+            for ( int p = _parStart; p < _parEnd; p++ )
+            {
+                PAPX papx = _paragraphs.get( p );
+
+                int left = Math.max( this._start, papx.getStart() );
+                int right = Math.min( this._end, papx.getEnd() );
+
+                if ( left >= right )
+                    throw new AssertionError();
+            }
+        }
     }
 }

@@ -26,20 +26,22 @@ import org.apache.poi.util.POILogger;
 
 public final class TableRow extends Paragraph
 {
-    private final static char TABLE_CELL_MARK = '\u0007';
-
-    private final static short SPRM_TJC = 0x5400;
-    private final static short SPRM_DXAGAPHALF = (short) 0x9602;
-    private final static short SPRM_FCANTSPLIT = 0x3403;
-    private final static short SPRM_FTABLEHEADER = 0x3404;
-    private final static short SPRM_DYAROWHEIGHT = (short) 0x9407;
-
     private static final POILogger logger = POILogFactory
             .getLogger( TableRow.class );
 
+    private final static short SPRM_DXAGAPHALF = (short) 0x9602;
+    private final static short SPRM_DYAROWHEIGHT = (short) 0x9407;
+    private final static short SPRM_FCANTSPLIT = 0x3403;
+    private final static short SPRM_FTABLEHEADER = 0x3404;
+    private final static short SPRM_TJC = 0x5400;
+
+    private final static char TABLE_CELL_MARK = '\u0007';
+
+    private TableCell[] _cells;
+    private boolean _cellsFound = false;
+
     int _levelNum;
     private TableProperties _tprops;
-    private TableCell[] _cells;
 
     public TableRow( int startIdxInclusive, int endIdxExclusive, Table parent,
             int levelNum )
@@ -48,19 +50,88 @@ public final class TableRow extends Paragraph
 
         _tprops = TableSprmUncompressor.uncompressTAP( _papx.toByteArray(), 2 );
         _levelNum = levelNum;
+        initCells();
+    }
+
+    public boolean cantSplit()
+    {
+        return _tprops.getFCantSplit();
+    }
+
+    public BorderCode getBarBorder()
+    {
+        throw new UnsupportedOperationException( "not applicable for TableRow" );
+    }
+
+    public BorderCode getBottomBorder()
+    {
+        return _tprops.getBrcBottom();
+    }
+
+    public TableCell getCell( int index )
+    {
+        initCells();
+        return _cells[index];
+    }
+
+    public int getGapHalf()
+    {
+        return _tprops.getDxaGapHalf();
+    }
+
+    public BorderCode getHorizontalBorder()
+    {
+        return _tprops.getBrcHorizontal();
+    }
+
+    public BorderCode getLeftBorder()
+    {
+        return _tprops.getBrcLeft();
+    }
+
+    public BorderCode getRightBorder()
+    {
+        return _tprops.getBrcRight();
+    }
+
+    public int getRowHeight()
+    {
+        return _tprops.getDyaRowHeight();
+    }
+
+    public int getRowJustification()
+    {
+        return _tprops.getJc();
+    }
+
+    public BorderCode getTopBorder()
+    {
+        return _tprops.getBrcBottom();
+    }
+
+    public BorderCode getVerticalBorder()
+    {
+        return _tprops.getBrcVertical();
+    }
+
+    private void initCells()
+    {
+        if ( _cellsFound )
+            return;
+
         final short expectedCellsCount = _tprops.getItcMac();
 
         int lastCellStart = 0;
         List<TableCell> cells = new ArrayList<TableCell>(
                 expectedCellsCount + 1 );
-        for ( int p = 0; p < ( endIdxExclusive - startIdxInclusive ); p++ )
+        for ( int p = 0; p < numParagraphs(); p++ )
         {
             Paragraph paragraph = getParagraph( p );
             String s = paragraph.text();
 
             if ( ( ( s.length() > 0 && s.charAt( s.length() - 1 ) == TABLE_CELL_MARK ) || paragraph
                     .isEmbeddedCellMark() )
-                    && paragraph.getTableLevel() == levelNum )
+                    && paragraph.getTableLevel() == _levelNum )
             {
                 TableCellDescriptor tableCellDescriptor = _tprops.getRgtc() != null
                         && _tprops.getRgtc().length > cells.size() ? _tprops
@@ -73,14 +144,14 @@ public final class TableRow extends Paragraph
                         .getRgdxaCenter()[cells.size() + 1] : 0;
 
                 TableCell tableCell = new TableCell( lastCellStart, p + 1,
-                        this, levelNum, tableCellDescriptor, leftEdge,
+                        this, _levelNum, tableCellDescriptor, leftEdge,
                         rightEdge - leftEdge );
                 cells.add( tableCell );
                 lastCellStart = p + 1;
             }
         }
 
-        if ( lastCellStart < ( endIdxExclusive - startIdxInclusive - 1 ) )
+        if ( lastCellStart < ( numParagraphs() - 1 ) )
         {
             TableCellDescriptor tableCellDescriptor = _tprops.getRgtc() != null
                     && _tprops.getRgtc().length > cells.size() ? _tprops
@@ -93,9 +164,8 @@ public final class TableRow extends Paragraph
                     .getRgdxaCenter()[cells.size() + 1] : 0;
 
             TableCell tableCell = new TableCell( lastCellStart,
-                    ( endIdxExclusive - startIdxInclusive - 1 ), this,
-                    levelNum, tableCellDescriptor, leftEdge, rightEdge
-                            - leftEdge );
+                    ( numParagraphs() - 1 ), this, _levelNum,
+                    tableCellDescriptor, leftEdge, rightEdge - leftEdge );
             cells.add( tableCell );
         }
 
@@ -119,44 +189,24 @@ public final class TableRow extends Paragraph
         }
 
         _cells = cells.toArray( new TableCell[cells.size()] );
+        _cellsFound = true;
     }
 
-    public int getRowJustification()
+    public boolean isTableHeader()
     {
-        return _tprops.getJc();
+        return _tprops.getFTableHeader();
     }
 
-    public void setRowJustification( int jc )
+    public int numCells()
     {
-        _tprops.setJc( (short) jc );
-        _papx.updateSprm( SPRM_TJC, (short) jc );
+        initCells();
+        return _cells.length;
     }
 
-    public int getGapHalf()
+    @Override
+    protected void reset()
     {
-        return _tprops.getDxaGapHalf();
-    }
-
-    public void setGapHalf( int dxaGapHalf )
-    {
-        _tprops.setDxaGapHalf( dxaGapHalf );
-        _papx.updateSprm( SPRM_DXAGAPHALF, (short) dxaGapHalf );
-    }
-
-    public int getRowHeight()
-    {
-        return _tprops.getDyaRowHeight();
-    }
-
-    public void setRowHeight( int dyaRowHeight )
-    {
-        _tprops.setDyaRowHeight( dyaRowHeight );
-        _papx.updateSprm( SPRM_DYAROWHEIGHT, (short) dyaRowHeight );
-    }
-
-    public boolean cantSplit()
-    {
-        return _tprops.getFCantSplit();
+        _cellsFound = false;
     }
 
     public void setCantSplit( boolean cantSplit )
@@ -165,60 +215,28 @@ public final class TableRow extends Paragraph
         _papx.updateSprm( SPRM_FCANTSPLIT, (byte) ( cantSplit ? 1 : 0 ) );
     }
 
-    public boolean isTableHeader()
+    public void setGapHalf( int dxaGapHalf )
     {
-        return _tprops.getFTableHeader();
+        _tprops.setDxaGapHalf( dxaGapHalf );
+        _papx.updateSprm( SPRM_DXAGAPHALF, (short) dxaGapHalf );
+    }
+
+    public void setRowHeight( int dyaRowHeight )
+    {
+        _tprops.setDyaRowHeight( dyaRowHeight );
+        _papx.updateSprm( SPRM_DYAROWHEIGHT, (short) dyaRowHeight );
+    }
+
+    public void setRowJustification( int jc )
+    {
+        _tprops.setJc( (short) jc );
+        _papx.updateSprm( SPRM_TJC, (short) jc );
     }
 
     public void setTableHeader( boolean tableHeader )
     {
         _tprops.setFTableHeader( tableHeader );
         _papx.updateSprm( SPRM_FTABLEHEADER, (byte) ( tableHeader ? 1 : 0 ) );
-    }
-
-    public int numCells()
-    {
-        return _cells.length;
-    }
-
-    public TableCell getCell( int index )
-    {
-        return _cells[index];
-    }
-
-    public BorderCode getTopBorder()
-    {
-        return _tprops.getBrcBottom();
-    }
-
-    public BorderCode getBottomBorder()
-    {
-        return _tprops.getBrcBottom();
-    }
-
-    public BorderCode getLeftBorder()
-    {
-        return _tprops.getBrcLeft();
-    }
-
-    public BorderCode getRightBorder()
-    {
-        return _tprops.getBrcRight();
-    }
-
-    public BorderCode getHorizontalBorder()
-    {
-        return _tprops.getBrcHorizontal();
-    }
-
-    public BorderCode getVerticalBorder()
-    {
-        return _tprops.getBrcVertical();
-    }
-
-    public BorderCode getBarBorder()
-    {
-        throw new UnsupportedOperationException( "not applicable for TableRow" );
     }
 
 }

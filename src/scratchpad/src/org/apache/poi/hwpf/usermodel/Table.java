@@ -23,32 +23,21 @@ public final class Table extends Range
 {
     private ArrayList<TableRow> _rows;
 
+    private boolean _rowsFound = false;
+
     private int _tableLevel;
 
-    Table( int startIdxInclusive, int endIdxExclusive, Range parent, int levelNum )
+    Table( int startIdxInclusive, int endIdxExclusive, Range parent,
+            int levelNum )
     {
         super( startIdxInclusive, endIdxExclusive, Range.TYPE_PARAGRAPH, parent );
-        _rows = new ArrayList<TableRow>();
         _tableLevel = levelNum;
-
-        int rowStart = 0;
-        int rowEnd = 0;
-
-        int numParagraphs = numParagraphs();
-        while ( rowEnd < numParagraphs )
-        {
-            Paragraph p = getParagraph( rowEnd );
-            rowEnd++;
-            if ( p.isTableRowEnd() && p.getTableLevel() == levelNum )
-            {
-                _rows.add( new TableRow( rowStart, rowEnd, this, levelNum ) );
-                rowStart = rowEnd;
-            }
-        }
+        initRows();
     }
 
     public TableRow getRow( int index )
     {
+        initRows();
         return _rows.get( index );
     }
 
@@ -57,9 +46,39 @@ public final class Table extends Range
         return _tableLevel;
     }
 
+    private void initRows()
+    {
+        if ( _rowsFound )
+            return;
+
+        _rows = new ArrayList<TableRow>();
+        int rowStart = 0;
+        int rowEnd = 0;
+
+        int numParagraphs = numParagraphs();
+        while ( rowEnd < numParagraphs )
+        {
+            Paragraph p = getParagraph( rowEnd );
+            rowEnd++;
+            if ( p.isTableRowEnd() && p.getTableLevel() == _tableLevel )
+            {
+                _rows.add( new TableRow( rowStart, rowEnd, this, _tableLevel ) );
+                rowStart = rowEnd;
+            }
+        }
+        _rowsFound = true;
+    }
+
     public int numRows()
     {
+        initRows();
         return _rows.size();
+    }
+
+    @Override
+    protected void reset()
+    {
+        _rowsFound = false;
     }
 
     public int type()
