@@ -29,6 +29,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
+import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.TextPiece;
@@ -84,6 +85,7 @@ public final class HWPFLister
             System.err
                     .println( "\tHWPFLister <filename>\n"
                             + "\t\t[--textPieces] [--textPiecesText]\n"
+                            + "\t\t[--textRuns] [--textRunsSprms]\n"
                             + "\t\t[--papx] [--papxProperties]\n"
                             + "\t\t[--paragraphs] [--paragraphsSprms] [--paragraphsText]\n"
                             + "\t\t[--writereadback]\n" );
@@ -92,6 +94,9 @@ public final class HWPFLister
 
         boolean outputTextPieces = false;
         boolean outputTextPiecesText = false;
+
+        boolean outputTextRuns = false;
+        boolean outputTextRunsSprms = false;
 
         boolean outputParagraphs = false;
         boolean outputParagraphsSprms = false;
@@ -108,6 +113,11 @@ public final class HWPFLister
                 outputTextPieces = true;
             if ( "--textPiecesText".equals( arg ) )
                 outputTextPiecesText = true;
+
+            if ( "--textRuns".equals( arg ) )
+                outputTextRuns = true;
+            if ( "--textRunsSprms".equals( arg ) )
+                outputTextRunsSprms = true;
 
             if ( "--paragraphs".equals( arg ) )
                 outputParagraphs = true;
@@ -136,6 +146,12 @@ public final class HWPFLister
         {
             System.out.println( "== Text pieces ==" );
             lister.dumpTextPieces( outputTextPiecesText );
+        }
+
+        if ( outputTextRuns )
+        {
+            System.out.println( "== Text runs ==" );
+            lister.dumpTextRuns( outputTextRunsSprms );
         }
 
         if ( outputParagraphs )
@@ -220,6 +236,23 @@ public final class HWPFLister
         }
     }
 
+    public void dumpTextRuns( boolean withSprms )
+    {
+        for ( CHPX chpx  : _doc.getCharacterTable().getTextRuns() )
+        {
+            System.out.println( chpx );
+
+            if ( withSprms )
+            {
+                SprmIterator sprmIt = new SprmIterator( chpx.getGrpprl(), 2 );
+                while ( sprmIt.hasNext() )
+                {
+                    SprmOperation sprm = sprmIt.next();
+                    System.out.println( "\t" + sprm.toString() );
+                }
+            }
+        }
+    }
     public void dumpTextPieces( boolean withText )
     {
         for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
