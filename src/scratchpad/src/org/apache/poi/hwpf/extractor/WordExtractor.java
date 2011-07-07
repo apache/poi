@@ -120,6 +120,12 @@ public final class WordExtractor extends POIOLE2TextExtractor {
                 return getParagraphText(r);
         }
 
+        public String[] getMainTextboxText() {
+                Range r = doc.getMainTextboxRange();
+
+                return getParagraphText(r);
+        }
+
         public String[] getEndnoteText() {
                 Range r = doc.getEndnoteRange();
 
@@ -251,6 +257,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 
 	   ArrayList<String> text = new ArrayList<String>();
 	   text.addAll(Arrays.asList(getParagraphText()));
+	   text.addAll(Arrays.asList(getMainTextboxText()));
 	   text.addAll(Arrays.asList(getFootnoteText()));
 	   text.addAll(Arrays.asList(getEndnoteText()));
 

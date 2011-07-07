@@ -364,6 +364,17 @@ public final class HWPFDocument extends HWPFDocumentCore
   }
 
   /**
+   * Returns the range which covers all the Endnotes.
+  */
+  public Range getMainTextboxRange() {
+          return new Range(
+                          _cpSplit.getMainTextboxStart(),
+                          _cpSplit.getMainTextboxEnd(),
+                          this
+      );
+  }
+
+  /**
    * Returns the range which covers all "Header Stories".
    * A header story contains a header, footer, end note
    *  separators and footnote separators.
