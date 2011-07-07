@@ -117,7 +117,7 @@ public final class HWPFLister
     public void dumpParagraphs( boolean withSprms, boolean withPapx,
             boolean withText )
     {
-        Range range = _doc.getRange();
+        Range range = _doc.getOverallRange();
         for ( int p = 0; p < range.numParagraphs(); p++ )
         {
             Paragraph paragraph = range.getParagraph( p );
