@@ -148,9 +148,22 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 <xsl:value-of select="recutil:getConstName(../@name,@name,0)"/></xsl:template>
 <xsl:template match="field" mode="getset">
     /**
-     * Get the <xsl:value-of select="@name"/> field for the <xsl:value-of select="../../@name"/> record.<xsl:if test="./const">
+     * <xsl:choose>
+        <xsl:when test="@description">
+            <xsl:value-of select="@description"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:text>Get the </xsl:text>
+            <xsl:value-of select="@name"/>
+            <xsl:text> field for the </xsl:text>
+            <xsl:value-of select="../../@name"/>
+            <xsl:text> record</xsl:text>
+        </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>.</xsl:text> 
+    <xsl:if test="./const">
      *
-     * @return  One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
+     * @return One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
     public <xsl:value-of select="@type"/> get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
     {
@@ -158,7 +171,20 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     }
 
     /**
-     * Set the <xsl:value-of select="@name"/> field for the <xsl:value-of select="../../@name"/> record.<xsl:if test="./const">
+     * <xsl:choose>
+        <xsl:when test="@description">
+            <xsl:value-of select="@description"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:text>Set the </xsl:text>
+            <xsl:value-of select="@name"/>
+            <xsl:text> field for the </xsl:text>
+            <xsl:value-of select="../../@name"/>
+            <xsl:text> record</xsl:text>
+        </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>.</xsl:text>
+    <xsl:if test="./const">
      *
      * @param <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
      *        One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
