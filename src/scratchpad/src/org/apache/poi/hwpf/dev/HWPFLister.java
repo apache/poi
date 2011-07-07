@@ -17,13 +17,17 @@
 
 package org.apache.poi.hwpf.dev;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -43,11 +47,17 @@ public final class HWPFLister
         if ( args.length == 0 )
         {
             System.err.println( "Use:" );
-            System.err.println( "   HWPFLister <filename> "
-                    + "[--papx] [--papxProperties] "
-                    + "[--paragraphs] [--paragraphsSprms] [--paragraphsText]" );
+            System.err
+                    .println( "\tHWPFLister <filename>\n"
+                            + "\t\t[--textPieces] [--textPiecesText]\n"
+                            + "\t\t[--papx] [--papxProperties]\n"
+                            + "\t\t[--paragraphs] [--paragraphsSprms] [--paragraphsText]\n"
+                            + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
+
+        boolean outputTextPieces = false;
+        boolean outputTextPiecesText = false;
 
         boolean outputParagraphs = false;
         boolean outputParagraphsSprms = false;
@@ -56,8 +66,15 @@ public final class HWPFLister
         boolean outputPapx = false;
         boolean outputPapxProperties = false;
 
+        boolean writereadback = false;
+
         for ( String arg : Arrays.asList( args ).subList( 1, args.length ) )
         {
+            if ( "--textPieces".equals( arg ) )
+                outputTextPieces = true;
+            if ( "--textPiecesText".equals( arg ) )
+                outputTextPiecesText = true;
+
             if ( "--paragraphs".equals( arg ) )
                 outputParagraphs = true;
             if ( "--paragraphsSprms".equals( arg ) )
@@ -69,11 +86,23 @@ public final class HWPFLister
                 outputPapx = true;
             if ( "--papxProperties".equals( arg ) )
                 outputPapxProperties = true;
+
+            if ( "--writereadback".equals( arg ) )
+                writereadback = true;
         }
 
-        HWPFLister lister = new HWPFLister( new HWPFDocument(
-                new FileInputStream( args[0] ) ) );
+        HWPFDocument doc = new HWPFDocument( new FileInputStream( args[0] ) );
+        if ( writereadback )
+            doc = writeOutAndReadBack( doc );
+
+        HWPFLister lister = new HWPFLister( doc );
         lister.dumpFIB();
+
+        if ( outputTextPieces )
+        {
+            System.out.println( "== Text pieces ==" );
+            lister.dumpTextPieces( outputTextPiecesText );
+        }
 
         if ( outputParagraphs )
         {
@@ -86,6 +115,22 @@ public final class HWPFLister
         {
             System.out.println( "== PAPX ==" );
             lister.dumpPapx( outputPapxProperties );
+        }
+    }
+
+    private static HWPFDocument writeOutAndReadBack( HWPFDocument original )
+    {
+        try
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream( 4096 );
+            original.write( baos );
+            ByteArrayInputStream bais = new ByteArrayInputStream(
+                    baos.toByteArray() );
+            return new HWPFDocument( bais );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
         }
     }
 
@@ -137,6 +182,19 @@ public final class HWPFLister
 
             if ( withText )
                 System.out.println( paragraph.text() );
+        }
+    }
+
+    public void dumpTextPieces( boolean withText )
+    {
+        for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
+        {
+            System.out.println( textPiece );
+
+            if ( withText )
+            {
+                System.out.println( "\t" + textPiece.getStringBuffer() );
+            }
         }
     }
 }
