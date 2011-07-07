@@ -429,9 +429,8 @@ public final class TestProblems extends HWPFTestCase {
    }
 
     static void fixed(String bugzillaId) {
-        fail("Bug " + bugzillaId + " seems to be fixed. " +
+        throw new Error("Bug " + bugzillaId + " seems to be fixed. " +
                 "Please resolve the issue in Bugzilla and remove fail() from the test");
-
     }
 
     /**
