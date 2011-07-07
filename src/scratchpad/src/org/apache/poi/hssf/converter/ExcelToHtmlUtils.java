@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.usermodel.converter;
+package org.apache.poi.hssf.converter;
 
 import java.io.File;
 import java.io.FileInputStream;

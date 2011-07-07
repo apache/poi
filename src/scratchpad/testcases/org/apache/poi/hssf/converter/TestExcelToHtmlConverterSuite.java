@@ -34,8 +34,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.converter.ExcelToHtmlConverter;
-import org.apache.poi.hssf.usermodel.converter.ExcelToHtmlUtils;
 
 public class TestExcelToHtmlConverterSuite
 {
