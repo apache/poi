@@ -17,14 +17,14 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.poifs.common.POIFSConstants;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * The piece table for matching up character positions to bits of text. This
@@ -197,6 +197,33 @@ public class TextPieceTable implements CharIndexTranslator {
 		return false;
 	}
 
+    public int getByteIndex( int charPos )
+    {
+        int byteCount = 0;
+        for ( TextPiece tp : _textPieces )
+        {
+            if ( charPos >= tp.getEnd() )
+            {
+                byteCount = tp.getPieceDescriptor().getFilePosition()
+                        + ( tp.getEnd() - tp.getStart() )
+                        * ( tp.isUnicode() ? 2 : 1 );
+
+                if ( charPos == tp.getEnd() )
+                    break;
+
+                continue;
+            }
+            if ( charPos < tp.getEnd() )
+            {
+                int left = charPos - tp.getStart();
+                byteCount = tp.getPieceDescriptor().getFilePosition() + left
+                        * ( tp.isUnicode() ? 2 : 1 );
+                break;
+            }
+        }
+        return byteCount;
+    }
+
     public int getCharIndex(int bytePos) {
         return getCharIndex(bytePos, 0);
     }
@@ -297,7 +324,7 @@ public class TextPieceTable implements CharIndexTranslator {
         for(TextPiece tp : _textPiecesFCOrder) {
             int pieceStart = tp.getPieceDescriptor().getFilePosition();
 
-            if (startBytePos > pieceStart + tp.bytesLength()) {
+            if (startBytePos >= pieceStart + tp.bytesLength()) {
                 continue;
             }
 

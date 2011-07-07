@@ -179,14 +179,22 @@ public class SectionTable
 
       // add the section descriptor bytes to the PlexOfCps.
 
-
-      // original line -
-      //GenericPropertyNode property = new GenericPropertyNode(sepx.getStart(), sepx.getEnd(), sed.toByteArray());
-
-      // Line using Ryan's FCtoCP() conversion method -
-      // unable to observe any effect on our testcases when using this code - piers
-      GenericPropertyNode property = new GenericPropertyNode(tpt.getCharIndex(sepx.getStartBytes()), tpt.getCharIndex(sepx.getEndBytes()), sed.toByteArray());
-
+            /* original line */
+            // GenericPropertyNode property = new
+            // GenericPropertyNode(sepx.getStart(), sepx.getEnd(),
+            // sed.toByteArray());
+            /*
+             * Line using Ryan's FCtoCP() conversion method - unable to observe
+             * any effect on our testcases when using this code - piers
+             */
+            /*
+             * there is an effect on Bug45743.doc actually. writeoutreadback
+             * changes byte offset of chars (but preserve string offsets) -
+             * sergey
+             */
+            GenericPropertyNode property = new GenericPropertyNode(
+                    tpt.getCharIndex( sepx.getStartBytes() ),
+                    tpt.getCharIndex( sepx.getEndBytes() ), sed.toByteArray() );
 
       plex.addProperty(property);
 

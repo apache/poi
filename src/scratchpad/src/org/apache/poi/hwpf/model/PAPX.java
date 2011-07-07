@@ -123,6 +123,31 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     return (SprmBuffer)_buf;
   }
 
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+    @Deprecated
+    @Override
+    public int getEndBytes()
+    {
+        return super.getEndBytes();
+    }
+
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+    @Deprecated
+    @Override
+    public int getStartBytes()
+    {
+        // TODO Auto-generated method stub
+        return super.getStartBytes();
+    }
+
   public ParagraphProperties getParagraphProperties(StyleSheet ss)
   {
     if(ss == null) {
