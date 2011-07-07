@@ -185,4 +185,10 @@ public final class TextPiece extends PropertyNode implements Comparable
    {
      return getStart();
    }
+
+    public String toString()
+    {
+        return "TextPiece from " + getStart() + " to " + getEnd() + " ("
+                + getPieceDescriptor() + ")";
+    }
 }

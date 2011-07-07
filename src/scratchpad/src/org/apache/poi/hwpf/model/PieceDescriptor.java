@@ -97,10 +97,40 @@ public final class PieceDescriptor
     return 8;
   }
 
-  public boolean equals(Object o)
-  {
-    PieceDescriptor pd = (PieceDescriptor)o;
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + descriptor;
+        result = prime * result + prm;
+        result = prime * result + ( unicode ? 1231 : 1237 );
+        return result;
+    }
 
-    return descriptor == pd.descriptor && prm == pd.prm && unicode == pd.unicode;
-  }
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        PieceDescriptor other = (PieceDescriptor) obj;
+        if ( descriptor != other.descriptor )
+            return false;
+        if ( prm != other.prm )
+            return false;
+        if ( unicode != other.unicode )
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "PieceDescriptor (pos: " + getFilePosition() + "; "
+                + ( isUnicode() ? "unicode" : "non-unicode" ) + ")";
+    }
 }
