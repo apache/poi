@@ -34,6 +34,18 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">Add getOverallRange() method to HWPFDocumentCore</action>
+           <action dev="poi-developers" type="fix">PAPX referenced outside of TextPiecesTable are ignored now and not loaded</action>
+           <action dev="poi-developers" type="fix">Fix main part range (and section) detection for files with additional parts (like footers/headers).</action>
+           <action dev="poi-developers" type="fix">Fix wrong TextPiece parsing in very rare cases like Bug33519.doc</action>
+           <action dev="poi-developers" type="fix">Inner tables are correctly supported</action>
+           <action dev="poi-developers" type="add">Allow user to retrieve Table nesting level (based on file information)</action>
+           <action dev="poi-developers" type="add">Functionality of internal tool HWPFLister is greatly improved, including output of document PAPX and paragraphs</action>
+           <action dev="poi-developers" type="add">Expand Word structures definitions (TAP, PAP, TLP, etc) based on official documentation</action>
+           <action dev="poi-developers" type="add">Add Excel-to-HTML converter (2007 versions)</action>
+           <action dev="poi-developers" type="add">Add Word-to-HTML converter (95-2007 versions)</action>
+           <action dev="poi-developers" type="fix">Skip wrong-type SPRMs when characters SPRM is expected</action>
+           <action dev="poi-developers" type="add">Add toStrings() methods to internal HWPF structures: BorderCode, PAPX, Paragraph, Section, SEPX, SprmOperation, etc.</action>
            <action dev="poi-developers" type="fix">51474 - SXSSF handling for null strings</action>
            <action dev="poi-developers" type="fix">48294 - Fixed HSSFWorkbook.setSheetOrder() to respect inter-sheet references </action>
            <action dev="poi-developers" type="fix">51448 - Avoid exception when evaluating workbooks with more than 256 sheets </action>
