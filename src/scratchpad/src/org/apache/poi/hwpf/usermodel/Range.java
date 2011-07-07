@@ -901,8 +901,7 @@ public class Range { // TODO -instantiable superclass
             }
         }
 
-        final Range overallrange = getDocument() instanceof HWPFDocument ? ((HWPFDocument) getDocument())
-                .getOverallRange() : getDocument().getRange();
+        final Range overallrange = getDocument().getOverallRange();
         int limit = _paragraphs.size();
         for ( ; tableEndInclusive < limit - 1; tableEndInclusive++ )
         {
