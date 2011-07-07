@@ -24,12 +24,22 @@ public final class TableProperties extends TAPAbstractType implements Cloneable
 
     public TableProperties()
     {
-
+        setTlp( new TableAutoformatLookSpecifier() );
+        setShdTable( new ShadingDescriptor() );
+        setBrcBottom( new BorderCode() );
+        setBrcHorizontal( new BorderCode() );
+        setBrcLeft( new BorderCode() );
+        setBrcRight( new BorderCode() );
+        setBrcTop( new BorderCode() );
+        setBrcVertical( new BorderCode() );
+        setRgbrcInsideDefault_0( new BorderCode() );
+        setRgbrcInsideDefault_1( new BorderCode() );
     }
 
     public TableProperties( short columns )
     {
-        setTlp( new TableAutoformatLookSpecifier() );
+        this();
+
         setItcMac( columns );
         setRgshd( new ShadingDescriptor[columns] );
 
@@ -37,16 +47,6 @@ public final class TableProperties extends TAPAbstractType implements Cloneable
         {
             getRgshd()[x] = new ShadingDescriptor();
         }
-
-        setBrcBottom( new BorderCode() );
-        setBrcHorizontal( new BorderCode() );
-        setBrcLeft( new BorderCode() );
-        setBrcRight( new BorderCode() );
-        setBrcTop( new BorderCode() );
-        setBrcVertical( new BorderCode() );
-
-        setRgbrcInsideDefault_0( new BorderCode() );
-        setRgbrcInsideDefault_1( new BorderCode() );
 
         TableCellDescriptor[] tableCellDescriptors = new TableCellDescriptor[columns];
         for ( int x = 0; x < columns; x++ )
