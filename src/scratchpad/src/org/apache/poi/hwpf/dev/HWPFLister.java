@@ -121,7 +121,7 @@ public final class HWPFLister
         for ( int p = 0; p < range.numParagraphs(); p++ )
         {
             Paragraph paragraph = range.getParagraph( p );
-            System.out.println( paragraph.toString( withPapx ) );
+            System.out.println( p + ":\t" + paragraph.toString( withPapx ) );
 
             if ( withSprms )
             {
