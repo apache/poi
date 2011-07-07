@@ -100,7 +100,7 @@
         <field type="byte" size="1" name="fInnerTableCell" description="When 1, the end of paragraph mark is really an end of cell mark for a nested table cell"/>
         <field type="byte" size="1" name="fOpenTch" description="Ensure the Table Cell char doesn't show up as zero height"/>
         <!-- not part of properties structure, but used anyway. See sprmPFInnerTtp doc. -->
-        <field type="byte" size="1" name="fTtpEmbedded" description="Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table."/>
+        <field type="byte" size="1" name="fTtpEmbedded" description="Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table"/>
         
         <field type="short" size="2" name="dxcRight" description="Right indent in character units"/>
         <field type="short" size="2" name="dxcLeft" description="Left indent in character units"/>

@@ -393,7 +393,7 @@ public abstract class PAPAbstractType
 
 
     /**
-     * Get the istd field for the PAP record.
+     * Index to style descriptor.
      */
     public int getIstd()
     {
@@ -401,7 +401,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the istd field for the PAP record.
+     * Index to style descriptor.
      */
     public void setIstd(int field_1_istd)
     {
@@ -473,7 +473,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the brcl field for the PAP record.
+     * Border line style.
      */
     public byte getBrcl()
     {
@@ -481,7 +481,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the brcl field for the PAP record.
+     * Border line style.
      */
     public void setBrcl(byte field_6_brcl)
     {
@@ -489,7 +489,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the brcp field for the PAP record.
+     * Rectangle border codes.
      */
     public byte getBrcp()
     {
@@ -497,7 +497,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the brcp field for the PAP record.
+     * Rectangle border codes.
      */
     public void setBrcp(byte field_7_brcp)
     {
@@ -505,7 +505,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the ilvl field for the PAP record.
+     * List level if non-zero.
      */
     public byte getIlvl()
     {
@@ -513,7 +513,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the ilvl field for the PAP record.
+     * List level if non-zero.
      */
     public void setIlvl(byte field_8_ilvl)
     {
@@ -521,7 +521,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the ilfo field for the PAP record.
+     * 1-based index into the pllfo (lists structure), if non-zero.
      */
     public int getIlfo()
     {
@@ -529,7 +529,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the ilfo field for the PAP record.
+     * 1-based index into the pllfo (lists structure), if non-zero.
      */
     public void setIlfo(int field_9_ilfo)
     {
@@ -537,7 +537,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fNoLnn field for the PAP record.
+     * No line numbering.
      */
     public byte getFNoLnn()
     {
@@ -545,7 +545,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fNoLnn field for the PAP record.
+     * No line numbering.
      */
     public void setFNoLnn(byte field_10_fNoLnn)
     {
@@ -553,7 +553,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the lspd field for the PAP record.
+     * Line spacing descriptor.
      */
     public LineSpacingDescriptor getLspd()
     {
@@ -561,7 +561,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the lspd field for the PAP record.
+     * Line spacing descriptor.
      */
     public void setLspd(LineSpacingDescriptor field_11_lspd)
     {
@@ -569,7 +569,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dyaBefore field for the PAP record.
+     * Space before paragraph.
      */
     public int getDyaBefore()
     {
@@ -577,7 +577,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dyaBefore field for the PAP record.
+     * Space before paragraph.
      */
     public void setDyaBefore(int field_12_dyaBefore)
     {
@@ -585,7 +585,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dyaAfter field for the PAP record.
+     * Space after paragraph.
      */
     public int getDyaAfter()
     {
@@ -593,7 +593,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dyaAfter field for the PAP record.
+     * Space after paragraph.
      */
     public void setDyaAfter(int field_13_dyaAfter)
     {
@@ -601,7 +601,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fInTable field for the PAP record.
+     * Paragraph is in table flag.
      */
     public byte getFInTable()
     {
@@ -609,7 +609,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fInTable field for the PAP record.
+     * Paragraph is in table flag.
      */
     public void setFInTable(byte field_14_fInTable)
     {
@@ -617,7 +617,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the finTableW97 field for the PAP record.
+     * Archaic paragraph is in table flag.
      */
     public byte getFinTableW97()
     {
@@ -625,7 +625,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the finTableW97 field for the PAP record.
+     * Archaic paragraph is in table flag.
      */
     public void setFinTableW97(byte field_15_finTableW97)
     {
@@ -633,7 +633,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fTtp field for the PAP record.
+     * Table trailer paragraph (last in table row).
      */
     public byte getFTtp()
     {
@@ -641,7 +641,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fTtp field for the PAP record.
+     * Table trailer paragraph (last in table row).
      */
     public void setFTtp(byte field_16_fTtp)
     {
@@ -841,7 +841,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dyaFromText field for the PAP record.
+     * Vertical distance between text and absolutely positioned object.
      */
     public int getDyaFromText()
     {
@@ -849,7 +849,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dyaFromText field for the PAP record.
+     * Vertical distance between text and absolutely positioned object.
      */
     public void setDyaFromText(int field_29_dyaFromText)
     {
@@ -857,7 +857,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dxaFromText field for the PAP record.
+     * Horizontal distance between text and absolutely positioned object.
      */
     public int getDxaFromText()
     {
@@ -865,7 +865,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dxaFromText field for the PAP record.
+     * Horizontal distance between text and absolutely positioned object.
      */
     public void setDxaFromText(int field_30_dxaFromText)
     {
@@ -1177,7 +1177,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the itap field for the PAP record.
+     * Table nesting level.
      */
     public int getItap()
     {
@@ -1185,7 +1185,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the itap field for the PAP record.
+     * Table nesting level.
      */
     public void setItap(int field_50_itap)
     {
@@ -1193,7 +1193,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fInnerTableCell field for the PAP record.
+     * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
     public byte getFInnerTableCell()
     {
@@ -1201,7 +1201,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fInnerTableCell field for the PAP record.
+     * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
     public void setFInnerTableCell(byte field_51_fInnerTableCell)
     {
@@ -1209,7 +1209,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fOpenTch field for the PAP record.
+     * Ensure the Table Cell char doesn't show up as zero height.
      */
     public byte getFOpenTch()
     {
@@ -1217,7 +1217,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fOpenTch field for the PAP record.
+     * Ensure the Table Cell char doesn't show up as zero height.
      */
     public void setFOpenTch(byte field_52_fOpenTch)
     {
@@ -1225,7 +1225,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fTtpEmbedded field for the PAP record.
+     * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
     public byte getFTtpEmbedded()
     {
@@ -1233,7 +1233,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fTtpEmbedded field for the PAP record.
+     * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
     public void setFTtpEmbedded(byte field_53_fTtpEmbedded)
     {
@@ -1241,7 +1241,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dxcRight field for the PAP record.
+     * Right indent in character units.
      */
     public short getDxcRight()
     {
@@ -1249,7 +1249,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dxcRight field for the PAP record.
+     * Right indent in character units.
      */
     public void setDxcRight(short field_54_dxcRight)
     {
@@ -1257,7 +1257,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dxcLeft field for the PAP record.
+     * Left indent in character units.
      */
     public short getDxcLeft()
     {
@@ -1265,7 +1265,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dxcLeft field for the PAP record.
+     * Left indent in character units.
      */
     public void setDxcLeft(short field_55_dxcLeft)
     {
@@ -1273,7 +1273,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the dxcLeft1 field for the PAP record.
+     * First line indent in character units.
      */
     public short getDxcLeft1()
     {
@@ -1281,7 +1281,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the dxcLeft1 field for the PAP record.
+     * First line indent in character units.
      */
     public void setDxcLeft1(short field_56_dxcLeft1)
     {
@@ -1289,7 +1289,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fDyaBeforeAuto field for the PAP record.
+     * Vertical spacing before is automatic.
      */
     public byte getFDyaBeforeAuto()
     {
@@ -1297,7 +1297,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fDyaBeforeAuto field for the PAP record.
+     * Vertical spacing before is automatic.
      */
     public void setFDyaBeforeAuto(byte field_57_fDyaBeforeAuto)
     {
@@ -1305,7 +1305,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fDyaAfterAuto field for the PAP record.
+     * Vertical spacing after is automatic.
      */
     public byte getFDyaAfterAuto()
     {
@@ -1313,7 +1313,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fDyaAfterAuto field for the PAP record.
+     * Vertical spacing after is automatic.
      */
     public void setFDyaAfterAuto(byte field_58_fDyaAfterAuto)
     {
