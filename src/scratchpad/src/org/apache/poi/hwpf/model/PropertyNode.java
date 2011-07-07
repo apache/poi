@@ -57,10 +57,14 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
     	  _cpStart = 0;
       }
 
-      if ( fcStart > fcEnd )
-          throw new IllegalArgumentException( "fcStart (" + fcStart
-                  + ") > fcEnd (" + fcEnd + ")" );
-  }
+        if ( _cpEnd < _cpStart )
+        {
+            _logger.log( POILogger.WARN, "A property claimed to end (" + _cpEnd
+                    + ") before start! "
+                    + "Resetting end to start, and hoping for the best" );
+            _cpEnd = _cpStart;
+        }
+    }
 
   /**
    * @return The start offset of this property's text.
