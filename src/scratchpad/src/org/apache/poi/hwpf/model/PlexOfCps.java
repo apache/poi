@@ -35,12 +35,12 @@ public final class PlexOfCps
   private int _count;
   private int _offset;
   private int _sizeOfStruct;
-  private ArrayList _props;
+  private ArrayList<GenericPropertyNode> _props;
 
 
   public PlexOfCps(int sizeOfStruct)
   {
-    _props = new ArrayList();
+    _props = new ArrayList<GenericPropertyNode>();
     _sizeOfStruct = sizeOfStruct;
   }
 
@@ -57,7 +57,7 @@ public final class PlexOfCps
     _count = (size - 4)/(4 + sizeOfStruct);
 
     _sizeOfStruct = sizeOfStruct;
-    _props = new ArrayList(_count);
+    _props = new ArrayList<GenericPropertyNode>(_count);
 
     for (int x = 0; x < _count; x++)
     {
@@ -67,7 +67,7 @@ public final class PlexOfCps
 
   public GenericPropertyNode getProperty(int index)
   {
-    return (GenericPropertyNode)_props.get(index);
+    return _props.get(index);
   }
 
   public void addProperty(GenericPropertyNode node)
@@ -87,7 +87,7 @@ public final class PlexOfCps
     GenericPropertyNode node = null;
     for (int x = 0; x < size; x++)
     {
-      node = (GenericPropertyNode)_props.get(x);
+      node = _props.get(x);
 
       // put the starting offset of the property into the plcf.
       LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x), node.getStart());
