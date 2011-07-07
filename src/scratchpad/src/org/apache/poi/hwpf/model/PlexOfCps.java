@@ -21,125 +21,129 @@ import java.util.ArrayList;
 
 import org.apache.poi.util.LittleEndian;
 
-
-
 /**
- * common data structure in a Word file. Contains an array of 4 byte ints in
- * the front that relate to an array of abitrary data structures in the back.
- *
- *
+ * Plex of CPs stored in File (PLCF)
+ * 
+ * common data structure in a Word file. Contains an array of 4 byte ints in the
+ * front that relate to an array of arbitrary data structures in the back.
+ * 
+ * See page 184 of official documentation for details
+ * 
  * @author Ryan Ackley
  */
 public final class PlexOfCps
 {
-  private int _count;
-  private int _offset;
-  private int _sizeOfStruct;
-  private ArrayList<GenericPropertyNode> _props;
+    private int _iMac;
+    private int _offset;
+    private int _cbStruct;
+    private ArrayList<GenericPropertyNode> _props;
 
-
-  public PlexOfCps(int sizeOfStruct)
-  {
-    _props = new ArrayList<GenericPropertyNode>();
-    _sizeOfStruct = sizeOfStruct;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param size The size in bytes of this PlexOfCps
-   * @param sizeOfStruct The size of the data structure type stored in
-   *        this PlexOfCps.
-   */
-  public PlexOfCps(byte[] buf, int start, int size, int sizeOfStruct)
-  {
-	// Figure out the number we hold
-    _count = (size - 4)/(4 + sizeOfStruct);
-
-    _sizeOfStruct = sizeOfStruct;
-    _props = new ArrayList<GenericPropertyNode>(_count);
-
-    for (int x = 0; x < _count; x++)
+    public PlexOfCps( int sizeOfStruct )
     {
-      _props.add(getProperty(x, buf, start));
+        _props = new ArrayList<GenericPropertyNode>();
+        _cbStruct = sizeOfStruct;
     }
-  }
 
-  public GenericPropertyNode getProperty(int index)
-  {
-    return _props.get(index);
-  }
-
-  public void addProperty(GenericPropertyNode node)
-  {
-    _props.add(node);
-  }
-
-  public byte[] toByteArray()
-  {
-    int size = _props.size();
-    int cpBufSize = ((size + 1) * LittleEndian.INT_SIZE);
-    int structBufSize =  + (_sizeOfStruct * size);
-    int bufSize = cpBufSize + structBufSize;
-
-    byte[] buf = new byte[bufSize];
-
-    GenericPropertyNode node = null;
-    for (int x = 0; x < size; x++)
+    /**
+     * Constructor
+     * 
+     * @param cb
+     *            The size of PLCF in bytes
+     * @param cbStruct
+     *            The size of the data structure type stored in this PlexOfCps.
+     */
+    public PlexOfCps( byte[] buf, int start, int cb, int cbStruct )
     {
-      node = _props.get(x);
+        // Figure out the number we hold
+        _iMac = ( cb - 4 ) / ( 4 + cbStruct );
 
-      // put the starting offset of the property into the plcf.
-      LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x), node.getStart());
+        _cbStruct = cbStruct;
+        _props = new ArrayList<GenericPropertyNode>( _iMac );
 
-      // put the struct into the plcf
-      System.arraycopy(node.getBytes(), 0, buf, cpBufSize + (x * _sizeOfStruct),
-                       _sizeOfStruct);
+        for ( int x = 0; x < _iMac; x++ )
+        {
+            _props.add( getProperty( x, buf, start ) );
+        }
     }
-    // put the ending offset of the last property into the plcf.
-    LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, node.getEnd());
 
-    return buf;
+    public GenericPropertyNode getProperty( int index )
+    {
+        return _props.get( index );
+    }
 
-  }
+    public void addProperty( GenericPropertyNode node )
+    {
+        _props.add( node );
+    }
 
-  private GenericPropertyNode getProperty(int index, byte[] buf, int offset)
-  {
-    int start = LittleEndian.getInt(buf, offset + getIntOffset(index));
-    int end = LittleEndian.getInt(buf, offset + getIntOffset(index+1));
+    public byte[] toByteArray()
+    {
+        int size = _props.size();
+        int cpBufSize = ( ( size + 1 ) * LittleEndian.INT_SIZE );
+        int structBufSize = +( _cbStruct * size );
+        int bufSize = cpBufSize + structBufSize;
 
-    byte[] struct = new byte[_sizeOfStruct];
-    System.arraycopy(buf, offset + getStructOffset(index), struct, 0, _sizeOfStruct);
+        byte[] buf = new byte[bufSize];
 
-    return new GenericPropertyNode(start, end, struct);
-  }
+        GenericPropertyNode node = null;
+        for ( int x = 0; x < size; x++ )
+        {
+            node = _props.get( x );
 
-  private int getIntOffset(int index)
-  {
-    return index * 4;
-  }
+            // put the starting offset of the property into the plcf.
+            LittleEndian.putInt( buf, ( LittleEndian.INT_SIZE * x ),
+                    node.getStart() );
 
-  /**
-   * returns the number of data structures in this PlexOfCps.
-   *
-   * @return The number of data structures in this PlexOfCps
-   */
-  public int length()
-  {
-    return _count;
-  }
+            // put the struct into the plcf
+            System.arraycopy( node.getBytes(), 0, buf, cpBufSize
+                    + ( x * _cbStruct ), _cbStruct );
+        }
+        // put the ending offset of the last property into the plcf.
+        LittleEndian.putInt( buf, LittleEndian.INT_SIZE * size, node.getEnd() );
 
-  /**
-   * Returns the offset, in bytes, from the beginning if this PlexOfCps to
-   * the data structure at index.
-   *
-   * @param index The index of the data structure.
-   *
-   * @return The offset, in bytes, from the beginning if this PlexOfCps to
-   *         the data structure at index.
-   */
-  private int getStructOffset(int index)
-  {
-    return (4 * (_count + 1)) + (_sizeOfStruct * index);
-  }
+        return buf;
+
+    }
+
+    private GenericPropertyNode getProperty( int index, byte[] buf, int offset )
+    {
+        int start = LittleEndian.getInt( buf, offset + getIntOffset( index ) );
+        int end = LittleEndian.getInt( buf, offset + getIntOffset( index + 1 ) );
+
+        byte[] struct = new byte[_cbStruct];
+        System.arraycopy( buf, offset + getStructOffset( index ), struct, 0,
+                _cbStruct );
+
+        return new GenericPropertyNode( start, end, struct );
+    }
+
+    private int getIntOffset( int index )
+    {
+        return index * 4;
+    }
+
+    /**
+     * returns the number of data structures in this PlexofCps.
+     * 
+     * @return The number of data structures in this PlexofCps
+     */
+    public int length()
+    {
+        return _iMac;
+    }
+
+    /**
+     * Returns the offset, in bytes, from the beginning if this PlexOfCps to the
+     * data structure at index.
+     * 
+     * @param index
+     *            The index of the data structure.
+     * 
+     * @return The offset, in bytes, from the beginning if this PlexOfCps to the
+     *         data structure at index.
+     */
+    private int getStructOffset( int index )
+    {
+        return ( 4 * ( _iMac + 1 ) ) + ( _cbStruct * index );
+    }
 }

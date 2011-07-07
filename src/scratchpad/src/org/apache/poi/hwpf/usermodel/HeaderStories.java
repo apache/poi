@@ -50,12 +50,32 @@ public final class HeaderStories {
 			return;
 		}
 
-		// Handle the PlcfHdd
-		plcfHdd = new PlexOfCps(
-				doc.getTableStream(), fib.getPlcfHddOffset(),
-				fib.getPlcfHddSize(), 0
-		);
-	}
+        // Handle the PlcfHdd
+        /*
+         * Page 88:
+         * 
+         * "The plcfhdd, a table whose location and length within the file is
+         * stored in fib.fcPlcfhdd and fib.cbPlcfhdd, describes where the text
+         * of each header/footer begins. If there are n headers/footers stored
+         * in the Word file, the plcfhdd consists of n+2 CP entries. The
+         * beginning CP of the ith header/footer is the ith CP in the plcfhdd.
+         * The limit CP (the CP of character 1 position past the end of a
+         * header/footer) of the ith header/footer is the i+1st CP in the
+         * plcfhdd. Note: at the limit CP - 1, Word always places a chEop as a
+         * placeholder which is never displayed as part of the header/footer.
+         * This allows Word to change an existing header/footer to be empty.
+         * 
+         * If there are n header/footers, the n+2nd CP entry value is always 1
+         * greater than the n+1st CP entry value. A paragraph end (ASCII 13) is
+         * always stored at the file position marked by the n+1st CP value.
+         * 
+         * The transformation in a full saved file from a header/footer CP to an
+         * offset from the beginning of a file (fc) is
+         * fc=fib.fcMin+ccpText+ccpFtn+cp."
+         */
+        plcfHdd = new PlexOfCps( doc.getTableStream(), fib.getPlcfHddOffset(),
+                fib.getPlcfHddSize(), 0 );
+    }
 
 	public String getFootnoteSeparator() {
 		return getAt(0);
