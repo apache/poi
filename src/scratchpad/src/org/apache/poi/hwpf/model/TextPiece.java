@@ -141,7 +141,10 @@ public final class TextPiece extends PropertyNode<TextPiece>
 		   /* find where the deleted area overlaps with this text piece */
 		   int overlapStart = Math.max(myStart, start);
 		   int overlapEnd = Math.min(myEnd, end);
-		   ((StringBuffer)_buf).delete(overlapStart, overlapEnd);
+
+		   int bufStart = overlapStart - myStart;
+		   int bufEnd = overlapEnd - myStart;
+		   ((StringBuffer)_buf).delete(bufStart, bufEnd);
 	   }
 
 	   // We need to invoke this even if text from this piece is not being
