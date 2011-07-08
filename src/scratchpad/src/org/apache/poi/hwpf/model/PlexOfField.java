@@ -51,10 +51,11 @@ public class PlexOfField
   public FieldDescriptor getFld() {
       return fld;
   }
-  
-  public String toString() {
-      return MessageFormat.format( "[{0}, {1}) - {2}", 
-              fcStart, fcEnd, fld.toString() );
-      
-  }
+
+    public String toString()
+    {
+        return MessageFormat.format( "[{0}, {1}) - FLD - 0x{2}; 0x{3}", fcStart,
+                fcEnd, Integer.toHexString( 0xff & fld.getBoundaryType() ),
+                Integer.toHexString( 0xff & fld.getFlt() ) );
+    }
 }

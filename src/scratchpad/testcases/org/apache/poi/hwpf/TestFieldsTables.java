@@ -21,71 +21,87 @@ package org.apache.poi.hwpf;
 
 import java.util.ArrayList;
 
+import org.apache.poi.hwpf.model.FieldDescriptor;
+
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
 
 /**
- * Test case for the fields tables, this test is based on the test-fields.doc file
- * instead of the usual test.doc.
+ * Test case for the fields tables, this test is based on the test-fields.doc
+ * file instead of the usual test.doc.
  * 
  * @author Cedric Bosdonnat <cbosdonnat@novell.com>
- *
+ * 
  */
 public class TestFieldsTables extends HWPFTestCase
 {
-  private static final int ALL_TYPES[] = {
-      FieldsTables.PLCFFLDATN,
-      FieldsTables.PLCFFLDEDN,
-      FieldsTables.PLCFFLDFTN,
-      FieldsTables.PLCFFLDHDR,
-      FieldsTables.PLCFFLDHDRTXBX,
-      FieldsTables.PLCFFLDMOM,
-      FieldsTables.PLCFFLDTXBX
-  };
-  
-  private static final String EXPECTED[] = {
-      "[19, 43) - FLD - 0x13 type: 31\n[43, 54) - FLD - 0x14\n[54, 59) - FLD - 0x15 flags: 0x81\n",
-      "[31, 59) - FLD - 0x13 type: 69\n[59, 61) - FLD - 0x14\n[61, 66) - FLD - 0x15 flags: 0x80\n",
-      "[23, 49) - FLD - 0x13 type: 17\n[49, 64) - FLD - 0x14\n[64, 69) - FLD - 0x15 flags: 0x80\n",
-      "[18, 42) - FLD - 0x13 type: 33\n[42, 44) - FLD - 0x14\n[44, 47) - FLD - 0x15 flags: 0x81\n" +
-        "[47, 75) - FLD - 0x13 type: 29\n[75, 85) - FLD - 0x14\n[85, 91) - FLD - 0x15 flags: 0x81\n",
-      "[30, 54) - FLD - 0x13 type: 32\n[54, 62) - FLD - 0x14\n[62, 68) - FLD - 0x15 flags: 0x81\n",
-      "[1, 31) - FLD - 0x13 type: 21\n[31, 51) - FLD - 0x14\n[51, 541) - FLD - 0x15 flags: 0x81\n",
-      "[19, 47) - FLD - 0x13 type: 25\n[47, 49) - FLD - 0x14\n[49, 55) - FLD - 0x15 flags: 0x81\n"
-  };
-  
-  public TestFieldsTables()
-  {
-  }
-  
-  protected String getTestFile()
-  {
-    return "test-fields.doc";
-  }
-  
-  public void testReadFields()
-  {
-    FileInformationBlock fib = _hWPFDocFixture._fib;
-    byte[] tableStream = _hWPFDocFixture._tableStream;
-    
-    FieldsTables fieldsTables = new FieldsTables(tableStream, fib);
-    
-    for (int i = 0; i < ALL_TYPES.length; i++)
-    {
-      ArrayList<PlexOfField> fieldsPlexes = fieldsTables.getFieldsPLCF( ALL_TYPES[i] );
-      String result = dumpPlexes(fieldsPlexes);
-      assertEquals(EXPECTED[i], result);
-    }
-  }
+    private static final int ALL_TYPES[] = { FieldsTables.PLCFFLDATN,
+            FieldsTables.PLCFFLDEDN, FieldsTables.PLCFFLDFTN,
+            FieldsTables.PLCFFLDHDR, FieldsTables.PLCFFLDHDRTXBX,
+            FieldsTables.PLCFFLDMOM, FieldsTables.PLCFFLDTXBX };
 
-  private String dumpPlexes(ArrayList<PlexOfField> fieldsPlexes)
-  {
-    String dump = new String();
-    for ( int i=0; i<fieldsPlexes.size(); i++)
+    private static final String EXPECTED[] = {
+
+            "[19, 43) - FLD - 0x13; 0x1f\n" + "[43, 54) - FLD - 0x14; 0xff\n"
+                    + "[54, 59) - FLD - 0x15; 0x81\n",
+
+            "[31, 59) - FLD - 0x13; 0x45\n" + "[59, 61) - FLD - 0x14; 0xff\n"
+                    + "[61, 66) - FLD - 0x15; 0x80\n",
+
+            "[23, 49) - FLD - 0x13; 0x11\n" + "[49, 64) - FLD - 0x14; 0xff\n"
+                    + "[64, 69) - FLD - 0x15; 0x80\n",
+
+            "[18, 42) - FLD - 0x13; 0x21\n" + "[42, 44) - FLD - 0x14; 0xff\n"
+                    + "[44, 47) - FLD - 0x15; 0x81\n"
+                    + "[47, 75) - FLD - 0x13; 0x1d\n"
+                    + "[75, 85) - FLD - 0x14; 0xff\n"
+                    + "[85, 91) - FLD - 0x15; 0x81\n",
+
+            "[30, 54) - FLD - 0x13; 0x20\n" + "[54, 62) - FLD - 0x14; 0xff\n"
+                    + "[62, 68) - FLD - 0x15; 0x81\n",
+
+            "[1, 31) - FLD - 0x13; 0x15\n" + "[31, 51) - FLD - 0x14; 0xff\n"
+                    + "[51, 541) - FLD - 0x15; 0x81\n",
+
+            "[19, 47) - FLD - 0x13; 0x19\n" + "[47, 49) - FLD - 0x14; 0xff\n"
+                    + "[49, 55) - FLD - 0x15; 0x81\n"
+
+    };
+
+    public TestFieldsTables()
     {
-      dump += fieldsPlexes.get(i).toString() + "\n";
     }
-    return dump;
-  }
+
+    protected String getTestFile()
+    {
+        return "test-fields.doc";
+    }
+
+    public void testReadFields()
+    {
+        FileInformationBlock fib = _hWPFDocFixture._fib;
+        byte[] tableStream = _hWPFDocFixture._tableStream;
+
+        FieldsTables fieldsTables = new FieldsTables( tableStream, fib );
+
+        for ( int i = 0; i < ALL_TYPES.length; i++ )
+        {
+            ArrayList<PlexOfField> fieldsPlexes = fieldsTables
+                    .getFieldsPLCF( ALL_TYPES[i] );
+            String result = dumpPlexes( fieldsPlexes );
+            assertEquals( EXPECTED[i], result );
+        }
+    }
+
+    private String dumpPlexes( ArrayList<PlexOfField> fieldsPlexes )
+    {
+        StringBuilder dump = new StringBuilder();
+        for ( int i = 0; i < fieldsPlexes.size(); i++ )
+        {
+            final PlexOfField flds = fieldsPlexes.get( i );
+            dump.append( flds.toString() + "\n" );
+        }
+        return dump.toString();
+    }
 }
