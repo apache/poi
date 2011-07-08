@@ -100,10 +100,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
     protected List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
     protected Map<Long, List<XWPFPictureData>> packagePictures = new HashMap<Long, List<XWPFPictureData>>();
-    protected Map<Integer, XWPFFootnote> footnotes = new HashMap<Integer, XWPFFootnote>();
     protected Map<Integer, XWPFFootnote> endnotes = new HashMap<Integer, XWPFFootnote>();
     protected XWPFNumbering numbering;
     protected XWPFStyles styles;
+    protected XWPFFootnotes footnotes;
 
     /** Handles the joy of different headers/footers for different pages */
     private XWPFHeaderFooterPolicy headerFooterPolicy;
@@ -212,22 +212,24 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     private void initFootnotes() throws XmlException, IOException {
-        for(POIXMLDocumentPart p : getRelations()){
-            String relation = p.getPackageRelationship().getRelationshipType();
-            if(relation.equals(XWPFRelation.FOOTNOTE.getRelation())){
-                FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+       for(POIXMLDocumentPart p : getRelations()){
+          String relation = p.getPackageRelationship().getRelationshipType();
+          if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
+             FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+             this.footnotes = (XWPFFootnotes)p;
+             this.footnotes.onDocumentRead();
 
-                for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteList()) {
-                    footnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
-                }
-            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
-                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+             for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteList()) {
+                footnotes.addFootnote(ctFtnEdn);
+             }
+          } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
+             EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
 
-                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteList()) {
-                    endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
-                }
-            }
-        }
+             for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteList()) {
+                endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
+             }
+          }
+       }
     }
 
     /**
@@ -349,15 +351,15 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFFootnote getFootnoteByID(int id) {
-        return footnotes.get(id);
+        return footnotes.getFootnoteById(id);
     }
 
     public XWPFFootnote getEndnoteByID(int id) {
         return endnotes.get(id);
     }
 
-    public Collection<XWPFFootnote> getFootnotes() {
-        return Collections.unmodifiableCollection(footnotes == null ? new ArrayList<XWPFFootnote>() : footnotes.values());
+    public List<XWPFFootnote> getFootnotes() {
+		return footnotes.getFootnotesList();
     }
 
     public XWPFHyperlink[] getHyperlinks() {
@@ -745,14 +747,30 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
        return styles;
     }
 
+    /**
+     * Creates an empty footnotes element for the document if one does not already exist
+     * @return footnotes
+     */
+    public XWPFFootnotes createFootnotes() {
+       if(footnotes == null) {
+          FootnotesDocument footnotesDoc = FootnotesDocument.Factory.newInstance();
 
-    public XWPFFootnote addEndnote(CTFtnEdn note) {
-       XWPFFootnote footnote = new XWPFFootnote(this, note); 
-       footnotes.put(note.getId().intValue(), footnote);
-       return footnote;
+          XWPFRelation relation = XWPFRelation.FOOTNOTE;
+          int i = getRelationIndex(relation);
+
+          XWPFFootnotes wrapper = (XWPFFootnotes)createRelationship(relation, XWPFFactory.getInstance(), i);
+          wrapper.setFootnotes(footnotesDoc.addNewFootnotes());
+          footnotes = wrapper;
+       }
+
+       return footnotes;
     }
 
     public XWPFFootnote addFootnote(CTFtnEdn note) {
+       return footnotes.addFootnote(note);
+    }
+
+    public XWPFFootnote addEndnote(CTFtnEdn note) {
        XWPFFootnote endnote = new XWPFFootnote(this, note); 
        endnotes.put(note.getId().intValue(), endnote);
        return endnote;
