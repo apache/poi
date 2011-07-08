@@ -18,7 +18,6 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.List;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,6 +33,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.Table;
@@ -226,18 +226,17 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     .addDescription( summaryInformation.getComments() );
     }
 
+    @Override
     protected void processHyperlink( HWPFDocumentCore wordDocument,
-            Element currentBlock, Paragraph paragraph,
-            List<CharacterRun> characterRuns, int currentTableLevel,
-            String hyperlink, int beginTextInclusive, int endTextExclusive )
+            Element currentBlock, Range textRange, int currentTableLevel,
+            String hyperlink )
     {
         Element basicLink = htmlDocumentFacade.createHyperlink( hyperlink );
         currentBlock.appendChild( basicLink );
 
-        if ( beginTextInclusive < endTextExclusive )
-            processCharacters( wordDocument, currentTableLevel, paragraph,
-                    basicLink, characterRuns, beginTextInclusive,
-                    endTextExclusive );
+        if ( textRange != null )
+            processCharacters( wordDocument, currentTableLevel, textRange,
+                    basicLink );
     }
 
     /**
@@ -266,17 +265,15 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     protected void processPageref( HWPFDocumentCore hwpfDocument,
-            Element currentBlock, Paragraph paragraph,
-            List<CharacterRun> characterRuns, int currentTableLevel,
-            String pageref, int beginTextInclusive, int endTextExclusive )
+            Element currentBlock, Range textRange, int currentTableLevel,
+            String pageref )
     {
         Element basicLink = htmlDocumentFacade.createHyperlink( "#" + pageref );
         currentBlock.appendChild( basicLink );
 
-        if ( beginTextInclusive < endTextExclusive )
-            processCharacters( hwpfDocument, currentTableLevel, paragraph,
-                    basicLink, characterRuns, beginTextInclusive,
-                    endTextExclusive );
+        if ( textRange != null )
+            processCharacters( hwpfDocument, currentTableLevel, textRange,
+                    basicLink );
     }
 
     protected void processParagraph( HWPFDocumentCore hwpfDocument,
@@ -322,10 +319,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 pElement.appendChild( textNode );
             }
 
-            List<CharacterRun> characterRuns = WordToHtmlUtils
-                    .findCharacterRuns( paragraph );
             processCharacters( hwpfDocument, currentTableLevel, paragraph,
-                    pElement, characterRuns, 0, characterRuns.size() );
+                    pElement );
         }
         finally
         {

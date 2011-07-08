@@ -16,13 +16,16 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.poi.ss.formula.functions.Match;
 
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.model.Field;
+import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
@@ -55,14 +58,16 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun, String text );
 
     protected boolean processCharacters( HWPFDocumentCore hwpfDocument,
-            int currentTableLevel, Paragraph paragraph, final Element block,
-            List<CharacterRun> characterRuns, final int start, final int end )
+            int currentTableLevel, Range range, final Element block )
     {
+        if (range == null)
+            return false;
+
         boolean haveAnyText = false;
 
-        for ( int c = start; c < end; c++ )
+        for ( int c = 0; c < range.numCharacterRuns(); c++ )
         {
-            CharacterRun characterRun = characterRuns.get( c );
+            CharacterRun characterRun = range.getCharacterRun( c );
 
             if ( characterRun == null )
                 throw new AssertionError();
@@ -86,8 +91,23 @@ public abstract class AbstractWordConverter
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
             {
-                int skipTo = tryField( hwpfDocument, paragraph,
-                        currentTableLevel, characterRuns, c, block );
+                if ( hwpfDocument instanceof HWPFDocument )
+                {
+                    Field aliveField = ( (HWPFDocument) hwpfDocument )
+                            .getFieldsTables().lookupFieldByStartOffset(
+                                    FieldsTables.PLCFFLDMOM,
+                                    characterRun.getStartOffset() );
+                    if ( aliveField != null )
+                    {
+                        processField( ( (HWPFDocument) hwpfDocument ), range,
+                                currentTableLevel, aliveField, block );
+                        c = aliveField.getEndOffset();
+                        continue;
+                    }
+                }
+
+                int skipTo = tryDeadField( hwpfDocument, range,
+                        currentTableLevel, c, block );
 
                 if ( skipTo != c )
                 {
@@ -145,91 +165,48 @@ public abstract class AbstractWordConverter
     protected abstract void processDocumentInformation(
             SummaryInformation summaryInformation );
 
-    protected void processField( HWPFDocumentCore wordDocument,
-            Element currentBlock, Paragraph paragraph, int currentTableLevel,
-            List<CharacterRun> characterRuns, int beginMark, int separatorMark,
-            int endMark )
+    protected void processDeadField( HWPFDocumentCore wordDocument,
+            Element currentBlock, Range range, int currentTableLevel,
+            int beginMark, int separatorMark, int endMark )
     {
-
-        Pattern hyperlinkPattern = Pattern
-                .compile( "[ \\t\\r\\n]*HYPERLINK \"(.*)\"[ \\t\\r\\n]*" );
-        Pattern pagerefPattern = Pattern
-                .compile( "[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h[ \\t\\r\\n]*" );
-
-        if ( separatorMark - beginMark > 1 )
-        {
-            int index = beginMark + 1;
-            CharacterRun firstAfterBegin = null;
-            while ( index < separatorMark )
-            {
-                firstAfterBegin = paragraph.getCharacterRun( index );
-                if ( firstAfterBegin == null )
-                {
-                    logger.log( POILogger.WARN,
-                            "Paragraph " + paragraph.getStartOffset() + "--"
-                                    + paragraph.getEndOffset()
-                                    + " contains null CharacterRun #" + index );
-                    index++;
-                    continue;
-                }
-                break;
-            }
-
-            if ( firstAfterBegin != null )
-            {
-                final Matcher hyperlinkMatcher = hyperlinkPattern
-                        .matcher( firstAfterBegin.text() );
-                if ( hyperlinkMatcher.matches() )
-                {
-                    String hyperlink = hyperlinkMatcher.group( 1 );
-                    processHyperlink( wordDocument, currentBlock, paragraph,
-                            characterRuns, currentTableLevel, hyperlink,
-                            separatorMark + 1, endMark );
-                    return;
-                }
-
-                final Matcher pagerefMatcher = pagerefPattern
-                        .matcher( firstAfterBegin.text() );
-                if ( pagerefMatcher.matches() )
-                {
-                    String pageref = pagerefMatcher.group( 1 );
-                    processPageref( wordDocument, currentBlock, paragraph,
-                            characterRuns, currentTableLevel, pageref,
-                            separatorMark + 1, endMark );
-                    return;
-                }
-            }
-        }
-
         StringBuilder debug = new StringBuilder( "Unsupported field type: \n" );
         for ( int i = beginMark; i <= endMark; i++ )
         {
             debug.append( "\t" );
-            debug.append( paragraph.getCharacterRun( i ) );
+            debug.append( range.getCharacterRun( i ) );
             debug.append( "\n" );
         }
         logger.log( POILogger.WARN, debug );
 
+        Range deadFieldValueSubrage = new Range( range.getCharacterRun(
+                separatorMark ).getStartOffset() + 1, range.getCharacterRun(
+                endMark ).getStartOffset(), range )
+        {
+            @Override
+            public String toString()
+            {
+                return "DeadFieldValueSubrange (" + super.toString() + ")";
+            }
+        };
+
         // just output field value
         if ( separatorMark + 1 < endMark )
-            processCharacters( wordDocument, currentTableLevel, paragraph,
-                    currentBlock, characterRuns, separatorMark + 1, endMark );
+            processCharacters( wordDocument, currentTableLevel,
+                    deadFieldValueSubrage, currentBlock );
 
         return;
     }
 
     protected abstract void processHyperlink( HWPFDocumentCore wordDocument,
-            Element currentBlock, Paragraph paragraph,
-            List<CharacterRun> characterRuns, int currentTableLevel,
-            String hyperlink, int i, int endMark );
+            Element currentBlock, Range textRange, int currentTableLevel,
+            String hyperlink );
 
     protected abstract void processImage( Element currentBlock,
             boolean inlined, Picture picture );
 
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
-            Element currentBlock, Paragraph paragraph,
-            List<CharacterRun> characterRuns, int currentTableLevel,
-            String pageref, int beginTextInclusive, int endTextExclusive );
+            Element currentBlock, Range textRange, int currentTableLevel,
+            String pageref );
 
     protected abstract void processParagraph( HWPFDocumentCore wordDocument,
             Element parentFopElement, int currentTableLevel,
@@ -317,19 +294,106 @@ public abstract class AbstractWordConverter
     protected abstract void processTable( HWPFDocumentCore wordDocument,
             Element flow, Table table );
 
-    protected int tryField( HWPFDocumentCore wordDocument, Paragraph paragraph,
-            int currentTableLevel, List<CharacterRun> characterRuns,
-            int beginMark, Element currentBlock )
+    protected Field processField( HWPFDocumentCore wordDocument,
+            Range charactersRange, int currentTableLevel, int startOffset,
+            Element currentBlock )
+    {
+        if ( !( wordDocument instanceof HWPFDocument ) )
+            return null;
+
+        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
+        Field field = hwpfDocument.getFieldsTables().lookupFieldByStartOffset(
+                FieldsTables.PLCFFLDMOM, startOffset );
+        if ( field == null )
+            return null;
+
+        processField( hwpfDocument, charactersRange, currentTableLevel, field,
+                currentBlock );
+
+        return field;
+    }
+
+    protected void processField( HWPFDocument hwpfDocument, Range parentRange,
+            int currentTableLevel, Field field, Element currentBlock )
+    {
+        switch ( field.getType() )
+        {
+        case 37: // page reference
+        {
+            final Range firstSubrange = field.firstSubrange( parentRange );
+            if ( firstSubrange != null )
+            {
+                String formula = firstSubrange.text();
+                Pattern pagerefPattern = Pattern
+                        .compile( "[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h[ \\t\\r\\n]*" );
+                Matcher matcher = pagerefPattern.matcher( formula );
+                if ( matcher.find() )
+                {
+                    String pageref = matcher.group( 1 );
+                    processPageref( hwpfDocument, currentBlock,
+                            field.secondSubrange( parentRange ),
+                            currentTableLevel, pageref );
+                    return;
+                }
+            }
+            break;
+        }
+        case 88: // hyperlink
+        {
+            final Range firstSubrange = field.firstSubrange( parentRange );
+            if ( firstSubrange != null )
+            {
+                String formula = firstSubrange.text();
+                Pattern hyperlinkPattern = Pattern
+                        .compile( "[ \\t\\r\\n]*HYPERLINK \"(.*)\"[ \\t\\r\\n]*" );
+                Matcher matcher = hyperlinkPattern.matcher( formula );
+                if ( matcher.find() )
+                {
+                    String hyperlink = matcher.group( 1 );
+                    processHyperlink( hwpfDocument, currentBlock,
+                            field.secondSubrange( parentRange ),
+                            currentTableLevel, hyperlink );
+                    return;
+                }
+            }
+            break;
+        }
+        }
+
+        logger.log( POILogger.WARN, parentRange + " contains " + field
+                + " with unsupported type or format" );
+        processCharacters( hwpfDocument, currentTableLevel,
+                field.secondSubrange( parentRange ), currentBlock );
+    }
+
+    protected int tryDeadField( HWPFDocumentCore wordDocument, Range range,
+            int currentTableLevel, int beginMark, Element currentBlock )
     {
         int separatorMark = -1;
         int endMark = -1;
-        for ( int c = beginMark + 1; c < paragraph.numCharacterRuns(); c++ )
+        for ( int c = beginMark + 1; c < range.numCharacterRuns(); c++ )
         {
-            CharacterRun characterRun = paragraph.getCharacterRun( c );
+            CharacterRun characterRun = range.getCharacterRun( c );
 
             String text = characterRun.text();
             if ( text.getBytes().length == 0 )
                 continue;
+
+            if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
+            {
+                // nested?
+                Field possibleField = processField( wordDocument, range,
+                        currentTableLevel, characterRun.getStartOffset(),
+                        currentBlock );
+                if ( possibleField != null )
+                {
+                    c = possibleField.getEndOffset();
+                }
+                else
+                {
+                    continue;
+                }
+            }
 
             if ( text.getBytes()[0] == FIELD_SEPARATOR_MARK )
             {
@@ -360,8 +424,8 @@ public abstract class AbstractWordConverter
         if ( separatorMark == -1 || endMark == -1 )
             return beginMark;
 
-        processField( wordDocument, currentBlock, paragraph, currentTableLevel,
-                characterRuns, beginMark, separatorMark, endMark );
+        processDeadField( wordDocument, currentBlock, range, currentTableLevel,
+                beginMark, separatorMark, endMark );
 
         return endMark;
     }
