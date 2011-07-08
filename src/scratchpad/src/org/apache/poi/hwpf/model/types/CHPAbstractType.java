@@ -859,7 +859,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word‘s default character set.
+     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word's default character set.
      */
     public short getChse()
     {
@@ -867,7 +867,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word‘s default character set.
+     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word's default character set.
      */
     public void setChse(short field_35_chse)
     {
