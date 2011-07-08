@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -33,6 +31,8 @@ import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.hwpf.model.FieldsTables;
+import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.util.IOUtils;
 
@@ -548,8 +548,14 @@ public final class TestProblems extends HWPFTestCase {
             assertEquals( text1.replaceAll( "\n", "" ),
                     text2.replaceAll( "\n", "" ) );
 
-            // no, it is not fixed yet :(
-            // text is the same, but field information is not preserved
+            List<PlexOfField> expectedFields = doc1.getFieldsTables()
+                    .getFieldsPLCF( FieldsTables.PLCFFLDMOM );
+            List<PlexOfField> actualFields = doc2.getFieldsTables()
+                    .getFieldsPLCF( FieldsTables.PLCFFLDMOM );
+
+            assertEquals( expectedFields.size(), actualFields.size() );
+
+            fixed("47286");
         }
         catch ( AssertionFailedError exc )
         {
