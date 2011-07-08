@@ -146,4 +146,12 @@ public final class PlexOfCps
     {
         return ( 4 * ( _iMac + 1 ) ) + ( _cbStruct * index );
     }
+
+    GenericPropertyNode[] toPropertiesArray()
+    {
+        if ( _props == null || _props.isEmpty() )
+            return new GenericPropertyNode[0];
+
+        return _props.toArray( new GenericPropertyNode[_props.size()] );
+    }
 }
