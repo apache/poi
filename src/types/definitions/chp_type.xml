@@ -98,7 +98,7 @@
         <bit number="6" mask="0x0040" name="fForcedCvAuto" description="Used internally by Word"/>
       </field>
       <!-- Not documented, but referenced by sprmCChs -->
-      <field type="short" size="2" name="chse" description="used to record a character set id for text that was pasted into the Word document that used a character set different than Word‘s default character set"/>
+      <field type="short" size="2" name="chse" description="used to record a character set id for text that was pasted into the Word document that used a character set different than Word's default character set"/>
       <field type="short" size="2" name="fPropMark"/>
       <field type="int" size="2" name="ibstPropRMark"/>
       <field type="DateAndTime" size="4" name="dttmPropRMark"/>
