@@ -46,9 +46,23 @@ public class PAPBinTable
   {
   }
 
-  public PAPBinTable(byte[] documentStream, byte[] tableStream, byte[] dataStream, int offset,
-                     int size, int fcMin, TextPieceTable tpt)
-  {
+    /**
+     * @deprecated Use
+     *             {@link #PAPBinTable(byte[],byte[],byte[],int,int,int,TextPieceTable,boolean)}
+     *             instead
+     */
+    public PAPBinTable( byte[] documentStream, byte[] tableStream,
+            byte[] dataStream, int offset, int size, int fcMin,
+            TextPieceTable tpt )
+    {
+        this( documentStream, tableStream, dataStream, offset, size, fcMin,
+                tpt, true );
+    }
+
+    public PAPBinTable( byte[] documentStream, byte[] tableStream,
+            byte[] dataStream, int offset, int size, int fcMin,
+            TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
+    {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
     this.tpt = tpt;
 
@@ -70,7 +84,7 @@ public class PAPBinTable
     	PAPX papx = pfkp.getPAPX(y);
 
     	//we don't need PAPX if they are references nowhere
-    	if (tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
+    	if (!ignorePapxWithoutTextPieces || tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
     	    _paragraphs.add(papx);
       }
     }
@@ -241,7 +255,4 @@ public class PAPBinTable
     while (overflow != null);
     tableStream.write(binTable.toByteArray());
   }
-
-
 }
-
