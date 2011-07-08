@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.OutputStream;
@@ -34,7 +36,21 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  */
 public class CHPBinTable
 {
-  /** List of character properties.*/
+
+    private static final class CHPXStartComparator implements Comparator<CHPX>
+    {
+        static CHPXStartComparator instance = new CHPXStartComparator();
+
+        public int compare( CHPX o1, CHPX o2 )
+        {
+            int thisVal = o1.getStart();
+            int anotherVal = o2.getEnd();
+            return ( thisVal < anotherVal ? -1 : ( thisVal == anotherVal ? 0
+                    : 1 ) );
+        }
+    }
+
+/** List of character properties.*/
   protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
 
   /** So we can know if things are unicode or not */
@@ -74,10 +90,13 @@ public class CHPBinTable
 
       for (int y = 0; y < fkpSize; y++)
       {
-        _textRuns.add(cfkp.getCHPX(y));
+        final CHPX chpx = cfkp.getCHPX(y);
+        if (chpx != null)
+            _textRuns.add(chpx);
       }
     }
-  }
+        Collections.sort( _textRuns, CHPXStartComparator.instance );
+    }
 
   public void adjustForDelete(int listIndex, int offset, int length)
   {
