@@ -498,12 +498,16 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         return tableRow.getTableCell(cell);
     }
 
+    public void setXWPFDocument(XWPFDocument doc) {
+       document = doc;
+    }
+
     public XWPFDocument getXWPFDocument() {
-        if (document!=null) {
-            return document;
-        } else {
-            return (XWPFDocument)getParent();
-        }
+       if (document!=null) {
+          return document;
+       } else {
+          return (XWPFDocument)getParent();
+       }
     }
 
     /**
