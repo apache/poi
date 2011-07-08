@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import java.lang.Iterable;
 import java.util.Iterator;
 
 /**
@@ -177,6 +176,25 @@ public interface Row extends Iterable<Cell> {
      */
     float getHeightInPoints();
 
+    /**
+     * Is this row formatted? Most aren't, but some rows
+     *  do have whole-row styles. For those that do, you
+     *  can get the formatting from {@link #getRowStyle()}
+     */
+    boolean isFormatted();
+    
+    /**
+     * Returns the whole-row cell styles. Most rows won't
+     *  have one of these, so will return null. Call
+     *  {@link #isFormatted()} to check first.
+     */
+    CellStyle getRowStyle();
+    
+    /**
+     * Applies a whole-row cell styling to the row.
+     */
+    void setRowStyle(CellStyle style);
+    
     /**
      * @return Cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!

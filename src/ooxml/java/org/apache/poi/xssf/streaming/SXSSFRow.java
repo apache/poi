@@ -17,12 +17,14 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -34,6 +36,7 @@ public class SXSSFRow implements Row
     SXSSFSheet _sheet;
     SXSSFCell[] _cells;
     int _maxColumn=-1;
+    short _style=-1;
     short _height=-1;
     boolean _zHeight = false;
 
@@ -329,6 +332,37 @@ public class SXSSFRow implements Row
     public float getHeightInPoints()
     {
         return (float)(_height==-1?getSheet().getDefaultRowHeightInPoints():(float)_height/20.0);
+    }
+    
+    /**
+     * Is this row formatted? Most aren't, but some rows
+     *  do have whole-row styles. For those that do, you
+     *  can get the formatting from {@link #getRowStyle()}
+     */
+    public boolean isFormatted() {
+        return _style > -1;
+    }
+    /**
+     * Returns the whole-row cell style. Most rows won't
+     *  have one of these, so will return null. Call
+     *  {@link #isFormatted()} to check first.
+     */
+    public CellStyle getRowStyle() {
+       if(!isFormatted()) return null;
+       
+       return getSheet().getWorkbook().getCellStyleAt(_style);
+    }
+    
+    /**
+     * Applies a whole-row cell styling to the row.
+     */
+    public void setRowStyle(CellStyle style) {
+       if(style == null) {
+          _style = -1;
+          return;
+       } else {
+          _style = style.getIndex();
+       }
     }
 
     /**

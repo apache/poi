@@ -386,4 +386,42 @@ public abstract class BaseTestRow extends TestCase {
         assertTrue(cell2 == it.next());
         assertEquals(Cell.CELL_TYPE_STRING, cell5.getCellType());
     }
+    
+    public void testRowStyle() {
+       Workbook workbook = _testDataProvider.createWorkbook();
+       Sheet sheet = workbook.createSheet("test");
+       Row row1 = sheet.createRow(0);
+       Row row2 = sheet.createRow(1);
+       
+       // Won't be styled currently
+       assertEquals(false, row1.isFormatted());
+       assertEquals(false, row2.isFormatted());
+       assertEquals(null, row1.getRowStyle());
+       assertEquals(null, row2.getRowStyle());
+       
+       // Style one
+       CellStyle style = workbook.createCellStyle();
+       style.setDataFormat((short)4);
+       row2.setRowStyle(style);
+       
+       // Check
+       assertEquals(false, row1.isFormatted());
+       assertEquals(true, row2.isFormatted());
+       assertEquals(null, row1.getRowStyle());
+       assertEquals(style, row2.getRowStyle());
+       
+       // Save, load and re-check
+       workbook = _testDataProvider.writeOutAndReadBack(workbook);
+       sheet = workbook.getSheetAt(0);
+
+       row1 = sheet.getRow(0);
+       row2 = sheet.getRow(1);
+       style = workbook.getCellStyleAt(style.getIndex());
+       
+       assertEquals(false, row1.isFormatted());
+       assertEquals(true, row2.isFormatted());
+       assertEquals(null, row1.getRowStyle());
+       assertEquals(style, row2.getRowStyle());
+       assertEquals(4, style.getDataFormat());
+    }
 }
