@@ -550,6 +550,9 @@ public final class TestProblems extends HWPFTestCase {
             assertEquals( text1.replaceAll( "\n", "" ),
                     text2.replaceAll( "\n", "" ) );
 
+            assertEquals( doc1.getCharacterTable().getTextRuns().size(), doc2
+                    .getCharacterTable().getTextRuns().size() );
+
             List<PlexOfField> expectedFields = doc1.getFieldsTables()
                     .getFieldsPLCF( FieldsTables.PLCFFLDMOM );
             List<PlexOfField> actualFields = doc2.getFieldsTables()
@@ -558,13 +561,17 @@ public final class TestProblems extends HWPFTestCase {
 
             assertTableStructures( doc1.getRange(), doc2.getRange() );
 
-            // no, it still not fixed, need to figure what is the difference in
-            // document
-            // fixed( "47286" );
+            // FileOutputStream fileOutputStream = new FileOutputStream(
+            // "test.doc" );
+            // doc1.write( fileOutputStream );
+            // fileOutputStream.close();
+
+            fixed( "47286" );
         }
         catch ( AssertionFailedError exc )
         {
             // expected
+            exc.toString();
         }
     }
 
