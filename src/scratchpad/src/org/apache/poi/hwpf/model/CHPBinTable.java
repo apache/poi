@@ -44,7 +44,7 @@ public class CHPBinTable
         public int compare( CHPX o1, CHPX o2 )
         {
             int thisVal = o1.getStart();
-            int anotherVal = o2.getEnd();
+            int anotherVal = o2.getStart();
             return ( thisVal < anotherVal ? -1 : ( thisVal == anotherVal ? 0
                     : 1 ) );
         }
