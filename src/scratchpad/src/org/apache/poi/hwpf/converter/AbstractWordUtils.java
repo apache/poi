@@ -22,19 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
-import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
@@ -53,35 +48,6 @@ public class AbstractWordUtils
     static boolean equals( String str1, String str2 )
     {
         return str1 == null ? str2 == null : str1.equals( str2 );
-    }
-
-    // XXX incorporate into Range
-    static List<CharacterRun> findCharacterRuns( Range range )
-    {
-        final int min = range.getStartOffset();
-        final int max = range.getEndOffset();
-
-        List<CharacterRun> result = new ArrayList<CharacterRun>();
-        List<CHPX> chpxs = getCharacters( range );
-        for ( int i = 0; i < chpxs.size(); i++ )
-        {
-            CHPX chpx = chpxs.get( i );
-            if ( chpx == null )
-                continue;
-
-            if ( Math.max( min, chpx.getStart() ) <= Math.min( max,
-                    chpx.getEnd() ) )
-            {
-                final CharacterRun characterRun = getCharacterRun( range, chpx );
-
-                if ( characterRun == null )
-                    continue;
-
-                result.add( characterRun );
-            }
-        }
-
-        return result;
     }
 
     public static String getBorderType( BorderCode borderCode )
@@ -194,35 +160,6 @@ public class AbstractWordUtils
         }
 
         return bulletBuffer.toString();
-    }
-
-    private static CharacterRun getCharacterRun( Range range, CHPX chpx )
-    {
-        try
-        {
-            Method method = Range.class.getDeclaredMethod( "getCharacterRun",
-                    CHPX.class );
-            method.setAccessible( true );
-            return (CharacterRun) method.invoke( range, chpx );
-        }
-        catch ( Exception exc )
-        {
-            throw new Error( exc );
-        }
-    }
-
-    private static List<CHPX> getCharacters( Range range )
-    {
-        try
-        {
-            Field field = Range.class.getDeclaredField( "_characters" );
-            field.setAccessible( true );
-            return (List<CHPX>) field.get( range );
-        }
-        catch ( Exception exc )
-        {
-            throw new Error( exc );
-        }
     }
 
     public static String getColor( int ico )
