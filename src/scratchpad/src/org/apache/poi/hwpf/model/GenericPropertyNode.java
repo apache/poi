@@ -30,5 +30,15 @@ public final class GenericPropertyNode
     return (byte[])_buf;
   }
 
-
+    @Override
+    public String toString()
+    {
+        return "GenericPropertyNode ["
+                + getStart()
+                + "; "
+                + getEnd()
+                + ") "
+                + ( getBytes() != null ? getBytes().length + " byte(s)"
+                        : "null" );
+    }
 }
