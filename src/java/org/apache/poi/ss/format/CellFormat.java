@@ -212,7 +212,7 @@ public class CellFormat {
         case Cell.CELL_TYPE_BLANK:
             return apply("");
         case Cell.CELL_TYPE_BOOLEAN:
-            return apply(c.getStringCellValue());
+            return apply(Boolean.toString(c.getBooleanCellValue()));
         case Cell.CELL_TYPE_NUMERIC:
             return apply(c.getNumericCellValue());
         case Cell.CELL_TYPE_STRING:
@@ -254,7 +254,7 @@ public class CellFormat {
         case Cell.CELL_TYPE_BLANK:
             return apply(label, "");
         case Cell.CELL_TYPE_BOOLEAN:
-            return apply(label, c.getStringCellValue());
+            return apply(Boolean.toString(c.getBooleanCellValue()));
         case Cell.CELL_TYPE_NUMERIC:
             return apply(label, c.getNumericCellValue());
         case Cell.CELL_TYPE_STRING:

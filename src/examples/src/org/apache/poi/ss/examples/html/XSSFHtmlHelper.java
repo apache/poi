@@ -58,7 +58,11 @@ public class XSSFHtmlHelper implements HtmlHelper {
         // support it will ignore the rgba specification and stick with the
         // solid color, which is declared first
         out.format("  %s: #%02x%02x%02x;%n", attr, rgb[0], rgb[1], rgb[2]);
+        byte[] argb = color.getARgb();
+        if (argb == null) {
+            return;
+        }
         out.format("  %s: rgba(0x%02x, 0x%02x, 0x%02x, 0x%02x);%n", attr,
-                rgb[0], rgb[1], rgb[2], rgb[3]);
+                argb[3], argb[0], argb[1], argb[2]);
     }
 }
