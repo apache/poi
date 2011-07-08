@@ -182,6 +182,13 @@ public class FieldsTables
                 GenericPropertyNode endNode = nodes[endNodePositionInArray];
                 PlexOfField endPlexOfField = new PlexOfField( endNode );
 
+                if ( endPlexOfField.getFld().getBoundaryType() != FieldDescriptor.FIELD_END_MARK )
+                {
+                    /* Not and ending mark */
+                    next++;
+                    continue;
+                }
+
                 Field field = new Field( startPlexOfField,
                         separatorPlexOfField, endPlexOfField );
                 result.add( field );
