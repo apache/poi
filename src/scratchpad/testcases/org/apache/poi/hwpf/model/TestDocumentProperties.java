@@ -17,11 +17,12 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
-
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
 import java.util.Arrays;
+
+import junit.framework.TestCase;
+import org.apache.poi.hwpf.HWPFDocFixture;
 
 public final class TestDocumentProperties
   extends TestCase
