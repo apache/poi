@@ -35,7 +35,9 @@ import org.apache.poi.util.BitField;
 public abstract class FLDAbstractType implements HDFType
 {
 
-    protected char field_1_ch;
+    protected byte field_1_chHolder;
+    private static BitField ch = new BitField( 0x1f );
+    private static BitField reserved = new BitField( 0xe0 );
     protected byte field_2_flt;
     private static BitField fDiffer = new BitField( 0x01 );
     private static BitField fZombieEmbed = new BitField( 0x02 );
@@ -53,18 +55,14 @@ public abstract class FLDAbstractType implements HDFType
 
     protected void fillFields( byte[] data, int offset )
     {
-        field_1_ch = (char) data[0x0 + offset];
+        field_1_chHolder = data[0x0 + offset];
         field_2_flt = data[0x1 + offset];
-
     }
 
     public void serialize( byte[] data, int offset )
     {
-        data[0x0 + offset] = (byte) field_1_ch;
-        ;
+        data[0x0 + offset] = field_1_chHolder;
         data[0x1 + offset] = field_2_flt;
-        ;
-
     }
 
     public String toString()
@@ -73,8 +71,12 @@ public abstract class FLDAbstractType implements HDFType
 
         buffer.append( "[FLD]\n" );
 
-        buffer.append( "    .ch                   = " );
-        buffer.append( " (" ).append( getCh() ).append( " )\n" );
+        buffer.append( "    .chHolder             = " );
+        buffer.append( " (" ).append( getChHolder() ).append( " )\n" );
+        buffer.append( "         .ch                       = " )
+                .append( getCh() ).append( '\n' );
+        buffer.append( "         .reserved                 = " )
+                .append( getReserved() ).append( '\n' );
 
         buffer.append( "    .flt                  = " );
         buffer.append( " (" ).append( getFlt() ).append( " )\n" );
@@ -108,21 +110,19 @@ public abstract class FLDAbstractType implements HDFType
     }
 
     /**
-     * Type of field boundary the FLD describes: 19 -- field begin mark, 20 --
-     * field separation mark; 21 -- field end mark.
+     * ch field holder (along with reserved bits).
      */
-    public char getCh()
+    public byte getChHolder()
     {
-        return field_1_ch;
+        return field_1_chHolder;
     }
 
     /**
-     * Type of field boundary the FLD describes: 19 -- field begin mark, 20 --
-     * field separation mark; 21 -- field end mark.
+     * ch field holder (along with reserved bits).
      */
-    public void setCh( char field_1_ch )
+    public void setChHolder( byte field_1_chHolder )
     {
-        this.field_1_ch = field_1_ch;
+        this.field_1_chHolder = field_1_chHolder;
     }
 
     /**
@@ -139,6 +139,48 @@ public abstract class FLDAbstractType implements HDFType
     public void setFlt( byte field_2_flt )
     {
         this.field_2_flt = field_2_flt;
+    }
+
+    /**
+     * Sets the ch field value. Type of field boundary the FLD describes: 19 --
+     * field begin mark, 20 -- field separation mark; 21 -- field end mark
+     */
+    public void setCh( byte value )
+    {
+        field_1_chHolder = (byte) ch.setValue( field_1_chHolder, value );
+
+    }
+
+    /**
+     * Type of field boundary the FLD describes: 19 -- field begin mark, 20 --
+     * field separation mark; 21 -- field end mark
+     * 
+     * @return the ch field value.
+     */
+    public byte getCh()
+    {
+        return (byte) ch.getValue( field_1_chHolder );
+
+    }
+
+    /**
+     * Sets the reserved field value. Reserved
+     */
+    public void setReserved( byte value )
+    {
+        field_1_chHolder = (byte) reserved.setValue( field_1_chHolder, value );
+
+    }
+
+    /**
+     * Reserved
+     * 
+     * @return the reserved field value.
+     */
+    public byte getReserved()
+    {
+        return (byte) reserved.getValue( field_1_chHolder );
+
     }
 
     /**
@@ -305,6 +347,5 @@ public abstract class FLDAbstractType implements HDFType
         return fHasSep.isSet( field_2_flt );
 
     }
-
 } // END OF CLASS
 

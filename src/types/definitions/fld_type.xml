@@ -28,8 +28,11 @@
         Specification [*.doc]
     </author>
     <fields>
-        <field type="char" size="1" name="ch"
-            description="Type of field boundary the FLD describes: 19 -- field begin mark, 20 -- field separation mark; 21 -- field end mark"/>
+        <field type="byte" size="1" name="chHolder" description="ch field holder (along with reserved bits)">
+            <bit number="0" mask="0x1f" name="ch"
+                description="Type of field boundary the FLD describes: 19 -- field begin mark, 20 -- field separation mark; 21 -- field end mark"/>
+            <bit number="0" mask="0xe0" name="reserved" description="Reserved"/>
+        </field>
         <field type="byte" size="1" name="flt"
             description="Field type when ch == 19 OR field flags when ch == 21 ">
             <bit number="0" mask="0x01" name="fDiffer" description="Ignored for saved file"/>
