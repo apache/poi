@@ -90,6 +90,12 @@ public class TestWordToHtmlConverter extends TestCase
                 .contains( "<meta content=\"This is document keywords\" name=\"keywords\">" ) );
     }
 
+    public void testEmailhyperlink() throws Exception
+    {
+        String result = getHtmlText( "Bug47286.doc" );
+        assertTrue( result.contains( "provisastpet@mfa.gov.cy" ) );
+    }
+
     public void testEquation() throws Exception
     {
         String result = getHtmlText( "equation.doc" );
