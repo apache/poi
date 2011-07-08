@@ -38,4 +38,22 @@ public class TestXWPFNumbering extends TestCase {
 		assertEquals(abstrNumId, compareAbstractNum);
 	}
 
+	public void testAddNumberingToDoc() throws IOException{
+		BigInteger abstractNumId = BigInteger.valueOf(1);
+		BigInteger numId = BigInteger.valueOf(1);
+
+		XWPFDocument docOut = new XWPFDocument();
+		XWPFNumbering numbering = docOut.createNumbering();
+		numId = numbering.addNum(abstractNumId);
+		
+		XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+
+		numbering = docIn.getNumbering();
+		assertTrue(numbering.numExist(numId));
+		XWPFNum num = numbering.getNum(numId);
+
+		BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
+		assertEquals(abstractNumId, compareAbstractNum);
+	}
+
 }
