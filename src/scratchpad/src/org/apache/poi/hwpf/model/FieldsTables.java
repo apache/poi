@@ -22,7 +22,6 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 /**
  * This class provides access to all the fields Plex.
  * 
@@ -31,16 +30,37 @@ import java.util.HashMap;
  */
 public class FieldsTables
 {
-  public static final int PLCFFLDATN = 0;
-  public static final int PLCFFLDEDN = 1;
-  public static final int PLCFFLDFTN = 2;
-  public static final int PLCFFLDHDR = 3;
-  public static final int PLCFFLDHDRTXBX = 4;
-  public static final int PLCFFLDMOM = 5;
-  public static final int PLCFFLDTXBX = 6;
+    /**
+     * annotation subdocument
+     */
+    public static final int PLCFFLDATN = 0;
+    /**
+     * endnote subdocument
+     */
+    public static final int PLCFFLDEDN = 1;
+    /**
+     * footnote subdocument
+     */
+    public static final int PLCFFLDFTN = 2;
+    /**
+     * header subdocument
+     */
+    public static final int PLCFFLDHDR = 3;
+    /**
+     * header textbox subdoc
+     */
+    public static final int PLCFFLDHDRTXBX = 4;
+    /**
+     * main document
+     */
+    public static final int PLCFFLDMOM = 5;
+    /**
+     * textbox subdoc
+     */
+    public static final int PLCFFLDTXBX = 6;
 
-  // The size in bytes of the FLD data structure
-  private static final int FLD_SIZE = 2;
+    // The size in bytes of the FLD data structure
+    private static final int FLD_SIZE = 2;
 
   private HashMap<Integer, ArrayList<PlexOfField>> _tables;
 
