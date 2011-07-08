@@ -1317,6 +1317,10 @@ public class SXSSFSheet implements Sheet, Cloneable
                 _out.write(" customHeight=\"true\"  ht=\""+row.getHeightInPoints()+"\"");
             if(row.getZeroHeight())
                 _out.write(" hidden=\"true\"");
+            if(row.isFormatted()) {
+                _out.write(" s=\"" + row._style + "\"");
+                _out.write(" customFormat=\"1\"");
+            }
             _out.write(">\n");
             this._rownum = rownum;
             _rowContainedNullCells=false;

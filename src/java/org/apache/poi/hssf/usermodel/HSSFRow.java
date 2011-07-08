@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.SpreadsheetVersion;
 
@@ -592,6 +593,12 @@ public final class HSSFRow implements Row {
     public void setRowStyle(HSSFCellStyle style) {
         row.setFormatted(true);
         row.setXFIndex(style.getIndex());
+    }
+    /**
+     * Applies a whole-row cell styling to the row.
+     */
+    public void setRowStyle(CellStyle style) {
+        setRowStyle((HSSFCellStyle)style);
     }
 
     /**

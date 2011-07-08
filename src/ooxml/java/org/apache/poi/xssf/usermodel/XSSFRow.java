@@ -22,12 +22,14 @@ import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -355,6 +357,53 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
     }
 
+    /**
+     * Is this row formatted? Most aren't, but some rows
+     *  do have whole-row styles. For those that do, you
+     *  can get the formatting from {@link #getRowStyle()}
+     */
+    public boolean isFormatted() {
+        return _row.isSetS();
+    }
+    /**
+     * Returns the whole-row cell style. Most rows won't
+     *  have one of these, so will return null. Call
+     *  {@link #isFormatted()} to check first.
+     */
+    public XSSFCellStyle getRowStyle() {
+       if(!isFormatted()) return null;
+       
+       StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
+       if(stylesSource.getNumCellStyles() > 0) {
+           return stylesSource.getStyleAt((int)_row.getS());
+       } else {
+          return null;
+       }
+    }
+    
+    /**
+     * Applies a whole-row cell styling to the row.
+     * If the value is null then the style information is removed,
+     *  causing the cell to used the default workbook style.
+     */
+    public void setRowStyle(CellStyle style) {
+        if(style == null) {
+           if(_row.isSetS()) {
+              _row.unsetS();
+              _row.unsetCustomFormat();
+           }
+        } else {
+            StylesTable styleSource = getSheet().getWorkbook().getStylesSource();
+            
+            XSSFCellStyle xStyle = (XSSFCellStyle)style;
+            xStyle.verifyBelongsToStylesSource(styleSource);
+
+            long idx = styleSource.putStyle(xStyle);
+            _row.setS(idx);
+            _row.setCustomFormat(true);
+        }
+    }
+    
     /**
      * Remove the Cell from this row.
      *

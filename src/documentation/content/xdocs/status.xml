@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51469 - XSSF support for row styles, to match existing HSSF functionality</action>
            <action dev="poi-developers" type="fix">51476 - Correct XSSF cell formatting in HTML export</action>
            <action dev="poi-developers" type="add">51486 - XWPF support for adding new footnotes</action>
            <action dev="poi-developers" type="fix">48065 - Problems with save output of HWPF (losing formatting)</action>
