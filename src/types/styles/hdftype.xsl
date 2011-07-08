@@ -91,7 +91,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     /**
      * Size of record (exluding 4 byte header)
      */
-    public int getSize()
+    public static int getSize()
     {
 <xsl:variable name="fieldIterator" select="field:new()"/>
 <xsl:text>        return 4 + </xsl:text>

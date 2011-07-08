@@ -102,7 +102,7 @@ public abstract class FLDAbstractType implements HDFType
     /**
      * Size of record (exluding 4 byte header)
      */
-    public int getSize()
+    public static int getSize()
     {
         return 4 + +1 + 1;
     }
