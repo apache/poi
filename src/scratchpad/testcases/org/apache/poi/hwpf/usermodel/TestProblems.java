@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -517,6 +520,27 @@ public final class TestProblems extends HWPFTestCase {
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug45473.doc");
         String text1 = new WordExtractor(doc1).getText().trim();
 
+        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
+        String text2 = new WordExtractor(doc2).getText().trim();
+
+        // the text in the saved document has some differences in line separators but we tolerate that
+        assertEquals(text1.replaceAll("\n", ""), text2.replaceAll("\n", ""));
+    }
+
+    /**
+     * Bug 47286 - Word documents saves in wrong format if source contains form elements
+     * @throws IOException 
+     */
+    public void test46286() throws IOException {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug46286.doc");
+        String text1 = new WordExtractor(doc1).getText().trim();
+
+        {
+            FileOutputStream  fileOutputStream = new FileOutputStream( new File("test.doc") );
+            doc1.write( fileOutputStream );
+            fileOutputStream.close();
+        }
+        
         HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
         String text2 = new WordExtractor(doc2).getText().trim();
 
