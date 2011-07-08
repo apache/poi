@@ -513,6 +513,12 @@ public final class HWPFDocument extends HWPFDocumentCore
     _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
+        if ( _fieldsTables != null )
+        {
+            _fieldsTables.write( _fib, tableStream );
+            tableOffset = tableStream.getOffset();
+        }
+
     // write out the list tables
     if (_lt != null)
     {
