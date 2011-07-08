@@ -25,37 +25,47 @@ import java.text.MessageFormat;
  * Structure describing the Plex for fields (contained plclfd* in the spec).
  * 
  * @author Cedric Bosdonnat <cbosdonnat@novell.com>
- *
+ * 
  */
-public class PlexOfField 
+public class PlexOfField
 {
-  private int fcStart;
-  private int fcEnd;
-  private FieldDescriptor fld;
-  
-  public PlexOfField( int fcStart, int fcEnd, byte[] data ) {
-      this.fcStart = fcStart;
-      this.fcEnd = fcEnd;
-      
-      fld = new FieldDescriptor( data );
-  }
-  
-  public int getFcStart() {
-      return fcStart;
-  }
 
-  public int getFcEnd() {
-      return fcEnd;
-  }
+    private final PropertyNode<?> propertyNode;
+    private final FieldDescriptor fld;
 
-  public FieldDescriptor getFld() {
-      return fld;
-  }
+    @Deprecated
+    public PlexOfField( int fcStart, int fcEnd, byte[] data )
+    {
+        propertyNode = new GenericPropertyNode( fcStart, fcEnd, data );
+        fld = new FieldDescriptor( data );
+    }
+
+    public PlexOfField( PropertyNode<?> propertyNode )
+    {
+        this.propertyNode = propertyNode;
+        fld = new FieldDescriptor( (byte[]) propertyNode._buf );
+    }
+
+    public int getFcStart()
+    {
+        return propertyNode.getStart();
+    }
+
+    public int getFcEnd()
+    {
+        return propertyNode.getEnd();
+    }
+
+    public FieldDescriptor getFld()
+    {
+        return fld;
+    }
 
     public String toString()
     {
-        return MessageFormat.format( "[{0}, {1}) - FLD - 0x{2}; 0x{3}", fcStart,
-                fcEnd, Integer.toHexString( 0xff & fld.getBoundaryType() ),
+        return MessageFormat.format( "[{0}, {1}) - FLD - 0x{2}; 0x{3}",
+                getFcStart(), getFcEnd(),
+                Integer.toHexString( 0xff & fld.getBoundaryType() ),
                 Integer.toHexString( 0xff & fld.getFlt() ) );
     }
 }

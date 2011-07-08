@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -552,10 +554,13 @@ public final class TestProblems extends HWPFTestCase {
                     .getFieldsPLCF( FieldsTables.PLCFFLDMOM );
             List<PlexOfField> actualFields = doc2.getFieldsTables()
                     .getFieldsPLCF( FieldsTables.PLCFFLDMOM );
-
             assertEquals( expectedFields.size(), actualFields.size() );
 
-            fixed("47286");
+            assertTableStructures( doc1.getRange(), doc2.getRange() );
+
+            // no, it still not fixed, need to figure what is the difference in
+            // document
+            // fixed( "47286" );
         }
         catch ( AssertionFailedError exc )
         {
@@ -746,6 +751,11 @@ public final class TestProblems extends HWPFTestCase {
                 expected.text().replace( "\r", "\n" ).replaceAll( "\n\n", "\n" ),
                 actual.text().replace( "\r", "\n" ).replaceAll( "\n\n", "\n" ) );
 
+        assertTableStructures( expected, actual );
+    }
+
+    private static void assertTableStructures( Range expected, Range actual )
+    {
         assertEquals( expected.numParagraphs(), actual.numParagraphs() );
         for ( int p = 0; p < expected.numParagraphs(); p++ )
         {

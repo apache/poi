@@ -19,14 +19,17 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 
 /**
  * This class provides access to all the fields Plex.
  * 
  * @author Cedric Bosdonnat <cbosdonnat@novell.com>
- *
+ * 
  */
 public class FieldsTables
 {
@@ -62,75 +65,145 @@ public class FieldsTables
     // The size in bytes of the FLD data structure
     private static final int FLD_SIZE = 2;
 
-  private HashMap<Integer, ArrayList<PlexOfField>> _tables;
+    private HashMap<Integer, PlexOfCps> _tables;
 
-  public FieldsTables(byte[] tableStream, FileInformationBlock fib)
-  {
-    _tables = new HashMap<Integer, ArrayList<PlexOfField>>();
-
-    for (int i = PLCFFLDATN; i <= PLCFFLDTXBX; i++ )
+    public FieldsTables( byte[] tableStream, FileInformationBlock fib )
     {
-      _tables.put(i, readPLCF(tableStream, fib, i));
-    }
-  }
-  
-  public ArrayList<PlexOfField> getFieldsPLCF( int type )
-  {
-    return _tables.get(type);
-  }
+        _tables = new HashMap<Integer, PlexOfCps>();
 
-  private ArrayList<PlexOfField> readPLCF(byte[] tableStream, FileInformationBlock fib, int type)
-  {
-    int start = 0;
-    int length = 0;
-
-    switch (type)
-    {
-    case PLCFFLDATN:
-      start = fib.getFcPlcffldAtn();
-      length = fib.getLcbPlcffldAtn();
-      break;
-    case PLCFFLDEDN:
-      start = fib.getFcPlcffldEdn();
-      length = fib.getLcbPlcffldEdn();
-      break;
-    case PLCFFLDFTN:
-      start = fib.getFcPlcffldFtn();
-      length = fib.getLcbPlcffldFtn();
-      break;
-    case PLCFFLDHDR:
-      start = fib.getFcPlcffldHdr();
-      length = fib.getLcbPlcffldHdr();
-      break;
-    case PLCFFLDHDRTXBX:
-      start = fib.getFcPlcffldHdrtxbx();
-      length = fib.getLcbPlcffldHdrtxbx();
-      break;
-    case PLCFFLDMOM:
-      start = fib.getFcPlcffldMom();
-      length = fib.getLcbPlcffldMom();
-      break;
-    case PLCFFLDTXBX:
-      start = fib.getFcPlcffldTxbx();
-      length = fib.getLcbPlcffldTxbx();
-    default:
-      break;
+        for ( int i = PLCFFLDATN; i <= PLCFFLDTXBX; i++ )
+        {
+            _tables.put( Integer.valueOf( i ), readPLCF( tableStream, fib, i ) );
+        }
     }
 
-    ArrayList<PlexOfField> fields = new ArrayList<PlexOfField>();
-
-    if (start > 0 && length > 0)
+    private PlexOfCps readPLCF( byte[] tableStream, FileInformationBlock fib,
+            int type )
     {
-      PlexOfCps plcf = new PlexOfCps(tableStream, start, length, FLD_SIZE);
-      fields.ensureCapacity(plcf.length());
+        int start = 0;
+        int length = 0;
 
-      for ( int i = 0; i < plcf.length(); i ++ ) {
-        GenericPropertyNode propNode = plcf.getProperty( i );
-        PlexOfField plex = new PlexOfField( propNode.getStart(), propNode.getEnd(), propNode.getBytes() );
-        fields.add( plex );
-      }
+        switch ( type )
+        {
+        case PLCFFLDATN:
+            start = fib.getFcPlcffldAtn();
+            length = fib.getLcbPlcffldAtn();
+            break;
+        case PLCFFLDEDN:
+            start = fib.getFcPlcffldEdn();
+            length = fib.getLcbPlcffldEdn();
+            break;
+        case PLCFFLDFTN:
+            start = fib.getFcPlcffldFtn();
+            length = fib.getLcbPlcffldFtn();
+            break;
+        case PLCFFLDHDR:
+            start = fib.getFcPlcffldHdr();
+            length = fib.getLcbPlcffldHdr();
+            break;
+        case PLCFFLDHDRTXBX:
+            start = fib.getFcPlcffldHdrtxbx();
+            length = fib.getLcbPlcffldHdrtxbx();
+            break;
+        case PLCFFLDMOM:
+            start = fib.getFcPlcffldMom();
+            length = fib.getLcbPlcffldMom();
+            break;
+        case PLCFFLDTXBX:
+            start = fib.getFcPlcffldTxbx();
+            length = fib.getLcbPlcffldTxbx();
+            break;
+        default:
+            break;
+        }
+
+        if ( start <= 0 || length <= 0 )
+            return null;
+
+        return new PlexOfCps( tableStream, start, length, FLD_SIZE );
     }
 
-    return fields;
-  }
+    public ArrayList<PlexOfField> getFieldsPLCF( int type )
+    {
+        return toArrayList( _tables.get( Integer.valueOf( type ) ) );
+    }
+
+    private static ArrayList<PlexOfField> toArrayList( PlexOfCps plexOfCps )
+    {
+        if ( plexOfCps == null )
+            return new ArrayList<PlexOfField>();
+
+        ArrayList<PlexOfField> fields = new ArrayList<PlexOfField>();
+        fields.ensureCapacity( plexOfCps.length() );
+
+        for ( int i = 0; i < plexOfCps.length(); i++ )
+        {
+            GenericPropertyNode propNode = plexOfCps.getProperty( i );
+            PlexOfField plex = new PlexOfField( propNode );
+            fields.add( plex );
+        }
+
+        return fields;
+    }
+
+    private int savePlex( PlexOfCps plexOfCps, int type,
+            FileInformationBlock fib, HWPFOutputStream outputStream )
+            throws IOException
+    {
+        if ( plexOfCps == null || plexOfCps.length() == 0 )
+            return 0;
+
+        byte[] data = plexOfCps.toByteArray();
+
+        int start = outputStream.getOffset();
+        int length = data.length;
+
+        outputStream.write( data );
+
+        switch ( type )
+        {
+        case PLCFFLDATN:
+            fib.setFcPlcffldAtn( start );
+            fib.setLcbPlcffldAtn( length );
+            break;
+        case PLCFFLDEDN:
+            fib.setFcPlcffldEdn( start );
+            fib.setLcbPlcffldEdn( length );
+            break;
+        case PLCFFLDFTN:
+            fib.setFcPlcffldFtn( start );
+            fib.setLcbPlcffldFtn( length );
+            break;
+        case PLCFFLDHDR:
+            fib.setFcPlcffldHdr( start );
+            fib.setLcbPlcffldHdr( length );
+            break;
+        case PLCFFLDHDRTXBX:
+            fib.setFcPlcffldHdrtxbx( start );
+            fib.setLcbPlcffldHdrtxbx( length );
+            break;
+        case PLCFFLDMOM:
+            fib.setFcPlcffldMom( start );
+            fib.setLcbPlcffldMom( length );
+            break;
+        case PLCFFLDTXBX:
+            fib.setFcPlcffldTxbx( start );
+            fib.setLcbPlcffldTxbx( length );
+            break;
+        default:
+            return 0;
+        }
+
+        return length;
+    }
+
+    public void write( FileInformationBlock fib, HWPFOutputStream tableStream )
+            throws IOException
+    {
+        for ( int i = PLCFFLDATN; i <= PLCFFLDTXBX; i++ )
+        {
+            PlexOfCps plexOfCps = _tables.get( Integer.valueOf( i ) );
+            savePlex( plexOfCps, i, fib, tableStream );
+        }
+    }
 }
