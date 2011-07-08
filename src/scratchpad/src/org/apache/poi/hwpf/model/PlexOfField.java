@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 public class PlexOfField
 {
 
-    private final PropertyNode<?> propertyNode;
+    private final GenericPropertyNode propertyNode;
     private final FieldDescriptor fld;
 
     @Deprecated
@@ -40,10 +40,10 @@ public class PlexOfField
         fld = new FieldDescriptor( data );
     }
 
-    public PlexOfField( PropertyNode<?> propertyNode )
+    public PlexOfField( GenericPropertyNode propertyNode )
     {
         this.propertyNode = propertyNode;
-        fld = new FieldDescriptor( (byte[]) propertyNode._buf );
+        fld = new FieldDescriptor( propertyNode.getBytes() );
     }
 
     public int getFcStart()
