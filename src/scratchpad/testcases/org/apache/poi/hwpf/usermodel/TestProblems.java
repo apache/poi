@@ -795,7 +795,13 @@ public final class TestProblems extends HWPFTestCase {
 
     public void test49933()
     {
-        HWPFTestDataSamples.openOldSampleFile( "Bug49933.doc" );
+        HWPFOldDocument document = HWPFTestDataSamples
+                .openOldSampleFile( "Bug49933.doc" );
+
+        Word6Extractor word6Extractor = new Word6Extractor( document );
+        String text = word6Extractor.getText();
+
+        assertTrue( text.contains( "best.wine.jump.ru" ) );
     }
 
     /**
