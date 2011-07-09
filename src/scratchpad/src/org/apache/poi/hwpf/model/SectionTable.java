@@ -17,12 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.model.io.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -180,21 +181,20 @@ public class SectionTable
       // add the section descriptor bytes to the PlexOfCps.
 
             /* original line */
-            // GenericPropertyNode property = new
-            // GenericPropertyNode(sepx.getStart(), sepx.getEnd(),
-            // sed.toByteArray());
+            GenericPropertyNode property = new GenericPropertyNode(
+                    sepx.getStart(), sepx.getEnd(), sed.toByteArray() );
             /*
              * Line using Ryan's FCtoCP() conversion method - unable to observe
              * any effect on our testcases when using this code - piers
              */
             /*
              * there is an effect on Bug45743.doc actually. writeoutreadback
-             * changes byte offset of chars (but preserve string offsets) -
-             * sergey
+             * changes byte offset of chars (but preserve string offsets).
+             * Changing back to original lines - sergey
              */
-            GenericPropertyNode property = new GenericPropertyNode(
-                    tpt.getCharIndex( sepx.getStartBytes() ),
-                    tpt.getCharIndex( sepx.getEndBytes() ), sed.toByteArray() );
+            // GenericPropertyNode property = new GenericPropertyNode(
+            // tpt.getCharIndex( sepx.getStartBytes() ),
+            // tpt.getCharIndex( sepx.getEndBytes() ), sed.toByteArray() );
 
       plex.addProperty(property);
 
