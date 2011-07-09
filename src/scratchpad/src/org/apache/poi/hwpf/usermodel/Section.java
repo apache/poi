@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.SEPX;
 
 public final class Section
@@ -25,11 +26,17 @@ public final class Section
 
   private SectionProperties _props;
 
-  public Section(SEPX sepx, Range parent)
-  {
-    super(Math.max(parent._start, sepx.getStart()), Math.min(parent._end, sepx.getEnd()), parent);
-    _props = sepx.getSectionProperties();
-  }
+    public Section( SEPX sepx, Range parent )
+    {
+        super( Math.max( parent._start, sepx.getStart() ), Math.min(
+                parent._end, sepx.getEnd() ), parent );
+
+        // XXX: temporary workaround for old Word95 document
+        if ( parent.getDocument() instanceof HWPFOldDocument )
+            _props = new SectionProperties();
+        else
+            _props = sepx.getSectionProperties();
+    }
 
   public int type()
   {
