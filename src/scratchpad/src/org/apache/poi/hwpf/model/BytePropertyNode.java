@@ -49,11 +49,25 @@ public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
                 this.endBytes = fcEnd;
 	}
 
-	public int getStartBytes() {
-                return startBytes;
-	}
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+	@Deprecated
+    public int getStartBytes()
+    {
+        return startBytes;
+    }
 
-	public int getEndBytes() {
-                return endBytes;
-	}
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+    @Deprecated
+    public int getEndBytes()
+    {
+        return endBytes;
+    }
 }
