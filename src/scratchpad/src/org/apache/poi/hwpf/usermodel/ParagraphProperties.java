@@ -25,15 +25,17 @@ public final class ParagraphProperties extends PAPAbstractType implements
     private boolean jcLogical = false;
     
     public ParagraphProperties() {
-        setLspd(new LineSpacingDescriptor());
-        setPhe(new byte[12]);
+        setAnld(new byte[84]);
         setBrcTop(new BorderCode());
         setBrcLeft(new BorderCode());
         setBrcBottom(new BorderCode());
         setBrcRight(new BorderCode());
         setBrcBetween(new BorderCode());
         setBrcBar(new BorderCode());
-        setAnld(new byte[84]);
+        setDcs( new DropCapSpecifier() );
+        setLspd( new LineSpacingDescriptor() );
+        setShd( new ShadingDescriptor() );
+        setPhe( new byte[12] );
 
         setWidowControl(true);
         getLspd().setMultiLinespace((short) 1);
@@ -275,15 +277,17 @@ public final class ParagraphProperties extends PAPAbstractType implements
 
     public Object clone() throws CloneNotSupportedException {
         ParagraphProperties pp = (ParagraphProperties) super.clone();
-        pp.setLspd((LineSpacingDescriptor) this.getLspd().clone());
-        pp.setPhe(getPhe().clone());
+        pp.setAnld(getAnld().clone());
         pp.setBrcTop((BorderCode) getBrcTop().clone());
         pp.setBrcLeft((BorderCode) getBrcLeft().clone());
         pp.setBrcBottom((BorderCode) getBrcBottom().clone());
         pp.setBrcRight((BorderCode) getBrcRight().clone());
         pp.setBrcBetween((BorderCode) getBrcBetween().clone());
         pp.setBrcBar((BorderCode) getBrcBar().clone());
-        pp.setAnld(getAnld().clone());
+        pp.setDcs( getDcs().clone() );
+        pp.setLspd( (LineSpacingDescriptor) getLspd().clone() );
+        pp.setShd( (ShadingDescriptor) getShd().clone() );
+        pp.setPhe( getPhe().clone() );
         return pp;
     }
 
