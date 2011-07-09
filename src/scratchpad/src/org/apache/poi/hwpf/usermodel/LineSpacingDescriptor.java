@@ -74,4 +74,19 @@ public final class LineSpacingDescriptor
 
     return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;
   }
+
+    public boolean isEmpty()
+    {
+        return _dyaLine == 0 && _fMultiLinespace == 0;
+    }
+
+    @Override
+    public String toString()
+    {
+        if ( isEmpty() )
+            return "[LSPD] EMPTY";
+
+        return "[LSPD] (dyaLine: " + _dyaLine + "; fMultLinespace: "
+                + _fMultiLinespace + ")";
+    }
 }
