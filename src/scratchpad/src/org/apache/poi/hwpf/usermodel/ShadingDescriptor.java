@@ -60,4 +60,20 @@ public final class ShadingDescriptor
   {
     return super.clone();
   }
+
+    public boolean isEmpty()
+    {
+        return _info == 0;
+    }
+
+    @Override
+    public String toString()
+    {
+        if ( isEmpty() )
+            return "[SHD] EMPTY]";
+
+        return "[SHD] (cvFore: " + _icoFore.getShortValue( _info )
+                + "; cvBack: " + _icoBack.getShortValue( _info ) + "; iPat: "
+                + _ipat.getShortValue( _info ) + ")";
+    }
 }
