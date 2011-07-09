@@ -53,7 +53,8 @@ public final class OldPAPBinTable extends PAPBinTable
       for (int y = 0; y < fkpSize; y++)
       {
     	PAPX papx = pfkp.getPAPX(y);
-        _paragraphs.add(papx);
+        if (papx != null && tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
+            _paragraphs.add(papx);
       }
     }
     Collections.sort( _paragraphs, PropertyNode.StartComparator.instance );
