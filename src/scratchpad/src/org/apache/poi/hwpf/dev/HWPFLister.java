@@ -255,8 +255,21 @@ public final class HWPFLister
                     System.out.println( "\t" + sprm.toString() );
                 }
             }
+
+            if ( true )
+            {
+                System.out.println( new Range( chpx.getStart(), chpx.getEnd(),
+                        _doc.getOverallRange() )
+                {
+                    public String toString()
+                    {
+                        return "CHPX range (" + super.toString() + ")";
+                    };
+                }.text() );
+            }
         }
     }
+
     public void dumpTextPieces( boolean withText )
     {
         for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
