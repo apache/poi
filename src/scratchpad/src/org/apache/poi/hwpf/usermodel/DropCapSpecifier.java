@@ -50,6 +50,12 @@ public final class DropCapSpecifier
     }
 
     @Override
+    public DropCapSpecifier clone()
+    {
+        return new DropCapSpecifier( _fdct );
+    }
+
+    @Override
     public boolean equals( Object obj )
     {
         if ( this == obj )
