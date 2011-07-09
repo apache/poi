@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Collections;
+
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
@@ -54,6 +56,7 @@ public final class OldPAPBinTable extends PAPBinTable
         _paragraphs.add(papx);
       }
     }
+    Collections.sort( _paragraphs, PropertyNode.StartComparator.instance );
   }
 }
 

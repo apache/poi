@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Collections;
+
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -66,6 +68,7 @@ public final class OldSectionTable extends SectionTable
         _sections.add(new SEPX(sed, startAt, endAt, charConv, buf));
       }
     }
+    Collections.sort( _sections, PropertyNode.StartComparator.instance );
   }
   
   private static class CharIsBytes implements CharIndexTranslator {
