@@ -55,18 +55,20 @@ public final class CHPX extends BytePropertyNode<CHPX>
     return (SprmBuffer)_buf;
   }
 
-  public CharacterProperties getCharacterProperties(StyleSheet ss, short istd)
-  {
-    CharacterProperties baseStyle;
-    if (ss == null) {
-      //old document format
-      baseStyle = new CharacterProperties();
-    } else {
-      baseStyle = ss.getCharacterStyle(istd);
+    public CharacterProperties getCharacterProperties( StyleSheet ss, short istd )
+    {
+        if ( ss == null )
+        {
+            // TODO Fix up for Word 6/95
+            return new CharacterProperties();
+        }
+
+        CharacterProperties baseStyle = ss.getCharacterStyle( istd );
+        CharacterProperties props = CharacterSprmUncompressor.uncompressCHP(
+                baseStyle, getGrpprl(), 0 );
+        ;
+        return props;
     }
-    CharacterProperties props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
-    return props;
-  }
 
   public String toString() {
       return "CHPX from " + getStart() + " to " + getEnd() + 
