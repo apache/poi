@@ -49,10 +49,11 @@ public final class OldSectionTable extends SectionTable
       int startAt = node.getStart();
       int endAt = node.getEnd();
 
+      SEPX sepx;
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, startAt, endAt, charConv, new byte[0]));
+        sepx = new SEPX(sed, startAt, endAt, charConv, new byte[0]);
       }
       else
       {
@@ -65,8 +66,11 @@ public final class OldSectionTable extends SectionTable
         byte[] buf = new byte[sepxSize+2];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, startAt, endAt, charConv, buf));
+        sepx = new SEPX(sed, startAt, endAt, charConv, buf);
       }
+
+      if (tpt.isIndexInTable( sepx.getStartBytes(), sepx.getEndBytes() ))
+        _sections.add(sepx);
     }
     Collections.sort( _sections, PropertyNode.StartComparator.instance );
   }

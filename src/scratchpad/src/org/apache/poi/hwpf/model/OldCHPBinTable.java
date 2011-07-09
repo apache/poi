@@ -61,7 +61,9 @@ public final class OldCHPBinTable extends CHPBinTable
 
       for (int y = 0; y < fkpSize; y++)
       {
-        _textRuns.add(cfkp.getCHPX(y));
+        CHPX chpx = cfkp.getCHPX(y);
+        if (chpx != null && tpt.isIndexInTable( chpx.getStartBytes(), chpx.getEndBytes() ))
+            _textRuns.add(chpx);
       }
     }
     Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
