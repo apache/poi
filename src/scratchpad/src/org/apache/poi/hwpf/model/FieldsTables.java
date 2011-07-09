@@ -37,8 +37,6 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
  */
 public class FieldsTables
 {
-    private static final byte[] BYTES_EMPTY = new byte[0];
-
     private static final class GenericPropertyNodeComparator implements
             Comparator<GenericPropertyNode>
     {
@@ -140,12 +138,8 @@ public class FieldsTables
              * we have start node. end offset points to next node, separator or
              * end
              */
-            int nextNodePositionInArray = Arrays.binarySearch(
-                    nodes,
-                    next + 1,
-                    endOffsetExclusive,
-                    new GenericPropertyNode( startNode.getEnd(), startNode
-                            .getEnd() + 1, BYTES_EMPTY ), comparator );
+            int nextNodePositionInArray = binarySearch( nodes, next + 1,
+                    endOffsetExclusive, startNode.getEnd() );
             if ( nextNodePositionInArray < 0 )
             {
                 /*
@@ -165,11 +159,9 @@ public class FieldsTables
                 GenericPropertyNode separatorNode = nextNode;
                 PlexOfField separatorPlexOfField = nextPlexOfField;
 
-                int endNodePositionInArray = Arrays.binarySearch( nodes,
+                int endNodePositionInArray = binarySearch( nodes,
                         nextNodePositionInArray, endOffsetExclusive,
-                        new GenericPropertyNode( separatorNode.getEnd(),
-                                separatorNode.getEnd() + 1, BYTES_EMPTY ),
-                        comparator );
+                        separatorNode.getEnd() );
                 if ( endNodePositionInArray < 0 )
                 {
                     /*
@@ -235,6 +227,62 @@ public class FieldsTables
                 continue;
             }
             }
+        }
+    }
+
+    /**
+     * This is port and adaptation of Arrays.binarySearch from Java 6 (Apache
+     * Harmony).
+     */
+    public static <T> int binarySearch( GenericPropertyNode[] array,
+            int startIndex, int endIndex, int requiredStartOffset )
+    {
+        checkIndexForBinarySearch( array.length, startIndex, endIndex );
+
+        int low = startIndex, mid = -1, high = endIndex - 1, result = 0;
+        while ( low <= high )
+        {
+            mid = ( low + high ) >>> 1;
+            int midStart = array[mid].getStart();
+
+            if ( midStart == requiredStartOffset )
+            {
+                return mid;
+            }
+            else if ( midStart < requiredStartOffset )
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        if ( mid < 0 )
+        {
+            int insertPoint = endIndex;
+            for ( int index = startIndex; index < endIndex; index++ )
+            {
+                if ( requiredStartOffset < array[index].getStart() )
+                {
+                    insertPoint = index;
+                }
+            }
+            return -insertPoint - 1;
+        }
+        return -mid - ( result >= 0 ? 1 : 2 );
+    }
+
+    private static void checkIndexForBinarySearch( int length, int start,
+            int end )
+    {
+        if ( start > end )
+        {
+            throw new IllegalArgumentException();
+        }
+        if ( length < end || 0 > start )
+        {
+            throw new ArrayIndexOutOfBoundsException();
         }
     }
 
