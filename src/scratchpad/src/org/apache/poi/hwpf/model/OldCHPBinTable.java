@@ -55,7 +55,7 @@ public final class OldCHPBinTable extends CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin, tpt);
+        pageOffset, fcMin, tpt, true);
 
       int fkpSize = cfkp.size();
 
