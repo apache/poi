@@ -53,8 +53,26 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
+     * 
+     * @deprecated Use
+     *             {@link #CHPFormattedDiskPage(byte[],int,int,TextPieceTable,boolean)}
+     *             instead
      */
-    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin, TextPieceTable tpt)
+    public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
+            TextPieceTable tpt )
+    {
+        this( documentStream, offset, fcMin, tpt, true );
+    }
+
+    /**
+     * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
+     * read from a Word file).
+     * 
+     * @param ignoreChpxWithoutTextPieces
+     *            TODO
+     */
+    public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
+            TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
     {
       super(documentStream, offset);
 
@@ -63,7 +81,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
     	int startAt = getStart(x);
 		int endAt = getEnd(x);
 
-        if ( !tpt.isIndexInTable( startAt, endAt ) ) {
+        if (ignoreChpxWithoutTextPieces && !tpt.isIndexInTable( startAt, endAt ) ) {
             _chpxList.add(null);
         } else {
 		    _chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));

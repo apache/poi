@@ -47,17 +47,25 @@ public class CHPBinTable
   {
   }
 
-  /**
-   * Constructor used to read a binTable in from a Word document.
-   *
-   * @param documentStream
-   * @param tableStream
-   * @param offset
-   * @param size
-   * @param fcMin
-   */
+    /**
+     * Constructor used to read a binTable in from a Word document.
+     * 
+     * @deprecated Use
+     *             {@link #CHPBinTable(byte[],byte[],int,int,int,TextPieceTable,boolean)}
+     *             instead
+     */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, int fcMin, TextPieceTable tpt )
+    {
+        this( documentStream, tableStream, offset, size, fcMin, tpt, true );
+    }
+
+    /**
+     * Constructor used to read a binTable in from a Word document.
+     */
+    public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
+            int size, int fcMin, TextPieceTable tpt,
+            boolean ignoreChpxWithoutTextPieces )
     {
         /*
          * Page 35:
@@ -79,7 +87,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin, tpt);
+        pageOffset, fcMin, tpt, ignoreChpxWithoutTextPieces);
 
       int fkpSize = cfkp.size();
 
