@@ -83,4 +83,18 @@ public final class DateAndTime
   {
     return super.clone();
   }
+
+    public boolean isEmpty()
+    {
+        return _info == 0 && _info2 == 0;
+    }
+
+    @Override
+    public String toString()
+    {
+        if ( isEmpty() )
+            return "[DTTM] EMPTY";
+
+        return "[DTTM] " + getDate();
+    }
 }
