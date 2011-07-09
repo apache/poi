@@ -19,45 +19,59 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.sprm.SectionSprmCompressor;
 import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 
-/**
- */
 public final class SEPX extends BytePropertyNode<SEPX>
 {
 
-  SectionDescriptor _sed;
+    SectionProperties sectionProperties;
 
-  public SEPX(SectionDescriptor sed, int start, int end, CharIndexTranslator translator, byte[] grpprl)
-  {
-    super(start, end, translator, SectionSprmUncompressor.uncompressSEP(grpprl, 0));
-    _sed = sed;
-  }
+    SectionDescriptor _sed;
 
-  public byte[] getGrpprl()
-  {
-    return SectionSprmCompressor.compressSectionProperty((SectionProperties)_buf);
-  }
-
-  public SectionDescriptor getSectionDescriptor()
-  {
-    return _sed;
-  }
-
-  public SectionProperties getSectionProperties()
-  {
-    return (SectionProperties)_buf;
-  }
-
-  public boolean equals(Object o)
-  {
-    SEPX sepx = (SEPX)o;
-    if (super.equals(o))
+    public SEPX( SectionDescriptor sed, int start, int end,
+            CharIndexTranslator translator, byte[] grpprl )
     {
-      return sepx._sed.equals(_sed);
+        super( start, end, translator, new SprmBuffer( grpprl ) );
+        _sed = sed;
     }
-    return false;
-  }
+
+    public byte[] getGrpprl()
+    {
+        if ( sectionProperties != null )
+        {
+            byte[] grpprl = SectionSprmCompressor
+                    .compressSectionProperty( sectionProperties );
+            _buf = new SprmBuffer( grpprl );
+        }
+
+        return ( (SprmBuffer) _buf ).toByteArray();
+    }
+
+    public SectionDescriptor getSectionDescriptor()
+    {
+        return _sed;
+    }
+
+    public SectionProperties getSectionProperties()
+    {
+        if ( sectionProperties == null )
+        {
+            sectionProperties = SectionSprmUncompressor.uncompressSEP(
+                    ( (SprmBuffer) _buf ).toByteArray(), 0 );
+        }
+        return sectionProperties;
+    }
+
+    public boolean equals( Object o )
+    {
+        SEPX sepx = (SEPX) o;
+        if ( super.equals( o ) )
+        {
+            return sepx._sed.equals( _sed );
+        }
+        return false;
+    }
 
     public String toString()
     {
