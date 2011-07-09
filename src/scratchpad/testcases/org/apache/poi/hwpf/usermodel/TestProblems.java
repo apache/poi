@@ -793,6 +793,11 @@ public final class TestProblems extends HWPFTestCase {
         }
     }
 
+    public void test49933()
+    {
+        HWPFTestDataSamples.openOldSampleFile( "Bug49933.doc" );
+    }
+
     /**
      * Bug 50936  - HWPF fails to read a file
      */
