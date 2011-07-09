@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -88,6 +89,7 @@ public class PAPBinTable
     	    _paragraphs.add(papx);
       }
     }
+    Collections.sort( _paragraphs, PropertyNode.StartComparator.instance );
     _dataStream = dataStream;
   }
 

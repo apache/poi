@@ -124,6 +124,11 @@ public class TestWordToHtmlConverter extends TestCase
         assertTrue( result.contains( "<table>" ) );
     }
 
+    public void testO_kurs_doc() throws Exception
+    {
+        getHtmlText( "o_kurs.doc" );
+    }
+
     public void testPageref() throws Exception
     {
         String result = getHtmlText( "pageref.doc" );
