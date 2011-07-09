@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
@@ -37,19 +36,6 @@ import org.apache.poi.util.LittleEndian;
  */
 public class CHPBinTable
 {
-
-    private static final class CHPXStartComparator implements Comparator<CHPX>
-    {
-        static CHPXStartComparator instance = new CHPXStartComparator();
-
-        public int compare( CHPX o1, CHPX o2 )
-        {
-            int thisVal = o1.getStart();
-            int anotherVal = o2.getStart();
-            return ( thisVal < anotherVal ? -1 : ( thisVal == anotherVal ? 0
-                    : 1 ) );
-        }
-    }
 
 /** List of character properties.*/
   protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
@@ -104,7 +90,7 @@ public class CHPBinTable
             _textRuns.add(chpx);
       }
     }
-        Collections.sort( _textRuns, CHPXStartComparator.instance );
+        Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
     }
 
   public void adjustForDelete(int listIndex, int offset, int length)

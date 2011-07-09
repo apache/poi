@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -33,6 +34,20 @@ import org.apache.poi.util.POILogger;
  */
 public abstract class PropertyNode<T extends PropertyNode<T>>  implements Comparable<T>, Cloneable
 {
+
+    static final class StartComparator implements Comparator<PropertyNode<?>>
+    {
+        static StartComparator instance = new StartComparator();
+
+        public int compare( PropertyNode<?> o1, PropertyNode<?> o2 )
+        {
+            int thisVal = o1.getStart();
+            int anotherVal = o2.getStart();
+            return ( thisVal < anotherVal ? -1 : ( thisVal == anotherVal ? 0
+                    : 1 ) );
+        }
+    }
+
   private final static POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
   protected Object _buf;
   /** The start, in characters */

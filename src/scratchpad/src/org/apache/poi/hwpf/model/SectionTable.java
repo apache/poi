@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
@@ -105,6 +106,8 @@ public class SectionTable
         	s.setEnd( CPtoFC(node.getEnd()) );
         }
     }
+
+    Collections.sort( _sections, PropertyNode.StartComparator.instance );
   }
 
   public void adjustForInsert(int listIndex, int length)
