@@ -17,8 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -110,7 +110,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         return chpx;
     }
 
-    protected byte[] toByteArray(int fcMin)
+    protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
     {
       byte[] buf = new byte[512];
       int size = _chpxList.size();
@@ -163,7 +163,9 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         chpx = (CHPX)_chpxList.get(x);
         byte[] grpprl = chpx.getGrpprl();
 
-        LittleEndian.putInt(buf, fcOffset, chpx.getStartBytes() + fcMin);
+            LittleEndian.putInt( buf, fcOffset,
+                    translator.getByteIndex( chpx.getStart() ) );
+
         grpprlOffset -= (1 + grpprl.length);
         grpprlOffset -= (grpprlOffset % 2);
         buf[offsetOffset] = (byte)(grpprlOffset/2);
@@ -173,8 +175,9 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         offsetOffset += 1;
         fcOffset += FC_SIZE;
       }
-      // put the last chpx's end in
-      LittleEndian.putInt(buf, fcOffset, chpx.getEndBytes() + fcMin);
+        // put the last chpx's end in
+        LittleEndian.putInt( buf, fcOffset,
+                translator.getByteIndex( chpx.getEnd() ) );
       return buf;
     }
 

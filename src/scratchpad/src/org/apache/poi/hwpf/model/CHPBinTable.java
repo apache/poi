@@ -17,17 +17,18 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ArrayList;
-import java.io.OutputStream;
-import java.io.IOException;
 
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.model.io.*;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * This class holds all of the character formatting properties.
@@ -69,16 +70,24 @@ public class CHPBinTable
    * @param size
    * @param fcMin
    */
-  public CHPBinTable(byte[] documentStream, byte[] tableStream, int offset,
-                     int size, int fcMin, TextPieceTable tpt)
-  {
-    PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
-    this.tpt = tpt;
+    public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
+            int size, int fcMin, TextPieceTable tpt )
+    {
+        /*
+         * Page 35:
+         * 
+         * "Associated with each interval is a BTE. A BTE holds a four-byte PN
+         * (page number) which identifies the FKP page in the file which
+         * contains the formatting information for that interval. A CHPX FKP
+         * further partitions an interval into runs of exception text."
+         */
+        PlexOfCps bte = new PlexOfCps( tableStream, offset, size, 4 );
+        this.tpt = tpt;
 
-    int length = binTable.length();
+    int length = bte.length();
     for (int x = 0; x < length; x++)
     {
-      GenericPropertyNode node = binTable.getProperty(x);
+      GenericPropertyNode node = bte.getProperty(x);
 
       int pageNum = LittleEndian.getInt(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
@@ -202,7 +211,15 @@ public class CHPBinTable
     HWPFOutputStream docStream = sys.getStream("WordDocument");
     OutputStream tableStream = sys.getStream("1Table");
 
-    PlexOfCps binTable = new PlexOfCps(4);
+        /*
+         * Page 35:
+         * 
+         * "Associated with each interval is a BTE. A BTE holds a four-byte PN
+         * (page number) which identifies the FKP page in the file which
+         * contains the formatting information for that interval. A CHPX FKP
+         * further partitions an interval into runs of exception text."
+         */
+        PlexOfCps bte = new PlexOfCps( 4 );
 
     // each FKP must start on a 512 byte page.
     int docOffset = docStream.getOffset();
@@ -232,7 +249,7 @@ public class CHPBinTable
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage();
       cfkp.fill(overflow);
 
-      byte[] bufFkp = cfkp.toByteArray(fcMin);
+            byte[] bufFkp = cfkp.toByteArray( tpt, fcMin );
       docStream.write(bufFkp);
       overflow = cfkp.getOverflow();
 
@@ -244,10 +261,10 @@ public class CHPBinTable
 
       byte[] intHolder = new byte[4];
       LittleEndian.putInt(intHolder, pageNum++);
-      binTable.addProperty(new GenericPropertyNode(start, end, intHolder));
+      bte.addProperty(new GenericPropertyNode(start, end, intHolder));
 
     }
     while (overflow != null);
-    tableStream.write(binTable.toByteArray());
+    tableStream.write(bte.toByteArray());
   }
 }

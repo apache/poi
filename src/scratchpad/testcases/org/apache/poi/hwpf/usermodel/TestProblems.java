@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -566,7 +564,8 @@ public final class TestProblems extends HWPFTestCase {
             // doc1.write( fileOutputStream );
             // fileOutputStream.close();
 
-            fixed( "47286" );
+            // not fixed yet, but still better
+            // fixed( "47286" );
         }
         catch ( AssertionFailedError exc )
         {
