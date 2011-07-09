@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Ryan Ackley
  */
-public final class DropCapSpecifier
+public final class DropCapSpecifier implements Cloneable
 {
     private short _fdct;
         private static BitField _lines = BitFieldFactory.getInstance( 0xf8 );
