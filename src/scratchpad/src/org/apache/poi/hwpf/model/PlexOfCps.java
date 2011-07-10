@@ -154,4 +154,10 @@ public final class PlexOfCps
 
         return _props.toArray( new GenericPropertyNode[_props.size()] );
     }
+
+    @Override
+    public String toString()
+    {
+        return "PLCF (cbStruct: " + _cbStruct + "; iMac: " + _iMac + ")";
+    }
 }
