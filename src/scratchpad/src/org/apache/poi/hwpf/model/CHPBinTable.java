@@ -51,21 +51,20 @@ public class CHPBinTable
      * Constructor used to read a binTable in from a Word document.
      * 
      * @deprecated Use
-     *             {@link #CHPBinTable(byte[],byte[],int,int,int,TextPieceTable,boolean)}
+     *             {@link #CHPBinTable(byte[],byte[],int,int,TextPieceTable,boolean)}
      *             instead
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, int fcMin, TextPieceTable tpt )
     {
-        this( documentStream, tableStream, offset, size, fcMin, tpt, true );
+        this( documentStream, tableStream, offset, size, tpt, true );
     }
 
     /**
      * Constructor used to read a binTable in from a Word document.
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
-            int size, int fcMin, TextPieceTable tpt,
-            boolean ignoreChpxWithoutTextPieces )
+            int size, TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
     {
         /*
          * Page 35:
@@ -87,7 +86,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, fcMin, tpt, ignoreChpxWithoutTextPieces);
+        pageOffset, tpt, ignoreChpxWithoutTextPieces);
 
       int fkpSize = cfkp.size();
 
@@ -243,7 +242,7 @@ public class CHPBinTable
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage();
       cfkp.fill(overflow);
 
-            byte[] bufFkp = cfkp.toByteArray( tpt, fcMin );
+            byte[] bufFkp = cfkp.toByteArray( tpt );
       docStream.write(bufFkp);
       overflow = cfkp.getOverflow();
 
