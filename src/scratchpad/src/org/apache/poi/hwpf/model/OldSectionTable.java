@@ -74,17 +74,12 @@ public final class OldSectionTable extends SectionTable
         sepx = new SEPX(sed, startAt, endAt, charConv, buf);
       }
 
-            if ( tpt.isIndexInTable( sepx.getStartBytes(), sepx.getEndBytes() ) )
-            {
-                _sections.add( sepx );
-            }
-            else
-            {
-                logger.log( POILogger.WARN, "Section [", sepx.getStartBytes(),
-                        "; ", sepx.getEndBytes(),
-                        ") (bytes) doesn't have corresponding text pieces "
-                                + "and will be skipped" );
-            }
+            /*
+             * section descriptor in old Word files seems to refer to char
+             * indexes, not bytes positions. Check Word6.doc for example. -
+             * sergey
+             */
+            _sections.add( sepx );
     }
     Collections.sort( _sections, PropertyNode.StartComparator.instance );
   }
