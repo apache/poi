@@ -61,10 +61,11 @@ public final class OldPAPBinTable extends PAPBinTable
         if (papx != null && tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() )) {
             _paragraphs.add(papx);
         } else {
-            logger.log( POILogger.WARN, "PAPX [", papx.getStartBytes(),
-                    "; ", papx.getEndBytes(),
-                    ") (bytes) doesn't have corresponding text pieces "
-                            + "and will be skipped" );
+                    if ( papx != null )
+                        logger.log( POILogger.WARN, "PAPX [",
+                                papx.getStartBytes(), "; ", papx.getEndBytes(),
+                                ") (bytes) doesn't have corresponding text pieces "
+                                        + "and will be skipped" );
         }
       }
     }
