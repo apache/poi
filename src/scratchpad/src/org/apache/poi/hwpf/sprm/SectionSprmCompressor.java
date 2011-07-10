@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.util.LittleEndian;
@@ -33,7 +34,7 @@ public final class SectionSprmCompressor
   public static byte[] compressSectionProperty(SectionProperties newSEP)
   {
     int size = 0;
-    ArrayList sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<byte[]>();
 
     if (newSEP.getCnsPgn() != DEFAULT_SEP.getCnsPgn())
     {

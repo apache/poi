@@ -20,7 +20,8 @@ package org.apache.poi.hwpf.sprm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
@@ -426,7 +427,7 @@ public final class ParagraphSprmUncompressor
     int[] tabPositions = pap.getRgdxaTab();
     byte[] tabDescriptors = pap.getRgtbd();
 
-    HashMap tabMap = new HashMap();
+    Map<Integer, Byte> tabMap = new HashMap<Integer, Byte>();
     for (int x = 0; x < tabPositions.length; x++)
     {
       tabMap.put(Integer.valueOf(tabPositions[x]), Byte.valueOf(tabDescriptors[x]));
@@ -450,20 +451,15 @@ public final class ParagraphSprmUncompressor
 
     tabPositions = new int[tabMap.size()];
     tabDescriptors = new byte[tabPositions.length];
-    ArrayList list = new ArrayList();
-
-    Iterator keyIT = tabMap.keySet().iterator();
-    while (keyIT.hasNext())
-    {
-      list.add(keyIT.next());
-    }
+    
+    List<Integer> list = new ArrayList<Integer>(tabMap.keySet());
     Collections.sort(list);
 
     for (int x = 0; x < tabPositions.length; x++)
     {
-      Integer key = ((Integer)list.get(x));
+      Integer key = list.get(x);
       tabPositions[x] = key.intValue();
-      tabDescriptors[x] = ((Byte)tabMap.get(key)).byteValue();
+      tabDescriptors[x] = tabMap.get(key).byteValue();
     }
 
     pap.setRgdxaTab(tabPositions);

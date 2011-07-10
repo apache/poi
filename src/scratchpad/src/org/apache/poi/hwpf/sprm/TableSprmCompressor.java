@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
@@ -34,7 +35,7 @@ public final class TableSprmCompressor
   public static byte[] compressTableProperty(TableProperties newTAP)
   {
     int size = 0;
-    ArrayList sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<byte[]>();
 
     if (newTAP.getJc() != 0)
     {

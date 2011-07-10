@@ -37,7 +37,6 @@ import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
@@ -286,7 +285,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   public Range getOverallRange() {
 	  // hack to get the ending cp of the document, Have to revisit this.
-      PropertyNode p =  _tpt.getTextPieces().get(_tpt.getTextPieces().size() - 1);
+      TextPiece p =  _tpt.getTextPieces().get(_tpt.getTextPieces().size() - 1);
 
       return new Range(0, p.getEnd(), this);
   }

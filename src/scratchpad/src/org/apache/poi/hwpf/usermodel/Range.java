@@ -998,13 +998,13 @@ public class Range { // TODO -instantiable superclass
 	 * @return An int array of length 2. The first int is the start index and
 	 *         the second int is the end index.
 	 */
-	private int[] findRange(List<? extends PropertyNode> rpl, int min, int start, int end) {
+	private int[] findRange(List<? extends PropertyNode<?>> rpl, int min, int start, int end) {
 		int x = min;
 
         if ( rpl.size() == min )
             return new int[] { min, min };
 
-        PropertyNode node = rpl.get( x );
+        PropertyNode<?> node = rpl.get( x );
 
 		while (node==null || (node.getEnd() <= start && x < rpl.size() - 1)) {
 			x++;
