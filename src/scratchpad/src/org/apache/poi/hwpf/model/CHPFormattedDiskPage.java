@@ -55,24 +55,22 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * read from a Word file).
      * 
      * @deprecated Use
-     *             {@link #CHPFormattedDiskPage(byte[],int,int,TextPieceTable,boolean)}
+     *             {@link #CHPFormattedDiskPage(byte[],int,TextPieceTable,boolean)}
      *             instead
      */
+    @SuppressWarnings( "unused" )
     public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
             TextPieceTable tpt )
     {
-        this( documentStream, offset, fcMin, tpt, true );
+        this( documentStream, offset, tpt, true );
     }
 
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
-     * 
-     * @param ignoreChpxWithoutTextPieces
-     *            TODO
      */
-    public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
-            TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
+    public CHPFormattedDiskPage( byte[] documentStream, int offset, TextPieceTable tpt,
+            boolean ignoreChpxWithoutTextPieces )
     {
       super(documentStream, offset);
 
@@ -128,7 +126,17 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         return chpx;
     }
 
+    /**
+     * @deprecated Use {@link #toByteArray(CharIndexTranslator)} instead
+     */
+    @Deprecated
+    @SuppressWarnings( "unused" )
     protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
+    {
+        return toByteArray( translator );
+    }
+
+    protected byte[] toByteArray(CharIndexTranslator translator)
     {
       byte[] buf = new byte[512];
       int size = _chpxList.size();
