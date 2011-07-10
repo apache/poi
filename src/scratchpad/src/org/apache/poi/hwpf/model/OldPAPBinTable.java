@@ -21,6 +21,8 @@ import java.util.Collections;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class holds all of the paragraph formatting 
@@ -32,6 +34,9 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class OldPAPBinTable extends PAPBinTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( OldPAPBinTable.class );
+
   public OldPAPBinTable(byte[] documentStream, int offset,
                      int size, int fcMin, TextPieceTable tpt)
   {
@@ -53,8 +58,14 @@ public final class OldPAPBinTable extends PAPBinTable
       for (int y = 0; y < fkpSize; y++)
       {
     	PAPX papx = pfkp.getPAPX(y);
-        if (papx != null && tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
+        if (papx != null && tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() )) {
             _paragraphs.add(papx);
+        } else {
+            logger.log( POILogger.WARN, "PAPX [", papx.getStartBytes(),
+                    "; ", papx.getEndBytes(),
+                    ") (bytes) doesn't have corresponding text pieces "
+                            + "and will be skipped" );
+        }
       }
     }
     Collections.sort( _paragraphs, PropertyNode.StartComparator.instance );
