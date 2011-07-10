@@ -17,12 +17,10 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.HashSet;
 import java.io.IOException;
+import java.util.HashSet;
 
-import org.apache.poi.hwpf.model.io.*;
-
-
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.model.types.FIBAbstractType;
 
 /**
@@ -57,7 +55,7 @@ public final class FileInformationBlock extends FIBAbstractType
 
     public void fillVariableFields(byte[] mainDocument, byte[] tableStream)
     {
-      HashSet fieldSet = new HashSet();
+      HashSet<Integer> fieldSet = new HashSet<Integer>();
       fieldSet.add(Integer.valueOf(FIBFieldHandler.STSHF));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.CLX));
       fieldSet.add(Integer.valueOf(FIBFieldHandler.DOP));

@@ -70,7 +70,7 @@ public class TextPieceTable implements CharIndexTranslator {
 		// using the PieceDescriptors, build our list of TextPieces.
 		for (int x = 0; x < pieces.length; x++) {
 			int start = pieces[x].getFilePosition();
-			PropertyNode node = pieceTable.getProperty(x);
+			GenericPropertyNode node = pieceTable.getProperty(x);
 
 			// Grab the start and end, which are in characters
 			int nodeStartChars = node.getStart();
@@ -173,7 +173,7 @@ public class TextPieceTable implements CharIndexTranslator {
 
 		// Now change all subsequent ones
 		for (int x = listIndex + 1; x < size; x++) {
-			tp = (TextPiece) _textPieces.get(x);
+			tp = _textPieces.get(x);
 			tp.setStart(tp.getStart() + length);
 			tp.setEnd(tp.getEnd() + length);
 		}

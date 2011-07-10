@@ -186,12 +186,12 @@ public class PAPBinTable
   public void adjustForInsert(int listIndex, int length)
   {
     int size = _paragraphs.size();
-    PAPX papx = (PAPX)_paragraphs.get(listIndex);
+    PAPX papx = _paragraphs.get(listIndex);
     papx.setEnd(papx.getEnd() + length);
 
     for (int x = listIndex + 1; x < size; x++)
     {
-      papx = (PAPX)_paragraphs.get(x);
+      papx = _paragraphs.get(x);
       papx.setStart(papx.getStart() + length);
       papx.setEnd(papx.getEnd() + length);
     }
@@ -226,14 +226,14 @@ public class PAPBinTable
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
     // get the ending fc
-    int endingFc = ((PropertyNode)_paragraphs.get(_paragraphs.size() - 1)).getEnd();
+    int endingFc = _paragraphs.get(_paragraphs.size() - 1).getEnd();
     endingFc += fcMin;
 
 
     ArrayList<PAPX> overflow = _paragraphs;
     do
     {
-      PropertyNode startingProp = (PropertyNode)overflow.get(0);
+      PAPX startingProp = overflow.get(0);
       int start = startingProp.getStart() + fcMin;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(_dataStream);
@@ -246,7 +246,7 @@ public class PAPBinTable
       int end = endingFc;
       if (overflow != null)
       {
-        end = ((PropertyNode)overflow.get(0)).getStart() + fcMin;
+        end = overflow.get(0).getStart() + fcMin;
       }
 
       byte[] intHolder = new byte[4];

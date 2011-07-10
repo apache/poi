@@ -22,10 +22,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 
 /**
  * String table containing the history of the last few revisions ("saves") of the document.
@@ -83,7 +82,7 @@ public final class SavedByTable
    *
    * @return the list of entries.
    */
-  public List getEntries()
+  public List<SavedByEntry> getEntries()
   {
     return Collections.unmodifiableList(Arrays.asList(entries));
   }

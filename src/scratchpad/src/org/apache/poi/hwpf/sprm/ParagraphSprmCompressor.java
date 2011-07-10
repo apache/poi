@@ -35,7 +35,7 @@ public final class ParagraphSprmCompressor
   {
     // page numbers links to Word97-2007BinaryFileFormat(doc)Specification.pdf, accessible from microsoft.com 
 
-    List sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<byte[]>();
     int size = 0;
 
     // Page 50 of public specification begins

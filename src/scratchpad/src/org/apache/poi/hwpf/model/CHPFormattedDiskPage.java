@@ -178,7 +178,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
       CHPX chpx = null;
       for (int x = 0; x < index; x++)
       {
-        chpx = (CHPX)_chpxList.get(x);
+        chpx = _chpxList.get(x);
         byte[] grpprl = chpx.getGrpprl();
 
             LittleEndian.putInt( buf, fcOffset,

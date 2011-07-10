@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +29,11 @@ import java.util.Map;
  */
 public final class FSPATable
 {
-    private final List _shapes = new ArrayList();
-    private final Map _shapeIndexesByPropertyStart = new HashMap();
-    private final List _text;
+    private final List<FSPA> _shapes = new ArrayList<FSPA>();
+    private final Map<Integer, Integer> _shapeIndexesByPropertyStart = new HashMap<Integer, Integer>();
+    private final List<TextPiece> _text;
 
-    public FSPATable(byte[] tableStream, int fcPlcspa, int lcbPlcspa, List tpt)
+    public FSPATable(byte[] tableStream, int fcPlcspa, int lcbPlcspa, List<TextPiece> tpt)
     {
         _text = tpt;
         // Will be 0 if no drawing objects in document
@@ -54,11 +53,11 @@ public final class FSPATable
 
     public FSPA getFspaFromCp(int cp)
     {
-        Integer idx = (Integer)_shapeIndexesByPropertyStart.get(Integer.valueOf(cp));
+        Integer idx = _shapeIndexesByPropertyStart.get(Integer.valueOf(cp));
         if (idx == null) {
             return null;
         }
-        return (FSPA)_shapes.get(idx.intValue());
+        return _shapes.get(idx.intValue());
     }
 
     public FSPA[] getShapes()
@@ -72,10 +71,10 @@ public final class FSPATable
     {
         StringBuffer buf = new StringBuffer();
         buf.append("[FPSA PLC size=").append(_shapes.size()).append("]\n");
-        for (Iterator it = _shapeIndexesByPropertyStart.keySet().iterator(); it.hasNext(); )
-        {
-            Integer i = (Integer) it.next();
-            FSPA fspa = (FSPA) _shapes.get(((Integer)_shapeIndexesByPropertyStart.get(i)).intValue());
+
+        for (Map.Entry<Integer, Integer> entry: _shapeIndexesByPropertyStart.entrySet()) {
+            Integer i = entry.getKey();
+            FSPA fspa = _shapes.get((entry.getValue()).intValue());
             buf.append("  [FC: ").append(i.toString()).append("] ");
             buf.append(fspa.toString());
             buf.append("\n");

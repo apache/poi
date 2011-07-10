@@ -229,7 +229,7 @@ public class CHPBinTable
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
     // get the ending fc
-    PropertyNode lastRun = (PropertyNode)_textRuns.get(_textRuns.size() - 1); 
+    CHPX lastRun = _textRuns.get(_textRuns.size() - 1); 
     int endingFc = lastRun.getEnd();
     endingFc += fcMin;
 
@@ -237,7 +237,7 @@ public class CHPBinTable
     ArrayList<CHPX> overflow = _textRuns;
     do
     {
-      PropertyNode startingProp = (PropertyNode)overflow.get(0);
+      CHPX startingProp = overflow.get(0);
       int start = startingProp.getStart() + fcMin;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage();
@@ -250,7 +250,7 @@ public class CHPBinTable
       int end = endingFc;
       if (overflow != null)
       {
-        end = ((PropertyNode)overflow.get(0)).getStart() + fcMin;
+        end = overflow.get(0).getStart() + fcMin;
       }
 
       byte[] intHolder = new byte[4];

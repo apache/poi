@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.util.LittleEndian;
@@ -29,7 +30,7 @@ public final class CharacterSprmCompressor
   }
   public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
   {
-    ArrayList sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<byte[]>();
     int size = 0;
 
     if (newCHP.isFRMarkDel() != oldCHP.isFRMarkDel())

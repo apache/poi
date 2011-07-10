@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Arrays;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -128,12 +128,12 @@ public final class FIBFieldHandler
 
   private static final int FIELD_SIZE = LittleEndian.INT_SIZE * 2;
 
-  private HashMap _unknownMap = new HashMap();
+  private Map<Integer, UnhandledDataStructure> _unknownMap = new HashMap<Integer, UnhandledDataStructure>();
   private int[] _fields;
 
 
   public FIBFieldHandler(byte[] mainStream, int offset, byte[] tableStream,
-                         HashSet offsetList, boolean areKnown)
+                         HashSet<Integer> offsetList, boolean areKnown)
   {
     int numFields = LittleEndian.getShort(mainStream, offset);
     offset += LittleEndian.SHORT_SIZE;
@@ -208,7 +208,7 @@ public final class FIBFieldHandler
 
     for (int x = 0; x < length; x++)
     {
-      UnhandledDataStructure ds = (UnhandledDataStructure)_unknownMap.get(Integer.valueOf(x));
+      UnhandledDataStructure ds = _unknownMap.get(Integer.valueOf(x));
       if (ds != null)
       {
         LittleEndian.putInt(mainStream, offset, tableStream.getOffset());

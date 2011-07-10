@@ -23,15 +23,15 @@ import java.util.List;
 import org.apache.poi.hwpf.usermodel.Shape;
 
 public final class ShapesTable {
-        private List _shapes;
-        private List _shapesVisibili;  //holds visible shapes
+        private List<Shape> _shapes;
+        private List<Shape> _shapesVisibili;  //holds visible shapes
 
         public ShapesTable(byte [] tblStream, FileInformationBlock fib) {
                 PlexOfCps binTable = new PlexOfCps(tblStream,
                      fib.getFcPlcspaMom(), fib.getLcbPlcspaMom(), 26);
 
-                _shapes = new ArrayList();
-                _shapesVisibili = new ArrayList();
+                _shapes = new ArrayList<Shape>();
+                _shapesVisibili = new ArrayList<Shape>();
 
 
                 for(int i = 0; i < binTable.length(); i++) {
@@ -44,11 +44,11 @@ public final class ShapesTable {
                 }
         }
 
-        public List getAllShapes() {
+        public List<Shape> getAllShapes() {
                 return _shapes;
         }
 
-        public List getVisibleShapes() {
+        public List<Shape> getVisibleShapes() {
                 return _shapesVisibili;
         }
 }

@@ -24,7 +24,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 public final class CachedPropertyNode
   extends PropertyNode<CachedPropertyNode>
 {
-  protected SoftReference _propCache;
+  protected SoftReference<Object> _propCache;
 
   public CachedPropertyNode(int start, int end, SprmBuffer buf)
   {
@@ -33,7 +33,7 @@ public final class CachedPropertyNode
 
   protected void fillCache(Object ref)
   {
-    _propCache = new SoftReference(ref);
+    _propCache = new SoftReference<Object>(ref);
   }
 
   protected Object getCacheContents()
