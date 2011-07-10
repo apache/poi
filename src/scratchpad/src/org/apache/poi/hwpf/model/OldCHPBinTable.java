@@ -70,10 +70,11 @@ public final class OldCHPBinTable extends CHPBinTable
         if (chpx != null && tpt.isIndexInTable( chpx.getStartBytes(), chpx.getEndBytes() )) {
             _textRuns.add(chpx);
         } else {
-                    logger.log( POILogger.WARN, "CHPX [",
-                            chpx.getStartBytes(), "; ", chpx.getEndBytes(),
-                            ") (bytes) doesn't have corresponding text pieces "
-                                    + "and will be skipped" );
+                    if ( chpx != null )
+                        logger.log( POILogger.WARN, "CHPX [",
+                                chpx.getStartBytes(), "; ", chpx.getEndBytes(),
+                                ") (bytes) doesn't have corresponding text pieces "
+                                        + "and will be skipped" );
         }
       }
     }
