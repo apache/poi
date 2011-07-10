@@ -20,6 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.util.Collections;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class holds all of the section formatting 
@@ -31,6 +33,9 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class OldSectionTable extends SectionTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( OldSectionTable.class );
+    
   public OldSectionTable(byte[] documentStream, int offset,
                       int size, int fcMin,
                       TextPieceTable tpt)
@@ -69,8 +74,17 @@ public final class OldSectionTable extends SectionTable
         sepx = new SEPX(sed, startAt, endAt, charConv, buf);
       }
 
-      if (tpt.isIndexInTable( sepx.getStartBytes(), sepx.getEndBytes() ))
-        _sections.add(sepx);
+            if ( tpt.isIndexInTable( sepx.getStartBytes(), sepx.getEndBytes() ) )
+            {
+                _sections.add( sepx );
+            }
+            else
+            {
+                logger.log( POILogger.WARN, "Section [", sepx.getStartBytes(),
+                        "; ", sepx.getEndBytes(),
+                        ") (bytes) doesn't have corresponding text pieces "
+                                + "and will be skipped" );
+            }
     }
     Collections.sort( _sections, PropertyNode.StartComparator.instance );
   }
