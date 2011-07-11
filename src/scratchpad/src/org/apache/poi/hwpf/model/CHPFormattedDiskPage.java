@@ -74,31 +74,42 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
      */
-    public CHPFormattedDiskPage( byte[] documentStream, int offset, TextPieceTable tpt,
-            boolean ignoreChpxWithoutTextPieces )
+    public CHPFormattedDiskPage( byte[] documentStream, int offset,
+            TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
     {
-      super(documentStream, offset);
+        super( documentStream, offset );
 
-      for (int x = 0; x < _crun; x++)
-      {
-    	int startAt = getStart(x);
-		int endAt = getEnd(x);
-
-        if (!ignoreChpxWithoutTextPieces || tpt.isIndexInTable( startAt, endAt ) )
+        for ( int x = 0; x < _crun; x++ )
         {
-		    _chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
-        }
-        else
-        {
-            logger.log( POILogger.WARN, "CHPX [",
-                    Integer.valueOf( startAt ), "; ",
-                    Integer.valueOf( endAt ),
-                    ") (bytes) doesn't have corresponding text pieces "
-                            + "and will be skipped" );
+            int startAt = getStart( x );
+            int endAt = getEnd( x );
 
-            _chpxList.add(null);
+            if ( ignoreChpxWithoutTextPieces
+                    && !tpt.isIndexInTable( startAt, endAt ) )
+            {
+                logger.log( POILogger.WARN, "CHPX [",
+                        Integer.valueOf( startAt ), "; ",
+                        Integer.valueOf( endAt ),
+                        ") (bytes) doesn't have corresponding text pieces "
+                                + "and will be skipped" );
+
+                _chpxList.add( null );
+                continue;
+            }
+
+            CHPX chpx = new CHPX( startAt, endAt, tpt, getGrpprl( x ) );
+
+            if ( ignoreChpxWithoutTextPieces
+                    && chpx.getStart() == chpx.getEnd() )
+            {
+                logger.log( POILogger.WARN, chpx
+                        + " references zero-length range and will be skipped" );
+                _chpxList.add( null );
+                continue;
+            }
+
+            _chpxList.add( chpx );
         }
-      }
     }
 
     public CHPX getCHPX(int index)
