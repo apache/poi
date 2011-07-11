@@ -30,7 +30,7 @@ public final class Table extends Range
     Table( int startIdxInclusive, int endIdxExclusive, Range parent,
             int levelNum )
     {
-        super( startIdxInclusive, endIdxExclusive, Range.TYPE_PARAGRAPH, parent );
+        super( startIdxInclusive, endIdxExclusive, parent );
         _tableLevel = levelNum;
         initRows();
     }
@@ -58,11 +58,14 @@ public final class Table extends Range
         int numParagraphs = numParagraphs();
         while ( rowEnd < numParagraphs )
         {
-            Paragraph p = getParagraph( rowEnd );
+            Paragraph startRowP = getParagraph( rowStart );
+            Paragraph endRowP = getParagraph( rowEnd );
             rowEnd++;
-            if ( p.isTableRowEnd() && p.getTableLevel() == _tableLevel )
+            if ( endRowP.isTableRowEnd()
+                    && endRowP.getTableLevel() == _tableLevel )
             {
-                _rows.add( new TableRow( rowStart, rowEnd, this, _tableLevel ) );
+                _rows.add( new TableRow( startRowP.getStartOffset(), endRowP
+                        .getEndOffset(), this, _tableLevel ) );
                 rowStart = rowEnd;
             }
         }

@@ -29,7 +29,7 @@ public final class TableCell
             TableRow parent, int levelNum, TableCellDescriptor tcd,
             int leftEdge, int width )
     {
-        super( startIdxInclusive, endIdxExclusive, Range.TYPE_PARAGRAPH, parent );
+        super( startIdxInclusive, endIdxExclusive, parent );
         _tcd = tcd;
         _leftEdge = leftEdge;
         _width = width;
