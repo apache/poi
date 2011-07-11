@@ -20,8 +20,6 @@ package org.apache.poi.hwpf.model;
 import java.util.Collections;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class holds all of the section formatting 
@@ -33,15 +31,20 @@ import org.apache.poi.util.POILogger;
  */
 public final class OldSectionTable extends SectionTable
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( OldSectionTable.class );
-    
-  public OldSectionTable(byte[] documentStream, int offset,
-                      int size, int fcMin,
-                      TextPieceTable tpt)
-  {
-    PlexOfCps sedPlex = new PlexOfCps(documentStream, offset, size, 12);
-    CharIsBytes charConv = new CharIsBytes(tpt);
+    /**
+     * @deprecated Use {@link #OldSectionTable(byte[],int,int)} instead
+     */
+    @Deprecated
+    @SuppressWarnings( "unused" )
+    public OldSectionTable( byte[] documentStream, int offset, int size,
+            int fcMin, TextPieceTable tpt )
+    {
+        this( documentStream, offset, size );
+    }
+
+    public OldSectionTable( byte[] documentStream, int offset, int size )
+    {
+    PlexOfCps sedPlex = new PlexOfCps( documentStream, offset, size, 12 );
 
     int length = sedPlex.length();
 
@@ -58,7 +61,7 @@ public final class OldSectionTable extends SectionTable
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        sepx = new SEPX(sed, startAt, endAt, charConv, new byte[0]);
+        sepx = new SEPX(sed, startAt, endAt, new byte[0]);
       }
       else
       {
@@ -71,45 +74,11 @@ public final class OldSectionTable extends SectionTable
         byte[] buf = new byte[sepxSize+2];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        sepx = new SEPX(sed, startAt, endAt, charConv, buf);
+        sepx = new SEPX(sed, startAt, endAt, buf);
       }
 
-            /*
-             * section descriptor in old Word files seems to refer to char
-             * indexes, not bytes positions. Check Word6.doc for example. -
-             * sergey
-             */
             _sections.add( sepx );
     }
     Collections.sort( _sections, PropertyNode.StartComparator.instance );
-  }
-  
-  private static class CharIsBytes implements CharIndexTranslator {
-     private TextPieceTable tpt;
-     private CharIsBytes(TextPieceTable tpt) {
-        this.tpt = tpt;
-     }
-
-        public int getByteIndex( int charPos )
-        {
-            return charPos;
-        }
-
-     public int getCharIndex(int bytePos, int startCP) {
-        return bytePos;
-     }
-     public int getCharIndex(int bytePos) {
-        return bytePos;
-     }
-
-     public boolean isIndexInTable(int bytePos) {
-        return tpt.isIndexInTable(bytePos);
-     }
-     public int lookIndexBackward(int bytePos) {
-        return tpt.lookIndexBackward(bytePos);
-     }
-     public int lookIndexForward(int bytePos) {
-        return tpt.lookIndexForward(bytePos);
-     }
   }
 }
