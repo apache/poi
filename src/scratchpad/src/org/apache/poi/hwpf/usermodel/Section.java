@@ -59,18 +59,7 @@ public final class Section
     @Override
     public String toString()
     {
-        return toString( true );
-    }
-
-    public String toString( boolean withProperties )
-    {
-        return "Section ("
-                + getStartOffset()
-                + "--"
-                + getEndOffset()
-                + ")"
-                + (withProperties ? "\n"
-                        + _props.toString().replaceAll( "\n", "\n\t" ) : "");
+        return "Section [" + getStartOffset() + "; " + getEndOffset() + ")";
     }
 
 }
