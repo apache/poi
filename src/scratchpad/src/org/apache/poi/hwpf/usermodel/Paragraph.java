@@ -503,7 +503,7 @@ public class Paragraph extends Range implements Cloneable {
     Paragraph p = (Paragraph)super.clone();
     p._props = (ParagraphProperties)_props.clone();
     //p._baseStyle = _baseStyle;
-    p._papx = new SprmBuffer();
+    p._papx = new SprmBuffer(0);
     return p;
   }
 
@@ -528,17 +528,6 @@ public class Paragraph extends Range implements Cloneable {
     @Override
     public String toString()
     {
-        return toString( true );
-    }
-
-    public String toString( boolean withPapx )
-    {
-        return "Paragraph ("
-                + getStartOffset()
-                + "--"
-                + getEndOffset()
-                + ")"
-                + ( withPapx ? "\n"
-                        + _props.toString().replaceAll( "\n", "\n\t" ) : "" );
+        return "Paragraph [" + getStartOffset() + "; " + getEndOffset() + ")";
     }
 }

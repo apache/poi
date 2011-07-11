@@ -459,7 +459,7 @@ public class Range { // TODO -instantiable superclass
 		StyleSheet ss = _doc.getStyleSheet();
 		CharacterProperties baseStyle = ss.getCharacterStyle(istd);
 		byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(props, baseStyle);
-		SprmBuffer buf = new SprmBuffer(grpprl);
+		SprmBuffer buf = new SprmBuffer(grpprl, 0);
 		_doc.getCharacterTable().insert(_charStart, _start, buf);
 
 		return insertBefore(text);
@@ -486,7 +486,7 @@ public class Range { // TODO -instantiable superclass
 		StyleSheet ss = _doc.getStyleSheet();
 		CharacterProperties baseStyle = ss.getCharacterStyle(istd);
 		byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(props, baseStyle);
-		SprmBuffer buf = new SprmBuffer(grpprl);
+		SprmBuffer buf = new SprmBuffer(grpprl, 0);
 		_doc.getCharacterTable().insert(_charEnd, _end, buf);
 		_charEnd++;
 		return insertAfter(text);
@@ -534,7 +534,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex);
+		SprmBuffer buf = new SprmBuffer(withIndex, 0);
 
 		_doc.getParagraphTable().insert(_parStart, _start, buf);
 		insertBefore(text, baseChp);
@@ -584,7 +584,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex);
+		SprmBuffer buf = new SprmBuffer(withIndex, 0);
 
 		_doc.getParagraphTable().insert(_parEnd, _end, buf);
 		_parEnd++;
@@ -781,12 +781,13 @@ public class Range { // TODO -instantiable superclass
     public CharacterRun getCharacterRun( int index )
     {
         initCharacterRuns();
-        CHPX chpx = _characters.get( index + _charStart );
-        return getCharacterRun( chpx );
-    }
 
-    private CharacterRun getCharacterRun( CHPX chpx )
-    {
+        if ( index + _charStart >= _charEnd )
+            throw new IndexOutOfBoundsException( "CHPX #" + index + " ("
+                    + ( index + _charStart ) + ") not in range [" + _charStart
+                    + "; " + _charEnd + ")" );
+
+        CHPX chpx = _characters.get( index + _charStart );
         if ( chpx == null )
         {
             return null;
@@ -884,9 +885,9 @@ public class Range { // TODO -instantiable superclass
 			throw new IllegalArgumentException("This paragraph is not a child of this range");
 		}
 
-		r.initAll();
-		int tableLevel = paragraph.getTableLevel();
-		int tableEndInclusive = r._parEnd ;
+        r.initAll();
+        int tableLevel = paragraph.getTableLevel();
+        int tableEndInclusive = r._parStart;
 
         if ( r._parStart != 0 )
         {
@@ -912,7 +913,7 @@ public class Range { // TODO -instantiable superclass
         }
 
         initAll();
-        if ( tableEndInclusive + 1 > _parEnd )
+        if ( tableEndInclusive >= this._parEnd )
         {
             throw new ArrayIndexOutOfBoundsException(
                     "The table's bounds fall outside of this Range" );

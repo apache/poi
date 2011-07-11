@@ -21,13 +21,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class holds all of the character formatting properties.
@@ -36,8 +41,10 @@ import org.apache.poi.util.LittleEndian;
  */
 public class CHPBinTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( CHPBinTable.class );
 
-/** List of character properties.*/
+  /** List of character properties.*/
   protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
 
   /** So we can know if things are unicode or not */
@@ -97,7 +104,98 @@ public class CHPBinTable
             _textRuns.add(chpx);
       }
     }
-        Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
+
+        // rebuild document paragraphs structure
+        StringBuilder docText = new StringBuilder();
+        for ( TextPiece textPiece : tpt.getTextPieces() )
+        {
+            String toAppend = textPiece.getStringBuffer().toString();
+            int toAppendLength = toAppend.length();
+
+            if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )
+            {
+                logger.log(
+                        POILogger.WARN,
+                        "Text piece has boundaries [",
+                        Integer.valueOf( textPiece.getStart() ),
+                        "; ",
+                        Integer.valueOf( textPiece.getEnd() ),
+                        ") but length ",
+                        Integer.valueOf( textPiece.getEnd()
+                                - textPiece.getStart() ) );
+            }
+
+            docText.replace( textPiece.getStart(), textPiece.getStart()
+                    + toAppendLength, toAppend );
+        }
+
+        Set<Integer> textRunsBoundariesSet = new HashSet<Integer>();
+        for ( CHPX chpx : _textRuns )
+        {
+            textRunsBoundariesSet.add( Integer.valueOf( chpx.getStart() ) );
+            textRunsBoundariesSet.add( Integer.valueOf( chpx.getEnd() ) );
+        }
+        textRunsBoundariesSet.remove( Integer.valueOf( 0 ) );
+        List<Integer> textRunsBoundariesList = new ArrayList<Integer>(
+                textRunsBoundariesSet );
+        Collections.sort( textRunsBoundariesList );
+
+        List<CHPX> newChpxs = new LinkedList<CHPX>();
+        int lastTextRunStart = 0;
+        for ( Integer boundary : textRunsBoundariesList )
+        {
+            final int startInclusive = lastTextRunStart;
+            final int endExclusive = boundary.intValue();
+            lastTextRunStart = endExclusive;
+
+            List<CHPX> chpxs = new LinkedList<CHPX>();
+            for ( CHPX chpx : _textRuns )
+            {
+                int left = Math.max( startInclusive, chpx.getStart() );
+                int right = Math.min( endExclusive, chpx.getEnd() );
+
+                if ( left < right )
+                {
+                    chpxs.add( chpx );
+                }
+            }
+
+            if ( chpxs.size() == 0 )
+            {
+                logger.log( POILogger.WARN, "Text piece [",
+                        Integer.valueOf( startInclusive ), "; ",
+                        Integer.valueOf( endExclusive ),
+                        ") has no CHPX. Creating new one." );
+                // create it manually
+                CHPX chpx = new CHPX( startInclusive, endExclusive,
+                        new SprmBuffer( 0 ) );
+                newChpxs.add( chpx );
+                continue;
+            }
+
+            if ( chpxs.size() == 1 )
+            {
+                // can we reuse existing?
+                CHPX existing = chpxs.get( 0 );
+                if ( existing.getStart() == startInclusive
+                        && existing.getEnd() == endExclusive )
+                {
+                    newChpxs.add( existing );
+                    continue;
+                }
+            }
+
+            SprmBuffer sprmBuffer = new SprmBuffer( 0 );
+            for ( CHPX chpx : chpxs )
+            {
+                sprmBuffer.append( chpx.getGrpprl(), 0 );
+            }
+            CHPX newChpx = new CHPX( startInclusive, endExclusive, sprmBuffer );
+            newChpxs.add( newChpx );
+
+            continue;
+        }
+        this._textRuns = new ArrayList<CHPX>( newChpxs );
     }
 
   public void adjustForDelete(int listIndex, int offset, int length)

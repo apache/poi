@@ -31,7 +31,7 @@ public final class SEPX extends PropertyNode<SEPX>
 
     public SEPX( SectionDescriptor sed, int start, int end, byte[] grpprl )
     {
-        super( start, end, new SprmBuffer( grpprl ) );
+        super( start, end, new SprmBuffer( grpprl, 0 ) );
         _sed = sed;
     }
 
@@ -41,7 +41,7 @@ public final class SEPX extends PropertyNode<SEPX>
         {
             byte[] grpprl = SectionSprmCompressor
                     .compressSectionProperty( sectionProperties );
-            _buf = new SprmBuffer( grpprl );
+            _buf = new SprmBuffer( grpprl, 0 );
         }
 
         return ( (SprmBuffer) _buf ).toByteArray();

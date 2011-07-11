@@ -21,74 +21,183 @@ import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 
-public final class SprmBuffer
-  implements Cloneable
+public final class SprmBuffer implements Cloneable
 {
-  byte[] _buf;
-  int _offset;
-  boolean _istd;
+    byte[] _buf;
+    boolean _istd;
+    int _offset;
 
-  public SprmBuffer(byte[] buf, boolean istd)
-  {
-    _offset = buf.length;
-    _buf = buf;
-    _istd = istd;
-  }
-  public SprmBuffer(byte[] buf)
-  {
-    this(buf, false);
-  }
-  public SprmBuffer()
-  {
-    _buf = new byte[4];
-    _offset = 0;
-  }
+    private final int _sprmsStartOffset;
 
-    public SprmOperation findSprm( short opcode )
+    /**
+     * @deprecated Use {@link #SprmBuffer(int)} instead
+     */
+    @Deprecated
+    public SprmBuffer()
     {
-        int operation = SprmOperation.getOperationFromOpcode( opcode );
-        int type = SprmOperation.getTypeFromOpcode( opcode );
+        this( 0 );
+    }
 
-        SprmIterator si = new SprmIterator( _buf, 2 );
-        while ( si.hasNext() )
+    /**
+     * @deprecated Use {@link #SprmBuffer(byte[],int)} instead
+     */
+    @Deprecated
+    public SprmBuffer( byte[] buf )
+    {
+        this( buf, 0 );
+    }
+
+    /**
+     * @deprecated Use {@link #SprmBuffer(byte[],boolean,int)} instead
+     */
+    @Deprecated
+    public SprmBuffer( byte[] buf, boolean istd )
+    {
+        this( buf, istd, 0 );
+    }
+
+    public SprmBuffer( byte[] buf, boolean istd, int sprmsStartOffset )
+    {
+        _offset = buf.length;
+        _buf = buf;
+        _istd = istd;
+        _sprmsStartOffset = sprmsStartOffset;
+    }
+
+    public SprmBuffer( byte[] buf, int _sprmsStartOffset )
+    {
+        this( buf, false, _sprmsStartOffset );
+    }
+
+    public SprmBuffer( int sprmsStartOffset )
+    {
+        _buf = new byte[sprmsStartOffset + 4];
+        _offset = sprmsStartOffset;
+        _sprmsStartOffset = sprmsStartOffset;
+    }
+
+    public void addSprm(short opcode, byte operand)
+      {
+        int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE;
+        ensureCapacity(addition);
+        LittleEndian.putShort(_buf, _offset, opcode);
+        _offset += LittleEndian.SHORT_SIZE;
+        _buf[_offset++] = operand;
+      }
+
+    public void addSprm(short opcode, byte[] operand)
+      {
+        int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE + operand.length;
+        ensureCapacity(addition);
+        LittleEndian.putShort(_buf, _offset, opcode);
+        _offset += LittleEndian.SHORT_SIZE;
+        _buf[_offset++] = (byte)operand.length;
+        System.arraycopy(operand, 0, _buf, _offset, operand.length);
+      }
+
+  public void addSprm(short opcode, int operand)
+  {
+    int addition = LittleEndian.SHORT_SIZE + LittleEndian.INT_SIZE;
+    ensureCapacity(addition);
+    LittleEndian.putShort(_buf, _offset, opcode);
+    _offset += LittleEndian.SHORT_SIZE;
+    LittleEndian.putInt(_buf, _offset, operand);
+    _offset += LittleEndian.INT_SIZE;
+  }
+
+  public void addSprm(short opcode, short operand)
+  {
+    int addition = LittleEndian.SHORT_SIZE + LittleEndian.SHORT_SIZE;
+    ensureCapacity(addition);
+    LittleEndian.putShort(_buf, _offset, opcode);
+    _offset += LittleEndian.SHORT_SIZE;
+    LittleEndian.putShort(_buf, _offset, operand);
+    _offset += LittleEndian.SHORT_SIZE;
+  }
+
+  public void append( byte[] grpprl )
+{
+    append( grpprl, 0 );
+}
+
+  public void append( byte[] grpprl, int offset )
+{
+    ensureCapacity( grpprl.length - offset );
+    System.arraycopy( grpprl, offset, _buf, _offset, grpprl.length - offset );
+    _offset += grpprl.length - offset;
+}
+  public Object clone()
+    throws CloneNotSupportedException
+  {
+    SprmBuffer retVal = (SprmBuffer)super.clone();
+    retVal._buf = new byte[_buf.length];
+    System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
+    return retVal;
+  }
+  private void ensureCapacity( int addition )
+{
+    if ( _offset + addition >= _buf.length )
+    {
+        // add 6 more than they need for use the next iteration
+        //
+        // commented - buffer shall not contain any additional bytes --
+        // sergey
+        // byte[] newBuf = new byte[_offset + addition + 6];
+         byte[] newBuf = new byte[_offset + addition];
+        System.arraycopy( _buf, 0, newBuf, 0, _buf.length );
+        _buf = newBuf;
+    }
+}
+  public boolean equals(Object obj)
+  {
+    SprmBuffer sprmBuf = (SprmBuffer)obj;
+    return (Arrays.equals(_buf, sprmBuf._buf));
+  }
+
+  public SprmOperation findSprm( short opcode )
+{
+    int operation = SprmOperation.getOperationFromOpcode( opcode );
+    int type = SprmOperation.getTypeFromOpcode( opcode );
+
+    SprmIterator si = new SprmIterator( _buf, 2 );
+    while ( si.hasNext() )
+    {
+        SprmOperation i = si.next();
+        if ( i.getOperation() == operation && i.getType() == type )
+            return i;
+    }
+    return null;
+}
+
+  private int findSprmOffset( short opcode )
+{
+    SprmOperation sprmOperation = findSprm( opcode );
+    if ( sprmOperation == null )
+        return -1;
+
+    return sprmOperation.getGrpprlOffset();
+}
+
+    public byte[] toByteArray()
+      {
+        return _buf;
+      }
+
+    public SprmIterator iterator()
+    {
+        return new SprmIterator( _buf, _sprmsStartOffset );
+    }
+
+    public void updateSprm(short opcode, byte operand)
+      {
+        int grpprlOffset = findSprmOffset(opcode);
+        if(grpprlOffset != -1)
         {
-            SprmOperation i = si.next();
-            if ( i.getOperation() == operation && i.getType() == type )
-                return i;
+          _buf[grpprlOffset] = operand;
+          return;
         }
-        return null;
-    }
-
-    private int findSprmOffset( short opcode )
-    {
-        SprmOperation sprmOperation = findSprm( opcode );
-        if ( sprmOperation == null )
-            return -1;
-
-        return sprmOperation.getGrpprlOffset();
-    }
-
-  public void updateSprm(short opcode, byte operand)
-  {
-    int grpprlOffset = findSprmOffset(opcode);
-    if(grpprlOffset != -1)
-    {
-      _buf[grpprlOffset] = operand;
-      return;
-    }
-    addSprm(opcode, operand);
-  }
-
-  public void updateSprm(short opcode, short operand)
-  {
-    int grpprlOffset = findSprmOffset(opcode);
-    if(grpprlOffset != -1)
-    {
-      LittleEndian.putShort(_buf, grpprlOffset, operand);
-      return;
-    }
-    addSprm(opcode, operand);
-  }
+        addSprm(opcode, operand);
+      }
 
   public void updateSprm(short opcode, int operand)
   {
@@ -101,86 +210,14 @@ public final class SprmBuffer
     addSprm(opcode, operand);
   }
 
-  public void addSprm(short opcode, byte operand)
-  {
-    int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE;
-    ensureCapacity(addition);
-    LittleEndian.putShort(_buf, _offset, opcode);
-    _offset += LittleEndian.SHORT_SIZE;
-    _buf[_offset++] = operand;
-  }
-  public void addSprm(short opcode, short operand)
-  {
-    int addition = LittleEndian.SHORT_SIZE + LittleEndian.SHORT_SIZE;
-    ensureCapacity(addition);
-    LittleEndian.putShort(_buf, _offset, opcode);
-    _offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(_buf, _offset, operand);
-    _offset += LittleEndian.SHORT_SIZE;
-  }
-  public void addSprm(short opcode, int operand)
-  {
-    int addition = LittleEndian.SHORT_SIZE + LittleEndian.INT_SIZE;
-    ensureCapacity(addition);
-    LittleEndian.putShort(_buf, _offset, opcode);
-    _offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putInt(_buf, _offset, operand);
-    _offset += LittleEndian.INT_SIZE;
-  }
-  public void addSprm(short opcode, byte[] operand)
-  {
-    int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE + operand.length;
-    ensureCapacity(addition);
-    LittleEndian.putShort(_buf, _offset, opcode);
-    _offset += LittleEndian.SHORT_SIZE;
-    _buf[_offset++] = (byte)operand.length;
-    System.arraycopy(operand, 0, _buf, _offset, operand.length);
-  }
-
-  public byte[] toByteArray()
-  {
-    return _buf;
-  }
-
-  public boolean equals(Object obj)
-  {
-    SprmBuffer sprmBuf = (SprmBuffer)obj;
-    return (Arrays.equals(_buf, sprmBuf._buf));
-  }
-
-    public void append( byte[] grpprl )
-    {
-        append( grpprl, 0 );
-    }
-
-    public void append( byte[] grpprl, int offset )
-    {
-        ensureCapacity( grpprl.length - offset );
-        System.arraycopy( grpprl, offset, _buf, _offset, grpprl.length - offset );
-        _offset += grpprl.length - offset;
-    }
-
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    SprmBuffer retVal = (SprmBuffer)super.clone();
-    retVal._buf = new byte[_buf.length];
-    System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
-    return retVal;
-  }
-
-    private void ensureCapacity( int addition )
-    {
-        if ( _offset + addition >= _buf.length )
+    public void updateSprm(short opcode, short operand)
+      {
+        int grpprlOffset = findSprmOffset(opcode);
+        if(grpprlOffset != -1)
         {
-            // add 6 more than they need for use the next iteration
-            //
-            // commented - buffer shall not contain any additional bytes --
-            // sergey
-            // byte[] newBuf = new byte[_offset + addition + 6];
-             byte[] newBuf = new byte[_offset + addition];
-            System.arraycopy( _buf, 0, newBuf, 0, _buf.length );
-            _buf = newBuf;
+          LittleEndian.putShort(_buf, grpprlOffset, operand);
+          return;
         }
-    }
+        addSprm(opcode, operand);
+      }
 }

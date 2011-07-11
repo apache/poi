@@ -470,7 +470,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
             {
                 tableBody.appendChild( tableRowElement );
             }
-
         }
 
         final Element tableElement = htmlDocumentFacade.createTable();
@@ -485,11 +484,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
         else
         {
-            logger.log(
-                    POILogger.WARN,
-                    "Table without body starting on offset "
-                            + table.getStartOffset() + " -- "
-                            + table.getEndOffset() );
+            logger.log( POILogger.WARN, "Table without body starting at [",
+                    Integer.valueOf( table.getStartOffset() ), "; ",
+                    Integer.valueOf( table.getEndOffset() ), ")" );
         }
     }
 

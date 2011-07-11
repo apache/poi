@@ -48,7 +48,7 @@ public final class TableRow extends Paragraph
     {
         super( startIdxInclusive, endIdxExclusive, parent );
 
-        _tprops = TableSprmUncompressor.uncompressTAP( _papx.toByteArray(), 2 );
+        _tprops = TableSprmUncompressor.uncompressTAP( _papx );
         _levelNum = levelNum;
         initCells();
     }

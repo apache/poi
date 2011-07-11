@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -152,13 +154,16 @@ public final class HWPFLister
         if ( outputTextRuns )
         {
             System.out.println( "== Text runs ==" );
-            lister.dumpTextRuns( outputTextRunsSprms );
+            lister.dumpChpx( outputTextRunsSprms );
         }
 
         if ( outputParagraphs )
         {
-            System.out.println( "== Paragraphs ==" );
-            lister.dumpParagraphs( outputParagraphsSprms, outputPapx,
+            System.out.println( "== Text paragraphs ==" );
+            lister.dumpParagraphs( true );
+
+            System.out.println( "== DOM paragraphs ==" );
+            lister.dumpParagraphsDom( outputParagraphsSprms, outputPapx,
                     outputParagraphsText );
         }
 
@@ -188,63 +193,64 @@ public final class HWPFLister
 
     private final HWPFDocumentCore _doc;
 
+    private LinkedHashMap<Integer, String> paragraphs;
+
+    private String text;
+
     public HWPFLister( HWPFDocumentCore doc )
     {
         _doc = doc;
+
+        buildText();
+        buildParagraphs();
     }
 
-    public void dumpFIB()
+    private void buildParagraphs()
     {
-        FileInformationBlock fib = _doc.getFileInformationBlock();
-        System.out.println( fib );
-    }
+        paragraphs = new LinkedHashMap<Integer, String>();
 
-    public void dumpPapx( boolean withProperties )
-    {
-        for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
+        StringBuilder part = new StringBuilder();
+        for ( int charIndex = 0; charIndex < text.length(); charIndex++ )
         {
-            System.out.println( papx );
-
-            if ( withProperties )
-                System.out.println( papx.getParagraphProperties( _doc
-                        .getStyleSheet() ) );
+            char c = text.charAt( charIndex );
+            part.append( c );
+            if ( c == 13 || c == 7 || c == 12 )
+            {
+                paragraphs.put( Integer.valueOf( charIndex ), part.toString() );
+                part.setLength( 0 );
+            }
         }
     }
 
-    public void dumpParagraphs( boolean withSprms, boolean withPapx,
-            boolean withText )
+    private void buildText()
     {
-        Range range = _doc.getOverallRange();
-        for ( int p = 0; p < range.numParagraphs(); p++ )
+        StringBuilder builder = new StringBuilder();
+        for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
         {
-            Paragraph paragraph = range.getParagraph( p );
-            System.out.println( p + ":\t" + paragraph.toString( withPapx ) );
+            String toAppend = textPiece.getStringBuffer().toString();
 
-            if ( withSprms )
+            if ( toAppend.length() != ( textPiece.getEnd() - textPiece
+                    .getStart() ) )
             {
-                PAPX papx = _doc.getParagraphTable().getParagraphs().get( p );
-
-                SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
-                while ( sprmIt.hasNext() )
-                {
-                    SprmOperation sprm = sprmIt.next();
-                    System.out.println( "\t" + sprm.toString() );
-                }
+                throw new AssertionError();
             }
 
-            if ( withText )
-                System.out.println( paragraph.text() );
+            builder.replace( textPiece.getStart(), textPiece.getEnd(), toAppend );
         }
+        this.text = builder.toString();
     }
 
-    public void dumpTextRuns( boolean withSprms )
+    public void dumpChpx( boolean withSprms )
     {
-        for ( CHPX chpx  : _doc.getCharacterTable().getTextRuns() )
+        for ( CHPX chpx : _doc.getCharacterTable().getTextRuns() )
         {
             System.out.println( chpx );
 
-            System.out.println( chpx.getCharacterProperties(
-                    _doc.getStyleSheet(), (short) StyleSheet.NIL_STYLE ) );
+            if ( false )
+            {
+                System.out.println( chpx.getCharacterProperties(
+                        _doc.getStyleSheet(), (short) StyleSheet.NIL_STYLE ) );
+            }
 
             if ( withSprms )
             {
@@ -264,9 +270,89 @@ public final class HWPFLister
                     public String toString()
                     {
                         return "CHPX range (" + super.toString() + ")";
-                    };
+                    }
                 }.text() );
             }
+        }
+    }
+
+    public void dumpFIB()
+    {
+        FileInformationBlock fib = _doc.getFileInformationBlock();
+        System.out.println( fib );
+    }
+
+    public void dumpPapx( boolean withProperties )
+    {
+        for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
+        {
+            System.out.println( papx );
+
+            if ( withProperties )
+                System.out.println( papx.getParagraphProperties( _doc
+                        .getStyleSheet() ) );
+
+            if ( true )
+            {
+                SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
+                while ( sprmIt.hasNext() )
+                {
+                    SprmOperation sprm = sprmIt.next();
+                    System.out.println( "\t" + sprm.toString() );
+                }
+            }
+        }
+    }
+
+    public void dumpParagraphs( boolean dumpAssotiatedPapx )
+    {
+        for ( Map.Entry<Integer, String> entry : paragraphs.entrySet() )
+        {
+            Integer endOfParagraphCharOffset = entry.getKey();
+            System.out.println( "[...; " + ( endOfParagraphCharOffset + 1 )
+                    + "): " + entry.getValue() );
+
+            if ( dumpAssotiatedPapx )
+            {
+                boolean hasAssotiatedPapx = false;
+                for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
+                {
+                    if ( papx.getStart() <= endOfParagraphCharOffset.intValue()
+                            && endOfParagraphCharOffset.intValue() < papx
+                                    .getEnd() )
+                    {
+                        hasAssotiatedPapx = true;
+                        System.out.println( "* " + papx );
+
+                        SprmIterator sprmIt = new SprmIterator(
+                                papx.getGrpprl(), 2 );
+                        while ( sprmIt.hasNext() )
+                        {
+                            SprmOperation sprm = sprmIt.next();
+                            System.out.println( "** " + sprm.toString() );
+                        }
+                    }
+                }
+                if ( !hasAssotiatedPapx )
+                {
+                    System.out.println( "* "
+                            + "NO PAPX ASSOTIATED WITH PARAGRAPH!" );
+                }
+            }
+        }
+    }
+
+    public void dumpParagraphsDom( boolean withSprms, boolean withPapx,
+            boolean withText )
+    {
+        Range range = _doc.getOverallRange();
+        for ( int p = 0; p < range.numParagraphs(); p++ )
+        {
+            Paragraph paragraph = range.getParagraph( p );
+            System.out.println( p + ":\t" + paragraph.toString() );
+
+            if ( withText )
+                System.out.println( paragraph.text() );
         }
     }
 

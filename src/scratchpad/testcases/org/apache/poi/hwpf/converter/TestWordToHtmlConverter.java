@@ -127,9 +127,7 @@ public class TestWordToHtmlConverter extends TestCase
 
     public void testBug48075() throws Exception
     {
-        String result = getHtmlText( "Bug48075.doc" );
-
-        assertTrue( result.contains( "<table>" ) );
+        getHtmlText( "Bug48075.doc" );
     }
 
     public void testO_kurs_doc() throws Exception
