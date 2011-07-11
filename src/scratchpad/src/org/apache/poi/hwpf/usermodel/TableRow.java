@@ -20,11 +20,12 @@ package org.apache.poi.hwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-public final class TableRow extends Paragraph
+public final class TableRow extends Range
 {
     private static final POILogger logger = POILogFactory
             .getLogger( TableRow.class );
@@ -41,6 +42,7 @@ public final class TableRow extends Paragraph
     private boolean _cellsFound = false;
 
     int _levelNum;
+    private SprmBuffer _papx;
     private TableProperties _tprops;
 
     public TableRow( int startIdxInclusive, int endIdxExclusive, Table parent,
@@ -48,7 +50,8 @@ public final class TableRow extends Paragraph
     {
         super( startIdxInclusive, endIdxExclusive, parent );
 
-        _tprops = TableSprmUncompressor.uncompressTAP( _papx );
+        Paragraph last = getParagraph( numParagraphs() - 1 );
+        _tprops = TableSprmUncompressor.uncompressTAP( last._papx );
         _levelNum = levelNum;
         initCells();
     }
