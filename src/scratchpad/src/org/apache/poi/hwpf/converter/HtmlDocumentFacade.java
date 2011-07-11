@@ -43,6 +43,8 @@ public class HtmlDocumentFacade
 
         html.appendChild( head );
         html.appendChild( body );
+
+        body.setAttribute( "style", "white-space-collapsing: preserve; " );
     }
 
     public void addAuthor( String value )

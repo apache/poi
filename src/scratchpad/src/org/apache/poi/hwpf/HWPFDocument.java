@@ -214,15 +214,10 @@ public final class HWPFDocument extends HWPFDocumentCore
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     _tpt = _cft.getTextPieceTable();
 
-    // Word XP and later all put in a zero filled buffer in
-    //  front of the text. This screws up the system for offsets,
-    //  which assume we always start at zero. This is an adjustment.
-    int cpMin = _tpt.getCpMin();
-
     // Now load the rest of the properties, which need to be adjusted
     //  for where text really begin
     _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), _tpt, true);
-    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), cpMin, _tpt, true);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), _tpt, true);
 
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());

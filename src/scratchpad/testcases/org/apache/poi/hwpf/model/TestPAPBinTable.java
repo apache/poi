@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 
@@ -38,9 +39,8 @@ public final class TestPAPBinTable
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFcMin();
 
-    _pAPBinTable = new PAPBinTable(mainStream, tableStream, null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fcMin, fakeTPT, false);
+    _pAPBinTable = new PAPBinTable(mainStream, tableStream, null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fakeTPT, false);
 
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
@@ -51,7 +51,7 @@ public final class TestPAPBinTable
     byte[] newTableStream = tableOut.toByteArray();
     byte[] newMainStream = mainOut.toByteArray();
 
-    PAPBinTable newBinTable = new PAPBinTable(newMainStream, newTableStream, null,0, newTableStream.length, 0, fakeTPT, false);
+    PAPBinTable newBinTable = new PAPBinTable(newMainStream, newTableStream, null,0, newTableStream.length, fakeTPT, false);
 
     ArrayList oldTextRuns = _pAPBinTable.getParagraphs();
     ArrayList newTextRuns = newBinTable.getParagraphs();

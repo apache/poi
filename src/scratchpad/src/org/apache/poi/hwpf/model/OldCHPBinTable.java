@@ -21,8 +21,6 @@ import java.util.Collections;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class holds all of the character formatting 
@@ -34,9 +32,6 @@ import org.apache.poi.util.POILogger;
  */
 public final class OldCHPBinTable extends CHPBinTable
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( OldCHPBinTable.class );
-
   /**
    * Constructor used to read an old-style binTable
    *  in from a Word document.
@@ -67,15 +62,8 @@ public final class OldCHPBinTable extends CHPBinTable
       for (int y = 0; y < fkpSize; y++)
       {
         CHPX chpx = cfkp.getCHPX(y);
-        if (chpx != null && tpt.isIndexInTable( chpx.getStartBytes(), chpx.getEndBytes() )) {
+        if (chpx != null)
             _textRuns.add(chpx);
-        } else {
-                    if ( chpx != null )
-                        logger.log( POILogger.WARN, "CHPX [",
-                                chpx.getStartBytes(), "; ", chpx.getEndBytes(),
-                                ") (bytes) doesn't have corresponding text pieces "
-                                        + "and will be skipped" );
-        }
       }
     }
     Collections.sort( _textRuns, PropertyNode.StartComparator.instance );

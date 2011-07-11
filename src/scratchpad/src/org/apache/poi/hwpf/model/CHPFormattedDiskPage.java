@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Represents a CHP fkp. The style properties for paragraph and character runs
@@ -40,6 +42,9 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( CHPFormattedDiskPage.class );
+
     private static final int FC_SIZE = 4;
 
     private ArrayList<CHPX> _chpxList = new ArrayList<CHPX>();
@@ -79,10 +84,19 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
     	int startAt = getStart(x);
 		int endAt = getEnd(x);
 
-        if (ignoreChpxWithoutTextPieces && !tpt.isIndexInTable( startAt, endAt ) ) {
-            _chpxList.add(null);
-        } else {
+        if (!ignoreChpxWithoutTextPieces || tpt.isIndexInTable( startAt, endAt ) )
+        {
 		    _chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
+        }
+        else
+        {
+            logger.log( POILogger.WARN, "CHPX [",
+                    Integer.valueOf( startAt ), "; ",
+                    Integer.valueOf( endAt ),
+                    ") (bytes) doesn't have corresponding text pieces "
+                            + "and will be skipped" );
+
+            _chpxList.add(null);
         }
       }
     }
