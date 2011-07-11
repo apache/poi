@@ -127,7 +127,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
     public static void addFontSize( final int fontSize, StringBuilder style )
     {
-        style.append( "font-size: " + fontSize + "; " );
+        style.append( "font-size: " + fontSize + "pt; " );
     }
 
     public static void addIndent( Paragraph paragraph, StringBuilder style )
