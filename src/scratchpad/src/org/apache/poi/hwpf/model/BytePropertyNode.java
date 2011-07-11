@@ -33,6 +33,7 @@ public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
 	/**
 	 * @param fcStart The start of the text for this property, in _bytes_
 	 * @param fcEnd The end of the text for this property, in _bytes_
+	 * @deprecated
 	 */
 	public BytePropertyNode(int fcStart, int fcEnd, CharIndexTranslator translator, Object buf) {
 		super(
@@ -48,6 +49,18 @@ public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
                 this.startBytes = fcStart;
                 this.endBytes = fcEnd;
 	}
+
+    public BytePropertyNode( int charStart, int charEnd, Object buf )
+    {
+        super( charStart, charEnd, buf );
+
+        if ( charStart > charEnd )
+            throw new IllegalArgumentException( "charStart (" + charStart
+                    + ") > charEnd (" + charEnd + ")" );
+
+        this.startBytes = -1;
+        this.endBytes = -1;
+    }
 
     /**
      * @deprecated Though bytes are actually stored in file, it is advised to
