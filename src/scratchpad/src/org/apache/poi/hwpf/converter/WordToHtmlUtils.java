@@ -122,12 +122,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( isEmpty( fontFamily ) )
             return;
 
-        style.append( "font-family: " + fontFamily );
+        style.append( "font-family: " + fontFamily + "; " );
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )
     {
-        style.append( "font-size: " + fontSize );
+        style.append( "font-size: " + fontSize + "; " );
     }
 
     public static void addIndent( Paragraph paragraph, StringBuilder style )
