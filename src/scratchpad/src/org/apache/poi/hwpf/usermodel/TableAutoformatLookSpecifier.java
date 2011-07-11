@@ -2,7 +2,8 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.types.TLPAbstractType;
 
-public class TableAutoformatLookSpecifier extends TLPAbstractType
+public class TableAutoformatLookSpecifier extends TLPAbstractType implements
+        Cloneable
 {
     public static final int SIZE = 4;
 
@@ -19,9 +20,15 @@ public class TableAutoformatLookSpecifier extends TLPAbstractType
 
     @Override
     public TableAutoformatLookSpecifier clone()
-            throws CloneNotSupportedException
     {
-        return (TableAutoformatLookSpecifier) super.clone();
+        try
+        {
+            return (TableAutoformatLookSpecifier) super.clone();
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            throw new Error( e.getMessage(), e );
+        }
     }
 
     @Override
