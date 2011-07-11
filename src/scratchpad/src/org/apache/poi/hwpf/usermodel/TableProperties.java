@@ -34,6 +34,10 @@ public final class TableProperties extends TAPAbstractType implements Cloneable
         setBrcVertical( new BorderCode() );
         setRgbrcInsideDefault_0( new BorderCode() );
         setRgbrcInsideDefault_1( new BorderCode() );
+        setRgdxaCenter( new short[0] );
+        setRgdxaCenterPrint( new short[0] );
+        setRgshd( new ShadingDescriptor[0] );
+        setRgtc( new TableCellDescriptor[0] );
     }
 
     public TableProperties( short columns )
