@@ -186,6 +186,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param parent
 	 *            The parent Range this range belongs to.
 	 */
+	@Deprecated
 	protected Range(int startIdx, int endIdx, int idxType, Range parent) {
 		_doc = parent._doc;
 		_sections = parent._sections;
@@ -193,37 +194,6 @@ public class Range { // TODO -instantiable superclass
 		_characters = parent._characters;
 		_text = parent._text;
 		_parent = new WeakReference<Range>(parent);
-
-		switch (idxType) {
-			case TYPE_PARAGRAPH:
-				_parStart = parent._parStart + startIdx;
-				_parEnd = parent._parStart + endIdx;
-				_start = _paragraphs.get(_parStart).getStart();
-				_end = _paragraphs.get(_parEnd - 1).getEnd();
-				_parRangeFound = true;
-				break;
-			case TYPE_CHARACTER:
-				_charStart = parent._charStart + startIdx;
-				_charEnd = parent._charStart + endIdx;
-				_start = _characters.get(_charStart - 1).getStart();
-				_end = _characters.get(_charEnd).getEnd();
-				_charRangeFound = true;
-				break;
-			case TYPE_SECTION:
-				_sectionStart = parent._sectionStart + startIdx;
-				_sectionEnd = parent._sectionStart + endIdx;
-				_start = _sections.get(_sectionStart - 1).getStart();
-				_end = _sections.get(_sectionEnd).getEnd();
-				_sectionRangeFound = true;
-				break;
-			case TYPE_TEXT:
-				_textStart = parent._textStart + startIdx;
-				_textEnd = parent._textStart + endIdx;
-				_start = _text.get(_textStart - 1).getStart();
-				_end = _text.get(_textEnd).getEnd();
-				_textRangeFound = true;
-				break;
-		}
 
 		sanityCheckStartEnd();
 	}
@@ -534,7 +504,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex, 0);
+		SprmBuffer buf = new SprmBuffer(withIndex, 2);
 
 		_doc.getParagraphTable().insert(_parStart, _start, buf);
 		insertBefore(text, baseChp);
@@ -584,7 +554,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex, 0);
+		SprmBuffer buf = new SprmBuffer(withIndex, 2);
 
 		_doc.getParagraphTable().insert(_parEnd, _end, buf);
 		_parEnd++;
@@ -902,12 +872,12 @@ public class Range { // TODO -instantiable superclass
             }
         }
 
-        final Range overallrange = getDocument().getOverallRange();
+        Range overallRange = _doc.getOverallRange();
         int limit = _paragraphs.size();
         for ( ; tableEndInclusive < limit - 1; tableEndInclusive++ )
         {
-            Paragraph next = new Paragraph( _paragraphs.get( tableEndInclusive + 1 ),
-                    overallrange );
+            Paragraph next = new Paragraph(
+                    _paragraphs.get( tableEndInclusive + 1 ), overallRange );
             if ( !next.isInTable() || next.getTableLevel() < tableLevel )
                 break;
         }
@@ -923,8 +893,11 @@ public class Range { // TODO -instantiable superclass
             throw new ArrayIndexOutOfBoundsException(
                     "The table's end is negative, which isn't allowed!" );
         }
-        return new Table( r._parStart, tableEndInclusive + 1, r._doc.getRange(),
-                paragraph.getTableLevel() );
+
+        int endOffsetExclusive = _paragraphs.get( tableEndInclusive ).getEnd();
+
+        return new Table( paragraph.getStartOffset(), endOffsetExclusive,
+                this, paragraph.getTableLevel() );
     }
 
 	/**

@@ -66,7 +66,9 @@ public final class TableIterator
         break;
       }
     }
-    return new Table(startIndex, endIndex, _range, _levelNum);
+        return new Table( _range.getParagraph( startIndex ).getStartOffset(),
+                _range.getParagraph( endIndex - 1 ).getEndOffset(), _range,
+                _levelNum );
   }
 
 }

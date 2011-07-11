@@ -41,7 +41,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
 
   public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] papx, ParagraphHeight phe, byte[] dataStream)
   {
-    super(fcStart, fcEnd, translator, new SprmBuffer(papx, 0));
+    super(fcStart, fcEnd, translator, new SprmBuffer(papx, 2));
     _phe = phe;
     SprmBuffer buf = findHuge(new SprmBuffer(papx, 2), dataStream);
     if(buf != null)

@@ -51,7 +51,8 @@ public final class TableRow extends Range
         super( startIdxInclusive, endIdxExclusive, parent );
 
         Paragraph last = getParagraph( numParagraphs() - 1 );
-        _tprops = TableSprmUncompressor.uncompressTAP( last._papx );
+        _papx = last._papx;
+        _tprops = TableSprmUncompressor.uncompressTAP( _papx );
         _levelNum = levelNum;
         initCells();
     }
@@ -146,9 +147,10 @@ public final class TableRow extends Range
                         && _tprops.getRgdxaCenter().length > cells.size() + 1 ? _tprops
                         .getRgdxaCenter()[cells.size() + 1] : 0;
 
-                TableCell tableCell = new TableCell( lastCellStart, p + 1,
-                        this, _levelNum, tableCellDescriptor, leftEdge,
-                        rightEdge - leftEdge );
+                TableCell tableCell = new TableCell( getParagraph(
+                        lastCellStart ).getStartOffset(), getParagraph( p )
+                        .getEndOffset(), this, _levelNum, tableCellDescriptor,
+                        leftEdge, rightEdge - leftEdge );
                 cells.add( tableCell );
                 lastCellStart = p + 1;
             }
