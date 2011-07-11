@@ -125,9 +125,9 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "innertable.doc" );
     }
 
-    public void testMBD001D0B89() throws Exception
+    public void testBug48075() throws Exception
     {
-        String result = getHtmlText( "MBD001D0B89.doc" );
+        String result = getHtmlText( "Bug48075.doc" );
 
         assertTrue( result.contains( "<table>" ) );
     }

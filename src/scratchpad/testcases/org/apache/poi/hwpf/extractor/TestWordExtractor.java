@@ -308,7 +308,7 @@ public final class TestWordExtractor extends TestCase {
 
     public void testFirstParagraphFix() throws Exception {
         extractor = new WordExtractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("MBD001D0B89.doc")
+                POIDataSamples.getDocumentInstance().openResourceAsStream("Bug48075.doc")
         );
 
         String text = extractor.getText();
