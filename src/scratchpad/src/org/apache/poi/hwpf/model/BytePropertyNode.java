@@ -23,7 +23,10 @@ package org.apache.poi.hwpf.model;
  *  still work despite that.
  * It handles the conversion as required between bytes
  *  and characters.
+ *  
+ *  @deprecated byte positions shall not be saved in memory
  */
+@Deprecated
 public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
         PropertyNode<T>
 {

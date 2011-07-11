@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-
+@SuppressWarnings( "deprecation" )
 public final class PAPX extends BytePropertyNode<PAPX> {
 
   private ParagraphHeight _phe;
@@ -41,9 +41,9 @@ public final class PAPX extends BytePropertyNode<PAPX> {
 
   public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] papx, ParagraphHeight phe, byte[] dataStream)
   {
-    super(fcStart, fcEnd, translator, new SprmBuffer(papx));
+    super(fcStart, fcEnd, translator, new SprmBuffer(papx, 0));
     _phe = phe;
-    SprmBuffer buf = findHuge(new SprmBuffer(papx), dataStream);
+    SprmBuffer buf = findHuge(new SprmBuffer(papx, 2), dataStream);
     if(buf != null)
       _buf = buf;
   }
@@ -56,6 +56,15 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     if(buf != null)
       _buf = buf;
   }
+
+    public PAPX( int charStart, int charEnd, SprmBuffer buf, byte[] dataStream )
+    {
+        super( charStart, charEnd, buf );
+        _phe = new ParagraphHeight();
+        buf = findHuge( buf, dataStream );
+        if ( buf != null )
+            _buf = buf;
+    }
 
   private SprmBuffer findHuge(SprmBuffer buf, byte[] datastream)
   {
@@ -80,7 +89,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
                              grpprlSize);
             // save a pointer to where we got the huge Grpprl from
             _hugeGrpprlOffset = hugeGrpprlOffset;
-            return new SprmBuffer(hugeGrpprl);
+            return new SprmBuffer(hugeGrpprl, 2);
           }
         }
       }

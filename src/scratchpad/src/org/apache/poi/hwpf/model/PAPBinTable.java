@@ -20,12 +20,16 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents the bin table of Word document but it also serves as a
@@ -36,6 +40,9 @@ import org.apache.poi.util.LittleEndian;
  */
 public class PAPBinTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( PAPBinTable.class );
+    
   protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
   byte[] _dataStream;
 
@@ -87,8 +94,106 @@ public class PAPBinTable
       }
     }
 
-    _dataStream = dataStream;
-  }
+        // rebuild document paragraphs structure
+        StringBuilder docText = new StringBuilder();
+        for ( TextPiece textPiece : tpt.getTextPieces() )
+        {
+            String toAppend = textPiece.getStringBuffer().toString();
+            int toAppendLength = toAppend.length();
+
+            if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )
+            {
+                logger.log(
+                        POILogger.WARN,
+                        "Text piece has boundaries [",
+                        Integer.valueOf( textPiece.getStart() ),
+                        "; ",
+                        Integer.valueOf( textPiece.getEnd() ),
+                        ") but length ",
+                        Integer.valueOf( textPiece.getEnd()
+                                - textPiece.getStart() ) );
+            }
+
+            docText.replace( textPiece.getStart(), textPiece.getStart()
+                    + toAppendLength, toAppend );
+        }
+
+        List<PAPX> newPapxs = new LinkedList<PAPX>();
+        int lastParStart = 0;
+        for ( int charIndex = 0; charIndex < docText.length(); charIndex++ )
+        {
+            final char c = docText.charAt( charIndex );
+            if ( c != 13 && c != 7 && c != 12 )
+                continue;
+
+            final int startInclusive = lastParStart;
+            final int endExclusive = charIndex + 1;
+
+            List<PAPX> papxs = new LinkedList<PAPX>();
+            for ( PAPX papx : _paragraphs )
+            {
+                // TODO: Tests, check, etc
+                for ( int f = papx.getEnd() - 1; f <= charIndex; f++ )
+                {
+                    if ( f == charIndex )
+                    {
+                        papxs.add( papx );
+                        break;
+                    }
+                    final char fChar = docText.charAt( charIndex );
+                    if ( fChar == 13 || fChar == 7 || fChar == 12 )
+                        break;
+                }
+                // if ( papx.getStart() <= charIndex && charIndex <
+                // papx.getEnd() )
+                // {
+                // papxs.add( papx );
+                // }
+            }
+
+            if ( papxs.size() == 0 )
+            {
+                logger.log( POILogger.WARN, "Paragraph [",
+                        Integer.valueOf( startInclusive ), "; ",
+                        Integer.valueOf( endExclusive ),
+                        ") has no PAPX. Creating new one." );
+                // create it manually
+                PAPX papx = new PAPX( startInclusive, endExclusive,
+                        new SprmBuffer( 2 ), dataStream );
+                newPapxs.add( papx );
+
+                lastParStart = endExclusive;
+                continue;
+            }
+
+            if ( papxs.size() == 1 )
+            {
+                // can we reuse existing?
+                PAPX existing = papxs.get( 0 );
+                if ( existing.getStart() == startInclusive && existing.getEnd() == endExclusive )
+                {
+                    newPapxs.add( existing );
+                    lastParStart = endExclusive;
+                    continue;
+                }
+            }
+
+            SprmBuffer sprmBuffer = new SprmBuffer( 2 );
+            for ( PAPX papx : papxs )
+            {
+                sprmBuffer.append( papx.getGrpprl(), 2 );
+            }
+            PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer,
+                    dataStream );
+            newPapxs.add( newPapx );
+
+            lastParStart = endExclusive;
+            continue;
+        }
+        this._paragraphs = new ArrayList<PAPX>( newPapxs );
+
+        _dataStream = dataStream;
+    }
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {

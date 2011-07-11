@@ -30,20 +30,26 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
  *
  * @author Ryan Ackley
  */
-
+@SuppressWarnings( "deprecation" )
 public final class CHPX extends BytePropertyNode<CHPX>
 {
 
+    @Deprecated
   public CHPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] grpprl)
   {
-    super(fcStart, translator.lookIndexBackward(fcEnd), translator, new SprmBuffer(grpprl));
+    super(fcStart, translator.lookIndexBackward(fcEnd), translator, new SprmBuffer(grpprl, 0));
   }
 
+  @Deprecated
   public CHPX(int fcStart, int fcEnd, CharIndexTranslator translator, SprmBuffer buf)
   {
     super(fcStart, translator.lookIndexBackward(fcEnd), translator ,buf);
   }
 
+    CHPX( int charStart, int charEnd, SprmBuffer buf )
+    {
+        super( charStart, charEnd, buf );
+    }
 
   public byte[] getGrpprl()
   {

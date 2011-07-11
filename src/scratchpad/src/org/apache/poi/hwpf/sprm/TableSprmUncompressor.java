@@ -33,6 +33,7 @@ public final class TableSprmUncompressor
   {
   }
 
+  @Deprecated
   public static TableProperties uncompressTAP(byte[] grpprl,
                                                   int offset)
   {
@@ -51,18 +52,57 @@ public final class TableSprmUncompressor
         try {
             unCompressTAPOperation(newProperties, sprm);
         } catch (ArrayIndexOutOfBoundsException ex) {
-              logger.log(
-                      POILogger.ERROR,
-                      "Unable to apply SPRM operation '"
-                              + sprm.getOperation() + "': ",
-                      ex
-              );
+                    logger.log( POILogger.ERROR, "Unable to apply ", sprm,
+                            ": ", ex, ex );
         }
       }
     }
 
     return newProperties;
   }
+
+    public static TableProperties uncompressTAP( SprmBuffer sprmBuffer )
+    {
+        TableProperties tableProperties;
+
+        SprmOperation sprmOperation = sprmBuffer.findSprm( (short) 0xd608 );
+        if ( sprmOperation != null )
+        {
+            byte[] grpprl = sprmOperation.getGrpprl();
+            int offset = sprmOperation.getGrpprlOffset();
+            short itcMac = grpprl[offset];
+            tableProperties = new TableProperties( itcMac );
+        }
+        else
+        {
+            logger.log( POILogger.WARN,
+                    "Some table rows didn't specify number of columns in SPRMs" );
+            tableProperties = new TableProperties( (short) 1 );
+        }
+
+        for ( SprmIterator iterator = sprmBuffer.iterator(); iterator.hasNext(); )
+        {
+            SprmOperation sprm = iterator.next();
+
+            /*
+             * TAPXs are actually PAPXs so we have to make sure we are only
+             * trying to uncompress the right type of sprm.
+             */
+            if ( sprm.getType() == SprmOperation.TYPE_TAP )
+            {
+                try
+                {
+                    unCompressTAPOperation( tableProperties, sprm );
+                }
+                catch ( ArrayIndexOutOfBoundsException ex )
+                {
+                    logger.log( POILogger.ERROR, "Unable to apply ", sprm,
+                            ": ", ex, ex );
+                }
+            }
+        }
+        return tableProperties;
+    }
 
   /**
    * Used to uncompress a table property. Performs an operation defined
