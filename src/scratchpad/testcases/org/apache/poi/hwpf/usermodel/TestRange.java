@@ -19,12 +19,11 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 
-import org.apache.poi.hwpf.model.SEPX;
+import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
-
-import junit.framework.TestCase;
+import org.apache.poi.hwpf.model.SEPX;
 
 /**
  * Tests for Range which aren't around deletion, insertion, text replacement or
@@ -69,8 +68,6 @@ public final class TestRange extends TestCase
 
         // whole document, including additional text from shape
         SEPX sepx = sections.get( 0 );
-        assertEquals( sepx.getStartBytes(), 1024 );
-        assertEquals( sepx.getEndBytes(), 3880 );
         assertEquals( sepx.getStart(), 0 );
         assertEquals( sepx.getEnd(), 1428 );
 
