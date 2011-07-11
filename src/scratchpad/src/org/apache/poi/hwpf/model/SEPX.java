@@ -22,17 +22,16 @@ import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 
-public final class SEPX extends BytePropertyNode<SEPX>
+public final class SEPX extends PropertyNode<SEPX>
 {
 
     SectionProperties sectionProperties;
 
     SectionDescriptor _sed;
 
-    public SEPX( SectionDescriptor sed, int start, int end,
-            CharIndexTranslator translator, byte[] grpprl )
+    public SEPX( SectionDescriptor sed, int start, int end, byte[] grpprl )
     {
-        super( start, end, translator, new SprmBuffer( grpprl ) );
+        super( start, end, new SprmBuffer( grpprl ) );
         _sed = sed;
     }
 
@@ -75,7 +74,6 @@ public final class SEPX extends BytePropertyNode<SEPX>
 
     public String toString()
     {
-        return "SEPX from " + getStart() + " to " + getEnd() + " (in bytes "
-                + getStartBytes() + " to " + getEndBytes() + ")";
+        return "SEPX from " + getStart() + " to " + getEnd();
     }
 }
