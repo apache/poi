@@ -82,20 +82,32 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
         {
             int startAt = getStart( x );
             int endAt = getEnd( x );
-            if ( !ignorePapxWithoutTextPieces
-                    || tpt.isIndexInTable( startAt, endAt ) )
-                _papxList.add( new PAPX( startAt, endAt, tpt, getGrpprl( x ),
-                        getParagraphHeight( x ), dataStream ) );
-            else
+
+            if ( ignorePapxWithoutTextPieces
+                    && !tpt.isIndexInTable( startAt, endAt ) )
             {
                 logger.log( POILogger.WARN, "PAPX [",
                         Integer.valueOf( startAt ), "; ",
                         Integer.valueOf( endAt ),
                         ") (bytes) doesn't have corresponding text pieces "
                                 + "and will be skipped" );
-
                 _papxList.add( null );
+                continue;
             }
+
+            PAPX papx = new PAPX( startAt, endAt, tpt, getGrpprl( x ),
+                    getParagraphHeight( x ), dataStream );
+
+            if ( ignorePapxWithoutTextPieces
+                    && papx.getStart() == papx.getEnd() )
+            {
+                logger.log( POILogger.WARN, papx
+                        + " references zero-length range and will be skipped" );
+                _papxList.add( null );
+                continue;
+            }
+
+            _papxList.add( papx );
         }
         _fkp = null;
         _dataStream = dataStream;
