@@ -172,7 +172,8 @@ public class WordToHtmlUtils extends AbstractWordUtils
             style.append( "break-before: page; " );
         }
 
-        style.append( "hyphenate: " + paragraph.isAutoHyphenated() + "; " );
+        style.append( "hyphenate: "
+                + ( paragraph.isAutoHyphenated() ? "auto" : "none" ) + "; " );
 
         if ( paragraph.keepOnPage() )
         {
@@ -183,9 +184,6 @@ public class WordToHtmlUtils extends AbstractWordUtils
         {
             style.append( "keep-with-next.within-page: always; " );
         }
-
-        style.append( "linefeed-treatment: preserve; " );
-        style.append( "white-space-collapse: false; " );
     }
 
     public static void addTableCellProperties( TableRow tableRow,

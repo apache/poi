@@ -26,6 +26,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 
@@ -66,6 +67,13 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "AIOOB-Tap.doc" );
         assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
+    }
+
+    public void testBug33519() throws Exception
+    {
+        String result = getHtmlText( "Bug33519.doc" );
+        assertTrue( result.contains( "Планински турове" ) );
+        assertTrue( result.contains( "Явор Асенов" ) );
     }
 
     public void testBug46610_2() throws Exception

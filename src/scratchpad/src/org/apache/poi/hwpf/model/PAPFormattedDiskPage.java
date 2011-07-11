@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -40,6 +42,8 @@ import org.apache.poi.util.LittleEndian;
  * @author Ryan Ackley
  */
 public final class PAPFormattedDiskPage extends FormattedDiskPage {
+    private static final POILogger logger = POILogFactory
+            .getLogger( PAPFormattedDiskPage.class );
 
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;
@@ -56,17 +60,45 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
 
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
+     * 
+     * @deprecated Use
+     *             {@link #PAPFormattedDiskPage(byte[],byte[],int,int,TextPieceTable,boolean)}
+     *             instead
      */
-    public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin, TextPieceTable tpt)
+    public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
+            int offset, int fcMin, TextPieceTable tpt )
     {
-      super(documentStream, offset);
-      for (int x = 0; x < _crun; x++) {
-         int startAt = getStart(x);
-         int endAt = getEnd(x);
-         _papxList.add(new PAPX(startAt, endAt, tpt, getGrpprl(x), getParagraphHeight(x), dataStream));
-      }
-      _fkp = null;
-      _dataStream = dataStream;
+        this( documentStream, dataStream, offset, tpt, true );
+    }
+
+    /**
+     * Creates a PAPFormattedDiskPage from a 512 byte array
+     */
+    public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
+            int offset, TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
+    {
+        super( documentStream, offset );
+        for ( int x = 0; x < _crun; x++ )
+        {
+            int startAt = getStart( x );
+            int endAt = getEnd( x );
+            if ( !ignorePapxWithoutTextPieces
+                    || tpt.isIndexInTable( startAt, endAt ) )
+                _papxList.add( new PAPX( startAt, endAt, tpt, getGrpprl( x ),
+                        getParagraphHeight( x ), dataStream ) );
+            else
+            {
+                logger.log( POILogger.WARN, "PAPX [",
+                        Integer.valueOf( startAt ), "; ",
+                        Integer.valueOf( endAt ),
+                        ") (bytes) doesn't have corresponding text pieces "
+                                + "and will be skipped" );
+
+                _papxList.add( null );
+            }
+        }
+        _fkp = null;
+        _dataStream = dataStream;
     }
 
     /**

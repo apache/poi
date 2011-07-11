@@ -56,13 +56,12 @@ public class PAPBinTable
             byte[] dataStream, int offset, int size, int fcMin,
             TextPieceTable tpt )
     {
-        this( documentStream, tableStream, dataStream, offset, size, fcMin,
-                tpt, true );
+        this( documentStream, tableStream, dataStream, offset, size, tpt, true );
     }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size, int fcMin,
-            TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
+            byte[] dataStream, int offset, int size, TextPieceTable tpt,
+            boolean ignorePapxWithoutTextPieces )
     {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
     this.tpt = tpt;
@@ -76,7 +75,7 @@ public class PAPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        dataStream, pageOffset, fcMin, tpt);
+        dataStream, pageOffset, tpt, ignorePapxWithoutTextPieces);
 
       int fkpSize = pfkp.size();
 
@@ -84,8 +83,7 @@ public class PAPBinTable
       {
     	PAPX papx = pfkp.getPAPX(y);
 
-    	//we don't need PAPX if they are references nowhere
-    	if (!ignorePapxWithoutTextPieces || tpt.isIndexInTable( papx.getStartBytes(), papx.getEndBytes() ))
+    	if (papx != null)
     	    _paragraphs.add(papx);
       }
     }
