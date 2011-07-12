@@ -74,7 +74,7 @@ public class CHPBinTable
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, ComplexFileTable complexFileTable, TextPieceTable tpt,
-            boolean ignoreChpxWithoutTextPieces )
+            boolean reconstructChpxTable )
     {
         /*
          * Page 35:
@@ -96,7 +96,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, tpt, ignoreChpxWithoutTextPieces);
+        pageOffset, tpt, reconstructChpxTable);
 
       int fkpSize = cfkp.size();
 
@@ -107,6 +107,12 @@ public class CHPBinTable
             _textRuns.add(chpx);
       }
     }
+
+        if ( !reconstructChpxTable )
+        {
+            Collections.sort( _textRuns );
+            return;
+        }
 
         if ( complexFileTable != null )
         {
