@@ -294,6 +294,12 @@ public class WordToFoConverter extends AbstractWordConverter
                         + "' can be here" ) );
     }
 
+    @Override
+    protected void processLineBreak( Element block, CharacterRun characterRun )
+    {
+        block.appendChild( foDocumentFacade.createBlock() );
+    }
+
     protected void processPageref( HWPFDocumentCore hwpfDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )

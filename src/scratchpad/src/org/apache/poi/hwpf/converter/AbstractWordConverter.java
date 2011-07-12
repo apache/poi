@@ -155,7 +155,31 @@ public abstract class AbstractWordConverter
                     || ( text.charAt( text.length() - 1 ) == BEL_MARK && currentTableLevel != 0 ) )
                 text = text.substring( 0, text.length() - 1 );
 
-            outputCharacters( block, characterRun, text );
+            {
+                // line breaks
+                StringBuilder stringBuilder = new StringBuilder();
+                for ( char charChar : text.toCharArray() )
+                {
+                    if ( charChar == 11 )
+                    {
+                        if ( stringBuilder.length() > 0 )
+                        {
+                            outputCharacters( block, characterRun, stringBuilder.toString() );
+                            stringBuilder.setLength( 0 );
+                        }
+                        processLineBreak(block, characterRun);
+                    }
+                    else
+                    {
+                        stringBuilder.append( charChar );
+                    }
+                }
+                if ( stringBuilder.length() > 0 )
+                {
+                    outputCharacters( block, characterRun, stringBuilder.toString() );
+                    stringBuilder.setLength( 0 );
+                }
+            }
 
             haveAnyText |= text.trim().length() != 0;
         }
@@ -292,6 +316,9 @@ public abstract class AbstractWordConverter
 
     protected abstract void processImage( Element currentBlock,
             boolean inlined, Picture picture );
+
+    protected abstract void processLineBreak( Element block,
+            CharacterRun characterRun );
 
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,

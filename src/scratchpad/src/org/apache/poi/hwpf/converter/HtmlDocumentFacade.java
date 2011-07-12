@@ -82,6 +82,11 @@ public class HtmlDocumentFacade
         return basicLink;
     }
 
+    public Element createLineBreak()
+    {
+        return document.createElement( "br" );
+    }
+
     public Element createListItem()
     {
         return document.createElement( "li" );
