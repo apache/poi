@@ -29,7 +29,7 @@ public final class PieceDescriptor
    private static BitField fPaphNil = BitFieldFactory.getInstance(0x02);
    private static BitField fCopied = BitFieldFactory.getInstance(0x04);
   int fc;
-  short prm;
+  PropertyModifier prm;
   boolean unicode;
 
 
@@ -39,7 +39,7 @@ public final class PieceDescriptor
     offset += LittleEndian.SHORT_SIZE;
     fc = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
-    prm = LittleEndian.getShort(buf, offset);
+    prm = new PropertyModifier( LittleEndian.getShort(buf, offset));
 
     // see if this piece uses unicode.
     if ((fc & 0x40000000) == 0)
@@ -70,6 +70,11 @@ public final class PieceDescriptor
     return unicode;
   }
 
+    public PropertyModifier getPrm()
+    {
+        return prm;
+    }
+
   protected byte[] toByteArray()
   {
     // set up the fc
@@ -86,7 +91,7 @@ public final class PieceDescriptor
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putInt(buf, offset, tempFc);
     offset += LittleEndian.INT_SIZE;
-    LittleEndian.putShort(buf, offset, prm);
+    LittleEndian.putShort(buf, offset, prm.getValue());
 
     return buf;
 
@@ -103,7 +108,7 @@ public final class PieceDescriptor
         final int prime = 31;
         int result = 1;
         result = prime * result + descriptor;
-        result = prime * result + prm;
+        result = prime * result + prm.getValue();
         result = prime * result + ( unicode ? 1231 : 1237 );
         return result;
     }
@@ -131,6 +136,7 @@ public final class PieceDescriptor
     public String toString()
     {
         return "PieceDescriptor (pos: " + getFilePosition() + "; "
-                + ( isUnicode() ? "unicode" : "non-unicode" ) + ")";
+                + ( isUnicode() ? "unicode" : "non-unicode" ) + "; prm: "
+                + getPrm() + ")";
     }
 }
