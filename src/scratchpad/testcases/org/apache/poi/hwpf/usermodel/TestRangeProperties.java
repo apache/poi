@@ -19,11 +19,10 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.List;
 
+import junit.framework.TestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.hwpf.model.PropertyNode;
-
-import junit.framework.TestCase;
+import org.apache.poi.hwpf.model.PAPX;
 
 /**
  * Tests to ensure that our ranges end up with
@@ -88,10 +87,11 @@ public final class TestRangeProperties extends TestCase {
 				s.text()
 		);
 
-		assertEquals(
-				7,
-				r.numParagraphs()
-		);
+        // no PAP reconstruction
+        // assertEquals( 7, r.numParagraphs() );
+        // with PAP reconstructon
+        assertEquals( 8, r.numParagraphs() );
+
 		String[] p1_parts = a_page_1.split("\r");
 		String[] p2_parts = a_page_2.split("\r");
 
@@ -109,24 +109,19 @@ public final class TestRangeProperties extends TestCase {
 				r.getParagraph(2).text()
 		);
 
-		assertEquals(
-				page_break + "\r",
-				r.getParagraph(3).text()
-		);
+        // no PAPX reconstruction
+        // assertEquals( page_break + "\r", r.getParagraph( 3 ).text() );
+        // assertEquals( p2_parts[0] + "\r", r.getParagraph( 4 ).text() );
+        // assertEquals( p2_parts[1] + "\r", r.getParagraph( 5 ).text() );
+        // assertEquals( p2_parts[2] + "\r", r.getParagraph( 6 ).text() );
 
-		assertEquals(
-				p2_parts[0] + "\r",
-				r.getParagraph(4).text()
-		);
-		assertEquals(
-				p2_parts[1] + "\r",
-				r.getParagraph(5).text()
-		);
-		assertEquals(
-				p2_parts[2] + "\r",
-				r.getParagraph(6).text()
-		);
-	}
+        // with PAPX reconstruction
+        assertEquals( "" + page_break, r.getParagraph( 3 ).text() );
+        assertEquals( "\r", r.getParagraph( 4 ).text() );
+        assertEquals( p2_parts[0] + "\r", r.getParagraph( 5 ).text() );
+        assertEquals( p2_parts[1] + "\r", r.getParagraph( 6 ).text() );
+        assertEquals( p2_parts[2] + "\r", r.getParagraph( 7 ).text() );
+    }
 
 	public void testAsciiStyling() {
 		Range r = a.getRange();
@@ -187,21 +182,24 @@ public final class TestRangeProperties extends TestCase {
 		assertEquals(408, s.getEndOffset());
 
 
-		List pDefs = r._paragraphs;
-		assertEquals(35, pDefs.size());
+		List<PAPX> pDefs = r._paragraphs;
+        // no PAPX reconstruction
+        // assertEquals(36, pDefs.size());
+        // with PAPX reconstruction
+        assertEquals( 36, pDefs.size() );
 
 		// Check that the last paragraph ends where it should do
 		assertEquals(531, u.getOverallRange().text().length());
 		assertEquals(530, u.getCPSplitCalculator().getHeaderTextboxEnd());
-		PropertyNode pLast = (PropertyNode)pDefs.get(34);
+		PAPX pLast = pDefs.get(34);
 //		assertEquals(530, pLast.getEnd());
 
 		// Only care about the first few really though
-		PropertyNode p0 = (PropertyNode)pDefs.get(0);
-		PropertyNode p1 = (PropertyNode)pDefs.get(1);
-		PropertyNode p2 = (PropertyNode)pDefs.get(2);
-		PropertyNode p3 = (PropertyNode)pDefs.get(3);
-		PropertyNode p4 = (PropertyNode)pDefs.get(4);
+		PAPX p0 = pDefs.get(0);
+		PAPX p1 = pDefs.get(1);
+		PAPX p2 = pDefs.get(2);
+		PAPX p3 = pDefs.get(3);
+		PAPX p4 = pDefs.get(4);
 
 		// 5 paragraphs should get us to the end of our text
 		assertTrue(p0.getStart() < 408);
@@ -260,10 +258,10 @@ public final class TestRangeProperties extends TestCase {
 				r.text()
 		);
 
-		assertEquals(
-				12,
-				r.numParagraphs()
-		);
+        // without PAPX reconstruction
+        // assertEquals( 12, r.numParagraphs() );
+        // with PAPX reconstruction
+        assertEquals( 13, r.numParagraphs() );
 		String[] p1_parts = u_page_1.split("\r");
 		String[] p2_parts = u_page_2.split("\r");
 
@@ -278,8 +276,13 @@ public final class TestRangeProperties extends TestCase {
 		assertEquals(p1_parts[7] + "\r", r.getParagraph(7).text());
 		assertEquals(p1_parts[8] + "\r", r.getParagraph(8).text());
 		assertEquals(p1_parts[9] + "\r", r.getParagraph(9).text());
-		assertEquals(page_break + "\r", r.getParagraph(10).text());
-		assertEquals(p2_parts[0] + "\r", r.getParagraph(11).text());
+        // without PAPX reconstruction
+        // assertEquals(page_break + "\r", r.getParagraph(10).text());
+        // assertEquals(p2_parts[0] + "\r", r.getParagraph(11).text());
+        // with PAPX reconstruction
+        assertEquals( page_break + "", r.getParagraph( 10 ).text() );
+        assertEquals( "\r", r.getParagraph( 11 ).text() );
+        assertEquals( p2_parts[0] + "\r", r.getParagraph( 12 ).text() );
 	}
 	public void testUnicodeStyling() {
 		Range r = u.getRange();
