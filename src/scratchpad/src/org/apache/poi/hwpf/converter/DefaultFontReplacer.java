@@ -4,7 +4,7 @@ public class DefaultFontReplacer implements FontReplacer
 {
     public Triplet update( Triplet original )
     {
-        if ( !AbstractWordUtils.isNotEmpty( original.fontName ) )
+        if ( AbstractWordUtils.isNotEmpty( original.fontName ) )
         {
             String fontName = original.fontName;
 
@@ -34,7 +34,7 @@ public class DefaultFontReplacer implements FontReplacer
             original.fontName = fontName;
         }
 
-        if ( !AbstractWordUtils.isNotEmpty( original.fontName ) )
+        if ( AbstractWordUtils.isNotEmpty( original.fontName ) )
         {
             if ( "Times Regular".equals( original.fontName )
                     || "Times-Regular".equals( original.fontName ) )
