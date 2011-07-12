@@ -18,9 +18,13 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.model.io.*;
 
 public final class ComplexFileTable
 {
@@ -30,6 +34,8 @@ public final class ComplexFileTable
 
   protected TextPieceTable _tpt;
 
+  private SprmBuffer[] _grpprls;
+  
   public ComplexFileTable()
   {
     _tpt = new TextPieceTable();
@@ -39,12 +45,20 @@ public final class ComplexFileTable
   {
     //skips through the prms before we reach the piece table. These contain data
     //for actual fast saved files
-    while (tableStream[offset] == GRPPRL_TYPE)
-    {
-      offset++;
-      int skip = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE + skip;
-    }
+        List<SprmBuffer> sprmBuffers = new LinkedList<SprmBuffer>();
+        while ( tableStream[offset] == GRPPRL_TYPE )
+        {
+            offset++;
+            int size = LittleEndian.getShort( tableStream, offset );
+            offset += LittleEndian.SHORT_SIZE;
+            byte[] bs = LittleEndian.getByteArray( tableStream, offset, size );
+            offset += size;
+
+            SprmBuffer sprmBuffer = new SprmBuffer( bs, false, 0 );
+            sprmBuffers.add( sprmBuffer );
+        }
+        this._grpprls = sprmBuffers.toArray( new SprmBuffer[sprmBuffers.size()] );
+
     if(tableStream[offset] != TEXT_PIECE_TABLE_TYPE)
     {
       throw new IOException("The text piece table is corrupted");
@@ -58,6 +72,11 @@ public final class ComplexFileTable
   {
     return _tpt;
   }
+
+    public SprmBuffer[] getGrpprls()
+    {
+        return _grpprls;
+    }
 
   public void writeTo(HWPFFileSystem sys)
     throws IOException

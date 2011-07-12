@@ -216,8 +216,8 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // Now load the rest of the properties, which need to be adjusted
     //  for where text really begin
-    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), _tpt, true);
-    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), _tpt, true);
+    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), _cft, _tpt, true);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), _cft, _tpt, true);
 
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());

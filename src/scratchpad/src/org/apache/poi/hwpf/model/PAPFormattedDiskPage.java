@@ -19,8 +19,10 @@ package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -90,7 +92,8 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
                         Integer.valueOf( startAt ), "; ",
                         Integer.valueOf( endAt ),
                         ") (bytes) doesn't have corresponding text pieces "
-                                + "and will be skipped" );
+                                + "and will be skipped\n\tSkipped SPRM: "
+                                + new SprmBuffer( getGrpprl( x ), 2 ) );
                 _papxList.add( null );
                 continue;
             }
@@ -148,6 +151,11 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     public PAPX getPAPX(int index)
     {
       return _papxList.get(index);
+    }
+
+    public List<PAPX> getPAPXs()
+    {
+        return Collections.unmodifiableList( _papxList );
     }
 
     /**

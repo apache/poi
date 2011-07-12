@@ -29,6 +29,8 @@ import java.util.Set;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.SprmIterator;
+import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -58,20 +60,21 @@ public class CHPBinTable
      * Constructor used to read a binTable in from a Word document.
      * 
      * @deprecated Use
-     *             {@link #CHPBinTable(byte[],byte[],int,int,TextPieceTable,boolean)}
+     *             {@link #CHPBinTable(byte[],byte[],int,int,ComplexFileTable,TextPieceTable, boolean)}
      *             instead
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, int fcMin, TextPieceTable tpt )
     {
-        this( documentStream, tableStream, offset, size, tpt, true );
+        this( documentStream, tableStream, offset, size, null, tpt, true );
     }
 
     /**
      * Constructor used to read a binTable in from a Word document.
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
-            int size, TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
+            int size, ComplexFileTable complexFileTable, TextPieceTable tpt,
+            boolean ignoreChpxWithoutTextPieces )
     {
         /*
          * Page 35:
@@ -104,6 +107,58 @@ public class CHPBinTable
             _textRuns.add(chpx);
       }
     }
+
+        if ( complexFileTable != null )
+        {
+            SprmBuffer[] sprmBuffers = complexFileTable.getGrpprls();
+
+            // adding CHPX from fast-saved SPRMs
+            for ( TextPiece textPiece : tpt.getTextPieces() )
+            {
+                PropertyModifier prm = textPiece.getPieceDescriptor().getPrm();
+                if ( !prm.isComplex() )
+                    continue;
+                int igrpprl = prm.getIgrpprl();
+
+                if ( igrpprl < 0 || igrpprl >= sprmBuffers.length )
+                {
+                    logger.log( POILogger.WARN, textPiece
+                            + "'s PRM references to unknown grpprl" );
+                    continue;
+                }
+
+                boolean hasChp = false;
+                SprmBuffer sprmBuffer = sprmBuffers[igrpprl];
+                for ( SprmIterator iterator = sprmBuffer.iterator(); iterator
+                        .hasNext(); )
+                {
+                    SprmOperation sprmOperation = iterator.next();
+                    if ( sprmOperation.getType() == SprmOperation.TYPE_CHP )
+                    {
+                        hasChp = true;
+                        break;
+                    }
+                }
+
+                if ( hasChp )
+                {
+                    SprmBuffer newSprmBuffer;
+                    try
+                    {
+                        newSprmBuffer = (SprmBuffer) sprmBuffer.clone();
+                    }
+                    catch ( CloneNotSupportedException e )
+                    {
+                        // shall not happen
+                        throw new Error( e );
+                    }
+
+                    CHPX chpx = new CHPX( textPiece.getStart(),
+                            textPiece.getEnd(), newSprmBuffer );
+                    _textRuns.add( chpx );
+                }
+            }
+        }
 
         // rebuild document paragraphs structure
         StringBuilder docText = new StringBuilder();
