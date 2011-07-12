@@ -2501,7 +2501,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         comment.setColumn(cellReference.getCol());
     }
 
-    protected void setCellHyperlink(XSSFHyperlink hyperlink) {
+    /**
+     * Register a hyperlink in the collection of hyperlinks on this sheet
+     *
+     * @param hyperlink the link to add
+     */
+    @Internal
+    public void addHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.add(hyperlink);
     }
 

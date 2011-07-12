@@ -26,7 +26,8 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -570,6 +571,15 @@ public class SXSSFCell implements Cell
     public void setHyperlink(Hyperlink link)
     {
         setProperty(Property.HYPERLINK,link);
+
+        XSSFHyperlink xssfobj = (XSSFHyperlink)link;
+        // Assign to us
+        CellReference ref = new CellReference(getRowIndex(), getColumnIndex());
+        xssfobj.getCTHyperlink().setRef( ref.formatAsString()  );
+
+        // Add to the lists
+        ((SXSSFSheet)getSheet())._sh.addHyperlink(xssfobj);
+
     }
 
     /**
