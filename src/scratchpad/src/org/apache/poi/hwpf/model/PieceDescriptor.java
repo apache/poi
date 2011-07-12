@@ -108,7 +108,7 @@ public final class PieceDescriptor
         final int prime = 31;
         int result = 1;
         result = prime * result + descriptor;
-        result = prime * result + prm.getValue();
+        result = prime * result + ( ( prm == null ) ? 0 : prm.hashCode() );
         result = prime * result + ( unicode ? 1231 : 1237 );
         return result;
     }
@@ -125,7 +125,12 @@ public final class PieceDescriptor
         PieceDescriptor other = (PieceDescriptor) obj;
         if ( descriptor != other.descriptor )
             return false;
-        if ( prm != other.prm )
+        if ( prm == null )
+        {
+            if ( other.prm != null )
+                return false;
+        }
+        else if ( !prm.equals( other.prm ) )
             return false;
         if ( unicode != other.unicode )
             return false;
