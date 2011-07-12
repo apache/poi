@@ -220,4 +220,26 @@ public final class SprmBuffer implements Cloneable
         }
         addSprm(opcode, operand);
       }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append( "Sprms (" );
+        stringBuilder.append( _buf.length );
+        stringBuilder.append( " byte(s)): " );
+        for ( SprmIterator iterator = iterator(); iterator.hasNext(); )
+        {
+            try
+            {
+                stringBuilder.append( iterator.next() );
+            }
+            catch ( Exception exc )
+            {
+                stringBuilder.append( "error" );
+            }
+            stringBuilder.append( "; " );
+        }
+        return stringBuilder.toString();
+    }
 }
