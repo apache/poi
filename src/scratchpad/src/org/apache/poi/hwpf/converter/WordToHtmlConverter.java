@@ -251,6 +251,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     basicLink );
     }
 
+    @Override
+    protected void processLineBreak( Element block, CharacterRun characterRun )
+    {
+        block.appendChild( htmlDocumentFacade.createLineBreak() );
+    }
+
     /**
      * This method shall store image bytes in external file and convert it if
      * necessary. Images shall be stored using PNG format. Other formats may be
