@@ -174,12 +174,15 @@ public final class TableRow extends Range
             cells.add( tableCell );
         }
 
-        TableCell lastCell = cells.get( cells.size() - 1 );
-        if ( lastCell.numParagraphs() == 1
-                && ( lastCell.getParagraph( 0 ).isTableRowEnd() ) )
+        if ( !cells.isEmpty() )
         {
-            // remove "fake" cell
-            cells.remove( cells.size() - 1 );
+            TableCell lastCell = cells.get( cells.size() - 1 );
+            if ( lastCell.numParagraphs() == 1
+                    && ( lastCell.getParagraph( 0 ).isTableRowEnd() ) )
+            {
+                // remove "fake" cell
+                cells.remove( cells.size() - 1 );
+            }
         }
 
         if ( cells.size() != expectedCellsCount )
