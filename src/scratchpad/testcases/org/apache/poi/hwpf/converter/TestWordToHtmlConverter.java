@@ -37,6 +37,14 @@ import org.apache.poi.hwpf.HWPFDocument;
  */
 public class TestWordToHtmlConverter extends TestCase
 {
+    private static void assertContains( String result, final String substring )
+    {
+        if ( !result.contains( substring ) )
+            fail( "Substring \"" + substring
+                    + "\" not found in the following string: \"" + substring
+                    + "\"" );
+    }
+
     private static String getHtmlText( final String sampleFileName )
             throws Exception
     {
@@ -66,68 +74,70 @@ public class TestWordToHtmlConverter extends TestCase
     public void testAIOOBTap() throws Exception
     {
         String result = getHtmlText( "AIOOB-Tap.doc" );
-        assertTrue( result.substring( 0, 2000 ).contains( "<table>" ) );
+        assertContains( result.substring( 0, 2000 ), "<table>" );
     }
 
     public void testBug33519() throws Exception
     {
         String result = getHtmlText( "Bug33519.doc" );
-        assertTrue( result.contains( "Планински турове" ) );
-        assertTrue( result.contains( "Явор Асенов" ) );
+        assertContains( result, "Планински турове" );
+        assertContains( result, "Явор Асенов" );
     }
 
     public void testBug46610_2() throws Exception
     {
         String result = getHtmlText( "Bug46610_2.doc" );
-        assertTrue( result
-                .contains( "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678" ) );
+        assertContains(
+                result,
+                "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678" );
     }
 
     public void testBug46817() throws Exception
     {
         String result = getHtmlText( "Bug46817.doc" );
-        assertTrue( result.contains( "<table>" ) );
+        final String substring = "<table>";
+        assertContains( result, substring );
+    }
+
+    public void testBug48075() throws Exception
+    {
+        getHtmlText( "Bug48075.doc" );
     }
 
     public void testDocumentProperties() throws Exception
     {
         String result = getHtmlText( "documentProperties.doc" );
 
-        assertTrue( result.contains( "<title>This is document title</title>" ) );
-        assertTrue( result
-                .contains( "<meta content=\"This is document keywords\" name=\"keywords\">" ) );
+        assertContains( result, "<title>This is document title</title>" );
+        assertContains( result,
+                "<meta content=\"This is document keywords\" name=\"keywords\">" );
     }
 
     public void testEmailhyperlink() throws Exception
     {
         String result = getHtmlText( "Bug47286.doc" );
-        assertTrue( result.contains( "provisastpet@mfa.gov.cy" ) );
+        final String substring = "provisastpet@mfa.gov.cy";
+        assertContains( result, substring );
     }
 
     public void testEquation() throws Exception
     {
         String result = getHtmlText( "equation.doc" );
 
-        assertTrue( result
-                .contains( "<!--Image link to '0.emf' can be here-->" ) );
+        assertContains( result, "<!--Image link to '0.emf' can be here-->" );
     }
 
     public void testHyperlink() throws Exception
     {
         String result = getHtmlText( "hyperlink.doc" );
 
-        assertTrue( result.contains( "<a href=\"http://testuri.org/\">" ) );
-        assertTrue( result.contains( "Hyperlink text" ) );
+        assertContains( result, "<a href=\"http://testuri.org/\">" );
+        assertContains( result, "Hyperlink text" );
     }
 
     public void testInnerTable() throws Exception
     {
         getHtmlText( "innertable.doc" );
-    }
-
-    public void testBug48075() throws Exception
-    {
-        getHtmlText( "Bug48075.doc" );
     }
 
     public void testO_kurs_doc() throws Exception
@@ -139,7 +149,7 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "pageref.doc" );
 
-        assertTrue( result.contains( "<a href=\"#userref\">" ) );
-        assertTrue( result.contains( "1" ) );
+        assertContains( result, "<a href=\"#userref\">" );
+        assertContains( result, "1" );
     }
 }
