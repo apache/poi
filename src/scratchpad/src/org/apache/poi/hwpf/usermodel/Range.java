@@ -629,7 +629,7 @@ public class Range { // TODO -instantiable superclass
 			cell = cell.insertAfter(parProps, StyleSheet.NIL_STYLE, String.valueOf('\u0007'));
 			cell.setTableRowEnd(props);
 		}
-		return new Table(_start, _start + (rows * (columns + 1)), this, 1);
+		return new Table(_start, _start + (rows * (columns + 1)) * 2, this, 1);
 	}
 
 	/**
