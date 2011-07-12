@@ -98,7 +98,7 @@ public class AbstractWordUtils
             return "solid";
         }
     }
-
+    
     public static String getBorderWidth( BorderCode borderCode )
     {
         int lineWidth = borderCode.getLineWidth();
@@ -318,6 +318,20 @@ public class AbstractWordUtils
         {
             throw new Error( exc );
         }
+    }
+
+    static String substringBeforeLast( String str, String separator )
+    {
+        if ( isEmpty( str ) || isEmpty( separator ) )
+        {
+            return str;
+        }
+        int pos = str.lastIndexOf( separator );
+        if ( pos == -1 )
+        {
+            return str;
+        }
+        return str.substring( 0, pos );
     }
 
 }

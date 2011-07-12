@@ -63,15 +63,6 @@ public class WordToHtmlUtils extends AbstractWordUtils
         final CharacterProperties clonedProperties = characterRun
                 .cloneProperties();
 
-        if ( characterRun.isBold() )
-        {
-            style.append( "font-weight: bold; " );
-        }
-        if ( characterRun.isItalic() )
-        {
-            style.append( "font-style: italic; " );
-        }
-
         addBorder( clonedProperties.getBrc(), EMPTY, style );
 
         if ( characterRun.isCapitalized() )
