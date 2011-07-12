@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class PAPBinTable
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
             byte[] dataStream, int offset, int size, ComplexFileTable complexFileTable,
-            TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
+            TextPieceTable tpt, boolean reconstructPapxTable )
     {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
     this.tpt = tpt;
@@ -83,7 +84,7 @@ public class PAPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        dataStream, pageOffset, tpt, ignorePapxWithoutTextPieces);
+        dataStream, pageOffset, tpt, reconstructPapxTable);
 
       int fkpSize = pfkp.size();
 
@@ -95,6 +96,12 @@ public class PAPBinTable
     	    _paragraphs.add(papx);
       }
     }
+
+        if ( !reconstructPapxTable )
+        {
+            Collections.sort( _paragraphs );
+            return;
+        }
 
         if ( complexFileTable != null )
         {
