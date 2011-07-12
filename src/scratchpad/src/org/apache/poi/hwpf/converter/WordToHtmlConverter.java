@@ -27,6 +27,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -189,15 +191,25 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         StringBuilder style = new StringBuilder();
         BlockProperies blockProperies = this.blocksProperies.peek();
-        if ( characterRun.getFontName() != null
-                && !WordToHtmlUtils.equals( characterRun.getFontName(),
+        Triplet triplet = getCharacterRunTriplet( characterRun );
+
+        if ( WordToHtmlUtils.isNotEmpty( triplet.fontName )
+                && !WordToHtmlUtils.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
-            style.append( "font-family: " + characterRun.getFontName() + "; " );
+            style.append( "font-family: " + triplet.fontName + "; " );
         }
         if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
         {
             style.append( "font-size: " + characterRun.getFontSize() / 2 + "; " );
+        }
+        if ( triplet.bold )
+        {
+            style.append( "font-weight: bold; " );
+        }
+        if ( triplet.italic )
+        {
+            style.append( "font-style: italic; " );
         }
 
         WordToHtmlUtils.addCharactersProperties( characterRun, style );
@@ -299,8 +311,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
             final CharacterRun characterRun = paragraph.getCharacterRun( 0 );
             if ( characterRun != null )
             {
+                Triplet triplet = getCharacterRunTriplet(characterRun);
                 pFontSize = characterRun.getFontSize() / 2;
-                pFontName = characterRun.getFontName();
+                pFontName = triplet.fontName;
                 WordToHtmlUtils.addFontFamily( pFontName, style );
                 WordToHtmlUtils.addFontSize( pFontSize, style );
             }

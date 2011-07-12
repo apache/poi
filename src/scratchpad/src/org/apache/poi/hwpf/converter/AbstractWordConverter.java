@@ -19,6 +19,8 @@ package org.apache.poi.hwpf.converter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -50,7 +52,24 @@ public abstract class AbstractWordConverter
     private static final POILogger logger = POILogFactory
             .getLogger( AbstractWordConverter.class );
 
+    private FontReplacer fontReplacer = new DefaultFontReplacer();
+
+    protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
+    {
+        Triplet original = new Triplet();
+        original.bold = characterRun.isBold();
+        original.italic = characterRun.isItalic();
+        original.fontName = characterRun.getFontName();
+        Triplet updated = getFontReplacer().update( original );
+        return updated;
+    }
+
     public abstract Document getDocument();
+
+    public FontReplacer getFontReplacer()
+    {
+        return fontReplacer;
+    }
 
     protected abstract void outputCharacters( Element block,
             CharacterRun characterRun, String text );
@@ -144,25 +163,6 @@ public abstract class AbstractWordConverter
         return haveAnyText;
     }
 
-    public void processDocument( HWPFDocumentCore wordDocument )
-    {
-        final SummaryInformation summaryInformation = wordDocument
-                .getSummaryInformation();
-        if ( summaryInformation != null )
-        {
-            processDocumentInformation( summaryInformation );
-        }
-
-        final Range range = wordDocument.getRange();
-        for ( int s = 0; s < range.numSections(); s++ )
-        {
-            processSection( wordDocument, range.getSection( s ), s );
-        }
-    }
-
-    protected abstract void processDocumentInformation(
-            SummaryInformation summaryInformation );
-
     protected void processDeadField( HWPFDocumentCore wordDocument,
             Element currentBlock, Range range, int currentTableLevel,
             int beginMark, int separatorMark, int endMark )
@@ -193,6 +193,97 @@ public abstract class AbstractWordConverter
                     deadFieldValueSubrage, currentBlock );
 
         return;
+    }
+
+    public void processDocument( HWPFDocumentCore wordDocument )
+    {
+        final SummaryInformation summaryInformation = wordDocument
+                .getSummaryInformation();
+        if ( summaryInformation != null )
+        {
+            processDocumentInformation( summaryInformation );
+        }
+
+        final Range range = wordDocument.getRange();
+        for ( int s = 0; s < range.numSections(); s++ )
+        {
+            processSection( wordDocument, range.getSection( s ), s );
+        }
+    }
+
+    protected abstract void processDocumentInformation(
+            SummaryInformation summaryInformation );
+
+    protected void processField( HWPFDocument hwpfDocument, Range parentRange,
+            int currentTableLevel, Field field, Element currentBlock )
+    {
+        switch ( field.getType() )
+        {
+        case 37: // page reference
+        {
+            final Range firstSubrange = field.firstSubrange( parentRange );
+            if ( firstSubrange != null )
+            {
+                String formula = firstSubrange.text();
+                Pattern pagerefPattern = Pattern
+                        .compile( "[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h[ \\t\\r\\n]*" );
+                Matcher matcher = pagerefPattern.matcher( formula );
+                if ( matcher.find() )
+                {
+                    String pageref = matcher.group( 1 );
+                    processPageref( hwpfDocument, currentBlock,
+                            field.secondSubrange( parentRange ),
+                            currentTableLevel, pageref );
+                    return;
+                }
+            }
+            break;
+        }
+        case 88: // hyperlink
+        {
+            final Range firstSubrange = field.firstSubrange( parentRange );
+            if ( firstSubrange != null )
+            {
+                String formula = firstSubrange.text();
+                Pattern hyperlinkPattern = Pattern
+                        .compile( "[ \\t\\r\\n]*HYPERLINK \"(.*)\"[ \\t\\r\\n]*" );
+                Matcher matcher = hyperlinkPattern.matcher( formula );
+                if ( matcher.find() )
+                {
+                    String hyperlink = matcher.group( 1 );
+                    processHyperlink( hwpfDocument, currentBlock,
+                            field.secondSubrange( parentRange ),
+                            currentTableLevel, hyperlink );
+                    return;
+                }
+            }
+            break;
+        }
+        }
+
+        logger.log( POILogger.WARN, parentRange + " contains " + field
+                + " with unsupported type or format" );
+        processCharacters( hwpfDocument, currentTableLevel,
+                field.secondSubrange( parentRange ), currentBlock );
+    }
+
+    protected Field processField( HWPFDocumentCore wordDocument,
+            Range charactersRange, int currentTableLevel, int startOffset,
+            Element currentBlock )
+    {
+        if ( !( wordDocument instanceof HWPFDocument ) )
+            return null;
+
+        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
+        Field field = hwpfDocument.getFieldsTables().lookupFieldByStartOffset(
+                FieldsTables.PLCFFLDMOM, startOffset );
+        if ( field == null )
+            return null;
+
+        processField( hwpfDocument, charactersRange, currentTableLevel, field,
+                currentBlock );
+
+        return field;
     }
 
     protected abstract void processHyperlink( HWPFDocumentCore wordDocument,
@@ -292,76 +383,9 @@ public abstract class AbstractWordConverter
     protected abstract void processTable( HWPFDocumentCore wordDocument,
             Element flow, Table table );
 
-    protected Field processField( HWPFDocumentCore wordDocument,
-            Range charactersRange, int currentTableLevel, int startOffset,
-            Element currentBlock )
+    public void setFontReplacer( FontReplacer fontReplacer )
     {
-        if ( !( wordDocument instanceof HWPFDocument ) )
-            return null;
-
-        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
-        Field field = hwpfDocument.getFieldsTables().lookupFieldByStartOffset(
-                FieldsTables.PLCFFLDMOM, startOffset );
-        if ( field == null )
-            return null;
-
-        processField( hwpfDocument, charactersRange, currentTableLevel, field,
-                currentBlock );
-
-        return field;
-    }
-
-    protected void processField( HWPFDocument hwpfDocument, Range parentRange,
-            int currentTableLevel, Field field, Element currentBlock )
-    {
-        switch ( field.getType() )
-        {
-        case 37: // page reference
-        {
-            final Range firstSubrange = field.firstSubrange( parentRange );
-            if ( firstSubrange != null )
-            {
-                String formula = firstSubrange.text();
-                Pattern pagerefPattern = Pattern
-                        .compile( "[ \\t\\r\\n]*PAGEREF ([^ ]*)[ \\t\\r\\n]*\\\\h[ \\t\\r\\n]*" );
-                Matcher matcher = pagerefPattern.matcher( formula );
-                if ( matcher.find() )
-                {
-                    String pageref = matcher.group( 1 );
-                    processPageref( hwpfDocument, currentBlock,
-                            field.secondSubrange( parentRange ),
-                            currentTableLevel, pageref );
-                    return;
-                }
-            }
-            break;
-        }
-        case 88: // hyperlink
-        {
-            final Range firstSubrange = field.firstSubrange( parentRange );
-            if ( firstSubrange != null )
-            {
-                String formula = firstSubrange.text();
-                Pattern hyperlinkPattern = Pattern
-                        .compile( "[ \\t\\r\\n]*HYPERLINK \"(.*)\"[ \\t\\r\\n]*" );
-                Matcher matcher = hyperlinkPattern.matcher( formula );
-                if ( matcher.find() )
-                {
-                    String hyperlink = matcher.group( 1 );
-                    processHyperlink( hwpfDocument, currentBlock,
-                            field.secondSubrange( parentRange ),
-                            currentTableLevel, hyperlink );
-                    return;
-                }
-            }
-            break;
-        }
-        }
-
-        logger.log( POILogger.WARN, parentRange + " contains " + field
-                + " with unsupported type or format" );
-        processCharacters( hwpfDocument, currentTableLevel,
-                field.secondSubrange( parentRange ), currentBlock );
+        this.fontReplacer = fontReplacer;
     }
 
     protected int tryDeadField( HWPFDocumentCore wordDocument, Range range,

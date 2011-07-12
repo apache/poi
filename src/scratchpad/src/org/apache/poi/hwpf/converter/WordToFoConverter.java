@@ -27,6 +27,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -206,16 +208,19 @@ public class WordToFoConverter extends AbstractWordConverter
     {
         BlockProperies blockProperies = this.blocksProperies.peek();
         Element inline = foDocumentFacade.createInline();
-        if ( characterRun.isBold() != blockProperies.pBold )
+
+        Triplet triplet = getCharacterRunTriplet( characterRun );
+
+        if ( triplet.bold != blockProperies.pBold )
         {
-            WordToFoUtils.setBold( inline, characterRun.isBold() );
+            WordToFoUtils.setBold( inline, triplet.bold );
         }
-        if ( characterRun.isItalic() != blockProperies.pItalic )
+        if ( triplet.italic != blockProperies.pItalic )
         {
-            WordToFoUtils.setItalic( inline, characterRun.isItalic() );
+            WordToFoUtils.setItalic( inline, triplet.italic );
         }
-        if ( characterRun.getFontName() != null
-                && !AbstractWordUtils.equals( characterRun.getFontName(),
+        if ( WordToFoUtils.isNotEmpty( triplet.fontName )
+                && !WordToFoUtils.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
             WordToFoUtils.setFontFamily( inline, characterRun.getFontName() );
@@ -318,24 +323,17 @@ public class WordToFoConverter extends AbstractWordConverter
         }
 
         {
-            final String pFontName;
-            final int pFontSize;
-            final boolean pBold;
-            final boolean pItalic;
-            {
-                CharacterRun characterRun = paragraph.getCharacterRun( 0 );
-                pFontSize = characterRun.getFontSize() / 2;
-                pFontName = characterRun.getFontName();
-                pBold = characterRun.isBold();
-                pItalic = characterRun.isItalic();
-            }
-            WordToFoUtils.setFontFamily( block, pFontName );
-            WordToFoUtils.setFontSize( block, pFontSize );
-            WordToFoUtils.setBold( block, pBold );
-            WordToFoUtils.setItalic( block, pItalic );
+            CharacterRun characterRun = paragraph.getCharacterRun( 0 );
+            int pFontSize = characterRun.getFontSize() / 2;
+            Triplet triplet = getCharacterRunTriplet( characterRun );
 
-            blocksProperies.push( new BlockProperies( pFontName, pFontSize,
-                    pBold, pItalic ) );
+            WordToFoUtils.setFontFamily( block, triplet.fontName );
+            WordToFoUtils.setFontSize( block, pFontSize );
+            WordToFoUtils.setBold( block, triplet.bold );
+            WordToFoUtils.setItalic( block, triplet.italic );
+
+            blocksProperies.push( new BlockProperies( triplet.fontName,
+                    pFontSize, triplet.bold, triplet.italic ) );
         }
         try
         {
