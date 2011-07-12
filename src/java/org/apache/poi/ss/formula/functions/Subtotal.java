@@ -44,7 +44,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
  *      <tr align='center'><td>6</td><td>PRODUCT</td></tr>
  *      <tr align='center'><td>7</td><td>STDEV</td></tr>
  *      <tr align='center'><td>8</td><td>STDEVP *</td></tr>
- *      <tr align='center'><td>9</td><td>AVERAGE</td></tr>
+ *      <tr align='center'><td>9</td><td>SUM</td></tr>
  *      <tr align='center'><td>10</td><td>VAR *</td></tr>
  *      <tr align='center'><td>11</td><td>VARP *</td></tr>
  *      <tr align='center'><td>101-111</td><td>*</td></tr>
