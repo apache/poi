@@ -88,9 +88,9 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Returns the underlying hyperlink object
+     * @return the underlying CTHyperlink object
      */
-    protected CTHyperlink getCTHyperlink() {
+    public CTHyperlink getCTHyperlink() {
         return _ctHyperlink;
     }
 

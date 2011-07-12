@@ -917,7 +917,7 @@ public final class XSSFCell implements Cell {
         link.setCellReference( new CellReference(_row.getRowNum(), _cellNum).formatAsString() );
 
         // Add to the lists
-        getSheet().setCellHyperlink(link);
+        getSheet().addHyperlink(link);
     }
 
     /**
