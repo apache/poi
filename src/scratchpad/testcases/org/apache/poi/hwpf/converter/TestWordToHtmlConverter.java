@@ -41,7 +41,7 @@ public class TestWordToHtmlConverter extends TestCase
     {
         if ( !result.contains( substring ) )
             fail( "Substring \"" + substring
-                    + "\" not found in the following string: \"" + substring
+                    + "\" not found in the following string: \"" + result
                     + "\"" );
     }
 
@@ -80,8 +80,11 @@ public class TestWordToHtmlConverter extends TestCase
     public void testBug33519() throws Exception
     {
         String result = getHtmlText( "Bug33519.doc" );
-        assertContains( result, "Планински турове" );
-        assertContains( result, "Явор Асенов" );
+        assertContains(
+                result,
+                "\u041F\u043B\u0430\u043D\u0438\u043D\u0441\u043A\u0438 \u0442\u0443\u0440\u043E\u0432\u0435" );
+        assertContains( result,
+                "\u042F\u0432\u043E\u0440 \u0410\u0441\u0435\u043D\u043E\u0432" );
     }
 
     public void testBug46610_2() throws Exception
