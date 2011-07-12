@@ -43,6 +43,9 @@ public final class SprmOperation
     final static private short SPRM_LONG_TABLE = (short) 0xd608;
 
     public static final int TYPE_PAP = 1;
+    public static final int TYPE_CHP = 2;
+    public static final int TYPE_PIC = 3;
+    public static final int TYPE_SEP = 4;
     public static final int TYPE_TAP = 5;
 
     @Deprecated
@@ -183,6 +186,18 @@ public final class SprmOperation
     @Override
     public String toString()
     {
-        return "[SPRM] (0x" + Integer.toHexString( _value & 0xffff ) + ")";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append( "[SPRM] (0x" );
+        stringBuilder.append( Integer.toHexString( _value & 0xffff ) );
+        stringBuilder.append( "): " );
+        try
+        {
+            stringBuilder.append( getOperand() );
+        }
+        catch ( Exception exc )
+        {
+            stringBuilder.append( "(error)" );
+        }
+        return stringBuilder.toString();
     }
 }
