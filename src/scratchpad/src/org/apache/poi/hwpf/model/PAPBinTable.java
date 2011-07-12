@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.SprmIterator;
+import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -62,12 +64,12 @@ public class PAPBinTable
             byte[] dataStream, int offset, int size, int fcMin,
             TextPieceTable tpt )
     {
-        this( documentStream, tableStream, dataStream, offset, size, tpt, true );
+        this( documentStream, tableStream, dataStream, offset, size, null, tpt, true );
     }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size, TextPieceTable tpt,
-            boolean ignorePapxWithoutTextPieces )
+            byte[] dataStream, int offset, int size, ComplexFileTable complexFileTable,
+            TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
     {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
     this.tpt = tpt;
@@ -93,6 +95,50 @@ public class PAPBinTable
     	    _paragraphs.add(papx);
       }
     }
+
+        if ( complexFileTable != null )
+        {
+            SprmBuffer[] sprmBuffers = complexFileTable.getGrpprls();
+
+            // adding CHPX from fast-saved SPRMs
+            for ( TextPiece textPiece : tpt.getTextPieces() )
+            {
+                PropertyModifier prm = textPiece.getPieceDescriptor().getPrm();
+                if ( !prm.isComplex() )
+                    continue;
+                int igrpprl = prm.getIgrpprl();
+
+                if ( igrpprl < 0 || igrpprl >= sprmBuffers.length )
+                {
+                    logger.log( POILogger.WARN, textPiece
+                            + "'s PRM references to unknown grpprl" );
+                    continue;
+                }
+
+                boolean hasPap = false;
+                SprmBuffer sprmBuffer = sprmBuffers[igrpprl];
+                for ( SprmIterator iterator = sprmBuffer.iterator(); iterator
+                        .hasNext(); )
+                {
+                    SprmOperation sprmOperation = iterator.next();
+                    if ( sprmOperation.getType() == SprmOperation.TYPE_PAP )
+                    {
+                        hasPap = true;
+                        break;
+                    }
+                }
+
+                if ( hasPap )
+                {
+                    SprmBuffer newSprmBuffer = new SprmBuffer(2);
+                    newSprmBuffer.append( sprmBuffer.toByteArray() );
+
+                    PAPX papx = new PAPX( textPiece.getStart(),
+                            textPiece.getEnd(), newSprmBuffer, dataStream );
+                    _paragraphs.add( papx );
+                }
+            }
+        }
 
         // rebuild document paragraphs structure
         StringBuilder docText = new StringBuilder();
@@ -144,11 +190,6 @@ public class PAPBinTable
                     if ( fChar == 13 || fChar == 7 || fChar == 12 )
                         break;
                 }
-                // if ( papx.getStart() <= charIndex && charIndex <
-                // papx.getEnd() )
-                // {
-                // papxs.add( papx );
-                // }
             }
 
             if ( papxs.size() == 0 )
@@ -178,10 +219,21 @@ public class PAPBinTable
                 }
             }
 
-            SprmBuffer sprmBuffer = new SprmBuffer( 2 );
+            SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
             {
-                sprmBuffer.append( papx.getGrpprl(), 2 );
+                if ( sprmBuffer == null )
+                    try
+                    {
+                        sprmBuffer = (SprmBuffer) papx.getSprmBuf().clone();
+                    }
+                    catch ( CloneNotSupportedException e )
+                    {
+                        // can't happen
+                        throw new Error( e );
+                    }
+                else
+                    sprmBuffer.append( papx.getGrpprl(), 2 );
             }
             PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer,
                     dataStream );
