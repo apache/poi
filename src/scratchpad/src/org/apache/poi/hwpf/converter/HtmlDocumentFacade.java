@@ -75,6 +75,11 @@ public class HtmlDocumentFacade
         return document.createElement( "h1" );
     }
 
+    public Element createHeader2()
+    {
+        return document.createElement( "h2" );
+    }
+
     public Element createHyperlink( String internalDestination )
     {
         final Element basicLink = document.createElement( "a" );
@@ -110,6 +115,16 @@ public class HtmlDocumentFacade
     public Element createTableCell()
     {
         return document.createElement( "td" );
+    }
+
+    public Element createTableColumn()
+    {
+        return document.createElement( "col" );
+    }
+
+    public Element createTableColumnGroup()
+    {
+        return document.createElement( "colgroup" );
     }
 
     public Element createTableHeader()

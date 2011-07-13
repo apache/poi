@@ -123,6 +123,10 @@ public class ExcelToHtmlConverter
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 
+    private boolean outputColumnHeaders = true;
+
+    private boolean outputRowNumbers = true;
+
     private final Element styles;
 
     private final Set<Short> usedStyles = new LinkedHashSet<Short>();
@@ -249,9 +253,40 @@ public class ExcelToHtmlConverter
         }
     }
 
+    /**
+     * Generates name for output as column header in case
+     * <tt>{@link #isOutputColumnHeaders()} == true</tt>
+     * 
+     * @param columnIndex
+     *            0-based column index
+     */
+    protected String getColumnName( int columnIndex )
+    {
+        return String.valueOf( columnIndex + 1 );
+    }
+
     public Document getDocument()
     {
         return htmlDocumentFacade.getDocument();
+    }
+
+    /**
+     * Generates name for output as row number in case
+     * <tt>{@link #isOutputRowNumbers()} == true</tt>
+     */
+    private String getRowName( HSSFRow row )
+    {
+        return String.valueOf( row.getRowNum() + 1 );
+    }
+
+    public boolean isOutputColumnHeaders()
+    {
+        return outputColumnHeaders;
+    }
+
+    public boolean isOutputRowNumbers()
+    {
+        return outputRowNumbers;
     }
 
     protected boolean processCell( HSSFCell cell, Element tableCellElement )
@@ -348,6 +383,52 @@ public class ExcelToHtmlConverter
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
     }
 
+    protected void processColumnHeaders( int maxSheetColumns, Element table )
+    {
+        Element tableHeader = htmlDocumentFacade.createTableHeader();
+        table.appendChild( tableHeader );
+
+        Element tr = htmlDocumentFacade.createTableRow();
+
+        if ( isOutputRowNumbers() )
+        {
+            // empty row at left-top corner
+            tr.appendChild( htmlDocumentFacade.createTableHeaderCell() );
+        }
+
+        for ( int c = 0; c < maxSheetColumns; c++ )
+        {
+            Element th = htmlDocumentFacade.createTableHeaderCell();
+            String text = getColumnName( c );
+            th.appendChild( htmlDocumentFacade.createText( text ) );
+            tr.appendChild( th );
+        }
+        tableHeader.appendChild( tr );
+    }
+
+    /**
+     * Creates COLGROUP element with width specified for all columns. (Except
+     * first if <tt>{@link #isOutputRowNumbers()}==true</tt>)
+     */
+    protected void processColumnWidths( HSSFSheet sheet, int maxSheetColumns,
+            Element table )
+    {
+        // draw COLS after we know max column number
+        Element columnGroup = htmlDocumentFacade.createTableColumnGroup();
+        if ( isOutputRowNumbers() )
+        {
+            columnGroup.appendChild( htmlDocumentFacade.createTableColumn() );
+        }
+        for ( int c = 0; c < maxSheetColumns; c++ )
+        {
+            Element col = htmlDocumentFacade.createTableColumn();
+            col.setAttribute( "width", String.valueOf( ExcelToHtmlUtils
+                    .getColumnWidthInPx( sheet.getColumnWidth( c ) ) ) );
+            columnGroup.appendChild( col );
+        }
+        table.appendChild( columnGroup );
+    }
+
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
@@ -365,16 +446,26 @@ public class ExcelToHtmlConverter
                     .addDescription( summaryInformation.getComments() );
     }
 
-    protected boolean processRow( HSSFRow row, Element tableRowElement )
+    /**
+     * @return maximum 1-base index of column that were rendered, zero if none
+     */
+    protected int processRow( HSSFRow row, Element tableRowElement )
     {
-        boolean emptyRow = true;
-
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
-            return true;
+            return 0;
 
         final List<Element> emptyCells = new ArrayList<Element>( maxColIx );
 
+        if ( isOutputRowNumbers() )
+        {
+            Element tableRowNumberCellElement = htmlDocumentFacade
+                    .createTableHeaderCell();
+            processRowNumber( row, tableRowNumberCellElement );
+            emptyCells.add( tableRowNumberCellElement );
+        }
+
+        int maxRenderedColumn = 0;
         for ( int colIx = 0; colIx < maxColIx; colIx++ )
         {
             HSSFCell cell = row.getCell( colIx );
@@ -404,18 +495,24 @@ public class ExcelToHtmlConverter
                 emptyCells.clear();
 
                 tableRowElement.appendChild( tableCellElement );
-                emptyRow = false;
+                maxRenderedColumn = colIx;
             }
         }
 
-        return emptyRow;
+        return maxRenderedColumn + 1;
+    }
+
+    protected void processRowNumber( HSSFRow row,
+            Element tableRowNumberCellElement )
+    {
+        tableRowNumberCellElement.setAttribute( "class", "rownumber" );
+        Text text = htmlDocumentFacade.createText( getRowName( row ) );
+        tableRowNumberCellElement.appendChild( text );
     }
 
     protected void processSheet( HSSFSheet sheet )
     {
-        Element h1 = htmlDocumentFacade.createHeader1();
-        h1.appendChild( htmlDocumentFacade.createText( sheet.getSheetName() ) );
-        htmlDocumentFacade.getBody().appendChild( h1 );
+        processSheetHeader( htmlDocumentFacade.getBody(), sheet );
 
         final int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
         if ( physicalNumberOfRows <= 0 )
@@ -426,24 +523,24 @@ public class ExcelToHtmlConverter
 
         final List<Element> emptyRowElements = new ArrayList<Element>(
                 physicalNumberOfRows );
-
+        int maxSheetColumns = 1;
         for ( int r = 0; r < physicalNumberOfRows; r++ )
         {
             HSSFRow row = sheet.getRow( r );
 
             Element tableRowElement = htmlDocumentFacade.createTableRow();
 
-            boolean emptyRow;
+            int maxRowColumnNumber;
             if ( row != null )
             {
-                emptyRow = processRow( row, tableRowElement );
+                maxRowColumnNumber = processRow( row, tableRowElement );
             }
             else
             {
-                emptyRow = true;
+                maxRowColumnNumber = 0;
             }
 
-            if ( emptyRow )
+            if ( maxRowColumnNumber == 0 )
             {
                 emptyRowElements.add( tableRowElement );
             }
@@ -451,20 +548,35 @@ public class ExcelToHtmlConverter
             {
                 if ( !emptyRowElements.isEmpty() )
                 {
-                    for ( Element emptyCellElement : emptyRowElements )
+                    for ( Element emptyRowElement : emptyRowElements )
                     {
-                        tableBody.appendChild( emptyCellElement );
+                        tableBody.appendChild( emptyRowElement );
                     }
                     emptyRowElements.clear();
                 }
 
                 tableBody.appendChild( tableRowElement );
-                emptyRow = false;
             }
+            maxSheetColumns = Math.max( maxSheetColumns, maxRowColumnNumber );
+        }
+
+        processColumnWidths( sheet, maxSheetColumns, table );
+
+        if ( isOutputColumnHeaders() )
+        {
+            processColumnHeaders( maxSheetColumns, table );
         }
 
         table.appendChild( tableBody );
+
         htmlDocumentFacade.getBody().appendChild( table );
+    }
+
+    protected void processSheetHeader( Element htmlBody, HSSFSheet sheet )
+    {
+        Element h2 = htmlDocumentFacade.createHeader2();
+        h2.appendChild( htmlDocumentFacade.createText( sheet.getSheetName() ) );
+        htmlBody.appendChild( h2 );
     }
 
     public void processWorkbook( HSSFWorkbook workbook )
@@ -474,6 +586,12 @@ public class ExcelToHtmlConverter
         if ( summaryInformation != null )
         {
             processDocumentInformation( summaryInformation );
+        }
+
+        for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
+        {
+            HSSFSheet sheet = workbook.getSheetAt( s );
+            processSheet( sheet );
         }
 
         for ( short i = 0; i < workbook.getNumCellStyles(); i++ )
@@ -488,11 +606,15 @@ public class ExcelToHtmlConverter
                         .createText( "td.cellstyle_" + i + "{"
                                 + buildStyle( workbook, cellStyle ) + "}\n" ) );
         }
+    }
 
-        for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
-        {
-            HSSFSheet sheet = workbook.getSheetAt( s );
-            processSheet( sheet );
-        }
+    public void setOutputColumnHeaders( boolean outputColumnHeaders )
+    {
+        this.outputColumnHeaders = outputColumnHeaders;
+    }
+
+    public void setOutputRowNumbers( boolean outputRowNumbers )
+    {
+        this.outputRowNumbers = outputRowNumbers;
     }
 }
