@@ -29,6 +29,9 @@ public class ExcelToHtmlUtils
 {
     static final String EMPTY = "";
 
+    private static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
+    private static final int UNIT_OFFSET_LENGTH = 7;
+
     public static String getBorderStyle( short xlsBorder )
     {
         final String borderStyle;
@@ -91,6 +94,23 @@ public class ExcelToHtmlUtils
             stringBuilder.append( Integer.toHexString( s ) );
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * See <a href=
+     * "http://apache-poi.1045710.n5.nabble.com/Excel-Column-Width-Unit-Converter-pixels-excel-column-width-units-td2301481.html"
+     * >here</a> for Xio explanation and details
+     */
+    public static int getColumnWidthInPx( int widthUnits )
+    {
+        int pixels = ( widthUnits / EXCEL_COLUMN_WIDTH_FACTOR )
+                * UNIT_OFFSET_LENGTH;
+
+        int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
+        pixels += Math.round( offsetWidthUnits
+                / ( (float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH ) );
+
+        return pixels;
     }
 
     static boolean isEmpty( String str )
