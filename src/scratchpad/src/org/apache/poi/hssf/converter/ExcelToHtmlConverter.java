@@ -19,9 +19,9 @@ package org.apache.poi.hssf.converter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -121,26 +121,28 @@ public class ExcelToHtmlConverter
 
     private final HSSFDataFormatter _formatter = new HSSFDataFormatter();
 
+    private Map<String, String> cssStyleToClass = new LinkedHashMap<String, String>();
+
+    private Map<Short, String> excelStyleToClass = new LinkedHashMap<Short, String>();
+
     private final HtmlDocumentFacade htmlDocumentFacade;
 
     private boolean outputColumnHeaders = true;
 
     private boolean outputRowNumbers = true;
 
-    private final Element styles;
-
-    private final Set<Short> usedStyles = new LinkedHashSet<Short>();
+    private final Element stylesElement;
 
     public ExcelToHtmlConverter( Document doc )
     {
         htmlDocumentFacade = new HtmlDocumentFacade( doc );
 
-        styles = doc.createElement( "style" );
-        styles.setAttribute( "type", "text/css" );
-        htmlDocumentFacade.getHead().appendChild( styles );
+        stylesElement = doc.createElement( "style" );
+        stylesElement.setAttribute( "type", "text/css" );
+        htmlDocumentFacade.getHead().appendChild( stylesElement );
     }
 
-    private String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
+    protected String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
     {
         StringBuilder style = new StringBuilder();
 
@@ -209,20 +211,23 @@ public class ExcelToHtmlConverter
     private void buildStyle_border( HSSFWorkbook workbook, StringBuilder style,
             String type, short xlsBorder, short borderColor )
     {
-        style.append( type + "-border-style: "
-                + ExcelToHtmlUtils.getBorderStyle( xlsBorder ) + "; " );
-
         if ( xlsBorder == HSSFCellStyle.BORDER_NONE )
             return;
 
-        style.append( type + "-border-width: "
-                + ExcelToHtmlUtils.getBorderWidth( xlsBorder ) + "; " );
+        StringBuilder borderStyle = new StringBuilder();
+        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
+        borderStyle.append( ' ' );
+        borderStyle.append( ExcelToHtmlUtils.getBorderWidth( xlsBorder ) );
 
         final HSSFColor color = workbook.getCustomPalette().getColor(
                 borderColor );
         if ( color != null )
-            style.append( type + "-border-color: "
-                    + ExcelToHtmlUtils.getColor( color ) + "; " );
+        {
+            borderStyle.append( ' ' );
+            borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
+        }
+
+        style.append( type + "-border: " + borderStyle + "; " );
     }
 
     void buildStyle_font( HSSFWorkbook workbook, StringBuilder style,
@@ -234,7 +239,8 @@ public class ExcelToHtmlConverter
             style.append( "font-weight: bold; " );
             break;
         case HSSFFont.BOLDWEIGHT_NORMAL:
-            style.append( "font-weight: normal; " );
+            // by default, not not increase HTML size
+            // style.append( "font-weight: normal; " );
             break;
         }
 
@@ -279,6 +285,30 @@ public class ExcelToHtmlConverter
         return String.valueOf( row.getRowNum() + 1 );
     }
 
+    protected String getStyleClassName( HSSFWorkbook workbook,
+            HSSFCellStyle cellStyle )
+    {
+        String knownClass = excelStyleToClass.get( Short.valueOf( cellStyle
+                .getIndex() ) );
+        if ( knownClass != null )
+            return knownClass;
+
+        String cssStyle = buildStyle( workbook, cellStyle );
+        knownClass = cssStyleToClass.get( cssStyle );
+        if ( knownClass != null )
+        {
+            excelStyleToClass.put( Short.valueOf( cellStyle.getIndex() ),
+                    knownClass );
+            return knownClass;
+        }
+
+        knownClass = "c" + cellStyle.getIndex();
+        cssStyleToClass.put( cssStyle, knownClass );
+        excelStyleToClass.put( Short.valueOf( cellStyle.getIndex() ),
+                knownClass );
+        return knownClass;
+    }
+
     public boolean isOutputColumnHeaders()
     {
         return outputColumnHeaders;
@@ -289,7 +319,8 @@ public class ExcelToHtmlConverter
         return outputRowNumbers;
     }
 
-    protected boolean processCell( HSSFCell cell, Element tableCellElement )
+    protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
+            Element tableCellElement )
     {
         final HSSFCellStyle cellStyle = cell.getCellStyle();
 
@@ -363,9 +394,8 @@ public class ExcelToHtmlConverter
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
-            tableCellElement.setAttribute( "class", "cellstyle_"
-                    + cellStyleIndex );
-            usedStyles.add( Short.valueOf( cellStyleIndex ) );
+            tableCellElement.setAttribute( "class",
+                    getStyleClassName( workbook, cellStyle ) );
             if ( ExcelToHtmlUtils.isEmpty( value ) )
             {
                 /*
@@ -449,7 +479,8 @@ public class ExcelToHtmlConverter
     /**
      * @return maximum 1-base index of column that were rendered, zero if none
      */
-    protected int processRow( HSSFRow row, Element tableRowElement )
+    protected int processRow( HSSFWorkbook workbook, HSSFRow row,
+            Element tableRowElement )
     {
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
@@ -475,7 +506,7 @@ public class ExcelToHtmlConverter
             boolean emptyCell;
             if ( cell != null )
             {
-                emptyCell = processCell( cell, tableCellElement );
+                emptyCell = processCell( workbook, cell, tableCellElement );
             }
             else
             {
@@ -510,7 +541,7 @@ public class ExcelToHtmlConverter
         tableRowNumberCellElement.appendChild( text );
     }
 
-    protected void processSheet( HSSFSheet sheet )
+    protected void processSheet( HSSFWorkbook workbook, HSSFSheet sheet )
     {
         processSheetHeader( htmlDocumentFacade.getBody(), sheet );
 
@@ -533,7 +564,7 @@ public class ExcelToHtmlConverter
             int maxRowColumnNumber;
             if ( row != null )
             {
-                maxRowColumnNumber = processRow( row, tableRowElement );
+                maxRowColumnNumber = processRow( workbook, row, tableRowElement );
             }
             else
             {
@@ -591,20 +622,16 @@ public class ExcelToHtmlConverter
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
         {
             HSSFSheet sheet = workbook.getSheetAt( s );
-            processSheet( sheet );
+            processSheet( workbook, sheet );
         }
 
-        for ( short i = 0; i < workbook.getNumCellStyles(); i++ )
+        if ( !cssStyleToClass.isEmpty() )
         {
-            HSSFCellStyle cellStyle = workbook.getCellStyleAt( i );
-
-            if ( cellStyle == null )
-                continue;
-
-            if ( usedStyles.contains( Short.valueOf( i ) ) )
-                styles.appendChild( htmlDocumentFacade
-                        .createText( "td.cellstyle_" + i + "{"
-                                + buildStyle( workbook, cellStyle ) + "}\n" ) );
+            for ( Map.Entry<String, String> entry : cssStyleToClass.entrySet() )
+            {
+                stylesElement.appendChild( htmlDocumentFacade.createText( "td."
+                        + entry.getValue() + "{" + entry.getKey() + "}\n" ) );
+            }
         }
     }
 
