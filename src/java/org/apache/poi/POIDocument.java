@@ -239,19 +239,26 @@ public abstract class POIDocument {
 	protected void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
 	                          List<String> excepts) throws IOException {
 		//System.err.println("CopyNodes called");
-
-		DirectoryEntry root = source.getRoot();
-		DirectoryEntry newRoot = target.getRoot();
-
-		Iterator<Entry> entries = root.getEntries();
-		while (entries.hasNext()) {
-			Entry entry = entries.next();
-			if (!excepts.contains(entry.getName())) {
-				copyNodeRecursively(entry,newRoot);
-			}
-		}
+	   copyNodes(source.getRoot(), target.getRoot(), excepts);
 	}
 		
+   /**
+    * Copies nodes from one POIFS to the other minus the excepts
+    * @param source is the source POIFS to copy from
+    * @param target is the target POIFS to copy to
+    * @param excepts is a list of Strings specifying what nodes NOT to copy
+    */
+   protected void copyNodes(DirectoryNode sourceRoot, DirectoryNode targetRoot,
+                             List<String> excepts) throws IOException {
+      Iterator<Entry> entries = sourceRoot.getEntries();
+      while (entries.hasNext()) {
+         Entry entry = entries.next();
+         if (!excepts.contains(entry.getName())) {
+            copyNodeRecursively(entry,targetRoot);
+         }
+      }
+   }
+      
 	/**
 	 * Copies an Entry into a target POIFS directory, recursively
 	 */

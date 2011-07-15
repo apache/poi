@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51514 - avoid NPE when copying nodes from one HSSF workbook to a new one, when opened from NPOIFS</action>
            <action dev="poi-developers" type="fix">51504 - avoid NPE when DefaultRowHeight or DefaultColumnWidth records are missing</action>
            <action dev="poi-developers" type="fix">51502 - Correct Subtotal function javadoc entry</action>
            <action dev="poi-developers" type="add">Support for hyperlinks in SXSSF</action>
