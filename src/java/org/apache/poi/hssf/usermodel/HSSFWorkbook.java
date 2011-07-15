@@ -36,27 +36,27 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.OperandPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1244,13 +1244,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             //  out correctly shortly, so don't include the old one
             excepts.add("WORKBOOK");
 
-            POIFSFileSystem srcFs = this.directory.getFileSystem();
             // Copy over all the other nodes to our new poifs
-            copyNodes(srcFs, fs, excepts);
+            copyNodes(this.directory, fs.getRoot(), excepts);
 
             // YK: preserve StorageClsid, it is important for embedded workbooks,
             // see Bugzilla 47920
-            fs.getRoot().setStorageClsid(srcFs.getRoot().getStorageClsid());
+            fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
         }
         fs.writeFilesystem(stream);
     }
