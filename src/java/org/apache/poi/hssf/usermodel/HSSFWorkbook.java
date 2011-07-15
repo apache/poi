@@ -1726,27 +1726,24 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param records the list of records to search.
      * @param objects the list of embedded objects to populate.
      */
-    private void getAllEmbeddedObjects(List records, List<HSSFObjectData> objects)
+    private void getAllEmbeddedObjects(List<RecordBase> records, List<HSSFObjectData> objects)
     {
-        Iterator recordIter = records.iterator();
-        while (recordIter.hasNext())
-        {
-            Object obj = recordIter.next();
-            if (obj instanceof ObjRecord)
-            {
-                // TODO: More convenient way of determining if there is stored binary.
-                // TODO: Link to the data stored in the other stream.
-                Iterator subRecordIter = ((ObjRecord) obj).getSubRecords().iterator();
-                while (subRecordIter.hasNext())
+       for (RecordBase obj : records) {
+          if (obj instanceof ObjRecord)
+          {
+             // TODO: More convenient way of determining if there is stored binary.
+             // TODO: Link to the data stored in the other stream.
+             Iterator<SubRecord> subRecordIter = ((ObjRecord) obj).getSubRecords().iterator();
+             while (subRecordIter.hasNext())
+             {
+                SubRecord sub = subRecordIter.next();
+                if (sub instanceof EmbeddedObjectRefSubRecord)
                 {
-                    Object sub = subRecordIter.next();
-                    if (sub instanceof EmbeddedObjectRefSubRecord)
-                    {
-                        objects.add(new HSSFObjectData((ObjRecord) obj, directory.getFileSystem()));
-                    }
+                   objects.add(new HSSFObjectData((ObjRecord) obj, directory));
                 }
-            }
-        }
+             }
+          }
+       }
     }
 
     public HSSFCreationHelper getCreationHelper() {
