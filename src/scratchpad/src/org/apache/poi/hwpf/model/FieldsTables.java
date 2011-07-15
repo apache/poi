@@ -114,7 +114,7 @@ public class FieldsTables
                 fields.size() );
         for ( Field field : fields )
         {
-            result.put( Integer.valueOf( field.getStartOffset() ), field );
+            result.put( Integer.valueOf( field.getFieldStartOffset() ), field );
         }
         return result;
     }

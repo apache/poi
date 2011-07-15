@@ -4,9 +4,9 @@ import org.apache.poi.hwpf.usermodel.Range;
 
 public class Field
 {
-    private PlexOfField startPlex;
-    private PlexOfField separatorPlex;
     private PlexOfField endPlex;
+    private PlexOfField separatorPlex;
+    private PlexOfField startPlex;
 
     public Field( PlexOfField startPlex, PlexOfField separatorPlex,
             PlexOfField endPlex )
@@ -34,12 +34,42 @@ public class Field
         this.endPlex = endPlex;
     }
 
-    public int getStartOffset()
+    public Range firstSubrange( Range parent )
     {
-        return startPlex.getFcStart();
+        if ( hasSeparator() )
+        {
+            if ( getMarkStartOffset() + 1 == getMarkSeparatorOffset() )
+                return null;
+
+            return new Range( getMarkStartOffset() + 1,
+                    getMarkSeparatorOffset(), parent )
+            {
+                @Override
+                public String toString()
+                {
+                    return "FieldSubrange1 (" + super.toString() + ")";
+                }
+            };
+        }
+
+        if ( getMarkStartOffset() + 1 == getMarkEndOffset() )
+            return null;
+
+        return new Range( getMarkStartOffset() + 1, getMarkEndOffset(), parent )
+        {
+            @Override
+            public String toString()
+            {
+                return "FieldSubrange1 (" + super.toString() + ")";
+            }
+        };
     }
 
-    public int getEndOffset()
+    /**
+     * @return character position of first character after field (i.e.
+     *         {@link #getMarkEndOffset()} + 1)
+     */
+    public int getFieldEndOffset()
     {
         /*
          * sometimes plex looks like [100, 2000), where 100 is the position of
@@ -49,14 +79,38 @@ public class Field
         return endPlex.getFcStart() + 1;
     }
 
-    public boolean hasSeparator()
+    /**
+     * @return character position of first character in field (i.e.
+     *         {@link #getFieldStartOffset()})
+     */
+    public int getFieldStartOffset()
     {
-        return separatorPlex != null;
+        return startPlex.getFcStart();
     }
 
-    public int getSeparatorOffset()
+    /**
+     * @return character position of end field mark
+     */
+    public int getMarkEndOffset()
+    {
+        return endPlex.getFcStart();
+    }
+
+    /**
+     * @return character position of separator field mark (if present,
+     *         {@link NullPointerException} otherwise)
+     */
+    public int getMarkSeparatorOffset()
     {
         return separatorPlex.getFcStart();
+    }
+
+    /**
+     * @return character position of start field mark
+     */
+    public int getMarkStartOffset()
+    {
+        return startPlex.getFcStart();
     }
 
     public int getType()
@@ -64,9 +118,29 @@ public class Field
         return startPlex.getFld().getFieldType();
     }
 
-    public boolean isZombieEmbed()
+    public boolean hasSeparator()
     {
-        return endPlex.getFld().isFZombieEmbed();
+        return separatorPlex != null;
+    }
+
+    public boolean isHasSep()
+    {
+        return endPlex.getFld().isFHasSep();
+    }
+
+    public boolean isLocked()
+    {
+        return endPlex.getFld().isFLocked();
+    }
+
+    public boolean isNested()
+    {
+        return endPlex.getFld().isFNested();
+    }
+
+    public boolean isPrivateResult()
+    {
+        return endPlex.getFld().isFPrivateResult();
     }
 
     public boolean isResultDirty()
@@ -79,63 +153,19 @@ public class Field
         return endPlex.getFld().isFResultEdited();
     }
 
-    public boolean isLocked()
+    public boolean isZombieEmbed()
     {
-        return endPlex.getFld().isFLocked();
-    }
-
-    public boolean isPrivateResult()
-    {
-        return endPlex.getFld().isFPrivateResult();
-    }
-
-    public boolean isNested()
-    {
-        return endPlex.getFld().isFNested();
-    }
-
-    public boolean isHasSep()
-    {
-        return endPlex.getFld().isFHasSep();
-    }
-
-    public Range firstSubrange( Range parent )
-    {
-        if ( hasSeparator() )
-        {
-            if ( getStartOffset() + 1 == getSeparatorOffset() )
-                return null;
-
-            return new Range( getStartOffset() + 1, getSeparatorOffset(),
-                    parent )
-            {
-                @Override
-                public String toString()
-                {
-                    return "FieldSubrange1 (" + super.toString() + ")";
-                }
-            };
-        }
-
-        if ( getStartOffset() + 1 == getEndOffset() )
-            return null;
-
-        return new Range( getStartOffset() + 1, getEndOffset(), parent )
-        {
-            @Override
-            public String toString()
-            {
-                return "FieldSubrange1 (" + super.toString() + ")";
-            }
-        };
+        return endPlex.getFld().isFZombieEmbed();
     }
 
     public Range secondSubrange( Range parent )
     {
-        if ( !hasSeparator() || getSeparatorOffset() + 1 == getEndOffset() )
+        if ( !hasSeparator()
+                || getMarkSeparatorOffset() + 1 == getMarkEndOffset() )
             return null;
 
-        return new Range( getSeparatorOffset() + 1, getEndOffset(), parent )
+        return new Range( getMarkSeparatorOffset() + 1, getMarkEndOffset(),
+                parent )
         {
             @Override
             public String toString()
@@ -148,7 +178,7 @@ public class Field
     @Override
     public String toString()
     {
-        return "Field [" + getStartOffset() + "; " + getEndOffset()
+        return "Field [" + getFieldStartOffset() + "; " + getFieldEndOffset()
                 + "] (type: 0x" + Integer.toHexString( getType() ) + " = "
                 + getType() + " )";
     }

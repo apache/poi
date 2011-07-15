@@ -118,7 +118,7 @@ public abstract class AbstractWordConverter
                         processField( ( (HWPFDocument) hwpfDocument ), range,
                                 currentTableLevel, aliveField, block );
 
-                        int continueAfter = aliveField.getEndOffset();
+                        int continueAfter = aliveField.getFieldEndOffset();
                         while ( c < range.numCharacterRuns()
                                 && range.getCharacterRun( c ).getEndOffset() <= continueAfter )
                             c++;
@@ -445,7 +445,7 @@ public abstract class AbstractWordConverter
                         currentBlock );
                 if ( possibleField != null )
                 {
-                    c = possibleField.getEndOffset();
+                    c = possibleField.getFieldEndOffset();
                 }
                 else
                 {
