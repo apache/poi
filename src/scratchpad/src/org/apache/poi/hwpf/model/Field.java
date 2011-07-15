@@ -41,7 +41,12 @@ public class Field
 
     public int getEndOffset()
     {
-        return endPlex.getFcEnd();
+        /*
+         * sometimes plex looks like [100, 2000), where 100 is the position of
+         * field-end character, and 2000 - some other char position, far away
+         * from field (not inside). So taking into account only start --sergey
+         */
+        return endPlex.getFcStart() + 1;
     }
 
     public boolean hasSeparator()
