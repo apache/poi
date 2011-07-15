@@ -119,8 +119,8 @@ public abstract class AbstractWordConverter
                                 currentTableLevel, aliveField, block );
 
                         int continueAfter = aliveField.getEndOffset();
-                        while ( range.getCharacterRun( c ).getEndOffset() <= continueAfter
-                                && c < range.numCharacterRuns() )
+                        while ( c < range.numCharacterRuns()
+                                && range.getCharacterRun( c ).getEndOffset() <= continueAfter )
                             c++;
 
                         if ( c < range.numCharacterRuns() )
