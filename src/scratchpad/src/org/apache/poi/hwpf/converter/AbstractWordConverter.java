@@ -19,11 +19,10 @@ package org.apache.poi.hwpf.converter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.model.Field;
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.ListFormatOverride;
@@ -77,7 +76,7 @@ public abstract class AbstractWordConverter
     protected boolean processCharacters( HWPFDocumentCore hwpfDocument,
             int currentTableLevel, Range range, final Element block )
     {
-        if (range == null)
+        if ( range == null )
             return false;
 
         boolean haveAnyText = false;
@@ -118,7 +117,15 @@ public abstract class AbstractWordConverter
                     {
                         processField( ( (HWPFDocument) hwpfDocument ), range,
                                 currentTableLevel, aliveField, block );
-                        c = aliveField.getEndOffset();
+
+                        int continueAfter = aliveField.getEndOffset();
+                        while ( range.getCharacterRun( c ).getEndOffset() <= continueAfter
+                                && c < range.numCharacterRuns() )
+                            c++;
+
+                        if ( c < range.numCharacterRuns() )
+                            c--;
+
                         continue;
                     }
                 }
@@ -164,10 +171,11 @@ public abstract class AbstractWordConverter
                     {
                         if ( stringBuilder.length() > 0 )
                         {
-                            outputCharacters( block, characterRun, stringBuilder.toString() );
+                            outputCharacters( block, characterRun,
+                                    stringBuilder.toString() );
                             stringBuilder.setLength( 0 );
                         }
-                        processLineBreak(block, characterRun);
+                        processLineBreak( block, characterRun );
                     }
                     else
                     {
@@ -176,7 +184,8 @@ public abstract class AbstractWordConverter
                 }
                 if ( stringBuilder.length() > 0 )
                 {
-                    outputCharacters( block, characterRun, stringBuilder.toString() );
+                    outputCharacters( block, characterRun,
+                            stringBuilder.toString() );
                     stringBuilder.setLength( 0 );
                 }
             }
