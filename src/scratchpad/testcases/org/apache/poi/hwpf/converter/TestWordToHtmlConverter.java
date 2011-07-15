@@ -134,8 +134,10 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "hyperlink.doc" );
 
-        assertContains( result, "<a href=\"http://testuri.org/\">" );
-        assertContains( result, "Hyperlink text" );
+        assertContains( result, "<span>Before text; </span><a " );
+        assertContains( result,
+                "<a href=\"http://testuri.org/\"><span>Hyperlink text</span></a>" );
+        assertContains( result, "</a><span>; after text</span>" );
     }
 
     public void testInnerTable() throws Exception
