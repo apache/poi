@@ -736,6 +736,28 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(40000, sh.getColumnWidth(0));
     }
 
+
+    public void testDefaultColumnWidth() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook( "12843-1.xls" );
+        HSSFSheet sheet = wb.getSheetAt( 7 );
+        // shall not be NPE
+        assertEquals(8, sheet.getDefaultColumnWidth());
+        assertEquals(8*256, sheet.getColumnWidth(0));
+
+        assertEquals(0xFF, sheet.getDefaultRowHeight());
+
+        wb = HSSFTestDataSamples.openSampleWorkbook( "34775.xls" );
+        // second and third sheets miss DefaultColWidthRecord
+        for(int i = 1; i <= 2; i++){
+            int dw = wb.getSheetAt( i ).getDefaultColumnWidth();
+            assertEquals(8, dw);
+            int cw = wb.getSheetAt( i ).getColumnWidth(0);
+            assertEquals(8*256, cw);
+
+            assertEquals(0xFF, sheet.getDefaultRowHeight());
+        }
+    }
+
     /**
      * Some utilities write Excel files without the ROW records.
      * Excel, ooo, and google docs are OK with this.

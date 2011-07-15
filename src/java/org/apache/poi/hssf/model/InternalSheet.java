@@ -65,12 +65,12 @@ import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
-import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -110,8 +110,8 @@ public final class InternalSheet {
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
-    protected DefaultColWidthRecord      defaultcolwidth   =     null;
-    protected DefaultRowHeightRecord     defaultrowheight  =     null;
+    protected DefaultColWidthRecord      defaultcolwidth   =     new DefaultColWidthRecord();
+    protected DefaultRowHeightRecord     defaultrowheight  =     new DefaultRowHeightRecord();
     private PageSettingsBlock _psBlock;
 
     /**
@@ -272,7 +272,7 @@ public final class InternalSheet {
                 records.add(rec);
                 continue;
             }
-            
+
             if (recSid == EOFRecord.sid) {
                 records.add(rec);
                 break;
@@ -723,7 +723,7 @@ public final class InternalSheet {
     public void removeRow(RowRecord row) {
         _rowsAggregate.removeRow(row);
     }
-    
+
     /**
      * Get all the value records (from LOC). Records will be returned from the first
      *  record (starting at LOC) which is a value record.
@@ -753,7 +753,7 @@ public final class InternalSheet {
      * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
      *
      * @return Array of CellValueRecordInterface representing the remaining value records
-     * @deprecated use {@link #getValueIterator()} instead
+     * @deprecated use {@link #getCellValueIterator()} instead
      */
     @Deprecated
     public CellValueRecordInterface[] getValueRecords() {
@@ -934,7 +934,7 @@ public final class InternalSheet {
         DefaultRowHeightRecord retval = new DefaultRowHeightRecord();
 
         retval.setOptionFlags(( short ) 0);
-        retval.setRowHeight(( short ) 0xff);
+        retval.setRowHeight(DefaultRowHeightRecord.DEFAULT_ROW_HEIGHT);
         return retval;
     }
 
@@ -955,7 +955,7 @@ public final class InternalSheet {
       */
     private static DefaultColWidthRecord createDefaultColWidth() {
         DefaultColWidthRecord retval = new DefaultColWidthRecord();
-        retval.setColWidth(( short ) 8);
+        retval.setColWidth(DefaultColWidthRecord.DEFAULT_COLUMN_WIDTH);
         return retval;
     }
 

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
@@ -38,8 +38,15 @@ public final class DefaultRowHeightRecord
     private short             field_1_option_flags;
     private short             field_2_row_height;
 
+    /**
+     * The default row height for empty rows is 255 twips (255 / 20 == 12.75 points)
+     */
+    public static final short DEFAULT_ROW_HEIGHT = 0xFF;
+
     public DefaultRowHeightRecord()
     {
+        field_1_option_flags = 0x0000;
+        field_2_row_height = DEFAULT_ROW_HEIGHT;
     }
 
     public DefaultRowHeightRecord(RecordInputStream in)
