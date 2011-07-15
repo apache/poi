@@ -26,7 +26,6 @@ import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.SubRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -41,20 +40,20 @@ public final class HSSFObjectData {
     private final ObjRecord _record;
 
     /**
-     * Reference to the filesystem, required for retrieving the object data.
+     * Reference to the filesystem root, required for retrieving the object data.
      */
-    private final POIFSFileSystem _poifs;
+    private final DirectoryEntry _root;
 
     /**
      * Constructs object data by wrapping a lower level object record.
      *
      * @param record the low-level object record.
-     * @param poifs the filesystem, required for retrieving the object data.
+     * @param root the root of the filesystem, required for retrieving the object data.
      */
-    public HSSFObjectData(ObjRecord record, POIFSFileSystem poifs)
+    public HSSFObjectData(ObjRecord record, DirectoryEntry root)
     {
         _record = record;
-        _poifs = poifs;
+        _root = root;
     }
 
     /**
@@ -77,7 +76,7 @@ public final class HSSFObjectData {
         int streamId = subRecord.getStreamId().intValue();
         String streamName = "MBD" + HexDump.toHex(streamId);
 
-        Entry entry = _poifs.getRoot().getEntry(streamName);
+        Entry entry = _root.getEntry(streamName);
         if (entry instanceof DirectoryEntry) {
             return (DirectoryEntry) entry;
         }
