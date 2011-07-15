@@ -33,6 +33,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -119,7 +120,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
     }
-
+    
     public void testReadWriteWithCharts() {
         HSSFWorkbook b;
         HSSFSheet s;
@@ -556,6 +557,54 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
           assertEquals("replaceMe", cell .getRichStringCellValue().getString());
        }
     }
+    
+    public void testWordDocEmbeddedInXls() throws IOException {
+       // Open the two filesystems
+       DirectoryNode[] files = new DirectoryNode[2];
+       files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampeFile("WithEmbeddedObjects.xls"))).getRoot();
+       
+       // Check the embedded parts
+       for(DirectoryNode root : files) {
+          HSSFWorkbook hw = new HSSFWorkbook(root, true);
+          List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
+          boolean found = false;
+          for (int i = 0; i < objects.size(); i++) {
+             HSSFObjectData embeddedObject = objects.get(i);
+             if (embeddedObject.hasDirectoryEntry()) {
+                DirectoryEntry dir = embeddedObject.getDirectory();
+                if (dir instanceof DirectoryNode) {
+                   DirectoryNode dNode = (DirectoryNode)dir;
+                   if (hasEntry(dNode,"WordDocument")) {
+                      found = true;
+                   }
+                }
+             }
+          }
+          assertTrue(found);
+       }
+    }
+
+    /**
+     * Checks that we can open a workbook with NPOIFS, and write it out
+     *  again (via POIFS) and have it be valid
+     * @throws IOException
+     */
+    public void testWriteWorkbookFromNPOIFS() throws IOException {
+       InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
+       NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+       
+       // Start as NPOIFS
+       HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
+       assertEquals(3, wb.getNumberOfSheets());
+       assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+       
+       // Will switch to POIFS
+       wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+       assertEquals(3, wb.getNumberOfSheets());
+       assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+    }
+   
     public void testCellStylesLimit() {
         HSSFWorkbook wb = new HSSFWorkbook();
         int numBuiltInStyles = wb.getNumCellStyles();
@@ -631,4 +680,13 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals("'first sheet'!D1", cf.getRule(0).getFormula1());
         assertEquals("'other sheet'!D1", cf.getRule(0).getFormula2());
     }
+    
+    private boolean hasEntry(DirectoryNode dirNode, String entryName) {
+       try {
+           dirNode.getEntry(entryName);
+           return true;
+       } catch (FileNotFoundException e) {
+           return false;
+       }
+   }
 }
