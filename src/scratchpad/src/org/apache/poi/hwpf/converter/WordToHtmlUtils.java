@@ -17,7 +17,6 @@
 package org.apache.poi.hwpf.converter;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.TableCell;
@@ -33,7 +32,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
     public static void addBorder( BorderCode borderCode, String where,
             StringBuilder style )
     {
-        if ( borderCode == null || borderCode.getBorderType() == 0 )
+        if ( borderCode == null || borderCode.isEmpty() )
             return;
 
         if ( isEmpty( where ) )
@@ -58,10 +57,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
     public static void addCharactersProperties(
             final CharacterRun characterRun, StringBuilder style )
     {
-        final CharacterProperties clonedProperties = characterRun
-                .cloneProperties();
-
-        addBorder( clonedProperties.getBrc(), EMPTY, style );
+        addBorder( characterRun.getBorder(), EMPTY, style );
 
         if ( characterRun.isCapitalized() )
         {
@@ -70,7 +66,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( characterRun.isHighlighted() )
         {
             style.append( "background-color: "
-                    + getColor( clonedProperties.getIcoHighlight() ) + "; " );
+                    + getColor( characterRun.getHighlightedColor() ) + "; " );
         }
         if ( characterRun.isStrikeThrough() )
         {
