@@ -146,7 +146,7 @@ public final class SectionSprmCompressor
     }
     if (newSEP.getDmOrientPage() != DEFAULT_SEP.getDmOrientPage())
     {
-      size += SprmUtils.addSprm((short)0x301D, newSEP.getDmOrientPage(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x301D, newSEP.getDmOrientPage() ? 1 : 0, null, sprmList);
     }
     if (newSEP.getXaPage() != DEFAULT_SEP.getXaPage())
     {
