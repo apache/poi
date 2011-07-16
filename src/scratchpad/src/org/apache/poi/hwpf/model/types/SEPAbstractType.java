@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf.model.types;
 
 
-import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 
@@ -29,86 +28,250 @@ import org.apache.poi.hwpf.usermodel.DateAndTime;
  *
  * @author S. Ryan Ackley
  */
-public abstract class SEPAbstractType implements HDFType {
+public abstract class SEPAbstractType
+{
 
-    protected  byte field_1_bkc;
-    protected  boolean field_2_fTitlePage;
-    protected  boolean field_3_fAutoPgn;
-    protected  byte field_4_nfcPgn;
-    protected  boolean field_5_fUnlocked;
-    protected  byte field_6_cnsPgn;
-    protected  boolean field_7_fPgnRestart;
-    protected  boolean field_8_fEndNote;
-    protected  byte field_9_lnc;
-    protected  byte field_10_grpfIhdt;
-    protected  int field_11_nLnnMod;
-    protected  int field_12_dxaLnn;
-    protected  int field_13_dxaPgn;
-    protected  int field_14_dyaPgn;
-    protected  boolean field_15_fLBetween;
-    protected  byte field_16_vjc;
-    protected  int field_17_dmBinFirst;
-    protected  int field_18_dmBinOther;
-    protected  int field_19_dmPaperReq;
-    protected  BorderCode field_20_brcTop;
-    protected  BorderCode field_21_brcLeft;
-    protected  BorderCode field_22_brcBottom;
-    protected  BorderCode field_23_brcRight;
-    protected  boolean field_24_fPropMark;
-    protected  int field_25_ibstPropRMark;
-    protected  DateAndTime field_26_dttmPropRMark;
-    protected  int field_27_dxtCharSpace;
-    protected  int field_28_dyaLinePitch;
-    protected  int field_29_clm;
-    protected  int field_30_unused2;
-    protected  byte field_31_dmOrientPage;
-    protected  byte field_32_iHeadingPgn;
-    protected  int field_33_pgnStart;
-    protected  int field_34_lnnMin;
-    protected  int field_35_wTextFlow;
-    protected  short field_36_unused3;
-    protected  int field_37_pgbProp;
-    protected  short field_38_unused4;
-    protected  int field_39_xaPage;
-    protected  int field_40_yaPage;
-    protected  int field_41_xaPageNUp;
-    protected  int field_42_yaPageNUp;
-    protected  int field_43_dxaLeft;
-    protected  int field_44_dxaRight;
-    protected  int field_45_dyaTop;
-    protected  int field_46_dyaBottom;
-    protected  int field_47_dzaGutter;
-    protected  int field_48_dyaHdrTop;
-    protected  int field_49_dyaHdrBottom;
-    protected  int field_50_ccolM1;
-    protected  boolean field_51_fEvenlySpaced;
-    protected  byte field_52_unused5;
-    protected  int field_53_dxaColumns;
-    protected  int[] field_54_rgdxaColumn;
-    protected  int field_55_dxaColumnWidth;
-    protected  byte field_56_dmOrientFirst;
-    protected  byte field_57_fLayout;
-    protected  short field_58_unused6;
-    protected  byte[] field_59_olstAnm;
+    protected byte field_1_bkc;
+    /** No break */
+    /**/public final static byte BKC_NO_BREAK = 0;
+    /** New column */
+    /**/public final static byte BKC_NEW_COLUMN = 1;
+    /** New page */
+    /**/public final static byte BKC_NEW_PAGE = 2;
+    /** Even page */
+    /**/public final static byte BKC_EVEN_PAGE = 3;
+    /** Odd page */
+    /**/public final static byte BKC_ODD_PAGE = 4;
+    protected boolean field_2_fTitlePage;
+    protected boolean field_3_fAutoPgn;
+    protected byte field_4_nfcPgn;
+    /** Arabic */
+    /**/public final static byte NFCPGN_ARABIC = 0;
+    /** Roman (upper case) */
+    /**/public final static byte NFCPGN_ROMAN_UPPER_CASE = 1;
+    /** Roman (lower case) */
+    /**/public final static byte NFCPGN_ROMAN_LOWER_CASE = 2;
+    /** Letter (upper case) */
+    /**/public final static byte NFCPGN_LETTER_UPPER_CASE = 3;
+    /** Letter (lower case) */
+    /**/public final static byte NFCPGN_LETTER_LOWER_CASE = 4;
+    protected boolean field_5_fUnlocked;
+    protected byte field_6_cnsPgn;
+    protected boolean field_7_fPgnRestart;
+    protected boolean field_8_fEndNote;
+    protected byte field_9_lnc;
+    protected byte field_10_grpfIhdt;
+    protected int field_11_nLnnMod;
+    protected int field_12_dxaLnn;
+    protected int field_13_dxaPgn;
+    protected int field_14_dyaPgn;
+    protected boolean field_15_fLBetween;
+    protected byte field_16_vjc;
+    protected int field_17_dmBinFirst;
+    protected int field_18_dmBinOther;
+    protected int field_19_dmPaperReq;
+    protected BorderCode field_20_brcTop;
+    protected BorderCode field_21_brcLeft;
+    protected BorderCode field_22_brcBottom;
+    protected BorderCode field_23_brcRight;
+    protected boolean field_24_fPropMark;
+    protected int field_25_ibstPropRMark;
+    protected DateAndTime field_26_dttmPropRMark;
+    protected int field_27_dxtCharSpace;
+    protected int field_28_dyaLinePitch;
+    protected int field_29_clm;
+    protected int field_30_unused2;
+    protected boolean field_31_dmOrientPage;
+    /**/public final static boolean DMORIENTPAGE_LANDSCAPE = false;
+    /**/public final static boolean DMORIENTPAGE_PORTRAIT = true;
+    protected byte field_32_iHeadingPgn;
+    protected int field_33_pgnStart;
+    protected int field_34_lnnMin;
+    protected int field_35_wTextFlow;
+    protected short field_36_unused3;
+    protected int field_37_pgbProp;
+    protected short field_38_unused4;
+    protected int field_39_xaPage;
+    protected int field_40_yaPage;
+    protected int field_41_xaPageNUp;
+    protected int field_42_yaPageNUp;
+    protected int field_43_dxaLeft;
+    protected int field_44_dxaRight;
+    protected int field_45_dyaTop;
+    protected int field_46_dyaBottom;
+    protected int field_47_dzaGutter;
+    protected int field_48_dyaHdrTop;
+    protected int field_49_dyaHdrBottom;
+    protected int field_50_ccolM1;
+    protected boolean field_51_fEvenlySpaced;
+    protected byte field_52_unused5;
+    protected int field_53_dxaColumns;
+    protected int[] field_54_rgdxaColumn;
+    protected int field_55_dxaColumnWidth;
+    protected byte field_56_dmOrientFirst;
+    protected byte field_57_fLayout;
+    protected short field_58_unused6;
+    protected byte[] field_59_olstAnm;
 
-
-    public SEPAbstractType()
+    protected SEPAbstractType()
     {
+        this.field_1_bkc = 2;
+        this.field_8_fEndNote = true;
+        this.field_13_dxaPgn = 720;
+        this.field_14_dyaPgn = 720;
+        this.field_31_dmOrientPage = true;
+        this.field_33_pgnStart = 1;
+        this.field_39_xaPage = 12240;
+        this.field_40_yaPage = 15840;
+        this.field_41_xaPageNUp = 12240;
+        this.field_42_yaPageNUp = 15840;
+        this.field_43_dxaLeft = 1800;
+        this.field_44_dxaRight = 1800;
+        this.field_45_dyaTop = 1440;
+        this.field_46_dyaBottom = 1440;
+        this.field_48_dyaHdrTop = 720;
+        this.field_49_dyaHdrBottom = 720;
+        this.field_51_fEvenlySpaced = true;
+        this.field_53_dxaColumns = 720;
+    }
 
+
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[SEP]\n");
+        builder.append("    .bkc                  = ");
+        builder.append(" (").append(getBkc()).append(" )\n");
+        builder.append("    .fTitlePage           = ");
+        builder.append(" (").append(getFTitlePage()).append(" )\n");
+        builder.append("    .fAutoPgn             = ");
+        builder.append(" (").append(getFAutoPgn()).append(" )\n");
+        builder.append("    .nfcPgn               = ");
+        builder.append(" (").append(getNfcPgn()).append(" )\n");
+        builder.append("    .fUnlocked            = ");
+        builder.append(" (").append(getFUnlocked()).append(" )\n");
+        builder.append("    .cnsPgn               = ");
+        builder.append(" (").append(getCnsPgn()).append(" )\n");
+        builder.append("    .fPgnRestart          = ");
+        builder.append(" (").append(getFPgnRestart()).append(" )\n");
+        builder.append("    .fEndNote             = ");
+        builder.append(" (").append(getFEndNote()).append(" )\n");
+        builder.append("    .lnc                  = ");
+        builder.append(" (").append(getLnc()).append(" )\n");
+        builder.append("    .grpfIhdt             = ");
+        builder.append(" (").append(getGrpfIhdt()).append(" )\n");
+        builder.append("    .nLnnMod              = ");
+        builder.append(" (").append(getNLnnMod()).append(" )\n");
+        builder.append("    .dxaLnn               = ");
+        builder.append(" (").append(getDxaLnn()).append(" )\n");
+        builder.append("    .dxaPgn               = ");
+        builder.append(" (").append(getDxaPgn()).append(" )\n");
+        builder.append("    .dyaPgn               = ");
+        builder.append(" (").append(getDyaPgn()).append(" )\n");
+        builder.append("    .fLBetween            = ");
+        builder.append(" (").append(getFLBetween()).append(" )\n");
+        builder.append("    .vjc                  = ");
+        builder.append(" (").append(getVjc()).append(" )\n");
+        builder.append("    .dmBinFirst           = ");
+        builder.append(" (").append(getDmBinFirst()).append(" )\n");
+        builder.append("    .dmBinOther           = ");
+        builder.append(" (").append(getDmBinOther()).append(" )\n");
+        builder.append("    .dmPaperReq           = ");
+        builder.append(" (").append(getDmPaperReq()).append(" )\n");
+        builder.append("    .brcTop               = ");
+        builder.append(" (").append(getBrcTop()).append(" )\n");
+        builder.append("    .brcLeft              = ");
+        builder.append(" (").append(getBrcLeft()).append(" )\n");
+        builder.append("    .brcBottom            = ");
+        builder.append(" (").append(getBrcBottom()).append(" )\n");
+        builder.append("    .brcRight             = ");
+        builder.append(" (").append(getBrcRight()).append(" )\n");
+        builder.append("    .fPropMark            = ");
+        builder.append(" (").append(getFPropMark()).append(" )\n");
+        builder.append("    .ibstPropRMark        = ");
+        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
+        builder.append("    .dttmPropRMark        = ");
+        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
+        builder.append("    .dxtCharSpace         = ");
+        builder.append(" (").append(getDxtCharSpace()).append(" )\n");
+        builder.append("    .dyaLinePitch         = ");
+        builder.append(" (").append(getDyaLinePitch()).append(" )\n");
+        builder.append("    .clm                  = ");
+        builder.append(" (").append(getClm()).append(" )\n");
+        builder.append("    .unused2              = ");
+        builder.append(" (").append(getUnused2()).append(" )\n");
+        builder.append("    .dmOrientPage         = ");
+        builder.append(" (").append(getDmOrientPage()).append(" )\n");
+        builder.append("    .iHeadingPgn          = ");
+        builder.append(" (").append(getIHeadingPgn()).append(" )\n");
+        builder.append("    .pgnStart             = ");
+        builder.append(" (").append(getPgnStart()).append(" )\n");
+        builder.append("    .lnnMin               = ");
+        builder.append(" (").append(getLnnMin()).append(" )\n");
+        builder.append("    .wTextFlow            = ");
+        builder.append(" (").append(getWTextFlow()).append(" )\n");
+        builder.append("    .unused3              = ");
+        builder.append(" (").append(getUnused3()).append(" )\n");
+        builder.append("    .pgbProp              = ");
+        builder.append(" (").append(getPgbProp()).append(" )\n");
+        builder.append("    .unused4              = ");
+        builder.append(" (").append(getUnused4()).append(" )\n");
+        builder.append("    .xaPage               = ");
+        builder.append(" (").append(getXaPage()).append(" )\n");
+        builder.append("    .yaPage               = ");
+        builder.append(" (").append(getYaPage()).append(" )\n");
+        builder.append("    .xaPageNUp            = ");
+        builder.append(" (").append(getXaPageNUp()).append(" )\n");
+        builder.append("    .yaPageNUp            = ");
+        builder.append(" (").append(getYaPageNUp()).append(" )\n");
+        builder.append("    .dxaLeft              = ");
+        builder.append(" (").append(getDxaLeft()).append(" )\n");
+        builder.append("    .dxaRight             = ");
+        builder.append(" (").append(getDxaRight()).append(" )\n");
+        builder.append("    .dyaTop               = ");
+        builder.append(" (").append(getDyaTop()).append(" )\n");
+        builder.append("    .dyaBottom            = ");
+        builder.append(" (").append(getDyaBottom()).append(" )\n");
+        builder.append("    .dzaGutter            = ");
+        builder.append(" (").append(getDzaGutter()).append(" )\n");
+        builder.append("    .dyaHdrTop            = ");
+        builder.append(" (").append(getDyaHdrTop()).append(" )\n");
+        builder.append("    .dyaHdrBottom         = ");
+        builder.append(" (").append(getDyaHdrBottom()).append(" )\n");
+        builder.append("    .ccolM1               = ");
+        builder.append(" (").append(getCcolM1()).append(" )\n");
+        builder.append("    .fEvenlySpaced        = ");
+        builder.append(" (").append(getFEvenlySpaced()).append(" )\n");
+        builder.append("    .unused5              = ");
+        builder.append(" (").append(getUnused5()).append(" )\n");
+        builder.append("    .dxaColumns           = ");
+        builder.append(" (").append(getDxaColumns()).append(" )\n");
+        builder.append("    .rgdxaColumn          = ");
+        builder.append(" (").append(getRgdxaColumn()).append(" )\n");
+        builder.append("    .dxaColumnWidth       = ");
+        builder.append(" (").append(getDxaColumnWidth()).append(" )\n");
+        builder.append("    .dmOrientFirst        = ");
+        builder.append(" (").append(getDmOrientFirst()).append(" )\n");
+        builder.append("    .fLayout              = ");
+        builder.append(" (").append(getFLayout()).append(" )\n");
+        builder.append("    .unused6              = ");
+        builder.append(" (").append(getUnused6()).append(" )\n");
+        builder.append("    .olstAnm              = ");
+        builder.append(" (").append(getOlstAnm()).append(" )\n");
+
+        builder.append("[/SEP]\n");
+        return builder.toString();
     }
 
     /**
-     * Size of record (exluding 4 byte header)
-     */
-    public int getSize()
-    {
-        return 4 +  + 1 + 0 + 0 + 1 + 0 + 1 + 0 + 0 + 1 + 1 + 2 + 4 + 2 + 2 + 0 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 0 + 2 + 4 + 4 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 0 + 1 + 4 + 356 + 4 + 1 + 1 + 2 + 212;
-    }
-
-
-
-    /**
-     * Get the bkc field for the SEP record.
+     * Break code.
+     *
+     * @return One of 
+     * <li>{@link #BKC_NO_BREAK}
+     * <li>{@link #BKC_NEW_COLUMN}
+     * <li>{@link #BKC_NEW_PAGE}
+     * <li>{@link #BKC_EVEN_PAGE}
+     * <li>{@link #BKC_ODD_PAGE}
      */
     public byte getBkc()
     {
@@ -116,7 +279,15 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Set the bkc field for the SEP record.
+     * Break code.
+     *
+     * @param field_1_bkc
+     *        One of 
+     * <li>{@link #BKC_NO_BREAK}
+     * <li>{@link #BKC_NEW_COLUMN}
+     * <li>{@link #BKC_NEW_PAGE}
+     * <li>{@link #BKC_EVEN_PAGE}
+     * <li>{@link #BKC_ODD_PAGE}
      */
     public void setBkc(byte field_1_bkc)
     {
@@ -124,7 +295,7 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Get the fTitlePage field for the SEP record.
+     * Set to 1 when a title page is to be displayed.
      */
     public boolean getFTitlePage()
     {
@@ -132,7 +303,7 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Set the fTitlePage field for the SEP record.
+     * Set to 1 when a title page is to be displayed.
      */
     public void setFTitlePage(boolean field_2_fTitlePage)
     {
@@ -140,7 +311,7 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Get the fAutoPgn field for the SEP record.
+     * Only for Macintosh compatibility, used only during open, when 1, sep.dxaPgn and sep.dyaPgn are valid page number locations.
      */
     public boolean getFAutoPgn()
     {
@@ -148,7 +319,7 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Set the fAutoPgn field for the SEP record.
+     * Only for Macintosh compatibility, used only during open, when 1, sep.dxaPgn and sep.dyaPgn are valid page number locations.
      */
     public void setFAutoPgn(boolean field_3_fAutoPgn)
     {
@@ -156,7 +327,14 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Get the nfcPgn field for the SEP record.
+     * Page number format code.
+     *
+     * @return One of 
+     * <li>{@link #NFCPGN_ARABIC}
+     * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
+     * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
+     * <li>{@link #NFCPGN_LETTER_UPPER_CASE}
+     * <li>{@link #NFCPGN_LETTER_LOWER_CASE}
      */
     public byte getNfcPgn()
     {
@@ -164,7 +342,15 @@ public abstract class SEPAbstractType implements HDFType {
     }
 
     /**
-     * Set the nfcPgn field for the SEP record.
+     * Page number format code.
+     *
+     * @param field_4_nfcPgn
+     *        One of 
+     * <li>{@link #NFCPGN_ARABIC}
+     * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
+     * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
+     * <li>{@link #NFCPGN_LETTER_UPPER_CASE}
+     * <li>{@link #NFCPGN_LETTER_LOWER_CASE}
      */
     public void setNfcPgn(byte field_4_nfcPgn)
     {
@@ -589,16 +775,25 @@ public abstract class SEPAbstractType implements HDFType {
 
     /**
      * Get the dmOrientPage field for the SEP record.
+     *
+     * @return One of 
+     * <li>{@link #DMORIENTPAGE_LANDSCAPE}
+     * <li>{@link #DMORIENTPAGE_PORTRAIT}
      */
-    public byte getDmOrientPage()
+    public boolean getDmOrientPage()
     {
         return field_31_dmOrientPage;
     }
 
     /**
      * Set the dmOrientPage field for the SEP record.
+     *
+     * @param field_31_dmOrientPage
+     *        One of 
+     * <li>{@link #DMORIENTPAGE_LANDSCAPE}
+     * <li>{@link #DMORIENTPAGE_PORTRAIT}
      */
-    public void setDmOrientPage(byte field_31_dmOrientPage)
+    public void setDmOrientPage(boolean field_31_dmOrientPage)
     {
         this.field_31_dmOrientPage = field_31_dmOrientPage;
     }
@@ -1051,9 +1246,4 @@ public abstract class SEPAbstractType implements HDFType {
         this.field_59_olstAnm = field_59_olstAnm;
     }
 
-
 }  // END OF CLASS
-
-
-
-

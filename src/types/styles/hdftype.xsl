@@ -31,38 +31,66 @@
 package <xsl:value-of select="@package"/>;
 </xsl:if>
 
-
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * <xsl:value-of select="/record/description"/>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
-<xsl:apply-templates select="author"/>
+ *       remove the record in src/types/definitions.
+<xsl:apply-templates select="author"/><xsl:text>
  */
-public abstract class <xsl:value-of select="@name"/>AbstractType
-    implements HDFType
+public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>AbstractType
 {
 
-<xsl:for-each select="//fields/field">    protected  <xsl:value-of select="@type"/><xsl:text> field_</xsl:text><xsl:value-of select="position()"/>_<xsl:value-of select="@name"/>;
-<xsl:apply-templates select="./bit|./const"/>
-</xsl:for-each>
+</xsl:text>
+    <xsl:for-each select="//fields/field">
+        <xsl:call-template name="indent"/>
+        <xsl:text>protected </xsl:text>
+        <xsl:value-of select="@type"/>
+        <xsl:text> field_</xsl:text>
+        <xsl:value-of select="position()"/>
+        <xsl:text>_</xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text>;</xsl:text>
+        <xsl:call-template name="linebreak"/>
+        <xsl:apply-templates select="./bit|./const"/>
+    </xsl:for-each>
 
-    public <xsl:value-of select="@name"/>AbstractType()
-    {
-<xsl:for-each select="//fields/field"><xsl:if test="@default">
-<xsl:text>        </xsl:text>
-<xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="@default"/>;
-</xsl:if></xsl:for-each>
-    }
-<xsl:if test='//@fromfile="true"'>
-    protected void fillFields(byte [] data, int offset)
-    {
+    <xsl:call-template name="linebreak"/>
+
+    <xsl:call-template name="indent"/>
+    <xsl:text>protected </xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>AbstractType()</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>{</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:for-each select="//fields/field">
+        <!-- we don't include @default condition in for-each to preserve position() -->
+        <xsl:if test="@default">
+            <xsl:call-template name="indent"/>
+            <xsl:call-template name="indent"/>
+            <xsl:text>this.</xsl:text>
+            <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+            <xsl:text> = </xsl:text>
+            <xsl:value-of select="@default"/>
+            <xsl:text>;</xsl:text>
+            <xsl:call-template name="linebreak"/>
+        </xsl:if>
+    </xsl:for-each>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="linebreak"/>
+
+    <xsl:if test='/@fromfile="true"'>
+        protected void fillFields(byte[] data, int offset)
+        {
 <xsl:variable name="fieldIterator" select="field:new()"/>
 <xsl:for-each select="//fields/field">
 <xsl:text>        </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,30)"/>  = <xsl:value-of select="field:fillDecoder($fieldIterator,@size,@type)"/>;
@@ -76,17 +104,6 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 <xsl:text>        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>;
 </xsl:for-each>
     }
-</xsl:if>
-
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[<xsl:value-of select="@name"/>]\n");
-<xsl:apply-templates select="//field" mode="tostring"/>
-        buffer.append("[/<xsl:value-of select="@name"/>]\n");
-        return buffer.toString();
-    }
 
     /**
      * Size of record (exluding 4 byte header)
@@ -99,16 +116,36 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     <xsl:value-of select="field:calcSize($fieldIterator,position(),@name,@size,@type)"/>
 </xsl:for-each>;
     }
+</xsl:if>
 
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+</xsl:text>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>builder.append("[</xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>]\n");</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:apply-templates select="//field" mode="tostring"/>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>builder.append("[/</xsl:text>
+    <xsl:value-of select="@name"/>
+    <xsl:text>]\n");
+        return builder.toString();
+    }
+</xsl:text>
 
 <xsl:apply-templates select="//field" mode="getset"/>
 <xsl:apply-templates select="//field" mode="bits"/>
-
+<xsl:text>
 }  // END OF CLASS
-
-
-
-
+</xsl:text>
 </xsl:template>
 
 <xsl:template match = "field" mode="bits">
@@ -139,13 +176,44 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 
 <xsl:template match = "bit" >        private static BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
 </xsl:template>
-<xsl:template match = "const">        public final static <xsl:value-of select="@type"/><xsl:text>  </xsl:text><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/>;
-</xsl:template>
 
-<xsl:template match = "const" mode="listconsts">
-<xsl:text>
-     *        </xsl:text>
-<xsl:value-of select="recutil:getConstName(../@name,@name,0)"/></xsl:template>
+    <xsl:template match="const">
+        <xsl:if test="@description">
+            <xsl:call-template name="indent"/>
+            <xsl:text>/** </xsl:text>
+            <xsl:value-of select="@description"/>
+            <xsl:text> */</xsl:text>
+            <xsl:call-template name="linebreak"/>
+        </xsl:if>
+        <xsl:call-template name="indent"/>
+        <xsl:text>/**/</xsl:text>
+        <xsl:text>public final static </xsl:text>
+        <xsl:value-of select="@type"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="recutil:getConstName(../@name,@name,0)"/>
+        <xsl:text> = </xsl:text>
+        <xsl:value-of select="@value"/>
+        <xsl:text>;</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:template>
+
+    <xsl:template match="const" mode="listconsts">
+        <xsl:call-template name="linebreak"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text> * &lt;li&gt;{@link #</xsl:text>
+        <xsl:value-of select="recutil:getConstName(../@name,@name,0)"/>
+        <xsl:text>}</xsl:text>
+    </xsl:template>
+
+    <xsl:template name="linebreak">
+        <xsl:text>
+</xsl:text>
+    </xsl:template>
+
+    <xsl:template name="indent">
+        <xsl:text>    </xsl:text>
+    </xsl:template>
+
 <xsl:template match="field" mode="getset">
     /**
      * <xsl:choose>
@@ -195,11 +263,21 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     }
 </xsl:template>
 
-<xsl:template match="field" mode="tostring">
-        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ");
-        buffer.append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");
-<xsl:apply-templates select="bit" mode="bittostring"/>
-</xsl:template>
+    <xsl:template match="field" mode="tostring">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>builder.append("    .</xsl:text>
+        <xsl:value-of select="recutil:getFieldName(@name,20)"/>
+        <xsl:text> = ");</xsl:text>
+        <xsl:call-template name="linebreak"/>
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>builder.append(" (").append(get</xsl:text>
+        <xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>
+        <xsl:text>()).append(" )\n");</xsl:text>
+        <xsl:apply-templates select="bit" mode="bittostring"/>
+        <xsl:call-template name="linebreak"/>
+    </xsl:template>
 
 <xsl:template match="bit" mode="bittostring">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(<xsl:value-of select="recutil:getBitFieldFunction(@name, @mask, ../@type, 'false')"/>()).append('\n');
 </xsl:template>
