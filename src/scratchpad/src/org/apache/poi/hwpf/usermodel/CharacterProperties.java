@@ -80,20 +80,8 @@ public final class CharacterProperties
 
     public CharacterProperties()
     {
-        setDttmRMark( new DateAndTime() );
-        setDttmRMarkDel( new DateAndTime() );
-        setDttmPropRMark( new DateAndTime() );
-        setDttmDispFldRMark( new DateAndTime() );
+        setFUsePgsuSettings( true );
         setXstDispFldRMark( new byte[36] );
-        setShd( new ShadingDescriptor() );
-        setBrc( new BorderCode() );
-
-        setFcPic( -1 );
-        setHps( 20 );
-        setIstd( 10 );
-        setWCharScale( 100 );
-        setLidDefault( 0x0400 );
-        setLidFE( 0x0400 );
     }
 
   public boolean isMarkedDeleted()
@@ -294,7 +282,7 @@ public final class CharacterProperties
 
   public void setVerticalOffset(int hpsPos)
   {
-    super.setHpsPos(hpsPos);
+    super.setHpsPos((short) hpsPos);
   }
 
   public int getKerning()

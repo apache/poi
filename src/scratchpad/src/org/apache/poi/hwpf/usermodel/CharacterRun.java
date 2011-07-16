@@ -397,7 +397,7 @@ public final class CharacterRun
 
   public void setVerticalOffset(int hpsPos)
   {
-    _props.setHpsPos(hpsPos);
+    _props.setHpsPos((short) hpsPos);
     _chpx.updateSprm(SPRM_HPSPOS, (byte)hpsPos);
   }
 

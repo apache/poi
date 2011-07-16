@@ -209,9 +209,9 @@ public final class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x484b, newCHP.getHpsKern(), null, sprmList);
     }
-    if (newCHP.getYsr() != oldCHP.getYsr())
+    if (newCHP.getHresi().equals( oldCHP.getHresi() ))
     {
-      size += SprmUtils.addSprm((short)0x484e, newCHP.getYsr(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x484e, newCHP.getHresi().getValue(), null, sprmList);
     }
     if (newCHP.getFtcAscii() != oldCHP.getFtcAscii())
     {
