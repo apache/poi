@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -30,8 +29,6 @@ import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 
@@ -95,7 +92,7 @@ public class AbstractWordUtils
             return "solid";
         }
     }
-    
+
     public static String getBorderWidth( BorderCode borderCode )
     {
         int lineWidth = borderCode.getLineWidth();
@@ -271,21 +268,6 @@ public class AbstractWordUtils
         catch ( OldWordFileFormatException exc )
         {
             return new HWPFOldDocument( poifsFileSystem );
-        }
-    }
-
-    public static TableIterator newTableIterator( Range range, int level )
-    {
-        try
-        {
-            Constructor<TableIterator> constructor = TableIterator.class
-                    .getDeclaredConstructor( Range.class, int.class );
-            constructor.setAccessible( true );
-            return constructor.newInstance( range, Integer.valueOf( level ) );
-        }
-        catch ( Exception exc )
-        {
-            throw new Error( exc );
         }
     }
 
