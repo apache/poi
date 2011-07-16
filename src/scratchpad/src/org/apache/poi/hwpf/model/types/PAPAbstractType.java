@@ -17,9 +17,6 @@
 
 package org.apache.poi.hwpf.model.types;
 
-
-
-import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
@@ -35,362 +32,294 @@ import org.apache.poi.util.BitField;
  * @author S. Ryan Ackley
  */
 public abstract class PAPAbstractType
-    implements HDFType
 {
 
-    protected  int field_1_istd;
-    protected  byte field_2_fSideBySide;
-    protected  byte field_3_fKeep;
-    protected  byte field_4_fKeepFollow;
-    protected  byte field_5_fPageBreakBefore;
-    protected  byte field_6_brcl;
-    protected  byte field_7_brcp;
-    protected  byte field_8_ilvl;
-    protected  int field_9_ilfo;
-    protected  byte field_10_fNoLnn;
-    protected  LineSpacingDescriptor field_11_lspd;
-    protected  int field_12_dyaBefore;
-    protected  int field_13_dyaAfter;
-    protected  byte field_14_fInTable;
-    protected  byte field_15_finTableW97;
-    protected  byte field_16_fTtp;
-    protected  int field_17_dxaAbs;
-    protected  int field_18_dyaAbs;
-    protected  int field_19_dxaWidth;
-    protected  byte field_20_fBrLnAbove;
-    protected  byte field_21_fBrLnBelow;
-    protected  byte field_22_pcVert;
-    protected  byte field_23_pcHorz;
-    protected  byte field_24_wr;
-    protected  byte field_25_fNoAutoHyph;
-    protected  int field_26_dyaHeight;
-    protected  byte field_27_fMinHeight;
-    protected  DropCapSpecifier field_28_dcs;
-    protected  int field_29_dyaFromText;
-    protected  int field_30_dxaFromText;
-    protected  byte field_31_fLocked;
-    protected  byte field_32_fWidowControl;
-    protected  byte field_33_fKinsoku;
-    protected  byte field_34_fWordWrap;
-    protected  byte field_35_fOverflowPunct;
-    protected  byte field_36_fTopLinePunct;
-    protected  byte field_37_fAutoSpaceDE;
-    protected  byte field_38_fAutoSpaceDN;
-    protected  int field_39_wAlignFont;
-    protected  short field_40_fontAlign;
+    protected int field_1_istd;
+    protected boolean field_2_fSideBySide;
+    protected boolean field_3_fKeep;
+    protected boolean field_4_fKeepFollow;
+    protected boolean field_5_fPageBreakBefore;
+    protected byte field_6_brcl;
+    /**/public final static byte BRCL_SINGLE = 0;
+    /**/public final static byte BRCL_THICK = 1;
+    /**/public final static byte BRCL_DOUBLE = 2;
+    /**/public final static byte BRCL_SHADOW = 3;
+    protected byte field_7_brcp;
+    /**/public final static byte BRCP_NONE = 0;
+    /**/public final static byte BRCP_BORDER_ABOVE = 1;
+    /**/public final static byte BRCP_BORDER_BELOW = 2;
+    /**/public final static byte BRCP_BOX_AROUND = 15;
+    /**/public final static byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
+    protected byte field_8_ilvl;
+    protected int field_9_ilfo;
+    protected boolean field_10_fNoLnn;
+    protected LineSpacingDescriptor field_11_lspd;
+    protected int field_12_dyaBefore;
+    protected int field_13_dyaAfter;
+    protected boolean field_14_fInTable;
+    protected boolean field_15_finTableW97;
+    protected boolean field_16_fTtp;
+    protected int field_17_dxaAbs;
+    protected int field_18_dyaAbs;
+    protected int field_19_dxaWidth;
+    protected boolean field_20_fBrLnAbove;
+    protected boolean field_21_fBrLnBelow;
+    protected byte field_22_pcVert;
+    protected byte field_23_pcHorz;
+    protected byte field_24_wr;
+    protected boolean field_25_fNoAutoHyph;
+    protected int field_26_dyaHeight;
+    protected boolean field_27_fMinHeight;
+    /**/public final static boolean FMINHEIGHT_EXACT = false;
+    /**/public final static boolean FMINHEIGHT_AT_LEAST = true;
+    protected DropCapSpecifier field_28_dcs;
+    protected int field_29_dyaFromText;
+    protected int field_30_dxaFromText;
+    protected boolean field_31_fLocked;
+    protected boolean field_32_fWidowControl;
+    protected boolean field_33_fKinsoku;
+    protected boolean field_34_fWordWrap;
+    protected boolean field_35_fOverflowPunct;
+    protected boolean field_36_fTopLinePunct;
+    protected boolean field_37_fAutoSpaceDE;
+    protected boolean field_38_fAutoSpaceDN;
+    protected int field_39_wAlignFont;
+    /**/public final static byte WALIGNFONT_HANGING = 0;
+    /**/public final static byte WALIGNFONT_CENTERED = 1;
+    /**/public final static byte WALIGNFONT_ROMAN = 2;
+    /**/public final static byte WALIGNFONT_VARIABLE = 3;
+    /**/public final static byte WALIGNFONT_AUTO = 4;
+    protected short field_40_fontAlign;
         private static BitField  fVertical = new BitField(0x0001);
         private static BitField  fBackward = new BitField(0x0002);
         private static BitField  fRotateFont = new BitField(0x0004);
-    protected  byte field_41_fVertical;
-    protected  byte field_42_fBackward;
-    protected  byte field_43_fRotateFont;
-    protected  byte field_44_lvl;
-    protected  byte field_45_fBiDi;
-    protected  byte field_46_fNumRMIns;
-    protected  byte field_47_fCrLf;
-    protected  byte field_48_fUsePgsuSettings;
-    protected  byte field_49_fAdjustRight;
-    protected  int field_50_itap;
-    protected  byte field_51_fInnerTableCell;
-    protected  byte field_52_fOpenTch;
-    protected  byte field_53_fTtpEmbedded;
-    protected  short field_54_dxcRight;
-    protected  short field_55_dxcLeft;
-    protected  short field_56_dxcLeft1;
-    protected  byte field_57_fDyaBeforeAuto;
-    protected  byte field_58_fDyaAfterAuto;
-    protected  int field_59_dxaRight;
-    protected  int field_60_dxaLeft;
-    protected  int field_61_dxaLeft1;
-    protected  byte field_62_jc;
-    protected  byte field_63_fNoAllowOverlap;
-    protected  BorderCode field_64_brcTop;
-    protected  BorderCode field_65_brcLeft;
-    protected  BorderCode field_66_brcBottom;
-    protected  BorderCode field_67_brcRight;
-    protected  BorderCode field_68_brcBetween;
-    protected  BorderCode field_69_brcBar;
-    protected  ShadingDescriptor field_70_shd;
-    protected  byte[] field_71_anld;
-    protected  byte[] field_72_phe;
-    protected  int field_73_fPropRMark;
-    protected  int field_74_ibstPropRMark;
-    protected  DateAndTime field_75_dttmPropRMark;
-    protected  int field_76_itbdMac;
-    protected  int[] field_77_rgdxaTab;
-    protected  byte[] field_78_rgtbd;
-    protected  byte[] field_79_numrm;
-    protected  byte[] field_80_ptap;
+    protected byte field_41_lvl;
+    protected boolean field_42_fBiDi;
+    protected boolean field_43_fNumRMIns;
+    protected boolean field_44_fCrLf;
+    protected boolean field_45_fUsePgsuSettings;
+    protected boolean field_46_fAdjustRight;
+    protected int field_47_itap;
+    protected boolean field_48_fInnerTableCell;
+    protected boolean field_49_fOpenTch;
+    protected boolean field_50_fTtpEmbedded;
+    protected short field_51_dxcRight;
+    protected short field_52_dxcLeft;
+    protected short field_53_dxcLeft1;
+    protected boolean field_54_fDyaBeforeAuto;
+    protected boolean field_55_fDyaAfterAuto;
+    protected int field_56_dxaRight;
+    protected int field_57_dxaLeft;
+    protected int field_58_dxaLeft1;
+    protected byte field_59_jc;
+    protected boolean field_60_fNoAllowOverlap;
+    protected BorderCode field_61_brcTop;
+    protected BorderCode field_62_brcLeft;
+    protected BorderCode field_63_brcBottom;
+    protected BorderCode field_64_brcRight;
+    protected BorderCode field_65_brcBetween;
+    protected BorderCode field_66_brcBar;
+    protected ShadingDescriptor field_67_shd;
+    protected byte[] field_68_anld;
+    protected byte[] field_69_phe;
+    protected boolean field_70_fPropRMark;
+    protected int field_71_ibstPropRMark;
+    protected DateAndTime field_72_dttmPropRMark;
+    protected int field_73_itbdMac;
+    protected int[] field_74_rgdxaTab;
+    protected byte[] field_75_rgtbd;
+    protected byte[] field_76_numrm;
+    protected byte[] field_77_ptap;
 
-
-    public PAPAbstractType()
+    protected PAPAbstractType()
     {
-
+        this.field_11_lspd = new LineSpacingDescriptor();
+        this.field_11_lspd = new LineSpacingDescriptor();
+        this.field_28_dcs = new DropCapSpecifier();
+        this.field_32_fWidowControl = true;
+        this.field_41_lvl = 9;
+        this.field_61_brcTop = new BorderCode();
+        this.field_62_brcLeft = new BorderCode();
+        this.field_63_brcBottom = new BorderCode();
+        this.field_64_brcRight = new BorderCode();
+        this.field_65_brcBetween = new BorderCode();
+        this.field_66_brcBar = new BorderCode();
+        this.field_67_shd = new ShadingDescriptor();
+        this.field_68_anld = new byte[0];
+        this.field_69_phe = new byte[0];
+        this.field_72_dttmPropRMark = new DateAndTime();
+        this.field_74_rgdxaTab = new int[0];
+        this.field_75_rgtbd = new byte[0];
+        this.field_76_numrm = new byte[0];
+        this.field_77_ptap = new byte[0];
     }
 
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[PAP]\n");
-
-        buffer.append("    .istd                 = ");
-        buffer.append(" (").append(getIstd()).append(" )\n");
-
-        buffer.append("    .fSideBySide          = ");
-        buffer.append(" (").append(getFSideBySide()).append(" )\n");
-
-        buffer.append("    .fKeep                = ");
-        buffer.append(" (").append(getFKeep()).append(" )\n");
-
-        buffer.append("    .fKeepFollow          = ");
-        buffer.append(" (").append(getFKeepFollow()).append(" )\n");
-
-        buffer.append("    .fPageBreakBefore     = ");
-        buffer.append(" (").append(getFPageBreakBefore()).append(" )\n");
-
-        buffer.append("    .brcl                 = ");
-        buffer.append(" (").append(getBrcl()).append(" )\n");
-
-        buffer.append("    .brcp                 = ");
-        buffer.append(" (").append(getBrcp()).append(" )\n");
-
-        buffer.append("    .ilvl                 = ");
-        buffer.append(" (").append(getIlvl()).append(" )\n");
-
-        buffer.append("    .ilfo                 = ");
-        buffer.append(" (").append(getIlfo()).append(" )\n");
-
-        buffer.append("    .fNoLnn               = ");
-        buffer.append(" (").append(getFNoLnn()).append(" )\n");
-
-        buffer.append("    .lspd                 = ");
-        buffer.append(" (").append(getLspd()).append(" )\n");
-
-        buffer.append("    .dyaBefore            = ");
-        buffer.append(" (").append(getDyaBefore()).append(" )\n");
-
-        buffer.append("    .dyaAfter             = ");
-        buffer.append(" (").append(getDyaAfter()).append(" )\n");
-
-        buffer.append("    .fInTable             = ");
-        buffer.append(" (").append(getFInTable()).append(" )\n");
-
-        buffer.append("    .finTableW97          = ");
-        buffer.append(" (").append(getFinTableW97()).append(" )\n");
-
-        buffer.append("    .fTtp                 = ");
-        buffer.append(" (").append(getFTtp()).append(" )\n");
-
-        buffer.append("    .dxaAbs               = ");
-        buffer.append(" (").append(getDxaAbs()).append(" )\n");
-
-        buffer.append("    .dyaAbs               = ");
-        buffer.append(" (").append(getDyaAbs()).append(" )\n");
-
-        buffer.append("    .dxaWidth             = ");
-        buffer.append(" (").append(getDxaWidth()).append(" )\n");
-
-        buffer.append("    .fBrLnAbove           = ");
-        buffer.append(" (").append(getFBrLnAbove()).append(" )\n");
-
-        buffer.append("    .fBrLnBelow           = ");
-        buffer.append(" (").append(getFBrLnBelow()).append(" )\n");
-
-        buffer.append("    .pcVert               = ");
-        buffer.append(" (").append(getPcVert()).append(" )\n");
-
-        buffer.append("    .pcHorz               = ");
-        buffer.append(" (").append(getPcHorz()).append(" )\n");
-
-        buffer.append("    .wr                   = ");
-        buffer.append(" (").append(getWr()).append(" )\n");
-
-        buffer.append("    .fNoAutoHyph          = ");
-        buffer.append(" (").append(getFNoAutoHyph()).append(" )\n");
-
-        buffer.append("    .dyaHeight            = ");
-        buffer.append(" (").append(getDyaHeight()).append(" )\n");
-
-        buffer.append("    .fMinHeight           = ");
-        buffer.append(" (").append(getFMinHeight()).append(" )\n");
-
-        buffer.append("    .dcs                  = ");
-        buffer.append(" (").append(getDcs()).append(" )\n");
-
-        buffer.append("    .dyaFromText          = ");
-        buffer.append(" (").append(getDyaFromText()).append(" )\n");
-
-        buffer.append("    .dxaFromText          = ");
-        buffer.append(" (").append(getDxaFromText()).append(" )\n");
-
-        buffer.append("    .fLocked              = ");
-        buffer.append(" (").append(getFLocked()).append(" )\n");
-
-        buffer.append("    .fWidowControl        = ");
-        buffer.append(" (").append(getFWidowControl()).append(" )\n");
-
-        buffer.append("    .fKinsoku             = ");
-        buffer.append(" (").append(getFKinsoku()).append(" )\n");
-
-        buffer.append("    .fWordWrap            = ");
-        buffer.append(" (").append(getFWordWrap()).append(" )\n");
-
-        buffer.append("    .fOverflowPunct       = ");
-        buffer.append(" (").append(getFOverflowPunct()).append(" )\n");
-
-        buffer.append("    .fTopLinePunct        = ");
-        buffer.append(" (").append(getFTopLinePunct()).append(" )\n");
-
-        buffer.append("    .fAutoSpaceDE         = ");
-        buffer.append(" (").append(getFAutoSpaceDE()).append(" )\n");
-
-        buffer.append("    .fAutoSpaceDN         = ");
-        buffer.append(" (").append(getFAutoSpaceDN()).append(" )\n");
-
-        buffer.append("    .wAlignFont           = ");
-        buffer.append(" (").append(getWAlignFont()).append(" )\n");
-
-        buffer.append("    .fontAlign            = ");
-        buffer.append(" (").append(getFontAlign()).append(" )\n");
-        buffer.append("         .fVertical                = ").append(isFVertical()).append('\n');
-        buffer.append("         .fBackward                = ").append(isFBackward()).append('\n');
-        buffer.append("         .fRotateFont              = ").append(isFRotateFont()).append('\n');
-
-        buffer.append("    .fVertical            = ");
-        buffer.append(" (").append(getFVertical()).append(" )\n");
-
-        buffer.append("    .fBackward            = ");
-        buffer.append(" (").append(getFBackward()).append(" )\n");
-
-        buffer.append("    .fRotateFont          = ");
-        buffer.append(" (").append(getFRotateFont()).append(" )\n");
-
-        buffer.append("    .lvl                  = ");
-        buffer.append(" (").append(getLvl()).append(" )\n");
-
-        buffer.append("    .fBiDi                = ");
-        buffer.append(" (").append(getFBiDi()).append(" )\n");
-
-        buffer.append("    .fNumRMIns            = ");
-        buffer.append(" (").append(getFNumRMIns()).append(" )\n");
-
-        buffer.append("    .fCrLf                = ");
-        buffer.append(" (").append(getFCrLf()).append(" )\n");
-
-        buffer.append("    .fUsePgsuSettings     = ");
-        buffer.append(" (").append(getFUsePgsuSettings()).append(" )\n");
-
-        buffer.append("    .fAdjustRight         = ");
-        buffer.append(" (").append(getFAdjustRight()).append(" )\n");
-
-        buffer.append("    .itap                 = ");
-        buffer.append(" (").append(getItap()).append(" )\n");
-
-        buffer.append("    .fInnerTableCell      = ");
-        buffer.append(" (").append(getFInnerTableCell()).append(" )\n");
-
-        buffer.append("    .fOpenTch             = ");
-        buffer.append(" (").append(getFOpenTch()).append(" )\n");
-
-        buffer.append("    .fTtpEmbedded         = ");
-        buffer.append(" (").append(getFTtpEmbedded()).append(" )\n");
-
-        buffer.append("    .dxcRight             = ");
-        buffer.append(" (").append(getDxcRight()).append(" )\n");
-
-        buffer.append("    .dxcLeft              = ");
-        buffer.append(" (").append(getDxcLeft()).append(" )\n");
-
-        buffer.append("    .dxcLeft1             = ");
-        buffer.append(" (").append(getDxcLeft1()).append(" )\n");
-
-        buffer.append("    .fDyaBeforeAuto       = ");
-        buffer.append(" (").append(getFDyaBeforeAuto()).append(" )\n");
-
-        buffer.append("    .fDyaAfterAuto        = ");
-        buffer.append(" (").append(getFDyaAfterAuto()).append(" )\n");
-
-        buffer.append("    .dxaRight             = ");
-        buffer.append(" (").append(getDxaRight()).append(" )\n");
-
-        buffer.append("    .dxaLeft              = ");
-        buffer.append(" (").append(getDxaLeft()).append(" )\n");
-
-        buffer.append("    .dxaLeft1             = ");
-        buffer.append(" (").append(getDxaLeft1()).append(" )\n");
-
-        buffer.append("    .jc                   = ");
-        buffer.append(" (").append(getJc()).append(" )\n");
-
-        buffer.append("    .fNoAllowOverlap      = ");
-        buffer.append(" (").append(getFNoAllowOverlap()).append(" )\n");
-
-        buffer.append("    .brcTop               = ");
-        buffer.append(" (").append(getBrcTop()).append(" )\n");
-
-        buffer.append("    .brcLeft              = ");
-        buffer.append(" (").append(getBrcLeft()).append(" )\n");
-
-        buffer.append("    .brcBottom            = ");
-        buffer.append(" (").append(getBrcBottom()).append(" )\n");
-
-        buffer.append("    .brcRight             = ");
-        buffer.append(" (").append(getBrcRight()).append(" )\n");
-
-        buffer.append("    .brcBetween           = ");
-        buffer.append(" (").append(getBrcBetween()).append(" )\n");
-
-        buffer.append("    .brcBar               = ");
-        buffer.append(" (").append(getBrcBar()).append(" )\n");
-
-        buffer.append("    .shd                  = ");
-        buffer.append(" (").append(getShd()).append(" )\n");
-
-        buffer.append("    .anld                 = ");
-        buffer.append(" (").append(getAnld()).append(" )\n");
-
-        buffer.append("    .phe                  = ");
-        buffer.append(" (").append(getPhe()).append(" )\n");
-
-        buffer.append("    .fPropRMark           = ");
-        buffer.append(" (").append(getFPropRMark()).append(" )\n");
-
-        buffer.append("    .ibstPropRMark        = ");
-        buffer.append(" (").append(getIbstPropRMark()).append(" )\n");
-
-        buffer.append("    .dttmPropRMark        = ");
-        buffer.append(" (").append(getDttmPropRMark()).append(" )\n");
-
-        buffer.append("    .itbdMac              = ");
-        buffer.append(" (").append(getItbdMac()).append(" )\n");
-
-        buffer.append("    .rgdxaTab             = ");
-        buffer.append(" (").append(getRgdxaTab()).append(" )\n");
-
-        buffer.append("    .rgtbd                = ");
-        buffer.append(" (").append(getRgtbd()).append(" )\n");
-
-        buffer.append("    .numrm                = ");
-        buffer.append(" (").append(getNumrm()).append(" )\n");
-
-        buffer.append("    .ptap                 = ");
-        buffer.append(" (").append(getPtap()).append(" )\n");
-
-        buffer.append("[/PAP]\n");
-        return buffer.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("[PAP]\n");
+        builder.append("    .istd                 = ");
+        builder.append(" (").append(getIstd()).append(" )\n");
+        builder.append("    .fSideBySide          = ");
+        builder.append(" (").append(getFSideBySide()).append(" )\n");
+        builder.append("    .fKeep                = ");
+        builder.append(" (").append(getFKeep()).append(" )\n");
+        builder.append("    .fKeepFollow          = ");
+        builder.append(" (").append(getFKeepFollow()).append(" )\n");
+        builder.append("    .fPageBreakBefore     = ");
+        builder.append(" (").append(getFPageBreakBefore()).append(" )\n");
+        builder.append("    .brcl                 = ");
+        builder.append(" (").append(getBrcl()).append(" )\n");
+        builder.append("    .brcp                 = ");
+        builder.append(" (").append(getBrcp()).append(" )\n");
+        builder.append("    .ilvl                 = ");
+        builder.append(" (").append(getIlvl()).append(" )\n");
+        builder.append("    .ilfo                 = ");
+        builder.append(" (").append(getIlfo()).append(" )\n");
+        builder.append("    .fNoLnn               = ");
+        builder.append(" (").append(getFNoLnn()).append(" )\n");
+        builder.append("    .lspd                 = ");
+        builder.append(" (").append(getLspd()).append(" )\n");
+        builder.append("    .dyaBefore            = ");
+        builder.append(" (").append(getDyaBefore()).append(" )\n");
+        builder.append("    .dyaAfter             = ");
+        builder.append(" (").append(getDyaAfter()).append(" )\n");
+        builder.append("    .fInTable             = ");
+        builder.append(" (").append(getFInTable()).append(" )\n");
+        builder.append("    .finTableW97          = ");
+        builder.append(" (").append(getFinTableW97()).append(" )\n");
+        builder.append("    .fTtp                 = ");
+        builder.append(" (").append(getFTtp()).append(" )\n");
+        builder.append("    .dxaAbs               = ");
+        builder.append(" (").append(getDxaAbs()).append(" )\n");
+        builder.append("    .dyaAbs               = ");
+        builder.append(" (").append(getDyaAbs()).append(" )\n");
+        builder.append("    .dxaWidth             = ");
+        builder.append(" (").append(getDxaWidth()).append(" )\n");
+        builder.append("    .fBrLnAbove           = ");
+        builder.append(" (").append(getFBrLnAbove()).append(" )\n");
+        builder.append("    .fBrLnBelow           = ");
+        builder.append(" (").append(getFBrLnBelow()).append(" )\n");
+        builder.append("    .pcVert               = ");
+        builder.append(" (").append(getPcVert()).append(" )\n");
+        builder.append("    .pcHorz               = ");
+        builder.append(" (").append(getPcHorz()).append(" )\n");
+        builder.append("    .wr                   = ");
+        builder.append(" (").append(getWr()).append(" )\n");
+        builder.append("    .fNoAutoHyph          = ");
+        builder.append(" (").append(getFNoAutoHyph()).append(" )\n");
+        builder.append("    .dyaHeight            = ");
+        builder.append(" (").append(getDyaHeight()).append(" )\n");
+        builder.append("    .fMinHeight           = ");
+        builder.append(" (").append(getFMinHeight()).append(" )\n");
+        builder.append("    .dcs                  = ");
+        builder.append(" (").append(getDcs()).append(" )\n");
+        builder.append("    .dyaFromText          = ");
+        builder.append(" (").append(getDyaFromText()).append(" )\n");
+        builder.append("    .dxaFromText          = ");
+        builder.append(" (").append(getDxaFromText()).append(" )\n");
+        builder.append("    .fLocked              = ");
+        builder.append(" (").append(getFLocked()).append(" )\n");
+        builder.append("    .fWidowControl        = ");
+        builder.append(" (").append(getFWidowControl()).append(" )\n");
+        builder.append("    .fKinsoku             = ");
+        builder.append(" (").append(getFKinsoku()).append(" )\n");
+        builder.append("    .fWordWrap            = ");
+        builder.append(" (").append(getFWordWrap()).append(" )\n");
+        builder.append("    .fOverflowPunct       = ");
+        builder.append(" (").append(getFOverflowPunct()).append(" )\n");
+        builder.append("    .fTopLinePunct        = ");
+        builder.append(" (").append(getFTopLinePunct()).append(" )\n");
+        builder.append("    .fAutoSpaceDE         = ");
+        builder.append(" (").append(getFAutoSpaceDE()).append(" )\n");
+        builder.append("    .fAutoSpaceDN         = ");
+        builder.append(" (").append(getFAutoSpaceDN()).append(" )\n");
+        builder.append("    .wAlignFont           = ");
+        builder.append(" (").append(getWAlignFont()).append(" )\n");
+        builder.append("    .fontAlign            = ");
+        builder.append(" (").append(getFontAlign()).append(" )\n");
+        builder.append("         .fVertical                = ").append(isFVertical()).append('\n');
+        builder.append("         .fBackward                = ").append(isFBackward()).append('\n');
+        builder.append("         .fRotateFont              = ").append(isFRotateFont()).append('\n');
+        builder.append("    .lvl                  = ");
+        builder.append(" (").append(getLvl()).append(" )\n");
+        builder.append("    .fBiDi                = ");
+        builder.append(" (").append(getFBiDi()).append(" )\n");
+        builder.append("    .fNumRMIns            = ");
+        builder.append(" (").append(getFNumRMIns()).append(" )\n");
+        builder.append("    .fCrLf                = ");
+        builder.append(" (").append(getFCrLf()).append(" )\n");
+        builder.append("    .fUsePgsuSettings     = ");
+        builder.append(" (").append(getFUsePgsuSettings()).append(" )\n");
+        builder.append("    .fAdjustRight         = ");
+        builder.append(" (").append(getFAdjustRight()).append(" )\n");
+        builder.append("    .itap                 = ");
+        builder.append(" (").append(getItap()).append(" )\n");
+        builder.append("    .fInnerTableCell      = ");
+        builder.append(" (").append(getFInnerTableCell()).append(" )\n");
+        builder.append("    .fOpenTch             = ");
+        builder.append(" (").append(getFOpenTch()).append(" )\n");
+        builder.append("    .fTtpEmbedded         = ");
+        builder.append(" (").append(getFTtpEmbedded()).append(" )\n");
+        builder.append("    .dxcRight             = ");
+        builder.append(" (").append(getDxcRight()).append(" )\n");
+        builder.append("    .dxcLeft              = ");
+        builder.append(" (").append(getDxcLeft()).append(" )\n");
+        builder.append("    .dxcLeft1             = ");
+        builder.append(" (").append(getDxcLeft1()).append(" )\n");
+        builder.append("    .fDyaBeforeAuto       = ");
+        builder.append(" (").append(getFDyaBeforeAuto()).append(" )\n");
+        builder.append("    .fDyaAfterAuto        = ");
+        builder.append(" (").append(getFDyaAfterAuto()).append(" )\n");
+        builder.append("    .dxaRight             = ");
+        builder.append(" (").append(getDxaRight()).append(" )\n");
+        builder.append("    .dxaLeft              = ");
+        builder.append(" (").append(getDxaLeft()).append(" )\n");
+        builder.append("    .dxaLeft1             = ");
+        builder.append(" (").append(getDxaLeft1()).append(" )\n");
+        builder.append("    .jc                   = ");
+        builder.append(" (").append(getJc()).append(" )\n");
+        builder.append("    .fNoAllowOverlap      = ");
+        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
+        builder.append("    .brcTop               = ");
+        builder.append(" (").append(getBrcTop()).append(" )\n");
+        builder.append("    .brcLeft              = ");
+        builder.append(" (").append(getBrcLeft()).append(" )\n");
+        builder.append("    .brcBottom            = ");
+        builder.append(" (").append(getBrcBottom()).append(" )\n");
+        builder.append("    .brcRight             = ");
+        builder.append(" (").append(getBrcRight()).append(" )\n");
+        builder.append("    .brcBetween           = ");
+        builder.append(" (").append(getBrcBetween()).append(" )\n");
+        builder.append("    .brcBar               = ");
+        builder.append(" (").append(getBrcBar()).append(" )\n");
+        builder.append("    .shd                  = ");
+        builder.append(" (").append(getShd()).append(" )\n");
+        builder.append("    .anld                 = ");
+        builder.append(" (").append(getAnld()).append(" )\n");
+        builder.append("    .phe                  = ");
+        builder.append(" (").append(getPhe()).append(" )\n");
+        builder.append("    .fPropRMark           = ");
+        builder.append(" (").append(getFPropRMark()).append(" )\n");
+        builder.append("    .ibstPropRMark        = ");
+        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
+        builder.append("    .dttmPropRMark        = ");
+        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
+        builder.append("    .itbdMac              = ");
+        builder.append(" (").append(getItbdMac()).append(" )\n");
+        builder.append("    .rgdxaTab             = ");
+        builder.append(" (").append(getRgdxaTab()).append(" )\n");
+        builder.append("    .rgtbd                = ");
+        builder.append(" (").append(getRgtbd()).append(" )\n");
+        builder.append("    .numrm                = ");
+        builder.append(" (").append(getNumrm()).append(" )\n");
+        builder.append("    .ptap                 = ");
+        builder.append(" (").append(getPtap()).append(" )\n");
+
+        builder.append("[/PAP]\n");
+        return builder.toString();
     }
-
-    /**
-     * Size of record (exluding 4 byte header)
-     */
-    public int getSize()
-    {
-        return 4 +  + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 2 + 4 + 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 1 + 4 + 4 + 4 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 84 + 12 + 1 + 2 + 4 + 2 + 128 + 128 + 128 + 4;
-    }
-
-
 
     /**
      * Index to style descriptor.
@@ -411,7 +340,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fSideBySide field for the PAP record.
      */
-    public byte getFSideBySide()
+    public boolean getFSideBySide()
     {
         return field_2_fSideBySide;
     }
@@ -419,7 +348,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fSideBySide field for the PAP record.
      */
-    public void setFSideBySide(byte field_2_fSideBySide)
+    public void setFSideBySide(boolean field_2_fSideBySide)
     {
         this.field_2_fSideBySide = field_2_fSideBySide;
     }
@@ -427,7 +356,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fKeep field for the PAP record.
      */
-    public byte getFKeep()
+    public boolean getFKeep()
     {
         return field_3_fKeep;
     }
@@ -435,7 +364,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeep field for the PAP record.
      */
-    public void setFKeep(byte field_3_fKeep)
+    public void setFKeep(boolean field_3_fKeep)
     {
         this.field_3_fKeep = field_3_fKeep;
     }
@@ -443,7 +372,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fKeepFollow field for the PAP record.
      */
-    public byte getFKeepFollow()
+    public boolean getFKeepFollow()
     {
         return field_4_fKeepFollow;
     }
@@ -451,7 +380,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeepFollow field for the PAP record.
      */
-    public void setFKeepFollow(byte field_4_fKeepFollow)
+    public void setFKeepFollow(boolean field_4_fKeepFollow)
     {
         this.field_4_fKeepFollow = field_4_fKeepFollow;
     }
@@ -459,7 +388,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fPageBreakBefore field for the PAP record.
      */
-    public byte getFPageBreakBefore()
+    public boolean getFPageBreakBefore()
     {
         return field_5_fPageBreakBefore;
     }
@@ -467,13 +396,19 @@ public abstract class PAPAbstractType
     /**
      * Set the fPageBreakBefore field for the PAP record.
      */
-    public void setFPageBreakBefore(byte field_5_fPageBreakBefore)
+    public void setFPageBreakBefore(boolean field_5_fPageBreakBefore)
     {
         this.field_5_fPageBreakBefore = field_5_fPageBreakBefore;
     }
 
     /**
      * Border line style.
+     *
+     * @return One of 
+     * <li>{@link #BRCL_SINGLE}
+     * <li>{@link #BRCL_THICK}
+     * <li>{@link #BRCL_DOUBLE}
+     * <li>{@link #BRCL_SHADOW}
      */
     public byte getBrcl()
     {
@@ -482,6 +417,13 @@ public abstract class PAPAbstractType
 
     /**
      * Border line style.
+     *
+     * @param field_6_brcl
+     *        One of 
+     * <li>{@link #BRCL_SINGLE}
+     * <li>{@link #BRCL_THICK}
+     * <li>{@link #BRCL_DOUBLE}
+     * <li>{@link #BRCL_SHADOW}
      */
     public void setBrcl(byte field_6_brcl)
     {
@@ -490,6 +432,13 @@ public abstract class PAPAbstractType
 
     /**
      * Rectangle border codes.
+     *
+     * @return One of 
+     * <li>{@link #BRCP_NONE}
+     * <li>{@link #BRCP_BORDER_ABOVE}
+     * <li>{@link #BRCP_BORDER_BELOW}
+     * <li>{@link #BRCP_BOX_AROUND}
+     * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
      */
     public byte getBrcp()
     {
@@ -498,6 +447,14 @@ public abstract class PAPAbstractType
 
     /**
      * Rectangle border codes.
+     *
+     * @param field_7_brcp
+     *        One of 
+     * <li>{@link #BRCP_NONE}
+     * <li>{@link #BRCP_BORDER_ABOVE}
+     * <li>{@link #BRCP_BORDER_BELOW}
+     * <li>{@link #BRCP_BOX_AROUND}
+     * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
      */
     public void setBrcp(byte field_7_brcp)
     {
@@ -539,7 +496,7 @@ public abstract class PAPAbstractType
     /**
      * No line numbering.
      */
-    public byte getFNoLnn()
+    public boolean getFNoLnn()
     {
         return field_10_fNoLnn;
     }
@@ -547,7 +504,7 @@ public abstract class PAPAbstractType
     /**
      * No line numbering.
      */
-    public void setFNoLnn(byte field_10_fNoLnn)
+    public void setFNoLnn(boolean field_10_fNoLnn)
     {
         this.field_10_fNoLnn = field_10_fNoLnn;
     }
@@ -603,7 +560,7 @@ public abstract class PAPAbstractType
     /**
      * Paragraph is in table flag.
      */
-    public byte getFInTable()
+    public boolean getFInTable()
     {
         return field_14_fInTable;
     }
@@ -611,7 +568,7 @@ public abstract class PAPAbstractType
     /**
      * Paragraph is in table flag.
      */
-    public void setFInTable(byte field_14_fInTable)
+    public void setFInTable(boolean field_14_fInTable)
     {
         this.field_14_fInTable = field_14_fInTable;
     }
@@ -619,7 +576,7 @@ public abstract class PAPAbstractType
     /**
      * Archaic paragraph is in table flag.
      */
-    public byte getFinTableW97()
+    public boolean getFinTableW97()
     {
         return field_15_finTableW97;
     }
@@ -627,7 +584,7 @@ public abstract class PAPAbstractType
     /**
      * Archaic paragraph is in table flag.
      */
-    public void setFinTableW97(byte field_15_finTableW97)
+    public void setFinTableW97(boolean field_15_finTableW97)
     {
         this.field_15_finTableW97 = field_15_finTableW97;
     }
@@ -635,7 +592,7 @@ public abstract class PAPAbstractType
     /**
      * Table trailer paragraph (last in table row).
      */
-    public byte getFTtp()
+    public boolean getFTtp()
     {
         return field_16_fTtp;
     }
@@ -643,7 +600,7 @@ public abstract class PAPAbstractType
     /**
      * Table trailer paragraph (last in table row).
      */
-    public void setFTtp(byte field_16_fTtp)
+    public void setFTtp(boolean field_16_fTtp)
     {
         this.field_16_fTtp = field_16_fTtp;
     }
@@ -699,7 +656,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fBrLnAbove field for the PAP record.
      */
-    public byte getFBrLnAbove()
+    public boolean getFBrLnAbove()
     {
         return field_20_fBrLnAbove;
     }
@@ -707,7 +664,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fBrLnAbove field for the PAP record.
      */
-    public void setFBrLnAbove(byte field_20_fBrLnAbove)
+    public void setFBrLnAbove(boolean field_20_fBrLnAbove)
     {
         this.field_20_fBrLnAbove = field_20_fBrLnAbove;
     }
@@ -715,7 +672,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fBrLnBelow field for the PAP record.
      */
-    public byte getFBrLnBelow()
+    public boolean getFBrLnBelow()
     {
         return field_21_fBrLnBelow;
     }
@@ -723,7 +680,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fBrLnBelow field for the PAP record.
      */
-    public void setFBrLnBelow(byte field_21_fBrLnBelow)
+    public void setFBrLnBelow(boolean field_21_fBrLnBelow)
     {
         this.field_21_fBrLnBelow = field_21_fBrLnBelow;
     }
@@ -779,7 +736,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fNoAutoHyph field for the PAP record.
      */
-    public byte getFNoAutoHyph()
+    public boolean getFNoAutoHyph()
     {
         return field_25_fNoAutoHyph;
     }
@@ -787,7 +744,7 @@ public abstract class PAPAbstractType
     /**
      * Set the fNoAutoHyph field for the PAP record.
      */
-    public void setFNoAutoHyph(byte field_25_fNoAutoHyph)
+    public void setFNoAutoHyph(boolean field_25_fNoAutoHyph)
     {
         this.field_25_fNoAutoHyph = field_25_fNoAutoHyph;
     }
@@ -809,17 +766,26 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fMinHeight field for the PAP record.
+     * Minimum height is exact or auto.
+     *
+     * @return One of 
+     * <li>{@link #FMINHEIGHT_EXACT}
+     * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
-    public byte getFMinHeight()
+    public boolean getFMinHeight()
     {
         return field_27_fMinHeight;
     }
 
     /**
-     * Set the fMinHeight field for the PAP record.
+     * Minimum height is exact or auto.
+     *
+     * @param field_27_fMinHeight
+     *        One of 
+     * <li>{@link #FMINHEIGHT_EXACT}
+     * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
-    public void setFMinHeight(byte field_27_fMinHeight)
+    public void setFMinHeight(boolean field_27_fMinHeight)
     {
         this.field_27_fMinHeight = field_27_fMinHeight;
     }
@@ -873,135 +839,142 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fLocked field for the PAP record.
+     * Anchor of an absolutely positioned frame is locked.
      */
-    public byte getFLocked()
+    public boolean getFLocked()
     {
         return field_31_fLocked;
     }
 
     /**
-     * Set the fLocked field for the PAP record.
+     * Anchor of an absolutely positioned frame is locked.
      */
-    public void setFLocked(byte field_31_fLocked)
+    public void setFLocked(boolean field_31_fLocked)
     {
         this.field_31_fLocked = field_31_fLocked;
     }
 
     /**
-     * Get the fWidowControl field for the PAP record.
+     * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
      */
-    public byte getFWidowControl()
+    public boolean getFWidowControl()
     {
         return field_32_fWidowControl;
     }
 
     /**
-     * Set the fWidowControl field for the PAP record.
+     * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
      */
-    public void setFWidowControl(byte field_32_fWidowControl)
+    public void setFWidowControl(boolean field_32_fWidowControl)
     {
         this.field_32_fWidowControl = field_32_fWidowControl;
     }
 
     /**
-     * Get the fKinsoku field for the PAP record.
+     * apply Kinsoku rules when performing line wrapping.
      */
-    public byte getFKinsoku()
+    public boolean getFKinsoku()
     {
         return field_33_fKinsoku;
     }
 
     /**
-     * Set the fKinsoku field for the PAP record.
+     * apply Kinsoku rules when performing line wrapping.
      */
-    public void setFKinsoku(byte field_33_fKinsoku)
+    public void setFKinsoku(boolean field_33_fKinsoku)
     {
         this.field_33_fKinsoku = field_33_fKinsoku;
     }
 
     /**
-     * Get the fWordWrap field for the PAP record.
+     * perform word wrap.
      */
-    public byte getFWordWrap()
+    public boolean getFWordWrap()
     {
         return field_34_fWordWrap;
     }
 
     /**
-     * Set the fWordWrap field for the PAP record.
+     * perform word wrap.
      */
-    public void setFWordWrap(byte field_34_fWordWrap)
+    public void setFWordWrap(boolean field_34_fWordWrap)
     {
         this.field_34_fWordWrap = field_34_fWordWrap;
     }
 
     /**
-     * Get the fOverflowPunct field for the PAP record.
+     * apply overflow punctuation rules when performing line wrapping.
      */
-    public byte getFOverflowPunct()
+    public boolean getFOverflowPunct()
     {
         return field_35_fOverflowPunct;
     }
 
     /**
-     * Set the fOverflowPunct field for the PAP record.
+     * apply overflow punctuation rules when performing line wrapping.
      */
-    public void setFOverflowPunct(byte field_35_fOverflowPunct)
+    public void setFOverflowPunct(boolean field_35_fOverflowPunct)
     {
         this.field_35_fOverflowPunct = field_35_fOverflowPunct;
     }
 
     /**
-     * Get the fTopLinePunct field for the PAP record.
+     * perform top line punctuation processing.
      */
-    public byte getFTopLinePunct()
+    public boolean getFTopLinePunct()
     {
         return field_36_fTopLinePunct;
     }
 
     /**
-     * Set the fTopLinePunct field for the PAP record.
+     * perform top line punctuation processing.
      */
-    public void setFTopLinePunct(byte field_36_fTopLinePunct)
+    public void setFTopLinePunct(boolean field_36_fTopLinePunct)
     {
         this.field_36_fTopLinePunct = field_36_fTopLinePunct;
     }
 
     /**
-     * Get the fAutoSpaceDE field for the PAP record.
+     * auto space East Asian and alphabetic characters.
      */
-    public byte getFAutoSpaceDE()
+    public boolean getFAutoSpaceDE()
     {
         return field_37_fAutoSpaceDE;
     }
 
     /**
-     * Set the fAutoSpaceDE field for the PAP record.
+     * auto space East Asian and alphabetic characters.
      */
-    public void setFAutoSpaceDE(byte field_37_fAutoSpaceDE)
+    public void setFAutoSpaceDE(boolean field_37_fAutoSpaceDE)
     {
         this.field_37_fAutoSpaceDE = field_37_fAutoSpaceDE;
     }
 
     /**
-     * Get the fAutoSpaceDN field for the PAP record.
+     * auto space East Asian and numeric characters.
      */
-    public byte getFAutoSpaceDN()
+    public boolean getFAutoSpaceDN()
     {
         return field_38_fAutoSpaceDN;
     }
 
     /**
-     * Set the fAutoSpaceDN field for the PAP record.
+     * auto space East Asian and numeric characters.
      */
-    public void setFAutoSpaceDN(byte field_38_fAutoSpaceDN)
+    public void setFAutoSpaceDN(boolean field_38_fAutoSpaceDN)
     {
         this.field_38_fAutoSpaceDN = field_38_fAutoSpaceDN;
     }
 
     /**
      * Get the wAlignFont field for the PAP record.
+     *
+     * @return One of 
+     * <li>{@link #WALIGNFONT_HANGING}
+     * <li>{@link #WALIGNFONT_CENTERED}
+     * <li>{@link #WALIGNFONT_ROMAN}
+     * <li>{@link #WALIGNFONT_VARIABLE}
+     * <li>{@link #WALIGNFONT_AUTO}
      */
     public int getWAlignFont()
     {
@@ -1010,6 +983,14 @@ public abstract class PAPAbstractType
 
     /**
      * Set the wAlignFont field for the PAP record.
+     *
+     * @param field_39_wAlignFont
+     *        One of 
+     * <li>{@link #WALIGNFONT_HANGING}
+     * <li>{@link #WALIGNFONT_CENTERED}
+     * <li>{@link #WALIGNFONT_ROMAN}
+     * <li>{@link #WALIGNFONT_VARIABLE}
+     * <li>{@link #WALIGNFONT_AUTO}
      */
     public void setWAlignFont(int field_39_wAlignFont)
     {
@@ -1017,7 +998,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fontAlign field for the PAP record.
+     * Used internally by Word.
      */
     public short getFontAlign()
     {
@@ -1025,7 +1006,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Set the fontAlign field for the PAP record.
+     * Used internally by Word.
      */
     public void setFontAlign(short field_40_fontAlign)
     {
@@ -1033,147 +1014,99 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fVertical field for the PAP record.
-     */
-    public byte getFVertical()
-    {
-        return field_41_fVertical;
-    }
-
-    /**
-     * Set the fVertical field for the PAP record.
-     */
-    public void setFVertical(byte field_41_fVertical)
-    {
-        this.field_41_fVertical = field_41_fVertical;
-    }
-
-    /**
-     * Get the fBackward field for the PAP record.
-     */
-    public byte getFBackward()
-    {
-        return field_42_fBackward;
-    }
-
-    /**
-     * Set the fBackward field for the PAP record.
-     */
-    public void setFBackward(byte field_42_fBackward)
-    {
-        this.field_42_fBackward = field_42_fBackward;
-    }
-
-    /**
-     * Get the fRotateFont field for the PAP record.
-     */
-    public byte getFRotateFont()
-    {
-        return field_43_fRotateFont;
-    }
-
-    /**
-     * Set the fRotateFont field for the PAP record.
-     */
-    public void setFRotateFont(byte field_43_fRotateFont)
-    {
-        this.field_43_fRotateFont = field_43_fRotateFont;
-    }
-
-    /**
-     * Get the lvl field for the PAP record.
+     * Outline level.
      */
     public byte getLvl()
     {
-        return field_44_lvl;
+        return field_41_lvl;
     }
 
     /**
-     * Set the lvl field for the PAP record.
+     * Outline level.
      */
-    public void setLvl(byte field_44_lvl)
+    public void setLvl(byte field_41_lvl)
     {
-        this.field_44_lvl = field_44_lvl;
+        this.field_41_lvl = field_41_lvl;
     }
 
     /**
      * Get the fBiDi field for the PAP record.
      */
-    public byte getFBiDi()
+    public boolean getFBiDi()
     {
-        return field_45_fBiDi;
+        return field_42_fBiDi;
     }
 
     /**
      * Set the fBiDi field for the PAP record.
      */
-    public void setFBiDi(byte field_45_fBiDi)
+    public void setFBiDi(boolean field_42_fBiDi)
     {
-        this.field_45_fBiDi = field_45_fBiDi;
+        this.field_42_fBiDi = field_42_fBiDi;
     }
 
     /**
      * Get the fNumRMIns field for the PAP record.
      */
-    public byte getFNumRMIns()
+    public boolean getFNumRMIns()
     {
-        return field_46_fNumRMIns;
+        return field_43_fNumRMIns;
     }
 
     /**
      * Set the fNumRMIns field for the PAP record.
      */
-    public void setFNumRMIns(byte field_46_fNumRMIns)
+    public void setFNumRMIns(boolean field_43_fNumRMIns)
     {
-        this.field_46_fNumRMIns = field_46_fNumRMIns;
+        this.field_43_fNumRMIns = field_43_fNumRMIns;
     }
 
     /**
      * Get the fCrLf field for the PAP record.
      */
-    public byte getFCrLf()
+    public boolean getFCrLf()
     {
-        return field_47_fCrLf;
+        return field_44_fCrLf;
     }
 
     /**
      * Set the fCrLf field for the PAP record.
      */
-    public void setFCrLf(byte field_47_fCrLf)
+    public void setFCrLf(boolean field_44_fCrLf)
     {
-        this.field_47_fCrLf = field_47_fCrLf;
+        this.field_44_fCrLf = field_44_fCrLf;
     }
 
     /**
      * Get the fUsePgsuSettings field for the PAP record.
      */
-    public byte getFUsePgsuSettings()
+    public boolean getFUsePgsuSettings()
     {
-        return field_48_fUsePgsuSettings;
+        return field_45_fUsePgsuSettings;
     }
 
     /**
      * Set the fUsePgsuSettings field for the PAP record.
      */
-    public void setFUsePgsuSettings(byte field_48_fUsePgsuSettings)
+    public void setFUsePgsuSettings(boolean field_45_fUsePgsuSettings)
     {
-        this.field_48_fUsePgsuSettings = field_48_fUsePgsuSettings;
+        this.field_45_fUsePgsuSettings = field_45_fUsePgsuSettings;
     }
 
     /**
      * Get the fAdjustRight field for the PAP record.
      */
-    public byte getFAdjustRight()
+    public boolean getFAdjustRight()
     {
-        return field_49_fAdjustRight;
+        return field_46_fAdjustRight;
     }
 
     /**
      * Set the fAdjustRight field for the PAP record.
      */
-    public void setFAdjustRight(byte field_49_fAdjustRight)
+    public void setFAdjustRight(boolean field_46_fAdjustRight)
     {
-        this.field_49_fAdjustRight = field_49_fAdjustRight;
+        this.field_46_fAdjustRight = field_46_fAdjustRight;
     }
 
     /**
@@ -1181,63 +1114,63 @@ public abstract class PAPAbstractType
      */
     public int getItap()
     {
-        return field_50_itap;
+        return field_47_itap;
     }
 
     /**
      * Table nesting level.
      */
-    public void setItap(int field_50_itap)
+    public void setItap(int field_47_itap)
     {
-        this.field_50_itap = field_50_itap;
+        this.field_47_itap = field_47_itap;
     }
 
     /**
      * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
-    public byte getFInnerTableCell()
+    public boolean getFInnerTableCell()
     {
-        return field_51_fInnerTableCell;
+        return field_48_fInnerTableCell;
     }
 
     /**
      * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
-    public void setFInnerTableCell(byte field_51_fInnerTableCell)
+    public void setFInnerTableCell(boolean field_48_fInnerTableCell)
     {
-        this.field_51_fInnerTableCell = field_51_fInnerTableCell;
+        this.field_48_fInnerTableCell = field_48_fInnerTableCell;
     }
 
     /**
      * Ensure the Table Cell char doesn't show up as zero height.
      */
-    public byte getFOpenTch()
+    public boolean getFOpenTch()
     {
-        return field_52_fOpenTch;
+        return field_49_fOpenTch;
     }
 
     /**
      * Ensure the Table Cell char doesn't show up as zero height.
      */
-    public void setFOpenTch(byte field_52_fOpenTch)
+    public void setFOpenTch(boolean field_49_fOpenTch)
     {
-        this.field_52_fOpenTch = field_52_fOpenTch;
+        this.field_49_fOpenTch = field_49_fOpenTch;
     }
 
     /**
      * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
-    public byte getFTtpEmbedded()
+    public boolean getFTtpEmbedded()
     {
-        return field_53_fTtpEmbedded;
+        return field_50_fTtpEmbedded;
     }
 
     /**
      * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
-    public void setFTtpEmbedded(byte field_53_fTtpEmbedded)
+    public void setFTtpEmbedded(boolean field_50_fTtpEmbedded)
     {
-        this.field_53_fTtpEmbedded = field_53_fTtpEmbedded;
+        this.field_50_fTtpEmbedded = field_50_fTtpEmbedded;
     }
 
     /**
@@ -1245,15 +1178,15 @@ public abstract class PAPAbstractType
      */
     public short getDxcRight()
     {
-        return field_54_dxcRight;
+        return field_51_dxcRight;
     }
 
     /**
      * Right indent in character units.
      */
-    public void setDxcRight(short field_54_dxcRight)
+    public void setDxcRight(short field_51_dxcRight)
     {
-        this.field_54_dxcRight = field_54_dxcRight;
+        this.field_51_dxcRight = field_51_dxcRight;
     }
 
     /**
@@ -1261,15 +1194,15 @@ public abstract class PAPAbstractType
      */
     public short getDxcLeft()
     {
-        return field_55_dxcLeft;
+        return field_52_dxcLeft;
     }
 
     /**
      * Left indent in character units.
      */
-    public void setDxcLeft(short field_55_dxcLeft)
+    public void setDxcLeft(short field_52_dxcLeft)
     {
-        this.field_55_dxcLeft = field_55_dxcLeft;
+        this.field_52_dxcLeft = field_52_dxcLeft;
     }
 
     /**
@@ -1277,47 +1210,47 @@ public abstract class PAPAbstractType
      */
     public short getDxcLeft1()
     {
-        return field_56_dxcLeft1;
+        return field_53_dxcLeft1;
     }
 
     /**
      * First line indent in character units.
      */
-    public void setDxcLeft1(short field_56_dxcLeft1)
+    public void setDxcLeft1(short field_53_dxcLeft1)
     {
-        this.field_56_dxcLeft1 = field_56_dxcLeft1;
+        this.field_53_dxcLeft1 = field_53_dxcLeft1;
     }
 
     /**
      * Vertical spacing before is automatic.
      */
-    public byte getFDyaBeforeAuto()
+    public boolean getFDyaBeforeAuto()
     {
-        return field_57_fDyaBeforeAuto;
+        return field_54_fDyaBeforeAuto;
     }
 
     /**
      * Vertical spacing before is automatic.
      */
-    public void setFDyaBeforeAuto(byte field_57_fDyaBeforeAuto)
+    public void setFDyaBeforeAuto(boolean field_54_fDyaBeforeAuto)
     {
-        this.field_57_fDyaBeforeAuto = field_57_fDyaBeforeAuto;
+        this.field_54_fDyaBeforeAuto = field_54_fDyaBeforeAuto;
     }
 
     /**
      * Vertical spacing after is automatic.
      */
-    public byte getFDyaAfterAuto()
+    public boolean getFDyaAfterAuto()
     {
-        return field_58_fDyaAfterAuto;
+        return field_55_fDyaAfterAuto;
     }
 
     /**
      * Vertical spacing after is automatic.
      */
-    public void setFDyaAfterAuto(byte field_58_fDyaAfterAuto)
+    public void setFDyaAfterAuto(boolean field_55_fDyaAfterAuto)
     {
-        this.field_58_fDyaAfterAuto = field_58_fDyaAfterAuto;
+        this.field_55_fDyaAfterAuto = field_55_fDyaAfterAuto;
     }
 
     /**
@@ -1325,15 +1258,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaRight()
     {
-        return field_59_dxaRight;
+        return field_56_dxaRight;
     }
 
     /**
      * Set the dxaRight field for the PAP record.
      */
-    public void setDxaRight(int field_59_dxaRight)
+    public void setDxaRight(int field_56_dxaRight)
     {
-        this.field_59_dxaRight = field_59_dxaRight;
+        this.field_56_dxaRight = field_56_dxaRight;
     }
 
     /**
@@ -1341,15 +1274,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaLeft()
     {
-        return field_60_dxaLeft;
+        return field_57_dxaLeft;
     }
 
     /**
      * Set the dxaLeft field for the PAP record.
      */
-    public void setDxaLeft(int field_60_dxaLeft)
+    public void setDxaLeft(int field_57_dxaLeft)
     {
-        this.field_60_dxaLeft = field_60_dxaLeft;
+        this.field_57_dxaLeft = field_57_dxaLeft;
     }
 
     /**
@@ -1357,15 +1290,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaLeft1()
     {
-        return field_61_dxaLeft1;
+        return field_58_dxaLeft1;
     }
 
     /**
      * Set the dxaLeft1 field for the PAP record.
      */
-    public void setDxaLeft1(int field_61_dxaLeft1)
+    public void setDxaLeft1(int field_58_dxaLeft1)
     {
-        this.field_61_dxaLeft1 = field_61_dxaLeft1;
+        this.field_58_dxaLeft1 = field_58_dxaLeft1;
     }
 
     /**
@@ -1373,31 +1306,31 @@ public abstract class PAPAbstractType
      */
     public byte getJc()
     {
-        return field_62_jc;
+        return field_59_jc;
     }
 
     /**
      * Set the jc field for the PAP record.
      */
-    public void setJc(byte field_62_jc)
+    public void setJc(byte field_59_jc)
     {
-        this.field_62_jc = field_62_jc;
+        this.field_59_jc = field_59_jc;
     }
 
     /**
      * Get the fNoAllowOverlap field for the PAP record.
      */
-    public byte getFNoAllowOverlap()
+    public boolean getFNoAllowOverlap()
     {
-        return field_63_fNoAllowOverlap;
+        return field_60_fNoAllowOverlap;
     }
 
     /**
      * Set the fNoAllowOverlap field for the PAP record.
      */
-    public void setFNoAllowOverlap(byte field_63_fNoAllowOverlap)
+    public void setFNoAllowOverlap(boolean field_60_fNoAllowOverlap)
     {
-        this.field_63_fNoAllowOverlap = field_63_fNoAllowOverlap;
+        this.field_60_fNoAllowOverlap = field_60_fNoAllowOverlap;
     }
 
     /**
@@ -1405,15 +1338,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcTop()
     {
-        return field_64_brcTop;
+        return field_61_brcTop;
     }
 
     /**
      * Set the brcTop field for the PAP record.
      */
-    public void setBrcTop(BorderCode field_64_brcTop)
+    public void setBrcTop(BorderCode field_61_brcTop)
     {
-        this.field_64_brcTop = field_64_brcTop;
+        this.field_61_brcTop = field_61_brcTop;
     }
 
     /**
@@ -1421,15 +1354,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcLeft()
     {
-        return field_65_brcLeft;
+        return field_62_brcLeft;
     }
 
     /**
      * Set the brcLeft field for the PAP record.
      */
-    public void setBrcLeft(BorderCode field_65_brcLeft)
+    public void setBrcLeft(BorderCode field_62_brcLeft)
     {
-        this.field_65_brcLeft = field_65_brcLeft;
+        this.field_62_brcLeft = field_62_brcLeft;
     }
 
     /**
@@ -1437,15 +1370,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcBottom()
     {
-        return field_66_brcBottom;
+        return field_63_brcBottom;
     }
 
     /**
      * Set the brcBottom field for the PAP record.
      */
-    public void setBrcBottom(BorderCode field_66_brcBottom)
+    public void setBrcBottom(BorderCode field_63_brcBottom)
     {
-        this.field_66_brcBottom = field_66_brcBottom;
+        this.field_63_brcBottom = field_63_brcBottom;
     }
 
     /**
@@ -1453,15 +1386,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcRight()
     {
-        return field_67_brcRight;
+        return field_64_brcRight;
     }
 
     /**
      * Set the brcRight field for the PAP record.
      */
-    public void setBrcRight(BorderCode field_67_brcRight)
+    public void setBrcRight(BorderCode field_64_brcRight)
     {
-        this.field_67_brcRight = field_67_brcRight;
+        this.field_64_brcRight = field_64_brcRight;
     }
 
     /**
@@ -1469,15 +1402,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcBetween()
     {
-        return field_68_brcBetween;
+        return field_65_brcBetween;
     }
 
     /**
      * Set the brcBetween field for the PAP record.
      */
-    public void setBrcBetween(BorderCode field_68_brcBetween)
+    public void setBrcBetween(BorderCode field_65_brcBetween)
     {
-        this.field_68_brcBetween = field_68_brcBetween;
+        this.field_65_brcBetween = field_65_brcBetween;
     }
 
     /**
@@ -1485,15 +1418,15 @@ public abstract class PAPAbstractType
      */
     public BorderCode getBrcBar()
     {
-        return field_69_brcBar;
+        return field_66_brcBar;
     }
 
     /**
      * Set the brcBar field for the PAP record.
      */
-    public void setBrcBar(BorderCode field_69_brcBar)
+    public void setBrcBar(BorderCode field_66_brcBar)
     {
-        this.field_69_brcBar = field_69_brcBar;
+        this.field_66_brcBar = field_66_brcBar;
     }
 
     /**
@@ -1501,15 +1434,15 @@ public abstract class PAPAbstractType
      */
     public ShadingDescriptor getShd()
     {
-        return field_70_shd;
+        return field_67_shd;
     }
 
     /**
      * Set the shd field for the PAP record.
      */
-    public void setShd(ShadingDescriptor field_70_shd)
+    public void setShd(ShadingDescriptor field_67_shd)
     {
-        this.field_70_shd = field_70_shd;
+        this.field_67_shd = field_67_shd;
     }
 
     /**
@@ -1517,15 +1450,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getAnld()
     {
-        return field_71_anld;
+        return field_68_anld;
     }
 
     /**
      * Set the anld field for the PAP record.
      */
-    public void setAnld(byte[] field_71_anld)
+    public void setAnld(byte[] field_68_anld)
     {
-        this.field_71_anld = field_71_anld;
+        this.field_68_anld = field_68_anld;
     }
 
     /**
@@ -1533,31 +1466,31 @@ public abstract class PAPAbstractType
      */
     public byte[] getPhe()
     {
-        return field_72_phe;
+        return field_69_phe;
     }
 
     /**
      * Set the phe field for the PAP record.
      */
-    public void setPhe(byte[] field_72_phe)
+    public void setPhe(byte[] field_69_phe)
     {
-        this.field_72_phe = field_72_phe;
+        this.field_69_phe = field_69_phe;
     }
 
     /**
      * Get the fPropRMark field for the PAP record.
      */
-    public int getFPropRMark()
+    public boolean getFPropRMark()
     {
-        return field_73_fPropRMark;
+        return field_70_fPropRMark;
     }
 
     /**
      * Set the fPropRMark field for the PAP record.
      */
-    public void setFPropRMark(int field_73_fPropRMark)
+    public void setFPropRMark(boolean field_70_fPropRMark)
     {
-        this.field_73_fPropRMark = field_73_fPropRMark;
+        this.field_70_fPropRMark = field_70_fPropRMark;
     }
 
     /**
@@ -1565,15 +1498,15 @@ public abstract class PAPAbstractType
      */
     public int getIbstPropRMark()
     {
-        return field_74_ibstPropRMark;
+        return field_71_ibstPropRMark;
     }
 
     /**
      * Set the ibstPropRMark field for the PAP record.
      */
-    public void setIbstPropRMark(int field_74_ibstPropRMark)
+    public void setIbstPropRMark(int field_71_ibstPropRMark)
     {
-        this.field_74_ibstPropRMark = field_74_ibstPropRMark;
+        this.field_71_ibstPropRMark = field_71_ibstPropRMark;
     }
 
     /**
@@ -1581,15 +1514,15 @@ public abstract class PAPAbstractType
      */
     public DateAndTime getDttmPropRMark()
     {
-        return field_75_dttmPropRMark;
+        return field_72_dttmPropRMark;
     }
 
     /**
      * Set the dttmPropRMark field for the PAP record.
      */
-    public void setDttmPropRMark(DateAndTime field_75_dttmPropRMark)
+    public void setDttmPropRMark(DateAndTime field_72_dttmPropRMark)
     {
-        this.field_75_dttmPropRMark = field_75_dttmPropRMark;
+        this.field_72_dttmPropRMark = field_72_dttmPropRMark;
     }
 
     /**
@@ -1597,15 +1530,15 @@ public abstract class PAPAbstractType
      */
     public int getItbdMac()
     {
-        return field_76_itbdMac;
+        return field_73_itbdMac;
     }
 
     /**
      * Set the itbdMac field for the PAP record.
      */
-    public void setItbdMac(int field_76_itbdMac)
+    public void setItbdMac(int field_73_itbdMac)
     {
-        this.field_76_itbdMac = field_76_itbdMac;
+        this.field_73_itbdMac = field_73_itbdMac;
     }
 
     /**
@@ -1613,15 +1546,15 @@ public abstract class PAPAbstractType
      */
     public int[] getRgdxaTab()
     {
-        return field_77_rgdxaTab;
+        return field_74_rgdxaTab;
     }
 
     /**
      * Set the rgdxaTab field for the PAP record.
      */
-    public void setRgdxaTab(int[] field_77_rgdxaTab)
+    public void setRgdxaTab(int[] field_74_rgdxaTab)
     {
-        this.field_77_rgdxaTab = field_77_rgdxaTab;
+        this.field_74_rgdxaTab = field_74_rgdxaTab;
     }
 
     /**
@@ -1629,15 +1562,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getRgtbd()
     {
-        return field_78_rgtbd;
+        return field_75_rgtbd;
     }
 
     /**
      * Set the rgtbd field for the PAP record.
      */
-    public void setRgtbd(byte[] field_78_rgtbd)
+    public void setRgtbd(byte[] field_75_rgtbd)
     {
-        this.field_78_rgtbd = field_78_rgtbd;
+        this.field_75_rgtbd = field_75_rgtbd;
     }
 
     /**
@@ -1645,15 +1578,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getNumrm()
     {
-        return field_79_numrm;
+        return field_76_numrm;
     }
 
     /**
      * Set the numrm field for the PAP record.
      */
-    public void setNumrm(byte[] field_79_numrm)
+    public void setNumrm(byte[] field_76_numrm)
     {
-        this.field_79_numrm = field_79_numrm;
+        this.field_76_numrm = field_76_numrm;
     }
 
     /**
@@ -1661,15 +1594,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getPtap()
     {
-        return field_80_ptap;
+        return field_77_ptap;
     }
 
     /**
      * Set the ptap field for the PAP record.
      */
-    public void setPtap(byte[] field_80_ptap)
+    public void setPtap(byte[] field_77_ptap)
     {
-        this.field_80_ptap = field_80_ptap;
+        this.field_77_ptap = field_77_ptap;
     }
 
     /**
@@ -1734,6 +1667,5 @@ public abstract class PAPAbstractType
         return fRotateFont.isSet(field_40_fontAlign);
         
     }
-
 
 }  // END OF CLASS

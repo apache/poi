@@ -124,7 +124,7 @@ public class Paragraph extends Range implements Cloneable {
 
   public boolean isInTable()
   {
-    return _props.getFInTable() != 0;
+    return _props.getFInTable();
   }
 
   /**
@@ -133,7 +133,7 @@ public class Paragraph extends Range implements Cloneable {
    */
   public boolean isTableRowEnd()
   {
-    return _props.getFTtp() != 0 || _props.getFTtpEmbedded() != 0;
+    return _props.getFTtp() || _props.getFTtpEmbedded();
   }
 
   public int getTableLevel()
@@ -147,7 +147,7 @@ public class Paragraph extends Range implements Cloneable {
      */
     public boolean isEmbeddedCellMark()
     {
-        return _props.getFInnerTableCell() != 0;
+        return _props.getFInnerTableCell();
     }
 
   public int getJustification()
@@ -163,86 +163,79 @@ public class Paragraph extends Range implements Cloneable {
 
   public boolean keepOnPage()
   {
-    return _props.getFKeep() != 0;
+    return _props.getFKeep();
   }
 
   public void setKeepOnPage(boolean fKeep)
   {
-    byte keep = (byte)(fKeep ? 1 : 0);
-    _props.setFKeep(keep);
-    _papx.updateSprm(SPRM_FKEEP, keep);
+    _props.setFKeep(fKeep);
+    _papx.updateSprm(SPRM_FKEEP, fKeep);
   }
 
   public boolean keepWithNext()
   {
-    return _props.getFKeepFollow() != 0;
+    return _props.getFKeepFollow();
   }
 
   public void setKeepWithNext(boolean fKeepFollow)
   {
-    byte keepFollow = (byte)(fKeepFollow ? 1 : 0);
-    _props.setFKeepFollow(keepFollow);
-    _papx.updateSprm(SPRM_FKEEPFOLLOW, keepFollow);
+    _props.setFKeepFollow(fKeepFollow);
+    _papx.updateSprm(SPRM_FKEEPFOLLOW, fKeepFollow);
   }
 
   public boolean pageBreakBefore()
   {
-    return _props.getFPageBreakBefore() != 0;
+    return _props.getFPageBreakBefore();
   }
 
   public void setPageBreakBefore(boolean fPageBreak)
   {
-    byte pageBreak = (byte)(fPageBreak ? 1 : 0);
-    _props.setFPageBreakBefore(pageBreak);
-    _papx.updateSprm(SPRM_FPAGEBREAKBEFORE, pageBreak);
+    _props.setFPageBreakBefore(fPageBreak);
+    _papx.updateSprm(SPRM_FPAGEBREAKBEFORE, fPageBreak);
   }
 
   public boolean isLineNotNumbered()
   {
-    return _props.getFNoLnn() != 0;
+    return _props.getFNoLnn();
   }
 
   public void setLineNotNumbered(boolean fNoLnn)
   {
-    byte noLnn = (byte)(fNoLnn ? 1 : 0);
-    _props.setFNoLnn(noLnn);
-    _papx.updateSprm(SPRM_FNOLINENUMB, noLnn);
+    _props.setFNoLnn(fNoLnn);
+    _papx.updateSprm(SPRM_FNOLINENUMB, fNoLnn);
   }
 
   public boolean isSideBySide()
   {
-    return _props.getFSideBySide() != 0;
+    return _props.getFSideBySide();
   }
 
   public void setSideBySide(boolean fSideBySide)
   {
-    byte sideBySide = (byte)(fSideBySide ? 1 : 0);
-    _props.setFSideBySide(sideBySide);
-    _papx.updateSprm(SPRM_FSIDEBYSIDE, sideBySide);
+    _props.setFSideBySide(fSideBySide);
+    _papx.updateSprm(SPRM_FSIDEBYSIDE, fSideBySide);
   }
 
   public boolean isAutoHyphenated()
   {
-    return _props.getFNoAutoHyph() == 0;
+    return !_props.getFNoAutoHyph();
   }
 
   public void setAutoHyphenated(boolean autoHyph)
   {
-    byte auto = (byte)(!autoHyph ? 1 : 0);
-    _props.setFNoAutoHyph(auto);
-    _papx.updateSprm(SPRM_FNOAUTOHYPH, auto);
+    _props.setFNoAutoHyph(!autoHyph);
+    _papx.updateSprm(SPRM_FNOAUTOHYPH, !autoHyph);
   }
 
   public boolean isWidowControlled()
   {
-    return _props.getFWidowControl() != 0;
+    return _props.getFWidowControl();
   }
 
   public void setWidowControl(boolean widowControl)
   {
-    byte widow = (byte)(widowControl ? 1 : 0);
-    _props.setFWidowControl(widow);
-    _papx.updateSprm(SPRM_FWIDOWCONTROL, widow);
+    _props.setFWidowControl(widowControl);
+    _papx.updateSprm(SPRM_FWIDOWCONTROL, widowControl);
   }
 
   public int getIndentFromRight()
@@ -313,26 +306,24 @@ public class Paragraph extends Range implements Cloneable {
 
   public boolean isKinsoku()
   {
-    return _props.getFKinsoku() != 0;
+    return _props.getFKinsoku();
   }
 
   public void setKinsoku(boolean kinsoku)
   {
-    byte kin = (byte)(kinsoku ? 1 : 0);
-    _props.setFKinsoku(kin);
-    _papx.updateSprm(SPRM_FKINSOKU, kin);
+    _props.setFKinsoku(kinsoku);
+    _papx.updateSprm(SPRM_FKINSOKU, kinsoku);
   }
 
   public boolean isWordWrapped()
   {
-    return _props.getFWordWrap() != 0;
+    return _props.getFWordWrap();
   }
 
   public void setWordWrapped(boolean wrap)
   {
-    byte wordWrap = (byte)(wrap ? 1 : 0);
-    _props.setFWordWrap(wordWrap);
-    _papx.updateSprm(SPRM_FWORDWRAP, wordWrap);
+    _props.setFWordWrap(wrap);
+    _papx.updateSprm(SPRM_FWORDWRAP, wrap);
   }
 
   public int getFontAlignment()
@@ -476,12 +467,12 @@ public class Paragraph extends Range implements Cloneable {
 
   void setTableRowEnd(TableProperties props)
   {
-    setTableRowEnd((byte)1);
+    setTableRowEnd(true);
     byte[] grpprl = TableSprmCompressor.compressTableProperty(props);
     _papx.append(grpprl);
   }
 
-  private void setTableRowEnd(byte val)
+  private void setTableRowEnd(boolean val)
   {
     _props.setFTtp(val);
     _papx.updateSprm(SPRM_FTTP, val);

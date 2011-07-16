@@ -64,7 +64,7 @@ public final class ParagraphSprmUncompressor
 
       // PAPXs can contain table sprms if the paragraph marks the end of a
       // table row
-      if (sprm.getType() == SprmOperation.PAP_TYPE)
+      if (sprm.getType() == SprmOperation.TYPE_PAP)
       {
           try
           {
@@ -135,16 +135,16 @@ public final class ParagraphSprmUncompressor
         newPAP.setJc ((byte) sprm.getOperand());
         break;
       case 0x4:
-        newPAP.setFSideBySide ((byte) sprm.getOperand());
+        newPAP.setFSideBySide (sprm.getOperand() != 0);
         break;
       case 0x5:
-        newPAP.setFKeep ((byte) sprm.getOperand());
+        newPAP.setFKeep (sprm.getOperand() != 0);
         break;
       case 0x6:
-        newPAP.setFKeepFollow ((byte) sprm.getOperand());
+        newPAP.setFKeepFollow (sprm.getOperand() != 0);
         break;
       case 0x7:
-        newPAP.setFPageBreakBefore ((byte) sprm.getOperand());
+        newPAP.setFPageBreakBefore (sprm.getOperand() != 0);
         break;
       case 0x8:
         newPAP.setBrcl ((byte) sprm.getOperand());
@@ -159,7 +159,7 @@ public final class ParagraphSprmUncompressor
         newPAP.setIlfo (sprm.getOperand());
         break;
       case 0xc:
-        newPAP.setFNoLnn ((byte) sprm.getOperand());
+        newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
       case 0xd:
         /**handle tabs . variable parameter. seperate processing needed*/
@@ -195,10 +195,10 @@ public final class ParagraphSprmUncompressor
         break;
         case 0x16:
             // sprmPFInTable -- 0x2416
-            newPAP.setFInTable( (byte) sprm.getOperand() );
+            newPAP.setFInTable( sprm.getOperand()  != 0);
             break;
       case 0x17:
-        newPAP.setFTtp ((byte) sprm.getOperand());
+        newPAP.setFTtp ( sprm.getOperand() != 0);
         break;
       case 0x18:
         newPAP.setDxaAbs (sprm.getOperand());
@@ -274,7 +274,7 @@ public final class ParagraphSprmUncompressor
         newPAP.setBrcBar (new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
       case 0x2a:
-        newPAP.setFNoAutoHyph ((byte) sprm.getOperand());
+        newPAP.setFNoAutoHyph (sprm.getOperand() != 0);
         break;
       case 0x2b:
         newPAP.setDyaHeight (sprm.getOperand());
@@ -292,32 +292,32 @@ public final class ParagraphSprmUncompressor
         newPAP.setDxaFromText (sprm.getOperand());
         break;
       case 0x30:
-        newPAP.setFLocked ((byte) sprm.getOperand());
+        newPAP.setFLocked (sprm.getOperand() != 0);
         break;
       case 0x31:
-        newPAP.setFWidowControl ((byte) sprm.getOperand());
+        newPAP.setFWidowControl (sprm.getOperand() != 0);
         break;
       case 0x32:
 
         //undocumented
         break;
       case 0x33:
-        newPAP.setFKinsoku ((byte) sprm.getOperand());
+        newPAP.setFKinsoku (sprm.getOperand() != 0);
         break;
       case 0x34:
-        newPAP.setFWordWrap ((byte) sprm.getOperand());
+        newPAP.setFWordWrap (sprm.getOperand() != 0);
         break;
       case 0x35:
-        newPAP.setFOverflowPunct ((byte) sprm.getOperand());
+        newPAP.setFOverflowPunct (sprm.getOperand() != 0);
         break;
       case 0x36:
-        newPAP.setFTopLinePunct ((byte) sprm.getOperand());
+        newPAP.setFTopLinePunct (sprm.getOperand() != 0);
         break;
       case 0x37:
-        newPAP.setFAutoSpaceDE ((byte) sprm.getOperand());
+        newPAP.setFAutoSpaceDE (sprm.getOperand() != 0);
         break;
       case 0x38:
-        newPAP.setFAutoSpaceDN ((byte) sprm.getOperand());
+        newPAP.setFAutoSpaceDN (sprm.getOperand() != 0);
         break;
       case 0x39:
         newPAP.setWAlignFont (sprm.getOperand());
@@ -344,7 +344,7 @@ public final class ParagraphSprmUncompressor
         {
           byte[] varParam = sprm.getGrpprl();
           int offset = sprm.getGrpprlOffset();
-          newPAP.setFPropRMark (varParam[offset]);
+          newPAP.setFPropRMark (varParam[offset]  != 0 );
           newPAP.setIbstPropRMark (LittleEndian.getShort (varParam, offset + 1));
           newPAP.setDttmPropRMark (new DateAndTime(varParam, offset + 3));
         }
@@ -364,12 +364,12 @@ public final class ParagraphSprmUncompressor
         break;
       case 0x41:
         // sprmPFBiDi 
-        newPAP.setFBiDi((byte) sprm.getOperand());
+        newPAP.setFBiDi(sprm.getOperand() != 0);
         break;
       case 0x43:
 
         //pap.fNumRMIns
-        newPAP.setFNumRMIns ((byte) sprm.getOperand());
+        newPAP.setFNumRMIns (sprm.getOperand() != 0);
         break;
       case 0x44:
 
@@ -389,10 +389,10 @@ public final class ParagraphSprmUncompressor
         break;
 
       case 0x47:
-        newPAP.setFUsePgsuSettings ((byte) sprm.getOperand());
+        newPAP.setFUsePgsuSettings (sprm.getOperand() != 0);
         break;
       case 0x48:
-        newPAP.setFAdjustRight ((byte) sprm.getOperand());
+        newPAP.setFAdjustRight (sprm.getOperand() != 0);
         break;
         case 0x49:
             // sprmPItap -- 0x6649
@@ -404,11 +404,11 @@ public final class ParagraphSprmUncompressor
             break;
         case 0x4b:
             // sprmPFInnerTableCell -- 0x244b
-            newPAP.setFInnerTableCell( (byte) sprm.getOperand() );
+            newPAP.setFInnerTableCell( sprm.getOperand()  != 0);
             break;
         case 0x4c:
             // sprmPFInnerTtp -- 0x244c
-            newPAP.setFTtpEmbedded( (byte) sprm.getOperand() );
+            newPAP.setFTtpEmbedded( sprm.getOperand()  != 0);
             break;
       case 0x61:
         // sprmPJc 
