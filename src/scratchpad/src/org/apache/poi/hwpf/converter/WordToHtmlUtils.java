@@ -20,10 +20,8 @@ import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
-import org.w3c.dom.Element;
 
 public class WordToHtmlUtils extends AbstractWordUtils
 {
@@ -224,54 +222,6 @@ public class WordToHtmlUtils extends AbstractWordUtils
         {
             style.append( "keep-together: always; " );
         }
-    }
-
-    public static void setPictureProperties( Picture picture,
-            Element graphicElement )
-    {
-        final int aspectRatioX = picture.getAspectRatioX();
-        final int aspectRatioY = picture.getAspectRatioY();
-
-        StringBuilder style = new StringBuilder();
-
-        if ( aspectRatioX > 0 )
-        {
-            style.append( "width:"
-                    + ( ( picture.getDxaGoal() * aspectRatioX / 1000 ) / TWIPS_PER_INCH )
-                    + "in;" );
-        }
-        else
-            style.append( "width:" + ( picture.getDxaGoal() / TWIPS_PER_INCH )
-                    + "in;" );
-
-        if ( aspectRatioY > 0 )
-        {
-            style.append( "height:"
-                    + ( ( picture.getDyaGoal() * aspectRatioY / 1000 ) / TWIPS_PER_INCH )
-                    + "in;" );
-        }
-        else
-            style.append( "height:" + ( picture.getDyaGoal() / TWIPS_PER_INCH )
-                    + "in;" );
-
-        graphicElement.setAttribute( "vertical-align", "text-bottom" );
-
-        if ( picture.getDyaCropTop() != 0 || picture.getDxaCropRight() != 0
-                || picture.getDyaCropBottom() != 0
-                || picture.getDxaCropLeft() != 0 )
-        {
-            float rectTop = picture.getDyaCropTop() / TWIPS_PER_INCH;
-            float rectRight = picture.getDxaCropRight() / TWIPS_PER_INCH;
-            float rectBottom = picture.getDyaCropBottom() / TWIPS_PER_INCH;
-            float rectLeft = picture.getDxaCropLeft() / TWIPS_PER_INCH;
-
-            style.append( "clip:rect(" + rectTop + "in," + rectRight + "in, "
-                    + rectBottom + "in, " + rectLeft + "in);" );
-            style.append( "overflow:hidden;" );
-        }
-
-        graphicElement.setAttribute( "style", style.toString() );
-
     }
 
 }
