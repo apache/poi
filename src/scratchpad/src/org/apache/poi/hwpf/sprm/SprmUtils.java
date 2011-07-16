@@ -50,6 +50,12 @@ public final class SprmUtils
     return sprm.length;
   }
 
+    public static int addSprm( short instruction, boolean param,
+            List<byte[]> list )
+    {
+        return addSprm( instruction, param ? 1 : 0, null, list );
+    }
+
   public static int addSprm(short instruction, int param, byte[] varParam, List<byte[]> list)
   {
     int type = (instruction & 0xe000) >> 13;

@@ -82,6 +82,33 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
             <xsl:text>;</xsl:text>
             <xsl:call-template name="linebreak"/>
         </xsl:if>
+        <xsl:choose>
+            <xsl:when test="@type='boolean'"/>
+            <xsl:when test="@type='byte'"/>
+            <xsl:when test="@type='int'"/>
+            <xsl:when test="@type='short'"/>
+            <xsl:when test="@type='long'"/>
+            <xsl:when test="substring(@type, string-length(@type) - 1) = '[]'">
+                <xsl:call-template name="indent"/>
+                <xsl:call-template name="indent"/>
+                <xsl:text>this.</xsl:text>
+                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+                <xsl:text> = new </xsl:text>
+                <xsl:value-of select="substring(@type, 0, string-length(@type) - 1)"/>
+                <xsl:text>[0];</xsl:text>
+                <xsl:call-template name="linebreak"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="indent"/>
+                <xsl:call-template name="indent"/>
+                <xsl:text>this.</xsl:text>
+                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+                <xsl:text> = new </xsl:text>
+                <xsl:value-of select="@type"/>
+                <xsl:text>();</xsl:text>
+                <xsl:call-template name="linebreak"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:for-each>
     <xsl:call-template name="indent"/>
     <xsl:text>}</xsl:text>
@@ -275,12 +302,20 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
         <xsl:text>builder.append(" (").append(get</xsl:text>
         <xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>
         <xsl:text>()).append(" )\n");</xsl:text>
-        <xsl:apply-templates select="bit" mode="bittostring"/>
         <xsl:call-template name="linebreak"/>
+        <xsl:apply-templates select="bit" mode="bittostring"/>
     </xsl:template>
 
-<xsl:template match="bit" mode="bittostring">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(<xsl:value-of select="recutil:getBitFieldFunction(@name, @mask, ../@type, 'false')"/>()).append('\n');
-</xsl:template>
+    <xsl:template match="bit" mode="bittostring">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>builder.append("         .</xsl:text>
+        <xsl:value-of select="recutil:getFieldName(@name,20)"/>
+        <xsl:text>     = ").append(</xsl:text>
+        <xsl:value-of select="recutil:getBitFieldFunction(@name, @mask, ../@type, 'false')"/>
+        <xsl:text>()).append('\n');</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:template>
 
 <xsl:template match="author">
  * @author <xsl:value-of select="."/>

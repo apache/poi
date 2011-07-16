@@ -199,6 +199,17 @@ public final class SprmBuffer implements Cloneable
         addSprm(opcode, operand);
       }
 
+    public void updateSprm( short opcode, boolean operand )
+    {
+        int grpprlOffset = findSprmOffset( opcode );
+        if ( grpprlOffset != -1 )
+        {
+            _buf[grpprlOffset] = (byte) ( operand ? 1 : 0 );
+            return;
+        }
+        addSprm( opcode, operand ? 1 : 0 );
+    }
+
   public void updateSprm(short opcode, int operand)
   {
     int grpprlOffset = findSprmOffset(opcode);
