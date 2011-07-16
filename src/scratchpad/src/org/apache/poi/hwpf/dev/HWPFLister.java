@@ -23,8 +23,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -33,15 +37,21 @@ import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FileInformationBlock;
+import org.apache.poi.hwpf.model.GenericPropertyNode;
+import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
 import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.PlexOfCps;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Used by developers to list out key information on a HWPF file. End users will
@@ -88,18 +98,19 @@ public final class HWPFLister
             System.err
                     .println( "\tHWPFLister <filename>\n"
                             + "\t\t[--textPieces] [--textPiecesText]\n"
-                            + "\t\t[--textRuns] [--textRunsSprms]\n"
+                            + "\t\t[--chpx] [--chpxProperties] [--chpxSprms]\n"
                             + "\t\t[--papx] [--papxProperties]\n"
                             + "\t\t[--paragraphs] [--paragraphsSprms] [--paragraphsText]\n"
-                            + "\t\t[--writereadback]\n" );
+                            + "\t\t[--pictures]\n" + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
 
         boolean outputTextPieces = false;
         boolean outputTextPiecesText = false;
 
-        boolean outputTextRuns = false;
-        boolean outputTextRunsSprms = false;
+        boolean outputChpx = false;
+        boolean outputChpxProperties = false;
+        boolean outputChpxSprms = false;
 
         boolean outputParagraphs = false;
         boolean outputParagraphsSprms = false;
@@ -107,6 +118,8 @@ public final class HWPFLister
 
         boolean outputPapx = false;
         boolean outputPapxProperties = false;
+
+        boolean outputPictures = false;
 
         boolean writereadback = false;
 
@@ -117,10 +130,12 @@ public final class HWPFLister
             if ( "--textPiecesText".equals( arg ) )
                 outputTextPiecesText = true;
 
-            if ( "--textRuns".equals( arg ) )
-                outputTextRuns = true;
-            if ( "--textRunsSprms".equals( arg ) )
-                outputTextRunsSprms = true;
+            if ( "--chpx".equals( arg ) )
+                outputChpx = true;
+            if ( "--chpxProperties".equals( arg ) )
+                outputChpxProperties = true;
+            if ( "--chpxSprms".equals( arg ) )
+                outputChpxSprms = true;
 
             if ( "--paragraphs".equals( arg ) )
                 outputParagraphs = true;
@@ -133,6 +148,9 @@ public final class HWPFLister
                 outputPapx = true;
             if ( "--papxProperties".equals( arg ) )
                 outputPapxProperties = true;
+
+            if ( "--pictures".equals( arg ) )
+                outputPictures = true;
 
             if ( "--writereadback".equals( arg ) )
                 writereadback = true;
@@ -151,10 +169,16 @@ public final class HWPFLister
             lister.dumpTextPieces( outputTextPiecesText );
         }
 
-        if ( outputTextRuns )
+        if ( outputChpx )
         {
-            System.out.println( "== Text runs ==" );
-            lister.dumpChpx( outputTextRunsSprms );
+            System.out.println( "== CHPX ==" );
+            lister.dumpChpx( outputChpxProperties, outputChpxSprms );
+        }
+
+        if ( outputPapx )
+        {
+            System.out.println( "== PAPX ==" );
+            lister.dumpPapx( outputPapxProperties );
         }
 
         if ( outputParagraphs )
@@ -167,10 +191,10 @@ public final class HWPFLister
                     outputParagraphsText );
         }
 
-        if ( !outputParagraphs && outputPapx )
+        if ( outputPictures )
         {
-            System.out.println( "== PAPX ==" );
-            lister.dumpPapx( outputPapxProperties );
+            System.out.println( "== PICTURES ==" );
+            lister.dumpPictures();
         }
     }
 
@@ -240,13 +264,13 @@ public final class HWPFLister
         this.text = builder.toString();
     }
 
-    public void dumpChpx( boolean withSprms )
+    public void dumpChpx( boolean withProperties, boolean withSprms )
     {
         for ( CHPX chpx : _doc.getCharacterTable().getTextRuns() )
         {
             System.out.println( chpx );
 
-            if ( false )
+            if ( withProperties )
             {
                 System.out.println( chpx.getCharacterProperties(
                         _doc.getStyleSheet(), (short) StyleSheet.NIL_STYLE ) );
@@ -282,26 +306,90 @@ public final class HWPFLister
         System.out.println( fib );
     }
 
-    public void dumpPapx( boolean withProperties )
+    public void dumpPapx( boolean withProperties ) throws Exception
     {
-        for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
+        if ( _doc instanceof HWPFDocument )
         {
-            System.out.println( papx );
+            System.out.println( "binary PAP pages " );
 
-            if ( withProperties )
-                System.out.println( papx.getParagraphProperties( _doc
-                        .getStyleSheet() ) );
+            HWPFDocument doc = (HWPFDocument) _doc;
 
-            if ( true )
+            Field fMainStream = HWPFDocumentCore.class
+                    .getDeclaredField( "_mainStream" );
+            fMainStream.setAccessible( true );
+            byte[] mainStream = (byte[]) fMainStream.get( _doc );
+
+            PlexOfCps binTable = new PlexOfCps( doc.getTableStream(), doc
+                    .getFileInformationBlock().getFcPlcfbtePapx(), doc
+                    .getFileInformationBlock().getLcbPlcfbtePapx(), 4 );
+
+            List<PAPX> papxs = new ArrayList<PAPX>();
+
+            int length = binTable.length();
+            for ( int x = 0; x < length; x++ )
             {
+                GenericPropertyNode node = binTable.getProperty( x );
+
+                int pageNum = LittleEndian.getInt( node.getBytes() );
+                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE
+                        * pageNum;
+
+                PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
+                        mainStream, doc.getDataStream(), pageOffset,
+                        doc.getTextTable(), false );
+
+                System.out.println( "* PFKP: " + pfkp );
+
+                for ( PAPX papx : pfkp.getPAPXs() )
+                {
+                    System.out.println( "** " + papx );
+                    papxs.add( papx );
+                    if ( papx != null && true )
+                    {
+                        SprmIterator sprmIt = new SprmIterator(
+                                papx.getGrpprl(), 2 );
+                        while ( sprmIt.hasNext() )
+                        {
+                            SprmOperation sprm = sprmIt.next();
+                            System.out.println( "*** " + sprm.toString() );
+                        }
+                    }
+
+                }
+            }
+
+            Collections.sort( papxs );
+            System.out.println( "* Sorted by END" );
+            for ( PAPX papx : papxs )
+            {
+                System.out.println( "** " + papx );
                 SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
                 while ( sprmIt.hasNext() )
                 {
                     SprmOperation sprm = sprmIt.next();
-                    System.out.println( "\t" + sprm.toString() );
+                    System.out.println( "*** " + sprm.toString() );
                 }
             }
         }
+
+        // for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
+        // {
+        // System.out.println( papx );
+        //
+        // if ( withProperties )
+        // System.out.println( papx.getParagraphProperties( _doc
+        // .getStyleSheet() ) );
+        //
+        // if ( true )
+        // {
+        // SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
+        // while ( sprmIt.hasNext() )
+        // {
+        // SprmOperation sprm = sprmIt.next();
+        // System.out.println( "\t" + sprm.toString() );
+        // }
+        // }
+        // }
     }
 
     public void dumpParagraphs( boolean dumpAssotiatedPapx )
@@ -353,6 +441,22 @@ public final class HWPFLister
 
             if ( withText )
                 System.out.println( paragraph.text() );
+        }
+    }
+
+    private void dumpPictures()
+    {
+        if ( _doc instanceof HWPFOldDocument )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+
+        List<Picture> allPictures = ( (HWPFDocument) _doc ).getPicturesTable()
+                .getAllPictures();
+        for ( Picture picture : allPictures )
+        {
+            System.out.println( picture.toString() );
         }
     }
 
