@@ -70,7 +70,7 @@ public final class ShadingDescriptor
     public String toString()
     {
         if ( isEmpty() )
-            return "[SHD] EMPTY]";
+            return "[SHD] EMPTY";
 
         return "[SHD] (cvFore: " + _icoFore.getShortValue( _info )
                 + "; cvBack: " + _icoBack.getShortValue( _info ) + "; iPat: "
