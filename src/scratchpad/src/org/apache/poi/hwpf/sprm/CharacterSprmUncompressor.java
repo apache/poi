@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.poi.hwpf.model.Hyphenation;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
@@ -437,18 +438,25 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x4b:
         newCHP.setHpsKern (sprm.getOperand());
         break;
-      case 0x4c:
-//        unCompressCHPOperation (oldCHP, newCHP, 0x47, param, varParam,
-//                                styleSheet, opSize);
-        break;
-      case 0x4d:
-        float percentage = sprm.getOperand() / 100.0f;
-        int add = (int) (percentage * newCHP.getHps ());
-        newCHP.setHps (newCHP.getHps () + add);
-        break;
-      case 0x4e:
-        newCHP.setYsr ((byte) sprm.getOperand());
-        break;
+        // Microsoft Office Word 97-2007 Binary File Format (.doc) Specification
+        // Page 59 of 210
+        case 0x4c:
+            // sprmCMajority50 -- 0xCA4C
+            // unCompressCHPOperation (oldCHP, newCHP, 0x47, param, varParam,
+            // styleSheet, opSize);
+            break;
+        case 0x4d:
+            // sprmCHpsMul -- 0x4A4D
+            float percentage = sprm.getOperand() / 100.0f;
+            int add = (int) ( percentage * newCHP.getHps() );
+            newCHP.setHps( newCHP.getHps() + add );
+            break;
+        case 0x4e:
+            // sprmCHresi -- 0x484e
+            Hyphenation hyphenation = new Hyphenation(
+                    (short) sprm.getOperand() );
+            newCHP.setHresi( hyphenation );
+            break;
       case 0x4f:
         newCHP.setFtcAscii ((short) sprm.getOperand());
         break;
@@ -473,13 +481,25 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x56:
         newCHP.setFObj (getFlag (sprm.getOperand()));
         break;
-      case 0x57:
-        byte[] buf = sprm.getGrpprl();
-        int offset = sprm.getGrpprlOffset();
-        newCHP.setFPropMark (buf[offset]);
-        newCHP.setIbstPropRMark (LittleEndian.getShort (buf, offset + 1));
-        newCHP.setDttmPropRMark (new DateAndTime(buf, offset +3));
-        break;
+        case 0x57:
+            // sprmCPropRMark -- 0xCA57
+            /*
+             * Microsoft Office Word 97-2007 Binary File Format (.doc)
+             * Specification
+             * 
+             * Page 78 of 210
+             * 
+             * sprmCPropRMark (opcode 0xCA57) is interpreted by moving the first
+             * parameter byte to chp.fPropRMark, the next two bytes to
+             * chp.ibstPropRMark, and the remaining four bytes to
+             * chp.dttmPropRMark.
+             */
+            byte[] buf = sprm.getGrpprl();
+            int offset = sprm.getGrpprlOffset();
+            newCHP.setFPropRMark( buf[offset] != 0 );
+            newCHP.setIbstPropRMark( LittleEndian.getShort( buf, offset + 1 ) );
+            newCHP.setDttmPropRMark( new DateAndTime( buf, offset + 3 ) );
+            break;
       case 0x58:
         newCHP.setFEmboss (getFlag (sprm.getOperand()));
         break;
@@ -509,16 +529,29 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x61:
         // sprmCHpsBi
         break;
-      case 0x62:
-        byte[] xstDispFldRMark = new byte[32];
-        buf = sprm.getGrpprl();
-        offset = sprm.getGrpprlOffset();
-        newCHP.setFDispFldRMark (buf[offset]);
-        newCHP.setIbstDispFldRMark (LittleEndian.getShort (buf, offset + 1));
-        newCHP.setDttmDispFldRMark (new DateAndTime(buf, offset + 3));
-        System.arraycopy (buf, offset + 7, xstDispFldRMark, 0, 32);
-        newCHP.setXstDispFldRMark (xstDispFldRMark);
-        break;
+        case 0x62:
+            // sprmCDispFldRMark -- 0xCA62
+            /*
+             * Microsoft Office Word 97-2007 Binary File Format (.doc)
+             * Specification
+             * 
+             * Page 78 of 210
+             * 
+             * sprmCDispFldRMark (opcode 0xCA62) is interpreted by moving the
+             * first parameter byte to chp.fDispFldRMark, the next two bytes to
+             * chp.ibstDispFldRMark, the next four bytes to
+             * chp.dttmDispFldRMark, and the remaining 32 bytes to
+             * chp.xstDispFldRMark.
+             */
+            byte[] xstDispFldRMark = new byte[32];
+            buf = sprm.getGrpprl();
+            offset = sprm.getGrpprlOffset();
+            newCHP.setFDispFldRMark( 0 != buf[offset] );
+            newCHP.setIbstDispFldRMark( LittleEndian.getShort( buf, offset + 1 ) );
+            newCHP.setDttmDispFldRMark( new DateAndTime( buf, offset + 3 ) );
+            System.arraycopy( buf, offset + 7, xstDispFldRMark, 0, 32 );
+            newCHP.setXstDispFldRMark( xstDispFldRMark );
+            break;
       case 0x63:
         newCHP.setIbstRMarkDel ((short) sprm.getOperand());
         break;

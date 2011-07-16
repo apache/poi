@@ -115,23 +115,41 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     <xsl:call-template name="linebreak"/>
     <xsl:call-template name="linebreak"/>
 
-    <xsl:if test='/@fromfile="true"'>
-        protected void fillFields(byte[] data, int offset)
-        {
-<xsl:variable name="fieldIterator" select="field:new()"/>
-<xsl:for-each select="//fields/field">
-<xsl:text>        </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,30)"/>  = <xsl:value-of select="field:fillDecoder($fieldIterator,@size,@type)"/>;
-</xsl:for-each>
-    }
-
-    public void serialize(byte[] data, int offset)
+    <xsl:if test='/*/@fromfile="true"'>
+    <xsl:call-template name="indent"/>
+<xsl:text>protected void fillFields( byte[] data, int offset )
     {
+</xsl:text>
 <xsl:variable name="fieldIterator" select="field:new()"/>
-<xsl:for-each select="//fields/field">
-<xsl:text>        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>;
-</xsl:for-each>
-    }
+    <xsl:for-each select="//fields/field">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,30)"/>
+        <xsl:text> = </xsl:text>
+        <xsl:value-of select="field:fillDecoder($fieldIterator,@size,@type)"/>
+        <xsl:text>;
+</xsl:text>
+    </xsl:for-each>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
 
+    <xsl:call-template name="linebreak"/>
+
+    <xsl:call-template name="indent"/>
+    <xsl:text>public void serialize( byte[] data, int offset )
+    {
+</xsl:text>
+<xsl:variable name="fieldIterator" select="field:new()"/>
+    <xsl:for-each select="//fields/field">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>
+        <xsl:call-template name="linebreak"/>
+    </xsl:for-each>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
     /**
      * Size of record (exluding 4 byte header)
      */
@@ -182,7 +200,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      * Sets the <xsl:value-of select="@name"/> field value.
      * <xsl:value-of select="@description"/>
      */
-    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(<xsl:value-of select="recutil:getBitFieldType(@name, @mask, ../@type)"/> value)
+    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="recutil:getBitFieldType(@name, @mask, ../@type)"/> value )
     {
         <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getBitFieldSet(@name, @mask, ../@type, recutil:getFieldName($fieldNum,../@name,0))"/>;
 
@@ -284,7 +302,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      * @param <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
      *        One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
-    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(<xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>)
+    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> )
     {
         this.<xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
     }

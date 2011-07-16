@@ -17,9 +17,7 @@
 
 package org.apache.poi.hwpf.model.types;
 
-
-
-import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.model.Hyphenation;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
@@ -33,321 +31,395 @@ import org.apache.poi.util.BitField;
  * @author S. Ryan Ackley
  */
 public abstract class CHPAbstractType
-    implements HDFType
 {
 
-    protected  int field_1_format_flags;
-        private static BitField  fBold = new BitField(0x0001);
-        private static BitField  fItalic = new BitField(0x0002);
-        private static BitField  fRMarkDel = new BitField(0x0004);
-        private static BitField  fOutline = new BitField(0x0008);
-        private static BitField  fFldVanish = new BitField(0x0010);
-        private static BitField  fSmallCaps = new BitField(0x0020);
-        private static BitField  fCaps = new BitField(0x0040);
-        private static BitField  fVanish = new BitField(0x0080);
-        private static BitField  fRMark = new BitField(0x0100);
-        private static BitField  fSpec = new BitField(0x0200);
-        private static BitField  fStrike = new BitField(0x0400);
-        private static BitField  fObj = new BitField(0x0800);
-        private static BitField  fShadow = new BitField(0x1000);
-        private static BitField  fLowerCase = new BitField(0x2000);
-        private static BitField  fData = new BitField(0x4000);
-        private static BitField  fOle2 = new BitField(0x8000);
-    protected  int field_2_format_flags1;
-        private static BitField  fEmboss = new BitField(0x0001);
-        private static BitField  fImprint = new BitField(0x0002);
-        private static BitField  fDStrike = new BitField(0x0004);
-        private static BitField  fUsePgsuSettings = new BitField(0x0008);
-    protected  int field_3_ftcAscii;
-    protected  int field_4_ftcFE;
-    protected  int field_5_ftcOther;
-    protected  int field_6_hps;
-    protected  int field_7_dxaSpace;
-    protected  byte field_8_iss;
-    protected  byte field_9_kul;
-    protected  byte field_10_ico;
-    protected  int field_11_hpsPos;
-    protected  int field_12_lidDefault;
-    protected  int field_13_lidFE;
-    protected  byte field_14_idctHint;
-    protected  int field_15_wCharScale;
-    protected  int field_16_fcPic;
-    protected  int field_17_fcObj;
-    protected  int field_18_lTagObj;
-    protected  int field_19_ibstRMark;
-    protected  int field_20_ibstRMarkDel;
-    protected  DateAndTime field_21_dttmRMark;
-    protected  DateAndTime field_22_dttmRMarkDel;
-    protected  int field_23_istd;
-    protected  int field_24_baseIstd;
-    protected  int field_25_ftcSym;
-    protected  int field_26_xchSym;
-    protected  int field_27_idslRMReason;
-    protected  int field_28_idslReasonDel;
-    protected  byte field_29_ysr;
-    protected  byte field_30_chYsr;
-    protected  int field_31_hpsKern;
-    protected  short field_32_Highlight;
+    protected int field_1_grpfChp;
+        private static BitField  fBold = new BitField(0x00000001);
+        private static BitField  fItalic = new BitField(0x00000002);
+        private static BitField  fRMarkDel = new BitField(0x00000004);
+        private static BitField  fOutline = new BitField(0x00000008);
+        private static BitField  fFldVanish = new BitField(0x00000010);
+        private static BitField  fSmallCaps = new BitField(0x00000020);
+        private static BitField  fCaps = new BitField(0x00000040);
+        private static BitField  fVanish = new BitField(0x00000080);
+        private static BitField  fRMark = new BitField(0x00000100);
+        private static BitField  fSpec = new BitField(0x00000200);
+        private static BitField  fStrike = new BitField(0x00000400);
+        private static BitField  fObj = new BitField(0x00000800);
+        private static BitField  fShadow = new BitField(0x00001000);
+        private static BitField  fLowerCase = new BitField(0x00002000);
+        private static BitField  fData = new BitField(0x00004000);
+        private static BitField  fOle2 = new BitField(0x00008000);
+        private static BitField  fEmboss = new BitField(0x00010000);
+        private static BitField  fImprint = new BitField(0x00020000);
+        private static BitField  fDStrike = new BitField(0x00040000);
+        private static BitField  fUsePgsuSettings = new BitField(0x00080000);
+        private static BitField  fBoldBi = new BitField(0x00100000);
+        private static BitField  fComplexScripts = new BitField(0x00200000);
+        private static BitField  fItalicBi = new BitField(0x00400000);
+        private static BitField  fBiDi = new BitField(0x00800000);
+    protected int field_2_hps;
+    protected int field_3_ftcAscii;
+    protected int field_4_ftcFE;
+    protected int field_5_ftcOther;
+    protected int field_6_ftcBi;
+    protected int field_7_dxaSpace;
+    protected byte field_8_ico;
+    protected int field_9_pctCharWidth;
+    protected int field_10_lidDefault;
+    protected int field_11_lidFE;
+    protected byte field_12_kcd;
+    /**/public final static byte KCD_NON = 0;
+    /**/public final static byte KCD_DOT = 1;
+    /**/public final static byte KCD_COMMA = 2;
+    /**/public final static byte KCD_CIRCLE = 3;
+    /**/public final static byte KCD_UNDER_DOT = 4;
+    protected boolean field_13_fUndetermine;
+    protected byte field_14_iss;
+    /**/public final static byte ISS_NONE = 0;
+    /**/public final static byte ISS_SUPERSCRIPTED = 1;
+    /**/public final static byte ISS_SUBSCRIPTED = 2;
+    protected boolean field_15_fSpecSymbol;
+    protected byte field_16_idct;
+    protected byte field_17_idctHint;
+    protected byte field_18_kul;
+    /**/public final static byte KUL_NONE = 0;
+    /**/public final static byte KUL_SINGLE = 1;
+    /**/public final static byte KUL_BY_WORD = 2;
+    /**/public final static byte KUL_DOUBLE = 3;
+    /**/public final static byte KUL_DOTTED = 4;
+    /**/public final static byte KUL_HIDDEN = 5;
+    /**/public final static byte KUL_THICK = 6;
+    /**/public final static byte KUL_DASH = 7;
+    /**/public final static byte KUL_DOT = 8;
+    /**/public final static byte KUL_DOT_DASH = 9;
+    /**/public final static byte KUL_DOT_DOT_DASH = 10;
+    /**/public final static byte KUL_WAVE = 11;
+    /**/public final static byte KUL_DOTTED_HEAVY = 20;
+    /**/public final static byte KUL_DASHED_HEAVY = 23;
+    /**/public final static byte KUL_DOT_DASH_HEAVY = 25;
+    /**/public final static byte KUL_DOT_DOT_DASH_HEAVY = 26;
+    /**/public final static byte KUL_WAVE_HEAVY = 27;
+    /**/public final static byte KUL_DASH_LONG = 39;
+    /**/public final static byte KUL_WAVE_DOUBLE = 43;
+    /**/public final static byte KUL_DASH_LONG_HEAVY = 55;
+    protected Hyphenation field_19_hresi;
+    protected int field_20_hpsKern;
+    protected short field_21_hpsPos;
+    protected ShadingDescriptor field_22_shd;
+    protected BorderCode field_23_brc;
+    protected int field_24_ibstRMark;
+    protected byte field_25_sfxtText;
+    /**/public final static byte SFXTTEXT_NO = 0;
+    /**/public final static byte SFXTTEXT_LAS_VEGAS_LIGHTS = 1;
+    /**/public final static byte SFXTTEXT_BACKGROUND_BLINK = 2;
+    /**/public final static byte SFXTTEXT_SPARKLE_TEXT = 3;
+    /**/public final static byte SFXTTEXT_MARCHING_ANTS = 4;
+    /**/public final static byte SFXTTEXT_MARCHING_RED_ANTS = 5;
+    /**/public final static byte SFXTTEXT_SHIMMER = 6;
+    protected boolean field_26_fDblBdr;
+    protected boolean field_27_fBorderWS;
+    protected short field_28_ufel;
+        private static BitField  itypFELayout = new BitField(0x00ff);
+        private static BitField  fTNY = new BitField(0x0100);
+        private static BitField  fWarichu = new BitField(0x0200);
+        private static BitField  fKumimoji = new BitField(0x0400);
+        private static BitField  fRuby = new BitField(0x0800);
+        private static BitField  fLSFitText = new BitField(0x1000);
+        private static BitField  spare = new BitField(0xe000);
+    protected byte field_29_copt;
+        private static BitField  iWarichuBracket = new BitField(0x07);
+        private static BitField  fWarichuNoOpenBracket = new BitField(0x08);
+        private static BitField  fTNYCompress = new BitField(0x10);
+        private static BitField  fTNYFetchTxm = new BitField(0x20);
+        private static BitField  fCellFitText = new BitField(0x40);
+        private static BitField  unused = new BitField(0x80);
+    protected int field_30_hpsAsci;
+    protected int field_31_hpsFE;
+    protected int field_32_hpsBi;
+    protected int field_33_ftcSym;
+    protected int field_34_xchSym;
+    protected int field_35_fcPic;
+    protected int field_36_fcObj;
+    protected int field_37_lTagObj;
+    protected int field_38_fcData;
+    protected Hyphenation field_39_hresiOld;
+    protected int field_40_ibstRMarkDel;
+    protected DateAndTime field_41_dttmRMark;
+    protected DateAndTime field_42_dttmRMarkDel;
+    protected int field_43_istd;
+    protected int field_44_idslRMReason;
+    protected int field_45_idslReasonDel;
+    protected int field_46_cpg;
+    protected short field_47_Highlight;
         private static BitField  icoHighlight = new BitField(0x001f);
         private static BitField  fHighlight = new BitField(0x0020);
-        private static BitField  fNavHighlight = new BitField(0x0040);
-    protected  short field_33_InternalFlags;
-        private static BitField  iatrUndetType = new BitField(0x000f);
-        private static BitField  fUlGap = new BitField(0x0010);
-        private static BitField  fScriptAnchor = new BitField(0x0800);
-        private static BitField  fFixedObj = new BitField(0x1000);
-        private static BitField  spare2 = new BitField(0x2000);
-    protected  short field_34_EncodingFlags;
+    protected short field_48_CharsetFlags;
         private static BitField  fChsDiff = new BitField(0x0001);
-        private static BitField  fMacChs = new BitField(0x0002);
-        private static BitField  fFtcAsciSym = new BitField(0x0004);
-        private static BitField  fFtcReq = new BitField(0x0008);
-        private static BitField  fLangApplied = new BitField(0x0010);
-        private static BitField  fSpareLangApplied = new BitField(0x0020);
-        private static BitField  fForcedCvAuto = new BitField(0x0040);
-    protected  short field_35_chse;
-    protected  short field_36_fPropMark;
-    protected  int field_37_ibstPropRMark;
-    protected  DateAndTime field_38_dttmPropRMark;
-    protected  byte field_39_sfxtText;
-    protected  byte field_40_fDispFldRMark;
-    protected  int field_41_ibstDispFldRMark;
-    protected  DateAndTime field_42_dttmDispFldRMark;
-    protected  byte[] field_43_xstDispFldRMark;
-    protected  ShadingDescriptor field_44_shd;
-    protected  BorderCode field_45_brc;
+        private static BitField  fMacChs = new BitField(0x0020);
+    protected short field_49_chse;
+    protected boolean field_50_fPropRMark;
+    protected int field_51_ibstPropRMark;
+    protected DateAndTime field_52_dttmPropRMark;
+    protected boolean field_53_fConflictOrig;
+    protected boolean field_54_fConflictOtherDel;
+    protected int field_55_wConflict;
+    protected int field_56_IbstConflict;
+    protected DateAndTime field_57_dttmConflict;
+    protected boolean field_58_fDispFldRMark;
+    protected int field_59_ibstDispFldRMark;
+    protected DateAndTime field_60_dttmDispFldRMark;
+    protected byte[] field_61_xstDispFldRMark;
+    protected int field_62_fcObjp;
+    protected byte field_63_lbrCRJ;
+    /**/public final static byte LBRCRJ_NONE = 0;
+    /**/public final static byte LBRCRJ_LEFT = 1;
+    /**/public final static byte LBRCRJ_RIGHT = 2;
+    /**/public final static byte LBRCRJ_BOTH = 3;
+    protected boolean field_64_fSpecVanish;
+    protected boolean field_65_fHasOldProps;
+    protected boolean field_66_fSdtVanish;
+    protected int field_67_wCharScale;
 
-
-    public CHPAbstractType()
+    protected CHPAbstractType()
     {
-
+        this.field_2_hps = 20;
+        this.field_10_lidDefault = 0x0400;
+        this.field_11_lidFE = 0x0400;
+        this.field_19_hresi = new Hyphenation();
+        this.field_22_shd = new ShadingDescriptor();
+        this.field_23_brc = new BorderCode();
+        this.field_35_fcPic = -1;
+        this.field_39_hresiOld = new Hyphenation();
+        this.field_41_dttmRMark = new DateAndTime();
+        this.field_42_dttmRMarkDel = new DateAndTime();
+        this.field_43_istd = 10;
+        this.field_52_dttmPropRMark = new DateAndTime();
+        this.field_57_dttmConflict = new DateAndTime();
+        this.field_60_dttmDispFldRMark = new DateAndTime();
+        this.field_61_xstDispFldRMark = new byte[0];
+        this.field_67_wCharScale = 100;
     }
 
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
+        builder.append("[CHP]\n");
+        builder.append("    .grpfChp              = ");
+        builder.append(" (").append(getGrpfChp()).append(" )\n");
+        builder.append("         .fBold                    = ").append(isFBold()).append('\n');
+        builder.append("         .fItalic                  = ").append(isFItalic()).append('\n');
+        builder.append("         .fRMarkDel                = ").append(isFRMarkDel()).append('\n');
+        builder.append("         .fOutline                 = ").append(isFOutline()).append('\n');
+        builder.append("         .fFldVanish               = ").append(isFFldVanish()).append('\n');
+        builder.append("         .fSmallCaps               = ").append(isFSmallCaps()).append('\n');
+        builder.append("         .fCaps                    = ").append(isFCaps()).append('\n');
+        builder.append("         .fVanish                  = ").append(isFVanish()).append('\n');
+        builder.append("         .fRMark                   = ").append(isFRMark()).append('\n');
+        builder.append("         .fSpec                    = ").append(isFSpec()).append('\n');
+        builder.append("         .fStrike                  = ").append(isFStrike()).append('\n');
+        builder.append("         .fObj                     = ").append(isFObj()).append('\n');
+        builder.append("         .fShadow                  = ").append(isFShadow()).append('\n');
+        builder.append("         .fLowerCase               = ").append(isFLowerCase()).append('\n');
+        builder.append("         .fData                    = ").append(isFData()).append('\n');
+        builder.append("         .fOle2                    = ").append(isFOle2()).append('\n');
+        builder.append("         .fEmboss                  = ").append(isFEmboss()).append('\n');
+        builder.append("         .fImprint                 = ").append(isFImprint()).append('\n');
+        builder.append("         .fDStrike                 = ").append(isFDStrike()).append('\n');
+        builder.append("         .fUsePgsuSettings         = ").append(isFUsePgsuSettings()).append('\n');
+        builder.append("         .fBoldBi                  = ").append(isFBoldBi()).append('\n');
+        builder.append("         .fComplexScripts          = ").append(isFComplexScripts()).append('\n');
+        builder.append("         .fItalicBi                = ").append(isFItalicBi()).append('\n');
+        builder.append("         .fBiDi                    = ").append(isFBiDi()).append('\n');
+        builder.append("    .hps                  = ");
+        builder.append(" (").append(getHps()).append(" )\n");
+        builder.append("    .ftcAscii             = ");
+        builder.append(" (").append(getFtcAscii()).append(" )\n");
+        builder.append("    .ftcFE                = ");
+        builder.append(" (").append(getFtcFE()).append(" )\n");
+        builder.append("    .ftcOther             = ");
+        builder.append(" (").append(getFtcOther()).append(" )\n");
+        builder.append("    .ftcBi                = ");
+        builder.append(" (").append(getFtcBi()).append(" )\n");
+        builder.append("    .dxaSpace             = ");
+        builder.append(" (").append(getDxaSpace()).append(" )\n");
+        builder.append("    .ico                  = ");
+        builder.append(" (").append(getIco()).append(" )\n");
+        builder.append("    .pctCharWidth         = ");
+        builder.append(" (").append(getPctCharWidth()).append(" )\n");
+        builder.append("    .lidDefault           = ");
+        builder.append(" (").append(getLidDefault()).append(" )\n");
+        builder.append("    .lidFE                = ");
+        builder.append(" (").append(getLidFE()).append(" )\n");
+        builder.append("    .kcd                  = ");
+        builder.append(" (").append(getKcd()).append(" )\n");
+        builder.append("    .fUndetermine         = ");
+        builder.append(" (").append(getFUndetermine()).append(" )\n");
+        builder.append("    .iss                  = ");
+        builder.append(" (").append(getIss()).append(" )\n");
+        builder.append("    .fSpecSymbol          = ");
+        builder.append(" (").append(getFSpecSymbol()).append(" )\n");
+        builder.append("    .idct                 = ");
+        builder.append(" (").append(getIdct()).append(" )\n");
+        builder.append("    .idctHint             = ");
+        builder.append(" (").append(getIdctHint()).append(" )\n");
+        builder.append("    .kul                  = ");
+        builder.append(" (").append(getKul()).append(" )\n");
+        builder.append("    .hresi                = ");
+        builder.append(" (").append(getHresi()).append(" )\n");
+        builder.append("    .hpsKern              = ");
+        builder.append(" (").append(getHpsKern()).append(" )\n");
+        builder.append("    .hpsPos               = ");
+        builder.append(" (").append(getHpsPos()).append(" )\n");
+        builder.append("    .shd                  = ");
+        builder.append(" (").append(getShd()).append(" )\n");
+        builder.append("    .brc                  = ");
+        builder.append(" (").append(getBrc()).append(" )\n");
+        builder.append("    .ibstRMark            = ");
+        builder.append(" (").append(getIbstRMark()).append(" )\n");
+        builder.append("    .sfxtText             = ");
+        builder.append(" (").append(getSfxtText()).append(" )\n");
+        builder.append("    .fDblBdr              = ");
+        builder.append(" (").append(getFDblBdr()).append(" )\n");
+        builder.append("    .fBorderWS            = ");
+        builder.append(" (").append(getFBorderWS()).append(" )\n");
+        builder.append("    .ufel                 = ");
+        builder.append(" (").append(getUfel()).append(" )\n");
+        builder.append("         .itypFELayout             = ").append(getItypFELayout()).append('\n');
+        builder.append("         .fTNY                     = ").append(isFTNY()).append('\n');
+        builder.append("         .fWarichu                 = ").append(isFWarichu()).append('\n');
+        builder.append("         .fKumimoji                = ").append(isFKumimoji()).append('\n');
+        builder.append("         .fRuby                    = ").append(isFRuby()).append('\n');
+        builder.append("         .fLSFitText               = ").append(isFLSFitText()).append('\n');
+        builder.append("         .spare                    = ").append(getSpare()).append('\n');
+        builder.append("    .copt                 = ");
+        builder.append(" (").append(getCopt()).append(" )\n");
+        builder.append("         .iWarichuBracket          = ").append(getIWarichuBracket()).append('\n');
+        builder.append("         .fWarichuNoOpenBracket     = ").append(isFWarichuNoOpenBracket()).append('\n');
+        builder.append("         .fTNYCompress             = ").append(isFTNYCompress()).append('\n');
+        builder.append("         .fTNYFetchTxm             = ").append(isFTNYFetchTxm()).append('\n');
+        builder.append("         .fCellFitText             = ").append(isFCellFitText()).append('\n');
+        builder.append("         .unused                   = ").append(isUnused()).append('\n');
+        builder.append("    .hpsAsci              = ");
+        builder.append(" (").append(getHpsAsci()).append(" )\n");
+        builder.append("    .hpsFE                = ");
+        builder.append(" (").append(getHpsFE()).append(" )\n");
+        builder.append("    .hpsBi                = ");
+        builder.append(" (").append(getHpsBi()).append(" )\n");
+        builder.append("    .ftcSym               = ");
+        builder.append(" (").append(getFtcSym()).append(" )\n");
+        builder.append("    .xchSym               = ");
+        builder.append(" (").append(getXchSym()).append(" )\n");
+        builder.append("    .fcPic                = ");
+        builder.append(" (").append(getFcPic()).append(" )\n");
+        builder.append("    .fcObj                = ");
+        builder.append(" (").append(getFcObj()).append(" )\n");
+        builder.append("    .lTagObj              = ");
+        builder.append(" (").append(getLTagObj()).append(" )\n");
+        builder.append("    .fcData               = ");
+        builder.append(" (").append(getFcData()).append(" )\n");
+        builder.append("    .hresiOld             = ");
+        builder.append(" (").append(getHresiOld()).append(" )\n");
+        builder.append("    .ibstRMarkDel         = ");
+        builder.append(" (").append(getIbstRMarkDel()).append(" )\n");
+        builder.append("    .dttmRMark            = ");
+        builder.append(" (").append(getDttmRMark()).append(" )\n");
+        builder.append("    .dttmRMarkDel         = ");
+        builder.append(" (").append(getDttmRMarkDel()).append(" )\n");
+        builder.append("    .istd                 = ");
+        builder.append(" (").append(getIstd()).append(" )\n");
+        builder.append("    .idslRMReason         = ");
+        builder.append(" (").append(getIdslRMReason()).append(" )\n");
+        builder.append("    .idslReasonDel        = ");
+        builder.append(" (").append(getIdslReasonDel()).append(" )\n");
+        builder.append("    .cpg                  = ");
+        builder.append(" (").append(getCpg()).append(" )\n");
+        builder.append("    .Highlight            = ");
+        builder.append(" (").append(getHighlight()).append(" )\n");
+        builder.append("         .icoHighlight             = ").append(getIcoHighlight()).append('\n');
+        builder.append("         .fHighlight               = ").append(isFHighlight()).append('\n');
+        builder.append("    .CharsetFlags         = ");
+        builder.append(" (").append(getCharsetFlags()).append(" )\n");
+        builder.append("         .fChsDiff                 = ").append(isFChsDiff()).append('\n');
+        builder.append("         .fMacChs                  = ").append(isFMacChs()).append('\n');
+        builder.append("    .chse                 = ");
+        builder.append(" (").append(getChse()).append(" )\n");
+        builder.append("    .fPropRMark           = ");
+        builder.append(" (").append(getFPropRMark()).append(" )\n");
+        builder.append("    .ibstPropRMark        = ");
+        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
+        builder.append("    .dttmPropRMark        = ");
+        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
+        builder.append("    .fConflictOrig        = ");
+        builder.append(" (").append(getFConflictOrig()).append(" )\n");
+        builder.append("    .fConflictOtherDel    = ");
+        builder.append(" (").append(getFConflictOtherDel()).append(" )\n");
+        builder.append("    .wConflict            = ");
+        builder.append(" (").append(getWConflict()).append(" )\n");
+        builder.append("    .IbstConflict         = ");
+        builder.append(" (").append(getIbstConflict()).append(" )\n");
+        builder.append("    .dttmConflict         = ");
+        builder.append(" (").append(getDttmConflict()).append(" )\n");
+        builder.append("    .fDispFldRMark        = ");
+        builder.append(" (").append(getFDispFldRMark()).append(" )\n");
+        builder.append("    .ibstDispFldRMark     = ");
+        builder.append(" (").append(getIbstDispFldRMark()).append(" )\n");
+        builder.append("    .dttmDispFldRMark     = ");
+        builder.append(" (").append(getDttmDispFldRMark()).append(" )\n");
+        builder.append("    .xstDispFldRMark      = ");
+        builder.append(" (").append(getXstDispFldRMark()).append(" )\n");
+        builder.append("    .fcObjp               = ");
+        builder.append(" (").append(getFcObjp()).append(" )\n");
+        builder.append("    .lbrCRJ               = ");
+        builder.append(" (").append(getLbrCRJ()).append(" )\n");
+        builder.append("    .fSpecVanish          = ");
+        builder.append(" (").append(getFSpecVanish()).append(" )\n");
+        builder.append("    .fHasOldProps         = ");
+        builder.append(" (").append(getFHasOldProps()).append(" )\n");
+        builder.append("    .fSdtVanish           = ");
+        builder.append(" (").append(getFSdtVanish()).append(" )\n");
+        builder.append("    .wCharScale           = ");
+        builder.append(" (").append(getWCharScale()).append(" )\n");
 
-        buffer.append("[CHP]\n");
-
-        buffer.append("    .format_flags         = ");
-        buffer.append(" (").append(getFormat_flags()).append(" )\n");
-        buffer.append("         .fBold                    = ").append(isFBold()).append('\n');
-        buffer.append("         .fItalic                  = ").append(isFItalic()).append('\n');
-        buffer.append("         .fRMarkDel                = ").append(isFRMarkDel()).append('\n');
-        buffer.append("         .fOutline                 = ").append(isFOutline()).append('\n');
-        buffer.append("         .fFldVanish               = ").append(isFFldVanish()).append('\n');
-        buffer.append("         .fSmallCaps               = ").append(isFSmallCaps()).append('\n');
-        buffer.append("         .fCaps                    = ").append(isFCaps()).append('\n');
-        buffer.append("         .fVanish                  = ").append(isFVanish()).append('\n');
-        buffer.append("         .fRMark                   = ").append(isFRMark()).append('\n');
-        buffer.append("         .fSpec                    = ").append(isFSpec()).append('\n');
-        buffer.append("         .fStrike                  = ").append(isFStrike()).append('\n');
-        buffer.append("         .fObj                     = ").append(isFObj()).append('\n');
-        buffer.append("         .fShadow                  = ").append(isFShadow()).append('\n');
-        buffer.append("         .fLowerCase               = ").append(isFLowerCase()).append('\n');
-        buffer.append("         .fData                    = ").append(isFData()).append('\n');
-        buffer.append("         .fOle2                    = ").append(isFOle2()).append('\n');
-
-        buffer.append("    .format_flags1        = ");
-        buffer.append(" (").append(getFormat_flags1()).append(" )\n");
-        buffer.append("         .fEmboss                  = ").append(isFEmboss()).append('\n');
-        buffer.append("         .fImprint                 = ").append(isFImprint()).append('\n');
-        buffer.append("         .fDStrike                 = ").append(isFDStrike()).append('\n');
-        buffer.append("         .fUsePgsuSettings         = ").append(isFUsePgsuSettings()).append('\n');
-
-        buffer.append("    .ftcAscii             = ");
-        buffer.append(" (").append(getFtcAscii()).append(" )\n");
-
-        buffer.append("    .ftcFE                = ");
-        buffer.append(" (").append(getFtcFE()).append(" )\n");
-
-        buffer.append("    .ftcOther             = ");
-        buffer.append(" (").append(getFtcOther()).append(" )\n");
-
-        buffer.append("    .hps                  = ");
-        buffer.append(" (").append(getHps()).append(" )\n");
-
-        buffer.append("    .dxaSpace             = ");
-        buffer.append(" (").append(getDxaSpace()).append(" )\n");
-
-        buffer.append("    .iss                  = ");
-        buffer.append(" (").append(getIss()).append(" )\n");
-
-        buffer.append("    .kul                  = ");
-        buffer.append(" (").append(getKul()).append(" )\n");
-
-        buffer.append("    .ico                  = ");
-        buffer.append(" (").append(getIco()).append(" )\n");
-
-        buffer.append("    .hpsPos               = ");
-        buffer.append(" (").append(getHpsPos()).append(" )\n");
-
-        buffer.append("    .lidDefault           = ");
-        buffer.append(" (").append(getLidDefault()).append(" )\n");
-
-        buffer.append("    .lidFE                = ");
-        buffer.append(" (").append(getLidFE()).append(" )\n");
-
-        buffer.append("    .idctHint             = ");
-        buffer.append(" (").append(getIdctHint()).append(" )\n");
-
-        buffer.append("    .wCharScale           = ");
-        buffer.append(" (").append(getWCharScale()).append(" )\n");
-
-        buffer.append("    .fcPic                = ");
-        buffer.append(" (").append(getFcPic()).append(" )\n");
-
-        buffer.append("    .fcObj                = ");
-        buffer.append(" (").append(getFcObj()).append(" )\n");
-
-        buffer.append("    .lTagObj              = ");
-        buffer.append(" (").append(getLTagObj()).append(" )\n");
-
-        buffer.append("    .ibstRMark            = ");
-        buffer.append(" (").append(getIbstRMark()).append(" )\n");
-
-        buffer.append("    .ibstRMarkDel         = ");
-        buffer.append(" (").append(getIbstRMarkDel()).append(" )\n");
-
-        buffer.append("    .dttmRMark            = ");
-        buffer.append(" (").append(getDttmRMark()).append(" )\n");
-
-        buffer.append("    .dttmRMarkDel         = ");
-        buffer.append(" (").append(getDttmRMarkDel()).append(" )\n");
-
-        buffer.append("    .istd                 = ");
-        buffer.append(" (").append(getIstd()).append(" )\n");
-
-        buffer.append("    .baseIstd             = ");
-        buffer.append(" (").append(getBaseIstd()).append(" )\n");
-
-        buffer.append("    .ftcSym               = ");
-        buffer.append(" (").append(getFtcSym()).append(" )\n");
-
-        buffer.append("    .xchSym               = ");
-        buffer.append(" (").append(getXchSym()).append(" )\n");
-
-        buffer.append("    .idslRMReason         = ");
-        buffer.append(" (").append(getIdslRMReason()).append(" )\n");
-
-        buffer.append("    .idslReasonDel        = ");
-        buffer.append(" (").append(getIdslReasonDel()).append(" )\n");
-
-        buffer.append("    .ysr                  = ");
-        buffer.append(" (").append(getYsr()).append(" )\n");
-
-        buffer.append("    .chYsr                = ");
-        buffer.append(" (").append(getChYsr()).append(" )\n");
-
-        buffer.append("    .hpsKern              = ");
-        buffer.append(" (").append(getHpsKern()).append(" )\n");
-
-        buffer.append("    .Highlight            = ");
-        buffer.append(" (").append(getHighlight()).append(" )\n");
-        buffer.append("         .icoHighlight             = ").append(getIcoHighlight()).append('\n');
-        buffer.append("         .fHighlight               = ").append(isFHighlight()).append('\n');
-        buffer.append("         .fNavHighlight            = ").append(isFNavHighlight()).append('\n');
-
-        buffer.append("    .InternalFlags        = ");
-        buffer.append(" (").append(getInternalFlags()).append(" )\n");
-        buffer.append("         .iatrUndetType            = ").append(getIatrUndetType()).append('\n');
-        buffer.append("         .fUlGap                   = ").append(isFUlGap()).append('\n');
-        buffer.append("         .fScriptAnchor            = ").append(isFScriptAnchor()).append('\n');
-        buffer.append("         .fFixedObj                = ").append(isFFixedObj()).append('\n');
-        buffer.append("         .spare2                   = ").append(isSpare2()).append('\n');
-
-        buffer.append("    .EncodingFlags        = ");
-        buffer.append(" (").append(getEncodingFlags()).append(" )\n");
-        buffer.append("         .fChsDiff                 = ").append(isFChsDiff()).append('\n');
-        buffer.append("         .fMacChs                  = ").append(isFMacChs()).append('\n');
-        buffer.append("         .fFtcAsciSym              = ").append(isFFtcAsciSym()).append('\n');
-        buffer.append("         .fFtcReq                  = ").append(isFFtcReq()).append('\n');
-        buffer.append("         .fLangApplied             = ").append(isFLangApplied()).append('\n');
-        buffer.append("         .fSpareLangApplied        = ").append(isFSpareLangApplied()).append('\n');
-        buffer.append("         .fForcedCvAuto            = ").append(isFForcedCvAuto()).append('\n');
-
-        buffer.append("    .chse                 = ");
-        buffer.append(" (").append(getChse()).append(" )\n");
-
-        buffer.append("    .fPropMark            = ");
-        buffer.append(" (").append(getFPropMark()).append(" )\n");
-
-        buffer.append("    .ibstPropRMark        = ");
-        buffer.append(" (").append(getIbstPropRMark()).append(" )\n");
-
-        buffer.append("    .dttmPropRMark        = ");
-        buffer.append(" (").append(getDttmPropRMark()).append(" )\n");
-
-        buffer.append("    .sfxtText             = ");
-        buffer.append(" (").append(getSfxtText()).append(" )\n");
-
-        buffer.append("    .fDispFldRMark        = ");
-        buffer.append(" (").append(getFDispFldRMark()).append(" )\n");
-
-        buffer.append("    .ibstDispFldRMark     = ");
-        buffer.append(" (").append(getIbstDispFldRMark()).append(" )\n");
-
-        buffer.append("    .dttmDispFldRMark     = ");
-        buffer.append(" (").append(getDttmDispFldRMark()).append(" )\n");
-
-        buffer.append("    .xstDispFldRMark      = ");
-        buffer.append(" (").append(getXstDispFldRMark()).append(" )\n");
-
-        buffer.append("    .shd                  = ");
-        buffer.append(" (").append(getShd()).append(" )\n");
-
-        buffer.append("    .brc                  = ");
-        buffer.append(" (").append(getBrc()).append(" )\n");
-
-        buffer.append("[/CHP]\n");
-        return buffer.toString();
+        builder.append("[/CHP]\n");
+        return builder.toString();
     }
 
     /**
-     * Size of record (exluding 4 byte header)
+     * Collection of the 32 flags.
      */
-    public int getSize()
+    public int getGrpfChp()
     {
-        return 4 +  + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 2 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 2 + 4 + 32 + 2 + 4;
+        return field_1_grpfChp;
     }
 
-
-
     /**
-     * Get the format_flags field for the CHP record.
+     * Collection of the 32 flags.
      */
-    public int getFormat_flags()
+    public void setGrpfChp( int field_1_grpfChp )
     {
-        return field_1_format_flags;
+        this.field_1_grpfChp = field_1_grpfChp;
     }
 
     /**
-     * Set the format_flags field for the CHP record.
+     * Font size in half points.
      */
-    public void setFormat_flags(int field_1_format_flags)
+    public int getHps()
     {
-        this.field_1_format_flags = field_1_format_flags;
+        return field_2_hps;
     }
 
     /**
-     * Get the format_flags1 field for the CHP record.
+     * Font size in half points.
      */
-    public int getFormat_flags1()
+    public void setHps( int field_2_hps )
     {
-        return field_2_format_flags1;
+        this.field_2_hps = field_2_hps;
     }
 
     /**
-     * Set the format_flags1 field for the CHP record.
-     */
-    public void setFormat_flags1(int field_2_format_flags1)
-    {
-        this.field_2_format_flags1 = field_2_format_flags1;
-    }
-
-    /**
-     * Get the ftcAscii field for the CHP record.
+     * Font for ASCII text.
      */
     public int getFtcAscii()
     {
@@ -355,15 +427,15 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * Set the ftcAscii field for the CHP record.
+     * Font for ASCII text.
      */
-    public void setFtcAscii(int field_3_ftcAscii)
+    public void setFtcAscii( int field_3_ftcAscii )
     {
         this.field_3_ftcAscii = field_3_ftcAscii;
     }
 
     /**
-     * Get the ftcFE field for the CHP record.
+     * Font for East Asian text.
      */
     public int getFtcFE()
     {
@@ -371,15 +443,15 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * Set the ftcFE field for the CHP record.
+     * Font for East Asian text.
      */
-    public void setFtcFE(int field_4_ftcFE)
+    public void setFtcFE( int field_4_ftcFE )
     {
         this.field_4_ftcFE = field_4_ftcFE;
     }
 
     /**
-     * Get the ftcOther field for the CHP record.
+     * Font for non-East Asian text.
      */
     public int getFtcOther()
     {
@@ -387,31 +459,31 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * Set the ftcOther field for the CHP record.
+     * Font for non-East Asian text.
      */
-    public void setFtcOther(int field_5_ftcOther)
+    public void setFtcOther( int field_5_ftcOther )
     {
         this.field_5_ftcOther = field_5_ftcOther;
     }
 
     /**
-     * Get the hps field for the CHP record.
+     * Font for Complex Scripts text.
      */
-    public int getHps()
+    public int getFtcBi()
     {
-        return field_6_hps;
+        return field_6_ftcBi;
     }
 
     /**
-     * Set the hps field for the CHP record.
+     * Font for Complex Scripts text.
      */
-    public void setHps(int field_6_hps)
+    public void setFtcBi( int field_6_ftcBi )
     {
-        this.field_6_hps = field_6_hps;
+        this.field_6_ftcBi = field_6_ftcBi;
     }
 
     /**
-     * Get the dxaSpace field for the CHP record.
+     * Space following each character in the run expressed in twip units..
      */
     public int getDxaSpace()
     {
@@ -419,75 +491,43 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * Set the dxaSpace field for the CHP record.
+     * Space following each character in the run expressed in twip units..
      */
-    public void setDxaSpace(int field_7_dxaSpace)
+    public void setDxaSpace( int field_7_dxaSpace )
     {
         this.field_7_dxaSpace = field_7_dxaSpace;
     }
 
     /**
-     * Get the iss field for the CHP record.
-     */
-    public byte getIss()
-    {
-        return field_8_iss;
-    }
-
-    /**
-     * Set the iss field for the CHP record.
-     */
-    public void setIss(byte field_8_iss)
-    {
-        this.field_8_iss = field_8_iss;
-    }
-
-    /**
-     * Get the kul field for the CHP record.
-     */
-    public byte getKul()
-    {
-        return field_9_kul;
-    }
-
-    /**
-     * Set the kul field for the CHP record.
-     */
-    public void setKul(byte field_9_kul)
-    {
-        this.field_9_kul = field_9_kul;
-    }
-
-    /**
-     * Get the ico field for the CHP record.
+     * Color of text for Word 97.
      */
     public byte getIco()
     {
-        return field_10_ico;
+        return field_8_ico;
     }
 
     /**
-     * Set the ico field for the CHP record.
+     * Color of text for Word 97.
      */
-    public void setIco(byte field_10_ico)
+    public void setIco( byte field_8_ico )
     {
-        this.field_10_ico = field_10_ico;
+        this.field_8_ico = field_8_ico;
     }
 
     /**
-     * Get the hpsPos field for the CHP record.
+     * Character scale.
      */
-    public int getHpsPos()
+    public int getPctCharWidth()
     {
-        return field_11_hpsPos;
+        return field_9_pctCharWidth;
     }
 
     /**
-     * Set the hpsPos field for the CHP record.
+     * Character scale.
      */
-    public void setHpsPos(int field_11_hpsPos)
+    public void setPctCharWidth( int field_9_pctCharWidth )
     {
-        this.field_11_hpsPos = field_11_hpsPos;
+        this.field_9_pctCharWidth = field_9_pctCharWidth;
     }
 
     /**
@@ -495,15 +535,15 @@ public abstract class CHPAbstractType
      */
     public int getLidDefault()
     {
-        return field_12_lidDefault;
+        return field_10_lidDefault;
     }
 
     /**
      * Set the lidDefault field for the CHP record.
      */
-    public void setLidDefault(int field_12_lidDefault)
+    public void setLidDefault( int field_10_lidDefault )
     {
-        this.field_12_lidDefault = field_12_lidDefault;
+        this.field_10_lidDefault = field_10_lidDefault;
     }
 
     /**
@@ -511,303 +551,665 @@ public abstract class CHPAbstractType
      */
     public int getLidFE()
     {
-        return field_13_lidFE;
+        return field_11_lidFE;
     }
 
     /**
      * Set the lidFE field for the CHP record.
      */
-    public void setLidFE(int field_13_lidFE)
+    public void setLidFE( int field_11_lidFE )
     {
-        this.field_13_lidFE = field_13_lidFE;
+        this.field_11_lidFE = field_11_lidFE;
     }
 
     /**
-     * Get the idctHint field for the CHP record.
+     * Emphasis mark.
+     *
+     * @return One of 
+     * <li>{@link #KCD_NON}
+     * <li>{@link #KCD_DOT}
+     * <li>{@link #KCD_COMMA}
+     * <li>{@link #KCD_CIRCLE}
+     * <li>{@link #KCD_UNDER_DOT}
+     */
+    public byte getKcd()
+    {
+        return field_12_kcd;
+    }
+
+    /**
+     * Emphasis mark.
+     *
+     * @param field_12_kcd
+     *        One of 
+     * <li>{@link #KCD_NON}
+     * <li>{@link #KCD_DOT}
+     * <li>{@link #KCD_COMMA}
+     * <li>{@link #KCD_CIRCLE}
+     * <li>{@link #KCD_UNDER_DOT}
+     */
+    public void setKcd( byte field_12_kcd )
+    {
+        this.field_12_kcd = field_12_kcd;
+    }
+
+    /**
+     * Character is undetermined.
+     */
+    public boolean getFUndetermine()
+    {
+        return field_13_fUndetermine;
+    }
+
+    /**
+     * Character is undetermined.
+     */
+    public void setFUndetermine( boolean field_13_fUndetermine )
+    {
+        this.field_13_fUndetermine = field_13_fUndetermine;
+    }
+
+    /**
+     * Superscript/subscript indices.
+     *
+     * @return One of 
+     * <li>{@link #ISS_NONE}
+     * <li>{@link #ISS_SUPERSCRIPTED}
+     * <li>{@link #ISS_SUBSCRIPTED}
+     */
+    public byte getIss()
+    {
+        return field_14_iss;
+    }
+
+    /**
+     * Superscript/subscript indices.
+     *
+     * @param field_14_iss
+     *        One of 
+     * <li>{@link #ISS_NONE}
+     * <li>{@link #ISS_SUPERSCRIPTED}
+     * <li>{@link #ISS_SUBSCRIPTED}
+     */
+    public void setIss( byte field_14_iss )
+    {
+        this.field_14_iss = field_14_iss;
+    }
+
+    /**
+     * Used by Word internally.
+     */
+    public boolean getFSpecSymbol()
+    {
+        return field_15_fSpecSymbol;
+    }
+
+    /**
+     * Used by Word internally.
+     */
+    public void setFSpecSymbol( boolean field_15_fSpecSymbol )
+    {
+        this.field_15_fSpecSymbol = field_15_fSpecSymbol;
+    }
+
+    /**
+     * Not stored in file.
+     */
+    public byte getIdct()
+    {
+        return field_16_idct;
+    }
+
+    /**
+     * Not stored in file.
+     */
+    public void setIdct( byte field_16_idct )
+    {
+        this.field_16_idct = field_16_idct;
+    }
+
+    /**
+     * Identifier of Character type.
      */
     public byte getIdctHint()
     {
-        return field_14_idctHint;
+        return field_17_idctHint;
     }
 
     /**
-     * Set the idctHint field for the CHP record.
+     * Identifier of Character type.
      */
-    public void setIdctHint(byte field_14_idctHint)
+    public void setIdctHint( byte field_17_idctHint )
     {
-        this.field_14_idctHint = field_14_idctHint;
+        this.field_17_idctHint = field_17_idctHint;
     }
 
     /**
-     * Get the wCharScale field for the CHP record.
+     * Underline code.
+     *
+     * @return One of 
+     * <li>{@link #KUL_NONE}
+     * <li>{@link #KUL_SINGLE}
+     * <li>{@link #KUL_BY_WORD}
+     * <li>{@link #KUL_DOUBLE}
+     * <li>{@link #KUL_DOTTED}
+     * <li>{@link #KUL_HIDDEN}
+     * <li>{@link #KUL_THICK}
+     * <li>{@link #KUL_DASH}
+     * <li>{@link #KUL_DOT}
+     * <li>{@link #KUL_DOT_DASH}
+     * <li>{@link #KUL_DOT_DOT_DASH}
+     * <li>{@link #KUL_WAVE}
+     * <li>{@link #KUL_DOTTED_HEAVY}
+     * <li>{@link #KUL_DASHED_HEAVY}
+     * <li>{@link #KUL_DOT_DASH_HEAVY}
+     * <li>{@link #KUL_DOT_DOT_DASH_HEAVY}
+     * <li>{@link #KUL_WAVE_HEAVY}
+     * <li>{@link #KUL_DASH_LONG}
+     * <li>{@link #KUL_WAVE_DOUBLE}
+     * <li>{@link #KUL_DASH_LONG_HEAVY}
      */
-    public int getWCharScale()
+    public byte getKul()
     {
-        return field_15_wCharScale;
+        return field_18_kul;
     }
 
     /**
-     * Set the wCharScale field for the CHP record.
+     * Underline code.
+     *
+     * @param field_18_kul
+     *        One of 
+     * <li>{@link #KUL_NONE}
+     * <li>{@link #KUL_SINGLE}
+     * <li>{@link #KUL_BY_WORD}
+     * <li>{@link #KUL_DOUBLE}
+     * <li>{@link #KUL_DOTTED}
+     * <li>{@link #KUL_HIDDEN}
+     * <li>{@link #KUL_THICK}
+     * <li>{@link #KUL_DASH}
+     * <li>{@link #KUL_DOT}
+     * <li>{@link #KUL_DOT_DASH}
+     * <li>{@link #KUL_DOT_DOT_DASH}
+     * <li>{@link #KUL_WAVE}
+     * <li>{@link #KUL_DOTTED_HEAVY}
+     * <li>{@link #KUL_DASHED_HEAVY}
+     * <li>{@link #KUL_DOT_DASH_HEAVY}
+     * <li>{@link #KUL_DOT_DOT_DASH_HEAVY}
+     * <li>{@link #KUL_WAVE_HEAVY}
+     * <li>{@link #KUL_DASH_LONG}
+     * <li>{@link #KUL_WAVE_DOUBLE}
+     * <li>{@link #KUL_DASH_LONG_HEAVY}
      */
-    public void setWCharScale(int field_15_wCharScale)
+    public void setKul( byte field_18_kul )
     {
-        this.field_15_wCharScale = field_15_wCharScale;
+        this.field_18_kul = field_18_kul;
     }
 
     /**
-     * Get the fcPic field for the CHP record.
+     * Get the hresi field for the CHP record.
      */
-    public int getFcPic()
+    public Hyphenation getHresi()
     {
-        return field_16_fcPic;
+        return field_19_hresi;
     }
 
     /**
-     * Set the fcPic field for the CHP record.
+     * Set the hresi field for the CHP record.
      */
-    public void setFcPic(int field_16_fcPic)
+    public void setHresi( Hyphenation field_19_hresi )
     {
-        this.field_16_fcPic = field_16_fcPic;
+        this.field_19_hresi = field_19_hresi;
     }
 
     /**
-     * Get the fcObj field for the CHP record.
-     */
-    public int getFcObj()
-    {
-        return field_17_fcObj;
-    }
-
-    /**
-     * Set the fcObj field for the CHP record.
-     */
-    public void setFcObj(int field_17_fcObj)
-    {
-        this.field_17_fcObj = field_17_fcObj;
-    }
-
-    /**
-     * Get the lTagObj field for the CHP record.
-     */
-    public int getLTagObj()
-    {
-        return field_18_lTagObj;
-    }
-
-    /**
-     * Set the lTagObj field for the CHP record.
-     */
-    public void setLTagObj(int field_18_lTagObj)
-    {
-        this.field_18_lTagObj = field_18_lTagObj;
-    }
-
-    /**
-     * Get the ibstRMark field for the CHP record.
-     */
-    public int getIbstRMark()
-    {
-        return field_19_ibstRMark;
-    }
-
-    /**
-     * Set the ibstRMark field for the CHP record.
-     */
-    public void setIbstRMark(int field_19_ibstRMark)
-    {
-        this.field_19_ibstRMark = field_19_ibstRMark;
-    }
-
-    /**
-     * Get the ibstRMarkDel field for the CHP record.
-     */
-    public int getIbstRMarkDel()
-    {
-        return field_20_ibstRMarkDel;
-    }
-
-    /**
-     * Set the ibstRMarkDel field for the CHP record.
-     */
-    public void setIbstRMarkDel(int field_20_ibstRMarkDel)
-    {
-        this.field_20_ibstRMarkDel = field_20_ibstRMarkDel;
-    }
-
-    /**
-     * Get the dttmRMark field for the CHP record.
-     */
-    public DateAndTime getDttmRMark()
-    {
-        return field_21_dttmRMark;
-    }
-
-    /**
-     * Set the dttmRMark field for the CHP record.
-     */
-    public void setDttmRMark(DateAndTime field_21_dttmRMark)
-    {
-        this.field_21_dttmRMark = field_21_dttmRMark;
-    }
-
-    /**
-     * Get the dttmRMarkDel field for the CHP record.
-     */
-    public DateAndTime getDttmRMarkDel()
-    {
-        return field_22_dttmRMarkDel;
-    }
-
-    /**
-     * Set the dttmRMarkDel field for the CHP record.
-     */
-    public void setDttmRMarkDel(DateAndTime field_22_dttmRMarkDel)
-    {
-        this.field_22_dttmRMarkDel = field_22_dttmRMarkDel;
-    }
-
-    /**
-     * Get the istd field for the CHP record.
-     */
-    public int getIstd()
-    {
-        return field_23_istd;
-    }
-
-    /**
-     * Set the istd field for the CHP record.
-     */
-    public void setIstd(int field_23_istd)
-    {
-        this.field_23_istd = field_23_istd;
-    }
-
-    /**
-     * Get the baseIstd field for the CHP record.
-     */
-    public int getBaseIstd()
-    {
-        return field_24_baseIstd;
-    }
-
-    /**
-     * Set the baseIstd field for the CHP record.
-     */
-    public void setBaseIstd(int field_24_baseIstd)
-    {
-        this.field_24_baseIstd = field_24_baseIstd;
-    }
-
-    /**
-     * Get the ftcSym field for the CHP record.
-     */
-    public int getFtcSym()
-    {
-        return field_25_ftcSym;
-    }
-
-    /**
-     * Set the ftcSym field for the CHP record.
-     */
-    public void setFtcSym(int field_25_ftcSym)
-    {
-        this.field_25_ftcSym = field_25_ftcSym;
-    }
-
-    /**
-     * Get the xchSym field for the CHP record.
-     */
-    public int getXchSym()
-    {
-        return field_26_xchSym;
-    }
-
-    /**
-     * Set the xchSym field for the CHP record.
-     */
-    public void setXchSym(int field_26_xchSym)
-    {
-        this.field_26_xchSym = field_26_xchSym;
-    }
-
-    /**
-     * Get the idslRMReason field for the CHP record.
-     */
-    public int getIdslRMReason()
-    {
-        return field_27_idslRMReason;
-    }
-
-    /**
-     * Set the idslRMReason field for the CHP record.
-     */
-    public void setIdslRMReason(int field_27_idslRMReason)
-    {
-        this.field_27_idslRMReason = field_27_idslRMReason;
-    }
-
-    /**
-     * Get the idslReasonDel field for the CHP record.
-     */
-    public int getIdslReasonDel()
-    {
-        return field_28_idslReasonDel;
-    }
-
-    /**
-     * Set the idslReasonDel field for the CHP record.
-     */
-    public void setIdslReasonDel(int field_28_idslReasonDel)
-    {
-        this.field_28_idslReasonDel = field_28_idslReasonDel;
-    }
-
-    /**
-     * Get the ysr field for the CHP record.
-     */
-    public byte getYsr()
-    {
-        return field_29_ysr;
-    }
-
-    /**
-     * Set the ysr field for the CHP record.
-     */
-    public void setYsr(byte field_29_ysr)
-    {
-        this.field_29_ysr = field_29_ysr;
-    }
-
-    /**
-     * Get the chYsr field for the CHP record.
-     */
-    public byte getChYsr()
-    {
-        return field_30_chYsr;
-    }
-
-    /**
-     * Set the chYsr field for the CHP record.
-     */
-    public void setChYsr(byte field_30_chYsr)
-    {
-        this.field_30_chYsr = field_30_chYsr;
-    }
-
-    /**
-     * Get the hpsKern field for the CHP record.
+     * Kerning distance for characters in run recorded in half points.
      */
     public int getHpsKern()
     {
-        return field_31_hpsKern;
+        return field_20_hpsKern;
     }
 
     /**
-     * Set the hpsKern field for the CHP record.
+     * Kerning distance for characters in run recorded in half points.
      */
-    public void setHpsKern(int field_31_hpsKern)
+    public void setHpsKern( int field_20_hpsKern )
     {
-        this.field_31_hpsKern = field_31_hpsKern;
+        this.field_20_hpsKern = field_20_hpsKern;
+    }
+
+    /**
+     * Reserved (actually used as vertical offset(?) value).
+     */
+    public short getHpsPos()
+    {
+        return field_21_hpsPos;
+    }
+
+    /**
+     * Reserved (actually used as vertical offset(?) value).
+     */
+    public void setHpsPos( short field_21_hpsPos )
+    {
+        this.field_21_hpsPos = field_21_hpsPos;
+    }
+
+    /**
+     * Shading.
+     */
+    public ShadingDescriptor getShd()
+    {
+        return field_22_shd;
+    }
+
+    /**
+     * Shading.
+     */
+    public void setShd( ShadingDescriptor field_22_shd )
+    {
+        this.field_22_shd = field_22_shd;
+    }
+
+    /**
+     * Border.
+     */
+    public BorderCode getBrc()
+    {
+        return field_23_brc;
+    }
+
+    /**
+     * Border.
+     */
+    public void setBrc( BorderCode field_23_brc )
+    {
+        this.field_23_brc = field_23_brc;
+    }
+
+    /**
+     * Index to author IDs stored in hsttbfRMark. Used when text in run was newly typed when revision marking was enabled.
+     */
+    public int getIbstRMark()
+    {
+        return field_24_ibstRMark;
+    }
+
+    /**
+     * Index to author IDs stored in hsttbfRMark. Used when text in run was newly typed when revision marking was enabled.
+     */
+    public void setIbstRMark( int field_24_ibstRMark )
+    {
+        this.field_24_ibstRMark = field_24_ibstRMark;
+    }
+
+    /**
+     * Text animation.
+     *
+     * @return One of 
+     * <li>{@link #SFXTTEXT_NO}
+     * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
+     * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
+     * <li>{@link #SFXTTEXT_SPARKLE_TEXT}
+     * <li>{@link #SFXTTEXT_MARCHING_ANTS}
+     * <li>{@link #SFXTTEXT_MARCHING_RED_ANTS}
+     * <li>{@link #SFXTTEXT_SHIMMER}
+     */
+    public byte getSfxtText()
+    {
+        return field_25_sfxtText;
+    }
+
+    /**
+     * Text animation.
+     *
+     * @param field_25_sfxtText
+     *        One of 
+     * <li>{@link #SFXTTEXT_NO}
+     * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
+     * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
+     * <li>{@link #SFXTTEXT_SPARKLE_TEXT}
+     * <li>{@link #SFXTTEXT_MARCHING_ANTS}
+     * <li>{@link #SFXTTEXT_MARCHING_RED_ANTS}
+     * <li>{@link #SFXTTEXT_SHIMMER}
+     */
+    public void setSfxtText( byte field_25_sfxtText )
+    {
+        this.field_25_sfxtText = field_25_sfxtText;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    public boolean getFDblBdr()
+    {
+        return field_26_fDblBdr;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    public void setFDblBdr( boolean field_26_fDblBdr )
+    {
+        this.field_26_fDblBdr = field_26_fDblBdr;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    public boolean getFBorderWS()
+    {
+        return field_27_fBorderWS;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    public void setFBorderWS( boolean field_27_fBorderWS )
+    {
+        this.field_27_fBorderWS = field_27_fBorderWS;
+    }
+
+    /**
+     * Collection properties represented by itypFELayout and copt (East Asian layout properties).
+     */
+    public short getUfel()
+    {
+        return field_28_ufel;
+    }
+
+    /**
+     * Collection properties represented by itypFELayout and copt (East Asian layout properties).
+     */
+    public void setUfel( short field_28_ufel )
+    {
+        this.field_28_ufel = field_28_ufel;
+    }
+
+    /**
+     * Collection of the 5 flags.
+     */
+    public byte getCopt()
+    {
+        return field_29_copt;
+    }
+
+    /**
+     * Collection of the 5 flags.
+     */
+    public void setCopt( byte field_29_copt )
+    {
+        this.field_29_copt = field_29_copt;
+    }
+
+    /**
+     * Font size for ASCII font.
+     */
+    public int getHpsAsci()
+    {
+        return field_30_hpsAsci;
+    }
+
+    /**
+     * Font size for ASCII font.
+     */
+    public void setHpsAsci( int field_30_hpsAsci )
+    {
+        this.field_30_hpsAsci = field_30_hpsAsci;
+    }
+
+    /**
+     * Font size for East Asian text.
+     */
+    public int getHpsFE()
+    {
+        return field_31_hpsFE;
+    }
+
+    /**
+     * Font size for East Asian text.
+     */
+    public void setHpsFE( int field_31_hpsFE )
+    {
+        this.field_31_hpsFE = field_31_hpsFE;
+    }
+
+    /**
+     * Font size for Complex Scripts text.
+     */
+    public int getHpsBi()
+    {
+        return field_32_hpsBi;
+    }
+
+    /**
+     * Font size for Complex Scripts text.
+     */
+    public void setHpsBi( int field_32_hpsBi )
+    {
+        this.field_32_hpsBi = field_32_hpsBi;
+    }
+
+    /**
+     * an index into the rgffn structure. When chp.fSpec is 1 and the character recorded for the run in the document stream is chSymbol (0x28), chp.ftcSym identifies the font code of the symbol font that will be used to display the symbol character recorded in chp.xchSym..
+     */
+    public int getFtcSym()
+    {
+        return field_33_ftcSym;
+    }
+
+    /**
+     * an index into the rgffn structure. When chp.fSpec is 1 and the character recorded for the run in the document stream is chSymbol (0x28), chp.ftcSym identifies the font code of the symbol font that will be used to display the symbol character recorded in chp.xchSym..
+     */
+    public void setFtcSym( int field_33_ftcSym )
+    {
+        this.field_33_ftcSym = field_33_ftcSym;
+    }
+
+    /**
+     * When chp.fSpec==1 and the character recorded for the run in the document stream is chSymbol (0x28), the character stored chp.xchSym will be displayed using the font specified in chp.ftcSym..
+     */
+    public int getXchSym()
+    {
+        return field_34_xchSym;
+    }
+
+    /**
+     * When chp.fSpec==1 and the character recorded for the run in the document stream is chSymbol (0x28), the character stored chp.xchSym will be displayed using the font specified in chp.ftcSym..
+     */
+    public void setXchSym( int field_34_xchSym )
+    {
+        this.field_34_xchSym = field_34_xchSym;
+    }
+
+    /**
+     * Offset in data stream pointing to beginning of a picture when character is a picture character (character is 0x01 and chp.fSpec is 1)..
+     */
+    public int getFcPic()
+    {
+        return field_35_fcPic;
+    }
+
+    /**
+     * Offset in data stream pointing to beginning of a picture when character is a picture character (character is 0x01 and chp.fSpec is 1)..
+     */
+    public void setFcPic( int field_35_fcPic )
+    {
+        this.field_35_fcPic = field_35_fcPic;
+    }
+
+    /**
+     * Offset in data stream pointing to beginning of a picture when character is an OLE1 object character (character is 0x20 and chp.fSpec is 1, chp.fOle2 is 0)..
+     */
+    public int getFcObj()
+    {
+        return field_36_fcObj;
+    }
+
+    /**
+     * Offset in data stream pointing to beginning of a picture when character is an OLE1 object character (character is 0x20 and chp.fSpec is 1, chp.fOle2 is 0)..
+     */
+    public void setFcObj( int field_36_fcObj )
+    {
+        this.field_36_fcObj = field_36_fcObj;
+    }
+
+    /**
+     * An object ID for an OLE object, only set if chp.fSpec and chp.fOle2 are both true, and chp.fObj..
+     */
+    public int getLTagObj()
+    {
+        return field_37_lTagObj;
+    }
+
+    /**
+     * An object ID for an OLE object, only set if chp.fSpec and chp.fOle2 are both true, and chp.fObj..
+     */
+    public void setLTagObj( int field_37_lTagObj )
+    {
+        this.field_37_lTagObj = field_37_lTagObj;
+    }
+
+    /**
+     * Points to location of picture data, only if chp.fSpec is true..
+     */
+    public int getFcData()
+    {
+        return field_38_fcData;
+    }
+
+    /**
+     * Points to location of picture data, only if chp.fSpec is true..
+     */
+    public void setFcData( int field_38_fcData )
+    {
+        this.field_38_fcData = field_38_fcData;
+    }
+
+    /**
+     * Get the hresiOld field for the CHP record.
+     */
+    public Hyphenation getHresiOld()
+    {
+        return field_39_hresiOld;
+    }
+
+    /**
+     * Set the hresiOld field for the CHP record.
+     */
+    public void setHresiOld( Hyphenation field_39_hresiOld )
+    {
+        this.field_39_hresiOld = field_39_hresiOld;
+    }
+
+    /**
+     * Index to author IDs stored in hsttbfRMark. Used when text in run was deleted when revision marking was enabled..
+     */
+    public int getIbstRMarkDel()
+    {
+        return field_40_ibstRMarkDel;
+    }
+
+    /**
+     * Index to author IDs stored in hsttbfRMark. Used when text in run was deleted when revision marking was enabled..
+     */
+    public void setIbstRMarkDel( int field_40_ibstRMarkDel )
+    {
+        this.field_40_ibstRMarkDel = field_40_ibstRMarkDel;
+    }
+
+    /**
+     * Date/time at which this run of text was entered/modified by the author (Only recorded when revision marking is on.).
+     */
+    public DateAndTime getDttmRMark()
+    {
+        return field_41_dttmRMark;
+    }
+
+    /**
+     * Date/time at which this run of text was entered/modified by the author (Only recorded when revision marking is on.).
+     */
+    public void setDttmRMark( DateAndTime field_41_dttmRMark )
+    {
+        this.field_41_dttmRMark = field_41_dttmRMark;
+    }
+
+    /**
+     * Date/time at which this run of text was deleted by the author (Only recorded when revision marking is on.).
+     */
+    public DateAndTime getDttmRMarkDel()
+    {
+        return field_42_dttmRMarkDel;
+    }
+
+    /**
+     * Date/time at which this run of text was deleted by the author (Only recorded when revision marking is on.).
+     */
+    public void setDttmRMarkDel( DateAndTime field_42_dttmRMarkDel )
+    {
+        this.field_42_dttmRMarkDel = field_42_dttmRMarkDel;
+    }
+
+    /**
+     * Index to character style descriptor in the stylesheet that tags this run of text. When istd is istdNormalChar (10 decimal), characters in run are not affected by a character style. If chp.istd contains any other value, chpx of the specified character style are applied to CHP for this run before any other exceptional properties are applied..
+     */
+    public int getIstd()
+    {
+        return field_43_istd;
+    }
+
+    /**
+     * Index to character style descriptor in the stylesheet that tags this run of text. When istd is istdNormalChar (10 decimal), characters in run are not affected by a character style. If chp.istd contains any other value, chpx of the specified character style are applied to CHP for this run before any other exceptional properties are applied..
+     */
+    public void setIstd( int field_43_istd )
+    {
+        this.field_43_istd = field_43_istd;
+    }
+
+    /**
+     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     */
+    public int getIdslRMReason()
+    {
+        return field_44_idslRMReason;
+    }
+
+    /**
+     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     */
+    public void setIdslRMReason( int field_44_idslRMReason )
+    {
+        this.field_44_idslRMReason = field_44_idslRMReason;
+    }
+
+    /**
+     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     */
+    public int getIdslReasonDel()
+    {
+        return field_45_idslReasonDel;
+    }
+
+    /**
+     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     */
+    public void setIdslReasonDel( int field_45_idslReasonDel )
+    {
+        this.field_45_idslReasonDel = field_45_idslReasonDel;
+    }
+
+    /**
+     * Code page of run in pre-Unicode files.
+     */
+    public int getCpg()
+    {
+        return field_46_cpg;
+    }
+
+    /**
+     * Code page of run in pre-Unicode files.
+     */
+    public void setCpg( int field_46_cpg )
+    {
+        this.field_46_cpg = field_46_cpg;
     }
 
     /**
@@ -815,642 +1217,1124 @@ public abstract class CHPAbstractType
      */
     public short getHighlight()
     {
-        return field_32_Highlight;
+        return field_47_Highlight;
     }
 
     /**
      * Set the Highlight field for the CHP record.
      */
-    public void setHighlight(short field_32_Highlight)
+    public void setHighlight( short field_47_Highlight )
     {
-        this.field_32_Highlight = field_32_Highlight;
+        this.field_47_Highlight = field_47_Highlight;
     }
 
     /**
-     * Get the InternalFlags field for the CHP record.
+     * Get the CharsetFlags field for the CHP record.
      */
-    public short getInternalFlags()
+    public short getCharsetFlags()
     {
-        return field_33_InternalFlags;
+        return field_48_CharsetFlags;
     }
 
     /**
-     * Set the InternalFlags field for the CHP record.
+     * Set the CharsetFlags field for the CHP record.
      */
-    public void setInternalFlags(short field_33_InternalFlags)
+    public void setCharsetFlags( short field_48_CharsetFlags )
     {
-        this.field_33_InternalFlags = field_33_InternalFlags;
+        this.field_48_CharsetFlags = field_48_CharsetFlags;
     }
 
     /**
-     * Get the EncodingFlags field for the CHP record.
-     */
-    public short getEncodingFlags()
-    {
-        return field_34_EncodingFlags;
-    }
-
-    /**
-     * Set the EncodingFlags field for the CHP record.
-     */
-    public void setEncodingFlags(short field_34_EncodingFlags)
-    {
-        this.field_34_EncodingFlags = field_34_EncodingFlags;
-    }
-
-    /**
-     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word's default character set.
+     * Get the chse field for the CHP record.
      */
     public short getChse()
     {
-        return field_35_chse;
+        return field_49_chse;
     }
 
     /**
-     * used to record a character set id for text that was pasted into the Word document that used a character set different than Word's default character set.
+     * Set the chse field for the CHP record.
      */
-    public void setChse(short field_35_chse)
+    public void setChse( short field_49_chse )
     {
-        this.field_35_chse = field_35_chse;
+        this.field_49_chse = field_49_chse;
     }
 
     /**
-     * Get the fPropMark field for the CHP record.
+     * properties have been changed with revision marking on.
      */
-    public short getFPropMark()
+    public boolean getFPropRMark()
     {
-        return field_36_fPropMark;
+        return field_50_fPropRMark;
     }
 
     /**
-     * Set the fPropMark field for the CHP record.
+     * properties have been changed with revision marking on.
      */
-    public void setFPropMark(short field_36_fPropMark)
+    public void setFPropRMark( boolean field_50_fPropRMark )
     {
-        this.field_36_fPropMark = field_36_fPropMark;
+        this.field_50_fPropRMark = field_50_fPropRMark;
     }
 
     /**
-     * Get the ibstPropRMark field for the CHP record.
+     * Index to author IDs stored in hsttbfRMark. Used when properties have been changed when revision marking was enabled..
      */
     public int getIbstPropRMark()
     {
-        return field_37_ibstPropRMark;
+        return field_51_ibstPropRMark;
     }
 
     /**
-     * Set the ibstPropRMark field for the CHP record.
+     * Index to author IDs stored in hsttbfRMark. Used when properties have been changed when revision marking was enabled..
      */
-    public void setIbstPropRMark(int field_37_ibstPropRMark)
+    public void setIbstPropRMark( int field_51_ibstPropRMark )
     {
-        this.field_37_ibstPropRMark = field_37_ibstPropRMark;
+        this.field_51_ibstPropRMark = field_51_ibstPropRMark;
     }
 
     /**
-     * Get the dttmPropRMark field for the CHP record.
+     * Date/time at which properties of this were changed for this run of text by the author. (Only recorded when revision marking is on.).
      */
     public DateAndTime getDttmPropRMark()
     {
-        return field_38_dttmPropRMark;
+        return field_52_dttmPropRMark;
     }
 
     /**
-     * Set the dttmPropRMark field for the CHP record.
+     * Date/time at which properties of this were changed for this run of text by the author. (Only recorded when revision marking is on.).
      */
-    public void setDttmPropRMark(DateAndTime field_38_dttmPropRMark)
+    public void setDttmPropRMark( DateAndTime field_52_dttmPropRMark )
     {
-        this.field_38_dttmPropRMark = field_38_dttmPropRMark;
+        this.field_52_dttmPropRMark = field_52_dttmPropRMark;
     }
 
     /**
-     * Get the sfxtText field for the CHP record.
+     * When chp.wConflict!=0, this is TRUE when text is part of the original version of text. When FALSE, text is alternative introduced by reconciliation operation..
      */
-    public byte getSfxtText()
+    public boolean getFConflictOrig()
     {
-        return field_39_sfxtText;
+        return field_53_fConflictOrig;
     }
 
     /**
-     * Set the sfxtText field for the CHP record.
+     * When chp.wConflict!=0, this is TRUE when text is part of the original version of text. When FALSE, text is alternative introduced by reconciliation operation..
      */
-    public void setSfxtText(byte field_39_sfxtText)
+    public void setFConflictOrig( boolean field_53_fConflictOrig )
     {
-        this.field_39_sfxtText = field_39_sfxtText;
+        this.field_53_fConflictOrig = field_53_fConflictOrig;
     }
 
     /**
-     * Get the fDispFldRMark field for the CHP record.
+     * When fConflictOtherDel==fTrue, the other side of a reconciliation conflict causes this text to be deleted.
      */
-    public byte getFDispFldRMark()
+    public boolean getFConflictOtherDel()
     {
-        return field_40_fDispFldRMark;
+        return field_54_fConflictOtherDel;
     }
 
     /**
-     * Set the fDispFldRMark field for the CHP record.
+     * When fConflictOtherDel==fTrue, the other side of a reconciliation conflict causes this text to be deleted.
      */
-    public void setFDispFldRMark(byte field_40_fDispFldRMark)
+    public void setFConflictOtherDel( boolean field_54_fConflictOtherDel )
     {
-        this.field_40_fDispFldRMark = field_40_fDispFldRMark;
+        this.field_54_fConflictOtherDel = field_54_fConflictOtherDel;
     }
 
     /**
-     * Get the ibstDispFldRMark field for the CHP record.
+     * When != 0, index number that identifies all text participating in a particular conflict incident.
+     */
+    public int getWConflict()
+    {
+        return field_55_wConflict;
+    }
+
+    /**
+     * When != 0, index number that identifies all text participating in a particular conflict incident.
+     */
+    public void setWConflict( int field_55_wConflict )
+    {
+        this.field_55_wConflict = field_55_wConflict;
+    }
+
+    /**
+     * Who made this change for this side of the conflict..
+     */
+    public int getIbstConflict()
+    {
+        return field_56_IbstConflict;
+    }
+
+    /**
+     * Who made this change for this side of the conflict..
+     */
+    public void setIbstConflict( int field_56_IbstConflict )
+    {
+        this.field_56_IbstConflict = field_56_IbstConflict;
+    }
+
+    /**
+     * When the change was made.
+     */
+    public DateAndTime getDttmConflict()
+    {
+        return field_57_dttmConflict;
+    }
+
+    /**
+     * When the change was made.
+     */
+    public void setDttmConflict( DateAndTime field_57_dttmConflict )
+    {
+        this.field_57_dttmConflict = field_57_dttmConflict;
+    }
+
+    /**
+     * the number for a ListNum field is being tracked in xstDispFldRMark. If that number is different from the current value, the number has changed. Only valid for ListNum fields..
+     */
+    public boolean getFDispFldRMark()
+    {
+        return field_58_fDispFldRMark;
+    }
+
+    /**
+     * the number for a ListNum field is being tracked in xstDispFldRMark. If that number is different from the current value, the number has changed. Only valid for ListNum fields..
+     */
+    public void setFDispFldRMark( boolean field_58_fDispFldRMark )
+    {
+        this.field_58_fDispFldRMark = field_58_fDispFldRMark;
+    }
+
+    /**
+     * Index to author IDs stored in hsttbfRMark. Used when ListNum field numbering has been changed when revision marking was enabled..
      */
     public int getIbstDispFldRMark()
     {
-        return field_41_ibstDispFldRMark;
+        return field_59_ibstDispFldRMark;
     }
 
     /**
-     * Set the ibstDispFldRMark field for the CHP record.
+     * Index to author IDs stored in hsttbfRMark. Used when ListNum field numbering has been changed when revision marking was enabled..
      */
-    public void setIbstDispFldRMark(int field_41_ibstDispFldRMark)
+    public void setIbstDispFldRMark( int field_59_ibstDispFldRMark )
     {
-        this.field_41_ibstDispFldRMark = field_41_ibstDispFldRMark;
+        this.field_59_ibstDispFldRMark = field_59_ibstDispFldRMark;
     }
 
     /**
-     * Get the dttmDispFldRMark field for the CHP record.
+     * The date for the ListNum field number change.
      */
     public DateAndTime getDttmDispFldRMark()
     {
-        return field_42_dttmDispFldRMark;
+        return field_60_dttmDispFldRMark;
     }
 
     /**
-     * Set the dttmDispFldRMark field for the CHP record.
+     * The date for the ListNum field number change.
      */
-    public void setDttmDispFldRMark(DateAndTime field_42_dttmDispFldRMark)
+    public void setDttmDispFldRMark( DateAndTime field_60_dttmDispFldRMark )
     {
-        this.field_42_dttmDispFldRMark = field_42_dttmDispFldRMark;
+        this.field_60_dttmDispFldRMark = field_60_dttmDispFldRMark;
     }
 
     /**
-     * Get the xstDispFldRMark field for the CHP record.
+     * The string value of the ListNum field when revision mark tracking began.
      */
     public byte[] getXstDispFldRMark()
     {
-        return field_43_xstDispFldRMark;
+        return field_61_xstDispFldRMark;
     }
 
     /**
-     * Set the xstDispFldRMark field for the CHP record.
+     * The string value of the ListNum field when revision mark tracking began.
      */
-    public void setXstDispFldRMark(byte[] field_43_xstDispFldRMark)
+    public void setXstDispFldRMark( byte[] field_61_xstDispFldRMark )
     {
-        this.field_43_xstDispFldRMark = field_43_xstDispFldRMark;
+        this.field_61_xstDispFldRMark = field_61_xstDispFldRMark;
     }
 
     /**
-     * Get the shd field for the CHP record.
+     * Offset in the data stream indicating the location of OLE object data.
      */
-    public ShadingDescriptor getShd()
+    public int getFcObjp()
     {
-        return field_44_shd;
+        return field_62_fcObjp;
     }
 
     /**
-     * Set the shd field for the CHP record.
+     * Offset in the data stream indicating the location of OLE object data.
      */
-    public void setShd(ShadingDescriptor field_44_shd)
+    public void setFcObjp( int field_62_fcObjp )
     {
-        this.field_44_shd = field_44_shd;
+        this.field_62_fcObjp = field_62_fcObjp;
     }
 
     /**
-     * Get the brc field for the CHP record.
+     * Line BReak code for xchCRJ.
+     *
+     * @return One of 
+     * <li>{@link #LBRCRJ_NONE}
+     * <li>{@link #LBRCRJ_LEFT}
+     * <li>{@link #LBRCRJ_RIGHT}
+     * <li>{@link #LBRCRJ_BOTH}
      */
-    public BorderCode getBrc()
+    public byte getLbrCRJ()
     {
-        return field_45_brc;
+        return field_63_lbrCRJ;
     }
 
     /**
-     * Set the brc field for the CHP record.
+     * Line BReak code for xchCRJ.
+     *
+     * @param field_63_lbrCRJ
+     *        One of 
+     * <li>{@link #LBRCRJ_NONE}
+     * <li>{@link #LBRCRJ_LEFT}
+     * <li>{@link #LBRCRJ_RIGHT}
+     * <li>{@link #LBRCRJ_BOTH}
      */
-    public void setBrc(BorderCode field_45_brc)
+    public void setLbrCRJ( byte field_63_lbrCRJ )
     {
-        this.field_45_brc = field_45_brc;
+        this.field_63_lbrCRJ = field_63_lbrCRJ;
+    }
+
+    /**
+     * Special hidden for leading emphasis (always hidden).
+     */
+    public boolean getFSpecVanish()
+    {
+        return field_64_fSpecVanish;
+    }
+
+    /**
+     * Special hidden for leading emphasis (always hidden).
+     */
+    public void setFSpecVanish( boolean field_64_fSpecVanish )
+    {
+        this.field_64_fSpecVanish = field_64_fSpecVanish;
+    }
+
+    /**
+     * Used for character property revision marking. The chp at the time fHasOldProps is set to 1, the is the old chp..
+     */
+    public boolean getFHasOldProps()
+    {
+        return field_65_fHasOldProps;
+    }
+
+    /**
+     * Used for character property revision marking. The chp at the time fHasOldProps is set to 1, the is the old chp..
+     */
+    public void setFHasOldProps( boolean field_65_fHasOldProps )
+    {
+        this.field_65_fHasOldProps = field_65_fHasOldProps;
+    }
+
+    /**
+     * Mark the character as hidden..
+     */
+    public boolean getFSdtVanish()
+    {
+        return field_66_fSdtVanish;
+    }
+
+    /**
+     * Mark the character as hidden..
+     */
+    public void setFSdtVanish( boolean field_66_fSdtVanish )
+    {
+        this.field_66_fSdtVanish = field_66_fSdtVanish;
+    }
+
+    /**
+     * Get the wCharScale field for the CHP record.
+     */
+    public int getWCharScale()
+    {
+        return field_67_wCharScale;
+    }
+
+    /**
+     * Set the wCharScale field for the CHP record.
+     */
+    public void setWCharScale( int field_67_wCharScale )
+    {
+        this.field_67_wCharScale = field_67_wCharScale;
     }
 
     /**
      * Sets the fBold field value.
-     * 
+     * Text is bold
      */
-    public void setFBold(boolean value)
+    public void setFBold( boolean value )
     {
-        field_1_format_flags = (int)fBold.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fBold.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Text is bold
      * @return  the fBold field value.
      */
     public boolean isFBold()
     {
-        return fBold.isSet(field_1_format_flags);
+        return fBold.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fItalic field value.
-     * 
+     * Italic
      */
-    public void setFItalic(boolean value)
+    public void setFItalic( boolean value )
     {
-        field_1_format_flags = (int)fItalic.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fItalic.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Italic
      * @return  the fItalic field value.
      */
     public boolean isFItalic()
     {
-        return fItalic.isSet(field_1_format_flags);
+        return fItalic.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fRMarkDel field value.
-     * 
+     * has been deleted and will be displayed with strikethrough when revision marked text is to be displayed
      */
-    public void setFRMarkDel(boolean value)
+    public void setFRMarkDel( boolean value )
     {
-        field_1_format_flags = (int)fRMarkDel.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fRMarkDel.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * has been deleted and will be displayed with strikethrough when revision marked text is to be displayed
      * @return  the fRMarkDel field value.
      */
     public boolean isFRMarkDel()
     {
-        return fRMarkDel.isSet(field_1_format_flags);
+        return fRMarkDel.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fOutline field value.
-     * 
+     * Outlined
      */
-    public void setFOutline(boolean value)
+    public void setFOutline( boolean value )
     {
-        field_1_format_flags = (int)fOutline.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fOutline.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Outlined
      * @return  the fOutline field value.
      */
     public boolean isFOutline()
     {
-        return fOutline.isSet(field_1_format_flags);
+        return fOutline.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fFldVanish field value.
-     * 
+     * Used internally by Word
      */
-    public void setFFldVanish(boolean value)
+    public void setFFldVanish( boolean value )
     {
-        field_1_format_flags = (int)fFldVanish.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fFldVanish.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Used internally by Word
      * @return  the fFldVanish field value.
      */
     public boolean isFFldVanish()
     {
-        return fFldVanish.isSet(field_1_format_flags);
+        return fFldVanish.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fSmallCaps field value.
-     * 
+     * Displayed with small caps
      */
-    public void setFSmallCaps(boolean value)
+    public void setFSmallCaps( boolean value )
     {
-        field_1_format_flags = (int)fSmallCaps.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fSmallCaps.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Displayed with small caps
      * @return  the fSmallCaps field value.
      */
     public boolean isFSmallCaps()
     {
-        return fSmallCaps.isSet(field_1_format_flags);
+        return fSmallCaps.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fCaps field value.
-     * 
+     * Displayed with caps
      */
-    public void setFCaps(boolean value)
+    public void setFCaps( boolean value )
     {
-        field_1_format_flags = (int)fCaps.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fCaps.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Displayed with caps
      * @return  the fCaps field value.
      */
     public boolean isFCaps()
     {
-        return fCaps.isSet(field_1_format_flags);
+        return fCaps.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fVanish field value.
-     * 
+     * text has ―hidden‖ format, and is not displayed unless fPagHidden is set in the DOP
      */
-    public void setFVanish(boolean value)
+    public void setFVanish( boolean value )
     {
-        field_1_format_flags = (int)fVanish.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fVanish.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * text has ―hidden‖ format, and is not displayed unless fPagHidden is set in the DOP
      * @return  the fVanish field value.
      */
     public boolean isFVanish()
     {
-        return fVanish.isSet(field_1_format_flags);
+        return fVanish.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fRMark field value.
-     * 
+     * text is newly typed since the last time revision marks have been accepted and will be displayed with an underline when revision marked text is to be displayed
      */
-    public void setFRMark(boolean value)
+    public void setFRMark( boolean value )
     {
-        field_1_format_flags = (int)fRMark.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fRMark.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * text is newly typed since the last time revision marks have been accepted and will be displayed with an underline when revision marked text is to be displayed
      * @return  the fRMark field value.
      */
     public boolean isFRMark()
     {
-        return fRMark.isSet(field_1_format_flags);
+        return fRMark.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fSpec field value.
-     * 
+     * Character is a Word special character
      */
-    public void setFSpec(boolean value)
+    public void setFSpec( boolean value )
     {
-        field_1_format_flags = (int)fSpec.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fSpec.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Character is a Word special character
      * @return  the fSpec field value.
      */
     public boolean isFSpec()
     {
-        return fSpec.isSet(field_1_format_flags);
+        return fSpec.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fStrike field value.
-     * 
+     * Displayed with strikethrough
      */
-    public void setFStrike(boolean value)
+    public void setFStrike( boolean value )
     {
-        field_1_format_flags = (int)fStrike.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fStrike.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Displayed with strikethrough
      * @return  the fStrike field value.
      */
     public boolean isFStrike()
     {
-        return fStrike.isSet(field_1_format_flags);
+        return fStrike.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fObj field value.
-     * 
+     * Embedded objec
      */
-    public void setFObj(boolean value)
+    public void setFObj( boolean value )
     {
-        field_1_format_flags = (int)fObj.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fObj.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Embedded objec
      * @return  the fObj field value.
      */
     public boolean isFObj()
     {
-        return fObj.isSet(field_1_format_flags);
+        return fObj.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fShadow field value.
-     * 
+     * Character is drawn with a shadow
      */
-    public void setFShadow(boolean value)
+    public void setFShadow( boolean value )
     {
-        field_1_format_flags = (int)fShadow.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fShadow.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Character is drawn with a shadow
      * @return  the fShadow field value.
      */
     public boolean isFShadow()
     {
-        return fShadow.isSet(field_1_format_flags);
+        return fShadow.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fLowerCase field value.
-     * 
+     * Character is displayed in lower case. This field may be set to 1 only when chp.fSmallCaps is 1.
      */
-    public void setFLowerCase(boolean value)
+    public void setFLowerCase( boolean value )
     {
-        field_1_format_flags = (int)fLowerCase.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fLowerCase.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Character is displayed in lower case. This field may be set to 1 only when chp.fSmallCaps is 1.
      * @return  the fLowerCase field value.
      */
     public boolean isFLowerCase()
     {
-        return fLowerCase.isSet(field_1_format_flags);
+        return fLowerCase.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fData field value.
-     * 
+     * chp.fcPic points to an FFDATA, the data structure binary data used by Word to describe a form field. The bit chp.fData may only be 1 when chp.fSpec is also 1 and the special character in the document stream that has this property is a chPicture (0x01)
      */
-    public void setFData(boolean value)
+    public void setFData( boolean value )
     {
-        field_1_format_flags = (int)fData.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fData.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * chp.fcPic points to an FFDATA, the data structure binary data used by Word to describe a form field. The bit chp.fData may only be 1 when chp.fSpec is also 1 and the special character in the document stream that has this property is a chPicture (0x01)
      * @return  the fData field value.
      */
     public boolean isFData()
     {
-        return fData.isSet(field_1_format_flags);
+        return fData.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fOle2 field value.
-     * 
+     * chp.lTagObj specifies a particular object in the object stream that specifies the particular OLE object in the stream that should be displayed when the chPicture fSpec character that is tagged with the fOle2 is encountered. The bit chp.fOle2 may only be 1 when chp.fSpec is also 1 and the special character in the document stream that has this property is a chPicture (0x01).
      */
-    public void setFOle2(boolean value)
+    public void setFOle2( boolean value )
     {
-        field_1_format_flags = (int)fOle2.setBoolean(field_1_format_flags, value);
+        field_1_grpfChp = (int)fOle2.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * chp.lTagObj specifies a particular object in the object stream that specifies the particular OLE object in the stream that should be displayed when the chPicture fSpec character that is tagged with the fOle2 is encountered. The bit chp.fOle2 may only be 1 when chp.fSpec is also 1 and the special character in the document stream that has this property is a chPicture (0x01).
      * @return  the fOle2 field value.
      */
     public boolean isFOle2()
     {
-        return fOle2.isSet(field_1_format_flags);
+        return fOle2.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fEmboss field value.
-     * 
+     * Text is embossed
      */
-    public void setFEmboss(boolean value)
+    public void setFEmboss( boolean value )
     {
-        field_2_format_flags1 = (int)fEmboss.setBoolean(field_2_format_flags1, value);
+        field_1_grpfChp = (int)fEmboss.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Text is embossed
      * @return  the fEmboss field value.
      */
     public boolean isFEmboss()
     {
-        return fEmboss.isSet(field_2_format_flags1);
+        return fEmboss.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fImprint field value.
-     * 
+     * Text is engraved
      */
-    public void setFImprint(boolean value)
+    public void setFImprint( boolean value )
     {
-        field_2_format_flags1 = (int)fImprint.setBoolean(field_2_format_flags1, value);
+        field_1_grpfChp = (int)fImprint.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Text is engraved
      * @return  the fImprint field value.
      */
     public boolean isFImprint()
     {
-        return fImprint.isSet(field_2_format_flags1);
+        return fImprint.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fDStrike field value.
-     * 
+     * Displayed with double strikethrough
      */
-    public void setFDStrike(boolean value)
+    public void setFDStrike( boolean value )
     {
-        field_2_format_flags1 = (int)fDStrike.setBoolean(field_2_format_flags1, value);
+        field_1_grpfChp = (int)fDStrike.setBoolean(field_1_grpfChp, value);
 
         
     }
 
     /**
-     * 
+     * Displayed with double strikethrough
      * @return  the fDStrike field value.
      */
     public boolean isFDStrike()
     {
-        return fDStrike.isSet(field_2_format_flags1);
+        return fDStrike.isSet(field_1_grpfChp);
         
     }
 
     /**
      * Sets the fUsePgsuSettings field value.
+     * Used internally by Word
+     */
+    public void setFUsePgsuSettings( boolean value )
+    {
+        field_1_grpfChp = (int)fUsePgsuSettings.setBoolean(field_1_grpfChp, value);
+
+        
+    }
+
+    /**
+     * Used internally by Word
+     * @return  the fUsePgsuSettings field value.
+     */
+    public boolean isFUsePgsuSettings()
+    {
+        return fUsePgsuSettings.isSet(field_1_grpfChp);
+        
+    }
+
+    /**
+     * Sets the fBoldBi field value.
+     * Complex Scripts text is bold
+     */
+    public void setFBoldBi( boolean value )
+    {
+        field_1_grpfChp = (int)fBoldBi.setBoolean(field_1_grpfChp, value);
+
+        
+    }
+
+    /**
+     * Complex Scripts text is bold
+     * @return  the fBoldBi field value.
+     */
+    public boolean isFBoldBi()
+    {
+        return fBoldBi.isSet(field_1_grpfChp);
+        
+    }
+
+    /**
+     * Sets the fComplexScripts field value.
+     * Complex Scripts text that requires special processing to display and process
+     */
+    public void setFComplexScripts( boolean value )
+    {
+        field_1_grpfChp = (int)fComplexScripts.setBoolean(field_1_grpfChp, value);
+
+        
+    }
+
+    /**
+     * Complex Scripts text that requires special processing to display and process
+     * @return  the fComplexScripts field value.
+     */
+    public boolean isFComplexScripts()
+    {
+        return fComplexScripts.isSet(field_1_grpfChp);
+        
+    }
+
+    /**
+     * Sets the fItalicBi field value.
+     * Complex Scripts text is italics
+     */
+    public void setFItalicBi( boolean value )
+    {
+        field_1_grpfChp = (int)fItalicBi.setBoolean(field_1_grpfChp, value);
+
+        
+    }
+
+    /**
+     * Complex Scripts text is italics
+     * @return  the fItalicBi field value.
+     */
+    public boolean isFItalicBi()
+    {
+        return fItalicBi.isSet(field_1_grpfChp);
+        
+    }
+
+    /**
+     * Sets the fBiDi field value.
+     * Complex Scripts right-to-left text that requires special processing to display and process (character reordering; contextual shaping; display of combining characters and diacritics; specialized justification rules; cursor positioning)
+     */
+    public void setFBiDi( boolean value )
+    {
+        field_1_grpfChp = (int)fBiDi.setBoolean(field_1_grpfChp, value);
+
+        
+    }
+
+    /**
+     * Complex Scripts right-to-left text that requires special processing to display and process (character reordering; contextual shaping; display of combining characters and diacritics; specialized justification rules; cursor positioning)
+     * @return  the fBiDi field value.
+     */
+    public boolean isFBiDi()
+    {
+        return fBiDi.isSet(field_1_grpfChp);
+        
+    }
+
+    /**
+     * Sets the itypFELayout field value.
      * 
      */
-    public void setFUsePgsuSettings(boolean value)
+    public void setItypFELayout( short value )
     {
-        field_2_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_2_format_flags1, value);
+        field_28_ufel = (short)itypFELayout.setValue(field_28_ufel, value);
 
         
     }
 
     /**
      * 
-     * @return  the fUsePgsuSettings field value.
+     * @return  the itypFELayout field value.
      */
-    public boolean isFUsePgsuSettings()
+    public short getItypFELayout()
     {
-        return fUsePgsuSettings.isSet(field_2_format_flags1);
+        return ( short )itypFELayout.getValue(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the fTNY field value.
+     * Tatenakayoko: Horizontal–in-vertical (range of text in a direction perpendicular to the text flow) is used
+     */
+    public void setFTNY( boolean value )
+    {
+        field_28_ufel = (short)fTNY.setBoolean(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * Tatenakayoko: Horizontal–in-vertical (range of text in a direction perpendicular to the text flow) is used
+     * @return  the fTNY field value.
+     */
+    public boolean isFTNY()
+    {
+        return fTNY.isSet(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the fWarichu field value.
+     * Two lines in one (text in the group is displayed as two half-height lines within a line)
+     */
+    public void setFWarichu( boolean value )
+    {
+        field_28_ufel = (short)fWarichu.setBoolean(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * Two lines in one (text in the group is displayed as two half-height lines within a line)
+     * @return  the fWarichu field value.
+     */
+    public boolean isFWarichu()
+    {
+        return fWarichu.isSet(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the fKumimoji field value.
+     * combine characters
+     */
+    public void setFKumimoji( boolean value )
+    {
+        field_28_ufel = (short)fKumimoji.setBoolean(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * combine characters
+     * @return  the fKumimoji field value.
+     */
+    public boolean isFKumimoji()
+    {
+        return fKumimoji.isSet(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the fRuby field value.
+     * Phonetic guide
+     */
+    public void setFRuby( boolean value )
+    {
+        field_28_ufel = (short)fRuby.setBoolean(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * Phonetic guide
+     * @return  the fRuby field value.
+     */
+    public boolean isFRuby()
+    {
+        return fRuby.isSet(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the fLSFitText field value.
+     * fit text
+     */
+    public void setFLSFitText( boolean value )
+    {
+        field_28_ufel = (short)fLSFitText.setBoolean(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * fit text
+     * @return  the fLSFitText field value.
+     */
+    public boolean isFLSFitText()
+    {
+        return fLSFitText.isSet(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the spare field value.
+     * Unused
+     */
+    public void setSpare( byte value )
+    {
+        field_28_ufel = (short)spare.setValue(field_28_ufel, value);
+
+        
+    }
+
+    /**
+     * Unused
+     * @return  the spare field value.
+     */
+    public byte getSpare()
+    {
+        return ( byte )spare.getValue(field_28_ufel);
+        
+    }
+
+    /**
+     * Sets the iWarichuBracket field value.
+     * Bracket character for two-lines-in-one
+     */
+    public void setIWarichuBracket( byte value )
+    {
+        field_29_copt = (byte)iWarichuBracket.setValue(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * Bracket character for two-lines-in-one
+     * @return  the iWarichuBracket field value.
+     */
+    public byte getIWarichuBracket()
+    {
+        return ( byte )iWarichuBracket.getValue(field_29_copt);
+        
+    }
+
+    /**
+     * Sets the fWarichuNoOpenBracket field value.
+     * Two-lines-in-one uses no open
+     */
+    public void setFWarichuNoOpenBracket( boolean value )
+    {
+        field_29_copt = (byte)fWarichuNoOpenBracket.setBoolean(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * Two-lines-in-one uses no open
+     * @return  the fWarichuNoOpenBracket field value.
+     */
+    public boolean isFWarichuNoOpenBracket()
+    {
+        return fWarichuNoOpenBracket.isSet(field_29_copt);
+        
+    }
+
+    /**
+     * Sets the fTNYCompress field value.
+     * fit text in line
+     */
+    public void setFTNYCompress( boolean value )
+    {
+        field_29_copt = (byte)fTNYCompress.setBoolean(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * fit text in line
+     * @return  the fTNYCompress field value.
+     */
+    public boolean isFTNYCompress()
+    {
+        return fTNYCompress.isSet(field_29_copt);
+        
+    }
+
+    /**
+     * Sets the fTNYFetchTxm field value.
+     * fetch text metrics
+     */
+    public void setFTNYFetchTxm( boolean value )
+    {
+        field_29_copt = (byte)fTNYFetchTxm.setBoolean(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * fetch text metrics
+     * @return  the fTNYFetchTxm field value.
+     */
+    public boolean isFTNYFetchTxm()
+    {
+        return fTNYFetchTxm.isSet(field_29_copt);
+        
+    }
+
+    /**
+     * Sets the fCellFitText field value.
+     * Fit text in cell
+     */
+    public void setFCellFitText( boolean value )
+    {
+        field_29_copt = (byte)fCellFitText.setBoolean(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * Fit text in cell
+     * @return  the fCellFitText field value.
+     */
+    public boolean isFCellFitText()
+    {
+        return fCellFitText.isSet(field_29_copt);
+        
+    }
+
+    /**
+     * Sets the unused field value.
+     * Not used
+     */
+    public void setUnused( boolean value )
+    {
+        field_29_copt = (byte)unused.setBoolean(field_29_copt, value);
+
+        
+    }
+
+    /**
+     * Not used
+     * @return  the unused field value.
+     */
+    public boolean isUnused()
+    {
+        return unused.isSet(field_29_copt);
         
     }
 
@@ -1458,9 +2342,9 @@ public abstract class CHPAbstractType
      * Sets the icoHighlight field value.
      * Highlight color (see chp.ico)
      */
-    public void setIcoHighlight(byte value)
+    public void setIcoHighlight( byte value )
     {
-        field_32_Highlight = (short)icoHighlight.setValue(field_32_Highlight, value);
+        field_47_Highlight = (short)icoHighlight.setValue(field_47_Highlight, value);
 
         
     }
@@ -1471,7 +2355,7 @@ public abstract class CHPAbstractType
      */
     public byte getIcoHighlight()
     {
-        return ( byte )icoHighlight.getValue(field_32_Highlight);
+        return ( byte )icoHighlight.getValue(field_47_Highlight);
         
     }
 
@@ -1479,9 +2363,9 @@ public abstract class CHPAbstractType
      * Sets the fHighlight field value.
      * When 1, characters are highlighted with color specified by chp.icoHighlight
      */
-    public void setFHighlight(boolean value)
+    public void setFHighlight( boolean value )
     {
-        field_32_Highlight = (short)fHighlight.setBoolean(field_32_Highlight, value);
+        field_47_Highlight = (short)fHighlight.setBoolean(field_47_Highlight, value);
 
         
     }
@@ -1492,133 +2376,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFHighlight()
     {
-        return fHighlight.isSet(field_32_Highlight);
-        
-    }
-
-    /**
-     * Sets the fNavHighlight field value.
-     * Used internally by Word
-     */
-    public void setFNavHighlight(boolean value)
-    {
-        field_32_Highlight = (short)fNavHighlight.setBoolean(field_32_Highlight, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fNavHighlight field value.
-     */
-    public boolean isFNavHighlight()
-    {
-        return fNavHighlight.isSet(field_32_Highlight);
-        
-    }
-
-    /**
-     * Sets the iatrUndetType field value.
-     * Used internally by Word
-     */
-    public void setIatrUndetType(byte value)
-    {
-        field_33_InternalFlags = (short)iatrUndetType.setValue(field_33_InternalFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the iatrUndetType field value.
-     */
-    public byte getIatrUndetType()
-    {
-        return ( byte )iatrUndetType.getValue(field_33_InternalFlags);
-        
-    }
-
-    /**
-     * Sets the fUlGap field value.
-     * Used internally by Word 8
-     */
-    public void setFUlGap(boolean value)
-    {
-        field_33_InternalFlags = (short)fUlGap.setBoolean(field_33_InternalFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word 8
-     * @return  the fUlGap field value.
-     */
-    public boolean isFUlGap()
-    {
-        return fUlGap.isSet(field_33_InternalFlags);
-        
-    }
-
-    /**
-     * Sets the fScriptAnchor field value.
-     * Used internally by Word
-     */
-    public void setFScriptAnchor(boolean value)
-    {
-        field_33_InternalFlags = (short)fScriptAnchor.setBoolean(field_33_InternalFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fScriptAnchor field value.
-     */
-    public boolean isFScriptAnchor()
-    {
-        return fScriptAnchor.isSet(field_33_InternalFlags);
-        
-    }
-
-    /**
-     * Sets the fFixedObj field value.
-     * Used internally by Word
-     */
-    public void setFFixedObj(boolean value)
-    {
-        field_33_InternalFlags = (short)fFixedObj.setBoolean(field_33_InternalFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fFixedObj field value.
-     */
-    public boolean isFFixedObj()
-    {
-        return fFixedObj.isSet(field_33_InternalFlags);
-        
-    }
-
-    /**
-     * Sets the spare2 field value.
-     * Not used
-     */
-    public void setSpare2(boolean value)
-    {
-        field_33_InternalFlags = (short)spare2.setBoolean(field_33_InternalFlags, value);
-
-        
-    }
-
-    /**
-     * Not used
-     * @return  the spare2 field value.
-     */
-    public boolean isSpare2()
-    {
-        return spare2.isSet(field_33_InternalFlags);
+        return fHighlight.isSet(field_47_Highlight);
         
     }
 
@@ -1626,9 +2384,9 @@ public abstract class CHPAbstractType
      * Sets the fChsDiff field value.
      * Pre-Unicode files, char's char set different from FIB char set
      */
-    public void setFChsDiff(boolean value)
+    public void setFChsDiff( boolean value )
     {
-        field_34_EncodingFlags = (short)fChsDiff.setBoolean(field_34_EncodingFlags, value);
+        field_48_CharsetFlags = (short)fChsDiff.setBoolean(field_48_CharsetFlags, value);
 
         
     }
@@ -1639,7 +2397,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFChsDiff()
     {
-        return fChsDiff.isSet(field_34_EncodingFlags);
+        return fChsDiff.isSet(field_48_CharsetFlags);
         
     }
 
@@ -1647,9 +2405,9 @@ public abstract class CHPAbstractType
      * Sets the fMacChs field value.
      * fTrue if char's are Macintosh char set
      */
-    public void setFMacChs(boolean value)
+    public void setFMacChs( boolean value )
     {
-        field_34_EncodingFlags = (short)fMacChs.setBoolean(field_34_EncodingFlags, value);
+        field_48_CharsetFlags = (short)fMacChs.setBoolean(field_48_CharsetFlags, value);
 
         
     }
@@ -1660,115 +2418,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFMacChs()
     {
-        return fMacChs.isSet(field_34_EncodingFlags);
+        return fMacChs.isSet(field_48_CharsetFlags);
         
     }
 
-    /**
-     * Sets the fFtcAsciSym field value.
-     * Used internally by Word
-     */
-    public void setFFtcAsciSym(boolean value)
-    {
-        field_34_EncodingFlags = (short)fFtcAsciSym.setBoolean(field_34_EncodingFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fFtcAsciSym field value.
-     */
-    public boolean isFFtcAsciSym()
-    {
-        return fFtcAsciSym.isSet(field_34_EncodingFlags);
-        
-    }
-
-    /**
-     * Sets the fFtcReq field value.
-     * Used internally by Word
-     */
-    public void setFFtcReq(boolean value)
-    {
-        field_34_EncodingFlags = (short)fFtcReq.setBoolean(field_34_EncodingFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fFtcReq field value.
-     */
-    public boolean isFFtcReq()
-    {
-        return fFtcReq.isSet(field_34_EncodingFlags);
-        
-    }
-
-    /**
-     * Sets the fLangApplied field value.
-     * Used internally by Word
-     */
-    public void setFLangApplied(boolean value)
-    {
-        field_34_EncodingFlags = (short)fLangApplied.setBoolean(field_34_EncodingFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fLangApplied field value.
-     */
-    public boolean isFLangApplied()
-    {
-        return fLangApplied.isSet(field_34_EncodingFlags);
-        
-    }
-
-    /**
-     * Sets the fSpareLangApplied field value.
-     * Used internally by Word
-     */
-    public void setFSpareLangApplied(boolean value)
-    {
-        field_34_EncodingFlags = (short)fSpareLangApplied.setBoolean(field_34_EncodingFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fSpareLangApplied field value.
-     */
-    public boolean isFSpareLangApplied()
-    {
-        return fSpareLangApplied.isSet(field_34_EncodingFlags);
-        
-    }
-
-    /**
-     * Sets the fForcedCvAuto field value.
-     * Used internally by Word
-     */
-    public void setFForcedCvAuto(boolean value)
-    {
-        field_34_EncodingFlags = (short)fForcedCvAuto.setBoolean(field_34_EncodingFlags, value);
-
-        
-    }
-
-    /**
-     * Used internally by Word
-     * @return  the fForcedCvAuto field value.
-     */
-    public boolean isFForcedCvAuto()
-    {
-        return fForcedCvAuto.isSet(field_34_EncodingFlags);
-        
-    }
-
-
-
-}
+}  // END OF CLASS
