@@ -418,7 +418,9 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
+     * @deprecated User code should not work with {@link CharacterProperties}
 	 */
+    @Deprecated
 	public CharacterRun insertBefore(String text, CharacterProperties props)
 	// throws UnsupportedEncodingException
 	{
@@ -445,7 +447,9 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
+	 * @deprecated User code should not work with {@link CharacterProperties}
 	 */
+    @Deprecated
 	public CharacterRun insertAfter(String text, CharacterProperties props)
 	// throws UnsupportedEncodingException
 	{
@@ -470,7 +474,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
+	 * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+	@Deprecated
 	public Paragraph insertBefore(ParagraphProperties props, int styleIndex)
 	// throws UnsupportedEncodingException
 	{
@@ -491,7 +497,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+    @Deprecated
 	protected Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
 	// throws UnsupportedEncodingException
 	{
@@ -519,8 +527,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-
+    @Deprecated
 	public Paragraph insertAfter(ParagraphProperties props, int styleIndex)
 	// throws UnsupportedEncodingException
 	{
@@ -541,7 +550,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+    @Deprecated
 	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
 	// throws UnsupportedEncodingException
 	{
@@ -612,10 +623,12 @@ public class Range { // TODO -instantiable superclass
 	 * @param rows
 	 *            The number of rows.
 	 * @return The empty Table that is now part of the document.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+	@Deprecated
 	public Table insertBefore(TableProperties props, int rows) {
 		ParagraphProperties parProps = new ParagraphProperties();
-		parProps.setFInTable((byte) 1);
+		parProps.setFInTable(true);
 		parProps.setItap( 1 );
 
 		int columns = props.getItcMac();
@@ -645,7 +658,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+	@Deprecated
 	public ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
@@ -672,7 +687,9 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
+     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
+	@Deprecated
 	public ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
