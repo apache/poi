@@ -146,7 +146,7 @@ public class AbstractWordUtils
             }
         }
 
-        byte follow = getIxchFollow( listLevel );
+        byte follow = listLevel.getTypeOfCharFollowingTheNumber();
         switch ( follow )
         {
         case 0:
@@ -200,20 +200,6 @@ public class AbstractWordUtils
             return "lightgray";
         default:
             return "black";
-        }
-    }
-
-    public static byte getIxchFollow( ListLevel listLevel )
-    {
-        try
-        {
-            Field field = ListLevel.class.getDeclaredField( "_ixchFollow" );
-            field.setAccessible( true );
-            return ( (Byte) field.get( listLevel ) ).byteValue();
-        }
-        catch ( Exception exc )
-        {
-            throw new Error( exc );
         }
     }
 
