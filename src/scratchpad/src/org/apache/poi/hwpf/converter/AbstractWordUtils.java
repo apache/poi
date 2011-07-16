@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -32,8 +31,6 @@ import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.hwpf.usermodel.Section;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.TableIterator;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -237,20 +234,6 @@ public class AbstractWordUtils
             System.err.println( "NYI: toListItemNumberLabel(): " + format );
 
         return String.valueOf( number );
-    }
-
-    public static SectionProperties getSectionProperties( Section section )
-    {
-        try
-        {
-            Field field = Section.class.getDeclaredField( "_props" );
-            field.setAccessible( true );
-            return (SectionProperties) field.get( section );
-        }
-        catch ( Exception exc )
-        {
-            throw new Error( exc );
-        }
     }
 
     static boolean isEmpty( String str )

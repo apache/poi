@@ -27,17 +27,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
@@ -82,23 +80,22 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     private static String getSectionStyle( Section section )
     {
-        SectionProperties sep = WordToHtmlUtils.getSectionProperties( section );
-
-        float leftMargin = sep.getDxaLeft() / TWIPS_PER_INCH;
-        float rightMargin = sep.getDxaRight() / TWIPS_PER_INCH;
-        float topMargin = sep.getDyaTop() / TWIPS_PER_INCH;
-        float bottomMargin = sep.getDyaBottom() / TWIPS_PER_INCH;
+        float leftMargin = section.getMarginLeft() / TWIPS_PER_INCH;
+        float rightMargin = section.getMarginRight() / TWIPS_PER_INCH;
+        float topMargin = section.getMarginTop() / TWIPS_PER_INCH;
+        float bottomMargin = section.getMarginBottom() / TWIPS_PER_INCH;
 
         String style = "margin: " + topMargin + "in " + rightMargin + "in "
                 + bottomMargin + "in " + leftMargin + "in; ";
 
-        if ( sep.getCcolM1() > 0 )
+        if ( section.getNumColumns() > 1 )
         {
-            style += "column-count: " + ( sep.getCcolM1() + 1 ) + "; ";
-            if ( sep.getFEvenlySpaced() )
+            style += "column-count: " + ( section.getNumColumns() ) + "; ";
+            if ( section.isColumnsEvenlySpaced() )
             {
-                style += "column-gap: "
-                        + ( sep.getDxaColumns() / TWIPS_PER_INCH ) + "in; ";
+                float distance = section.getDistanceBetweenColumns()
+                        / TWIPS_PER_INCH;
+                style += "column-gap: " + distance + "in; ";
             }
             else
             {
@@ -317,7 +314,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
             final CharacterRun characterRun = paragraph.getCharacterRun( 0 );
             if ( characterRun != null )
             {
-                Triplet triplet = getCharacterRunTriplet(characterRun);
+                Triplet triplet = getCharacterRunTriplet( characterRun );
                 pFontSize = characterRun.getFontSize() / 2;
                 pFontName = triplet.fontName;
                 WordToHtmlUtils.addFontFamily( pFontName, style );
