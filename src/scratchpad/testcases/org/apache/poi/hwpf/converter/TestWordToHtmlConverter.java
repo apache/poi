@@ -29,6 +29,9 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Picture;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
@@ -48,12 +51,27 @@ public class TestWordToHtmlConverter extends TestCase
     private static String getHtmlText( final String sampleFileName )
             throws Exception
     {
+        return getHtmlText( sampleFileName, false );
+    }
+
+    private static String getHtmlText( final String sampleFileName,
+            boolean emulatePictureStorage ) throws Exception
+    {
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
-        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+        Document newDocument = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder().newDocument();
+        WordToHtmlConverter wordToHtmlConverter = !emulatePictureStorage ? new WordToHtmlConverter(
+                newDocument ) : new WordToHtmlConverter( newDocument )
+        {
+            @Override
+            protected void processImage( Element currentBlock, boolean inlined,
+                    Picture picture )
+            {
+                processImage( currentBlock, inlined, picture, "picture.bin" );
+            }
+        };
         wordToHtmlConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -128,6 +146,20 @@ public class TestWordToHtmlConverter extends TestCase
         String result = getHtmlText( "equation.doc" );
 
         assertContains( result, "<!--Image link to '0.emf' can be here-->" );
+    }
+
+    public void testPicture() throws Exception
+    {
+        String result = getHtmlText( "picture.doc", true );
+
+        // picture
+        assertContains( result, "src=\"picture.bin\"" );
+        // visible size
+        assertContains( result, "width:3.1305554in;height:1.7250001in;" );
+        // shift due to crop
+        assertContains( result, "left:-0.09375;top:-0.25694445;" );
+        // size without crop
+        assertContains( result, "width:3.4125in;height:2.325in;" );
     }
 
     public void testHyperlink() throws Exception

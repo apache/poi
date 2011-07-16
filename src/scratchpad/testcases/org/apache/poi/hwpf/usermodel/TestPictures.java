@@ -303,6 +303,7 @@ public final class TestPictures extends TestCase {
        assertEquals(0, plain8s);
     }
 
+    @SuppressWarnings( "deprecation" )
     public void testCroppedPictures() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("testCroppedPictures.doc");
         List<Picture> pics = doc.getPicturesTable().getAllPictures();
@@ -312,7 +313,9 @@ public final class TestPictures extends TestCase {
 
         Picture pic1 = pics.get(0);
         assertEquals(27, pic1.getAspectRatioX());
+        assertEquals(270, pic1.getHorizontalScalingFactor());
         assertEquals(27, pic1.getAspectRatioY());
+        assertEquals(271, pic1.getVerticalScalingFactor());
         assertEquals(12000, pic1.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
         assertEquals(9000, pic1.getDyaGoal());        // 15.88 cm / 2.54 cm/inch * 72dpi * 20 = 9000
         assertEquals(0, pic1.getDxaCropLeft());
@@ -323,7 +326,9 @@ public final class TestPictures extends TestCase {
         Picture pic2 = pics.get(1);
         System.out.println(pic2.getWidth());
         assertEquals(76, pic2.getAspectRatioX());
+        assertEquals(764, pic2.getHorizontalScalingFactor());
         assertEquals(68, pic2.getAspectRatioY());
+        assertEquals(685, pic2.getVerticalScalingFactor());
         assertEquals(12000, pic2.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
         assertEquals(9000, pic2.getDyaGoal());        // 15.88 cm / 2.54 cm/inch * 72dpi * 20 = 9000
         assertEquals(0, pic2.getDxaCropLeft());       // TODO YK: The Picture is cropped but HWPF reads the crop parameters all zeros
