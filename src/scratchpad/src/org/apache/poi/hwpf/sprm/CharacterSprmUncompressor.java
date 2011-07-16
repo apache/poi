@@ -95,10 +95,23 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x2:
         newCHP.setFFldVanish (getFlag (sprm.getOperand()));
         break;
-      case 0x3:
-        newCHP.setFcPic (sprm.getOperand());
-        newCHP.setFSpec (true);
-        break;
+        case 0x3:
+            // sprmCPicLocation -- 0x6A03
+            /*
+             * Microsoft Office Word 97-2007 Binary File Format (.doc)
+             * Specification
+             * 
+             * Page 75 of 210
+             * 
+             * sprmCPicLocation (opcode 0x6A03) is used ONLY IN CHPX FKPs. This
+             * sprm moves the 4-byte operand of the sprm into the chp.fcPic
+             * field. It simultaneously sets chp.fSpec to 1. This sprm is also
+             * used when the chp.lTagObj field that is unioned with chp.fcPic is
+             * to be set for OLE objects.
+             */
+            newCHP.setFcPic( sprm.getOperand() );
+            newCHP.setFSpec( true );
+            break;
       case 0x4:
         newCHP.setIbstRMark ((short) sprm.getOperand());
         break;
@@ -475,9 +488,10 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x54:
         newCHP.setFImprint (getFlag (sprm.getOperand()));
         break;
-      case 0x55:
-        newCHP.setFSpec (getFlag (sprm.getOperand()));
-        break;
+        case 0x55:
+            // sprmCFSpec -- 0x0855
+            newCHP.setFSpec( getFlag( sprm.getOperand() ) );
+            break;
       case 0x56:
         newCHP.setFObj (getFlag (sprm.getOperand()));
         break;
