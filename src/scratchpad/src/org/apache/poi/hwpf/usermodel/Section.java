@@ -20,11 +20,9 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.SEPX;
 
-public final class Section
-  extends Range
+public final class Section extends Range
 {
-
-  private SectionProperties _props;
+    private SectionProperties _props;
 
     public Section( SEPX sepx, Range parent )
     {
@@ -38,23 +36,17 @@ public final class Section
             _props = sepx.getSectionProperties();
     }
 
-  public int type()
-  {
-    return TYPE_SECTION;
-  }
+    public Object clone() throws CloneNotSupportedException
+    {
+        Section s = (Section) super.clone();
+        s._props = (SectionProperties) _props.clone();
+        return s;
+    }
 
-  public int getNumColumns()
-  {
-    return _props.getCcolM1() + 1;
-  }
-
-  public Object clone()
-     throws CloneNotSupportedException
-   {
-     Section s = (Section)super.clone();
-     s._props = (SectionProperties)_props.clone();
-     return s;
-   }
+    public int getNumColumns()
+    {
+        return _props.getCcolM1() + 1;
+    }
 
     @Override
     public String toString()
@@ -62,4 +54,8 @@ public final class Section
         return "Section [" + getStartOffset() + "; " + getEndOffset() + ")";
     }
 
+    public int type()
+    {
+        return TYPE_SECTION;
+    }
 }
