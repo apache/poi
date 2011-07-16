@@ -17,7 +17,6 @@
 package org.apache.poi.hwpf.converter;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -62,11 +61,9 @@ public class WordToFoUtils extends AbstractWordUtils
     public static void setCharactersProperties(
             final CharacterRun characterRun, final Element inline )
     {
-        final CharacterProperties clonedProperties = characterRun
-                .cloneProperties();
         StringBuilder textDecorations = new StringBuilder();
 
-        setBorder( inline, clonedProperties.getBrc(), EMPTY );
+        setBorder( inline, characterRun.getBorder(), EMPTY );
 
         if ( characterRun.isCapitalized() )
         {
@@ -75,7 +72,7 @@ public class WordToFoUtils extends AbstractWordUtils
         if ( characterRun.isHighlighted() )
         {
             inline.setAttribute( "background-color",
-                    getColor( clonedProperties.getIcoHighlight() ) );
+                    getColor( characterRun.getHighlightedColor() ) );
         }
         if ( characterRun.isStrikeThrough() )
         {
