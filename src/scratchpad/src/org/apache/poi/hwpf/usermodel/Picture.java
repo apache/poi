@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.hwpf.model.PictureDescriptor;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -31,7 +32,7 @@ import org.apache.poi.util.POILogger;
  * Represents embedded picture extracted from Word Document
  * @author Dmitry Romanov
  */
-public final class Picture
+public final class Picture extends PictureDescriptor
 {
   private static final POILogger log = POILogFactory.getLogger(Picture.class);
 
@@ -41,14 +42,6 @@ public final class Picture
   static final int PICT_HEADER_OFFSET = 0x4;
   static final int MFPMM_OFFSET = 0x6;
   static final int PICF_SHAPE_OFFSET = 0xE;
-  static final int DXAGOAL_OFFSET = 0x1C;
-  static final int DYAGOAL_OFFSET = 0x1E;
-  static final int MX_OFFSET = 0x20;
-  static final int MY_OFFSET = 0x22;
-  static final int DXACROPLEFT_OFFSET = 0x24;
-  static final int DYACROPTOP_OFFSET = 0x26;
-  static final int DXACROPRIGHT_OFFSET = 0x28;
-  static final int DYACROPBOTTOM_OFFSET = 0x2A;
   static final int UNKNOWN_HEADER_SIZE = 0x49;
 
   public static final byte[] GIF = new byte[]{'G', 'I', 'F'};
@@ -76,21 +69,13 @@ public final class Picture
   private byte[] rawContent;
   private byte[] content;
   private byte[] _dataStream;
-  private int aspectRatioX;
-  private int aspectRatioY;
   private int height = -1;
   private int width = -1;
 
-  private int dxaGoal = -1;
-  private int dyaGoal = -1;
-
-  private int dxaCropLeft = -1;
-  private int dyaCropTop = -1;
-  private int dxaCropRight = -1;
-  private int dyaCropBottom = -1;
-
   public Picture(int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes)
   {
+      super (_dataStream, dataBlockStartOfsset);
+
     this._dataStream = _dataStream;
     this.dataBlockStartOfsset = dataBlockStartOfsset;
     this.dataBlockSize = LittleEndian.getInt(_dataStream, dataBlockStartOfsset);
@@ -101,17 +86,6 @@ public final class Picture
 
     }
 
-    this.dxaGoal = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXAGOAL_OFFSET);
-    this.dyaGoal = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYAGOAL_OFFSET);
-
-    this.aspectRatioX = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+MX_OFFSET)/10;
-    this.aspectRatioY = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+MY_OFFSET)/10;
-
-    this.dxaCropLeft = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXACROPLEFT_OFFSET);
-    this.dyaCropTop = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYACROPTOP_OFFSET);
-    this.dxaCropRight = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DXACROPRIGHT_OFFSET);
-    this.dyaCropBottom = LittleEndian.getShort(_dataStream, dataBlockStartOfsset+DYACROPBOTTOM_OFFSET);
-
     if (fillBytes)
     {
       fillImageContent();
@@ -120,6 +94,8 @@ public final class Picture
 
   public Picture(byte[] _dataStream)
   {
+        super();
+
       this._dataStream = _dataStream;
       this.dataBlockStartOfsset = 0;
       this.dataBlockSize = _dataStream.length;
@@ -207,16 +183,39 @@ public final class Picture
 
     /**
      * @return the horizontal aspect ratio for picture provided by user
+     * @deprecated use more precise {@link #getHorizontalScalingFactor()}
      */
-    public int getAspectRatioX() {
-        return aspectRatioX;
+    @Deprecated
+    public int getAspectRatioX()
+    {
+        return mx / 10;
+    }
+
+    /**
+     * @return Horizontal scaling factor supplied by user expressed in .001%
+     *         units
+     */
+    public int getHorizontalScalingFactor()
+    {
+        return mx;
     }
 
     /**
      * @retrn the vertical aspect ratio for picture provided by user
+     * @deprecated use more precise {@link #getVerticalScalingFactor()}
      */
-    public int getAspectRatioY() {
-        return aspectRatioY;
+    @Deprecated
+    public int getAspectRatioY()
+    {
+        return my / 10;
+    }
+
+    /**
+     * @return Vertical scaling factor supplied by user expressed in .001% units
+     */
+    public int getVerticalScalingFactor()
+    {
+        return my;
     }
 
     /**

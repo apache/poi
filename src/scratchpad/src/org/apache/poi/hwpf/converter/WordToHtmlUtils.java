@@ -232,34 +232,27 @@ public class WordToHtmlUtils extends AbstractWordUtils
         final int aspectRatioX = picture.getAspectRatioX();
         final int aspectRatioY = picture.getAspectRatioY();
 
+        StringBuilder style = new StringBuilder();
+
         if ( aspectRatioX > 0 )
         {
-            graphicElement
-                    .setAttribute( "content-width", ( ( picture.getDxaGoal()
-                            * aspectRatioX / 100 ) / TWIPS_PER_PT )
-                            + "pt" );
+            style.append( "width:"
+                    + ( ( picture.getDxaGoal() * aspectRatioX / 1000 ) / TWIPS_PER_INCH )
+                    + "in;" );
         }
         else
-            graphicElement.setAttribute( "content-width",
-                    ( picture.getDxaGoal() / TWIPS_PER_PT ) + "pt" );
+            style.append( "width:" + ( picture.getDxaGoal() / TWIPS_PER_INCH )
+                    + "in;" );
 
         if ( aspectRatioY > 0 )
-            graphicElement
-                    .setAttribute( "content-height", ( ( picture.getDyaGoal()
-                            * aspectRatioY / 100 ) / TWIPS_PER_PT )
-                            + "pt" );
-        else
-            graphicElement.setAttribute( "content-height",
-                    ( picture.getDyaGoal() / TWIPS_PER_PT ) + "pt" );
-
-        if ( aspectRatioX <= 0 || aspectRatioY <= 0 )
         {
-            graphicElement.setAttribute( "scaling", "uniform" );
+            style.append( "height:"
+                    + ( ( picture.getDyaGoal() * aspectRatioY / 1000 ) / TWIPS_PER_INCH )
+                    + "in;" );
         }
         else
-        {
-            graphicElement.setAttribute( "scaling", "non-uniform" );
-        }
+            style.append( "height:" + ( picture.getDyaGoal() / TWIPS_PER_INCH )
+                    + "in;" );
 
         graphicElement.setAttribute( "vertical-align", "text-bottom" );
 
@@ -267,15 +260,18 @@ public class WordToHtmlUtils extends AbstractWordUtils
                 || picture.getDyaCropBottom() != 0
                 || picture.getDxaCropLeft() != 0 )
         {
-            int rectTop = picture.getDyaCropTop() / TWIPS_PER_PT;
-            int rectRight = picture.getDxaCropRight() / TWIPS_PER_PT;
-            int rectBottom = picture.getDyaCropBottom() / TWIPS_PER_PT;
-            int rectLeft = picture.getDxaCropLeft() / TWIPS_PER_PT;
-            graphicElement.setAttribute( "clip", "rect(" + rectTop + "pt, "
-                    + rectRight + "pt, " + rectBottom + "pt, " + rectLeft
-                    + "pt)" );
-            graphicElement.setAttribute( "oveerflow", "hidden" );
+            float rectTop = picture.getDyaCropTop() / TWIPS_PER_INCH;
+            float rectRight = picture.getDxaCropRight() / TWIPS_PER_INCH;
+            float rectBottom = picture.getDyaCropBottom() / TWIPS_PER_INCH;
+            float rectLeft = picture.getDxaCropLeft() / TWIPS_PER_INCH;
+
+            style.append( "clip:rect(" + rectTop + "in," + rectRight + "in, "
+                    + rectBottom + "in, " + rectLeft + "in);" );
+            style.append( "overflow:hidden;" );
         }
+
+        graphicElement.setAttribute( "style", style.toString() );
+
     }
 
 }

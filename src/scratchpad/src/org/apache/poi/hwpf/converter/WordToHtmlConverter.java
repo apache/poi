@@ -59,22 +59,6 @@ import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 public class WordToHtmlConverter extends AbstractWordConverter
 {
 
-    /**
-     * Holds properties values, applied to current <tt>p</tt> element. Those
-     * properties shall not be doubled in children <tt>span</tt> elements.
-     */
-    private static class BlockProperies
-    {
-        final String pFontName;
-        final int pFontSize;
-
-        public BlockProperies( String pFontName, int pFontSize )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
-        }
-    }
-
     private static final POILogger logger = POILogFactory
             .getLogger( WordToHtmlConverter.class );
 
@@ -248,19 +232,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     basicLink );
     }
 
-    @Override
-    protected void processLineBreak( Element block, CharacterRun characterRun )
-    {
-        block.appendChild( htmlDocumentFacade.createLineBreak() );
-    }
-
     /**
      * This method shall store image bytes in external file and convert it if
      * necessary. Images shall be stored using PNG format. Other formats may be
      * not supported by user browser.
      * <p>
-     * Please note the
-     * {@link WordToHtmlUtils#setPictureProperties(Picture, Element)} method.
+     * Please note the {@link #processImage(Element, boolean, Picture, String)}.
      * 
      * @param currentBlock
      *            currently processed HTML element, like <tt>p</tt>. Shall be
@@ -277,6 +254,99 @@ public class WordToHtmlConverter extends AbstractWordConverter
         currentBlock.appendChild( htmlDocumentFacade.document
                 .createComment( "Image link to '"
                         + picture.suggestFullFileName() + "' can be here" ) );
+    }
+
+    protected void processImage( Element currentBlock, boolean inlined,
+            Picture picture, String imageSourcePath )
+    {
+        final int aspectRatioX = picture.getHorizontalScalingFactor();
+        final int aspectRatioY = picture.getVerticalScalingFactor();
+
+        StringBuilder style = new StringBuilder();
+
+        final float imageWidth;
+        final float imageHeight;
+
+        final float cropTop;
+        final float cropBottom;
+        final float cropLeft;
+        final float cropRight;
+
+        if ( aspectRatioX > 0 )
+        {
+            imageWidth = picture.getDxaGoal() * aspectRatioX / 1000
+                    / TWIPS_PER_INCH;
+            cropRight = picture.getDxaCropRight() * aspectRatioX / 1000
+                    / TWIPS_PER_INCH;
+            cropLeft = picture.getDxaCropLeft() * aspectRatioX / 1000
+                    / TWIPS_PER_INCH;
+        }
+        else
+        {
+            imageWidth = picture.getDxaGoal() / TWIPS_PER_INCH;
+            cropRight = picture.getDxaCropRight() / TWIPS_PER_INCH;
+            cropLeft = picture.getDxaCropLeft() / TWIPS_PER_INCH;
+        }
+
+        if ( aspectRatioY > 0 )
+        {
+            imageHeight = picture.getDyaGoal() * aspectRatioY / 1000
+                    / TWIPS_PER_INCH;
+            cropTop = picture.getDyaCropTop() * aspectRatioY / 1000
+                    / TWIPS_PER_INCH;
+            cropBottom = picture.getDyaCropBottom() * aspectRatioY / 1000
+                    / TWIPS_PER_INCH;
+        }
+        else
+        {
+            imageHeight = picture.getDyaGoal() / TWIPS_PER_INCH;
+            cropTop = picture.getDyaCropTop() / TWIPS_PER_INCH;
+            cropBottom = picture.getDyaCropBottom() / TWIPS_PER_INCH;
+        }
+
+        Element root;
+        if ( cropTop != 0 || cropRight != 0 || cropBottom != 0 || cropLeft != 0 )
+        {
+            float visibleWidth = Math
+                    .max( 0, imageWidth - cropLeft - cropRight );
+            float visibleHeight = Math.max( 0, imageHeight - cropTop
+                    - cropBottom );
+
+            root = htmlDocumentFacade.document.createElement( "div" );
+            root.setAttribute( "style", "vertical-align:text-bottom;width:"
+                    + visibleWidth + "in;height:" + visibleHeight + "in;" );
+
+            // complex
+            Element inner = htmlDocumentFacade.document.createElement( "div" );
+            inner.setAttribute( "style", "position:relative;width:"
+                    + visibleWidth + "in;height:" + visibleHeight
+                    + "in;overflow:hidden;" );
+            root.appendChild( inner );
+
+            Element image = htmlDocumentFacade.document.createElement( "img" );
+            image.setAttribute( "src", imageSourcePath );
+            image.setAttribute( "style", "position:absolute;left:-" + cropLeft
+                    + ";top:-" + cropTop + ";width:" + imageWidth
+                    + "in;height:" + imageHeight + "in;" );
+            inner.appendChild( image );
+
+            style.append( "overflow:hidden;" );
+        }
+        else
+        {
+            root = htmlDocumentFacade.document.createElement( "img" );
+            root.setAttribute( "src", imageSourcePath );
+            root.setAttribute( "style", "width:" + imageWidth + "in;height:"
+                    + imageHeight + "in;vertical-align:text-bottom;" );
+        }
+
+        currentBlock.appendChild( root );
+    }
+
+    @Override
+    protected void processLineBreak( Element block, CharacterRun characterRun )
+    {
+        block.appendChild( htmlDocumentFacade.createLineBreak() );
     }
 
     protected void processPageref( HWPFDocumentCore hwpfDocument,
@@ -503,6 +573,22 @@ public class WordToHtmlConverter extends AbstractWordConverter
             logger.log( POILogger.WARN, "Table without body starting at [",
                     Integer.valueOf( table.getStartOffset() ), "; ",
                     Integer.valueOf( table.getEndOffset() ), ")" );
+        }
+    }
+
+    /**
+     * Holds properties values, applied to current <tt>p</tt> element. Those
+     * properties shall not be doubled in children <tt>span</tt> elements.
+     */
+    private static class BlockProperies
+    {
+        final String pFontName;
+        final int pFontSize;
+
+        public BlockProperies( String pFontName, int pFontSize )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
         }
     }
 
