@@ -32,6 +32,9 @@ public final class LineSpacingDescriptor
 
   public LineSpacingDescriptor()
   {
+      //see page 181
+      _dyaLine = 240;
+      _fMultiLinespace = 1;
   }
 
   public LineSpacingDescriptor(byte[] buf, int offset)
