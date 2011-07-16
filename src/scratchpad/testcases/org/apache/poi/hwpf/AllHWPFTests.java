@@ -20,7 +20,6 @@ package org.apache.poi.hwpf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.poi.hwpf.converter.TestWordToConverterSuite;
 import org.apache.poi.hwpf.converter.TestWordToFoConverter;
 import org.apache.poi.hwpf.converter.TestWordToHtmlConverter;
 import org.apache.poi.hwpf.extractor.TestDifferentRoutes;
@@ -70,7 +69,7 @@ public final class AllHWPFTests
         suite.addTestSuite( TestHWPFRangeParts.class );
 
         // org.apache.poi.hwpf.converter
-        suite.addTestSuite( TestWordToConverterSuite.class );
+        // suite.addTestSuite( TestWordToConverterSuite.class );
         suite.addTestSuite( TestWordToFoConverter.class );
         suite.addTestSuite( TestWordToHtmlConverter.class );
 
