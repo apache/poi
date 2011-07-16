@@ -147,6 +147,14 @@ public final class ListLevel
       return null;
   }
 
+  /**
+   * "The type of character following the number text for the paragraph: 0 == tab, 1 == space, 2 == nothing."
+   */
+  public byte getTypeOfCharFollowingTheNumber()
+  {
+      return this._ixchFollow;
+  }
+
   public void setStartAt(int startAt)
   {
     _iStartAt = startAt;
@@ -160,6 +168,11 @@ public final class ListLevel
   public void setAlignment(int alignment)
   {
     _jc.setValue(_info, alignment);
+  }
+
+  public void setTypeOfCharFollowingTheNumber( byte value )
+  {
+      this._ixchFollow = value;
   }
 
   public void setNumberProperties(byte[] grpprl)
