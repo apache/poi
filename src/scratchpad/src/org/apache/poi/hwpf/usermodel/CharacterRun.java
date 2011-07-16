@@ -417,6 +417,11 @@ public final class CharacterRun
     return _props.isFHighlight();
   }
 
+  public byte getHighlightedColor()
+  {
+      return _props.getIcoHighlight();
+  }
+
   public void setHighlighted(byte color)
   {
     _props.setFHighlight(true);
@@ -533,7 +538,10 @@ public final class CharacterRun
   /**
    * clone the CharacterProperties object associated with this
    * characterRun so that you can apply it to another CharacterRun
+   * 
+   * @deprecated This method shall not be public and should not be called from high-level code
    */
+  @Deprecated
   public CharacterProperties cloneProperties() {
     try {
        return (CharacterProperties)_props.clone();
