@@ -27,17 +27,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
@@ -146,18 +144,21 @@ public class WordToFoConverter extends AbstractWordConverter
         this.foDocumentFacade = new FoDocumentFacade( document );
     }
 
-    protected String createPageMaster( SectionProperties sep, String type,
-            int section )
+    protected String createPageMaster( Section section, String type,
+            int sectionIndex )
     {
-        float height = sep.getYaPage() / WordToFoUtils.TWIPS_PER_INCH;
-        float width = sep.getXaPage() / WordToFoUtils.TWIPS_PER_INCH;
-        float leftMargin = sep.getDxaLeft() / WordToFoUtils.TWIPS_PER_INCH;
-        float rightMargin = sep.getDxaRight() / WordToFoUtils.TWIPS_PER_INCH;
-        float topMargin = sep.getDyaTop() / WordToFoUtils.TWIPS_PER_INCH;
-        float bottomMargin = sep.getDyaBottom() / WordToFoUtils.TWIPS_PER_INCH;
+        float height = section.getPageHeight() / WordToFoUtils.TWIPS_PER_INCH;
+        float width = section.getPageWidth() / WordToFoUtils.TWIPS_PER_INCH;
+        float leftMargin = section.getMarginLeft()
+                / WordToFoUtils.TWIPS_PER_INCH;
+        float rightMargin = section.getMarginRight()
+                / WordToFoUtils.TWIPS_PER_INCH;
+        float topMargin = section.getMarginTop() / WordToFoUtils.TWIPS_PER_INCH;
+        float bottomMargin = section.getMarginBottom()
+                / WordToFoUtils.TWIPS_PER_INCH;
 
         // add these to the header
-        String pageMasterName = type + "-page" + section;
+        String pageMasterName = type + "-page" + sectionIndex;
 
         Element pageMaster = foDocumentFacade
                 .addSimplePageMaster( pageMasterName );
@@ -178,15 +179,15 @@ public class WordToFoConverter extends AbstractWordConverter
         // WordToFoUtils.setBorder(regionBody, sep.getBrcLeft(), "left");
         // WordToFoUtils.setBorder(regionBody, sep.getBrcRight(), "right");
 
-        if ( sep.getCcolM1() > 0 )
+        if ( section.getNumColumns() > 1 )
         {
-            regionBody.setAttribute( "column-count", ""
-                    + ( sep.getCcolM1() + 1 ) );
-            if ( sep.getFEvenlySpaced() )
+            regionBody.setAttribute( "column-count",
+                    "" + ( section.getNumColumns() ) );
+            if ( section.isColumnsEvenlySpaced() )
             {
-                regionBody.setAttribute( "column-gap",
-                        ( sep.getDxaColumns() / WordToFoUtils.TWIPS_PER_INCH )
-                                + "in" );
+                float distance = section.getDistanceBetweenColumns()
+                        / WordToFoUtils.TWIPS_PER_INCH;
+                regionBody.setAttribute( "column-gap", distance + "in" );
             }
             else
             {
@@ -376,9 +377,7 @@ public class WordToFoConverter extends AbstractWordConverter
     protected void processSection( HWPFDocumentCore wordDocument,
             Section section, int sectionCounter )
     {
-        String regularPage = createPageMaster(
-                WordToFoUtils.getSectionProperties( section ), "page",
-                sectionCounter );
+        String regularPage = createPageMaster( section, "page", sectionCounter );
 
         Element pageSequence = foDocumentFacade.addPageSequence( regularPage );
         Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
