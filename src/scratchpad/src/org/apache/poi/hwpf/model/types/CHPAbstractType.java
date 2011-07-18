@@ -1165,7 +1165,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     * An index to strings displayed as reasons for actions taken by Word's AutoFormat code.
      */
     public int getIdslRMReason()
     {
@@ -1173,7 +1173,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     * An index to strings displayed as reasons for actions taken by Word's AutoFormat code.
      */
     public void setIdslRMReason( int field_44_idslRMReason )
     {
@@ -1181,7 +1181,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     * An index to strings displayed as reasons for actions taken by Word's AutoFormat code.
      */
     public int getIdslReasonDel()
     {
@@ -1189,7 +1189,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code.
+     * An index to strings displayed as reasons for actions taken by Word's AutoFormat code.
      */
     public void setIdslReasonDel( int field_45_idslReasonDel )
     {
