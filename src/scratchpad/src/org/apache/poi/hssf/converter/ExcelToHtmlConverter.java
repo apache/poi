@@ -19,6 +19,7 @@ package org.apache.poi.hssf.converter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.HtmlDocumentFacade;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -455,12 +457,15 @@ public class ExcelToHtmlConverter
             return true;
         }
 
-        boolean noText = ExcelToHtmlUtils.isEmpty( value );
+        final boolean noText = ExcelToHtmlUtils.isEmpty( value );
+        final boolean wrapInDivs = !noText && isUseDivsToSpan()
+                && !cellStyle.getWrapText();
+
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
             String mainCssClass = getStyleClassName( workbook, cellStyle );
-            if ( !noText && isUseDivsToSpan() )
+            if ( wrapInDivs )
             {
                 tableCellElement.setAttribute( "class", mainCssClass + " "
                         + cssClassContainerCell );
@@ -499,7 +504,7 @@ public class ExcelToHtmlConverter
 
         Text text = htmlDocumentFacade.createText( value );
 
-        if ( !noText && isUseDivsToSpan() )
+        if ( wrapInDivs )
         {
             Element outerDiv = htmlDocumentFacade.createBlock();
             outerDiv.setAttribute( "class", this.cssClassContainerDiv );
@@ -612,7 +617,8 @@ public class ExcelToHtmlConverter
      * @return maximum 1-base index of column that were rendered, zero if none
      */
     protected int processRow( HSSFWorkbook workbook, HSSFSheet sheet,
-            HSSFRow row, Element tableRowElement )
+            CellRangeAddress[][] mergedRanges, HSSFRow row,
+            Element tableRowElement )
     {
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
@@ -631,10 +637,18 @@ public class ExcelToHtmlConverter
         int maxRenderedColumn = 0;
         for ( int colIx = 0; colIx < maxColIx; colIx++ )
         {
-            HSSFCell cell = row.getCell( colIx );
-
             if ( !isOutputHiddenColumns() && sheet.isColumnHidden( colIx ) )
                 continue;
+
+            CellRangeAddress range = ExcelToHtmlUtils.getCellRangeAddress(
+                    mergedRanges, row.getRowNum(), colIx );
+
+            if ( range != null
+                    && ( range.getFirstColumn() != colIx || range.getFirstRow() != row
+                            .getRowNum() ) )
+                continue;
+
+            HSSFCell cell = row.getCell( colIx );
 
             int divWidthPx = 0;
             if ( isUseDivsToSpan() )
@@ -663,6 +677,20 @@ public class ExcelToHtmlConverter
             }
 
             Element tableCellElement = htmlDocumentFacade.createTableCell();
+
+            if ( range != null )
+            {
+                if ( range.getFirstColumn() != range.getLastColumn() )
+                    tableCellElement.setAttribute(
+                            "colspan",
+                            String.valueOf( range.getLastColumn()
+                                    - range.getFirstColumn() + 1 ) );
+                if ( range.getFirstRow() != range.getLastRow() )
+                    tableCellElement.setAttribute(
+                            "rowspan",
+                            String.valueOf( range.getLastRow()
+                                    - range.getFirstRow() + 1 ) );
+            }
 
             boolean emptyCell;
             if ( cell != null )
@@ -717,6 +745,50 @@ public class ExcelToHtmlConverter
 
         Element tableBody = htmlDocumentFacade.createTableBody();
 
+        CellRangeAddress[][] mergedRanges = new CellRangeAddress[1][];
+        for ( int m = 0; m < sheet.getNumMergedRegions(); m++ )
+        {
+            final CellRangeAddress cellRangeAddress = sheet.getMergedRegion( m );
+
+            final int requiredHeight = cellRangeAddress.getLastRow() + 1;
+            if ( mergedRanges.length < requiredHeight )
+            {
+                CellRangeAddress[][] newArray = new CellRangeAddress[requiredHeight][];
+                System.arraycopy( mergedRanges, 0, newArray, 0,
+                        mergedRanges.length );
+                mergedRanges = newArray;
+            }
+
+            for ( int r = cellRangeAddress.getFirstRow(); r <= cellRangeAddress
+                    .getLastRow(); r++ )
+            {
+                final int requiredWidth = cellRangeAddress.getLastColumn() + 1;
+
+                CellRangeAddress[] rowMerged = mergedRanges[r];
+                if ( rowMerged == null )
+                {
+                    rowMerged = new CellRangeAddress[requiredWidth];
+                    mergedRanges[r] = rowMerged;
+                }
+                else
+                {
+                    final int rowMergedLength = rowMerged.length;
+                    if ( rowMergedLength < requiredWidth )
+                    {
+                        final CellRangeAddress[] newRow = new CellRangeAddress[requiredWidth];
+                        System.arraycopy( rowMerged, 0, newRow, 0,
+                                rowMergedLength );
+
+                        mergedRanges[r] = newRow;
+                        rowMerged = newRow;
+                    }
+                }
+
+                Arrays.fill( rowMerged, cellRangeAddress.getFirstColumn(),
+                        cellRangeAddress.getLastColumn() + 1, cellRangeAddress );
+            }
+        }
+
         final List<Element> emptyRowElements = new ArrayList<Element>(
                 physicalNumberOfRows );
         int maxSheetColumns = 1;
@@ -737,8 +809,8 @@ public class ExcelToHtmlConverter
                             tableRowElement.getTagName(), "r", "height:"
                                     + ( row.getHeight() / 20f ) + "pt;" ) );
 
-            int maxRowColumnNumber = processRow( workbook, sheet, row,
-                    tableRowElement );
+            int maxRowColumnNumber = processRow( workbook, sheet, mergedRanges,
+                    row, tableRowElement );
 
             if ( maxRowColumnNumber == 0 )
             {

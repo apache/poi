@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 
 public class ExcelToHtmlUtils
@@ -108,6 +109,18 @@ public class ExcelToHtmlUtils
             break;
         }
         return borderWidth;
+    }
+
+    public static CellRangeAddress getCellRangeAddress(
+            CellRangeAddress[][] mergedRanges, int rowNumber, int columnNumber )
+    {
+        CellRangeAddress[] mergedRangeRowInfo = rowNumber < mergedRanges.length ? mergedRanges[rowNumber]
+                : null;
+        CellRangeAddress cellRangeAddress = mergedRangeRowInfo != null
+                && columnNumber < mergedRangeRowInfo.length ? mergedRangeRowInfo[columnNumber]
+                : null;
+
+        return cellRangeAddress;
     }
 
     public static String getColor( HSSFColor color )
