@@ -85,7 +85,8 @@ public class ExcelToHtmlUtils
 
     public static String getColor( HSSFColor color )
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder( 7 );
+        stringBuilder.append( '#' );
         for ( short s : color.getTriplet() )
         {
             if ( s < 10 )
@@ -93,7 +94,21 @@ public class ExcelToHtmlUtils
 
             stringBuilder.append( Integer.toHexString( s ) );
         }
-        return stringBuilder.toString();
+        String result = stringBuilder.toString();
+
+        if ( result.equals( "#ffffff" ) )
+            return "white";
+
+        if ( result.equals( "#c0c0c0" ) )
+            return "silver";
+
+        if ( result.equals( "#808080" ) )
+            return "gray";
+
+        if ( result.equals( "#000000" ) )
+            return "black";
+
+        return result;
     }
 
     /**
