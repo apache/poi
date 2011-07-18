@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -44,7 +45,8 @@ public class TestExcelToHtmlConverterSuite
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite(
+                TestExcelToHtmlConverterSuite.class.getName() );
 
         File directory = POIDataSamples.getSpreadSheetInstance().getFile(
                 "../spreadsheet" );
