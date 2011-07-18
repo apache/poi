@@ -161,30 +161,7 @@ public class ExcelToHtmlConverter
         StringBuilder style = new StringBuilder();
 
         style.append( "white-space: pre-wrap; " );
-
-        switch ( cellStyle.getAlignment() )
-        {
-        case HSSFCellStyle.ALIGN_CENTER:
-            style.append( "text-align: center; " );
-            break;
-        case HSSFCellStyle.ALIGN_CENTER_SELECTION:
-            style.append( "text-align: center; " );
-            break;
-        case HSSFCellStyle.ALIGN_FILL:
-            // XXX: shall we support fill?
-            break;
-        case HSSFCellStyle.ALIGN_GENERAL:
-            break;
-        case HSSFCellStyle.ALIGN_JUSTIFY:
-            style.append( "text-align: justify; " );
-            break;
-        case HSSFCellStyle.ALIGN_LEFT:
-            style.append( "text-align: left; " );
-            break;
-        case HSSFCellStyle.ALIGN_RIGHT:
-            style.append( "text-align: right; " );
-            break;
-        }
+        ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignment() );
 
         if ( cellStyle.getFillPattern() == 0 )
         {
@@ -486,12 +463,13 @@ public class ExcelToHtmlConverter
             return true;
         }
 
+        boolean noText = ExcelToHtmlUtils.isEmpty( value );
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
             tableCellElement.setAttribute( "class",
                     getStyleClassName( workbook, cellStyle ) );
-            if ( ExcelToHtmlUtils.isEmpty( value ) )
+            if ( noText )
             {
                 /*
                  * if cell style is defined (like borders, etc.) but cell text
@@ -520,7 +498,7 @@ public class ExcelToHtmlConverter
 
         Text text = htmlDocumentFacade.createText( value );
 
-        if ( isUseDivsToSpan() )
+        if ( !noText && isUseDivsToSpan() )
         {
             tableCellElement.setAttribute( "style",
                     "padding:0;margin:0;align:left;vertical-align:top;" );
@@ -530,13 +508,22 @@ public class ExcelToHtmlConverter
 
             Element innerDiv = htmlDocumentFacade.getDocument().createElement(
                     "div" );
-            innerDiv.setAttribute( "style", "position:absolute;min-width:"
-                    + normalWidthPx
-                    + "px;"
-                    + ( maxSpannedWidthPx != Integer.MAX_VALUE ? "max-width:"
-                            + maxSpannedWidthPx + "px;" : "" )
-                    + "overflow:hidden;max-height:" + normalHeightPt
-                    + "pt;white-space:nowrap;" );
+            StringBuilder innerDivStyle = new StringBuilder();
+            innerDivStyle.append( "position:absolute;min-width:" );
+            innerDivStyle.append( normalWidthPx );
+            innerDivStyle.append( "px;" );
+            if ( maxSpannedWidthPx != Integer.MAX_VALUE )
+            {
+                innerDivStyle.append( "max-width:" );
+                innerDivStyle.append( maxSpannedWidthPx );
+                innerDivStyle.append( "px;" );
+            }
+            innerDivStyle.append( "overflow:hidden;max-height:" );
+            innerDivStyle.append( normalHeightPt );
+            innerDivStyle.append( "pt;white-space:nowrap;" );
+            ExcelToHtmlUtils.appendAlign( innerDivStyle,
+                    cellStyle.getAlignment() );
+            innerDiv.setAttribute( "style", innerDivStyle.toString() );
 
             innerDiv.appendChild( text );
             outerDiv.appendChild( innerDiv );
