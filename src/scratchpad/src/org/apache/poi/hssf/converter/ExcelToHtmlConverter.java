@@ -19,7 +19,6 @@ package org.apache.poi.hssf.converter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -384,9 +383,8 @@ public class ExcelToHtmlConverter
         return useDivsToSpan;
     }
 
-    protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
-            Element tableCellElement, int normalWidthPx, int maxSpannedWidthPx,
-            float normalHeightPt )
+    protected boolean processCell( HSSFCell cell, Element tableCellElement,
+            int normalWidthPx, int maxSpannedWidthPx, float normalHeightPt )
     {
         final HSSFCellStyle cellStyle = cell.getCellStyle();
 
@@ -464,6 +462,7 @@ public class ExcelToHtmlConverter
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
+            HSSFWorkbook workbook = cell.getRow().getSheet().getWorkbook();
             String mainCssClass = getStyleClassName( workbook, cellStyle );
             if ( wrapInDivs )
             {
@@ -616,10 +615,10 @@ public class ExcelToHtmlConverter
     /**
      * @return maximum 1-base index of column that were rendered, zero if none
      */
-    protected int processRow( HSSFWorkbook workbook, HSSFSheet sheet,
-            CellRangeAddress[][] mergedRanges, HSSFRow row,
+    protected int processRow( CellRangeAddress[][] mergedRanges, HSSFRow row,
             Element tableRowElement )
     {
+        final HSSFSheet sheet = row.getSheet();
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
             return 0;
@@ -640,7 +639,7 @@ public class ExcelToHtmlConverter
             if ( !isOutputHiddenColumns() && sheet.isColumnHidden( colIx ) )
                 continue;
 
-            CellRangeAddress range = ExcelToHtmlUtils.getCellRangeAddress(
+            CellRangeAddress range = ExcelToHtmlUtils.getMergedRange(
                     mergedRanges, row.getRowNum(), colIx );
 
             if ( range != null
@@ -695,7 +694,7 @@ public class ExcelToHtmlConverter
             boolean emptyCell;
             if ( cell != null )
             {
-                emptyCell = processCell( workbook, cell, tableCellElement,
+                emptyCell = processCell( cell, tableCellElement,
                         getColumnWidth( sheet, colIx ), divWidthPx,
                         row.getHeight() / 20f );
             }
@@ -732,7 +731,7 @@ public class ExcelToHtmlConverter
         tableRowNumberCellElement.appendChild( text );
     }
 
-    protected void processSheet( HSSFWorkbook workbook, HSSFSheet sheet )
+    protected void processSheet( HSSFSheet sheet )
     {
         processSheetHeader( htmlDocumentFacade.getBody(), sheet );
 
@@ -745,49 +744,8 @@ public class ExcelToHtmlConverter
 
         Element tableBody = htmlDocumentFacade.createTableBody();
 
-        CellRangeAddress[][] mergedRanges = new CellRangeAddress[1][];
-        for ( int m = 0; m < sheet.getNumMergedRegions(); m++ )
-        {
-            final CellRangeAddress cellRangeAddress = sheet.getMergedRegion( m );
-
-            final int requiredHeight = cellRangeAddress.getLastRow() + 1;
-            if ( mergedRanges.length < requiredHeight )
-            {
-                CellRangeAddress[][] newArray = new CellRangeAddress[requiredHeight][];
-                System.arraycopy( mergedRanges, 0, newArray, 0,
-                        mergedRanges.length );
-                mergedRanges = newArray;
-            }
-
-            for ( int r = cellRangeAddress.getFirstRow(); r <= cellRangeAddress
-                    .getLastRow(); r++ )
-            {
-                final int requiredWidth = cellRangeAddress.getLastColumn() + 1;
-
-                CellRangeAddress[] rowMerged = mergedRanges[r];
-                if ( rowMerged == null )
-                {
-                    rowMerged = new CellRangeAddress[requiredWidth];
-                    mergedRanges[r] = rowMerged;
-                }
-                else
-                {
-                    final int rowMergedLength = rowMerged.length;
-                    if ( rowMergedLength < requiredWidth )
-                    {
-                        final CellRangeAddress[] newRow = new CellRangeAddress[requiredWidth];
-                        System.arraycopy( rowMerged, 0, newRow, 0,
-                                rowMergedLength );
-
-                        mergedRanges[r] = newRow;
-                        rowMerged = newRow;
-                    }
-                }
-
-                Arrays.fill( rowMerged, cellRangeAddress.getFirstColumn(),
-                        cellRangeAddress.getLastColumn() + 1, cellRangeAddress );
-            }
-        }
+        final CellRangeAddress[][] mergedRanges = ExcelToHtmlUtils
+                .buildMergedRangesMap( sheet );
 
         final List<Element> emptyRowElements = new ArrayList<Element>(
                 physicalNumberOfRows );
@@ -809,8 +767,8 @@ public class ExcelToHtmlConverter
                             tableRowElement.getTagName(), "r", "height:"
                                     + ( row.getHeight() / 20f ) + "pt;" ) );
 
-            int maxRowColumnNumber = processRow( workbook, sheet, mergedRanges,
-                    row, tableRowElement );
+            int maxRowColumnNumber = processRow( mergedRanges, row,
+                    tableRowElement );
 
             if ( maxRowColumnNumber == 0 )
             {
@@ -873,7 +831,7 @@ public class ExcelToHtmlConverter
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
         {
             HSSFSheet sheet = workbook.getSheetAt( s );
-            processSheet( workbook, sheet );
+            processSheet( sheet );
         }
 
         htmlDocumentFacade.updateStylesheet();
