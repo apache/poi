@@ -32,6 +32,33 @@ public class ExcelToHtmlUtils
     private static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
     private static final int UNIT_OFFSET_LENGTH = 7;
 
+    public static void appendAlign( StringBuilder style, short alignment )
+    {
+        switch ( alignment )
+        {
+        case HSSFCellStyle.ALIGN_CENTER:
+            style.append( "text-align: center; " );
+            break;
+        case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+            style.append( "text-align: center; " );
+            break;
+        case HSSFCellStyle.ALIGN_FILL:
+            // XXX: shall we support fill?
+            break;
+        case HSSFCellStyle.ALIGN_GENERAL:
+            break;
+        case HSSFCellStyle.ALIGN_JUSTIFY:
+            style.append( "text-align: justify; " );
+            break;
+        case HSSFCellStyle.ALIGN_LEFT:
+            style.append( "text-align: left; " );
+            break;
+        case HSSFCellStyle.ALIGN_RIGHT:
+            style.append( "text-align: right; " );
+            break;
+        }
+    }
+
     public static String getBorderStyle( short xlsBorder )
     {
         final String borderStyle;
