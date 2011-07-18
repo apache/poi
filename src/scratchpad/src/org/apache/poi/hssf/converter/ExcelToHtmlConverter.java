@@ -129,6 +129,10 @@ public class ExcelToHtmlConverter
 
     private boolean outputColumnHeaders = true;
 
+    private boolean outputHiddenColumns = false;
+
+    private boolean outputHiddenRows = false;
+
     private boolean outputRowNumbers = true;
 
     private final Element stylesElement;
@@ -314,6 +318,16 @@ public class ExcelToHtmlConverter
         return outputColumnHeaders;
     }
 
+    public boolean isOutputHiddenColumns()
+    {
+        return outputHiddenColumns;
+    }
+
+    public boolean isOutputHiddenRows()
+    {
+        return outputHiddenRows;
+    }
+
     public boolean isOutputRowNumbers()
     {
         return outputRowNumbers;
@@ -413,7 +427,8 @@ public class ExcelToHtmlConverter
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
     }
 
-    protected void processColumnHeaders( int maxSheetColumns, Element table )
+    protected void processColumnHeaders( HSSFSheet sheet, int maxSheetColumns,
+            Element table )
     {
         Element tableHeader = htmlDocumentFacade.createTableHeader();
         table.appendChild( tableHeader );
@@ -428,6 +443,9 @@ public class ExcelToHtmlConverter
 
         for ( int c = 0; c < maxSheetColumns; c++ )
         {
+            if ( !isOutputHiddenColumns() && sheet.isColumnHidden( c ) )
+                continue;
+
             Element th = htmlDocumentFacade.createTableHeaderCell();
             String text = getColumnName( c );
             th.appendChild( htmlDocumentFacade.createText( text ) );
@@ -451,6 +469,9 @@ public class ExcelToHtmlConverter
         }
         for ( int c = 0; c < maxSheetColumns; c++ )
         {
+            if ( !isOutputHiddenColumns() && sheet.isColumnHidden( c ) )
+                continue;
+
             Element col = htmlDocumentFacade.createTableColumn();
             col.setAttribute( "width", String.valueOf( ExcelToHtmlUtils
                     .getColumnWidthInPx( sheet.getColumnWidth( c ) ) ) );
@@ -479,8 +500,8 @@ public class ExcelToHtmlConverter
     /**
      * @return maximum 1-base index of column that were rendered, zero if none
      */
-    protected int processRow( HSSFWorkbook workbook, HSSFRow row,
-            Element tableRowElement )
+    protected int processRow( HSSFWorkbook workbook, HSSFSheet sheet,
+            HSSFRow row, Element tableRowElement )
     {
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
@@ -500,6 +521,9 @@ public class ExcelToHtmlConverter
         for ( int colIx = 0; colIx < maxColIx; colIx++ )
         {
             HSSFCell cell = row.getCell( colIx );
+
+            if ( !isOutputHiddenColumns() && sheet.isColumnHidden( colIx ) )
+                continue;
 
             Element tableCellElement = htmlDocumentFacade.createTableCell();
 
@@ -559,17 +583,16 @@ public class ExcelToHtmlConverter
         {
             HSSFRow row = sheet.getRow( r );
 
+            if ( row == null )
+                continue;
+
+            if ( !isOutputHiddenRows() && row.getZeroHeight() )
+                continue;
+
             Element tableRowElement = htmlDocumentFacade.createTableRow();
 
-            int maxRowColumnNumber;
-            if ( row != null )
-            {
-                maxRowColumnNumber = processRow( workbook, row, tableRowElement );
-            }
-            else
-            {
-                maxRowColumnNumber = 0;
-            }
+            int maxRowColumnNumber = processRow( workbook, sheet, row,
+                    tableRowElement );
 
             if ( maxRowColumnNumber == 0 )
             {
@@ -595,7 +618,7 @@ public class ExcelToHtmlConverter
 
         if ( isOutputColumnHeaders() )
         {
-            processColumnHeaders( maxSheetColumns, table );
+            processColumnHeaders( sheet, maxSheetColumns, table );
         }
 
         table.appendChild( tableBody );
@@ -638,6 +661,16 @@ public class ExcelToHtmlConverter
     public void setOutputColumnHeaders( boolean outputColumnHeaders )
     {
         this.outputColumnHeaders = outputColumnHeaders;
+    }
+
+    public void setOutputHiddenColumns( boolean outputZeroWidthColumns )
+    {
+        this.outputHiddenColumns = outputZeroWidthColumns;
+    }
+
+    public void setOutputHiddenRows( boolean outputZeroHeightRows )
+    {
+        this.outputHiddenRows = outputZeroHeightRows;
     }
 
     public void setOutputRowNumbers( boolean outputRowNumbers )
