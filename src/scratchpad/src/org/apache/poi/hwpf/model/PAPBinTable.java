@@ -48,7 +48,7 @@ public class PAPBinTable
 {
     private static final POILogger logger = POILogFactory
             .getLogger( PAPBinTable.class );
-    
+
   protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
   byte[] _dataStream;
 
@@ -64,6 +64,7 @@ public class PAPBinTable
      *             {@link #PAPBinTable(byte[],byte[],byte[],int,int,int,TextPieceTable,boolean)}
      *             instead
      */
+    @SuppressWarnings( "unused" )
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
             byte[] dataStream, int offset, int size, int fcMin,
             TextPieceTable tpt )
@@ -210,12 +211,21 @@ public class PAPBinTable
 
         final Map<PAPX, Integer> papxToFileOrder = new IdentityHashMap<PAPX, Integer>();
         {
-        int counter = 0;
-        for ( PAPX papx : _paragraphs )
+            int counter = 0;
+            for ( PAPX papx : _paragraphs )
+            {
+                papxToFileOrder.put( papx, Integer.valueOf( counter++ ) );
+            }
+        }
+        final Comparator<PAPX> papxFileOrderComparator = new Comparator<PAPX>()
         {
-            papxToFileOrder.put( papx, Integer.valueOf( counter++ ) );
-        }
-        }
+            public int compare( PAPX o1, PAPX o2 )
+            {
+                Integer i1 = papxToFileOrder.get( o1 );
+                Integer i2 = papxToFileOrder.get( o2 );
+                return i1.compareTo( i2 );
+            }
+        };
 
         logger.log( POILogger.DEBUG, "PAPX's order map created in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
@@ -277,15 +287,7 @@ public class PAPBinTable
             }
 
             // restore file order of PAPX
-            Collections.sort( papxs, new Comparator<PAPX>()
-            {
-                public int compare( PAPX o1, PAPX o2 )
-                {
-                    Integer i1 = papxToFileOrder.get( o1 );
-                    Integer i2 = papxToFileOrder.get( o2 );
-                    return i1.compareTo( i2 );
-                }
-            } );
+            Collections.sort( papxs, papxFileOrderComparator );
 
             SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
@@ -311,6 +313,10 @@ public class PAPBinTable
             continue;
         }
         this._paragraphs = new ArrayList<PAPX>( newPapxs );
+
+        logger.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
 
         _dataStream = dataStream;
     }
