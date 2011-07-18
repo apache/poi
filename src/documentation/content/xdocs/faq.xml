@@ -320,4 +320,46 @@ System.out.println("Core POI came from " + path);
       </source>
     </answer>
   </faq>
+  <faq>
+    <question>
+      An OLE2 ("binary") file is giving me problems, but I can't share it. How can I investigate the problem on my own?
+    </question>
+    <answer>
+      <p>The first thing to try is running the 
+        <link href="http://blogs.msdn.com/b/officeinteroperability/archive/2011/07/12/microsoft-office-binary-file-format-validator-is-now-available.aspx">Binary File Format Validator</link>
+        from Microsoft against the file, which will report if the file
+        complies with the specification. If your input file doesn't, then this
+        may well explain why POI isn't able to process it correctly. You 
+        should probably in this case speak to whoever is generating the file,
+        and have them fix it there. If your POI generated file is identified
+        as having an issue, and you're on the 
+        <link href="/howtobuild.html">latest codebase</link>, report a new
+        POI bug and include the details of the validation failure.</p>
+      <p>Another thing to try, especially if the file is valid but POI isn't
+        behaving as expected, are the POI Dev Tools for the component you're
+        using. For example, HSSF has <em>org.apache.poi.hssf.dev.BiffViewer</em>
+        which will allow you to view the file as POI does. This will often
+        allow you to check that things are being read as you expect, and 
+        narrow in on problem records and structures.</p>
+    </answer>
+  </faq>
+  <faq>
+    <question>
+      An OOXML ("xml") file is giving me problems, but I can't share it. How can I investigate the problem on my own?
+    </question>
+    <answer>
+       <p>There's not currently a simple validator tool as there is for the
+         OLE2 based (binary) file formats, but checking the basics of a file
+         is generally much easier.</p>
+       <p>Files such as .xlsx, .docx and .pptx are actually a zip file of XML
+         files, with a special structure. Your first step in diagnosing the
+         issues with the input or output file will likely be to unzip the
+         file, and look at the XML of it. Newer versions of Office will 
+         normally tell you which area of the file is problematic, so 
+         narrow in on there. Looking at the XML, does it look correct?</p>
+       <p>When reporting bugs, ideally include the whole file, but if you're
+         unable to then include the snippet of XML for the problem area, and
+         reference the OOXML standard for what it should contain.</p>
+    </answer>
+  </faq>
 </faqs>
