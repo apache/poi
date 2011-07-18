@@ -59,6 +59,12 @@ public class ExcelToHtmlConverter
     private static final POILogger logger = POILogFactory
             .getLogger( ExcelToHtmlConverter.class );
 
+    protected static int getColumnWidth( HSSFSheet sheet, int columnIndex )
+    {
+        return ExcelToHtmlUtils.getColumnWidthInPx( sheet
+                .getColumnWidth( columnIndex ) );
+    }
+
     /**
      * Java main() interface to interact with {@link ExcelToHtmlConverter}
      * 
@@ -133,9 +139,13 @@ public class ExcelToHtmlConverter
 
     private boolean outputHiddenRows = false;
 
+    private boolean outputLeadingSpacesAsNonBreaking = true;
+
     private boolean outputRowNumbers = true;
 
     private final Element stylesElement;
+
+    private boolean useDivsToSpan = false;
 
     public ExcelToHtmlConverter( Document doc )
     {
@@ -328,13 +338,84 @@ public class ExcelToHtmlConverter
         return outputHiddenRows;
     }
 
+    public boolean isOutputLeadingSpacesAsNonBreaking()
+    {
+        return outputLeadingSpacesAsNonBreaking;
+    }
+
     public boolean isOutputRowNumbers()
     {
         return outputRowNumbers;
     }
 
+    protected boolean isTextEmpty( HSSFCell cell )
+    {
+        final String value;
+        switch ( cell.getCellType() )
+        {
+        case HSSFCell.CELL_TYPE_STRING:
+            // XXX: enrich
+            value = cell.getRichStringCellValue().getString();
+            break;
+        case HSSFCell.CELL_TYPE_FORMULA:
+            switch ( cell.getCachedFormulaResultType() )
+            {
+            case HSSFCell.CELL_TYPE_STRING:
+                HSSFRichTextString str = cell.getRichStringCellValue();
+                if ( str == null || str.length() <= 0 )
+                    return false;
+
+                value = str.toString();
+                break;
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                HSSFCellStyle style = cell.getCellStyle();
+                if ( style == null )
+                {
+                    return false;
+                }
+
+                value = ( _formatter.formatRawCellContents(
+                        cell.getNumericCellValue(), style.getDataFormat(),
+                        style.getDataFormatString() ) );
+                break;
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                value = String.valueOf( cell.getBooleanCellValue() );
+                break;
+            case HSSFCell.CELL_TYPE_ERROR:
+                value = ErrorEval.getText( cell.getErrorCellValue() );
+                break;
+            default:
+                value = ExcelToHtmlUtils.EMPTY;
+                break;
+            }
+            break;
+        case HSSFCell.CELL_TYPE_BLANK:
+            value = ExcelToHtmlUtils.EMPTY;
+            break;
+        case HSSFCell.CELL_TYPE_NUMERIC:
+            value = _formatter.formatCellValue( cell );
+            break;
+        case HSSFCell.CELL_TYPE_BOOLEAN:
+            value = String.valueOf( cell.getBooleanCellValue() );
+            break;
+        case HSSFCell.CELL_TYPE_ERROR:
+            value = ErrorEval.getText( cell.getErrorCellValue() );
+            break;
+        default:
+            return true;
+        }
+
+        return ExcelToHtmlUtils.isEmpty( value );
+    }
+
+    public boolean isUseDivsToSpan()
+    {
+        return useDivsToSpan;
+    }
+
     protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
-            Element tableCellElement )
+            Element tableCellElement, int normalWidthPx, int maxSpannedWidthPx,
+            float normalHeightPt )
     {
         final HSSFCellStyle cellStyle = cell.getCellStyle();
 
@@ -421,8 +502,50 @@ public class ExcelToHtmlConverter
             }
         }
 
+        if ( isOutputLeadingSpacesAsNonBreaking() && value.startsWith( " " ) )
+        {
+            StringBuilder builder = new StringBuilder();
+            for ( int c = 0; c < value.length(); c++ )
+            {
+                if ( value.charAt( c ) != ' ' )
+                    break;
+                builder.append( '\u00a0' );
+            }
+
+            if ( value.length() != builder.length() )
+                builder.append( value.substring( builder.length() ) );
+
+            value = builder.toString();
+        }
+
         Text text = htmlDocumentFacade.createText( value );
-        tableCellElement.appendChild( text );
+
+        if ( isUseDivsToSpan() )
+        {
+            tableCellElement.setAttribute( "style",
+                    "padding:0;margin:0;align:left;vertical-align:top;" );
+            Element outerDiv = htmlDocumentFacade.getDocument().createElement(
+                    "div" );
+            outerDiv.setAttribute( "style", "position:relative;" );
+
+            Element innerDiv = htmlDocumentFacade.getDocument().createElement(
+                    "div" );
+            innerDiv.setAttribute( "style", "position:absolute;min-width:"
+                    + normalWidthPx
+                    + "px;"
+                    + ( maxSpannedWidthPx != Integer.MAX_VALUE ? "max-width:"
+                            + maxSpannedWidthPx + "px;" : "" )
+                    + "overflow:hidden;max-height:" + normalHeightPt
+                    + "pt;white-space:nowrap;" );
+
+            innerDiv.appendChild( text );
+            outerDiv.appendChild( innerDiv );
+            tableCellElement.appendChild( outerDiv );
+        }
+        else
+        {
+            tableCellElement.appendChild( text );
+        }
 
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
     }
@@ -473,8 +596,8 @@ public class ExcelToHtmlConverter
                 continue;
 
             Element col = htmlDocumentFacade.createTableColumn();
-            col.setAttribute( "width", String.valueOf( ExcelToHtmlUtils
-                    .getColumnWidthInPx( sheet.getColumnWidth( c ) ) ) );
+            col.setAttribute( "width",
+                    String.valueOf( getColumnWidth( sheet, c ) ) );
             columnGroup.appendChild( col );
         }
         table.appendChild( columnGroup );
@@ -525,12 +648,40 @@ public class ExcelToHtmlConverter
             if ( !isOutputHiddenColumns() && sheet.isColumnHidden( colIx ) )
                 continue;
 
+            int divWidthPx = 0;
+            if ( isUseDivsToSpan() )
+            {
+                divWidthPx = getColumnWidth( sheet, colIx );
+
+                boolean hasBreaks = false;
+                for ( int nextColumnIndex = colIx + 1; nextColumnIndex < maxColIx; nextColumnIndex++ )
+                {
+                    if ( !isOutputHiddenColumns()
+                            && sheet.isColumnHidden( nextColumnIndex ) )
+                        continue;
+
+                    if ( row.getCell( nextColumnIndex ) != null
+                            && !isTextEmpty( row.getCell( nextColumnIndex ) ) )
+                    {
+                        hasBreaks = true;
+                        break;
+                    }
+
+                    divWidthPx += getColumnWidth( sheet, nextColumnIndex );
+                }
+
+                if ( !hasBreaks )
+                    divWidthPx = Integer.MAX_VALUE;
+            }
+
             Element tableCellElement = htmlDocumentFacade.createTableCell();
 
             boolean emptyCell;
             if ( cell != null )
             {
-                emptyCell = processCell( workbook, cell, tableCellElement );
+                emptyCell = processCell( workbook, cell, tableCellElement,
+                        getColumnWidth( sheet, colIx ), divWidthPx,
+                        row.getHeight() / 20f );
             }
             else
             {
@@ -592,6 +743,8 @@ public class ExcelToHtmlConverter
                 continue;
 
             Element tableRowElement = htmlDocumentFacade.createTableRow();
+            tableRowElement.setAttribute( "style",
+                    "height:" + ( row.getHeight() / 20f ) + "pt;" );
 
             int maxRowColumnNumber = processRow( workbook, sheet, row,
                     tableRowElement );
@@ -678,8 +831,27 @@ public class ExcelToHtmlConverter
         this.outputHiddenRows = outputZeroHeightRows;
     }
 
+    public void setOutputLeadingSpacesAsNonBreaking(
+            boolean outputPrePostSpacesAsNonBreaking )
+    {
+        this.outputLeadingSpacesAsNonBreaking = outputPrePostSpacesAsNonBreaking;
+    }
+
     public void setOutputRowNumbers( boolean outputRowNumbers )
     {
         this.outputRowNumbers = outputRowNumbers;
+    }
+
+    /**
+     * Allows converter to wrap content into two additional DIVs with tricky
+     * styles, so it will wrap across empty cells (like in Excel).
+     * <p>
+     * <b>Warning:</b> after enabling this mode do not serialize result HTML
+     * with INDENT=YES option, because line breaks will make additional
+     * (unwanted) changes
+     */
+    public void setUseDivsToSpan( boolean useDivsToSpan )
+    {
+        this.useDivsToSpan = useDivsToSpan;
     }
 }
