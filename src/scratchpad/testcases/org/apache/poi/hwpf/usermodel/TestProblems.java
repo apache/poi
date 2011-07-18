@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -43,6 +44,7 @@ import org.apache.poi.util.IOUtils;
  */
 public final class TestProblems extends HWPFTestCase {
 
+    
    /**
     * ListEntry passed no ListTable
     */
@@ -823,6 +825,14 @@ public final class TestProblems extends HWPFTestCase {
         } catch (Exception e) {
             // expected exception
         }
+    }
+
+    /**
+     * Bug 51524 - PapBinTable constructor is slow
+     */
+    public void test51524()
+    {
+        HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
     }
 
 }

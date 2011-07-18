@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -69,37 +72,52 @@ public class PAPBinTable
     }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size, ComplexFileTable complexFileTable,
-            TextPieceTable tpt, boolean reconstructPapxTable )
+            byte[] dataStream, int offset, int size,
+            ComplexFileTable complexFileTable, TextPieceTable tpt,
+            boolean reconstructPapxTable )
     {
-    PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
-    this.tpt = tpt;
+        long start = System.currentTimeMillis();
 
-    int length = binTable.length();
-    for (int x = 0; x < length; x++)
-    {
-      GenericPropertyNode node = binTable.getProperty(x);
+        {
+            PlexOfCps binTable = new PlexOfCps( tableStream, offset, size, 4 );
+            this.tpt = tpt;
 
-      int pageNum = LittleEndian.getInt(node.getBytes());
-      int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
+            int length = binTable.length();
+            for ( int x = 0; x < length; x++ )
+            {
+                GenericPropertyNode node = binTable.getProperty( x );
 
-      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        dataStream, pageOffset, tpt, reconstructPapxTable);
+                int pageNum = LittleEndian.getInt( node.getBytes() );
+                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE
+                        * pageNum;
 
-      int fkpSize = pfkp.size();
+                PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
+                        documentStream, dataStream, pageOffset, tpt,
+                        reconstructPapxTable );
 
-      for (int y = 0; y < fkpSize; y++)
-      {
-    	PAPX papx = pfkp.getPAPX(y);
+                int fkpSize = pfkp.size();
 
-    	if (papx != null)
-    	    _paragraphs.add(papx);
-      }
-    }
+                for ( int y = 0; y < fkpSize; y++ )
+                {
+                    PAPX papx = pfkp.getPAPX( y );
+
+                    if ( papx != null )
+                        _paragraphs.add( papx );
+                }
+            }
+        }
+
+        logger.log( POILogger.DEBUG, "PAPX tables loaded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( _paragraphs.size() ), " elements)" );
+        start = System.currentTimeMillis();
 
         if ( !reconstructPapxTable )
         {
             Collections.sort( _paragraphs );
+
+            logger.log( POILogger.DEBUG, "PAPX sorted in ",
+                    Long.valueOf( System.currentTimeMillis() - start ), " ms" );
             return;
         }
 
@@ -107,7 +125,7 @@ public class PAPBinTable
         {
             SprmBuffer[] sprmBuffers = complexFileTable.getGrpprls();
 
-            // adding CHPX from fast-saved SPRMs
+            // adding PAPX from fast-saved SPRMs
             for ( TextPiece textPiece : tpt.getTextPieces() )
             {
                 PropertyModifier prm = textPiece.getPieceDescriptor().getPrm();
@@ -137,7 +155,7 @@ public class PAPBinTable
 
                 if ( hasPap )
                 {
-                    SprmBuffer newSprmBuffer = new SprmBuffer(2);
+                    SprmBuffer newSprmBuffer = new SprmBuffer( 2 );
                     newSprmBuffer.append( sprmBuffer.toByteArray() );
 
                     PAPX papx = new PAPX( textPiece.getStart(),
@@ -145,6 +163,13 @@ public class PAPBinTable
                     _paragraphs.add( papx );
                 }
             }
+
+            logger.log( POILogger.DEBUG,
+                    "Merged (?) with PAPX from complex file table in ",
+                    Long.valueOf( System.currentTimeMillis() - start ),
+                    " ms (", Integer.valueOf( _paragraphs.size() ),
+                    " elements in total)" );
+            start = System.currentTimeMillis();
         }
 
         // rebuild document paragraphs structure
@@ -170,9 +195,35 @@ public class PAPBinTable
             docText.replace( textPiece.getStart(), textPiece.getStart()
                     + toAppendLength, toAppend );
         }
+        logger.log( POILogger.DEBUG, "Document text rebuilded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( docText.length() ), " chars)" );
+        start = System.currentTimeMillis();
+
+        List<PAPX> oldPapxSortedByEndPos = new ArrayList<PAPX>( _paragraphs );
+        Collections.sort( oldPapxSortedByEndPos,
+                PropertyNode.EndComparator.instance );
+
+        logger.log( POILogger.DEBUG, "PAPX sorted by end position in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
+
+        final Map<PAPX, Integer> papxToFileOrder = new IdentityHashMap<PAPX, Integer>();
+        {
+        int counter = 0;
+        for ( PAPX papx : _paragraphs )
+        {
+            papxToFileOrder.put( papx, Integer.valueOf( counter++ ) );
+        }
+        }
+
+        logger.log( POILogger.DEBUG, "PAPX's order map created in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
 
         List<PAPX> newPapxs = new LinkedList<PAPX>();
         int lastParStart = 0;
+        int lastPapxIndex = 0;
         for ( int charIndex = 0; charIndex < docText.length(); charIndex++ )
         {
             final char c = docText.charAt( charIndex );
@@ -183,20 +234,19 @@ public class PAPBinTable
             final int endExclusive = charIndex + 1;
 
             List<PAPX> papxs = new LinkedList<PAPX>();
-            for ( PAPX papx : _paragraphs )
+            for ( int papxIndex = lastPapxIndex; papxIndex < oldPapxSortedByEndPos
+                    .size(); papxIndex++ )
             {
-                // TODO: Tests, check, etc
-                for ( int f = papx.getEnd() - 1; f <= charIndex; f++ )
+                PAPX papx = oldPapxSortedByEndPos.get( papxIndex );
+
+                assert papx.getEnd() > startInclusive;
+                if ( papx.getEnd() - 1 > charIndex )
                 {
-                    if ( f == charIndex )
-                    {
-                        papxs.add( papx );
-                        break;
-                    }
-                    final char fChar = docText.charAt( charIndex );
-                    if ( fChar == 13 || fChar == 7 || fChar == 12 )
-                        break;
+                    lastPapxIndex = papxIndex;
+                    break;
                 }
+
+                papxs.add( papx );
             }
 
             if ( papxs.size() == 0 )
@@ -225,6 +275,17 @@ public class PAPBinTable
                     continue;
                 }
             }
+
+            // restore file order of PAPX
+            Collections.sort( papxs, new Comparator<PAPX>()
+            {
+                public int compare( PAPX o1, PAPX o2 )
+                {
+                    Integer i1 = papxToFileOrder.get( o1 );
+                    Integer i2 = papxToFileOrder.get( o2 );
+                    return i1.compareTo( i2 );
+                }
+            } );
 
             SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
