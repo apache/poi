@@ -19,8 +19,10 @@ package org.apache.poi.hssf.converter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -58,6 +60,61 @@ public class ExcelToHtmlUtils
             style.append( "text-align: right; " );
             break;
         }
+    }
+
+    /**
+     * Creates a map (i.e. two-dimensional array) filled with ranges. Allow fast
+     * retrieving {@link CellRangeAddress} of any cell, if cell is contained in
+     * range.
+     * 
+     * @see #getMergedRange(CellRangeAddress[][], int, int)
+     */
+    public static CellRangeAddress[][] buildMergedRangesMap( HSSFSheet sheet )
+    {
+        CellRangeAddress[][] mergedRanges = new CellRangeAddress[1][];
+        for ( int m = 0; m < sheet.getNumMergedRegions(); m++ )
+        {
+            final CellRangeAddress cellRangeAddress = sheet.getMergedRegion( m );
+
+            final int requiredHeight = cellRangeAddress.getLastRow() + 1;
+            if ( mergedRanges.length < requiredHeight )
+            {
+                CellRangeAddress[][] newArray = new CellRangeAddress[requiredHeight][];
+                System.arraycopy( mergedRanges, 0, newArray, 0,
+                        mergedRanges.length );
+                mergedRanges = newArray;
+            }
+
+            for ( int r = cellRangeAddress.getFirstRow(); r <= cellRangeAddress
+                    .getLastRow(); r++ )
+            {
+                final int requiredWidth = cellRangeAddress.getLastColumn() + 1;
+
+                CellRangeAddress[] rowMerged = mergedRanges[r];
+                if ( rowMerged == null )
+                {
+                    rowMerged = new CellRangeAddress[requiredWidth];
+                    mergedRanges[r] = rowMerged;
+                }
+                else
+                {
+                    final int rowMergedLength = rowMerged.length;
+                    if ( rowMergedLength < requiredWidth )
+                    {
+                        final CellRangeAddress[] newRow = new CellRangeAddress[requiredWidth];
+                        System.arraycopy( rowMerged, 0, newRow, 0,
+                                rowMergedLength );
+
+                        mergedRanges[r] = newRow;
+                        rowMerged = newRow;
+                    }
+                }
+
+                Arrays.fill( rowMerged, cellRangeAddress.getFirstColumn(),
+                        cellRangeAddress.getLastColumn() + 1, cellRangeAddress );
+            }
+        }
+        return mergedRanges;
     }
 
     public static String getBorderStyle( short xlsBorder )
@@ -111,18 +168,6 @@ public class ExcelToHtmlUtils
         return borderWidth;
     }
 
-    public static CellRangeAddress getCellRangeAddress(
-            CellRangeAddress[][] mergedRanges, int rowNumber, int columnNumber )
-    {
-        CellRangeAddress[] mergedRangeRowInfo = rowNumber < mergedRanges.length ? mergedRanges[rowNumber]
-                : null;
-        CellRangeAddress cellRangeAddress = mergedRangeRowInfo != null
-                && columnNumber < mergedRangeRowInfo.length ? mergedRangeRowInfo[columnNumber]
-                : null;
-
-        return cellRangeAddress;
-    }
-
     public static String getColor( HSSFColor color )
     {
         StringBuilder stringBuilder = new StringBuilder( 7 );
@@ -166,6 +211,25 @@ public class ExcelToHtmlUtils
                 / ( (float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH ) );
 
         return pixels;
+    }
+
+    /**
+     * @param mergedRanges
+     *            map of sheet merged ranges built with
+     *            {@link #buildMergedRangesMap(HSSFSheet)}
+     * @return {@link CellRangeAddress} from map if cell with specified row and
+     *         column numbers contained in found range, <tt>null</tt> otherwise
+     */
+    public static CellRangeAddress getMergedRange(
+            CellRangeAddress[][] mergedRanges, int rowNumber, int columnNumber )
+    {
+        CellRangeAddress[] mergedRangeRowInfo = rowNumber < mergedRanges.length ? mergedRanges[rowNumber]
+                : null;
+        CellRangeAddress cellRangeAddress = mergedRangeRowInfo != null
+                && columnNumber < mergedRangeRowInfo.length ? mergedRangeRowInfo[columnNumber]
+                : null;
+
+        return cellRangeAddress;
     }
 
     static boolean isEmpty( String str )
