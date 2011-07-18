@@ -1219,14 +1219,12 @@ public class SXSSFSheet implements Sheet, Cloneable
 
     private void flushOneRow() throws IOException
     {
-        Map.Entry<Integer,SXSSFRow> firstEntry=_rows.firstEntry();
-        if(firstEntry!=null)
-        {
-            
-            SXSSFRow row=firstEntry.getValue();
-            int rowIndex=firstEntry.getKey().intValue();
-            _writer.writeRow(rowIndex,row);
-            _rows.remove(firstEntry.getKey());
+        Integer firstRowNum = _rows.firstKey();
+        if (firstRowNum!=null) {
+            int rowIndex = firstRowNum.intValue();
+            SXSSFRow row = _rows.get(firstRowNum);
+            _writer.writeRow(rowIndex, row);
+            _rows.remove(firstRowNum);
         }
     }
     public void changeRowNum(SXSSFRow row, int newRowNum)
