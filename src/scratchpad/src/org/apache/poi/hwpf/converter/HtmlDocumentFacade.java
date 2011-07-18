@@ -16,17 +16,25 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 public class HtmlDocumentFacade
 {
-
     protected final Element body;
     protected final Document document;
     protected final Element head;
     protected final Element html;
+
+    /**
+     * Map from tag name, to map linking known styles and css class names
+     */
+    private Map<String, Map<String, String>> stylesheet = new LinkedHashMap<String, Map<String, String>>();
+    private Element stylesheetElement;
 
     protected Element title;
     protected Text titleText;
@@ -40,11 +48,17 @@ public class HtmlDocumentFacade
 
         body = document.createElement( "body" );
         head = document.createElement( "head" );
+        stylesheetElement = document.createElement( "style" );
+        stylesheetElement.setAttribute( "type", "text/css" );
 
         html.appendChild( head );
         html.appendChild( body );
+        head.appendChild( stylesheetElement );
 
-        body.setAttribute( "style", "white-space-collapsing: preserve; " );
+        body.setAttribute(
+                "class",
+                getOrCreateCssClass( "body", "b",
+                        "white-space-collapsing: preserve; " ) );
     }
 
     public void addAuthor( String value )
@@ -68,6 +82,11 @@ public class HtmlDocumentFacade
         meta.setAttribute( "name", name );
         meta.setAttribute( "content", value );
         head.appendChild( meta );
+    }
+
+    public Element createBlock()
+    {
+        return document.createElement( "div" );
     }
 
     public Element createHeader1()
@@ -167,6 +186,22 @@ public class HtmlDocumentFacade
         return head;
     }
 
+    public String getOrCreateCssClass( String tagName, String classNamePrefix,
+            String style )
+    {
+        if ( !stylesheet.containsKey( tagName ) )
+            stylesheet.put( tagName, new LinkedHashMap<String, String>( 1 ) );
+
+        Map<String, String> styleToClassName = stylesheet.get( tagName );
+        String knownClass = styleToClassName.get( style );
+        if ( knownClass != null )
+            return knownClass;
+
+        String newClassName = classNamePrefix + ( styleToClassName.size() + 1 );
+        styleToClassName.put( style, newClassName );
+        return newClassName;
+    }
+
     public String getTitle()
     {
         if ( title == null )
@@ -193,5 +228,25 @@ public class HtmlDocumentFacade
         }
 
         this.titleText.setData( titleText );
+    }
+
+    public void updateStylesheet()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for ( Map.Entry<String, Map<String, String>> byTag : stylesheet
+                .entrySet() )
+        {
+            String tagName = byTag.getKey();
+            for ( Map.Entry<String, String> byStyle : byTag.getValue()
+                    .entrySet() )
+            {
+                String style = byStyle.getKey();
+                String className = byStyle.getValue();
+
+                stringBuilder.append( tagName + "." + className + "{" + style
+                        + "}\n" );
+            }
+        }
+        stylesheetElement.setTextContent( stringBuilder.toString() );
     }
 }
