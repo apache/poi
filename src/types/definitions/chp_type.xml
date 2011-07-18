@@ -240,9 +240,9 @@
             description="Index to character style descriptor in the stylesheet that tags this run of text. When istd is istdNormalChar (10 decimal), characters in run are not affected by a character style. If chp.istd contains any other value, chpx of the specified character style are applied to CHP for this run before any other exceptional properties are applied."/>
 
         <field type="int" size="2" name="idslRMReason"
-            description="An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code"/>
+            description="An index to strings displayed as reasons for actions taken by Word's AutoFormat code"/>
         <field type="int" size="2" name="idslReasonDel"
-            description="An index to strings displayed as reasons for actions taken by Word‘s AutoFormat code"/>
+            description="An index to strings displayed as reasons for actions taken by Word's AutoFormat code"/>
 
         <field type="int" size="2" name="cpg" description="Code page of run in pre-Unicode files"/>
 
