@@ -35,7 +35,7 @@
             <bit number="05" mask="0x00000020" name="fSmallCaps" description="Displayed with small caps"/>
             <bit number="06" mask="0x00000040" name="fCaps" description="Displayed with caps"/>
             <bit number="07" mask="0x00000080" name="fVanish"
-                description="text has ―hidden‖ format, and is not displayed unless fPagHidden is set in the DOP"/>
+                description="text has hidden format, and is not displayed unless fPagHidden is set in the DOP"/>
             <bit number="08" mask="0x00000100" name="fRMark"
                 description="text is newly typed since the last time revision marks have been accepted and will be displayed with an underline when revision marked text is to be displayed"/>
             <bit number="09" mask="0x00000200" name="fSpec" description="Character is a Word special character"/>
@@ -165,7 +165,7 @@
             description="Collection properties represented by itypFELayout and copt (East Asian layout properties)">
             <bit number="0" mask="0x00ff" name="itypFELayout"/>
             <bit number="1" mask="0x0100" name="fTNY"
-                description="Tatenakayoko: Horizontal–in-vertical (range of text in a direction perpendicular to the text flow) is used"/>
+                description="Tatenakayoko: Horizontal-in-vertical (range of text in a direction perpendicular to the text flow) is used"/>
             <bit number="2" mask="0x0200" name="fWarichu"
                 description="Two lines in one (text in the group is displayed as two half-height lines within a line)"/>
             <bit number="3" mask="0x0400" name="fKumimoji" description="combine characters"/>

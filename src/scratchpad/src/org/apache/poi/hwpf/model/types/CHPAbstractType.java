@@ -1710,7 +1710,7 @@ public abstract class CHPAbstractType
 
     /**
      * Sets the fVanish field value.
-     * text has ―hidden‖ format, and is not displayed unless fPagHidden is set in the DOP
+     * text has hidden format, and is not displayed unless fPagHidden is set in the DOP
      */
     public void setFVanish( boolean value )
     {
@@ -1720,7 +1720,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * text has ―hidden‖ format, and is not displayed unless fPagHidden is set in the DOP
+     * text has -hidden format, and is not displayed unless fPagHidden is set in the DOP
      * @return  the fVanish field value.
      */
     public boolean isFVanish()
@@ -2088,7 +2088,7 @@ public abstract class CHPAbstractType
 
     /**
      * Sets the fTNY field value.
-     * Tatenakayoko: Horizontal–in-vertical (range of text in a direction perpendicular to the text flow) is used
+     * Tatenakayoko: Horizontal-in-vertical (range of text in a direction perpendicular to the text flow) is used
      */
     public void setFTNY( boolean value )
     {
@@ -2098,7 +2098,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * Tatenakayoko: Horizontal–in-vertical (range of text in a direction perpendicular to the text flow) is used
+     * Tatenakayoko: Horizontal-in-vertical (range of text in a direction perpendicular to the text flow) is used
      * @return  the fTNY field value.
      */
     public boolean isFTNY()
