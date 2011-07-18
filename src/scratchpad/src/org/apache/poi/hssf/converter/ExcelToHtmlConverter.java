@@ -219,9 +219,9 @@ public class ExcelToHtmlConverter
             return;
 
         StringBuilder borderStyle = new StringBuilder();
-        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
-        borderStyle.append( ' ' );
         borderStyle.append( ExcelToHtmlUtils.getBorderWidth( xlsBorder ) );
+        borderStyle.append( ' ' );
+        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
 
         final HSSFColor color = workbook.getCustomPalette().getColor(
                 borderColor );
@@ -231,7 +231,7 @@ public class ExcelToHtmlConverter
             borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
         }
 
-        style.append( type + "-border: " + borderStyle + "; " );
+        style.append( "border-" + type + ": " + borderStyle + "; " );
     }
 
     void buildStyle_font( HSSFWorkbook workbook, StringBuilder style,
@@ -574,6 +574,8 @@ public class ExcelToHtmlConverter
             return;
 
         Element table = htmlDocumentFacade.createTable();
+        table.setAttribute( "class", "t" );
+
         Element tableBody = htmlDocumentFacade.createTableBody();
 
         final List<Element> emptyRowElements = new ArrayList<Element>(
@@ -648,6 +650,9 @@ public class ExcelToHtmlConverter
             processSheet( workbook, sheet );
         }
 
+        stylesElement
+                .appendChild( htmlDocumentFacade
+                        .createText( "table.t{border-collapse:collapse;border-spacing:0;}\n" ) );
         if ( !cssStyleToClass.isEmpty() )
         {
             for ( Map.Entry<String, String> entry : cssStyleToClass.entrySet() )
