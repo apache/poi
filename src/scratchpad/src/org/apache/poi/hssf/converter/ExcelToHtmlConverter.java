@@ -127,7 +127,11 @@ public class ExcelToHtmlConverter
 
     private final HSSFDataFormatter _formatter = new HSSFDataFormatter();
 
-    private Map<String, String> cssStyleToClass = new LinkedHashMap<String, String>();
+    private String cssClassContainerCell = null;
+
+    private String cssClassContainerDiv = null;
+
+    private final String cssClassTable;
 
     private Map<Short, String> excelStyleToClass = new LinkedHashMap<Short, String>();
 
@@ -143,17 +147,13 @@ public class ExcelToHtmlConverter
 
     private boolean outputRowNumbers = true;
 
-    private final Element stylesElement;
-
     private boolean useDivsToSpan = false;
 
     public ExcelToHtmlConverter( Document doc )
     {
         htmlDocumentFacade = new HtmlDocumentFacade( doc );
-
-        stylesElement = doc.createElement( "style" );
-        stylesElement.setAttribute( "type", "text/css" );
-        htmlDocumentFacade.getHead().appendChild( stylesElement );
+        cssClassTable = htmlDocumentFacade.getOrCreateCssClass( "table", "t",
+                "border-collapse:collapse;border-spacing:0;" );
     }
 
     protected String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
@@ -279,25 +279,17 @@ public class ExcelToHtmlConverter
     protected String getStyleClassName( HSSFWorkbook workbook,
             HSSFCellStyle cellStyle )
     {
-        String knownClass = excelStyleToClass.get( Short.valueOf( cellStyle
-                .getIndex() ) );
+        final Short cellStyleKey = Short.valueOf( cellStyle.getIndex() );
+
+        String knownClass = excelStyleToClass.get( cellStyleKey );
         if ( knownClass != null )
             return knownClass;
 
         String cssStyle = buildStyle( workbook, cellStyle );
-        knownClass = cssStyleToClass.get( cssStyle );
-        if ( knownClass != null )
-        {
-            excelStyleToClass.put( Short.valueOf( cellStyle.getIndex() ),
-                    knownClass );
-            return knownClass;
-        }
-
-        knownClass = "c" + cellStyle.getIndex();
-        cssStyleToClass.put( cssStyle, knownClass );
-        excelStyleToClass.put( Short.valueOf( cellStyle.getIndex() ),
-                knownClass );
-        return knownClass;
+        String cssClass = htmlDocumentFacade.getOrCreateCssClass( "td", "c",
+                cssStyle );
+        excelStyleToClass.put( cellStyleKey, cssClass );
+        return cssClass;
     }
 
     public boolean isOutputColumnHeaders()
@@ -467,8 +459,17 @@ public class ExcelToHtmlConverter
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
-            tableCellElement.setAttribute( "class",
-                    getStyleClassName( workbook, cellStyle ) );
+            String mainCssClass = getStyleClassName( workbook, cellStyle );
+            if ( !noText && isUseDivsToSpan() )
+            {
+                tableCellElement.setAttribute( "class", mainCssClass + " "
+                        + cssClassContainerCell );
+            }
+            else
+            {
+                tableCellElement.setAttribute( "class", mainCssClass );
+            }
+
             if ( noText )
             {
                 /*
@@ -500,14 +501,10 @@ public class ExcelToHtmlConverter
 
         if ( !noText && isUseDivsToSpan() )
         {
-            tableCellElement.setAttribute( "style",
-                    "padding:0;margin:0;align:left;vertical-align:top;" );
-            Element outerDiv = htmlDocumentFacade.getDocument().createElement(
-                    "div" );
-            outerDiv.setAttribute( "style", "position:relative;" );
+            Element outerDiv = htmlDocumentFacade.createBlock();
+            outerDiv.setAttribute( "class", this.cssClassContainerDiv );
 
-            Element innerDiv = htmlDocumentFacade.getDocument().createElement(
-                    "div" );
+            Element innerDiv = htmlDocumentFacade.createBlock();
             StringBuilder innerDivStyle = new StringBuilder();
             innerDivStyle.append( "position:absolute;min-width:" );
             innerDivStyle.append( normalWidthPx );
@@ -523,7 +520,11 @@ public class ExcelToHtmlConverter
             innerDivStyle.append( "pt;white-space:nowrap;" );
             ExcelToHtmlUtils.appendAlign( innerDivStyle,
                     cellStyle.getAlignment() );
-            innerDiv.setAttribute( "style", innerDivStyle.toString() );
+            innerDiv.setAttribute(
+                    "class",
+                    htmlDocumentFacade.getOrCreateCssClass(
+                            outerDiv.getTagName(), "d",
+                            innerDivStyle.toString() ) );
 
             innerDiv.appendChild( text );
             outerDiv.appendChild( innerDiv );
@@ -712,7 +713,7 @@ public class ExcelToHtmlConverter
             return;
 
         Element table = htmlDocumentFacade.createTable();
-        table.setAttribute( "class", "t" );
+        table.setAttribute( "class", cssClassTable );
 
         Element tableBody = htmlDocumentFacade.createTableBody();
 
@@ -730,8 +731,11 @@ public class ExcelToHtmlConverter
                 continue;
 
             Element tableRowElement = htmlDocumentFacade.createTableRow();
-            tableRowElement.setAttribute( "style",
-                    "height:" + ( row.getHeight() / 20f ) + "pt;" );
+            tableRowElement.setAttribute(
+                    "class",
+                    htmlDocumentFacade.getOrCreateCssClass(
+                            tableRowElement.getTagName(), "r", "height:"
+                                    + ( row.getHeight() / 20f ) + "pt;" ) );
 
             int maxRowColumnNumber = processRow( workbook, sheet, row,
                     tableRowElement );
@@ -784,23 +788,23 @@ public class ExcelToHtmlConverter
             processDocumentInformation( summaryInformation );
         }
 
+        if ( isUseDivsToSpan() )
+        {
+            // prepare CSS classes for later usage
+            this.cssClassContainerCell = htmlDocumentFacade
+                    .getOrCreateCssClass( "td", "c",
+                            "padding:0;margin:0;align:left;vertical-align:top;" );
+            this.cssClassContainerDiv = htmlDocumentFacade.getOrCreateCssClass(
+                    "div", "d", "position:relative;" );
+        }
+
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
         {
             HSSFSheet sheet = workbook.getSheetAt( s );
             processSheet( workbook, sheet );
         }
 
-        stylesElement
-                .appendChild( htmlDocumentFacade
-                        .createText( "table.t{border-collapse:collapse;border-spacing:0;}\n" ) );
-        if ( !cssStyleToClass.isEmpty() )
-        {
-            for ( Map.Entry<String, String> entry : cssStyleToClass.entrySet() )
-            {
-                stylesElement.appendChild( htmlDocumentFacade.createText( "td."
-                        + entry.getValue() + "{" + entry.getKey() + "}\n" ) );
-            }
-        }
+        htmlDocumentFacade.updateStylesheet();
     }
 
     public void setOutputColumnHeaders( boolean outputColumnHeaders )
