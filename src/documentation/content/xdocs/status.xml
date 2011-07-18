@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51524 - PapBinTable constructor is slow (regression)</action>
            <action dev="poi-developers" type="fix">51514 - allow HSSFObjectData to work with both POIFS and NPOIFS</action>
            <action dev="poi-developers" type="fix">51514 - avoid NPE when copying nodes from one HSSF workbook to a new one, when opened from NPOIFS</action>
            <action dev="poi-developers" type="fix">51504 - avoid NPE when DefaultRowHeight or DefaultColumnWidth records are missing</action>
