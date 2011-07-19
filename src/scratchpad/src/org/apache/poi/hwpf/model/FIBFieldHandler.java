@@ -30,6 +30,7 @@ import org.apache.poi.util.POILogger;
 
 public final class FIBFieldHandler
 {
+    // 154 == 0x009A; 158 == 0x009E
   public static final int STSHFORIG = 0;
   public static final int STSHF = 1;
   public static final int PLCFFNDREF = 2;
@@ -48,10 +49,13 @@ public final class FIBFieldHandler
   public static final int STTBFFFN = 15;
   public static final int PLCFFLDMOM = 16;
   public static final int PLCFFLDHDR = 17;
+  // 298 == 0x12A; 302 == 0x12E
   public static final int PLCFFLDFTN = 18;
+  // 306 == 0x132; 310 == 0x0136
   public static final int PLCFFLDATN = 19;
   public static final int PLCFFLDMCR = 20;
   public static final int STTBFBKMK = 21;
+  // 330 == 0x014A; 334 == 0x014E
   public static final int PLCFBKF = 22;
   public static final int PLCFBKL = 23;
   public static final int CMDS = 24;
@@ -70,24 +74,29 @@ public final class FIBFieldHandler
   public static final int STTBFATNBKMK = 37;
   public static final int PLCFDOAMOM = 38;
   public static final int PLCDOAHDR = 39;
-  public static final int PLCSPAMOM = 40;
+    // 474 == 0x01DA; 478 == 0x01DE
+    public static final int PLCSPAMOM = 40;
   public static final int PLCSPAHDR = 41;
-  public static final int PLCFATNBKF = 42;
-  public static final int PLCFATNBKL = 43;
-  public static final int PMS = 44;
+    public static final int PLCFATNBKF = 42;
+    // 498 == 0x01F2; 502 == 0x01F6
+    public static final int PLCFATNBKL = 43;
+    // 506 == 0x01FA; 510 == 0x01FE
+    public static final int PMS = 44;
   public static final int FORMFLDSTTBS = 45;
   public static final int PLCFENDREF = 46;
   public static final int PLCFENDTXT = 47;
   public static final int PLCFFLDEDN = 48;
   public static final int PLCFPGDEDN = 49;
-  public static final int DGGINFO = 50;
+    // 554 == 0x022A; 558 == 0x022E -- long
+    public static final int DGGINFO = 50;
   public static final int STTBFRMARK = 51;
   public static final int STTBCAPTION = 52;
   public static final int STTBAUTOCAPTION = 53;
   public static final int PLCFWKB = 54;
   public static final int PLCFSPL = 55;
   public static final int PLCFTXBXTXT = 56;
-  public static final int PLCFFLDTXBX = 57;//validated
+    // 610 -- 0x0262; 614 == 0x0266
+    public static final int PLCFFLDTXBX = 57;// validated
   public static final int PLCFHDRTXBXTXT = 58;
   public static final int PLCFFLDHDRTXBX = 59;
   public static final int STWUSER = 60;
@@ -132,11 +141,11 @@ public final class FIBFieldHandler
   private int[] _fields;
 
 
-  public FIBFieldHandler(byte[] mainStream, int offset, byte[] tableStream,
+  public FIBFieldHandler(byte[] mainStream, int startOffset, byte[] tableStream,
                          HashSet<Integer> offsetList, boolean areKnown)
   {
-    int numFields = LittleEndian.getShort(mainStream, offset);
-    offset += LittleEndian.SHORT_SIZE;
+    int numFields = LittleEndian.getShort(mainStream, startOffset);
+    int offset = startOffset + LittleEndian.SHORT_SIZE;
     _fields = new int[numFields * 2];
 
     for (int x = 0; x < numFields; x++)

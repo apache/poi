@@ -150,17 +150,25 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     <xsl:call-template name="indent"/>
     <xsl:text>}</xsl:text>
     <xsl:call-template name="linebreak"/>
+    <xsl:text>
     /**
-     * Size of record (exluding 4 byte header)
+     * Size of record
      */
     public static int getSize()
     {
-<xsl:variable name="fieldIterator" select="field:new()"/>
-<xsl:text>        return 4 + </xsl:text>
-<xsl:for-each select="//fields/field">
-    <xsl:value-of select="field:calcSize($fieldIterator,position(),@name,@size,@type)"/>
-</xsl:for-each>;
-    }
+</xsl:text>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>return 0</xsl:text>
+    <xsl:variable name="fieldIterator" select="field:new()"/>
+    <xsl:for-each select="//fields/field">
+        <xsl:value-of select="field:calcSize($fieldIterator,position(),@name,@size,@type)"/>
+    </xsl:for-each>
+    <xsl:text>;</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
 </xsl:if>
 
     <xsl:call-template name="linebreak"/>
@@ -203,8 +211,6 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="recutil:getBitFieldType(@name, @mask, ../@type)"/> value )
     {
         <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getBitFieldSet(@name, @mask, ../@type, recutil:getFieldName($fieldNum,../@name,0))"/>;
-
-        <!--<xsl:value-of select="recutil:getFieldName(@name,0)"/>.setValue(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>, value);-->
     }
 
     /**
@@ -214,13 +220,19 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     public <xsl:value-of select="recutil:getBitFieldFunction(@name,@mask,../@type, 'true')"/>()
     {
         return <xsl:value-of select="recutil:getBitFieldGet(@name, @mask,../@type, recutil:getFieldName($fieldNum,../@name,0))"/>
-        <!--return <xsl:value-of select="recutil:getFieldName(@name,0)"/>.isSet(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>);-->
     }
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >        private static BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
-</xsl:template>
+    <xsl:template match="bit">
+        <xsl:call-template name="indent"/>
+        <xsl:text>/**/private static BitField </xsl:text>
+        <xsl:value-of select="@name"/>
+        <xsl:text> = new BitField(</xsl:text>
+        <xsl:value-of select="@mask"/>
+        <xsl:text>);</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:template>
 
     <xsl:template match="const">
         <xsl:if test="@description">
