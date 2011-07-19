@@ -26,7 +26,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
 {
     public static void addBold( final boolean bold, StringBuilder style )
     {
-        style.append( "font-weight: " + ( bold ? "bold" : "normal" ) + ";" );
+        style.append( "font-weight:" + ( bold ? "bold" : "normal" ) + ";" );
     }
 
     public static void addBorder( BorderCode borderCode, String where,
@@ -37,21 +37,21 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
         if ( isEmpty( where ) )
         {
-            style.append( "border-style: " + getBorderType( borderCode ) + "; " );
-            style.append( "border-color: " + getColor( borderCode.getColor() )
-                    + "; " );
-            style.append( "border-width: " + getBorderWidth( borderCode )
-                    + "; " );
+            style.append( "border:" );
         }
         else
         {
-            style.append( "border-" + where + "-style: "
-                    + getBorderType( borderCode ) + "; " );
-            style.append( "border-" + where + "-color: "
-                    + getColor( borderCode.getColor() ) + "; " );
-            style.append( "border-" + where + "-width: "
-                    + getBorderWidth( borderCode ) + "; " );
+            style.append( "border-" );
+            style.append( where );
         }
+
+        style.append( ":" );
+        style.append( getBorderWidth( borderCode ) );
+        style.append( ' ' );
+        style.append( getBorderType( borderCode ) );
+        style.append( ' ' );
+        style.append( getColor( borderCode.getColor() ) );
+        style.append( ';' );
     }
 
     public static void addCharactersProperties(
@@ -61,43 +61,43 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
         if ( characterRun.isCapitalized() )
         {
-            style.append( "text-transform: uppercase; " );
+            style.append( "text-transform:uppercase;" );
         }
         if ( characterRun.isHighlighted() )
         {
-            style.append( "background-color: "
-                    + getColor( characterRun.getHighlightedColor() ) + "; " );
+            style.append( "background-color:"
+                    + getColor( characterRun.getHighlightedColor() ) + ";" );
         }
         if ( characterRun.isStrikeThrough() )
         {
-            style.append( "text-decoration: line-through; " );
+            style.append( "text-decoration:line-through;" );
         }
         if ( characterRun.isShadowed() )
         {
-            style.append( "text-shadow: " + characterRun.getFontSize() / 24
-                    + "pt; " );
+            style.append( "text-shadow:" + characterRun.getFontSize() / 24
+                    + "pt;" );
         }
         if ( characterRun.isSmallCaps() )
         {
-            style.append( "font-variant: small-caps; " );
+            style.append( "font-variant:small-caps;" );
         }
         if ( characterRun.getSubSuperScriptIndex() == 1 )
         {
-            style.append( "baseline-shift: super; " );
-            style.append( "font-size: smaller; " );
+            style.append( "baseline-shift:super;" );
+            style.append( "font-size:smaller;" );
         }
         if ( characterRun.getSubSuperScriptIndex() == 2 )
         {
-            style.append( "baseline-shift: sub; " );
-            style.append( "font-size: smaller; " );
+            style.append( "baseline-shift:sub;" );
+            style.append( "font-size:smaller;" );
         }
         if ( characterRun.getUnderlineCode() > 0 )
         {
-            style.append( "text-decoration: underline; " );
+            style.append( "text-decoration:underline;" );
         }
         if ( characterRun.isVanished() )
         {
-            style.append( "visibility: hidden; " );
+            style.append( "visibility:hidden;" );
         }
     }
 
@@ -107,12 +107,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( isEmpty( fontFamily ) )
             return;
 
-        style.append( "font-family: " + fontFamily + "; " );
+        style.append( "font-family:" + fontFamily + ";" );
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )
     {
-        style.append( "font-size: " + fontSize + "pt; " );
+        style.append( "font-size:" + fontSize + "pt;" );
     }
 
     public static void addIndent( Paragraph paragraph, StringBuilder style )
@@ -130,7 +130,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( twipsValue == 0 )
             return;
 
-        style.append( cssName + ": " + ( twipsValue / TWIPS_PER_PT ) + "pt; " );
+        style.append( cssName + ":" + ( twipsValue / TWIPS_PER_PT ) + "pt;" );
     }
 
     public static void addJustification( Paragraph paragraph,
@@ -138,7 +138,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
     {
         String justification = getJustification( paragraph.getJustification() );
         if ( isNotEmpty( justification ) )
-            style.append( "text-align: " + justification + "; " );
+            style.append( "text-align:" + justification + ";" );
     }
 
     public static void addParagraphProperties( Paragraph paragraph,
@@ -154,20 +154,20 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
         if ( paragraph.pageBreakBefore() )
         {
-            style.append( "break-before: page; " );
+            style.append( "break-before:page;" );
         }
 
-        style.append( "hyphenate: "
-                + ( paragraph.isAutoHyphenated() ? "auto" : "none" ) + "; " );
+        style.append( "hyphenate:"
+                + ( paragraph.isAutoHyphenated() ? "auto" : "none" ) + ";" );
 
         if ( paragraph.keepOnPage() )
         {
-            style.append( "keep-together.within-page: always; " );
+            style.append( "keep-together.within-page:always;" );
         }
 
         if ( paragraph.keepWithNext() )
         {
-            style.append( "keep-with-next.within-page: always; " );
+            style.append( "keep-with-next.within-page:always;" );
         }
     }
 
@@ -175,12 +175,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
             TableCell tableCell, boolean toppest, boolean bottomest,
             boolean leftest, boolean rightest, StringBuilder style )
     {
-        style.append( "width: " + ( tableCell.getWidth() / TWIPS_PER_INCH )
-                + "in; " );
-        style.append( "padding-start: "
-                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in; " );
-        style.append( "padding-end: "
-                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in; " );
+        style.append( "width:" + ( tableCell.getWidth() / TWIPS_PER_INCH )
+                + "in;" );
+        style.append( "padding-start:"
+                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in;" );
+        style.append( "padding-end:"
+                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in;" );
 
         BorderCode top = tableCell.getBrcTop() != null
                 && tableCell.getBrcTop().getBorderType() != 0 ? tableCell
@@ -211,12 +211,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
     {
         if ( tableRow.getRowHeight() > 0 )
         {
-            style.append( "height: "
-                    + ( tableRow.getRowHeight() / TWIPS_PER_INCH ) + "in; " );
+            style.append( "height:"
+                    + ( tableRow.getRowHeight() / TWIPS_PER_INCH ) + "in;" );
         }
         if ( !tableRow.cantSplit() )
         {
-            style.append( "keep-together: always; " );
+            style.append( "keep-together:always;" );
         }
     }
 

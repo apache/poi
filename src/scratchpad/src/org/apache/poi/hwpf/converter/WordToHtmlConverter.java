@@ -70,20 +70,20 @@ public class WordToHtmlConverter extends AbstractWordConverter
         float bottomMargin = section.getMarginBottom() / TWIPS_PER_INCH;
 
         String style = "margin: " + topMargin + "in " + rightMargin + "in "
-                + bottomMargin + "in " + leftMargin + "in; ";
+                + bottomMargin + "in " + leftMargin + "in;";
 
         if ( section.getNumColumns() > 1 )
         {
-            style += "column-count: " + ( section.getNumColumns() ) + "; ";
+            style += "column-count: " + ( section.getNumColumns() ) + ";";
             if ( section.isColumnsEvenlySpaced() )
             {
                 float distance = section.getDistanceBetweenColumns()
                         / TWIPS_PER_INCH;
-                style += "column-gap: " + distance + "in; ";
+                style += "column-gap: " + distance + "in;";
             }
             else
             {
-                style += "column-gap: 0.25in; ";
+                style += "column-gap: 0.25in;";
             }
         }
         return style;
@@ -160,6 +160,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     public Document getDocument()
     {
+        htmlDocumentFacade.updateStylesheet();
         return htmlDocumentFacade.getDocument();
     }
 
@@ -178,24 +179,25 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 && !WordToHtmlUtils.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
-            style.append( "font-family: " + triplet.fontName + "; " );
+            style.append( "font-family:" + triplet.fontName + ";" );
         }
         if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
         {
-            style.append( "font-size: " + characterRun.getFontSize() / 2 + "; " );
+            style.append( "font-size:" + characterRun.getFontSize() / 2 + "pt;" );
         }
         if ( triplet.bold )
         {
-            style.append( "font-weight: bold; " );
+            style.append( "font-weight:bold;" );
         }
         if ( triplet.italic )
         {
-            style.append( "font-style: italic; " );
+            style.append( "font-style:italic;" );
         }
 
         WordToHtmlUtils.addCharactersProperties( characterRun, style );
         if ( style.length() != 0 )
-            span.setAttribute( "style", style.toString() );
+            span.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
+                    span.getTagName(), "s", style.toString() ) );
 
         Text textNode = htmlDocumentFacade.createText( text );
         span.appendChild( textNode );
@@ -312,22 +314,28 @@ public class WordToHtmlConverter extends AbstractWordConverter
             float visibleHeight = Math.max( 0, imageHeight - cropTop
                     - cropBottom );
 
-            root = htmlDocumentFacade.document.createElement( "div" );
-            root.setAttribute( "style", "vertical-align:text-bottom;width:"
-                    + visibleWidth + "in;height:" + visibleHeight + "in;" );
+            root = htmlDocumentFacade.createBlock();
+            root.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
+                    root.getTagName(), "d", "vertical-align:text-bottom;width:"
+                            + visibleWidth + "in;height:" + visibleHeight
+                            + "in;" ) );
 
             // complex
-            Element inner = htmlDocumentFacade.document.createElement( "div" );
-            inner.setAttribute( "style", "position:relative;width:"
-                    + visibleWidth + "in;height:" + visibleHeight
-                    + "in;overflow:hidden;" );
+            Element inner = htmlDocumentFacade.createBlock();
+            inner.setAttribute( "class", htmlDocumentFacade
+                    .getOrCreateCssClass( inner.getTagName(), "d",
+                            "position:relative;width:" + visibleWidth
+                                    + "in;height:" + visibleHeight
+                                    + "in;overflow:hidden;" ) );
             root.appendChild( inner );
 
             Element image = htmlDocumentFacade.document.createElement( "img" );
             image.setAttribute( "src", imageSourcePath );
-            image.setAttribute( "style", "position:absolute;left:-" + cropLeft
-                    + ";top:-" + cropTop + ";width:" + imageWidth
-                    + "in;height:" + imageHeight + "in;" );
+            image.setAttribute( "class", htmlDocumentFacade
+                    .getOrCreateCssClass( image.getTagName(), "i",
+                            "position:absolute;left:-" + cropLeft + ";top:-"
+                                    + cropTop + ";width:" + imageWidth
+                                    + "in;height:" + imageHeight + "in;" ) );
             inner.appendChild( image );
 
             style.append( "overflow:hidden;" );
@@ -414,7 +422,10 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
 
         if ( style.length() > 0 )
-            pElement.setAttribute( "style", style.toString() );
+            pElement.setAttribute(
+                    "class",
+                    htmlDocumentFacade.getOrCreateCssClass(
+                            pElement.getTagName(), "p", style.toString() ) );
 
         return;
     }
@@ -422,8 +433,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processSection( HWPFDocumentCore wordDocument,
             Section section, int sectionCounter )
     {
-        Element div = htmlDocumentFacade.document.createElement( "div" );
-        div.setAttribute( "style", getSectionStyle( section ) );
+        Element div = htmlDocumentFacade.createBlock();
+        div.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
+                div.getTagName(), "d", getSectionStyle( section ) ) );
         htmlDocumentFacade.body.appendChild( div );
 
         processSectionParagraphes( wordDocument, div, section,
@@ -434,8 +446,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processSingleSection( HWPFDocumentCore wordDocument,
             Section section )
     {
-        htmlDocumentFacade.body.setAttribute( "style",
-                getSectionStyle( section ) );
+        htmlDocumentFacade.body
+                .setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
+                        "body", "b", getSectionStyle( section ) ) );
 
         processSectionParagraphes( wordDocument, htmlDocumentFacade.body,
                 section, Integer.MIN_VALUE );
@@ -538,15 +551,19 @@ public class WordToHtmlConverter extends AbstractWordConverter
                             .createParagraph() );
                 }
                 if ( tableCellStyle.length() > 0 )
-                    tableCellElement.setAttribute( "style",
-                            tableCellStyle.toString() );
+                    tableCellElement.setAttribute( "class", htmlDocumentFacade
+                            .getOrCreateCssClass(
+                                    tableCellElement.getTagName(),
+                                    tableCellElement.getTagName(),
+                                    tableCellStyle.toString() ) );
 
                 tableRowElement.appendChild( tableCellElement );
             }
 
             if ( tableRowStyle.length() > 0 )
-                tableRowElement
-                        .setAttribute( "style", tableRowStyle.toString() );
+                tableRowElement.setAttribute( "class", htmlDocumentFacade
+                        .getOrCreateCssClass( "tr", "r",
+                                tableRowStyle.toString() ) );
 
             if ( tableRow.isTableHeader() )
             {
