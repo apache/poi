@@ -36,6 +36,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
+import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
@@ -101,7 +102,8 @@ public final class HWPFLister
                             + "\t\t[--chpx] [--chpxProperties] [--chpxSprms]\n"
                             + "\t\t[--papx] [--papxProperties]\n"
                             + "\t\t[--paragraphs] [--paragraphsSprms] [--paragraphsText]\n"
-                            + "\t\t[--pictures]\n" + "\t\t[--writereadback]\n" );
+                            + "\t\t[--fields]\n" + "\t\t[--pictures]\n"
+                            + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
 
@@ -119,6 +121,7 @@ public final class HWPFLister
         boolean outputPapx = false;
         boolean outputPapxProperties = false;
 
+        boolean outputFields = false;
         boolean outputPictures = false;
 
         boolean writereadback = false;
@@ -149,6 +152,8 @@ public final class HWPFLister
             if ( "--papxProperties".equals( arg ) )
                 outputPapxProperties = true;
 
+            if ( "--fields".equals( arg ) )
+                outputFields = true;
             if ( "--pictures".equals( arg ) )
                 outputPictures = true;
 
@@ -189,6 +194,12 @@ public final class HWPFLister
             System.out.println( "== DOM paragraphs ==" );
             lister.dumpParagraphsDom( outputParagraphsSprms, outputPapx,
                     outputParagraphsText );
+        }
+
+        if ( outputFields )
+        {
+            System.out.println( "== FIELDS ==" );
+            lister.dumpFields();
         }
 
         if ( outputPictures )
@@ -304,6 +315,27 @@ public final class HWPFLister
     {
         FileInformationBlock fib = _doc.getFileInformationBlock();
         System.out.println( fib );
+    }
+
+    private void dumpFields()
+    {
+        if ( !( _doc instanceof HWPFDocument ) )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+
+        HWPFDocument document = (HWPFDocument) _doc;
+
+        for ( int i = FieldsTables.PLCFFLDATN; i <= FieldsTables.PLCFFLDTXBX; i++ )
+        {
+            System.out.println( "=== Document part: " + i + " ===" );
+            for ( org.apache.poi.hwpf.model.Field field : document
+                    .getFieldsTables().getFields( i ) )
+            {
+                System.out.println( field );
+            }
+        }
     }
 
     public void dumpPapx( boolean withProperties ) throws Exception
