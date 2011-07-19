@@ -92,7 +92,7 @@ public class TestWordToHtmlConverter extends TestCase
     public void testAIOOBTap() throws Exception
     {
         String result = getHtmlText( "AIOOB-Tap.doc" );
-        assertContains( result.substring( 0, 2000 ), "<table>" );
+        assertContains( result.substring( 0, 6000 ), "<table>" );
     }
 
     public void testBug33519() throws Exception
