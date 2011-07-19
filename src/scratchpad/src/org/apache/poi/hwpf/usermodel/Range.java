@@ -24,13 +24,13 @@ import java.util.NoSuchElementException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.CPSplitCalculator;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.SEPX;
 import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
@@ -1044,52 +1044,68 @@ public class Range { // TODO -instantiable superclass
 		_sectionRangeFound = false;
 	}
 
-	/**
-	 * Adjust the value of the various FIB character count fields, eg
-	 * <code>FIB.CCPText</code> after an insert or a delete...
-	 *
-	 * Works on all CCP fields from this range onwards
-	 *
-	 * @param adjustment
-	 *            The (signed) value that should be added to the FIB CCP fields
-	 */
-	protected void adjustFIB(int adjustment) {
-	    assert (_doc instanceof HWPFDocument);
-	    
-		// update the FIB.CCPText field (this should happen once per adjustment,
-		// so we don't want it in
-		// adjustForInsert() or it would get updated multiple times if the range
-		// has a parent)
-		// without this, OpenOffice.org (v. 2.2.x) does not see all the text in
-		// the document
+    /**
+     * Adjust the value of the various FIB character count fields, eg
+     * <code>FIB.CCPText</code> after an insert or a delete...
+     * 
+     * Works on all CCP fields from this range onwards
+     * 
+     * @param adjustment
+     *            The (signed) value that should be added to the FIB CCP fields
+     */
+    protected void adjustFIB( int adjustment )
+    {
+        assert ( _doc instanceof HWPFDocument );
 
-		CPSplitCalculator cpS = ((HWPFDocument)_doc).getCPSplitCalculator();
-		FileInformationBlock fib = _doc.getFileInformationBlock();
+        // update the FIB.CCPText field (this should happen once per adjustment,
+        // so we don't want it in
+        // adjustForInsert() or it would get updated multiple times if the range
+        // has a parent)
+        // without this, OpenOffice.org (v. 2.2.x) does not see all the text in
+        // the document
 
-		// Do for each affected part
-		if (_start < cpS.getMainDocumentEnd()) {
-			fib.setCcpText(fib.getCcpText() + adjustment);
-		}
+        FileInformationBlock fib = _doc.getFileInformationBlock();
 
-		if (_start < cpS.getCommentsEnd()) {
-			fib.setCcpAtn(fib.getCcpAtn() + adjustment);
-		}
-		if (_start < cpS.getEndNoteEnd()) {
-			fib.setCcpEdn(fib.getCcpEdn() + adjustment);
-		}
-		if (_start < cpS.getFootnoteEnd()) {
-			fib.setCcpFtn(fib.getCcpFtn() + adjustment);
-		}
-		if (_start < cpS.getHeaderStoryEnd()) {
-			fib.setCcpHdd(fib.getCcpHdd() + adjustment);
-		}
-		if (_start < cpS.getHeaderTextboxEnd()) {
-			fib.setCcpHdrTxtBx(fib.getCcpHdrTxtBx() + adjustment);
-		}
-		if (_start < cpS.getMainTextboxEnd()) {
-			fib.setCcpTxtBx(fib.getCcpTxtBx() + adjustment);
-		}
-	}
+        // // Do for each affected part
+        // if (_start < cpS.getMainDocumentEnd()) {
+        // fib.setCcpText(fib.getCcpText() + adjustment);
+        // }
+        //
+        // if (_start < cpS.getCommentsEnd()) {
+        // fib.setCcpAtn(fib.getCcpAtn() + adjustment);
+        // }
+        // if (_start < cpS.getEndNoteEnd()) {
+        // fib.setCcpEdn(fib.getCcpEdn() + adjustment);
+        // }
+        // if (_start < cpS.getFootnoteEnd()) {
+        // fib.setCcpFtn(fib.getCcpFtn() + adjustment);
+        // }
+        // if (_start < cpS.getHeaderStoryEnd()) {
+        // fib.setCcpHdd(fib.getCcpHdd() + adjustment);
+        // }
+        // if (_start < cpS.getHeaderTextboxEnd()) {
+        // fib.setCcpHdrTxtBx(fib.getCcpHdrTxtBx() + adjustment);
+        // }
+        // if (_start < cpS.getMainTextboxEnd()) {
+        // fib.setCcpTxtBx(fib.getCcpTxtBx() + adjustment);
+        // }
+
+        // much simple implementation base on SubdocumentType --sergey
+
+        int currentEnd = 0;
+        for ( SubdocumentType type : SubdocumentType.ORDERED )
+        {
+            int currentLength = fib.getSubdocumentTextStreamLength( type );
+            currentEnd += currentLength;
+
+            // do we need to shift this part?
+            if ( _start < currentEnd )
+            {
+                fib.setSubdocumentTextStreamLength( type, currentLength
+                        + adjustment );
+            }
+        }
+    }
 
 	/**
 	 * adjust this range after an insert happens.

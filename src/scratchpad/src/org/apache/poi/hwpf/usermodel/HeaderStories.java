@@ -21,6 +21,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.PlexOfCps;
+import org.apache.poi.hwpf.model.SubdocumentType;
 
 /**
  * A HeaderStory is a Header, a Footer, or footnote/endnote
@@ -42,10 +43,14 @@ public final class HeaderStories {
 		this.headerStories = doc.getHeaderStoryRange();
 		FileInformationBlock fib = doc.getFileInformationBlock();
 
-		// If there's no PlcfHdd, nothing to do
-		if(fib.getCcpHdd() == 0) {
-			return;
-		}
+//        // If there's no PlcfHdd, nothing to do
+//        if(fib.getCcpHdd() == 0) {
+//            return;
+//        }
+
+        if (fib.getSubdocumentTextStreamLength( SubdocumentType.HEADER ) == 0)
+		    return;
+		
 		if(fib.getPlcfHddSize() == 0) {
 			return;
 		}

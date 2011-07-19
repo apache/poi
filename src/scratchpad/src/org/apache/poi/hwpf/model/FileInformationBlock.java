@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -82,6 +84,56 @@ public final class FileInformationBlock extends FIBAbstractType
       _fieldHandler = new FIBFieldHandler(mainDocument,
                                           FIBShortHandler.START + _shortHandler.sizeInBytes() + _longHandler.sizeInBytes(),
                                           tableStream, fieldSet, true);
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder stringBuilder = new StringBuilder( super.toString() );
+        stringBuilder.append( "[FIB2]\n" );
+        stringBuilder.append( "\tSubdocuments info:\n" );
+        for ( SubdocumentType type : SubdocumentType.values() )
+        {
+            stringBuilder.append( "\t\t" );
+            stringBuilder.append( type );
+            stringBuilder.append( " has length of " );
+            stringBuilder.append( getSubdocumentTextStreamLength( type ) );
+            stringBuilder.append( " char(s)\n" );
+        }
+        stringBuilder.append( "\tFields PLCF info:\n" );
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
+        {
+            stringBuilder.append( "\t\t" );
+            stringBuilder.append( part );
+            stringBuilder.append( ": PLCF starts at " );
+            stringBuilder.append( getFieldsPlcfOffset( part ) );
+            stringBuilder.append( " and have length of " );
+            stringBuilder.append( getFieldsPlcfLength( part ) );
+            stringBuilder.append( "\n" );
+        }
+        try
+        {
+            stringBuilder.append( "\tJava reflection info:\n" );
+            for ( Method method : FileInformationBlock.class.getMethods() )
+            {
+                if ( !method.getName().startsWith( "get" )
+                        || !Modifier.isPublic( method.getModifiers() )
+                        || Modifier.isStatic( method.getModifiers() )
+                        || method.getParameterTypes().length > 0 )
+                    continue;
+                stringBuilder.append( "\t\t" );
+                stringBuilder.append( method.getName() );
+                stringBuilder.append( " => " );
+                stringBuilder.append( method.invoke( this ) );
+                stringBuilder.append( "\n" );
+            }
+        }
+        catch ( Exception exc )
+        {
+            stringBuilder.append( "(exc: " + exc.getMessage() + ")" );
+        }
+        stringBuilder.append( "[/FIB2]\n" );
+        return stringBuilder.toString();
     }
 
     public int getFcDop()
@@ -344,14 +396,14 @@ public final class FileInformationBlock extends FIBAbstractType
     {
       _fieldHandler.setFieldSize(FIBFieldHandler.PLFLFO, modifiedHigh);
     }
-
-
+    
     /**
      * How many bytes of the main stream contain real data.
      */
     public int getCbMac() {
        return _longHandler.getLong(FIBLongHandler.CBMAC);
     }
+
     /**
      * Updates the count of the number of bytes in the
      * main stream which contain real data
@@ -361,14 +413,29 @@ public final class FileInformationBlock extends FIBAbstractType
     }
 
     /**
+     * @return length of specified subdocument text stream in characters
+     */
+    public int getSubdocumentTextStreamLength( SubdocumentType type )
+    {
+        return _longHandler.getLong( type.getFibLongFieldIndex() );
+    }
+
+    public void setSubdocumentTextStreamLength( SubdocumentType type, int length )
+    {
+        _longHandler.setLong( type.getFibLongFieldIndex(), length );
+    }
+
+    /**
      * The count of CPs in the main document
      */
+    @Deprecated
     public int getCcpText() {
        return _longHandler.getLong(FIBLongHandler.CCPTEXT);
     }
     /**
      * Updates the count of CPs in the main document
      */
+    @Deprecated
     public void setCcpText(int ccpText) {
        _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
     }
@@ -376,12 +443,14 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the footnote subdocument
      */
+    @Deprecated
     public int getCcpFtn() {
        return _longHandler.getLong(FIBLongHandler.CCPFTN);
     }
     /**
      * Updates the count of CPs in the footnote subdocument
      */
+    @Deprecated
     public void setCcpFtn(int ccpFtn) {
        _longHandler.setLong(FIBLongHandler.CCPFTN, ccpFtn);
     }
@@ -389,12 +458,14 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the header story subdocument
      */
+    @Deprecated
     public int getCcpHdd() {
        return _longHandler.getLong(FIBLongHandler.CCPHDD);
     }
     /**
      * Updates the count of CPs in the header story subdocument
      */
+    @Deprecated
     public void setCcpHdd(int ccpHdd) {
        _longHandler.setLong(FIBLongHandler.CCPHDD, ccpHdd);
     }
@@ -402,15 +473,19 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the comments (atn) subdocument
      */
+    @Deprecated
     public int getCcpAtn() {
        return _longHandler.getLong(FIBLongHandler.CCPATN);
     }
+
+    @Deprecated
     public int getCcpCommentAtn() {
        return getCcpAtn();
     }
     /**
      * Updates the count of CPs in the comments (atn) story subdocument
      */
+    @Deprecated
     public void setCcpAtn(int ccpAtn) {
        _longHandler.setLong(FIBLongHandler.CCPATN, ccpAtn);
     }
@@ -418,12 +493,14 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the end note subdocument
      */
+    @Deprecated
     public int getCcpEdn() {
        return _longHandler.getLong(FIBLongHandler.CCPEDN);
     }
     /**
      * Updates the count of CPs in the end note subdocument
      */
+    @Deprecated
     public void setCcpEdn(int ccpEdn) {
        _longHandler.setLong(FIBLongHandler.CCPEDN, ccpEdn);
     }
@@ -431,12 +508,14 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the main document textboxes
      */
+    @Deprecated
     public int getCcpTxtBx() {
        return _longHandler.getLong(FIBLongHandler.CCPTXBX);
     }
     /**
      * Updates the count of CPs in the main document textboxes
      */
+    @Deprecated
     public void setCcpTxtBx(int ccpTxtBx) {
        _longHandler.setLong(FIBLongHandler.CCPTXBX, ccpTxtBx);
     }
@@ -444,12 +523,14 @@ public final class FileInformationBlock extends FIBAbstractType
     /**
      * The count of CPs in the header textboxes
      */
+    @Deprecated
     public int getCcpHdrTxtBx() {
        return _longHandler.getLong(FIBLongHandler.CCPHDRTXBX);
     }
     /**
      * Updates the count of CPs in the header textboxes
      */
+    @Deprecated
     public void setCcpHdrTxtBx(int ccpTxtBx) {
        _longHandler.setLong(FIBLongHandler.CCPHDRTXBX, ccpTxtBx);
     }
@@ -460,165 +541,189 @@ public final class FileInformationBlock extends FIBAbstractType
       _fieldHandler.clearFields();
     }
 
-    public int getFieldsPlcfOffset( DocumentPart documentPart )
+    public int getFieldsPlcfOffset( FieldsDocumentPart part )
     {
-        return _fieldHandler.getFieldOffset( documentPart
-                .getFibHandlerFieldsPosition() );
+        return _fieldHandler.getFieldOffset( part.getFibFieldsField() );
     }
 
-    public int getFieldsPlcfLength( DocumentPart documentPart )
+    public int getFieldsPlcfLength( FieldsDocumentPart part )
     {
-        return _fieldHandler.getFieldSize( documentPart
-                .getFibHandlerFieldsPosition() );
+        return _fieldHandler.getFieldSize( part.getFibFieldsField() );
     }
 
-    public void setFieldsPlcfOffset( DocumentPart documentPart, int offset )
+    public void setFieldsPlcfOffset( FieldsDocumentPart part, int offset )
     {
-        _fieldHandler.setFieldOffset(
-                documentPart.getFibHandlerFieldsPosition(), offset );
+        _fieldHandler.setFieldOffset( part.getFibFieldsField(), offset );
     }
 
-    public void setFieldsPlcfLength( DocumentPart documentPart, int length )
+    public void setFieldsPlcfLength( FieldsDocumentPart part, int length )
     {
-        _fieldHandler.setFieldSize( documentPart.getFibHandlerFieldsPosition(),
-                length );
+        _fieldHandler.setFieldSize( part.getFibFieldsField(), length );
     }
 
+    @Deprecated
     public int getFcPlcffldAtn()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDATN);
     }
 
+    @Deprecated
     public int getLcbPlcffldAtn()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDATN);
     }
 
+    @Deprecated
     public void setFcPlcffldAtn( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDATN, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldAtn( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDATN, size );
     }
 
+    @Deprecated
     public int getFcPlcffldEdn()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDEDN);
     }
 
+    @Deprecated
     public int getLcbPlcffldEdn()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDEDN);
     }
 
+    @Deprecated
     public void setFcPlcffldEdn( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDEDN, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldEdn( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDEDN, size );
     }
 
+    @Deprecated
     public int getFcPlcffldFtn()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDFTN);
     }
 
+    @Deprecated
     public int getLcbPlcffldFtn()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDFTN);
     }
 
+    @Deprecated
     public void setFcPlcffldFtn( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDFTN, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldFtn( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDFTN, size );
     }
 
+    @Deprecated
     public int getFcPlcffldHdr()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDHDR);
     }
 
+    @Deprecated
     public int getLcbPlcffldHdr()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDHDR);
     }
 
+    @Deprecated
     public void setFcPlcffldHdr( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDHDR, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldHdr( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDHDR, size );
     }
 
+    @Deprecated
     public int getFcPlcffldHdrtxbx()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDHDRTXBX);
     }
 
+    @Deprecated
     public int getLcbPlcffldHdrtxbx()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDHDRTXBX);
     }
 
+    @Deprecated
     public void setFcPlcffldHdrtxbx( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDHDRTXBX, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldHdrtxbx( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDHDRTXBX, size );
     }
 
+    @Deprecated
     public int getFcPlcffldMom()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDMOM);
     }
 
+    @Deprecated
     public int getLcbPlcffldMom()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
     }
 
+    @Deprecated
     public void setFcPlcffldMom( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDMOM, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldMom( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDMOM, size );
     }
 
+    @Deprecated
     public int getFcPlcffldTxbx()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDTXBX);
     }
 
+    @Deprecated
     public int getLcbPlcffldTxbx()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDTXBX);
     }
 
+    @Deprecated
     public void setFcPlcffldTxbx( int offset )
     {
         _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFFLDTXBX, offset );
     }
 
+    @Deprecated
     public void setLcbPlcffldTxbx( int size )
     {
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDTXBX, size );
