@@ -17,42 +17,27 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
+import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BlankRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.MulBlankRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.HexRead;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit test for the {@link InternalSheet} class.
@@ -82,10 +67,10 @@ public final class TestSheet extends TestCase {
 
 		int pos = 0;
 		assertTrue(outRecs[pos++] instanceof BOFRecord );
-		assertTrue(outRecs[pos++] instanceof IndexRecord );
-		assertTrue(outRecs[pos++] instanceof DimensionsRecord );
+		assertTrue(outRecs[pos++] instanceof IndexRecord);
+		assertTrue(outRecs[pos++] instanceof DimensionsRecord);
 		assertTrue(outRecs[pos++] instanceof WindowTwoRecord );
-		assertTrue(outRecs[pos++] instanceof EOFRecord );
+		assertTrue(outRecs[pos++] instanceof EOFRecord);
 	}
 
 	private static Record createWindow2Record() {
@@ -701,4 +686,91 @@ public final class TestSheet extends TestCase {
 		Record[] clonedRecs = rc.getRecords();
 		assertEquals(recs.length+2, clonedRecs.length); // +2 for INDEX and DBCELL
 	}
+
+    public void testCreateAggregate() {
+        String msoDrawingRecord1 =
+                "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
+                "03 00 00 00 02 04 00 00 0F 00 03 F0 08 01 00 00 \n" +
+                "0F 00 04 F0 28 00 00 00 01 00 09 F0 10 00 00 00 \n" +
+                "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 \n" +
+                "02 00 0A F0 08 00 00 00 00 04 00 00 05 00 00 00 \n" +
+                "0F 00 04 F0 64 00 00 00 42 01 0A F0 08 00 00 00 \n" +
+                "01 04 00 00 00 0A 00 00 73 00 0B F0 2A 00 00 00 \n" +
+                "BF 00 08 00 08 00 44 01 04 00 00 00 7F 01 00 00 \n" +
+                "01 00 BF 01 00 00 11 00 C0 01 40 00 00 08 FF 01 \n" +
+                "10 00 10 00 BF 03 00 00 08 00 00 00 10 F0 12 00 \n" +
+                "00 00 00 00 01 00 54 00 05 00 45 00 01 00 88 03 \n" +
+                "05 00 94 00 00 00 11 F0 00 00 00 00";
+
+        String msoDrawingRecord2 =
+                "0F 00 04 F0 64 00 00 00 42 01 0A F0 08 00 00 00 " +
+                "02 04 00 00 80 0A 00 00 73 00 0B F0 2A 00 00 00 " +
+                "BF 00 08 00 08 00 44 01 04 00 00 00 7F 01 00 00 " +
+                "01 00 BF 01 00 00 11 00 C0 01 40 00 00 08 FF 01 " +
+                "10 00 10 00 BF 03 00 00 08 00 00 00 10 F0 12 00 " +
+                "00 00 00 00 01 00 8D 03 05 00 E4 00 03 00 4D 03 " +
+                "0B 00 0C 00 00 00 11 F0 00 00 00 00";
+
+        DrawingRecord d1 = new DrawingRecord();
+        d1.setData( HexRead.readFromString( msoDrawingRecord1 ) );
+
+        ObjRecord r1 = new ObjRecord();
+
+        DrawingRecord d2 = new DrawingRecord();
+        d2.setData( HexRead.readFromString( msoDrawingRecord2 ) );
+
+        TextObjectRecord r2 = new TextObjectRecord();
+        r2.setStr(new HSSFRichTextString("Aggregated"));
+        NoteRecord n2 = new NoteRecord();
+
+        List<Record> recordStream = new ArrayList<Record>();
+        recordStream.add(InternalSheet.createBOF());
+        recordStream.add( d1 );
+        recordStream.add( r1 );
+        recordStream.add(createWindow2Record());
+        recordStream.add(EOFRecord.instance);
+
+        confirmAggregatedRecords(recordStream);
+
+
+        recordStream = new ArrayList<Record>();
+        recordStream.add(InternalSheet.createBOF());
+        recordStream.add( d1 );
+        recordStream.add( r1 );
+        recordStream.add( d2 );
+        recordStream.add( r2 );
+        recordStream.add(createWindow2Record());
+        recordStream.add(EOFRecord.instance);
+
+        confirmAggregatedRecords(recordStream);
+
+        recordStream = new ArrayList<Record>();
+        recordStream.add(InternalSheet.createBOF());
+        recordStream.add( d1 );
+        recordStream.add( r1 );
+        recordStream.add( d2 );
+        recordStream.add( r2 );
+        recordStream.add( n2 );
+        recordStream.add(createWindow2Record());
+        recordStream.add(EOFRecord.instance);
+
+        confirmAggregatedRecords(recordStream);
+     }
+
+    private void confirmAggregatedRecords(List<Record> recordStream){
+        InternalSheet sheet = InternalSheet.createSheet();
+        sheet.getRecords().clear();
+        sheet.getRecords().addAll(recordStream);
+
+        List<RecordBase> sheetRecords = sheet.getRecords();
+
+        DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord() );
+        sheet.aggregateDrawingRecords(drawingManager, false);
+
+        assertEquals(4, sheetRecords.size());
+        assertEquals(BOFRecord.sid, ((Record)sheetRecords.get(0)).getSid());
+        assertEquals(EscherAggregate.sid, ((Record)sheetRecords.get(1)).getSid());
+        assertEquals(WindowTwoRecord.sid, ((Record)sheetRecords.get(2)).getSid());
+        assertEquals(EOFRecord.sid, ((Record)sheetRecords.get(3)).getSid());
+    }
 }

@@ -38,6 +38,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
 
 /**
@@ -689,4 +690,27 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
            return false;
        }
    }
+
+    public void testClonePictures() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
+        InternalWorkbook iwb = wb.getWorkbook();
+        iwb.findDrawingGroup();
+        
+        for(int pictureIndex=1; pictureIndex <= 4; pictureIndex++){
+            EscherBSERecord bse = iwb.getBSERecord(pictureIndex);
+            assertEquals(1, bse.getRef());
+        }
+
+        wb.cloneSheet(0);
+        for(int pictureIndex=1; pictureIndex <= 4; pictureIndex++){
+            EscherBSERecord bse = iwb.getBSERecord(pictureIndex);
+            assertEquals(2, bse.getRef());
+        }
+
+        wb.cloneSheet(0);
+        for(int pictureIndex=1; pictureIndex <= 4; pictureIndex++){
+            EscherBSERecord bse = iwb.getBSERecord(pictureIndex);
+            assertEquals(3, bse.getRef());
+        }
+    }
 }

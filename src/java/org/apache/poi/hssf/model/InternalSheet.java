@@ -54,6 +54,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UncalcedRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
@@ -1537,10 +1538,13 @@ public final class InternalSheet {
         int startloc = loc;
         while ( loc + 1 < records.size()
                 && records.get( loc ) instanceof DrawingRecord
-                && records.get( loc + 1 ) instanceof ObjRecord )
+                && (records.get( loc + 1 ) instanceof ObjRecord ||
+                    records.get( loc + 1 ) instanceof TextObjectRecord) )
         {
             loc += 2;
+            if (records.get( loc ) instanceof NoteRecord) loc ++;
         }
+
         int endloc = loc-1;
         for(int i = 0; i < (endloc - startloc + 1); i++)
             records.remove(startloc);

@@ -631,8 +631,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 					// org.apache.poi.hslf.model.Picture.getPictureIndex()
 					EscherOptRecord opt = (EscherOptRecord) getEscherChild(
 							shapeContainer, EscherOptRecord.RECORD_ID );
-					EscherSimpleProperty prop = (EscherSimpleProperty) getEscherProperty(
-							opt, EscherProperties.BLIP__BLIPTODISPLAY );
+					EscherSimpleProperty prop = (EscherSimpleProperty)opt.lookup(
+							EscherProperties.BLIP__BLIPTODISPLAY );
 					if (prop == null)
 					{
 						log.log( POILogger.WARN,
@@ -962,25 +962,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			if (escherRecord.getRecordId() == recordId)
 				return escherRecord;
 		}
-		return null;
-	}
-
-	/**
-	 * Returns escher property by id.
-	 * 
-	 * @return escher property or <code>null</code> if not found.
-	 */
-	private static EscherProperty getEscherProperty(EscherOptRecord opt,
-			int propId)
-	{
-		if (opt != null)
-			for (Iterator iterator = opt.getEscherProperties().iterator(); iterator
-					.hasNext();)
-			{
-				EscherProperty prop = (EscherProperty) iterator.next();
-				if (prop.getPropertyNumber() == propId)
-					return prop;
-			}
 		return null;
 	}
 

@@ -35,6 +35,7 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRGBProperty;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
 import org.apache.poi.hssf.record.BOFRecord;
@@ -81,10 +82,9 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
@@ -2075,15 +2075,23 @@ public final class InternalWorkbook {
                 }
 
                 EscherDggRecord dgg = null;
+                EscherContainerRecord bStore = null;
                 for(Iterator<EscherRecord> it = cr.getChildIterator(); it.hasNext();) {
-                    Object er = it.next();
+                    EscherRecord er = it.next();
                     if(er instanceof EscherDggRecord) {
                         dgg = (EscherDggRecord)er;
+                    } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
+                        bStore = (EscherContainerRecord) er;
                     }
                 }
 
                 if(dgg != null) {
                     drawingManager = new DrawingManager2(dgg);
+                    if(bStore != null){
+                        for(EscherRecord bs : bStore.getChildRecords()){
+                            if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
+                        }
+                    }
                     return;
                 }
             }
@@ -2096,14 +2104,22 @@ public final class InternalWorkbook {
         if(dgLoc != -1) {
             DrawingGroupRecord dg = (DrawingGroupRecord)records.get(dgLoc);
             EscherDggRecord dgg = null;
+            EscherContainerRecord bStore = null;
             for(EscherRecord er : dg.getEscherRecords()) {
-                if(er instanceof EscherDggRecord) {
-                    dgg = (EscherDggRecord)er;
+                if (er instanceof EscherDggRecord) {
+                    dgg = (EscherDggRecord) er;
+                } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
+                    bStore = (EscherContainerRecord) er;
                 }
             }
 
             if(dgg != null) {
                 drawingManager = new DrawingManager2(dgg);
+                if(bStore != null){
+                    for(EscherRecord bs : bStore.getChildRecords()){
+                        if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
+                    }
+                }
             }
         }
     }
@@ -2357,23 +2373,61 @@ public final class InternalWorkbook {
                     //update id of the drawing in the cloned sheet
                     dg.setOptions( (short) ( dgId << 4 ) );
                 } else if (er instanceof EscherContainerRecord){
-                    //recursively find shape records and re-generate shapeId
-                    List<EscherRecord> spRecords = new ArrayList<EscherRecord>();
+                    // iterate over shapes and re-generate shapeId
                     EscherContainerRecord cp = (EscherContainerRecord)er;
-                    cp.getRecordsById(EscherSpRecord.RECORD_ID,  spRecords);
-                    for(Iterator<EscherRecord> spIt = spRecords.iterator(); spIt.hasNext();) {
-                        EscherSpRecord sp = (EscherSpRecord)spIt.next();
-                        int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
-                        //allocateShapeId increments the number of shapes. roll back to the previous value
-                        dg.setNumShapes(dg.getNumShapes()-1);
-                        sp.setShapeId(shapeId);
+                    for(Iterator<EscherRecord> spIt = cp.getChildRecords().iterator(); spIt.hasNext();) {
+                        EscherContainerRecord shapeContainer = (EscherContainerRecord)spIt.next();
+                        for(EscherRecord shapeChildRecord : shapeContainer.getChildRecords()) {
+                            int recordId = shapeChildRecord.getRecordId();
+                            if (recordId == EscherSpRecord.RECORD_ID){
+                                EscherSpRecord sp = (EscherSpRecord)shapeChildRecord;
+                                int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                                //allocateShapeId increments the number of shapes. roll back to the previous value
+                                dg.setNumShapes(dg.getNumShapes()-1);
+                                sp.setShapeId(shapeId);
+                            } else if (recordId == EscherOptRecord.RECORD_ID){
+                                EscherOptRecord opt = (EscherOptRecord)shapeChildRecord;
+                                EscherSimpleProperty prop = (EscherSimpleProperty)opt.lookup(
+                                        EscherProperties.BLIP__BLIPTODISPLAY );
+                                if (prop != null){
+                                    int pictureIndex = prop.getPropertyValue();
+                                    // increment reference count for pictures
+                                    EscherBSERecord bse = getBSERecord(pictureIndex);
+                                    bse.setRef(bse.getRef() + 1);
+                                }
+
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
+    
+    public NameRecord cloneFilter(int filterDbNameIndex, int newSheetIndex){
+        NameRecord origNameRecord = getNameRecord(filterDbNameIndex);
+        // copy original formula but adjust 3D refs to the new external sheet index
+        int newExtSheetIx = checkExternSheet(newSheetIndex);
+        Ptg[] ptgs = origNameRecord.getNameDefinition();
+        for (int i=0; i< ptgs.length; i++) {
+            Ptg ptg = ptgs[i];
 
+            if (ptg instanceof Area3DPtg) {
+                Area3DPtg a3p = (Area3DPtg) ((OperandPtg) ptg).copy();
+                a3p.setExternSheetIndex(newExtSheetIx);
+                ptgs[i] = a3p;
+            } else if (ptg instanceof Ref3DPtg) {
+                Ref3DPtg r3p = (Ref3DPtg) ((OperandPtg) ptg).copy();
+                r3p.setExternSheetIndex(newExtSheetIx);
+                ptgs[i] = r3p;
+            }
+        }
+        NameRecord newNameRecord = createBuiltInName(NameRecord.BUILTIN_FILTER_DB, newSheetIndex+1);
+        newNameRecord.setNameDefinition(ptgs);
+        newNameRecord.setHidden(true);
+        return newNameRecord;
+
+    }
     /**
      * Updates named ranges due to moving of cells
      */

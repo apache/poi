@@ -40,7 +40,7 @@ public class EscherOptRecord
     public static final short RECORD_ID = (short) 0xF00B;
     public static final String RECORD_DESCRIPTION = "msofbtOPT";
 
-    private List properties = new ArrayList();
+    private List<EscherProperty> properties = new ArrayList<EscherProperty>();
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -126,7 +126,7 @@ public class EscherOptRecord
     /**
      * The list of properties stored by this record.
      */
-    public List getEscherProperties()
+    public List<EscherProperty> getEscherProperties()
     {
         return properties;
     }
@@ -136,7 +136,7 @@ public class EscherOptRecord
      */
     public EscherProperty getEscherProperty( int index )
     {
-        return (EscherProperty) properties.get( index );
+        return properties.get( index );
     }
 
     /**
@@ -163,5 +163,14 @@ public class EscherOptRecord
         } );
     }
 
+    public EscherProperty lookup(int propId)
+    {
+        for (EscherProperty prop : properties)
+        {
+            if (prop.getPropertyNumber() == propId)
+                return prop;
+        }
+        return null;
+    }
 
 }
