@@ -21,8 +21,7 @@ package org.apache.poi.hwpf;
 
 import java.util.ArrayList;
 
-import org.apache.poi.hwpf.model.FieldDescriptor;
-
+import org.apache.poi.hwpf.model.DocumentPart;
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
@@ -36,10 +35,6 @@ import org.apache.poi.hwpf.model.PlexOfField;
  */
 public class TestFieldsTables extends HWPFTestCase
 {
-    private static final int ALL_TYPES[] = { FieldsTables.PLCFFLDATN,
-            FieldsTables.PLCFFLDEDN, FieldsTables.PLCFFLDFTN,
-            FieldsTables.PLCFFLDHDR, FieldsTables.PLCFFLDHDRTXBX,
-            FieldsTables.PLCFFLDMOM, FieldsTables.PLCFFLDTXBX };
 
     private static final String EXPECTED[] = {
 
@@ -85,10 +80,12 @@ public class TestFieldsTables extends HWPFTestCase
 
         FieldsTables fieldsTables = new FieldsTables( tableStream, fib );
 
-        for ( int i = 0; i < ALL_TYPES.length; i++ )
+        for ( int i = 0; i < DocumentPart.values().length; i++ )
         {
+            DocumentPart part = DocumentPart.values()[i];
+
             ArrayList<PlexOfField> fieldsPlexes = fieldsTables
-                    .getFieldsPLCF( ALL_TYPES[i] );
+                    .getFieldsPLCF( part );
             String result = dumpPlexes( fieldsPlexes );
             assertEquals( EXPECTED[i], result );
         }

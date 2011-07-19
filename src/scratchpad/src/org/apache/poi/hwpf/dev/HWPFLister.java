@@ -36,7 +36,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.FieldsTables;
+import org.apache.poi.hwpf.model.DocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
@@ -327,11 +327,11 @@ public final class HWPFLister
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-        for ( int i = FieldsTables.PLCFFLDATN; i <= FieldsTables.PLCFFLDTXBX; i++ )
+        for ( DocumentPart part : DocumentPart.values() )
         {
-            System.out.println( "=== Document part: " + i + " ===" );
+            System.out.println( "=== Document part: " + part + " ===" );
             for ( org.apache.poi.hwpf.model.Field field : document
-                    .getFieldsTables().getFields( i ) )
+                    .getFieldsTables().getFields( part ) )
             {
                 System.out.println( field );
             }

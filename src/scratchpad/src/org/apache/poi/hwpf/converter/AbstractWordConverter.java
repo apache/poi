@@ -23,8 +23,8 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+import org.apache.poi.hwpf.model.DocumentPart;
 import org.apache.poi.hwpf.model.Field;
-import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
@@ -111,7 +111,7 @@ public abstract class AbstractWordConverter
                 {
                     Field aliveField = ( (HWPFDocument) hwpfDocument )
                             .getFieldsTables().lookupFieldByStartOffset(
-                                    FieldsTables.PLCFFLDMOM,
+                                    DocumentPart.MAIN,
                                     characterRun.getStartOffset() );
                     if ( aliveField != null )
                     {
@@ -309,7 +309,7 @@ public abstract class AbstractWordConverter
 
         HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
         Field field = hwpfDocument.getFieldsTables().lookupFieldByStartOffset(
-                FieldsTables.PLCFFLDMOM, startOffset );
+                DocumentPart.MAIN, startOffset );
         if ( field == null )
             return null;
 

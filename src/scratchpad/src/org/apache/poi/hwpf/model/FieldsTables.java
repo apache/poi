@@ -55,50 +55,60 @@ public class FieldsTables
     /**
      * annotation subdocument
      */
+    @Deprecated
     public static final int PLCFFLDATN = 0;
     /**
      * endnote subdocument
      */
+    @Deprecated
     public static final int PLCFFLDEDN = 1;
     /**
      * footnote subdocument
      */
+    @Deprecated
     public static final int PLCFFLDFTN = 2;
     /**
      * header subdocument
      */
+    @Deprecated
     public static final int PLCFFLDHDR = 3;
     /**
      * header textbox subdoc
      */
+    @Deprecated
     public static final int PLCFFLDHDRTXBX = 4;
     /**
      * main document
      */
+    @Deprecated
     public static final int PLCFFLDMOM = 5;
     /**
      * textbox subdoc
      */
+    @Deprecated
     public static final int PLCFFLDTXBX = 6;
 
     // The size in bytes of the FLD data structure
     private static final int FLD_SIZE = 2;
 
-    private Map<Integer, PlexOfCps> _tables;
-    private Map<Integer, Map<Integer, Field>> _fieldsByOffset;
+    private Map<DocumentPart, PlexOfCps> _tables;
+    private Map<DocumentPart, Map<Integer, Field>> _fieldsByOffset;
 
     public FieldsTables( byte[] tableStream, FileInformationBlock fib )
     {
-        _tables = new HashMap<Integer, PlexOfCps>( PLCFFLDTXBX - PLCFFLDATN + 1 );
-        _fieldsByOffset = new HashMap<Integer, Map<Integer, Field>>(
-                PLCFFLDTXBX - PLCFFLDATN + 1 );
+        _tables = new HashMap<DocumentPart, PlexOfCps>(
+                DocumentPart.values().length );
+        _fieldsByOffset = new HashMap<DocumentPart, Map<Integer, Field>>(
+                DocumentPart.values().length );
 
-        for ( int i = PLCFFLDATN; i <= PLCFFLDTXBX; i++ )
+        for ( DocumentPart documentPart : DocumentPart.values() )
         {
-            final PlexOfCps plexOfCps = readPLCF( tableStream, fib, i );
-            _fieldsByOffset.put( Integer.valueOf( i ),
-                    parseFieldStructure( plexOfCps ) );
-            _tables.put( Integer.valueOf( i ), plexOfCps );
+            final PlexOfCps plexOfCps = readPLCF( tableStream, fib,
+                    documentPart );
+
+            _fieldsByOffset
+                    .put( documentPart, parseFieldStructure( plexOfCps ) );
+            _tables.put( documentPart, plexOfCps );
         }
     }
 
@@ -288,10 +298,9 @@ public class FieldsTables
         }
     }
 
-    public Field lookupFieldByStartOffset( int documentPart, int offset )
+    public Field lookupFieldByStartOffset( DocumentPart documentPart, int offset )
     {
-        Map<Integer, Field> map = _fieldsByOffset.get( Integer
-                .valueOf( documentPart ) );
+        Map<Integer, Field> map = _fieldsByOffset.get( documentPart);
         if ( map == null || map.isEmpty() )
             return null;
 
@@ -299,44 +308,10 @@ public class FieldsTables
     }
 
     private PlexOfCps readPLCF( byte[] tableStream, FileInformationBlock fib,
-            int type )
+            DocumentPart documentPart )
     {
-        int start = 0;
-        int length = 0;
-
-        switch ( type )
-        {
-        case PLCFFLDATN:
-            start = fib.getFcPlcffldAtn();
-            length = fib.getLcbPlcffldAtn();
-            break;
-        case PLCFFLDEDN:
-            start = fib.getFcPlcffldEdn();
-            length = fib.getLcbPlcffldEdn();
-            break;
-        case PLCFFLDFTN:
-            start = fib.getFcPlcffldFtn();
-            length = fib.getLcbPlcffldFtn();
-            break;
-        case PLCFFLDHDR:
-            start = fib.getFcPlcffldHdr();
-            length = fib.getLcbPlcffldHdr();
-            break;
-        case PLCFFLDHDRTXBX:
-            start = fib.getFcPlcffldHdrtxbx();
-            length = fib.getLcbPlcffldHdrtxbx();
-            break;
-        case PLCFFLDMOM:
-            start = fib.getFcPlcffldMom();
-            length = fib.getLcbPlcffldMom();
-            break;
-        case PLCFFLDTXBX:
-            start = fib.getFcPlcffldTxbx();
-            length = fib.getLcbPlcffldTxbx();
-            break;
-        default:
-            break;
-        }
+        int start = fib.getFieldsPlcfOffset( documentPart );
+        int length = fib.getFieldsPlcfLength( documentPart );
 
         if ( start <= 0 || length <= 0 )
             return null;
@@ -344,19 +319,24 @@ public class FieldsTables
         return new PlexOfCps( tableStream, start, length, FLD_SIZE );
     }
 
-    public Collection<Field> getFields( int documentPart )
+    public Collection<Field> getFields( DocumentPart part )
     {
-        Map<Integer, Field> map = _fieldsByOffset.get( Integer
-                .valueOf( documentPart ) );
+        Map<Integer, Field> map = _fieldsByOffset.get( part );
         if ( map == null || map.isEmpty() )
             return Collections.emptySet();
 
         return Collections.unmodifiableCollection( map.values() );
     }
 
-    public ArrayList<PlexOfField> getFieldsPLCF( int type )
+    @Deprecated
+    public ArrayList<PlexOfField> getFieldsPLCF( int partIndex )
     {
-        return toArrayList( _tables.get( Integer.valueOf( type ) ) );
+        return getFieldsPLCF( DocumentPart.values()[partIndex] );
+    }
+
+    public ArrayList<PlexOfField> getFieldsPLCF( DocumentPart documentPart )
+    {
+        return toArrayList( _tables.get( documentPart ) );
     }
 
     private static ArrayList<PlexOfField> toArrayList( PlexOfCps plexOfCps )
@@ -377,8 +357,8 @@ public class FieldsTables
         return fields;
     }
 
-    private int savePlex( PlexOfCps plexOfCps, int type,
-            FileInformationBlock fib, HWPFOutputStream outputStream )
+    private int savePlex( FileInformationBlock fib, DocumentPart documentPart,
+            PlexOfCps plexOfCps, HWPFOutputStream outputStream )
             throws IOException
     {
         if ( plexOfCps == null || plexOfCps.length() == 0 )
@@ -391,39 +371,8 @@ public class FieldsTables
 
         outputStream.write( data );
 
-        switch ( type )
-        {
-        case PLCFFLDATN:
-            fib.setFcPlcffldAtn( start );
-            fib.setLcbPlcffldAtn( length );
-            break;
-        case PLCFFLDEDN:
-            fib.setFcPlcffldEdn( start );
-            fib.setLcbPlcffldEdn( length );
-            break;
-        case PLCFFLDFTN:
-            fib.setFcPlcffldFtn( start );
-            fib.setLcbPlcffldFtn( length );
-            break;
-        case PLCFFLDHDR:
-            fib.setFcPlcffldHdr( start );
-            fib.setLcbPlcffldHdr( length );
-            break;
-        case PLCFFLDHDRTXBX:
-            fib.setFcPlcffldHdrtxbx( start );
-            fib.setLcbPlcffldHdrtxbx( length );
-            break;
-        case PLCFFLDMOM:
-            fib.setFcPlcffldMom( start );
-            fib.setLcbPlcffldMom( length );
-            break;
-        case PLCFFLDTXBX:
-            fib.setFcPlcffldTxbx( start );
-            fib.setLcbPlcffldTxbx( length );
-            break;
-        default:
-            return 0;
-        }
+        fib.setFieldsPlcfOffset( documentPart, start );
+        fib.setFieldsPlcfLength( documentPart, length );
 
         return length;
     }
@@ -431,10 +380,10 @@ public class FieldsTables
     public void write( FileInformationBlock fib, HWPFOutputStream tableStream )
             throws IOException
     {
-        for ( int i = PLCFFLDATN; i <= PLCFFLDTXBX; i++ )
+        for ( DocumentPart part : DocumentPart.values() )
         {
-            PlexOfCps plexOfCps = _tables.get( Integer.valueOf( i ) );
-            savePlex( plexOfCps, i, fib, tableStream );
+            PlexOfCps plexOfCps = _tables.get( part );
+            savePlex( fib, part, plexOfCps, tableStream );
         }
     }
 }
