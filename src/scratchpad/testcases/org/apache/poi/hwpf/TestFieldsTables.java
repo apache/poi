@@ -21,7 +21,7 @@ package org.apache.poi.hwpf;
 
 import java.util.ArrayList;
 
-import org.apache.poi.hwpf.model.DocumentPart;
+import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
@@ -80,9 +80,9 @@ public class TestFieldsTables extends HWPFTestCase
 
         FieldsTables fieldsTables = new FieldsTables( tableStream, fib );
 
-        for ( int i = 0; i < DocumentPart.values().length; i++ )
+        for ( int i = 0; i < FieldsDocumentPart.values().length; i++ )
         {
-            DocumentPart part = DocumentPart.values()[i];
+            FieldsDocumentPart part = FieldsDocumentPart.values()[i];
 
             ArrayList<PlexOfField> fieldsPlexes = fieldsTables
                     .getFieldsPLCF( part );

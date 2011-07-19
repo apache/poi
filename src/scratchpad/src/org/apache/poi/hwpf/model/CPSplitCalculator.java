@@ -24,6 +24,7 @@ import org.apache.poi.hwpf.HWPFDocument;
  *  where different kinds of text can be found within the
  *  overall CP splurge.
  */
+@Deprecated
 public final class CPSplitCalculator {
 	private FileInformationBlock fib;
 	public CPSplitCalculator(FileInformationBlock fib) {

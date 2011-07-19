@@ -32,7 +32,7 @@ import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.hwpf.model.DocumentPart;
+import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.util.IOUtils;
@@ -554,9 +554,9 @@ public final class TestProblems extends HWPFTestCase {
                     .getCharacterTable().getTextRuns().size() );
 
             List<PlexOfField> expectedFields = doc1.getFieldsTables()
-                    .getFieldsPLCF( DocumentPart.MAIN );
+                    .getFieldsPLCF( FieldsDocumentPart.MAIN );
             List<PlexOfField> actualFields = doc2.getFieldsTables()
-                    .getFieldsPLCF( DocumentPart.MAIN );
+                    .getFieldsPLCF( FieldsDocumentPart.MAIN );
             assertEquals( expectedFields.size(), actualFields.size() );
 
             assertTableStructures( doc1.getRange(), doc2.getRange() );

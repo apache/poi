@@ -39,24 +39,15 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
  */
 public class FieldsTables
 {
-    private static final class GenericPropertyNodeComparator implements
-            Comparator<GenericPropertyNode>
-    {
-        public int compare( GenericPropertyNode o1, GenericPropertyNode o2 )
-        {
-            int thisVal = o1.getStart();
-            int anotherVal = o2.getStart();
-            return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
-        }
-    }
-
-    private GenericPropertyNodeComparator comparator = new GenericPropertyNodeComparator();
+    // The size in bytes of the FLD data structure
+    private static final int FLD_SIZE = 2;
 
     /**
      * annotation subdocument
      */
     @Deprecated
     public static final int PLCFFLDATN = 0;
+
     /**
      * endnote subdocument
      */
@@ -88,33 +79,135 @@ public class FieldsTables
     @Deprecated
     public static final int PLCFFLDTXBX = 6;
 
-    // The size in bytes of the FLD data structure
-    private static final int FLD_SIZE = 2;
+    /**
+     * This is port and adaptation of Arrays.binarySearch from Java 6 (Apache
+     * Harmony).
+     */
+    private static <T> int binarySearch( GenericPropertyNode[] array,
+            int startIndex, int endIndex, int requiredStartOffset )
+    {
+        checkIndexForBinarySearch( array.length, startIndex, endIndex );
 
-    private Map<DocumentPart, PlexOfCps> _tables;
-    private Map<DocumentPart, Map<Integer, Field>> _fieldsByOffset;
+        int low = startIndex, mid = -1, high = endIndex - 1, result = 0;
+        while ( low <= high )
+        {
+            mid = ( low + high ) >>> 1;
+            int midStart = array[mid].getStart();
+
+            if ( midStart == requiredStartOffset )
+            {
+                return mid;
+            }
+            else if ( midStart < requiredStartOffset )
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        if ( mid < 0 )
+        {
+            int insertPoint = endIndex;
+            for ( int index = startIndex; index < endIndex; index++ )
+            {
+                if ( requiredStartOffset < array[index].getStart() )
+                {
+                    insertPoint = index;
+                }
+            }
+            return -insertPoint - 1;
+        }
+        return -mid - ( result >= 0 ? 1 : 2 );
+    }
+
+    private static void checkIndexForBinarySearch( int length, int start,
+            int end )
+    {
+        if ( start > end )
+        {
+            throw new IllegalArgumentException();
+        }
+        if ( length < end || 0 > start )
+        {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+    }
+
+    private static ArrayList<PlexOfField> toArrayList( PlexOfCps plexOfCps )
+    {
+        if ( plexOfCps == null )
+            return new ArrayList<PlexOfField>();
+
+        ArrayList<PlexOfField> fields = new ArrayList<PlexOfField>();
+        fields.ensureCapacity( plexOfCps.length() );
+
+        for ( int i = 0; i < plexOfCps.length(); i++ )
+        {
+            GenericPropertyNode propNode = plexOfCps.getProperty( i );
+            PlexOfField plex = new PlexOfField( propNode );
+            fields.add( plex );
+        }
+
+        return fields;
+    }
+
+    private Map<FieldsDocumentPart, Map<Integer, Field>> _fieldsByOffset;
+
+    private Map<FieldsDocumentPart, PlexOfCps> _tables;
+
+    private GenericPropertyNodeComparator comparator = new GenericPropertyNodeComparator();
 
     public FieldsTables( byte[] tableStream, FileInformationBlock fib )
     {
-        _tables = new HashMap<DocumentPart, PlexOfCps>(
-                DocumentPart.values().length );
-        _fieldsByOffset = new HashMap<DocumentPart, Map<Integer, Field>>(
-                DocumentPart.values().length );
+        _tables = new HashMap<FieldsDocumentPart, PlexOfCps>(
+                FieldsDocumentPart.values().length );
+        _fieldsByOffset = new HashMap<FieldsDocumentPart, Map<Integer, Field>>(
+                FieldsDocumentPart.values().length );
 
-        for ( DocumentPart documentPart : DocumentPart.values() )
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {
-            final PlexOfCps plexOfCps = readPLCF( tableStream, fib,
-                    documentPart );
+            final PlexOfCps plexOfCps = readPLCF( tableStream, fib, part );
 
-            _fieldsByOffset
-                    .put( documentPart, parseFieldStructure( plexOfCps ) );
-            _tables.put( documentPart, plexOfCps );
+            _fieldsByOffset.put( part, parseFieldStructure( plexOfCps ) );
+            _tables.put( part, plexOfCps );
         }
+    }
+
+    public Collection<Field> getFields( FieldsDocumentPart part )
+    {
+        Map<Integer, Field> map = _fieldsByOffset.get( part );
+        if ( map == null || map.isEmpty() )
+            return Collections.emptySet();
+
+        return Collections.unmodifiableCollection( map.values() );
+    }
+
+    public ArrayList<PlexOfField> getFieldsPLCF( FieldsDocumentPart part )
+    {
+        return toArrayList( _tables.get( part ) );
+    }
+
+    @Deprecated
+    public ArrayList<PlexOfField> getFieldsPLCF( int partIndex )
+    {
+        return getFieldsPLCF( FieldsDocumentPart.values()[partIndex] );
+    }
+
+    public Field lookupFieldByStartOffset( FieldsDocumentPart documentPart,
+            int offset )
+    {
+        Map<Integer, Field> map = _fieldsByOffset.get( documentPart );
+        if ( map == null || map.isEmpty() )
+            return null;
+
+        return map.get( Integer.valueOf( offset ) );
     }
 
     private Map<Integer, Field> parseFieldStructure( PlexOfCps plexOfCps )
     {
-        if (plexOfCps == null)
+        if ( plexOfCps == null )
             return new HashMap<Integer, Field>();
 
         GenericPropertyNode[] nodes = plexOfCps.toPropertiesArray();
@@ -242,73 +335,8 @@ public class FieldsTables
         }
     }
 
-    /**
-     * This is port and adaptation of Arrays.binarySearch from Java 6 (Apache
-     * Harmony).
-     */
-    private static <T> int binarySearch( GenericPropertyNode[] array,
-            int startIndex, int endIndex, int requiredStartOffset )
-    {
-        checkIndexForBinarySearch( array.length, startIndex, endIndex );
-
-        int low = startIndex, mid = -1, high = endIndex - 1, result = 0;
-        while ( low <= high )
-        {
-            mid = ( low + high ) >>> 1;
-            int midStart = array[mid].getStart();
-
-            if ( midStart == requiredStartOffset )
-            {
-                return mid;
-            }
-            else if ( midStart < requiredStartOffset )
-            {
-                low = mid + 1;
-            }
-            else
-            {
-                high = mid - 1;
-            }
-        }
-        if ( mid < 0 )
-        {
-            int insertPoint = endIndex;
-            for ( int index = startIndex; index < endIndex; index++ )
-            {
-                if ( requiredStartOffset < array[index].getStart() )
-                {
-                    insertPoint = index;
-                }
-            }
-            return -insertPoint - 1;
-        }
-        return -mid - ( result >= 0 ? 1 : 2 );
-    }
-
-    private static void checkIndexForBinarySearch( int length, int start,
-            int end )
-    {
-        if ( start > end )
-        {
-            throw new IllegalArgumentException();
-        }
-        if ( length < end || 0 > start )
-        {
-            throw new ArrayIndexOutOfBoundsException();
-        }
-    }
-
-    public Field lookupFieldByStartOffset( DocumentPart documentPart, int offset )
-    {
-        Map<Integer, Field> map = _fieldsByOffset.get( documentPart);
-        if ( map == null || map.isEmpty() )
-            return null;
-
-        return map.get( Integer.valueOf( offset ) );
-    }
-
     private PlexOfCps readPLCF( byte[] tableStream, FileInformationBlock fib,
-            DocumentPart documentPart )
+            FieldsDocumentPart documentPart )
     {
         int start = fib.getFieldsPlcfOffset( documentPart );
         int length = fib.getFieldsPlcfLength( documentPart );
@@ -319,45 +347,7 @@ public class FieldsTables
         return new PlexOfCps( tableStream, start, length, FLD_SIZE );
     }
 
-    public Collection<Field> getFields( DocumentPart part )
-    {
-        Map<Integer, Field> map = _fieldsByOffset.get( part );
-        if ( map == null || map.isEmpty() )
-            return Collections.emptySet();
-
-        return Collections.unmodifiableCollection( map.values() );
-    }
-
-    @Deprecated
-    public ArrayList<PlexOfField> getFieldsPLCF( int partIndex )
-    {
-        return getFieldsPLCF( DocumentPart.values()[partIndex] );
-    }
-
-    public ArrayList<PlexOfField> getFieldsPLCF( DocumentPart documentPart )
-    {
-        return toArrayList( _tables.get( documentPart ) );
-    }
-
-    private static ArrayList<PlexOfField> toArrayList( PlexOfCps plexOfCps )
-    {
-        if ( plexOfCps == null )
-            return new ArrayList<PlexOfField>();
-
-        ArrayList<PlexOfField> fields = new ArrayList<PlexOfField>();
-        fields.ensureCapacity( plexOfCps.length() );
-
-        for ( int i = 0; i < plexOfCps.length(); i++ )
-        {
-            GenericPropertyNode propNode = plexOfCps.getProperty( i );
-            PlexOfField plex = new PlexOfField( propNode );
-            fields.add( plex );
-        }
-
-        return fields;
-    }
-
-    private int savePlex( FileInformationBlock fib, DocumentPart documentPart,
+    private int savePlex( FileInformationBlock fib, FieldsDocumentPart part,
             PlexOfCps plexOfCps, HWPFOutputStream outputStream )
             throws IOException
     {
@@ -371,8 +361,8 @@ public class FieldsTables
 
         outputStream.write( data );
 
-        fib.setFieldsPlcfOffset( documentPart, start );
-        fib.setFieldsPlcfLength( documentPart, length );
+        fib.setFieldsPlcfOffset( part, start );
+        fib.setFieldsPlcfLength( part, length );
 
         return length;
     }
@@ -380,10 +370,21 @@ public class FieldsTables
     public void write( FileInformationBlock fib, HWPFOutputStream tableStream )
             throws IOException
     {
-        for ( DocumentPart part : DocumentPart.values() )
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {
             PlexOfCps plexOfCps = _tables.get( part );
             savePlex( fib, part, plexOfCps, tableStream );
+        }
+    }
+
+    private static final class GenericPropertyNodeComparator implements
+            Comparator<GenericPropertyNode>
+    {
+        public int compare( GenericPropertyNode o1, GenericPropertyNode o2 )
+        {
+            int thisVal = o1.getStart();
+            int anotherVal = o2.getStart();
+            return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
         }
     }
 }

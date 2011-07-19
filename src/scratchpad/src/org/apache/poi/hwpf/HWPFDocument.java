@@ -42,6 +42,7 @@ import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
 import org.apache.poi.hwpf.model.ShapesTable;
 import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
@@ -64,6 +65,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public final class HWPFDocument extends HWPFDocumentCore
 {
   /** And for making sense of CP lengths in the FIB */
+  @Deprecated
   protected CPSplitCalculator _cpSplit;
 
   /** table stream buffer*/
@@ -268,6 +270,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     return _cft.getTextPieceTable();
   }
 
+  @Deprecated
   public CPSplitCalculator getCPSplitCalculator()
   {
 	return _cpSplit;
@@ -319,7 +322,9 @@ public final class HWPFDocument extends HWPFDocumentCore
         int bytesStart = getFileInformationBlock().getFcMin();
 
         int charsStart = getTextTable().getCharIndex( bytesStart );
-        int charsEnd = charsStart + getFileInformationBlock().getCcpText();
+        int charsEnd = charsStart
+                + getFileInformationBlock().getSubdocumentTextStreamLength(
+                        SubdocumentType.MAIN );
 
         return new Range( charsStart, charsEnd, this );
     }

@@ -29,34 +29,54 @@ public final class FIBLongHandler {
   public static final int PRODUCTREVISED = 2;
     /**
      * Pointer to length of main document text stream 1
+     * 
+     * @since Word 97
      */
     public static final int CCPTEXT = 3;
     /**
      * Pointer to length of footnote subdocument text stream
+     * 
+     * @since Word 97
      */
     public static final int CCPFTN = 4;
     /**
      * Pointer to length of header subdocument text stream
+     * 
+     * @since Word 97
      */
     public static final int CCPHDD = 5;
     /**
      * Pointer to length of macro subdocument text stream, which should now
      * always be 0
+     * 
+     * @since Word 97
      */
     public static final int CCPMCR = 6;
     /**
      * Pointer to length of annotation subdocument text stream
+     * 
+     * @since Word 97
      */
     public static final int CCPATN = 7;
     /**
      * Pointer to length of endnote subdocument text stream
+     * 
+     * @since Word 97
      */
     public static final int CCPEDN = 8;
     /**
      * Pointer to length of textbox subdocument text stream
+     * 
+     * @since Word 97
      */
     public static final int CCPTXBX = 9;
-  public static final int CCPHDRTXBX = 10;
+
+    /**
+     * Length of header textbox subdocument text stream
+     * 
+     * @since Word 97
+     */
+    public static final int CCPHDRTXBX = 10;
   public static final int PNFBPCHPFIRST = 11;
   public static final int PNCHPFIRST = 12;
   public static final int CPNBTECHP = 13;

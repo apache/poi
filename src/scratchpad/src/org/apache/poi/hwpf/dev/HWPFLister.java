@@ -36,7 +36,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.DocumentPart;
+import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
@@ -315,6 +315,7 @@ public final class HWPFLister
     {
         FileInformationBlock fib = _doc.getFileInformationBlock();
         System.out.println( fib );
+
     }
 
     private void dumpFields()
@@ -327,7 +328,7 @@ public final class HWPFLister
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-        for ( DocumentPart part : DocumentPart.values() )
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {
             System.out.println( "=== Document part: " + part + " ===" );
             for ( org.apache.poi.hwpf.model.Field field : document
