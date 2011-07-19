@@ -21,9 +21,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
@@ -76,6 +79,7 @@ public class CHPBinTable
             int size, ComplexFileTable complexFileTable, TextPieceTable tpt,
             boolean reconstructChpxTable )
     {
+        long start = System.currentTimeMillis();
         /*
          * Page 35:
          * 
@@ -107,10 +111,17 @@ public class CHPBinTable
             _textRuns.add(chpx);
       }
     }
+        logger.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( _textRuns.size() ), " elements)" );
+        start = System.currentTimeMillis();
 
         if ( !reconstructChpxTable )
         {
             Collections.sort( _textRuns );
+
+            logger.log( POILogger.DEBUG, "CHPX sorted in ",
+                    Long.valueOf( System.currentTimeMillis() - start ), " ms" );
             return;
         }
 
@@ -164,6 +175,12 @@ public class CHPBinTable
                     _textRuns.add( chpx );
                 }
             }
+            logger.log( POILogger.DEBUG,
+                    "Merged with CHPX from complex file table in ",
+                    Long.valueOf( System.currentTimeMillis() - start ),
+                    " ms (", Integer.valueOf( _textRuns.size() ),
+                    " elements in total)" );
+            start = System.currentTimeMillis();
         }
 
         // rebuild document paragraphs structure
@@ -189,29 +206,85 @@ public class CHPBinTable
             docText.replace( textPiece.getStart(), textPiece.getStart()
                     + toAppendLength, toAppend );
         }
+        logger.log( POILogger.DEBUG, "Document text rebuilded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( docText.length() ), " chars)" );
+        start = System.currentTimeMillis();
 
-        Set<Integer> textRunsBoundariesSet = new HashSet<Integer>();
-        for ( CHPX chpx : _textRuns )
+        List<CHPX> oldChpxSortedByStartPos = new ArrayList<CHPX>( _textRuns );
+        Collections.sort( oldChpxSortedByStartPos,
+                PropertyNode.StartComparator.instance );
+
+        logger.log( POILogger.DEBUG, "CHPX sorted by start position in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
+
+        final Map<CHPX, Integer> chpxToFileOrder = new IdentityHashMap<CHPX, Integer>();
         {
-            textRunsBoundariesSet.add( Integer.valueOf( chpx.getStart() ) );
-            textRunsBoundariesSet.add( Integer.valueOf( chpx.getEnd() ) );
+            int counter = 0;
+            for ( CHPX chpx : _textRuns )
+            {
+                chpxToFileOrder.put( chpx, Integer.valueOf( counter++ ) );
+            }
         }
-        textRunsBoundariesSet.remove( Integer.valueOf( 0 ) );
-        List<Integer> textRunsBoundariesList = new ArrayList<Integer>(
-                textRunsBoundariesSet );
-        Collections.sort( textRunsBoundariesList );
+        final Comparator<CHPX> chpxFileOrderComparator = new Comparator<CHPX>()
+        {
+            public int compare( CHPX o1, CHPX o2 )
+            {
+                Integer i1 = chpxToFileOrder.get( o1 );
+                Integer i2 = chpxToFileOrder.get( o2 );
+                return i1.compareTo( i2 );
+            }
+        };
+
+        logger.log( POILogger.DEBUG, "CHPX's order map created in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
+
+        List<Integer> textRunsBoundariesList;
+        {
+            Set<Integer> textRunsBoundariesSet = new HashSet<Integer>();
+            for ( CHPX chpx : _textRuns )
+            {
+                textRunsBoundariesSet.add( Integer.valueOf( chpx.getStart() ) );
+                textRunsBoundariesSet.add( Integer.valueOf( chpx.getEnd() ) );
+            }
+            textRunsBoundariesSet.remove( Integer.valueOf( 0 ) );
+            textRunsBoundariesList = new ArrayList<Integer>(
+                    textRunsBoundariesSet );
+            Collections.sort( textRunsBoundariesList );
+        }
+
+        logger.log( POILogger.DEBUG, "Texts CHPX boundaries collected in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+        start = System.currentTimeMillis();
 
         List<CHPX> newChpxs = new LinkedList<CHPX>();
         int lastTextRunStart = 0;
-        for ( Integer boundary : textRunsBoundariesList )
+        for ( Integer objBoundary : textRunsBoundariesList )
         {
+            final int boundary = objBoundary.intValue();
+
             final int startInclusive = lastTextRunStart;
-            final int endExclusive = boundary.intValue();
+            final int endExclusive = boundary;
             lastTextRunStart = endExclusive;
 
+            int startPosition = binarySearch( oldChpxSortedByStartPos, boundary );
+            startPosition = Math.abs( startPosition );
+            while ( startPosition >= oldChpxSortedByStartPos.size() )
+                startPosition--;
+            while ( startPosition > 0
+                    && oldChpxSortedByStartPos.get( startPosition ).getStart() >= boundary )
+                startPosition--;
+
             List<CHPX> chpxs = new LinkedList<CHPX>();
-            for ( CHPX chpx : _textRuns )
+            for ( int c = startPosition; c < oldChpxSortedByStartPos.size(); c++ )
             {
+                CHPX chpx = oldChpxSortedByStartPos.get( c );
+
+                if ( boundary < chpx.getStart() )
+                    break;
+
                 int left = Math.max( startInclusive, chpx.getStart() );
                 int right = Math.min( endExclusive, chpx.getEnd() );
 
@@ -246,6 +319,8 @@ public class CHPBinTable
                 }
             }
 
+            Collections.sort( chpxs, chpxFileOrderComparator );
+
             SprmBuffer sprmBuffer = new SprmBuffer( 0 );
             for ( CHPX chpx : chpxs )
             {
@@ -257,6 +332,31 @@ public class CHPBinTable
             continue;
         }
         this._textRuns = new ArrayList<CHPX>( newChpxs );
+
+        logger.log( POILogger.DEBUG, "CHPX rebuilded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( _textRuns.size() ), " elements)" );
+    }
+
+    private static int binarySearch( List<CHPX> chpxs, int startPosition )
+    {
+        int low = 0;
+        int high = chpxs.size() - 1;
+
+        while ( low <= high )
+        {
+            int mid = ( low + high ) >>> 1;
+            CHPX midVal = chpxs.get( mid );
+            int midValue = midVal.getStart();
+
+            if ( midValue < startPosition )
+                low = mid + 1;
+            else if ( midValue > startPosition )
+                high = mid - 1;
+            else
+                return mid; // key found
+        }
+        return -( low + 1 ); // key not found.
     }
 
   public void adjustForDelete(int listIndex, int offset, int length)
