@@ -22,6 +22,8 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -234,7 +236,7 @@ public class FieldsTables
      * This is port and adaptation of Arrays.binarySearch from Java 6 (Apache
      * Harmony).
      */
-    public static <T> int binarySearch( GenericPropertyNode[] array,
+    private static <T> int binarySearch( GenericPropertyNode[] array,
             int startIndex, int endIndex, int requiredStartOffset )
     {
         checkIndexForBinarySearch( array.length, startIndex, endIndex );
@@ -340,6 +342,16 @@ public class FieldsTables
             return null;
 
         return new PlexOfCps( tableStream, start, length, FLD_SIZE );
+    }
+
+    public Collection<Field> getFields( int documentPart )
+    {
+        Map<Integer, Field> map = _fieldsByOffset.get( Integer
+                .valueOf( documentPart ) );
+        if ( map == null || map.isEmpty() )
+            return Collections.emptySet();
+
+        return Collections.unmodifiableCollection( map.values() );
     }
 
     public ArrayList<PlexOfField> getFieldsPLCF( int type )
