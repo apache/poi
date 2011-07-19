@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 
 /**
  * String table containing the history of the last few revisions ("saves") of the document.
@@ -34,10 +32,6 @@ import org.apache.poi.util.StringUtil;
  */
 public final class SavedByTable
 {
-  /**
-   * A value that I don't know what it does, but is maintained for accuracy.
-   */
-  private short unknownValue = -1;
 
   /**
    * Array of entries.
@@ -52,30 +46,40 @@ public final class SavedByTable
    * @param size the size of the table in the byte array.
    */
   public SavedByTable(byte[] tableStream, int offset, int size)
-  {
-    // Read the value that I don't know what it does. :-)
-    unknownValue = LittleEndian.getShort(tableStream, offset);
-    offset += 2;
+  {      
+//    // Read the value that I don't know what it does. :-)
+//    unknownValue = LittleEndian.getShort(tableStream, offset);
+//    offset += 2;
+//
+//    // The stored int is the number of strings, and there are two strings per entry.
+//    int numEntries = LittleEndian.getInt(tableStream, offset) / 2;
+//    offset += 4;
+//
+//    entries = new SavedByEntry[numEntries];
+//    for (int i = 0; i < numEntries; i++)
+//    {
+//      int len = LittleEndian.getShort(tableStream, offset);
+//      offset += 2;
+//      String userName = StringUtil.getFromUnicodeLE(tableStream, offset, len);
+//      offset += len * 2;
+//      len = LittleEndian.getShort(tableStream, offset);
+//      offset += 2;
+//      String saveLocation = StringUtil.getFromUnicodeLE(tableStream, offset, len);
+//      offset += len * 2;
+//
+//      entries[i] = new SavedByEntry(userName, saveLocation);
+//    }
 
-    // The stored int is the number of strings, and there are two strings per entry.
-    int numEntries = LittleEndian.getInt(tableStream, offset) / 2;
-    offset += 4;
+        // first value is mark for extended STTBF ;) -- sergey
+        String[] strings = SttbfUtils.read( tableStream, offset );
 
-    entries = new SavedByEntry[numEntries];
-    for (int i = 0; i < numEntries; i++)
-    {
-      int len = LittleEndian.getShort(tableStream, offset);
-      offset += 2;
-      String userName = StringUtil.getFromUnicodeLE(tableStream, offset, len);
-      offset += len * 2;
-      len = LittleEndian.getShort(tableStream, offset);
-      offset += 2;
-      String saveLocation = StringUtil.getFromUnicodeLE(tableStream, offset, len);
-      offset += len * 2;
-
-      entries[i] = new SavedByEntry(userName, saveLocation);
+        int numEntries = strings.length / 2;
+        entries = new SavedByEntry[numEntries];
+        for ( int i = 0; i < numEntries; i++ )
+        {
+            entries[i] = new SavedByEntry( strings[i * 2], strings[i * 2 + 1] );
+        }
     }
-  }
 
   /**
    * Gets the entries.  The returned list cannot be modified.
@@ -87,34 +91,24 @@ public final class SavedByTable
     return Collections.unmodifiableList(Arrays.asList(entries));
   }
 
-  /**
-   * Writes this table to the table stream.
-   *
-   * @param tableStream the table stream to write to.
-   * @throws IOException if an error occurs while writing.
-   */
-  public void writeTo(HWPFOutputStream tableStream)
-    throws IOException
-  {
-    byte[] header = new byte[6];
-    LittleEndian.putShort(header, 0, unknownValue);
-    LittleEndian.putInt(header, 2, entries.length * 2);
-    tableStream.write(header);
-
-    for (int i = 0; i < entries.length; i++)
+    /**
+     * Writes this table to the table stream.
+     * 
+     * @param tableStream
+     *            the table stream to write to.
+     * @throws IOException
+     *             if an error occurs while writing.
+     */
+    public void writeTo( HWPFOutputStream tableStream ) throws IOException
     {
-      writeStringValue(tableStream, entries[i].getUserName());
-      writeStringValue(tableStream, entries[i].getSaveLocation());
+        String[] toSave = new String[entries.length * 2];
+        int counter = 0;
+        for ( SavedByEntry entry : entries )
+        {
+            toSave[counter++] = entry.getUserName();
+            toSave[counter++] = entry.getSaveLocation();
+        }
+        SttbfUtils.write( tableStream, toSave );
     }
-  }
 
-  private void writeStringValue(HWPFOutputStream tableStream, String value)
-    throws IOException
-  {
-    byte[] buf = new byte[value.length() * 2 + 2];
-    LittleEndian.putShort(buf, 0, (short) value.length());
-    StringUtil.putUnicodeLE(value, buf, 2);
-    tableStream.write(buf);
-  }
 }
-

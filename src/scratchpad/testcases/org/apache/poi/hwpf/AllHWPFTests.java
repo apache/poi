@@ -25,6 +25,7 @@ import org.apache.poi.hwpf.converter.TestWordToHtmlConverter;
 import org.apache.poi.hwpf.extractor.TestDifferentRoutes;
 import org.apache.poi.hwpf.extractor.TestWordExtractor;
 import org.apache.poi.hwpf.extractor.TestWordExtractorBugs;
+import org.apache.poi.hwpf.model.TestBookmarksTables;
 import org.apache.poi.hwpf.model.TestCHPBinTable;
 import org.apache.poi.hwpf.model.TestDocumentProperties;
 import org.apache.poi.hwpf.model.TestFileInformationBlock;
@@ -79,6 +80,7 @@ public final class AllHWPFTests
         suite.addTestSuite( TestWordExtractorBugs.class );
 
         // org.apache.poi.hwpf.model
+        suite.addTestSuite( TestBookmarksTables.class );
         suite.addTestSuite( TestCHPBinTable.class );
         suite.addTestSuite( TestDocumentProperties.class );
         suite.addTestSuite( TestFileInformationBlock.class );

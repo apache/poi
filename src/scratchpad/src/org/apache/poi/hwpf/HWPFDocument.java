@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
 import org.apache.poi.hwpf.model.ComplexFileTable;
@@ -100,6 +101,9 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /** Holds Office Art objects */
   protected ShapesTable _officeArts;
+  
+  /** Holds the bookmarks */
+  protected BookmarksTables _bookmarksTables;
   
   /** Holds the fields PLCFs */
   protected FieldsTables _fieldsTables;
@@ -261,7 +265,8 @@ public final class HWPFDocument extends HWPFDocumentCore
     {
       _rmat = new RevisionMarkAuthorTable(_tableStream, rmarkOffset, rmarkLength);
     }
-    
+
+    _bookmarksTables = new BookmarksTables( _tableStream, _fib );
     _fieldsTables = new FieldsTables(_tableStream, _fib);
   }
 
@@ -438,6 +443,15 @@ public final class HWPFDocument extends HWPFDocumentCore
 	  return _officeArts;
   }
 
+    /**
+     * @return BookmarksTables object, that is able to extract bookmarks
+     *         descriptors from this document
+     */
+    public BookmarksTables getBookmarksTables()
+    {
+        return _bookmarksTables;
+    }
+
   /**
    * @return FieldsTables object, that is able to extract fields descriptors from this document
    */
@@ -487,6 +501,15 @@ public final class HWPFDocument extends HWPFDocumentCore
     // complex table.
     int fcMin = mainOffset;
 
+        /*
+         * clx (encoding of the sprm lists for a complex file and piece table
+         * for a any file) Written immediately after the end of the previously
+         * recorded structure. This is recorded in all Word documents
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 23 of 210
+         */
+    
     // write out the Complex table, includes text.
     _fib.setFcClx(tableOffset);
     _cft.writeTo(docSys);
@@ -494,11 +517,53 @@ public final class HWPFDocument extends HWPFDocumentCore
     tableOffset = tableStream.getOffset();
     int fcMac = mainStream.getOffset();
 
+        /*
+         * plcfBkmkf (table recording beginning CPs of bookmarks) Written
+         * immediately after the sttbfBkmk, if the document contains bookmarks.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
+        if ( _bookmarksTables != null )
+        {
+            _bookmarksTables.writePlcfBkmkf( _fib, tableStream );
+            tableOffset = tableStream.getOffset();
+        }
+
+        /*
+         * plcfBkmkl (table recording limit CPs of bookmarks) Written
+         * immediately after the plcfBkmkf, if the document contains bookmarks.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
+        if ( _bookmarksTables != null )
+        {
+            _bookmarksTables.writePlcfBkmkl( _fib, tableStream );
+            tableOffset = tableStream.getOffset();
+        }
+
+        /*
+         * plcfbteChpx (bin table for CHP FKPs) Written immediately after the
+         * previously recorded table. This is recorded in all Word documents.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
+
     // write out the CHPBinTable.
     _fib.setFcPlcfbteChpx(tableOffset);
     _cbt.writeTo(docSys, fcMin);
     _fib.setLcbPlcfbteChpx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
+
+        /*
+         * plcfbtePapx (bin table for PAP FKPs) Written immediately after the
+         * plcfbteChpx. This is recorded in all Word documents.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
 
     // write out the PAPBinTable.
     _fib.setFcPlcfbtePapx(tableOffset);
@@ -530,6 +595,27 @@ public final class HWPFDocument extends HWPFDocumentCore
       _fib.setLcbPlfLfo(tableStream.getOffset() - tableOffset);
       tableOffset = tableStream.getOffset();
     }
+
+        /*
+         * sttbfBkmk (table of bookmark name strings) Written immediately after
+         * the previously recorded table, if the document contains bookmarks.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 27 of 210
+         */
+        if ( _bookmarksTables != null )
+        {
+            _bookmarksTables.writeSttbfBkmk( _fib, tableStream );
+            tableOffset = tableStream.getOffset();
+        }
+
+        /*
+         * sttbSavedBy (last saved by string table) Written immediately after
+         * the previously recorded table.
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 27 of 210
+         */
 
     // write out the saved-by table.
     if (_sbt != null)
