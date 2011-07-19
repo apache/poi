@@ -683,7 +683,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public HSSFSheet cloneSheet(int sheetIndex) {
         validateSheetIndex(sheetIndex);
-        HSSFSheet srcSheet = (HSSFSheet) _sheets.get(sheetIndex);
+        HSSFSheet srcSheet = _sheets.get(sheetIndex);
         String srcName = workbook.getSheetName(sheetIndex);
         HSSFSheet clonedSheet = srcSheet.cloneSheet(this);
         clonedSheet.setSelected(false);
@@ -696,33 +696,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         // Check this sheet has an autofilter, (which has a built-in NameRecord at workbook level)
         int filterDbNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_FILTER_DB);
-        if (filterDbNameIndex >=0) {
-            NameRecord origNameRecord = workbook.getNameRecord(filterDbNameIndex);
-            // copy original formula but adjust 3D refs to the new external sheet index
-            int newExtSheetIx = workbook.checkExternSheet(newSheetIndex);
-            Ptg[] ptgs = origNameRecord.getNameDefinition();
-            for (int i=0; i< ptgs.length; i++) {
-                Ptg ptg = ptgs[i];
-
-                if (ptg instanceof Area3DPtg) {
-                    Area3DPtg a3p = (Area3DPtg) ((OperandPtg) ptg).copy();
-                    a3p.setExternSheetIndex(newExtSheetIx);
-                    ptgs[i] = a3p;
-                } else if (ptg instanceof Ref3DPtg) {
-                    Ref3DPtg r3p = (Ref3DPtg) ((OperandPtg) ptg).copy();
-                    r3p.setExternSheetIndex(newExtSheetIx);
-                    ptgs[i] = r3p;
-                }
-            }
-            NameRecord newNameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_FILTER_DB, newSheetIndex+1);
-            newNameRecord.setNameDefinition(ptgs);
-            newNameRecord.setHidden(true);
+        if (filterDbNameIndex != -1) {
+            NameRecord newNameRecord = workbook.cloneFilter(filterDbNameIndex, newSheetIndex);
             HSSFName newName = new HSSFName(this, newNameRecord);
             names.add(newName);
-
-            workbook.cloneDrawings(clonedSheet.getSheet());
         }
         // TODO - maybe same logic required for other/all built-in name records
+        workbook.cloneDrawings(clonedSheet.getSheet());
 
         return clonedSheet;
     }
