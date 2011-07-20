@@ -299,90 +299,103 @@ public final class HWPFDocument extends HWPFDocumentCore
       return new Range(0, p.getEnd(), this);
   }
 
-  /**
-   * Returns the range which covers the whole of the
-   *  document, but excludes any headers and footers.
-   */
+    /**
+     * Returns the range which covers the whole of the document, but excludes
+     * any headers and footers.
+     */
     public Range getRange()
     {
-        // First up, trigger a full-recalculate
-        // Needed in case of deletes etc
-        getOverallRange();
+        // // First up, trigger a full-recalculate
+        // // Needed in case of deletes etc
+        // getOverallRange();
+        //
+        // if ( getFileInformationBlock().isFComplex() )
+        // {
+        // /*
+        // * Page 31:
+        // *
+        // * main document must be found by examining the piece table entries
+        // * from the 0th piece table entry from the piece table entry that
+        // * describes cp=fib.ccpText.
+        // */
+        // // TODO: review
+        // return new Range( _cpSplit.getMainDocumentStart(),
+        // _cpSplit.getMainDocumentEnd(), this );
+        // }
+        //
+        // /*
+        // * Page 31:
+        // *
+        // * "In a non-complex file, this means text of the: main document
+        // begins
+        // * at fib.fcMin in the file and continues through
+        // * fib.fcMin+fib.ccpText."
+        // */
+        // int bytesStart = getFileInformationBlock().getFcMin();
+        //
+        // int charsStart = getTextTable().getCharIndex( bytesStart );
+        // int charsEnd = charsStart
+        // + getFileInformationBlock().getSubdocumentTextStreamLength(
+        // SubdocumentType.MAIN );
 
-        if ( getFileInformationBlock().isFComplex() )
-        {
-            /*
-             * Page 31:
-             * 
-             * main document must be found by examining the piece table entries
-             * from the 0th piece table entry from the piece table entry that
-             * describes cp=fib.ccpText.
-             */
-            // TODO: review
-            return new Range( _cpSplit.getMainDocumentStart(),
-                    _cpSplit.getMainDocumentEnd(), this );
-        }
-
-        /*
-         * Page 31:
-         * 
-         * "In a non-complex file, this means text of the: main document begins
-         * at fib.fcMin in the file and continues through
-         * fib.fcMin+fib.ccpText."
-         */
-        int bytesStart = getFileInformationBlock().getFcMin();
-
-        int charsStart = getTextTable().getCharIndex( bytesStart );
-        int charsEnd = charsStart
-                + getFileInformationBlock().getSubdocumentTextStreamLength(
-                        SubdocumentType.MAIN );
-
-        return new Range( charsStart, charsEnd, this );
+        // it seems much simpler -- sergey
+        return getRange(SubdocumentType.MAIN);
     }
 
-  /**
-   * Returns the range which covers all the Footnotes.
-   */
-  public Range getFootnoteRange() {
-	  return new Range(
-			  _cpSplit.getFootnoteStart(),
-			  _cpSplit.getFootnoteEnd(),
-			  this
-      );
-  }
+    private Range getRange( SubdocumentType subdocument )
+    {
+        int startCp = 0;
+        for ( SubdocumentType previos : SubdocumentType.ORDERED )
+        {
+            int length = getFileInformationBlock()
+                    .getSubdocumentTextStreamLength( previos );
+            if ( subdocument == previos )
+                return new Range( startCp, startCp + length, this );
+            startCp += length;
+        }
+        throw new UnsupportedOperationException(
+                "Subdocument type not supported: " + subdocument );
+    }
 
-  /**
-   * Returns the range which covers all the Endnotes.
-  */
-  public Range getEndnoteRange() {
-          return new Range(
-                          _cpSplit.getEndNoteStart(),
-                          _cpSplit.getEndNoteEnd(),
-                          this
-      );
-  }
+    /**
+     * Returns the {@link Range} which covers all the Footnotes.
+     * 
+     * @return the {@link Range} which covers all the Footnotes.
+     */
+    public Range getFootnoteRange()
+    {
+        return getRange( SubdocumentType.FOOTNOTE );
+    }
 
-  /**
-   * Returns the range which covers all the Endnotes.
-  */
-  public Range getCommentsRange() {
-          return new Range(
-                          _cpSplit.getCommentsStart(),
-                          _cpSplit.getCommentsEnd(),
-                          this
-      );
-  }
+    /**
+     * Returns the {@link Range} which covers all endnotes.
+     * 
+     * @return the {@link Range} which covers all endnotes.
+     */
+    public Range getEndnoteRange()
+    {
+        return getRange( SubdocumentType.ENDNOTE );
+    }
 
-  /**
-   * Returns the range which covers all the Endnotes.
-  */
-  public Range getMainTextboxRange() {
-          return new Range(
-                          _cpSplit.getMainTextboxStart(),
-                          _cpSplit.getMainTextboxEnd(),
-                          this
-      );
-  }
+    /**
+     * Returns the {@link Range} which covers all annotations.
+     * 
+     * @return the {@link Range} which covers all annotations.
+     */
+    public Range getCommentsRange()
+    {
+        return getRange( SubdocumentType.ANNOTATION );
+    }
+
+    /**
+     * Returns the {@link Range} which covers all textboxes.
+     * 
+     * @return the {@link Range} which covers all textboxes.
+     */
+    public Range getMainTextboxRange()
+    {
+        return getRange( SubdocumentType.TEXTBOX );
+    }
 
   /**
    * Returns the range which covers all "Header Stories".
