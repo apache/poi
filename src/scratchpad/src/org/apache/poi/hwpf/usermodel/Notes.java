@@ -34,6 +34,12 @@ public interface Notes
     int getNotesCount();
 
     /**
+     * Returns index of note (if exists, otherwise -1) with specified anchor
+     * position
+     */
+    int getNoteIndexByAnchorPosition( int anchorPosition );
+
+    /**
      * Returns the end offset of the text corresponding to the reference within
      * the footnote text address space
      */

@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.hwpf.model.NotesTables;
 
 /**
@@ -25,6 +28,8 @@ import org.apache.poi.hwpf.model.NotesTables;
  */
 public class NotesImpl implements Notes
 {
+    private Map<Integer, Integer> anchorToIndexMap = null;
+
     private final NotesTables notesTables;
 
     public NotesImpl( NotesTables notesTables )
@@ -35,6 +40,18 @@ public class NotesImpl implements Notes
     public int getNoteAnchorPosition( int index )
     {
         return notesTables.getDescriptor( index ).getStart();
+    }
+
+    public int getNoteIndexByAnchorPosition( int anchorPosition )
+    {
+        updateAnchorToIndexMap();
+
+        Integer index = anchorToIndexMap
+                .get( Integer.valueOf( anchorPosition ) );
+        if ( index == null )
+            return -1;
+
+        return index.intValue();
     }
 
     public int getNotesCount()
@@ -50,5 +67,19 @@ public class NotesImpl implements Notes
     public int getNoteTextStartOffset( int index )
     {
         return notesTables.getTextPosition( index ).getStart();
+    }
+
+    private void updateAnchorToIndexMap()
+    {
+        if ( anchorToIndexMap != null )
+            return;
+
+        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        for ( int n = 0; n < notesTables.getDescriptorsCount(); n++ )
+        {
+            int anchorPosition = notesTables.getDescriptor( n ).getStart();
+            result.put( Integer.valueOf( anchorPosition ), Integer.valueOf( n ) );
+        }
+        this.anchorToIndexMap = result;
     }
 }

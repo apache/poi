@@ -299,14 +299,23 @@ public final class HWPFLister
 
             if ( true )
             {
-                System.out.println( new Range( chpx.getStart(), chpx.getEnd(),
+                String text = new Range( chpx.getStart(), chpx.getEnd(),
                         _doc.getOverallRange() )
                 {
                     public String toString()
                     {
                         return "CHPX range (" + super.toString() + ")";
                     }
-                }.text() );
+                }.text();
+                StringBuilder stringBuilder = new StringBuilder();
+                for ( char c : text.toCharArray() )
+                {
+                    if ( c < 30 )
+                        stringBuilder.append( "\\0x" + Integer.toHexString( c ) );
+                    else
+                        stringBuilder.append( c );
+                }
+                System.out.println( stringBuilder );
             }
         }
     }
