@@ -568,4 +568,28 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
     }
 
+    public void changeSheetNameWithSharedFormulas(String sampleFile){
+        Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile);
+
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        Sheet sheet = wb.getSheetAt(0);
+
+        for (int rownum = 1; rownum <= 40; rownum++) {
+            Cell cellA = sheet.getRow(1).getCell(0);
+            Cell cellB = sheet.getRow(1).getCell(1);
+
+            assertEquals(cellB.getStringCellValue(), evaluator.evaluate(cellA).getStringValue());
+        }
+
+        wb.setSheetName(0, "Renamed by POI");
+        evaluator.clearAllCachedResultValues();
+
+        for (int rownum = 1; rownum <= 40; rownum++) {
+            Cell cellA = sheet.getRow(1).getCell(0);
+            Cell cellB = sheet.getRow(1).getCell(1);
+
+            assertEquals(cellB.getStringCellValue(), evaluator.evaluate(cellA).getStringValue());
+        }
+    }
 }

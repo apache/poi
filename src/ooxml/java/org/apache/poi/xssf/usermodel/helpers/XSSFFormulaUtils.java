@@ -120,7 +120,7 @@ public final class XSSFFormulaUtils {
         CTCellFormula f = cell.getCTCell().getF();
         if (f != null) {
             String formula = f.getStringValue();
-            if (formula != null) {
+            if (formula != null && formula.length() > 0) {
                 int sheetIndex = _wb.getSheetIndex(cell.getSheet());
                 Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.CELL, sheetIndex);
                 String updatedFormula = FormulaRenderer.toFormulaString(frwb, ptgs);

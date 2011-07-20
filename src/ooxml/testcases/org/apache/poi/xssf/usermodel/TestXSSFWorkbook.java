@@ -428,4 +428,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertFalse(wb.getForceFormulaRecalculation());
     }
 
+    public void testChangeSheetNameWithSharedFormulas() {
+        changeSheetNameWithSharedFormulas("shared_formulas.xlsx");
+    }
+
 }

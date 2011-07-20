@@ -713,4 +713,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             assertEquals(3, bse.getRef());
         }
     }
+
+    public void testChangeSheetNameWithSharedFormulas() {
+        changeSheetNameWithSharedFormulas("shared_formulas.xls");
+    }
+
 }
