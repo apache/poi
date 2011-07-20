@@ -31,6 +31,7 @@ import org.apache.poi.hwpf.model.TestDocumentProperties;
 import org.apache.poi.hwpf.model.TestFileInformationBlock;
 import org.apache.poi.hwpf.model.TestFontTable;
 import org.apache.poi.hwpf.model.TestListTables;
+import org.apache.poi.hwpf.model.TestNotesTables;
 import org.apache.poi.hwpf.model.TestPAPBinTable;
 import org.apache.poi.hwpf.model.TestPlexOfCps;
 import org.apache.poi.hwpf.model.TestRevisionMarkAuthorTable;
@@ -86,6 +87,7 @@ public final class AllHWPFTests
         suite.addTestSuite( TestFileInformationBlock.class );
         suite.addTestSuite( TestFontTable.class );
         suite.addTestSuite( TestListTables.class );
+        suite.addTestSuite( TestNotesTables.class );
         suite.addTestSuite( TestPAPBinTable.class );
         suite.addTestSuite( TestPlexOfCps.class );
         suite.addTestSuite( TestRevisionMarkAuthorTable.class );
