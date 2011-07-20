@@ -50,50 +50,7 @@ public class BookmarksImpl implements Bookmarks
 
     private Bookmark getBookmark( final GenericPropertyNode first )
     {
-        return new Bookmark()
-        {
-            public int getEnd()
-            {
-                int currentIndex = bookmarksTables
-                        .getDescriptorFirstIndex( first );
-                try
-                {
-                    GenericPropertyNode descriptorLim = bookmarksTables
-                            .getDescriptorLim( currentIndex );
-                    return descriptorLim.getStart();
-                }
-                catch ( IndexOutOfBoundsException exc )
-                {
-                    return first.getEnd();
-                }
-            }
-
-            public String getName()
-            {
-                int currentIndex = bookmarksTables
-                        .getDescriptorFirstIndex( first );
-                try
-                {
-                    return bookmarksTables.getName( currentIndex );
-                }
-                catch ( ArrayIndexOutOfBoundsException exc )
-                {
-                    return "";
-                }
-            }
-
-            public int getStart()
-            {
-                return first.getStart();
-            }
-
-            public void setName( String name )
-            {
-                int currentIndex = bookmarksTables
-                        .getDescriptorFirstIndex( first );
-                bookmarksTables.setName( currentIndex, name );
-            }
-        };
+        return new BookmarkImpl( first );
     }
 
     public Bookmark getBookmark( int index )
@@ -143,6 +100,11 @@ public class BookmarksImpl implements Bookmarks
         for ( int lookupIndex = startLookupIndex; lookupIndex < endLookupIndex; lookupIndex++ )
         {
             int s = sortedStartPositions[lookupIndex];
+            if ( s < startInclusive )
+                continue;
+            if ( s >= endExclusive )
+                break;
+
             List<Bookmark> startedAt = getBookmarksAt( s );
             if ( startedAt != null )
                 result.put( Integer.valueOf( s ), startedAt );
@@ -185,5 +147,88 @@ public class BookmarksImpl implements Bookmarks
 
         this.sortedDescriptors = result;
         this.sortedStartPositions = indices;
+    }
+
+    private final class BookmarkImpl implements Bookmark
+    {
+        private final GenericPropertyNode first;
+
+        private BookmarkImpl( GenericPropertyNode first )
+        {
+            this.first = first;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if ( this == obj )
+                return true;
+            if ( obj == null )
+                return false;
+            if ( getClass() != obj.getClass() )
+                return false;
+            BookmarkImpl other = (BookmarkImpl) obj;
+            if ( first == null )
+            {
+                if ( other.first != null )
+                    return false;
+            }
+            else if ( !first.equals( other.first ) )
+                return false;
+            return true;
+        }
+
+        public int getEnd()
+        {
+            int currentIndex = bookmarksTables.getDescriptorFirstIndex( first );
+            try
+            {
+                GenericPropertyNode descriptorLim = bookmarksTables
+                        .getDescriptorLim( currentIndex );
+                return descriptorLim.getStart();
+            }
+            catch ( IndexOutOfBoundsException exc )
+            {
+                return first.getEnd();
+            }
+        }
+
+        public String getName()
+        {
+            int currentIndex = bookmarksTables.getDescriptorFirstIndex( first );
+            try
+            {
+                return bookmarksTables.getName( currentIndex );
+            }
+            catch ( ArrayIndexOutOfBoundsException exc )
+            {
+                return "";
+            }
+        }
+
+        public int getStart()
+        {
+            return first.getStart();
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return 31 + ( first == null ? 0 : first.hashCode() );
+        }
+
+        public void setName( String name )
+        {
+            int currentIndex = bookmarksTables.getDescriptorFirstIndex( first );
+            bookmarksTables.setName( currentIndex, name );
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Bookmark [" + getStart() + "; " + getEnd() + "): name: "
+                    + getName();
+        }
+
     }
 }

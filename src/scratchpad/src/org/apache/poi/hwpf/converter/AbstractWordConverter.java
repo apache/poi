@@ -16,6 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,10 +29,11 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.Field;
+import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -51,6 +58,8 @@ public abstract class AbstractWordConverter
     private static final POILogger logger = POILogFactory
             .getLogger( AbstractWordConverter.class );
 
+    private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
+
     private FontReplacer fontReplacer = new DefaultFontReplacer();
 
     protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
@@ -73,13 +82,38 @@ public abstract class AbstractWordConverter
     protected abstract void outputCharacters( Element block,
             CharacterRun characterRun, String text );
 
-    protected boolean processCharacters( HWPFDocumentCore hwpfDocument,
+    /**
+     * Wrap range into bookmark(s) and process it. All bookmarks have starts
+     * equal to range start and ends equal to range end. Usually it's only one
+     * bookmark.
+     */
+    protected abstract void processBookmarks( HWPFDocumentCore wordDocument,
+            Element currentBlock, Range range, int currentTableLevel,
+            List<Bookmark> rangeBookmarks );
+
+    protected boolean processCharacters( HWPFDocumentCore document,
             int currentTableLevel, Range range, final Element block )
     {
         if ( range == null )
             return false;
 
         boolean haveAnyText = false;
+
+        if ( document instanceof HWPFDocument )
+        {
+            final HWPFDocument doc = (HWPFDocument) document;
+            Map<Integer, List<Bookmark>> rangeBookmarks = doc.getBookmarks()
+                    .getBookmarksStartedBetween( range.getStartOffset(),
+                            range.getEndOffset() );
+
+            if ( rangeBookmarks != null && !rangeBookmarks.isEmpty() )
+            {
+                boolean processedAny = processRangeBookmarks( doc,
+                        currentTableLevel, range, block, rangeBookmarks );
+                if ( processedAny )
+                    return true;
+            }
+        }
 
         for ( int c = 0; c < range.numCharacterRuns(); c++ )
         {
@@ -88,11 +122,11 @@ public abstract class AbstractWordConverter
             if ( characterRun == null )
                 throw new AssertionError();
 
-            if ( hwpfDocument instanceof HWPFDocument
-                    && ( (HWPFDocument) hwpfDocument ).getPicturesTable()
+            if ( document instanceof HWPFDocument
+                    && ( (HWPFDocument) document ).getPicturesTable()
                             .hasPicture( characterRun ) )
             {
-                HWPFDocument newFormat = (HWPFDocument) hwpfDocument;
+                HWPFDocument newFormat = (HWPFDocument) document;
                 Picture picture = newFormat.getPicturesTable().extractPicture(
                         characterRun, true );
 
@@ -107,15 +141,15 @@ public abstract class AbstractWordConverter
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
             {
-                if ( hwpfDocument instanceof HWPFDocument )
+                if ( document instanceof HWPFDocument )
                 {
-                    Field aliveField = ( (HWPFDocument) hwpfDocument )
+                    Field aliveField = ( (HWPFDocument) document )
                             .getFieldsTables().lookupFieldByStartOffset(
                                     FieldsDocumentPart.MAIN,
                                     characterRun.getStartOffset() );
                     if ( aliveField != null )
                     {
-                        processField( ( (HWPFDocument) hwpfDocument ), range,
+                        processField( ( (HWPFDocument) document ), range,
                                 currentTableLevel, aliveField, block );
 
                         int continueAfter = aliveField.getFieldEndOffset();
@@ -130,8 +164,8 @@ public abstract class AbstractWordConverter
                     }
                 }
 
-                int skipTo = tryDeadField( hwpfDocument, range,
-                        currentTableLevel, c, block );
+                int skipTo = tryDeadField( document, range, currentTableLevel,
+                        c, block );
 
                 if ( skipTo != c )
                 {
@@ -336,6 +370,129 @@ public abstract class AbstractWordConverter
     protected abstract void processParagraph( HWPFDocumentCore wordDocument,
             Element parentFopElement, int currentTableLevel,
             Paragraph paragraph, String bulletText );
+
+    private boolean processRangeBookmarks( HWPFDocumentCore document,
+            int currentTableLevel, Range range, final Element block,
+            Map<Integer, List<Bookmark>> rangeBookmakrs )
+    {
+        final int startOffset = range.getStartOffset();
+        final int endOffset = range.getEndOffset();
+
+        int beforeBookmarkStart = startOffset;
+        for ( Map.Entry<Integer, List<Bookmark>> entry : rangeBookmakrs
+                .entrySet() )
+        {
+            final List<Bookmark> startedAt = entry.getValue();
+
+            final List<Bookmark> bookmarks;
+            if ( entry.getKey().intValue() == startOffset
+                    && !bookmarkStack.isEmpty() )
+            {
+                /*
+                 * we need to filter out some bookmarks because already
+                 * processing them in caller methods
+                 */
+                List<Bookmark> filtered = new ArrayList<Bookmark>(
+                        startedAt.size() );
+                for ( Bookmark bookmark : startedAt )
+                {
+                    if ( this.bookmarkStack.contains( bookmark ) )
+                        continue;
+
+                    filtered.add( bookmark );
+                }
+
+                if ( filtered.isEmpty() )
+                    // no bookmarks - skip to next start point
+                    continue;
+
+                bookmarks = filtered;
+            }
+            else
+            {
+                bookmarks = startedAt;
+            }
+
+            // TODO: test me
+            /*
+             * we processing only bookmarks with max size, they shall be first
+             * in sorted list. Other bookmarks will be processed by called
+             * method
+             */
+            final Bookmark firstBookmark = bookmarks.iterator().next();
+            final int startBookmarkOffset = firstBookmark.getStart();
+            final int endBookmarkOffset = Math.min( firstBookmark.getEnd(),
+                    range.getEndOffset() );
+            List<Bookmark> toProcess = new ArrayList<Bookmark>(
+                    bookmarks.size() );
+            for ( Bookmark bookmark : bookmarks )
+            {
+                if ( Math.min( bookmark.getEnd(), range.getEndOffset() ) != endBookmarkOffset )
+                    break;
+                toProcess.add( bookmark );
+            }
+
+            if ( beforeBookmarkStart != startBookmarkOffset )
+            {
+                // we have range before bookmark
+                Range beforeBookmarkRange = new Range( beforeBookmarkStart,
+                        startBookmarkOffset, range )
+                {
+                    @Override
+                    public String toString()
+                    {
+                        return "BeforeBookmarkRange (" + super.toString() + ")";
+                    }
+                };
+                processCharacters( document, currentTableLevel,
+                        beforeBookmarkRange, block );
+            }
+            Range bookmarkRange = new Range( startBookmarkOffset,
+                    endBookmarkOffset, range )
+            {
+                @Override
+                public String toString()
+                {
+                    return "BookmarkRange (" + super.toString() + ")";
+                }
+            };
+
+            bookmarkStack.addAll( toProcess );
+            try
+            {
+                processBookmarks( document, block, bookmarkRange,
+                        currentTableLevel,
+                        Collections.unmodifiableList( toProcess ) );
+            }
+            finally
+            {
+                bookmarkStack.removeAll( toProcess );
+            }
+            beforeBookmarkStart = endBookmarkOffset;
+        }
+
+        if ( beforeBookmarkStart == startOffset )
+        {
+            return false;
+        }
+
+        if ( beforeBookmarkStart != endOffset )
+        {
+            // we have range after last bookmark
+            Range afterLastBookmarkRange = new Range( beforeBookmarkStart,
+                    endOffset, range )
+            {
+                @Override
+                public String toString()
+                {
+                    return "AfterBookmarkRange (" + super.toString() + ")";
+                }
+            };
+            processCharacters( document, currentTableLevel,
+                    afterLastBookmarkRange, block );
+        }
+        return true;
+    }
 
     protected abstract void processSection( HWPFDocumentCore wordDocument,
             Section section, int s );

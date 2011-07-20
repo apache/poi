@@ -89,6 +89,13 @@ public class HtmlDocumentFacade
         return document.createElement( "div" );
     }
 
+    public Element createBookmark( String name )
+    {
+        final Element basicLink = document.createElement( "a" );
+        basicLink.setAttribute( "name", name );
+        return basicLink;
+    }
+
     public Element createHeader1()
     {
         return document.createElement( "h1" );

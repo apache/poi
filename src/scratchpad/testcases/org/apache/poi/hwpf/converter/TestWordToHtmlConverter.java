@@ -187,6 +187,7 @@ public class TestWordToHtmlConverter extends TestCase
         String result = getHtmlText( "pageref.doc" );
 
         assertContains( result, "<a href=\"#userref\">" );
+        assertContains( result, "<a name=\"userref\">" );
         assertContains( result, "1" );
     }
 }

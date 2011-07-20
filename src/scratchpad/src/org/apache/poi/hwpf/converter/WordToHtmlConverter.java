@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,6 +32,7 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -232,6 +234,24 @@ public class WordToHtmlConverter extends AbstractWordConverter
         if ( textRange != null )
             processCharacters( wordDocument, currentTableLevel, textRange,
                     basicLink );
+    }
+
+    @Override
+    protected void processBookmarks( HWPFDocumentCore wordDocument,
+            Element currentBlock, Range range, int currentTableLevel,
+            List<Bookmark> rangeBookmarks )
+    {
+        Element parent = currentBlock;
+        for ( Bookmark bookmark : rangeBookmarks )
+        {
+            Element bookmarkElement = htmlDocumentFacade
+                    .createBookmark( bookmark.getName() );
+            parent.appendChild( bookmarkElement );
+            parent = bookmarkElement;
+        }
+
+        if ( range != null )
+            processCharacters( wordDocument, currentTableLevel, range, parent );
     }
 
     /**
