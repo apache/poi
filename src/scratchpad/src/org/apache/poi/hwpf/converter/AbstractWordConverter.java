@@ -35,6 +35,7 @@ import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -57,6 +58,8 @@ public abstract class AbstractWordConverter
 
     private static final POILogger logger = POILogFactory
             .getLogger( AbstractWordConverter.class );
+
+    private static final byte SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE = 2;
 
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
@@ -138,6 +141,17 @@ public abstract class AbstractWordConverter
             String text = characterRun.text();
             if ( text.getBytes().length == 0 )
                 continue;
+
+            if ( characterRun.isSpecialCharacter() )
+            {
+                if ( text.charAt( 0 ) == SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE
+                        && ( document instanceof HWPFDocument ) )
+                {
+                    HWPFDocument doc = (HWPFDocument) document;
+                    processNoteAnchor( doc, characterRun, block );
+                    continue;
+                }
+            }
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
             {
@@ -271,15 +285,23 @@ public abstract class AbstractWordConverter
             processDocumentInformation( summaryInformation );
         }
 
-        final Range range = wordDocument.getRange();
+        processDocumentPart( wordDocument, wordDocument.getRange() );
+    }
+
+    protected abstract void processDocumentInformation(
+            SummaryInformation summaryInformation );
+
+    protected void processDocumentPart( HWPFDocumentCore wordDocument,
+            final Range range )
+    {
         for ( int s = 0; s < range.numSections(); s++ )
         {
             processSection( wordDocument, range.getSection( s ), s );
         }
     }
 
-    protected abstract void processDocumentInformation(
-            SummaryInformation summaryInformation );
+    protected abstract void processEndnoteAutonumbered( HWPFDocument doc,
+            int noteIndex, Element block, Range endnoteTextRange );
 
     protected void processField( HWPFDocument hwpfDocument, Range parentRange,
             int currentTableLevel, Field field, Element currentBlock )
@@ -353,6 +375,9 @@ public abstract class AbstractWordConverter
         return field;
     }
 
+    protected abstract void processFootnoteAutonumbered( HWPFDocument doc,
+            int noteIndex, Element block, Range footnoteTextRange );
+
     protected abstract void processHyperlink( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink );
@@ -363,6 +388,56 @@ public abstract class AbstractWordConverter
     protected abstract void processLineBreak( Element block,
             CharacterRun characterRun );
 
+    protected void processNoteAnchor( HWPFDocument doc,
+            CharacterRun characterRun, final Element block )
+    {
+        {
+            Notes footnotes = doc.getFootnotes();
+            int noteIndex = footnotes
+                    .getNoteIndexByAnchorPosition( characterRun
+                            .getStartOffset() );
+            if ( noteIndex != -1 )
+            {
+                Range footnoteRange = doc.getFootnoteRange();
+                int rangeStartOffset = footnoteRange.getStartOffset();
+                int noteTextStartOffset = footnotes
+                        .getNoteTextStartOffset( noteIndex );
+                int noteTextEndOffset = footnotes
+                        .getNoteTextEndOffset( noteIndex );
+
+                Range noteTextRange = new Range( rangeStartOffset
+                        + noteTextStartOffset, rangeStartOffset
+                        + noteTextEndOffset, doc );
+
+                processFootnoteAutonumbered( doc, noteIndex, block,
+                        noteTextRange );
+                return;
+            }
+        }
+        {
+            Notes endnotes = doc.getEndnotes();
+            int noteIndex = endnotes.getNoteIndexByAnchorPosition( characterRun
+                    .getStartOffset() );
+            if ( noteIndex != -1 )
+            {
+                Range endnoteRange = doc.getEndnoteRange();
+                int rangeStartOffset = endnoteRange.getStartOffset();
+                int noteTextStartOffset = endnotes
+                        .getNoteTextStartOffset( noteIndex );
+                int noteTextEndOffset = endnotes
+                        .getNoteTextEndOffset( noteIndex );
+
+                Range noteTextRange = new Range( rangeStartOffset
+                        + noteTextStartOffset, rangeStartOffset
+                        + noteTextEndOffset, doc );
+
+                processEndnoteAutonumbered( doc, noteIndex, block,
+                        noteTextRange );
+                return;
+            }
+        }
+    }
+
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref );
@@ -370,6 +445,76 @@ public abstract class AbstractWordConverter
     protected abstract void processParagraph( HWPFDocumentCore wordDocument,
             Element parentFopElement, int currentTableLevel,
             Paragraph paragraph, String bulletText );
+
+    protected void processParagraphes( HWPFDocumentCore wordDocument,
+            Element flow, Range range, int currentTableLevel )
+    {
+        final ListTables listTables = wordDocument.getListTables();
+        int currentListInfo = 0;
+
+        final int paragraphs = range.numParagraphs();
+        for ( int p = 0; p < paragraphs; p++ )
+        {
+            Paragraph paragraph = range.getParagraph( p );
+
+            if ( paragraph.isInTable()
+                    && paragraph.getTableLevel() != currentTableLevel )
+            {
+                if ( paragraph.getTableLevel() < currentTableLevel )
+                    throw new IllegalStateException(
+                            "Trying to process table cell with higher level ("
+                                    + paragraph.getTableLevel()
+                                    + ") than current table level ("
+                                    + currentTableLevel
+                                    + ") as inner table part" );
+
+                Table table = range.getTable( paragraph );
+                processTable( wordDocument, flow, table );
+
+                p += table.numParagraphs();
+                p--;
+                continue;
+            }
+
+            if ( paragraph.getIlfo() != currentListInfo )
+            {
+                currentListInfo = paragraph.getIlfo();
+            }
+
+            if ( currentListInfo != 0 )
+            {
+                if ( listTables != null )
+                {
+                    final ListFormatOverride listFormatOverride = listTables
+                            .getOverride( paragraph.getIlfo() );
+
+                    String label = AbstractWordUtils.getBulletText( listTables,
+                            paragraph, listFormatOverride.getLsid() );
+
+                    processParagraph( wordDocument, flow, currentTableLevel,
+                            paragraph, label );
+                }
+                else
+                {
+                    logger.log( POILogger.WARN,
+                            "Paragraph #" + paragraph.getStartOffset() + "-"
+                                    + paragraph.getEndOffset()
+                                    + " has reference to list structure #"
+                                    + currentListInfo
+                                    + ", but listTables not defined in file" );
+
+                    processParagraph( wordDocument, flow, currentTableLevel,
+                            paragraph, AbstractWordUtils.EMPTY );
+                }
+            }
+            else
+            {
+                processParagraph( wordDocument, flow, currentTableLevel,
+                        paragraph, AbstractWordUtils.EMPTY );
+            }
+        }
+
+    }
 
     private boolean processRangeBookmarks( HWPFDocumentCore document,
             int currentTableLevel, Range range, final Element block,
@@ -496,76 +641,6 @@ public abstract class AbstractWordConverter
 
     protected abstract void processSection( HWPFDocumentCore wordDocument,
             Section section, int s );
-
-    protected void processSectionParagraphes( HWPFDocumentCore wordDocument,
-            Element flow, Range range, int currentTableLevel )
-    {
-        final ListTables listTables = wordDocument.getListTables();
-        int currentListInfo = 0;
-
-        final int paragraphs = range.numParagraphs();
-        for ( int p = 0; p < paragraphs; p++ )
-        {
-            Paragraph paragraph = range.getParagraph( p );
-
-            if ( paragraph.isInTable()
-                    && paragraph.getTableLevel() != currentTableLevel )
-            {
-                if ( paragraph.getTableLevel() < currentTableLevel )
-                    throw new IllegalStateException(
-                            "Trying to process table cell with higher level ("
-                                    + paragraph.getTableLevel()
-                                    + ") than current table level ("
-                                    + currentTableLevel
-                                    + ") as inner table part" );
-
-                Table table = range.getTable( paragraph );
-                processTable( wordDocument, flow, table );
-
-                p += table.numParagraphs();
-                p--;
-                continue;
-            }
-
-            if ( paragraph.getIlfo() != currentListInfo )
-            {
-                currentListInfo = paragraph.getIlfo();
-            }
-
-            if ( currentListInfo != 0 )
-            {
-                if ( listTables != null )
-                {
-                    final ListFormatOverride listFormatOverride = listTables
-                            .getOverride( paragraph.getIlfo() );
-
-                    String label = AbstractWordUtils.getBulletText( listTables,
-                            paragraph, listFormatOverride.getLsid() );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, label );
-                }
-                else
-                {
-                    logger.log( POILogger.WARN,
-                            "Paragraph #" + paragraph.getStartOffset() + "-"
-                                    + paragraph.getEndOffset()
-                                    + " has reference to list structure #"
-                                    + currentListInfo
-                                    + ", but listTables not defined in file" );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, AbstractWordUtils.EMPTY );
-                }
-            }
-            else
-            {
-                processParagraph( wordDocument, flow, currentTableLevel,
-                        paragraph, AbstractWordUtils.EMPTY );
-            }
-        }
-
-    }
 
     protected void processSingleSection( HWPFDocumentCore wordDocument,
             Section section )

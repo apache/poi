@@ -28,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 
@@ -38,6 +39,14 @@ import org.apache.poi.hwpf.HWPFDocument;
  */
 public class TestWordToFoConverter extends TestCase
 {
+    private static void assertContains( String result, final String substring )
+    {
+        if ( !result.contains( substring ) )
+            fail( "Substring \"" + substring
+                    + "\" not found in the following string: \"" + result
+                    + "\"" );
+    }
+
     private static String getFoText( final String sampleFileName )
             throws Exception
     {
@@ -72,6 +81,15 @@ public class TestWordToFoConverter extends TestCase
                 .contains( "<pdf:Keywords xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">This is document keywords</pdf:Keywords>" ) );
     }
 
+    public void testEndnote() throws Exception
+    {
+        String result = getFoText( "endingnote.doc" );
+
+        assertContains( result,
+                "<fo:inline baseline-shift=\"super\" font-size=\"smaller\">1</fo:inline>" );
+        assertContains( result, "Ending note text" );
+    }
+
     public void testEquation() throws Exception
     {
         final String sampleFileName = "equation.doc";
@@ -79,15 +97,6 @@ public class TestWordToFoConverter extends TestCase
 
         assertTrue( result
                 .contains( "<!--Image link to '0.emf' can be here-->" ) );
-    }
-
-    public void testInnerTable() throws Exception
-    {
-        final String sampleFileName = "innertable.doc";
-        String result = getFoText( sampleFileName );
-
-        assertTrue( result
-                .contains( "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" ) );
     }
 
     public void testHyperlink() throws Exception
@@ -98,6 +107,15 @@ public class TestWordToFoConverter extends TestCase
         assertTrue( result
                 .contains( "<fo:basic-link external-destination=\"http://testuri.org/\">" ) );
         assertTrue( result.contains( "Hyperlink text" ) );
+    }
+
+    public void testInnerTable() throws Exception
+    {
+        final String sampleFileName = "innertable.doc";
+        String result = getFoText( sampleFileName );
+
+        assertTrue( result
+                .contains( "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" ) );
     }
 
     public void testPageref() throws Exception

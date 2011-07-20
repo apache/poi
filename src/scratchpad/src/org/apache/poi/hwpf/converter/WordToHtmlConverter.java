@@ -148,6 +148,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 
+    private Element notes = null;
+
     /**
      * Creates new instance of {@link WordToHtmlConverter}. Can be used for
      * output several {@link HWPFDocument}s into single HTML document.
@@ -206,6 +208,33 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
+    protected void processBookmarks( HWPFDocumentCore wordDocument,
+            Element currentBlock, Range range, int currentTableLevel,
+            List<Bookmark> rangeBookmarks )
+    {
+        Element parent = currentBlock;
+        for ( Bookmark bookmark : rangeBookmarks )
+        {
+            Element bookmarkElement = htmlDocumentFacade
+                    .createBookmark( bookmark.getName() );
+            parent.appendChild( bookmarkElement );
+            parent = bookmarkElement;
+        }
+
+        if ( range != null )
+            processCharacters( wordDocument, currentTableLevel, range, parent );
+    }
+
+    @Override
+    public void processDocument( HWPFDocumentCore wordDocument )
+    {
+        super.processDocument( wordDocument );
+
+        if ( notes != null )
+            htmlDocumentFacade.getBody().appendChild( notes );
+    }
+
+    @Override
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
@@ -224,6 +253,21 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
+    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
+            Element block, Range endnoteTextRange )
+    {
+        processNoteAutonumbered( doc, "end", noteIndex, block, endnoteTextRange );
+    }
+
+    @Override
+    protected void processFootnoteAutonumbered( HWPFDocument doc,
+            int noteIndex, Element block, Range footnoteTextRange )
+    {
+        processNoteAutonumbered( doc, "foot", noteIndex, block,
+                footnoteTextRange );
+    }
+
+    @Override
     protected void processHyperlink( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink )
@@ -234,24 +278,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
         if ( textRange != null )
             processCharacters( wordDocument, currentTableLevel, textRange,
                     basicLink );
-    }
-
-    @Override
-    protected void processBookmarks( HWPFDocumentCore wordDocument,
-            Element currentBlock, Range range, int currentTableLevel,
-            List<Bookmark> rangeBookmarks )
-    {
-        Element parent = currentBlock;
-        for ( Bookmark bookmark : rangeBookmarks )
-        {
-            Element bookmarkElement = htmlDocumentFacade
-                    .createBookmark( bookmark.getName() );
-            parent.appendChild( bookmarkElement );
-            parent = bookmarkElement;
-        }
-
-        if ( range != null )
-            processCharacters( wordDocument, currentTableLevel, range, parent );
     }
 
     /**
@@ -377,6 +403,43 @@ public class WordToHtmlConverter extends AbstractWordConverter
         block.appendChild( htmlDocumentFacade.createLineBreak() );
     }
 
+    protected void processNoteAutonumbered( HWPFDocument doc, String type,
+            int noteIndex, Element block, Range noteTextRange )
+    {
+        String textIndex = String.valueOf( noteIndex + 1 );
+
+        final String forwardNoteLink = type + "note_" + textIndex;
+        final String backwardNoteLink = type + "note_back_" + textIndex;
+
+        Element anchor = htmlDocumentFacade.createHyperlink( "#"
+                + forwardNoteLink );
+        anchor.setAttribute( "name", backwardNoteLink );
+        anchor.setAttribute( "class", type + "noteanchor" );
+        anchor.setTextContent( textIndex );
+        block.appendChild( anchor );
+
+        if ( notes == null )
+        {
+            notes = htmlDocumentFacade.createBlock();
+            notes.setAttribute( "class", "notes" );
+        }
+
+        Element note = htmlDocumentFacade.createBlock();
+        note.setAttribute( "class", type + "note" );
+        notes.appendChild( note );
+
+        Element bookmark = htmlDocumentFacade.createBookmark( forwardNoteLink );
+        bookmark.setAttribute( "href", "#" + backwardNoteLink );
+        bookmark.setTextContent( textIndex );
+        note.appendChild( bookmark );
+
+        Element span = htmlDocumentFacade.getDocument().createElement( "span" );
+        span.setAttribute( "class", type + "notetext" );
+        note.appendChild( span );
+
+        processCharacters( doc, Integer.MIN_VALUE, noteTextRange, span );
+    }
+
     protected void processPageref( HWPFDocumentCore hwpfDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )
@@ -458,8 +521,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 div.getTagName(), "d", getSectionStyle( section ) ) );
         htmlDocumentFacade.body.appendChild( div );
 
-        processSectionParagraphes( wordDocument, div, section,
-                Integer.MIN_VALUE );
+        processParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
     }
 
     @Override
@@ -470,8 +532,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 .setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
                         "body", "b", getSectionStyle( section ) ) );
 
-        processSectionParagraphes( wordDocument, htmlDocumentFacade.body,
-                section, Integer.MIN_VALUE );
+        processParagraphes( wordDocument, htmlDocumentFacade.body, section,
+                Integer.MIN_VALUE );
     }
 
     protected void processTable( HWPFDocumentCore hwpfDocument, Element flow,
@@ -562,8 +624,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     tableCellElement.setAttribute( "rowspan", "" + count );
                 }
 
-                processSectionParagraphes( hwpfDocument, tableCellElement,
-                        tableCell, table.getTableLevel() );
+                processParagraphes( hwpfDocument, tableCellElement, tableCell,
+                        table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )
                 {

@@ -97,6 +97,45 @@ public class WordToFoConverter extends AbstractWordConverter
         }
     }
 
+    @Override
+    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
+            Element block, Range endnoteTextRange )
+    {
+        // TODO: add endnote implementation?
+        processFootnoteAutonumbered( doc, noteIndex, block, endnoteTextRange );
+    }
+
+    @Override
+    protected void processFootnoteAutonumbered( HWPFDocument doc,
+            int noteIndex, Element block, Range footnoteTextRange )
+    {
+        String textIndex = String.valueOf( noteIndex + 1 );
+
+        {
+            Element inline = foDocumentFacade.createInline();
+            inline.setTextContent( textIndex );
+            inline.setAttribute( "baseline-shift", "super" );
+            inline.setAttribute( "font-size", "smaller" );
+            block.appendChild( inline );
+        }
+
+        Element footnoteBody = foDocumentFacade.createFootnoteBody();
+        Element footnoteBlock = foDocumentFacade.createBlock();
+        footnoteBody.appendChild( footnoteBlock );
+        block.appendChild( footnoteBody );
+
+        {
+            Element inline = foDocumentFacade.createInline();
+            inline.setTextContent( textIndex );
+            inline.setAttribute( "baseline-shift", "super" );
+            inline.setAttribute( "font-size", "smaller" );
+            footnoteBlock.appendChild( inline );
+        }
+
+        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
+                footnoteBlock );
+    }
+
     static Document process( File docFile ) throws Exception
     {
         final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile );
@@ -381,8 +420,7 @@ public class WordToFoConverter extends AbstractWordConverter
         Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
                 "xsl-region-body" );
 
-        processSectionParagraphes( wordDocument, flow, section,
-                Integer.MIN_VALUE );
+        processParagraphes( wordDocument, flow, section, Integer.MIN_VALUE );
     }
 
     protected void processTable( HWPFDocumentCore wordDocument, Element flow,
@@ -465,8 +503,8 @@ public class WordToFoConverter extends AbstractWordConverter
                             + count );
                 }
 
-                processSectionParagraphes( wordDocument, tableCellElement,
-                        tableCell, table.getTableLevel() );
+                processParagraphes( wordDocument, tableCellElement, tableCell,
+                        table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )
                 {

@@ -145,9 +145,11 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "endingnote.doc" );
 
-        assertContains( result, "<a href=\"#userref\">" );
-        assertContains( result, "<a name=\"userref\">" );
-        assertContains( result, "1" );
+        assertContains( result,
+                "<a class=\"endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>" );
+        assertContains( result,
+                "<a href=\"#endnote_back_1\" name=\"endnote_1\">1</a>" );
+        assertContains( result, "Ending note text" );
     }
 
     public void testEquation() throws Exception
