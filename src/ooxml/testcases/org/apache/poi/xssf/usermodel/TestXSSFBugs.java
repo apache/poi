@@ -1157,4 +1157,16 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 //       assertEquals("FFEEECE1", cA4_EEECE1.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
 //       assertEquals("FF1F497D", cA5_1F497D.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
     }
+
+    public void test51470() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51470.xlsx");
+        XSSFSheet sh0 = wb.getSheetAt(0);
+        XSSFSheet sh1 = wb.cloneSheet(0);
+        List<POIXMLDocumentPart> rels0 = sh0.getRelations();
+        List<POIXMLDocumentPart> rels1 = sh1.getRelations();
+        assertEquals(1, rels0.size());
+        assertEquals(1, rels1.size());
+
+        assertEquals(rels0.get(0).getPackageRelationship(), rels1.get(0).getPackageRelationship());
+    }
 }

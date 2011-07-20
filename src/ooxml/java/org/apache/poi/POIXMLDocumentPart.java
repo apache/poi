@@ -233,7 +233,7 @@ public class POIXMLDocumentPart {
      *
      * @param part the child to add
      */
-    protected final void addRelation(String id,POIXMLDocumentPart part){
+    public final void addRelation(String id,POIXMLDocumentPart part){
         relations.put(id,part);
         part.incrementRelationCounter();
     }
