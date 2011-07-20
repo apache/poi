@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
@@ -917,5 +918,21 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertNotNull(afilter );
         assertEquals(2, afilter.getNumEntries()); //filter covers two columns
 
+        HSSFPatriarch dr = sh.getDrawingPatriarch();
+        assertNotNull(dr);
+        HSSFSimpleShape comboBoxShape = (HSSFSimpleShape)dr.getChildren().get(0);
+        assertEquals(comboBoxShape.getShapeType(),  HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
+
+        assertNull( ish.findFirstRecordBySid(ObjRecord.sid) ); // ObjRecord will appear after serializetion
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wb.getSheetAt(0);
+        ish = sh.getSheet();
+        ObjRecord objRecord = (ObjRecord)ish.findFirstRecordBySid(ObjRecord.sid);
+        List<SubRecord> subRecords = objRecord.getSubRecords();
+        assertEquals(3, subRecords.size());
+        assertTrue(subRecords.get(0) instanceof CommonObjectDataSubRecord );
+        assertTrue(subRecords.get(1) instanceof FtCblsSubRecord ); // must be present, see Bug 51481
+        assertTrue(subRecords.get(2) instanceof LbsDataSubRecord );
     }
 }
