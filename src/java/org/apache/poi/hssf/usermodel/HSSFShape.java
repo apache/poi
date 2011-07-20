@@ -42,6 +42,7 @@ public abstract class HSSFShape {
     // TODO - make all these fields private
     final HSSFShape parent;  
     HSSFAnchor anchor;
+    HSSFPatriarch _patriarch;  
     private int _lineStyleColor = 0x08000040;
     int _fillColor = 0x08000009;
     private int _lineWidth = LINEWIDTH_DEFAULT;    // 12700 = 1pt

@@ -50,5 +50,12 @@ public interface Picture {
     void resize(double scale);
 
     ClientAnchor getPreferredSize();
+    
+    /**
+     * Return picture data for this picture
+     *
+     * @return picture data for this picture
+     */
+    PictureData getPictureData();
 
 }

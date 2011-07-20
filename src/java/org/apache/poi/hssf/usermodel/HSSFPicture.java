@@ -21,10 +21,12 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
@@ -55,7 +57,6 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     private static final int PX_ROW = 15;
 
     private int _pictureIndex;
-    HSSFPatriarch _patriarch;  // TODO make private
 
     /**
      * Constructs a picture object.
@@ -220,5 +221,16 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
+    }
+    
+    /**
+     * Return picture data for this shape
+     *
+     * @return picture data for this shape
+     */
+    public HSSFPictureData getPictureData(){
+        InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
+    	EscherBlipRecord blipRecord = iwb.getBSERecord(_pictureIndex).getBlipRecord();
+    	return new HSSFPictureData(blipRecord);
     }
 }

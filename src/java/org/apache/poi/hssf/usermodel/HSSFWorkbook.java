@@ -39,6 +39,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
@@ -60,6 +61,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.commons.codec.digest.DigestUtils;
 
 
 /**
@@ -542,7 +544,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Set the sheet name.
      *
-     * @param sheet number (0 based)
+     * @param sheetIx number (0 based)
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
      * @see {@link #createSheet(String)}
@@ -1556,6 +1558,17 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         w.flush();
     }
 
+    void initDrawings(){
+        DrawingManager2 mgr = workbook.findDrawingGroup();
+        if(mgr != null) {
+            for(int i=0; i < getNumberOfSheets(); i++)  {
+                getSheetAt(i).getDrawingPatriarch();
+            }
+        } else {
+            workbook.createDrawingGroup();
+        }
+    }
+
     /**
      * Adds a picture to the workbook.
      *
@@ -1566,7 +1579,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     public int addPicture(byte[] pictureData, int format)
     {
-        byte[] uid = newUID();
+        initDrawings();
+        
+        byte[] uid = DigestUtils.md5(pictureData);
         EscherBitmapBlip blipRecord = new EscherBitmapBlip();
         blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
         switch (format)
@@ -1728,10 +1743,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public HSSFCreationHelper getCreationHelper() {
         return new HSSFCreationHelper(this);
-    }
-
-    private static byte[] newUID() {
-        return new byte[16];
     }
 
     /**

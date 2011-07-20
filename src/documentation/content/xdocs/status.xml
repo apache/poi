@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">Support for appending images to existing drawings in HSSF</action>
            <action dev="poi-developers" type="fix">Added initial support for bookmarks in HWFP</action>
            <action dev="poi-developers" type="fix">46250 - Fixed cloning worksheets with images</action>
            <action dev="poi-developers" type="fix">51524 - PapBinTable constructor is slow (regression)</action>

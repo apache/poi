@@ -1660,14 +1660,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public HSSFPatriarch createDrawingPatriarch() {
         if(_patriarch == null){
             // Create the drawing group if it doesn't already exist.
-            _book.createDrawingGroup();
+            _workbook.initDrawings();
 
-            _sheet.aggregateDrawingRecords(_book.getDrawingManager(), true);
-            EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
-            _patriarch = new HSSFPatriarch(this, agg);
-            agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
-                             // creating a new patriarch.
-            agg.setPatriarch(_patriarch);
+            if(_patriarch == null){
+                _sheet.aggregateDrawingRecords(_book.getDrawingManager(), true);
+                EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
+                _patriarch = new HSSFPatriarch(this, agg);
+                agg.setPatriarch(_patriarch);
+            }
         }
         return _patriarch;
     }

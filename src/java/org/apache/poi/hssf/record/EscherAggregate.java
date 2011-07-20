@@ -53,6 +53,7 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFShapeContainer;
 import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
 import org.apache.poi.hssf.usermodel.HSSFTextbox;
+import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -622,7 +623,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				case ST_TEXTBOX:
 					HSSFTextbox box = new HSSFTextbox( null,
 							new HSSFClientAnchor() );
-					patriarch.getChildren().add( box );
+					patriarch.addShape( box );
 
 					convertRecordsToUserModel( shapeContainer, box );
 					break;
@@ -644,19 +645,11 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 						EscherClientAnchorRecord anchorRecord = (EscherClientAnchorRecord) getEscherChild(
 								shapeContainer,
 								EscherClientAnchorRecord.RECORD_ID );
-						HSSFClientAnchor anchor = new HSSFClientAnchor();
-						anchor.setCol1( anchorRecord.getCol1() );
-						anchor.setCol2( anchorRecord.getCol2() );
-						anchor.setDx1( anchorRecord.getDx1() );
-						anchor.setDx2( anchorRecord.getDx2() );
-						anchor.setDy1( anchorRecord.getDy1() );
-						anchor.setDy2( anchorRecord.getDy2() );
-						anchor.setRow1( anchorRecord.getRow1() );
-						anchor.setRow2( anchorRecord.getRow2() );
+                        HSSFClientAnchor anchor = toClientAnchor(anchorRecord);
 
 						HSSFPicture picture = new HSSFPicture( null, anchor );
 						picture.setPictureIndex( pictureIndex );
-						patriarch.getChildren().add( picture );
+						patriarch.addShape( picture );
 					}
 					break;
 				default:
@@ -682,6 +675,20 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		// back into shapes
 		// log.log(POILogger.WARN, "Not processing objects into Patriarch!");
 	}
+
+    private HSSFClientAnchor toClientAnchor(EscherClientAnchorRecord anchorRecord){
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+        anchor.setAnchorType(anchorRecord.getFlag());
+        anchor.setCol1( anchorRecord.getCol1() );
+        anchor.setCol2( anchorRecord.getCol2() );
+        anchor.setDx1( anchorRecord.getDx1() );
+        anchor.setDx2( anchorRecord.getDx2() );
+        anchor.setDy1( anchorRecord.getDy1() );
+        anchor.setDy2( anchorRecord.getDy2() );
+        anchor.setRow1( anchorRecord.getRow1() );
+        anchor.setRow2( anchorRecord.getRow2() );
+        return anchor;
+    }
 
 	private void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
 		for(Iterator<EscherRecord> it = shapeContainer.getChildIterator(); it.hasNext();) {

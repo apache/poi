@@ -2055,10 +2055,10 @@ public final class InternalWorkbook {
     /**
      * Finds the primary drawing group, if one already exists
      */
-    public void findDrawingGroup() {
+    public DrawingManager2 findDrawingGroup() {
         if(drawingManager != null) {
            // We already have it!
-           return;
+           return drawingManager;
         }
         
         // Need to find a DrawingGroupRecord that
@@ -2092,7 +2092,7 @@ public final class InternalWorkbook {
                             if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
                         }
                     }
-                    return;
+                    return drawingManager;
                 }
             }
         }
@@ -2122,6 +2122,7 @@ public final class InternalWorkbook {
                 }
             }
         }
+        return drawingManager;
     }
 
     /**
