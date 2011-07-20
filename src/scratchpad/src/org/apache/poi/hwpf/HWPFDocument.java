@@ -36,6 +36,8 @@ import org.apache.poi.hwpf.model.FSPATable;
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.model.NoteType;
+import org.apache.poi.hwpf.model.NotesTables;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
@@ -51,6 +53,8 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.BookmarksImpl;
 import org.apache.poi.hwpf.usermodel.HWPFList;
+import org.apache.poi.hwpf.usermodel.Notes;
+import org.apache.poi.hwpf.usermodel.NotesImpl;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -109,6 +113,18 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /** Holds the bookmarks */
   protected Bookmarks _bookmarks;
+
+  /** Holds the ending notes tables */
+  protected NotesTables _endnotesTables = new NotesTables( NoteType.ENDNOTE );
+
+  /** Holds the footnotes */
+  protected Notes _endnotes = new NotesImpl( _endnotesTables );
+
+  /** Holds the footnotes tables */
+  protected NotesTables _footnotesTables = new NotesTables( NoteType.FOOTNOTE );
+
+  /** Holds the footnotes */
+  protected Notes _footnotes = new NotesImpl( _footnotesTables );
 
   /** Holds the fields PLCFs */
   protected FieldsTables _fieldsTables;
@@ -273,6 +289,12 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     _bookmarksTables = new BookmarksTables( _tableStream, _fib );
     _bookmarks = new BookmarksImpl( _bookmarksTables );
+
+    _endnotesTables = new NotesTables( NoteType.ENDNOTE, _tableStream, _fib );
+    _endnotes = new NotesImpl( _endnotesTables );
+    _footnotesTables = new NotesTables( NoteType.FOOTNOTE, _tableStream, _fib );
+    _footnotes = new NotesImpl( _footnotesTables );
+
     _fieldsTables = new FieldsTables(_tableStream, _fib);
   }
 
@@ -470,6 +492,22 @@ public final class HWPFDocument extends HWPFDocumentCore
         return _bookmarks;
     }
 
+    /**
+     * @return user-friendly interface to access document endnotes
+     */
+    public Notes getEndnotes()
+    {
+        return _endnotes;
+    }
+
+    /**
+     * @return user-friendly interface to access document footnotes
+     */
+    public Notes getFootnotes()
+    {
+        return _footnotes;
+    }
+
   /**
    * @return FieldsTables object, that is able to extract fields descriptors from this document
    */
@@ -589,17 +627,75 @@ public final class HWPFDocument extends HWPFDocumentCore
     _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
+        /*
+         * plcfendRef (endnote reference position table) Written immediately
+         * after the previously recorded table if the document contains endnotes
+         * 
+         * plcfendTxt (endnote text position table) Written immediately after
+         * the plcfendRef if the document contains endnotes
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
+        _endnotesTables.writeRef( _fib, tableStream );
+        _endnotesTables.writeTxt( _fib, tableStream );
+        tableOffset = tableStream.getOffset();
+
+    /*
+     * plcffld*** (table of field positions and statuses for annotation
+     * subdocument) Written immediately after the previously recorded table,
+     * if the ******* subdocument contains fields.
+     * 
+     * Microsoft Office Word 97-2007 Binary File Format (.doc)
+     * Specification; Page 24 of 210
+     */
+
+    if ( _fieldsTables != null )
+    {
+        _fieldsTables.write( _fib, tableStream );
+        tableOffset = tableStream.getOffset();
+    }
+
+        /*
+         * plcffndRef (footnote reference position table) Written immediately
+         * after the stsh if the document contains footnotes
+         * 
+         * plcffndTxt (footnote text position table) Written immediately after
+         * the plcffndRef if the document contains footnotes
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 24 of 210
+         */
+        _footnotesTables.writeRef( _fib, tableStream );
+        _footnotesTables.writeTxt( _fib, tableStream );
+        tableOffset = tableStream.getOffset();
+
+        /*
+         * plcfsed (section table) Written immediately after the previously
+         * recorded table. Recorded in all Word documents
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 25 of 210
+         */
+
     // write out the SectionTable.
     _fib.setFcPlcfsed(tableOffset);
     _st.writeTo(docSys, fcMin);
     _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
-        if ( _fieldsTables != null )
-        {
-            _fieldsTables.write( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
-        }
+        /*
+         * plcflst (list formats) Written immediately after the end of the
+         * previously recorded, if there are any lists defined in the document.
+         * This begins with a short count of LSTF structures followed by those
+         * LSTF structures. This is immediately followed by the allocated data
+         * hanging off the LSTFs. This data consists of the array of LVLs for
+         * each LSTF. (Each LVL consists of an LVLF followed by two grpprls and
+         * an XST.)
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 25 of 210
+         */
 
     // write out the list tables
     if (_lt != null)
@@ -607,7 +703,22 @@ public final class HWPFDocument extends HWPFDocumentCore
       _fib.setFcPlcfLst(tableOffset);
       _lt.writeListDataTo(tableStream);
       _fib.setLcbPlcfLst(tableStream.getOffset() - tableOffset);
+    }
 
+    /*
+     * plflfo (more list formats) Written immediately after the end of the
+     * plcflst and its accompanying data, if there are any lists defined in
+     * the document. This consists first of a PL of LFO records, followed by
+     * the allocated data (if any) hanging off the LFOs. The allocated data
+     * consists of the array of LFOLVLFs for each LFO (and each LFOLVLF is
+     * immediately followed by some LVLs).
+     * 
+     * Microsoft Office Word 97-2007 Binary File Format (.doc)
+     * Specification; Page 26 of 210
+     */
+
+    if (_lt != null)
+    {
       _fib.setFcPlfLfo(tableStream.getOffset());
       _lt.writeListOverridesTo(tableStream);
       _fib.setLcbPlfLfo(tableStream.getOffset() - tableOffset);

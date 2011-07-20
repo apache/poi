@@ -85,6 +85,15 @@ public final class FileInformationBlock extends FIBAbstractType
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBKL ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFBKMK ) );
 
+        // notes
+        for ( NoteType noteType : NoteType.values() )
+        {
+            knownFieldSet.add( Integer.valueOf( noteType
+                    .getFibDescriptorsFieldIndex() ) );
+            knownFieldSet.add( Integer.valueOf( noteType
+                    .getFibTextPositionsFieldIndex() ) );
+        }
+
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFFFN ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBFRMARK ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBSAVEDBY ) );
@@ -120,6 +129,24 @@ public final class FileInformationBlock extends FIBAbstractType
             stringBuilder.append( " and have length of " );
             stringBuilder.append( getFieldsPlcfLength( part ) );
             stringBuilder.append( "\n" );
+        }
+        stringBuilder.append( "\tNotes PLCF info:\n" );
+        for ( NoteType noteType : NoteType.values() )
+        {
+            stringBuilder.append( "\t\t" );
+            stringBuilder.append( noteType );
+            stringBuilder.append( ": descriptions starts " );
+            stringBuilder.append( getNotesDescriptorsOffset( noteType ) );
+            stringBuilder.append( " and have length of " );
+            stringBuilder.append( getNotesDescriptorsSize( noteType ) );
+            stringBuilder.append( " bytes\n" );
+            stringBuilder.append( "\t\t" );
+            stringBuilder.append( noteType );
+            stringBuilder.append( ": text positions starts " );
+            stringBuilder.append( getNotesTextPositionsOffset( noteType ) );
+            stringBuilder.append( " and have length of " );
+            stringBuilder.append( getNotesTextPositionsSize( noteType ) );
+            stringBuilder.append( " bytes\n" );
         }
         try
         {
@@ -842,7 +869,55 @@ public final class FileInformationBlock extends FIBAbstractType
         return _fieldHandler.getFieldSize(FIBFieldHandler.DGGINFO);
     }
 
-    public void writeTo (byte[] mainStream, HWPFOutputStream tableStream)
+    public int getNotesDescriptorsOffset( NoteType noteType )
+    {
+        return _fieldHandler.getFieldOffset( noteType
+                .getFibDescriptorsFieldIndex() );
+    }
+
+    public void setNotesDescriptorsOffset( NoteType noteType, int offset )
+    {
+        _fieldHandler.setFieldOffset( noteType.getFibDescriptorsFieldIndex(),
+                offset );
+    }
+
+    public int getNotesDescriptorsSize( NoteType noteType )
+    {
+        return _fieldHandler.getFieldSize( noteType
+                .getFibDescriptorsFieldIndex() );
+    }
+
+    public void setNotesDescriptorsSize( NoteType noteType, int offset )
+    {
+        _fieldHandler.setFieldSize( noteType.getFibDescriptorsFieldIndex(),
+                offset );
+    }
+
+    public int getNotesTextPositionsOffset( NoteType noteType )
+    {
+        return _fieldHandler.getFieldOffset( noteType
+                .getFibTextPositionsFieldIndex() );
+    }
+
+    public void setNotesTextPositionsOffset( NoteType noteType, int offset )
+    {
+        _fieldHandler.setFieldOffset( noteType.getFibTextPositionsFieldIndex(),
+                offset );
+    }
+
+    public int getNotesTextPositionsSize( NoteType noteType )
+    {
+        return _fieldHandler.getFieldSize( noteType
+                .getFibTextPositionsFieldIndex() );
+    }
+
+    public void setNotesTextPositionsSize( NoteType noteType, int offset )
+    {
+        _fieldHandler.setFieldSize( noteType.getFibTextPositionsFieldIndex(),
+                offset );
+    }
+
+    public void writeTo( byte[] mainStream, HWPFOutputStream tableStream)
       throws IOException
     {
       //HWPFOutputStream mainDocument = sys.getStream("WordDocument");
