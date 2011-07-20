@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,6 +32,7 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
+import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -50,28 +52,6 @@ import org.w3c.dom.Text;
  */
 public class WordToFoConverter extends AbstractWordConverter
 {
-
-    /**
-     * Holds properties values, applied to current <tt>fo:block</tt> element.
-     * Those properties shall not be doubled in children <tt>fo:inline</tt>
-     * elements.
-     */
-    private static class BlockProperies
-    {
-        final boolean pBold;
-        final String pFontName;
-        final int pFontSize;
-        final boolean pItalic;
-
-        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
-                boolean pItalic )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
-            this.pBold = pBold;
-            this.pItalic = pItalic;
-        }
-    }
 
     private static final POILogger logger = POILogFactory
             .getLogger( WordToFoConverter.class );
@@ -235,6 +215,24 @@ public class WordToFoConverter extends AbstractWordConverter
 
         Text textNode = foDocumentFacade.createText( text );
         inline.appendChild( textNode );
+    }
+
+    @Override
+    protected void processBookmarks( HWPFDocumentCore wordDocument,
+            Element currentBlock, Range range, int currentTableLevel,
+            List<Bookmark> rangeBookmarks )
+    {
+        Element parent = currentBlock;
+        for ( Bookmark bookmark : rangeBookmarks )
+        {
+            Element bookmarkElement = foDocumentFacade.createInline();
+            bookmarkElement.setAttribute( "id", bookmark.getName() );
+            parent.appendChild( bookmarkElement );
+            parent = bookmarkElement;
+        }
+
+        if ( range != null )
+            processCharacters( wordDocument, currentTableLevel, range, parent );
     }
 
     @Override
@@ -506,6 +504,28 @@ public class WordToFoConverter extends AbstractWordConverter
                     "Table without body starting on offset "
                             + table.getStartOffset() + " -- "
                             + table.getEndOffset() );
+        }
+    }
+
+    /**
+     * Holds properties values, applied to current <tt>fo:block</tt> element.
+     * Those properties shall not be doubled in children <tt>fo:inline</tt>
+     * elements.
+     */
+    private static class BlockProperies
+    {
+        final boolean pBold;
+        final String pFontName;
+        final int pFontSize;
+        final boolean pItalic;
+
+        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
+                boolean pItalic )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
+            this.pBold = pBold;
+            this.pItalic = pItalic;
         }
     }
 
