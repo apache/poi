@@ -52,7 +52,7 @@ public class HSSFSimpleShape
 
     int shapeType = OBJECT_TYPE_LINE;
 
-    HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor )
+    public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
     }

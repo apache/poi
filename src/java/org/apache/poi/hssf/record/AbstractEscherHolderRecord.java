@@ -74,6 +74,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     }
     private void convertToEscherRecords( int offset, int size, byte[] data )
     {
+         escherRecords.clear();
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
         int pos = offset;
         while ( pos < offset + size )
