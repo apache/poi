@@ -1,10 +1,25 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.hwpf.usermodel.Bookmark;
 
 public class BookmarksTables
 {
@@ -14,65 +29,53 @@ public class BookmarksTables
 
     private String[] names = new String[0];
 
-    public BookmarksTables()
-    {
-    }
-
     public BookmarksTables( byte[] tableStream, FileInformationBlock fib )
     {
         read( tableStream, fib );
     }
 
-    public Bookmark getBookmark( int index )
-    {
-        final GenericPropertyNode first = descriptorsFirst.getProperty( index );
-        return new Bookmark()
-        {
-            public int getEnd()
-            {
-                int currentIndex = Arrays.asList(
-                        descriptorsFirst.toPropertiesArray() ).indexOf( first );
-                if ( currentIndex >= descriptorsLim.length() )
-                    return first.getEnd();
-
-                GenericPropertyNode lim = descriptorsLim
-                        .getProperty( currentIndex );
-                return lim.getStart();
-            }
-
-            public String getName()
-            {
-                int currentIndex = Arrays.asList(
-                        descriptorsFirst.toPropertiesArray() ).indexOf( first );
-                if ( currentIndex >= names.length )
-                    return "";
-
-                return names[currentIndex];
-            }
-
-            public int getStart()
-            {
-                return first.getStart();
-            }
-
-            public void setName( String name )
-            {
-                int currentIndex = Arrays.asList(
-                        descriptorsFirst.toPropertiesArray() ).indexOf( first );
-                if ( currentIndex < names.length )
-                {
-                    String[] newNames = new String[currentIndex + 1];
-                    System.arraycopy( names, 0, newNames, 0, names.length );
-                    names = newNames;
-                }
-                names[currentIndex] = name;
-            }
-        };
-    }
-
     public int getBookmarksCount()
     {
         return descriptorsFirst.length();
+    }
+
+    public GenericPropertyNode getDescriptorFirst( int index )
+            throws IndexOutOfBoundsException
+    {
+        return descriptorsFirst.getProperty( index );
+    }
+
+    public int getDescriptorFirstIndex( GenericPropertyNode descriptorFirst )
+    {
+        // TODO: very non-optimal
+        return Arrays.asList( descriptorsFirst.toPropertiesArray() ).indexOf(
+                descriptorFirst );
+    }
+
+    public GenericPropertyNode getDescriptorLim( int index )
+            throws IndexOutOfBoundsException
+    {
+        return descriptorsLim.getProperty( index );
+    }
+
+    public int getDescriptorsFirstCount()
+    {
+        return descriptorsFirst.length();
+    }
+
+    public int getDescriptorsLimCount()
+    {
+        return descriptorsLim.length();
+    }
+
+    public String getName( int index ) throws ArrayIndexOutOfBoundsException
+    {
+        return names[index];
+    }
+
+    public int getNamesCount()
+    {
+        return names.length;
     }
 
     private void read( byte[] tableStream, FileInformationBlock fib )
@@ -95,6 +98,17 @@ public class BookmarksTables
         if ( limDescriptorsStart != 0 && limDescriptorsLength != 0 )
             descriptorsLim = new PlexOfCps( tableStream, limDescriptorsStart,
                     limDescriptorsLength, 0 );
+    }
+
+    public void setName( int index, String name )
+    {
+        if ( index < names.length )
+        {
+            String[] newNames = new String[index + 1];
+            System.arraycopy( names, 0, newNames, 0, names.length );
+            names = newNames;
+        }
+        names[index] = name;
     }
 
     public void writePlcfBkmkf( FileInformationBlock fib,

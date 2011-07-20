@@ -48,6 +48,8 @@ import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.hwpf.usermodel.Bookmarks;
+import org.apache.poi.hwpf.usermodel.BookmarksImpl;
 import org.apache.poi.hwpf.usermodel.HWPFList;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -102,9 +104,12 @@ public final class HWPFDocument extends HWPFDocumentCore
   /** Holds Office Art objects */
   protected ShapesTable _officeArts;
   
-  /** Holds the bookmarks */
+  /** Holds the bookmarks tables */
   protected BookmarksTables _bookmarksTables;
-  
+
+  /** Holds the bookmarks */
+  protected Bookmarks _bookmarks;
+
   /** Holds the fields PLCFs */
   protected FieldsTables _fieldsTables;
 
@@ -267,6 +272,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
 
     _bookmarksTables = new BookmarksTables( _tableStream, _fib );
+    _bookmarks = new BookmarksImpl( _bookmarksTables );
     _fieldsTables = new FieldsTables(_tableStream, _fib);
   }
 
@@ -444,12 +450,11 @@ public final class HWPFDocument extends HWPFDocumentCore
   }
 
     /**
-     * @return BookmarksTables object, that is able to extract bookmarks
-     *         descriptors from this document
+     * @return user-friendly interface to access document bookmarks
      */
-    public BookmarksTables getBookmarksTables()
+    public Bookmarks getBookmarks()
     {
-        return _bookmarksTables;
+        return _bookmarks;
     }
 
   /**

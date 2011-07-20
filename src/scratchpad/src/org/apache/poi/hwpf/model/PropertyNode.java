@@ -35,9 +35,10 @@ import org.apache.poi.util.POILogger;
 public abstract class PropertyNode<T extends PropertyNode<T>>  implements Comparable<T>, Cloneable
 {
 
-    static final class EndComparator implements Comparator<PropertyNode<?>>
+    public static final class EndComparator implements
+            Comparator<PropertyNode<?>>
     {
-        static EndComparator instance = new EndComparator();
+        public static EndComparator instance = new EndComparator();
 
         public int compare( PropertyNode<?> o1, PropertyNode<?> o2 )
         {
@@ -48,9 +49,10 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
         }
     }
 
-    static final class StartComparator implements Comparator<PropertyNode<?>>
+    public static final class StartComparator implements
+            Comparator<PropertyNode<?>>
     {
-        static StartComparator instance = new StartComparator();
+        public static StartComparator instance = new StartComparator();
 
         public int compare( PropertyNode<?> o1, PropertyNode<?> o2 )
         {

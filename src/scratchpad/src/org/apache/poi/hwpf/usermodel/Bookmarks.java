@@ -14,33 +14,37 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.hwpf.usermodel.Bookmark;
-import org.apache.poi.hwpf.usermodel.Bookmarks;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Test cases for {@link BookmarksTables} and default implementation of
- * {@link Bookmarks}
+ * User-friendly interface to access document bookmarks
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestBookmarksTables extends TestCase
+public interface Bookmarks
 {
-    public void test()
-    {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "pageref.doc" );
-        Bookmarks bookmarks = doc.getBookmarks();
+    /**
+     * @param index
+     *            bookmark document index
+     * @return {@link Bookmark} with specified index
+     * @throws IndexOutOfBoundsException
+     *             if bookmark with specified index not present in document
+     */
+    Bookmark getBookmark( int index ) throws IndexOutOfBoundsException;
 
-        assertEquals( 1, bookmarks.getBookmarksCount() );
+    /**
+     * @return count of {@link Bookmark}s in document
+     */
+    int getBookmarksCount();
 
-        Bookmark bookmark = bookmarks.getBookmark( 0 );
-        assertEquals( "userref", bookmark.getName() );
-        assertEquals( 27, bookmark.getStart() );
-        assertEquals( 38, bookmark.getEnd() );
-    }
+    /**
+     * @return {@link Map} of bookmarks started in specified range, where key is
+     *         start position and value is sorted {@link List} of
+     *         {@link Bookmark}
+     */
+    Map<Integer, List<Bookmark>> getBookmarksStartedBetween(
+            int startInclusive, int endExclusive );
 }
