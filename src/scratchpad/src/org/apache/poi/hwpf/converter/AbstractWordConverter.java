@@ -61,6 +61,10 @@ public abstract class AbstractWordConverter
 
     private static final byte SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE = 2;
 
+    private static final char UNICODECHAR_NONBREAKING_HYPHEN = '\u2011';
+
+    private static final char UNICODECHAR_ZERO_WIDTH_SPACE = '\u200b';
+
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();
@@ -224,6 +228,16 @@ public abstract class AbstractWordConverter
                             stringBuilder.setLength( 0 );
                         }
                         processLineBreak( block, characterRun );
+                    }
+                    else if ( charChar == 30 )
+                    {
+                        // Non-breaking hyphens are stored as ASCII 30
+                        stringBuilder.append( UNICODECHAR_NONBREAKING_HYPHEN );
+                    }
+                    else if ( charChar == 31 )
+                    {
+                        // Non-required hyphens to zero-width space
+                        stringBuilder.append( UNICODECHAR_ZERO_WIDTH_SPACE );
                     }
                     else
                     {
