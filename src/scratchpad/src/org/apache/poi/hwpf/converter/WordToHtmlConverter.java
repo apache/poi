@@ -439,6 +439,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         bookmark.setAttribute( "class", textIndexClass + " " + type
                 + "noteindex" );
         note.appendChild( bookmark );
+        note.appendChild( htmlDocumentFacade.createText( " " ) );
 
         Element span = htmlDocumentFacade.getDocument().createElement( "span" );
         span.setAttribute( "class", type + "notetext" );
