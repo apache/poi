@@ -407,15 +407,17 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processNoteAutonumbered( HWPFDocument doc, String type,
             int noteIndex, Element block, Range noteTextRange )
     {
-        String textIndex = String.valueOf( noteIndex + 1 );
-
+        final String textIndex = String.valueOf( noteIndex + 1 );
+        final String textIndexClass = htmlDocumentFacade.getOrCreateCssClass(
+                "a", "a", "vertical-align:super;font-size:smaller;" );
         final String forwardNoteLink = type + "note_" + textIndex;
         final String backwardNoteLink = type + "note_back_" + textIndex;
 
         Element anchor = htmlDocumentFacade.createHyperlink( "#"
                 + forwardNoteLink );
         anchor.setAttribute( "name", backwardNoteLink );
-        anchor.setAttribute( "class", type + "noteanchor" );
+        anchor.setAttribute( "class", textIndexClass + " " + type
+                + "noteanchor" );
         anchor.setTextContent( textIndex );
         block.appendChild( anchor );
 
@@ -432,6 +434,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
         Element bookmark = htmlDocumentFacade.createBookmark( forwardNoteLink );
         bookmark.setAttribute( "href", "#" + backwardNoteLink );
         bookmark.setTextContent( textIndex );
+        bookmark.setAttribute( "class", textIndexClass + " " + type
+                + "noteindex" );
         note.appendChild( bookmark );
 
         Element span = htmlDocumentFacade.getDocument().createElement( "span" );
