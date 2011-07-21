@@ -46,7 +46,10 @@ public class WordToHtmlUtils extends AbstractWordUtils
         }
 
         style.append( ":" );
-        style.append( getBorderWidth( borderCode ) );
+        if ( borderCode.getLineWidth() < 8 )
+            style.append( "thin" );
+        else
+            style.append( getBorderWidth( borderCode ) );
         style.append( ' ' );
         style.append( getBorderType( borderCode ) );
         style.append( ' ' );
