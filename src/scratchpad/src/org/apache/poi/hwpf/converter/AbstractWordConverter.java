@@ -308,6 +308,12 @@ public abstract class AbstractWordConverter
     protected void processDocumentPart( HWPFDocumentCore wordDocument,
             final Range range )
     {
+        if ( range.numSections() == 1 )
+        {
+            processSingleSection( wordDocument, range.getSection( 0 ) );
+            return;
+        }
+
         for ( int s = 0; s < range.numSections(); s++ )
         {
             processSection( wordDocument, range.getSection( s ), s );
