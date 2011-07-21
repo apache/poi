@@ -65,19 +65,21 @@
   </section>
   <section><title>Committers</title>
     <ul>
-      <li>Marc Johnson (mjohnson at apache dot org)</li>
-      <li><link href="http://members.iinet.net.au/~gstamp/glen/">Glen Stampoultzis</link> (glens at apache.org)</li>
-      <li><link href="http://www.rainer-klute.de/">Rainer Klute</link> (klute at apache dot org)</li>
-      <li>Avik Sengupta (avik at apache dot org)</li>
-      <li>Shawn Laubach (slaubach at apache dot org)</li>
-      <li>Danny Mui (dmui at apache dot org)</li>
-      <li>Jason Height (jheight at apache dot org)</li>
-      <li>Yegor Kozlov (yegor at apache dot org)</li>
+      <!-- Alphabetical by surname -->
+      <li>Nick Burch (nick at apache dot org)</li>
       <li>Amol S Deshmukh (amol at apache dot org)</li>
       <li>David Fisher (wave at apache dot org)</li>
+      <li>Jason Height (jheight at apache dot org)</li>
+      <li>Marc Johnson (mjohnson at apache dot org)</li>
+      <li><link href="http://www.rainer-klute.de/">Rainer Klute</link> (klute at apache dot org)</li>
+      <li>Yegor Kozlov (yegor at apache dot org)</li>
+      <li>Shawn Laubach (slaubach at apache dot org)</li>
       <li>Josh Micich (josh at apache dot org)</li>
-      <li>Maxim Valyanskiy (maxcom at apache dot org)</li>
+      <li>Danny Mui (dmui at apache dot org)</li>
+      <li>Avik Sengupta (avik at apache dot org)</li>
+      <li><link href="http://members.iinet.net.au/~gstamp/glen/">Glen Stampoultzis</link> (glens at apache.org)</li>
       <li>Jon Svede (jsvede at apache dot org)</li>
+      <li>Maxim Valyanskiy (maxcom at apache dot org)</li>
       <li>Sergey Vladimirov (sergey at apache dot org)</li>
     </ul>
   </section>
