@@ -437,7 +437,15 @@ public class WordToHtmlConverter extends AbstractWordConverter
         span.setAttribute( "class", type + "notetext" );
         note.appendChild( span );
 
-        processCharacters( doc, Integer.MIN_VALUE, noteTextRange, span );
+        this.blocksProperies.add( new BlockProperies( "", -1 ) );
+        try
+        {
+            processCharacters( doc, Integer.MIN_VALUE, noteTextRange, span );
+        }
+        finally
+        {
+            this.blocksProperies.pop();
+        }
     }
 
     protected void processPageref( HWPFDocumentCore hwpfDocument,
@@ -658,6 +666,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
 
         final Element tableElement = htmlDocumentFacade.createTable();
+        tableElement
+                .setAttribute(
+                        "class",
+                        htmlDocumentFacade.getOrCreateCssClass(
+                                tableElement.getTagName(), "t",
+                                "table-layout:fixed;border-collapse:collapse;border-spacing:0;" ) );
         if ( tableHeader.hasChildNodes() )
         {
             tableElement.appendChild( tableHeader );
