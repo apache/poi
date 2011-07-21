@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
@@ -2140,5 +2141,36 @@ if(1==2) {
        
        assertEquals(2, wbPOIFS.getNumberOfSheets());
        assertEquals(2, wbNPOIFS.getNumberOfSheets());
+    }
+    
+    /**
+     * Large row numbers
+     */
+    public void DISABLEDtest51535() throws Exception {
+       byte[] data = HSSFITestDataProvider.instance.getTestDataFileContent("51535.xls");
+       
+       HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
+             new ByteArrayInputStream(data)).getRoot(), false);
+       HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+             new ByteArrayInputStream(data)).getRoot(), false);
+       
+       for(HSSFWorkbook wb : new HSSFWorkbook[] {wbPOIFS, wbNPOIFS}) {
+          assertEquals(3, wb.getNumberOfSheets());
+          
+          // Check directly
+          HSSFSheet s = wb.getSheetAt(0);
+          assertEquals("Top Left Cell", s.getRow(0).getCell(0).getStringCellValue());
+          assertEquals("Top Right Cell", s.getRow(0).getCell(255).getStringCellValue());
+          assertEquals("Bottom Left Cell", s.getRow(65535).getCell(0).getStringCellValue());
+          assertEquals("Bottom Right Cell", s.getRow(65535).getCell(255).getStringCellValue());
+          
+          // Extract and check
+          ExcelExtractor ex = new ExcelExtractor(wb);
+          String text = ex.getText();
+          assertTrue(text.contains("Top Left Cell"));
+          assertTrue(text.contains("Top Right Cell"));
+          assertTrue(text.contains("Bottom Left Cell"));
+          assertTrue(text.contains("Bottom Right Cell"));
+       }
     }
 }
