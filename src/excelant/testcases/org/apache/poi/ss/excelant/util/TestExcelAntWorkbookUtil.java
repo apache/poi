@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.examples.formula.CalculateMortgage;
+import org.apache.poi.ss.examples.formula.CalculateMortgageFunction;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -50,7 +50,7 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 
 		assertNotNull( fixture ) ;
 		
-		fixture.addFunction("h2_ZFactor", new CalculateMortgage() ) ;
+		fixture.addFunction("h2_ZFactor", new CalculateMortgageFunction() ) ;
 		
 		UDFFinder functions = fixture.getFunctions() ;
 		

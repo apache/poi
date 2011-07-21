@@ -26,12 +26,14 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction ;
 
 /**
  * A simple user-defined function to calculate principal and interest.
+ *
+ * Used by {@link org.apache.poi.ss.excelant.util.TestExcelAntWorkbookUtil}.
  * 
  * @author Jon Svede ( jon [at] loquatic [dot] com )
  * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
  *
  */
-public class CalculateMortgage implements FreeRefFunction {
+public class CalculateMortgageFunction implements FreeRefFunction {
 
     public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {
         
