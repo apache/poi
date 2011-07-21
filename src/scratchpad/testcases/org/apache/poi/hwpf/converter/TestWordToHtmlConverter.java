@@ -92,7 +92,7 @@ public class TestWordToHtmlConverter extends TestCase
     public void testAIOOBTap() throws Exception
     {
         String result = getHtmlText( "AIOOB-Tap.doc" );
-        assertContains( result.substring( 0, 6000 ), "<table>" );
+        assertContains( result.substring( 0, 6000 ), "<table class=\"t1\">" );
     }
 
     public void testBug33519() throws Exception
@@ -116,7 +116,7 @@ public class TestWordToHtmlConverter extends TestCase
     public void testBug46817() throws Exception
     {
         String result = getHtmlText( "Bug46817.doc" );
-        final String substring = "<table>";
+        final String substring = "<table class=\"t1\">";
         assertContains( result, substring );
     }
 
@@ -145,10 +145,12 @@ public class TestWordToHtmlConverter extends TestCase
     {
         String result = getHtmlText( "endingnote.doc" );
 
-        assertContains( result,
-                "<a class=\"endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>" );
-        assertContains( result,
-                "<a href=\"#endnote_back_1\" name=\"endnote_1\">1</a>" );
+        assertContains(
+                result,
+                "<a class=\"a1 endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>" );
+        assertContains(
+                result,
+                "<a class=\"a1 endnoteindex\" href=\"#endnote_back_1\" name=\"endnote_1\">1</a> <span" );
         assertContains( result, "Ending note text" );
     }
 
