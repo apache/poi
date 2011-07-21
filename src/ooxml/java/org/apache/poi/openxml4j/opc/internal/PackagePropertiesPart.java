@@ -596,7 +596,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	@Override
 	protected InputStream getInputStreamImpl() {
-		throw new InvalidOperationException("Operation not authorized");
+		throw new InvalidOperationException("Operation not authorized. This part may only be manipulated using the getters and setters on PackagePropertiesPart");
 	}
 
 	@Override
@@ -607,12 +607,12 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	@Override
 	public boolean save(OutputStream zos) {
-		throw new InvalidOperationException("Operation not authorized");
+		throw new InvalidOperationException("Operation not authorized. This part may only be manipulated using the getters and setters on PackagePropertiesPart");
 	}
 
 	@Override
 	public boolean load(InputStream ios) {
-		throw new InvalidOperationException("Operation not authorized");
+		throw new InvalidOperationException("Operation not authorized. This part may only be manipulated using the getters and setters on PackagePropertiesPart");
 	}
 
 	@Override
