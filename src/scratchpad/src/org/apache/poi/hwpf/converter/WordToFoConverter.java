@@ -284,7 +284,17 @@ public class WordToFoConverter extends AbstractWordConverter
         backwardLink.appendChild( createNoteInline( textIndex + " " ) );
         backwardLink.setAttribute( "id", forwardLinkName );
         endnote.appendChild( backwardLink );
-        processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange, endnote );
+
+        blocksProperies.push( new BlockProperies( "", -1, false, false ) );
+        try
+        {
+            processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange,
+                    endnote );
+        }
+        finally
+        {
+            blocksProperies.pop();
+        }
         this.endnotes.add( endnote );
     }
 
@@ -317,8 +327,16 @@ public class WordToFoConverter extends AbstractWordConverter
         footnoteBody.appendChild( footnoteBlock );
         footNote.appendChild( footnoteBody );
 
-        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
-                footnoteBlock );
+        blocksProperies.push( new BlockProperies( "", -1, false, false ) );
+        try
+        {
+            processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
+                    footnoteBlock );
+        }
+        finally
+        {
+            blocksProperies.pop();
+        }
     }
 
     protected void processHyperlink( HWPFDocumentCore wordDocument,
