@@ -137,6 +137,11 @@ public class FoDocumentFacade
         return result;
     }
 
+    public Element createFootnote()
+    {
+        return document.createElementNS( NS_XSLFO, "fo:footnote" );
+    }
+
     public Element createFootnoteBody()
     {
         return document.createElementNS( NS_XSLFO, "fo:footnote-body" );

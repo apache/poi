@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -97,45 +98,6 @@ public class WordToFoConverter extends AbstractWordConverter
         }
     }
 
-    @Override
-    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
-            Element block, Range endnoteTextRange )
-    {
-        // TODO: add endnote implementation?
-        processFootnoteAutonumbered( doc, noteIndex, block, endnoteTextRange );
-    }
-
-    @Override
-    protected void processFootnoteAutonumbered( HWPFDocument doc,
-            int noteIndex, Element block, Range footnoteTextRange )
-    {
-        String textIndex = String.valueOf( noteIndex + 1 );
-
-        {
-            Element inline = foDocumentFacade.createInline();
-            inline.setTextContent( textIndex );
-            inline.setAttribute( "baseline-shift", "super" );
-            inline.setAttribute( "font-size", "smaller" );
-            block.appendChild( inline );
-        }
-
-        Element footnoteBody = foDocumentFacade.createFootnoteBody();
-        Element footnoteBlock = foDocumentFacade.createBlock();
-        footnoteBody.appendChild( footnoteBlock );
-        block.appendChild( footnoteBody );
-
-        {
-            Element inline = foDocumentFacade.createInline();
-            inline.setTextContent( textIndex );
-            inline.setAttribute( "baseline-shift", "super" );
-            inline.setAttribute( "font-size", "smaller" );
-            footnoteBlock.appendChild( inline );
-        }
-
-        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
-                footnoteBlock );
-    }
-
     static Document process( File docFile ) throws Exception
     {
         final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile );
@@ -147,6 +109,8 @@ public class WordToFoConverter extends AbstractWordConverter
     }
 
     private final Stack<BlockProperies> blocksProperies = new Stack<BlockProperies>();
+
+    private List<Element> endnotes = new ArrayList<Element>( 0 );
 
     protected final FoDocumentFacade foDocumentFacade;
 
@@ -161,6 +125,15 @@ public class WordToFoConverter extends AbstractWordConverter
     public WordToFoConverter( Document document )
     {
         this.foDocumentFacade = new FoDocumentFacade( document );
+    }
+
+    protected Element createNoteInline( String noteIndexText )
+    {
+        Element inline = foDocumentFacade.createInline();
+        inline.setTextContent( noteIndexText );
+        inline.setAttribute( "baseline-shift", "super" );
+        inline.setAttribute( "font-size", "smaller" );
+        return inline;
     }
 
     protected String createPageMaster( Section section, String type,
@@ -289,6 +262,63 @@ public class WordToFoConverter extends AbstractWordConverter
 
         if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
             foDocumentFacade.setDescription( summaryInformation.getComments() );
+    }
+
+    @Override
+    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
+            Element block, Range endnoteTextRange )
+    {
+        final String textIndex = String.valueOf( noteIndex + 1 );
+        final String forwardLinkName = "endnote_" + textIndex;
+        final String backwardLinkName = "endnote_back_" + textIndex;
+
+        Element forwardLink = foDocumentFacade
+                .createBasicLinkInternal( forwardLinkName );
+        forwardLink.appendChild( createNoteInline( textIndex ) );
+        forwardLink.setAttribute( "id", backwardLinkName );
+        block.appendChild( forwardLink );
+
+        Element endnote = foDocumentFacade.createBlock();
+        Element backwardLink = foDocumentFacade
+                .createBasicLinkInternal( backwardLinkName );
+        backwardLink.appendChild( createNoteInline( textIndex + " " ) );
+        backwardLink.setAttribute( "id", forwardLinkName );
+        endnote.appendChild( backwardLink );
+        processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange, endnote );
+        this.endnotes.add( endnote );
+    }
+
+    @Override
+    protected void processFootnoteAutonumbered( HWPFDocument doc,
+            int noteIndex, Element block, Range footnoteTextRange )
+    {
+        final String textIndex = String.valueOf( noteIndex + 1 );
+        final String forwardLinkName = "footnote_" + textIndex;
+        final String backwardLinkName = "footnote_back_" + textIndex;
+
+        Element footNote = foDocumentFacade.createFootnote();
+        block.appendChild( footNote );
+
+        Element inline = foDocumentFacade.createInline();
+        Element forwardLink = foDocumentFacade
+                .createBasicLinkInternal( forwardLinkName );
+        forwardLink.appendChild( createNoteInline( textIndex ) );
+        forwardLink.setAttribute( "id", backwardLinkName );
+        inline.appendChild( forwardLink );
+        footNote.appendChild( inline );
+
+        Element footnoteBody = foDocumentFacade.createFootnoteBody();
+        Element footnoteBlock = foDocumentFacade.createBlock();
+        Element backwardLink = foDocumentFacade
+                .createBasicLinkInternal( backwardLinkName );
+        backwardLink.appendChild( createNoteInline( textIndex + " " ) );
+        backwardLink.setAttribute( "id", forwardLinkName );
+        footnoteBlock.appendChild( backwardLink );
+        footnoteBody.appendChild( footnoteBlock );
+        footNote.appendChild( footnoteBody );
+
+        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
+                footnoteBlock );
     }
 
     protected void processHyperlink( HWPFDocumentCore wordDocument,
@@ -421,6 +451,13 @@ public class WordToFoConverter extends AbstractWordConverter
                 "xsl-region-body" );
 
         processParagraphes( wordDocument, flow, section, Integer.MIN_VALUE );
+
+        if ( endnotes != null && !endnotes.isEmpty() )
+        {
+            for ( Element endnote : endnotes )
+                flow.appendChild( endnote );
+            endnotes.clear();
+        }
     }
 
     protected void processTable( HWPFDocumentCore wordDocument, Element flow,
