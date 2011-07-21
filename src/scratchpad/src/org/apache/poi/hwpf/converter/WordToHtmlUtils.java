@@ -21,6 +21,7 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.w3c.dom.Element;
 
 public class WordToHtmlUtils extends AbstractWordUtils
 {
@@ -221,6 +222,11 @@ public class WordToHtmlUtils extends AbstractWordUtils
         {
             style.append( "keep-together:always;" );
         }
+    }
+
+    static void compactSpans( Element pElement )
+    {
+        compactChildNodes( pElement, "span" );
     }
 
 }

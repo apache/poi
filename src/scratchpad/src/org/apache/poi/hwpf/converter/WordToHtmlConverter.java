@@ -45,8 +45,6 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
@@ -526,32 +524,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     htmlDocumentFacade.getOrCreateCssClass(
                             pElement.getTagName(), "p", style.toString() ) );
 
-        {
-            // compact spans
-            NodeList childNodes = pElement.getChildNodes();
-            for ( int i = 0; i < childNodes.getLength() - 1; i++ )
-            {
-                Node child1 = childNodes.item( i );
-                Node child2 = childNodes.item( i + 1 );
-                if ( child1.getNodeType() != Node.ELEMENT_NODE
-                        || child2.getNodeType() != Node.ELEMENT_NODE
-                        || !WordToHtmlUtils.equals( "span",
-                                ( (Element) child1 ).getTagName() )
-                        || !WordToHtmlUtils.equals( "span",
-                                ( (Element) child2 ).getTagName() )
-                        || !WordToHtmlUtils.equals(
-                                ( (Element) child1 ).getAttribute( "class" ),
-                                ( (Element) child2 ).getAttribute( "class" ) ) )
-                    continue;
-
-                // merge
-                while ( child2.getChildNodes().getLength() > 0 )
-                    child1.appendChild( child2.getFirstChild() );
-                child2.getParentNode().removeChild( child2 );
-                i--;
-            }
-        }
-
+        WordToHtmlUtils.compactSpans( pElement );
         return;
     }
 
