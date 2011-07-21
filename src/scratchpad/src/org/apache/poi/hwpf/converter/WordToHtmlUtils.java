@@ -83,12 +83,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
         }
         if ( characterRun.getSubSuperScriptIndex() == 1 )
         {
-            style.append( "baseline-shift:super;" );
+            style.append( "vertical-align:super;" );
             style.append( "font-size:smaller;" );
         }
         if ( characterRun.getSubSuperScriptIndex() == 2 )
         {
-            style.append( "baseline-shift:sub;" );
+            style.append( "vertical-align:sub;" );
             style.append( "font-size:smaller;" );
         }
         if ( characterRun.getUnderlineCode() > 0 )
