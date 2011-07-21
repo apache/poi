@@ -26,6 +26,11 @@ import org.w3c.dom.Element;
 
 public class WordToFoUtils extends AbstractWordUtils
 {
+    static void compactInlines( Element blockElement )
+    {
+        compactChildNodes( blockElement, "fo:inline" );
+    }
+
     public static void setBold( final Element element, final boolean bold )
     {
         element.setAttribute( "font-weight", bold ? "bold" : "normal" );

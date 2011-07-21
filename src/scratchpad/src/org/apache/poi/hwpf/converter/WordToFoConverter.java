@@ -295,6 +295,8 @@ public class WordToFoConverter extends AbstractWordConverter
         {
             blocksProperies.pop();
         }
+
+        WordToFoUtils.compactInlines( endnote );
         this.endnotes.add( endnote );
     }
 
@@ -337,6 +339,8 @@ public class WordToFoConverter extends AbstractWordConverter
         {
             blocksProperies.pop();
         }
+
+        WordToFoUtils.compactInlines( footnoteBlock );
     }
 
     protected void processHyperlink( HWPFDocumentCore wordDocument,
@@ -456,6 +460,7 @@ public class WordToFoConverter extends AbstractWordConverter
             blocksProperies.pop();
         }
 
+        WordToFoUtils.compactInlines( block );
         return;
     }
 
