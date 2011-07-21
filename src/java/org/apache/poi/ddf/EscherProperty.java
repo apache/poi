@@ -62,7 +62,7 @@ public abstract class EscherProperty {
     }
 
     public String getName() {
-        return EscherProperties.getPropertyName(_id);
+        return EscherProperties.getPropertyName(getPropertyNumber());
     }
 
     /**
