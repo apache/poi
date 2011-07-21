@@ -164,7 +164,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     public Document getDocument()
     {
-        htmlDocumentFacade.updateStylesheet();
         return htmlDocumentFacade.getDocument();
     }
 
@@ -232,6 +231,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         if ( notes != null )
             htmlDocumentFacade.getBody().appendChild( notes );
+
+        htmlDocumentFacade.updateStylesheet();
     }
 
     @Override
