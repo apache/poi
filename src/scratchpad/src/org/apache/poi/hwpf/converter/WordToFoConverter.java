@@ -19,8 +19,11 @@ package org.apache.poi.hwpf.converter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -135,6 +138,10 @@ public class WordToFoConverter extends AbstractWordConverter
     private List<Element> endnotes = new ArrayList<Element>( 0 );
 
     protected final FoDocumentFacade foDocumentFacade;
+
+    private AtomicInteger internalLinkCounter = new AtomicInteger( 1 );
+
+    private Set<String> usedIds = new LinkedHashSet<String>();
 
     /**
      * Creates new instance of {@link WordToFoConverter}. Can be used for output
@@ -260,9 +267,17 @@ public class WordToFoConverter extends AbstractWordConverter
         for ( Bookmark bookmark : rangeBookmarks )
         {
             Element bookmarkElement = foDocumentFacade.createInline();
-            bookmarkElement.setAttribute( "id", bookmark.getName() );
-            parent.appendChild( bookmarkElement );
-            parent = bookmarkElement;
+            final String idName = "bookmark_" + bookmark.getName();
+            // make sure ID used once
+            if ( setId( bookmarkElement, idName ) )
+            {
+                /*
+                 * if it just empty fo:inline without "id" attribute doesn't
+                 * making sense to add it to DOM
+                 */
+                parent.appendChild( bookmarkElement );
+                parent = bookmarkElement;
+            }
         }
 
         if ( range != null )
@@ -290,21 +305,22 @@ public class WordToFoConverter extends AbstractWordConverter
     protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
             Element block, Range endnoteTextRange )
     {
-        final String textIndex = String.valueOf( noteIndex + 1 );
+        final String textIndex = String.valueOf( internalLinkCounter
+                .incrementAndGet() );
         final String forwardLinkName = "endnote_" + textIndex;
         final String backwardLinkName = "endnote_back_" + textIndex;
 
         Element forwardLink = foDocumentFacade
                 .createBasicLinkInternal( forwardLinkName );
         forwardLink.appendChild( createNoteInline( textIndex ) );
-        forwardLink.setAttribute( "id", backwardLinkName );
+        setId( forwardLink, backwardLinkName );
         block.appendChild( forwardLink );
 
         Element endnote = foDocumentFacade.createBlock();
         Element backwardLink = foDocumentFacade
                 .createBasicLinkInternal( backwardLinkName );
         backwardLink.appendChild( createNoteInline( textIndex + " " ) );
-        backwardLink.setAttribute( "id", forwardLinkName );
+        setId( backwardLink, forwardLinkName );
         endnote.appendChild( backwardLink );
 
         blocksProperies.push( new BlockProperies( "", -1, false, false ) );
@@ -326,7 +342,8 @@ public class WordToFoConverter extends AbstractWordConverter
     protected void processFootnoteAutonumbered( HWPFDocument doc,
             int noteIndex, Element block, Range footnoteTextRange )
     {
-        final String textIndex = String.valueOf( noteIndex + 1 );
+        final String textIndex = String.valueOf( internalLinkCounter
+                .incrementAndGet() );
         final String forwardLinkName = "footnote_" + textIndex;
         final String backwardLinkName = "footnote_back_" + textIndex;
 
@@ -337,7 +354,7 @@ public class WordToFoConverter extends AbstractWordConverter
         Element forwardLink = foDocumentFacade
                 .createBasicLinkInternal( forwardLinkName );
         forwardLink.appendChild( createNoteInline( textIndex ) );
-        forwardLink.setAttribute( "id", backwardLinkName );
+        setId( forwardLink, backwardLinkName );
         inline.appendChild( forwardLink );
         footNote.appendChild( inline );
 
@@ -346,7 +363,7 @@ public class WordToFoConverter extends AbstractWordConverter
         Element backwardLink = foDocumentFacade
                 .createBasicLinkInternal( backwardLinkName );
         backwardLink.appendChild( createNoteInline( textIndex + " " ) );
-        backwardLink.setAttribute( "id", forwardLinkName );
+        setId( backwardLink, forwardLinkName );
         footnoteBlock.appendChild( backwardLink );
         footnoteBody.appendChild( footnoteBlock );
         footNote.appendChild( footnoteBody );
@@ -416,7 +433,8 @@ public class WordToFoConverter extends AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )
     {
-        Element basicLink = foDocumentFacade.createBasicLinkInternal( pageref );
+        Element basicLink = foDocumentFacade
+                .createBasicLinkInternal( "bookmark_" + pageref );
         currentBlock.appendChild( basicLink );
 
         if ( textRange != null )
@@ -609,6 +627,21 @@ public class WordToFoConverter extends AbstractWordConverter
                             + table.getStartOffset() + " -- "
                             + table.getEndOffset() );
         }
+    }
+
+    protected boolean setId( Element element, final String id )
+    {
+        // making sure ID used once
+        if ( usedIds.contains( id ) )
+        {
+            logger.log( POILogger.WARN,
+                    "Tried to create element with same ID '", id, "'. Skipped" );
+            return false;
+        }
+
+        element.setAttribute( "id", id );
+        usedIds.add( id );
+        return true;
     }
 
 }
