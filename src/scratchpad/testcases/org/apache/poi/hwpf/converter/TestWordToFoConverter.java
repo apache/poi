@@ -75,10 +75,12 @@ public class TestWordToFoConverter extends TestCase
     {
         String result = getFoText( "documentProperties.doc" );
 
-        assertTrue( result
-                .contains( "<dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\">This is document title</dc:title>" ) );
-        assertTrue( result
-                .contains( "<pdf:Keywords xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">This is document keywords</pdf:Keywords>" ) );
+        assertContains(
+                result,
+                "<dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\">This is document title</dc:title>" );
+        assertContains(
+                result,
+                "<pdf:Keywords xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">This is document keywords</pdf:Keywords>" );
     }
 
     public void testEndnote() throws Exception
@@ -86,7 +88,13 @@ public class TestWordToFoConverter extends TestCase
         String result = getFoText( "endingnote.doc" );
 
         assertContains( result,
+                "<fo:basic-link id=\"endnote_back_1\" internal-destination=\"endnote_1\">" );
+        assertContains( result,
                 "<fo:inline baseline-shift=\"super\" font-size=\"smaller\">1</fo:inline>" );
+        assertContains( result,
+                "<fo:basic-link id=\"endnote_1\" internal-destination=\"endnote_back_1\">" );
+        assertContains( result,
+                "<fo:inline baseline-shift=\"super\" font-size=\"smaller\">1 </fo:inline>" );
         assertContains( result, "Ending note text" );
     }
 
@@ -95,8 +103,7 @@ public class TestWordToFoConverter extends TestCase
         final String sampleFileName = "equation.doc";
         String result = getFoText( sampleFileName );
 
-        assertTrue( result
-                .contains( "<!--Image link to '0.emf' can be here-->" ) );
+        assertContains( result, "<!--Image link to '0.emf' can be here-->" );
     }
 
     public void testHyperlink() throws Exception
@@ -104,9 +111,9 @@ public class TestWordToFoConverter extends TestCase
         final String sampleFileName = "hyperlink.doc";
         String result = getFoText( sampleFileName );
 
-        assertTrue( result
-                .contains( "<fo:basic-link external-destination=\"http://testuri.org/\">" ) );
-        assertTrue( result.contains( "Hyperlink text" ) );
+        assertContains( result,
+                "<fo:basic-link external-destination=\"http://testuri.org/\">" );
+        assertContains( result, "Hyperlink text" );
     }
 
     public void testInnerTable() throws Exception
@@ -114,8 +121,8 @@ public class TestWordToFoConverter extends TestCase
         final String sampleFileName = "innertable.doc";
         String result = getFoText( sampleFileName );
 
-        assertTrue( result
-                .contains( "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" ) );
+        assertContains( result,
+                "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" );
     }
 
     public void testPageref() throws Exception
@@ -125,8 +132,9 @@ public class TestWordToFoConverter extends TestCase
 
         System.out.println( result );
 
-        assertTrue( result
-                .contains( "<fo:basic-link internal-destination=\"userref\">" ) );
-        assertTrue( result.contains( "1" ) );
+        assertContains( result,
+                "<fo:basic-link internal-destination=\"bookmark_userref\">" );
+        assertContains( result, "1" );
+        assertContains( result, "<fo:inline id=\"bookmark_userref\">" );
     }
 }
