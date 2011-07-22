@@ -52,6 +52,9 @@ import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.BookmarksImpl;
+import org.apache.poi.hwpf.usermodel.Field;
+import org.apache.poi.hwpf.usermodel.Fields;
+import org.apache.poi.hwpf.usermodel.FieldsImpl;
 import org.apache.poi.hwpf.usermodel.HWPFList;
 import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.NotesImpl;
@@ -60,6 +63,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Internal;
 
 
 /**
@@ -128,6 +132,9 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /** Holds the fields PLCFs */
   protected FieldsTables _fieldsTables;
+
+  /** Holds the fields */
+  protected Fields _fields;
 
   protected HWPFDocument()
   {
@@ -296,6 +303,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     _footnotes = new NotesImpl( _footnotesTables );
 
     _fieldsTables = new FieldsTables(_tableStream, _fib);
+    _fields = new FieldsImpl(_fieldsTables);
   }
 
   public TextPieceTable getTextTable()
@@ -510,11 +518,24 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /**
    * @return FieldsTables object, that is able to extract fields descriptors from this document
+   * @deprecated
    */
+    @Deprecated
+    @Internal
   public FieldsTables getFieldsTables() {
       return _fieldsTables;
   }
-  
+
+    /**
+     * Returns user-friendly interface to access document {@link Field}s
+     * 
+     * @return user-friendly interface to access document {@link Field}s
+     */
+    public Fields getFields()
+    {
+        return _fields;
+    }
+
   /**
    * Writes out the word file that is represented by an instance of this class.
    *

@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +45,7 @@ import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
+import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -311,7 +311,8 @@ public final class HWPFLister
                 for ( char c : text.toCharArray() )
                 {
                     if ( c < 30 )
-                        stringBuilder.append( "\\0x" + Integer.toHexString( c ) );
+                        stringBuilder
+                                .append( "\\0x" + Integer.toHexString( c ) );
                     else
                         stringBuilder.append( c );
                 }
@@ -340,8 +341,7 @@ public final class HWPFLister
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {
             System.out.println( "=== Document part: " + part + " ===" );
-            for ( org.apache.poi.hwpf.model.Field field : document
-                    .getFieldsTables().getFields( part ) )
+            for ( Field field : document.getFields().getFields( part ) )
             {
                 System.out.println( field );
             }
@@ -356,7 +356,7 @@ public final class HWPFLister
 
             HWPFDocument doc = (HWPFDocument) _doc;
 
-            Field fMainStream = HWPFDocumentCore.class
+            java.lang.reflect.Field fMainStream = HWPFDocumentCore.class
                     .getDeclaredField( "_mainStream" );
             fMainStream.setAccessible( true );
             byte[] mainStream = (byte[]) fMainStream.get( _doc );
