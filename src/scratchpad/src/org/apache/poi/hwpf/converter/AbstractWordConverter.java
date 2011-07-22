@@ -29,12 +29,12 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-import org.apache.poi.hwpf.model.Field;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.ListFormatOverride;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -229,9 +229,8 @@ public abstract class AbstractWordConverter
             {
                 if ( document instanceof HWPFDocument )
                 {
-                    Field aliveField = ( (HWPFDocument) document )
-                            .getFieldsTables().lookupFieldByStartOffset(
-                                    FieldsDocumentPart.MAIN,
+                    Field aliveField = ( (HWPFDocument) document ).getFields()
+                            .getFieldByStartOffset( FieldsDocumentPart.MAIN,
                                     characterRun.getStartOffset() );
                     if ( aliveField != null )
                     {
@@ -453,7 +452,7 @@ public abstract class AbstractWordConverter
             return null;
 
         HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
-        Field field = hwpfDocument.getFieldsTables().lookupFieldByStartOffset(
+        Field field = hwpfDocument.getFields().getFieldByStartOffset(
                 FieldsDocumentPart.MAIN, startOffset );
         if ( field == null )
             return null;
