@@ -41,6 +41,8 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
+import org.apache.poi.hwpf.usermodel.TableCell;
+import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -84,6 +86,68 @@ public abstract class AbstractWordConverter
     public FontReplacer getFontReplacer()
     {
         return fontReplacer;
+    }
+
+    protected int getNumberColumnsSpanned( int[] tableCellEdges,
+            int currentEdgeIndex, TableCell tableCell )
+    {
+        int nextEdgeIndex = currentEdgeIndex;
+        int colSpan = 0;
+        int cellRightEdge = tableCell.getLeftEdge() + tableCell.getWidth();
+        while ( tableCellEdges[nextEdgeIndex] < cellRightEdge )
+        {
+            colSpan++;
+            nextEdgeIndex++;
+        }
+        return colSpan;
+    }
+
+    protected int getNumberRowsSpanned( Table table, int currentRowIndex,
+            int currentColumnIndex, TableCell tableCell )
+    {
+        if ( !tableCell.isFirstVerticallyMerged() )
+            return 1;
+
+        final int numRows = table.numRows();
+
+        int count = 1;
+        for ( int r1 = currentRowIndex + 1; r1 < numRows; r1++ )
+        {
+            TableRow nextRow = table.getRow( r1 );
+            if ( nextRow.numCells() < currentColumnIndex )
+                break;
+            TableCell nextCell = nextRow.getCell( currentColumnIndex );
+            if ( !nextCell.isVerticallyMerged()
+                    || nextCell.isFirstVerticallyMerged() )
+                break;
+            count++;
+        }
+        return count;
+    }
+
+    protected int getTableCellEdgesIndexSkipCount( Table table, int r,
+            int[] tableCellEdges, int currentEdgeIndex, int c,
+            TableCell tableCell )
+    {
+        TableCell upperCell = null;
+        for ( int r1 = r - 1; r1 >= 0; r1-- )
+        {
+            final TableCell prevCell = table.getRow( r1 ).getCell( c );
+            if ( prevCell != null && prevCell.isFirstVerticallyMerged() )
+            {
+                upperCell = prevCell;
+                break;
+            }
+        }
+        if ( upperCell == null )
+        {
+            logger.log( POILogger.WARN, "First vertically merged cell for ",
+                    tableCell, " not found" );
+            return 0;
+        }
+
+        return getNumberColumnsSpanned( tableCellEdges, currentEdgeIndex,
+                tableCell );
     }
 
     protected abstract void outputCharacters( Element block,
@@ -211,7 +275,7 @@ public abstract class AbstractWordConverter
             }
 
             if ( text.endsWith( "\r" )
-                    || ( text.charAt( text.length() - 1 ) == BEL_MARK && currentTableLevel != 0 ) )
+                    || ( text.charAt( text.length() - 1 ) == BEL_MARK && currentTableLevel != Integer.MIN_VALUE ) )
                 text = text.substring( 0, text.length() - 1 );
 
             {
@@ -239,7 +303,8 @@ public abstract class AbstractWordConverter
                         // Non-required hyphens to zero-width space
                         stringBuilder.append( UNICODECHAR_ZERO_WIDTH_SPACE );
                     }
-                    else
+                    else if ( charChar > 0x20 || charChar == 0x09
+                            || charChar == 0x0A || charChar == 0x0D )
                     {
                         stringBuilder.append( charChar );
                     }

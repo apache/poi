@@ -61,6 +61,22 @@ import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 public class WordToHtmlConverter extends AbstractWordConverter
 {
 
+    /**
+     * Holds properties values, applied to current <tt>p</tt> element. Those
+     * properties shall not be doubled in children <tt>span</tt> elements.
+     */
+    private static class BlockProperies
+    {
+        final String pFontName;
+        final int pFontSize;
+
+        public BlockProperies( String pFontName, int pFontSize )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
+        }
+    }
+
     private static final POILogger logger = POILogFactory
             .getLogger( WordToHtmlConverter.class );
 
@@ -584,7 +600,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
                 if ( tableCell.isVerticallyMerged()
                         && !tableCell.isFirstVerticallyMerged() )
+                {
+                    currentEdgeIndex += getTableCellEdgesIndexSkipCount( table,
+                            r, tableCellEdges, currentEdgeIndex, c, tableCell );
                     continue;
+                }
 
                 Element tableCellElement;
                 if ( tableRow.isTableHeader() )
@@ -601,42 +621,22 @@ public class WordToHtmlConverter extends AbstractWordConverter
                         r == 0, r == tableRows - 1, c == 0, c == rowCells - 1,
                         tableCellStyle );
 
-                int colSpan = 0;
-                int cellRightEdge = tableCell.getLeftEdge()
-                        + tableCell.getWidth();
-                while ( tableCellEdges[currentEdgeIndex] < cellRightEdge )
-                {
-                    colSpan++;
-                    currentEdgeIndex++;
-                }
+                int colSpan = getNumberColumnsSpanned( tableCellEdges,
+                        currentEdgeIndex, tableCell );
+                currentEdgeIndex += colSpan;
 
                 if ( colSpan == 0 )
                     continue;
 
                 if ( colSpan != 1 )
-                {
                     tableCellElement.setAttribute( "colspan",
                             String.valueOf( colSpan ) );
-                }
 
-                if ( tableCell.isFirstVerticallyMerged() )
-                {
-                    int count = 1;
-                    for ( int r1 = r + 1; r1 < tableRows; r1++ )
-                    {
-                        TableRow nextRow = table.getRow( r1 );
-                        if ( nextRow.numCells() < c )
-                            break;
-                        TableCell nextCell = nextRow.getCell( c );
-                        if ( !nextCell.isVerticallyMerged()
-                                || nextCell.isFirstVerticallyMerged() )
-                            break;
-                        count++;
-                    }
-                    if ( count > 1 )
-                        tableCellElement.setAttribute( "rowspan",
-                                String.valueOf( count ) );
-                }
+                final int rowSpan = getNumberRowsSpanned( table, r, c,
+                        tableCell );
+                if ( rowSpan > 1 )
+                    tableCellElement.setAttribute( "rowspan",
+                            String.valueOf( rowSpan ) );
 
                 processParagraphes( hwpfDocument, tableCellElement, tableCell,
                         table.getTableLevel() );
@@ -692,22 +692,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
             logger.log( POILogger.WARN, "Table without body starting at [",
                     Integer.valueOf( table.getStartOffset() ), "; ",
                     Integer.valueOf( table.getEndOffset() ), ")" );
-        }
-    }
-
-    /**
-     * Holds properties values, applied to current <tt>p</tt> element. Those
-     * properties shall not be doubled in children <tt>span</tt> elements.
-     */
-    private static class BlockProperies
-    {
-        final String pFontName;
-        final int pFontSize;
-
-        public BlockProperies( String pFontName, int pFontSize )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
         }
     }
 

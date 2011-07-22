@@ -54,6 +54,28 @@ import org.w3c.dom.Text;
 public class WordToFoConverter extends AbstractWordConverter
 {
 
+    /**
+     * Holds properties values, applied to current <tt>fo:block</tt> element.
+     * Those properties shall not be doubled in children <tt>fo:inline</tt>
+     * elements.
+     */
+    private static class BlockProperies
+    {
+        final boolean pBold;
+        final String pFontName;
+        final int pFontSize;
+        final boolean pItalic;
+
+        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
+                boolean pItalic )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
+            this.pBold = pBold;
+            this.pItalic = pItalic;
+        }
+    }
+
     private static final POILogger logger = POILogFactory
             .getLogger( WordToFoConverter.class );
 
@@ -513,26 +535,22 @@ public class WordToFoConverter extends AbstractWordConverter
             {
                 TableCell tableCell = tableRow.getCell( c );
 
-                if ( tableCell.isMerged() && !tableCell.isFirstMerged() )
-                    continue;
-
                 if ( tableCell.isVerticallyMerged()
                         && !tableCell.isFirstVerticallyMerged() )
+                {
+                    currentEdgeIndex += getTableCellEdgesIndexSkipCount( table,
+                            r, tableCellEdges, currentEdgeIndex, c, tableCell );
                     continue;
+                }
 
                 Element tableCellElement = foDocumentFacade.createTableCell();
                 WordToFoUtils.setTableCellProperties( tableRow, tableCell,
                         tableCellElement, r == 0, r == tableRows - 1, c == 0,
                         c == rowCells - 1 );
 
-                int colSpan = 0;
-                int cellRightEdge = tableCell.getLeftEdge()
-                        + tableCell.getWidth();
-                while ( tableCellEdges[currentEdgeIndex] < cellRightEdge )
-                {
-                    colSpan++;
-                    currentEdgeIndex++;
-                }
+                int colSpan = getNumberColumnsSpanned( tableCellEdges,
+                        currentEdgeIndex, tableCell );
+                currentEdgeIndex += colSpan;
 
                 if ( colSpan == 0 )
                     continue;
@@ -541,24 +559,11 @@ public class WordToFoConverter extends AbstractWordConverter
                     tableCellElement.setAttribute( "number-columns-spanned",
                             String.valueOf( colSpan ) );
 
-                if ( tableCell.isFirstVerticallyMerged() )
-                {
-                    int count = 0;
-                    for ( int r1 = r; r1 < tableRows; r1++ )
-                    {
-                        TableRow nextRow = table.getRow( r1 );
-                        if ( nextRow.numCells() < c )
-                            break;
-                        TableCell nextCell = nextRow.getCell( c );
-                        if ( nextCell.isVerticallyMerged() )
-                            count++;
-                        if ( !nextCell.isVerticallyMerged() )
-                            break;
-                    }
-                    if ( count > 1 )
-                        tableCellElement.setAttribute( "number-rows-spanned",
-                                String.valueOf( count ) );
-                }
+                final int rowSpan = getNumberRowsSpanned( table, r, c,
+                        tableCell );
+                if ( rowSpan > 1 )
+                    tableCellElement.setAttribute( "number-rows-spanned",
+                            String.valueOf( rowSpan ) );
 
                 processParagraphes( wordDocument, tableCellElement, tableCell,
                         table.getTableLevel() );
@@ -572,17 +577,21 @@ public class WordToFoConverter extends AbstractWordConverter
                 tableRowElement.appendChild( tableCellElement );
             }
 
-            if ( tableRow.isTableHeader() )
+            if ( tableRowElement.hasChildNodes() )
             {
-                tableHeader.appendChild( tableRowElement );
-            }
-            else
-            {
-                tableBody.appendChild( tableRowElement );
+                if ( tableRow.isTableHeader() )
+                {
+                    tableHeader.appendChild( tableRowElement );
+                }
+                else
+                {
+                    tableBody.appendChild( tableRowElement );
+                }
             }
         }
 
         final Element tableElement = foDocumentFacade.createTable();
+        tableElement.setAttribute( "table-layout", "fixed" );
         if ( tableHeader.hasChildNodes() )
         {
             tableElement.appendChild( tableHeader );
@@ -599,28 +608,6 @@ public class WordToFoConverter extends AbstractWordConverter
                     "Table without body starting on offset "
                             + table.getStartOffset() + " -- "
                             + table.getEndOffset() );
-        }
-    }
-
-    /**
-     * Holds properties values, applied to current <tt>fo:block</tt> element.
-     * Those properties shall not be doubled in children <tt>fo:inline</tt>
-     * elements.
-     */
-    private static class BlockProperies
-    {
-        final boolean pBold;
-        final String pFontName;
-        final int pFontSize;
-        final boolean pItalic;
-
-        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
-                boolean pItalic )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
-            this.pBold = pBold;
-            this.pItalic = pItalic;
         }
     }
 
