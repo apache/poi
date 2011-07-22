@@ -303,7 +303,7 @@ public abstract class AbstractWordConverter
                         // Non-required hyphens to zero-width space
                         stringBuilder.append( UNICODECHAR_ZERO_WIDTH_SPACE );
                     }
-                    else if ( charChar > 0x20 || charChar == 0x09
+                    else if ( charChar >= 0x20 || charChar == 0x09
                             || charChar == 0x0A || charChar == 0x0D )
                     {
                         stringBuilder.append( charChar );
