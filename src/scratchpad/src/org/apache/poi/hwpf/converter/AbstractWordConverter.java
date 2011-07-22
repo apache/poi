@@ -132,7 +132,11 @@ public abstract class AbstractWordConverter
         TableCell upperCell = null;
         for ( int r1 = r - 1; r1 >= 0; r1-- )
         {
-            final TableCell prevCell = table.getRow( r1 ).getCell( c );
+            final TableRow row = table.getRow( r1 );
+            if ( row == null || c >= row.numCells() )
+                continue;
+
+            final TableCell prevCell = row.getCell( c );
             if ( prevCell != null && prevCell.isFirstVerticallyMerged() )
             {
                 upperCell = prevCell;
