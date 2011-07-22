@@ -318,7 +318,8 @@ public class WordToFoUtils extends AbstractWordUtils
         }
         if ( !tableRow.cantSplit() )
         {
-            tableRowElement.setAttribute( "keep-together", "always" );
+            tableRowElement.setAttribute( "keep-together.within-column",
+                    "always" );
         }
     }
 
