@@ -190,6 +190,14 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "innertable.doc" );
     }
 
+    public void testTableMerges() throws Exception
+    {
+        String result = getHtmlText( "table-merges.doc" );
+        
+        assertContains( result, "<td class=\"td1\" colspan=\"3\">" );
+        assertContains( result, "<td class=\"td2\" colspan=\"2\">" );
+    }
+
     public void testO_kurs_doc() throws Exception
     {
         getHtmlText( "o_kurs.doc" );

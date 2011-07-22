@@ -489,6 +489,8 @@ public class WordToFoConverter extends AbstractWordConverter
         Element tableHeader = foDocumentFacade.createTableHeader();
         Element tableBody = foDocumentFacade.createTableBody();
 
+        final int[] tableCellEdges = WordToHtmlUtils
+                .buildTableCellEdgesArray( table );
         final int tableRows = table.numRows();
 
         int maxColumns = Integer.MIN_VALUE;
@@ -504,6 +506,8 @@ public class WordToFoConverter extends AbstractWordConverter
             Element tableRowElement = foDocumentFacade.createTableRow();
             WordToFoUtils.setTableRowProperties( tableRow, tableRowElement );
 
+            // index of current element in tableCellEdges[]
+            int currentEdgeIndex = 0;
             final int rowCells = tableRow.numCells();
             for ( int c = 0; c < rowCells; c++ )
             {
@@ -521,29 +525,21 @@ public class WordToFoConverter extends AbstractWordConverter
                         tableCellElement, r == 0, r == tableRows - 1, c == 0,
                         c == rowCells - 1 );
 
-                if ( tableCell.isFirstMerged() )
+                int colSpan = 0;
+                int cellRightEdge = tableCell.getLeftEdge()
+                        + tableCell.getWidth();
+                while ( tableCellEdges[currentEdgeIndex] < cellRightEdge )
                 {
-                    int count = 0;
-                    for ( int c1 = c; c1 < rowCells; c1++ )
-                    {
-                        TableCell nextCell = tableRow.getCell( c1 );
-                        if ( nextCell.isMerged() )
-                            count++;
-                        if ( !nextCell.isMerged() )
-                            break;
-                    }
-                    tableCellElement.setAttribute( "number-columns-spanned", ""
-                            + count );
+                    colSpan++;
+                    currentEdgeIndex++;
                 }
-                else
-                {
-                    if ( c == rowCells - 1 && c != maxColumns - 1 )
-                    {
-                        tableCellElement.setAttribute(
-                                "number-columns-spanned", ""
-                                        + ( maxColumns - c ) );
-                    }
-                }
+
+                if ( colSpan == 0 )
+                    continue;
+
+                if ( colSpan != 1 )
+                    tableCellElement.setAttribute( "number-columns-spanned",
+                            String.valueOf( colSpan ) );
 
                 if ( tableCell.isFirstVerticallyMerged() )
                 {
@@ -559,8 +555,9 @@ public class WordToFoConverter extends AbstractWordConverter
                         if ( !nextCell.isVerticallyMerged() )
                             break;
                     }
-                    tableCellElement.setAttribute( "number-rows-spanned", ""
-                            + count );
+                    if ( count > 1 )
+                        tableCellElement.setAttribute( "number-rows-spanned",
+                                String.valueOf( count ) );
                 }
 
                 processParagraphes( wordDocument, tableCellElement, tableCell,

@@ -557,6 +557,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
         Element tableHeader = htmlDocumentFacade.createTableHeader();
         Element tableBody = htmlDocumentFacade.createTableBody();
 
+        final int[] tableCellEdges = WordToHtmlUtils
+                .buildTableCellEdgesArray( table );
         final int tableRows = table.numRows();
 
         int maxColumns = Integer.MIN_VALUE;
@@ -573,13 +575,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
             StringBuilder tableRowStyle = new StringBuilder();
             WordToHtmlUtils.addTableRowProperties( tableRow, tableRowStyle );
 
+            // index of current element in tableCellEdges[]
+            int currentEdgeIndex = 0;
             final int rowCells = tableRow.numCells();
             for ( int c = 0; c < rowCells; c++ )
             {
                 TableCell tableCell = tableRow.getCell( c );
-
-                if ( tableCell.isMerged() && !tableCell.isFirstMerged() )
-                    continue;
 
                 if ( tableCell.isVerticallyMerged()
                         && !tableCell.isFirstVerticallyMerged() )
@@ -600,43 +601,41 @@ public class WordToHtmlConverter extends AbstractWordConverter
                         r == 0, r == tableRows - 1, c == 0, c == rowCells - 1,
                         tableCellStyle );
 
-                if ( tableCell.isFirstMerged() )
+                int colSpan = 0;
+                int cellRightEdge = tableCell.getLeftEdge()
+                        + tableCell.getWidth();
+                while ( tableCellEdges[currentEdgeIndex] < cellRightEdge )
                 {
-                    int count = 0;
-                    for ( int c1 = c; c1 < rowCells; c1++ )
-                    {
-                        TableCell nextCell = tableRow.getCell( c1 );
-                        if ( nextCell.isMerged() )
-                            count++;
-                        if ( !nextCell.isMerged() )
-                            break;
-                    }
-                    tableCellElement.setAttribute( "colspan", "" + count );
+                    colSpan++;
+                    currentEdgeIndex++;
                 }
-                else
+
+                if ( colSpan == 0 )
+                    continue;
+
+                if ( colSpan != 1 )
                 {
-                    if ( c == rowCells - 1 && c != maxColumns - 1 )
-                    {
-                        tableCellElement.setAttribute( "colspan", ""
-                                + ( maxColumns - c ) );
-                    }
+                    tableCellElement.setAttribute( "colspan",
+                            String.valueOf( colSpan ) );
                 }
 
                 if ( tableCell.isFirstVerticallyMerged() )
                 {
-                    int count = 0;
-                    for ( int r1 = r; r1 < tableRows; r1++ )
+                    int count = 1;
+                    for ( int r1 = r + 1; r1 < tableRows; r1++ )
                     {
                         TableRow nextRow = table.getRow( r1 );
                         if ( nextRow.numCells() < c )
                             break;
                         TableCell nextCell = nextRow.getCell( c );
-                        if ( nextCell.isVerticallyMerged() )
-                            count++;
-                        if ( !nextCell.isVerticallyMerged() )
+                        if ( !nextCell.isVerticallyMerged()
+                                || nextCell.isFirstVerticallyMerged() )
                             break;
+                        count++;
                     }
-                    tableCellElement.setAttribute( "rowspan", "" + count );
+                    if ( count > 1 )
+                        tableCellElement.setAttribute( "rowspan",
+                                String.valueOf( count ) );
                 }
 
                 processParagraphes( hwpfDocument, tableCellElement, tableCell,

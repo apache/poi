@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -29,6 +31,9 @@ import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Table;
+import org.apache.poi.hwpf.usermodel.TableCell;
+import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.Attr;
@@ -43,6 +48,42 @@ public class AbstractWordUtils
 
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
+
+    /**
+     * Creates array of all possible cell edges. In HTML (and FO) cells from
+     * different rows and same column should have same width, otherwise spanning
+     * shall be used.
+     * 
+     * @param table
+     *            table to build cell edges array from
+     * @return array of cell edges (including leftest one) in twips
+     */
+    static int[] buildTableCellEdgesArray( Table table )
+    {
+        Set<Integer> edges = new TreeSet<Integer>();
+
+        for ( int r = 0; r < table.numRows(); r++ )
+        {
+            TableRow tableRow = table.getRow( r );
+            for ( int c = 0; c < tableRow.numCells(); c++ )
+            {
+                TableCell tableCell = tableRow.getCell( c );
+
+                edges.add( Integer.valueOf( tableCell.getLeftEdge() ) );
+                edges.add( Integer.valueOf( tableCell.getLeftEdge()
+                        + tableCell.getWidth() ) );
+            }
+        }
+
+        Integer[] sorted = edges.toArray( new Integer[edges.size()] );
+        int[] result = new int[sorted.length];
+        for ( int i = 0; i < sorted.length; i++ )
+        {
+            result[i] = sorted[i].intValue();
+        }
+
+        return result;
+    }
 
     static boolean canBeMerged( Node node1, Node node2, String requiredTagName )
     {
