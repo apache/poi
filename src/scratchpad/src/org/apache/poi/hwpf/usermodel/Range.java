@@ -869,7 +869,7 @@ public class Range { // TODO -instantiable superclass
 
 		Range r = paragraph;
 		if (r._parent.get() != this) {
-			throw new IllegalArgumentException("This paragraph is not a child of this range");
+			throw new IllegalArgumentException("This paragraph is not a child of this range instance");
 		}
 
         r.initAll();
