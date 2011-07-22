@@ -139,7 +139,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
     protected final FoDocumentFacade foDocumentFacade;
 
-    private AtomicInteger internalLinkCounter = new AtomicInteger( 1 );
+    private AtomicInteger internalLinkCounter = new AtomicInteger( 0 );
 
     private Set<String> usedIds = new LinkedHashSet<String>();
 
