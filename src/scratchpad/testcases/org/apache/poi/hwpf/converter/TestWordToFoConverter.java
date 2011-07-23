@@ -130,8 +130,6 @@ public class TestWordToFoConverter extends TestCase
         final String sampleFileName = "pageref.doc";
         String result = getFoText( sampleFileName );
 
-        System.out.println( result );
-
         assertContains( result,
                 "<fo:basic-link internal-destination=\"bookmark_userref\">" );
         assertContains( result, "1" );
