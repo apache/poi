@@ -124,7 +124,7 @@ under the License.
     <target name="test-udf">
         <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
             <poi:udf functionAlias="calculatePayment"
-                     className="org.apache.poi.ss.examples.formula.CalculateMortgage"/>
+                     className="org.apache.poi.ss.examples.formula.CalculateMortgageFunction"/>
             <poi:test>
                 <poi:setDouble cell="'MortageCalculatorFunction'!$B$1" value="240000"/>
                 <poi:setDouble cell="'MortageCalculatorFunction'!$B$2" value ="0.11"/>
