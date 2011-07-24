@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -468,7 +469,8 @@ public final class TestProblems extends HWPFTestCase {
         try {
             assertEquals(extractor1.getFooterText(), extractor2.getFooterText());
             assertEquals(extractor1.getHeaderText(), extractor2.getHeaderText());
-            assertEquals(extractor1.getParagraphText(), extractor2.getParagraphText());
+            assertEquals( Arrays.toString( extractor1.getParagraphText() ),
+                    Arrays.toString( extractor2.getParagraphText() ) );
 
             assertEquals(extractor1.getText(), extractor2.getText());
 
