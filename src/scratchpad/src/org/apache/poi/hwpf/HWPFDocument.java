@@ -433,11 +433,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    *  separators and footnote separators.
    */
   public Range getHeaderStoryRange() {
-	  return new Range(
-			  _cpSplit.getHeaderStoryStart(),
-			  _cpSplit.getHeaderStoryEnd(),
-			  this
-      );
+	  return getRange( SubdocumentType.HEADER );
   }
 
   /**
@@ -847,7 +843,14 @@ public final class HWPFDocument extends HWPFDocumentCore
     writeProperties(pfs);
 
     pfs.writeFilesystem(out);
-  }
+
+        /*
+         * since we updated all references in FIB and etc, using new arrays to
+         * access data
+         */
+        this._tableStream = tableStream.toByteArray();
+        this._dataStream = dataBuf;
+    }
 
   public byte[] getDataStream()
   {
