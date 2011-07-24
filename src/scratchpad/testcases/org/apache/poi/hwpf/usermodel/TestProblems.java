@@ -458,26 +458,22 @@ public final class TestProblems extends HWPFTestCase {
     }
 
     /**
-     * [FAILING] Bug 44331 - Output is corrupted
+     * Bug 44331 - HWPFDocument.write destroys fields
      */
-    public void test44431() {
-        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug44431.doc");
-        WordExtractor extractor1 = new WordExtractor(doc1);
+    public void test44431()
+    {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile( "Bug44431.doc" );
+        WordExtractor extractor1 = new WordExtractor( doc1 );
 
-        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
-        WordExtractor extractor2 = new WordExtractor(doc2);
-        try {
-            assertEquals(extractor1.getFooterText(), extractor2.getFooterText());
-            assertEquals(extractor1.getHeaderText(), extractor2.getHeaderText());
-            assertEquals( Arrays.toString( extractor1.getParagraphText() ),
-                    Arrays.toString( extractor2.getParagraphText() ) );
+        HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack( doc1 );
+        WordExtractor extractor2 = new WordExtractor( doc2 );
 
-            assertEquals(extractor1.getText(), extractor2.getText());
+        assertEquals( extractor1.getFooterText(), extractor2.getFooterText() );
+        assertEquals( extractor1.getHeaderText(), extractor2.getHeaderText() );
+        assertEquals( Arrays.toString( extractor1.getParagraphText() ),
+                Arrays.toString( extractor2.getParagraphText() ) );
 
-            fixed("44431");
-        } catch (AssertionFailedError e) {
-            // expected exception
-        }
+        assertEquals( extractor1.getText(), extractor2.getText() );
     }
 
     /**

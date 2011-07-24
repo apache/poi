@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">44431 - HWPFDocument.write destroys fields</action>
            <action dev="poi-developers" type="fix">50401 - fixed EscherProperty to return property name instead of 'unknown' for complex properties </action>
            <action dev="poi-developers" type="add">Initial support for endnotes and footnotes in HWPF</action>
            <action dev="poi-developers" type="fix">51470 - avoid exception when cloning XSSF sheets with background images</action>
