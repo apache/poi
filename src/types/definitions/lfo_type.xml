@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="LFO" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>List Format Override (LFO). &lt;p&gt;Class and fields descriptions are quoted from
+        Microsoft Office Word 97-2007 Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc]
+    </author>
+    <fields>
+        <field type="int" size="4" name="lsid" description="List ID of corresponding LSTF (see LSTF)"/>
+        <field type="int" size="4" name="reserved1" description="Reserved"/>
+        <field type="int" size="4" name="reserved2" description="Reserved"/>
+        <field type="byte" size="1" name="clfolvl"
+            description="Count of levels whose format is overridden (see LFOLVL)"/>
+        <field type="byte" size="1" name="ibstFltAutoNum" description="Used for AUTONUM field emulation"/>
+        <field type="byte" size="1" name="grfhic" description="HTML compatibility flags">
+            <bit number="0" mask="0x01" name="fHtmlChecked" description="Checked"/>
+            <bit number="1" mask="0x02" name="fHtmlUnsupported"
+                description="The numbering sequence or format is unsupported (includes tab &amp; size)"/>
+            <bit number="2" mask="0x04" name="fHtmlListTextNotSharpDot" description="The list text is not &quot;#.&quot;"/>
+            <bit number="3" mask="0x08" name="fHtmlNotPeriod" description="Something other than a period is used"/>
+            <bit number="4" mask="0x10" name="fHtmlFirstLineMismatch" description="First line indent mismatch"/>
+            <bit number="5" mask="0x20" name="fHtmlTabLeftIndentMismatch"
+                description="The list tab and the dxaLeft don't match (need table?)"/>
+            <bit number="6" mask="0x40" name="fHtmlHangingIndentBeneathNumber"
+                description="The hanging indent falls beneath the number (need plain text)"/>
+            <bit number="7" mask="0x80" name="fHtmlBuiltInBullet" description="A built-in HTML bullet"/>
+        </field>
+        <field type="byte" size="1" name="reserved3" description="Reserved"/>
+    </fields>
+</record>
