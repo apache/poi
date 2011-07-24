@@ -41,7 +41,9 @@ public final class FIBFieldHandler
   public static final int PLCFPAD = 7;
   public static final int PLCFPHE = 8;
   public static final int STTBGLSY = 9;
+  // 234 == 0x00EA; 238 == 0x00EE
   public static final int PLCFGLSY = 10;
+  // 242 == 0200F2; 246 == 0x00F6
   public static final int PLCFHDD = 11;
   public static final int PLCFBTECHPX = 12;
   public static final int PLCFBTEPAPX = 13;
@@ -53,7 +55,9 @@ public final class FIBFieldHandler
   public static final int PLCFFLDFTN = 18;
   // 306 == 0x132; 310 == 0x0136
   public static final int PLCFFLDATN = 19;
+  // 314 == 0x013A; 318 == 0x013E
   public static final int PLCFFLDMCR = 20;
+  // 322 == 0x0142; 326 == 0x0146
   public static final int STTBFBKMK = 21;
   // 330 == 0x014A; 334 == 0x014E
   public static final int PLCFBKF = 22;
@@ -220,10 +224,14 @@ public final class FIBFieldHandler
       UnhandledDataStructure ds = _unknownMap.get(Integer.valueOf(x));
       if (ds != null)
       {
+        _fields[x * 2] = tableStream.getOffset();
         LittleEndian.putInt(mainStream, offset, tableStream.getOffset());
         offset += LittleEndian.INT_SIZE;
+
         byte[] buf = ds.getBuf();
         tableStream.write(buf);
+
+        _fields[(x * 2) + 1] = buf.length;
         LittleEndian.putInt(mainStream, offset, buf.length);
         offset += LittleEndian.INT_SIZE;
       }
