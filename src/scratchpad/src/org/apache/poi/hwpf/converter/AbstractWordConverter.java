@@ -318,15 +318,26 @@ public abstract class AbstractWordConverter
 
         if ( previous != range.getStartOffset() )
         {
-            Range subrange = new Range( previous, range.getEndOffset(), range )
+            if ( previous > range.getEndOffset() )
             {
-                @Override
-                public String toString()
+                logger.log( POILogger.WARN, "Latest structure in " + range
+                        + " ended after range (" + previous + ")" );
+                return true;
+            }
+
+            if ( previous < range.getEndOffset() )
+            {
+                Range subrange = new Range( previous, range.getEndOffset(),
+                        range )
                 {
-                    return "AfterStructureSubrange " + super.toString();
-                }
-            };
-            processCharacters( document, currentTableLevel, subrange, block );
+                    @Override
+                    public String toString()
+                    {
+                        return "AfterStructureSubrange " + super.toString();
+                    }
+                };
+                processCharacters( document, currentTableLevel, subrange, block );
+            }
             return true;
         }
 
