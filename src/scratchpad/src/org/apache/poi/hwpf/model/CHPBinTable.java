@@ -65,21 +65,20 @@ public class CHPBinTable
      * Constructor used to read a binTable in from a Word document.
      * 
      * @deprecated Use
-     *             {@link #CHPBinTable(byte[],byte[],int,int,ComplexFileTable,TextPieceTable, boolean)}
+     *             {@link #CHPBinTable(byte[],byte[],int,int,TextPieceTable)}
      *             instead
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
             int size, int fcMin, TextPieceTable tpt )
     {
-        this( documentStream, tableStream, offset, size, null, tpt, true );
+        this( documentStream, tableStream, offset, size, tpt );
     }
 
     /**
      * Constructor used to read a binTable in from a Word document.
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
-            int size, ComplexFileTable complexFileTable, TextPieceTable tpt,
-            boolean reconstructChpxTable )
+            int size, TextPieceTable tpt )
     {
         long start = System.currentTimeMillis();
         /*
@@ -102,7 +101,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, tpt, reconstructChpxTable);
+        pageOffset, tpt);
 
       int fkpSize = cfkp.size();
 
@@ -116,16 +115,11 @@ public class CHPBinTable
         logger.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
-        start = System.currentTimeMillis();
+    }
 
-        if ( !reconstructChpxTable )
-        {
-            Collections.sort( _textRuns );
-
-            logger.log( POILogger.DEBUG, "CHPX sorted in ",
-                    Long.valueOf( System.currentTimeMillis() - start ), " ms" );
-            return;
-        }
+    public void rebuild( ComplexFileTable complexFileTable )
+    {
+        long start = System.currentTimeMillis();
 
         if ( complexFileTable != null )
         {
@@ -359,14 +353,14 @@ public class CHPBinTable
                 iterator.remove();
                 continue;
             }
-            
+
             previous = current;
         }
 
         logger.log( POILogger.DEBUG, "CHPX compacted in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
-}
+    }
 
     private static int binarySearch( List<CHPX> chpxs, int startPosition )
     {
