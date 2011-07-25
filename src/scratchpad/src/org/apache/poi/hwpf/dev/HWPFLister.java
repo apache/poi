@@ -45,6 +45,8 @@ import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
+import org.apache.poi.hwpf.usermodel.Bookmark;
+import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
@@ -102,7 +104,7 @@ public final class HWPFLister
                             + "\t\t[--chpx] [--chpxProperties] [--chpxSprms]\n"
                             + "\t\t[--papx] [--papxProperties]\n"
                             + "\t\t[--paragraphs] [--paragraphsSprms] [--paragraphsText]\n"
-                            + "\t\t[--fields]\n" + "\t\t[--pictures]\n"
+                            + "\t\t[--bookmarks]\n" +"\t\t[--fields]\n" + "\t\t[--pictures]\n"
                             + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
@@ -121,6 +123,7 @@ public final class HWPFLister
         boolean outputPapx = false;
         boolean outputPapxProperties = false;
 
+        boolean outputBookmarks = false;
         boolean outputFields = false;
         boolean outputPictures = false;
 
@@ -152,6 +155,8 @@ public final class HWPFLister
             if ( "--papxProperties".equals( arg ) )
                 outputPapxProperties = true;
 
+            if ( "--bookmarks".equals( arg ) )
+                outputBookmarks = true;
             if ( "--fields".equals( arg ) )
                 outputFields = true;
             if ( "--pictures".equals( arg ) )
@@ -194,6 +199,12 @@ public final class HWPFLister
             System.out.println( "== DOM paragraphs ==" );
             lister.dumpParagraphsDom( outputParagraphsSprms, outputPapx,
                     outputParagraphsText );
+        }
+
+        if ( outputBookmarks )
+        {
+            System.out.println( "== BOOKMARKS ==" );
+            lister.dumpBookmarks();
         }
 
         if ( outputFields )
@@ -273,6 +284,24 @@ public final class HWPFLister
             builder.replace( textPiece.getStart(), textPiece.getEnd(), toAppend );
         }
         this.text = builder.toString();
+    }
+
+    private void dumpBookmarks()
+    {
+        if ( !( _doc instanceof HWPFDocument ) )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+
+        HWPFDocument document = (HWPFDocument) _doc;
+        Bookmarks bookmarks = document.getBookmarks();
+        for ( int b = 0; b < bookmarks.getBookmarksCount(); b++ )
+        {
+            Bookmark bookmark = bookmarks.getBookmark( b );
+            System.out.println( "[" + bookmark.getStart() + "; "
+                    + bookmark.getEnd() + "): " + bookmark.getName() );
+        }
     }
 
     public void dumpChpx( boolean withProperties, boolean withSprms )
