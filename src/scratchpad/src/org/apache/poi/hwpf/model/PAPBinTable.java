@@ -52,7 +52,6 @@ public class PAPBinTable
             .getLogger( PAPBinTable.class );
 
   protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
-  byte[] _dataStream;
 
   public PAPBinTable()
   {
@@ -72,7 +71,8 @@ public class PAPBinTable
     }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size, TextPieceTable tpt )
+            byte[] dataStream, int offset, int size,
+            CharIndexTranslator charIndexTranslator )
     {
         long start = System.currentTimeMillis();
 
@@ -89,7 +89,8 @@ public class PAPBinTable
                         * pageNum;
 
                 PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
-                        documentStream, dataStream, pageOffset, tpt );
+                        documentStream, dataStream, pageOffset,
+                        charIndexTranslator );
 
                 int fkpSize = pfkp.size();
 
@@ -108,7 +109,7 @@ public class PAPBinTable
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
     }
 
-    public void rebuild( final StringBuilder docText, byte[] dataStream,
+    public void rebuild( final StringBuilder docText,
             ComplexFileTable complexFileTable )
     {
         long start = System.currentTimeMillis();
@@ -152,7 +153,7 @@ public class PAPBinTable
                     newSprmBuffer.append( sprmBuffer.toByteArray() );
 
                     PAPX papx = new PAPX( textPiece.getStart(),
-                            textPiece.getEnd(), newSprmBuffer, dataStream );
+                            textPiece.getEnd(), newSprmBuffer );
                     _paragraphs.add( papx );
                 }
             }
@@ -233,7 +234,7 @@ public class PAPBinTable
                         ") has no PAPX. Creating new one." );
                 // create it manually
                 PAPX papx = new PAPX( startInclusive, endExclusive,
-                        new SprmBuffer( 2 ), dataStream );
+                        new SprmBuffer( 2 ) );
                 newPapxs.add( papx );
 
                 lastParStart = endExclusive;
@@ -272,8 +273,7 @@ public class PAPBinTable
                 else
                     sprmBuffer.append( papx.getGrpprl(), 2 );
             }
-            PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer,
-                    dataStream );
+            PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer );
             newPapxs.add( newPapx );
 
             lastParStart = endExclusive;
@@ -285,14 +285,12 @@ public class PAPBinTable
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
         start = System.currentTimeMillis();
-
-        _dataStream = dataStream;
     }
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
 
-    PAPX forInsert = new PAPX(0, 0, buf, _dataStream);
+    PAPX forInsert = new PAPX(0, 0, buf);
 
     // Ensure character offsets are really characters
     forInsert.setStart(cpStart);
@@ -322,7 +320,7 @@ public class PAPBinTable
     	//  Original, until insert at point
     	//  New one
     	//  Clone of original, on to the old end
-        PAPX clone = new PAPX(0, 0, clonedBuf, _dataStream);
+        PAPX clone = new PAPX(0, 0, clonedBuf);
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(currentPap.getEnd());
@@ -399,11 +397,12 @@ public class PAPBinTable
     return _paragraphs;
   }
 
-    public void writeTo( HWPFFileSystem sys, int fcMin, CharIndexTranslator translator ) throws IOException
+    public void writeTo( HWPFFileSystem sys, CharIndexTranslator translator ) throws IOException
     {
 
     HWPFOutputStream docStream = sys.getStream("WordDocument");
     OutputStream tableStream = sys.getStream("1Table");
+    HWPFOutputStream dataStream = sys.getStream("1Table");
 
     PlexOfCps binTable = new PlexOfCps(4);
 
@@ -420,28 +419,32 @@ public class PAPBinTable
     docOffset = docStream.getOffset();
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
-    // get the ending fc
-    int endingFc = _paragraphs.get(_paragraphs.size() - 1).getEnd();
-    endingFc += fcMin;
-
+        // get the ending fc
+        // int endingFc = _paragraphs.get(_paragraphs.size() - 1).getEnd();
+        // endingFc += fcMin;
+        int endingFc = translator.getByteIndex( _paragraphs.get(
+                _paragraphs.size() - 1 ).getEnd() );
 
     ArrayList<PAPX> overflow = _paragraphs;
     do
     {
       PAPX startingProp = overflow.get(0);
-      int start = startingProp.getStart() + fcMin;
 
-      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(_dataStream);
+            // int start = startingProp.getStart() + fcMin;
+            int start = translator.getByteIndex( startingProp.getStart() );
+
+      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage();
       pfkp.fill(overflow);
 
-      byte[] bufFkp = pfkp.toByteArray(translator, fcMin);
+      byte[] bufFkp = pfkp.toByteArray(dataStream, translator);
       docStream.write(bufFkp);
       overflow = pfkp.getOverflow();
 
       int end = endingFc;
       if (overflow != null)
       {
-        end = overflow.get(0).getStart() + fcMin;
+                // end = overflow.get(0).getStart() + fcMin;
+                end = translator.getByteIndex( overflow.get( 0 ).getStart() );
       }
 
       byte[] intHolder = new byte[4];

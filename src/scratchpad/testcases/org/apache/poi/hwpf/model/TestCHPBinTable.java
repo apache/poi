@@ -50,7 +50,7 @@ public final class TestCHPBinTable
 
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
-    _cHPBinTable.writeTo(fileSys, 0);
+    _cHPBinTable.writeTo(fileSys, 0, fakeTPT);
     ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
     ByteArrayOutputStream mainOut =  fileSys.getStream("WordDocument");
 

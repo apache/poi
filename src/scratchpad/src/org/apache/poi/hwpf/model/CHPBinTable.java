@@ -37,6 +37,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -46,6 +47,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Ryan Ackley
  */
+@Internal
 public class CHPBinTable
 {
     private static final POILogger logger = POILogFactory
@@ -53,9 +55,6 @@ public class CHPBinTable
 
   /** List of character properties.*/
   protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
-
-  /** So we can know if things are unicode or not */
-  private TextPieceTable tpt;
 
   public CHPBinTable()
   {
@@ -78,7 +77,7 @@ public class CHPBinTable
      * Constructor used to read a binTable in from a Word document.
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,
-            int size, TextPieceTable tpt )
+            int size, CharIndexTranslator translator )
     {
         long start = System.currentTimeMillis();
         /*
@@ -90,7 +89,6 @@ public class CHPBinTable
          * further partitions an interval into runs of exception text."
          */
         PlexOfCps bte = new PlexOfCps( tableStream, offset, size, 4 );
-        this.tpt = tpt;
 
     int length = bte.length();
     for (int x = 0; x < length; x++)
@@ -101,7 +99,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, tpt);
+        pageOffset, translator);
 
       int fkpSize = cfkp.size();
 
@@ -126,7 +124,8 @@ public class CHPBinTable
             SprmBuffer[] sprmBuffers = complexFileTable.getGrpprls();
 
             // adding CHPX from fast-saved SPRMs
-            for ( TextPiece textPiece : tpt.getTextPieces() )
+            for ( TextPiece textPiece : complexFileTable.getTextPieceTable()
+                    .getTextPieces() )
             {
                 PropertyModifier prm = textPiece.getPieceDescriptor().getPrm();
                 if ( !prm.isComplex() )
@@ -396,7 +395,7 @@ public class CHPBinTable
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
 
-    CHPX insertChpx = new CHPX(0, 0, tpt,buf);
+    CHPX insertChpx = new CHPX(0, 0, buf);
 
     // Ensure character offsets are really characters
     insertChpx.setStart(cpStart);
@@ -416,7 +415,7 @@ public class CHPBinTable
     	//  Original, until insert at point
     	//  New one
     	//  Clone of original, on to the old end
-        CHPX clone = new CHPX(0, 0, tpt,chpx.getSprmBuf());
+        CHPX clone = new CHPX(0, 0, chpx.getSprmBuf());
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(chpx.getEnd());
@@ -452,7 +451,7 @@ public class CHPBinTable
     return _textRuns;
   }
 
-  public void writeTo(HWPFFileSystem sys, int fcMin)
+  public void writeTo(HWPFFileSystem sys, int fcMin, CharIndexTranslator translator)
     throws IOException
   {
 
@@ -482,29 +481,32 @@ public class CHPBinTable
     docOffset = docStream.getOffset();
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
-    // get the ending fc
-    CHPX lastRun = _textRuns.get(_textRuns.size() - 1); 
-    int endingFc = lastRun.getEnd();
-    endingFc += fcMin;
-
+        // get the ending fc
+        // CHPX lastRun = _textRuns.get(_textRuns.size() - 1);
+        // int endingFc = lastRun.getEnd();
+        // endingFc += fcMin;
+        int endingFc = translator.getByteIndex( _textRuns.get(
+                _textRuns.size() - 1 ).getEnd() );
 
     ArrayList<CHPX> overflow = _textRuns;
     do
     {
       CHPX startingProp = overflow.get(0);
-      int start = startingProp.getStart() + fcMin;
+            // int start = startingProp.getStart() + fcMin;
+            int start = translator.getByteIndex( startingProp.getStart() );
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage();
       cfkp.fill(overflow);
 
-            byte[] bufFkp = cfkp.toByteArray( tpt );
+            byte[] bufFkp = cfkp.toByteArray( translator );
       docStream.write(bufFkp);
       overflow = cfkp.getOverflow();
 
       int end = endingFc;
       if (overflow != null)
       {
-        end = overflow.get(0).getStart() + fcMin;
+          // end = overflow.get(0).getStart() + fcMin;
+          end = translator.getByteIndex( overflow.get( 0 ).getStart() );
       }
 
       byte[] intHolder = new byte[4];

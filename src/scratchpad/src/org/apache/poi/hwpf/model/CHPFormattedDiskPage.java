@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Represents a CHP fkp. The style properties for paragraph and character runs
@@ -41,11 +40,9 @@ import org.apache.poi.util.POILogger;
  *
  * @author Ryan Ackley
  */
+@Internal
 public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
-    private static final POILogger logger = POILogFactory
-            .getLogger( CHPFormattedDiskPage.class );
-
     private static final int FC_SIZE = 4;
 
     private ArrayList<CHPX> _chpxList = new ArrayList<CHPX>();
@@ -76,7 +73,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * read from a Word file).
      */
     public CHPFormattedDiskPage( byte[] documentStream, int offset,
-            TextPieceTable tpt )
+            CharIndexTranslator translator )
     {
         super( documentStream, offset );
 
@@ -85,8 +82,8 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
             int bytesStartAt = getStart( x );
             int bytesEndAt = getEnd( x );
 
-            int charStartAt = tpt.getCharIndex( bytesStartAt );
-            int charEndAt = tpt.getCharIndex( bytesEndAt, charStartAt );
+            int charStartAt = translator.getCharIndex( bytesStartAt );
+            int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt );
 
             // TODO: CHECK!
             // CHPX chpx = new CHPX( bytesStartAt, bytesEndAt, tpt, getGrpprl( x
@@ -146,75 +143,76 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         return toByteArray( translator );
     }
 
-    protected byte[] toByteArray(CharIndexTranslator translator)
+    protected byte[] toByteArray( CharIndexTranslator translator )
     {
-      byte[] buf = new byte[512];
-      int size = _chpxList.size();
-      int grpprlOffset = 511;
-      int offsetOffset = 0;
-      int fcOffset = 0;
+        byte[] buf = new byte[512];
+        int size = _chpxList.size();
+        int grpprlOffset = 511;
+        int offsetOffset = 0;
+        int fcOffset = 0;
 
-      // total size is currently the size of one FC
-      int totalSize = FC_SIZE + 2;
+        // total size is currently the size of one FC
+        int totalSize = FC_SIZE + 2;
 
-      int index = 0;
-      for (; index < size; index++)
-      {
-        int grpprlLength = (_chpxList.get(index)).getGrpprl().length;
-
-        // check to see if we have enough room for an FC, the grpprl offset,
-        // the grpprl size byte and the grpprl.
-        totalSize += (FC_SIZE + 2 + grpprlLength);
-        // if size is uneven we will have to add one so the first grpprl falls
-        // on a word boundary
-        if (totalSize > 511 + (index % 2))
+        int index = 0;
+        for ( ; index < size; index++ )
         {
-          totalSize -= (FC_SIZE + 2 + grpprlLength);
-          break;
+            int grpprlLength = ( _chpxList.get( index ) ).getGrpprl().length;
+
+            // check to see if we have enough room for an FC, the grpprl offset,
+            // the grpprl size byte and the grpprl.
+            totalSize += ( FC_SIZE + 2 + grpprlLength );
+            // if size is uneven we will have to add one so the first grpprl
+            // falls
+            // on a word boundary
+            if ( totalSize > 511 + ( index % 2 ) )
+            {
+                totalSize -= ( FC_SIZE + 2 + grpprlLength );
+                break;
+            }
+
+            // grpprls must fall on word boundaries
+            if ( ( 1 + grpprlLength ) % 2 > 0 )
+            {
+                totalSize += 1;
+            }
         }
 
-        // grpprls must fall on word boundaries
-        if ((1 + grpprlLength) % 2 > 0)
+        // see if we couldn't fit some
+        if ( index != size )
         {
-          totalSize += 1;
+            _overFlow = new ArrayList<CHPX>();
+            _overFlow.addAll( _chpxList.subList( index, size ) );
         }
-      }
 
-      // see if we couldn't fit some
-      if (index != size)
-      {
-        _overFlow = new ArrayList<CHPX>();
-        _overFlow.addAll(_chpxList.subList(index, size));
-      }
+        // index should equal number of CHPXs that will be in this fkp now.
+        buf[511] = (byte) index;
 
-      // index should equal number of CHPXs that will be in this fkp now.
-      buf[511] = (byte)index;
+        offsetOffset = ( FC_SIZE * index ) + FC_SIZE;
+        // grpprlOffset = offsetOffset + index + (grpprlOffset % 2);
 
-      offsetOffset = (FC_SIZE * index) + FC_SIZE;
-      //grpprlOffset =  offsetOffset + index + (grpprlOffset % 2);
-
-      CHPX chpx = null;
-      for (int x = 0; x < index; x++)
-      {
-        chpx = _chpxList.get(x);
-        byte[] grpprl = chpx.getGrpprl();
+        CHPX chpx = null;
+        for ( int x = 0; x < index; x++ )
+        {
+            chpx = _chpxList.get( x );
+            byte[] grpprl = chpx.getGrpprl();
 
             LittleEndian.putInt( buf, fcOffset,
                     translator.getByteIndex( chpx.getStart() ) );
 
-        grpprlOffset -= (1 + grpprl.length);
-        grpprlOffset -= (grpprlOffset % 2);
-        buf[offsetOffset] = (byte)(grpprlOffset/2);
-        buf[grpprlOffset] = (byte)grpprl.length;
-        System.arraycopy(grpprl, 0, buf, grpprlOffset + 1, grpprl.length);
+            grpprlOffset -= ( 1 + grpprl.length );
+            grpprlOffset -= ( grpprlOffset % 2 );
+            buf[offsetOffset] = (byte) ( grpprlOffset / 2 );
+            buf[grpprlOffset] = (byte) grpprl.length;
+            System.arraycopy( grpprl, 0, buf, grpprlOffset + 1, grpprl.length );
 
-        offsetOffset += 1;
-        fcOffset += FC_SIZE;
-      }
+            offsetOffset += 1;
+            fcOffset += FC_SIZE;
+        }
         // put the last chpx's end in
         LittleEndian.putInt( buf, fcOffset,
                 translator.getByteIndex( chpx.getEnd() ) );
-      return buf;
+        return buf;
     }
 
 }
