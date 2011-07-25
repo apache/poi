@@ -70,6 +70,10 @@ public class WordToFoUtils extends AbstractWordUtils
 
         setBorder( inline, characterRun.getBorder(), EMPTY );
 
+        if ( characterRun.getIco24() != -1 )
+        {
+            inline.setAttribute( "color", getColor24( characterRun.getIco24() ) );
+        }
         if ( characterRun.isCapitalized() )
         {
             inline.setAttribute( "text-transform", "uppercase" );

@@ -67,6 +67,11 @@ public class WordToHtmlUtils extends AbstractWordUtils
         {
             style.append( "text-transform:uppercase;" );
         }
+        if ( characterRun.getIco24() != -1 )
+        {
+            style.append( "color:" + getColor24( characterRun.getIco24() )
+                    + ";" );
+        }
         if ( characterRun.isHighlighted() )
         {
             style.append( "background-color:"
