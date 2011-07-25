@@ -140,7 +140,7 @@ public abstract class AbstractWordConverter
         for ( int r1 = currentRowIndex + 1; r1 < numRows; r1++ )
         {
             TableRow nextRow = table.getRow( r1 );
-            if ( nextRow.numCells() < currentColumnIndex )
+            if ( currentColumnIndex >= nextRow.numCells() )
                 break;
             TableCell nextCell = nextRow.getCell( currentColumnIndex );
             if ( !nextCell.isVerticallyMerged()
