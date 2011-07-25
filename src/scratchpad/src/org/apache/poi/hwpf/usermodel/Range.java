@@ -31,7 +31,7 @@ import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.SEPX;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPiece;
+import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
@@ -108,18 +108,8 @@ public class Range { // TODO -instantiable superclass
 	/** The end index in the characterRuns list for this Range. */
 	protected int _charEnd;
 
-	/** Have we loaded the Text indexes yet */
-	protected boolean _textRangeFound;
-
-	/** All text pieces that belong to the document this Range belongs to. */
-	protected List<TextPiece> _text;
-
-	/** The start index in the text list for this Range. */
-	protected int _textStart;
-
-	/** The end index in the text list for this Range. */
-	protected int _textEnd;
-
+	protected StringBuilder _text;
+	
 	// protected Range()
 	// {
 	//
@@ -144,7 +134,7 @@ public class Range { // TODO -instantiable superclass
 		_sections = _doc.getSectionTable().getSections();
 		_paragraphs = _doc.getParagraphTable().getParagraphs();
 		_characters = _doc.getCharacterTable().getTextRuns();
-		_text = _doc.getTextTable().getTextPieces();
+		_text = _doc.getText();
 		_parent = new WeakReference<Range>(null);
 
 		sanityCheckStartEnd();
@@ -171,6 +161,7 @@ public class Range { // TODO -instantiable superclass
 		_parent = new WeakReference<Range>(parent);
 
 		sanityCheckStartEnd();
+		assert sanityCheck();
 	}
 
 	/**
@@ -212,23 +203,17 @@ public class Range { // TODO -instantiable superclass
 		}
 	}
 
-	/**
-	 * Does any <code>TextPiece</code> in this Range use unicode?
-	 *
-	 * @return true if it does and false if it doesn't
-	 */
-	public boolean usesUnicode() {
-
-		initText();
-
-		for (int i = _textStart; i < _textEnd; i++) {
-			TextPiece piece = _text.get(i);
-			if (piece.isUnicode())
-				return true;
-		}
-
-		return false;
-	}
+    /**
+     * @return always return true
+     * @deprecated Range is not linked to any text piece anymore, so to check if
+     *             unicode is used please access {@link TextPieceTable} during
+     *             document load time
+     */
+    @Deprecated
+    public boolean usesUnicode()
+    {
+        return true;
+    }
 
 	/**
 	 * Gets the text that this Range contains.
@@ -236,29 +221,7 @@ public class Range { // TODO -instantiable superclass
 	 * @return The text for this range.
 	 */
 	public String text() {
-		initText();
-
-		StringBuffer sb = new StringBuffer();
-
-		for (int x = _textStart; x < _textEnd; x++) {
-			TextPiece piece = _text.get(x);
-
-			// Figure out where in this piece the text
-			// we're after lives
-			int rStart = 0;
-			int rEnd = piece.characterLength();
-			if (_start > piece.getStart()) {
-				rStart = _start - piece.getStart();
-			}
-			if (_end < piece.getEnd()) {
-				rEnd -= (piece.getEnd() - _end);
-			}
-
-			// Luckily TextPieces work in characters, so we don't
-			// need to worry about unicode here
-			sb.append(piece.substring(rStart, rEnd));
-		}
-		return sb.toString();
+	    return _text.substring( _start, _end );
 	}
 
 	/**
@@ -346,67 +309,52 @@ public class Range { // TODO -instantiable superclass
 		return _charEnd - _charStart;
 	}
 
-	/**
-	 * Inserts text into the front of this range.
-	 *
-	 * @param text
-	 *            The text to insert
-	 * @return The character run that text was inserted into.
-	 */
-	public CharacterRun insertBefore(String text)
-	// throws UnsupportedEncodingException
-	{
-		initAll();
+    /**
+     * Inserts text into the front of this range.
+     * 
+     * @param text
+     *            The text to insert
+     * @return The character run that text was inserted into.
+     */
+    public CharacterRun insertBefore( String text )
+    {
+        initAll();
 
-		TextPiece tp = _text.get(_textStart);
-		StringBuffer sb = tp.getStringBuffer();
+        _text.insert( _start, text );
+        _doc.getCharacterTable().adjustForInsert( _charStart, text.length() );
+        _doc.getParagraphTable().adjustForInsert( _parStart, text.length() );
+        _doc.getSectionTable().adjustForInsert( _sectionStart, text.length() );
+        adjustForInsert( text.length() );
 
-		// Since this is the first item in our list, it is safe to assume that
-		// _start >= tp.getStart()
-		int insertIndex = _start - tp.getStart();
-		sb.insert(insertIndex, text);
+        // update the FIB.CCPText + friends fields
+        adjustFIB( text.length() );
 
-		int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
-		_doc.getCharacterTable().adjustForInsert(_charStart, adjustedLength);
-		_doc.getParagraphTable().adjustForInsert(_parStart, adjustedLength);
-		_doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
-		adjustForInsert(adjustedLength);
+        assert sanityCheck();
 
-		// update the FIB.CCPText + friends fields
-		adjustFIB(text.length());
+        return getCharacterRun( 0 );
+    }
 
-		return getCharacterRun(0);
-	}
+    /**
+     * Inserts text onto the end of this range
+     * 
+     * @param text
+     *            The text to insert
+     * @return The character run the text was inserted into.
+     */
+    public CharacterRun insertAfter( String text )
+    {
+        initAll();
 
-	/**
-	 * Inserts text onto the end of this range
-	 *
-	 * @param text
-	 *            The text to insert
-	 * @return The character run the text was inserted into.
-	 */
-	public CharacterRun insertAfter(String text) {
-		initAll();
+        _text.insert( _end, text );
 
-		int listIndex = _textEnd - 1;
-		TextPiece tp = _text.get(listIndex);
-		StringBuffer sb = tp.getStringBuffer();
+        _doc.getCharacterTable().adjustForInsert( _charEnd - 1, text.length() );
+        _doc.getParagraphTable().adjustForInsert( _parEnd - 1, text.length() );
+        _doc.getSectionTable().adjustForInsert( _sectionEnd - 1, text.length() );
+        adjustForInsert( text.length() );
 
-		int insertIndex = _end - tp.getStart();
-
-		if (tp.getStringBuffer().charAt(_end - 1) == '\r' && text.charAt(0) != '\u0007') {
-			insertIndex--;
-		}
-		sb.insert(insertIndex, text);
-		int adjustedLength = _doc.getTextTable().adjustForInsert(listIndex, text.length());
-		_doc.getCharacterTable().adjustForInsert(_charEnd - 1, adjustedLength);
-		_doc.getParagraphTable().adjustForInsert(_parEnd - 1, adjustedLength);
-		_doc.getSectionTable().adjustForInsert(_sectionEnd - 1, adjustedLength);
-		adjustForInsert(text.length());
-
-		return getCharacterRun(numCharacterRuns() - 1);
-
-	}
+        assert sanityCheck();
+        return getCharacterRun( numCharacterRuns() - 1 );
+    }
 
 	/**
 	 * Inserts text into the front of this range and it gives that text the
@@ -580,7 +528,6 @@ public class Range { // TODO -instantiable superclass
 		int numSections = _sections.size();
 		int numRuns = _characters.size();
 		int numParagraphs = _paragraphs.size();
-		int numTextPieces = _text.size();
 
 		for (int x = _charStart; x < numRuns; x++) {
 			CHPX chpx = _characters.get(x);
@@ -605,10 +552,12 @@ public class Range { // TODO -instantiable superclass
 			// + " -> " + sepx.getEnd());
 		}
 
-		for (int x = _textStart; x < numTextPieces; x++) {
-			TextPiece piece = _text.get(x);
-			piece.adjustForDelete(_start, _end - _start);
-		}
+        _text.delete( _start, _end );
+        Range parent = _parent.get();
+        if ( parent != null )
+        {
+            parent.adjustForInsert( -( _end - _start ) );
+        }
 
 		// update the FIB.CCPText + friends field
 		adjustFIB(-(_end - _start));
@@ -623,7 +572,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param rows
 	 *            The number of rows.
 	 * @return The empty Table that is now part of the document.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated Use code shall not work with {@link TableProperties}
 	 */
 	@Deprecated
 	public Table insertBefore(TableProperties props, int rows) {
@@ -631,19 +580,28 @@ public class Range { // TODO -instantiable superclass
 		parProps.setFInTable(true);
 		parProps.setItap( 1 );
 
+		final int oldEnd = this._end;
+		
 		int columns = props.getItcMac();
-		for (int x = 0; x < rows; x++) {
-			Paragraph cell = this.insertBefore(parProps, StyleSheet.NIL_STYLE);
-			cell.insertAfter(String.valueOf('\u0007'));
-			for (int y = 1; y < columns; y++) {
-				cell = cell.insertAfter(parProps, StyleSheet.NIL_STYLE);
-				cell.insertAfter(String.valueOf('\u0007'));
-			}
-			cell = cell.insertAfter(parProps, StyleSheet.NIL_STYLE, String.valueOf('\u0007'));
-			cell.setTableRowEnd(props);
-		}
-		return new Table(_start, _start + (rows * (columns + 1)) * 2, this, 1);
-	}
+        for ( int x = 0; x < rows; x++ )
+        {
+            Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
+            cell.insertAfter( String.valueOf( '\u0007' ) );
+            for ( int y = 1; y < columns; y++ )
+            {
+                cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE );
+                cell.insertAfter( String.valueOf( '\u0007' ) );
+            }
+            cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE,
+                    String.valueOf( '\u0007' ) );
+            cell.setTableRowEnd( props );
+        }
+
+        final int newEnd = this._end;
+        final int diff = newEnd - oldEnd;
+
+        return new Table( _start, _start + diff, this, 1 );
+    }
 
 	/**
 	 * Inserts a list into the beginning of this range.
@@ -715,23 +673,14 @@ public class Range { // TODO -instantiable superclass
 	 */
 	public void replaceText(String pPlaceHolder, String pValue, int pOffset) {
 		int absPlaceHolderIndex = getStartOffset() + pOffset;
+
 		Range subRange = new Range(absPlaceHolderIndex, (absPlaceHolderIndex + pPlaceHolder
-				.length()), getDocument());
-
-		// this Range isn't a proper parent of the subRange() so we'll have to
-		// keep
-		// track of an updated endOffset on our own
-		int previousEndOffset = subRange.getEndOffset();
-
+				.length()), this);
 		subRange.insertBefore(pValue);
-
-		if (subRange.getEndOffset() != previousEndOffset) {
-			adjustForInsert(subRange.getEndOffset() - previousEndOffset);
-		}
 
 		// re-create the sub-range so we can delete it
 		subRange = new Range((absPlaceHolderIndex + pValue.length()), (absPlaceHolderIndex
-				+ pPlaceHolder.length() + pValue.length()), getDocument());
+				+ pPlaceHolder.length() + pValue.length()), this);
 
 		// deletes are automagically propagated
 		subRange.delete();
@@ -921,7 +870,6 @@ public class Range { // TODO -instantiable superclass
 	 * loads all of the list indexes.
 	 */
 	protected void initAll() {
-		initText();
 		initCharacterRuns();
 		initParagraphs();
 		initSections();
@@ -948,18 +896,6 @@ public class Range { // TODO -instantiable superclass
 			_charStart = point[0];
 			_charEnd = point[1];
 			_charRangeFound = true;
-		}
-	}
-
-	/**
-	 * inits the text piece list indexes.
-	 */
-	private void initText() {
-		if (!_textRangeFound) {
-			int[] point = findRange(_text, _textStart, _start, _end);
-			_textStart = point[0];
-			_textEnd = point[1];
-			_textRangeFound = true;
 		}
 	}
 
@@ -1038,7 +974,6 @@ public class Range { // TODO -instantiable superclass
 	 * resets the list indexes.
 	 */
 	protected void reset() {
-		_textRangeFound = false;
 		_charRangeFound = false;
 		_parRangeFound = false;
 		_sectionRangeFound = false;
@@ -1153,8 +1088,19 @@ public class Range { // TODO -instantiable superclass
      * Method for debug purposes. Checks that all resolved elements are inside
      * of current range.
      */
-    public void sanityCheck()
+    public boolean sanityCheck()
     {
+        if ( _start < 0 )
+            throw new AssertionError();
+        if ( _start >= _text.length() )
+            throw new AssertionError();
+        if ( _end < 0 )
+            throw new AssertionError();
+        if ( _end > _text.length() )
+            throw new AssertionError();
+        if ( _start > _end )
+            throw new AssertionError();
+
         if ( _charRangeFound )
         {
             for ( int c = _charStart; c < _charEnd; c++ )
@@ -1181,5 +1127,7 @@ public class Range { // TODO -instantiable superclass
                     throw new AssertionError();
             }
         }
+
+        return true;
     }
 }

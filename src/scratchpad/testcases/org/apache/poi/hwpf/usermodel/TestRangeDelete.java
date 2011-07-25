@@ -150,6 +150,8 @@ public final class TestRangeDelete extends TestCase {
 		assertEquals(searchText, subRange.text());
 
 		subRange.delete();
+		daDoc.getOverallRange().sanityCheck();
+		daDoc.getRange().sanityCheck();
 
 		// we need to let the model re-calculate the Range before we evaluate it
 		range = daDoc.getRange();
@@ -166,6 +168,7 @@ public final class TestRangeDelete extends TestCase {
 		// this can lead to a StringBufferOutOfBoundsException, so we will add it
 		// even though we don't have an assertion for it
 		Range daRange = daDoc.getRange();
+		daRange.sanityCheck();
 		daRange.text();
 	}
 

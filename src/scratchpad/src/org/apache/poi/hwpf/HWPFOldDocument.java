@@ -38,6 +38,8 @@ import org.apache.poi.util.LittleEndian;
 public class HWPFOldDocument extends HWPFDocumentCore {
     private TextPieceTable tpt;
     
+    private StringBuilder _text;
+    
     public HWPFOldDocument(POIFSFileSystem fs) throws IOException {
         this(fs.getRoot());
     }
@@ -88,13 +90,15 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             byte[] textData = new byte[_fib.getFcMac()-_fib.getFcMin()];
             System.arraycopy(_mainStream, _fib.getFcMin(), textData, 0, textData.length);
             TextPiece tp = new TextPiece(
-                    0, textData.length, textData, pd, 0
+                    0, textData.length, textData, pd
             );
             tpt.add(tp);
             
             text.append(tp.getStringBuffer());
         }
         
+        _text = tpt.getText();
+
         // Now we can fetch the character and paragraph properties
         _cbt = new OldCHPBinTable(
                 _mainStream, chpTableOffset, chpTableSize,
@@ -124,6 +128,12 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     public TextPieceTable getTextTable()
     {
       return tpt;
+    }
+
+    @Override
+    public StringBuilder getText()
+    {
+        return _text;
     }
 
     @Override

@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +35,7 @@ import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.GenericPropertyNode;
-import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
 import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.PlexOfCps;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
@@ -51,10 +46,8 @@ import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Used by developers to list out key information on a HWPF file. End users will
@@ -241,13 +234,10 @@ public final class HWPFLister
 
     private LinkedHashMap<Integer, String> paragraphs;
 
-    private String text;
-
     public HWPFLister( HWPFDocumentCore doc )
     {
         _doc = doc;
 
-        buildText();
         buildParagraphs();
     }
 
@@ -256,6 +246,7 @@ public final class HWPFLister
         paragraphs = new LinkedHashMap<Integer, String>();
 
         StringBuilder part = new StringBuilder();
+        String text = _doc.getDocumentText();
         for ( int charIndex = 0; charIndex < text.length(); charIndex++ )
         {
             char c = text.charAt( charIndex );
@@ -266,24 +257,6 @@ public final class HWPFLister
                 part.setLength( 0 );
             }
         }
-    }
-
-    private void buildText()
-    {
-        StringBuilder builder = new StringBuilder();
-        for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
-        {
-            String toAppend = textPiece.getStringBuffer().toString();
-
-            if ( toAppend.length() != ( textPiece.getEnd() - textPiece
-                    .getStart() ) )
-            {
-                throw new AssertionError();
-            }
-
-            builder.replace( textPiece.getStart(), textPiece.getEnd(), toAppend );
-        }
-        this.text = builder.toString();
     }
 
     private void dumpBookmarks()
@@ -379,69 +352,69 @@ public final class HWPFLister
 
     public void dumpPapx( boolean withProperties ) throws Exception
     {
-        if ( _doc instanceof HWPFDocument )
-        {
-            System.out.println( "binary PAP pages " );
-
-            HWPFDocument doc = (HWPFDocument) _doc;
-
-            java.lang.reflect.Field fMainStream = HWPFDocumentCore.class
-                    .getDeclaredField( "_mainStream" );
-            fMainStream.setAccessible( true );
-            byte[] mainStream = (byte[]) fMainStream.get( _doc );
-
-            PlexOfCps binTable = new PlexOfCps( doc.getTableStream(), doc
-                    .getFileInformationBlock().getFcPlcfbtePapx(), doc
-                    .getFileInformationBlock().getLcbPlcfbtePapx(), 4 );
-
-            List<PAPX> papxs = new ArrayList<PAPX>();
-
-            int length = binTable.length();
-            for ( int x = 0; x < length; x++ )
-            {
-                GenericPropertyNode node = binTable.getProperty( x );
-
-                int pageNum = LittleEndian.getInt( node.getBytes() );
-                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE
-                        * pageNum;
-
-                PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
-                        mainStream, doc.getDataStream(), pageOffset,
-                        doc.getTextTable() );
-
-                System.out.println( "* PFKP: " + pfkp );
-
-                for ( PAPX papx : pfkp.getPAPXs() )
-                {
-                    System.out.println( "** " + papx );
-                    papxs.add( papx );
-                    if ( papx != null && true )
-                    {
-                        SprmIterator sprmIt = new SprmIterator(
-                                papx.getGrpprl(), 2 );
-                        while ( sprmIt.hasNext() )
-                        {
-                            SprmOperation sprm = sprmIt.next();
-                            System.out.println( "*** " + sprm.toString() );
-                        }
-                    }
-
-                }
-            }
-
-            Collections.sort( papxs );
-            System.out.println( "* Sorted by END" );
-            for ( PAPX papx : papxs )
-            {
-                System.out.println( "** " + papx );
-                SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
-                while ( sprmIt.hasNext() )
-                {
-                    SprmOperation sprm = sprmIt.next();
-                    System.out.println( "*** " + sprm.toString() );
-                }
-            }
-        }
+//        if ( _doc instanceof HWPFDocument )
+//        {
+//            System.out.println( "binary PAP pages " );
+//
+//            HWPFDocument doc = (HWPFDocument) _doc;
+//
+//            java.lang.reflect.Field fMainStream = HWPFDocumentCore.class
+//                    .getDeclaredField( "_mainStream" );
+//            fMainStream.setAccessible( true );
+//            byte[] mainStream = (byte[]) fMainStream.get( _doc );
+//
+//            PlexOfCps binTable = new PlexOfCps( doc.getTableStream(), doc
+//                    .getFileInformationBlock().getFcPlcfbtePapx(), doc
+//                    .getFileInformationBlock().getLcbPlcfbtePapx(), 4 );
+//
+//            List<PAPX> papxs = new ArrayList<PAPX>();
+//
+//            int length = binTable.length();
+//            for ( int x = 0; x < length; x++ )
+//            {
+//                GenericPropertyNode node = binTable.getProperty( x );
+//
+//                int pageNum = LittleEndian.getInt( node.getBytes() );
+//                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE
+//                        * pageNum;
+//
+//                PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
+//                        mainStream, doc.getDataStream(), pageOffset,
+//                        doc.getTextTable() );
+//
+//                System.out.println( "* PFKP: " + pfkp );
+//
+//                for ( PAPX papx : pfkp.getPAPXs() )
+//                {
+//                    System.out.println( "** " + papx );
+//                    papxs.add( papx );
+//                    if ( papx != null && true )
+//                    {
+//                        SprmIterator sprmIt = new SprmIterator(
+//                                papx.getGrpprl(), 2 );
+//                        while ( sprmIt.hasNext() )
+//                        {
+//                            SprmOperation sprm = sprmIt.next();
+//                            System.out.println( "*** " + sprm.toString() );
+//                        }
+//                    }
+//
+//                }
+//            }
+//
+//            Collections.sort( papxs );
+//            System.out.println( "* Sorted by END" );
+//            for ( PAPX papx : papxs )
+//            {
+//                System.out.println( "** " + papx );
+//                SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
+//                while ( sprmIt.hasNext() )
+//                {
+//                    SprmOperation sprm = sprmIt.next();
+//                    System.out.println( "*** " + sprm.toString() );
+//                }
+//            }
+//        }
 
         // for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
         // {

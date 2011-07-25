@@ -179,34 +179,6 @@ public class CHPBinTable
             start = System.currentTimeMillis();
         }
 
-        // rebuild document paragraphs structure
-        StringBuilder docText = new StringBuilder();
-        for ( TextPiece textPiece : tpt.getTextPieces() )
-        {
-            String toAppend = textPiece.getStringBuffer().toString();
-            int toAppendLength = toAppend.length();
-
-            if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )
-            {
-                logger.log(
-                        POILogger.WARN,
-                        "Text piece has boundaries [",
-                        Integer.valueOf( textPiece.getStart() ),
-                        "; ",
-                        Integer.valueOf( textPiece.getEnd() ),
-                        ") but length ",
-                        Integer.valueOf( textPiece.getEnd()
-                                - textPiece.getStart() ) );
-            }
-
-            docText.replace( textPiece.getStart(), textPiece.getStart()
-                    + toAppendLength, toAppend );
-        }
-        logger.log( POILogger.DEBUG, "Document text rebuilded in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( docText.length() ), " chars)" );
-        start = System.currentTimeMillis();
-
         List<CHPX> oldChpxSortedByStartPos = new ArrayList<CHPX>( _textRuns );
         Collections.sort( oldChpxSortedByStartPos,
                 PropertyNode.StartComparator.instance );

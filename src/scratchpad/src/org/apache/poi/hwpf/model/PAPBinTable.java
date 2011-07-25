@@ -54,9 +54,6 @@ public class PAPBinTable
   protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
   byte[] _dataStream;
 
-  /** So we can know if things are unicode or not */
-  private TextPieceTable tpt;
-
   public PAPBinTable()
   {
   }
@@ -81,7 +78,6 @@ public class PAPBinTable
 
         {
             PlexOfCps binTable = new PlexOfCps( tableStream, offset, size, 4 );
-            this.tpt = tpt;
 
             int length = binTable.length();
             for ( int x = 0; x < length; x++ )
@@ -112,7 +108,8 @@ public class PAPBinTable
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
     }
 
-    public void rebuild( byte[] dataStream, ComplexFileTable complexFileTable )
+    public void rebuild( final StringBuilder docText, byte[] dataStream,
+            ComplexFileTable complexFileTable )
     {
         long start = System.currentTimeMillis();
 
@@ -121,7 +118,8 @@ public class PAPBinTable
             SprmBuffer[] sprmBuffers = complexFileTable.getGrpprls();
 
             // adding PAPX from fast-saved SPRMs
-            for ( TextPiece textPiece : tpt.getTextPieces() )
+            for ( TextPiece textPiece : complexFileTable.getTextPieceTable()
+                    .getTextPieces() )
             {
                 PropertyModifier prm = textPiece.getPieceDescriptor().getPrm();
                 if ( !prm.isComplex() )
@@ -166,34 +164,6 @@ public class PAPBinTable
                     " elements in total)" );
             start = System.currentTimeMillis();
         }
-
-        // rebuild document paragraphs structure
-        StringBuilder docText = new StringBuilder();
-        for ( TextPiece textPiece : tpt.getTextPieces() )
-        {
-            String toAppend = textPiece.getStringBuffer().toString();
-            int toAppendLength = toAppend.length();
-
-            if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )
-            {
-                logger.log(
-                        POILogger.WARN,
-                        "Text piece has boundaries [",
-                        Integer.valueOf( textPiece.getStart() ),
-                        "; ",
-                        Integer.valueOf( textPiece.getEnd() ),
-                        ") but length ",
-                        Integer.valueOf( textPiece.getEnd()
-                                - textPiece.getStart() ) );
-            }
-
-            docText.replace( textPiece.getStart(), textPiece.getStart()
-                    + toAppendLength, toAppend );
-        }
-        logger.log( POILogger.DEBUG, "Document text rebuilded in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( docText.length() ), " chars)" );
-        start = System.currentTimeMillis();
 
         List<PAPX> oldPapxSortedByEndPos = new ArrayList<PAPX>( _paragraphs );
         Collections.sort( oldPapxSortedByEndPos,
@@ -274,7 +244,8 @@ public class PAPBinTable
             {
                 // can we reuse existing?
                 PAPX existing = papxs.get( 0 );
-                if ( existing.getStart() == startInclusive && existing.getEnd() == endExclusive )
+                if ( existing.getStart() == startInclusive
+                        && existing.getEnd() == endExclusive )
                 {
                     newPapxs.add( existing );
                     lastParStart = endExclusive;
@@ -311,7 +282,8 @@ public class PAPBinTable
         this._paragraphs = new ArrayList<PAPX>( newPapxs );
 
         logger.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
-                Long.valueOf( System.currentTimeMillis() - start ), " ms" );
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( _paragraphs.size() ), " elements)" );
         start = System.currentTimeMillis();
 
         _dataStream = dataStream;
@@ -320,7 +292,7 @@ public class PAPBinTable
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
 
-    PAPX forInsert = new PAPX(0, 0, tpt, buf, _dataStream);
+    PAPX forInsert = new PAPX(0, 0, buf, _dataStream);
 
     // Ensure character offsets are really characters
     forInsert.setStart(cpStart);
@@ -350,7 +322,7 @@ public class PAPBinTable
     	//  Original, until insert at point
     	//  New one
     	//  Clone of original, on to the old end
-        PAPX clone = new PAPX(0, 0, tpt, clonedBuf, _dataStream);
+        PAPX clone = new PAPX(0, 0, clonedBuf, _dataStream);
         // Again ensure contains character based offsets no matter what
         clone.setStart(cpStart);
         clone.setEnd(currentPap.getEnd());
@@ -427,9 +399,8 @@ public class PAPBinTable
     return _paragraphs;
   }
 
-  public void writeTo(HWPFFileSystem sys, int fcMin)
-    throws IOException
-  {
+    public void writeTo( HWPFFileSystem sys, int fcMin, CharIndexTranslator translator ) throws IOException
+    {
 
     HWPFOutputStream docStream = sys.getStream("WordDocument");
     OutputStream tableStream = sys.getStream("1Table");
@@ -463,7 +434,7 @@ public class PAPBinTable
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(_dataStream);
       pfkp.fill(overflow);
 
-      byte[] bufFkp = pfkp.toByteArray(tpt, fcMin);
+      byte[] bufFkp = pfkp.toByteArray(translator, fcMin);
       docStream.write(bufFkp);
       overflow = pfkp.getOverflow();
 

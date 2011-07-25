@@ -23,8 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
@@ -40,6 +38,7 @@ import org.apache.poi.hwpf.model.NoteType;
 import org.apache.poi.hwpf.model.NotesTables;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
+import org.apache.poi.hwpf.model.PieceDescriptor;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
@@ -92,7 +91,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   * structure*/
   protected ComplexFileTable _cft;
 
-  protected TextPieceTable _tpt;
+  protected final StringBuilder _text;
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
@@ -139,6 +138,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   protected HWPFDocument()
   {
      super();
+     this._text = new StringBuilder("\r");
   }
 
   /**
@@ -246,15 +246,35 @@ public final class HWPFDocument extends HWPFDocumentCore
     // Start to load up our standard structures.
     _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
-    _tpt = _cft.getTextPieceTable();
+    TextPieceTable _tpt = _cft.getTextPieceTable();
 
     // Now load the rest of the properties, which need to be adjusted
     //  for where text really begin
     _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), _tpt);
     _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), _tpt);
 
+        _text = _tpt.getText();
         _cbt.rebuild( _cft );
-        _pbt.rebuild( _dataStream, _cft );
+        _pbt.rebuild( _text, _dataStream, _cft );
+
+        boolean preserve = false;
+        try
+        {
+            preserve = Boolean.parseBoolean( System
+                    .getProperty( "org.apache.poi.hwpf.preserveTextTable" ) );
+        }
+        catch ( Exception exc )
+        {
+            // ignore;
+        }
+        if ( !preserve )
+        {
+            _cft = new ComplexFileTable();
+            _tpt = _cft.getTextPieceTable();
+            _tpt.add( new TextPiece( 0, _text.length(), _text.toString()
+                    .getBytes( "UTF-16LE" ), new PieceDescriptor( new byte[8],
+                    0 ) ) );
+        }
 
     // Read FSPA and Escher information
     _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(), _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());
@@ -314,6 +334,12 @@ public final class HWPFDocument extends HWPFDocumentCore
     return _cft.getTextPieceTable();
   }
 
+    @Override
+    public StringBuilder getText()
+    {
+        return _text;
+    }
+
   @Deprecated
   public CPSplitCalculator getCPSplitCalculator()
   {
@@ -326,10 +352,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   }
 
   public Range getOverallRange() {
-	  // hack to get the ending cp of the document, Have to revisit this.
-      TextPiece p =  _tpt.getTextPieces().get(_tpt.getTextPieces().size() - 1);
-
-      return new Range(0, p.getEnd(), this);
+      return new Range(0, _text.length(), this);
   }
 
     /**
@@ -445,16 +468,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    */
   public int characterLength()
   {
-    List<TextPiece> textPieces = _tpt.getTextPieces();
-    Iterator<TextPiece> textIt = textPieces.iterator();
-
-    int length = 0;
-    while(textIt.hasNext())
-    {
-      TextPiece tp = textIt.next();
-      length += tp.characterLength();
-    }
-    return length;
+      return _text.length();
   }
 
   /**
@@ -643,7 +657,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the PAPBinTable.
     _fib.setFcPlcfbtePapx(tableOffset);
-    _pbt.writeTo(docSys, fcMin);
+    _pbt.writeTo(docSys, fcMin, _cft.getTextPieceTable());
     _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
