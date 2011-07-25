@@ -255,7 +255,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
         _text = _tpt.getText();
         _cbt.rebuild( _cft );
-        _pbt.rebuild( _text, _dataStream, _cft );
+        _pbt.rebuild( _text, _cft );
 
         boolean preserve = false;
         try
@@ -643,7 +643,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the CHPBinTable.
     _fib.setFcPlcfbteChpx(tableOffset);
-    _cbt.writeTo(docSys, fcMin);
+    _cbt.writeTo(docSys, fcMin, _cft.getTextPieceTable());
     _fib.setLcbPlcfbteChpx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
@@ -657,7 +657,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the PAPBinTable.
     _fib.setFcPlcfbtePapx(tableOffset);
-    _pbt.writeTo(docSys, fcMin, _cft.getTextPieceTable());
+    _pbt.writeTo(docSys, _cft.getTextPieceTable());
     _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
