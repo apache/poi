@@ -59,4 +59,11 @@ public interface TwoDEval extends ValueEval {
 	 * @return a single column {@link TwoDEval}
 	 */
 	TwoDEval getColumn(int columnIndex);
+
+
+    /**
+     * @return true if the  cell at row and col is a subtotal
+     */
+    boolean isSubTotal(int rowIndex, int columnIndex);
+
 }

@@ -17,11 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.formula.functions.CountUtils.I_MatchAreaPredicate;
 
 /**
  * Counts the number of cells that contain data within the list of arguments.
@@ -33,6 +35,15 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  * @author Josh Micich
  */
 public final class Counta implements Function {
+    private final I_MatchPredicate _predicate;
+
+    public Counta(){
+        _predicate = defaultPredicate;
+    }
+
+    private Counta(I_MatchPredicate criteriaPredicate){
+        _predicate = criteriaPredicate;
+    }
 
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		int nArgs = args.length;
@@ -49,13 +60,13 @@ public final class Counta implements Function {
 		int temp = 0;
 
 		for(int i=0; i<nArgs; i++) {
-			temp += CountUtils.countArg(args[i], predicate);
+			temp += CountUtils.countArg(args[i], _predicate);
 
 		}
 		return new NumberEval(temp);
 	}
 
-	private static final I_MatchPredicate predicate = new I_MatchPredicate() {
+	private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
 
 		public boolean matches(ValueEval valueEval) {
 			// Note - observed behavior of Excel:
@@ -69,4 +80,21 @@ public final class Counta implements Function {
 			return true;
 		}
 	};
+    private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
+        public boolean matches(ValueEval valueEval) {
+            return defaultPredicate.matches(valueEval);
+        }
+
+        /**
+         * don't count cells that are subtotals
+         */
+        public boolean matches(TwoDEval areEval, int rowIndex, int columnIndex) {
+            return !areEval.isSubTotal(rowIndex, columnIndex);
+        }
+    };
+
+    public static Counta subtotalInstance() {
+        return new Counta(subtotalPredicate);
+    }
+
 }

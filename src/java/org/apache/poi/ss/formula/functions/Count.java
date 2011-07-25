@@ -17,11 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.formula.functions.CountUtils.I_MatchAreaPredicate;
 
 /**
  * Counts the number of cells that contain numeric data within
@@ -35,6 +37,15 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  *  like formula cells, error cells etc
  */
 public final class Count implements Function {
+    private final I_MatchPredicate _predicate;
+
+    public Count(){
+        _predicate = defaultPredicate;
+    }
+
+    private Count(I_MatchPredicate criteriaPredicate){
+        _predicate = criteriaPredicate;
+    }
 
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		int nArgs = args.length;
@@ -51,13 +62,13 @@ public final class Count implements Function {
 		int temp = 0;
 
 		for(int i=0; i<nArgs; i++) {
-			temp += CountUtils.countArg(args[i], predicate);
+			temp += CountUtils.countArg(args[i], _predicate);
 
 		}
 		return new NumberEval(temp);
 	}
 
-	private static final I_MatchPredicate predicate = new I_MatchPredicate() {
+	private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
 
 		public boolean matches(ValueEval valueEval) {
 
@@ -74,4 +85,30 @@ public final class Count implements Function {
 			return false;
 		}
 	};
+
+    private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
+        public boolean matches(ValueEval valueEval) {
+            return defaultPredicate.matches(valueEval);
+        }
+
+        /**
+         * don't count cells that are subtotals
+         */
+        public boolean matches(TwoDEval areEval, int rowIndex, int columnIndex) {
+            return !areEval.isSubTotal(rowIndex, columnIndex);
+        }
+    };
+
+    /**
+     *  Create an instance of Count to use in {@link Subtotal}
+     * <p>
+     *     If there are other subtotals within argument refs (or nested subtotals),
+     *     these nested subtotals are ignored to avoid double counting.
+     * </p>
+     *
+     *  @see Subtotal
+     */
+    public static Count subtotalInstance() {
+        return new Count(subtotalPredicate );
+    }
 }

@@ -129,6 +129,10 @@ public final class WorkbookEvaluator {
 		return _workbook.getSheet(sheetIndex);
 	}
 	
+	/* package */ EvaluationWorkbook getWorkbook() {
+		return _workbook;
+	}
+
 	/* package */ EvaluationName getName(String name, int sheetIndex) {
         NamePtg namePtg = _workbook.getName(name, sheetIndex).createPtg();
 
