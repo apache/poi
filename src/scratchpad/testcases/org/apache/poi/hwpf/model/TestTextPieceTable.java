@@ -169,6 +169,7 @@ public final class TestTextPieceTable extends TestCase {
     throws Exception
   {
     super.setUp();
+    System.setProperty( "org.apache.poi.hwpf.preserveTextTable", Boolean.TRUE.toString() );
 
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
@@ -178,8 +179,9 @@ public final class TestTextPieceTable extends TestCase {
     throws Exception
   {
     _hWPFDocFixture.tearDown();
-
     _hWPFDocFixture = null;
+
+    System.setProperty( "org.apache.poi.hwpf.preserveTextTable", Boolean.FALSE.toString() );
     super.tearDown();
   }
 

@@ -19,6 +19,9 @@ package org.apache.poi.hwpf.model;
 
 
 import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.util.Internal;
+
 /**
  * Lightweight representation of a text piece.
  * Works in the character domain, not the byte domain, so you
@@ -27,19 +30,39 @@ import java.io.UnsupportedEncodingException;
  *
  * @author Ryan Ackley
  */
-
+@Internal
 public final class TextPiece extends PropertyNode<TextPiece>
 {
   private boolean _usesUnicode;
 
   private PieceDescriptor _pd;
 
-  /**
-   * @param start Beginning offset in main document stream, in characters.
-   * @param end Ending offset in main document stream, in characters.
-   * @param text The raw bytes of our text
-   */
-  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd, int cpStart) {
+    /**
+     * @param start
+     *            Beginning offset in main document stream, in characters.
+     * @param end
+     *            Ending offset in main document stream, in characters.
+     * @param text
+     *            The raw bytes of our text
+     * @deprecated Use {@link #TextPiece(int,int,byte[],PieceDescriptor)}
+     *             instead
+     */
+    public TextPiece( int start, int end, byte[] text, PieceDescriptor pd,
+            int cpStart )
+    {
+        this( start, end, text, pd );
+    }
+
+    /**
+     * @param start
+     *            Beginning offset in main document stream, in characters.
+     * @param end
+     *            Ending offset in main document stream, in characters.
+     * @param text
+     *            The raw bytes of our text
+     */
+    public TextPiece( int start, int end, byte[] text, PieceDescriptor pd )
+    {
 	  super(start, end, buildInitSB(text, pd));
 	  _usesUnicode = pd.isUnicode();
 	  _pd = pd;

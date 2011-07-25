@@ -53,7 +53,7 @@ public final class TestPAPBinTable extends TestCase
 
         HWPFFileSystem fileSys = new HWPFFileSystem();
 
-        _pAPBinTable.writeTo( fileSys, 0 );
+        _pAPBinTable.writeTo( fileSys, 0, fakeTPT );
         ByteArrayOutputStream tableOut = fileSys.getStream( "1Table" );
         ByteArrayOutputStream mainOut = fileSys.getStream( "WordDocument" );
 

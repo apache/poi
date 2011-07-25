@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * The piece table for matching up character positions to bits of text. This
@@ -34,6 +36,9 @@ import org.apache.poi.poifs.common.POIFSConstants;
  */
 public class TextPieceTable implements CharIndexTranslator
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( TextPieceTable.class );
+
     // int _multiple;
     int _cpMin;
     protected ArrayList<TextPiece> _textPieces = new ArrayList<TextPiece>();
@@ -101,7 +106,7 @@ public class TextPieceTable implements CharIndexTranslator
 
             // And now build the piece
             _textPieces.add( new TextPiece( nodeStartChars, nodeEndChars, buf,
-                    pieces[x], node.getStart() ) );
+                    pieces[x] ) );
         }
 
         // In the interest of our sanity, now sort the text pieces
@@ -249,6 +254,41 @@ public class TextPieceTable implements CharIndexTranslator
     public int getCpMin()
     {
         return _cpMin;
+    }
+
+    public StringBuilder getText()
+    {
+        final long start = System.currentTimeMillis();
+
+        // rebuild document paragraphs structure
+        StringBuilder docText = new StringBuilder();
+        for ( TextPiece textPiece : _textPieces )
+        {
+            String toAppend = textPiece.getStringBuffer().toString();
+            int toAppendLength = toAppend.length();
+
+            if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )
+            {
+                logger.log(
+                        POILogger.WARN,
+                        "Text piece has boundaries [",
+                        Integer.valueOf( textPiece.getStart() ),
+                        "; ",
+                        Integer.valueOf( textPiece.getEnd() ),
+                        ") but length ",
+                        Integer.valueOf( textPiece.getEnd()
+                                - textPiece.getStart() ) );
+            }
+
+            docText.replace( textPiece.getStart(), textPiece.getStart()
+                    + toAppendLength, toAppend );
+        }
+
+        logger.log( POILogger.DEBUG, "Document text were rebuilded in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( docText.length() ), " chars)" );
+
+        return docText;
     }
 
     public List<TextPiece> getTextPieces()

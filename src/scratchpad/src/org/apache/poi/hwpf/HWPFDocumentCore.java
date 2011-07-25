@@ -35,6 +35,7 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Internal;
 
 
 /**
@@ -161,8 +162,20 @@ public abstract class HWPFDocumentCore extends POIDocument
      */
     public abstract Range getOverallRange();
 
-  public abstract TextPieceTable getTextTable();
-  
+    /**
+     * Returns document text, i.e. text information from all text pieces,
+     * including OLE descriptions and field codes
+     */
+    public String getDocumentText() {
+        return getText().toString();
+    }
+
+    /**
+     * Internal method to access document text
+     */
+    @Internal
+    public abstract StringBuilder getText();
+
   public CHPBinTable getCharacterTable()
   {
     return _cbt;
@@ -197,4 +210,6 @@ public abstract class HWPFDocumentCore extends POIDocument
   {
     return _fib;
   }
+
+    public abstract TextPieceTable getTextTable();
 }

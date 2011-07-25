@@ -20,13 +20,11 @@ package org.apache.poi.hwpf.extractor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.HeaderStories;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -218,22 +216,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 	 *  mapping is broken. Fast too.
 	 */
 	public String getTextFromPieces() {
-    	StringBuffer textBuf = new StringBuffer();
-
-    	for(TextPiece piece : doc.getTextTable().getTextPieces()) {
-    		String encoding = "Cp1252";
-    		if (piece.isUnicode()) {
-    			encoding = "UTF-16LE";
-    		}
-    		try {
-    			String text = new String(piece.getRawBytes(), encoding);
-    			textBuf.append(text);
-    		} catch(UnsupportedEncodingException e) {
-    			throw new InternalError("Standard Encoding " + encoding + " not found, JVM broken");
-    		}
-    	}
-
-    	String text = textBuf.toString();
+    	String text = doc.getDocumentText();
 
     	// Fix line endings (Note - won't get all of them
     	text = text.replaceAll("\r\r\r", "\r\n\r\n\r\n");

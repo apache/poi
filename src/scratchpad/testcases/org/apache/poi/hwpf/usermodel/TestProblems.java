@@ -103,10 +103,6 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals("One paragraph is ok\7", r.getParagraph(3).text());
       assertEquals("\7", r.getParagraph(4).text());
       assertEquals("\r", r.getParagraph(5).text());
-      for(int i=0; i<=5; i++) {
-         assertFalse(r.getParagraph(i).usesUnicode());
-      }
-
 
       // Get the table
       Table t = r.getTable(p);
@@ -304,9 +300,6 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals("Row 3/Cell 3\u0007", r.getParagraph(10).text());
       assertEquals("\u0007", r.getParagraph(11).text());
       assertEquals("\r", r.getParagraph(12).text());
-      for(int i=0; i<=12; i++) {
-         assertFalse(r.getParagraph(i).usesUnicode());
-      }
 
       Paragraph p;
 
@@ -791,7 +784,9 @@ public final class TestProblems extends HWPFTestCase {
             Paragraph actParagraph = actual.getParagraph( p );
 
             assertEquals( expParagraph.text(), actParagraph.text() );
-            assertEquals( expParagraph.isInTable(), actParagraph.isInTable() );
+            assertEquals( "Diffent isInTable flags for paragraphs #" + p
+                    + " -- " + expParagraph + " -- " + actParagraph + ".",
+                    expParagraph.isInTable(), actParagraph.isInTable() );
             assertEquals( expParagraph.isTableRowEnd(),
                     actParagraph.isTableRowEnd() );
 
