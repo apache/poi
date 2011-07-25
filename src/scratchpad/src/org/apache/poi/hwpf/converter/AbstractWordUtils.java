@@ -298,6 +298,58 @@ public class AbstractWordUtils
         }
     }
 
+    public static String getColor24( int value )
+    {
+        if ( value == -1 )
+            throw new IllegalArgumentException( "This colorref is empty" );
+
+        // http://www.w3.org/TR/REC-html40/types.html#h-6.5
+        switch ( value )
+        {
+        case 0xFFFFFF:
+            return "white";
+        case 0xC0C0C0:
+            return "silver";
+        case 0x808080:
+            return "gray";
+        case 0x000000:
+            return "black";
+        case 0xFF0000:
+            return "red";
+        case 0x800000:
+            return "maroon";
+        case 0xFFFF00:
+            return "yellow";
+        case 0x808000:
+            return "olive";
+        case 0x00FF00:
+            return "lime";
+        case 0x008000:
+            return "green";
+        case 0x00FFFF:
+            return "aqua";
+        case 0x008080:
+            return "teal";
+        case 0x0000FF:
+            return "blue";
+        case 0x000080:
+            return "navy";
+        case 0xFF00FF:
+            return "fuchsia";
+        case 0x800080:
+            return "purple";
+        }
+
+        StringBuilder result = new StringBuilder( "#" );
+        String hex = Integer.toHexString( value );
+        for ( int i = hex.length(); i < 6; i++ )
+        {
+            result.append( '0' );
+        }
+        result.append( hex );
+        return result.toString();
+    }
+
     public static String getJustification( int js )
     {
         switch ( js )
