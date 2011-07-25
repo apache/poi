@@ -104,4 +104,28 @@ public class ArrayUtil
     	
     	// We're done - array will now have everything moved as required
     }
+
+    /**
+     * Copies the specified array, truncating or padding with zeros (if
+     * necessary) so the copy has the specified length. This method is temporary
+     * replace for Arrays.copyOf() until we start to require JDK 1.6.
+     * 
+     * @param source
+     *            the array to be copied
+     * @param newLength
+     *            the length of the copy to be returned
+     * @return a copy of the original array, truncated or padded with zeros to
+     *         obtain the specified length
+     * @throws NegativeArraySizeException
+     *             if <tt>newLength</tt> is negative
+     * @throws NullPointerException
+     *             if <tt>original</tt> is null
+     */
+    public static byte[] copyOf( byte[] source, int newLength )
+    {
+        byte[] result = new byte[newLength];
+        System.arraycopy( source, 0, result, 0,
+                Math.min( source.length, newLength ) );
+        return result;
+    }
 }
