@@ -120,6 +120,16 @@ public class TestWordToHtmlConverter extends TestCase
         assertContains( result, substring );
     }
 
+    public void testBug47286() throws Exception
+    {
+        String result = getHtmlText( "Bug47286.doc" );
+
+        assertFalse( result.contains( "FORMTEXT" ) );
+
+        assertContains( result, "Passport No and the date of expire" );
+        assertContains( result, "mfa.gov.cy" );
+    }
+
     public void testBug48075() throws Exception
     {
         getHtmlText( "Bug48075.doc" );
