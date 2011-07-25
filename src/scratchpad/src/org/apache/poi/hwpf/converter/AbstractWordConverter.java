@@ -283,7 +283,7 @@ public abstract class AbstractWordConverter
                 bookmarkStack.addAll( bookmarks );
                 try
                 {
-                    Range subrange = new Range( previous, structure.start,
+                    Range subrange = new Range( structure.start, structure.end,
                             range )
                     {
                         @Override
