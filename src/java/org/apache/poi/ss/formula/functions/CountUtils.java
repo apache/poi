@@ -38,6 +38,10 @@ final class CountUtils {
 	public interface I_MatchPredicate {
 		boolean matches(ValueEval x);
 	}
+    public interface I_MatchAreaPredicate extends I_MatchPredicate {
+        boolean matches(TwoDEval x, int rowIndex, int columnIndex);
+    }
+
 	/**
 	 * @return the number of evaluated cells in the range that match the specified criteria
 	 */
@@ -49,6 +53,12 @@ final class CountUtils {
 		for (int rrIx=0; rrIx<height; rrIx++) {
 			for (int rcIx=0; rcIx<width; rcIx++) {
 				ValueEval ve = areaEval.getValue(rrIx, rcIx);
+
+                if(criteriaPredicate instanceof I_MatchAreaPredicate){
+                    I_MatchAreaPredicate areaPredicate = (I_MatchAreaPredicate)criteriaPredicate;
+                    if(!areaPredicate.matches(areaEval, rrIx, rcIx)) continue;
+                }
+
 				if(criteriaPredicate.matches(ve)) {
 					result++;
 				}

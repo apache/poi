@@ -114,4 +114,13 @@ public abstract class AreaEvalBase implements AreaEval {
 	public int getWidth() {
 		return _lastColumn-_firstColumn+1;
 	}
+
+    /**
+     * @return  whether cell at rowIndex and columnIndex is a subtotal.
+     * By default return false which means 'don't care about subtotals'
+    */
+    public boolean isSubTotal(int rowIndex, int columnIndex) {
+        return false;
+    }
+
 }

@@ -39,10 +39,10 @@ public abstract class MultiOperandNumericFunction implements Function {
 	private final boolean _isReferenceBoolCounted;
 	private final boolean _isBlankCounted;
 
-	protected MultiOperandNumericFunction(boolean isReferenceBoolCounted, boolean isBlankCounted) {
-		_isReferenceBoolCounted = isReferenceBoolCounted;
-		_isBlankCounted = isBlankCounted;
-	}
+    protected MultiOperandNumericFunction(boolean isReferenceBoolCounted, boolean isBlankCounted) {
+        _isReferenceBoolCounted = isReferenceBoolCounted;
+        _isBlankCounted = isBlankCounted;
+    }
 
 	static final double[] EMPTY_DOUBLE_ARRAY = { };
 
@@ -129,6 +129,13 @@ public abstract class MultiOperandNumericFunction implements Function {
 		return retval.toArray();
 	}
 
+    /**
+     *  Whether to count nested subtotals.
+     */
+    public boolean isSubtotalCounted(){
+        return true;
+    }
+
 	/**
 	 * Collects values from a single argument
 	 */
@@ -141,7 +148,8 @@ public abstract class MultiOperandNumericFunction implements Function {
 			for (int rrIx=0; rrIx<height; rrIx++) {
 				for (int rcIx=0; rcIx<width; rcIx++) {
 					ValueEval ve = ae.getValue(rrIx, rcIx);
-					collectValue(ve, true, temp);
+                    if(!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
+                    collectValue(ve, true, temp);
 				}
 			}
 			return;
