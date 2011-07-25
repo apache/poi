@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,28 +55,6 @@ import org.w3c.dom.Text;
  */
 public class WordToFoConverter extends AbstractWordConverter
 {
-
-    /**
-     * Holds properties values, applied to current <tt>fo:block</tt> element.
-     * Those properties shall not be doubled in children <tt>fo:inline</tt>
-     * elements.
-     */
-    private static class BlockProperies
-    {
-        final boolean pBold;
-        final String pFontName;
-        final int pFontSize;
-        final boolean pItalic;
-
-        public BlockProperies( String pFontName, int pFontSize, boolean pBold,
-                boolean pItalic )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
-            this.pBold = pBold;
-            this.pItalic = pItalic;
-        }
-    }
 
     private static final POILogger logger = POILogFactory
             .getLogger( WordToFoConverter.class );
@@ -132,8 +109,6 @@ public class WordToFoConverter extends AbstractWordConverter
         wordToFoConverter.processDocument( hwpfDocument );
         return wordToFoConverter.getDocument();
     }
-
-    private final Stack<BlockProperies> blocksProperies = new Stack<BlockProperies>();
 
     private List<Element> endnotes = new ArrayList<Element>( 0 );
 
@@ -228,29 +203,15 @@ public class WordToFoConverter extends AbstractWordConverter
     protected void outputCharacters( Element block, CharacterRun characterRun,
             String text )
     {
-        BlockProperies blockProperies = this.blocksProperies.peek();
         Element inline = foDocumentFacade.createInline();
 
         Triplet triplet = getCharacterRunTriplet( characterRun );
 
-        if ( triplet.bold != blockProperies.pBold )
-        {
-            WordToFoUtils.setBold( inline, triplet.bold );
-        }
-        if ( triplet.italic != blockProperies.pItalic )
-        {
-            WordToFoUtils.setItalic( inline, triplet.italic );
-        }
-        if ( WordToFoUtils.isNotEmpty( triplet.fontName )
-                && !WordToFoUtils.equals( triplet.fontName,
-                        blockProperies.pFontName ) )
-        {
+        if ( WordToFoUtils.isNotEmpty( triplet.fontName ) )
             WordToFoUtils.setFontFamily( inline, characterRun.getFontName() );
-        }
-        if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
-        {
-            WordToFoUtils.setFontSize( inline, characterRun.getFontSize() / 2 );
-        }
+        WordToFoUtils.setBold( inline, triplet.bold );
+        WordToFoUtils.setItalic( inline, triplet.italic );
+        WordToFoUtils.setFontSize( inline, characterRun.getFontSize() / 2 );
         WordToFoUtils.setCharactersProperties( characterRun, inline );
         block.appendChild( inline );
 
@@ -323,16 +284,7 @@ public class WordToFoConverter extends AbstractWordConverter
         setId( backwardLink, forwardLinkName );
         endnote.appendChild( backwardLink );
 
-        blocksProperies.push( new BlockProperies( "", -1, false, false ) );
-        try
-        {
-            processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange,
-                    endnote );
-        }
-        finally
-        {
-            blocksProperies.pop();
-        }
+        processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange, endnote );
 
         WordToFoUtils.compactInlines( endnote );
         this.endnotes.add( endnote );
@@ -368,16 +320,8 @@ public class WordToFoConverter extends AbstractWordConverter
         footnoteBody.appendChild( footnoteBlock );
         footNote.appendChild( footnoteBody );
 
-        blocksProperies.push( new BlockProperies( "", -1, false, false ) );
-        try
-        {
-            processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
-                    footnoteBlock );
-        }
-        finally
-        {
-            blocksProperies.pop();
-        }
+        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
+                footnoteBlock );
 
         WordToFoUtils.compactInlines( footnoteBlock );
     }
@@ -458,46 +402,26 @@ public class WordToFoConverter extends AbstractWordConverter
             return;
         }
 
+        boolean haveAnyText = false;
+
+        if ( WordToFoUtils.isNotEmpty( bulletText ) )
         {
-            CharacterRun characterRun = paragraph.getCharacterRun( 0 );
-            int pFontSize = characterRun.getFontSize() / 2;
-            Triplet triplet = getCharacterRunTriplet( characterRun );
+            Element inline = foDocumentFacade.createInline();
+            block.appendChild( inline );
 
-            WordToFoUtils.setFontFamily( block, triplet.fontName );
-            WordToFoUtils.setFontSize( block, pFontSize );
-            WordToFoUtils.setBold( block, triplet.bold );
-            WordToFoUtils.setItalic( block, triplet.italic );
+            Text textNode = foDocumentFacade.createText( bulletText );
+            inline.appendChild( textNode );
 
-            blocksProperies.push( new BlockProperies( triplet.fontName,
-                    pFontSize, triplet.bold, triplet.italic ) );
+            haveAnyText |= bulletText.trim().length() != 0;
         }
-        try
+
+        haveAnyText = processCharacters( hwpfDocument, currentTableLevel,
+                paragraph, block );
+
+        if ( !haveAnyText )
         {
-            boolean haveAnyText = false;
-
-            if ( WordToFoUtils.isNotEmpty( bulletText ) )
-            {
-                Element inline = foDocumentFacade.createInline();
-                block.appendChild( inline );
-
-                Text textNode = foDocumentFacade.createText( bulletText );
-                inline.appendChild( textNode );
-
-                haveAnyText |= bulletText.trim().length() != 0;
-            }
-
-            haveAnyText = processCharacters( hwpfDocument, currentTableLevel,
-                    paragraph, block );
-
-            if ( !haveAnyText )
-            {
-                Element leader = foDocumentFacade.createLeader();
-                block.appendChild( leader );
-            }
-        }
-        finally
-        {
-            blocksProperies.pop();
+            Element leader = foDocumentFacade.createLeader();
+            block.appendChild( leader );
         }
 
         WordToFoUtils.compactInlines( block );
