@@ -22,10 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -43,10 +41,8 @@ import org.apache.poi.util.POILogger;
  *
  * @author Ryan Ackley
  */
+@Internal
 public final class PAPFormattedDiskPage extends FormattedDiskPage {
-    private static final POILogger logger = POILogFactory
-            .getLogger( PAPFormattedDiskPage.class );
-
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;
 
@@ -70,14 +66,14 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
             int offset, int fcMin, TextPieceTable tpt )
     {
-        this( documentStream, dataStream, offset, tpt, true );
+        this( documentStream, dataStream, offset, tpt );
     }
 
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
      */
     public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
-            int offset, TextPieceTable tpt, boolean ignorePapxWithoutTextPieces )
+            int offset, TextPieceTable tpt )
     {
         super( documentStream, offset );
         for ( int x = 0; x < _crun; x++ )
@@ -85,31 +81,8 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
             int startAt = getStart( x );
             int endAt = getEnd( x );
 
-            if ( ignorePapxWithoutTextPieces
-                    && !tpt.isIndexInTable( startAt, endAt ) )
-            {
-                logger.log( POILogger.WARN, "PAPX [",
-                        Integer.valueOf( startAt ), "; ",
-                        Integer.valueOf( endAt ),
-                        ") (bytes) doesn't have corresponding text pieces "
-                                + "and will be skipped\n\tSkipped SPRM: "
-                                + new SprmBuffer( getGrpprl( x ), 2 ) );
-                _papxList.add( null );
-                continue;
-            }
-
             PAPX papx = new PAPX( startAt, endAt, tpt, getGrpprl( x ),
                     getParagraphHeight( x ), dataStream );
-
-            if ( ignorePapxWithoutTextPieces
-                    && papx.getStart() == papx.getEnd() )
-            {
-                logger.log( POILogger.WARN, papx
-                        + " references zero-length range and will be skipped" );
-                _papxList.add( null );
-                continue;
-            }
-
             _papxList.add( papx );
         }
         _fkp = null;

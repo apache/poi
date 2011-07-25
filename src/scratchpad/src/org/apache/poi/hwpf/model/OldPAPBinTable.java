@@ -47,7 +47,7 @@ public final class OldPAPBinTable extends PAPBinTable
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        documentStream, pageOffset, tpt, true);
+        documentStream, pageOffset, tpt);
 
       int fkpSize = pfkp.size();
 

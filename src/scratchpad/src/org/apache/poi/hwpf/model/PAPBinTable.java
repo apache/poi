@@ -33,6 +33,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -44,6 +45,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Ryan Ackley
  */
+@Internal
 public class PAPBinTable
 {
     private static final POILogger logger = POILogFactory
@@ -69,13 +71,11 @@ public class PAPBinTable
             byte[] dataStream, int offset, int size, int fcMin,
             TextPieceTable tpt )
     {
-        this( documentStream, tableStream, dataStream, offset, size, null, tpt, true );
+        this( documentStream, tableStream, dataStream, offset, size, tpt );
     }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size,
-            ComplexFileTable complexFileTable, TextPieceTable tpt,
-            boolean reconstructPapxTable )
+            byte[] dataStream, int offset, int size, TextPieceTable tpt )
     {
         long start = System.currentTimeMillis();
 
@@ -93,8 +93,7 @@ public class PAPBinTable
                         * pageNum;
 
                 PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
-                        documentStream, dataStream, pageOffset, tpt,
-                        reconstructPapxTable );
+                        documentStream, dataStream, pageOffset, tpt );
 
                 int fkpSize = pfkp.size();
 
@@ -111,16 +110,11 @@ public class PAPBinTable
         logger.log( POILogger.DEBUG, "PAPX tables loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
-        start = System.currentTimeMillis();
+    }
 
-        if ( !reconstructPapxTable )
-        {
-            Collections.sort( _paragraphs );
-
-            logger.log( POILogger.DEBUG, "PAPX sorted in ",
-                    Long.valueOf( System.currentTimeMillis() - start ), " ms" );
-            return;
-        }
+    public void rebuild( byte[] dataStream, ComplexFileTable complexFileTable )
+    {
+        long start = System.currentTimeMillis();
 
         if ( complexFileTable != null )
         {

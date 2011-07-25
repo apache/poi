@@ -49,8 +49,7 @@ public final class TestPAPBinTable extends TestCase
         byte[] tableStream = _hWPFDocFixture._tableStream;
 
         PAPBinTable _pAPBinTable = new PAPBinTable( mainStream, tableStream,
-                null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), null,
-                fakeTPT, false );
+                null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fakeTPT );
 
         HWPFFileSystem fileSys = new HWPFFileSystem();
 
@@ -62,8 +61,7 @@ public final class TestPAPBinTable extends TestCase
         byte[] newMainStream = mainOut.toByteArray();
 
         PAPBinTable newBinTable = new PAPBinTable( newMainStream,
-                newTableStream, null, 0, newTableStream.length, null, fakeTPT,
-                false );
+                newTableStream, null, 0, newTableStream.length, fakeTPT );
 
         List<PAPX> oldTextRuns = _pAPBinTable.getParagraphs();
         List<PAPX> newTextRuns = newBinTable.getParagraphs();

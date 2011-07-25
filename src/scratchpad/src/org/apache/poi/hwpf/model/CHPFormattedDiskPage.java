@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -60,14 +61,14 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * read from a Word file).
      * 
      * @deprecated Use
-     *             {@link #CHPFormattedDiskPage(byte[],int,TextPieceTable,boolean)}
+     *             {@link #CHPFormattedDiskPage(byte[],int,TextPieceTable)}
      *             instead
      */
     @SuppressWarnings( "unused" )
     public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
             TextPieceTable tpt )
     {
-        this( documentStream, offset, tpt, true );
+        this( documentStream, offset, tpt );
     }
 
     /**
@@ -75,39 +76,23 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * read from a Word file).
      */
     public CHPFormattedDiskPage( byte[] documentStream, int offset,
-            TextPieceTable tpt, boolean ignoreChpxWithoutTextPieces )
+            TextPieceTable tpt )
     {
         super( documentStream, offset );
 
         for ( int x = 0; x < _crun; x++ )
         {
-            int startAt = getStart( x );
-            int endAt = getEnd( x );
+            int bytesStartAt = getStart( x );
+            int bytesEndAt = getEnd( x );
 
-            if ( ignoreChpxWithoutTextPieces
-                    && !tpt.isIndexInTable( startAt, endAt ) )
-            {
-                logger.log( POILogger.WARN, "CHPX [",
-                        Integer.valueOf( startAt ), "; ",
-                        Integer.valueOf( endAt ),
-                        ") (bytes) doesn't have corresponding text pieces "
-                                + "and will be skipped" );
+            int charStartAt = tpt.getCharIndex( bytesStartAt );
+            int charEndAt = tpt.getCharIndex( bytesEndAt, charStartAt );
 
-                _chpxList.add( null );
-                continue;
-            }
-
-            CHPX chpx = new CHPX( startAt, endAt, tpt, getGrpprl( x ) );
-
-            if ( ignoreChpxWithoutTextPieces
-                    && chpx.getStart() == chpx.getEnd() )
-            {
-                logger.log( POILogger.WARN, chpx
-                        + " references zero-length range and will be skipped" );
-                _chpxList.add( null );
-                continue;
-            }
-
+            // TODO: CHECK!
+            // CHPX chpx = new CHPX( bytesStartAt, bytesEndAt, tpt, getGrpprl( x
+            // ) );
+            CHPX chpx = new CHPX( charStartAt, charEndAt, new SprmBuffer(
+                    getGrpprl( x ), 0 ) );
             _chpxList.add( chpx );
         }
     }

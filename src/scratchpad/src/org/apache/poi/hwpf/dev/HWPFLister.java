@@ -407,7 +407,7 @@ public final class HWPFLister
 
                 PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
                         mainStream, doc.getDataStream(), pageOffset,
-                        doc.getTextTable(), false );
+                        doc.getTextTable() );
 
                 System.out.println( "* PFKP: " + pfkp );
 
