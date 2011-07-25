@@ -20,10 +20,12 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -336,7 +338,35 @@ public class CHPBinTable
         logger.log( POILogger.DEBUG, "CHPX rebuilded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
-    }
+        start = System.currentTimeMillis();
+
+        CHPX previous = null;
+        for ( Iterator<CHPX> iterator = _textRuns.iterator(); iterator
+                .hasNext(); )
+        {
+            CHPX current = iterator.next();
+            if ( previous == null )
+            {
+                previous = current;
+                continue;
+            }
+
+            if ( previous.getEnd() == current.getStart()
+                    && Arrays
+                            .equals( previous.getGrpprl(), current.getGrpprl() ) )
+            {
+                previous.setEnd( current.getEnd() );
+                iterator.remove();
+                continue;
+            }
+            
+            previous = current;
+        }
+
+        logger.log( POILogger.DEBUG, "CHPX compacted in ",
+                Long.valueOf( System.currentTimeMillis() - start ), " ms (",
+                Integer.valueOf( _textRuns.size() ), " elements)" );
+}
 
     private static int binarySearch( List<CHPX> chpxs, int startPosition )
     {
