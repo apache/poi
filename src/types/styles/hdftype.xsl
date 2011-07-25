@@ -32,6 +32,7 @@ package <xsl:value-of select="@package"/>;
 </xsl:if>
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
@@ -39,10 +40,15 @@ import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * <xsl:value-of select="/record/description"/>
+ * &lt;p&gt;
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
+ * &lt;p&gt;
+ * This class is internal. It content or properties may change without notice 
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
 <xsl:apply-templates select="author"/><xsl:text>
  */
+@Internal
 public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>AbstractType
 {
 
@@ -208,6 +214,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      * Sets the <xsl:value-of select="@name"/> field value.
      * <xsl:value-of select="@description"/>
      */
+    @Internal
     public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="recutil:getBitFieldType(@name, @mask, ../@type)"/> value )
     {
         <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getBitFieldSet(@name, @mask, ../@type, recutil:getFieldName($fieldNum,../@name,0))"/>;
@@ -217,6 +224,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      * <xsl:value-of select="@description"/>
      * @return  the <xsl:value-of select="@name"/> field value.
      */
+    @Internal
     public <xsl:value-of select="recutil:getBitFieldFunction(@name,@mask,../@type, 'true')"/>()
     {
         return <xsl:value-of select="recutil:getBitFieldGet(@name, @mask,../@type, recutil:getFieldName($fieldNum,../@name,0))"/>
@@ -244,7 +252,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
         </xsl:if>
         <xsl:call-template name="indent"/>
         <xsl:text>/**/</xsl:text>
-        <xsl:text>public final static </xsl:text>
+        <xsl:text>protected final static </xsl:text>
         <xsl:value-of select="@type"/>
         <xsl:text> </xsl:text>
         <xsl:value-of select="recutil:getConstName(../@name,@name,0)"/>
@@ -290,6 +298,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      *
      * @return One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
+    @Internal
     public <xsl:value-of select="@type"/> get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
     {
         return <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
@@ -314,6 +323,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
      * @param <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
      *        One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
+    @Internal
     public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> )
     {
         this.<xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
