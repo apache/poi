@@ -79,7 +79,8 @@
         <!-- rgftc[iftcCompositeMax] -->
         <field type="int" size="4" name="dxaSpace"
             description="Space following each character in the run expressed in twip units."/>
-        <!-- cv -->
+
+        <field type="Colorref" size="4" name="cv" description="24-bit color"/>
 
         <!-- Microsoft Office Word 97-2007 Binary File Format (.doc) Specification -->
         <!-- Page 104 of 210 -->

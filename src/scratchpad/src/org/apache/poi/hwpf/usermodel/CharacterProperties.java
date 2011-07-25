@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.types.CHPAbstractType;
 
 /**
@@ -65,6 +66,10 @@ public final class CharacterProperties
   public final static short SPRM_PROPRMARK = (short)0xCA57;
   public final static short SPRM_FEMBOSS = 0x0858;
   public final static short SPRM_SFXTEXT = 0x2859;
+    /*
+     * Microsoft Office Word 97-2007 Binary File Format (.doc) Specification;
+     * Page 60 of 210
+     */
   public final static short SPRM_DISPFLDRMARK = (short)0xCA62;
   public final static short SPRM_IBSTRMARKDEL = 0x4863;
   public final static short SPRM_DTTMRMARKDEL = 0x6864;
@@ -75,8 +80,10 @@ public final class CharacterProperties
   public final static short SPRM_NONFELID = 0x486D;
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
-
-  int _ico24 = -1; // default to -1 so we can ignore it for word 97 files
+    /**
+     * change chp.cv
+     */
+    public final static short SPRM_CCV = 0x6870;
 
     public CharacterProperties()
     {
@@ -305,66 +312,69 @@ public final class CharacterProperties
     super.setIcoHighlight(color);
   }
 
-  /**
-  * Get the ico24 field for the CHP record.
-  */
-  public int getIco24()
-  {
-    if ( _ico24 == -1 )
+    /**
+     * Get the ico24 field for the CHP record.
+     */
+    public int getIco24()
     {
-      switch(getIco()) // convert word 97 colour numbers to 0xBBGGRR value
-      {
-        case 0: // auto
-          return -1;
-        case 1: // black
-          return 0x000000;
-        case 2: // blue
-          return 0xFF0000;
-        case 3: // cyan
-          return 0xFFFF00;
-        case 4: // green
-          return 0x00FF00;
-        case 5: // magenta
-          return 0xFF00FF;
-        case 6: // red
-          return 0x0000FF;
-        case 7: // yellow
-          return 0x00FFFF;
-        case 8: // white
-          return 0x0FFFFFF;
-        case 9: // dark blue
-          return 0x800000;
-        case 10: // dark cyan
-          return 0x808000;
-        case 11: // dark green
-          return 0x008000;
-        case 12: // dark magenta
-          return 0x800080;
-        case 13: // dark red
-          return 0x000080;
-        case 14: // dark yellow
-          return 0x008080;
-        case 15: // dark grey
-          return 0x808080;
-        case 16: // light grey
-         return 0xC0C0C0;
-      }
-    }
-    return _ico24;
-  }
+        if ( !getCv().isEmpty() )
+            return getCv().getValue();
 
-  /**
-   * Set the ico24 field for the CHP record.
-   */
-  public void setIco24(int colour24)
-  {
-    _ico24 = colour24 & 0xFFFFFF; // only keep the 24bit 0xBBGGRR colour
-  }
+        // convert word 97 colour numbers to 0xBBRRGGRR value
+        switch ( getIco() )
+        {
+        case 0: // auto
+            return -1;
+        case 1: // black
+            return 0x00000000;
+        case 2: // blue
+            return 0x00FF0000;
+        case 3: // cyan
+            return 0x00FFFF00;
+        case 4: // green
+            return 0x0000FF00;
+        case 5: // magenta
+            return 0x00FF00FF;
+        case 6: // red
+            return 0x000000FF;
+        case 7: // yellow
+            return 0x0000FFFF;
+        case 8: // white
+            return 0x00FFFFFF;
+        case 9: // dark blue
+            return 0x00800000;
+        case 10: // dark cyan
+            return 0x00808000;
+        case 11: // dark green
+            return 0x00008000;
+        case 12: // dark magenta
+            return 0x00800080;
+        case 13: // dark red
+            return 0x00000080;
+        case 14: // dark yellow
+            return 0x00008080;
+        case 15: // dark grey
+            return 0x00808080;
+        case 16: // light grey
+            return 0x00C0C0C0;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Set the ico24 field for the CHP record.
+     */
+    public void setIco24( int colour24 )
+    {
+        setCv( new Colorref( colour24 & 0xFFFFFF ) );
+    }
 
     public Object clone() throws CloneNotSupportedException
     {
         CharacterProperties cp = (CharacterProperties) super.clone();
 
+        cp.setCv( getCv().clone() );
         cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
         cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
         cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
@@ -372,8 +382,6 @@ public final class CharacterProperties
         cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
         cp.setShd( (ShadingDescriptor) getShd().clone() );
         cp.setBrc( (BorderCode) getBrc().clone() );
-
-        cp._ico24 = _ico24;
 
         return cp;
     }
