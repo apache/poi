@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.Hyphenation;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
@@ -601,9 +602,10 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x6f:
         newCHP.setIdctHint ((byte) sprm.getOperand());
         break;
-      case 0x70:
-        newCHP.setIco24 (sprm.getOperand());
-        break;
+        case 0x70:
+            // sprmCCv -- 0x6870
+            newCHP.setCv( new Colorref( sprm.getOperand() ) );
+            break;
       case 0x71:
         // sprmCShd
         break;
