@@ -144,6 +144,7 @@ public class BookmarksImpl implements Bookmarks
             Collections.sort( updated, PropertyNode.EndComparator.instance );
             entry.setValue( updated );
         }
+        Arrays.sort( indices );
 
         this.sortedDescriptors = result;
         this.sortedStartPositions = indices;
