@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -45,6 +48,9 @@ import org.w3c.dom.NodeList;
 public class AbstractWordUtils
 {
     static final String EMPTY = "";
+
+    private static final POILogger logger = POILogFactory
+            .getLogger( AbstractWordUtils.class );
 
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
@@ -375,6 +381,23 @@ public class AbstractWordUtils
             return "justify";
         }
         return "";
+    }
+
+    public static String getLanguage( int languageCode )
+    {
+        switch ( languageCode )
+        {
+        case 1033:
+            return "en-us";
+        case 1049:
+            return "ru-ru";
+        case 2057:
+            return "en-uk";
+        default:
+            logger.log( POILogger.WARN, "Uknown or unmapped language code: ",
+                    Integer.valueOf( languageCode ) );
+            return "";
+        }
     }
 
     public static String getListItemNumberLabel( int number, int format )

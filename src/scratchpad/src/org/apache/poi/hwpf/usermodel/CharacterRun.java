@@ -620,6 +620,10 @@ public final class CharacterRun
     return _props.getBrc();
   }
 
+  public int getLanguageCode() {
+      return _props.getLidDefault();
+  }
+  
   public String toString() {
      String text = text();
      return "CharacterRun of " + text.length() + " characters - " + text; 

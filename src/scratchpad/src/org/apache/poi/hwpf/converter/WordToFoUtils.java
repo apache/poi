@@ -74,6 +74,12 @@ public class WordToFoUtils extends AbstractWordUtils
         {
             inline.setAttribute( "color", getColor24( characterRun.getIco24() ) );
         }
+        if ( characterRun.getLanguageCode() != 0 )
+        {
+            final String language = getLanguage( characterRun.getLanguageCode() );
+            if ( isNotEmpty( language ) )
+                inline.setAttribute( "language", language );
+        }
         if ( characterRun.isCapitalized() )
         {
             inline.setAttribute( "text-transform", "uppercase" );
@@ -273,7 +279,7 @@ public class WordToFoUtils extends AbstractWordUtils
             graphicElement.setAttribute( "clip", "rect(" + rectTop + "pt, "
                     + rectRight + "pt, " + rectBottom + "pt, " + rectLeft
                     + "pt)" );
-            graphicElement.setAttribute( "oveerflow", "hidden" );
+            graphicElement.setAttribute( "overflow", "hidden" );
         }
     }
 
