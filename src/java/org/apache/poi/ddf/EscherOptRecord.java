@@ -21,7 +21,6 @@ package org.apache.poi.ddf;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
@@ -59,15 +58,13 @@ public class EscherOptRecord
         LittleEndian.putShort( data, offset + 2, getRecordId() );
         LittleEndian.putInt( data, offset + 4, getPropertiesSize() );
         int pos = offset + 8;
-        for ( Iterator iterator = properties.iterator(); iterator.hasNext(); )
+        for ( EscherProperty property : properties )
         {
-            EscherProperty escherProperty = (EscherProperty) iterator.next();
-            pos += escherProperty.serializeSimplePart( data, pos );
+            pos += property.serializeSimplePart( data, pos );
         }
-        for ( Iterator iterator = properties.iterator(); iterator.hasNext(); )
+        for ( EscherProperty property : properties )
         {
-            EscherProperty escherProperty = (EscherProperty) iterator.next();
-            pos += escherProperty.serializeComplexPart( data, pos );
+            pos += property.serializeComplexPart( data, pos );
         }
         listener.afterRecordSerialize( pos, getRecordId(), pos - offset, this );
         return pos - offset;
@@ -94,11 +91,11 @@ public class EscherOptRecord
     private int getPropertiesSize()
     {
         int totalSize = 0;
-        for ( Iterator iterator = properties.iterator(); iterator.hasNext(); )
+        for ( EscherProperty property : properties )
         {
-            EscherProperty escherProperty = (EscherProperty) iterator.next();
-            totalSize += escherProperty.getPropertySize();
+            totalSize += property.getPropertySize();
         }
+
         return totalSize;
     }
 
@@ -109,10 +106,10 @@ public class EscherOptRecord
     {
         String nl = System.getProperty( "line.separator" );
         StringBuffer propertiesBuf = new StringBuffer();
-        for ( Iterator iterator = properties.iterator(); iterator.hasNext(); )
-            propertiesBuf.append( "    "
-                    + iterator.next().toString()
-                    + nl );
+        for ( EscherProperty property : properties )
+        {
+            propertiesBuf.append( "    " + property.toString() + nl );
+        }
 
         return "org.apache.poi.ddf.EscherOptRecord:" + nl +
                 "  isContainer: " + isContainerRecord() + nl +
@@ -152,13 +149,13 @@ public class EscherOptRecord
      */
     public void sortProperties()
     {
-        Collections.sort( properties, new Comparator()
+        Collections.sort( properties, new Comparator<EscherProperty>()
         {
-            public int compare( Object o1, Object o2 )
+            public int compare( EscherProperty p1, EscherProperty p2 )
             {
-                EscherProperty p1 = (EscherProperty) o1;
-                EscherProperty p2 = (EscherProperty) o2;
-                return Short.valueOf( p1.getPropertyNumber() ).compareTo( Short.valueOf( p2.getPropertyNumber() ) );
+                short s1 = p1.getPropertyNumber();
+                short s2 = p2.getPropertyNumber();
+                return s1 < s2 ? -1 : s1 == s2 ? 0 : 1;
             }
         } );
     }
