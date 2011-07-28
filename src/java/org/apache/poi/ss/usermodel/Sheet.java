@@ -117,6 +117,20 @@ public interface Sheet extends Iterable<Row> {
     boolean isColumnHidden(int columnIndex);
 
     /**
+     * Sets whether the worksheet is displayed from right to left instead of from left to right.
+     *
+     * @param value true for right to left, false otherwise.
+     */
+    public void setRightToLeft(boolean value);
+
+    /**
+     * Whether the text is displayed in right-to-left mode in the window
+     *
+     * @return whether the text is displayed in right-to-left mode in the window
+     */
+    public boolean isRightToLeft();
+
+    /**
      * Set the width (in units of 1/256th of a character width)
      *
      * <p>

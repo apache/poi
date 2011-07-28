@@ -431,6 +431,26 @@ public class SXSSFSheet implements Sheet, Cloneable
     {
         return _sh.isDisplayZeros();
     }
+    
+    /**
+     * Sets whether the worksheet is displayed from right to left instead of from left to right.
+     *
+     * @param value true for right to left, false otherwise.
+     */
+    public void setRightToLeft(boolean value)
+    {
+       _sh.setRightToLeft(value);
+    }
+
+    /**
+     * Whether the text is displayed in right-to-left mode in the window
+     *
+     * @return whether the text is displayed in right-to-left mode in the window
+     */
+    public boolean isRightToLeft()
+    {
+       return _sh.isRightToLeft();
+    }
 
     /**
      * Flag indicating whether the Fit to Page print option is enabled.
