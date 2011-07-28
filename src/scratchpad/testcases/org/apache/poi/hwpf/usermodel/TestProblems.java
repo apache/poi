@@ -534,37 +534,20 @@ public final class TestProblems extends HWPFTestCase {
         HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack( doc1 );
         String text2 = new WordExtractor( doc2 ).getText().trim();
 
-        try
-        {
-            // the text in the saved document has some differences in line
-            // separators but we tolerate that
-            assertEquals( text1.replaceAll( "\n", "" ),
-                    text2.replaceAll( "\n", "" ) );
+        // the text in the saved document has some differences in line
+        // separators but we tolerate that
+        assertEquals( text1.replaceAll( "\n", "" ), text2.replaceAll( "\n", "" ) );
 
-            assertEquals( doc1.getCharacterTable().getTextRuns().size(), doc2
-                    .getCharacterTable().getTextRuns().size() );
+        assertEquals( doc1.getCharacterTable().getTextRuns().size(), doc2
+                .getCharacterTable().getTextRuns().size() );
 
-            List<PlexOfField> expectedFields = doc1.getFieldsTables()
-                    .getFieldsPLCF( FieldsDocumentPart.MAIN );
-            List<PlexOfField> actualFields = doc2.getFieldsTables()
-                    .getFieldsPLCF( FieldsDocumentPart.MAIN );
-            assertEquals( expectedFields.size(), actualFields.size() );
+        List<PlexOfField> expectedFields = doc1.getFieldsTables()
+                .getFieldsPLCF( FieldsDocumentPart.MAIN );
+        List<PlexOfField> actualFields = doc2.getFieldsTables().getFieldsPLCF(
+                FieldsDocumentPart.MAIN );
+        assertEquals( expectedFields.size(), actualFields.size() );
 
-            assertTableStructures( doc1.getRange(), doc2.getRange() );
-
-            // FileOutputStream fileOutputStream = new FileOutputStream(
-            // "test.doc" );
-            // doc1.write( fileOutputStream );
-            // fileOutputStream.close();
-
-            // not fixed yet, but still better
-            // fixed( "47286" );
-        }
-        catch ( AssertionFailedError exc )
-        {
-            // expected
-            exc.toString();
-        }
+        assertTableStructures( doc1.getRange(), doc2.getRange() );
     }
 
     /**
