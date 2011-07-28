@@ -46,7 +46,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -713,6 +712,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return getWorkbook().getCellStyleAt((short)(idx == -1 ? 0 : idx));
     }
 
+    /**
+     * Sets whether the worksheet is displayed from right to left instead of from left to right.
+     *
+     * @param value true for right to left, false otherwise.
+     */
+    public void setRightToLeft(boolean value)
+    {
+       CTSheetView view = getDefaultSheetView();
+       view.setRightToLeft(value);
+    }
+
+    /**
+     * Whether the text is displayed in right-to-left mode in the window
+     *
+     * @return whether the text is displayed in right-to-left mode in the window
+     */
+    public boolean isRightToLeft()
+    {
+       CTSheetView view = getDefaultSheetView();
+       return view == null ? false : view.getRightToLeft();
+    }
 
     /**
      * Get whether to display the guts or not,

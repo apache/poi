@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">Support isRightToLeft and setRightToLeft on the common spreadsheet Sheet interface, as per existing HSSF support</action>
            <action dev="poi-developers" type="fix">50209 - Fixed evaluation of Subtotals to ignore nested subtotals</action>
            <action dev="poi-developers" type="fix">44431 - HWPFDocument.write destroys fields</action>
            <action dev="poi-developers" type="fix">50401 - fixed EscherProperty to return property name instead of 'unknown' for complex properties </action>
