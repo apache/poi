@@ -160,12 +160,16 @@ public class EscherOptRecord
         } );
     }
 
-    public EscherProperty lookup(int propId)
+    public <T extends EscherProperty> T lookup( int propId )
     {
-        for (EscherProperty prop : properties)
+        for ( EscherProperty prop : properties )
         {
-            if (prop.getPropertyNumber() == propId)
-                return prop;
+            if ( prop.getPropertyNumber() == propId )
+            {
+                @SuppressWarnings( "unchecked" )
+                final T result = (T) prop;
+                return result;
+            }
         }
         return null;
     }

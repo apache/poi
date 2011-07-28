@@ -254,12 +254,16 @@ public final class EscherContainerRecord extends EscherRecord {
                 + children.toString();
     }
 
-    public EscherSpRecord getChildById(short recordId) {
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
-            if (r.getRecordId() == recordId)
-                return (EscherSpRecord) r;
+    public <T extends EscherRecord> T getChildById( short recordId )
+    {
+        for ( EscherRecord childRecord : _childRecords )
+        {
+            if ( childRecord.getRecordId() == recordId )
+            {
+                @SuppressWarnings( "unchecked" )
+                final T result = (T) childRecord;
+                return result;
+            }
         }
         return null;
     }
