@@ -168,26 +168,26 @@ public final class Picture extends PictureDescriptor
      return dataBlockStartOfsset;
   }
 
-  /**
-   * @return picture's content as byte array
-   */
-  public byte[] getContent()
-  {
-    if (content == null || content.length<=0)
+    /**
+     * @return picture's content as byte array
+     */
+    public byte[] getContent()
     {
-      fillImageContent();
+        fillImageContent();
+        return content;
     }
-    return content;
-  }
 
-  public byte[] getRawContent()
-  {
-    if (rawContent == null || rawContent.length <= 0)
+    /**
+     * Returns picture's content as it stored in Word file, i.e. possibly in
+     * compressed form.
+     * 
+     * @return picture's content as it stored in Word file
+     */
+    public byte[] getRawContent()
     {
-      fillRawImageContent();
+        fillRawImageContent();
+        return rawContent;
     }
-    return rawContent;
-  }
 
   /**
    *
@@ -304,12 +304,10 @@ public final class Picture extends PictureDescriptor
 
     public PictureType suggestPictureType()
     {
-        fillImageContent();
-
+        final byte[] imageContent = getContent();
         for ( PictureType pictureType : PictureType.values() )
             for ( byte[] signature : pictureType.getSignatures() )
-                if ( matchSignature( _dataStream, signature,
-                        pictureBytesStartOffset ) )
+                if ( matchSignature( imageContent, signature, 0 ) )
                     return pictureType;
 
         // TODO: DIB, PICT
@@ -355,12 +353,18 @@ public final class Picture extends PictureDescriptor
 
   private void fillRawImageContent()
   {
+        if ( rawContent != null && rawContent.length > 0 )
+            return;
+
     this.rawContent = new byte[size];
     System.arraycopy(_dataStream, pictureBytesStartOffset, rawContent, 0, size);
   }
 
   private void fillImageContent()
   {
+        if ( content != null && content.length > 0 )
+            return;
+
     byte[] rawContent = getRawContent();
 
     // HACK: Detect compressed images.  In reality there should be some way to determine
