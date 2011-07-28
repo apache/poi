@@ -95,6 +95,8 @@ public abstract class AbstractWordConverter
 
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
+    private PicturesManager fileManager;
+
     private FontReplacer fontReplacer = new DefaultFontReplacer();
 
     protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
@@ -108,6 +110,11 @@ public abstract class AbstractWordConverter
     }
 
     public abstract Document getDocument();
+
+    public PicturesManager getFileManager()
+    {
+        return fileManager;
+    }
 
     public FontReplacer getFontReplacer()
     {
@@ -509,6 +516,25 @@ public abstract class AbstractWordConverter
         return;
     }
 
+    protected Field processDeadField( HWPFDocumentCore wordDocument,
+            Range charactersRange, int currentTableLevel, int startOffset,
+            Element currentBlock )
+    {
+        if ( !( wordDocument instanceof HWPFDocument ) )
+            return null;
+
+        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
+        Field field = hwpfDocument.getFields().getFieldByStartOffset(
+                FieldsDocumentPart.MAIN, startOffset );
+        if ( field == null )
+            return null;
+
+        processField( hwpfDocument, charactersRange, currentTableLevel, field,
+                currentBlock );
+
+        return field;
+    }
+
     public void processDocument( HWPFDocumentCore wordDocument )
     {
         final SummaryInformation summaryInformation = wordDocument
@@ -593,25 +619,6 @@ public abstract class AbstractWordConverter
                 + " with unsupported type or format" );
         processCharacters( hwpfDocument, currentTableLevel,
                 field.secondSubrange( parentRange ), currentBlock );
-    }
-
-    protected Field processDeadField( HWPFDocumentCore wordDocument,
-            Range charactersRange, int currentTableLevel, int startOffset,
-            Element currentBlock )
-    {
-        if ( !( wordDocument instanceof HWPFDocument ) )
-            return null;
-
-        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
-        Field field = hwpfDocument.getFields().getFieldByStartOffset(
-                FieldsDocumentPart.MAIN, startOffset );
-        if ( field == null )
-            return null;
-
-        processField( hwpfDocument, charactersRange, currentTableLevel, field,
-                currentBlock );
-
-        return field;
     }
 
     protected abstract void processFootnoteAutonumbered( HWPFDocument doc,
@@ -766,6 +773,11 @@ public abstract class AbstractWordConverter
 
     protected abstract void processTable( HWPFDocumentCore wordDocument,
             Element flow, Table table );
+
+    public void setFileManager( PicturesManager fileManager )
+    {
+        this.fileManager = fileManager;
+    }
 
     public void setFontReplacer( FontReplacer fontReplacer )
     {

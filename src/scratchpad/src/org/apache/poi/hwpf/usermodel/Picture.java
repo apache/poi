@@ -44,17 +44,27 @@ public final class Picture extends PictureDescriptor
   static final int PICF_SHAPE_OFFSET = 0xE;
   static final int UNKNOWN_HEADER_SIZE = 0x49;
 
-  public static final byte[] GIF = new byte[]{'G', 'I', 'F'};
-  public static final byte[] PNG = new byte[]{ (byte)0x89, 0x50, 0x4E, 0x47,0x0D,0x0A,0x1A,0x0A};
-  public static final byte[] JPG = new byte[]{(byte)0xFF, (byte)0xD8};
-  public static final byte[] BMP = new byte[]{'B', 'M'};
-  public static final byte[] TIFF = new byte[]{0x49, 0x49, 0x2A, 0x00};
-  public static final byte[] TIFF1 = new byte[]{0x4D, 0x4D, 0x00, 0x2A};
+    @Deprecated
+    public static final byte[] GIF = PictureType.GIF.getSignatures()[0];
+    @Deprecated
+    public static final byte[] PNG = PictureType.PNG.getSignatures()[0];
+    @Deprecated
+    public static final byte[] JPG = PictureType.JPEG.getSignatures()[0];
+    @Deprecated
+    public static final byte[] BMP = PictureType.BMP.getSignatures()[0];
+    @Deprecated
+    public static final byte[] TIFF = PictureType.TIFF.getSignatures()[0];
+    @Deprecated
+    public static final byte[] TIFF1 = PictureType.TIFF.getSignatures()[1];
 
-  public static final byte[] EMF = { 0x01, 0x00, 0x00, 0x00 };
-  public static final byte[] WMF1 = { (byte)0xD7, (byte)0xCD, (byte)0xC6, (byte)0x9A, 0x00, 0x00 };
-  public static final byte[] WMF2 = { 0x01, 0x00, 0x09, 0x00, 0x00, 0x03 }; // Windows 3.x
-  // TODO: DIB, PICT
+    @Deprecated
+    public static final byte[] EMF = PictureType.EMF.getSignatures()[0];
+    @Deprecated
+    public static final byte[] WMF1 = PictureType.WMF.getSignatures()[0];
+    // Windows 3.x
+    @Deprecated
+    public static final byte[] WMF2 = PictureType.WMF.getSignatures()[1];
+    // TODO: DIB, PICT
 
   public static final byte[] IHDR = new byte[]{'I', 'H', 'D', 'R'};
 
@@ -103,16 +113,23 @@ public final class Picture extends PictureDescriptor
       this.size = _dataStream.length;
   }
 
-  private void fillWidthHeight()
-  {
-    String ext = suggestFileExtension();
-    // trying to extract width and height from pictures content:
-    if ("jpg".equalsIgnoreCase(ext)) {
-      fillJPGWidthHeight();
-    } else if ("png".equalsIgnoreCase(ext)) {
-      fillPNGWidthHeight();
+    private void fillWidthHeight()
+    {
+        PictureType pictureType = suggestPictureType();
+        // trying to extract width and height from pictures content:
+        switch ( pictureType )
+        {
+        case JPEG:
+            fillJPGWidthHeight();
+            break;
+        case PNG:
+            fillPNGWidthHeight();
+            break;
+        default:
+            // unsupported;
+            break;
+        }
     }
-  }
 
   /**
    * Tries to suggest a filename: hex representation of picture structure offset in "Data" stream plus extension that
@@ -265,76 +282,39 @@ public final class Picture extends PictureDescriptor
     }
 
     /**
-   * tries to suggest extension for picture's file by matching signatures of popular image formats to first bytes
-   * of picture's contents
-   * @return suggested file extension
-   */
-  public String suggestFileExtension()
-  {
-    String extension = suggestFileExtension(_dataStream, pictureBytesStartOffset);
-    if ("".equals(extension)) {
-      // May be compressed.  Get the uncompressed content and inspect that.
-      extension = suggestFileExtension(getContent(), 0);
+     * tries to suggest extension for picture's file by matching signatures of
+     * popular image formats to first bytes of picture's contents
+     * 
+     * @return suggested file extension
+     */
+    public String suggestFileExtension()
+    {
+        return suggestPictureType().getExtension();
     }
-    return extension;
-  }
 
-  /**
-   * Returns the mime type for the image
-   */
-  public String getMimeType() {
-     String extension = suggestFileExtension();
-     if("jpg".equals(extension)) {
-        return "image/jpeg";
-     }
-     if("png".equals(extension)) {
-        return "image/png";
-     }
-     if("gif".equals(extension)) {
-        return "image/gif";
-     }
-     if("bmp".equals(extension)) {
-        return "image/bmp";
-     }
-     if("tiff".equals(extension)) {
-        return "image/tiff";
-     }
-     if("wmf".equals(extension)) {
-        return "image/x-wmf";
-     }
-     if("emf".equals(extension)) {
-        return "image/x-emf";
-     }
-     return "image/unknown";
-  }
+    /**
+     * Returns the MIME type for the image
+     * 
+     * @return MIME-type for known types of image or "image/unknown" if unknown
+     */
+    public String getMimeType()
+    {
+        return suggestPictureType().getMime();
+    }
 
-
-  private String suggestFileExtension(byte[] _dataStream, int pictureBytesStartOffset)
-  {
-    if (matchSignature(_dataStream, JPG, pictureBytesStartOffset)) {
-      return "jpg";
-    } else if (matchSignature(_dataStream, PNG, pictureBytesStartOffset)) {
-      return "png";
-    } else if (matchSignature(_dataStream, GIF, pictureBytesStartOffset)) {
-      return "gif";
-    } else if (matchSignature(_dataStream, BMP, pictureBytesStartOffset)) {
-      return "bmp";
-    } else if (matchSignature(_dataStream, TIFF, pictureBytesStartOffset) ||
-               matchSignature(_dataStream, TIFF1, pictureBytesStartOffset)) {
-      return "tiff";
-	} else {
-        // Need to load the image content before we can try the following tests
+    public PictureType suggestPictureType()
+    {
         fillImageContent();
 
-        if (matchSignature(content, WMF1, 0) || matchSignature(content, WMF2, 0)) {
-            return "wmf";
-        } else if (matchSignature(content, EMF, 0)) {
-            return "emf";
-        }
+        for ( PictureType pictureType : PictureType.values() )
+            for ( byte[] signature : pictureType.getSignatures() )
+                if ( matchSignature( _dataStream, signature,
+                        pictureBytesStartOffset ) )
+                    return pictureType;
+
+        // TODO: DIB, PICT
+        return PictureType.UNKNOWN;
     }
-    // TODO: DIB, PICT
-    return "";
-  }
 
   private static boolean matchSignature(byte[] dataStream, byte[] signature, int pictureBytesOffset)
   {

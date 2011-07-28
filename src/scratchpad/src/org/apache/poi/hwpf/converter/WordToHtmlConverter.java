@@ -315,6 +315,18 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processImage( Element currentBlock, boolean inlined,
             Picture picture )
     {
+        PicturesManager fileManager = getFileManager();
+        if ( fileManager != null )
+        {
+            String url = fileManager.savePicture( picture );
+
+            if ( WordToHtmlUtils.isNotEmpty( url ) )
+            {
+                processImage( currentBlock, inlined, picture, url );
+                return;
+            }
+        }
+
         // no default implementation -- skip
         currentBlock.appendChild( htmlDocumentFacade.document
                 .createComment( "Image link to '"
