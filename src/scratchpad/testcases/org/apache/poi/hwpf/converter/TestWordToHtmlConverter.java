@@ -29,9 +29,8 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.PictureType;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
@@ -62,16 +61,21 @@ public class TestWordToHtmlConverter extends TestCase
 
         Document newDocument = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder().newDocument();
-        WordToHtmlConverter wordToHtmlConverter = !emulatePictureStorage ? new WordToHtmlConverter(
-                newDocument ) : new WordToHtmlConverter( newDocument )
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
+                newDocument );
+
+        if ( emulatePictureStorage )
         {
-            @Override
-            protected void processImage( Element currentBlock, boolean inlined,
-                    Picture picture )
+            wordToHtmlConverter.setPicturesManager( new PicturesManager()
             {
-                processImage( currentBlock, inlined, picture, "picture.bin" );
-            }
-        };
+                public String savePicture( byte[] content,
+                        PictureType pictureType, String suggestedName )
+                {
+                    return suggestedName;
+                }
+            } );
+        }
+
         wordToHtmlConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -172,20 +176,6 @@ public class TestWordToHtmlConverter extends TestCase
         assertContains( result, "<!--Image link to '0.emf' can be here-->" );
     }
 
-    public void testPicture() throws Exception
-    {
-        String result = getHtmlText( "picture.doc", true );
-
-        // picture
-        assertContains( result, "src=\"picture.bin\"" );
-        // visible size
-        assertContains( result, "width:3.1305554in;height:1.7250001in;" );
-        // shift due to crop
-        assertContains( result, "left:-0.09375;top:-0.25694445;" );
-        // size without crop
-        assertContains( result, "width:3.4125in;height:2.325in;" );
-    }
-
     public void testHyperlink() throws Exception
     {
         String result = getHtmlText( "hyperlink.doc" );
@@ -201,14 +191,6 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "innertable.doc" );
     }
 
-    public void testTableMerges() throws Exception
-    {
-        String result = getHtmlText( "table-merges.doc" );
-        
-        assertContains( result, "<td class=\"td1\" colspan=\"3\">" );
-        assertContains( result, "<td class=\"td2\" colspan=\"2\">" );
-    }
-
     public void testO_kurs_doc() throws Exception
     {
         getHtmlText( "o_kurs.doc" );
@@ -221,5 +203,34 @@ public class TestWordToHtmlConverter extends TestCase
         assertContains( result, "<a href=\"#userref\">" );
         assertContains( result, "<a name=\"userref\">" );
         assertContains( result, "1" );
+    }
+
+    public void testPicture() throws Exception
+    {
+        String result = getHtmlText( "picture.doc", true );
+
+        // picture
+        assertContains( result, "src=\"0.emf\"" );
+        // visible size
+        assertContains( result, "width:3.1305554in;height:1.7250001in;" );
+        // shift due to crop
+        assertContains( result, "left:-0.09375;top:-0.25694445;" );
+        // size without crop
+        assertContains( result, "width:3.4125in;height:2.325in;" );
+    }
+
+    public void testPicturesEscher() throws Exception
+    {
+        String result = getHtmlText( "pictures_escher.doc", true );
+        assertContains( result, "<img src=\"s0.PNG\">" );
+        assertContains( result, "<img src=\"s808.PNG\">" );
+    }
+
+    public void testTableMerges() throws Exception
+    {
+        String result = getHtmlText( "table-merges.doc" );
+
+        assertContains( result, "<td class=\"td1\" colspan=\"3\">" );
+        assertContains( result, "<td class=\"td2\" colspan=\"2\">" );
     }
 }

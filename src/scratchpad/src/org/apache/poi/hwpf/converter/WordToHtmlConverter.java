@@ -34,6 +34,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -60,6 +61,22 @@ import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
  */
 public class WordToHtmlConverter extends AbstractWordConverter
 {
+
+    /**
+     * Holds properties values, applied to current <tt>p</tt> element. Those
+     * properties shall not be doubled in children <tt>span</tt> elements.
+     */
+    private static class BlockProperies
+    {
+        final String pFontName;
+        final int pFontSize;
+
+        public BlockProperies( String pFontName, int pFontSize )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
+        }
+    }
 
     private static final POILogger logger = POILogFactory
             .getLogger( WordToHtmlConverter.class );
@@ -254,6 +271,15 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
+    protected void processDrawnObject( HWPFDocument doc,
+            CharacterRun characterRun, OfficeDrawing officeDrawing,
+            String path, Element block )
+    {
+        Element img = htmlDocumentFacade.createImage( path );
+        block.appendChild( img );
+    }
+
+    @Override
     protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
             Element block, Range endnoteTextRange )
     {
@@ -302,7 +328,10 @@ public class WordToHtmlConverter extends AbstractWordConverter
         PicturesManager fileManager = getPicturesManager();
         if ( fileManager != null )
         {
-            String url = fileManager.savePicture( picture );
+            String url = fileManager
+                    .savePicture( picture.getContent(),
+                            picture.suggestPictureType(),
+                            picture.suggestFullFileName() );
 
             if ( WordToHtmlUtils.isNotEmpty( url ) )
             {
@@ -388,8 +417,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                                     + "in;overflow:hidden;" ) );
             root.appendChild( inner );
 
-            Element image = htmlDocumentFacade.document.createElement( "img" );
-            image.setAttribute( "src", imageSourcePath );
+            Element image = htmlDocumentFacade.createImage( imageSourcePath );
             image.setAttribute( "class", htmlDocumentFacade
                     .getOrCreateCssClass( image.getTagName(), "i",
                             "position:absolute;left:-" + cropLeft + ";top:-"
@@ -401,8 +429,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
         else
         {
-            root = htmlDocumentFacade.document.createElement( "img" );
-            root.setAttribute( "src", imageSourcePath );
+            root = htmlDocumentFacade.createImage( imageSourcePath );
             root.setAttribute( "style", "width:" + imageWidth + "in;height:"
                     + imageHeight + "in;vertical-align:text-bottom;" );
         }
@@ -688,22 +715,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
             logger.log( POILogger.WARN, "Table without body starting at [",
                     Integer.valueOf( table.getStartOffset() ), "; ",
                     Integer.valueOf( table.getEndOffset() ), ")" );
-        }
-    }
-
-    /**
-     * Holds properties values, applied to current <tt>p</tt> element. Those
-     * properties shall not be doubled in children <tt>span</tt> elements.
-     */
-    private static class BlockProperies
-    {
-        final String pFontName;
-        final int pFontSize;
-
-        public BlockProperies( String pFontName, int pFontSize )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
         }
     }
 

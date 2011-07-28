@@ -310,8 +310,8 @@ public final class HWPFDocument extends HWPFDocumentCore
     _officeArts = new ShapesTable(_tableStream, _fib);
 
     // And escher pictures
-    _officeDrawingsHeaders = new OfficeDrawingsImpl( _fspaHeaders, _escherRecordHolder );
-    _officeDrawingsMain = new OfficeDrawingsImpl( _fspaMain , _escherRecordHolder);
+    _officeDrawingsHeaders = new OfficeDrawingsImpl( _fspaHeaders, _escherRecordHolder, _mainStream );
+    _officeDrawingsMain = new OfficeDrawingsImpl( _fspaMain , _escherRecordHolder, _mainStream);
 
     _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _cpSplit);
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
