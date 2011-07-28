@@ -17,14 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.io.PrintWriter;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Escher container records store other escher records as children.
@@ -224,42 +224,34 @@ public final class EscherContainerRecord extends EscherRecord {
 
     public String toString()
     {
-        return toString("");
-    }
-    public String toString(String indent)
-    {
         String nl = System.getProperty( "line.separator" );
 
         StringBuffer children = new StringBuffer();
-        if (_childRecords.size() > 0) {
+        if ( _childRecords.size() > 0 )
+        {
             children.append( "  children: " + nl );
 
             int count = 0;
-            for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext(); )
+            for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator
+                    .hasNext(); )
             {
-                String newIndent = indent + "   ";
-
                 EscherRecord record = iterator.next();
-                children.append(newIndent + "Child " + count + ":" + nl);
-
-                if(record instanceof EscherContainerRecord) {
-                    EscherContainerRecord ecr = (EscherContainerRecord)record;
-                    children.append( ecr.toString(newIndent));
-                } else {
-                    children.append( record.toString() );
-                }
+                children.append( "   Child " + count + ":" + nl );
+                String childResult = String.valueOf( record );
+                childResult = childResult.replaceAll( "\n", "\n    " );
+                children.append( "    " );
+                children.append( childResult );
+                children.append( nl );
                 count++;
             }
         }
 
-        return
-            indent + getClass().getName() + " (" + getRecordName() + "):" + nl +
-            indent + "  isContainer: " + isContainerRecord() + nl +
-            indent + "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
-            indent + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-            indent + "  numchildren: " + _childRecords.size() + nl +
-            indent + children.toString();
-
+        return getClass().getName() + " (" + getRecordName() + "):" + nl
+                + "  isContainer: " + isContainerRecord() + nl
+                + "  options: 0x" + HexDump.toHex( getOptions() ) + nl
+                + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl
+                + "  numchildren: " + _childRecords.size() + nl
+                + children.toString();
     }
 
     public EscherSpRecord getChildById(short recordId) {
