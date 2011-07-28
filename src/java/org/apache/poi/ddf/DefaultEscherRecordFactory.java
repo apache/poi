@@ -30,11 +30,13 @@ import java.util.Map;
  * @see EscherRecordFactory
  */
 public class DefaultEscherRecordFactory implements EscherRecordFactory {
-    private static Class<?>[] escherRecordClasses = {
-        EscherBSERecord.class, EscherOptRecord.class, EscherClientAnchorRecord.class, EscherDgRecord.class,
-        EscherSpgrRecord.class, EscherSpRecord.class, EscherClientDataRecord.class, EscherDggRecord.class,
-        EscherSplitMenuColorsRecord.class, EscherChildAnchorRecord.class, EscherTextboxRecord.class
-    };
+    private static Class<?>[] escherRecordClasses = { EscherBSERecord.class,
+            EscherOptRecord.class, EscherTertiaryOptRecord.class,
+            EscherClientAnchorRecord.class, EscherDgRecord.class,
+            EscherSpgrRecord.class, EscherSpRecord.class,
+            EscherClientDataRecord.class, EscherDggRecord.class,
+            EscherSplitMenuColorsRecord.class, EscherChildAnchorRecord.class,
+            EscherTextboxRecord.class };
     private static Map<Short, Constructor<? extends EscherRecord>> recordsMap = recordsToMap( escherRecordClasses );
 
     /**
