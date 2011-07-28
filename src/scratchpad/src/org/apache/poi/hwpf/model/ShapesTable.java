@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.Shape;
 
+@Deprecated
 public final class ShapesTable {
         private List<Shape> _shapes;
         private List<Shape> _shapesVisibili;  //holds visible shapes

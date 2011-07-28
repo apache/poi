@@ -38,6 +38,7 @@ import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.Notes;
+import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -64,6 +65,8 @@ public abstract class AbstractWordConverter
             .getLogger( AbstractWordConverter.class );
 
     private static final byte SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE = 2;
+
+    private static final byte SPECCHAR_DRAWN_OBJECT = 8;
 
     private static final char UNICODECHAR_NONBREAKING_HYPHEN = '\u2011';
 
@@ -381,6 +384,13 @@ public abstract class AbstractWordConverter
                     processNoteAnchor( doc, characterRun, block );
                     continue;
                 }
+                if ( text.charAt( 0 ) == SPECCHAR_DRAWN_OBJECT
+                        && ( document instanceof HWPFDocument ) )
+                {
+                    HWPFDocument doc = (HWPFDocument) document;
+                    processDrawnObject( doc, characterRun, block );
+                    continue;
+                }
             }
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
@@ -563,6 +573,23 @@ public abstract class AbstractWordConverter
         {
             processSection( wordDocument, range.getSection( s ), s );
         }
+    }
+
+    protected void processDrawnObject( HWPFDocument doc,
+            CharacterRun characterRun, Element block )
+    {
+        // main?
+        OfficeDrawing officeDrawing = doc.getOfficeDrawingsMain()
+                .getOfficeDrawingAt( characterRun.getStartOffset() );
+        if ( officeDrawing == null )
+        {
+            logger.log( POILogger.WARN, "Characters #" + characterRun
+                    + " references missing drawn object" );
+            return;
+        }
+
+        // TODO: do something :)
+
     }
 
     protected abstract void processEndnoteAutonumbered( HWPFDocument doc,

@@ -17,19 +17,19 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Range;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
@@ -61,7 +61,9 @@ public final class PicturesTable
   private HWPFDocument _document;
   private byte[] _dataStream;
   private byte[] _mainStream;
+  @Deprecated
   private FSPATable _fspa;
+  @Deprecated
   private EscherRecordHolder _dgg;
 
   /** @link dependency
@@ -73,6 +75,7 @@ public final class PicturesTable
    * @param _document
    * @param _dataStream
    */
+  @Deprecated
   public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)
   {
     this._document = _document;
@@ -81,6 +84,14 @@ public final class PicturesTable
     this._fspa = fspa;
     this._dgg = dgg;
   }
+
+    public PicturesTable( HWPFDocument _document, byte[] _dataStream,
+            byte[] _mainStream )
+    {
+        this._document = _document;
+        this._dataStream = _dataStream;
+        this._mainStream = _mainStream;
+    }
 
   /**
    * determines whether specified CharacterRun contains reference to a picture

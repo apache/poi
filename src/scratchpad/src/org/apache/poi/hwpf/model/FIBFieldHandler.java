@@ -80,7 +80,8 @@ public final class FIBFieldHandler
   public static final int PLCDOAHDR = 39;
     // 474 == 0x01DA; 478 == 0x01DE
     public static final int PLCSPAMOM = 40;
-  public static final int PLCSPAHDR = 41;
+    // 482 == 0x01E2; 490 == 0x01E6
+    public static final int PLCSPAHDR = 41;
     public static final int PLCFATNBKF = 42;
     // 498 == 0x01F2; 502 == 0x01F6
     public static final int PLCFATNBKL = 43;

@@ -849,11 +849,34 @@ public final class FileInformationBlock extends FIBAbstractType
         _fieldHandler.setFieldSize( FIBFieldHandler.PLCFFLDTXBX, size );
     }
 
+
+    public int getFSPAPlcfOffset( FSPADocumentPart part )
+    {
+        return _fieldHandler.getFieldOffset( part.getFibFieldsField() );
+    }
+
+    public int getFSPAPlcfLength( FSPADocumentPart part )
+    {
+        return _fieldHandler.getFieldSize( part.getFibFieldsField() );
+    }
+
+    public void setFSPAPlcfOffset( FSPADocumentPart part, int offset )
+    {
+        _fieldHandler.setFieldOffset( part.getFibFieldsField(), offset );
+    }
+
+    public void setFSPAPlcfLength( FSPADocumentPart part, int length )
+    {
+        _fieldHandler.setFieldSize( part.getFibFieldsField(), length );
+    }
+
+    @Deprecated
     public int getFcPlcspaMom()
     {
         return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCSPAMOM);
     }
 
+    @Deprecated
     public int getLcbPlcspaMom()
     {
         return _fieldHandler.getFieldSize(FIBFieldHandler.PLCSPAMOM);
