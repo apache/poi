@@ -261,7 +261,24 @@ public final class TestPictures extends TestCase {
        assertEquals("10a8", picture.suggestFullFileName());
        assertEquals("image/unknown", picture.getMimeType());
     }
-    
+
+    public void testEquation()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "equation.doc" );
+        PicturesTable pictures = doc.getPicturesTable();
+
+        final List<Picture> allPictures = pictures.getAllPictures();
+        assertEquals( 1, allPictures.size() );
+
+        Picture picture = allPictures.get( 0 );
+        assertNotNull( picture );
+        assertEquals( PictureType.EMF, picture.suggestPictureType() );
+        assertEquals( PictureType.EMF.getExtension(),
+                picture.suggestFileExtension() );
+        assertEquals( PictureType.EMF.getMime(), picture.getMimeType() );
+        assertEquals( "0.emf", picture.suggestFullFileName() );
+    }
+
     /**
      * In word you can have floating or fixed pictures.
      * Fixed have a \u0001 in place with an offset to the
