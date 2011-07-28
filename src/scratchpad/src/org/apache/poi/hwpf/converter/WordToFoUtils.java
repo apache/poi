@@ -234,30 +234,30 @@ public class WordToFoUtils extends AbstractWordUtils
     public static void setPictureProperties( Picture picture,
             Element graphicElement )
     {
-        final int aspectRatioX = picture.getAspectRatioX();
-        final int aspectRatioY = picture.getAspectRatioY();
+        final int horizontalScale = picture.getHorizontalScalingFactor();
+        final int verticalScale = picture.getVerticalScalingFactor();
 
-        if ( aspectRatioX > 0 )
+        if ( horizontalScale > 0 )
         {
             graphicElement
                     .setAttribute( "content-width", ( ( picture.getDxaGoal()
-                            * aspectRatioX / 100 ) / TWIPS_PER_PT )
+                            * horizontalScale / 1000 ) / TWIPS_PER_PT )
                             + "pt" );
         }
         else
             graphicElement.setAttribute( "content-width",
                     ( picture.getDxaGoal() / TWIPS_PER_PT ) + "pt" );
 
-        if ( aspectRatioY > 0 )
+        if ( verticalScale > 0 )
             graphicElement
                     .setAttribute( "content-height", ( ( picture.getDyaGoal()
-                            * aspectRatioY / 100 ) / TWIPS_PER_PT )
+                            * verticalScale / 1000 ) / TWIPS_PER_PT )
                             + "pt" );
         else
             graphicElement.setAttribute( "content-height",
                     ( picture.getDyaGoal() / TWIPS_PER_PT ) + "pt" );
 
-        if ( aspectRatioX <= 0 || aspectRatioY <= 0 )
+        if ( horizontalScale <= 0 || verticalScale <= 0 )
         {
             graphicElement.setAttribute( "scaling", "uniform" );
         }

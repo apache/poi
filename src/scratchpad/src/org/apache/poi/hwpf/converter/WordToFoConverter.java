@@ -359,12 +359,32 @@ public class WordToFoConverter extends AbstractWordConverter
      *            HWPF object, contained picture data and properties
      */
     protected void processImage( Element currentBlock, boolean inlined,
-            Picture picture )
-    {
+            Picture picture ) {
+        PicturesManager fileManager = getFileManager();
+        if ( fileManager != null )
+        {
+            String url = fileManager.savePicture( picture );
+
+            if ( WordToFoUtils.isNotEmpty( url ) )
+            {
+                processImage( currentBlock, inlined, picture, url );
+                return;
+            }
+        }
+
         // no default implementation -- skip
-        currentBlock.appendChild( foDocumentFacade.getDocument().createComment(
-                "Image link to '" + picture.suggestFullFileName()
-                        + "' can be here" ) );
+        currentBlock.appendChild( foDocumentFacade.document
+                .createComment( "Image link to '"
+                        + picture.suggestFullFileName() + "' can be here" ) );
+    }
+
+    protected void processImage( Element currentBlock, boolean inlined,
+            Picture picture, String url )
+    {
+        final Element externalGraphic = foDocumentFacade
+                .createExternalGraphic( url );
+        WordToFoUtils.setPictureProperties( picture, externalGraphic );
+        currentBlock.appendChild( externalGraphic );
     }
 
     @Override
