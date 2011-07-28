@@ -20,7 +20,6 @@ package org.apache.poi.ddf;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
@@ -95,35 +94,38 @@ public final class TestEscherContainerRecord extends TestCase {
 				   "  numchildren: 1" + nl +
 				   "  children: " + nl +
 				   "   Child 0:" + nl +
-				   "org.apache.poi.ddf.EscherOptRecord:" + nl +
-				   "  isContainer: false" + nl +
-				   "  options: 0x0003" + nl +
-				   "  recordId: 0xF00B" + nl +
-				   "  numchildren: 0" + nl +
-				   "  properties:" + nl;
+				   "    org.apache.poi.ddf.EscherOptRecord:" + nl +
+				   "      isContainer: false" + nl +
+				   "      options: 0x0003" + nl +
+				   "      recordId: 0xF00B" + nl +
+				   "      numchildren: 0" + nl +
+				   "      properties:" + nl +
+				   "    " + nl;
 		assertEquals(expected, r.toString());
 
 		r.addChildRecord(r2);
 		expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
-				   "  isContainer: true" + nl +
-				   "  options: 0x000F" + nl +
-				   "  recordId: 0xF004" + nl +
-				   "  numchildren: 2" + nl +
-				   "  children: " + nl +
-				   "   Child 0:" + nl +
-				   "org.apache.poi.ddf.EscherOptRecord:" + nl +
-				   "  isContainer: false" + nl +
-				   "  options: 0x0003" + nl +
-				   "  recordId: 0xF00B" + nl +
-				   "  numchildren: 0" + nl +
-				   "  properties:" + nl +
-				   "   Child 1:" + nl +
-				   "org.apache.poi.ddf.EscherOptRecord:" + nl +
-				   "  isContainer: false" + nl +
-				   "  options: 0x0003" + nl +
-				   "  recordId: 0xF00B" + nl +
-				   "  numchildren: 0" + nl +
-				   "  properties:" + nl;
+				"  isContainer: true" + nl +
+				"  options: 0x000F" + nl +
+				"  recordId: 0xF004" + nl +
+				"  numchildren: 2" + nl +
+				"  children: " + nl +
+				"   Child 0:" + nl +
+				"    org.apache.poi.ddf.EscherOptRecord:" + nl +
+				"      isContainer: false" + nl +
+				"      options: 0x0003" + nl +
+				"      recordId: 0xF00B" + nl +
+				"      numchildren: 0" + nl +
+				"      properties:" + nl +
+				"    " + nl +
+				"   Child 1:" + nl +
+				"    org.apache.poi.ddf.EscherOptRecord:" + nl +
+				"      isContainer: false" + nl +
+				"      options: 0x0003" + nl +
+				"      recordId: 0xF00B" + nl +
+				"      numchildren: 0" + nl +
+				"      properties:" + nl +
+				"    " + nl;
 		assertEquals(expected, r.toString());
 	}
 
