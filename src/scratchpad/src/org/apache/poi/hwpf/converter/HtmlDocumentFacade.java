@@ -113,6 +113,13 @@ public class HtmlDocumentFacade
         return basicLink;
     }
 
+    public Element createImage( String src )
+    {
+        Element result = document.createElement( "img" );
+        result.setAttribute( "src", src );
+        return result;
+    }
+
     public Element createLineBreak()
     {
         return document.createElement( "br" );

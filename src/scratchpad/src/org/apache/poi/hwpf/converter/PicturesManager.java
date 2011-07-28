@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.PictureType;
 
 /**
@@ -35,11 +34,11 @@ public interface PicturesManager
      * {@link PictureType#WMF}. FO (Apache FOP) supports at least PNG and SVG
      * types.
      * 
-     * @param picture
-     *            Word picture
+     * @param content
+     *            picture content
      * @return path to file that can be used as reference in HTML (img's src) of
      *         XLS FO (fo:external-graphic's src) or <tt>null</tt> if image were
      *         not saved and should not be referenced from result HTML / FO.
      */
-    String savePicture( Picture picture );
+    String savePicture( byte[] content, PictureType pictureType, String suggestedName );
 }

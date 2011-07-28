@@ -37,6 +37,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -263,6 +264,16 @@ public class WordToFoConverter extends AbstractWordConverter
     }
 
     @Override
+    protected void processDrawnObject( HWPFDocument doc,
+            CharacterRun characterRun, OfficeDrawing officeDrawing,
+            String path, Element block )
+    {
+        final Element externalGraphic = foDocumentFacade
+                .createExternalGraphic( path );
+        block.appendChild( externalGraphic );
+    }
+
+    @Override
     protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
             Element block, Range endnoteTextRange )
     {
@@ -364,7 +375,10 @@ public class WordToFoConverter extends AbstractWordConverter
         PicturesManager fileManager = getPicturesManager();
         if ( fileManager != null )
         {
-            String url = fileManager.savePicture( picture );
+            String url = fileManager
+                    .savePicture( picture.getContent(),
+                            picture.suggestPictureType(),
+                            picture.suggestFullFileName() );
 
             if ( WordToFoUtils.isNotEmpty( url ) )
             {

@@ -41,6 +41,7 @@ import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.PictureType;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
@@ -578,7 +579,10 @@ public abstract class AbstractWordConverter
     protected void processDrawnObject( HWPFDocument doc,
             CharacterRun characterRun, Element block )
     {
-        // main?
+        if ( getPicturesManager() == null )
+            return;
+
+        // TODO: support headers
         OfficeDrawing officeDrawing = doc.getOfficeDrawingsMain()
                 .getOfficeDrawingAt( characterRun.getStartOffset() );
         if ( officeDrawing == null )
@@ -588,9 +592,21 @@ public abstract class AbstractWordConverter
             return;
         }
 
-        // TODO: do something :)
+        byte[] pictureData = officeDrawing.getPictureData();
+        if ( pictureData == null )
+            // usual shape?
+            return;
 
+        final PictureType type = PictureType.findMatchingType( pictureData );
+        String path = getPicturesManager().savePicture( pictureData, type,
+                "s" + characterRun.getStartOffset() + "." + type );
+
+        processDrawnObject( doc, characterRun, officeDrawing, path, block );
     }
+
+    protected abstract void processDrawnObject( HWPFDocument doc,
+            CharacterRun characterRun, OfficeDrawing officeDrawing,
+            String path, Element block );
 
     protected abstract void processEndnoteAutonumbered( HWPFDocument doc,
             int noteIndex, Element block, Range endnoteTextRange );
