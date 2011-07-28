@@ -155,7 +155,7 @@ public final class HWPFLister
 
             if ( "--bookmarks".equals( arg ) )
                 outputBookmarks = true;
-            if ( "--eschaer".equals( arg ) )
+            if ( "--escher".equals( arg ) )
                 outputEscher = true;
             if ( "--fields".equals( arg ) )
                 outputFields = true;
@@ -351,8 +351,8 @@ public final class HWPFLister
             System.out.println( "Word 95 not supported so far" );
             return;
         }
-        System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
 
+        System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
     }
 
     public void dumpFIB()
@@ -392,11 +392,12 @@ public final class HWPFLister
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-            System.out.println( "=== Document part: MAIN ===" );
-            for ( OfficeDrawing officeDrawing : document.getOfficeDrawingsMain().getOfficeDrawings() )
-            {
-                System.out.println( officeDrawing );
-            }
+        System.out.println( "=== Document part: MAIN ===" );
+        for ( OfficeDrawing officeDrawing : document.getOfficeDrawingsMain()
+                .getOfficeDrawings() )
+        {
+            System.out.println( officeDrawing );
+        }
     }
 
     public void dumpPapx( boolean withProperties ) throws Exception
