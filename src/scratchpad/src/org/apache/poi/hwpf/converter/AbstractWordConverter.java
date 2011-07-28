@@ -95,9 +95,9 @@ public abstract class AbstractWordConverter
 
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
-    private PicturesManager fileManager;
-
     private FontReplacer fontReplacer = new DefaultFontReplacer();
+
+    private PicturesManager picturesManager;
 
     protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
     {
@@ -110,11 +110,6 @@ public abstract class AbstractWordConverter
     }
 
     public abstract Document getDocument();
-
-    public PicturesManager getFileManager()
-    {
-        return fileManager;
-    }
 
     public FontReplacer getFontReplacer()
     {
@@ -156,6 +151,11 @@ public abstract class AbstractWordConverter
             count++;
         }
         return count;
+    }
+
+    public PicturesManager getPicturesManager()
+    {
+        return picturesManager;
     }
 
     protected int getTableCellEdgesIndexSkipCount( Table table, int r,
@@ -774,14 +774,14 @@ public abstract class AbstractWordConverter
     protected abstract void processTable( HWPFDocumentCore wordDocument,
             Element flow, Table table );
 
-    public void setFileManager( PicturesManager fileManager )
-    {
-        this.fileManager = fileManager;
-    }
-
     public void setFontReplacer( FontReplacer fontReplacer )
     {
         this.fontReplacer = fontReplacer;
+    }
+
+    public void setPicturesManager( PicturesManager fileManager )
+    {
+        this.picturesManager = fileManager;
     }
 
     protected int tryDeadField( HWPFDocumentCore wordDocument, Range range,
