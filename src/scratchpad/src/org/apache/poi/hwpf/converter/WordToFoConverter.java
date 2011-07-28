@@ -359,8 +359,9 @@ public class WordToFoConverter extends AbstractWordConverter
      *            HWPF object, contained picture data and properties
      */
     protected void processImage( Element currentBlock, boolean inlined,
-            Picture picture ) {
-        PicturesManager fileManager = getFileManager();
+            Picture picture )
+    {
+        PicturesManager fileManager = getPicturesManager();
         if ( fileManager != null )
         {
             String url = fileManager.savePicture( picture );

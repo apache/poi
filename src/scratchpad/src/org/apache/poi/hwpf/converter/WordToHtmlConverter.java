@@ -61,22 +61,6 @@ import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 public class WordToHtmlConverter extends AbstractWordConverter
 {
 
-    /**
-     * Holds properties values, applied to current <tt>p</tt> element. Those
-     * properties shall not be doubled in children <tt>span</tt> elements.
-     */
-    private static class BlockProperies
-    {
-        final String pFontName;
-        final int pFontSize;
-
-        public BlockProperies( String pFontName, int pFontSize )
-        {
-            this.pFontName = pFontName;
-            this.pFontSize = pFontSize;
-        }
-    }
-
     private static final POILogger logger = POILogFactory
             .getLogger( WordToHtmlConverter.class );
 
@@ -315,7 +299,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processImage( Element currentBlock, boolean inlined,
             Picture picture )
     {
-        PicturesManager fileManager = getFileManager();
+        PicturesManager fileManager = getPicturesManager();
         if ( fileManager != null )
         {
             String url = fileManager.savePicture( picture );
@@ -704,6 +688,22 @@ public class WordToHtmlConverter extends AbstractWordConverter
             logger.log( POILogger.WARN, "Table without body starting at [",
                     Integer.valueOf( table.getStartOffset() ), "; ",
                     Integer.valueOf( table.getEndOffset() ), ")" );
+        }
+    }
+
+    /**
+     * Holds properties values, applied to current <tt>p</tt> element. Those
+     * properties shall not be doubled in children <tt>span</tt> elements.
+     */
+    private static class BlockProperies
+    {
+        final String pFontName;
+        final int pFontSize;
+
+        public BlockProperies( String pFontName, int pFontSize )
+        {
+            this.pFontName = pFontName;
+            this.pFontSize = pFontSize;
         }
     }
 
