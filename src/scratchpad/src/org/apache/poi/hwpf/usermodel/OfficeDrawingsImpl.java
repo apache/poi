@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.ddf.EscherTertiaryOptRecord;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -47,22 +49,6 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         this._fspaTable = fspaTable;
         this._escherRecordHolder = escherRecordHolder;
         this._mainStream = mainStream;
-    }
-
-    private EscherContainerRecord getEscherShapeRecordContainer(
-            final int shapeId )
-    {
-        for ( EscherContainerRecord spContainer : _escherRecordHolder
-                .getSpContainers() )
-        {
-            EscherSpRecord escherSpRecord = spContainer
-                    .getChildById( (short) 0xF00A );
-            if ( escherSpRecord != null
-                    && escherSpRecord.getShapeId() == shapeId )
-                return spContainer;
-        }
-
-        return null;
     }
 
     private EscherBlipRecord getBitmapRecord( int bitmapIndex )
@@ -117,10 +103,94 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         return null;
     }
 
+    private EscherContainerRecord getEscherShapeRecordContainer(
+            final int shapeId )
+    {
+        for ( EscherContainerRecord spContainer : _escherRecordHolder
+                .getSpContainers() )
+        {
+            EscherSpRecord escherSpRecord = spContainer
+                    .getChildById( (short) 0xF00A );
+            if ( escherSpRecord != null
+                    && escherSpRecord.getShapeId() == shapeId )
+                return spContainer;
+        }
+
+        return null;
+    }
+
     private OfficeDrawing getOfficeDrawing( final FSPA fspa )
     {
         return new OfficeDrawing()
         {
+            public HorizontalPositioning getHorizontalPositioning()
+            {
+                int value = getTertiaryPropertyValue(
+                        EscherProperties.GROUPSHAPE__POSH, -1 );
+
+                switch ( value )
+                {
+                case 0:
+                    return HorizontalPositioning.ABSOLUTE;
+                case 1:
+                    return HorizontalPositioning.LEFT;
+                case 2:
+                    return HorizontalPositioning.CENTER;
+                case 3:
+                    return HorizontalPositioning.RIGHT;
+                case 4:
+                    return HorizontalPositioning.INSIDE;
+                case 5:
+                    return HorizontalPositioning.OUTSIDE;
+                }
+
+                return HorizontalPositioning.ABSOLUTE;
+            }
+
+            public HorizontalRelativeElement getHorizontalRelative()
+            {
+                int value = getTertiaryPropertyValue(
+                        EscherProperties.GROUPSHAPE__POSRELH, -1 );
+
+                switch ( value )
+                {
+                case 1:
+                    return HorizontalRelativeElement.MARGIN;
+                case 2:
+                    return HorizontalRelativeElement.PAGE;
+                case 3:
+                    return HorizontalRelativeElement.TEXT;
+                case 4:
+                    return HorizontalRelativeElement.CHAR;
+                }
+
+                return HorizontalRelativeElement.TEXT;
+            }
+
+            public byte[] getPictureData()
+            {
+                EscherContainerRecord shapeDescription = getEscherShapeRecordContainer( getShapeId() );
+                if ( shapeDescription == null )
+                    return null;
+
+                EscherOptRecord escherOptRecord = shapeDescription
+                        .getChildById( EscherOptRecord.RECORD_ID );
+                if ( escherOptRecord == null )
+                    return null;
+
+                EscherSimpleProperty escherProperty = escherOptRecord
+                        .lookup( EscherProperties.BLIP__BLIPTODISPLAY );
+                if ( escherProperty == null )
+                    return null;
+
+                int bitmapIndex = escherProperty.getPropertyValue();
+                EscherBlipRecord escherBlipRecord = getBitmapRecord( bitmapIndex );
+                if ( escherBlipRecord == null )
+                    return null;
+
+                return escherBlipRecord.getPicturedata();
+            }
+
             public int getRectangleBottom()
             {
                 return fspa.getYaBottom();
@@ -146,28 +216,69 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return fspa.getSpid();
             }
 
-            public byte[] getPictureData()
+            private int getTertiaryPropertyValue( int propertyId,
+                    int defaultValue )
             {
                 EscherContainerRecord shapeDescription = getEscherShapeRecordContainer( getShapeId() );
                 if ( shapeDescription == null )
-                    return null;
+                    return defaultValue;
 
-                EscherOptRecord escherOptRecord = shapeDescription
-                        .getChildById( (short) 0xF00B );
-                if ( escherOptRecord == null )
-                    return null;
+                EscherTertiaryOptRecord escherTertiaryOptRecord = shapeDescription
+                        .getChildById( EscherTertiaryOptRecord.RECORD_ID );
+                if ( escherTertiaryOptRecord == null )
+                    return defaultValue;
 
-                EscherSimpleProperty escherProperty = escherOptRecord
-                        .lookup( EscherProperties.BLIP__BLIPTODISPLAY );
+                EscherSimpleProperty escherProperty = escherTertiaryOptRecord
+                        .lookup( propertyId );
                 if ( escherProperty == null )
-                    return null;
+                    return defaultValue;
+                int value = escherProperty.getPropertyValue();
 
-                int bitmapIndex = escherProperty.getPropertyValue();
-                EscherBlipRecord escherBlipRecord = getBitmapRecord( bitmapIndex );
-                if ( escherBlipRecord == null )
-                    return null;
+                return value;
+            }
 
-                return escherBlipRecord.getPicturedata();
+            public VerticalPositioning getVerticalPositioning()
+            {
+                int value = getTertiaryPropertyValue(
+                        EscherProperties.GROUPSHAPE__POSV, -1 );
+
+                switch ( value )
+                {
+                case 0:
+                    return VerticalPositioning.ABSOLUTE;
+                case 1:
+                    return VerticalPositioning.TOP;
+                case 2:
+                    return VerticalPositioning.CENTER;
+                case 3:
+                    return VerticalPositioning.BOTTOM;
+                case 4:
+                    return VerticalPositioning.INSIDE;
+                case 5:
+                    return VerticalPositioning.OUTSIDE;
+                }
+
+                return VerticalPositioning.ABSOLUTE;
+            }
+
+            public VerticalRelativeElement getVerticalRelativeElement()
+            {
+                int value = getTertiaryPropertyValue(
+                        EscherProperties.GROUPSHAPE__POSV, -1 );
+
+                switch ( value )
+                {
+                case 1:
+                    return VerticalRelativeElement.MARGIN;
+                case 2:
+                    return VerticalRelativeElement.PAGE;
+                case 3:
+                    return VerticalRelativeElement.TEXT;
+                case 4:
+                    return VerticalRelativeElement.LINE;
+                }
+
+                return VerticalRelativeElement.TEXT;
             }
 
             @Override

@@ -17,12 +17,119 @@
 package org.apache.poi.hwpf.usermodel;
 
 /**
- * User-friendly interface to office drawing objects
+ * User-friendly interface to office drawing objects.
+ * <p>
+ * Some properties and enumeration constants description are quotes from the
+ * following sources:
+ * <ul>
+ * <li>[MS-ODRAW] — v20110608; Office Drawing Binary File Format; Copyright (c)
+ * 2011 Microsoft Corporation.
+ * </ul>
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public interface OfficeDrawing
 {
+
+    public enum HorizontalPositioning {
+
+        /**
+         * The shape is horizontally offset by an absolute distance from the
+         * page element.
+         */
+        ABSOLUTE,
+
+        /**
+         * The shape is horizontally positioned at the center of the page
+         * element.
+         */
+        CENTER,
+
+        /**
+         * The shape is horizontally positioned like {@link #LEFT} on
+         * odd-numbered pages and like {@link #RIGHT} on even-numbered pages.
+         */
+        INSIDE,
+
+        /**
+         * The shape is horizontally positioned at the left side of the page
+         * element.
+         */
+        LEFT,
+
+        /**
+         * The shape is horizontally positioned like {@link #RIGHT} on
+         * odd-numbered pages and like {@link #LEFT} on even-numbered pages.
+         */
+        OUTSIDE,
+
+        /**
+         * The shape is horizontally positioned at the right side of the page
+         * element.
+         */
+        RIGHT;
+    }
+
+    public enum HorizontalRelativeElement {
+        CHAR, MARGIN, PAGE, TEXT;
+    }
+
+    public enum VerticalPositioning {
+
+        /**
+         * The shape is vertically offset by an absolute distance from the page
+         * element
+         */
+        ABSOLUTE,
+
+        /**
+         * The shape is vertically positioned at the bottom of the page element
+         */
+        BOTTOM,
+
+        /**
+         * The shape is vertically positioned in the center of the page element
+         */
+        CENTER,
+
+        /**
+         * The shape is vertically positioned like msopvTop on odd-numbered
+         * pages and like msopvBottom on even-numbered pages
+         */
+        INSIDE,
+
+        /**
+         * The shape is vertically positioned like {@link #BOTTOM} on
+         * odd-numbered pages and like {@link #TOP} on even-numbered pages
+         */
+        OUTSIDE,
+
+        /**
+         * The shape is vertically positioned at the top of the page element
+         */
+        TOP;
+    }
+
+    public enum VerticalRelativeElement {
+        LINE, MARGIN, PAGE, TEXT;
+    }
+
+    /**
+     * Returns the type of horizontal positioning to use for a shape
+     * 
+     * @return the type of horizontal positioning to use for a shape
+     */
+    public HorizontalPositioning getHorizontalPositioning();
+
+    /**
+     * Specifies a page element relative to which a shape is horizontally
+     * positioned
+     * 
+     * @return a page element relative to which a shape is horizontally
+     *         positioned
+     */
+    public HorizontalRelativeElement getHorizontalRelative();
+
     /**
      * Returns picture data if this shape has (single?) associated picture data
      */
@@ -53,5 +160,20 @@ public interface OfficeDrawing
      * Shape Identifier
      */
     int getShapeId();
+
+    /**
+     * Specifies the type of vertical positioning to use for a shape
+     * 
+     * @return return the type of vertical positioning to use for a shape
+     */
+    public VerticalPositioning getVerticalPositioning();
+
+    /**
+     * Specifies a page element relative to which a shape is vertically
+     * positioned
+     * 
+     * @return a page element relative to which a shape is vertically positioned
+     */
+    public VerticalRelativeElement getVerticalRelativeElement();
 
 }
