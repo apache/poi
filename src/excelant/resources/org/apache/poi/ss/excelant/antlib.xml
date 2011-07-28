@@ -26,5 +26,6 @@ under the License.
     <typedef name="setFormula" classname="org.apache.poi.ss.excelant.ExcelAntSetFormulaCell"/>
     <typedef name="evaluate" classname="org.apache.poi.ss.excelant.ExcelAntEvaluateCell"/>
     <typedef name="udf" classname="org.apache.poi.ss.excelant.ExcelAntUserDefinedFunction"/>
+    <typedef name="handler" classname="org.apache.poi.ss.excelant.ExcelAntHandlerTask"/>
 
 </antlib>
