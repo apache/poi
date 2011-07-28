@@ -23,9 +23,6 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -39,6 +36,8 @@ import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -387,6 +386,8 @@ public class AbstractWordUtils
     {
         switch ( languageCode )
         {
+        case 1024:
+            return EMPTY;
         case 1033:
             return "en-us";
         case 1049:
@@ -396,7 +397,7 @@ public class AbstractWordUtils
         default:
             logger.log( POILogger.WARN, "Uknown or unmapped language code: ",
                     Integer.valueOf( languageCode ) );
-            return "";
+            return EMPTY;
         }
     }
 

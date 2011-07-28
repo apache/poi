@@ -20,6 +20,10 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
 import org.apache.poi.util.LittleEndian;
 
+/**
+ * @deprecated Use {@link OfficeDrawing} instead
+ */
+@Deprecated
 public final class Shape {
         int _id, _left, _right, _top, _bottom;
         /**
