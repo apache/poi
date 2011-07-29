@@ -71,5 +71,31 @@
         <img src="../resources/images/timesheet.jpg" alt="timesheet demo"/>
       </p>
 		</section>
+		<section><title>Conditional Formats</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/ConditionalFormats.java">ConditionalFormats</link>
+        demo is a collection of short examples showing what you can do with Excel conditional formating in POI:
+      </p>
+      <ul>
+          <li>Highlight cells based on their values</li>
+          <li>Highlight a range of cells based on a formula</li>
+          <li>Hide errors</li>
+          <li>Hide the duplicate values</li>
+          <li>Highlight duplicate entries in a column</li>
+          <li>Highlight items that are in a list on the worksheet</li>
+          <li>Highlight payments that are due in the next thirty days</li>
+          <li>Shade alternating rows on the worksheet</li>
+          <li>Shade bands of rows on the worksheet</li>
+      </ul>
+		</section>
+		<section><title>ToHtml</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/html/ToHtml.java">ToHtml</link>
+        example shows how to display a spreadsheet in HTML using the classes for spreadsheet display.
+      </p>
+		</section>
+		<section><title>ToCSV</title>
+      <p> The <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/ToCSV.java">ToCSV</link>
+        example demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV file.        
+      </p>
+		</section>
 	</body>
 </document>
