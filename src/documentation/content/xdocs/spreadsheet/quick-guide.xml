@@ -729,7 +729,7 @@ Examples:
     sheet1.addMergedRegion( region );
 
     // Set the border and border colors.
-    final short borderMediumDashed = HSSFCellStyle.BORDER_MEDIUM_DASHED;
+    final short borderMediumDashed = CellStyle.BORDER_MEDIUM_DASHED;
     RegionUtil.setBorderBottom( borderMediumDashed,
         region, sheet1, wb );
     RegionUtil.setBorderTop( borderMediumDashed,
@@ -748,7 +748,7 @@ Examples:
     style.setIndention((short)4);
     CellUtil.createCell(row, 8, "This is the value of the cell", style);
     Cell cell2 = CellUtil.createCell( row2, 8, "This is the value of the cell");
-    CellUtil.setAlignment(cell2, wb, HSSFCellStyle.ALIGN_CENTER);
+    CellUtil.setAlignment(cell2, wb, CellStyle.ALIGN_CENTER);
 
     // Write out the workbook
     FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
@@ -1677,39 +1677,43 @@ Examples:
        </source>
      </section>  
      <anchor id="ConditionalFormatting"/>
-     <section><title>Conditional Formatting (HSSF Only)</title>
+     <section><title>Conditional Formatting</title>
        <source>
-    HSSFWorkbook workbook = new HSSFWorkbook();
-    HSSFSheet sheet = workbook.createSheet();
-    String formula = "7";
+    Workbook workbook = new HSSFWorkbook(); // or new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet();
 
-    HSSFSheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+    SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
 
-    HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(formula);
-    HSSFFontFormatting fontFmt = rule1.createFontFormatting();
+    ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "0");
+    FontFormatting fontFmt = rule1.createFontFormatting();
     fontFmt.setFontStyle(true, false);
+    fontFmt.setFontColorIndex(IndexedColors.DARK_RED.index);
+    
+    BorderFormatting bordFmt = rule1.createBorderFormatting();
+    bordFmt.setBorderBottom(BorderFormatting.BORDER_THIN);
+    bordFmt.setBorderTop(BorderFormatting.BORDER_THICK);
+    bordFmt.setBorderLeft(BorderFormatting.BORDER_DASHED);
+    bordFmt.setBorderRight(BorderFormatting.BORDER_DOTTED);
 
-    HSSFBorderFormatting bordFmt = rule1.createBorderFormatting();
-    bordFmt.setBorderBottom(HSSFBorderFormatting.BORDER_THIN);
-    bordFmt.setBorderTop(HSSFBorderFormatting.BORDER_THICK);
-    bordFmt.setBorderLeft(HSSFBorderFormatting.BORDER_DASHED);
-    bordFmt.setBorderRight(HSSFBorderFormatting.BORDER_DOTTED);
+    PatternFormatting patternFmt = rule1.createPatternFormatting();
+    patternFmt.setFillBackgroundColor(IndexedColors.YELLOW.index);
 
-    HSSFPatternFormatting patternFmt = rule1.createPatternFormatting();
-    patternFmt.setFillBackgroundColor(HSSFColor.YELLOW.index);
-
-    HSSFConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "1", "2");
-    HSSFConditionalFormattingRule [] cfRules =
+    ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(ComparisonOperator.BETWEEN, "-10", "10");
+    ConditionalFormattingRule [] cfRules =
     {
         rule1, rule2
     };
 
-    CellRangeAddress [] regions = {
-        new CellRangeAddress(2, 4, 0, 0), // A3:A5
+    CellRangeAddress[] regions = {
+        CellRangeAddress.valueOf("A3:A5")
     };
 
     sheetCF.addConditionalFormatting(regions, cfRules);
        </source>
+     <p> See more examples on Excel conditional formatting in
+     <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/ss/examples/ConditionalFormats.java">ConditionalFormats.java</link>     
+      </p>
+       
      </section>  
     </body>
 </document>

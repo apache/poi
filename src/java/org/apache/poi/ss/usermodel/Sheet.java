@@ -919,5 +919,12 @@ public interface Sheet extends Iterable<Row> {
      * @param range the range of cells to filter
      */
     AutoFilter setAutoFilter(CellRangeAddress range);
-    
+
+    /**
+     * The 'Conditional Formatting' facet for this <tt>Sheet</tt>
+     *
+     * @return  conditional formatting rule for this sheet
+     */
+    SheetConditionalFormatting getSheetConditionalFormatting();
+
 }

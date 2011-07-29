@@ -80,10 +80,10 @@ public enum IndexedColors {
     GREY_80_PERCENT(63),
     AUTOMATIC(64);
 
-    private int index;
+    public final short index;
 
     IndexedColors(int idx){
-        index = idx;
+        index = (short)idx;
     }
 
     /**
@@ -92,6 +92,6 @@ public enum IndexedColors {
      * @return index of this color
      */
     public short getIndex(){
-        return (short)index;
+        return index;
     }
 }
