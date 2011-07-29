@@ -22,7 +22,7 @@ package org.apache.poi.hwpf.usermodel;
  * Some properties and enumeration constants description are quotes from the
  * following sources:
  * <ul>
- * <li>[MS-ODRAW] — v20110608; Office Drawing Binary File Format; Copyright (c)
+ * <li>[MS-ODRAW] -- v20110608; Office Drawing Binary File Format; Copyright (c)
  * 2011 Microsoft Corporation.
  * </ul>
  * 
