@@ -228,8 +228,8 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 if ( escherTertiaryOptRecord == null )
                     return defaultValue;
 
-                EscherSimpleProperty escherProperty = escherTertiaryOptRecord
-                        .lookup( propertyId );
+                // YK: There is no EscherTertiaryOptRecord.lookup in r1152099. Disabled until implemented.
+                EscherSimpleProperty escherProperty = null;//escherTertiaryOptRecord.lookup( propertyId );
                 if ( escherProperty == null )
                     return defaultValue;
                 int value = escherProperty.getPropertyValue();
