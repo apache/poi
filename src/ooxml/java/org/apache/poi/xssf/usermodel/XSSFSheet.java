@@ -49,7 +49,7 @@ import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+simport org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
@@ -2391,6 +2391,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateNamedRanges(shifter);
         rowShifter.updateFormulas(shifter);
         rowShifter.shiftMerged(startRow, endRow, n);
+        rowShifter.updateConditionalFormatting(shifter);
 
         //rebuild the _rows map
         TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
@@ -3208,5 +3209,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
              tables.values()
        );
        return tableList;
+    }
+
+    public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
+        return new XSSFSheetConditionalFormatting(this);
     }
 }

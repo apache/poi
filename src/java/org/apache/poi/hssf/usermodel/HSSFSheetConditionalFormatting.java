@@ -20,6 +20,9 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
+import org.apache.poi.ss.usermodel.ConditionalFormatting;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -29,7 +32,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
  *
  * @author Dmitriy Kumshayev
  */
-public final class HSSFSheetConditionalFormatting {
+public final class HSSFSheetConditionalFormatting implements SheetConditionalFormatting {
 
 	private final HSSFSheet _sheet;
 	private final ConditionalFormattingTable _conditionalFormattingTable;
@@ -72,6 +75,15 @@ public final class HSSFSheetConditionalFormatting {
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
 
+    public HSSFConditionalFormattingRule createConditionalFormattingRule(
+            byte comparisonOperation,
+            String formula1) {
+
+        HSSFWorkbook wb = _sheet.getWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, null);
+        return new HSSFConditionalFormattingRule(wb, rr);
+    }
+
 	/**
 	 * A factory method allowing to create a conditional formatting rule with a formula.<br>
 	 *
@@ -102,6 +114,11 @@ public final class HSSFSheetConditionalFormatting {
 
 		return _conditionalFormattingTable.add(cfraClone);
 	}
+
+    public int addConditionalFormatting( ConditionalFormatting cf ) {
+        return addConditionalFormatting((HSSFConditionalFormatting)cf);
+    }
+
 	/**
 	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
 	 */
@@ -140,15 +157,31 @@ public final class HSSFSheetConditionalFormatting {
 		return _conditionalFormattingTable.add(cfra);
 	}
 
+    public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
+        HSSFConditionalFormattingRule[] hfRules;
+        if(cfRules instanceof HSSFConditionalFormattingRule[]) hfRules = (HSSFConditionalFormattingRule[])cfRules;
+        else {
+            hfRules = new HSSFConditionalFormattingRule[cfRules.length];
+            System.arraycopy(cfRules, 0, hfRules, 0, hfRules.length);
+        }
+        return addConditionalFormatting(regions, hfRules);
+    }
+
 	public int addConditionalFormatting(CellRangeAddress[] regions,
 			HSSFConditionalFormattingRule rule1)
 	{
 		return addConditionalFormatting(regions,
-				new HSSFConditionalFormattingRule[]
+				rule1 == null ? null : new HSSFConditionalFormattingRule[]
 				{
 					rule1
 				});
 	}
+
+    public int addConditionalFormatting(CellRangeAddress[] regions,
+            ConditionalFormattingRule rule1)
+    {
+        return addConditionalFormatting(regions,  (HSSFConditionalFormattingRule)rule1);
+    }
 
 	public int addConditionalFormatting(CellRangeAddress[] regions,
 			HSSFConditionalFormattingRule rule1,
@@ -160,6 +193,16 @@ public final class HSSFSheetConditionalFormatting {
 						rule1, rule2
 				});
 	}
+
+    public int addConditionalFormatting(CellRangeAddress[] regions,
+            ConditionalFormattingRule rule1,
+            ConditionalFormattingRule rule2)
+    {
+        return addConditionalFormatting(regions,
+                (HSSFConditionalFormattingRule)rule1,
+                (HSSFConditionalFormattingRule)rule2
+                );
+    }
 
 	/**
 	* gets Conditional Formatting object at a particular index

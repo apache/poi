@@ -346,6 +346,9 @@ public class StylesTable extends POIXMLDocumentPart {
 	public CTStylesheet getCTStylesheet() {
 		return doc.getStyleSheet();
 	}
+    public int _getDXfsSize() {
+        return dxfs.size();
+    }
 
 
 	/**
@@ -497,14 +500,11 @@ public class StylesTable extends POIXMLDocumentPart {
 		return xssfFont;
 	}
 
-	protected CTDxf getDxf(int idx) {
-		if (dxfs.size()==0) {
-			return CTDxf.Factory.newInstance();
-		}
+	public CTDxf getDxfAt(int idx) {
 		return dxfs.get(idx);
 	}
 
-	protected int putDxf(CTDxf dxf) {
+	public int putDxf(CTDxf dxf) {
 		this.dxfs.add(dxf);
 		return this.dxfs.size();
 	}

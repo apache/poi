@@ -26,8 +26,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -185,6 +189,83 @@ public final class XSSFRowShifter {
             shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
         }
         return shiftedFmla;
+    }
+
+    public void updateConditionalFormatting(FormulaShifter shifter) {
+        XSSFWorkbook wb = sheet.getWorkbook();
+        int sheetIndex = wb.getSheetIndex(sheet);
+
+
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        List<CTConditionalFormatting> cfList = sheet.getCTWorksheet().getConditionalFormattingList();
+        for(int j = 0; j< cfList.size(); j++){
+            CTConditionalFormatting cf = cfList.get(j);
+
+            ArrayList<CellRangeAddress> cellRanges = new ArrayList<CellRangeAddress>();
+            for (Object stRef : cf.getSqref()) {
+                String[] regions = stRef.toString().split(" ");
+                for (int i = 0; i < regions.length; i++) {
+                    cellRanges.add(CellRangeAddress.valueOf(regions[i]));
+                }
+            }
+
+            boolean changed = false;
+            List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
+            for (int i = 0; i < cellRanges.size(); i++) {
+                CellRangeAddress craOld = cellRanges.get(i);
+                CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
+                if (craNew == null) {
+                    changed = true;
+                    continue;
+                }
+                temp.add(craNew);
+                if (craNew != craOld) {
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                int nRanges = temp.size();
+                if (nRanges == 0) {
+                    cfList.remove(j);
+                    continue;
+                }
+                List<String> refs = new ArrayList<String>();
+                for(CellRangeAddress a : temp) refs.add(a.formatAsString());
+                cf.setSqref(refs);
+            }
+
+            for(CTCfRule cfRule : cf.getCfRuleList()){
+                List<String> formulas = cfRule.getFormulaList();
+                for (int i = 0; i < formulas.size(); i++) {
+                    String formula = formulas.get(i);
+                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+                    if (shifter.adjustFormula(ptgs, sheetIndex)) {
+                        String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+                        formulas.set(i, shiftedFmla);
+                    }
+                }
+            }
+        }
+    }
+
+    private static CellRangeAddress shiftRange(FormulaShifter shifter, CellRangeAddress cra, int currentExternSheetIx) {
+        // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
+        AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
+        Ptg[] ptgs = { aptg, };
+
+        if (!shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+            return cra;
+        }
+        Ptg ptg0 = ptgs[0];
+        if (ptg0 instanceof AreaPtg) {
+            AreaPtg bptg = (AreaPtg) ptg0;
+            return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
+        }
+        if (ptg0 instanceof AreaErrPtg) {
+            return null;
+        }
+        throw new IllegalStateException("Unexpected shifted ptg class (" + ptg0.getClass().getName() + ")");
     }
 
 }

@@ -1196,6 +1196,11 @@ public class SXSSFSheet implements Sheet, Cloneable
     {
         return _sh.setAutoFilter(range);
     }
+
+    public SheetConditionalFormatting getSheetConditionalFormatting(){
+        return _sh.getSheetConditionalFormatting();
+    }
+
 //end of interface implementation
     /**
      * Specifies how many rows can be accessed at most via getRow().

@@ -27,38 +27,8 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
  * @author Dmitriy Kumshayev
  *
  */
-public final class HSSFBorderFormatting
+public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting
 {
-	/** No border */
-	public final static short BORDER_NONE =  BorderFormatting.BORDER_NONE;
-	/** Thin border */
-	public final static short BORDER_THIN =  BorderFormatting.BORDER_THIN;
-	/** Medium border */
-	public final static short BORDER_MEDIUM =  BorderFormatting.BORDER_MEDIUM;
-	/** dash border */
-	public final static short BORDER_DASHED =  BorderFormatting.BORDER_DASHED;
-	/** dot border */
-	public final static short BORDER_HAIR =  BorderFormatting.BORDER_HAIR;
-	/** Thick border */
-	public final static short BORDER_THICK =  BorderFormatting.BORDER_THICK;
-	/** double-line border */
-	public final static short BORDER_DOUBLE =  BorderFormatting.BORDER_DOUBLE;
-	/** hair-line border */
-	public final static short BORDER_DOTTED =  BorderFormatting.BORDER_DOTTED;
-	/** Medium dashed border */
-	public final static short BORDER_MEDIUM_DASHED =  BorderFormatting.BORDER_MEDIUM_DASHED;
-	/** dash-dot border */
-	public final static short BORDER_DASH_DOT =  BorderFormatting.BORDER_DASH_DOT;
-	/** medium dash-dot border */
-	public final static short BORDER_MEDIUM_DASH_DOT =  BorderFormatting.BORDER_MEDIUM_DASH_DOT;
-	/** dash-dot-dot border */
-	public final static short BORDER_DASH_DOT_DOT =  BorderFormatting.BORDER_DASH_DOT_DOT;
-	/** medium dash-dot-dot border */
-	public final static short BORDER_MEDIUM_DASH_DOT_DOT =  BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT;
-	/** slanted dash-dot border */
-	public final static short BORDER_SLANTED_DASH_DOT =  BorderFormatting.BORDER_SLANTED_DASH_DOT;
-
-	
 	private final CFRuleRecord cfRuleRecord;
 	private final BorderFormatting borderFormatting;
 	

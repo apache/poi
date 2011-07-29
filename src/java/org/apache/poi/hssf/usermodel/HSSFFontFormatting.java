@@ -26,24 +26,18 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
  * @author Dmitriy Kumshayev
  *
  */
-public final class HSSFFontFormatting
+public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting
 {
-	/** Escapement type - None */
-	public final static short SS_NONE  = FontFormatting.SS_NONE;
-	/** Escapement type - Superscript */
-	public final static short SS_SUPER = FontFormatting.SS_SUPER;
-	/** Escapement type - Subscript */
-	public final static short SS_SUB   = FontFormatting.SS_SUB;
 
-	/** Underline type - None */ 
+	/** Underline type - None */
 	public final static byte U_NONE              = FontFormatting.U_NONE;
-	/** Underline type - Single */ 
+	/** Underline type - Single */
 	public final static byte U_SINGLE            = FontFormatting.U_SINGLE;
-	/** Underline type - Double */ 
+	/** Underline type - Double */
 	public final static byte U_DOUBLE            = FontFormatting.U_DOUBLE;
-	/**  Underline type - Single Accounting */ 
+	/**  Underline type - Single Accounting */
 	public final static byte U_SINGLE_ACCOUNTING = FontFormatting.U_SINGLE_ACCOUNTING;
-	/** Underline type - Double Accounting */ 
+	/** Underline type - Double Accounting */
 	public final static byte U_DOUBLE_ACCOUNTING = FontFormatting.U_DOUBLE_ACCOUNTING;
 
 	private final FontFormatting fontFormatting;
