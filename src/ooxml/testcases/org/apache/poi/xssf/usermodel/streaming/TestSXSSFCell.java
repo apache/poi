@@ -19,7 +19,7 @@
 
 package org.apache.poi.xssf.usermodel.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 
 /**
@@ -59,5 +59,19 @@ public class TestSXSSFCell extends BaseTestCell {
                     "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
                     "Only XSSFCells can be evaluated.", e.getMessage());
         }
+    }
+
+    public void testXmlEncoding(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        Row row = sh.createRow(0);
+        Cell cell = row.createCell(0);
+        String sval = "<>\t\r\n\u00a0 &\"POI\'\u2122";
+        cell.setCellValue(sval);
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+
+        assertEquals(sval, wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+
     }
 }

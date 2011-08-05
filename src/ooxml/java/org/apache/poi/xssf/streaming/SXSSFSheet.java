@@ -1502,7 +1502,7 @@ public class SXSSFSheet implements Sheet, Cloneable
                     {
                         _out.write(chars,last,counter-last);
                     }
-                    _out.write("&nbsp;");
+                    _out.write("&#xa0;");
                     last=counter+1;
                     break;
                 default:
