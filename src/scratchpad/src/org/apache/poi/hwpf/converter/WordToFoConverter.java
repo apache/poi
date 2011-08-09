@@ -276,8 +276,8 @@ public class WordToFoConverter extends AbstractWordConverter
     }
 
     @Override
-    protected void processEndnoteAutonumbered( HWPFDocument wordDocument, int noteIndex,
-            Element block, Range endnoteTextRange )
+    protected void processEndnoteAutonumbered( HWPFDocument wordDocument,
+            int noteIndex, Element block, Range endnoteTextRange )
     {
         final String textIndex = String.valueOf( internalLinkCounter
                 .incrementAndGet() );
@@ -297,7 +297,8 @@ public class WordToFoConverter extends AbstractWordConverter
         setId( backwardLink, forwardLinkName );
         endnote.appendChild( backwardLink );
 
-        processCharacters( wordDocument, Integer.MIN_VALUE, endnoteTextRange, endnote );
+        processCharacters( wordDocument, Integer.MIN_VALUE, endnoteTextRange,
+                endnote );
 
         WordToFoUtils.compactInlines( endnote );
         this.endnotes.add( endnote );

@@ -34,6 +34,7 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -422,6 +423,19 @@ public class AbstractWordUtils
         return !isEmpty( str );
     }
 
+    public static HWPFDocumentCore loadDoc( final DirectoryNode root )
+            throws IOException
+    {
+        try
+        {
+            return new HWPFDocument( root );
+        }
+        catch ( OldWordFileFormatException exc )
+        {
+            return new HWPFOldDocument( root );
+        }
+    }
+
     public static HWPFDocumentCore loadDoc( File docFile ) throws IOException
     {
         final FileInputStream istream = new FileInputStream( docFile );
@@ -438,16 +452,13 @@ public class AbstractWordUtils
     public static HWPFDocumentCore loadDoc( InputStream inputStream )
             throws IOException
     {
-        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore
-                .verifyAndBuildPOIFS( inputStream );
-        try
-        {
-            return new HWPFDocument( poifsFileSystem );
-        }
-        catch ( OldWordFileFormatException exc )
-        {
-            return new HWPFOldDocument( poifsFileSystem );
-        }
+        return loadDoc( HWPFDocumentCore.verifyAndBuildPOIFS( inputStream ) );
+    }
+
+    public static HWPFDocumentCore loadDoc(
+            final POIFSFileSystem poifsFileSystem ) throws IOException
+    {
+        return loadDoc( poifsFileSystem.getRoot() );
     }
 
     static String substringBeforeLast( String str, String separator )

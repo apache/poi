@@ -82,35 +82,96 @@ public final class HeaderStories {
                 fib.getPlcfHddSize(), 0 );
     }
 
-	public String getFootnoteSeparator() {
-		return getAt(0);
-	}
-	public String getFootnoteContSeparator() {
-		return getAt(1);
-	}
-	public String getFootnoteContNote() {
-		return getAt(2);
-	}
-	public String getEndnoteSeparator() {
-		return getAt(3);
-	}
-	public String getEndnoteContSeparator() {
-		return getAt(4);
-	}
-	public String getEndnoteContNote() {
-		return getAt(5);
-	}
+    @Deprecated
+    public String getFootnoteSeparator()
+    {
+        return getAt( 0 );
+    }
 
+    @Deprecated
+    public String getFootnoteContSeparator()
+    {
+        return getAt( 1 );
+    }
 
+    @Deprecated
+    public String getFootnoteContNote()
+    {
+        return getAt( 2 );
+    }
+
+    @Deprecated
+    public String getEndnoteSeparator()
+    {
+        return getAt( 3 );
+    }
+
+    @Deprecated
+    public String getEndnoteContSeparator()
+    {
+        return getAt( 4 );
+    }
+
+    @Deprecated
+    public String getEndnoteContNote()
+    {
+        return getAt( 5 );
+    }
+
+    public Range getFootnoteSeparatorSubrange()
+    {
+        return getSubrangeAt( 0 );
+    }
+
+    public Range getFootnoteContSeparatorSubrange()
+    {
+        return getSubrangeAt( 1 );
+    }
+
+    public Range getFootnoteContNoteSubrange()
+    {
+        return getSubrangeAt( 2 );
+    }
+
+    public Range getEndnoteSeparatorSubrange()
+    {
+        return getSubrangeAt( 3 );
+    }
+
+    public Range getEndnoteContSeparatorSubrange()
+    {
+        return getSubrangeAt( 4 );
+    }
+
+    public Range getEndnoteContNoteSubrange()
+    {
+        return getSubrangeAt( 5 );
+    }
+
+	@Deprecated
 	public String getEvenHeader() {
 		return getAt(6+0);
 	}
+    @Deprecated
 	public String getOddHeader() {
 		return getAt(6+1);
 	}
+    @Deprecated
 	public String getFirstHeader() {
 		return getAt(6+4);
 	}
+	
+
+    public Range getEvenHeaderSubrange() {
+        return getSubrangeAt(6+0);
+    }
+    public Range getOddHeaderSubrange() {
+        return getSubrangeAt(6+1);
+    }
+    public Range getFirstHeaderSubrange() {
+        return getSubrangeAt(6+4);
+    }
+    
 	/**
 	 * Returns the correct, defined header for the given
 	 *  one based page
@@ -135,16 +196,39 @@ public final class HeaderStories {
 		return getOddHeader();
 	}
 
+	@Deprecated
+    public String getEvenFooter()
+    {
+        return getAt( 6 + 2 );
+    }
 
-	public String getEvenFooter() {
-		return getAt(6+2);
-	}
-	public String getOddFooter() {
-		return getAt(6+3);
-	}
-	public String getFirstFooter() {
-		return getAt(6+5);
-	}
+    @Deprecated
+    public String getOddFooter()
+    {
+        return getAt( 6 + 3 );
+    }
+
+    @Deprecated
+    public String getFirstFooter()
+    {
+        return getAt( 6 + 5 );
+    }
+
+    public Range getEvenFooterSubrange()
+    {
+        return getSubrangeAt( 6 + 2 );
+    }
+
+    public Range getOddFooterSubrange()
+    {
+        return getSubrangeAt( 6 + 3 );
+    }
+
+    public Range getFirstFooterSubrange()
+    {
+        return getSubrangeAt( 6 + 5 );
+    }
+
 	/**
 	 * Returns the correct, defined footer for the given
 	 *  one based page
@@ -174,6 +258,7 @@ public final class HeaderStories {
 	 * Get the string that's pointed to by the
 	 *  given plcfHdd index
 	 */
+    @Deprecated
 	private String getAt(int plcfHddIndex) {
 		if(plcfHdd == null) return null;
 
@@ -208,6 +293,32 @@ public final class HeaderStories {
 
 		return text;
 	}
+
+    private Range getSubrangeAt( int plcfHddIndex )
+    {
+        if ( plcfHdd == null )
+            return null;
+
+        GenericPropertyNode prop = plcfHdd.getProperty( plcfHddIndex );
+        if ( prop.getStart() == prop.getEnd() )
+        {
+            // Empty story
+            return null;
+        }
+        if ( prop.getEnd() < prop.getStart() )
+        {
+            // Broken properties?
+            return null;
+        }
+
+        final int headersLength = headerStories.getEndOffset()
+                - headerStories.getStartOffset();
+        int start = Math.min( prop.getStart(), headersLength );
+        int end = Math.min( prop.getEnd(), headersLength );
+
+        return new Range( headerStories.getStartOffset() + start,
+                headerStories.getStartOffset() + end, headerStories );
+    }
 
 	public Range getRange() {
 		return headerStories;

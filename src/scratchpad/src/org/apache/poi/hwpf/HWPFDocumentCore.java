@@ -17,9 +17,16 @@
 
 package org.apache.poi.hwpf;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+
+import org.apache.poi.hwpf.usermodel.ObjectsPool;
+
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+
+import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
@@ -46,6 +53,9 @@ import org.apache.poi.util.Internal;
  */
 public abstract class HWPFDocumentCore extends POIDocument
 {
+  /** Holds OLE2 objects */
+  protected ObjectPoolImpl _objectPool;
+
   /** The FIB */
   protected FileInformationBlock _fib;
 
@@ -148,7 +158,21 @@ public abstract class HWPFDocumentCore extends POIDocument
     if(_fib.isFEncrypted()) {
     	throw new EncryptedDocumentException("Cannot process encrypted word files!");
     }
-  }
+
+        {
+            DirectoryEntry objectPoolEntry;
+            try
+            {
+                objectPoolEntry = (DirectoryEntry) directory
+                        .getEntry( "ObjectPool" );
+            }
+            catch ( FileNotFoundException exc )
+            {
+                objectPoolEntry = directory.createDirectory( "ObjectPool" );
+            }
+            _objectPool = new ObjectPoolImpl( objectPoolEntry );
+        }
+    }
 
     /**
      * Returns the range which covers the whole of the document, but excludes
@@ -210,6 +234,11 @@ public abstract class HWPFDocumentCore extends POIDocument
   {
     return _fib;
   }
+
+    public ObjectsPool getObjectsPool()
+    {
+        return _objectPool;
+    }
 
     public abstract TextPieceTable getTextTable();
 }

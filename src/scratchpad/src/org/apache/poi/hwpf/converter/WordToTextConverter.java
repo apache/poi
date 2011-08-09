@@ -2,10 +2,14 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -25,6 +29,8 @@ import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +38,29 @@ import org.w3c.dom.Element;
 @Beta
 public class WordToTextConverter extends AbstractWordConverter
 {
+
+    public static String getText( DirectoryNode root ) throws Exception
+    {
+        final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( root );
+        return getText( wordDocument );
+    }
+
+    public static String getText( File docFile ) throws Exception
+    {
+        final HWPFDocumentCore wordDocument = AbstractWordUtils
+                .loadDoc( docFile );
+        return getText( wordDocument );
+    }
+
+    public static String getText( final HWPFDocumentCore wordDocument )
+            throws Exception
+    {
+        WordToTextConverter wordToTextConverter = new WordToTextConverter(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+        wordToTextConverter.processDocument( wordDocument );
+        return wordToTextConverter.getText();
+    }
 
     /**
      * Java main() interface to interact with {@link WordToTextConverter}
@@ -91,7 +120,23 @@ public class WordToTextConverter extends AbstractWordConverter
 
     private Element notes = null;
 
+    private boolean outputSummaryInformation = false;
+
     private final TextDocumentFacade textDocumentFacade;
+
+    /**
+     * Creates new instance of {@link WordToTextConverter}. Can be used for
+     * output several {@link HWPFDocument}s into single text document.
+     * 
+     * @throws ParserConfigurationException
+     *             if an internal {@link DocumentBuilder} cannot be created
+     */
+    public WordToTextConverter() throws ParserConfigurationException
+    {
+        this.textDocumentFacade = new TextDocumentFacade(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+    }
 
     /**
      * Creates new instance of {@link WordToTextConverter}. Can be used for
@@ -108,6 +153,28 @@ public class WordToTextConverter extends AbstractWordConverter
     public Document getDocument()
     {
         return textDocumentFacade.getDocument();
+    }
+
+    public String getText() throws Exception
+    {
+        StringWriter stringWriter = new StringWriter();
+        DOMSource domSource = new DOMSource( getDocument() );
+        StreamResult streamResult = new StreamResult( stringWriter );
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer serializer = tf.newTransformer();
+        // TODO set encoding from a command argument
+        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
+        serializer.setOutputProperty( OutputKeys.METHOD, "text" );
+        serializer.transform( domSource, streamResult );
+
+        return stringWriter.toString();
+    }
+
+    public boolean isOutputSummaryInformation()
+    {
+        return outputSummaryInformation;
     }
 
     @Override
@@ -138,18 +205,24 @@ public class WordToTextConverter extends AbstractWordConverter
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
-        if ( AbstractWordUtils.isNotEmpty( summaryInformation.getTitle() ) )
-            textDocumentFacade.setTitle( summaryInformation.getTitle() );
+        if ( isOutputSummaryInformation() )
+        {
+            if ( AbstractWordUtils.isNotEmpty( summaryInformation.getTitle() ) )
+                textDocumentFacade.setTitle( summaryInformation.getTitle() );
 
-        if ( AbstractWordUtils.isNotEmpty( summaryInformation.getAuthor() ) )
-            textDocumentFacade.addAuthor( summaryInformation.getAuthor() );
+            if ( AbstractWordUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+                textDocumentFacade.addAuthor( summaryInformation.getAuthor() );
 
-        if ( AbstractWordUtils.isNotEmpty( summaryInformation.getComments() ) )
-            textDocumentFacade
-                    .addDescription( summaryInformation.getComments() );
+            if ( AbstractWordUtils
+                    .isNotEmpty( summaryInformation.getComments() ) )
+                textDocumentFacade.addDescription( summaryInformation
+                        .getComments() );
 
-        if ( AbstractWordUtils.isNotEmpty( summaryInformation.getKeywords() ) )
-            textDocumentFacade.addKeywords( summaryInformation.getKeywords() );
+            if ( AbstractWordUtils
+                    .isNotEmpty( summaryInformation.getKeywords() ) )
+                textDocumentFacade.addKeywords( summaryInformation
+                        .getKeywords() );
+        }
     }
 
     @Override
@@ -223,6 +296,48 @@ public class WordToTextConverter extends AbstractWordConverter
     }
 
     @Override
+    protected boolean processOle2( HWPFDocument wordDocument, Element block,
+            Entry entry ) throws Exception
+    {
+        if ( !( entry instanceof DirectoryNode ) )
+            return false;
+        DirectoryNode directoryNode = (DirectoryNode) entry;
+
+        // even if no ExtractorFactory in classpath
+        if ( directoryNode.hasEntry( "WordDocument" ) )
+        {
+            String text = WordToTextConverter.getText( (DirectoryNode) entry );
+            block.appendChild( textDocumentFacade
+                    .createText( UNICODECHAR_ZERO_WIDTH_SPACE + text
+                            + UNICODECHAR_ZERO_WIDTH_SPACE ) );
+            return true;
+        }
+
+        try
+        {
+            Class<?> cls = Class
+                    .forName( "org.apache.poi.extractor.ExtractorFactory" );
+            Method createExtractor = cls.getMethod( "createExtractor",
+                    DirectoryNode.class );
+            Object extractor = createExtractor.invoke( null, directoryNode );
+
+            Method getText = extractor.getClass().getMethod( "getText" );
+            String text = (String) getText.invoke( extractor );
+
+            block.appendChild( textDocumentFacade
+                    .createText( UNICODECHAR_ZERO_WIDTH_SPACE + text
+                            + UNICODECHAR_ZERO_WIDTH_SPACE ) );
+            return true;
+        }
+        catch ( ClassNotFoundException exc )
+        {
+            // no extractor in classpath
+        }
+
+        return false;
+    }
+
+    @Override
     protected void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )
@@ -254,7 +369,7 @@ public class WordToTextConverter extends AbstractWordConverter
         textDocumentFacade.body.appendChild( sectionElement );
     }
 
-    protected void processTable( HWPFDocumentCore hwpfDocument, Element flow,
+    protected void processTable( HWPFDocumentCore wordDocument, Element flow,
             Table table )
     {
         final int tableRows = table.numRows();
@@ -275,14 +390,19 @@ public class WordToTextConverter extends AbstractWordConverter
                     tableCellElement.appendChild( textDocumentFacade
                             .createText( "\t" ) );
 
-                processParagraphes( hwpfDocument, tableCellElement, tableCell,
-                        table.getTableLevel() );
+                processCharacters( wordDocument, table.getTableLevel(),
+                        tableCell, tableCellElement );
                 tableRowElement.appendChild( tableCellElement );
             }
 
             tableRowElement.appendChild( textDocumentFacade.createText( "\n" ) );
             flow.appendChild( tableRowElement );
         }
+    }
+
+    public void setOutputSummaryInformation( boolean outputDocumentInformation )
+    {
+        this.outputSummaryInformation = outputDocumentInformation;
     }
 
 }

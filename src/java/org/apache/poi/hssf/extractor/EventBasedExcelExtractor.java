@@ -61,17 +61,27 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
    private DirectoryNode _dir;
-	private POIFSFileSystem _fs;
 	boolean _includeSheetNames = true;
 	boolean _formulasNotResults = false;
 
-	public EventBasedExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) {
-		super(null);
-		_dir = dir;
-		_fs = fs;
-	}
+    /**
+     * @deprecated Use {@link #EventBasedExcelExtractor(DirectoryNode)} instead
+     */
+    @Deprecated
+    @SuppressWarnings( "unused" )
+    public EventBasedExcelExtractor( DirectoryNode dir, POIFSFileSystem fs )
+    {
+        this( dir );
+    }
+
+    public EventBasedExcelExtractor( DirectoryNode dir )
+    {
+        super( null );
+        _dir = dir;
+    }
+
    public EventBasedExcelExtractor(POIFSFileSystem fs) {
-      this(fs.getRoot(), fs);
+      this(fs.getRoot());
    }
 
    /**
@@ -79,9 +89,9 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
     *  this document.
     */
    public POIFSFileSystem getFileSystem() {
-      return _fs;
+      return _dir.getFileSystem();
    }
-   
+
 	/**
 	 * Would return the document information metadata for the document,
 	 *  if we supported it
@@ -200,7 +210,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 						outputNextStringValue = true;
 						nextRow = frec.getRow();
 					} else {
-						thisText = _ft.formatNumberDateCell(frec); 
+						thisText = _ft.formatNumberDateCell(frec);
 					}
 				}
 				break;
@@ -234,7 +244,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 			case NumberRecord.sid:
 				NumberRecord numrec = (NumberRecord) record;
 				thisRow = numrec.getRow();
-				thisText = _ft.formatNumberDateCell(numrec); 
+				thisText = _ft.formatNumberDateCell(numrec);
 				break;
 			default:
 				break;

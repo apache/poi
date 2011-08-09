@@ -63,7 +63,6 @@ import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 @Beta
 public class WordToHtmlConverter extends AbstractWordConverter
 {
-
     /**
      * Holds properties values, applied to current <tt>p</tt> element. Those
      * properties shall not be doubled in children <tt>span</tt> elements.
@@ -282,10 +281,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
-    protected void processEndnoteAutonumbered( HWPFDocument wordDocument, int noteIndex,
-            Element block, Range endnoteTextRange )
+    protected void processEndnoteAutonumbered( HWPFDocument wordDocument,
+            int noteIndex, Element block, Range endnoteTextRange )
     {
-        processNoteAutonumbered( wordDocument, "end", noteIndex, block, endnoteTextRange );
+        processNoteAutonumbered( wordDocument, "end", noteIndex, block,
+                endnoteTextRange );
     }
 
     @Override

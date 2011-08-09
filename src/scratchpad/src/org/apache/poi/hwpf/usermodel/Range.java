@@ -36,6 +36,8 @@ import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class is the central class of the HWPF object model. All properties that
@@ -52,6 +54,8 @@ import org.apache.poi.util.LittleEndian;
  */
 public class Range { // TODO -instantiable superclass
 
+    private POILogger logger = POILogFactory.getLogger( Range.class );
+    
 	public static final int TYPE_PARAGRAPH = 0;
 	public static final int TYPE_CHARACTER = 1;
 	public static final int TYPE_SECTION = 2;
@@ -888,9 +892,12 @@ public class Range { // TODO -instantiable superclass
         initAll();
         if ( tableEndInclusive >= this._parEnd )
         {
-            throw new ArrayIndexOutOfBoundsException(
-                    "The table's bounds fall outside of this Range" );
+            logger.log( POILogger.WARN, "The table's bounds ", "["
+                    + this._parStart + "; " + tableEndInclusive + ")",
+                    " fall outside of this Range paragraphs numbers ", "["
+                            + this._parStart + "; " + this._parEnd + ")" );
         }
+
         if ( tableEndInclusive < 0 )
         {
             throw new ArrayIndexOutOfBoundsException(

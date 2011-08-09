@@ -43,6 +43,15 @@ import org.apache.poi.util.IOUtils;
 public class TestBugs extends TestCase
 {
 
+    public static void assertEquals( String expected, String actual )
+    {
+        String newExpected = expected.replaceAll( "\r\n", "\n" )
+                .replaceAll( "\r", "\n" ).trim();
+        String newActual = actual.replaceAll( "\r\n", "\n" )
+                .replaceAll( "\r", "\n" ).trim();
+        TestCase.assertEquals( newExpected, newActual );
+    }
+
     private static void assertTableStructures( Range expected, Range actual )
     {
         assertEquals( expected.numParagraphs(), actual.numParagraphs() );
