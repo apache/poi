@@ -1,7 +1,9 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
+@Internal
 public final class PropertyModifier implements Cloneable
 {
     /**

@@ -17,13 +17,15 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+@Internal
 public final class ParagraphHeight
 {
   private short infoField;

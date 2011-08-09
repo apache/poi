@@ -22,15 +22,16 @@ import java.util.Arrays;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-
+@Internal
 public final class StyleDescription implements HDFType
 {
 

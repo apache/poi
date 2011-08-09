@@ -1,10 +1,13 @@
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
 /**
  * Document text parts that can have text pieces (CPs)
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
+@Internal
 public enum SubdocumentType {
     MAIN( FIBLongHandler.CCPTEXT ),
 

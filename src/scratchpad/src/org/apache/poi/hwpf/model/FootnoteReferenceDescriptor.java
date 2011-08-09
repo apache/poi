@@ -17,7 +17,9 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.model.types.FRDAbstractType;
+import org.apache.poi.util.Internal;
 
+@Internal
 public final class FootnoteReferenceDescriptor extends FRDAbstractType
         implements Cloneable
 {

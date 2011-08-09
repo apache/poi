@@ -29,6 +29,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -48,6 +49,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Dmitry Romanov
  */
+@Internal
 public final class PicturesTable
 {
   static final int TYPE_IMAGE = 0x08;

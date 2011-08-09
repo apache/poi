@@ -19,6 +19,9 @@ package org.apache.poi.hwpf.model.io;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public final class HWPFOutputStream extends ByteArrayOutputStream
 {
 

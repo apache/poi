@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.util.Internal;
 
 /**
  * DANGER - works in bytes!
@@ -30,6 +31,7 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
  *
  * @author Ryan Ackley
  */
+@Internal
 @SuppressWarnings( "deprecation" )
 public final class CHPX extends BytePropertyNode<CHPX>
 {

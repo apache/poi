@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Collections;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,6 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * In common with the rest of the old support, it 
  *  is read only
  */
+@Internal
 public final class OldPAPBinTable extends PAPBinTable
 {
 

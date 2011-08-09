@@ -17,12 +17,14 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Handles the fibRgLw / The FibRgLw97 part of
  *  the FIB (File Information Block)
  */
+@Internal
 public final class FIBLongHandler {
   public static final int CBMAC = 0;
   public static final int PRODUCTCREATED = 1;

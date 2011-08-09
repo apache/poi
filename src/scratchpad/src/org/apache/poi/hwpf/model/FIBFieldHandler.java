@@ -24,10 +24,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
+@Internal
 public final class FIBFieldHandler
 {
     // 154 == 0x009A; 158 == 0x009E

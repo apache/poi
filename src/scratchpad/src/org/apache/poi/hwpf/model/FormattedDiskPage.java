@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -39,6 +40,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
+@Internal
 public abstract class FormattedDiskPage
 {
     protected byte[] _fkp;

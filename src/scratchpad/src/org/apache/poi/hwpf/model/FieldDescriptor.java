@@ -18,12 +18,14 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.model.types.FLDAbstractType;
+import org.apache.poi.util.Internal;
 
 /**
  * Class for the FLD structure.
  * 
  * @author Cedric Bosdonnat <cbosdonnat@novell.com>
  */
+@Internal
 public final class FieldDescriptor extends FLDAbstractType
 {
     public static final int FIELD_BEGIN_MARK = 0x13;

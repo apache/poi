@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 
 /**
  * String table containing the history of the last few revisions ("saves") of the document.
@@ -30,6 +31,7 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
  *
  * @author Daniel Noll
  */
+@Internal
 public final class SavedByTable
 {
 

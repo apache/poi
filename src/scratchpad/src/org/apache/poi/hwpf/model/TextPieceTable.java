@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -34,6 +35,7 @@ import org.apache.poi.util.POILogger;
  * 
  * @author Ryan Ackley
  */
+@Internal
 public class TextPieceTable implements CharIndexTranslator
 {
     private static final POILogger logger = POILogFactory

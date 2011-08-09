@@ -21,6 +21,7 @@ package org.apache.poi.hwpf.model.types;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,6 +31,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Andrew C. Oliver
  */
+@Internal
 public abstract class FIBAbstractType implements HDFType {
 
     protected  int field_1_wIdent;

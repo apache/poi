@@ -23,6 +23,7 @@ import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * "Table Properties (TAP). This structure is never written out to disk but can
@@ -38,6 +39,7 @@ import org.apache.poi.util.BitField;
  * @author S. Ryan Ackley
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
+@Internal
 public abstract class TAPAbstractType implements HDFType
 {
 

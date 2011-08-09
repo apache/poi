@@ -2,6 +2,7 @@
 package org.apache.poi.hwpf.model.types;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -16,6 +17,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
  *         File Format (.doc) Specification
  */
+@Internal
 public abstract class BKFAbstractType
 {
 
