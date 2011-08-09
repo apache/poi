@@ -48,15 +48,63 @@
      either have a recent SVN checkout, or a recent SVN nightly build
      (including the scratchpad jar!)</p>
 
-  <p>Source in the
-     <em>org.apache.poi.hwpf.model</em> tree is the old legacy code refactored
-     into an object model. Source code in the
-     <em>org.apache.poi.hwpf.extractor</em> tree is a wrapper of this to
-     facilitate easy extraction of interesting things (eg the Text). 
-     Source code in the <em>org.apache.poi.hdf</em> tree is the old legacy
-     code.
-   </p>
+    <p>
+        Source code in the
+        <em>org.apache.poi.hdf</em>
+        tree is the old legacy code. Source in the
+        <em>org.apache.poi.hwpf.model</em>
+        tree is the old legacy code refactored into an new object model. Those packages contains
+        Java representation of internal Word format structure. This code is "internal", it shall not
+        be used by your code. Because of backward-compatibility some API still has references to
+        those packages. They are subject to be deprecated and removed. Code from
+        <em>org.apache.poi.hwpf.usermodel</em>
+        package is actual public and user-friendly (as much as possible) API to access document
+        parts. Source code in the
+        <em>org.apache.poi.hwpf.extractor</em>
+        tree is a wrapper of this to facilitate easy extraction of interesting things (eg the Text),
+        and
+        <em>org.apache.poi.hwpf.converter</em>
+        package contains Word-to-HTML and Word-to-FO converters (latest can be used to generate PDF
+        from Word files when using with
+        <a href="http://xmlgraphics.apache.org/fop/">Apache FOP</a>
+        ). Also there is a small file-structure-dumping utility in
+        <em>org.apache.poi.hwpf.dev</em>
+        package, primally for developing purposes.
+    </p>
 
+    <p>
+        The main entry point to HWPF is HWPFDocument. Currently it has a lot of references both to
+        internal interfaces (
+        <em>org.apache.poi.hwpf.model</em>
+        package) and public API (
+        <em>org.apache.poi.hwpf.usermodel</em>
+        ) package. It is possible that it will be split into two different interfaces (like WordFile
+        and WordDocument) in later versions.
+    </p>
+
+    <p>Word document can be considered as very long single text buffer. HWPF API provides "pointers"
+        to document parts, like sections, paragraphs and character runs. Usually user will iterates
+        over main document part sections, paragraphs from sections and character runs from
+        paragraph. Each such interface is a pointer to document text subrange along with additional
+        properties (and they all extends same Range parent class). There is additional Range
+        implementations like Table, TableRow, TableCell, etc. Some structures like Bookmark or Field
+        can also provide subranges pointers.
+    </p>
+
+    <p>Changing file content usually requires a lot of synchronized changes in those structures like
+        updating property boundaries, position handlers, etc. Because of that HWPF API shall be
+        considered as not thread safe. In addition, there is a "one pointer" rule for changing
+        content. It means you should not use two different Range instances at one time. More
+        precisely, if you are changing file content using some range pointer, all other range
+        pointers except parents' ones become invalid. For example if you obtain overall range (1),
+        paragraph range (2) from overall range and character run range (3) from paragraph range and
+        change text of paragraph, character run range is now invalid and should not be used, but
+        overall range pointer still valid. Each time you obtaining range (pointer) new instance is
+        created. It means if you obtained two range pointers and changed document text using first
+        range pointer, second one became invalid.
+    </p>
+
+   </section>
    <section>
     <title>XWPF Patches Required!</title>
 
