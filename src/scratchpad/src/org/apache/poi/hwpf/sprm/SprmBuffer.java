@@ -19,8 +19,10 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+@Internal
 public final class SprmBuffer implements Cloneable
 {
     byte[] _buf;

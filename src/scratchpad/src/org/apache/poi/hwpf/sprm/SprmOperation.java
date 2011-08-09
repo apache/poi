@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.sprm;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -28,6 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Ryan Ackley
  * @version 1.0
  */
+@Internal
 public final class SprmOperation
 {
     private static final BitField BITFIELD_OP = BitFieldFactory

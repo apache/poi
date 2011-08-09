@@ -19,9 +19,11 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.List;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 
+@Internal
 public final class SprmUtils
 {
   public SprmUtils()
