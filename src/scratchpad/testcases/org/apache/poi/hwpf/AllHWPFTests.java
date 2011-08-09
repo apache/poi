@@ -44,6 +44,7 @@ import org.apache.poi.hwpf.usermodel.TestBorderCode;
 import org.apache.poi.hwpf.usermodel.TestBug46610;
 import org.apache.poi.hwpf.usermodel.TestBug49820;
 import org.apache.poi.hwpf.usermodel.TestBug50075;
+import org.apache.poi.hwpf.usermodel.TestBugs;
 import org.apache.poi.hwpf.usermodel.TestHWPFOldDocument;
 import org.apache.poi.hwpf.usermodel.TestHeaderStories;
 import org.apache.poi.hwpf.usermodel.TestLists;
@@ -105,6 +106,7 @@ public final class AllHWPFTests
         suite.addTestSuite( TestBug46610.class );
         suite.addTestSuite( TestBug49820.class );
         suite.addTestSuite( TestBug50075.class );
+        suite.addTestSuite( TestBugs.class );
         suite.addTestSuite( TestHeaderStories.class );
         suite.addTestSuite( TestHWPFOldDocument.class );
         suite.addTestSuite( TestLists.class );
