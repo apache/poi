@@ -108,36 +108,6 @@ public final class TestPictures extends TestCase {
 		}
 	}
 
-	/**
-	 * emf image, with a crazy offset
-	 */
-	public void disabled_testEmfComplexImage() {
-
-		// Commenting out this test case temporarily. The file emf_2003_image does not contain any
-		// pictures. Instead it has an office drawing object. Need to rewrite this test after
-		// revisiting the implementation of office drawing objects.
-
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("emf_2003_image.doc");
-		List<Picture> pics = doc.getPicturesTable().getAllPictures();
-
-		assertNotNull(pics);
-		assertEquals(1, pics.size());
-
-		Picture pic = pics.get(0);
-		assertNotNull(pic.suggestFileExtension());
-		assertNotNull(pic.suggestFullFileName());
-
-		// This one's tricky
-		// TODO: Fix once we've sorted bug #41898
-		assertNotNull(pic.getContent());
-		assertNotNull(pic.getRawContent());
-
-		// These are probably some sort of offset, need to figure them out
-		assertEquals(4, pic.getSize());
-		assertEquals(0x80000000l, LittleEndian.getUInt(pic.getContent()));
-		assertEquals(0x80000000l, LittleEndian.getUInt(pic.getRawContent()));
-	}
-
 	public void testPicturesWithTable() {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug44603.doc");
 

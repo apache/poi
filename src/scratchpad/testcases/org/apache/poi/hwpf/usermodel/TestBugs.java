@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.util.LittleEndian;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -147,6 +149,38 @@ public class TestBugs extends TestCase
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug33519.doc" );
         WordExtractor extractor = new WordExtractor( doc );
         extractor.getText();
+    }
+
+    /**
+     * [FAILING] 41898 - Word 2003 pictures cannot be extracted
+     */
+    public void Bug41898()
+    {
+        /*
+         * Commenting out this test case temporarily. The file emf_2003_image
+         * does not contain any pictures. Instead it has an office drawing
+         * object. Need to rewrite this test after revisiting the implementation
+         * of office drawing objects. -- (nick?)
+         */
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug41898.doc" );
+        List<Picture> pics = doc.getPicturesTable().getAllPictures();
+
+        assertNotNull( pics );
+        assertEquals( 1, pics.size() );
+
+        Picture pic = pics.get( 0 );
+        assertNotNull( pic.suggestFileExtension() );
+        assertNotNull( pic.suggestFullFileName() );
+
+        // This one's tricky
+        // TODO: Fix once we've sorted bug #41898
+        assertNotNull( pic.getContent() );
+        assertNotNull( pic.getRawContent() );
+
+        // These are probably some sort of offset, need to figure them out
+        assertEquals( 4, pic.getSize() );
+        assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getContent() ) );
+        assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getRawContent() ) );
     }
 
     /**
