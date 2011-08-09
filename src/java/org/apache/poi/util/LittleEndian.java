@@ -118,7 +118,7 @@ public class LittleEndian implements LittleEndianConsts {
      */
     public static long getUInt(byte[] data, int offset) {
         long retNum = getInt(data, offset);
-        return retNum & 0x00FFFFFFFF;
+        return retNum & 0x00FFFFFFFFl;
     }
 
     /**
@@ -140,7 +140,7 @@ public class LittleEndian implements LittleEndianConsts {
      */
     public static long getLong(byte[] data, int offset) {
         long result = 0;
-		
+
 		for (int j = offset + LONG_SIZE - 1; j >= offset; j--) {
 		    result <<= 8;
 		    result |= 0xff & data[j];
@@ -248,7 +248,7 @@ public class LittleEndian implements LittleEndianConsts {
     public static void putLong(byte[] data, int offset, long value) {
         int limit = LONG_SIZE + offset;
         long v = value;
-        
+
         for (int j = offset; j < limit; j++) {
             data[j] = (byte) (v & 0xFF);
             v >>= 8;
@@ -303,7 +303,7 @@ public class LittleEndian implements LittleEndianConsts {
         }
         return (ch2 << 8) + (ch1 << 0);
     }
-    
+
 
     /**
      *  get an int value from an InputStream
@@ -347,8 +347,8 @@ public class LittleEndian implements LittleEndianConsts {
         if ((ch1 | ch2 | ch3 | ch4 | ch5 | ch6 | ch7 | ch8) < 0) {
             throw new BufferUnderrunException();
         }
-        
-        return 
+
+        return
             ((long)ch8 << 56) +
             ((long)ch7 << 48) +
             ((long)ch6 << 40) +
