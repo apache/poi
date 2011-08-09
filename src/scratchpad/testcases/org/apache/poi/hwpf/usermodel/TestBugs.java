@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
@@ -152,16 +153,21 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * [FAILING] 41898 - Word 2003 pictures cannot be extracted
+     * Bug 34898 - WordExtractor doesn't read the whole string from the file
      */
-    public void Bug41898()
+    public void test34898()
     {
-        /*
-         * Commenting out this test case temporarily. The file emf_2003_image
-         * does not contain any pictures. Instead it has an office drawing
-         * object. Need to rewrite this test after revisiting the implementation
-         * of office drawing objects. -- (nick?)
-         */
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug34898.doc" );
+        WordExtractor extractor = new WordExtractor( doc );
+        assertEquals( "\u30c7\u30a3\u30ec\u30af\u30c8\u30ea", extractor
+                .getText().trim() );
+    }
+
+    /**
+     * [RESOLVED INVALID] 41898 - Word 2003 pictures cannot be extracted
+     */
+    public void test41898()
+    {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug41898.doc" );
         List<Picture> pics = doc.getPicturesTable().getAllPictures();
 
@@ -172,8 +178,6 @@ public class TestBugs extends TestCase
         assertNotNull( pic.suggestFileExtension() );
         assertNotNull( pic.suggestFullFileName() );
 
-        // This one's tricky
-        // TODO: Fix once we've sorted bug #41898
         assertNotNull( pic.getContent() );
         assertNotNull( pic.getRawContent() );
 
@@ -181,17 +185,19 @@ public class TestBugs extends TestCase
         assertEquals( 4, pic.getSize() );
         assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getContent() ) );
         assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getRawContent() ) );
-    }
 
-    /**
-     * Bug 34898 - WordExtractor doesn't read the whole string from the file
-     */
-    public void test34898()
-    {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug34898.doc" );
-        WordExtractor extractor = new WordExtractor( doc );
-        assertEquals( "\u30c7\u30a3\u30ec\u30af\u30c8\u30ea", extractor
-                .getText().trim() );
+        /*
+         * This is a file with empty EMF image, but present Office Drawing
+         * --sergey
+         */
+        final Collection<OfficeDrawing> officeDrawings = doc
+                .getOfficeDrawingsMain().getOfficeDrawings();
+        assertNotNull( officeDrawings );
+        assertEquals( 1, officeDrawings.size() );
+
+        OfficeDrawing officeDrawing = officeDrawings.iterator().next();
+        assertNotNull( officeDrawing );
+        assertEquals( 1044, officeDrawing.getShapeId() );
     }
 
     /**
