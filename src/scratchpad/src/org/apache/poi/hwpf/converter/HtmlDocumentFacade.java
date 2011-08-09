@@ -57,10 +57,7 @@ public class HtmlDocumentFacade
         html.appendChild( body );
         head.appendChild( stylesheetElement );
 
-        body.setAttribute(
-                "class",
-                getOrCreateCssClass( "body", "b",
-                        "white-space-collapsing: preserve; " ) );
+        addStyleClass( body, "b", "white-space-collapsing:preserve;" );
     }
 
     public void addAuthor( String value )
@@ -84,6 +81,17 @@ public class HtmlDocumentFacade
         meta.setAttribute( "name", name );
         meta.setAttribute( "content", value );
         head.appendChild( meta );
+    }
+
+    public void addStyleClass( Element element, String classNamePrefix,
+            String style )
+    {
+        String exising = element.getAttribute( "class" );
+        String addition = getOrCreateCssClass( element.getTagName(),
+                classNamePrefix, style );
+        String newClassValue = WordToHtmlUtils.isEmpty( exising ) ? addition
+                : ( exising + " " + addition );
+        element.setAttribute( "class", newClassValue );
     }
 
     public Element createBlock()

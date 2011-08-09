@@ -217,8 +217,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         WordToHtmlUtils.addCharactersProperties( characterRun, style );
         if ( style.length() != 0 )
-            span.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
-                    span.getTagName(), "s", style.toString() ) );
+            htmlDocumentFacade.addStyleClass( span, "s", style.toString() );
 
         Text textNode = htmlDocumentFacade.createText( text );
         span.appendChild( textNode );
@@ -405,26 +404,22 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     - cropBottom );
 
             root = htmlDocumentFacade.createBlock();
-            root.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
-                    root.getTagName(), "d", "vertical-align:text-bottom;width:"
-                            + visibleWidth + "in;height:" + visibleHeight
-                            + "in;" ) );
+            htmlDocumentFacade.addStyleClass( root, "d",
+                    "vertical-align:text-bottom;width:" + visibleWidth
+                            + "in;height:" + visibleHeight + "in;" );
 
             // complex
             Element inner = htmlDocumentFacade.createBlock();
-            inner.setAttribute( "class", htmlDocumentFacade
-                    .getOrCreateCssClass( inner.getTagName(), "d",
-                            "position:relative;width:" + visibleWidth
-                                    + "in;height:" + visibleHeight
-                                    + "in;overflow:hidden;" ) );
+            htmlDocumentFacade.addStyleClass( inner, "d",
+                    "position:relative;width:" + visibleWidth + "in;height:"
+                            + visibleHeight + "in;overflow:hidden;" );
             root.appendChild( inner );
 
             Element image = htmlDocumentFacade.createImage( imageSourcePath );
-            image.setAttribute( "class", htmlDocumentFacade
-                    .getOrCreateCssClass( image.getTagName(), "i",
-                            "position:absolute;left:-" + cropLeft + ";top:-"
-                                    + cropTop + ";width:" + imageWidth
-                                    + "in;height:" + imageHeight + "in;" ) );
+            htmlDocumentFacade.addStyleClass( image, "i",
+                    "position:absolute;left:-" + cropLeft + ";top:-" + cropTop
+                            + ";width:" + imageWidth + "in;height:"
+                            + imageHeight + "in;" );
             inner.appendChild( image );
 
             style.append( "overflow:hidden;" );
@@ -560,10 +555,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
 
         if ( style.length() > 0 )
-            pElement.setAttribute(
-                    "class",
-                    htmlDocumentFacade.getOrCreateCssClass(
-                            pElement.getTagName(), "p", style.toString() ) );
+            htmlDocumentFacade.addStyleClass( pElement, "p", style.toString() );
 
         WordToHtmlUtils.compactSpans( pElement );
         return;
@@ -573,8 +565,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
             Section section, int sectionCounter )
     {
         Element div = htmlDocumentFacade.createBlock();
-        div.setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
-                div.getTagName(), "d", getSectionStyle( section ) ) );
+        htmlDocumentFacade.addStyleClass( div, "d", getSectionStyle( section ) );
         htmlDocumentFacade.body.appendChild( div );
 
         processParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
@@ -584,9 +575,8 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processSingleSection( HWPFDocumentCore wordDocument,
             Section section )
     {
-        htmlDocumentFacade.body
-                .setAttribute( "class", htmlDocumentFacade.getOrCreateCssClass(
-                        "body", "b", getSectionStyle( section ) ) );
+        htmlDocumentFacade.addStyleClass( htmlDocumentFacade.body, "b",
+                getSectionStyle( section ) );
 
         processParagraphes( wordDocument, htmlDocumentFacade.body, section,
                 Integer.MIN_VALUE );
@@ -672,11 +662,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
                             .createParagraph() );
                 }
                 if ( tableCellStyle.length() > 0 )
-                    tableCellElement.setAttribute( "class", htmlDocumentFacade
-                            .getOrCreateCssClass(
-                                    tableCellElement.getTagName(),
-                                    tableCellElement.getTagName(),
-                                    tableCellStyle.toString() ) );
+                    htmlDocumentFacade.addStyleClass( tableCellElement,
+                            tableCellElement.getTagName(),
+                            tableCellStyle.toString() );
 
                 tableRowElement.appendChild( tableCellElement );
             }
