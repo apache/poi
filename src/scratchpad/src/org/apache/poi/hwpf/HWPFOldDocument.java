@@ -74,7 +74,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             tpt = cft.getTextPieceTable();
             
             for(TextPiece tp : tpt.getTextPieces()) {
-                text.append( tp.getStringBuffer() );
+                text.append( tp.getStringBuilder() );
             }
         } else {
             // TODO Discover if these older documents can ever hold Unicode Strings?
@@ -94,7 +94,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             );
             tpt.add(tp);
             
-            text.append(tp.getStringBuffer());
+            text.append(tp.getStringBuilder());
         }
         
         _text = tpt.getText();

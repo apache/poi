@@ -68,7 +68,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
 	  _pd = pd;
 
 	  // Validate
-	  int textLength = ((StringBuffer)_buf).length();
+	  int textLength = ((CharSequence)_buf).length();
 	  if(end-start != textLength) {
 		  throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
 	  }
@@ -78,9 +78,9 @@ public final class TextPiece extends PropertyNode<TextPiece>
   }
 
   /**
-   * Create the StringBuffer from the text and unicode flag
+   * Create the StringBuilder from the text and unicode flag
    */
-  private static StringBuffer buildInitSB(byte[] text, PieceDescriptor pd) {
+  private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
 	  String str;
 	  try {
 		  if(pd.isUnicode()) {
@@ -91,7 +91,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
 	  } catch(UnsupportedEncodingException e) {
 		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
 	  }
-	  return new StringBuffer(str);
+	  return new StringBuilder(str);
   }
 
   /**
@@ -107,15 +107,21 @@ public final class TextPiece extends PropertyNode<TextPiece>
      return _pd;
    }
 
+   @Deprecated
    public StringBuffer getStringBuffer()
    {
-     return (StringBuffer)_buf;
+     return new StringBuffer(getStringBuilder());
+   }
+
+   public StringBuilder getStringBuilder()
+   {
+     return (StringBuilder)_buf;
    }
 
    public byte[] getRawBytes()
    {
      try {
-       return ((StringBuffer)_buf).toString().getBytes(_usesUnicode ?
+       return ((CharSequence)_buf).toString().getBytes(_usesUnicode ?
            "UTF-16LE" : "Cp1252");
      } catch (UnsupportedEncodingException ignore) {
 		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
@@ -130,7 +136,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
     */
    public String substring(int start, int end)
    {
-	   StringBuffer buf = (StringBuffer)_buf;
+       StringBuilder buf = (StringBuilder)_buf;
 
 	   // Validate
 	   if(start < 0) {
@@ -167,7 +173,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
 
 		   int bufStart = overlapStart - myStart;
 		   int bufEnd = overlapEnd - myStart;
-		   ((StringBuffer)_buf).delete(bufStart, bufEnd);
+		   ((StringBuilder)_buf).delete(bufStart, bufEnd);
 	   }
 
 	   // We need to invoke this even if text from this piece is not being
@@ -197,7 +203,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
      if (limitsAreEqual(o))
      {
        TextPiece tp = (TextPiece)o;
-       return getStringBuffer().toString().equals(tp.getStringBuffer().toString()) &&
+       return getStringBuilder().toString().equals(tp.getStringBuilder().toString()) &&
               tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
      }
      return false;

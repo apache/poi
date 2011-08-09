@@ -70,13 +70,13 @@ public final class TestTextPieceTable extends TestCase {
 
 		// All ascii, so stored in one big lump
 		assertEquals(1, tbl.getTextPieces().size());
-		TextPiece tp = (TextPiece)tbl.getTextPieces().get(0);
+		TextPiece tp = tbl.getTextPieces().get(0);
 
 		assertEquals(0, tp.getStart());
 		assertEquals(339, tp.getEnd());
 		assertEquals(339, tp.characterLength());
 		assertEquals(339, tp.bytesLength());
-		assertTrue(tp.getStringBuffer().toString().startsWith("This is a sample word document"));
+		assertTrue(tp.getStringBuilder().toString().startsWith("This is a sample word document"));
 
 
 		// Save and re-load
@@ -84,13 +84,13 @@ public final class TestTextPieceTable extends TestCase {
 		tbl = docB.getTextTable();
 
 		assertEquals(1, tbl.getTextPieces().size());
-		tp = (TextPiece)tbl.getTextPieces().get(0);
+		tp = tbl.getTextPieces().get(0);
 
 		assertEquals(0, tp.getStart());
 		assertEquals(339, tp.getEnd());
 		assertEquals(339, tp.characterLength());
 		assertEquals(339, tp.bytesLength());
-		assertTrue(tp.getStringBuffer().toString().startsWith("This is a sample word document"));
+		assertTrue(tp.getStringBuilder().toString().startsWith("This is a sample word document"));
 	}
 
 	/**

@@ -562,7 +562,7 @@ public final class HWPFLister
 
             if ( withText )
             {
-                System.out.println( "\t" + textPiece.getStringBuffer() );
+                System.out.println( "\t" + textPiece.getStringBuilder() );
             }
         }
     }
