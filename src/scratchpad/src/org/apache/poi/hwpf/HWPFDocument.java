@@ -39,11 +39,11 @@ import org.apache.poi.hwpf.model.NoteType;
 import org.apache.poi.hwpf.model.NotesTables;
 import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.PieceDescriptor;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
 import org.apache.poi.hwpf.model.ShapesTable;
+import org.apache.poi.hwpf.model.SinglentonTextPiece;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.TextPiece;
@@ -94,7 +94,8 @@ public final class HWPFDocument extends HWPFDocumentCore
   * structure*/
   protected ComplexFileTable _cft;
 
-  protected final StringBuilder _text;
+  /** Contains text buffer linked directly to single-piece document text piece */
+  protected StringBuilder _text;
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
@@ -284,9 +285,9 @@ public final class HWPFDocument extends HWPFDocumentCore
         {
             _cft = new ComplexFileTable();
             _tpt = _cft.getTextPieceTable();
-            _tpt.add( new TextPiece( 0, _text.length(), _text.toString()
-                    .getBytes( "UTF-16LE" ), new PieceDescriptor( new byte[8],
-                    0 ) ) );
+            final TextPiece textPiece = new SinglentonTextPiece( _text );
+            _tpt.add( textPiece );
+            _text = textPiece.getStringBuilder();
         }
 
         // Read FSPA and Escher information

@@ -31,7 +31,7 @@ import org.apache.poi.util.Internal;
  * @author Ryan Ackley
  */
 @Internal
-public final class TextPiece extends PropertyNode<TextPiece>
+public class TextPiece extends PropertyNode<TextPiece>
 {
   private boolean _usesUnicode;
 
@@ -134,6 +134,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
     * @param start Local start position, in characters
     * @param end Local end position, in characters
     */
+   @Deprecated
    public String substring(int start, int end)
    {
        StringBuilder buf = (StringBuilder)_buf;
@@ -157,6 +158,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
     * @param start The start position for the delete, in characters
     * @param length The number of characters to delete
     */
+   @Deprecated
    public void adjustForDelete(int start, int length) {
 	   int numChars = length;
 
@@ -187,6 +189,7 @@ public final class TextPiece extends PropertyNode<TextPiece>
    /**
     * Returns the length, in characters
     */
+   @Deprecated
    public int characterLength()
    {
      return (getEnd() - getStart());

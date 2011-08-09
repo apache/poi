@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -471,6 +473,35 @@ public class TestBugs extends TestCase
     public void test51524()
     {
         HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
+    }
+
+    /**
+     * Bug 51604 - replace text fails for doc ( poi 3.8 beta release from
+     * download site )
+     */
+    public void test51604()
+    {
+        HWPFDocument document = HWPFTestDataSamples
+                .openSampleFile( "Bug51604.doc" );
+
+        Range range = document.getRange();
+        int numParagraph = range.numParagraphs();
+        int counter = 0;
+        for ( int i = 0; i < numParagraph; i++ )
+        {
+            Paragraph paragraph = range.getParagraph( i );
+            int numCharRuns = paragraph.numCharacterRuns();
+            for ( int j = 0; j < numCharRuns; j++ )
+            {
+                CharacterRun charRun = paragraph.getCharacterRun( j );
+                String text = charRun.text();
+                charRun.replaceText( text, "+" + ( ++counter ) );
+            }
+        }
+
+        document = HWPFTestDataSamples.writeOutAndReadBack( document );
+        String text = document.getDocumentText();
+        assertEquals( "+1+2+3+4+5+6+7+8+9+10+11+12", text );
     }
 
 }
