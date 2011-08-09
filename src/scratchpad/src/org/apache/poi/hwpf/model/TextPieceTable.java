@@ -264,7 +264,7 @@ public class TextPieceTable implements CharIndexTranslator
         StringBuilder docText = new StringBuilder();
         for ( TextPiece textPiece : _textPieces )
         {
-            String toAppend = textPiece.getStringBuffer().toString();
+            String toAppend = textPiece.getStringBuilder().toString();
             int toAppendLength = toAppend.length();
 
             if ( toAppendLength != textPiece.getEnd() - textPiece.getStart() )

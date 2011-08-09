@@ -84,7 +84,7 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
             // Fall back to ripping out the text pieces
 	        ret = new String[doc.getTextTable().getTextPieces().size()];
 	        for(int i=0; i<ret.length; i++) {
-	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuffer().toString();
+	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
 	            
 	            // Fix the line endings
 	            ret[i].replaceAll("\r", "\ufffe");
