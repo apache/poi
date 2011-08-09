@@ -524,11 +524,8 @@ public class ExcelToHtmlConverter
             innerDivStyle.append( "pt;white-space:nowrap;" );
             ExcelToHtmlUtils.appendAlign( innerDivStyle,
                     cellStyle.getAlignment() );
-            innerDiv.setAttribute(
-                    "class",
-                    htmlDocumentFacade.getOrCreateCssClass(
-                            outerDiv.getTagName(), "d",
-                            innerDivStyle.toString() ) );
+            htmlDocumentFacade.addStyleClass( outerDiv, "d",
+                    innerDivStyle.toString() );
 
             innerDiv.appendChild( text );
             outerDiv.appendChild( innerDiv );
@@ -761,11 +758,8 @@ public class ExcelToHtmlConverter
                 continue;
 
             Element tableRowElement = htmlDocumentFacade.createTableRow();
-            tableRowElement.setAttribute(
-                    "class",
-                    htmlDocumentFacade.getOrCreateCssClass(
-                            tableRowElement.getTagName(), "r", "height:"
-                                    + ( row.getHeight() / 20f ) + "pt;" ) );
+            htmlDocumentFacade.addStyleClass( tableRowElement, "r", "height:"
+                    + ( row.getHeight() / 20f ) + "pt;" );
 
             int maxRowColumnNumber = processRow( mergedRanges, row,
                     tableRowElement );
