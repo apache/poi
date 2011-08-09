@@ -22,6 +22,7 @@ package org.apache.poi.hwpf.model.types;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * Table Cell Descriptor.
@@ -30,6 +31,7 @@ import org.apache.poi.util.BitField;
 
  * @author S. Ryan Ackley
  */
+@Internal
 public abstract class TCAbstractType
     implements HDFType
 {

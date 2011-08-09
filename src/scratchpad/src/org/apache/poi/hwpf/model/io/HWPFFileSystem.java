@@ -21,6 +21,9 @@ package org.apache.poi.hwpf.model.io;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public final class HWPFFileSystem
 {
   Map<String, HWPFOutputStream> _streams = new HashMap<String, HWPFOutputStream>();

@@ -23,6 +23,7 @@ import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
 import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * Paragraph Properties.
@@ -31,6 +32,7 @@ import org.apache.poi.util.BitField;
 
  * @author S. Ryan Ackley
  */
+@Internal
 public abstract class PAPAbstractType
 {
 

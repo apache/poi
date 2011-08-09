@@ -18,8 +18,10 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -32,6 +34,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Praveen Mathew
  */
+@Internal
 public final class FontTable
 {
   private final static POILogger _logger = POILogFactory.getLogger(FontTable.class);

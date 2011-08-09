@@ -18,12 +18,14 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
+import org.apache.poi.util.Internal;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
+@Internal
 public final class DocumentProperties extends DOPAbstractType {
 
 

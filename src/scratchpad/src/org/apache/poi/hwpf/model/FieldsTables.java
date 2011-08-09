@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 
 /**
  * This class provides access to all the fields Plex.
@@ -32,6 +33,7 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
  * @author Cedric Bosdonnat <cbosdonnat@novell.com>
  * 
  */
+@Internal
 public class FieldsTables
 {
     // The size in bytes of the FLD data structure

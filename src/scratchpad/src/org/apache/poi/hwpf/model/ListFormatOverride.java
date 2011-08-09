@@ -18,7 +18,9 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.model.types.LFOAbstractType;
+import org.apache.poi.util.Internal;
 
+@Internal
 public final class ListFormatOverride extends LFOAbstractType
 {
     private ListFormatOverrideLevel[] _levelOverrides;

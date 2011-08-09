@@ -19,6 +19,9 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public final class UPX
 {
   private byte[] _upx;

@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public final class GenericPropertyNode
   extends PropertyNode<GenericPropertyNode>
 {

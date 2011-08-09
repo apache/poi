@@ -22,10 +22,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 
 /**
  * String table containing the names of authors of revision marks, e-mails and
@@ -33,6 +33,7 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
  * 
  * @author Ryan Lauck
  */
+@Internal
 public final class RevisionMarkAuthorTable {
 	/**
 	 * must be 0xFFFF

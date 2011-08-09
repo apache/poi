@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model.types;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
+import org.apache.poi.util.Internal;
 
 /**
  * Section Properties.
@@ -28,6 +29,7 @@ import org.apache.poi.hwpf.usermodel.DateAndTime;
  *
  * @author S. Ryan Ackley
  */
+@Internal
 public abstract class SEPAbstractType
 {
 

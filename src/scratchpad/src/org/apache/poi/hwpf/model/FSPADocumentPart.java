@@ -1,5 +1,8 @@
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public enum FSPADocumentPart {
     HEADER( FIBFieldHandler.PLCSPAHDR ),
 

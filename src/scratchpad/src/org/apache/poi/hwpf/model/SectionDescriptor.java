@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -24,6 +25,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @see page 186 for details
  */
+@Internal
 public final class SectionDescriptor
 {
 

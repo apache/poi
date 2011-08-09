@@ -17,10 +17,12 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import java.util.Arrays;
 
 /**
  * FFN - Font Family Name. FFN is a data structure that stores the names of the Main
@@ -29,6 +31,7 @@ import java.util.Arrays;
  *
  * @author Praveen Mathew
  */
+@Internal
 public final class Ffn
 {
   private int _cbFfnM1;//total length of FFN - 1.

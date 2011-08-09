@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -37,6 +38,7 @@ import org.apache.poi.util.POILogger;
 /**
  * @author Ryan Ackley
  */
+@Internal
 public final class ListTables
 {
   private static final int LIST_DATA_SIZE = 28;

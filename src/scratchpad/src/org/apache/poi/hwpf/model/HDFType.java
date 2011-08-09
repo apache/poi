@@ -17,10 +17,14 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
 /**
  *
  * @author  andy
  */
+@Internal
+@Deprecated
 public interface HDFType {
 
 }

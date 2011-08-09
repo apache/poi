@@ -2,6 +2,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -12,6 +13,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Sergey Vladimirov ( vlsergey {at} gmail {dot} com )
  */
+@Internal
 public class PictureDescriptor
 {
     private static final int LCB_OFFSET = 0x00;

@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -32,6 +33,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Ryan Ackley
  */
+@Internal
 public abstract class PropertyNode<T extends PropertyNode<T>>  implements Comparable<T>, Cloneable
 {
 

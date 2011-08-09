@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.model.types.HRESIAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -26,6 +27,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * @author Sergey Vladimirov ( vlsergey {at} gmail {dot} com )
  */
+@Internal
 public final class Hyphenation extends HRESIAbstractType implements Cloneable
 {
     public Hyphenation()

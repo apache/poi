@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.Shape;
+import org.apache.poi.util.Internal;
 
+@Internal
 @Deprecated
 public final class ShapesTable {
         private List<Shape> _shapes;

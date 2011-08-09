@@ -3,6 +3,7 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -11,6 +12,7 @@ import org.apache.poi.util.StringUtil;
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
+@Internal
 class SttbfUtils
 {
     public static String[] read( byte[] data, int startOffset )

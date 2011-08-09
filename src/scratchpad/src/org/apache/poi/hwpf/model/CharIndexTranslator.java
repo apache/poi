@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public interface CharIndexTranslator {
     /**
      * Calculates the byte index of the given char index.

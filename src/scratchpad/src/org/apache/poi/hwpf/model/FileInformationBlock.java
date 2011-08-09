@@ -24,6 +24,7 @@ import java.util.HashSet;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.model.types.FIBAbstractType;
+import org.apache.poi.util.Internal;
 
 /**
  * The File Information Block (FIB). Holds pointers
@@ -41,6 +42,7 @@ import org.apache.poi.hwpf.model.types.FIBAbstractType;
  *
  * @author  andy
  */
+@Internal
 public final class FileInformationBlock extends FIBAbstractType
   implements Cloneable
 {

@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.util.Internal;
 
+@Internal
 public class BookmarksTables
 {
     private PlexOfCps descriptorsFirst = new PlexOfCps( 4 );

@@ -19,12 +19,13 @@ package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
+import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
-import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Represents a document's stylesheet. A word documents formatting is stored as
@@ -34,6 +35,7 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
  *
  * @author Ryan Ackley
  */
+@Internal
 public final class StyleSheet implements HDFType {
 
   public static final int NIL_STYLE = 4095;

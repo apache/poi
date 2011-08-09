@@ -25,12 +25,14 @@ import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.util.Internal;
 
 /**
  * Based on AbstractEscherRecordHolder from HSSF.
  *
  * @author Squeeself
  */
+@Internal
 public final class EscherRecordHolder {
 	private final ArrayList<EscherRecord> escherRecords;
 

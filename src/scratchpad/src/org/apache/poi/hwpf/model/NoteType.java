@@ -22,6 +22,9 @@
  */
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 public enum NoteType {
     /** Ending note */
     ENDNOTE( FIBFieldHandler.PLCFENDREF, FIBFieldHandler.PLCFENDTXT ),

@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -27,6 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * 
  * See page 170 for details.
  */
+@Internal
 public final class ListLevel
 {
     private static final int RGBXCH_NUMS_SIZE = 9;

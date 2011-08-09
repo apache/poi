@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model.types;
 
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * Field Descriptor (FLD).
@@ -32,6 +33,7 @@ import org.apache.poi.util.BitField;
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
  *         File Format Specification [*.doc]
  */
+@Internal
 public abstract class FLDAbstractType implements HDFType
 {
 
