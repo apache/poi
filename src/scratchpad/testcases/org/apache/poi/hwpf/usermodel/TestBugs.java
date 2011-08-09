@@ -94,8 +94,7 @@ public class TestBugs extends TestCase
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "empty.doc" );
 
         Range range = doc.getRange();
-        Table table = range.insertBefore(
-                new TableProperties( (short) columns ), rows );
+        Table table = range.insertTableBefore( (short) columns, rows );
         table.sanityCheck();
         range.sanityCheck();
 
