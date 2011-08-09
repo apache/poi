@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class NewOleFile extends RandomAccessFile
 {
     private byte[] LAOLA_ID_ARRAY = new byte[]{(byte)0xd0, (byte)0xcf, (byte)0x11,

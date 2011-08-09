@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class TableCellDescriptor extends TCAbstractType implements HDFType
 {
 

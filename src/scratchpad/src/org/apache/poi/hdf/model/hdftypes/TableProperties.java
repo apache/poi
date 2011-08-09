@@ -24,7 +24,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.TAPAbstractType;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class TableProperties extends TAPAbstractType
 {
 

@@ -34,7 +34,7 @@ import java.util.*;
  * @author Ryan Ackley
  *
 */
-
+@Deprecated
 public final class BTreeSet extends AbstractSet implements Set {
 
     /*

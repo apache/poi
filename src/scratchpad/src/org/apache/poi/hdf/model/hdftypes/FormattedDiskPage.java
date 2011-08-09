@@ -39,6 +39,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
+@Deprecated
 public abstract class FormattedDiskPage
 {
     protected byte[] _fkp;

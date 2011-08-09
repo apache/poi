@@ -24,6 +24,7 @@ package org.apache.poi.hdf.model.hdftypes;
  *
  * @author Ryan Ackley
  */
+@Deprecated
 public abstract class PropertyNode implements Comparable {
   private byte[] _grpprl;
   private int _fcStart;

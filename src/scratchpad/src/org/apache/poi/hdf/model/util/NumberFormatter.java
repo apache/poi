@@ -23,7 +23,7 @@ package org.apache.poi.hdf.model.util;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class NumberFormatter
 {
   private final static int ARABIC = 0;

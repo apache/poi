@@ -35,7 +35,7 @@ import org.apache.poi.hdf.model.hdftypes.PropertyNode;
  * @author Ryan Ackley
  *
 */
-
+@Deprecated
 public final class BTreeSet extends AbstractSet
 {
 

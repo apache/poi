@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.poi.hdf.event.HDFParsingListener;
 import org.apache.poi.hdf.event.EventBridge;
 
+@Deprecated
 public final class HDFDocument
 {
 

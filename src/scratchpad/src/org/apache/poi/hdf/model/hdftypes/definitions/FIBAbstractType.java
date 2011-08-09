@@ -31,6 +31,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 
  * @author Andrew C. Oliver
  */
+@Deprecated
 public abstract class FIBAbstractType
     implements HDFType
 {

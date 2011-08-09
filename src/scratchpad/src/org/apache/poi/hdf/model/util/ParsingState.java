@@ -19,6 +19,7 @@ package org.apache.poi.hdf.model.util;
 
 import org.apache.poi.hdf.model.hdftypes.FormattedDiskPage;
 
+@Deprecated
 public final class ParsingState
 {
 

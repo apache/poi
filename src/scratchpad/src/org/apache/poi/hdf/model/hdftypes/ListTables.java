@@ -27,7 +27,7 @@ import org.apache.poi.hdf.extractor.*;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class ListTables implements HDFType
 {
 

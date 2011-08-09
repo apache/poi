@@ -35,6 +35,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
+@Deprecated
 public final class WordDocument {
 	// TODO - name this constant properly
 	private static final float K_1440_0F = 1440.0f;
