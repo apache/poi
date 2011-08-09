@@ -563,17 +563,18 @@ public class Range { // TODO -instantiable superclass
 		adjustFIB(-(_end - _start));
 	}
 
-	/**
-	 * Inserts a simple table into the beginning of this range. The number of
-	 * columns is determined by the TableProperties passed into this function.
-	 *
-	 * @param props
-	 *            The table properties for the table.
-	 * @param rows
-	 *            The number of rows.
-	 * @return The empty Table that is now part of the document.
-     * @deprecated Use code shall not work with {@link TableProperties}
-	 */
+    /**
+     * Inserts a simple table into the beginning of this range. The number of
+     * columns is determined by the TableProperties passed into this function.
+     * 
+     * @param props
+     *            The table properties for the table.
+     * @param rows
+     *            The number of rows.
+     * @return The empty Table that is now part of the document.
+     * @deprecated Use code shall not work with {@link TableProperties}. Use
+     *             {@link #insertTableBefore(short, int)} instead
+     */
 	@Deprecated
 	public Table insertBefore(TableProperties props, int rows) {
 		ParagraphProperties parProps = new ParagraphProperties();
@@ -603,6 +604,42 @@ public class Range { // TODO -instantiable superclass
         return new Table( _start, _start + diff, this, 1 );
     }
 
+    /**
+     * Inserts a simple table into the beginning of this range.
+     * 
+     * @param columns
+     *            The number of columns
+     * @param rows
+     *            The number of rows.
+     * @return The empty Table that is now part of the document.
+     */
+	public Table insertTableBefore(short columns, int rows) {
+        ParagraphProperties parProps = new ParagraphProperties();
+        parProps.setFInTable(true);
+        parProps.setItap( 1 );
+
+        final int oldEnd = this._end;
+        
+        for ( int x = 0; x < rows; x++ )
+        {
+            Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
+            cell.insertAfter( String.valueOf( '\u0007' ) );
+            for ( int y = 1; y < columns; y++ )
+            {
+                cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE );
+                cell.insertAfter( String.valueOf( '\u0007' ) );
+            }
+            cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE,
+                    String.valueOf( '\u0007' ) );
+            cell.setTableRowEnd( new TableProperties( columns ) );
+        }
+
+        final int newEnd = this._end;
+        final int diff = newEnd - oldEnd;
+
+        return new Table( _start, _start + diff, this, 1 );
+	}
+	
 	/**
 	 * Inserts a list into the beginning of this range.
 	 *
