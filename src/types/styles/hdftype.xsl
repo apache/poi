@@ -19,8 +19,8 @@
 -->
 <xsl:stylesheet version="1.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:recutil="org.apache.poi.hdf.generator.HDFRecordUtil"
-   xmlns:field="org.apache.poi.hdf.generator.HDFFieldIterator"
+   xmlns:recutil="org.apache.poi.hwpf.dev.RecordUtil"
+   xmlns:field="org.apache.poi.hwpf.dev.FieldIterator"
    xmlns:java="java" >
 
     <xsl:output method="text"/>
@@ -31,12 +31,8 @@
 package <xsl:value-of select="@package"/>;
 </xsl:if>
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.util.*;
 
 /**
  * <xsl:value-of select="/record/description"/>
