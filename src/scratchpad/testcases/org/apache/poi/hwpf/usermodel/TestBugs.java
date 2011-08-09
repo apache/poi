@@ -353,25 +353,16 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * [FAILING] Bug 47731 - Word Extractor considers text copied from some
-     * website as an embedded object
+     * [RESOLVED FIXED] Bug 47731 - Word Extractor considers text copied from
+     * some website as an embedded object
      */
     public void test47731() throws Exception
     {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug47731.doc" );
         String foundText = new WordExtractor( doc ).getText();
 
-        try
-        {
-            assertTrue( foundText
-                    .contains( "Soak the rice in water for three to four hours" ) );
-
-            fixed( "47731" );
-        }
-        catch ( AssertionFailedError exc )
-        {
-            // expected
-        }
+        assertTrue( foundText
+                .contains( "Soak the rice in water for three to four hours" ) );
     }
 
     /**
