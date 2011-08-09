@@ -1,5 +1,8 @@
 package org.apache.poi.hwpf.converter;
 
+import org.apache.poi.util.Beta;
+
+@Beta
 public class DefaultFontReplacer implements FontReplacer
 {
     public Triplet update( Triplet original )

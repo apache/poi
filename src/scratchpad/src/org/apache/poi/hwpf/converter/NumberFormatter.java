@@ -19,11 +19,14 @@
 
 package org.apache.poi.hwpf.converter;
 
+import org.apache.poi.util.Beta;
+
 /**
  * Comment me
  * 
  * @author Ryan Ackley
  */
+@Beta
 public final class NumberFormatter
 {
 
