@@ -48,6 +48,7 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -57,6 +58,7 @@ import org.apache.poi.util.IOUtils;
  * @author Nick Burch (nick at torchbox dot com)
  * @author Sergey Vladimirov (vlsergey at gmail dot com)
  */
+@Beta
 public final class HWPFLister
 {
     private static HWPFDocumentCore loadDoc( File docFile ) throws IOException
