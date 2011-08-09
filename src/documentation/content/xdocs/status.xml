@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51604 - replace text fails for doc ( poi 3.8 beta release from download site )</action>
            <action dev="poi-developers" type="fix">Fixed incorrect encoding of non-breaking space (0xA0) in SXSSF</action>
            <action dev="poi-developers" type="add">Support for conditional formatting in XSSF</action>
            <action dev="poi-developers" type="add">Support isRightToLeft and setRightToLeft on the common spreadsheet Sheet interface, as per existing HSSF support</action>
