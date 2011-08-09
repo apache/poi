@@ -16,12 +16,14 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import org.apache.poi.util.Beta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+@Beta
 public class FoDocumentFacade
 {
     private static final String NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";

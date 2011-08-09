@@ -22,8 +22,10 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.util.Beta;
 import org.w3c.dom.Element;
 
+@Beta
 public class WordToFoUtils extends AbstractWordUtils
 {
     static void compactInlines( Element blockElement )

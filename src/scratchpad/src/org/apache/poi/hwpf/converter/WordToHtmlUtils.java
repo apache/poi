@@ -21,8 +21,10 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.util.Beta;
 import org.w3c.dom.Element;
 
+@Beta
 public class WordToHtmlUtils extends AbstractWordUtils
 {
     public static void addBold( final boolean bold, StringBuilder style )

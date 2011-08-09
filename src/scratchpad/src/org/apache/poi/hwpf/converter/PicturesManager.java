@@ -17,12 +17,14 @@
 package org.apache.poi.hwpf.converter;
 
 import org.apache.poi.hwpf.usermodel.PictureType;
+import org.apache.poi.util.Beta;
 
 /**
  * User-implemented pictures manager to store images on-disk
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
+@Beta
 public interface PicturesManager
 {
     /**

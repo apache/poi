@@ -45,6 +45,7 @@ import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -54,6 +55,7 @@ import org.w3c.dom.Text;
 /**
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
+@Beta
 public class WordToFoConverter extends AbstractWordConverter
 {
 
