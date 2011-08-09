@@ -71,9 +71,9 @@ public abstract class AbstractWordConverter
 
     private static final byte SPECCHAR_DRAWN_OBJECT = 8;
 
-    private static final char UNICODECHAR_NONBREAKING_HYPHEN = '\u2011';
+    protected static final char UNICODECHAR_NONBREAKING_HYPHEN = '\u2011';
 
-    private static final char UNICODECHAR_ZERO_WIDTH_SPACE = '\u200b';
+    protected static final char UNICODECHAR_ZERO_WIDTH_SPACE = '\u200b';
 
     private static void addToStructures( List<Structure> structures,
             Structure structure )
@@ -205,7 +205,7 @@ public abstract class AbstractWordConverter
             Element currentBlock, Range range, int currentTableLevel,
             List<Bookmark> rangeBookmarks );
 
-    protected boolean processCharacters( final HWPFDocumentCore document,
+    protected boolean processCharacters( final HWPFDocumentCore wordDocument,
             final int currentTableLevel, final Range range, final Element block )
     {
         if ( range == null )
@@ -220,9 +220,9 @@ public abstract class AbstractWordConverter
          * reconstruct the structure of range -- sergey
          */
         List<Structure> structures = new LinkedList<Structure>();
-        if ( document instanceof HWPFDocument )
+        if ( wordDocument instanceof HWPFDocument )
         {
-            final HWPFDocument doc = (HWPFDocument) document;
+            final HWPFDocument doc = (HWPFDocument) wordDocument;
 
             Map<Integer, List<Bookmark>> rangeBookmarks = doc.getBookmarks()
                     .getBookmarksStartedBetween( range.getStartOffset(),
@@ -247,7 +247,7 @@ public abstract class AbstractWordConverter
                 CharacterRun characterRun = range.getCharacterRun( c );
                 if ( characterRun == null )
                     throw new AssertionError();
-                Field aliveField = ( (HWPFDocument) document ).getFields()
+                Field aliveField = ( (HWPFDocument) wordDocument ).getFields()
                         .getFieldByStartOffset( FieldsDocumentPart.MAIN,
                                 characterRun.getStartOffset() );
                 if ( aliveField != null )
@@ -273,14 +273,15 @@ public abstract class AbstractWordConverter
                         return "BetweenStructuresSubrange " + super.toString();
                     }
                 };
-                processCharacters( document, currentTableLevel, subrange, block );
+                processCharacters( wordDocument, currentTableLevel, subrange,
+                        block );
             }
 
             if ( structure.structure instanceof Bookmark )
             {
                 // other bookmarks with same bundaries
                 List<Bookmark> bookmarks = new LinkedList<Bookmark>();
-                for ( Bookmark bookmark : ( (HWPFDocument) document )
+                for ( Bookmark bookmark : ( (HWPFDocument) wordDocument )
                         .getBookmarks()
                         .getBookmarksStartedBetween( structure.start,
                                 structure.start + 1 ).values().iterator()
@@ -306,7 +307,7 @@ public abstract class AbstractWordConverter
                         }
                     };
 
-                    processBookmarks( document, block, subrange,
+                    processBookmarks( wordDocument, block, subrange,
                             currentTableLevel, bookmarks );
                 }
                 finally
@@ -317,7 +318,7 @@ public abstract class AbstractWordConverter
             else if ( structure.structure instanceof Field )
             {
                 Field field = (Field) structure.structure;
-                processField( (HWPFDocument) document, range,
+                processField( (HWPFDocument) wordDocument, range,
                         currentTableLevel, field, block );
             }
             else
@@ -349,7 +350,8 @@ public abstract class AbstractWordConverter
                         return "AfterStructureSubrange " + super.toString();
                     }
                 };
-                processCharacters( document, currentTableLevel, subrange, block );
+                processCharacters( wordDocument, currentTableLevel, subrange,
+                        block );
             }
             return true;
         }
@@ -361,11 +363,11 @@ public abstract class AbstractWordConverter
             if ( characterRun == null )
                 throw new AssertionError();
 
-            if ( document instanceof HWPFDocument
-                    && ( (HWPFDocument) document ).getPicturesTable()
+            if ( wordDocument instanceof HWPFDocument
+                    && ( (HWPFDocument) wordDocument ).getPicturesTable()
                             .hasPicture( characterRun ) )
             {
-                HWPFDocument newFormat = (HWPFDocument) document;
+                HWPFDocument newFormat = (HWPFDocument) wordDocument;
                 Picture picture = newFormat.getPicturesTable().extractPicture(
                         characterRun, true );
 
@@ -381,16 +383,16 @@ public abstract class AbstractWordConverter
             if ( characterRun.isSpecialCharacter() )
             {
                 if ( text.charAt( 0 ) == SPECCHAR_AUTONUMBERED_FOOTNOTE_REFERENCE
-                        && ( document instanceof HWPFDocument ) )
+                        && ( wordDocument instanceof HWPFDocument ) )
                 {
-                    HWPFDocument doc = (HWPFDocument) document;
+                    HWPFDocument doc = (HWPFDocument) wordDocument;
                     processNoteAnchor( doc, characterRun, block );
                     continue;
                 }
                 if ( text.charAt( 0 ) == SPECCHAR_DRAWN_OBJECT
-                        && ( document instanceof HWPFDocument ) )
+                        && ( wordDocument instanceof HWPFDocument ) )
                 {
-                    HWPFDocument doc = (HWPFDocument) document;
+                    HWPFDocument doc = (HWPFDocument) wordDocument;
                     processDrawnObject( doc, characterRun, block );
                     continue;
                 }
@@ -398,14 +400,15 @@ public abstract class AbstractWordConverter
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
             {
-                if ( document instanceof HWPFDocument )
+                if ( wordDocument instanceof HWPFDocument )
                 {
-                    Field aliveField = ( (HWPFDocument) document ).getFields()
-                            .getFieldByStartOffset( FieldsDocumentPart.MAIN,
+                    Field aliveField = ( (HWPFDocument) wordDocument )
+                            .getFields().getFieldByStartOffset(
+                                    FieldsDocumentPart.MAIN,
                                     characterRun.getStartOffset() );
                     if ( aliveField != null )
                     {
-                        processField( ( (HWPFDocument) document ), range,
+                        processField( ( (HWPFDocument) wordDocument ), range,
                                 currentTableLevel, aliveField, block );
 
                         int continueAfter = aliveField.getFieldEndOffset();
@@ -420,8 +423,8 @@ public abstract class AbstractWordConverter
                     }
                 }
 
-                int skipTo = tryDeadField( document, range, currentTableLevel,
-                        c, block );
+                int skipTo = tryDeadField( wordDocument, range,
+                        currentTableLevel, c, block );
 
                 if ( skipTo != c )
                 {
@@ -610,7 +613,7 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun, OfficeDrawing officeDrawing,
             String path, Element block );
 
-    protected abstract void processEndnoteAutonumbered( HWPFDocument doc,
+    protected abstract void processEndnoteAutonumbered( HWPFDocument wordDocument,
             int noteIndex, Element block, Range endnoteTextRange );
 
     protected void processField( HWPFDocument hwpfDocument, Range parentRange,
@@ -666,7 +669,7 @@ public abstract class AbstractWordConverter
                 field.secondSubrange( parentRange ), currentBlock );
     }
 
-    protected abstract void processFootnoteAutonumbered( HWPFDocument doc,
+    protected abstract void processFootnoteAutonumbered( HWPFDocument wordDocument,
             int noteIndex, Element block, Range footnoteTextRange );
 
     protected abstract void processHyperlink( HWPFDocumentCore wordDocument,
@@ -734,8 +737,8 @@ public abstract class AbstractWordConverter
             String pageref );
 
     protected abstract void processParagraph( HWPFDocumentCore wordDocument,
-            Element parentFopElement, int currentTableLevel,
-            Paragraph paragraph, String bulletText );
+            Element parentElement, int currentTableLevel, Paragraph paragraph,
+            String bulletText );
 
     protected void processParagraphes( HWPFDocumentCore wordDocument,
             Element flow, Range range, int currentTableLevel )

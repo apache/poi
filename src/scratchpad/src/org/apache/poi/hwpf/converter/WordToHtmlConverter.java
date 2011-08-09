@@ -282,17 +282,17 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
-    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
+    protected void processEndnoteAutonumbered( HWPFDocument wordDocument, int noteIndex,
             Element block, Range endnoteTextRange )
     {
-        processNoteAutonumbered( doc, "end", noteIndex, block, endnoteTextRange );
+        processNoteAutonumbered( wordDocument, "end", noteIndex, block, endnoteTextRange );
     }
 
     @Override
-    protected void processFootnoteAutonumbered( HWPFDocument doc,
+    protected void processFootnoteAutonumbered( HWPFDocument wordDocument,
             int noteIndex, Element block, Range footnoteTextRange )
     {
-        processNoteAutonumbered( doc, "foot", noteIndex, block,
+        processNoteAutonumbered( wordDocument, "foot", noteIndex, block,
                 footnoteTextRange );
     }
 
@@ -508,11 +508,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     protected void processParagraph( HWPFDocumentCore hwpfDocument,
-            Element parentFopElement, int currentTableLevel,
-            Paragraph paragraph, String bulletText )
+            Element parentElement, int currentTableLevel, Paragraph paragraph,
+            String bulletText )
     {
         final Element pElement = htmlDocumentFacade.createParagraph();
-        parentFopElement.appendChild( pElement );
+        parentElement.appendChild( pElement );
 
         StringBuilder style = new StringBuilder();
         WordToHtmlUtils.addParagraphProperties( paragraph, style );
