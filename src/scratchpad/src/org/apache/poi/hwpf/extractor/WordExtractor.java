@@ -20,8 +20,11 @@ package org.apache.poi.hwpf.extractor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.apache.poi.hwpf.converter.WordToTextConverter;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -33,231 +36,300 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to extract the text from a Word Document.
- *
- * You should use either getParagraphText() or getText() unless
- *  you have a strong reason otherwise.
- *
+ * 
+ * You should use either getParagraphText() or getText() unless you have a
+ * strong reason otherwise.
+ * 
  * @author Nick Burch
  */
-public final class WordExtractor extends POIOLE2TextExtractor {
-	private POIFSFileSystem fs;
-	private HWPFDocument doc;
+public final class WordExtractor extends POIOLE2TextExtractor
+{
+    private HWPFDocument doc;
 
-	/**
-	 * Create a new Word Extractor
-	 * @param is InputStream containing the word file
-	 */
-	public WordExtractor(InputStream is) throws IOException {
-		this( HWPFDocument.verifyAndBuildPOIFS(is) );
-	}
+    /**
+     * Create a new Word Extractor
+     * 
+     * @param is
+     *            InputStream containing the word file
+     */
+    public WordExtractor( InputStream is ) throws IOException
+    {
+        this( HWPFDocument.verifyAndBuildPOIFS( is ) );
+    }
 
-	/**
-	 * Create a new Word Extractor
-	 * @param fs POIFSFileSystem containing the word file
-	 */
-	public WordExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HWPFDocument(fs));
-		this.fs = fs;
-	}
-	public WordExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HWPFDocument(dir, fs));
-		this.fs = fs;
-	}
+    /**
+     * Create a new Word Extractor
+     * 
+     * @param fs
+     *            POIFSFileSystem containing the word file
+     */
+    public WordExtractor( POIFSFileSystem fs ) throws IOException
+    {
+        this( new HWPFDocument( fs ) );
+    }
 
-	/**
-	 * Create a new Word Extractor
-	 * @param doc The HWPFDocument to extract from
-	 */
-	public WordExtractor(HWPFDocument doc) {
-		super(doc);
-		this.doc = doc;
-	}
+    /**
+     * @deprecated Use {@link #WordExtractor(DirectoryNode)} instead
+     */
+    @Deprecated
+    public WordExtractor( DirectoryNode dir, POIFSFileSystem fs )
+            throws IOException
+    {
+        this( dir );
+    }
 
-	/**
-	 * Command line extractor, so people will stop moaning that
-	 *  they can't just run this.
-	 */
-	public static void main(String[] args) throws IOException {
-		if(args.length == 0) {
-			System.err.println("Use:");
-			System.err.println("   java org.apache.poi.hwpf.extractor.WordExtractor <filename>");
-			System.exit(1);
-		}
+    public WordExtractor( DirectoryNode dir ) throws IOException
+    {
+        this( new HWPFDocument( dir ) );
+    }
 
-		// Process the first argument as a file
-		FileInputStream fin = new FileInputStream(args[0]);
-		WordExtractor extractor = new WordExtractor(fin);
-		System.out.println(extractor.getText());
-	}
+    /**
+     * Create a new Word Extractor
+     * 
+     * @param doc
+     *            The HWPFDocument to extract from
+     */
+    public WordExtractor( HWPFDocument doc )
+    {
+        super( doc );
+        this.doc = doc;
+    }
 
-	/**
-	 * Get the text from the word file, as an array with one String
-	 *  per paragraph
-	 */
-        public String[] getParagraphText() {
-                String[] ret;
+    /**
+     * Command line extractor, so people will stop moaning that they can't just
+     * run this.
+     */
+    public static void main( String[] args ) throws IOException
+    {
+        if ( args.length == 0 )
+        {
+            System.err.println( "Use:" );
+            System.err
+                    .println( "   java org.apache.poi.hwpf.extractor.WordExtractor <filename>" );
+            System.exit( 1 );
+        }
 
-                // Extract using the model code
-                try {
-                        Range r = doc.getRange();
+        // Process the first argument as a file
+        FileInputStream fin = new FileInputStream( args[0] );
+        WordExtractor extractor = new WordExtractor( fin );
+        System.out.println( extractor.getText() );
+    }
 
-                        ret = getParagraphText(r);
-                } catch (Exception e) {
-                        // Something's up with turning the text pieces into paragraphs
-                        // Fall back to ripping out the text pieces
-                        ret = new String[1];
-                        ret[0] = getTextFromPieces();
+    /**
+     * Get the text from the word file, as an array with one String per
+     * paragraph
+     */
+    public String[] getParagraphText()
+    {
+        String[] ret;
+
+        // Extract using the model code
+        try
+        {
+            Range r = doc.getRange();
+
+            ret = getParagraphText( r );
+        }
+        catch ( Exception e )
+        {
+            // Something's up with turning the text pieces into paragraphs
+            // Fall back to ripping out the text pieces
+            ret = new String[1];
+            ret[0] = getTextFromPieces();
+        }
+
+        return ret;
+    }
+
+    public String[] getFootnoteText()
+    {
+        Range r = doc.getFootnoteRange();
+
+        return getParagraphText( r );
+    }
+
+    public String[] getMainTextboxText()
+    {
+        Range r = doc.getMainTextboxRange();
+
+        return getParagraphText( r );
+    }
+
+    public String[] getEndnoteText()
+    {
+        Range r = doc.getEndnoteRange();
+
+        return getParagraphText( r );
+    }
+
+    public String[] getCommentsText()
+    {
+        Range r = doc.getCommentsRange();
+
+        return getParagraphText( r );
+    }
+
+    protected static String[] getParagraphText( Range r )
+    {
+        String[] ret;
+        ret = new String[r.numParagraphs()];
+        for ( int i = 0; i < ret.length; i++ )
+        {
+            Paragraph p = r.getParagraph( i );
+            ret[i] = p.text();
+
+            // Fix the line ending
+            if ( ret[i].endsWith( "\r" ) )
+            {
+                ret[i] = ret[i] + "\n";
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Add the header/footer text, if it's not empty
+     */
+    private void appendHeaderFooter( String text, StringBuffer out )
+    {
+        if ( text == null || text.length() == 0 )
+            return;
+
+        text = text.replace( '\r', '\n' );
+        if ( !text.endsWith( "\n" ) )
+        {
+            out.append( text );
+            out.append( '\n' );
+            return;
+        }
+        if ( text.endsWith( "\n\n" ) )
+        {
+            out.append( text.substring( 0, text.length() - 1 ) );
+            return;
+        }
+        out.append( text );
+        return;
+    }
+
+    /**
+     * Grab the text from the headers
+     */
+    @Deprecated
+    public String getHeaderText()
+    {
+        HeaderStories hs = new HeaderStories( doc );
+
+        StringBuffer ret = new StringBuffer();
+        if ( hs.getFirstHeader() != null )
+        {
+            appendHeaderFooter( hs.getFirstHeader(), ret );
+        }
+        if ( hs.getEvenHeader() != null )
+        {
+            appendHeaderFooter( hs.getEvenHeader(), ret );
+        }
+        if ( hs.getOddHeader() != null )
+        {
+            appendHeaderFooter( hs.getOddHeader(), ret );
+        }
+
+        return ret.toString();
+    }
+
+    /**
+     * Grab the text from the footers
+     */
+    @Deprecated
+    public String getFooterText()
+    {
+        HeaderStories hs = new HeaderStories( doc );
+
+        StringBuffer ret = new StringBuffer();
+        if ( hs.getFirstFooter() != null )
+        {
+            appendHeaderFooter( hs.getFirstFooter(), ret );
+        }
+        if ( hs.getEvenFooter() != null )
+        {
+            appendHeaderFooter( hs.getEvenFooter(), ret );
+        }
+        if ( hs.getOddFooter() != null )
+        {
+            appendHeaderFooter( hs.getOddFooter(), ret );
+        }
+
+        return ret.toString();
+    }
+
+    /**
+     * Grab the text out of the text pieces. Might also include various bits of
+     * crud, but will work in cases where the text piece -> paragraph mapping is
+     * broken. Fast too.
+     */
+    public String getTextFromPieces()
+    {
+        String text = doc.getDocumentText();
+
+        // Fix line endings (Note - won't get all of them
+        text = text.replaceAll( "\r\r\r", "\r\n\r\n\r\n" );
+        text = text.replaceAll( "\r\r", "\r\n\r\n" );
+
+        if ( text.endsWith( "\r" ) )
+        {
+            text += "\n";
+        }
+
+        return text;
+    }
+
+    /**
+     * Grab the text, based on the WordToTextConverter. Shouldn't include any
+     * crud, but slower than getTextFromPieces().
+     */
+    public String getText()
+    {
+        try
+        {
+            final StringWriter stringWriter = new StringWriter();
+            @SuppressWarnings( "unused" )
+            WordToTextConverter wordToTextConverter = new WordToTextConverter()
+            {
+                {
+                    HeaderStories hs = new HeaderStories( doc );
+
+                    if ( hs.getFirstHeaderSubrange() != null )
+                        processDocumentPart( doc, hs.getFirstHeaderSubrange() );
+                    if ( hs.getEvenHeaderSubrange() != null )
+                        processDocumentPart( doc, hs.getEvenHeaderSubrange() );
+                    if ( hs.getOddHeaderSubrange() != null )
+                        processDocumentPart( doc, hs.getOddHeaderSubrange() );
+
+                    processDocument( doc );
+                    processDocumentPart( doc, doc.getMainTextboxRange() );
+
+                    if ( hs.getFirstFooterSubrange() != null )
+                        processDocumentPart( doc, hs.getFirstFooterSubrange() );
+                    if ( hs.getEvenFooterSubrange() != null )
+                        processDocumentPart( doc, hs.getEvenFooterSubrange() );
+                    if ( hs.getOddFooterSubrange() != null )
+                        processDocumentPart( doc, hs.getOddFooterSubrange() );
+
+                    stringWriter.append( getText() );
                 }
-
-                return ret;
+            };
+            return stringWriter.toString();
         }
-
-        public String[] getFootnoteText() {
-                Range r = doc.getFootnoteRange();
-
-                return getParagraphText(r);
+        catch ( Exception exc )
+        {
+            throw new RuntimeException( exc );
         }
+    }
 
-        public String[] getMainTextboxText() {
-                Range r = doc.getMainTextboxRange();
-
-                return getParagraphText(r);
-        }
-
-        public String[] getEndnoteText() {
-                Range r = doc.getEndnoteRange();
-
-                return getParagraphText(r);
-        }
-
-        public String[] getCommentsText() {
-                Range r = doc.getCommentsRange();
-
-                return getParagraphText(r);
-        }
-
-        protected static String[] getParagraphText(Range r) {
-                String[] ret;
-                ret = new String[r.numParagraphs()];
-                for (int i = 0; i < ret.length; i++) {
-                        Paragraph p = r.getParagraph(i);
-                        ret[i] = p.text();
-
-                        // Fix the line ending
-                        if (ret[i].endsWith("\r")) {
-                                ret[i] = ret[i] + "\n";
-                        }
-                }
-                return ret;
-        }
-
-        /**
-	 * Add the header/footer text, if it's not empty
-	 */
-	private void appendHeaderFooter(String text, StringBuffer out) {
-		if(text == null || text.length() == 0)
-			return;
-
-		text = text.replace('\r', '\n');
-		if(! text.endsWith("\n")) {
-			out.append(text);
-			out.append('\n');
-			return;
-		}
-		if(text.endsWith("\n\n")) {
-			out.append(text.substring(0, text.length()-1));
-			return;
-		}
-		out.append(text);
-		return;
-	}
-	/**
-	 * Grab the text from the headers
-	 */
-	public String getHeaderText() {
-		HeaderStories hs = new HeaderStories(doc);
-
-		StringBuffer ret = new StringBuffer();
-		if(hs.getFirstHeader() != null) {
-			appendHeaderFooter(hs.getFirstHeader(), ret);
-		}
-		if(hs.getEvenHeader() != null) {
-			appendHeaderFooter(hs.getEvenHeader(), ret);
-		}
-		if(hs.getOddHeader() != null) {
-			appendHeaderFooter(hs.getOddHeader(), ret);
-		}
-
-		return ret.toString();
-	}
-	/**
-	 * Grab the text from the footers
-	 */
-	public String getFooterText() {
-		HeaderStories hs = new HeaderStories(doc);
-
-		StringBuffer ret = new StringBuffer();
-		if(hs.getFirstFooter() != null) {
-			appendHeaderFooter(hs.getFirstFooter(), ret);
-		}
-		if(hs.getEvenFooter() != null) {
-			appendHeaderFooter(hs.getEvenFooter(), ret);
-		}
-		if(hs.getOddFooter() != null) {
-			appendHeaderFooter(hs.getOddFooter(), ret);
-		}
-
-		return ret.toString();
-	}
-
-	/**
-	 * Grab the text out of the text pieces. Might also include various
-	 *  bits of crud, but will work in cases where the text piece -> paragraph
-	 *  mapping is broken. Fast too.
-	 */
-	public String getTextFromPieces() {
-    	String text = doc.getDocumentText();
-
-    	// Fix line endings (Note - won't get all of them
-    	text = text.replaceAll("\r\r\r", "\r\n\r\n\r\n");
-    	text = text.replaceAll("\r\r", "\r\n\r\n");
-
-    	if(text.endsWith("\r")) {
-    		text += "\n";
-    	}
-
-    	return text;
-	}
-
-	/**
-	 * Grab the text, based on the paragraphs. Shouldn't include any crud,
-	 *  but slightly slower than getTextFromPieces().
-	 */
-	public String getText() {
-	   StringBuffer ret = new StringBuffer();
-
-	   ret.append(getHeaderText());
-
-	   ArrayList<String> text = new ArrayList<String>();
-	   text.addAll(Arrays.asList(getParagraphText()));
-	   text.addAll(Arrays.asList(getMainTextboxText()));
-	   text.addAll(Arrays.asList(getFootnoteText()));
-	   text.addAll(Arrays.asList(getEndnoteText()));
-
-	   for(String p : text) {
-	      ret.append(p);
-	   }
-
-	   ret.append(getFooterText());
-
-	   return ret.toString();
-	}
-
-	/**
-	 * Removes any fields (eg macros, page markers etc)
-	 *  from the string.
-	 */
-	public static String stripFields(String text) {
-		return Range.stripFields(text);
-	}
+    /**
+     * Removes any fields (eg macros, page markers etc) from the string.
+     */
+    public static String stripFields( String text )
+    {
+        return Range.stripFields( text );
+    }
 }

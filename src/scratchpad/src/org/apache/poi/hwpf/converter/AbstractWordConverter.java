@@ -47,6 +47,7 @@ import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -56,6 +57,32 @@ import org.w3c.dom.Element;
 @Beta
 public abstract class AbstractWordConverter
 {
+    private static final class Structure implements Comparable<Structure>
+    {
+        final int end;
+        final int start;
+        final Object structure;
+
+        Structure( Bookmark bookmark )
+        {
+            this.start = bookmark.getStart();
+            this.end = bookmark.getEnd();
+            this.structure = bookmark;
+        }
+
+        Structure( Field field )
+        {
+            this.start = field.getFieldStartOffset();
+            this.end = field.getFieldEndOffset();
+            this.structure = field;
+        }
+
+        public int compareTo( Structure o )
+        {
+            return start < o.start ? -1 : start == o.start ? 0 : 1;
+        }
+    }
+
     private static final byte BEL_MARK = 7;
 
     private static final byte FIELD_BEGIN_MARK = 19;
@@ -396,6 +423,13 @@ public abstract class AbstractWordConverter
                     processDrawnObject( doc, characterRun, block );
                     continue;
                 }
+                if ( characterRun.isOle2()
+                        && ( wordDocument instanceof HWPFDocument ) )
+                {
+                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    processOle2( doc, characterRun, block );
+                    continue;
+                }
             }
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
@@ -613,10 +647,11 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun, OfficeDrawing officeDrawing,
             String path, Element block );
 
-    protected abstract void processEndnoteAutonumbered( HWPFDocument wordDocument,
-            int noteIndex, Element block, Range endnoteTextRange );
+    protected abstract void processEndnoteAutonumbered(
+            HWPFDocument wordDocument, int noteIndex, Element block,
+            Range endnoteTextRange );
 
-    protected void processField( HWPFDocument hwpfDocument, Range parentRange,
+    protected void processField( HWPFDocument wordDocument, Range parentRange,
             int currentTableLevel, Field field, Element currentBlock )
     {
         switch ( field.getType() )
@@ -633,12 +668,42 @@ public abstract class AbstractWordConverter
                 if ( matcher.find() )
                 {
                     String pageref = matcher.group( 1 );
-                    processPageref( hwpfDocument, currentBlock,
+                    processPageref( wordDocument, currentBlock,
                             field.secondSubrange( parentRange ),
                             currentTableLevel, pageref );
                     return;
                 }
             }
+            break;
+        }
+        case 58: // Embedded Object
+        {
+            if ( !field.hasSeparator() )
+            {
+                logger.log( POILogger.WARN, parentRange + " contains " + field
+                        + " with 'Embedded Object' but without separator mark" );
+                return;
+            }
+
+            CharacterRun separator = field
+                    .getMarkSeparatorCharacterRun( parentRange );
+
+            if ( separator.isOle2() )
+            {
+                // the only supported so far
+                boolean processed = processOle2( wordDocument, separator,
+                        currentBlock );
+
+                // if we didn't output OLE - output field value
+                if ( !processed )
+                {
+                    processCharacters( wordDocument, currentTableLevel,
+                            field.secondSubrange( parentRange ), currentBlock );
+                }
+
+                return;
+            }
+
             break;
         }
         case 88: // hyperlink
@@ -653,7 +718,7 @@ public abstract class AbstractWordConverter
                 if ( matcher.find() )
                 {
                     String hyperlink = matcher.group( 1 );
-                    processHyperlink( hwpfDocument, currentBlock,
+                    processHyperlink( wordDocument, currentBlock,
                             field.secondSubrange( parentRange ),
                             currentTableLevel, hyperlink );
                     return;
@@ -665,12 +730,13 @@ public abstract class AbstractWordConverter
 
         logger.log( POILogger.WARN, parentRange + " contains " + field
                 + " with unsupported type or format" );
-        processCharacters( hwpfDocument, currentTableLevel,
+        processCharacters( wordDocument, currentTableLevel,
                 field.secondSubrange( parentRange ), currentBlock );
     }
 
-    protected abstract void processFootnoteAutonumbered( HWPFDocument wordDocument,
-            int noteIndex, Element block, Range footnoteTextRange );
+    protected abstract void processFootnoteAutonumbered(
+            HWPFDocument wordDocument, int noteIndex, Element block,
+            Range footnoteTextRange );
 
     protected abstract void processHyperlink( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
@@ -730,6 +796,40 @@ public abstract class AbstractWordConverter
                 return;
             }
         }
+    }
+
+    private boolean processOle2( HWPFDocument doc, CharacterRun characterRun,
+            Element block )
+    {
+        Entry entry = doc.getObjectsPool().getObjectById(
+                "_" + characterRun.getPicOffset() );
+        if ( entry == null )
+        {
+            logger.log( POILogger.WARN, "Referenced OLE2 object '",
+                    Integer.valueOf( characterRun.getPicOffset() ),
+                    "' not found in ObjectPool" );
+            return false;
+        }
+
+        try
+        {
+            return processOle2( doc, block, entry );
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.WARN,
+                    "Unable to convert internal OLE2 object '",
+                    Integer.valueOf( characterRun.getPicOffset() ), "': ", exc,
+                    exc );
+            return false;
+        }
+    }
+
+    @SuppressWarnings( "unused" )
+    protected boolean processOle2( HWPFDocument wordDocument, Element block,
+            Entry entry ) throws Exception
+    {
+        return false;
     }
 
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
@@ -894,32 +994,6 @@ public abstract class AbstractWordConverter
                 beginMark, separatorMark, endMark );
 
         return endMark;
-    }
-
-    private static final class Structure implements Comparable<Structure>
-    {
-        final int end;
-        final int start;
-        final Object structure;
-
-        Structure( Bookmark bookmark )
-        {
-            this.start = bookmark.getStart();
-            this.end = bookmark.getEnd();
-            this.structure = bookmark;
-        }
-
-        Structure( Field field )
-        {
-            this.start = field.getFieldStartOffset();
-            this.end = field.getFieldEndOffset();
-            this.structure = field;
-        }
-
-        public int compareTo( Structure o )
-        {
-            return start < o.start ? -1 : start == o.start ? 0 : 1;
-        }
     }
 
 }

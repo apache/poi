@@ -112,12 +112,27 @@ class FieldImpl implements Field
         return startPlex.getFcStart();
     }
 
+    public CharacterRun getMarkEndCharacterRun( Range parent )
+    {
+        return new Range( getMarkEndOffset(), getMarkEndOffset() + 1, parent )
+                .getCharacterRun( 0 );
+    }
+
     /**
      * @return character position of end field mark
      */
     public int getMarkEndOffset()
     {
         return endPlex.getFcStart();
+    }
+
+    public CharacterRun getMarkSeparatorCharacterRun( Range parent )
+    {
+        if ( !hasSeparator() )
+            return null;
+
+        return new Range( getMarkSeparatorOffset(),
+                getMarkSeparatorOffset() + 1, parent ).getCharacterRun( 0 );
     }
 
     /**
@@ -127,6 +142,12 @@ class FieldImpl implements Field
     public int getMarkSeparatorOffset()
     {
         return separatorPlex.getFcStart();
+    }
+
+    public CharacterRun getMarkStartCharacterRun( Range parent )
+    {
+        return new Range( getMarkStartOffset(), getMarkStartOffset() + 1,
+                parent ).getCharacterRun( 0 );
     }
 
     /**

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
+
 import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
@@ -190,7 +192,9 @@ public final class HWPFDocument extends HWPFDocumentCore
    * @param pfilesystem The POIFSFileSystem that contains the Word document.
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
+   * @deprecated Use {@link #HWPFDocument(DirectoryNode)} instead
    */
+  @Deprecated
   public HWPFDocument(DirectoryNode directory, POIFSFileSystem pfilesystem) throws IOException
   {
      this(directory);

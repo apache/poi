@@ -17,16 +17,22 @@ public interface Field
      */
     int getFieldStartOffset();
 
+    CharacterRun getMarkEndCharacterRun( Range parent );
+
     /**
      * @return character position of end field mark
      */
     int getMarkEndOffset();
+
+    CharacterRun getMarkSeparatorCharacterRun( Range parent );
 
     /**
      * @return character position of separator field mark (if present,
      *         {@link NullPointerException} otherwise)
      */
     int getMarkSeparatorOffset();
+
+    CharacterRun getMarkStartCharacterRun( Range parent );
 
     /**
      * @return character position of start field mark

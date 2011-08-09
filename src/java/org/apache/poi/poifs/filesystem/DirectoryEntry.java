@@ -15,13 +15,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.poi.hpsf.ClassID;
 
@@ -66,6 +67,12 @@ public interface DirectoryEntry
      */
 
     public int getEntryCount();
+
+    /**
+     * Checks if entry with specified name present
+     */
+
+    public boolean hasEntry( final String name );
 
     /**
      * get a specified Entry by name

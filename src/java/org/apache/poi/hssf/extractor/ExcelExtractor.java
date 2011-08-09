@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFComment;
@@ -35,12 +34,13 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 
 /**
  * A text extractor for Excel files.
  * <p>
- * Returns the textual content of the file, suitable for 
+ * Returns the textual content of the file, suitable for
  *  indexing by something like Lucene, but not really
  *  intended for display to the user.
  * </p>
@@ -59,19 +59,27 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	private boolean _includeCellComments = false;
 	private boolean _includeBlankCells = false;
 	private boolean _includeHeadersFooters = true;
-	
+
 	public ExcelExtractor(HSSFWorkbook wb) {
 		super(wb);
 		_wb = wb;
 		_formatter = new HSSFDataFormatter();
 	}
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot(), fs);
+		this(fs.getRoot());
 	}
-	public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HSSFWorkbook(dir, fs, true));
+	/**
+     * @deprecated Use {@link #ExcelExtractor(DirectoryNode)} instead
+     */
+    @Deprecated
+    @SuppressWarnings( "unused" )
+    public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
+        this( dir );
+    }
+    public ExcelExtractor(DirectoryNode dir) throws IOException {
+		this(new HSSFWorkbook(dir, true));
 	}
-	
+
 	private static final class CommandParseException extends Exception {
 		public CommandParseException(String msg) {
 			super(msg);
@@ -183,7 +191,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			return _headersFooters;
 		}
 	}
-	
+
 	private static void printUsageMessage(PrintStream ps) {
 		ps.println("Use:");
 		ps.println("    " + ExcelExtractor.class.getName() + " [<flag> <value> [<flag> <value> [...]]] [-i <filename.xls>]");
@@ -201,7 +209,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	 * Command line extractor.
 	 */
 	public static void main(String[] args) {
-		
+
 		CommandArgs cmdArgs;
 		try {
 			cmdArgs = new CommandArgs(args);
@@ -211,12 +219,12 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			System.exit(1);
 			return; // suppress compiler error
 		}
-		
+
 		if (cmdArgs.isRequestHelp()) {
 			printUsageMessage(System.out);
 			return;
 		}
-		
+
 		try {
 			InputStream is;
 			if(cmdArgs.getInputFile() == null) {
@@ -270,9 +278,9 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	 * Default is to include them.
 	 */
 	public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
-		_includeHeadersFooters = includeHeadersFooters; 
+		_includeHeadersFooters = includeHeadersFooters;
 	}
-	
+
 	/**
 	 * Retrieves the text contents of the file
 	 */
@@ -282,12 +290,12 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		// We don't care about the difference between
 		//  null (missing) and blank cells
 		_wb.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
-		
+
 		// Process each sheet in turn
 		for(int i=0;i<_wb.getNumberOfSheets();i++) {
 			HSSFSheet sheet = _wb.getSheetAt(i);
 			if(sheet == null) { continue; }
-			
+
 			if(_includeSheetNames) {
 				String name = _wb.getSheetName(i);
 				if(name != null) {
@@ -295,12 +303,12 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 					text.append("\n");
 				}
 			}
-			
+
 			// Header text, if there is any
 			if(_includeHeadersFooters) {
 				text.append(_extractHeaderFooter(sheet.getHeader()));
 			}
-			
+
 			int firstRow = sheet.getFirstRowNum();
 			int lastRow = sheet.getLastRowNum();
 			for(int j=firstRow;j<=lastRow;j++) {
@@ -313,7 +321,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 				if(_includeBlankCells) {
 					firstCell = 0;
 				}
-				
+
 				for(int k=firstCell;k<lastCell;k++) {
 					HSSFCell cell = row.getCell(k);
 					boolean outputContents = true;
@@ -368,14 +376,14 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 										case HSSFCell.CELL_TYPE_ERROR:
 											text.append(ErrorEval.getText(cell.getErrorCellValue()));
 											break;
-											
+
 									}
 								}
 								break;
 							default:
 								throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
 						}
-						
+
 						// Output the comment, if requested and exists
 						HSSFComment comment = cell.getCellComment();
 						if(_includeCellComments && comment != null) {
@@ -385,29 +393,29 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 							text.append(" Comment by "+comment.getAuthor()+": "+commentText);
 						}
 					}
-					
+
 					// Output a tab if we're not on the last cell
 					if(outputContents && k < (lastCell-1)) {
 						text.append("\t");
 					}
 				}
-				
+
 				// Finish off the row
 				text.append("\n");
 			}
-			
+
 			// Finally Footer text, if there is any
 			if(_includeHeadersFooters) {
 				text.append(_extractHeaderFooter(sheet.getFooter()));
 			}
 		}
-		
+
 		return text.toString();
 	}
-	
+
 	public static String _extractHeaderFooter(HeaderFooter hf) {
 		StringBuffer text = new StringBuffer();
-		
+
 		if(hf.getLeft() != null) {
 			text.append(hf.getLeft());
 		}
@@ -423,7 +431,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		}
 		if(text.length() > 0)
 			text.append("\n");
-		
+
 		return text.toString();
 	}
 }

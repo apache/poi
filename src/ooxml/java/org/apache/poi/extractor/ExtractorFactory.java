@@ -66,48 +66,48 @@ import org.apache.xmlbeans.XmlException;
 public class ExtractorFactory {
 	public static final String CORE_DOCUMENT_REL =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
-	
-	
+
+
 	/** Should this thread prefer event based over usermodel based extractors? */
 	private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
       protected Boolean initialValue() { return Boolean.FALSE; }
 	};
 	/** Should all threads prefer event based over usermodel based extractors? */
 	private static Boolean allPreferEventExtractors;
-	
-   /** 
+
+   /**
     * Should this thread prefer event based over usermodel based extractors?
-    * (usermodel extractors tend to be more accurate, but use more memory) 
-    * Default is false. 
+    * (usermodel extractors tend to be more accurate, but use more memory)
+    * Default is false.
     */
 	public static boolean getThreadPrefersEventExtractors() {
 	   return threadPreferEventExtractors.get();
 	}
-   /** 
-    * Should all threads prefer event based over usermodel based extractors? 
-    * (usermodel extractors tend to be more accurate, but use more memory) 
-    * Default is to use the thread level setting, which defaults to false. 
+   /**
+    * Should all threads prefer event based over usermodel based extractors?
+    * (usermodel extractors tend to be more accurate, but use more memory)
+    * Default is to use the thread level setting, which defaults to false.
     */
 	public static Boolean getAllThreadsPreferEventExtractors() {
 	   return allPreferEventExtractors;
 	}
-	
-   /** 
+
+   /**
     * Should this thread prefer event based over usermodel based extractors?
-    * Will only be used if the All Threads setting is null. 
+    * Will only be used if the All Threads setting is null.
     */
    public static void setThreadPrefersEventExtractors(boolean preferEventExtractors) {
       threadPreferEventExtractors.set(preferEventExtractors);
    }
-   /** 
+   /**
     * Should all threads prefer event based over usermodel based extractors?
-    * If set, will take preference over the Thread level setting. 
+    * If set, will take preference over the Thread level setting.
     */
    public static void setAllThreadsPreferEventExtractors(Boolean preferEventExtractors) {
       allPreferEventExtractors = preferEventExtractors;
    }
-	
-   
+
+
    /**
     * Should this thread use event based extractors is available?
     * Checks the all-threads one first, then thread specific.
@@ -118,8 +118,8 @@ public class ExtractorFactory {
       }
       return threadPreferEventExtractors.get();
    }
-   
-	
+
+
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		InputStream inp = null;
         try {
@@ -137,14 +137,14 @@ public class ExtractorFactory {
             if(inp != null) inp.close();
         }
     }
-	
+
 	public static POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		// Figure out the kind of stream
 		// If clearly doesn't do mark/reset, wrap up
 		if(! inp.markSupported()) {
 			inp = new PushbackInputStream(inp, 8);
 		}
-		
+
 		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
 			return createExtractor(new POIFSFileSystem(inp));
 		}
@@ -153,16 +153,16 @@ public class ExtractorFactory {
 		}
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
-	
+
 	public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
-       PackageRelationshipCollection core = 
+       PackageRelationshipCollection core =
             pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
        if(core.size() != 1) {
           throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
        }
 
        PackagePart corePart = pkg.getPart(core.getRelationship(0));
-        
+
        // Is it XSSF?
        for(XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {
           if(corePart.getContentType().equals(rel.getContentType())) {
@@ -173,84 +173,98 @@ public class ExtractorFactory {
              }
           }
        }
-        
+
        // Is it XWPF?
        for(XWPFRelation rel : XWPFWordExtractor.SUPPORTED_TYPES) {
           if(corePart.getContentType().equals(rel.getContentType())) {
              return new XWPFWordExtractor(pkg);
           }
        }
-       
+
        // Is it XSLF?
        for(XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
           if(corePart.getContentType().equals(rel.getContentType())) {
              return new XSLFPowerPointExtractor(pkg);
           }
        }
-       
+
        throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
-	
+
 	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 	   // Only ever an OLE2 one from the root of the FS
-		return (POIOLE2TextExtractor)createExtractor(fs.getRoot(), fs);
+		return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
 	}
-	public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
-		// Look for certain entries in the stream, to figure it
-		//  out from
-		for(Iterator<Entry> entries = poifsDir.getEntries(); entries.hasNext(); ) {
-			Entry entry = entries.next();
-			
-			if(entry.getName().equals("Workbook")) {
-			   if(getPreferEventExtractor()) {
-               return new EventBasedExcelExtractor(poifsDir, fs);
-			   } else {
-			      return new ExcelExtractor(poifsDir, fs);
-			   }
-			}
-			if(entry.getName().equals("WordDocument")) {
-			    // Old or new style word document?
-			    try {
-			        return new WordExtractor(poifsDir, fs);
-			    } catch(OldWordFileFormatException e) {
-			        return new Word6Extractor(poifsDir, fs);
-			    }
-			}
-			if(entry.getName().equals("PowerPoint Document")) {
-				return new PowerPointExtractor(poifsDir, fs);
-			}
-			if(entry.getName().equals("VisioDocument")) {
-				return new VisioTextExtractor(poifsDir, fs);
-			}
-         if(entry.getName().equals("Quill")) {
-            return new PublisherTextExtractor(poifsDir, fs);
-         }
-			if(
-                entry.getName().equals("__substg1.0_1000001E") ||
-                entry.getName().equals("__substg1.0_1000001F") ||
-                entry.getName().equals("__substg1.0_0047001E") ||
-                entry.getName().equals("__substg1.0_0047001F") ||
-                entry.getName().equals("__substg1.0_0037001E") ||
-                entry.getName().equals("__substg1.0_0037001F")
-			) {
-			   return new OutlookTextExtactor(poifsDir, fs);
-			}
-			if(entry.getName().equals("Package")) {
-			   OPCPackage pkg = OPCPackage.open(
-			         poifsDir.createDocumentInputStream(entry.getName())
-			   );
-			   return createExtractor(pkg);
-			}
-		}
-		throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
-	}
-	
-	
+
+    /**
+     * @deprecated Use {@link #createExtractor(DirectoryNode)} instead
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs)
+            throws IOException, InvalidFormatException, OpenXML4JException, XmlException
+    {
+        return createExtractor(poifsDir);
+    }
+
+    public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
+            InvalidFormatException, OpenXML4JException, XmlException
+    {
+        // Look for certain entries in the stream, to figure it
+        // out from
+        if (poifsDir.hasEntry("Workbook")) {
+            if (getPreferEventExtractor()) {
+                return new EventBasedExcelExtractor(poifsDir);
+            }
+            return new ExcelExtractor(poifsDir);
+        }
+
+        if (poifsDir.hasEntry("WordDocument")) {
+            // Old or new style word document?
+            try {
+                return new WordExtractor(poifsDir);
+            } catch (OldWordFileFormatException e) {
+                return new Word6Extractor(poifsDir);
+            }
+        }
+
+        if (poifsDir.hasEntry("PowerPoint Document")) {
+            return new PowerPointExtractor(poifsDir);
+        }
+
+        if (poifsDir.hasEntry("VisioDocument")) {
+            return new VisioTextExtractor(poifsDir);
+        }
+
+        if (poifsDir.hasEntry("Quill")) {
+            return new PublisherTextExtractor(poifsDir);
+        }
+
+        if (poifsDir.hasEntry("__substg1.0_1000001E") || poifsDir.hasEntry("__substg1.0_1000001F")
+                || poifsDir.hasEntry("__substg1.0_0047001E")
+                || poifsDir.hasEntry("__substg1.0_0047001F")
+                || poifsDir.hasEntry("__substg1.0_0037001E")
+                || poifsDir.hasEntry("__substg1.0_0037001F"))
+        {
+            return new OutlookTextExtactor(poifsDir);
+        }
+
+        for (Iterator<Entry> entries = poifsDir.getEntries(); entries.hasNext();) {
+            Entry entry = entries.next();
+
+            if (entry.getName().equals("Package")) {
+                OPCPackage pkg = OPCPackage.open(poifsDir.createDocumentInputStream("Package"));
+                return createExtractor(pkg);
+            }
+        }
+        throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
+    }
+
 	/**
 	 * Returns an array of text extractors, one for each of
 	 *  the embeded documents in the file (if there are any).
 	 * If there are no embeded documents, you'll get back an
-	 *  empty array. Otherwise, you'll get one open 
+	 *  empty array. Otherwise, you'll get one open
 	 *  {@link POITextExtractor} for each embeded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
@@ -258,16 +272,16 @@ public class ExtractorFactory {
 		ArrayList<Entry> dirs = new ArrayList<Entry>();
 		// For anything else not directly held in as a POIFS directory
 		ArrayList<InputStream> nonPOIFS = new ArrayList<InputStream>();
-		
+
       // Find all the embeded directories
-		POIFSFileSystem fs = ext.getFileSystem();
-		if(fs == null) {
+		DirectoryEntry root = ext.getRoot();
+		if(root == null) {
 			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
 		}
-		
+
 		if(ext instanceof ExcelExtractor) {
 			// These are in MBD... under the root
-			Iterator<Entry> it = fs.getRoot().getEntries();
+			Iterator<Entry> it = root.getEntries();
 			while(it.hasNext()) {
 				Entry entry = it.next();
 				if(entry.getName().startsWith("MBD")) {
@@ -278,7 +292,7 @@ public class ExtractorFactory {
 			// These are in ObjectPool -> _... under the root
 			try {
 				DirectoryEntry op = (DirectoryEntry)
-					fs.getRoot().getEntry("ObjectPool");
+				        root.getEntry("ObjectPool");
 				Iterator<Entry> it = op.getEntries();
 				while(it.hasNext()) {
 					Entry entry = it.next();
@@ -302,7 +316,7 @@ public class ExtractorFactory {
 		      }
 		   }
 		}
-		
+
 		// Create the extractors
 		if(
 		      (dirs == null || dirs.size() == 0) &&
@@ -310,11 +324,11 @@ public class ExtractorFactory {
 		){
 			return new POITextExtractor[0];
 		}
-		
+
 		ArrayList<POITextExtractor> e = new ArrayList<POITextExtractor>();
 		for(int i=0; i<dirs.size(); i++) {
 			e.add( createExtractor(
-					(DirectoryNode)dirs.get(i), ext.getFileSystem()
+					(DirectoryNode)dirs.get(i)
 			) );
 		}
 		for(int i=0; i<nonPOIFS.size(); i++) {
@@ -336,7 +350,7 @@ public class ExtractorFactory {
 	 * Returns an array of text extractors, one for each of
 	 *  the embeded documents in the file (if there are any).
 	 * If there are no embeded documents, you'll get back an
-	 *  empty array. Otherwise, you'll get one open 
+	 *  empty array. Otherwise, you'll get one open
 	 *  {@link POITextExtractor} for each embeded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
