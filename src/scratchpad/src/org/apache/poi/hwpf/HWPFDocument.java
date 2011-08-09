@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -931,41 +930,5 @@ public final class HWPFDocument extends HWPFDocumentCore
   {
     Range r = new Range(start, start + length, this);
     r.delete();
-  }
-
-  /**
-   * Takes two arguments, 1) name of the Word file to read in 2) location to
-   * write it out at.
-   * @param args
-   */
-  public static void main(String[] args)
-  {
-
-    try
-    {
-      HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
-      Range r = doc.getRange();
-      String str = r.text();
-      int x = 0;
-//      CharacterRun run = new CharacterRun();
-//      run.setBold(true);
-//      run.setItalic(true);
-//      run.setCapitalized(true);
-//
-//      Range range = doc.getRange();
-//      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!", run);
-//
-//      OutputStream out = new FileOutputStream(args[1]);
-//      doc.write(out);
-//
-//      out.flush();
-//      out.close();
-
-
-    }
-    catch (Throwable t)
-    {
-      t.printStackTrace();
-    }
   }
 }
