@@ -276,7 +276,7 @@ public class WordToFoConverter extends AbstractWordConverter
     }
 
     @Override
-    protected void processEndnoteAutonumbered( HWPFDocument doc, int noteIndex,
+    protected void processEndnoteAutonumbered( HWPFDocument wordDocument, int noteIndex,
             Element block, Range endnoteTextRange )
     {
         final String textIndex = String.valueOf( internalLinkCounter
@@ -297,14 +297,14 @@ public class WordToFoConverter extends AbstractWordConverter
         setId( backwardLink, forwardLinkName );
         endnote.appendChild( backwardLink );
 
-        processCharacters( doc, Integer.MIN_VALUE, endnoteTextRange, endnote );
+        processCharacters( wordDocument, Integer.MIN_VALUE, endnoteTextRange, endnote );
 
         WordToFoUtils.compactInlines( endnote );
         this.endnotes.add( endnote );
     }
 
     @Override
-    protected void processFootnoteAutonumbered( HWPFDocument doc,
+    protected void processFootnoteAutonumbered( HWPFDocument wordDocument,
             int noteIndex, Element block, Range footnoteTextRange )
     {
         final String textIndex = String.valueOf( internalLinkCounter
@@ -333,7 +333,7 @@ public class WordToFoConverter extends AbstractWordConverter
         footnoteBody.appendChild( footnoteBlock );
         footNote.appendChild( footnoteBody );
 
-        processCharacters( doc, Integer.MIN_VALUE, footnoteTextRange,
+        processCharacters( wordDocument, Integer.MIN_VALUE, footnoteTextRange,
                 footnoteBlock );
 
         WordToFoUtils.compactInlines( footnoteBlock );

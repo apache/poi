@@ -45,7 +45,8 @@ public class TestWordToConverterSuite
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite(TestWordToConverterSuite.class.getName());
+        TestSuite suite = new TestSuite(
+                TestWordToConverterSuite.class.getName() );
 
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../document" );
@@ -63,14 +64,21 @@ public class TestWordToConverterSuite
             {
                 public void runTest() throws Exception
                 {
-                    test( child, false );
+                    testFo( child );
                 }
             } );
             suite.addTest( new TestCase( name + " [HTML]" )
             {
                 public void runTest() throws Exception
                 {
-                    test( child, true );
+                    testHtml( child );
+                }
+            } );
+            suite.addTest( new TestCase( name + " [TEXT]" )
+            {
+                public void runTest() throws Exception
+                {
+                    testText( child );
                 }
             } );
 
@@ -79,7 +87,7 @@ public class TestWordToConverterSuite
         return suite;
     }
 
-    protected static void test( File child, boolean html ) throws Exception
+    protected static void testFo( File child ) throws Exception
     {
         HWPFDocumentCore hwpfDocument;
         try
@@ -88,7 +96,6 @@ public class TestWordToConverterSuite
         }
         catch ( Exception exc )
         {
-            // unable to parse file -- not WordToFoConverter fault
             return;
         }
 
@@ -102,14 +109,74 @@ public class TestWordToConverterSuite
         Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
         transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
-        transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        transformer.setOutputProperty( OutputKeys.INDENT, "false" );
         transformer.transform(
                 new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
-        if ( html )
-            transformer.setOutputProperty( OutputKeys.METHOD, "html" );
+        // no exceptions
+    }
 
+    protected static void testHtml( File child ) throws Exception
+    {
+        HWPFDocumentCore hwpfDocument;
+        try
+        {
+            hwpfDocument = AbstractWordUtils.loadDoc( child );
+        }
+        catch ( Exception exc )
+        {
+            return;
+        }
+
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+        wordToHtmlConverter.processDocument( hwpfDocument );
+
+        StringWriter stringWriter = new StringWriter();
+
+        Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer();
+        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
+        transformer.setOutputProperty( OutputKeys.INDENT, "false" );
+        transformer.setOutputProperty( OutputKeys.METHOD, "html" );
+        transformer.transform(
+                new DOMSource( wordToHtmlConverter.getDocument() ),
+                new StreamResult( stringWriter ) );
+
+        // no exceptions
+    }
+
+    protected static void testText( File child ) throws Exception
+    {
+        HWPFDocumentCore wordDocument;
+        try
+        {
+            wordDocument = AbstractWordUtils.loadDoc( child );
+        }
+        catch ( Exception exc )
+        {
+            return;
+        }
+
+        WordToTextConverter wordToTextConverter = new WordToTextConverter(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+        wordToTextConverter.processDocument( wordDocument );
+
+        StringWriter stringWriter = new StringWriter();
+
+        Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer();
+        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
+        transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        transformer.setOutputProperty( OutputKeys.METHOD, "text" );
+        transformer.transform(
+                new DOMSource( wordToTextConverter.getDocument() ),
+                new StreamResult( stringWriter ) );
+
+        stringWriter.toString();
         // no exceptions
     }
 }
