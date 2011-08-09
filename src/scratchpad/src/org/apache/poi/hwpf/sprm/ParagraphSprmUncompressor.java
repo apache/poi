@@ -29,10 +29,12 @@ import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
 import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
+@Internal
 public final class ParagraphSprmUncompressor
   extends SprmUncompressor
 {

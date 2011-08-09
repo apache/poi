@@ -22,9 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
-
+@Internal
 public final class SectionSprmCompressor
 {
   private final static SectionProperties DEFAULT_SEP = new SectionProperties();

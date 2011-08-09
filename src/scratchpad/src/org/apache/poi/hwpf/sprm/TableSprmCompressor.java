@@ -25,8 +25,10 @@ import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+@Internal
 public final class TableSprmCompressor
 {
   public TableSprmCompressor()

@@ -22,8 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+@Internal
 public final class ParagraphSprmCompressor
 {
   public ParagraphSprmCompressor()
