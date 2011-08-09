@@ -23,7 +23,7 @@ package org.apache.poi.hdf.model.hdftypes;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class ChpxNode extends PropertyNode
 {
 

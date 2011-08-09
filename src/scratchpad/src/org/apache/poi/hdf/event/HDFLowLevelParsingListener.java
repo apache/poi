@@ -26,6 +26,7 @@ import org.apache.poi.hdf.model.hdftypes.FontTable;
 import org.apache.poi.hdf.model.hdftypes.ListTables;
 import org.apache.poi.hdf.model.hdftypes.StyleSheet;
 
+@Deprecated
 public interface HDFLowLevelParsingListener
 {
   public void mainDocument(byte[] mainDocument);

@@ -30,6 +30,7 @@ import org.apache.poi.hdf.model.hdftypes.ListTables;
 import org.apache.poi.hdf.model.hdftypes.StyleSheet;
 
 
+@Deprecated
 public final class HDFObjectModel implements HDFLowLevelParsingListener
 {
 

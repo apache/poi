@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class TableRow
 {
   TAP _descriptor;

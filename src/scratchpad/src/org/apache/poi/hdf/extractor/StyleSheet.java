@@ -22,6 +22,7 @@ package org.apache.poi.hdf.extractor;
  *
  * @author Ryan Ackley
  */
+@Deprecated
 public final class StyleSheet {
 
   private static final int NIL_STYLE = 4095;

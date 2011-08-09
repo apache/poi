@@ -26,6 +26,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 
  * @author S. Ryan Ackley
  */
+@Deprecated
 public abstract class TAPAbstractType
     implements HDFType
 {

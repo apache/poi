@@ -22,7 +22,7 @@ package org.apache.poi.hdf.extractor;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class PAP implements Cloneable
 {
   int _istd;//index to style descriptor.

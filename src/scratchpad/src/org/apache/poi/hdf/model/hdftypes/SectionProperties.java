@@ -23,7 +23,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.SEPAbstractType;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class SectionProperties extends SEPAbstractType implements HDFType
 {
   /*int _index;

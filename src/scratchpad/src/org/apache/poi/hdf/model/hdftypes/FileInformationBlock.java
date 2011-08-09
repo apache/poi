@@ -24,6 +24,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.FIBAbstractType;
  *
  * @author  andy
  */
+@Deprecated
 public final class FileInformationBlock extends FIBAbstractType
 {
 /*

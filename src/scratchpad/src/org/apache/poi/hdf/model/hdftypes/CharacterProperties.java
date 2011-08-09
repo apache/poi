@@ -23,7 +23,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.CHPAbstractType;
  *
  * @author Ryan Ackley
  */
-
+@Deprecated
 public final class CharacterProperties extends CHPAbstractType implements Cloneable
 {
 

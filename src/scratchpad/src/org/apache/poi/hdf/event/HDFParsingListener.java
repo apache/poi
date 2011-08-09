@@ -23,6 +23,7 @@ import org.apache.poi.hdf.model.hdftypes.ParagraphProperties;
 import org.apache.poi.hdf.model.hdftypes.TableProperties;
 import org.apache.poi.hdf.model.hdftypes.DocumentProperties;
 
+@Deprecated
 public interface HDFParsingListener
 {
   public void document(DocumentProperties dop);

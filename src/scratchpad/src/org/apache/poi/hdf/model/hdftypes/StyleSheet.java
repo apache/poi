@@ -28,6 +28,7 @@ import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
  *
  * @author Ryan Ackley
  */
+@Deprecated
 public final class StyleSheet implements HDFType {
 
   private static final int NIL_STYLE = 4095;
