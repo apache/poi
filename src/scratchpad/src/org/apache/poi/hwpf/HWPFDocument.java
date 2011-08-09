@@ -76,6 +76,9 @@ import org.apache.poi.util.Internal;
  */
 public final class HWPFDocument extends HWPFDocumentCore
 {
+    private static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
+    private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
+
   /** And for making sense of CP lengths in the FIB */
   @Deprecated
   protected CPSplitCalculator _cpSplit;
@@ -267,20 +270,43 @@ public final class HWPFDocument extends HWPFDocumentCore
     _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), _tpt);
 
         _text = _tpt.getText();
-        _cbt.rebuild( _cft );
-        _pbt.rebuild( _text, _cft );
 
-        boolean preserve = false;
+        /*
+         * in this mode we preserving PAPX/CHPX structure from file, so text may
+         * miss from output, and text order may be corrupted
+         */
+        boolean preserveBinTables = false;
         try
         {
-            preserve = Boolean.parseBoolean( System
-                    .getProperty( "org.apache.poi.hwpf.preserveTextTable" ) );
+            preserveBinTables = Boolean.parseBoolean( System
+                    .getProperty( PROPERTY_PRESERVE_BIN_TABLES ) );
         }
         catch ( Exception exc )
         {
             // ignore;
         }
-        if ( !preserve )
+
+        if ( !preserveBinTables )
+        {
+            _cbt.rebuild( _cft );
+            _pbt.rebuild( _text, _cft );
+        }
+
+        /*
+         * Property to disable text rebuilding. In this mode changing the text
+         * will lead to unpredictable behavior
+         */
+        boolean preserveTextTable = false;
+        try
+        {
+            preserveTextTable = Boolean.parseBoolean( System
+                    .getProperty( PROPERTY_PRESERVE_TEXT_TABLE ) );
+        }
+        catch ( Exception exc )
+        {
+            // ignore;
+        }
+        if ( !preserveTextTable )
         {
             _cft = new ComplexFileTable();
             _tpt = _cft.getTextPieceTable();
@@ -350,11 +376,13 @@ public final class HWPFDocument extends HWPFDocumentCore
     _fields = new FieldsImpl(_fieldsTables);
   }
 
+  @Internal
   public TextPieceTable getTextTable()
   {
     return _cft.getTextPieceTable();
   }
 
+    @Internal
     @Override
     public StringBuilder getText()
     {
@@ -497,6 +525,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    *
    * @return the saved-by table.
    */
+  @Internal
   public SavedByTable getSavedByTable()
   {
     return _sbt;
@@ -507,6 +536,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    *
    * @return the saved-by table.
    */
+  @Internal
   public RevisionMarkAuthorTable getRevisionMarkAuthorTable()
   {
     return _rmat;
@@ -519,6 +549,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 	  return _pictures;
   }
 
+  @Internal
   public EscherRecordHolder getEscherRecordHolder() {
       return _escherRecordHolder;
   }
@@ -529,6 +560,7 @@ public final class HWPFDocument extends HWPFDocumentCore
      * @deprecated use {@link #getOfficeDrawingsMain()} instead
      */
     @Deprecated
+    @Internal
     public ShapesTable getShapesTable()
     {
         return _officeArts;
@@ -908,10 +940,12 @@ public final class HWPFDocument extends HWPFDocumentCore
         this._dataStream = dataBuf;
     }
 
+  @Internal
   public byte[] getDataStream()
   {
     return _dataStream;
   }
+  @Internal
   public byte[] getTableStream()
   {
 	return _tableStream;
