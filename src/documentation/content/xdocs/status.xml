@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51635 - Improved performance of XSSFSheet#write</action>
            <action dev="poi-developers" type="fix">47731 - Word Extractor considers text copied from some website as an embedded object</action>
            <action dev="poi-developers" type="add">Add Word-to-Text converter and use it as replacement for WordExtractor</action>
            <action dev="poi-developers" type="fix">51604 - replace text fails for doc ( poi 3.8 beta release from download site )</action>

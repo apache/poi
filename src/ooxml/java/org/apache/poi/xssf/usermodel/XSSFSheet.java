@@ -570,7 +570,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             ctRow = prev.getCTRow();
             ctRow.set(CTRow.Factory.newInstance());
         } else {
-            ctRow = worksheet.getSheetData().addNewRow();
+        	if(_rows.isEmpty() || rownum > _rows.lastKey()) {
+        		// we can append the new row at the end
+        		ctRow = worksheet.getSheetData().addNewRow();
+        	} else {
+        		// get number of rows where row index < rownum
+        		// --> this tells us where our row should go
+        		int idx = _rows.headMap(rownum).size();
+        		ctRow = worksheet.getSheetData().insertNewRow(idx);
+        	}
         }
         XSSFRow r = new XSSFRow(ctRow, this);
         r.setRowNum(rownum);
@@ -1496,7 +1504,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         for(XSSFCell cell : cellsToDelete) row.removeCell(cell);
 
+        int idx = _rows.headMap(row.getRowNum()).size();
         _rows.remove(row.getRowNum());
+        worksheet.getSheetData().removeRow(idx);
     }
 
     /**
@@ -2355,7 +2365,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+    	for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
             if(rownum < startRow) continue;
@@ -2365,6 +2375,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
 
             if (removeRow(startRow, endRow, n, rownum)) {
+            	// remove row from worksheet.getSheetData row array
+            	int idx = _rows.headMap(row.getRowNum()).size();
+                worksheet.getSheetData().removeRow(idx);
+                // remove row from _rows
                 it.remove();
             }
             else if (rownum >= startRow && rownum <= endRow) {
@@ -2689,7 +2703,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for(XSSFRow row : _rows.values()){
             row.onDocumentWrite();
         }
-        ensureRowOrdering();
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
@@ -2698,39 +2711,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         xmlOptions.setSaveSuggestedPrefixes(map);
 
         worksheet.save(out, xmlOptions);
-    }
-
-    /**
-     * ensure that the array of CTRow written to CTSheetData is ordered by row index
-     */
-    private void ensureRowOrdering(){
-        CTSheetData sheetData = worksheet.getSheetData();
-        // check if row indexes in CTSheetData match the internal model:
-        // rows in the internal model (_rows) are always ordered while
-        // CTRow beans held by CTSheetData may be not, for example, user can
-        // insert rows in random order, shift rows after insertion, etc.
-        boolean isOrdered = true;
-        if(sheetData.sizeOfRowArray() != _rows.size()) isOrdered = false;
-        else {
-            int i = 0;
-            for (XSSFRow row : _rows.values()) {
-                CTRow c1 = row.getCTRow();
-                CTRow c2 = sheetData.getRowArray(i++); 
-                if (c1.getR() != c2.getR()){
-                    isOrdered = false;
-                    break;
-                }
-            }
-        }
-        
-        if(!isOrdered){
-            CTRow[] cArray = new CTRow[_rows.size()];
-            int i = 0;
-            for(XSSFRow row : _rows.values()){
-                cArray[i++] = row.getCTRow();
-            }
-            sheetData.setRowArray(cArray);
-        }
     }
 
     /**
