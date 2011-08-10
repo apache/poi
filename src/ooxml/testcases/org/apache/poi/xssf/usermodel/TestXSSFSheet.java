@@ -901,7 +901,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
     /**
      * Rows and cells can be created in random order,
-     * but serialization forces strict ascending order of the CTRow and CTCell xml beans
+     * but CTRows are kept in ascending order
      */
     public void testCreateRow() {
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -929,20 +929,20 @@ public final class TestXSSFSheet extends BaseTestSheet {
         CTRow[] xrow = sheetData.getRowArray();
         assertEquals(3, xrow.length);
 
-        //rows are unsorted: {2, 1, 0}
-        assertEquals(2, xrow[0].sizeOfCArray());
-        assertEquals(3, xrow[0].getR());
-        assertTrue(xrow[0].equals(row1.getCTRow()));
+        //rows are sorted: {0, 1, 2}
+        assertEquals(4, xrow[0].sizeOfCArray());
+        assertEquals(1, xrow[0].getR());
+        assertTrue(xrow[0].equals(row3.getCTRow()));
 
         assertEquals(3, xrow[1].sizeOfCArray());
         assertEquals(2, xrow[1].getR());
         assertTrue(xrow[1].equals(row2.getCTRow()));
 
-        assertEquals(4, xrow[2].sizeOfCArray());
-        assertEquals(1, xrow[2].getR());
-        assertTrue(xrow[2].equals(row3.getCTRow()));
+        assertEquals(2, xrow[2].sizeOfCArray());
+        assertEquals(3, xrow[2].getR());
+        assertTrue(xrow[2].equals(row1.getCTRow()));
 
-        CTCell[] xcell = xrow[2].getCArray();
+        CTCell[] xcell = xrow[0].getCArray();
         assertEquals("D1", xcell[0].getR());
         assertEquals("A1", xcell[1].getR());
         assertEquals("C1", xcell[2].getR());
