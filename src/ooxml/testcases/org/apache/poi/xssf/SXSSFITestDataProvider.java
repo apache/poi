@@ -20,7 +20,6 @@
 package org.apache.poi.xssf;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -42,7 +41,8 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         // enforce singleton
     }
     public Workbook openSampleWorkbook(String sampleFileName) {
-        throw new IllegalArgumentException("SXSSF cannot read files");
+    	XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
+    	return new SXSSFWorkbook(xssfWorkbook);
     }
 
     public Workbook writeOutAndReadBack(Workbook wb) {

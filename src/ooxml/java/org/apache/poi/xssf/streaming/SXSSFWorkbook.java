@@ -59,25 +59,67 @@ public class SXSSFWorkbook implements Workbook
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
 
-    XSSFWorkbook _wb=new XSSFWorkbook();
+    XSSFWorkbook _wb;
 
     HashMap<SXSSFSheet,XSSFSheet> _sxFromXHash=new HashMap<SXSSFSheet,XSSFSheet>();
     HashMap<XSSFSheet,SXSSFSheet> _xFromSxHash=new HashMap<XSSFSheet,SXSSFSheet>();
 
-    int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
+    private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
     /**
      * Construct a new workbook
      */
     public SXSSFWorkbook(){
+    	this(null /*workbook*/);
+    }
+    
+    public SXSSFWorkbook(XSSFWorkbook workbook){
+    	this(workbook, DEFAULT_WINDOW_SIZE);
+    }
+    
 
+    /**
+     * Constructs an workbook from an existing workbook.
+     * <p>
+     * When a new node is created via createRow() and the total number
+     * of unflushed records would exceed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via getRow() anymore.
+     * </p>
+     * <p>
+     * A value of -1 indicates unlimited access. In this case all
+     * records that have not been flushed by a call to flush() are available
+     * for random access.
+     * <p>
+     * <p></p>
+     * A value of 0 is not allowed because it would flush any newly created row
+     * without having a chance to specify any cells.
+     * </p>
+     *
+     * @param rowAccessWindowSize
+     */
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
+    	setRandomAccessWindowSize(rowAccessWindowSize);
+    	if (workbook == null)
+    	{
+    		_wb=new XSSFWorkbook();
+    	}
+    	else
+    	{
+    		_wb=workbook;
+            for ( int i = 0; i < _wb.getNumberOfSheets(); i++ )
+            {
+                XSSFSheet sheet = _wb.getSheetAt( i );
+                createAndRegisterSXSSFSheet( sheet );
+            }
+    	}
     }
 
     /**
      * Construct an empty workbook and specify the window for row access.
      * <p>
      * When a new node is created via createRow() and the total number
-     * of unflushed records would exeed the specified value, then the
+     * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
      * via getRow() anymore.
      * </p>
@@ -94,6 +136,15 @@ public class SXSSFWorkbook implements Workbook
      * @param rowAccessWindowSize
      */
     public SXSSFWorkbook(int rowAccessWindowSize){
+    	this(null /*workbook*/, rowAccessWindowSize);
+    }
+    
+    public int getRandomAccessWindowSize()
+    {
+    	return _randomAccessWindowSize;
+    }
+    private void setRandomAccessWindowSize(int rowAccessWindowSize)
+    {
         if(rowAccessWindowSize == 0 || rowAccessWindowSize < -1) {
             throw new IllegalArgumentException("rowAccessWindowSize must be greater than 0 or -1");
         }
@@ -168,20 +219,75 @@ public class SXSSFWorkbook implements Workbook
           out.write(chunk,0,count);
         }
     }
-    private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out,InputStream worksheetData) throws IOException {
+    private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
         InputStreamReader inReader=new InputStreamReader(in,"UTF-8"); //TODO: Is it always UTF-8 or do we need to read the xml encoding declaration in the file? If not, we should perhaps use a SAX reader instead.
         OutputStreamWriter outWriter=new OutputStreamWriter(out,"UTF-8");
+        boolean needsStartTag = true;
         int c;
         int pos=0;
-        String s="<sheetData/>";
+        String s="<sheetData";
         int n=s.length();
-//Copy from "in" to "out" up to the string "<sheetData/>" (excluding).
+//Copy from "in" to "out" up to the string "<sheetData/>" or "</sheetData>" (excluding).
         while(((c=inReader.read())!=-1))
         {
             if(c==s.charAt(pos))
             {
                 pos++;
-                if(pos==n) break;
+                if(pos==n)
+                {
+                	if ("<sheetData".equals(s))
+                	{
+                    	c = inReader.read();
+                    	if (c == -1)
+                    	{
+                    		outWriter.write(s);
+                    		break;
+                    	}
+                    	if (c == '>')
+                    	{
+                    		// Found <sheetData>
+                    		outWriter.write(s);
+                    		outWriter.write(c);
+                    		s = "</sheetData>";
+                    		n = s.length();
+                    		pos = 0;
+                    		needsStartTag = false;
+                    		continue;
+                    	}
+                    	if (c == '/')
+                    	{
+                    		// Found <sheetData/
+                        	c = inReader.read();
+                        	if (c == -1)
+                        	{
+                        		outWriter.write(s);
+                        		break;
+                        	}
+                        	if (c == '>')
+                        	{
+                        		// Found <sheetData/>
+                        		break;
+                        	}
+                        	
+                    		outWriter.write(s);
+                    		outWriter.write('/');
+                    		outWriter.write(c);
+                    		pos = 0;
+                    		continue;
+                    	}
+                    	
+                		outWriter.write(s);
+                		outWriter.write('/');
+                		outWriter.write(c);
+                		pos = 0;
+                		continue;
+                	}
+                	else
+                	{
+                		// Found </sheetData>
+                    	break;
+                	}
+                }
             }
             else
             {
@@ -198,8 +304,15 @@ public class SXSSFWorkbook implements Workbook
             }
         }
         outWriter.flush();
+        if (needsStartTag)
+        {
+        	outWriter.write("<sheetData>\n");
+        	outWriter.flush();
+        }
 //Copy the worksheet data to "out".
         copyStream(worksheetData,out);
+        outWriter.write("</sheetData>");
+        outWriter.flush();
 //Copy the rest of "in" to "out".
         while(((c=inReader.read())!=-1))
             outWriter.write(c);
@@ -348,7 +461,6 @@ public class SXSSFWorkbook implements Workbook
         {
             throw new RuntimeException(ioe);
         }
-        sxSheet.setRandomAccessWindowSize(_randomAccessWindowSize);
         registerSheetMapping(sxSheet,xSheet);
         return sxSheet;
     }
@@ -532,6 +644,11 @@ public class SXSSFWorkbook implements Workbook
      */
     public void write(OutputStream stream) throws IOException
     {
+    	for (SXSSFSheet sheet : _xFromSxHash.values())
+    	{
+    		sheet.flushRows();
+    	}
+    	
         //Save the template
         File tmplFile = File.createTempFile("poi-sxxsf-template", ".xlsx");
         tmplFile.deleteOnExit();
