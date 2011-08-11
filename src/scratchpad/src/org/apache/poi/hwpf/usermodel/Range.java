@@ -1078,11 +1078,13 @@ public class Range { // TODO -instantiable superclass
             currentEnd += currentLength;
 
             // do we need to shift this part?
-            if ( _start < currentEnd )
-            {
-                fib.setSubdocumentTextStreamLength( type, currentLength
-                        + adjustment );
-            }
+            if ( _start > currentEnd )
+                continue;
+
+            fib.setSubdocumentTextStreamLength( type, currentLength
+                    + adjustment );
+
+            break;
         }
     }
 

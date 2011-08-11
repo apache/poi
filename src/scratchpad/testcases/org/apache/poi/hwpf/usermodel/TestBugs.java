@@ -26,6 +26,11 @@ import org.apache.poi.util.LittleEndian;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.hwpf.model.SubdocumentType;
+
+import org.apache.poi.hwpf.model.FileInformationBlock;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -513,8 +518,8 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 51604 - replace text fails for doc ( poi 3.8 beta release from
-     * download site )
+     * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
+     * release from download site )
      */
     public void test51604()
     {
@@ -541,4 +546,44 @@ public class TestBugs extends TestCase
         assertEquals( "+1+2+3+4+5+6+7+8+9+10+11+12", text );
     }
 
+    /**
+     * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
+     * release from download site )
+     */
+    public void test51604p2()
+    {
+        HWPFDocument doc = HWPFTestDataSamples
+                .openSampleFile( "Bug51604.doc" );
+
+        Range range = doc.getRange();
+        int numParagraph = range.numParagraphs();
+        for ( int i = 0; i < numParagraph; i++ )
+        {
+            Paragraph paragraph = range.getParagraph( i );
+            int numCharRuns = paragraph.numCharacterRuns();
+            for ( int j = 0; j < numCharRuns; j++ )
+            {
+                CharacterRun charRun = paragraph.getCharacterRun( j );
+                String text = charRun.text();
+                if ( text.contains( "Header" ) )
+                    charRun.replaceText( text, "added" );
+            }
+        }
+
+        doc = HWPFTestDataSamples.writeOutAndReadBack( doc );
+        final FileInformationBlock fileInformationBlock = doc
+                .getFileInformationBlock();
+
+        int totalLength = 0;
+        for ( SubdocumentType type : SubdocumentType.values() )
+        {
+            final int partLength = fileInformationBlock
+                    .getSubdocumentTextStreamLength( type );
+            assert ( partLength >= 0 );
+
+            totalLength += partLength;
+        }
+
+        assertEquals( doc.getText().length(), totalLength );
+    }
 }
