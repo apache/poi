@@ -2144,9 +2144,9 @@ if(1==2) {
     }
     
     /**
-     * Large row numbers
+     * Large row numbers and NPOIFS vs POIFS
      */
-    public void DISABLEDtest51535() throws Exception {
+    public void test51535() throws Exception {
        byte[] data = HSSFITestDataProvider.instance.getTestDataFileContent("51535.xls");
        
        HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
