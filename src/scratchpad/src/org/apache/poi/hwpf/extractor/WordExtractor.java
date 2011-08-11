@@ -20,14 +20,10 @@ package org.apache.poi.hwpf.extractor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.apache.poi.hwpf.converter.WordToTextConverter;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.usermodel.HeaderStories;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -72,6 +68,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @deprecated Use {@link #WordExtractor(DirectoryNode)} instead
      */
     @Deprecated
+    @SuppressWarnings( "unused" )
     public WordExtractor( DirectoryNode dir, POIFSFileSystem fs )
             throws IOException
     {
@@ -290,34 +287,35 @@ public final class WordExtractor extends POIOLE2TextExtractor
     {
         try
         {
-            final StringWriter stringWriter = new StringWriter();
-            @SuppressWarnings( "unused" )
-            WordToTextConverter wordToTextConverter = new WordToTextConverter()
-            {
-                {
-                    HeaderStories hs = new HeaderStories( doc );
+            WordToTextConverter wordToTextConverter = new WordToTextConverter();
 
-                    if ( hs.getFirstHeaderSubrange() != null )
-                        processDocumentPart( doc, hs.getFirstHeaderSubrange() );
-                    if ( hs.getEvenHeaderSubrange() != null )
-                        processDocumentPart( doc, hs.getEvenHeaderSubrange() );
-                    if ( hs.getOddHeaderSubrange() != null )
-                        processDocumentPart( doc, hs.getOddHeaderSubrange() );
+            HeaderStories hs = new HeaderStories( doc );
 
-                    processDocument( doc );
-                    processDocumentPart( doc, doc.getMainTextboxRange() );
+            if ( hs.getFirstHeaderSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getFirstHeaderSubrange() );
+            if ( hs.getEvenHeaderSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getEvenHeaderSubrange() );
+            if ( hs.getOddHeaderSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getOddHeaderSubrange() );
 
-                    if ( hs.getFirstFooterSubrange() != null )
-                        processDocumentPart( doc, hs.getFirstFooterSubrange() );
-                    if ( hs.getEvenFooterSubrange() != null )
-                        processDocumentPart( doc, hs.getEvenFooterSubrange() );
-                    if ( hs.getOddFooterSubrange() != null )
-                        processDocumentPart( doc, hs.getOddFooterSubrange() );
+            wordToTextConverter.processDocument( doc );
+            wordToTextConverter.processDocumentPart( doc,
+                    doc.getMainTextboxRange() );
 
-                    stringWriter.append( getText() );
-                }
-            };
-            return stringWriter.toString();
+            if ( hs.getFirstFooterSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getFirstFooterSubrange() );
+            if ( hs.getEvenFooterSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getEvenFooterSubrange() );
+            if ( hs.getOddFooterSubrange() != null )
+                wordToTextConverter.processDocumentPart( doc,
+                        hs.getOddFooterSubrange() );
+
+            return wordToTextConverter.getText();
         }
         catch ( Exception exc )
         {

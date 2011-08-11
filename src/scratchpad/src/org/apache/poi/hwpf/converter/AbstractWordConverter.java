@@ -132,6 +132,16 @@ public abstract class AbstractWordConverter
 
     private PicturesManager picturesManager;
 
+    /**
+     * Special actions that need to be called after processing complete, like
+     * updating stylesheets or building document notes list. Usually they are
+     * called once, but it's okay to call them several times.
+     */
+    protected void afterProcess()
+    {
+        // by default no such actions needed
+    }
+
     protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
     {
         Triplet original = new Triplet();
@@ -594,7 +604,17 @@ public abstract class AbstractWordConverter
             processDocumentInformation( summaryInformation );
         }
 
-        processDocumentPart( wordDocument, wordDocument.getRange() );
+        final Range docRange = wordDocument.getRange();
+
+        if ( docRange.numSections() == 1 )
+        {
+            processSingleSection( wordDocument, docRange.getSection( 0 ) );
+            afterProcess();
+            return;
+        }
+
+        processDocumentPart( wordDocument, docRange );
+        afterProcess();
     }
 
     protected abstract void processDocumentInformation(
@@ -603,12 +623,6 @@ public abstract class AbstractWordConverter
     protected void processDocumentPart( HWPFDocumentCore wordDocument,
             final Range range )
     {
-        if ( range.numSections() == 1 )
-        {
-            processSingleSection( wordDocument, range.getSection( 0 ) );
-            return;
-        }
-
         for ( int s = 0; s < range.numSections(); s++ )
         {
             processSection( wordDocument, range.getSection( s ), s );
