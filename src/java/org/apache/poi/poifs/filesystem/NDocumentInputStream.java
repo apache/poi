@@ -275,7 +275,10 @@ public final class NDocumentInputStream extends DocumentInputStream {
 
    @Override
    public short readShort() {
-      return (short) readUShort();
+      checkAvaliable(SIZE_SHORT);
+      byte[] data = new byte[SIZE_SHORT];
+      readFully(data, 0, SIZE_SHORT);
+      return LittleEndian.getShort(data);
    }
 
    @Override
@@ -291,7 +294,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 		checkAvaliable(SIZE_SHORT);
       byte[] data = new byte[SIZE_SHORT];
       readFully(data, 0, SIZE_SHORT);
-      return LittleEndian.getShort(data);
+      return LittleEndian.getUShort(data);
 	}
 
    @Override
