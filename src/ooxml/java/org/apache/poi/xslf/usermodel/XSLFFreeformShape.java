@@ -121,24 +121,24 @@ public class XSLFFreeformShape extends XSLFAutoShape {
             for(XmlObject ch : spPath.selectPath("*")){
                 if(ch instanceof CTPath2DMoveTo){
                     CTAdjPoint2D pt = ((CTPath2DMoveTo)ch).getPt();
-                    path.moveTo(Units.toPoints((Long)pt.getX() + x0),
-                                Units.toPoints((Long)pt.getY() + y0));
+                    path.moveTo((float)Units.toPoints((Long)pt.getX() + x0),
+                                (float)Units.toPoints((Long)pt.getY() + y0));
                 } else if (ch instanceof CTPath2DLineTo){
                     CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
-                    path.lineTo(Units.toPoints((Long)pt.getX() + x0),
-                                Units.toPoints((Long)pt.getY() + y0));
+                    path.lineTo((float)Units.toPoints((Long)pt.getX() + x0),
+                                (float)Units.toPoints((Long)pt.getY() + y0));
                 } else if (ch instanceof CTPath2DCubicBezierTo){
                     CTPath2DCubicBezierTo bez = ((CTPath2DCubicBezierTo)ch);
                     CTAdjPoint2D pt1 = bez.getPtArray(0);
                     CTAdjPoint2D pt2 = bez.getPtArray(1);
                     CTAdjPoint2D pt3 = bez.getPtArray(2);
                     path.curveTo(
-                            Units.toPoints((Long) pt1.getX() + x0),
-                            Units.toPoints((Long) pt1.getY() + y0),
-                            Units.toPoints((Long) pt2.getX() + x0),
-                            Units.toPoints((Long) pt2.getY() + y0),
-                            Units.toPoints((Long) pt3.getX() + x0),
-                            Units.toPoints((Long) pt3.getY() + y0)
+                            (float)Units.toPoints((Long) pt1.getX() + x0),
+                            (float)Units.toPoints((Long) pt1.getY() + y0),
+                            (float)Units.toPoints((Long) pt2.getX() + x0),
+                            (float)Units.toPoints((Long) pt2.getY() + y0),
+                            (float)Units.toPoints((Long) pt3.getX() + x0),
+                            (float)Units.toPoints((Long) pt3.getY() + y0)
                     );
 
                 } else if (ch instanceof CTPath2DClose){
