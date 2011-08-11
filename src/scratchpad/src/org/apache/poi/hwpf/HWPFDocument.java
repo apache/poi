@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
-
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CPSplitCalculator;
@@ -636,7 +636,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   {
     // initialize our streams for writing.
     HWPFFileSystem docSys = new HWPFFileSystem();
-    HWPFOutputStream mainStream = docSys.getStream("WordDocument");
+    HWPFOutputStream wordDocumentStream = docSys.getStream("WordDocument");
     HWPFOutputStream tableStream = docSys.getStream("1Table");
     //HWPFOutputStream dataStream = docSys.getStream("Data");
     int tableOffset = 0;
@@ -653,8 +653,8 @@ public final class HWPFDocument extends HWPFDocumentCore
     // preserve space for the FileInformationBlock because we will be writing
     // it after we write everything else.
     byte[] placeHolder = new byte[fibSize];
-    mainStream.write(placeHolder);
-    int mainOffset = mainStream.getOffset();
+    wordDocumentStream.write(placeHolder);
+    int mainOffset = wordDocumentStream.getOffset();
 
     // write out the StyleSheet.
     _fib.setFcStshf(tableOffset);
@@ -677,10 +677,10 @@ public final class HWPFDocument extends HWPFDocumentCore
     
     // write out the Complex table, includes text.
     _fib.setFcClx(tableOffset);
-    _cft.writeTo(docSys);
+    _cft.writeTo(wordDocumentStream, tableStream);
     _fib.setLcbClx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
-    int fcMac = mainStream.getOffset();
+    int fcMac = wordDocumentStream.getOffset();
 
         /*
          * dop (document properties record) Written immediately after the end of
@@ -733,7 +733,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the CHPBinTable.
     _fib.setFcPlcfbteChpx(tableOffset);
-    _cbt.writeTo(docSys, fcMin, _cft.getTextPieceTable());
+    _cbt.writeTo(wordDocumentStream, tableStream, fcMin, _cft.getTextPieceTable());
     _fib.setLcbPlcfbteChpx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
@@ -747,7 +747,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the PAPBinTable.
     _fib.setFcPlcfbtePapx(tableOffset);
-    _pbt.writeTo(docSys, _cft.getTextPieceTable());
+    _pbt.writeTo(wordDocumentStream, tableStream, _cft.getTextPieceTable());
     _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
@@ -804,7 +804,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the SectionTable.
     _fib.setFcPlcfsed(tableOffset);
-    _st.writeTo(docSys, fcMin);
+    _st.writeTo(wordDocumentStream, tableStream);
     _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
@@ -892,17 +892,17 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // write out the FontTable.
     _fib.setFcSttbfffn(tableOffset);
-    _ft.writeTo(docSys);
+    _ft.writeTo(tableStream);
     _fib.setLcbSttbfffn(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
     // set some variables in the FileInformationBlock.
     _fib.setFcMin(fcMin);
     _fib.setFcMac(fcMac);
-    _fib.setCbMac(mainStream.getOffset());
+    _fib.setCbMac(wordDocumentStream.getOffset());
 
     // make sure that the table, doc and data streams use big blocks.
-    byte[] mainBuf = mainStream.toByteArray();
+    byte[] mainBuf = wordDocumentStream.toByteArray();
     if (mainBuf.length < 4096)
     {
       byte[] tempBuf = new byte[4096];
@@ -934,15 +934,31 @@ public final class HWPFDocument extends HWPFDocumentCore
       dataBuf = tempBuf;
     }
 
+//    // spit out the Word document.
+//    POIFSFileSystem pfs = new POIFSFileSystem();
+//    
+//    pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
+//    pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
+//    pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
+//    writeProperties(pfs);
 
-    // spit out the Word document.
-    POIFSFileSystem pfs = new POIFSFileSystem();
-    pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
-    pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
-    pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
-    writeProperties(pfs);
+        POIFSFileSystem pfs = directory.getFileSystem();
+        deleteEntrySafe( pfs, "WordDocument" );
+        deleteEntrySafe( pfs, "0Table" );
+        deleteEntrySafe( pfs, "1Table" );
+        deleteEntrySafe( pfs, "Data" );
 
-    pfs.writeFilesystem(out);
+        // read properties only if they were not read
+        getSummaryInformation();
+        // update properties in case user changed them
+        deleteEntrySafe( pfs, SummaryInformation.DEFAULT_STREAM_NAME );
+        deleteEntrySafe( pfs, DocumentSummaryInformation.DEFAULT_STREAM_NAME );
+        writeProperties( pfs );
+
+        pfs.createDocument( new ByteArrayInputStream( mainBuf ), "WordDocument" );
+        pfs.createDocument( new ByteArrayInputStream( tableBuf ), "1Table" );
+        pfs.createDocument( new ByteArrayInputStream( dataBuf ), "Data" );
+        pfs.writeFilesystem( out );
 
         /*
          * since we updated all references in FIB and etc, using new arrays to
@@ -950,6 +966,18 @@ public final class HWPFDocument extends HWPFDocumentCore
          */
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
+    }
+
+    private static void deleteEntrySafe( POIFSFileSystem pfs, final String name )
+    {
+        try
+        {
+            pfs.getRoot().getEntry( name ).delete();
+        }
+        catch ( FileNotFoundException exc )
+        {
+            // ok
+        }
     }
 
   @Internal

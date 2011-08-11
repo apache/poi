@@ -165,13 +165,20 @@ public class SectionTable
     return _sections;
   }
 
-  public void writeTo(HWPFFileSystem sys, int fcMin)
-    throws IOException
-  {
-    HWPFOutputStream docStream = sys.getStream("WordDocument");
-    HWPFOutputStream tableStream = sys.getStream("1Table");
+    @Deprecated
+    public void writeTo( HWPFFileSystem sys, int fcMin ) throws IOException
+    {
+        HWPFOutputStream docStream = sys.getStream( "WordDocument" );
+        HWPFOutputStream tableStream = sys.getStream( "1Table" );
 
-    int offset = docStream.getOffset();
+        writeTo( docStream, tableStream );
+    }
+
+    public void writeTo( HWPFOutputStream wordDocumentStream,
+            HWPFOutputStream tableStream ) throws IOException
+    {
+
+    int offset = wordDocumentStream.getOffset();
     int len = _sections.size();
     PlexOfCps plex = new PlexOfCps(SED_SIZE);
 
@@ -185,8 +192,8 @@ public class SectionTable
       byte[] shortBuf = new byte[2];
       LittleEndian.putShort(shortBuf, (short)grpprl.length);
 
-      docStream.write(shortBuf);
-      docStream.write(grpprl);
+      wordDocumentStream.write(shortBuf);
+      wordDocumentStream.write(grpprl);
 
       // set the fc in the section descriptor
       SectionDescriptor sed = sepx.getSectionDescriptor();
@@ -212,7 +219,7 @@ public class SectionTable
 
       plex.addProperty(property);
 
-      offset = docStream.getOffset();
+      offset = wordDocumentStream.getOffset();
     }
     tableStream.write(plex.toByteArray());
   }

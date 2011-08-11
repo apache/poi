@@ -17,6 +17,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -551,7 +552,7 @@ public class TestBugs extends TestCase
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public void test51604p2() throws FileNotFoundException, IOException
+    public void test51604p2() throws Exception
     {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug51604.doc" );
 
@@ -583,13 +584,14 @@ public class TestBugs extends TestCase
 
             totalLength += partLength;
         }
+        assertEquals( doc.getText().length(), totalLength );
     }
 
     /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
      * release from download site )
      */
-    public void test51604p3() throws IOException
+    public void test51604p3() throws Exception
     {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug51604.doc" );
 

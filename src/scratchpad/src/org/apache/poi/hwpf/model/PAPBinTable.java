@@ -397,26 +397,34 @@ public class PAPBinTable
     return _paragraphs;
   }
 
-    public void writeTo( HWPFFileSystem sys, CharIndexTranslator translator ) throws IOException
+    @Deprecated
+    public void writeTo( HWPFFileSystem sys, CharIndexTranslator translator )
+            throws IOException
     {
+        HWPFOutputStream wordDocumentStream = sys.getStream( "WordDocument" );
+        HWPFOutputStream tableStream = sys.getStream( "1Table" );
 
-    HWPFOutputStream docStream = sys.getStream("WordDocument");
-    OutputStream tableStream = sys.getStream("1Table");
-    HWPFOutputStream dataStream = sys.getStream("1Table");
+        writeTo( wordDocumentStream, tableStream, translator );
+    }
+
+    public void writeTo( HWPFOutputStream wordDocumentStream,
+            HWPFOutputStream tableStream, CharIndexTranslator translator )
+            throws IOException
+    {
 
     PlexOfCps binTable = new PlexOfCps(4);
 
     // each FKP must start on a 512 byte page.
-    int docOffset = docStream.getOffset();
+    int docOffset = wordDocumentStream.getOffset();
     int mod = docOffset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
     if (mod != 0)
     {
       byte[] padding = new byte[POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod];
-      docStream.write(padding);
+      wordDocumentStream.write(padding);
     }
 
     // get the page number for the first fkp
-    docOffset = docStream.getOffset();
+    docOffset = wordDocumentStream.getOffset();
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
         // get the ending fc
@@ -436,8 +444,8 @@ public class PAPBinTable
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage();
       pfkp.fill(overflow);
 
-      byte[] bufFkp = pfkp.toByteArray(dataStream, translator);
-      docStream.write(bufFkp);
+      byte[] bufFkp = pfkp.toByteArray(tableStream, translator);
+      wordDocumentStream.write(bufFkp);
       overflow = pfkp.getOverflow();
 
       int end = endingFc;

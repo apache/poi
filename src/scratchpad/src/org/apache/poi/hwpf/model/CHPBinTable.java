@@ -451,12 +451,20 @@ public class CHPBinTable
     return _textRuns;
   }
 
-  public void writeTo(HWPFFileSystem sys, int fcMin, CharIndexTranslator translator)
-    throws IOException
-  {
+    @Deprecated
+    public void writeTo( HWPFFileSystem sys, int fcMin,
+            CharIndexTranslator translator ) throws IOException
+    {
+        HWPFOutputStream docStream = sys.getStream( "WordDocument" );
+        HWPFOutputStream tableStream = sys.getStream( "1Table" );
 
-    HWPFOutputStream docStream = sys.getStream("WordDocument");
-    OutputStream tableStream = sys.getStream("1Table");
+        writeTo( docStream, tableStream, fcMin, translator );
+    }
+
+    public void writeTo( HWPFOutputStream wordDocumentStream,
+            HWPFOutputStream tableStream, int fcMin,
+            CharIndexTranslator translator ) throws IOException
+    {
 
         /*
          * Page 35:
@@ -469,16 +477,16 @@ public class CHPBinTable
         PlexOfCps bte = new PlexOfCps( 4 );
 
     // each FKP must start on a 512 byte page.
-    int docOffset = docStream.getOffset();
+    int docOffset = wordDocumentStream.getOffset();
     int mod = docOffset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
     if (mod != 0)
     {
       byte[] padding = new byte[POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod];
-      docStream.write(padding);
+      wordDocumentStream.write(padding);
     }
 
     // get the page number for the first fkp
-    docOffset = docStream.getOffset();
+    docOffset = wordDocumentStream.getOffset();
     int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
 
         // get the ending fc
@@ -499,7 +507,7 @@ public class CHPBinTable
       cfkp.fill(overflow);
 
             byte[] bufFkp = cfkp.toByteArray( translator );
-      docStream.write(bufFkp);
+      wordDocumentStream.write(bufFkp);
       overflow = cfkp.getOverflow();
 
       int end = endingFc;

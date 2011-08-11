@@ -115,11 +115,15 @@ public final class FontTable
     this._stringCount = stringCount;
   }
 
-  public void writeTo(HWPFFileSystem sys)
-	  throws IOException
-  {
-	  HWPFOutputStream tableStream = sys.getStream("1Table");
+    @Deprecated
+    public void writeTo( HWPFFileSystem sys ) throws IOException
+    {
+        HWPFOutputStream tableStream = sys.getStream( "1Table" );
+        writeTo( tableStream );
+    }
 
+    public void writeTo( HWPFOutputStream tableStream ) throws IOException
+    {
 	  byte[] buf = new byte[LittleEndian.SHORT_SIZE];
 	  LittleEndian.putShort(buf, _stringCount);
 	  tableStream.write(buf);
