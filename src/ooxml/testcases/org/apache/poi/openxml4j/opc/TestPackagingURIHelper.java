@@ -53,7 +53,10 @@ public class TestPackagingURIHelper extends TestCase {
 
 		// Document to itself is the same place (empty URI)
 		URI retURI2 = PackagingURIHelper.relativizeURI(uri1, uri1);
-		assertEquals("", retURI2.getPath());
+		// YK: the line below used to assert empty string which is wrong
+        // if source and target are the same they should be relaitivized as the last segment,
+        // see Bugzilla 51187
+        assertEquals("document.xml", retURI2.getPath());
 
 		// relativization against root
 		URI root = new URI("/");
