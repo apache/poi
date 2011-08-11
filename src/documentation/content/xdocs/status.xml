@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">51634 - support SXSSF streaming from templates</action>
            <action dev="poi-developers" type="add">initial support for XSLF usermodel API</action>
            <action dev="poi-developers" type="fix">51187 - fixed OPCPackage to correctly handle self references</action>
            <action dev="poi-developers" type="fix">51635 - Improved performance of XSSFSheet#write</action>

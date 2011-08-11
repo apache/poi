@@ -44,11 +44,12 @@ public class SXSSFSheet implements Sheet, Cloneable
     SheetDataWriter _writer;
     int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
 
-    public SXSSFSheet(SXSSFWorkbook workbook,XSSFSheet xSheet) throws IOException
+    public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException
     {
-       _workbook=workbook;
-       _sh=xSheet;
+        _workbook=workbook;
+        _sh=xSheet;
         _writer=new SheetDataWriter();
+        setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
 
     }
 /* Gets "<sheetData>" document fragment*/
@@ -1286,7 +1287,6 @@ public class SXSSFSheet implements Sheet, Cloneable
             _fd = File.createTempFile("poi-sxxsf-sheet", ".xml");
             _fd.deleteOnExit();
             _out = new BufferedWriter(new FileWriter(_fd));
-            _out.write("<sheetData>\n");
         }
         public int getNumberOfFlushedRows()
         {
@@ -1306,7 +1306,6 @@ public class SXSSFSheet implements Sheet, Cloneable
         }
         public InputStream getWorksheetXMLInputStream() throws IOException
         {
-            _out.write("</sheetData>");
             _out.flush();
             _out.close();
             return new FileInputStream(_fd);
