@@ -32,7 +32,10 @@ import org.apache.poi.util.LittleEndian;
  * compressed styles that are based on styles contained in the stylesheet. This
  * class also contains static utility functions to uncompress different
  * formatting properties.
- *
+ * <p>
+ * Fields documentation is quotes from Microsoft Office Word 97-2007 Binary File
+ * Format (.doc) Specification, page 36 of 210
+ * 
  * @author Ryan Ackley
  */
 @Internal
@@ -48,13 +51,74 @@ public final class StyleSheet implements HDFType {
   private final static ParagraphProperties NIL_PAP = new ParagraphProperties();
   private final static CharacterProperties NIL_CHP = new CharacterProperties();
 
-  private int _stshiLength;
-  private int _baseLength;
-  private int _flags;
-  private int _maxIndex;
-  private int _maxFixedIndex;
-  private int _stylenameVersion;
-  private int[] _rgftc;
+    /**
+     * Size of the STSHI structure
+     */
+    private int _cbStshi;
+
+    /**
+     * Length of STD Base as stored in a file
+     * <p>
+     * "The STD structure (see below) is divided into a fixed-length "base", and
+     * a variable length part. The stshi.cbSTDBaseInFile indicates the size in
+     * bytes of the fixed-length base of the STD as it was written in this file.
+     * If the STD base is grown in a future version, the file format doesn't
+     * change, because the style sheet reader can discard parts it doesn't know
+     * about, or use defaults if the file's STD is not as large as it was
+     * expecting. (Currently, stshi.cbSTDBaseInFile is 8.)"
+     */
+    private int _cbSTDBaseInFile;
+
+    /**
+     * First bit - Are built-in stylenames stored?
+     * <p>
+     * "Previous versions of Word did not store the style name if the style was
+     * a built-in style; Word 6.0 stores the style name for compatibility with
+     * future versions. Note: the built-in style names may need to be
+     * "regenerated" if the file is opened in a different language or if
+     * stshi.nVerBuiltInNamesWhenSaved doesn't match the expected value."
+     * <p>
+     * other - Spare flags
+     */
+    private int _flags;
+
+    /**
+     * Max sti known when this file was written
+     * <p>
+     * "This indicates the last built-in style known to the version of Word that
+     * saved this file."
+     */
+    private int _stiMaxWhenSaved;
+
+    /**
+     * How many fixed-index istds are there?
+     * <p>
+     * "Each array of styles has some fixed-index styles at the beginning. This
+     * indicates the number of fixed-index positions reserved in the style sheet
+     * when it was saved."
+     */
+    private int _istdMaxFixedWhenSaved;
+
+    /**
+     * Current version of built-in stylenames
+     * <p>
+     * "Since built-in style names are saved with the document, this provides a
+     * way to see if the saved names are the same "version" as the names in the
+     * version of Word that is loading the file. If not, the built-in style
+     * names need to be "regenerated", i.e. the old names need to be replaced
+     * with the new."
+     */
+    private int nVerBuiltInNamesWhenSaved;
+
+    /**
+     * rgftc used by StandardChpStsh for document
+     * <p>
+     * "This is a list of the default fonts for this style sheet. The first is
+     * for ASCII characters (0-127), the second is for East Asian characters,
+     * and the third is the default font for non-East Asian, non-ASCII text. See
+     * notes on sprmCRgftcX for details."
+     */
+    private int[] _rgftcStandardChpStsh;
 
   StyleDescription[] _styleDescriptions;
 
@@ -67,33 +131,48 @@ public final class StyleSheet implements HDFType {
    */
   public StyleSheet(byte[] tableStream, int offset)
   {
-      int startOffset = offset;
-      _stshiLength = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      int stdCount = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _baseLength = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _flags = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _maxIndex = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _maxFixedIndex = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _stylenameVersion = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
+        int startOffset = offset;
+        _cbStshi = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
 
-      _rgftc = new int[3];
-      _rgftc[0] = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _rgftc[1] = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      _rgftc[2] = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE;
+        /*
+         * Count of styles in stylesheet
+         * 
+         * The number of styles in this style sheet. There will be stshi.cstd
+         * (cbSTD, STD) pairs in the file following the STSHI. Note: styles can
+         * be empty, i.e. cbSTD==0.
+         */
+        int cstd = LittleEndian.getUShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
 
-      offset = startOffset + LittleEndian.SHORT_SIZE + _stshiLength;
-      _styleDescriptions = new StyleDescription[stdCount];
-      for(int x = 0; x < stdCount; x++)
+        _cbSTDBaseInFile = LittleEndian.getUShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        _flags = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        _stiMaxWhenSaved = LittleEndian.getUShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        _istdMaxFixedWhenSaved = LittleEndian.getUShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        nVerBuiltInNamesWhenSaved = LittleEndian.getUShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        _rgftcStandardChpStsh = new int[3];
+        _rgftcStandardChpStsh[0] = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+        _rgftcStandardChpStsh[1] = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+        _rgftcStandardChpStsh[2] = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+
+        // shall we discard cbLSD and mpstilsd?
+        
+      offset = startOffset + LittleEndian.SHORT_SIZE + _cbStshi;
+      _styleDescriptions = new StyleDescription[cstd];
+      for(int x = 0; x < cstd; x++)
       {
           int stdSize = LittleEndian.getShort(tableStream, offset);
           //get past the size
@@ -103,7 +182,7 @@ public final class StyleSheet implements HDFType {
               //byte[] std = new byte[stdSize];
 
               StyleDescription aStyle = new StyleDescription(tableStream,
-                _baseLength, offset, true);
+                _cbSTDBaseInFile, offset, true);
 
               _styleDescriptions[x] = aStyle;
           }
@@ -124,29 +203,39 @@ public final class StyleSheet implements HDFType {
   public void writeTo(HWPFOutputStream out)
     throws IOException
   {
+
     int offset = 0;
+
+        /*
+         * we don't support 2003 Word extensions in STSHI (but may be we should
+         * at least not delete them, shouldn't we?), so our structure is always
+         * 18 bytes in length -- sergey
+         */
+        this._cbStshi = 18;
+
     // add two bytes so we can prepend the stylesheet w/ its size
-    byte[] buf = new byte[_stshiLength + 2];
-    LittleEndian.putShort(buf, offset, (short)_stshiLength);
+    byte[] buf = new byte[_cbStshi + 2];
+
+    LittleEndian.putUShort(buf, offset, (short)_cbStshi);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_styleDescriptions.length);
+    LittleEndian.putUShort(buf, offset, (short)_styleDescriptions.length);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_baseLength);
+    LittleEndian.putUShort(buf, offset, (short)_cbSTDBaseInFile);
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, (short)_flags);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_maxIndex);
+    LittleEndian.putUShort(buf, offset, (short)_stiMaxWhenSaved);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_maxFixedIndex);
+    LittleEndian.putUShort(buf, offset, (short)_istdMaxFixedWhenSaved);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_stylenameVersion);
+    LittleEndian.putUShort(buf, offset, (short)nVerBuiltInNamesWhenSaved);
     offset += LittleEndian.SHORT_SIZE;
 
-    LittleEndian.putShort(buf, offset, (short)_rgftc[0]);
+    LittleEndian.putShort(buf, offset, (short)_rgftcStandardChpStsh[0]);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_rgftc[1]);
+    LittleEndian.putShort(buf, offset, (short)_rgftcStandardChpStsh[1]);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, (short)_rgftc[2]);
+    LittleEndian.putShort(buf, offset, (short)_rgftcStandardChpStsh[2]);
 
     out.write(buf);
 
@@ -180,11 +269,11 @@ public final class StyleSheet implements HDFType {
   {
     StyleSheet ss = (StyleSheet)o;
 
-    if (ss._baseLength == _baseLength && ss._flags == _flags &&
-        ss._maxFixedIndex ==_maxFixedIndex && ss._maxIndex == _maxIndex &&
-        ss._rgftc[0] == _rgftc[0] && ss._rgftc[1] == _rgftc[1] &&
-        ss._rgftc[2] == _rgftc[2] && ss._stshiLength == _stshiLength &&
-        ss._stylenameVersion == _stylenameVersion)
+    if (ss._cbSTDBaseInFile == _cbSTDBaseInFile && ss._flags == _flags &&
+        ss._istdMaxFixedWhenSaved ==_istdMaxFixedWhenSaved && ss._stiMaxWhenSaved == _stiMaxWhenSaved &&
+        ss._rgftcStandardChpStsh[0] == _rgftcStandardChpStsh[0] && ss._rgftcStandardChpStsh[1] == _rgftcStandardChpStsh[1] &&
+        ss._rgftcStandardChpStsh[2] == _rgftcStandardChpStsh[2] && ss._cbStshi == _cbStshi &&
+        ss.nVerBuiltInNamesWhenSaved == nVerBuiltInNamesWhenSaved)
     {
       if (ss._styleDescriptions.length == _styleDescriptions.length)
       {
