@@ -26,10 +26,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -53,6 +55,9 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -199,6 +204,9 @@ public final class HWPFLister
         HWPFLister listerOriginal = new HWPFLister( original );
         HWPFLister listerRebuilded = new HWPFLister( doc );
 
+        System.out.println( "== OLE streams ==" );
+        listerOriginal.dumpFileSystem();
+        
         System.out.println( "== FIB (original) ==" );
         listerOriginal.dumpFIB();
 
@@ -402,6 +410,41 @@ public final class HWPFLister
         }
 
         System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
+    }
+
+    public void dumpFileSystem() throws Exception
+    {
+        java.lang.reflect.Field field = POIDocument.class
+                .getDeclaredField( "directory" );
+        field.setAccessible( true );
+        DirectoryNode directoryNode = (DirectoryNode) field.get( _doc );
+
+        System.out.println( dumpFileSystem( directoryNode ) );
+    }
+
+    private String dumpFileSystem( DirectoryEntry directory )
+    {
+        StringBuilder result = new StringBuilder();
+        result.append( "+ " );
+        result.append( directory.getName() );
+        for ( Iterator<Entry> iterator = directory.getEntries(); iterator
+                .hasNext(); )
+        {
+            Entry entry = iterator.next();
+            String entryToString = "\n" + dumpFileSystem( entry );
+            entryToString = entryToString.replaceAll( "\n", "\n+---" );
+            result.append( entryToString );
+        }
+        result.append( "\n" );
+        return result.toString();
+    }
+
+    private String dumpFileSystem( Entry entry )
+    {
+        if ( entry instanceof DirectoryEntry )
+            return dumpFileSystem( (DirectoryEntry) entry );
+
+        return entry.getName();
     }
 
     public void dumpFIB()
