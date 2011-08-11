@@ -87,7 +87,7 @@ public class NotesTables
     {
         if ( descriptors == null || descriptors.length() == 0 )
         {
-            fib.setNotesDescriptorsOffset( noteType, 0 );
+            fib.setNotesDescriptorsOffset( noteType, tableStream.getOffset() );
             fib.setNotesDescriptorsSize( noteType, 0 );
             return;
         }
@@ -105,7 +105,7 @@ public class NotesTables
     {
         if ( textPositions == null || textPositions.length() == 0 )
         {
-            fib.setNotesTextPositionsOffset( noteType, 0 );
+            fib.setNotesTextPositionsOffset( noteType, tableStream.getOffset() );
             fib.setNotesTextPositionsSize( noteType, 0 );
             return;
         }

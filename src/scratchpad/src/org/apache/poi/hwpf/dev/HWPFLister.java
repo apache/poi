@@ -101,7 +101,7 @@ public final class HWPFLister
         if ( args.length == 0 )
         {
             System.err.println( "Use:" );
-            System.err.println( "\tHWPFLister <filename>\n"
+            System.err.println( "\tHWPFLister <filename>\n" + "\t\t[--dop]\n"
                     + "\t\t[--textPieces] [--textPiecesText]\n"
                     + "\t\t[--chpx] [--chpxProperties] [--chpxSprms]\n"
                     + "\t\t[--papx] [--papxProperties] [--papxSprms]\n"
@@ -111,6 +111,8 @@ public final class HWPFLister
                     + "\t\t[--officeDrawings]\n" + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
+
+        boolean outputDop = false;
 
         boolean outputTextPieces = false;
         boolean outputTextPiecesText = false;
@@ -136,6 +138,9 @@ public final class HWPFLister
 
         for ( String arg : Arrays.asList( args ).subList( 1, args.length ) )
         {
+            if ( "--dop".equals( arg ) )
+                outputDop = true;
+
             if ( "--textPieces".equals( arg ) )
                 outputTextPieces = true;
             if ( "--textPiecesText".equals( arg ) )
@@ -196,6 +201,12 @@ public final class HWPFLister
 
         System.out.println( "== FIB (original) ==" );
         listerOriginal.dumpFIB();
+
+        if ( outputDop )
+        {
+            System.out.println( "== Document properties ==" );
+            listerOriginal.dumpDop();
+        }
 
         if ( outputTextPieces )
         {
@@ -369,6 +380,17 @@ public final class HWPFLister
                 System.out.println( stringBuilder );
             }
         }
+    }
+
+    private void dumpDop()
+    {
+        if ( !( _doc instanceof HWPFDocument ) )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+
+        System.out.println( ( (HWPFDocument) _doc ).getDocProperties() );
     }
 
     private void dumpEscher()

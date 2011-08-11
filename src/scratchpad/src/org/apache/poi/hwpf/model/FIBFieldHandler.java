@@ -71,6 +71,7 @@ public final class FIBFieldHandler
   public static final int PRENVPORT = 28;
   public static final int PRENVLAND = 29;
   public static final int WSS = 30;
+  // 402 == 0x0192; 406 == 0x0196
   public static final int DOP = 31;
   public static final int STTBFASSOC = 32;
   public static final int CLX = 33;

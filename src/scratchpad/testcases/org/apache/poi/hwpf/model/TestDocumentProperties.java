@@ -39,7 +39,7 @@ public final class TestDocumentProperties
     _documentProperties.serialize(buf, 0);
 
     DocumentProperties newDocProperties =
-      new DocumentProperties(buf, 0);
+      new DocumentProperties(buf, 0, size);
 
     Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
     AccessibleObject.setAccessible(fields, true);
@@ -71,7 +71,7 @@ public final class TestDocumentProperties
 
     _hWPFDocFixture.setUp();
 
-    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop());
+    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
   }
 
   protected void tearDown()

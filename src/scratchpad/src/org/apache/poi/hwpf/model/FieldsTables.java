@@ -135,7 +135,11 @@ public class FieldsTables
             throws IOException
     {
         if ( plexOfCps == null || plexOfCps.length() == 0 )
+        {
+            fib.setFieldsPlcfOffset( part, outputStream.getOffset() );
+            fib.setFieldsPlcfLength( part, 0 );
             return 0;
+        }
 
         byte[] data = plexOfCps.toByteArray();
 
