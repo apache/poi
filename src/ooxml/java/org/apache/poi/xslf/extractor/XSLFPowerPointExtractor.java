@@ -26,7 +26,10 @@ import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.presentationml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 
 import java.io.IOException;
 
@@ -42,11 +45,11 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	private boolean notesByDefault = false;
 	
 	public XSLFPowerPointExtractor(XMLSlideShow slideshow) {
-		super(slideshow._getXSLFSlideShow());
+		super(slideshow);
 		this.slideshow = slideshow;
 	}
 	public XSLFPowerPointExtractor(XSLFSlideShow slideshow) throws XmlException, IOException {
-		this(new XMLSlideShow(slideshow));
+		this(new XMLSlideShow(slideshow.getPackage()));
 	}
 	public XSLFPowerPointExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
 		this(new XSLFSlideShow(container));
@@ -55,7 +58,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Use:");
-			System.err.println("  HXFPowerPointExtractor <filename.pptx>");
+			System.err.println("  XSLFPowerPointExtractor <filename.pptx>");
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor = 
@@ -95,41 +98,41 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 		StringBuffer text = new StringBuffer();
 
 		XSLFSlide[] slides = slideshow.getSlides();
-		for(int i = 0; i < slides.length; i++) {
-			CTSlide rawSlide = slides[i]._getCTSlide();
-			CTSlideIdListEntry slideId = slides[i]._getCTSlideId();
-			
-			try {
-				// For now, still very low level
-				CTNotesSlide notes = 
-					slideshow._getXSLFSlideShow().getNotes(slideId);
-				CTCommentList comments =
-					slideshow._getXSLFSlideShow().getSlideComments(slideId);
-				
-				if(slideText) {
-					extractText(slides[i].getCommonSlideData(), text);
-					
-					// Comments too for the slide
-					if(comments != null) {
-						for(CTComment comment : comments.getCmList()) {
-							// TODO - comment authors too
-							// (They're in another stream)
-							text.append(
-									comment.getText() + "\n"
-							);
-						}
-					}
-				}
+        try {
+            XSLFSlideShow xsl = new XSLFSlideShow(slideshow.getPackage());
+            for (int i = 0; i < slides.length; i++) {
+                CTSlideIdListEntry slideId = slideshow.getCTPresentation().getSldIdLst().getSldIdArray(i);
 
-				if(notesText && notes != null) {
-					extractText(new XSLFCommonSlideData(notes.getCSld()), text);
-				}
-			} catch(Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-		return text.toString();
+                // For now, still very low level
+                CTNotesSlide notes =
+                        xsl.getNotes(slideId);
+                CTCommentList comments =
+                        xsl.getSlideComments(slideId);
+
+                if (slideText) {
+                    extractText(new XSLFCommonSlideData(slides[i].getXmlObject().getCSld()), text);
+
+                    // Comments too for the slide
+                    if (comments != null) {
+                        for (CTComment comment : comments.getCmList()) {
+                            // TODO - comment authors too
+                            // (They're in another stream)
+                            text.append(
+                                    comment.getText() + "\n"
+                            );
+                        }
+                    }
+                }
+
+                if (notesText && notes != null) {
+                    extractText(new XSLFCommonSlideData(notes.getCSld()), text);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return text.toString();
 	}
 	
 	private void extractText(XSLFCommonSlideData data, StringBuffer text) {

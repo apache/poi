@@ -41,7 +41,7 @@ public class XSLFTestDataSamples {
     public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            doc._getXSLFSlideShow().write(baos);
+            doc.write(baos);
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             return new XMLSlideShow(OPCPackage.open(bais));
         } catch (Exception e) {

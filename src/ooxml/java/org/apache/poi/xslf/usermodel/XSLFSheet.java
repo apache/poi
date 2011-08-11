@@ -16,44 +16,199 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.Background;
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Shape;
-import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.Beta;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-public abstract class XSLFSheet implements Sheet {
-	private SlideShow slideShow;
-	protected XSLFSheet(SlideShow parent) {
-		this.slideShow = parent;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+@Beta
+public abstract class XSLFSheet extends POIXMLDocumentPart {
+    private XSLFDrawing _drawing;
+    private List<XSLFShape> _shapes;
+    private CTGroupShape _spTree;
+
+    public XSLFSheet(){
+        super();
+    }
+
+    public XSLFSheet(PackagePart part, PackageRelationship rel){
+        super(part, rel);
+    }
+
+	public XMLSlideShow getSlideShow() {
+		return (XMLSlideShow)getParent();
 	}
 
-	public Background getBackground() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    protected List<XSLFShape> buildShapes(CTGroupShape spTree){
+        List<XSLFShape> shapes = new ArrayList<XSLFShape>();
+        for(XmlObject ch : spTree.selectPath("*")){
+            if(ch instanceof CTShape){ // simple shape
+                XSLFAutoShape shape = XSLFAutoShape.create((CTShape)ch, this);
+                shapes.add(shape);
+            } else if (ch instanceof CTGroupShape){
+                shapes.add(new XSLFGroupShape((CTGroupShape)ch, this));
+            } else if (ch instanceof CTConnector){
+                shapes.add(new XSLFConnectorShape((CTConnector)ch, this));
+            } else if (ch instanceof CTPicture){
+                shapes.add(new XSLFPictureShape((CTPicture)ch, this));
+            } else if (ch instanceof CTGraphicalObjectFrame){
+                shapes.add(new XSLFGraphicFrame((CTGraphicalObjectFrame)ch, this));
+            }
+        }
+        return shapes;
+    }
 
-	public MasterSheet getMasterSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public abstract XmlObject getXmlObject();
 
-	public SlideShow getSlideShow() {
-		return slideShow;
-	}
 
-	public void addShape(Shape shape) {
-		// TODO Auto-generated method stub
+    private XSLFDrawing getDrawing(){
+        if(_drawing == null) {
+            _drawing = new XSLFDrawing(this, getSpTree());
+        }
+        return _drawing;
+    }
 
-	}
+    private List<XSLFShape> getShapeList(){
+        if(_shapes == null){
+            _shapes = buildShapes(getSpTree());
+        }
+        return _shapes;
+    }
 
-	public Shape[] getShapes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    // shape factory methods
 
-	public boolean removeShape(Shape shape) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public XSLFAutoShape createAutoShape(){
+        List<XSLFShape> shapes = getShapeList();
+        XSLFAutoShape sh = getDrawing().createAutoShape();
+        shapes.add(sh);
+        return sh;
+    }
+
+    public XSLFFreeformShape createFreeform(){
+        List<XSLFShape> shapes = getShapeList();
+        XSLFFreeformShape sh = getDrawing().createFreeform();
+        shapes.add(sh);
+        return sh;
+    }
+
+    public XSLFTextBox createTextBox(){
+        List<XSLFShape> shapes = getShapeList();
+        XSLFTextBox sh = getDrawing().createTextBox();
+        shapes.add(sh);
+        return sh;
+    }
+
+    public XSLFConnectorShape createConnector(){
+        List<XSLFShape> shapes = getShapeList();
+        XSLFConnectorShape sh = getDrawing().createConnector();
+        shapes.add(sh);
+        return sh;
+    }
+
+    public XSLFGroupShape createGroup(){
+        List<XSLFShape> shapes = getShapeList();
+        XSLFGroupShape sh = getDrawing().createGroup();
+        shapes.add(sh);
+        return sh;
+    }
+
+    public XSLFPictureShape createPicture(int pictureIndex){
+        List<PackagePart>  pics = getPackagePart().getPackage()
+                .getPartsByName(Pattern.compile("/ppt/media/.*?"));
+
+        PackagePart pic = pics.get(pictureIndex);
+
+        PackageRelationship rel = getPackagePart().addRelationship(
+                pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
+        addRelation(rel.getId(), new XSLFPictureData(pic, rel));
+
+        XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
+        sh.resize();
+
+        getShapeList().add(sh);
+        return sh;
+    }
+
+    public XSLFShape[] getShapes(){
+        return getShapeList().toArray(new XSLFShape[_shapes.size()]);
+    }
+
+    public boolean removeShape(XSLFShape xShape) {
+        XmlObject obj = xShape.getXmlObject();
+        CTGroupShape spTree = getSpTree();
+        if(obj instanceof CTShape){
+            spTree.getSpList().remove(obj);
+        } else if (obj instanceof CTGroupShape){
+            spTree.getGrpSpList().remove(obj);
+        } else if (obj instanceof CTConnector){
+            spTree.getCxnSpList().remove(obj);
+        } else {
+            throw new IllegalArgumentException("Unsupported shape: " + xShape);
+        }
+        return getShapeList().remove(xShape);
+    }
+
+    protected abstract String getRootElementName();
+
+    protected CTGroupShape getSpTree(){
+        if(_spTree == null) {
+            XmlObject root = getXmlObject();
+            XmlObject[] sp = root.selectPath(
+                    "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:spTree");
+            if(sp.length == 0) throw new IllegalStateException("CTGroupShape was not found");
+            _spTree = (CTGroupShape)sp[0];
+        }
+        return _spTree;
+    }
+
+    protected final void commit() throws IOException {
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
+        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
+        map.put("http://schemas.openxmlformats.org/presentationml/2006/main", "p");
+        xmlOptions.setSaveSuggestedPrefixes(map);
+        String docName = getRootElementName();
+        if(docName != null) {
+            xmlOptions.setSaveSyntheticDocumentElement(
+                    new QName("http://schemas.openxmlformats.org/presentationml/2006/main", docName));
+        }
+
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        getXmlObject().save(out, xmlOptions);
+        out.close();
+    }
+
+    /**
+     * Set the contents of this sheet to be a copy of the source sheet.
+     *
+     * @param src the source sheet to copy data from
+     */
+    public void copy(XSLFSheet src){
+        _shapes = null;
+        _spTree = null;
+        _drawing = null;
+        getXmlObject().set(src.getXmlObject());
+    }
+
 }

@@ -17,10 +17,10 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.util.List;
-
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
+
+import java.util.List;
 
 public class DrawingTable {
     private final CTTable table;

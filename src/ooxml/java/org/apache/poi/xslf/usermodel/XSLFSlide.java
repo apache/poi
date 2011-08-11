@@ -16,82 +16,124 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.Notes;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.util.Internal;
+import org.apache.poi.util.Beta;
+import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-public class XSLFSlide extends XSLFSheet implements Slide {
-	private CTSlide slide;
-	private CTSlideIdListEntry slideId;
-    private XSLFCommonSlideData data;
-	
-	public XSLFSlide(CTSlide slide, CTSlideIdListEntry slideId, SlideShow parent) {
-		super(parent);
-		this.slide = slide;
-		this.slideId = slideId;
-        this.data = new XSLFCommonSlideData(slide.getCSld());
-	}
-	
-	/**
-	 * While developing only!
-	 */
-    @Internal
-	public CTSlide _getCTSlide() {
-		return slide;
-	}
-	/**
-	 * While developing only!
-	 */
-    @Internal
-	public CTSlideIdListEntry _getCTSlideId() {
-		return slideId;
-	}
-	
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
 
-	public boolean getFollowMasterBackground() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+@Beta
+public final class XSLFSlide extends XSLFSheet {
+	private final CTSlide _slide;
+    private XSLFSlideLayout _layout;
 
-	public boolean getFollowMasterColourScheme() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean getFollowMasterObjects() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public Notes getNotes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setFollowMasterBackground(boolean follow) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setFollowMasterColourScheme(boolean follow) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setFollowMasterObjects(boolean follow) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setNotes(Notes notes) {
-		// TODO Auto-generated method stub
-
-	}
-
-    public XSLFCommonSlideData getCommonSlideData() {
-        return data;
+    /**
+     * Create a new slide
+     */
+    XSLFSlide() {
+        super();
+        _slide = prototype();
     }
+
+    /**
+     * Construct a SpreadsheetML drawing from a package part
+     *
+     * @param part the package part holding the drawing data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
+     * @param rel  the package relationship holding this drawing,
+     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+     */
+    XSLFSlide(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        super(part, rel);
+
+        SldDocument doc =
+            SldDocument.Factory.parse(getPackagePart().getInputStream());
+        _slide = doc.getSld();
+    }
+
+
+    private static CTSlide prototype(){
+        CTSlide ctSlide = CTSlide.Factory.newInstance();
+        CTCommonSlideData cSld = ctSlide.addNewCSld();
+        CTGroupShape spTree = cSld.addNewSpTree();
+
+        CTGroupShapeNonVisual nvGrpSpPr = spTree.addNewNvGrpSpPr();
+        CTNonVisualDrawingProps cnvPr = nvGrpSpPr.addNewCNvPr();
+        cnvPr.setId(1);
+        cnvPr.setName("");
+        nvGrpSpPr.addNewCNvGrpSpPr();
+        nvGrpSpPr.addNewNvPr();
+
+        CTGroupShapeProperties grpSpr = spTree.addNewGrpSpPr();
+        CTGroupTransform2D xfrm = grpSpr.addNewXfrm();
+        CTPoint2D off = xfrm.addNewOff();
+        off.setX(0);
+        off.setY(0);
+        CTPositiveSize2D ext = xfrm.addNewExt();
+        ext.setCx(0);
+        ext.setCy(0);
+        CTPoint2D choff = xfrm.addNewChOff();
+        choff.setX(0);
+        choff.setY(0);
+        CTPositiveSize2D chExt = xfrm.addNewChExt();
+        chExt.setCx(0);
+        chExt.setCy(0);
+        ctSlide.addNewClrMapOvr().addNewMasterClrMapping();
+        return ctSlide;
+    }
+
+    @Override
+	public CTSlide getXmlObject() {
+		return _slide;
+	}
+
+    @Override
+    protected String getRootElementName(){
+        return "sld";        
+    }
+
+    public XSLFSlideMaster getMasterSheet(){
+        return getSlideLayout().getSlideMaster();
+    }
+
+    public XSLFSlideLayout getSlideLayout(){
+        if(_layout == null){
+             for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFSlideLayout){
+                   _layout = (XSLFSlideLayout)p;
+                }
+            }
+        }
+        if(_layout == null) {
+            throw new IllegalArgumentException("SlideLayout was not found for " + this.toString());
+        }
+        return _layout;
+    }
+
+    public void setFollowMasterBackground(boolean value){
+        _slide.setShowMasterSp(value);    
+    }
+
+    public boolean getFollowMasterBackground(){
+        return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();    
+    }
+
 }

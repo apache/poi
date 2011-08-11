@@ -18,6 +18,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Beta
 public class XSLFCommonSlideData {
     private final CTCommonSlideData data;
 

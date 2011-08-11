@@ -16,20 +16,42 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import java.io.IOException;
-
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Resources;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdList;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
+import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -37,57 +59,261 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdList;
  *  they are reading or writing a slideshow. It is also the
  *  top level object for creating new slides/etc.
  */
-public class XMLSlideShow implements SlideShow {
-	private XSLFSlideShow slideShow;
-	private XSLFSlide[] slides;
-	
-	public XMLSlideShow(XSLFSlideShow xml) throws XmlException, IOException {
-		this.slideShow = xml;
-		
-		// Build the main masters list - TODO
-		CTSlideMasterIdList masterIds = slideShow.getSlideMasterReferences();
-		
-		// Build the slides list
-		CTSlideIdList slideIds = slideShow.getSlideReferences();
-		slides = new XSLFSlide[slideIds.getSldIdList().size()];
-		for(int i=0; i<slides.length; i++) {
-			CTSlideIdListEntry slideId = slideIds.getSldIdArray(i);
-			CTSlide slide = slideShow.getSlide(slideId);
-			slides[i] = new XSLFSlide(slide, slideId, this);
-		}
-		
-		// Build the notes list - TODO
-	}
-	
-	public XMLSlideShow(OPCPackage pkg) throws XmlException, IOException, OpenXML4JException {
-	   this(new XSLFSlideShow(pkg));
-	}
-	
-	public XSLFSlideShow _getXSLFSlideShow() {
-		return slideShow;
-	}
+@Beta
+public class XMLSlideShow  extends POIXMLDocument {
 
-	public MasterSheet createMasterSheet() throws IOException {
-		throw new IllegalStateException("Not implemented yet!");
-	}
-	public Slide createSlide() throws IOException {
-		throw new IllegalStateException("Not implemented yet!");
-	}
+    private static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
 
-	public MasterSheet[] getMasterSheet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private CTPresentation _presentation;
+    private List<XSLFSlide> _slides;
+    private Map<String, XSLFSlideMaster> _masters;
+    protected List<XSLFPictureData> _pictures;
 
-	/**
-	 * Return all the slides in the slideshow
-	 */
-	public XSLFSlide[] getSlides() {
-		return slides;
-	}
-	
-	public Resources getResources() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public XMLSlideShow() {
+        this(empty());
+    }
+
+    public XMLSlideShow(OPCPackage pkg) {
+        super(pkg);
+
+        try {
+            if(getCorePart().getContentType().equals(XSLFRelation.THEME_MANAGER.getContentType())) {
+               rebase(getPackage());
+            }
+
+            //build a tree of POIXMLDocumentParts, this presentation being the root
+            load(XSLFFactory.getInstance());
+        } catch (Exception e){
+            throw new POIXMLException(e);
+        }
+    }
+
+    public XMLSlideShow(InputStream is) throws IOException {
+        this(PackageHelper.open(is));
+    }
+
+    static final OPCPackage empty() {
+        InputStream is = XMLSlideShow.class.getResourceAsStream("empty.pptx");
+        if (is == null) {
+            throw new RuntimeException("Missing resource 'empty.pptx'");
+        }
+        try {
+            return OPCPackage.open(is);
+        } catch (Exception e){
+            throw new POIXMLException(e);
+        }
+    }
+
+    // TODO get rid of this method
+    @Deprecated
+    public XSLFSlideShow _getXSLFSlideShow() throws OpenXML4JException, IOException, XmlException{
+        return new XSLFSlideShow(getPackage());
+    }
+
+    @Override
+    protected void onDocumentRead() throws IOException {
+        try {
+            PresentationDocument doc =
+                    PresentationDocument.Factory.parse(getCorePart().getInputStream());
+            _presentation = doc.getPresentation();
+            Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
+
+            _masters = new HashMap<String, XSLFSlideMaster>();
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFSlide) {
+                    shIdMap.put(p.getPackageRelationship().getId(), (XSLFSlide) p);
+                } else if (p instanceof XSLFSlideMaster){
+                    XSLFSlideMaster master = (XSLFSlideMaster)p;
+                    _masters.put(p.getPackageRelationship().getId(), master);
+                }
+            }
+
+            _slides = new ArrayList<XSLFSlide>();
+            if (_presentation.isSetSldIdLst()) {
+                List<CTSlideIdListEntry> slideIds = _presentation.getSldIdLst().getSldIdList();
+                for (CTSlideIdListEntry slId : slideIds) {
+                    XSLFSlide sh = shIdMap.get(slId.getId2());
+                    if (sh == null) {
+                        _logger.log(POILogger.WARN, "Slide with r:id " + slId.getId() + " was defined, but didn't exist in package, skipping");
+                        continue;
+                    }
+                    _slides.add(sh);
+                }
+            }
+        } catch (XmlException e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+
+    @Override
+    protected void commit() throws IOException {
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
+        xmlOptions.setSaveSuggestedPrefixes(map);
+
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        _presentation.save(out, xmlOptions);
+        out.close();
+    }
+
+    /**
+     * Get the document's embedded files.
+     */
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        return Collections.unmodifiableList(
+                getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/.*?"))
+        );
+    }
+
+    /**
+     * Returns all Pictures, which are referenced from the document itself.
+     * @return a {@link List} of {@link PackagePart}.
+     * The returned {@link List} is unmodifiable. 
+     */
+    public List<XSLFPictureData> getAllPictures() {
+        if(_pictures == null){
+            List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
+            _pictures = new ArrayList<XSLFPictureData>(mediaParts.size());
+            for(PackagePart part : mediaParts){
+                _pictures.add(new XSLFPictureData(part, null));    
+            }
+        }
+        return Collections.unmodifiableList(_pictures);
+    }
+
+    public XSLFSlide createSlide() {
+        int slideNumber = 256, cnt = 1;
+        CTSlideIdList slideList;
+        if (!_presentation.isSetSldIdLst()) slideList = _presentation.addNewSldIdLst();
+        else {
+            slideList = _presentation.getSldIdLst();
+            for(CTSlideIdListEntry slideId : slideList.getSldIdList()){
+                slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
+                cnt++;
+            }
+        }
+
+        XSLFSlide slide = (XSLFSlide)createRelationship(
+                XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt);
+
+        CTSlideIdListEntry slideId = slideList.addNewSldId();
+        slideId.setId(slideNumber);
+        slideId.setId2(slide.getPackageRelationship().getId());
+
+        String masterId = _presentation.getSldMasterIdLst().getSldMasterIdArray(0).getId2();
+        XSLFSlideMaster master = _masters.get(masterId);
+
+        XSLFSlideLayout layout = master.getLayout("blank");
+        if(layout == null) throw new IllegalArgumentException("Blank layout was not found");
+
+        slide.addRelation(layout.getPackageRelationship().getId(), layout);
+
+        PackagePartName ppName = layout.getPackagePart().getPartName();
+        slide.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
+                layout.getPackageRelationship().getRelationshipType());
+
+        _slides.add(slide);
+        return slide;
+    }
+
+    public XSLFSlideMaster[] getSlideMasters() {
+        return _masters.values().toArray(new XSLFSlideMaster[_masters.size()]);
+    }
+
+    /**
+     * Return all the slides in the slideshow
+     */
+    public XSLFSlide[] getSlides() {
+        return _slides.toArray(new XSLFSlide[_slides.size()]);
+    }
+
+    /**
+     *
+     * @param newIndex 0-based index of the slide
+     */
+    public void setSlideOrder(XSLFSlide slide, int newIndex){
+        int oldIndex = _slides.indexOf(slide);
+        if(oldIndex == -1) throw new IllegalArgumentException("Slide not found");
+
+        // fix the usermodel container
+        _slides.add(newIndex, _slides.remove(oldIndex));
+
+        // fix ordering in the low-level xml
+        List<CTSlideIdListEntry> slideIds = _presentation.getSldIdLst().getSldIdList();
+        CTSlideIdListEntry oldEntry = slideIds.get(oldIndex);
+        slideIds.add(newIndex, oldEntry);
+        slideIds.remove(oldEntry);
+    }
+
+    public XSLFSlide removeSlide(int index){
+        XSLFSlide slide = _slides.remove(index);
+        removeRelation(slide);
+         _presentation.getSldIdLst().getSldIdList().remove(index);
+        return slide;
+    }
+    
+    /**
+     * Returns the current page size
+     *
+     * @return the page size
+     */
+    public Dimension getPageSize(){
+        CTSlideSize sz = _presentation.getSldSz();
+        int cx = sz.getCx();
+        int cy = sz.getCy();
+        return new Dimension((int)Units.toPoints(cx), (int)Units.toPoints(cy));
+    }
+
+    /**
+     * Sets the page size to the given <code>Dimension</code> object.
+     *
+     * @param pgSize page size
+     */
+    public void setPageSize(Dimension pgSize){
+        CTSlideSize sz = CTSlideSize.Factory.newInstance();
+        sz.setCx(Units.toEMU(pgSize.getWidth()));
+        sz.setCy(Units.toEMU(pgSize.getHeight()));
+        _presentation.setSldSz(sz);
+    }
+
+
+    @Internal
+    public CTPresentation getCTPresentation(){
+        return _presentation;        
+    }
+
+    /**
+     * Adds a picture to the workbook.
+     *
+     * @param pictureData       The bytes of the picture
+     * @param format            The format of the picture.
+     *
+     * @return the index to this picture (1 based).
+     * @see XSLFPictureData#PICTURE_TYPE_EMF
+     * @see XSLFPictureData#PICTURE_TYPE_WMF
+     * @see XSLFPictureData#PICTURE_TYPE_PICT
+     * @see XSLFPictureData#PICTURE_TYPE_JPEG
+     * @see XSLFPictureData#PICTURE_TYPE_PNG
+     * @see XSLFPictureData#PICTURE_TYPE_DIB
+     */
+    public int addPicture(byte[] pictureData, int format) {
+        getAllPictures();
+        
+        int imageNumber = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?")).size() + 1;
+        XSLFPictureData img = (XSLFPictureData) createRelationship(
+                XSLFPictureData.RELATIONS[format], XSLFFactory.getInstance(), imageNumber, true);
+        _pictures.add(img);
+        try {
+            OutputStream out = img.getPackagePart().getOutputStream();
+            out.write(pictureData);
+            out.close();
+        } catch (IOException e) {
+            throw new POIXMLException(e);
+        }
+        return imageNumber - 1;
+    }
+
 }
