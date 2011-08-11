@@ -16,20 +16,14 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.poi.util.LittleEndian;
-
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
-import org.apache.poi.hwpf.model.SubdocumentType;
-
-import org.apache.poi.hwpf.model.FileInformationBlock;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
@@ -39,8 +33,12 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
+import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
+import org.apache.poi.hwpf.model.SubdocumentType;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Test different problems reported in Apache Bugzilla
@@ -549,11 +547,13 @@ public class TestBugs extends TestCase
     /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
      * release from download site )
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
      */
-    public void test51604p2()
+    public void test51604p2() throws FileNotFoundException, IOException
     {
-        HWPFDocument doc = HWPFTestDataSamples
-                .openSampleFile( "Bug51604.doc" );
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug51604.doc" );
 
         Range range = doc.getRange();
         int numParagraph = range.numParagraphs();
@@ -583,7 +583,49 @@ public class TestBugs extends TestCase
 
             totalLength += partLength;
         }
+    }
 
-        assertEquals( doc.getText().length(), totalLength );
+    /**
+     * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
+     * release from download site )
+     */
+    public void test51604p3() throws IOException
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug51604.doc" );
+
+        byte[] originalData = new byte[doc.getFileInformationBlock()
+                .getLcbDop()];
+        System.arraycopy( doc.getTableStream(), doc.getFileInformationBlock()
+                .getFcDop(), originalData, 0, originalData.length );
+
+        HWPFOutputStream outputStream = new HWPFOutputStream();
+        doc.getDocProperties().writeTo( outputStream );
+        final byte[] oldData = outputStream.toByteArray();
+
+        assertEquals( Arrays.toString( originalData ),
+                Arrays.toString( oldData ) );
+
+        Range range = doc.getRange();
+        int numParagraph = range.numParagraphs();
+        for ( int i = 0; i < numParagraph; i++ )
+        {
+            Paragraph paragraph = range.getParagraph( i );
+            int numCharRuns = paragraph.numCharacterRuns();
+            for ( int j = 0; j < numCharRuns; j++ )
+            {
+                CharacterRun charRun = paragraph.getCharacterRun( j );
+                String text = charRun.text();
+                if ( text.contains( "Header" ) )
+                    charRun.replaceText( text, "added" );
+            }
+        }
+
+        doc = HWPFTestDataSamples.writeOutAndReadBack( doc );
+
+        outputStream = new HWPFOutputStream();
+        doc.getDocProperties().writeTo( outputStream );
+        final byte[] newData = outputStream.toByteArray();
+
+        assertEquals( Arrays.toString( oldData ), Arrays.toString( newData ) );
     }
 }

@@ -264,7 +264,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     //fcMin = _fib.getFcMin()
 
     // Start to load up our standard structures.
-    _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
+    _dop = new DocumentProperties(_tableStream, _fib.getFcDop(), _fib.getLcbDop() );
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     TextPieceTable _tpt = _cft.getTextPieceTable();
 
@@ -683,6 +683,21 @@ public final class HWPFDocument extends HWPFDocumentCore
     int fcMac = mainStream.getOffset();
 
         /*
+         * dop (document properties record) Written immediately after the end of
+         * the previously recorded structure. This is recorded in all Word
+         * documents
+         * 
+         * Microsoft Office Word 97-2007 Binary File Format (.doc)
+         * Specification; Page 23 of 210
+         */
+
+    // write out the DocumentProperties.
+    _fib.setFcDop(tableOffset);
+    _dop.writeTo(tableStream);
+    _fib.setLcbDop(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+        /*
          * plcfBkmkf (table recording beginning CPs of bookmarks) Written
          * immediately after the sttbfBkmk, if the document contains bookmarks.
          * 
@@ -880,13 +895,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     _ft.writeTo(docSys);
     _fib.setLcbSttbfffn(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
-
-    // write out the DocumentProperties.
-    _fib.setFcDop(tableOffset);
-    byte[] buf = new byte[_dop.getSize()];
-    _fib.setLcbDop(_dop.getSize());
-    _dop.serialize(buf, 0);
-    tableStream.write(buf);
 
     // set some variables in the FileInformationBlock.
     _fib.setFcMin(fcMin);
