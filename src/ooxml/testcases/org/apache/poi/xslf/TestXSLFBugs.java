@@ -52,7 +52,7 @@ public class TestXSLFBugs extends TestCase {
        assertEquals("/ppt/slideLayouts/slideLayout12.xml", slidePart.getRelationship("rId1").getTargetURI().toString());
        assertEquals("/ppt/notesSlides/notesSlide1.xml", slidePart.getRelationship("rId2").getTargetURI().toString());
        // TODO Fix this
-//       assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
+       assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
        assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
     }
 }

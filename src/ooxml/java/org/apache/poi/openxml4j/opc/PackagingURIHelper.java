@@ -342,7 +342,16 @@ public final class PackagingURIHelper {
 		// Special case for where the two are the same
 		if (segmentsTheSame == segmentsSource.length
 				&& segmentsTheSame == segmentsTarget.length) {
-			retVal.append("");
+            if(sourceURI.equals(targetURI)){
+                // if source and target are the same they should be resolved to the last segment,
+                // Example: if a slide references itself, e.g. the source URI is
+                // "/ppt/slides/slide1.xml" and the targetURI is "slide1.xml" then
+                // this it should be relativized as "slide1.xml", i.e. the last segment.
+                retVal.append(segmentsSource[segmentsSource.length - 1]);
+            } else {
+                retVal.append("");
+            }
+
 		} else {
 			// Matched for so long, but no more
 

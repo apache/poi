@@ -313,4 +313,35 @@ public class TestRelationships extends TestCase {
         assertEquals("'\u0410\u043F\u0430\u0447\u0435 \u041F\u041E\u0418'!A5", rel6.getFragment());
     }
 
+   public void testSelfRelations_bug51187() throws Exception {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	OPCPackage pkg = OPCPackage.create(baos);
+
+    	PackagePart partA =
+    		pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
+    	assertNotNull(partA);
+
+    	// reference itself
+    	PackageRelationship rel1 = partA.addRelationship(partA.getPartName(), TargetMode.INTERNAL, "partA");
+
+    	
+    	// Save, and re-load
+    	pkg.close();
+    	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+    	pkg = OPCPackage.open(bais);
+
+    	partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
+
+
+    	// Check the relations
+    	assertEquals(1, partA.getRelationships().size());
+
+       PackageRelationship rel2 = partA.getRelationships().getRelationship(0);
+
+    	assertEquals(rel1.getRelationshipType(), rel2.getRelationshipType());
+       assertEquals(rel1.getId(), rel2.getId());
+       assertEquals(rel1.getSourceURI(), rel2.getSourceURI());
+       assertEquals(rel1.getTargetURI(), rel2.getTargetURI());
+       assertEquals(rel1.getTargetMode(), rel2.getTargetMode());
+    }
 }
