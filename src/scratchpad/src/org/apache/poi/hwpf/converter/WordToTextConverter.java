@@ -166,6 +166,13 @@ public class WordToTextConverter extends AbstractWordConverter
         this.textDocumentFacade = new TextDocumentFacade( document );
     }
 
+    @Override
+    protected void afterProcess()
+    {
+        if ( notes != null )
+            textDocumentFacade.getBody().appendChild( notes );
+    }
+
     public Document getDocument()
     {
         return textDocumentFacade.getDocument();
@@ -209,15 +216,6 @@ public class WordToTextConverter extends AbstractWordConverter
     }
 
     @Override
-    public void processDocument( HWPFDocumentCore wordDocument )
-    {
-        super.processDocument( wordDocument );
-
-        if ( notes != null )
-            textDocumentFacade.getBody().appendChild( notes );
-    }
-
-    @Override
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
@@ -239,6 +237,14 @@ public class WordToTextConverter extends AbstractWordConverter
                 textDocumentFacade.addKeywords( summaryInformation
                         .getKeywords() );
         }
+    }
+
+    @Override
+    public void processDocumentPart( HWPFDocumentCore wordDocument,
+            Range range )
+    {
+        super.processDocumentPart( wordDocument, range );
+        afterProcess();
     }
 
     @Override

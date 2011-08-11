@@ -180,6 +180,15 @@ public class WordToHtmlConverter extends AbstractWordConverter
         this.htmlDocumentFacade = new HtmlDocumentFacade( document );
     }
 
+    @Override
+    protected void afterProcess()
+    {
+        if ( notes != null )
+            htmlDocumentFacade.getBody().appendChild( notes );
+
+        htmlDocumentFacade.updateStylesheet();
+    }
+
     public Document getDocument()
     {
         return htmlDocumentFacade.getDocument();
@@ -242,17 +251,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
     }
 
     @Override
-    public void processDocument( HWPFDocumentCore wordDocument )
-    {
-        super.processDocument( wordDocument );
-
-        if ( notes != null )
-            htmlDocumentFacade.getBody().appendChild( notes );
-
-        htmlDocumentFacade.updateStylesheet();
-    }
-
-    @Override
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
@@ -268,6 +266,13 @@ public class WordToHtmlConverter extends AbstractWordConverter
         if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
             htmlDocumentFacade
                     .addDescription( summaryInformation.getComments() );
+    }
+
+    @Override
+    public void processDocumentPart( HWPFDocumentCore wordDocument, Range range )
+    {
+        super.processDocumentPart( wordDocument, range );
+        afterProcess();
     }
 
     @Override
