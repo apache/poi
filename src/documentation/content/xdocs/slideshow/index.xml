@@ -21,7 +21,7 @@
 
 <document>
     <header>
-        <title>POI-HSLF - Java API To Access Microsoft Powerpoint Format Files</title>
+        <title>POI-HSLF and and POI-XLSF - Java API To Access Microsoft Powerpoint Format Files</title>
         <subtitle>Overview</subtitle>
         <authors>
             <person name="Avik Sengupta" email="avik at apache dot org"/>
@@ -32,12 +32,9 @@
 
     <body>
         <section>
-            <title>Overview</title>
+            <title>POI-HSLF</title>
 
-            <p>HSLF is the POI Project's pure Java implementation of the 
-			Powerpoint '97(-2007) file format. It <em>does not</em> support
-			the new PowerPoint 2007 .pptx file format, which is not OLE2 
-			based.</p>
+            <p>HSLF is the POI Project's pure Java implementation of the Powerpoint '97(-2007) file format. </p>
     <p>HSLF provides a way to read, create or modify PowerPoint  presentations. In particular, it provides:
             </p>
             <ul>
@@ -55,8 +52,20 @@
 			<p>The <link href="./quick-guide.html">quick guide</link> documentation provides 
             information on using this API. Comments and fixes gratefully accepted on the POI
             dev mailing lists.</p>
-
-
+        </section>
+        <section>
+            <title>POI-XSLF</title>
+            <p>
+            XSLF is the POI Project's pure Java implementation of the PowerPoint 2007 OOXML (.xlsx) file format. 
+            Whilst HSLF and XSLF provide similar features, there is not a common interface across the two of them at this time.
+            </p>
+            <p>
+            Please note that XSLF is still in early development and is a subject to incompatible changes in future. 
+            </p>
+            <p>
+              A quick guide is available in 
+                <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/xslf/usermodel/">XSLF Examples</link> 
+            </p>
         </section>
     </body>
 </document>
