@@ -66,7 +66,7 @@
         <em>org.apache.poi.hwpf.converter</em>
         package contains Word-to-HTML and Word-to-FO converters (latest can be used to generate PDF
         from Word files when using with
-        <a href="http://xmlgraphics.apache.org/fop/">Apache FOP</a>
+        <link href="http://xmlgraphics.apache.org/fop/">Apache FOP</link>
         ). Also there is a small file-structure-dumping utility in
         <em>org.apache.poi.hwpf.dev</em>
         package, primally for developing purposes.
@@ -178,7 +178,6 @@
      mostly on your own. We are looking forward for you and your contributions!
      Honor and glory of becoming a POI committer are waiting!</p>
    </section>
-  </section>
  </body>
 </document>
 
