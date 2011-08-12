@@ -107,7 +107,7 @@ public class XSLFRelation extends POIXMLRelation {
          "application/vnd.openxmlformats-officedocument.theme+xml",
          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
          "/ppt/theme/theme#.xml", 
-         null
+         XSLFTheme.class
    );
    
    public static final XSLFRelation VML_DRAWING = new XSLFRelation(

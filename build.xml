@@ -664,6 +664,12 @@ under the License.
             <classpath refid="test.scratchpad.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
+            <!-- 
+              YK: ensure that JUnit has enough memory to run tests. 
+              Without the line below tests fail on Mac OS X with jdk-1.6.26 
+              and on Windows with jdk-1.5.22 
+            -->
+            <jvmarg value="-Xmx256M"/>            
             <formatter type="plain"/>
             <batchtest todir="${scratchpad.reports.test}">
                 <fileset dir="${scratchpad.src.test}">
