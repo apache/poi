@@ -23,6 +23,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
@@ -35,8 +36,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisua
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayoutIdListEntry;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -135,5 +138,4 @@ public final class XSLFSlide extends XSLFSheet {
     public boolean getFollowMasterBackground(){
         return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();    
     }
-
 }

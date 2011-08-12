@@ -52,6 +52,7 @@ import java.util.Map;
  public class XSLFSlideMaster extends XSLFSheet {
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
+    private XSLFTheme _theme;
 
     XSLFSlideMaster() {
         super();
@@ -86,5 +87,17 @@ import java.util.Map;
             }
         }
         return _layouts.get(name);
+    }
+
+    public XSLFTheme getTheme(){
+        if(_theme == null){
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFTheme){
+                    _theme = (XSLFTheme)p;
+                    break;
+                }
+            }
+        }
+        return _theme;
     }
 }
