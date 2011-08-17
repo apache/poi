@@ -31,7 +31,6 @@ public class TestXSLFShape extends TestCase {
     public void testReadTextShapes() {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide[] slides = ppt.getSlides();
-        assertEquals(3, slides.length);
 
         XSLFSlide slide1 = slides[0];
         XSLFShape[] shapes1 = slide1.getShapes();

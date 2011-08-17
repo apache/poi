@@ -210,7 +210,7 @@ public class TestXSLFAutoShape extends TestCase {
         assertSame(r, p.getTextRuns().get(0));
 
         assertEquals(-1.0, r.getFontSize());
-        assertFalse(r.getXmlObject().isSetRPr());
+        assertFalse(r.getXmlObject().getRPr().isSetSz());
         r.setFontSize(10.0);
         assertTrue(r.getXmlObject().isSetRPr());
         assertEquals(1000, r.getXmlObject().getRPr().getSz());

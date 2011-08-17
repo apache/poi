@@ -36,9 +36,15 @@ import java.awt.*;
 @Beta
 public class XSLFTextRun {
     private final CTRegularTextRun _r;
+    private final XSLFTextParagraph _p;
 
-    XSLFTextRun(CTRegularTextRun r){
+    XSLFTextRun(CTRegularTextRun r, XSLFTextParagraph p){
         _r = r;
+        _p = p;
+    }
+
+    XSLFTextParagraph getParentParagraph(){
+        return _p;
     }
 
     public String getText(){
@@ -78,7 +84,7 @@ public class XSLFTextRun {
      * @return font size in points or -1 if font size is not set.
      */
     public double getFontSize(){
-        if(!_r.isSetRPr()) return -1;
+        if(!_r.isSetRPr() || !_r.getRPr().isSetSz()) return -1;
 
         return _r.getRPr().getSz()*0.01;
     }
@@ -198,5 +204,16 @@ public class XSLFTextRun {
     public String toString(){
         return "[" + getClass() + "]" + getText();
     }
-    
+
+    public XSLFHyperlink createHyperlink(){
+        XSLFHyperlink link = new XSLFHyperlink(_r.getRPr().addNewHlinkClick(), this);
+        return link;
+    }
+
+    public XSLFHyperlink getHyperlink(){
+        if(!_r.getRPr().isSetHlinkClick()) return null;
+
+
+        return new XSLFHyperlink(_r.getRPr().getHlinkClick(), this);
+    }
 }

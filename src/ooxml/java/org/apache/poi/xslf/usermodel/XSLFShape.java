@@ -41,8 +41,4 @@ public abstract class XSLFShape {
     public abstract String getShapeName();
 
     public abstract int getShapeId();
-
-    void onCopy(XSLFSheet srcSheet){
-
-    }
 }

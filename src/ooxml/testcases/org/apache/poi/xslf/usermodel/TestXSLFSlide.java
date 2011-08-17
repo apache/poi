@@ -30,7 +30,6 @@ public class TestXSLFSlide extends TestCase {
     public void testReadShapes(){
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide[] slides = ppt.getSlides();
-        assertEquals(3, slides.length);
 
         XSLFSlide slide1 = slides[0];
         XSLFShape[] shapes1 = slide1.getShapes();
@@ -85,6 +84,14 @@ public class TestXSLFSlide extends TestCase {
 
         assertTrue(groupShapes[2] instanceof XSLFAutoShape);
         assertEquals("Right Arrow 3", groupShapes[2].getShapeName());
+
+        XSLFSlide slide4 = slides[3];
+        XSLFShape[] shapes4 = slide4.getShapes();
+        assertEquals(1, shapes4.length);
+        assertTrue(shapes4[0] instanceof XSLFTable);
+        XSLFTable tbl = (XSLFTable)shapes4[0];
+        assertEquals(3, tbl.getNumberOfColumns());
+        assertEquals(6, tbl.getNumberOfRows());
     }
 
     public void testCreateSlide(){

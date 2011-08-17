@@ -24,6 +24,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 import java.awt.*;
 
@@ -94,6 +95,14 @@ public class XSLFDrawing {
         CTPicture obj = _spTree.addNewPic();
         obj.set(XSLFPictureShape.prototype(_shapeId++, rel));
         XSLFPictureShape shape = new XSLFPictureShape(obj, _sheet);
+        shape.setAnchor(new Rectangle());
+        return shape;
+    }
+
+    public XSLFTable createTable(){
+        CTGraphicalObjectFrame obj = _spTree.addNewGraphicFrame();
+        obj.set(XSLFTable.prototype(_shapeId++));
+        XSLFTable shape = new XSLFTable(obj, _sheet);
         shape.setAnchor(new Rectangle());
         return shape;
     }
