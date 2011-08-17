@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 import junit.framework.TestCase;
 
@@ -629,5 +632,19 @@ public class TestBugs extends TestCase
         final byte[] newData = outputStream.toByteArray();
 
         assertEquals( Arrays.toString( oldData ), Arrays.toString( newData ) );
+    }
+
+    /**
+     * [RESOLVED FIXED] Bug 51671 - HWPFDocument.write based on NPOIFSFileSystem
+     * throws a NullPointerException
+     */
+    public void test51671() throws Exception
+    {
+        InputStream is = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream( "empty.doc" );
+        NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem( is );
+        HWPFDocument hwpfDocument = new HWPFDocument(
+                npoifsFileSystem.getRoot() );
+        hwpfDocument.write( new ByteArrayOutputStream() );
     }
 }

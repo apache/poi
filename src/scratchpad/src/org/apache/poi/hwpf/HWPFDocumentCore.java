@@ -22,12 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
-import org.apache.poi.hwpf.usermodel.ObjectsPool;
-
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-
-import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.model.CHPBinTable;
@@ -38,7 +32,10 @@ import org.apache.poi.hwpf.model.PAPBinTable;
 import org.apache.poi.hwpf.model.SectionTable;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPieceTable;
+import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
+import org.apache.poi.hwpf.usermodel.ObjectsPool;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -53,6 +50,9 @@ import org.apache.poi.util.Internal;
  */
 public abstract class HWPFDocumentCore extends POIDocument
 {
+    protected static final String STREAM_OBJECT_POOL = "ObjectPool";
+    protected static final String STREAM_WORD_DOCUMENT = "WordDocument";
+
   /** Holds OLE2 objects */
   protected ObjectPoolImpl _objectPool;
 
@@ -151,7 +151,7 @@ public abstract class HWPFDocumentCore extends POIDocument
        directory.getEntry("WordDocument");
     _mainStream = new byte[documentProps.getSize()];
 
-    directory.createDocumentInputStream("WordDocument").read(_mainStream);
+    directory.createDocumentInputStream(STREAM_WORD_DOCUMENT).read(_mainStream);
 
     // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
@@ -164,11 +164,12 @@ public abstract class HWPFDocumentCore extends POIDocument
             try
             {
                 objectPoolEntry = (DirectoryEntry) directory
-                        .getEntry( "ObjectPool" );
+                        .getEntry( STREAM_OBJECT_POOL );
             }
             catch ( FileNotFoundException exc )
             {
-                objectPoolEntry = directory.createDirectory( "ObjectPool" );
+                objectPoolEntry = directory
+                        .createDirectory( STREAM_OBJECT_POOL );
             }
             _objectPool = new ObjectPoolImpl( objectPoolEntry );
         }

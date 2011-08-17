@@ -36,6 +36,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -262,7 +263,8 @@ public abstract class POIDocument {
 	/**
 	 * Copies an Entry into a target POIFS directory, recursively
 	 */
-	private void copyNodeRecursively(Entry entry, DirectoryEntry target)
+    @Internal
+	protected void copyNodeRecursively(Entry entry, DirectoryEntry target)
 	throws IOException {
 		//System.err.println("copyNodeRecursively called with "+entry.getName()+
 		//                   ","+target.getName());
