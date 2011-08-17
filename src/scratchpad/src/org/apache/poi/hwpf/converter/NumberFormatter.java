@@ -22,49 +22,117 @@ package org.apache.poi.hwpf.converter;
 import org.apache.poi.util.Beta;
 
 /**
- * Comment me
+ * Utility class to translate numbers in letters, usually for lists.
  * 
- * @author Ryan Ackley
+ * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Beta
 public final class NumberFormatter
 {
 
-    private static String[] C_LETTERS = new String[] { "a", "b", "c", "d", "e",
-            "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
-            "s", "t", "u", "v", "x", "y", "z" };
+    private static final String[] ENGLISH_LETTERS = new String[] { "a", "b",
+            "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+            "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
-    private static String[] C_ROMAN = new String[] { "i", "ii", "iii", "iv",
-            "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "xiii", "xiv",
-            "xv", "xvi", "xvii", "xviii", "xix", "xx", "xxi", "xxii", "xxiii",
-            "xxiv", "xxv", "xxvi", "xxvii", "xxviii", "xxix", "xxx", "xxxi",
-            "xxxii", "xxxiii", "xxxiv", "xxxv", "xxxvi", "xxxvii", "xxxvii",
-            "xxxviii", "xxxix", "xl", "xli", "xlii", "xliii", "xliv", "xlv",
-            "xlvi", "xlvii", "xlviii", "xlix", "l" };
+    private static final String[] ROMAN_LETTERS = { "m", "cm", "d", "cd", "c",
+            "xc", "l", "xl", "x", "ix", "v", "iv", "i" };
 
-    private final static int T_ARABIC = 0;
-    private final static int T_LOWER_LETTER = 4;
-    private final static int T_LOWER_ROMAN = 2;
-    private final static int T_ORDINAL = 5;
-    private final static int T_UPPER_LETTER = 3;
-    private final static int T_UPPER_ROMAN = 1;
+    private static final int[] ROMAN_VALUES = { 1000, 900, 500, 400, 100, 90,
+            50, 40, 10, 9, 5, 4, 1 };
+
+    private static final int T_ARABIC = 0;
+    private static final int T_LOWER_LETTER = 4;
+    private static final int T_LOWER_ROMAN = 2;
+    private static final int T_ORDINAL = 5;
+    private static final int T_UPPER_LETTER = 3;
+    private static final int T_UPPER_ROMAN = 1;
 
     public static String getNumber( int num, int style )
     {
         switch ( style )
         {
         case T_UPPER_ROMAN:
-            return C_ROMAN[num - 1].toUpperCase();
+            return toRoman( num ).toUpperCase();
         case T_LOWER_ROMAN:
-            return C_ROMAN[num - 1];
+            return toRoman( num );
         case T_UPPER_LETTER:
-            return C_LETTERS[num - 1].toUpperCase();
+            return toLetters( num ).toUpperCase();
         case T_LOWER_LETTER:
-            return C_LETTERS[num - 1];
+            return toLetters( num );
         case T_ARABIC:
         case T_ORDINAL:
         default:
             return String.valueOf( num );
         }
+    }
+
+    private static String toLetters( int number )
+    {
+        final int base = 26;
+
+        if ( number <= 0 )
+            throw new IllegalArgumentException( "Unsupported number: " + number );
+
+        if ( number < base + 1 )
+            return ENGLISH_LETTERS[number - 1];
+
+        long toProcess = number;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        int maxPower = 0;
+        {
+            int boundary = 0;
+            while ( toProcess > boundary )
+            {
+                maxPower++;
+                boundary = boundary * base + base;
+
+                if ( boundary > Integer.MAX_VALUE )
+                    throw new IllegalArgumentException( "Unsupported number: "
+                            + toProcess );
+            }
+        }
+        maxPower--;
+
+        for ( int p = maxPower; p > 0; p-- )
+        {
+            long boundary = 0;
+            long shift = 1;
+            for ( int i = 0; i < p; i++ )
+            {
+                shift *= base;
+                boundary = boundary * base + base;
+            }
+
+            int count = 0;
+            while ( toProcess > boundary )
+            {
+                count++;
+                toProcess -= shift;
+            }
+            stringBuilder.append( ENGLISH_LETTERS[count - 1] );
+        }
+        stringBuilder.append( ENGLISH_LETTERS[(int) toProcess - 1] );
+        return stringBuilder.toString();
+    }
+
+    private static String toRoman( int number )
+    {
+        if ( number <= 0 )
+            throw new IllegalArgumentException( "Unsupported number: " + number );
+
+        StringBuilder result = new StringBuilder();
+
+        for ( int i = 0; i < ROMAN_LETTERS.length; i++ )
+        {
+            String letter = ROMAN_LETTERS[i];
+            int value = ROMAN_VALUES[i];
+            while ( number >= value )
+            {
+                number -= value;
+                result.append( letter );
+            }
+        }
+        return result.toString();
     }
 }
