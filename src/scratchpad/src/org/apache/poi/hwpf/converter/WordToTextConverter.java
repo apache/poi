@@ -48,12 +48,16 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @Beta
 public class WordToTextConverter extends AbstractWordConverter
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( WordToTextConverter.class );
 
     public static String getText( DirectoryNode root ) throws Exception
     {
@@ -325,7 +329,10 @@ public class WordToTextConverter extends AbstractWordConverter
             return false;
         DirectoryNode directoryNode = (DirectoryNode) entry;
 
-        // even if no ExtractorFactory in classpath
+        /*
+         * even if there is no ExtractorFactory in classpath, still support
+         * included Word's objects
+         */
         if ( directoryNode.hasEntry( "WordDocument" ) )
         {
             String text = WordToTextConverter.getText( (DirectoryNode) entry );
@@ -335,14 +342,27 @@ public class WordToTextConverter extends AbstractWordConverter
             return true;
         }
 
+        Object extractor;
         try
         {
             Class<?> cls = Class
                     .forName( "org.apache.poi.extractor.ExtractorFactory" );
             Method createExtractor = cls.getMethod( "createExtractor",
                     DirectoryNode.class );
-            Object extractor = createExtractor.invoke( null, directoryNode );
+            extractor = createExtractor.invoke( null, directoryNode );
+        }
+        catch ( Error exc )
+        {
+            // no extractor in classpath
+            logger.log( POILogger.WARN, "There is an OLE object entry '",
+                    entry.getName(),
+                    "', but there is no text extractor for this object type ",
+                    "or text extractor factory is not available: ", "" + exc );
+            return false;
+        }
 
+        try
+        {
             Method getText = extractor.getClass().getMethod( "getText" );
             String text = (String) getText.invoke( extractor );
 
@@ -351,12 +371,13 @@ public class WordToTextConverter extends AbstractWordConverter
                             + UNICODECHAR_ZERO_WIDTH_SPACE ) );
             return true;
         }
-        catch ( ClassNotFoundException exc )
+        catch ( Exception exc )
         {
-            // no extractor in classpath
+            logger.log( POILogger.ERROR,
+                    "Unable to extract text from OLE entry '", entry.getName(),
+                    "': ", exc, exc );
+            return false;
         }
-
-        return false;
     }
 
     @Override
