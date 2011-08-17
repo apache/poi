@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta4" date="2011-??-??">
+           <action dev="poi-developers" type="add">support for tables and hyperlinks</action>
            <action dev="poi-developers" type="fix">51535 - correct signed vs unsigned short reading in NDocumentInputStream</action>
            <action dev="poi-developers" type="add">51634 - support SXSSF streaming from templates</action>
            <action dev="poi-developers" type="add">initial support for XSLF usermodel API</action>
