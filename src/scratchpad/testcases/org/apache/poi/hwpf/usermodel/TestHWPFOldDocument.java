@@ -42,7 +42,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
       // Check
       assertEquals(1, doc.getRange().numSections());
       assertEquals(1, doc.getRange().numParagraphs());
-      assertEquals(1, doc.getRange().numCharacterRuns());
+      assertEquals(2, doc.getRange().numCharacterRuns());
       
       assertEquals(
             "The quick brown fox jumps over the lazy dog\r",
@@ -96,7 +96,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
       assertEquals(5, doc.getRange().getParagraph(4).numCharacterRuns());
       assertEquals(1, doc.getRange().getParagraph(5).numCharacterRuns());
       // Normal, superscript for 4th, normal
-      assertEquals(3, doc.getRange().getParagraph(6).numCharacterRuns());
+      assertEquals(4, doc.getRange().getParagraph(6).numCharacterRuns());
    }
    
    /**
