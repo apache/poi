@@ -647,4 +647,15 @@ public class TestBugs extends TestCase
                 npoifsFileSystem.getRoot() );
         hwpfDocument.write( new ByteArrayOutputStream() );
     }
+
+
+    /**
+     * Bug 51678 - Extracting text from Bug51524.zip is slow
+     */
+    public void test51678()
+    {
+        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
+        WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
+        wordExtractor.getText();
+    }
 }
