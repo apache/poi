@@ -512,14 +512,6 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 51524 - PapBinTable constructor is slow
-     */
-    public void test51524()
-    {
-        HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
-    }
-
-    /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
      * release from download site )
      */
@@ -649,13 +641,22 @@ public class TestBugs extends TestCase
     }
 
 
+
     /**
      * Bug 51678 - Extracting text from Bug51524.zip is slow
+     * Bug 51524 - PapBinTable constructor is slow
      */
-    public void test51678()
+    public void test51678And51524()
     {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
-        WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
-        wordExtractor.getText();
+        // YK: the test will run only if the poi.test.remote system property is set.
+        // TODO: refactor into something nicer!
+        if(System.getProperty("poi.test.remote") != null) {
+            String href = "http://domex.nps.edu/corp/files/govdocs1/007/007488.doc";
+            HWPFDocument hwpfDocument = HWPFTestDataSamples.openRemoteFile( href );
+
+            WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
+            wordExtractor.getText();
+        }
+
     }
 }
