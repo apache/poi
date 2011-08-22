@@ -358,8 +358,14 @@ public final class TestWordExtractor extends TestCase {
        }
     }
 
-    public void testRootEntiesNavigation() throws IOException {
-        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream("testWORD.doc");
+    /**
+     * [RESOLVED FIXED] Bug 51686 - Update to POI 3.8 beta 4 causes
+     * ConcurrentModificationException in Tika's OfficeParser
+     */
+    public void testRootEntiesNavigation() throws IOException
+    {
+        InputStream is = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream( "Bug51686.doc" );
 
         POIFSFileSystem fs = new POIFSFileSystem(is);
 
