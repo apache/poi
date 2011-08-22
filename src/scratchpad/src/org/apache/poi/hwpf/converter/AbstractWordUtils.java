@@ -306,10 +306,21 @@ public class AbstractWordUtils
         }
     }
 
-    public static String getColor24( int value )
+    public static String getOpacity( int argbValue )
     {
-        if ( value == -1 )
+        int opacity = (int) ( ( argbValue & 0xFF000000l ) >>> 24 );
+        if ( opacity == 0 || opacity == 0xFF )
+            return ".0";
+
+        return "" + ( opacity / (float) 0xFF );
+    }
+
+    public static String getColor24( int argbValue )
+    {
+        if ( argbValue == -1 )
             throw new IllegalArgumentException( "This colorref is empty" );
+
+        int value = argbValue & 0x00FFFFFF;
 
         // http://www.w3.org/TR/REC-html40/types.html#h-6.5
         switch ( value )
