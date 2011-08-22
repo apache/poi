@@ -58,7 +58,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       SprmOperation sprm = sprmIt.next();
 
       if (sprm.getType() != 2) {
-        logger.log( POILogger.WARN, "Non-CHP SPRM returned by SprmIterator" );
+        logger.log( POILogger.WARN, "Non-CHP SPRM returned by SprmIterator: " + sprm );
         continue;
       }
 
