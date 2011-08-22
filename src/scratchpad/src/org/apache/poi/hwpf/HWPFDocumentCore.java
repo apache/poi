@@ -141,41 +141,32 @@ public abstract class HWPFDocumentCore extends POIDocument
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */
-  public HWPFDocumentCore(DirectoryNode directory) throws IOException
-  {
+  public HWPFDocumentCore(DirectoryNode directory) throws IOException {
     // Sort out the hpsf properties
-	super(directory);
+    super(directory);
 
     // read in the main stream.
     DocumentEntry documentProps = (DocumentEntry)
-       directory.getEntry("WordDocument");
+            directory.getEntry("WordDocument");
     _mainStream = new byte[documentProps.getSize()];
 
     directory.createDocumentInputStream(STREAM_WORD_DOCUMENT).read(_mainStream);
 
     // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
-    if(_fib.isFEncrypted()) {
-    	throw new EncryptedDocumentException("Cannot process encrypted word files!");
+    if (_fib.isFEncrypted()) {
+      throw new EncryptedDocumentException("Cannot process encrypted word files!");
     }
 
-        {
-            DirectoryEntry objectPoolEntry;
-            try
-            {
-                objectPoolEntry = (DirectoryEntry) directory
-                        .getEntry( STREAM_OBJECT_POOL );
-            }
-            catch ( FileNotFoundException exc )
-            {
-                objectPoolEntry = directory
-                        .createDirectory( STREAM_OBJECT_POOL );
-            }
-            _objectPool = new ObjectPoolImpl( objectPoolEntry );
-        }
+    try {
+      DirectoryEntry objectPoolEntry = (DirectoryEntry) directory
+              .getEntry(STREAM_OBJECT_POOL);
+      _objectPool = new ObjectPoolImpl(objectPoolEntry);
+    } catch (FileNotFoundException exc) {
     }
+  }
 
-    /**
+  /**
      * Returns the range which covers the whole of the document, but excludes
      * any headers and footers.
      */
