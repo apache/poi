@@ -125,6 +125,14 @@ public class TestWordToFoConverter extends TestCase
                 "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" );
     }
 
+    public void testPageBreakBefore() throws Exception
+    {
+        final String sampleFileName = "page-break-before.doc";
+        String result = getFoText( sampleFileName );
+
+        assertContains( result, "<fo:block break-before=\"page\"" );
+    }
+
     public void testPageref() throws Exception
     {
         final String sampleFileName = "pageref.doc";
