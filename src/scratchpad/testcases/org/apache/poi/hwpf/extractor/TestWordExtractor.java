@@ -362,7 +362,7 @@ public final class TestWordExtractor extends TestCase {
      * [RESOLVED FIXED] Bug 51686 - Update to POI 3.8 beta 4 causes
      * ConcurrentModificationException in Tika's OfficeParser
      */
-    public void testRootEntiesNavigation() throws IOException
+    public void testBug51686() throws IOException
     {
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "Bug51686.doc" );

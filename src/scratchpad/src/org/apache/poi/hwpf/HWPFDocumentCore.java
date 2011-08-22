@@ -158,12 +158,14 @@ public abstract class HWPFDocumentCore extends POIDocument
       throw new EncryptedDocumentException("Cannot process encrypted word files!");
     }
 
+    DirectoryEntry objectPoolEntry;
     try {
-      DirectoryEntry objectPoolEntry = (DirectoryEntry) directory
+      objectPoolEntry = (DirectoryEntry) directory
               .getEntry(STREAM_OBJECT_POOL);
-      _objectPool = new ObjectPoolImpl(objectPoolEntry);
     } catch (FileNotFoundException exc) {
+      objectPoolEntry = null;
     }
+    _objectPool = new ObjectPoolImpl(objectPoolEntry);
   }
 
   /**

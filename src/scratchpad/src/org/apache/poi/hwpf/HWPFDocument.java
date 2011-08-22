@@ -69,6 +69,7 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POIUtils;
 
 
 /**
@@ -947,6 +948,7 @@ public final class HWPFDocument extends HWPFDocumentCore
         POIFSFileSystem pfs = new POIFSFileSystem();
         boolean docWritten = false;
         boolean dataWritten = false;
+        boolean objectPoolWritten = false;
         boolean tableWritten = false;
         boolean propertiesWritten = false;
         for ( Iterator<Entry> iter = directory.getEntries(); iter.hasNext(); )
@@ -959,6 +961,14 @@ public final class HWPFDocument extends HWPFDocumentCore
                     pfs.createDocument( new ByteArrayInputStream( mainBuf ),
                             STREAM_WORD_DOCUMENT );
                     docWritten = true;
+                }
+            }
+            else if ( entry.getName().equals( STREAM_OBJECT_POOL ) )
+            {
+                if ( !objectPoolWritten )
+                {
+                    _objectPool.writeTo( pfs.getRoot() );
+                    objectPoolWritten = true;
                 }
             }
             else if ( entry.getName().equals( STREAM_TABLE_0 )
@@ -993,7 +1003,7 @@ public final class HWPFDocument extends HWPFDocumentCore
             }
             else
             {
-                copyNodeRecursively( entry, pfs.getRoot() );
+                POIUtils.copyNodeRecursively( entry, pfs.getRoot() );
             }
         }
 
@@ -1008,6 +1018,8 @@ public final class HWPFDocument extends HWPFDocumentCore
         if ( !dataWritten )
             pfs.createDocument( new ByteArrayInputStream( dataBuf ),
                     STREAM_DATA );
+        if ( !objectPoolWritten )
+            _objectPool.writeTo( pfs.getRoot() );
 
         pfs.writeFilesystem( out );
         this.directory = pfs.getRoot();
