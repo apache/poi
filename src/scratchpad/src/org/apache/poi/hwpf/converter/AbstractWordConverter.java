@@ -324,7 +324,7 @@ public abstract class AbstractWordConverter
 
             if ( structure.structure instanceof Bookmark )
             {
-                // other bookmarks with same bundaries
+                // other bookmarks with same boundaries
                 List<Bookmark> bookmarks = new LinkedList<Bookmark>();
                 for ( Bookmark bookmark : ( (HWPFDocument) wordDocument )
                         .getBookmarks()
@@ -379,8 +379,10 @@ public abstract class AbstractWordConverter
         {
             if ( previous > range.getEndOffset() )
             {
-                logger.log( POILogger.WARN, "Latest structure in " + range
-                        + " ended after range (" + previous + ")" );
+                logger.log( POILogger.WARN, "Latest structure in ", range,
+                        " ended at #" + previous, " after range boundaries [",
+                        range.getStartOffset() + "; " + range.getEndOffset(),
+                        ")" );
                 return true;
             }
 
