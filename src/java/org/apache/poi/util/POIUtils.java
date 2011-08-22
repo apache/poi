@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -70,8 +69,9 @@ public class POIUtils
      * @param excepts
      *            is a list of Strings specifying what nodes NOT to copy
      */
-    public static void copyNodes( DirectoryNode sourceRoot,
-            DirectoryNode targetRoot, List<String> excepts ) throws IOException
+    public static void copyNodes( DirectoryEntry sourceRoot,
+            DirectoryEntry targetRoot, List<String> excepts )
+            throws IOException
     {
         Iterator<Entry> entries = sourceRoot.getEntries();
         while ( entries.hasNext() )
