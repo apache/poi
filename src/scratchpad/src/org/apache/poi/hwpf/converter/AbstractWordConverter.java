@@ -342,8 +342,8 @@ public abstract class AbstractWordConverter
                 bookmarkStack.addAll( bookmarks );
                 try
                 {
-                    Range subrange = new Range( structure.start, structure.end,
-                            range )
+                    int end = Math.min( range.getEndOffset(), structure.end );
+                    Range subrange = new Range( structure.start, end, range )
                     {
                         @Override
                         public String toString()
@@ -372,7 +372,7 @@ public abstract class AbstractWordConverter
                         + structure.structure.getClass() );
             }
 
-            previous = structure.end;
+            previous = Math.min( range.getEndOffset(), structure.end );
         }
 
         if ( previous != range.getStartOffset() )
@@ -865,6 +865,9 @@ public abstract class AbstractWordConverter
         return false;
     }
 
+    protected abstract void processPageBreak( HWPFDocumentCore wordDocument,
+            Element flow );
+
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref );
@@ -901,6 +904,11 @@ public abstract class AbstractWordConverter
                 p += table.numParagraphs();
                 p--;
                 continue;
+            }
+
+            if ( paragraph.text().equals( "\u000c" ) )
+            {
+                processPageBreak( wordDocument, flow );
             }
 
             if ( paragraph.getIlfo() != currentListInfo )

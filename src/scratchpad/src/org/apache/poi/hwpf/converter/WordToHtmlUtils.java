@@ -233,7 +233,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
 
     static void compactSpans( Element pElement )
     {
-        compactChildNodes( pElement, "span" );
+        compactChildNodesR( pElement, "span" );
     }
 
 }
