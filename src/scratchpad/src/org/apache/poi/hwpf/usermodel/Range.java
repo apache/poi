@@ -1251,7 +1251,7 @@ public class Range { // TODO -instantiable superclass
     {
         if ( _start < 0 )
             throw new AssertionError();
-        if ( _start >= _text.length() )
+        if ( _start > _text.length() )
             throw new AssertionError();
         if ( _end < 0 )
             throw new AssertionError();
