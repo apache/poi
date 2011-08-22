@@ -605,11 +605,20 @@ public abstract class AbstractWordConverter
 
     public void processDocument( HWPFDocumentCore wordDocument )
     {
-        final SummaryInformation summaryInformation = wordDocument
-                .getSummaryInformation();
-        if ( summaryInformation != null )
+        try
         {
-            processDocumentInformation( summaryInformation );
+            final SummaryInformation summaryInformation = wordDocument
+                    .getSummaryInformation();
+            if ( summaryInformation != null )
+            {
+                processDocumentInformation( summaryInformation );
+            }
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.WARN,
+                    "Unable to process document summary information: ", exc,
+                    exc );
         }
 
         final Range docRange = wordDocument.getRange();
