@@ -381,6 +381,14 @@ public class WordToTextConverter extends AbstractWordConverter
     }
 
     @Override
+    protected void processPageBreak( HWPFDocumentCore wordDocument, Element flow )
+    {
+        Element block = textDocumentFacade.createBlock();
+        block.appendChild( textDocumentFacade.createText( "\n" ) );
+        flow.appendChild( block );
+    }
+
+    @Override
     protected void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )
