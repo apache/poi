@@ -76,6 +76,12 @@ public class WordToFoUtils extends AbstractWordUtils
         {
             inline.setAttribute( "color", getColor24( characterRun.getIco24() ) );
         }
+        final int opacity = (int) ( characterRun.getIco24() & 0xFF000000l ) >>> 24;
+        if ( opacity != 0 && opacity != 0xFF )
+        {
+            inline.setAttribute( "opacity",
+                    getOpacity( characterRun.getIco24() ) );
+        }
         if ( characterRun.getLanguageCode() != 0 )
         {
             final String language = getLanguage( characterRun.getLanguageCode() );
