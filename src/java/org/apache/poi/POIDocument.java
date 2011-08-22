@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.util.POIUtils;
+
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.PropertySet;
@@ -237,50 +239,34 @@ public abstract class POIDocument {
 	 * @param target is the target POIFS to copy to
 	 * @param excepts is a list of Strings specifying what nodes NOT to copy
 	 */
-	protected void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
-	                          List<String> excepts) throws IOException {
-		//System.err.println("CopyNodes called");
-	   copyNodes(source.getRoot(), target.getRoot(), excepts);
-	}
-		
+	@Deprecated
+    protected void copyNodes( POIFSFileSystem source, POIFSFileSystem target,
+            List<String> excepts ) throws IOException
+    {
+        POIUtils.copyNodes( source, target, excepts );
+    }
+
    /**
     * Copies nodes from one POIFS to the other minus the excepts
     * @param source is the source POIFS to copy from
     * @param target is the target POIFS to copy to
     * @param excepts is a list of Strings specifying what nodes NOT to copy
     */
-   protected void copyNodes(DirectoryNode sourceRoot, DirectoryNode targetRoot,
-                             List<String> excepts) throws IOException {
-      Iterator<Entry> entries = sourceRoot.getEntries();
-      while (entries.hasNext()) {
-         Entry entry = entries.next();
-         if (!excepts.contains(entry.getName())) {
-            copyNodeRecursively(entry,targetRoot);
-         }
-      }
-   }
-      
+    @Deprecated
+    protected void copyNodes( DirectoryNode sourceRoot,
+            DirectoryNode targetRoot, List<String> excepts ) throws IOException
+    {
+        POIUtils.copyNodes( sourceRoot, targetRoot, excepts );
+    }
+
 	/**
 	 * Copies an Entry into a target POIFS directory, recursively
 	 */
     @Internal
-	protected void copyNodeRecursively(Entry entry, DirectoryEntry target)
-	throws IOException {
-		//System.err.println("copyNodeRecursively called with "+entry.getName()+
-		//                   ","+target.getName());
-		DirectoryEntry newTarget = null;
-		if (entry.isDirectoryEntry()) {
-			newTarget = target.createDirectory(entry.getName());
-			Iterator<Entry> entries = ((DirectoryEntry)entry).getEntries();
-
-			while (entries.hasNext()) {
-				copyNodeRecursively(entries.next(),newTarget);
-			}
-		} else {
-			DocumentEntry dentry = (DocumentEntry)entry;
-			DocumentInputStream dstream = new DocumentInputStream(dentry);
-			target.createDocument(dentry.getName(),dstream);
-			dstream.close();
-		}
-	}
+    @Deprecated
+    protected void copyNodeRecursively( Entry entry, DirectoryEntry target )
+            throws IOException
+    {
+        POIUtils.copyNodeRecursively( entry, target );
+    }
 }
