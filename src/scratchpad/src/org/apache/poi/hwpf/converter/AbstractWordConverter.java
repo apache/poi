@@ -81,6 +81,13 @@ public abstract class AbstractWordConverter
         {
             return start < o.start ? -1 : start == o.start ? 0 : 1;
         }
+
+        @Override
+        public String toString()
+        {
+            return "Structure [" + start + "; " + end + "): "
+                    + structure.toString();
+        }
     }
 
     private static final byte BEL_MARK = 7;
@@ -116,8 +123,9 @@ public abstract class AbstractWordConverter
                 return;
             }
 
-            if ( ( another.start > structure.start && another.end <= structure.end )
-                    || ( another.start >= structure.start && another.end < structure.end ) )
+            if ( ( structure.start < another.start && another.start < structure.end )
+                    || ( structure.start < another.start && another.end <= structure.end )
+                    || ( structure.start <= another.start && another.end < structure.end ) )
             {
                 iterator.remove();
                 continue;
