@@ -495,6 +495,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
     }
 
+    @Override
+    protected void processPageBreak( HWPFDocumentCore wordDocument, Element flow )
+    {
+        flow.appendChild( htmlDocumentFacade.createLineBreak() );
+    }
+
     protected void processPageref( HWPFDocumentCore hwpfDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )

@@ -81,6 +81,13 @@ public abstract class AbstractWordConverter
         {
             return start < o.start ? -1 : start == o.start ? 0 : 1;
         }
+
+        @Override
+        public String toString()
+        {
+            return "Structure [" + start + "; " + end + "): "
+                    + structure.toString();
+        }
     }
 
     private static final byte BEL_MARK = 7;
@@ -116,8 +123,9 @@ public abstract class AbstractWordConverter
                 return;
             }
 
-            if ( ( another.start > structure.start && another.end <= structure.end )
-                    || ( another.start >= structure.start && another.end < structure.end ) )
+            if ( ( structure.start < another.start && another.start < structure.end )
+                    || ( structure.start < another.start && another.end <= structure.end )
+                    || ( structure.start <= another.start && another.end < structure.end ) )
             {
                 iterator.remove();
                 continue;
@@ -316,7 +324,7 @@ public abstract class AbstractWordConverter
 
             if ( structure.structure instanceof Bookmark )
             {
-                // other bookmarks with same bundaries
+                // other bookmarks with same boundaries
                 List<Bookmark> bookmarks = new LinkedList<Bookmark>();
                 for ( Bookmark bookmark : ( (HWPFDocument) wordDocument )
                         .getBookmarks()
@@ -334,8 +342,8 @@ public abstract class AbstractWordConverter
                 bookmarkStack.addAll( bookmarks );
                 try
                 {
-                    Range subrange = new Range( structure.start, structure.end,
-                            range )
+                    int end = Math.min( range.getEndOffset(), structure.end );
+                    Range subrange = new Range( structure.start, end, range )
                     {
                         @Override
                         public String toString()
@@ -364,15 +372,17 @@ public abstract class AbstractWordConverter
                         + structure.structure.getClass() );
             }
 
-            previous = structure.end;
+            previous = Math.min( range.getEndOffset(), structure.end );
         }
 
         if ( previous != range.getStartOffset() )
         {
             if ( previous > range.getEndOffset() )
             {
-                logger.log( POILogger.WARN, "Latest structure in " + range
-                        + " ended after range (" + previous + ")" );
+                logger.log( POILogger.WARN, "Latest structure in ", range,
+                        " ended at #" + previous, " after range boundaries [",
+                        range.getStartOffset() + "; " + range.getEndOffset(),
+                        ")" );
                 return true;
             }
 
@@ -597,11 +607,20 @@ public abstract class AbstractWordConverter
 
     public void processDocument( HWPFDocumentCore wordDocument )
     {
-        final SummaryInformation summaryInformation = wordDocument
-                .getSummaryInformation();
-        if ( summaryInformation != null )
+        try
         {
-            processDocumentInformation( summaryInformation );
+            final SummaryInformation summaryInformation = wordDocument
+                    .getSummaryInformation();
+            if ( summaryInformation != null )
+            {
+                processDocumentInformation( summaryInformation );
+            }
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.WARN,
+                    "Unable to process document summary information: ", exc,
+                    exc );
         }
 
         final Range docRange = wordDocument.getRange();
@@ -846,6 +865,9 @@ public abstract class AbstractWordConverter
         return false;
     }
 
+    protected abstract void processPageBreak( HWPFDocumentCore wordDocument,
+            Element flow );
+
     protected abstract void processPageref( HWPFDocumentCore wordDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref );
@@ -882,6 +904,11 @@ public abstract class AbstractWordConverter
                 p += table.numParagraphs();
                 p--;
                 continue;
+            }
+
+            if ( paragraph.text().equals( "\u000c" ) )
+            {
+                processPageBreak( wordDocument, flow );
             }
 
             if ( paragraph.getIlfo() != currentListInfo )

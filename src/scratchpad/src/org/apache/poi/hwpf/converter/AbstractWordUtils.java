@@ -130,7 +130,7 @@ public class AbstractWordUtils
         return true;
     }
 
-    static void compactChildNodes( Element parentElement, String childTagName )
+    static void compactChildNodesR( Element parentElement, String childTagName )
     {
         NodeList childNodes = parentElement.getChildNodes();
         for ( int i = 0; i < childNodes.getLength() - 1; i++ )
@@ -145,6 +145,16 @@ public class AbstractWordUtils
                 child1.appendChild( child2.getFirstChild() );
             child2.getParentNode().removeChild( child2 );
             i--;
+        }
+
+        childNodes = parentElement.getChildNodes();
+        for ( int i = 0; i < childNodes.getLength() - 1; i++ )
+        {
+            Node child = childNodes.item( i );
+            if ( child instanceof Element )
+            {
+                compactChildNodesR( (Element) child, childTagName );
+            }
         }
     }
 
@@ -306,13 +316,26 @@ public class AbstractWordUtils
         }
     }
 
-    public static String getColor24( int value )
+    public static String getOpacity( int argbValue )
     {
-        if ( value == -1 )
+        int opacity = (int) ( ( argbValue & 0xFF000000l ) >>> 24 );
+        if ( opacity == 0 || opacity == 0xFF )
+            return ".0";
+
+        return "" + ( opacity / (float) 0xFF );
+    }
+
+    public static String getColor24( int argbValue )
+    {
+        if ( argbValue == -1 )
             throw new IllegalArgumentException( "This colorref is empty" );
 
+        int bgrValue = argbValue & 0x00FFFFFF;
+        int rgbValue = ( bgrValue & 0x0000FF ) << 16 | ( bgrValue & 0x00FF00 )
+                | ( bgrValue & 0xFF0000 ) >> 16;
+
         // http://www.w3.org/TR/REC-html40/types.html#h-6.5
-        switch ( value )
+        switch ( rgbValue )
         {
         case 0xFFFFFF:
             return "white";
@@ -349,7 +372,7 @@ public class AbstractWordUtils
         }
 
         StringBuilder result = new StringBuilder( "#" );
-        String hex = Integer.toHexString( value );
+        String hex = Integer.toHexString( rgbValue );
         for ( int i = hex.length(); i < 6; i++ )
         {
             result.append( '0' );

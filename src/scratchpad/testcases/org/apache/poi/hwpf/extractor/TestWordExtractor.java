@@ -24,8 +24,12 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Test the different routes to extracting text
@@ -352,5 +356,28 @@ public final class TestWordExtractor extends TestCase {
           WordExtractor extractor = new WordExtractor(doc);
           assertEquals(p_text1_block, extractor.getText());
        }
+    }
+
+    /**
+     * [RESOLVED FIXED] Bug 51686 - Update to POI 3.8 beta 4 causes
+     * ConcurrentModificationException in Tika's OfficeParser
+     */
+    public void testBug51686() throws IOException
+    {
+        InputStream is = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream( "Bug51686.doc" );
+
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+
+        String text = null;
+
+        for (Entry entry : fs.getRoot()) {
+            if ("WordDocument".equals(entry.getName())) {
+                WordExtractor ex = new WordExtractor(fs);
+                text = ex.getText();
+            }
+        }
+
+        assertNotNull(text);
     }
 }

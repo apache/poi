@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -65,8 +66,10 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POIUtils;
 
 
 /**
@@ -80,6 +83,10 @@ public final class HWPFDocument extends HWPFDocumentCore
 {
     private static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
+
+    private static final String STREAM_DATA = "Data";
+    private static final String STREAM_TABLE_0 = "0Table";
+    private static final String STREAM_TABLE_1 = "1Table";
 
   /** And for making sense of CP lengths in the FIB */
   @Deprecated
@@ -181,7 +188,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    */
   public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException
   {
-	this(pfilesystem.getRoot());
+    this(pfilesystem.getRoot());
   }
 
   /**
@@ -213,7 +220,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   {
     // Load the main stream and FIB
     // Also handles HPSF bits
-	super(directory);
+    super(directory);
 
     // Do the CP Split
     _cpSplit = new CPSplitCalculator(_fib);
@@ -224,20 +231,20 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
 
     // use the fib to determine the name of the table stream.
-    String name = "0Table";
+    String name = STREAM_TABLE_0;
     if (_fib.isFWhichTblStm())
     {
-      name = "1Table";
+      name = STREAM_TABLE_1;
     }
 
     // Grab the table stream.
     DocumentEntry tableProps;
-	try {
-		tableProps =
-			(DocumentEntry)directory.getEntry(name);
-	} catch(FileNotFoundException fnfe) {
-		throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
-	}
+    try {
+        tableProps =
+            (DocumentEntry)directory.getEntry(name);
+    } catch(FileNotFoundException fnfe) {
+        throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
+    }
 
     // read in the table stream.
     _tableStream = new byte[tableProps.getSize()];
@@ -249,9 +256,9 @@ public final class HWPFDocument extends HWPFDocumentCore
     try
     {
       DocumentEntry dataProps =
-          (DocumentEntry)directory.getEntry("Data");
+          (DocumentEntry)directory.getEntry(STREAM_DATA);
       _dataStream = new byte[dataProps.getSize()];
-      directory.createDocumentInputStream("Data").read(_dataStream);
+      directory.createDocumentInputStream(STREAM_DATA).read(_dataStream);
     }
     catch(java.io.FileNotFoundException e)
     {
@@ -396,7 +403,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   @Deprecated
   public CPSplitCalculator getCPSplitCalculator()
   {
-	return _cpSplit;
+    return _cpSplit;
   }
 
   public DocumentProperties getDocProperties()
@@ -512,7 +519,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    *  separators and footnote separators.
    */
   public Range getHeaderStoryRange() {
-	  return getRange( SubdocumentType.HEADER );
+      return getRange( SubdocumentType.HEADER );
   }
 
   /**
@@ -550,7 +557,7 @@ public final class HWPFDocument extends HWPFDocumentCore
    * @return PicturesTable object, that is able to extract images from this document
    */
   public PicturesTable getPicturesTable() {
-	  return _pictures;
+      return _pictures;
   }
 
   @Internal
@@ -636,8 +643,8 @@ public final class HWPFDocument extends HWPFDocumentCore
   {
     // initialize our streams for writing.
     HWPFFileSystem docSys = new HWPFFileSystem();
-    HWPFOutputStream wordDocumentStream = docSys.getStream("WordDocument");
-    HWPFOutputStream tableStream = docSys.getStream("1Table");
+    HWPFOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
+    HWPFOutputStream tableStream = docSys.getStream(STREAM_TABLE_1);
     //HWPFOutputStream dataStream = docSys.getStream("Data");
     int tableOffset = 0;
 
@@ -910,6 +917,9 @@ public final class HWPFDocument extends HWPFDocumentCore
       mainBuf = tempBuf;
     }
 
+        // Table1 stream will be used
+        _fib.setFWhichTblStm( true );
+
     // write out the FileInformationBlock.
     //_fib.serialize(mainBuf, 0);
     _fib.writeTo(mainBuf, tableStream);
@@ -934,50 +944,93 @@ public final class HWPFDocument extends HWPFDocumentCore
       dataBuf = tempBuf;
     }
 
-//    // spit out the Word document.
-//    POIFSFileSystem pfs = new POIFSFileSystem();
-//    
-//    pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
-//    pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
-//    pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
-//    writeProperties(pfs);
+        // create new document preserving order of entries
+        POIFSFileSystem pfs = new POIFSFileSystem();
+        boolean docWritten = false;
+        boolean dataWritten = false;
+        boolean objectPoolWritten = false;
+        boolean tableWritten = false;
+        boolean propertiesWritten = false;
+        for ( Iterator<Entry> iter = directory.getEntries(); iter.hasNext(); )
+        {
+            Entry entry = iter.next();
+            if ( entry.getName().equals( STREAM_WORD_DOCUMENT ) )
+            {
+                if ( !docWritten )
+                {
+                    pfs.createDocument( new ByteArrayInputStream( mainBuf ),
+                            STREAM_WORD_DOCUMENT );
+                    docWritten = true;
+                }
+            }
+            else if ( entry.getName().equals( STREAM_OBJECT_POOL ) )
+            {
+                if ( !objectPoolWritten )
+                {
+                    _objectPool.writeTo( pfs.getRoot() );
+                    objectPoolWritten = true;
+                }
+            }
+            else if ( entry.getName().equals( STREAM_TABLE_0 )
+                    || entry.getName().equals( STREAM_TABLE_1 ) )
+            {
+                if ( !tableWritten )
+                {
+                    pfs.createDocument( new ByteArrayInputStream( tableBuf ),
+                            STREAM_TABLE_1 );
+                    tableWritten = true;
+                }
+            }
+            else if ( entry.getName().equals(
+                    SummaryInformation.DEFAULT_STREAM_NAME )
+                    || entry.getName().equals(
+                            DocumentSummaryInformation.DEFAULT_STREAM_NAME ) )
+            {
+                if ( !propertiesWritten )
+                {
+                    writeProperties( pfs );
+                    propertiesWritten = true;
+                }
+            }
+            else if ( entry.getName().equals( STREAM_DATA ) )
+            {
+                if ( !dataWritten )
+                {
+                    pfs.createDocument( new ByteArrayInputStream( dataBuf ),
+                            STREAM_DATA );
+                    dataWritten = true;
+                }
+            }
+            else
+            {
+                POIUtils.copyNodeRecursively( entry, pfs.getRoot() );
+            }
+        }
 
-        POIFSFileSystem pfs = directory.getFileSystem();
-        deleteEntrySafe( pfs, "WordDocument" );
-        deleteEntrySafe( pfs, "0Table" );
-        deleteEntrySafe( pfs, "1Table" );
-        deleteEntrySafe( pfs, "Data" );
+        if ( !docWritten )
+            pfs.createDocument( new ByteArrayInputStream( mainBuf ),
+                    STREAM_WORD_DOCUMENT );
+        if ( !tableWritten )
+            pfs.createDocument( new ByteArrayInputStream( tableBuf ),
+                    STREAM_TABLE_1 );
+        if ( !propertiesWritten )
+            writeProperties( pfs );
+        if ( !dataWritten )
+            pfs.createDocument( new ByteArrayInputStream( dataBuf ),
+                    STREAM_DATA );
+        if ( !objectPoolWritten )
+            _objectPool.writeTo( pfs.getRoot() );
 
-        // read properties only if they were not read
-        getSummaryInformation();
-        // update properties in case user changed them
-        deleteEntrySafe( pfs, SummaryInformation.DEFAULT_STREAM_NAME );
-        deleteEntrySafe( pfs, DocumentSummaryInformation.DEFAULT_STREAM_NAME );
-        writeProperties( pfs );
-
-        pfs.createDocument( new ByteArrayInputStream( mainBuf ), "WordDocument" );
-        pfs.createDocument( new ByteArrayInputStream( tableBuf ), "1Table" );
-        pfs.createDocument( new ByteArrayInputStream( dataBuf ), "Data" );
         pfs.writeFilesystem( out );
+        this.directory = pfs.getRoot();
 
         /*
          * since we updated all references in FIB and etc, using new arrays to
          * access data
          */
+        this.directory = pfs.getRoot();
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
-    }
-
-    private static void deleteEntrySafe( POIFSFileSystem pfs, final String name )
-    {
-        try
-        {
-            pfs.getRoot().getEntry( name ).delete();
-        }
-        catch ( FileNotFoundException exc )
-        {
-            // ok
-        }
     }
 
   @Internal
@@ -988,7 +1041,7 @@ public final class HWPFDocument extends HWPFDocumentCore
   @Internal
   public byte[] getTableStream()
   {
-	return _tableStream;
+    return _tableStream;
   }
 
   public int registerList(HWPFList list)

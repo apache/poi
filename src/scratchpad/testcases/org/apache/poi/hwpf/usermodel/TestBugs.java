@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 import junit.framework.TestCase;
 
@@ -509,14 +512,6 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 51524 - PapBinTable constructor is slow
-     */
-    public void test51524()
-    {
-        HWPFTestDataSamples.openSampleFileFromArchive( "Bug51524.zip" );
-    }
-
-    /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc ( poi 3.8 beta
      * release from download site )
      */
@@ -629,5 +624,39 @@ public class TestBugs extends TestCase
         final byte[] newData = outputStream.toByteArray();
 
         assertEquals( Arrays.toString( oldData ), Arrays.toString( newData ) );
+    }
+
+    /**
+     * [RESOLVED FIXED] Bug 51671 - HWPFDocument.write based on NPOIFSFileSystem
+     * throws a NullPointerException
+     */
+    public void test51671() throws Exception
+    {
+        InputStream is = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream( "empty.doc" );
+        NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem( is );
+        HWPFDocument hwpfDocument = new HWPFDocument(
+                npoifsFileSystem.getRoot() );
+        hwpfDocument.write( new ByteArrayOutputStream() );
+    }
+
+
+
+    /**
+     * Bug 51678 - Extracting text from Bug51524.zip is slow
+     * Bug 51524 - PapBinTable constructor is slow
+     */
+    public void test51678And51524()
+    {
+        // YK: the test will run only if the poi.test.remote system property is set.
+        // TODO: refactor into something nicer!
+        if(System.getProperty("poi.test.remote") != null) {
+            String href = "http://domex.nps.edu/corp/files/govdocs1/007/007488.doc";
+            HWPFDocument hwpfDocument = HWPFTestDataSamples.openRemoteFile( href );
+
+            WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
+            wordExtractor.getText();
+        }
+
     }
 }

@@ -30,7 +30,7 @@ public class WordToFoUtils extends AbstractWordUtils
 {
     static void compactInlines( Element blockElement )
     {
-        compactChildNodes( blockElement, "fo:inline" );
+        compactChildNodesR( blockElement, "fo:inline" );
     }
 
     public static void setBold( final Element element, final boolean bold )
@@ -76,11 +76,11 @@ public class WordToFoUtils extends AbstractWordUtils
         {
             inline.setAttribute( "color", getColor24( characterRun.getIco24() ) );
         }
-        if ( characterRun.getLanguageCode() != 0 )
+        final int opacity = (int) ( characterRun.getIco24() & 0xFF000000l ) >>> 24;
+        if ( opacity != 0 && opacity != 0xFF )
         {
-            final String language = getLanguage( characterRun.getLanguageCode() );
-            if ( isNotEmpty( language ) )
-                inline.setAttribute( "language", language );
+            inline.setAttribute( "opacity",
+                    getOpacity( characterRun.getIco24() ) );
         }
         if ( characterRun.isCapitalized() )
         {
@@ -198,6 +198,17 @@ public class WordToFoUtils extends AbstractWordUtils
         String justification = getJustification( paragraph.getJustification() );
         if ( isNotEmpty( justification ) )
             element.setAttribute( "text-align", justification );
+    }
+
+    public static void setLanguage( final CharacterRun characterRun,
+            final Element inline )
+    {
+        if ( characterRun.getLanguageCode() != 0 )
+        {
+            final String language = getLanguage( characterRun.getLanguageCode() );
+            if ( isNotEmpty( language ) )
+                inline.setAttribute( "language", language );
+        }
     }
 
     public static void setParagraphProperties( Paragraph paragraph,

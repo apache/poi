@@ -103,6 +103,13 @@ public class XSLFRelation extends POIXMLRelation {
          null, null
    );
    
+    public static final XSLFRelation HYPERLINK = new XSLFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+            null,
+            null
+    );
+
    public static final XSLFRelation THEME = new XSLFRelation(
          "application/vnd.openxmlformats-officedocument.theme+xml",
          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",

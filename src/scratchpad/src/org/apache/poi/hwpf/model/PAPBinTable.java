@@ -208,22 +208,30 @@ public class PAPBinTable
             final int startInclusive = lastParStart;
             final int endExclusive = charIndex + 1;
 
+            boolean broken = false;
             List<PAPX> papxs = new LinkedList<PAPX>();
             for ( int papxIndex = lastPapxIndex; papxIndex < oldPapxSortedByEndPos
                     .size(); papxIndex++ )
             {
+                broken = false;
                 PAPX papx = oldPapxSortedByEndPos.get( papxIndex );
 
-                assert papxIndex + 1 == oldPapxSortedByEndPos.size()
+                assert startInclusive == 0
+                        || papxIndex + 1 == oldPapxSortedByEndPos.size()
                         || papx.getEnd() > startInclusive;
 
                 if ( papx.getEnd() - 1 > charIndex )
                 {
                     lastPapxIndex = papxIndex;
+                    broken = true;
                     break;
                 }
 
                 papxs.add( papx );
+            }
+            if ( !broken )
+            {
+                lastPapxIndex = oldPapxSortedByEndPos.size() - 1;
             }
 
             if ( papxs.size() == 0 )

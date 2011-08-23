@@ -40,12 +40,14 @@ import java.util.List;
 public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     private final CTTextParagraph _p;
     private final List<XSLFTextRun> _runs;
+    private final XSLFTextShape _shape;
 
-    XSLFTextParagraph(CTTextParagraph p){
+    XSLFTextParagraph(CTTextParagraph p, XSLFTextShape shape){
         _p = p;
         _runs = new ArrayList<XSLFTextRun>();
+        _shape = shape;
         for (CTRegularTextRun r : _p.getRList()) {
-            _runs.add(new XSLFTextRun(r));
+            _runs.add(new XSLFTextRun(r, this));
         }
     }
 
@@ -62,6 +64,10 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return _p;
     }
 
+    XSLFTextShape getParentShape() {
+        return _shape;
+
+    }
     public List<XSLFTextRun> getTextRuns(){
         return _runs;
     }
@@ -72,7 +78,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
     public XSLFTextRun addNewTextRun(){
         CTRegularTextRun r = _p.addNewR();
-        XSLFTextRun run = new XSLFTextRun(r);
+        r.addNewRPr();
+        XSLFTextRun run = new XSLFTextRun(r, this);
         _runs.add(run);
         return run;
     }

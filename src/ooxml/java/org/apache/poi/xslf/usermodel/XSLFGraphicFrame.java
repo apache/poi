@@ -44,6 +44,10 @@ public class XSLFGraphicFrame extends XSLFShape {
         return _shape;
     }
 
+    public XSLFSheet getSheet(){
+        return _sheet;
+    }
+
     public int getShapeType(){
         throw new RuntimeException("NotImplemented");
     }
@@ -64,16 +68,14 @@ public class XSLFGraphicFrame extends XSLFShape {
         throw new RuntimeException("NotImplemented");
     }
 
-    public ShapeGroup getParent(){
-        throw new RuntimeException("NotImplemented");
+
+    static XSLFGraphicFrame create(CTGraphicalObjectFrame shape, XSLFSheet sheet){
+        String uri = shape.getGraphic().getGraphicData().getUri();
+        if(XSLFTable.TABLE_URI.equals(uri)){
+            return new XSLFTable(shape, sheet);
+        } else {
+            return new XSLFGraphicFrame(shape, sheet);
+        }
     }
 
-    public Shape[] getShapes(){
-        throw new RuntimeException("NotImplemented");
-    }
-
-
-    public boolean removeShape(Shape shape){
-        throw new RuntimeException("NotImplemented");
-    }
 }

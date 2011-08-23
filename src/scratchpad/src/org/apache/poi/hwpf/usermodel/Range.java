@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.hwpf.model.BytePropertyNode;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.CHPX;
@@ -770,16 +772,28 @@ public class Range { // TODO -instantiable superclass
             return null;
         }
 
-        int[] point = findRange( _paragraphs, _parStart,
-                Math.max( chpx.getStart(), _start ), chpx.getEnd() );
-
-        if ( point[0] >= _paragraphs.size() )
+        short istd;
+        if ( this instanceof Paragraph )
         {
-            return null;
+            istd = ((Paragraph) this)._istd;
         }
+        else
+        {
+            int[] point = findRange( _paragraphs,
+                    Math.max( chpx.getStart(), _start ),
+                    Math.min( chpx.getEnd(), _end ) );
 
-        PAPX papx = _paragraphs.get( point[0] );
-        short istd = papx.getIstd();
+            initParagraphs();
+            int parStart = Math.max( point[0], _parStart );
+
+            if ( parStart >= _paragraphs.size() )
+            {
+                return null;
+            }
+
+            PAPX papx = _paragraphs.get( point[0] );
+            istd = papx.getIstd();
+        }
 
         CharacterRun chp = new CharacterRun( chpx, _doc.getStyleSheet(), istd,
                 this );
@@ -924,7 +938,7 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private void initParagraphs() {
 		if (!_parRangeFound) {
-			int[] point = findRange(_paragraphs, _parStart, _start, _end);
+			int[] point = findRange(_paragraphs, _start, _end);
 			_parStart = point[0];
 			_parEnd = point[1];
 			_parRangeFound = true;
@@ -936,7 +950,7 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private void initCharacterRuns() {
 		if (!_charRangeFound) {
-			int[] point = findRange(_characters, _charStart, _start, _end);
+			int[] point = findRange(_characters, _start, _end);
 			_charStart = point[0];
 			_charEnd = point[1];
 			_charRangeFound = true;
@@ -955,6 +969,105 @@ public class Range { // TODO -instantiable superclass
 		}
 	}
 
+    private static int binarySearchStart( List<? extends PropertyNode<?>> rpl,
+            int start )
+    {
+        if ( rpl.get( 0 ).getStart() >= start )
+            return 0;
+
+        int low = 0;
+        int high = rpl.size() - 1;
+
+        while ( low <= high )
+        {
+            int mid = ( low + high ) >>> 1;
+            PropertyNode<?> node = rpl.get( mid );
+
+            if ( node.getStart() < start )
+            {
+                low = mid + 1;
+            }
+            else if ( node.getStart() > start )
+            {
+                high = mid - 1;
+            }
+            else
+            {
+                assert node.getStart() == start;
+                return mid;
+            }
+        }
+        assert low != 0;
+        return low - 1;
+    }
+
+    private static int binarySearchEnd( List<? extends PropertyNode<?>> rpl,
+            int foundStart, int end )
+    {
+        if ( rpl.get( rpl.size() - 1 ).getEnd() <= end )
+            return rpl.size() - 1;
+
+        int low = foundStart;
+        int high = rpl.size() - 1;
+
+        while ( low <= high )
+        {
+            int mid = ( low + high ) >>> 1;
+            PropertyNode<?> node = rpl.get( mid );
+
+            if ( node.getEnd() < end )
+            {
+                low = mid + 1;
+            }
+            else if ( node.getEnd() > end )
+            {
+                high = mid - 1;
+            }
+            else
+            {
+                assert node.getEnd() == end;
+                return mid;
+            }
+        }
+        assert 0 <= low && low < rpl.size();
+
+        return low;
+    }
+
+    /**
+     * Used to find the list indexes of a particular property.
+     * 
+     * @param rpl
+     *            A list of property nodes.
+     * @param min
+     *            A hint on where to start looking.
+     * @param start
+     *            The starting character offset.
+     * @param end
+     *            The ending character offset.
+     * @return An int array of length 2. The first int is the start index and
+     *         the second int is the end index.
+     */
+    private int[] findRange( List<? extends PropertyNode<?>> rpl, int start,
+            int end )
+    {
+        int startIndex = binarySearchStart( rpl, start );
+        while ( startIndex > 0 && rpl.get( startIndex - 1 ).getStart() >= start )
+            startIndex--;
+
+        int endIndex = binarySearchEnd( rpl, startIndex, end );
+        while ( endIndex < rpl.size() - 1
+                && rpl.get( endIndex + 1 ).getEnd() <= end )
+            endIndex--;
+
+        if ( startIndex < 0 || startIndex >= rpl.size()
+                || startIndex > endIndex || endIndex < 0
+                || endIndex >= rpl.size() )
+            throw new AssertionError();
+
+        return new int[] { startIndex, endIndex + 1 };
+    }
+
 	/**
 	 * Used to find the list indexes of a particular property.
 	 *
@@ -971,7 +1084,7 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private int[] findRange(List<? extends PropertyNode<?>> rpl, int min, int start, int end) {
 		int x = min;
-
+		
         if ( rpl.size() == min )
             return new int[] { min, min };
 
@@ -1138,7 +1251,7 @@ public class Range { // TODO -instantiable superclass
     {
         if ( _start < 0 )
             throw new AssertionError();
-        if ( _start >= _text.length() )
+        if ( _start > _text.length() )
             throw new AssertionError();
         if ( _end < 0 )
             throw new AssertionError();

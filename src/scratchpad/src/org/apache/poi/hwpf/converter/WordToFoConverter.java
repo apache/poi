@@ -50,6 +50,8 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 /**
@@ -118,6 +120,8 @@ public class WordToFoConverter extends AbstractWordConverter
     protected final FoDocumentFacade foDocumentFacade;
 
     private AtomicInteger internalLinkCounter = new AtomicInteger( 0 );
+
+    private boolean outputCharactersLanguage = false;
 
     private Set<String> usedIds = new LinkedHashSet<String>();
 
@@ -202,6 +206,11 @@ public class WordToFoConverter extends AbstractWordConverter
         return foDocumentFacade.getDocument();
     }
 
+    public boolean isOutputCharactersLanguage()
+    {
+        return outputCharactersLanguage;
+    }
+
     @Override
     protected void outputCharacters( Element block, CharacterRun characterRun,
             String text )
@@ -211,11 +220,15 @@ public class WordToFoConverter extends AbstractWordConverter
         Triplet triplet = getCharacterRunTriplet( characterRun );
 
         if ( WordToFoUtils.isNotEmpty( triplet.fontName ) )
-            WordToFoUtils.setFontFamily( inline, characterRun.getFontName() );
+            WordToFoUtils.setFontFamily( inline, triplet.fontName );
         WordToFoUtils.setBold( inline, triplet.bold );
         WordToFoUtils.setItalic( inline, triplet.italic );
         WordToFoUtils.setFontSize( inline, characterRun.getFontSize() / 2 );
         WordToFoUtils.setCharactersProperties( characterRun, inline );
+
+        if ( isOutputCharactersLanguage() )
+            WordToFoUtils.setLanguage( characterRun, inline );
+
         block.appendChild( inline );
 
         Text textNode = foDocumentFacade.createText( text );
@@ -411,6 +424,32 @@ public class WordToFoConverter extends AbstractWordConverter
         block.appendChild( foDocumentFacade.createBlock() );
     }
 
+    @Override
+    protected void processPageBreak( HWPFDocumentCore wordDocument, Element flow )
+    {
+        Element block = null;
+        NodeList childNodes = flow.getChildNodes();
+        if ( childNodes.getLength() > 0 )
+        {
+            Node lastChild = childNodes.item( childNodes.getLength() - 1 );
+            if ( lastChild instanceof Element )
+            {
+                Element lastElement = (Element) lastChild;
+                if ( !lastElement.hasAttribute( "break-after" ) )
+                {
+                    block = lastElement;
+                }
+            }
+        }
+
+        if ( block == null )
+        {
+            block = foDocumentFacade.createBlock();
+            flow.appendChild( block );
+        }
+        block.setAttribute( "break-after", "page" );
+    }
+
     protected void processPageref( HWPFDocumentCore hwpfDocument,
             Element currentBlock, Range textRange, int currentTableLevel,
             String pageref )
@@ -604,6 +643,11 @@ public class WordToFoConverter extends AbstractWordConverter
         element.setAttribute( "id", id );
         usedIds.add( id );
         return true;
+    }
+
+    public void setOutputCharactersLanguage( boolean outputCharactersLanguage )
+    {
+        this.outputCharactersLanguage = outputCharactersLanguage;
     }
 
 }
