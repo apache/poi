@@ -14,20 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.util;
+package org.apache.poi.poifs.filesystem;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Internal;
 
 @Internal
-public class POIUtils
+public class EntryUtils
 {
 
     /**

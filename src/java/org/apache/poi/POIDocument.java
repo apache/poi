@@ -21,10 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
-
-import org.apache.poi.util.POIUtils;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.MutablePropertySet;
@@ -33,9 +30,9 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
@@ -243,7 +240,7 @@ public abstract class POIDocument {
     protected void copyNodes( POIFSFileSystem source, POIFSFileSystem target,
             List<String> excepts ) throws IOException
     {
-        POIUtils.copyNodes( source, target, excepts );
+        EntryUtils.copyNodes( source, target, excepts );
     }
 
    /**
@@ -256,7 +253,7 @@ public abstract class POIDocument {
     protected void copyNodes( DirectoryNode sourceRoot,
             DirectoryNode targetRoot, List<String> excepts ) throws IOException
     {
-        POIUtils.copyNodes( sourceRoot, targetRoot, excepts );
+        EntryUtils.copyNodes( sourceRoot, targetRoot, excepts );
     }
 
 	/**
@@ -267,6 +264,6 @@ public abstract class POIDocument {
     protected void copyNodeRecursively( Entry entry, DirectoryEntry target )
             throws IOException
     {
-        POIUtils.copyNodeRecursively( entry, target );
+        EntryUtils.copyNodeRecursively( entry, target );
     }
 }

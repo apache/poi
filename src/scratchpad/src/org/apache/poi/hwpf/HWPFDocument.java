@@ -67,9 +67,9 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POIUtils;
 
 
 /**
@@ -1003,7 +1003,7 @@ public final class HWPFDocument extends HWPFDocumentCore
             }
             else
             {
-                POIUtils.copyNodeRecursively( entry, pfs.getRoot() );
+                EntryUtils.copyNodeRecursively( entry, pfs.getRoot() );
             }
         }
 
