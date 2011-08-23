@@ -214,7 +214,8 @@ public class PAPBinTable
             {
                 PAPX papx = oldPapxSortedByEndPos.get( papxIndex );
 
-                assert papxIndex + 1 == oldPapxSortedByEndPos.size()
+                assert startInclusive == 0
+                        || papxIndex + 1 == oldPapxSortedByEndPos.size()
                         || papx.getEnd() > startInclusive;
 
                 if ( papx.getEnd() - 1 > charIndex )
