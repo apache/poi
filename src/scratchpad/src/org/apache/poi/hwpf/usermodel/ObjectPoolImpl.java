@@ -21,8 +21,8 @@ import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POIUtils;
 
 @Internal
 public class ObjectPoolImpl implements ObjectsPool
@@ -54,6 +54,6 @@ public class ObjectPoolImpl implements ObjectsPool
     public void writeTo( DirectoryEntry directoryEntry ) throws IOException
     {
         if ( _objectPool != null )
-            POIUtils.copyNodeRecursively( _objectPool, directoryEntry );
+            EntryUtils.copyNodeRecursively( _objectPool, directoryEntry );
     }
 }
