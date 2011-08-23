@@ -167,6 +167,11 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return HorizontalRelativeElement.TEXT;
             }
 
+            public EscherContainerRecord getOfficeArtSpContainer()
+            {
+                return getEscherShapeRecordContainer( getShapeId() );
+            }
+
             public byte[] getPictureData()
             {
                 EscherContainerRecord shapeDescription = getEscherShapeRecordContainer( getShapeId() );
