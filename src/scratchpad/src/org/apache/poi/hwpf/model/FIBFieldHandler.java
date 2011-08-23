@@ -248,4 +248,59 @@ public final class FIBFieldHandler
       }
     }
   }
+
+    private static String leftPad( String text, int value, char padChar )
+    {
+        if ( text.length() >= value )
+            return text;
+
+        StringBuilder result = new StringBuilder();
+        for ( int i = 0; i < ( value - text.length() ); i++ )
+        {
+            result.append( padChar );
+        }
+        result.append( text );
+        return result.toString();
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append( "[FIBFieldHandler]:\n" );
+
+        result.append( "\tFields:\n" );
+        result.append( "\t" );
+        result.append( leftPad( "Index", 8, ' ' ) );
+        result.append( leftPad( "FIB offset", 15, ' ' ) );
+        result.append( leftPad( "Offset", 8, ' ' ) );
+        result.append( leftPad( "Size", 8, ' ' ) );
+        result.append( '\n' );
+        for ( int x = 0; x < _fields.length / 2; x++ )
+        {
+            result.append( '\t' );
+            result.append( leftPad( Integer.toString( x ), 8, ' ' ) );
+            result.append( leftPad(
+                    Integer.toString( 154 + x * LittleEndian.INT_SIZE * 2 ), 6,
+                    ' ' ) );
+            result.append( "   0x" );
+            result.append( leftPad(
+                    Integer.toHexString( 154 + x * LittleEndian.INT_SIZE * 2 ),
+                    4, '0' ) );
+            result.append( leftPad( Integer.toString( getFieldOffset( x ) ), 8,
+                    ' ' ) );
+            result.append( leftPad( Integer.toString( getFieldSize( x ) ), 8,
+                    ' ' ) );
+
+            UnhandledDataStructure structure = _unknownMap.get( Integer
+                    .valueOf( x ) );
+            if ( structure != null )
+            {
+                result.append( " => Unknown structure of size " );
+                result.append( structure._buf.length );
+            }
+            result.append( '\n' );
+        }
+        return result.toString();
+    }
 }

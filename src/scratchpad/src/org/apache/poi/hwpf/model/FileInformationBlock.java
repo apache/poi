@@ -150,6 +150,7 @@ public final class FileInformationBlock extends FIBAbstractType
             stringBuilder.append( getNotesTextPositionsSize( noteType ) );
             stringBuilder.append( " bytes\n" );
         }
+        stringBuilder.append( _fieldHandler );
         try
         {
             stringBuilder.append( "\tJava reflection info:\n" );
