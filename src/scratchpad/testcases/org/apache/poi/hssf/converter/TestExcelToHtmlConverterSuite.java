@@ -41,7 +41,9 @@ public class TestExcelToHtmlConverterSuite
     /**
      * YK: a quick hack to exclude failing documents from the suite.
      */
-    private static List<String> failingFiles = Arrays.asList();
+    private static List<String> failingFiles = Arrays.asList( //
+            /* not failing, but requires more memory */
+            "ex45698-22488.xls" );
 
     public static Test suite()
     {
