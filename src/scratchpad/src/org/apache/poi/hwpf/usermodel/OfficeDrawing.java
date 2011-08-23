@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.ddf.EscherContainerRecord;
+
 /**
  * User-friendly interface to office drawing objects.
  * <p>
@@ -129,6 +131,15 @@ public interface OfficeDrawing
      *         positioned
      */
     public HorizontalRelativeElement getHorizontalRelative();
+
+    /**
+     * Returns escher record that represent shape container (record type is
+     * <tt>0xF004</tt>). Returned record has a child with record type
+     * <tt>0xF00A</tt> and value of shape id equals to {@link #getShapeId()}.
+     * 
+     * @return Returns office art shape container or <tt>null</tt> if not found
+     */
+    public EscherContainerRecord getOfficeArtSpContainer();
 
     /**
      * Returns picture data if this shape has (single?) associated picture data
