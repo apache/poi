@@ -484,11 +484,24 @@ public final class HWPFLister
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-        System.out.println( "=== Document part: MAIN ===" );
-        for ( OfficeDrawing officeDrawing : document.getOfficeDrawingsMain()
-                .getOfficeDrawings() )
+        if ( document.getOfficeDrawingsHeaders() != null )
         {
-            System.out.println( officeDrawing );
+            System.out.println( "=== Document part: HEADER ===" );
+            for ( OfficeDrawing officeDrawing : document
+                    .getOfficeDrawingsHeaders().getOfficeDrawings() )
+            {
+                System.out.println( officeDrawing );
+            }
+        }
+
+        if ( document.getOfficeDrawingsHeaders() != null )
+        {
+            System.out.println( "=== Document part: MAIN ===" );
+            for ( OfficeDrawing officeDrawing : document
+                    .getOfficeDrawingsMain().getOfficeDrawings() )
+            {
+                System.out.println( officeDrawing );
+            }
         }
     }
 
