@@ -130,7 +130,7 @@ public class TestWordToHtmlConverter extends TestCase
 
         assertFalse( result.contains( "FORMTEXT" ) );
 
-        assertContains( result, "color:#28624f;" );
+        assertContains( result, "color:#4f6228;" );
         assertContains( result, "Passport No and the date of expire" );
         assertContains( result, "mfa.gov.cy" );
     }
