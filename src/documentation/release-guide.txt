@@ -128,6 +128,15 @@ Remove the previous release
 Next, svn move the files from the /dist/dev/ area to the appropriate
 /dist/release/ area
 
+example:
+$ svn rm -m "remove the previous release" \ 
+    https://dist.apache.org/repos/dist/release/poi/dev/src
+    https://dist.apache.org/repos/dist/release/poi/dev/bin
+
+$ svn mv -m "move staging files to the release area" \
+    https://dist.apache.org/repos/dist/dev/poi/bin \
+    https://dist.apache.org/repos/dist/dev/poi/src/  \
+    https://dist.apache.org/repos/dist/release/poi/dev/
 
 Log-in on people.apache.org
 
