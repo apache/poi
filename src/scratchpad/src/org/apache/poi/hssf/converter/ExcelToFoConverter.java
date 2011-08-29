@@ -273,24 +273,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         final boolean noText = ExcelToHtmlUtils.isEmpty( value );
-        // final boolean wrapInDivs = !noText && isUseDivsToSpan()
-        // && !cellStyle.getWrapText();
+        final boolean wrapInDivs = !noText && !cellStyle.getWrapText();
 
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
-            // HSSFWorkbook workbook = cell.getRow().getSheet().getWorkbook();
-            // String mainCssClass = getStyleClassName( workbook, cellStyle );
-            // if ( wrapInDivs )
-            // {
-            // tableCellElement.setAttribute( "class", mainCssClass + " "
-            // + cssClassContainerCell );
-            // }
-            // else
-            // {
-            // tableCellElement.setAttribute( "class", mainCssClass );
-            // }
-
             if ( noText )
             {
                 /*
@@ -320,42 +307,30 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
         Text text = foDocumentFacade.createText( value );
         Element block = foDocumentFacade.createBlock();
-        block.appendChild( text );
 
-        // if ( wrapInDivs )
-        // {
-        // Element outerDiv = htmlDocumentFacade.createBlock();
-        // outerDiv.setAttribute( "class", this.cssClassContainerDiv );
-        //
-        // Element innerDiv = htmlDocumentFacade.createBlock();
-        // StringBuilder innerDivStyle = new StringBuilder();
-        // innerDivStyle.append( "position:absolute;min-width:" );
-        // innerDivStyle.append( normalWidthPx );
-        // innerDivStyle.append( "px;" );
-        // if ( maxSpannedWidthPx != Integer.MAX_VALUE )
-        // {
-        // innerDivStyle.append( "max-width:" );
-        // innerDivStyle.append( maxSpannedWidthPx );
-        // innerDivStyle.append( "px;" );
-        // }
-        // innerDivStyle.append( "overflow:hidden;max-height:" );
-        // innerDivStyle.append( normalHeightPt );
-        // innerDivStyle.append( "pt;white-space:nowrap;" );
-        // ExcelToHtmlUtils.appendAlign( innerDivStyle,
-        // cellStyle.getAlignment() );
-        // htmlDocumentFacade.addStyleClass( outerDiv, "d",
-        // innerDivStyle.toString() );
-        //
-        // innerDiv.appendChild( block );
-        // outerDiv.appendChild( innerDiv );
-        // tableCellElement.appendChild( outerDiv );
-        // }
-        // else
+        if ( wrapInDivs )
         {
-            processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
-                    block );
-            tableCellElement.appendChild( block );
+            block.setAttribute( "absolute-position", "fixed" );
+            block.setAttribute( "left", "0px" );
+            block.setAttribute( "top", "0px" );
+            block.setAttribute( "bottom", "0px" );
+            block.setAttribute( "min-width", normalWidthPx + "px" );
+
+            if ( maxSpannedWidthPx != Integer.MAX_VALUE )
+            {
+                block.setAttribute( "max-width", maxSpannedWidthPx + "px" );
+            }
+
+            block.setAttribute( "overflow", "hidden" );
+            block.setAttribute( "height", normalHeightPt + "pt" );
+            block.setAttribute( "keep-together.within-line", "always" );
         }
+
+        processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
+                block );
+
+        block.appendChild( text );
+        tableCellElement.appendChild( block );
 
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
     }
@@ -579,32 +554,31 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
             HSSFCell cell = row.getCell( colIx );
 
+            // spanning using overlapping blocks
             int divWidthPx = 0;
-            // if ( isUseDivsToSpan() )
-            // {
-            // divWidthPx = getColumnWidth( sheet, colIx );
-            //
-            // boolean hasBreaks = false;
-            // for ( int nextColumnIndex = colIx + 1; nextColumnIndex <
-            // maxColIx; nextColumnIndex++ )
-            // {
-            // if ( !isOutputHiddenColumns()
-            // && sheet.isColumnHidden( nextColumnIndex ) )
-            // continue;
-            //
-            // if ( row.getCell( nextColumnIndex ) != null
-            // && !isTextEmpty( row.getCell( nextColumnIndex ) ) )
-            // {
-            // hasBreaks = true;
-            // break;
-            // }
-            //
-            // divWidthPx += getColumnWidth( sheet, nextColumnIndex );
-            // }
-            //
-            // if ( !hasBreaks )
-            // divWidthPx = Integer.MAX_VALUE;
-            // }
+            {
+                divWidthPx = getColumnWidth( sheet, colIx );
+
+                boolean hasBreaks = false;
+                for ( int nextColumnIndex = colIx + 1; nextColumnIndex < maxColIx; nextColumnIndex++ )
+                {
+                    if ( !isOutputHiddenColumns()
+                            && sheet.isColumnHidden( nextColumnIndex ) )
+                        continue;
+
+                    if ( row.getCell( nextColumnIndex ) != null
+                            && !isTextEmpty( row.getCell( nextColumnIndex ) ) )
+                    {
+                        hasBreaks = true;
+                        break;
+                    }
+
+                    divWidthPx += getColumnWidth( sheet, nextColumnIndex );
+                }
+
+                if ( !hasBreaks )
+                    divWidthPx = Integer.MAX_VALUE;
+            }
 
             Element tableCellElement = foDocumentFacade.createTableCell();
 
