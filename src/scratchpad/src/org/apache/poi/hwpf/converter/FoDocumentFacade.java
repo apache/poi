@@ -82,11 +82,14 @@ public class FoDocumentFacade
         return result;
     }
 
+    public void addPageSequence( Element pageSequence )
+    {
+        root.appendChild( pageSequence );
+    }
+
     public Element addPageSequence( String pageMaster )
     {
-        final Element pageSequence = document.createElementNS( NS_XSLFO,
-                "fo:page-sequence" );
-        pageSequence.setAttribute( "master-reference", pageMaster );
+        final Element pageSequence = createPageSequence( pageMaster );
         root.appendChild( pageSequence );
         return pageSequence;
     }
@@ -182,6 +185,14 @@ public class FoDocumentFacade
         block.appendChild( document.createTextNode( text ) );
         result.appendChild( block );
         return result;
+    }
+
+    public Element createPageSequence( String pageMaster )
+    {
+        final Element pageSequence = document.createElementNS( NS_XSLFO,
+                "fo:page-sequence" );
+        pageSequence.setAttribute( "master-reference", pageMaster );
+        return pageSequence;
     }
 
     public Element createTable()
