@@ -36,7 +36,7 @@ import junit.framework.TestSuite;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-public class TestExcelToHtmlConverterSuite
+public class TestExcelConverterSuite
 {
     /**
      * YK: a quick hack to exclude failing documents from the suite.
@@ -48,7 +48,7 @@ public class TestExcelToHtmlConverterSuite
     public static Test suite()
     {
         TestSuite suite = new TestSuite(
-                TestExcelToHtmlConverterSuite.class.getName() );
+                TestExcelConverterSuite.class.getName() );
 
         File directory = POIDataSamples.getSpreadSheetInstance().getFile(
                 "../spreadsheet" );
@@ -61,20 +61,26 @@ public class TestExcelToHtmlConverterSuite
         } ) )
         {
             final String name = child.getName();
+            suite.addTest( new TestCase( name + " [FO]" )
+            {
+                public void runTest() throws Exception
+                {
+                    testFo( child );
+                }
+            } );
             suite.addTest( new TestCase( name + " [HTML]" )
             {
                 public void runTest() throws Exception
                 {
-                    test( child, true );
+                    testHtml( child );
                 }
             } );
-
         }
 
         return suite;
     }
 
-    protected static void test( File child, boolean html ) throws Exception
+    protected static void testFo( File child ) throws Exception
     {
         HSSFWorkbook workbook;
         try
@@ -98,13 +104,39 @@ public class TestExcelToHtmlConverterSuite
                 .newTransformer();
         transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
         transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        transformer.setOutputProperty( OutputKeys.METHOD, "xml" );
         transformer.transform(
                 new DOMSource( excelToHtmlConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
+    }
 
-        if ( html )
-            transformer.setOutputProperty( OutputKeys.METHOD, "html" );
+    protected static void testHtml( File child ) throws Exception
+    {
+        HSSFWorkbook workbook;
+        try
+        {
+            workbook = ExcelToHtmlUtils.loadXls( child );
+        }
+        catch ( Exception exc )
+        {
+            // unable to parse file -- not WordToFoConverter fault
+            return;
+        }
 
-        // no exceptions
+        ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                        .newDocument() );
+        excelToHtmlConverter.processWorkbook( workbook );
+
+        StringWriter stringWriter = new StringWriter();
+
+        Transformer transformer = TransformerFactory.newInstance()
+                .newTransformer();
+        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
+        transformer.setOutputProperty( OutputKeys.INDENT, "no" );
+        transformer.setOutputProperty( OutputKeys.METHOD, "html" );
+        transformer.transform(
+                new DOMSource( excelToHtmlConverter.getDocument() ),
+                new StreamResult( stringWriter ) );
     }
 }

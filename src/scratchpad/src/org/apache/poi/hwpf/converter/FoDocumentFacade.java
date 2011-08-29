@@ -110,7 +110,7 @@ public class FoDocumentFacade
         return simplePageMaster;
     }
 
-    protected Element createBasicLinkExternal( String externalDestination )
+    public Element createBasicLinkExternal( String externalDestination )
     {
         final Element basicLink = document.createElementNS( NS_XSLFO,
                 "fo:basic-link" );
@@ -184,32 +184,37 @@ public class FoDocumentFacade
         return result;
     }
 
-    protected Element createTable()
+    public Element createTable()
     {
         return document.createElementNS( NS_XSLFO, "fo:table" );
     }
 
-    protected Element createTableBody()
+    public Element createTableBody()
     {
         return document.createElementNS( NS_XSLFO, "fo:table-body" );
     }
 
-    protected Element createTableCell()
+    public Element createTableCell()
     {
         return document.createElementNS( NS_XSLFO, "fo:table-cell" );
     }
 
-    protected Element createTableHeader()
+    public Element createTableColumn()
+    {
+        return document.createElementNS( NS_XSLFO, "fo:table-column" );
+    }
+
+    public Element createTableHeader()
     {
         return document.createElementNS( NS_XSLFO, "fo:table-header" );
     }
 
-    protected Element createTableRow()
+    public Element createTableRow()
     {
         return document.createElementNS( NS_XSLFO, "fo:table-row" );
     }
 
-    protected Text createText( String data )
+    public Text createText( String data )
     {
         return document.createTextNode( data );
     }

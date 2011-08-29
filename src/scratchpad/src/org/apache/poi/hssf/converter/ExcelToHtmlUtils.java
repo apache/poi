@@ -16,25 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hssf.converter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Beta;
 
-public class ExcelToHtmlUtils
+@Beta
+public class ExcelToHtmlUtils extends AbstractExcelUtils
 {
-    static final String EMPTY = "";
-
-    private static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
-    private static final int UNIT_OFFSET_LENGTH = 7;
-
     public static void appendAlign( StringBuilder style, short alignment )
     {
         switch ( alignment )
@@ -197,23 +189,6 @@ public class ExcelToHtmlUtils
     }
 
     /**
-     * See <a href=
-     * "http://apache-poi.1045710.n5.nabble.com/Excel-Column-Width-Unit-Converter-pixels-excel-column-width-units-td2301481.html"
-     * >here</a> for Xio explanation and details
-     */
-    public static int getColumnWidthInPx( int widthUnits )
-    {
-        int pixels = ( widthUnits / EXCEL_COLUMN_WIDTH_FACTOR )
-                * UNIT_OFFSET_LENGTH;
-
-        int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-        pixels += Math.round( offsetWidthUnits
-                / ( (float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH ) );
-
-        return pixels;
-    }
-
-    /**
      * @param mergedRanges
      *            map of sheet merged ranges built with
      *            {@link #buildMergedRangesMap(HSSFSheet)}
@@ -230,29 +205,6 @@ public class ExcelToHtmlUtils
                 : null;
 
         return cellRangeAddress;
-    }
-
-    static boolean isEmpty( String str )
-    {
-        return str == null || str.length() == 0;
-    }
-
-    static boolean isNotEmpty( String str )
-    {
-        return !isEmpty( str );
-    }
-
-    public static HSSFWorkbook loadXls( File xlsFile ) throws IOException
-    {
-        final FileInputStream inputStream = new FileInputStream( xlsFile );
-        try
-        {
-            return new HSSFWorkbook( inputStream );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( inputStream );
-        }
     }
 
 }
