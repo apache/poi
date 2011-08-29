@@ -23,6 +23,9 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hwpf.converter.AbstractWordConverter;
+import org.apache.poi.hwpf.converter.DefaultFontReplacer;
+import org.apache.poi.hwpf.converter.FontReplacer;
+import org.apache.poi.hwpf.converter.NumberFormatter;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.util.Beta;
 import org.w3c.dom.Document;
@@ -44,6 +47,8 @@ public abstract class AbstractExcelConverter
 
     protected final HSSFDataFormatter _formatter = new HSSFDataFormatter();
 
+    private FontReplacer fontReplacer = new DefaultFontReplacer();
+
     private boolean outputColumnHeaders = true;
 
     private boolean outputHiddenColumns = false;
@@ -63,10 +68,15 @@ public abstract class AbstractExcelConverter
      */
     protected String getColumnName( int columnIndex )
     {
-        return String.valueOf( columnIndex + 1 );
+        return NumberFormatter.getNumber( columnIndex + 1, 3 );
     }
 
     protected abstract Document getDocument();
+
+    public FontReplacer getFontReplacer()
+    {
+        return fontReplacer;
+    }
 
     /**
      * Generates name for output as row number in case
@@ -160,6 +170,11 @@ public abstract class AbstractExcelConverter
         }
 
         return ExcelToHtmlUtils.isEmpty( value );
+    }
+
+    public void setFontReplacer( FontReplacer fontReplacer )
+    {
+        this.fontReplacer = fontReplacer;
     }
 
     public void setOutputColumnHeaders( boolean outputColumnHeaders )

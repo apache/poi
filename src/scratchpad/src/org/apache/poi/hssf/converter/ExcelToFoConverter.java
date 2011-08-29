@@ -31,11 +31,14 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.FoDocumentFacade;
+import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
@@ -196,8 +199,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         return width;
     }
 
-    protected boolean processCell( HSSFCell cell, Element tableCellElement,
-            int normalWidthPx, int maxSpannedWidthPx, float normalHeightPt )
+    protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
+            Element tableCellElement, int normalWidthPx, int maxSpannedWidthPx,
+            float normalHeightPt )
     {
         final HSSFCellStyle cellStyle = cell.getCellStyle();
 
@@ -315,6 +319,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         Text text = foDocumentFacade.createText( value );
+        Element block = foDocumentFacade.createBlock();
+        block.appendChild( text );
 
         // if ( wrapInDivs )
         // {
@@ -340,16 +346,121 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         // htmlDocumentFacade.addStyleClass( outerDiv, "d",
         // innerDivStyle.toString() );
         //
-        // innerDiv.appendChild( text );
+        // innerDiv.appendChild( block );
         // outerDiv.appendChild( innerDiv );
         // tableCellElement.appendChild( outerDiv );
         // }
         // else
         {
-            tableCellElement.appendChild( text );
+            processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
+                    block );
+            tableCellElement.appendChild( block );
         }
 
         return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
+    }
+
+    protected void processCellStyle( HSSFWorkbook workbook,
+            HSSFCellStyle cellStyle, Element cellTarget, Element blockTarget )
+    {
+        blockTarget.setAttribute( "white-space-collapse", "false" );
+        {
+            String textAlign = ExcelToFoUtils.getAlign( cellStyle
+                    .getAlignment() );
+            if ( ExcelToFoUtils.isNotEmpty( textAlign ) )
+                blockTarget.setAttribute( "text-align", textAlign );
+        }
+
+        if ( cellStyle.getFillPattern() == 0 )
+        {
+            // no fill
+        }
+        else if ( cellStyle.getFillPattern() == 1 )
+        {
+            final HSSFColor foregroundColor = cellStyle
+                    .getFillForegroundColorColor();
+            if ( foregroundColor != null )
+                cellTarget.setAttribute( "background-color",
+                        ExcelToFoUtils.getColor( foregroundColor ) );
+        }
+        else
+        {
+            final HSSFColor backgroundColor = cellStyle
+                    .getFillBackgroundColorColor();
+            if ( backgroundColor != null )
+                cellTarget.setAttribute( "background-color",
+                        ExcelToHtmlUtils.getColor( backgroundColor ) );
+        }
+
+        processCellStyleBorder( workbook, cellTarget, "top",
+                cellStyle.getBorderTop(), cellStyle.getTopBorderColor() );
+        processCellStyleBorder( workbook, cellTarget, "right",
+                cellStyle.getBorderRight(), cellStyle.getRightBorderColor() );
+        processCellStyleBorder( workbook, cellTarget, "bottom",
+                cellStyle.getBorderBottom(), cellStyle.getBottomBorderColor() );
+        processCellStyleBorder( workbook, cellTarget, "left",
+                cellStyle.getBorderLeft(), cellStyle.getLeftBorderColor() );
+
+        HSSFFont font = cellStyle.getFont( workbook );
+        processCellStyleFont( workbook, blockTarget, font );
+    }
+
+    protected void processCellStyleBorder( HSSFWorkbook workbook,
+            Element cellTarget, String type, short xlsBorder, short borderColor )
+    {
+        if ( xlsBorder == HSSFCellStyle.BORDER_NONE )
+            return;
+
+        StringBuilder borderStyle = new StringBuilder();
+        borderStyle.append( ExcelToHtmlUtils.getBorderWidth( xlsBorder ) );
+        borderStyle.append( ' ' );
+        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
+
+        final HSSFColor color = workbook.getCustomPalette().getColor(
+                borderColor );
+        if ( color != null )
+        {
+            borderStyle.append( ' ' );
+            borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
+        }
+
+        cellTarget.setAttribute( "border-" + type, borderStyle.toString() );
+    }
+
+    protected void processCellStyleFont( HSSFWorkbook workbook,
+            Element blockTarget, HSSFFont font )
+    {
+        Triplet triplet = new Triplet();
+        triplet.fontName = font.getFontName();
+
+        switch ( font.getBoldweight() )
+        {
+        case HSSFFont.BOLDWEIGHT_BOLD:
+            triplet.bold = true;
+            break;
+        case HSSFFont.BOLDWEIGHT_NORMAL:
+            triplet.bold = false;
+            break;
+        }
+
+        if ( font.getItalic() )
+        {
+            triplet.italic = true;
+        }
+
+        getFontReplacer().update( triplet );
+        setBlockProperties( blockTarget, triplet );
+
+        final HSSFColor fontColor = workbook.getCustomPalette().getColor(
+                font.getColor() );
+        if ( fontColor != null )
+            blockTarget.setAttribute( "color",
+                    ExcelToHtmlUtils.getColor( fontColor ) );
+
+        if ( font.getFontHeightInPoints() != 0 )
+            blockTarget.setAttribute( "font-size", font.getFontHeightInPoints()
+                    + "pt" );
+
     }
 
     protected void processColumnHeaders( HSSFSheet sheet, int maxSheetColumns,
@@ -361,7 +472,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         if ( isOutputRowNumbers() )
         {
             // empty cell at left-top corner
-            row.appendChild( foDocumentFacade.createTableCell() );
+            final Element tableCellElement = foDocumentFacade.createTableCell();
+            tableCellElement.appendChild( foDocumentFacade.createBlock() );
+            row.appendChild( tableCellElement );
         }
 
         for ( int c = 0; c < maxSheetColumns; c++ )
@@ -370,8 +483,14 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 continue;
 
             Element cell = foDocumentFacade.createTableCell();
+            Element block = foDocumentFacade.createBlock();
+            block.setAttribute( "text-align", "center" );
+            block.setAttribute( "font-weight", "bold" );
+
             String text = getColumnName( c );
-            cell.appendChild( foDocumentFacade.createText( text ) );
+            block.appendChild( foDocumentFacade.createText( text ) );
+
+            cell.appendChild( block );
             row.appendChild( cell );
         }
 
@@ -422,21 +541,25 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     /**
      * @return maximum 1-base index of column that were rendered, zero if none
      */
-    protected int processRow( CellRangeAddress[][] mergedRanges, HSSFRow row,
+    protected int processRow( HSSFWorkbook workbook,
+            CellRangeAddress[][] mergedRanges, HSSFRow row,
             Element tableRowElement )
     {
         final HSSFSheet sheet = row.getSheet();
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
+        {
+            Element emptyCellElement = foDocumentFacade.createTableCell();
+            emptyCellElement.appendChild( foDocumentFacade.createBlock() );
+            tableRowElement.appendChild( emptyCellElement );
             return 0;
+        }
 
         final List<Element> emptyCells = new ArrayList<Element>( maxColIx );
 
         if ( isOutputRowNumbers() )
         {
-            Element tableRowNumberCellElement = foDocumentFacade
-                    .createTableCell();
-            processRowNumber( row, tableRowNumberCellElement );
+            Element tableRowNumberCellElement = processRowNumber( row );
             emptyCells.add( tableRowNumberCellElement );
         }
 
@@ -502,12 +625,13 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             boolean emptyCell;
             if ( cell != null )
             {
-                emptyCell = processCell( cell, tableCellElement,
+                emptyCell = processCell( workbook, cell, tableCellElement,
                         getColumnWidth( sheet, colIx ), divWidthPx,
                         row.getHeight() / 20f );
             }
             else
             {
+                tableCellElement.appendChild( foDocumentFacade.createBlock() );
                 emptyCell = true;
             }
 
@@ -531,14 +655,23 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         return maxRenderedColumn + 1;
     }
 
-    protected void processRowNumber( HSSFRow row,
-            Element tableRowNumberCellElement )
+    protected Element processRowNumber( HSSFRow row )
     {
+        Element tableRowNumberCellElement = foDocumentFacade.createTableCell();
+
+        Element block = foDocumentFacade.createBlock();
+        block.setAttribute( "text-align", "right" );
+        block.setAttribute( "font-weight", "bold" );
+
         Text text = foDocumentFacade.createText( getRowName( row ) );
-        tableRowNumberCellElement.appendChild( text );
+        block.appendChild( text );
+
+        tableRowNumberCellElement.appendChild( block );
+        return tableRowNumberCellElement;
     }
 
-    protected int processSheet( HSSFSheet sheet, Element flow )
+    protected int processSheet( HSSFWorkbook workbook, HSSFSheet sheet,
+            Element flow )
     {
         final int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
         if ( physicalNumberOfRows <= 0 )
@@ -569,7 +702,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             tableRowElement.setAttribute( "height", row.getHeight() / 20f
                     + "pt" );
 
-            int maxRowColumnNumber = processRow( mergedRanges, row,
+            int maxRowColumnNumber = processRow( workbook, mergedRanges, row,
                     tableRowElement );
 
             if ( maxRowColumnNumber == 0 )
@@ -608,11 +741,26 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected void processSheetName( HSSFSheet sheet, Element flow )
     {
         Element titleBlock = foDocumentFacade.createBlock();
+
+        Triplet triplet = new Triplet();
+        triplet.bold = true;
+        triplet.italic = false;
+        triplet.fontName = "Arial";
+        getFontReplacer().update( triplet );
+
+        setBlockProperties( titleBlock, triplet );
+        titleBlock.setAttribute( "font-size", "200%" );
+
         Element titleInline = foDocumentFacade.createInline();
         titleInline.appendChild( foDocumentFacade.createText( sheet
                 .getSheetName() ) );
         titleBlock.appendChild( titleInline );
         flow.appendChild( titleBlock );
+
+        Element titleBlock2 = foDocumentFacade.createBlock();
+        Element titleInline2 = foDocumentFacade.createInline();
+        titleBlock2.appendChild( titleInline2 );
+        flow.appendChild( titleBlock2 );
     }
 
     public void processWorkbook( HSSFWorkbook workbook )
@@ -629,16 +777,31 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             String pageMasterName = "sheet-" + s;
 
             Element pageSequence = foDocumentFacade
-                    .addPageSequence( pageMasterName );
+                    .createPageSequence( pageMasterName );
             Element flow = foDocumentFacade.addFlowToPageSequence(
                     pageSequence, "xsl-region-body" );
 
             HSSFSheet sheet = workbook.getSheetAt( s );
-            int maxSheetColumns = processSheet( sheet, flow );
+            int maxSheetColumns = processSheet( workbook, sheet, flow );
 
             if ( maxSheetColumns != 0 )
+            {
                 createPageMaster( sheet, maxSheetColumns, pageMasterName );
+                foDocumentFacade.addPageSequence( pageSequence );
+            }
         }
+    }
+
+    private void setBlockProperties( Element textBlock, Triplet triplet )
+    {
+        if ( triplet.bold )
+            textBlock.setAttribute( "font-weight", "bold" );
+
+        if ( triplet.italic )
+            textBlock.setAttribute( "font-style", "italic" );
+
+        if ( ExcelToFoUtils.isNotEmpty( triplet.fontName ) )
+            textBlock.setAttribute( "font-family", triplet.fontName );
     }
 
 }
