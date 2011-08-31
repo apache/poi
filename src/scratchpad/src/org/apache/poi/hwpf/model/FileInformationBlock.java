@@ -540,11 +540,16 @@ public final class FileInformationBlock extends FIBAbstractType
      */
     public int getSubdocumentTextStreamLength( SubdocumentType type )
     {
+        if ( type == null )
+            throw new IllegalArgumentException( "argument 'type' is null" );
+
         return _longHandler.getLong( type.getFibLongFieldIndex() );
     }
 
     public void setSubdocumentTextStreamLength( SubdocumentType type, int length )
     {
+        if ( type == null )
+            throw new IllegalArgumentException( "argument 'type' is null" );
         if ( length < 0 )
             throw new IllegalArgumentException(
                     "Subdocument length can't be less than 0 (passed value is "
