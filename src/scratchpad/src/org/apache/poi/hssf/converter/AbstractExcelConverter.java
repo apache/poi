@@ -45,6 +45,12 @@ public abstract class AbstractExcelConverter
                 .getColumnWidth( columnIndex ) );
     }
 
+    protected static int getDefaultColumnWidth( HSSFSheet sheet )
+    {
+        return ExcelToHtmlUtils.getColumnWidthInPx( sheet
+                .getDefaultColumnWidth() );
+    }
+
     protected final HSSFDataFormatter _formatter = new HSSFDataFormatter();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();

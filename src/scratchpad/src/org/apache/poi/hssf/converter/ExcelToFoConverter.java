@@ -134,15 +134,12 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         this.foDocumentFacade = new FoDocumentFacade( document );
     }
 
-    protected String createPageMaster( HSSFSheet sheet, int maxSheetColumns,
-            String pageMasterName )
+    protected String createPageMaster( float tableWidthIn, String pageMasterName )
     {
         final float paperHeightIn;
         final float paperWidthIn;
         {
-            float requiredWidthIn = ExcelToFoUtils
-                    .getColumnWidthInPx( getSheetWidth( sheet, maxSheetColumns ) )
-                    / DPI + 2;
+            float requiredWidthIn = tableWidthIn + 2;
 
             if ( requiredWidthIn < PAPER_A4_WIDTH_INCHES )
             {
@@ -180,23 +177,6 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected Document getDocument()
     {
         return foDocumentFacade.getDocument();
-    }
-
-    protected int getSheetWidth( HSSFSheet sheet, int maxSheetColumns )
-    {
-        int width = 0;
-        if ( isOutputRowNumbers() )
-        {
-            width += sheet.getDefaultColumnWidth();
-        }
-
-        for ( int columnIndex = 0; columnIndex < maxSheetColumns; columnIndex++ )
-        {
-            if ( !isOutputHiddenColumns() && sheet.isColumnHidden( columnIndex ) )
-                continue;
-            width += sheet.getColumnWidth( columnIndex );
-        }
-        return width;
     }
 
     protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
@@ -388,8 +368,6 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
         StringBuilder borderStyle = new StringBuilder();
         borderStyle.append( ExcelToHtmlUtils.getBorderWidth( xlsBorder ) );
-        borderStyle.append( ' ' );
-        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
 
         final HSSFColor color = workbook.getCustomPalette().getColor(
                 borderColor );
@@ -397,6 +375,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         {
             borderStyle.append( ' ' );
             borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
+
+            borderStyle.append( ' ' );
+            borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
         }
 
         cellTarget.setAttribute( "border-" + type, borderStyle.toString() );
@@ -476,13 +457,24 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     /**
      * Creates COLGROUP element with width specified for all columns. (Except
      * first if <tt>{@link #isOutputRowNumbers()}==true</tt>)
+     * 
+     * @return table width in inches
      */
-    protected void processColumnWidths( HSSFSheet sheet, int maxSheetColumns,
+    protected float processColumnWidths( HSSFSheet sheet, int maxSheetColumns,
             Element table )
     {
+        float tableWidth = 0;
+
         if ( isOutputRowNumbers() )
         {
-            table.appendChild( foDocumentFacade.createTableColumn() );
+            final float columnWidthIn = getDefaultColumnWidth( sheet ) / DPI;
+
+            final Element rowNumberColumn = foDocumentFacade
+                    .createTableColumn();
+            rowNumberColumn.setAttribute( "column-width", columnWidthIn + "in" );
+            table.appendChild( rowNumberColumn );
+
+            tableWidth += columnWidthIn;
         }
 
         for ( int c = 0; c < maxSheetColumns; c++ )
@@ -490,11 +482,17 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             if ( !isOutputHiddenColumns() && sheet.isColumnHidden( c ) )
                 continue;
 
+            final float columnWidthIn = getColumnWidth( sheet, c ) / DPI;
+
             Element col = foDocumentFacade.createTableColumn();
-            col.setAttribute( "column-width",
-                    String.valueOf( getColumnWidth( sheet, c ) / DPI ) + "in" );
+            col.setAttribute( "column-width", columnWidthIn + "in" );
             table.appendChild( col );
+
+            tableWidth += columnWidthIn;
         }
+
+        table.setAttribute( "width", tableWidth + "in" );
+        return tableWidth;
     }
 
     protected void processDocumentInformation(
@@ -524,9 +522,6 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final short maxColIx = row.getLastCellNum();
         if ( maxColIx <= 0 )
         {
-            Element emptyCellElement = foDocumentFacade.createTableCell();
-            emptyCellElement.appendChild( foDocumentFacade.createBlock() );
-            tableRowElement.appendChild( emptyCellElement );
             return 0;
         }
 
@@ -644,7 +639,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         return tableRowNumberCellElement;
     }
 
-    protected int processSheet( HSSFWorkbook workbook, HSSFSheet sheet,
+    protected float processSheet( HSSFWorkbook workbook, HSSFSheet sheet,
             Element flow )
     {
         final int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
@@ -654,6 +649,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         processSheetName( sheet, flow );
 
         Element table = foDocumentFacade.createTable();
+        table.setAttribute( "table-layout", "fixed" );
+
         Element tableBody = foDocumentFacade.createTableBody();
 
         final CellRangeAddress[][] mergedRanges = ExcelToHtmlUtils
@@ -679,6 +676,13 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             int maxRowColumnNumber = processRow( workbook, mergedRanges, row,
                     tableRowElement );
 
+            if ( tableRowElement.getChildNodes().getLength() == 0 )
+            {
+                Element emptyCellElement = foDocumentFacade.createTableCell();
+                emptyCellElement.appendChild( foDocumentFacade.createBlock() );
+                tableRowElement.appendChild( emptyCellElement );
+            }
+
             if ( maxRowColumnNumber == 0 )
             {
                 emptyRowElements.add( tableRowElement );
@@ -699,7 +703,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             maxSheetColumns = Math.max( maxSheetColumns, maxRowColumnNumber );
         }
 
-        processColumnWidths( sheet, maxSheetColumns, table );
+        float tableWidthIn = processColumnWidths( sheet, maxSheetColumns, table );
 
         if ( isOutputColumnHeaders() )
         {
@@ -709,7 +713,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         table.appendChild( tableBody );
         flow.appendChild( table );
 
-        return maxSheetColumns;
+        return tableWidthIn;
     }
 
     protected void processSheetName( HSSFSheet sheet, Element flow )
@@ -756,11 +760,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                     pageSequence, "xsl-region-body" );
 
             HSSFSheet sheet = workbook.getSheetAt( s );
-            int maxSheetColumns = processSheet( workbook, sheet, flow );
+            float tableWidthIn = processSheet( workbook, sheet, flow );
 
-            if ( maxSheetColumns != 0 )
+            if ( tableWidthIn != 0 )
             {
-                createPageMaster( sheet, maxSheetColumns, pageMasterName );
+                createPageMaster( tableWidthIn, pageMasterName );
                 foDocumentFacade.addPageSequence( pageSequence );
             }
         }
