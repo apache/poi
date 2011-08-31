@@ -132,7 +132,8 @@ public final class EscherDggRecord extends EscherRecord {
         }
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
                 "  ShapeIdMax: " + field_1_shapeIdMax + '\n' +
                 "  NumIdClusters: " + getNumIdClusters() + '\n' +
                 "  NumShapesSaved: " + field_3_numShapesSaved + '\n' +

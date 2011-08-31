@@ -247,7 +247,8 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         String extraData = "";//HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
+                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
+                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
                 "  UID: 0x" + HexDump.toHex( field_1_UID ) + '\n' +
                 (field_2_UID == null ? "" : ("  UID2: 0x" + HexDump.toHex( field_2_UID ) + '\n')) +
                 "  Uncompressed Size: " + HexDump.toHex( field_2_cb ) + '\n' +

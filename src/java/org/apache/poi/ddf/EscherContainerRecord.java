@@ -248,7 +248,8 @@ public final class EscherContainerRecord extends EscherRecord {
 
         return getClass().getName() + " (" + getRecordName() + "):" + nl
                 + "  isContainer: " + isContainerRecord() + nl
-                + "  options: 0x" + HexDump.toHex( getOptions() ) + nl
+                + "  version: 0x" + HexDump.toHex( getVersion() ) + nl
+                + "  instance: 0x" + HexDump.toHex( getInstance() ) + nl
                 + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl
                 + "  numchildren: " + _childRecords.size() + nl
                 + children.toString();

@@ -135,7 +135,8 @@ public final class UnknownEscherRecord extends EscherRecord {
 
         return getClass().getName() + ":" + '\n' +
                 "  isContainer: " + isContainerRecord() + '\n' +
-                "  options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
+                "  version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
+                "  instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
                 "  recordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
                 "  numchildren: " + getChildRecords().size() + '\n' +
                 theDumpHex +

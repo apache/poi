@@ -88,7 +88,8 @@ public class EscherChildAnchorRecord
 
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
                 "  X1: " + field_1_dx1 + nl +
                 "  Y1: " + field_2_dy1 + nl +
                 "  X2: " + field_3_dx2 + nl +

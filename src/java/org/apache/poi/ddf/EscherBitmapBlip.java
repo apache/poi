@@ -108,7 +108,8 @@ public class EscherBitmapBlip extends EscherBlipRecord {
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
+                "  Version: 0x" + HexDump.toHex( getVersion() ) + nl +
+                "  Instance: 0x" + HexDump.toHex( getInstance() ) + nl +
                 "  UID: 0x" + HexDump.toHex( field_1_UID ) + nl +
                 "  Marker: 0x" + HexDump.toHex( field_2_marker ) + nl +
                 "  Extra Data:" + nl + extraData;

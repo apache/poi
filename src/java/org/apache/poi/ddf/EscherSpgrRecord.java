@@ -89,7 +89,8 @@ public class EscherSpgrRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
                 "  RectX: " + field_1_rectX1 + '\n' +
                 "  RectY: " + field_2_rectY1 + '\n' +
                 "  RectWidth: " + field_3_rectX2 + '\n' +

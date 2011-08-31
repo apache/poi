@@ -90,7 +90,8 @@ public class EscherSplitMenuColorsRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
                 "  Color1: 0x" + HexDump.toHex(field_1_color1) + '\n' +
                 "  Color2: 0x" + HexDump.toHex(field_2_color2) + '\n' +
                 "  Color3: 0x" + HexDump.toHex(field_3_color3) + '\n' +

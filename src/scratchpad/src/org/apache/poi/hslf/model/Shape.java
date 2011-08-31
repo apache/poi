@@ -130,7 +130,7 @@ public abstract class Shape {
      */
     public int getShapeType(){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        return spRecord.getOptions() >> 4;
+        return spRecord.getShapeType();
     }
 
     /**
@@ -139,7 +139,8 @@ public abstract class Shape {
      */
     public void setShapeType(int type){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        spRecord.setOptions((short)(type << 4 | 0x2));
+        spRecord.setShapeType( (short) type );
+        spRecord.setVersion( (short) 0x2 );
     }
 
     /**

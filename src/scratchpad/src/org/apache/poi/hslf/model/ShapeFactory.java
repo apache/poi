@@ -72,7 +72,7 @@ public final class ShapeFactory {
         Shape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
-        int type = spRecord.getOptions() >> 4;
+        int type = spRecord.getShapeType();
         switch (type){
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);
