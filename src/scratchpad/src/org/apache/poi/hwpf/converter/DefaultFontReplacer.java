@@ -56,7 +56,8 @@ public class DefaultFontReplacer implements FontReplacer
         if ( AbstractWordUtils.isNotEmpty( original.fontName ) )
         {
             if ( "Times Regular".equals( original.fontName )
-                    || "Times-Regular".equals( original.fontName ) )
+                    || "Times-Regular".equals( original.fontName )
+                    || "Times Roman".equals( original.fontName ) )
             {
                 original.fontName = "Times";
                 original.bold = false;
