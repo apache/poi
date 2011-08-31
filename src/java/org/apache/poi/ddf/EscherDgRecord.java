@@ -88,7 +88,8 @@ public class EscherDgRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
                 "  NumShapes: " + field_1_numShapes + '\n' +
                 "  LastMSOSPID: " + field_2_lastMSOSPID + '\n';
 

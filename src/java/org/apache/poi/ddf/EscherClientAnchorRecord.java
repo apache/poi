@@ -145,7 +145,8 @@ public class EscherClientAnchorRecord
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
                 "  Flag: " + field_1_flag + nl +
                 "  Col1: " + field_2_col1 + nl +
                 "  DX1: " + field_3_dx1 + nl +

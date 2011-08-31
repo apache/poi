@@ -313,7 +313,8 @@ public final class EscherBSERecord extends EscherRecord {
         String extraData = _remainingData == null ? null : HexDump.toHex(_remainingData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + '\n' +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
+                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
+                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
                 "  BlipTypeWin32: " + field_1_blipTypeWin32 + '\n' +
                 "  BlipTypeMacOS: " + field_2_blipTypeMacOS + '\n' +
                 "  SUID: " + (field_3_uid == null ? "" : HexDump.toHex(field_3_uid)) + '\n' +

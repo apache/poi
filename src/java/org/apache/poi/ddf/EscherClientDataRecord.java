@@ -92,7 +92,8 @@ public class EscherClientDataRecord
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
+                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
                 "  Extra Data:" + nl +
                 extraData;
 

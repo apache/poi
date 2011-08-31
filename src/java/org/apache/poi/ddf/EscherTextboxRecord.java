@@ -132,7 +132,8 @@ public class EscherTextboxRecord extends EscherRecord
 
         return getClass().getName() + ":" + nl +
                 "  isContainer: " + isContainerRecord() + nl +
-                "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
+                "  version: 0x" + HexDump.toHex( getVersion() ) + nl +
+                "  instance: 0x" + HexDump.toHex( getInstance() ) + nl +
                 "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
                 "  numchildren: " + getChildRecords().size() + nl +
                 theDumpHex;

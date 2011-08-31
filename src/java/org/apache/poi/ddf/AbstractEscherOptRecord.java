@@ -152,8 +152,11 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         stringBuilder.append( "  isContainer: " );
         stringBuilder.append( isContainerRecord() );
         stringBuilder.append( nl );
-        stringBuilder.append( "  options: 0x" );
-        stringBuilder.append( HexDump.toHex( getOptions() ) );
+        stringBuilder.append( "  version: 0x" );
+        stringBuilder.append( HexDump.toHex( getVersion() ) );
+        stringBuilder.append( nl );
+        stringBuilder.append( "  instance: 0x" );
+        stringBuilder.append( HexDump.toHex( getInstance() ) );
         stringBuilder.append( nl );
         stringBuilder.append( "  recordId: 0x" );
         stringBuilder.append( HexDump.toHex( getRecordId() ) );

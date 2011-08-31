@@ -616,7 +616,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			{
 				EscherSpRecord spRecord = shapeContainer
 						.getChildById( EscherSpRecord.RECORD_ID );
-				int type = spRecord.getOptions() >> 4;
+				int type = spRecord.getShapeType();
 
 				switch (type)
 				{

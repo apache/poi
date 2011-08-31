@@ -108,7 +108,8 @@ public class EscherSpRecord
 
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
+                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
+                "  ShapeType: 0x" + HexDump.toHex(getShapeType()) + nl +
                 "  ShapeId: " + field_1_shapeId + nl +
                 "  Flags: " + decodeFlags(field_2_flags) + " (0x" + HexDump.toHex(field_2_flags) + ")" + nl;
 
@@ -196,5 +197,28 @@ public class EscherSpRecord
     public void setFlags( int field_2_flags )
     {
         this.field_2_flags = field_2_flags;
+    }
+
+    /**
+     * Returns shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
+     * details).
+     * 
+     * @return shape type
+     */
+    public short getShapeType()
+    {
+        return getInstance();
+    }
+
+    /**
+     * Sets shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
+     * details).
+     * 
+     * @param value
+     *            new shape type
+     */
+    public void setShapeType( short value )
+    {
+        setInstance( value );
     }
 }
