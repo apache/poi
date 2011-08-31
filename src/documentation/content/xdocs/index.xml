@@ -32,6 +32,11 @@
   </header>
 
   <body>
+    <section><title>28 August 2011 -  The Apache POI project is celebrating its 10th anniversary</title>
+      <p>
+        The Apache POI project is celebrating its 10th anniversary. On the 28th of August 2001, the first 0.1 alpha version of POI was released. 
+        <link href="https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces14">Read more...</link></p>
+    </section>
     <section><title>26 August 2011 - POI 3.8 beta 4 available</title>
       <p>The Apache POI team is pleased to announce the release of 3.8 beta 4. 
          This includes a large number of bug fixes and enhancements. 
