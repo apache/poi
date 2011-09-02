@@ -716,6 +716,32 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         return tableWidthIn;
     }
 
+    /**
+     * Process single sheet (as specified by 0-based sheet index)
+     * 
+     * @return <tt>true</tt> if result were added to FO document, <tt>false</tt>
+     *         otherwise
+     */
+    protected boolean processSheet( HSSFWorkbook workbook, int sheetIndex )
+    {
+        String pageMasterName = "sheet-" + sheetIndex;
+
+        Element pageSequence = foDocumentFacade
+                .createPageSequence( pageMasterName );
+        Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
+                "xsl-region-body" );
+
+        HSSFSheet sheet = workbook.getSheetAt( sheetIndex );
+        float tableWidthIn = processSheet( workbook, sheet, flow );
+
+        if ( tableWidthIn == 0 )
+            return false;
+
+        createPageMaster( tableWidthIn, pageMasterName );
+        foDocumentFacade.addPageSequence( pageSequence );
+        return true;
+    }
+
     protected void processSheetName( HSSFSheet sheet, Element flow )
     {
         Element titleBlock = foDocumentFacade.createBlock();
@@ -752,21 +778,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
         {
-            String pageMasterName = "sheet-" + s;
-
-            Element pageSequence = foDocumentFacade
-                    .createPageSequence( pageMasterName );
-            Element flow = foDocumentFacade.addFlowToPageSequence(
-                    pageSequence, "xsl-region-body" );
-
-            HSSFSheet sheet = workbook.getSheetAt( s );
-            float tableWidthIn = processSheet( workbook, sheet, flow );
-
-            if ( tableWidthIn != 0 )
-            {
-                createPageMaster( tableWidthIn, pageMasterName );
-                foDocumentFacade.addPageSequence( pageSequence );
-            }
+            processSheet( workbook, s );
         }
     }
 
