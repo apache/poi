@@ -112,6 +112,13 @@ public class XSLFRelation extends POIXMLRelation {
          XSLFComments.class
    );
    
+   public static final XSLFRelation COMMENT_AUTHORS = new XSLFRelation(
+         "application/vnd.openxmlformats-officedocument.presentationml.commentAuthors+xml",
+         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/commentAuthors",
+         "/ppt/commentAuthors.xml",
+         XSLFCommentAuthors.class
+   );
+   
     public static final XSLFRelation HYPERLINK = new XSLFRelation(
             null,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",

@@ -119,4 +119,43 @@ public class TestXMLSlideShow extends TestCase {
       assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
       assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
    }
+   
+   public void testComments() throws Exception {
+      // Default sample file has none
+      XMLSlideShow xml = new XMLSlideShow(pack);
+      
+      assertEquals(null, xml.getCommentAuthors());
+      
+      for (XSLFSlide slide : xml.getSlides()) {
+         assertEquals(null, slide.getComments());
+      }
+      
+      // Try another with comments
+      OPCPackage packComments = OPCPackage.open(slTests.openResourceAsStream("45545_Comment.pptx"));
+      XMLSlideShow xmlComments = new XMLSlideShow(packComments);
+      
+      // Has one author
+      assertNotNull(xmlComments.getCommentAuthors());
+      assertEquals(1, xmlComments.getCommentAuthors().getCTCommentAuthorsList().sizeOfCmAuthorArray());
+      assertEquals("XPVMWARE01", xmlComments.getCommentAuthors().getAuthorById(0).getName());
+      
+      // First two slides have comments
+      for (int i=0; i<xmlComments.getSlides().length; i++) {
+         XSLFSlide slide = xmlComments.getSlides()[i];
+         
+         if(i == 0) {
+            assertNotNull(slide.getComments());
+            assertEquals(1, slide.getComments().getNumberOfComments());
+            assertEquals("testdoc", slide.getComments().getCommentAt(0).getText());
+            assertEquals(0, slide.getComments().getCommentAt(0).getAuthorId());
+         } else if (i == 1) {
+            assertNotNull(slide.getComments());
+            assertEquals(1, slide.getComments().getNumberOfComments());
+            assertEquals("test phrase", slide.getComments().getCommentAt(0).getText());
+            assertEquals(0, slide.getComments().getCommentAt(0).getAuthorId());
+         } else {
+            assertEquals(null, slide.getComments());
+         }
+      }
+   }
 }
