@@ -70,6 +70,7 @@ public final class XSLFSlide extends XSLFSheet {
         SldDocument doc =
             SldDocument.Factory.parse(getPackagePart().getInputStream());
         _slide = doc.getSld();
+        setCommonSlideData(_slide.getCSld());
     }
 
 

@@ -43,6 +43,7 @@ public class XSLFSlideLayout extends XSLFSheet {
         SldLayoutDocument doc =
             SldLayoutDocument.Factory.parse(getPackagePart().getInputStream());
         _layout = doc.getSldLayout();
+        setCommonSlideData(_layout.getCSld());
     }
 
 

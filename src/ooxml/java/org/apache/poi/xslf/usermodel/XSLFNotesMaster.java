@@ -22,7 +22,9 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
+import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
 
 import java.io.IOException;
@@ -30,75 +32,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
-* Slide master object associated with this layout.
+* Notes master object associated with this layout.
 * <p>
-*  Within a slide master slide are contained all elements
+*  Within a notes master slide are contained all elements
 * that describe the objects and their corresponding formatting
 * for within a presentation slide.
 * </p>
 * <p>
-* Within a slide master slide are two main elements.
+* Within a nodes master slide are two main elements.
 * The cSld element specifies the common slide elements such as shapes and
-* their attached text bodies. Then the txStyles element specifies the
-* formatting for the text within each of these shapes. The other properties
-* within a slide master slide specify other properties for within a presentation slide
-* such as color information, headers and footers, as well as timing and
-* transition information for all corresponding presentation slides.
+* their attached text bodies. Then the notesStyles element specifies the
+* formatting for the text within each of these shapes.
 * </p>
  *
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFSlideMaster extends XSLFSheet {
-	private CTSlideMaster _slide;
+ public class XSLFNotesMaster extends XSLFSheet {
+	 private CTNotesMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
 
-    XSLFSlideMaster() {
+    XSLFNotesMaster() {
         super();
-        _slide = CTSlideMaster.Factory.newInstance();
+        _slide = CTNotesMaster.Factory.newInstance();
     }
 
-    protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+    protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
-        SldMasterDocument doc =
-            SldMasterDocument.Factory.parse(getPackagePart().getInputStream());
-        _slide = doc.getSldMaster();
+        NotesMasterDocument doc =
+            NotesMasterDocument.Factory.parse(getPackagePart().getInputStream());
+        _slide = doc.getNotesMaster();
         setCommonSlideData(_slide.getCSld());
     }
 
     @Override
-	public CTSlideMaster getXmlObject() {
-		return _slide;
-	}
+    public CTNotesMaster getXmlObject() {
+       return _slide;
+    }
 
     @Override
     protected String getRootElementName(){
-        return "sldMaster";
-    }
-
-    public XSLFSlideLayout getLayout(String name){
-        if(_layouts == null){
-            _layouts = new HashMap<String, XSLFSlideLayout>();
-            for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFSlideLayout){
-                    XSLFSlideLayout layout = (XSLFSlideLayout)p;
-                    _layouts.put(layout.getName().toLowerCase(), layout);
-                }
-            }
-        }
-        return _layouts.get(name);
-    }
-
-    public XSLFTheme getTheme(){
-        if(_theme == null){
-            for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFTheme){
-                    _theme = (XSLFTheme)p;
-                    break;
-                }
-            }
-        }
-        return _theme;
+        return "notesMaster";
     }
 }
