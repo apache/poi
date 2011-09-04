@@ -31,7 +31,7 @@ public final class XSLFNotes extends XSLFSheet {
    private CTNotesSlide _notes;
 
     /**
-     * Create a new slide
+     * Create a new notes
      */
     XSLFNotes() {
         super();
@@ -40,12 +40,12 @@ public final class XSLFNotes extends XSLFSheet {
     }
 
     /**
-     * Construct a SpreadsheetML drawing from a package part
+     * Construct a SpreadsheetML notes from a package part
      *
-     * @param part the package part holding the drawing data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
-     * @param rel  the package relationship holding this drawing,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+     * @param part the package part holding the notes data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.notes+xml</code>
+     * @param rel  the package relationship holding this notes,
+     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/notes
      */
     XSLFNotes(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);

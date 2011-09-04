@@ -108,7 +108,8 @@ public class XSLFRelation extends POIXMLRelation {
    public static final XSLFRelation COMMENTS = new XSLFRelation(
          "application/vnd.openxmlformats-officedocument.presentationml.comments+xml",
          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",
-         null, null
+         "/ppt/comments/comment#.xml",
+         XSLFComments.class
    );
    
     public static final XSLFRelation HYPERLINK = new XSLFRelation(
