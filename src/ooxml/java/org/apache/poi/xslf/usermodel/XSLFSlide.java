@@ -38,6 +38,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 public final class XSLFSlide extends XSLFSheet {
    private final CTSlide _slide;
    private XSLFSlideLayout _layout;
+   private XSLFComments _comments;
    private XSLFNotes _notes;
 
     /**
@@ -50,12 +51,12 @@ public final class XSLFSlide extends XSLFSheet {
     }
 
     /**
-     * Construct a SpreadsheetML drawing from a package part
+     * Construct a SpreadsheetML slide from a package part
      *
-     * @param part the package part holding the drawing data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
-     * @param rel  the package relationship holding this drawing,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+     * @param part the package part holding the slide data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.slide+xml</code>
+     * @param rel  the package relationship holding this slide,
+     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide
      */
     XSLFSlide(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
@@ -125,6 +126,22 @@ public final class XSLFSlide extends XSLFSheet {
         return _layout;
     }
     
+    public XSLFComments getComments() {
+       if(_comments == null) {
+          for (POIXMLDocumentPart p : getRelations()) {
+             if (p instanceof XSLFComments) {
+                _comments = (XSLFComments)p;
+             }
+          }
+       }
+       if(_comments == null) {
+          // This slide lacks comments
+          // Not all have them, sorry...
+          return null;
+       }
+       return _comments;
+    }
+
     public XSLFNotes getNotes() {
        if(_notes == null) {
           for (POIXMLDocumentPart p : getRelations()) {
