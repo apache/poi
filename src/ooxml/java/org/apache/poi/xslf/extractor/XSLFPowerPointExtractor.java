@@ -16,22 +16,21 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFComments;
 import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
+import org.apache.poi.xslf.usermodel.XSLFNotes;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-
-import java.io.IOException;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    public static final XSLFRelation[] SUPPORTED_TYPES = new XSLFRelation[] {
@@ -89,51 +88,50 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 		return getText(slidesByDefault, notesByDefault);
 	}
 	
-	/**
-	 * Gets the requested text from the file
-	 * @param slideText Should we retrieve text from slides?
-	 * @param notesText Should we retrieve text from notes?
-	 */
-	public String getText(boolean slideText, boolean notesText) {
-		StringBuffer text = new StringBuffer();
+   /**
+    * Gets the requested text from the file
+    * @param slideText Should we retrieve text from slides?
+    * @param notesText Should we retrieve text from notes?
+    */
+   public String getText(boolean slideText, boolean notesText) {
+      StringBuffer text = new StringBuffer();
 
-		XSLFSlide[] slides = slideshow.getSlides();
-        try {
-            XSLFSlideShow xsl = new XSLFSlideShow(slideshow.getPackage());
-            for (int i = 0; i < slides.length; i++) {
-                CTSlideIdListEntry slideId = slideshow.getCTPresentation().getSldIdLst().getSldIdArray(i);
+      XSLFSlide[] slides = slideshow.getSlides();
 
-                // For now, still very low level
-                CTNotesSlide notes =
-                        xsl.getNotes(slideId);
-                CTCommentList comments =
-                        xsl.getSlideComments(slideId);
+      for (XSLFSlide slide : slides) {
+         try {
+            XSLFNotes notes = slide.getNotes();
+            XSLFComments comments = slide.getComments();
 
-                if (slideText) {
-                    extractText(new XSLFCommonSlideData(slides[i].getXmlObject().getCSld()), text);
+            // TODO Do the slide's name
 
-                    // Comments too for the slide
-                    if (comments != null) {
-                        for (CTComment comment : comments.getCmList()) {
-                            // TODO - comment authors too
-                            // (They're in another stream)
-                            text.append(
-                                    comment.getText() + "\n"
-                            );
-                        }
-                    }
-                }
+            // Do the slide's text if requested
+            if (slideText) {
+               extractText(slide.getCommonSlideData(), text);
 
-                if (notesText && notes != null) {
-                    extractText(new XSLFCommonSlideData(notes.getCSld()), text);
-                }
+               // If the slide has comments, do those too
+               if (comments != null) {
+                  for (CTComment comment : comments.getCTCommentsList().getCmList()) {
+                     // TODO - comment authors too
+                     // (They're in another stream)
+                     text.append(
+                           comment.getText() + "\n"
+                     );
+                  }
+               }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
-        return text.toString();
-	}
+            // Do the notes if requested
+            if (notesText && notes != null) {
+               extractText(notes.getCommonSlideData(), text);
+            }
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
+      }
+
+      return text.toString();
+   }
 	
 	private void extractText(XSLFCommonSlideData data, StringBuffer text) {
         for (DrawingParagraph p : data.getText()) {
