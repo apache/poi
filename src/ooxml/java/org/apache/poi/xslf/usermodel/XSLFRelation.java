@@ -73,7 +73,8 @@ public class XSLFRelation extends POIXMLRelation {
    public static final XSLFRelation NOTES = new XSLFRelation(
            "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml",
            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide", 
-           null, null
+           "/ppt/notesSlides/notesSlide#.xml",
+           XSLFNotes.class
    );
    
    public static final XSLFRelation SLIDE = new XSLFRelation(

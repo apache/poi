@@ -83,12 +83,11 @@ public class TestXMLSlideShow extends TestCase {
 
       // Now get those objects
       assertNotNull(xml.getSlides()[0]);
-      assertNotNull(xml.getSlides()[0]);
+      assertNotNull(xml.getSlides()[1]);
 
       // And check they have notes as expected
-      // TODO
-//    assertNotNull(xml.getNotes(slides[0]));
-//    assertNotNull(xml.getNotes(slides[1]));
+      assertNotNull(xml.getSlides()[0].getNotes());
+      assertNotNull(xml.getSlides()[1].getNotes());
 
       // Next up look for the slide master
       CTSlideMasterIdListEntry[] masters = new CTSlideMasterIdListEntry[
@@ -103,8 +102,9 @@ public class TestXMLSlideShow extends TestCase {
       CTNotesMasterIdListEntry notesMaster =
          xml.getCTPresentation().getNotesMasterIdLst().getNotesMasterId();
       assertNotNull(notesMaster);
-      // TODO Get the wrapper
-	}
+
+      assertNotNull(xml.getNotesMaster());
+   }
 	
    public void testMetadataBasics() throws Exception {
       XMLSlideShow xml = new XMLSlideShow(pack);
