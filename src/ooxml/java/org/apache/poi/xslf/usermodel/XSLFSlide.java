@@ -16,14 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
@@ -35,18 +33,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayoutIdListEntry;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.regex.Pattern;
 
 @Beta
 public final class XSLFSlide extends XSLFSheet {
-	private final CTSlide _slide;
-    private XSLFSlideLayout _layout;
+   private final CTSlide _slide;
+   private XSLFSlideLayout _layout;
+   private XSLFNotes _notes;
 
     /**
      * Create a new slide
@@ -54,6 +46,7 @@ public final class XSLFSlide extends XSLFSheet {
     XSLFSlide() {
         super();
         _slide = prototype();
+        setCommonSlideData(_slide.getCSld());
     }
 
     /**
@@ -130,6 +123,22 @@ public final class XSLFSlide extends XSLFSheet {
             throw new IllegalArgumentException("SlideLayout was not found for " + this.toString());
         }
         return _layout;
+    }
+    
+    public XSLFNotes getNotes() {
+       if(_notes == null) {
+          for (POIXMLDocumentPart p : getRelations()) {
+             if (p instanceof XSLFNotes){
+                _notes = (XSLFNotes)p;
+             }
+          }
+       }
+       if(_notes == null) {
+          // This slide lacks notes
+          // Not al have them, sorry...
+          return null;
+       }
+       return _notes;
     }
 
     public void setFollowMasterBackground(boolean value){

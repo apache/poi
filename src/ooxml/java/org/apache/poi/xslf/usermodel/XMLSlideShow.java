@@ -16,33 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.xslf.XSLFSlideShow;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.PackageHelper;
-import org.apache.poi.util.Units;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
-import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
-
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,6 +27,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.Units;
+import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
+import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
+
 /**
  * High level representation of a ooxml slideshow.
  * This is the first object most users will construct whether
@@ -61,12 +59,12 @@ import java.util.regex.Pattern;
  */
 @Beta
 public class XMLSlideShow  extends POIXMLDocument {
-
     private static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
 
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;
     private Map<String, XSLFSlideMaster> _masters;
+    private XSLFNotesMaster _notesMaster;
     protected List<XSLFPictureData> _pictures;
 
     public XMLSlideShow() {
@@ -122,9 +120,11 @@ public class XMLSlideShow  extends POIXMLDocument {
             for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlide) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSLFSlide) p);
-                } else if (p instanceof XSLFSlideMaster){
+                } else if (p instanceof XSLFSlideMaster) {
                     XSLFSlideMaster master = (XSLFSlideMaster)p;
                     _masters.put(p.getPackageRelationship().getId(), master);
+                } else if (p instanceof XSLFNotesMaster) {
+                    _notesMaster = (XSLFNotesMaster)p;
                 }
             }
 
@@ -217,6 +217,10 @@ public class XMLSlideShow  extends POIXMLDocument {
 
         _slides.add(slide);
         return slide;
+    }
+    
+    public XSLFNotesMaster getNotesMaster() {
+        return _notesMaster; 
     }
 
     public XSLFSlideMaster[] getSlideMasters() {
