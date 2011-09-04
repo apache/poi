@@ -65,6 +65,7 @@ public class XMLSlideShow  extends POIXMLDocument {
     private List<XSLFSlide> _slides;
     private Map<String, XSLFSlideMaster> _masters;
     private XSLFNotesMaster _notesMaster;
+    private XSLFCommentAuthors _commentAuthors;
     protected List<XSLFPictureData> _pictures;
 
     public XMLSlideShow() {
@@ -125,6 +126,8 @@ public class XMLSlideShow  extends POIXMLDocument {
                     _masters.put(p.getPackageRelationship().getId(), master);
                 } else if (p instanceof XSLFNotesMaster) {
                     _notesMaster = (XSLFNotesMaster)p;
+                } else if (p instanceof XSLFCommentAuthors) {
+                    _commentAuthors = (XSLFCommentAuthors)p;
                 }
             }
 
@@ -219,6 +222,10 @@ public class XMLSlideShow  extends POIXMLDocument {
         return slide;
     }
     
+    /**
+     * Return the Notes Master, if there is one.
+     * (May not be present if no notes exist)  
+     */
     public XSLFNotesMaster getNotesMaster() {
         return _notesMaster; 
     }
@@ -232,6 +239,14 @@ public class XMLSlideShow  extends POIXMLDocument {
      */
     public XSLFSlide[] getSlides() {
         return _slides.toArray(new XSLFSlide[_slides.size()]);
+    }
+    
+    /**
+     * Returns the list of comment authors, if there is one.
+     * Will only be present if at least one slide has comments on it.
+     */
+    public XSLFCommentAuthors getCommentAuthors() {
+        return _commentAuthors;
     }
 
     /**

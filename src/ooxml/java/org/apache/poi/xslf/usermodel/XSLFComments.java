@@ -24,6 +24,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CmLstDocument;
 
@@ -58,5 +59,13 @@ public class XSLFComments extends POIXMLDocumentPart {
     
     public CTCommentList getCTCommentsList() {
        return _comments;
+    }
+    
+    public int getNumberOfComments() {
+       return _comments.sizeOfCmArray();
+    }
+    
+    public CTComment getCommentAt(int pos) {
+       return _comments.getCmList().get(pos);
     }
 }
