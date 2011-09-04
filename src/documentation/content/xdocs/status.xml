@@ -34,6 +34,9 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">XSLFPowerPointExtractor support for including comment authors with comment text</action>
+           <action dev="poi-developers" type="fix">Converted XSLFPowerPointExtractor to use UserModel for all text extraction</action>
+           <action dev="poi-developers" type="add">XSLF initial UserModel support for Notes and Comments for Slides</action>
         </release>
         <release version="3.8-beta4" date="2011-08-26">
            <action dev="poi-developers" type="fix">51678 - Extracting text from Bug51524.zip is slow</action>

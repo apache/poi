@@ -24,6 +24,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFCommentAuthors;
 import org.apache.poi.xslf.usermodel.XSLFComments;
 import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
@@ -31,6 +32,7 @@ import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    public static final XSLFRelation[] SUPPORTED_TYPES = new XSLFRelation[] {
@@ -97,6 +99,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
       StringBuffer text = new StringBuffer();
 
       XSLFSlide[] slides = slideshow.getSlides();
+      XSLFCommentAuthors commentAuthors = slideshow.getCommentAuthors();
 
       for (XSLFSlide slide : slides) {
          try {
@@ -112,11 +115,17 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
                // If the slide has comments, do those too
                if (comments != null) {
                   for (CTComment comment : comments.getCTCommentsList().getCmList()) {
-                     // TODO - comment authors too
-                     // (They're in another stream)
-                     text.append(
-                           comment.getText() + "\n"
-                     );
+                     // Do the author if we can
+                     if (commentAuthors != null) {
+                        CTCommentAuthor author = commentAuthors.getAuthorById(comment.getAuthorId());
+                        if(author != null) {
+                           text.append(author.getName() + ": ");
+                        }
+                     }
+                     
+                     // Then the comment text, with a new line afterwards
+                     text.append(comment.getText());
+                     text.append("\n");
                   }
                }
             }

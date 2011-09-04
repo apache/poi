@@ -112,6 +112,10 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 		
 		// Check comments are there
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		
+		// Check the authors came through too
+      assertTrue("Unable to find expected word in text\n" + text, text.contains("XPVMWARE01"));
 	}
 
     public void testTable() throws Exception {
