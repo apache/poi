@@ -24,11 +24,13 @@ import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -41,11 +43,12 @@ import java.util.regex.Pattern;
 
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart {
+    private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
     private CTGroupShape _spTree;
 
-    public XSLFSheet(){
+    public XSLFSheet() {
         super();
     }
 
@@ -53,9 +56,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         super(part, rel);
     }
 
-	public XMLSlideShow getSlideShow() {
-		return (XMLSlideShow)getParent();
-	}
+    public XMLSlideShow getSlideShow() {
+       return (XMLSlideShow)getParent();
+    }
 
     protected List<XSLFShape> buildShapes(CTGroupShape spTree){
         List<XSLFShape> shapes = new ArrayList<XSLFShape>();
@@ -79,6 +82,16 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
 
     public abstract XmlObject getXmlObject();
 
+    public XSLFCommonSlideData getCommonSlideData() {
+       return _commonSlideData;
+    }
+    protected void setCommonSlideData(CTCommonSlideData data) {
+       if(data == null) {
+          _commonSlideData = null;
+       } else {
+          _commonSlideData = new XSLFCommonSlideData(data);
+       }
+    }
 
     private XSLFDrawing getDrawing(){
         if(_drawing == null) {

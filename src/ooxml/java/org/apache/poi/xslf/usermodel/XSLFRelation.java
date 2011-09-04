@@ -90,12 +90,19 @@ public class XSLFRelation extends POIXMLRelation {
          XSLFSlideLayout.class
    );
    
-    public static final XSLFRelation SLIDE_MASTER = new XSLFRelation(
-          "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml",
-          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster",
-          "/ppt/slideMasters/slideMaster#.xml",
-          XSLFSlideMaster.class
-    );
+   public static final XSLFRelation SLIDE_MASTER = new XSLFRelation(
+         "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml",
+         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster",
+         "/ppt/slideMasters/slideMaster#.xml",
+         XSLFSlideMaster.class
+   );
+
+   public static final XSLFRelation NOTES_MASTER = new XSLFRelation(
+         "application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml",
+         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesMaster",
+         "/ppt/notesMasters/notesMaster#.xml",
+         XSLFNotesMaster.class
+   );
 
    public static final XSLFRelation COMMENTS = new XSLFRelation(
          "application/vnd.openxmlformats-officedocument.presentationml.comments+xml",
