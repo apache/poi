@@ -102,7 +102,8 @@ public final class TestEscherBlipWMFRecord extends TestCase {
 
         assertEquals( "org.apache.poi.ddf.EscherBlipWMFRecord:" + nl +
                 "  RecordId: 0xF018" + nl +
-                "  Options: 0x152C" + nl +
+                "  Version: 0x000C" + nl +
+                "  Instance: 0x0152" + nl +
                 "  Secondary UID: [01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01]" + nl +
                 "  CacheOfSize: 6" + nl +
                 "  BoundaryTop: 3" + nl +
