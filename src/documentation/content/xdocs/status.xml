@@ -989,7 +989,7 @@
             <action dev="POI-DEVELOPERS" type="fix" context="All">Fix supplied for bug 24397 where some compilation got ambiguous classes.  Explicitly imports the classes.  Patch supplied by Jean-Pierre Paris.</action>
         </release>
 
-        <release verion="2.0-RC1" date="2003-11-02">
+        <release version="2.0-RC1" date="2003-11-02">
             <action dev="POI-DEVELOPERS" type="fix" context="All">12561 (Min)	HSSFWorkbook throws Exceptions</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">12730 (Nor)	values dont get copied to another sheet.</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">13224 (Maj)	Exception thrown when cell has =Names call</action>
