@@ -63,7 +63,8 @@ public final class TestEscherChildAnchorRecord extends TestCase {
 
         String expected = "org.apache.poi.ddf.EscherChildAnchorRecord:" + nl +
                 "  RecordId: 0xF00F" + nl +
-                "  Options: 0x0001" + nl +
+                "  Version: 0x0001" + nl +
+                "  Instance: 0x0000" + nl +
                 "  X1: 1" + nl +
                 "  Y1: 2" + nl +
                 "  X2: 3" + nl +

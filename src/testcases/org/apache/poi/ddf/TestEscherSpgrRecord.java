@@ -61,7 +61,8 @@ public final class TestEscherSpgrRecord extends TestCase {
 
         String expected = "org.apache.poi.ddf.EscherSpgrRecord:" + '\n' +
                 "  RecordId: 0xF009" + '\n' +
-                "  Options: 0x0010" + '\n' +
+                "  Version: 0x0000" + '\n' +
+                "  Instance: 0x0001" + '\n' +
                 "  RectX: 1" + '\n' +
                 "  RectY: 2" + '\n' +
                 "  RectWidth: 3" + '\n' +

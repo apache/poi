@@ -146,7 +146,8 @@ public final class TestUnknownEscherRecord extends TestCase {
 
         assertEquals( "org.apache.poi.ddf.UnknownEscherRecord:" + '\n' +
                 "  isContainer: false" + '\n' +
-                "  options: 0x1234" + '\n' +
+                "  version: 0x0004" + '\n' +
+                "  instance: 0x0123" + '\n' +
                 "  recordId: 0xF112" + '\n' +
                 "  numchildren: 0" + '\n' +
                 ": 0"
