@@ -26,20 +26,47 @@ package org.apache.poi.ddf;
  */
 public class EscherOptRecord extends AbstractEscherOptRecord
 {
-    public static final short RECORD_ID = (short) 0xF00B;
     public static final String RECORD_DESCRIPTION = "msofbtOPT";
+    public static final short RECORD_ID = (short) 0xF00B;
+
+    @Override
+    public short getInstance()
+    {
+        setInstance( (short) properties.size() );
+        return super.getInstance();
+    }
 
     /**
      * Automatically recalculate the correct option
      */
+    @Deprecated
     public short getOptions()
     {
-        setOptions( (short) ( ( properties.size() << 4 ) | 0x3 ) );
+        // update values
+        getInstance();
+        getVersion();
         return super.getOptions();
     }
 
     public String getRecordName()
     {
         return "Opt";
+    }
+
+    @Override
+    public short getVersion()
+    {
+        setVersion( (short) 0x3 );
+        return super.getVersion();
+    }
+
+    @Override
+    public void setVersion( short value )
+    {
+        if ( value != 0x3 )
+            throw new IllegalArgumentException( RECORD_DESCRIPTION
+                    + " can have only '0x3' version" );
+
+        super.setVersion( value );
     }
 }

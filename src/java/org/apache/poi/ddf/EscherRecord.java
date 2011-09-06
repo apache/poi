@@ -77,11 +77,24 @@ public abstract class EscherRecord {
      * @return          the number of bytes remaining in this record.  This
      *                  may include the children if this is a container.
      */
-    protected int readHeader( byte[] data, int offset ) {
-        EscherRecordHeader header = EscherRecordHeader.readHeader(data, offset);
-        _options = header.getOptions();
-        _recordId = header.getRecordId();
-        return header.getRemainingBytes();
+    protected int readHeader( byte[] data, int offset )
+    {
+        _options = LittleEndian.getShort( data, offset );
+        _recordId = LittleEndian.getShort( data, offset + 2 );
+        int remainingBytes = LittleEndian.getInt( data, offset + 4 );
+        return remainingBytes;
+    }
+
+    /**
+     * Read the options field from header and return instance part of it.
+     * @param data      the byte array to read from
+     * @param offset    the offset to start reading from
+     * @return          value of instance part of options field
+     */
+    protected static short readInstance( byte data[], int offset )
+    {
+        final short options = LittleEndian.getShort( data, offset );
+        return fInstance.getShortValue( options );
     }
 
     /**
@@ -112,6 +125,9 @@ public abstract class EscherRecord {
      */
     @Deprecated
     public void setOptions( short options ) {
+        // call to handle correct/incorrect values
+        setVersion( fVersion.getShortValue( options ) );
+        setInstance( fInstance.getShortValue( options ) );
         _options = options;
     }
 
@@ -252,7 +268,7 @@ public abstract class EscherRecord {
      */
     public void setInstance( short value )
     {
-        fInstance.setShortValue( _options, value );
+        _options = fInstance.setShortValue( _options, value );
     }
 
     /**
@@ -273,64 +289,6 @@ public abstract class EscherRecord {
      */
     public void setVersion( short value )
     {
-        fVersion.setShortValue( _options, value );
-    }
-
-    /**
-     * This class reads the standard escher header.
-     */
-    static class EscherRecordHeader
-    {
-        private short options;
-        private short recordId;
-        private int remainingBytes;
-
-        private EscherRecordHeader() {
-            // fields uninitialised
-        }
-
-        public static EscherRecordHeader readHeader( byte[] data, int offset )
-        {
-            EscherRecordHeader header = new EscherRecordHeader();
-            header.options = LittleEndian.getShort(data, offset);
-            header.recordId = LittleEndian.getShort(data, offset + 2);
-            header.remainingBytes = LittleEndian.getInt( data, offset + 4 );
-            return header;
-        }
-
-        public byte getVersion()
-        {
-            return (byte) fVersion.getShortValue( options );
-        }
-
-        public short getInstance()
-        {
-            return fInstance.getShortValue( options );
-        }
-
-        public short getOptions()
-        {
-            return options;
-        }
-
-        public short getRecordId()
-        {
-            return recordId;
-        }
-
-        public int getRemainingBytes()
-        {
-            return remainingBytes;
-        }
-
-        public String toString()
-        {
-            return "EscherRecordHeader{" +
-                    "ver=" + getVersion() +
-                    "instance=" + getInstance() +
-                    ", recordId=" + recordId +
-                    ", remainingBytes=" + remainingBytes +
-                    "}";
-        }
+        _options = fVersion.setShortValue( _options, value );
     }
 }
