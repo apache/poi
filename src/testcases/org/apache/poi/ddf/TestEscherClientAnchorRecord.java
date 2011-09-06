@@ -70,7 +70,8 @@ public class TestEscherClientAnchorRecord extends TestCase
 
         String expected = "org.apache.poi.ddf.EscherClientAnchorRecord:" + nl +
                 "  RecordId: 0xF010" + nl +
-                "  Options: 0x0001" + nl +
+                "  Version: 0x0001" + nl +
+                "  Instance: 0x0000" + nl +
                 "  Flag: 77" + nl +
                 "  Col1: 55" + nl +
                 "  DX1: 33" + nl +

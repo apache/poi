@@ -65,7 +65,8 @@ public final class TestEscherDggRecord extends TestCase {
     public void testToString() {
         String expected = "org.apache.poi.ddf.EscherDggRecord:" + '\n' +
                 "  RecordId: 0xF006" + '\n' +
-                "  Options: 0x0000" + '\n' +
+                "  Version: 0x0000" + '\n' +
+                "  Instance: 0x0000" + '\n' +
                 "  ShapeIdMax: 1026" + '\n' +
                 "  NumIdClusters: 2" + '\n' +
                 "  NumShapesSaved: 2" + '\n' +

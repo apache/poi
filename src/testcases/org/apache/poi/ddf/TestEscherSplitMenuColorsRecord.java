@@ -60,7 +60,8 @@ public final class TestEscherSplitMenuColorsRecord extends TestCase {
     public void testToString() {
         String expected = "org.apache.poi.ddf.EscherSplitMenuColorsRecord:" + '\n' +
                 "  RecordId: 0xF11E" + '\n' +
-                "  Options: 0x0040" + '\n' +
+                "  Version: 0x0000" + '\n' +
+                "  Instance: 0x0004" + '\n' +
                 "  Color1: 0x00000402" + '\n' +
                 "  Color2: 0x00000002" + '\n' +
                 "  Color3: 0x00000002" + '\n' +
