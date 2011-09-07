@@ -412,13 +412,18 @@ public final class ParagraphSprmUncompressor
             // sprmPFInnerTtp -- 0x244c
             newPAP.setFTtpEmbedded( sprm.getOperand()  != 0);
             break;
+        case 0x60:
+            // sprmPDxaLeft1 -- 0x8460
+            newPAP.setDxaLeft1( sprm.getOperand() );
+            break;
       case 0x61:
         // sprmPJc 
         newPAP.setJustificationLogical((byte) sprm.getOperand());
         break;
-      default:
-        break;
-    }
+        default:
+            logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: " + sprm );
+            break;
+        }
   }
 
   private static void handleTabs(ParagraphProperties pap, SprmOperation sprm)
