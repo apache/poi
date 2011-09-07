@@ -92,12 +92,8 @@ public class PAPBinTable
                         documentStream, dataStream, pageOffset,
                         charIndexTranslator );
 
-                int fkpSize = pfkp.size();
-
-                for ( int y = 0; y < fkpSize; y++ )
+                for ( PAPX papx : pfkp.getPAPXs() )
                 {
-                    PAPX papx = pfkp.getPAPX( y );
-
                     if ( papx != null )
                         _paragraphs.add( papx );
                 }
@@ -107,6 +103,12 @@ public class PAPBinTable
         logger.log( POILogger.DEBUG, "PAPX tables loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _paragraphs.size() ), " elements)" );
+
+        if ( _paragraphs.isEmpty() )
+        {
+            logger.log( POILogger.WARN, "PAPX FKPs are empty" );
+            _paragraphs.add( new PAPX( 0, 0, new SprmBuffer( 2 ) ) );
+        }
     }
 
     public void rebuild( final StringBuilder docText,

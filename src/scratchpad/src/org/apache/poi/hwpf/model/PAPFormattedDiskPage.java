@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -88,12 +90,20 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
             int bytesStartAt = getStart( x );
             int bytesEndAt = getEnd( x );
 
-            int charStartAt = translator.getCharIndex( bytesStartAt );
-            int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt );
+            // int charStartAt = translator.getCharIndex( bytesStartAt );
+            // int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt
+            // );
+            // PAPX papx = new PAPX( charStartAt, charEndAt, getGrpprl( x ),
+            // getParagraphHeight( x ), dataStream );
+            // _papxList.add( papx );
 
-            PAPX papx = new PAPX( charStartAt, charEndAt, getGrpprl( x ),
-                    getParagraphHeight( x ), dataStream );
-            _papxList.add( papx );
+            for ( int[] range : translator.getCharIndexRanges( bytesStartAt,
+                    bytesEndAt ) )
+            {
+                PAPX papx = new PAPX( range[0], range[1], getGrpprl( x ),
+                        getParagraphHeight( x ), dataStream );
+                _papxList.add( papx );
+            }
         }
         _fkp = null;
     }

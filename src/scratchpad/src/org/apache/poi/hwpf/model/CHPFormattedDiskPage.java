@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
@@ -82,21 +83,28 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
             int bytesStartAt = getStart( x );
             int bytesEndAt = getEnd( x );
 
-            int charStartAt = translator.getCharIndex( bytesStartAt );
-            int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt );
+            // int charStartAt = translator.getCharIndex( bytesStartAt );
+            // int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt
+            // );
 
-            // TODO: CHECK!
-            // CHPX chpx = new CHPX( bytesStartAt, bytesEndAt, tpt, getGrpprl( x
-            // ) );
-            CHPX chpx = new CHPX( charStartAt, charEndAt, new SprmBuffer(
-                    getGrpprl( x ), 0 ) );
-            _chpxList.add( chpx );
+            for ( int[] range : translator.getCharIndexRanges( bytesStartAt,
+                    bytesEndAt ) )
+            {
+                CHPX chpx = new CHPX( range[0], range[1], new SprmBuffer(
+                        getGrpprl( x ), 0 ) );
+                _chpxList.add( chpx );
+            }
         }
     }
 
     public CHPX getCHPX(int index)
     {
       return _chpxList.get(index);
+    }
+
+    public List<CHPX> getCHPXs()
+    {
+        return Collections.unmodifiableList( _chpxList );
     }
 
     public void fill(List<CHPX> filler)
