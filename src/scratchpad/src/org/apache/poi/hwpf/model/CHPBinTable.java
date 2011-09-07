@@ -101,18 +101,21 @@ public class CHPBinTable
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
         pageOffset, translator);
 
-      int fkpSize = cfkp.size();
-
-      for (int y = 0; y < fkpSize; y++)
-      {
-        final CHPX chpx = cfkp.getCHPX(y);
-        if (chpx != null)
-            _textRuns.add(chpx);
-      }
+            for ( CHPX chpx : cfkp.getCHPXs() )
+            {
+                if ( chpx != null )
+                    _textRuns.add( chpx );
+            }
     }
         logger.log( POILogger.DEBUG, "CHPX FKPs loaded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( _textRuns.size() ), " elements)" );
+
+        if ( _textRuns.isEmpty() )
+        {
+            logger.log( POILogger.WARN, "CHPX FKPs are empty" );
+            _textRuns.add( new CHPX( 0, 0, new SprmBuffer( 0 ) ) );
+        }
     }
 
     public void rebuild( ComplexFileTable complexFileTable )

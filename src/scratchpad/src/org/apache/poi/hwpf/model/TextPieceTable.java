@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -107,8 +108,10 @@ public class TextPieceTable implements CharIndexTranslator
             System.arraycopy( documentStream, start, buf, 0, textSizeBytes );
 
             // And now build the piece
-            _textPieces.add( new TextPiece( nodeStartChars, nodeEndChars, buf,
-                    pieces[x] ) );
+            final TextPiece newTextPiece = new TextPiece( nodeStartChars, nodeEndChars, buf,
+                    pieces[x] );
+
+            _textPieces.add( newTextPiece );
         }
 
         // In the interest of our sanity, now sort the text pieces
@@ -201,11 +204,13 @@ public class TextPieceTable implements CharIndexTranslator
         return byteCount;
     }
 
+    @Deprecated
     public int getCharIndex( int bytePos )
     {
         return getCharIndex( bytePos, 0 );
     }
 
+    @Deprecated
     public int getCharIndex( int startBytePos, int startCP )
     {
         int charCount = 0;
@@ -251,6 +256,42 @@ public class TextPieceTable implements CharIndexTranslator
         }
 
         return charCount;
+    }
+
+    public int[][] getCharIndexRanges( int startBytePosInclusive,
+            int endBytePosExclusive )
+    {
+        List<int[]> result = new LinkedList<int[]>();
+        for ( TextPiece textPiece : _textPiecesFCOrder )
+        {
+            final int tpStart = textPiece.getPieceDescriptor()
+                    .getFilePosition();
+            final int tpEnd = textPiece.getPieceDescriptor().getFilePosition()
+                    + textPiece.bytesLength();
+            if ( startBytePosInclusive > tpEnd )
+                continue;
+            if ( endBytePosExclusive < tpStart )
+                break;
+
+            final int rangeStartBytes = Math.max( tpStart,
+                    startBytePosInclusive );
+            final int rangeEndBytes = Math.min( tpEnd, endBytePosExclusive );
+            final int rangeLengthBytes = rangeEndBytes - rangeStartBytes;
+
+            if ( rangeStartBytes > rangeEndBytes )
+                continue;
+
+            final int encodingMultiplier = textPiece.isUnicode() ? 2 : 1;
+
+            final int rangeStartCp = textPiece.getStart()
+                    + ( rangeStartBytes - tpStart ) / encodingMultiplier;
+            final int rangeEndCp = rangeStartCp + rangeLengthBytes
+                    / encodingMultiplier;
+
+            result.add( new int[] { rangeStartCp, rangeEndCp } );
+        }
+
+        return result.toArray( new int[result.size()][] );
     }
 
     public int getCpMin()
@@ -377,24 +418,42 @@ public class TextPieceTable implements CharIndexTranslator
 
     public int lookIndexForward( final int startBytePos )
     {
-        int bytePos = startBytePos;
-        for ( TextPiece tp : _textPiecesFCOrder )
+        if ( _textPiecesFCOrder.isEmpty() )
+            throw new IllegalStateException( "Text pieces table is empty" );
+
+        if ( _textPiecesFCOrder.get( 0 ).getPieceDescriptor().getFilePosition() > startBytePos )
+            return _textPiecesFCOrder.get( 0 ).getPieceDescriptor().getFilePosition();
+
+        if ( _textPiecesFCOrder.get( _textPiecesFCOrder.size() - 1 )
+                .getPieceDescriptor().getFilePosition() <= startBytePos )
+            return startBytePos;
+
+        int low = 0;
+        int high = _textPiecesFCOrder.size() - 1;
+
+        while ( low <= high )
         {
-            int pieceStart = tp.getPieceDescriptor().getFilePosition();
+            int mid = ( low + high ) >>> 1;
+            final TextPiece textPiece = _textPiecesFCOrder.get( mid );
+            int midVal = textPiece.getPieceDescriptor().getFilePosition();
 
-            if ( bytePos >= pieceStart + tp.bytesLength() )
-            {
-                continue;
-            }
-
-            if ( pieceStart > bytePos )
-            {
-                bytePos = pieceStart;
-            }
-
-            break;
+            if ( midVal < startBytePos )
+                low = mid + 1;
+            else if ( midVal > startBytePos )
+                high = mid - 1;
+            else
+                // found piece with exact start
+                return textPiece.getPieceDescriptor().getFilePosition();
         }
-        return bytePos;
+        assert low == high;
+        assert _textPiecesFCOrder.get( low ).getPieceDescriptor()
+                .getFilePosition() < startBytePos;
+        // last line can't be current, can it?
+        assert _textPiecesFCOrder.get( low + 1 ).getPieceDescriptor()
+                .getFilePosition() > startBytePos;
+
+        // shifting to next piece start
+        return _textPiecesFCOrder.get( low + 1 ).getPieceDescriptor().getFilePosition();
     }
 
     public byte[] writeTo( HWPFOutputStream docStream ) throws IOException

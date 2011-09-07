@@ -227,6 +227,36 @@ public class TestBugs extends TestCase
     }
 
     /**
+     * Bug 44331 - HWPFDocument.write destroys fields
+     */
+    public void test44431_2()
+    {
+        HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile( "Bug44431.doc" );
+        WordExtractor extractor1 = new WordExtractor( doc1 );
+
+        assertEquals( "File name=FieldsTest.doc\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"STYLEREF test\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"TEST TABLE OF CONTENTS\n" + 
+        		"\n" + 
+        		"Heading paragraph in next page\t2\n" + 
+        		"Another heading paragraph in further page\t3\n" + 
+        		"Another heading paragraph in further page\t3\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"Heading paragraph in next page\n" + 
+        		"Another heading paragraph in further page\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"\n" + 
+        		"Page 3 of 3", extractor1.getText() );
+    }
+
+    /**
      * Bug 45473 - HWPF cannot read file after save
      */
     public void test45473()
@@ -640,19 +670,20 @@ public class TestBugs extends TestCase
         hwpfDocument.write( new ByteArrayOutputStream() );
     }
 
-
-
     /**
-     * Bug 51678 - Extracting text from Bug51524.zip is slow
-     * Bug 51524 - PapBinTable constructor is slow
+     * Bug 51678 - Extracting text from Bug51524.zip is slow Bug 51524 -
+     * PapBinTable constructor is slow
      */
     public void test51678And51524()
     {
-        // YK: the test will run only if the poi.test.remote system property is set.
+        // YK: the test will run only if the poi.test.remote system property is
+        // set.
         // TODO: refactor into something nicer!
-        if(System.getProperty("poi.test.remote") != null) {
+        if ( System.getProperty( "poi.test.remote" ) != null )
+        {
             String href = "http://domex.nps.edu/corp/files/govdocs1/007/007488.doc";
-            HWPFDocument hwpfDocument = HWPFTestDataSamples.openRemoteFile( href );
+            HWPFDocument hwpfDocument = HWPFTestDataSamples
+                    .openRemoteFile( href );
 
             WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
             wordExtractor.getText();
