@@ -129,10 +129,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
     public static void addIndent( Paragraph paragraph, StringBuilder style )
     {
         addIndent( style, "text-indent", paragraph.getFirstLineIndent() );
-        addIndent( style, "start-indent", paragraph.getIndentFromLeft() );
-        addIndent( style, "end-indent", paragraph.getIndentFromRight() );
-        addIndent( style, "space-before", paragraph.getSpacingBefore() );
-        addIndent( style, "space-after", paragraph.getSpacingAfter() );
+
+        addIndent( style, "margin-left", paragraph.getIndentFromLeft() );
+        addIndent( style, "margin-right", paragraph.getIndentFromRight() );
+
+        addIndent( style, "margin-top", paragraph.getSpacingBefore() );
+        addIndent( style, "margin-bottom", paragraph.getSpacingAfter() );
     }
 
     private static void addIndent( StringBuilder style, final String cssName,
