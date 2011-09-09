@@ -1063,4 +1063,25 @@ public final class TestXSSFSheet extends BaseTestSheet {
        XSSFSheet s3 = wb.getSheetAt(2);
        assertEquals(0, s3.getTables().size());
     }
+    
+    /**
+     * Test to trigger OOXML-LITE generating to include org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr
+     */
+    public void testSetForceFormulaRecalculation() {
+    	   XSSFWorkbook workbook = new XSSFWorkbook();
+         XSSFSheet sheet = workbook.createSheet("Sheet 1");
+
+         // Set
+         sheet.setForceFormulaRecalculation(true);
+         assertEquals(true, sheet.getForceFormulaRecalculation());
+         
+         // Check
+         sheet.setForceFormulaRecalculation(false);
+         assertEquals(false, sheet.getForceFormulaRecalculation());
+         
+         // Save, re-load, and re-check
+         workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+         sheet = workbook.getSheet("Sheet 1");
+         assertEquals(false, sheet.getForceFormulaRecalculation());
+	}
 }
