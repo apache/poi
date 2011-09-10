@@ -37,6 +37,6 @@ public class TestXSLFTableStyles extends TestCase {
         XSLFTableStyles tblStyles = ppt.getTableStyles();
         assertNotNull(tblStyles);
 
-        assertEquals(10, tblStyles.getStyles().size());
+        assertEquals(0, tblStyles.getStyles().size());
     }
 }
