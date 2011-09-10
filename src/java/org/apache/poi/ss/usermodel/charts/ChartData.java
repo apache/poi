@@ -18,19 +18,21 @@
 package org.apache.poi.ss.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.util.Beta;
 
 /**
- * A base for all chart data types.
+ * A base for all charts data types.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ChartData {
 
 	/**
-	 * Fills a chart with data specified by implementation.
+	 * Fills a charts with data specified by implementation.
 	 *
-	 * @param chart a chart to fill in
-	 * @param axis chart axis to use
+	 * @param chart a charts to fill in
+	 * @param axis charts axis to use
 	 */
 	void fillChart(Chart chart, ChartAxis... axis);
 }

@@ -17,9 +17,12 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Beta;
+
 /**
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ValueAxis extends ChartAxis {
 
 	/**

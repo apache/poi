@@ -17,23 +17,24 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.DataMarker;
-import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
+import org.apache.poi.util.Beta;
 
 /**
+ * Represents scatter charts serie.
+ *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ScatterChartSerie {
 
-	/**
-	 * @param xMarker data marker to use for X values.
-	 */
-	void setXValues(DataMarker xMarker);
+    /**
+     * @return data source used for X axis values
+     */
+    ChartDataSource<?> getXValues();
 
-	/**'
-	 * @param yMarker data marker to use for Y values.
-	 */
-	void setYValues(DataMarker yMarker);
+    /**
+     * @return data source used for Y axis values
+     */
+    ChartDataSource<? extends Number> getYValues();
 
 }

@@ -40,7 +40,7 @@ public final class TestXSSFChartSheet extends TestCase {
         XSSFChartSheet sheet = (XSSFChartSheet)wb.getSheetAt(2);
 
         for(Row row : sheet) {
-            fail("Row iterator for chart sheets should return zero rows");
+            fail("Row iterator for charts sheets should return zero rows");
         }
         //access to a arbitrary row
         assertEquals(null, sheet.getRow(1));

@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
@@ -38,6 +39,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public abstract class XSSFChartAxis implements ChartAxis {
 
 	protected XSSFChart chart;

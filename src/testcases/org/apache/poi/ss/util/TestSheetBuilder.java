@@ -29,49 +29,56 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Tests SheetBuilder.
+ *
  * @see org.apache.poi.ss.util.SheetBuilder
  */
 public final class TestSheetBuilder extends TestCase {
-    
-    private static Object[][] testData = new Object[][] {
-	{         1,     2,        3},
-	{new Date(),  null,     null},
-	{     "one", "two", "=A1+B2"}
+
+    private static Object[][] testData = new Object[][]{
+            {1, 2, 3},
+            {new Date(), null, null},
+            {"one", "two", "=A1+B2"}
     };
 
     public void testNotCreateEmptyCells() {
-	Workbook wb = new HSSFWorkbook();
-	Sheet sheet = new SheetBuilder(wb, testData).build();
-	
-	assertEquals(sheet.getPhysicalNumberOfRows(), 3);
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = new SheetBuilder(wb, testData).build();
 
-	Row firstRow = sheet.getRow(0);
-	Cell firstCell = firstRow.getCell(0);
+        assertEquals(sheet.getPhysicalNumberOfRows(), 3);
 
-	assertEquals(firstCell.getCellType(), Cell.CELL_TYPE_NUMERIC);
-	assertEquals(1.0, firstCell.getNumericCellValue(), 0.00001);
-	
+        Row firstRow = sheet.getRow(0);
+        Cell firstCell = firstRow.getCell(0);
 
-	Row secondRow = sheet.getRow(1);
-	assertNotNull(secondRow.getCell(0));
-	assertNull(secondRow.getCell(2));
+        assertEquals(firstCell.getCellType(), Cell.CELL_TYPE_NUMERIC);
+        assertEquals(1.0, firstCell.getNumericCellValue(), 0.00001);
 
-	Row thirdRow = sheet.getRow(2);
-	assertEquals(Cell.CELL_TYPE_STRING, thirdRow.getCell(0).getCellType());
-	String cellValue = thirdRow.getCell(0).getStringCellValue();
-	assertEquals(testData[2][0].toString(), cellValue);
-	
-	assertEquals(Cell.CELL_TYPE_FORMULA, thirdRow.getCell(2).getCellType());
-	assertEquals("A1+B2", thirdRow.getCell(2).getCellFormula());
+
+        Row secondRow = sheet.getRow(1);
+        assertNotNull(secondRow.getCell(0));
+        assertNull(secondRow.getCell(2));
+
+        Row thirdRow = sheet.getRow(2);
+        assertEquals(Cell.CELL_TYPE_STRING, thirdRow.getCell(0).getCellType());
+        String cellValue = thirdRow.getCell(0).getStringCellValue();
+        assertEquals(testData[2][0].toString(), cellValue);
+
+        assertEquals(Cell.CELL_TYPE_FORMULA, thirdRow.getCell(2).getCellType());
+        assertEquals("A1+B2", thirdRow.getCell(2).getCellFormula());
     }
 
     public void testEmptyCells() {
-	Workbook wb = new HSSFWorkbook();
-	Sheet sheet = new SheetBuilder(wb, testData).setCreateEmptyCells(true).build();
-	
-	Cell emptyCell = sheet.getRow(1).getCell(1);
-	assertNotNull(emptyCell);
-	assertEquals(Cell.CELL_TYPE_BLANK, emptyCell.getCellType());
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = new SheetBuilder(wb, testData).setCreateEmptyCells(true).build();
+
+        Cell emptyCell = sheet.getRow(1).getCell(1);
+        assertNotNull(emptyCell);
+        assertEquals(Cell.CELL_TYPE_BLANK, emptyCell.getCellType());
     }
 
+    public void testSheetName() {
+        final String sheetName = "TEST SHEET NAME";
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = new SheetBuilder(wb, testData).setSheetName(sheetName).build();
+        assertEquals(sheetName, sheet.getSheetName());
+    }
 }

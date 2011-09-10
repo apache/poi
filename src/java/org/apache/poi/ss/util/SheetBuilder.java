@@ -25,115 +25,134 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * Class that provides useful sheet build capabilities. It can be used
- * in test cases to improve readability or in Swing applications with
- * tables.
+ * Class {@code SheetBuilder} provides an easy way of building workbook sheets
+ * from 2D array of Objects. It can be used in test cases to improve code
+ * readability or in Swing applications with tables.
  *
  * @author Roman Kashitsyn
  */
 public class SheetBuilder {
 
-    private Workbook workbook;
-    private Object[][] cells;
+    private final Workbook workbook;
+    private final Object[][] cells;
     private boolean shouldCreateEmptyCells = false;
+    private String sheetName = null;
 
     public SheetBuilder(Workbook workbook, Object[][] cells) {
-	this.workbook = workbook;
-	this.cells = cells;
+        this.workbook = workbook;
+        this.cells = cells;
     }
 
     /**
-     * @return true if null objects should be trated as empty cells
-     *         false otherwise
+     * Returns {@code true} if null array elements should be treated as empty
+     * cells.
+     *
+     * @return {@code true} if null objects should be treated as empty cells
+     *         and {@code false} otherwise
      */
     public boolean getCreateEmptyCells() {
-	return shouldCreateEmptyCells;
+        return shouldCreateEmptyCells;
     }
 
     /**
-     * @param shouldCreateEmptyCells true if null array elements should be
-     *        trated as empty cells
-     * @return this
+     * Specifies if null array elements should be treated as empty cells.
+     *
+     * @param shouldCreateEmptyCells {@code true} if null array elements should be
+     *                               treated as empty cells
+     * @return {@code this}
      */
     public SheetBuilder setCreateEmptyCells(boolean shouldCreateEmptyCells) {
-	this.shouldCreateEmptyCells = shouldCreateEmptyCells;
-	return this;
+        this.shouldCreateEmptyCells = shouldCreateEmptyCells;
+        return this;
+    }
+
+    /**
+     * Specifies name of the sheet to build. If not specified, default name (provided by
+     * workbook) will be used instead.
+     * @param sheetName sheet name to use
+     * @return {@code this}
+     */
+    public SheetBuilder setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+        return this;
     }
 
     /**
      * Builds sheet from parent workbook and 2D array with cell
      * values. Creates rows anyway (even if row contains only null
-     * cells), creates cells only if corresponding property is true.
+     * cells), creates cells if either corresponding array value is not
+     * null or createEmptyCells property is true.
      * The conversion is performed in the following way:
-     *
+     * <p/>
      * <ul>
      * <li>Numbers become numeric cells.</li>
      * <li><code>java.util.Date</code> or <code>java.util.Calendar</code>
-     *     instances become date cells.</li>
+     * instances become date cells.</li>
      * <li>String with leading '=' char become formulas (leading '='
-     *     trancated).</li>
+     * will be truncated).</li>
      * <li>Other objects become strings via <code>Object.toString()</code>
-     *     method.</li>
+     * method call.</li>
      * </ul>
      *
      * @return newly created sheet
      */
     public Sheet build() {
-	Sheet sheet = workbook.createSheet();
-	Row currentRow = null;
-	Cell currentCell = null;
+        Sheet sheet = (sheetName == null) ? workbook.createSheet() : workbook.createSheet(sheetName);
+        Row currentRow = null;
+        Cell currentCell = null;
 
-	for (int rowIndex = 0; rowIndex < cells.length; ++rowIndex) {
-	    Object[] rowArray = cells[rowIndex];
-	    currentRow = sheet.createRow(rowIndex);
+        for (int rowIndex = 0; rowIndex < cells.length; ++rowIndex) {
+            Object[] rowArray = cells[rowIndex];
+            currentRow = sheet.createRow(rowIndex);
 
-	    for (int cellIndex = 0; cellIndex < rowArray.length; ++cellIndex) {
-		Object cellValue = rowArray[cellIndex];
-		if (cellValue != null || shouldCreateEmptyCells) {
-		    currentCell = currentRow.createCell(cellIndex);
-		    setCellValue(currentCell, cellValue);
-		}
-	    }
-	}
-	return sheet;
+            for (int cellIndex = 0; cellIndex < rowArray.length; ++cellIndex) {
+                Object cellValue = rowArray[cellIndex];
+                if (cellValue != null || shouldCreateEmptyCells) {
+                    currentCell = currentRow.createCell(cellIndex);
+                    setCellValue(currentCell, cellValue);
+                }
+            }
+        }
+        return sheet;
     }
 
     /**
      * Sets the cell value using object type information.
-     * @param cell cell to change
+     *
+     * @param cell  cell to change
      * @param value value to set
      */
-    public void setCellValue(Cell cell, Object value) {
-	if (value == null || cell == null) {
-	    return;
-	} else if (value instanceof Number) {
-	    double doubleValue = ((Number) value).doubleValue();
-	    cell.setCellValue(doubleValue);
-	} else if (value instanceof Date) {
-	    cell.setCellValue((Date) value);
-	} else if (value instanceof Calendar) {
-	    cell.setCellValue((Calendar) value);
-	} else if (isFormulaDefinition(value)) {
-	    cell.setCellFormula(getFormula(value));
-	} else {
-	    cell.setCellValue(value.toString());
-	}
+    private void setCellValue(Cell cell, Object value) {
+        if (value == null || cell == null) {
+            return;
+        } else if (value instanceof Number) {
+            double doubleValue = ((Number) value).doubleValue();
+            cell.setCellValue(doubleValue);
+        } else if (value instanceof Date) {
+            cell.setCellValue((Date) value);
+        } else if (value instanceof Calendar) {
+            cell.setCellValue((Calendar) value);
+        } else if (isFormulaDefinition(value)) {
+            cell.setCellFormula(getFormula(value));
+        } else {
+            cell.setCellValue(value.toString());
+        }
     }
 
     private boolean isFormulaDefinition(Object obj) {
-	if (obj instanceof String) {
-	    String str = (String) obj;
-	    if (str.length() < 2) {
-		return false;
-	    } else {
-		return ((String) obj).charAt(0) == '=';
-	    }
-	} else {
-	    return false;
-	}
+        if (obj instanceof String) {
+            String str = (String) obj;
+            if (str.length() < 2) {
+                return false;
+            } else {
+                return ((String) obj).charAt(0) == '=';
+            }
+        } else {
+            return false;
+        }
     }
 
     private String getFormula(Object obj) {
-	return ((String) obj).substring(1);
+        return ((String) obj).substring(1);
     }
 }

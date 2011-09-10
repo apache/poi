@@ -17,40 +17,25 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.DataMarker;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
 import org.apache.poi.ss.usermodel.charts.ScatterChartSerie;
-import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterStyle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STScatterStyle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
-
+import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- * Represents DrawingML scatter chart.
+ * Represents DrawingML scatter charts.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public class XSSFScatterChartData implements ScatterChartData {
 
     /**
@@ -59,118 +44,93 @@ public class XSSFScatterChartData implements ScatterChartData {
     private List<Serie> series;
 
     public XSSFScatterChartData() {
-	series = new ArrayList<Serie>();
+        series = new ArrayList<Serie>();
     }
 
     /**
      * Package private ScatterChartSerie implementation.
      */
     static class Serie implements ScatterChartSerie {
-	private int id;
-	private int order;
-	private boolean useCache;
-	private DataMarker xMarker;
-	private DataMarker yMarker;
-	private XSSFNumberCache lastCaclulatedXCache;
-	private XSSFNumberCache lastCalculatedYCache;
+        private int id;
+        private int order;
+        private ChartDataSource<?> xs;
+        private ChartDataSource<? extends Number> ys;
 
-	protected Serie(int id, int order) {
-	    super();
-	    this.id = id;
-	    this.order = order;
-	    this.useCache = true;
-	}
+        protected Serie(int id, int order,
+                        ChartDataSource<?> xs,
+                        ChartDataSource<? extends Number> ys) {
+            super();
+            this.id = id;
+            this.order = order;
+            this.xs = xs;
+            this.ys = ys;
+        }
 
-	public void setXValues(DataMarker marker) {
-	    xMarker = marker;
-	}
+        /**
+         * Returns data source used for X axis values.
+         * @return data source used for X axis values
+         */
+        public ChartDataSource<?> getXValues() {
+            return xs;
+        }
 
-	public void setYValues(DataMarker marker) {
-	    yMarker = marker;
-	}
+        /**
+         * Returns data source used for Y axis values.
+         * @return data source used for Y axis values
+         */
+        public ChartDataSource<? extends Number> getYValues() {
+            return ys;
+        }
 
-	/**
-	 * @param useCache if true, cached results will be added on plot
-	 */
-	public void setUseCache(boolean useCache) {
-	    this.useCache = useCache;
-	}
+        protected void addToChart(CTScatterChart ctScatterChart) {
+            CTScatterSer scatterSer = ctScatterChart.addNewSer();
+            scatterSer.addNewIdx().setVal(this.id);
+            scatterSer.addNewOrder().setVal(this.order);
 
-	/**
-	 * Returns last calculated number cache for X axis.
-	 * @return last calculated number cache for X axis.
-	 */
-	XSSFNumberCache getLastCaculatedXCache() {
-	    return lastCaclulatedXCache;
-	}
+            CTAxDataSource xVal = scatterSer.addNewXVal();
+            XSSFChartUtil.buildAxDataSource(xVal, xs);
 
-	/**
-	 * Returns last calculated number cache for Y axis.
-	 * @return last calculated number cache for Y axis.
-	 */
-	XSSFNumberCache getLastCalculatedYCache() {
-	    return lastCalculatedYCache;
-	}
-
-	protected void addToChart(CTScatterChart ctScatterChart) {
-	    CTScatterSer scatterSer = ctScatterChart.addNewSer();
-	    scatterSer.addNewIdx().setVal(this.id);
-	    scatterSer.addNewOrder().setVal(this.order);
-
-	    /* TODO: add some logic to automatically recognize cell
-	     * types and choose appropriate data representation for
-	     * X axis.
-	     */
-	    CTAxDataSource xVal = scatterSer.addNewXVal();
-	    CTNumRef xNumRef = xVal.addNewNumRef();
-	    xNumRef.setF(xMarker.formatAsString());
-
-	    CTNumDataSource yVal = scatterSer.addNewYVal();
-	    CTNumRef yNumRef = yVal.addNewNumRef();
-	    yNumRef.setF(yMarker.formatAsString());
-
-	    if (useCache) {
-		/* We can not store cache since markers are not immutable */
-		XSSFNumberCache.buildCache(xMarker, xNumRef);
-		lastCalculatedYCache = XSSFNumberCache.buildCache(yMarker, yNumRef);
-	    }
-	}
+            CTNumDataSource yVal = scatterSer.addNewYVal();
+            XSSFChartUtil.buildNumDataSource(yVal, ys);
+        }
     }
 
-    public ScatterChartSerie addSerie(DataMarker xMarker, DataMarker yMarker) {
-	int numOfSeries = series.size();
-	Serie newSerie = new Serie(numOfSeries, numOfSeries);
-	newSerie.setXValues(xMarker);
-	newSerie.setYValues(yMarker);
-	series.add(newSerie);
-	return newSerie;
+    public ScatterChartSerie addSerie(ChartDataSource<?> xs,
+                                      ChartDataSource<? extends Number> ys) {
+        if (!ys.isNumeric()) {
+            throw new IllegalArgumentException("Y axis data source must be numeric.");
+        }
+        int numOfSeries = series.size();
+        Serie newSerie = new Serie(numOfSeries, numOfSeries, xs, ys);
+        series.add(newSerie);
+        return newSerie;
     }
 
     public void fillChart(Chart chart, ChartAxis... axis) {
-	if (!(chart instanceof XSSFChart)) {
-	    throw new IllegalArgumentException("Chart must be instance of XSSFChart");
-	}
+        if (!(chart instanceof XSSFChart)) {
+            throw new IllegalArgumentException("Chart must be instance of XSSFChart");
+        }
 
-	XSSFChart xssfChart = (XSSFChart) chart;
-	CTPlotArea plotArea = xssfChart.getCTChart().getPlotArea();
-	CTScatterChart scatterChart = plotArea.addNewScatterChart();
-	addStyle(scatterChart);
+        XSSFChart xssfChart = (XSSFChart) chart;
+        CTPlotArea plotArea = xssfChart.getCTChart().getPlotArea();
+        CTScatterChart scatterChart = plotArea.addNewScatterChart();
+        addStyle(scatterChart);
 
-	for (Serie s : series) {
-	    s.addToChart(scatterChart);
-	}
+        for (Serie s : series) {
+            s.addToChart(scatterChart);
+        }
 
-	for (ChartAxis ax : axis) {
-	    scatterChart.addNewAxId().setVal(ax.getId());
-	}
+        for (ChartAxis ax : axis) {
+            scatterChart.addNewAxId().setVal(ax.getId());
+        }
     }
 
     public List<? extends Serie> getSeries() {
-	return series;
+        return series;
     }
 
     private void addStyle(CTScatterChart ctScatterChart) {
-	CTScatterStyle scatterStyle = ctScatterChart.addNewScatterStyle();
-	scatterStyle.setVal(STScatterStyle.LINE_MARKER);
+        CTScatterStyle scatterStyle = ctScatterChart.addNewScatterStyle();
+        scatterStyle.setVal(STScatterStyle.LINE_MARKER);
     }
 }

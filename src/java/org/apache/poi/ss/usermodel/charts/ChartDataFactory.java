@@ -17,11 +17,14 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Beta;
+
 /**
- * A factory for different chart data types.
+ * A factory for different charts data types.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ChartDataFactory {
 	
 	/**
