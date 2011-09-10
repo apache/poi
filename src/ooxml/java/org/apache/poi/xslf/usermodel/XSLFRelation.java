@@ -190,6 +190,13 @@ public class XSLFRelation extends POIXMLRelation {
     		null
     );
 
+    public static final XSLFRelation TABLE_STYLES = new XSLFRelation(
+          "application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml",
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/tableStyles",
+          "/ppt/tableStyles.xml",
+          XSLFTableStyles.class
+    );
+
    private XSLFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
       super(type, rel, defaultName, cls);
 

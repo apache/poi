@@ -64,9 +64,10 @@ public class XMLSlideShow  extends POIXMLDocument {
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;
     private Map<String, XSLFSlideMaster> _masters;
+    private List<XSLFPictureData> _pictures;
+    private XSLFTableStyles _tableStyles;
     private XSLFNotesMaster _notesMaster;
     private XSLFCommentAuthors _commentAuthors;
-    protected List<XSLFPictureData> _pictures;
 
     public XMLSlideShow() {
         this(empty());
@@ -124,6 +125,8 @@ public class XMLSlideShow  extends POIXMLDocument {
                 } else if (p instanceof XSLFSlideMaster) {
                     XSLFSlideMaster master = (XSLFSlideMaster)p;
                     _masters.put(p.getPackageRelationship().getId(), master);
+                }else if (p instanceof XSLFTableStyles){
+                    _tableStyles = (XSLFTableStyles)p;
                 } else if (p instanceof XSLFNotesMaster) {
                     _notesMaster = (XSLFNotesMaster)p;
                 } else if (p instanceof XSLFCommentAuthors) {
@@ -333,6 +336,10 @@ public class XMLSlideShow  extends POIXMLDocument {
             throw new POIXMLException(e);
         }
         return imageNumber - 1;
+    }
+
+    public XSLFTableStyles getTableStyles(){
+        return _tableStyles;
     }
 
 }
