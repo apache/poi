@@ -18,10 +18,12 @@
 package org.apache.poi.xssf.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.charts.*;
+import org.apache.poi.util.Beta;
 
 /**
  * @author Roman Kashitsyn
  */
+@Beta
 public class XSSFChartDataFactory implements ChartDataFactory {
 
 	private static XSSFChartDataFactory instance;
@@ -31,7 +33,7 @@ public class XSSFChartDataFactory implements ChartDataFactory {
 	}
 
 	/**
-	 * @return new scatter chart data instance
+	 * @return new scatter charts data instance
 	 */
 	public XSSFScatterChartData createScatterChartData() {
 		return new XSSFScatterChartData();

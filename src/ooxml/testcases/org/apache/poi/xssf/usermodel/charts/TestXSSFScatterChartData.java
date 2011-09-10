@@ -21,42 +21,43 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.DataMarker;
 import org.apache.poi.ss.util.SheetBuilder;
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Tests for XSSFScatterChartData.
+ *
  * @author Roman Kashitsyn
  */
-public final class TestXSSFScatterChartData  extends TestCase {
+public final class TestXSSFScatterChartData extends TestCase {
 
-    private static Object[][] plotData = new Object[][] {
-	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    private static final Object[][] plotData = {
+            {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"},
+            {  1,    2,   3,    4,    5,   6,    7,   8,    9,  10}
     };
-    
+
     public void testOneSeriePlot() throws Exception {
-	Workbook wb = new XSSFWorkbook();
-	Sheet sheet = new SheetBuilder(wb, plotData).build();
-	Drawing drawing = sheet.createDrawingPatriarch();
-	ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-	Chart chart = drawing.createChart(anchor);
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = new SheetBuilder(wb, plotData).build();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        Chart chart = drawing.createChart(anchor);
 
-	ChartAxis bottomAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
-	ChartAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        ChartAxis bottomAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
+        ChartAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
 
-	ScatterChartData scatterChartData =
-	    chart.getChartDataFactory().createScatterChartData();
+        ScatterChartData scatterChartData =
+                chart.getChartDataFactory().createScatterChartData();
 
-	DataMarker xMarker = new DataMarker(sheet, CellRangeAddress.valueOf("A1:A10"));
-	DataMarker yMarker = new DataMarker(sheet, CellRangeAddress.valueOf("B1:B10"));
-	ScatterChartSerie serie = scatterChartData.addSerie(xMarker, yMarker);
+        ChartDataSource<String> xs = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
+        ChartDataSource<Number> ys = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
+        ScatterChartSerie serie = scatterChartData.addSerie(xs, ys);
 
-	assertEquals(1, scatterChartData.getSeries().size());
+        assertNotNull(serie);
+        assertEquals(1, scatterChartData.getSeries().size());
+        assertTrue(scatterChartData.getSeries().contains(serie));
 
-	chart.plot(scatterChartData, bottomAxis, leftAxis);
+        chart.plot(scatterChartData, bottomAxis, leftAxis);
     }
-
 }

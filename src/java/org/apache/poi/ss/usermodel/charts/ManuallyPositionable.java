@@ -17,12 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Beta;
+
 /**
  * Abstraction of chart element that can be positioned with manual
  * layout.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ManuallyPositionable {
 
 	/**

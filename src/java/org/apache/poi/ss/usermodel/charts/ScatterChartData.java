@@ -18,20 +18,17 @@
 package org.apache.poi.ss.usermodel.charts;
 
 import java.util.List;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.DataMarker;
-
 
 /**
  * @author Roman Kashitsyn
  */
 public interface ScatterChartData extends ChartData {
 	/**
-	 * @param xMarker data marker to be used for X value range
-	 * @param yMarker data marker to be used for Y value range
-	 * @return a new scatter chart serie
+	 * @param xs data source to be used for X axis values
+	 * @param ys data source to be used for Y axis values
+	 * @return a new scatter charts serie
 	 */
-	ScatterChartSerie addSerie(DataMarker xMarker, DataMarker yMarker);
+	ScatterChartSerie addSerie(ChartDataSource<?> xs, ChartDataSource<? extends Number> ys);
 
 	/**
 	 * @return list of all series

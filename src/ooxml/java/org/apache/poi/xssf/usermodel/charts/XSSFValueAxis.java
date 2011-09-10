@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrossBetween;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
@@ -39,6 +40,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 
 	private CTValAx ctValAx;

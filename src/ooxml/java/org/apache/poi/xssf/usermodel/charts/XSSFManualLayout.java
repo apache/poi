@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.charts.ManualLayout;
 import org.apache.poi.ss.usermodel.charts.LayoutMode;
@@ -35,6 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
  * Represents a SpreadsheetML manual layout.
  * @author Roman Kashitsyn
  */
+@Beta
 public final class XSSFManualLayout implements ManualLayout {
 
 	/**

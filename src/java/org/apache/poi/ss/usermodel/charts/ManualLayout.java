@@ -17,11 +17,14 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Beta;
+
 /**
  * High level representation of chart element manual layout.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ManualLayout {
 
 	/**

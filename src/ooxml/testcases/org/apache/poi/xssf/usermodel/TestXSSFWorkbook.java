@@ -332,7 +332,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
 	/**
-	 * Problems with XSSFWorkbook.removeSheetAt when workbook contains chart
+	 * Problems with XSSFWorkbook.removeSheetAt when workbook contains charts
 	 */
 	public void testBug47813() {
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");

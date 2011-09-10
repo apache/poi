@@ -17,11 +17,14 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Beta;
+
 /**
  * High level representation of chart legend.
  *
  * @author Roman Kashitsyn
  */
+@Beta
 public interface ChartLegend extends ManuallyPositionable {
 	
 	/**

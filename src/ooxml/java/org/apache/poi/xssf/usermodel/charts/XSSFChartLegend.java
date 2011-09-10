@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.ss.usermodel.charts.LegendPosition;
@@ -30,6 +31,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
  * Represents a SpreadsheetML chart legend
  * @author Roman Kashitsyn
  */
+@Beta
 public final class XSSFChartLegend implements ChartLegend {
 
 	/**
