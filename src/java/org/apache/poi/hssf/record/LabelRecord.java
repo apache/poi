@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell..  Don't
@@ -29,6 +31,8 @@ import org.apache.poi.util.HexDump;
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
+    private final static POILogger logger = POILogFactory.getLogger(LabelRecord.class);
+
     public final static short sid = 0x0204;
 
     private int               field_1_row;
@@ -61,6 +65,13 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
             }
         } else {
             field_6_value = "";
+        }
+
+        if (in.remaining() > 0) {
+           logger.log(POILogger.INFO,
+                   "LabelRecord data remains: " + in.remaining() +
+                           " : " + HexDump.toHex(in.readRemainder())
+           );
         }
     }
 
@@ -97,7 +108,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      */
     public boolean isUnCompressedUnicode()
     {
-        return (field_5_unicode_flag == 1);
+        return (field_5_unicode_flag & 0x01) != 0;
     }
 
     /**

@@ -2173,4 +2173,10 @@ if(1==2) {
           assertTrue(text.contains("Bottom Right Cell"));
        }
     }
+
+    public void test51670() {
+        HSSFWorkbook wb = openSample("51670.xls");
+        writeOutAndReadBack(wb);
+    }
+
 }
