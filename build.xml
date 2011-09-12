@@ -627,6 +627,7 @@ under the License.
             <classpath refid="test.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
+            <jvmarg value="-ea"/>
             <formatter type="plain"/>
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
@@ -664,6 +665,7 @@ under the License.
             <classpath refid="test.scratchpad.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
+            <jvmarg value="-ea"/>
             <!-- 
               YK: ensure that JUnit has enough memory to run tests. 
               Without the line below tests fail on Mac OS X with jdk-1.6.26 
@@ -701,6 +703,7 @@ under the License.
               <classpath refid="@{classpath}"/>
               <syspropertyset refid="junit.properties"/>
               <jvmarg value="${poi.test.locale}"/>
+<!--              <jvmarg value="-ea"/> -->
               <formatter type="plain"/>
               <batchtest todir="${ooxml.reports.test}">
                   <fileset dir="${ooxml.src.test}">
@@ -755,6 +758,7 @@ under the License.
             <classpath refid="test.excelant.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
+            <jvmarg value="-ea"/>
             <formatter type="plain"/>
             <batchtest todir="${excelant.reports.test}">
                 <fileset dir="${excelant.src.test}">
