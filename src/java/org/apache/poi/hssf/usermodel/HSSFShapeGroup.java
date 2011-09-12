@@ -56,6 +56,11 @@ public class HSSFShapeGroup
         return group;
     }
 
+    public void addShape(HSSFShape shape){
+        shape._patriarch = this._patriarch;
+        shapes.add(shape);
+    }
+
     /**
      * Create a new simple shape under this group.
      * @param anchor    the position of the shape.

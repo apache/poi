@@ -129,4 +129,26 @@ public class TestXWPFPictureData extends TestCase {
     public void testGetChecksum() {
         
     }
+
+    public void testBug51770() throws InvalidFormatException, IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug51170.docx");
+        XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+        XWPFHeader header = policy.getDefaultHeader();
+        for (XWPFParagraph paragraph : header.getParagraphs()) {
+            for (XWPFRun run : paragraph.getRuns()) {
+                for (XWPFPicture picture : run.getEmbeddedPictures()) {
+                    if (paragraph.getDocument() != null) {
+                        System.out.println(picture.getCTPicture());
+                        XWPFPictureData data = picture.getPictureData();
+                        if(data != null) System.out.println(data.getFileName());
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void process(XWPFParagraph paragraph){
+
+    }
 }
