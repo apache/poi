@@ -83,16 +83,17 @@ public final class OLEShape extends Picture {
         ObjectData[] ole = ppt.getEmbeddedObjects();
 
         //persist reference
-        int ref = getExEmbed().getExOleObjAtom().getObjStgDataRef();
-
+        ExEmbed exEmbed = getExEmbed();
         ObjectData data = null;
+        if(exEmbed != null) {
+            int ref = exEmbed.getExOleObjAtom().getObjStgDataRef();
 
-        for (int i = 0; i < ole.length; i++) {
-            if(ole[i].getExOleObjStg().getPersistId() == ref) {
-                data=ole[i];
+            for (int i = 0; i < ole.length; i++) {
+                if(ole[i].getExOleObjStg().getPersistId() == ref) {
+                    data=ole[i];
+                }
             }
         }
-
         if (data==null) {
             logger.log(POILogger.WARN, "OLE data not found");
         }

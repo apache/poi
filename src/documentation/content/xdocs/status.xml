@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">51196 - prevent NPE in XWPFPicture.getPictureData() </action>
+           <action dev="poi-developers" type="add">51771 - prevent NPE when getting object data from OLEShape in HSLF</action>
            <action dev="poi-developers" type="add">51196 - more progress with Chart APi in XSSF</action>
            <action dev="poi-developers" type="fix">51785 - Allow XSSF setForceFormulaRecalculation to work with the minimal ooxml-schemas jar</action>
            <action dev="poi-developers" type="fix">51772 - IllegalArgumentException Parsing MS Word 97 - 2003</action>

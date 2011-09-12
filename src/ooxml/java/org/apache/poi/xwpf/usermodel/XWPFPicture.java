@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
 
@@ -58,7 +59,14 @@ public class XWPFPicture {
      * Note - not all kinds of picture have data
      */
     public XWPFPictureData getPictureData(){
-        String blipId = ctPic.getBlipFill().getBlip().getEmbed();
+        CTBlipFillProperties blipProps = ctPic.getBlipFill();
+
+        if(blipProps == null || !blipProps.isSetBlip()) {
+            // return null if Blip data is missing
+            return null;
+        }
+
+        String blipId = blipProps.getBlip().getEmbed();
         POIXMLDocumentPart part = run.getParagraph().getPart();
         if (part != null)
         {
