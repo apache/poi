@@ -136,8 +136,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     public ExcelToHtmlConverter( Document doc )
     {
         htmlDocumentFacade = new HtmlDocumentFacade( doc );
-        cssClassTable = htmlDocumentFacade.getOrCreateCssClass( "table", "t",
-                "border-collapse:collapse;border-spacing:0;" );
+        cssClassTable = htmlDocumentFacade.getOrCreateCssClass( "t", "border-collapse:collapse;border-spacing:0;" );
     }
 
     protected String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
@@ -249,8 +248,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             return knownClass;
 
         String cssStyle = buildStyle( workbook, cellStyle );
-        String cssClass = htmlDocumentFacade.getOrCreateCssClass( "td", "c",
-                cssStyle );
+        String cssClass = htmlDocumentFacade.getOrCreateCssClass( "c", cssStyle );
         excelStyleToClass.put( cellStyleKey, cssClass );
         return cssClass;
     }
@@ -693,10 +691,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         {
             // prepare CSS classes for later usage
             this.cssClassContainerCell = htmlDocumentFacade
-                    .getOrCreateCssClass( "td", "c",
-                            "padding:0;margin:0;align:left;vertical-align:top;" );
+                    .getOrCreateCssClass( "c", "padding:0;margin:0;align:left;vertical-align:top;" );
             this.cssClassContainerDiv = htmlDocumentFacade.getOrCreateCssClass(
-                    "div", "d", "position:relative;" );
+                    "d", "position:relative;" );
         }
 
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
