@@ -501,10 +501,9 @@ public final class HyperlinkRecord extends StandardRecord {
                     int charDataSize = in.readInt();
 
                     //From the spec: An optional unsigned integer that MUST be 3 if present
-                    int optFlags = in.readUShort();
-                    if (optFlags != 0x0003) {
-                        throw new RecordFormatException("Expected 0x3 but found " + optFlags);
-                    }
+                    // but some files has 4
+                    int usKeyValue = in.readUShort();
+
                     _address = StringUtil.readUnicodeLE(in, charDataSize/2);
                 } else {
                     _address = null;
