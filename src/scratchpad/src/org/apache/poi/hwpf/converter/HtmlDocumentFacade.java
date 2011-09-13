@@ -87,8 +87,7 @@ public class HtmlDocumentFacade
             String style )
     {
         String exising = element.getAttribute( "class" );
-        String addition = getOrCreateCssClass( element.getTagName(),
-                classNamePrefix, style );
+        String addition = getOrCreateCssClass( classNamePrefix, style );
         String newClassValue = WordToHtmlUtils.isEmpty( exising ) ? addition
                 : ( exising + " " + addition );
         element.setAttribute( "class", newClassValue );
@@ -210,13 +209,13 @@ public class HtmlDocumentFacade
         return head;
     }
 
-    public String getOrCreateCssClass( String tagName, String classNamePrefix,
-            String style )
+    public String getOrCreateCssClass( String classNamePrefix, String style )
     {
-        if ( !stylesheet.containsKey( tagName ) )
-            stylesheet.put( tagName, new LinkedHashMap<String, String>( 1 ) );
+        if ( !stylesheet.containsKey( classNamePrefix ) )
+            stylesheet.put( classNamePrefix, new LinkedHashMap<String, String>(
+                    1 ) );
 
-        Map<String, String> styleToClassName = stylesheet.get( tagName );
+        Map<String, String> styleToClassName = stylesheet.get( classNamePrefix );
         String knownClass = styleToClassName.get( style );
         if ( knownClass != null )
             return knownClass;
@@ -257,18 +256,14 @@ public class HtmlDocumentFacade
     public void updateStylesheet()
     {
         StringBuilder stringBuilder = new StringBuilder();
-        for ( Map.Entry<String, Map<String, String>> byTag : stylesheet
-                .entrySet() )
+        for ( Map<String, String> byPrefix : stylesheet.values() )
         {
-            String tagName = byTag.getKey();
-            for ( Map.Entry<String, String> byStyle : byTag.getValue()
-                    .entrySet() )
+            for ( Map.Entry<String, String> byStyle : byPrefix.entrySet() )
             {
                 String style = byStyle.getKey();
                 String className = byStyle.getValue();
 
-                stringBuilder.append( tagName + "." + className + "{" + style
-                        + "}\n" );
+                stringBuilder.append( "." + className + "{" + style + "}\n" );
             }
         }
         stylesheetElement.setTextContent( stringBuilder.toString() );

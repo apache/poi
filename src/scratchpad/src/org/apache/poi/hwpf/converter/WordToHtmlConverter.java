@@ -450,7 +450,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     {
         final String textIndex = String.valueOf( noteIndex + 1 );
         final String textIndexClass = htmlDocumentFacade.getOrCreateCssClass(
-                "a", "a", "vertical-align:super;font-size:smaller;" );
+                "a", "vertical-align:super;font-size:smaller;" );
         final String forwardNoteLink = type + "note_" + textIndex;
         final String backwardNoteLink = type + "note_back_" + textIndex;
 
@@ -682,8 +682,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
             if ( tableRowStyle.length() > 0 )
                 tableRowElement.setAttribute( "class", htmlDocumentFacade
-                        .getOrCreateCssClass( "tr", "r",
-                                tableRowStyle.toString() ) );
+                        .getOrCreateCssClass( "r", tableRowStyle.toString() ) );
 
             if ( tableRow.isTableHeader() )
             {
@@ -700,8 +699,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 .setAttribute(
                         "class",
                         htmlDocumentFacade.getOrCreateCssClass(
-                                tableElement.getTagName(), "t",
-                                "table-layout:fixed;border-collapse:collapse;border-spacing:0;" ) );
+                                "t", "table-layout:fixed;border-collapse:collapse;border-spacing:0;" ) );
         if ( tableHeader.hasChildNodes() )
         {
             tableElement.appendChild( tableHeader );
