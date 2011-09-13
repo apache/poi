@@ -40,6 +40,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.FoDocumentFacade;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -179,6 +180,22 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         return foDocumentFacade.getDocument();
     }
 
+    /**
+     * Returns <tt>false</tt> if cell style by itself (without text, i.e.
+     * borders, fill, etc.) worth a mention, <tt>true</tt> otherwise
+     * 
+     * @return <tt>false</tt> if cell style by itself (without text, i.e.
+     *         borders, fill, etc.) worth a mention, <tt>true</tt> otherwise
+     */
+    protected boolean isEmptyStyle( CellStyle cellStyle )
+    {
+        return cellStyle.getFillPattern() == 0 //
+                && cellStyle.getBorderTop() == HSSFCellStyle.BORDER_NONE //
+                && cellStyle.getBorderRight() == HSSFCellStyle.BORDER_NONE //
+                && cellStyle.getBorderBottom() == HSSFCellStyle.BORDER_NONE //
+                && cellStyle.getBorderLeft() == HSSFCellStyle.BORDER_NONE; //
+    }
+
     protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
             Element tableCellElement, int normalWidthPx, int maxSpannedWidthPx,
             float normalHeightPt )
@@ -255,8 +272,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final boolean noText = ExcelToHtmlUtils.isEmpty( value );
         final boolean wrapInDivs = !noText && !cellStyle.getWrapText();
 
-        final short cellStyleIndex = cellStyle.getIndex();
-        if ( cellStyleIndex != 0 )
+        final boolean emptyStyle = isEmptyStyle( cellStyle );
+        if ( !emptyStyle )
         {
             if ( noText )
             {
@@ -306,13 +323,13 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             block.setAttribute( "keep-together.within-line", "always" );
         }
 
-        processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
-                block );
+        processCellStyle( workbook, cell.getCellStyle(),
+                tableCellElement, block );
 
         block.appendChild( text );
         tableCellElement.appendChild( block );
 
-        return ExcelToHtmlUtils.isEmpty( value ) && cellStyleIndex == 0;
+        return ExcelToHtmlUtils.isEmpty( value ) && emptyStyle;
     }
 
     protected void processCellStyle( HSSFWorkbook workbook,
@@ -358,6 +375,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
         HSSFFont font = cellStyle.getFont( workbook );
         processCellStyleFont( workbook, blockTarget, font );
+
     }
 
     protected void processCellStyleBorder( HSSFWorkbook workbook,
