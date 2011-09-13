@@ -130,6 +130,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
     private final FoDocumentFacade foDocumentFacade;
 
+    private float pageMarginInches = 0.4f;
+
     public ExcelToFoConverter( Document document )
     {
         this.foDocumentFacade = new FoDocumentFacade( document );
@@ -140,7 +142,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final float paperHeightIn;
         final float paperWidthIn;
         {
-            float requiredWidthIn = tableWidthIn + 2;
+            float requiredWidthIn = tableWidthIn + 2 * getPageMarginInches();
 
             if ( requiredWidthIn < PAPER_A4_WIDTH_INCHES )
             {
@@ -157,10 +159,10 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             }
         }
 
-        final float leftMargin = 1;
-        final float rightMargin = 1;
-        final float topMargin = 1;
-        final float bottomMargin = 1;
+        final float leftMargin = getPageMarginInches();
+        final float rightMargin = getPageMarginInches();
+        final float topMargin = getPageMarginInches();
+        final float bottomMargin = getPageMarginInches();
 
         Element pageMaster = foDocumentFacade
                 .addSimplePageMaster( pageMasterName );
@@ -178,6 +180,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected Document getDocument()
     {
         return foDocumentFacade.getDocument();
+    }
+
+    public float getPageMarginInches()
+    {
+        return pageMarginInches;
     }
 
     /**
@@ -323,8 +330,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             block.setAttribute( "keep-together.within-line", "always" );
         }
 
-        processCellStyle( workbook, cell.getCellStyle(),
-                tableCellElement, block );
+        processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
+                block );
 
         block.appendChild( text );
         tableCellElement.appendChild( block );
@@ -810,6 +817,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
 
         if ( ExcelToFoUtils.isNotEmpty( triplet.fontName ) )
             textBlock.setAttribute( "font-family", triplet.fontName );
+    }
+
+    public void setPageMarginInches( float pageMarginInches )
+    {
+        this.pageMarginInches = pageMarginInches;
     }
 
 }
