@@ -133,7 +133,7 @@ public final class Countif extends Fixed2ArgFunction {
 				case LT: return cmpResult <  0;
 				case LE: return cmpResult <= 0;
 				case GT: return cmpResult >  0;
-				case GE: return cmpResult <= 0;
+				case GE: return cmpResult >= 0;
 			}
 			throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
 					+ _representation + "'");

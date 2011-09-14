@@ -61,6 +61,14 @@ public final class TestSumif extends TestCase {
 		confirm(60.0, arg0, new NumberEval(30.0));
 		confirm(70.0, arg0, new NumberEval(30.0), arg2);
 		confirm(100.0, arg0, new StringEval(">45"));
+		confirm(100.0, arg0, new StringEval(">=45"));
+		confirm(100.0, arg0, new StringEval(">=50.0"));
+		confirm(140.0, arg0, new StringEval("<45"));
+		confirm(140.0, arg0, new StringEval("<=45"));
+		confirm(140.0, arg0, new StringEval("<=40.0"));
+		confirm(160.0, arg0, new StringEval("<>40.0"));
+		confirm(80.0, arg0, new StringEval("=40.0"));
+		
 
 	}
 	private static void confirm(double expectedResult, ValueEval...args) {
