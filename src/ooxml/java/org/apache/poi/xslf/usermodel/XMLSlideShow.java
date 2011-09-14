@@ -337,7 +337,6 @@ public class XMLSlideShow  extends POIXMLDocument {
         }
         return imageNumber - 1;
     }
-
     public XSLFTableStyles getTableStyles(){
         return _tableStyles;
     }

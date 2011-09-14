@@ -55,4 +55,12 @@ public class TestXSLFBugs extends TestCase {
        assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
        assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
     }
+    
+    /**
+     * Slide relations with anchors in them
+     */
+    public void testTIKA705() {
+       XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("with_japanese.pptx");
+       // TODO Check the details including the links
+    }
 }
