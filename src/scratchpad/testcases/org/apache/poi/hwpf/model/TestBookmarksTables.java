@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.hwpf.usermodel.Range;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -42,5 +44,53 @@ public class TestBookmarksTables extends TestCase
         assertEquals( "userref", bookmark.getName() );
         assertEquals( 27, bookmark.getStart() );
         assertEquals( 38, bookmark.getEnd() );
+    }
+
+    public void testDeleteRange()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "pageref.doc" );
+        Range range = new Range( 27, 41, doc );
+        range.delete();
+
+        assertEquals( 0, doc.getBookmarks().getBookmarksCount() );
+    }
+
+    public void testReplaceTextAfter()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "pageref.doc" );
+        Bookmark bookmark = doc.getBookmarks().getBookmark( 0 );
+        Range range = new Range( bookmark.getStart(), bookmark.getEnd(), doc );
+        range.replaceText( "1destin2ation3", true );
+
+        bookmark = doc.getBookmarks().getBookmark( 0 );
+        assertEquals( "userref", bookmark.getName() );
+        assertEquals( 27, bookmark.getStart() );
+        assertEquals( 41, bookmark.getEnd() );
+    }
+
+    public void testReplaceTextBefore()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "pageref.doc" );
+        Bookmark bookmark = doc.getBookmarks().getBookmark( 0 );
+        Range range = new Range( bookmark.getStart(), bookmark.getEnd(), doc );
+        range.replaceText( "1destin2ation3", false );
+
+        bookmark = doc.getBookmarks().getBookmark( 0 );
+        assertEquals( "userref", bookmark.getName() );
+        assertEquals( 27, bookmark.getStart() );
+        assertEquals( 41, bookmark.getEnd() );
+    }
+
+    public void testUpdateText()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "pageref.doc" );
+        Bookmark bookmark = doc.getBookmarks().getBookmark( 0 );
+        Range range = new Range( bookmark.getStart(), bookmark.getEnd(), doc );
+        range.replaceText( "destination", "1destin2ation3" );
+
+        bookmark = doc.getBookmarks().getBookmark( 0 );
+        assertEquals( "userref", bookmark.getName() );
+        assertEquals( 27, bookmark.getStart() );
+        assertEquals( 41, bookmark.getEnd() );
     }
 }
