@@ -17,7 +17,13 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.util.POILogFactory;
+
+import org.apache.poi.util.POILogger;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
@@ -25,15 +31,43 @@ import org.apache.poi.util.Internal;
 @Internal
 public class BookmarksTables
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( BookmarksTables.class );
+
     private PlexOfCps descriptorsFirst = new PlexOfCps( 4 );
 
     private PlexOfCps descriptorsLim = new PlexOfCps( 0 );
 
-    private String[] names = new String[0];
+    private List<String> names = new ArrayList<String>( 0 );
 
     public BookmarksTables( byte[] tableStream, FileInformationBlock fib )
     {
         read( tableStream, fib );
+    }
+
+    public void afterDelete( int startCp, int length )
+    {
+        descriptorsFirst.adjust( startCp, -length );
+        descriptorsLim.adjust( startCp, -length );
+        for ( int i = 0; i < descriptorsFirst.length(); i++ )
+        {
+            GenericPropertyNode startNode = descriptorsFirst.getProperty( i );
+            GenericPropertyNode endNode = descriptorsLim.getProperty( i );
+            if ( startNode.getStart() == endNode.getStart() )
+            {
+                logger.log( POILogger.DEBUG, "Removing bookmark #",
+                        Integer.valueOf( i ), "..." );
+                remove( i );
+                i--;
+                continue;
+            }
+        }
+    }
+
+    public void afterInsert( int startCp, int length )
+    {
+        descriptorsFirst.adjust( startCp, length );
+        descriptorsLim.adjust( startCp - 1, length );
     }
 
     public int getBookmarksCount()
@@ -70,14 +104,14 @@ public class BookmarksTables
         return descriptorsLim.length();
     }
 
-    public String getName( int index ) throws ArrayIndexOutOfBoundsException
+    public String getName( int index )
     {
-        return names[index];
+        return names.get( index );
     }
 
     public int getNamesCount()
     {
-        return names.length;
+        return names.size();
     }
 
     private void read( byte[] tableStream, FileInformationBlock fib )
@@ -86,7 +120,8 @@ public class BookmarksTables
         int namesLength = fib.getLcbSttbfbkmk();
 
         if ( namesStart != 0 && namesLength != 0 )
-            this.names = SttbfUtils.read( tableStream, namesStart );
+            this.names = new ArrayList<String>( Arrays.asList( SttbfUtils.read(
+                    tableStream, namesStart ) ) );
 
         int firstDescriptorsStart = fib.getFcPlcfbkf();
         int firstDescriptorsLength = fib.getLcbPlcfbkf();
@@ -102,15 +137,16 @@ public class BookmarksTables
                     limDescriptorsLength, 0 );
     }
 
+    public void remove( int index )
+    {
+        descriptorsFirst.remove( index );
+        descriptorsLim.remove( index );
+        names.remove( index );
+    }
+
     public void setName( int index, String name )
     {
-        if ( index < names.length )
-        {
-            String[] newNames = new String[index + 1];
-            System.arraycopy( names, 0, newNames, 0, names.length );
-            names = newNames;
-        }
-        names[index] = name;
+        names.set( index, name );
     }
 
     public void writePlcfBkmkf( FileInformationBlock fib,
@@ -152,7 +188,7 @@ public class BookmarksTables
     public void writeSttbfBkmk( FileInformationBlock fib,
             HWPFOutputStream tableStream ) throws IOException
     {
-        if ( names == null || names.length == 0 )
+        if ( names == null || names.isEmpty() )
         {
             fib.setFcSttbfbkmk( 0 );
             fib.setLcbSttbfbkmk( 0 );
@@ -160,7 +196,8 @@ public class BookmarksTables
         }
 
         int start = tableStream.getOffset();
-        SttbfUtils.write( tableStream, names );
+        SttbfUtils
+                .write( tableStream, names.toArray( new String[names.size()] ) );
         int end = tableStream.getOffset();
 
         fib.setFcSttbfbkmk( start );

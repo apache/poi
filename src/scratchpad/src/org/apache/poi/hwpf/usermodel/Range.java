@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.util.Internal;
+
 import org.apache.poi.hwpf.model.BytePropertyNode;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -330,6 +332,11 @@ public class Range { // TODO -instantiable superclass
         _doc.getCharacterTable().adjustForInsert( _charStart, text.length() );
         _doc.getParagraphTable().adjustForInsert( _parStart, text.length() );
         _doc.getSectionTable().adjustForInsert( _sectionStart, text.length() );
+        if ( _doc instanceof HWPFDocument )
+        {
+            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+                    .afterInsert( _start, text.length() );
+        }
         adjustForInsert( text.length() );
 
         // update the FIB.CCPText + friends fields
@@ -356,6 +363,11 @@ public class Range { // TODO -instantiable superclass
         _doc.getCharacterTable().adjustForInsert( _charEnd - 1, text.length() );
         _doc.getParagraphTable().adjustForInsert( _parEnd - 1, text.length() );
         _doc.getSectionTable().adjustForInsert( _sectionEnd - 1, text.length() );
+        if ( _doc instanceof HWPFDocument )
+        {
+            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+                    .afterInsert( _end, text.length() );
+        }
         adjustForInsert( text.length() );
 
         assert sanityCheck();
@@ -558,6 +570,12 @@ public class Range { // TODO -instantiable superclass
 			// + " -> " + sepx.getEnd());
 		}
 
+        if ( _doc instanceof HWPFDocument )
+        {
+            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
+                    .afterDelete( _start, ( _end - _start ) );
+        }
+
         _text.delete( _start, _end );
         Range parent = _parent.get();
         if ( parent != null )
@@ -703,6 +721,35 @@ public class Range { // TODO -instantiable superclass
 		return (ListEntry) insertAfter(props, styleIndex);
 	}
 
+    /**
+     * Replace range text with new one, adding it to the range and deleting
+     * original text from document
+     * 
+     * @param newText
+     *            The text to be replaced with
+     * @param addAfter
+     *            if <tt>true</tt> the text will be added at the end of current
+     *            range, otherwise to the beginning
+     */
+    public void replaceText( String newText, boolean addAfter )
+    {
+        if ( addAfter )
+        {
+            int originalEnd = getEndOffset();
+            insertAfter( newText );
+            new Range( getStartOffset(), originalEnd, this ).delete();
+        }
+        else
+        {
+            int originalStart = getStartOffset();
+            int originalEnd = getEndOffset();
+
+            insertBefore( newText );
+            new Range( originalStart + newText.length(), originalEnd
+                    + newText.length(), this ).delete();
+        }
+    }
+
 	/**
 	 * Replace (one instance of) a piece of text with another...
 	 *
@@ -714,6 +761,7 @@ public class Range { // TODO -instantiable superclass
 	 *            The offset or index where the text to be replaced begins
 	 *            (relative to/within this <code>Range</code>)
 	 */
+	@Internal
 	public void replaceText(String pPlaceHolder, String pValue, int pOffset) {
 		int absPlaceHolderIndex = getStartOffset() + pOffset;
 

@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">Add HWPF API to update range text and delete bookmarks</action>
+           <action dev="poi-developers" type="add">HWPF Bookmarks tables are correctly updated on text updates</action>
            <action dev="poi-developers" type="add">51670 - avoid LeftoverDataException when reading .xls files with invalid LabelRecords</action>
            <action dev="poi-developers" type="add">51196 - prevent NPE in XWPFPicture.getPictureData() </action>
            <action dev="poi-developers" type="add">51771 - prevent NPE when getting object data from OLEShape in HSLF</action>

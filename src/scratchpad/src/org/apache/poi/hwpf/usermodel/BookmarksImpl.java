@@ -37,119 +37,6 @@ import org.apache.poi.hwpf.model.PropertyNode;
 public class BookmarksImpl implements Bookmarks
 {
 
-    private final BookmarksTables bookmarksTables;
-
-    private Map<Integer, List<GenericPropertyNode>> sortedDescriptors = null;
-
-    private int[] sortedStartPositions = null;
-
-    public BookmarksImpl( BookmarksTables bookmarksTables )
-    {
-        this.bookmarksTables = bookmarksTables;
-    }
-
-    private Bookmark getBookmark( final GenericPropertyNode first )
-    {
-        return new BookmarkImpl( first );
-    }
-
-    public Bookmark getBookmark( int index )
-    {
-        final GenericPropertyNode first = bookmarksTables
-                .getDescriptorFirst( index );
-        return getBookmark( first );
-    }
-
-    public List<Bookmark> getBookmarksAt( int startCp )
-    {
-        updateSortedDescriptors();
-
-        List<GenericPropertyNode> nodes = sortedDescriptors.get( Integer
-                .valueOf( startCp ) );
-        if ( nodes == null || nodes.isEmpty() )
-            return Collections.emptyList();
-
-        List<Bookmark> result = new ArrayList<Bookmark>( nodes.size() );
-        for ( GenericPropertyNode node : nodes )
-        {
-            result.add( getBookmark( node ) );
-        }
-        return Collections.unmodifiableList( result );
-    }
-
-    public int getBookmarksCount()
-    {
-        return bookmarksTables.getDescriptorsFirstCount();
-    }
-
-    public Map<Integer, List<Bookmark>> getBookmarksStartedBetween(
-            int startInclusive, int endExclusive )
-    {
-        updateSortedDescriptors();
-
-        int startLookupIndex = Arrays.binarySearch( this.sortedStartPositions,
-                startInclusive );
-        if ( startLookupIndex < 0 )
-            startLookupIndex = -( startLookupIndex + 1 );
-        int endLookupIndex = Arrays.binarySearch( this.sortedStartPositions,
-                endExclusive );
-        if ( endLookupIndex < 0 )
-            endLookupIndex = -( endLookupIndex + 1 );
-
-        Map<Integer, List<Bookmark>> result = new LinkedHashMap<Integer, List<Bookmark>>();
-        for ( int lookupIndex = startLookupIndex; lookupIndex < endLookupIndex; lookupIndex++ )
-        {
-            int s = sortedStartPositions[lookupIndex];
-            if ( s < startInclusive )
-                continue;
-            if ( s >= endExclusive )
-                break;
-
-            List<Bookmark> startedAt = getBookmarksAt( s );
-            if ( startedAt != null )
-                result.put( Integer.valueOf( s ), startedAt );
-        }
-
-        return Collections.unmodifiableMap( result );
-    }
-
-    private void updateSortedDescriptors()
-    {
-        if ( sortedDescriptors != null )
-            return;
-
-        Map<Integer, List<GenericPropertyNode>> result = new HashMap<Integer, List<GenericPropertyNode>>();
-        for ( int b = 0; b < bookmarksTables.getDescriptorsFirstCount(); b++ )
-        {
-            GenericPropertyNode property = bookmarksTables
-                    .getDescriptorFirst( b );
-            Integer positionKey = Integer.valueOf( property.getStart() );
-            List<GenericPropertyNode> atPositionList = result.get( positionKey );
-            if ( atPositionList == null )
-            {
-                atPositionList = new LinkedList<GenericPropertyNode>();
-                result.put( positionKey, atPositionList );
-            }
-            atPositionList.add( property );
-        }
-
-        int counter = 0;
-        int[] indices = new int[result.size()];
-        for ( Map.Entry<Integer, List<GenericPropertyNode>> entry : result
-                .entrySet() )
-        {
-            indices[counter++] = entry.getKey().intValue();
-            List<GenericPropertyNode> updated = new ArrayList<GenericPropertyNode>(
-                    entry.getValue() );
-            Collections.sort( updated, PropertyNode.EndComparator.instance );
-            entry.setValue( updated );
-        }
-        Arrays.sort( indices );
-
-        this.sortedDescriptors = result;
-        this.sortedStartPositions = indices;
-    }
-
     private final class BookmarkImpl implements Bookmark
     {
         private final GenericPropertyNode first;
@@ -231,5 +118,142 @@ public class BookmarksImpl implements Bookmarks
                     + getName();
         }
 
+    }
+
+    private final BookmarksTables bookmarksTables;
+
+    private Map<Integer, List<GenericPropertyNode>> sortedDescriptors = null;
+
+    private int[] sortedStartPositions = null;
+
+    public BookmarksImpl( BookmarksTables bookmarksTables )
+    {
+        this.bookmarksTables = bookmarksTables;
+        reset();
+    }
+
+    void afterDelete( int startCp, int length )
+    {
+        bookmarksTables.afterDelete( startCp, length );
+        reset();
+    }
+
+    void afterInsert( int startCp, int length )
+    {
+        bookmarksTables.afterInsert( startCp, length );
+        reset();
+    }
+
+    private Bookmark getBookmark( final GenericPropertyNode first )
+    {
+        return new BookmarkImpl( first );
+    }
+
+    public Bookmark getBookmark( int index )
+    {
+        final GenericPropertyNode first = bookmarksTables
+                .getDescriptorFirst( index );
+        return getBookmark( first );
+    }
+
+    public List<Bookmark> getBookmarksAt( int startCp )
+    {
+        updateSortedDescriptors();
+
+        List<GenericPropertyNode> nodes = sortedDescriptors.get( Integer
+                .valueOf( startCp ) );
+        if ( nodes == null || nodes.isEmpty() )
+            return Collections.emptyList();
+
+        List<Bookmark> result = new ArrayList<Bookmark>( nodes.size() );
+        for ( GenericPropertyNode node : nodes )
+        {
+            result.add( getBookmark( node ) );
+        }
+        return Collections.unmodifiableList( result );
+    }
+
+    public int getBookmarksCount()
+    {
+        return bookmarksTables.getDescriptorsFirstCount();
+    }
+
+    public Map<Integer, List<Bookmark>> getBookmarksStartedBetween(
+            int startInclusive, int endExclusive )
+    {
+        updateSortedDescriptors();
+
+        int startLookupIndex = Arrays.binarySearch( this.sortedStartPositions,
+                startInclusive );
+        if ( startLookupIndex < 0 )
+            startLookupIndex = -( startLookupIndex + 1 );
+        int endLookupIndex = Arrays.binarySearch( this.sortedStartPositions,
+                endExclusive );
+        if ( endLookupIndex < 0 )
+            endLookupIndex = -( endLookupIndex + 1 );
+
+        Map<Integer, List<Bookmark>> result = new LinkedHashMap<Integer, List<Bookmark>>();
+        for ( int lookupIndex = startLookupIndex; lookupIndex < endLookupIndex; lookupIndex++ )
+        {
+            int s = sortedStartPositions[lookupIndex];
+            if ( s < startInclusive )
+                continue;
+            if ( s >= endExclusive )
+                break;
+
+            List<Bookmark> startedAt = getBookmarksAt( s );
+            if ( startedAt != null )
+                result.put( Integer.valueOf( s ), startedAt );
+        }
+
+        return Collections.unmodifiableMap( result );
+    }
+
+    public void remove( int index )
+    {
+        bookmarksTables.remove( index );
+    }
+
+    private void reset()
+    {
+        sortedDescriptors = null;
+        sortedStartPositions = null;
+    }
+
+    private void updateSortedDescriptors()
+    {
+        if ( sortedDescriptors != null )
+            return;
+
+        Map<Integer, List<GenericPropertyNode>> result = new HashMap<Integer, List<GenericPropertyNode>>();
+        for ( int b = 0; b < bookmarksTables.getDescriptorsFirstCount(); b++ )
+        {
+            GenericPropertyNode property = bookmarksTables
+                    .getDescriptorFirst( b );
+            Integer positionKey = Integer.valueOf( property.getStart() );
+            List<GenericPropertyNode> atPositionList = result.get( positionKey );
+            if ( atPositionList == null )
+            {
+                atPositionList = new LinkedList<GenericPropertyNode>();
+                result.put( positionKey, atPositionList );
+            }
+            atPositionList.add( property );
+        }
+
+        int counter = 0;
+        int[] indices = new int[result.size()];
+        for ( Map.Entry<Integer, List<GenericPropertyNode>> entry : result
+                .entrySet() )
+        {
+            indices[counter++] = entry.getKey().intValue();
+            List<GenericPropertyNode> updated = new ArrayList<GenericPropertyNode>(
+                    entry.getValue() );
+            Collections.sort( updated, PropertyNode.EndComparator.instance );
+            entry.setValue( updated );
+        }
+        Arrays.sort( indices );
+
+        this.sortedDescriptors = result;
+        this.sortedStartPositions = indices;
     }
 }

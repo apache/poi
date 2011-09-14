@@ -47,4 +47,12 @@ public interface Bookmarks
      */
     Map<Integer, List<Bookmark>> getBookmarksStartedBetween(
             int startInclusive, int endExclusive );
+
+    /**
+     * Remove bookmark from document (but not the bookmark text)
+     * 
+     * @param index
+     *            bookmark document index to be removed
+     */
+    void remove( int index );
 }

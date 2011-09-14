@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -66,6 +67,36 @@ public final class PlexOfCps
         }
     }
 
+    @Internal
+    void adjust( int startCp, int shift )
+    {
+        for ( GenericPropertyNode node : _props )
+        {
+            if ( node.getStart() > startCp )
+            {
+                if ( node.getStart() + shift < startCp )
+                {
+                    node.setStart( startCp );
+                }
+                else
+                {
+                    node.setStart( node.getStart() + shift );
+                }
+            }
+            if ( node.getEnd() >= startCp )
+            {
+                if ( node.getEnd() + shift < startCp )
+                {
+                    node.setEnd( startCp );
+                }
+                else
+                {
+                    node.setEnd( node.getEnd() + shift );
+                }
+            }
+        }
+    }
+
     public GenericPropertyNode getProperty( int index )
     {
         return _props.get( index );
@@ -74,6 +105,13 @@ public final class PlexOfCps
     public void addProperty( GenericPropertyNode node )
     {
         _props.add( node );
+        _iMac++;
+    }
+
+    void remove( int index )
+    {
+        _props.remove( index );
+        _iMac--;
     }
 
     public byte[] toByteArray()
