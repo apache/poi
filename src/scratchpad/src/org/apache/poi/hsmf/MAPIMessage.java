@@ -413,11 +413,15 @@ public class MAPIMessage extends POIDocument {
             ((StringChunk)c).set7BitEncoding(charset);
          }
       }
-      for(Chunk c : nameIdChunks.getAll()) {
-         if(c instanceof StringChunk) {
-            ((StringChunk)c).set7BitEncoding(charset);
+
+      if (nameIdChunks!=null) {
+         for(Chunk c : nameIdChunks.getAll()) {
+            if(c instanceof StringChunk) {
+                ((StringChunk)c).set7BitEncoding(charset);
+            }
          }
       }
+
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
