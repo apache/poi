@@ -73,13 +73,21 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         System.arraycopy(source,start+8,_data,0,len-8);
     }
 
+    public boolean isCompressed() {
+        return LittleEndian.getShort(_header, 0)!=0;
+    }
+
     /**
      * Gets the uncompressed length of the data.
      *
      * @return the uncompressed length of the data.
      */
     public int getDataLength() {
-        return LittleEndian.getInt(_data, 0);
+        if (isCompressed()) {
+            return LittleEndian.getInt(_data, 0);
+        } else {
+            return _data.length;
+        }
     }
 
     /**
@@ -88,8 +96,12 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
      * @return the data input stream.
      */
     public InputStream getData() {
-        InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
-        return new InflaterInputStream(compressedStream);
+        if (isCompressed()) {
+            InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
+            return new InflaterInputStream(compressedStream);
+        } else {
+            return new ByteArrayInputStream(_data, 0, _data.length);
+        }
     }
 
     public byte[] getRawData() {
