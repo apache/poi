@@ -370,7 +370,10 @@ public class MAPIMessage extends POIDocument {
                   if(m.matches()) {
                      // Found it! Tell all the string chunks
                      String charset = m.group(1);
-                     set7BitEncoding(charset);
+
+                     if (!charset.equalsIgnoreCase("utf-8")) { 
+                        set7BitEncoding(charset);
+                     }
                      return;
                   }
                }
