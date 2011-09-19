@@ -57,11 +57,26 @@ public final class RecordFactoryInputStream {
 			FilePassRecord fpr = null;
 			if (rec instanceof BOFRecord) {
 				_hasBOFRecord = true;
+				
+				// Fetch the next record, and see if it indicates whether
+				//  the document is encrypted or not
 				if (rs.hasNextRecord()) {
 					rs.nextRecord();
 					rec = RecordFactory.createSingleRecord(rs);
 					recSize += rec.getRecordSize();
 					outputRecs.add(rec);
+					
+					// Encrypted is normally BOF then FILEPASS
+					// May sometimes be BOF, WRITEPROTECT, FILEPASS
+					if (rec instanceof WriteProtectRecord && rs.hasNextRecord()) {
+	               rs.nextRecord();
+	               rec = RecordFactory.createSingleRecord(rs);
+	               recSize += rec.getRecordSize();
+	               outputRecs.add(rec);
+					}
+					
+					// If it's a FILEPASS, track it specifically but
+					//  don't include it in the main stream
 					if (rec instanceof FilePassRecord) {
 						fpr = (FilePassRecord) rec;
 						outputRecs.remove(outputRecs.size()-1);

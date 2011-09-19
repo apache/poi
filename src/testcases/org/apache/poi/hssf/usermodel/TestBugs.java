@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.AssertionFailedError;
+
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -2179,4 +2181,16 @@ if(1==2) {
         writeOutAndReadBack(wb);
     }
 
+    /**
+     * Normally encrypted files have BOF then FILEPASS, but
+     *  some may squeeze a WRITEPROTECT in the middle
+     */
+    public void test51832() {
+       try {
+          openSample("51832.xls");
+          fail("Encrypted file");
+       } catch(EncryptedDocumentException e) {
+          // Good
+       }
+    }
 }
