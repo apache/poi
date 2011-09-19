@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51832 - handle XLS files where the WRITEPROTECT record preceeds the FILEPASS one, rather than following as normal</action>
            <action dev="poi-developers" type="fix">51809 - correct GTE handling in COUNTIF</action>
            <action dev="poi-developers" type="add">Add HWPF API to update range text and delete bookmarks</action>
            <action dev="poi-developers" type="add">HWPF Bookmarks tables are correctly updated on text updates</action>
