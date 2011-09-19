@@ -90,7 +90,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
         PackagePart[] parts = new PackagePart[partsC.size()];
         int count = 0;
         for (PackageRelationship rel : partsC) {
-            parts[count] = getTargetPart(rel);
+            parts[count] = getPackagePart().getRelatedPart(rel);
             count++;
         }
         return parts;

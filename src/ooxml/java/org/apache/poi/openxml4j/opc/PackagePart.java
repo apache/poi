@@ -456,6 +456,38 @@ public abstract class PackagePart implements RelationshipSource {
         return false;
 	}
 
+   /**
+    * Get the PackagePart that is the target of a relationship.
+    *
+    * @param rel A relationship from this part to another one 
+    * @return The target part of the relationship
+    */
+   public PackagePart getRelatedPart(PackageRelationship rel) throws InvalidFormatException {
+       // Ensure this is one of ours
+       if(! isRelationshipExists(rel)) {
+          throw new IllegalArgumentException("Relationship " + rel + " doesn't start with this part " + _partName);
+       }
+       
+       // Get the target URI, excluding any relative fragments
+       URI target = rel.getTargetURI();
+       if(target.getFragment() != null) {
+          String t = target.toString();
+          try {
+             target = new URI( t.substring(0, t.indexOf('#')) );
+          } catch(URISyntaxException e) {
+             throw new InvalidFormatException("Invalid target URI: " + target);
+          }
+       }
+   
+       // Turn that into a name, and fetch
+       PackagePartName relName = PackagingURIHelper.createPartName(target);
+       PackagePart part = _container.getPart(relName);
+       if (part == null) {
+           throw new IllegalArgumentException("No part found for relationship " + rel);
+       }
+       return part;
+   }
+   
 	/**
 	 * Get the input stream of this part to read its content.
 	 *

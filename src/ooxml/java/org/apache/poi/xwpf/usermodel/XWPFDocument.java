@@ -387,7 +387,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public PackagePart getPartById(String id) {
         try {
-            return getTargetPart(getCorePart().getRelationship(id));
+            PackagePart corePart = getCorePart();
+            return corePart.getRelatedPart(corePart.getRelationship(id));
         } catch (InvalidFormatException e) {
             throw new IllegalArgumentException(e);
         }
@@ -428,12 +429,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         List<PackagePart> embedds = new LinkedList<PackagePart>();
 
         // Get the embeddings for the workbook
+        PackagePart part = getPackagePart();
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
-            embedds.add(getTargetPart(rel));
+            embedds.add(part.getRelatedPart(rel));
         }
 
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
-            embedds.add(getTargetPart(rel));
+            embedds.add(part.getRelatedPart(rel));
         }
 
         return embedds;

@@ -1333,12 +1333,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         for(XSSFSheet sheet : sheets){
             // Get the embeddings for the workbook
-            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation()))
-                embedds.add(getTargetPart(rel));
+            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation())) {
+                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+            }
 
-            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation()))
-                embedds.add(getTargetPart(rel));
-
+            for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation())) {
+               embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+            }
         }
         return embedds;
     }

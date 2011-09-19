@@ -62,23 +62,6 @@ public class POIXMLDocumentPart {
     private Map<String,POIXMLDocumentPart> relations = new LinkedHashMap<String,POIXMLDocumentPart>();
 
     /**
-     * Get the PackagePart that is the target of a relationship.
-     *
-     * @param rel The relationship
-     * @param pkg The package to fetch from
-     * @return The target part
-     * @throws InvalidFormatException
-     */
-    protected static PackagePart getTargetPart(OPCPackage pkg, PackageRelationship rel)
-    throws InvalidFormatException {
-        PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-        PackagePart part = pkg.getPart(relName);
-        if (part == null) {
-            throw new IllegalArgumentException("No part found for relationship " + rel);
-        }
-        return part;
-    }
-    /**
      * Counter that provides the amount of incoming relations from other parts
      * to this part.
      */
@@ -159,7 +142,7 @@ public class POIXMLDocumentPart {
             );
         }
         packageRel = cores.getRelationship(0);
-        packagePart = POIXMLDocument.getTargetPart(pkg, packageRel);
+        packagePart = packagePart.getRelatedPart(packageRel);
     }
 
     /**
@@ -425,6 +408,18 @@ public class POIXMLDocumentPart {
             }
         }
     }
+    
+    /**
+     * Get the PackagePart that is the target of a relationship from this Part.
+     *
+     * @param rel The relationship
+     * @return The target part
+     * @throws InvalidFormatException
+     */
+    protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
+        return getPackagePart().getRelatedPart(rel);
+    }
+
 
     /**
      * Fired when a new package part is created
@@ -438,17 +433,6 @@ public class POIXMLDocumentPart {
      */
     protected void onDocumentRead() throws IOException {
 
-    }
-
-    /**
-     * Get the PackagePart that is the target of a relationship.
-     *
-     * @param rel The relationship
-     * @return The target part
-     * @throws InvalidFormatException
-     */
-    protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
-        return getTargetPart(getPackagePart().getPackage(), rel);
     }
 
     /**
