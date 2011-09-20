@@ -78,6 +78,9 @@ public class FieldIterator
         else if ( type.equals( "BorderCode" ) )
             result = "new BorderCode(data, 0x" + Integer.toHexString( offset )
                     + " + offset)";
+        else if ( type.equals( "Colorref" ) )
+            result = "new Colorref(data, 0x" + Integer.toHexString( offset )
+                    + " + offset)";
         else if ( type.equals( "DateAndTime" ) )
             result = "new DateAndTime(data, 0x" + Integer.toHexString( offset )
                     + " + offset)";
@@ -121,6 +124,9 @@ public class FieldIterator
                     + Integer.toHexString( offset ) + " + offset, "
                     + javaFieldName + ".length);";
         else if ( type.equals( "BorderCode" ) )
+            result = javaFieldName + ".serialize(data, 0x"
+                    + Integer.toHexString( offset ) + " + offset);";
+        else if ( type.equals( "Colorref" ) )
             result = javaFieldName + ".serialize(data, 0x"
                     + Integer.toHexString( offset ) + " + offset);";
         else if ( type.equals( "DateAndTime" ) )
