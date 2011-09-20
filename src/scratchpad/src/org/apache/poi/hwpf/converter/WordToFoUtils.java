@@ -44,7 +44,7 @@ public class WordToFoUtils extends AbstractWordUtils
         if ( element == null )
             throw new IllegalArgumentException( "element is null" );
 
-        if ( borderCode == null || borderCode.getBorderType() == 0 )
+        if ( borderCode == null || borderCode.isEmpty() )
             return;
 
         if ( isEmpty( where ) )
