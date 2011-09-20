@@ -143,7 +143,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( twipsValue == 0 )
             return;
 
-        style.append( cssName + ":" + ( twipsValue / TWIPS_PER_PT ) + "pt;" );
+        style.append( cssName + ":" + ( twipsValue / TWIPS_PER_INCH ) + "in;" );
     }
 
     public static void addJustification( Paragraph paragraph,

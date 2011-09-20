@@ -191,6 +191,22 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "innertable.doc" );
     }
 
+    public void testListsMargins() throws Exception
+    {
+        String result = getHtmlText( "lists-margins.doc" );
+
+        assertContains( result,
+                ".s1{display: inline-block; text-indent: 0; min-width: 0.4861111in;}" );
+        assertContains( result,
+                ".s2{display: inline-block; text-indent: 0; min-width: 0.23055555in;}" );
+        assertContains( result,
+                ".s3{display: inline-block; text-indent: 0; min-width: 0.28541666in;}" );
+        assertContains( result,
+                ".s4{display: inline-block; text-indent: 0; min-width: 0.28333333in;}" );
+        assertContains( result,
+                ".p4{text-indent:-0.59652776in;margin-left:-0.70069444in;" );
+    }
+
     public void testO_kurs_doc() throws Exception
     {
         getHtmlText( "o_kurs.doc" );

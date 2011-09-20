@@ -553,8 +553,41 @@ public class WordToHtmlConverter extends AbstractWordConverter
         {
             if ( WordToHtmlUtils.isNotEmpty( bulletText ) )
             {
-                Text textNode = htmlDocumentFacade.createText( bulletText );
-                pElement.appendChild( textNode );
+                if ( bulletText.endsWith( "\t" ) )
+                {
+                    /*
+                     * We don't know how to handle all cases in HTML, but at
+                     * least simplest case shall be handled
+                     */
+                    final float defaultTab = TWIPS_PER_INCH / 2;
+                    float firstLinePosition = paragraph.getIndentFromLeft()
+                            + paragraph.getFirstLineIndent() + 20; // char have
+                                                                   // some space
+
+                    float nextStop = (float) ( Math.ceil( firstLinePosition
+                            / defaultTab ) * defaultTab );
+
+                    final float spanMinWidth = nextStop - firstLinePosition;
+
+                    Element span = htmlDocumentFacade.getDocument()
+                            .createElement( "span" );
+                    htmlDocumentFacade
+                            .addStyleClass( span, "s",
+                                    "display: inline-block; text-indent: 0; min-width: "
+                                            + ( spanMinWidth / TWIPS_PER_INCH )
+                                            + "in;" );
+                    pElement.appendChild( span );
+
+                    Text textNode = htmlDocumentFacade.createText( bulletText
+                            .substring( 0, bulletText.length() - 1 ) );
+                    span.appendChild( textNode );
+                }
+                else
+                {
+                    Text textNode = htmlDocumentFacade.createText( bulletText
+                            .substring( 0, bulletText.length() - 1 ) );
+                    pElement.appendChild( textNode );
+                }
             }
 
             processCharacters( hwpfDocument, currentTableLevel, paragraph,
