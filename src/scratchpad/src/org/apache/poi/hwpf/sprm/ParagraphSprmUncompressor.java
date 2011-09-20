@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
 import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -284,9 +286,10 @@ public final class ParagraphSprmUncompressor
       case 0x2c:
         newPAP.setDcs (new DropCapSpecifier((short)sprm.getOperand()));
         break;
-      case 0x2d:
-        newPAP.setShd (new ShadingDescriptor((short)sprm.getOperand()));
-        break;
+        case 0x2d:
+            newPAP.setShd( new ShadingDescriptor80( (short) sprm.getOperand() )
+                    .toShadingDescriptor() );
+            break;
       case 0x2e:
         newPAP.setDyaFromText (sprm.getOperand());
         break;
@@ -412,6 +415,20 @@ public final class ParagraphSprmUncompressor
             // sprmPFInnerTtp -- 0x244c
             newPAP.setFTtpEmbedded( sprm.getOperand()  != 0);
             break;
+        case 0x4d:
+            // sprmPShd -- 0xc64d
+            ShadingDescriptor shadingDescriptor = new ShadingDescriptor(
+                    sprm.getGrpprl(), 3 );
+            newPAP.setShading( shadingDescriptor );
+            break;
+        case 0x5d:
+            // sprmPDxaRight -- 0x845d
+            newPAP.setDxaRight( sprm.getOperand() );
+            break;
+        case 0x5e:
+            // sprmPDxaLeft -- 0x845e
+            newPAP.setDxaLeft( sprm.getOperand() );
+            break;
         case 0x60:
             // sprmPDxaLeft1 -- 0x8460
             newPAP.setDxaLeft1( sprm.getOperand() );
@@ -420,6 +437,10 @@ public final class ParagraphSprmUncompressor
         // sprmPJc 
         newPAP.setJustificationLogical((byte) sprm.getOperand());
         break;
+      case 0x67:
+          // sprmPRsid -- 0x6467 
+          newPAP.setRsid( sprm.getOperand() );
+          break;
         default:
             logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: " + sprm );
             break;
@@ -432,12 +453,12 @@ public final class ParagraphSprmUncompressor
     int offset = sprm.getGrpprlOffset();
     int delSize = grpprl[offset++];
     int[] tabPositions = pap.getRgdxaTab();
-    byte[] tabDescriptors = pap.getRgtbd();
+    TabDescriptor[] tabDescriptors = pap.getRgtbd();
 
-    Map<Integer, Byte> tabMap = new HashMap<Integer, Byte>();
+    Map<Integer, TabDescriptor> tabMap = new HashMap<Integer, TabDescriptor>();
     for (int x = 0; x < tabPositions.length; x++)
     {
-      tabMap.put(Integer.valueOf(tabPositions[x]), Byte.valueOf(tabDescriptors[x]));
+      tabMap.put(Integer.valueOf(tabPositions[x]), tabDescriptors[x]);
     }
 
     for (int x = 0; x < delSize; x++)
@@ -451,13 +472,13 @@ public final class ParagraphSprmUncompressor
     for (int x = 0; x < addSize; x++)
     {
       Integer key = Integer.valueOf(LittleEndian.getShort(grpprl, offset));
-      Byte val = Byte.valueOf(grpprl[start + ((LittleEndian.SHORT_SIZE * addSize) + x)]);
+      TabDescriptor val = new TabDescriptor( grpprl, start + ((TabDescriptor.getSize() * addSize) + x) );
       tabMap.put(key, val);
       offset += LittleEndian.SHORT_SIZE;
     }
 
     tabPositions = new int[tabMap.size()];
-    tabDescriptors = new byte[tabPositions.length];
+    tabDescriptors = new TabDescriptor[tabPositions.length];
     
     List<Integer> list = new ArrayList<Integer>(tabMap.keySet());
     Collections.sort(list);
@@ -466,7 +487,10 @@ public final class ParagraphSprmUncompressor
     {
       Integer key = list.get(x);
       tabPositions[x] = key.intValue();
-      tabDescriptors[x] = tabMap.get(key).byteValue();
+      if (tabMap.containsKey( key ))
+          tabDescriptors[x] = tabMap.get(key);
+      else
+          tabDescriptors[x] = new TabDescriptor();
     }
 
     pap.setRgdxaTab(tabPositions);

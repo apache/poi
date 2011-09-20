@@ -226,7 +226,6 @@ public class LittleEndian implements LittleEndianConsts {
         data[i++] = (byte)((value >>> 24) & 0xFF);
     }
 
-
     /**
      *  put an int value into beginning of a byte array
      *
@@ -237,6 +236,32 @@ public class LittleEndian implements LittleEndianConsts {
         putInt(data, 0, value);
     }
 
+    /**
+     * put an unsigned int value into a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @param value the int (32-bit) value
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static void putUInt(byte[] data, int offset, long value) {
+        int i = offset;
+        data[i++] = (byte)((value >>>  0) & 0xFF);
+        data[i++] = (byte)((value >>>  8) & 0xFF);
+        data[i++] = (byte)((value >>> 16) & 0xFF);
+        data[i++] = (byte)((value >>> 24) & 0xFF);
+    }
+
+    /**
+     *  put an unsigned int value into beginning of a byte array
+     *
+     *@param  data   the byte array
+     *@param  value  the int (32-bit) value
+     */
+    public static void putUInt(byte[] data, long value) {
+        putUInt(data, 0, value);
+    }
 
     /**
      *  put a long value into a byte array

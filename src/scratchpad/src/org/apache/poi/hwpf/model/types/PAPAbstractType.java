@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model.types;
 
+
+import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
@@ -27,8 +29,12 @@ import org.apache.poi.util.Internal;
 
 /**
  * Paragraph Properties.
+ * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
+ *       remove the record in src/types/definitions.
+ * <p>
+ * This class is internal. It content or properties may change without notice 
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author S. Ryan Ackley
  */
@@ -42,16 +48,16 @@ public abstract class PAPAbstractType
     protected boolean field_4_fKeepFollow;
     protected boolean field_5_fPageBreakBefore;
     protected byte field_6_brcl;
-    /**/public final static byte BRCL_SINGLE = 0;
-    /**/public final static byte BRCL_THICK = 1;
-    /**/public final static byte BRCL_DOUBLE = 2;
-    /**/public final static byte BRCL_SHADOW = 3;
+    /**/protected final static byte BRCL_SINGLE = 0;
+    /**/protected final static byte BRCL_THICK = 1;
+    /**/protected final static byte BRCL_DOUBLE = 2;
+    /**/protected final static byte BRCL_SHADOW = 3;
     protected byte field_7_brcp;
-    /**/public final static byte BRCP_NONE = 0;
-    /**/public final static byte BRCP_BORDER_ABOVE = 1;
-    /**/public final static byte BRCP_BORDER_BELOW = 2;
-    /**/public final static byte BRCP_BOX_AROUND = 15;
-    /**/public final static byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
+    /**/protected final static byte BRCP_NONE = 0;
+    /**/protected final static byte BRCP_BORDER_ABOVE = 1;
+    /**/protected final static byte BRCP_BORDER_BELOW = 2;
+    /**/protected final static byte BRCP_BOX_AROUND = 15;
+    /**/protected final static byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
     protected byte field_8_ilvl;
     protected int field_9_ilfo;
     protected boolean field_10_fNoLnn;
@@ -72,8 +78,8 @@ public abstract class PAPAbstractType
     protected boolean field_25_fNoAutoHyph;
     protected int field_26_dyaHeight;
     protected boolean field_27_fMinHeight;
-    /**/public final static boolean FMINHEIGHT_EXACT = false;
-    /**/public final static boolean FMINHEIGHT_AT_LEAST = true;
+    /**/protected final static boolean FMINHEIGHT_EXACT = false;
+    /**/protected final static boolean FMINHEIGHT_AT_LEAST = true;
     protected DropCapSpecifier field_28_dcs;
     protected int field_29_dyaFromText;
     protected int field_30_dxaFromText;
@@ -86,15 +92,15 @@ public abstract class PAPAbstractType
     protected boolean field_37_fAutoSpaceDE;
     protected boolean field_38_fAutoSpaceDN;
     protected int field_39_wAlignFont;
-    /**/public final static byte WALIGNFONT_HANGING = 0;
-    /**/public final static byte WALIGNFONT_CENTERED = 1;
-    /**/public final static byte WALIGNFONT_ROMAN = 2;
-    /**/public final static byte WALIGNFONT_VARIABLE = 3;
-    /**/public final static byte WALIGNFONT_AUTO = 4;
+    /**/protected final static byte WALIGNFONT_HANGING = 0;
+    /**/protected final static byte WALIGNFONT_CENTERED = 1;
+    /**/protected final static byte WALIGNFONT_ROMAN = 2;
+    /**/protected final static byte WALIGNFONT_VARIABLE = 3;
+    /**/protected final static byte WALIGNFONT_AUTO = 4;
     protected short field_40_fontAlign;
-        private static BitField  fVertical = new BitField(0x0001);
-        private static BitField  fBackward = new BitField(0x0002);
-        private static BitField  fRotateFont = new BitField(0x0004);
+    /**/private static BitField fVertical = new BitField(0x0001);
+    /**/private static BitField fBackward = new BitField(0x0002);
+    /**/private static BitField fRotateFont = new BitField(0x0004);
     protected byte field_41_lvl;
     protected boolean field_42_fBiDi;
     protected boolean field_43_fNumRMIns;
@@ -114,24 +120,26 @@ public abstract class PAPAbstractType
     protected int field_57_dxaLeft;
     protected int field_58_dxaLeft1;
     protected byte field_59_jc;
-    protected boolean field_60_fNoAllowOverlap;
-    protected BorderCode field_61_brcTop;
-    protected BorderCode field_62_brcLeft;
-    protected BorderCode field_63_brcBottom;
-    protected BorderCode field_64_brcRight;
-    protected BorderCode field_65_brcBetween;
-    protected BorderCode field_66_brcBar;
-    protected ShadingDescriptor field_67_shd;
-    protected byte[] field_68_anld;
-    protected byte[] field_69_phe;
-    protected boolean field_70_fPropRMark;
-    protected int field_71_ibstPropRMark;
-    protected DateAndTime field_72_dttmPropRMark;
-    protected int field_73_itbdMac;
-    protected int[] field_74_rgdxaTab;
-    protected byte[] field_75_rgtbd;
-    protected byte[] field_76_numrm;
-    protected byte[] field_77_ptap;
+    protected BorderCode field_60_brcTop;
+    protected BorderCode field_61_brcLeft;
+    protected BorderCode field_62_brcBottom;
+    protected BorderCode field_63_brcRight;
+    protected BorderCode field_64_brcBetween;
+    protected BorderCode field_65_brcBar;
+    protected ShadingDescriptor field_66_shd;
+    protected byte[] field_67_anld;
+    protected byte[] field_68_phe;
+    protected boolean field_69_fPropRMark;
+    protected int field_70_ibstPropRMark;
+    protected DateAndTime field_71_dttmPropRMark;
+    protected int field_72_itbdMac;
+    protected int[] field_73_rgdxaTab;
+    protected TabDescriptor[] field_74_rgtbd;
+    protected byte[] field_75_numrm;
+    protected byte[] field_76_ptap;
+    protected boolean field_77_fNoAllowOverlap;
+    protected long field_78_ipgp;
+    protected long field_79_rsid;
 
     protected PAPAbstractType()
     {
@@ -140,20 +148,20 @@ public abstract class PAPAbstractType
         this.field_28_dcs = new DropCapSpecifier();
         this.field_32_fWidowControl = true;
         this.field_41_lvl = 9;
-        this.field_61_brcTop = new BorderCode();
-        this.field_62_brcLeft = new BorderCode();
-        this.field_63_brcBottom = new BorderCode();
-        this.field_64_brcRight = new BorderCode();
-        this.field_65_brcBetween = new BorderCode();
-        this.field_66_brcBar = new BorderCode();
-        this.field_67_shd = new ShadingDescriptor();
-        this.field_68_anld = new byte[0];
-        this.field_69_phe = new byte[0];
-        this.field_72_dttmPropRMark = new DateAndTime();
-        this.field_74_rgdxaTab = new int[0];
-        this.field_75_rgtbd = new byte[0];
-        this.field_76_numrm = new byte[0];
-        this.field_77_ptap = new byte[0];
+        this.field_60_brcTop = new BorderCode();
+        this.field_61_brcLeft = new BorderCode();
+        this.field_62_brcBottom = new BorderCode();
+        this.field_63_brcRight = new BorderCode();
+        this.field_64_brcBetween = new BorderCode();
+        this.field_65_brcBar = new BorderCode();
+        this.field_66_shd = new ShadingDescriptor();
+        this.field_67_anld = new byte[0];
+        this.field_68_phe = new byte[0];
+        this.field_71_dttmPropRMark = new DateAndTime();
+        this.field_73_rgdxaTab = new int[0];
+        this.field_74_rgtbd = new TabDescriptor[0];
+        this.field_75_numrm = new byte[0];
+        this.field_76_ptap = new byte[0];
     }
 
 
@@ -282,8 +290,6 @@ public abstract class PAPAbstractType
         builder.append(" (").append(getDxaLeft1()).append(" )\n");
         builder.append("    .jc                   = ");
         builder.append(" (").append(getJc()).append(" )\n");
-        builder.append("    .fNoAllowOverlap      = ");
-        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
         builder.append("    .brcTop               = ");
         builder.append(" (").append(getBrcTop()).append(" )\n");
         builder.append("    .brcLeft              = ");
@@ -318,6 +324,12 @@ public abstract class PAPAbstractType
         builder.append(" (").append(getNumrm()).append(" )\n");
         builder.append("    .ptap                 = ");
         builder.append(" (").append(getPtap()).append(" )\n");
+        builder.append("    .fNoAllowOverlap      = ");
+        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
+        builder.append("    .ipgp                 = ");
+        builder.append(" (").append(getIpgp()).append(" )\n");
+        builder.append("    .rsid                 = ");
+        builder.append(" (").append(getRsid()).append(" )\n");
 
         builder.append("[/PAP]\n");
         return builder.toString();
@@ -326,6 +338,7 @@ public abstract class PAPAbstractType
     /**
      * Index to style descriptor.
      */
+    @Internal
     public int getIstd()
     {
         return field_1_istd;
@@ -334,7 +347,8 @@ public abstract class PAPAbstractType
     /**
      * Index to style descriptor.
      */
-    public void setIstd(int field_1_istd)
+    @Internal
+    public void setIstd( int field_1_istd )
     {
         this.field_1_istd = field_1_istd;
     }
@@ -342,6 +356,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fSideBySide field for the PAP record.
      */
+    @Internal
     public boolean getFSideBySide()
     {
         return field_2_fSideBySide;
@@ -350,7 +365,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fSideBySide field for the PAP record.
      */
-    public void setFSideBySide(boolean field_2_fSideBySide)
+    @Internal
+    public void setFSideBySide( boolean field_2_fSideBySide )
     {
         this.field_2_fSideBySide = field_2_fSideBySide;
     }
@@ -358,6 +374,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fKeep field for the PAP record.
      */
+    @Internal
     public boolean getFKeep()
     {
         return field_3_fKeep;
@@ -366,7 +383,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeep field for the PAP record.
      */
-    public void setFKeep(boolean field_3_fKeep)
+    @Internal
+    public void setFKeep( boolean field_3_fKeep )
     {
         this.field_3_fKeep = field_3_fKeep;
     }
@@ -374,6 +392,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fKeepFollow field for the PAP record.
      */
+    @Internal
     public boolean getFKeepFollow()
     {
         return field_4_fKeepFollow;
@@ -382,7 +401,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeepFollow field for the PAP record.
      */
-    public void setFKeepFollow(boolean field_4_fKeepFollow)
+    @Internal
+    public void setFKeepFollow( boolean field_4_fKeepFollow )
     {
         this.field_4_fKeepFollow = field_4_fKeepFollow;
     }
@@ -390,6 +410,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fPageBreakBefore field for the PAP record.
      */
+    @Internal
     public boolean getFPageBreakBefore()
     {
         return field_5_fPageBreakBefore;
@@ -398,7 +419,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fPageBreakBefore field for the PAP record.
      */
-    public void setFPageBreakBefore(boolean field_5_fPageBreakBefore)
+    @Internal
+    public void setFPageBreakBefore( boolean field_5_fPageBreakBefore )
     {
         this.field_5_fPageBreakBefore = field_5_fPageBreakBefore;
     }
@@ -412,6 +434,7 @@ public abstract class PAPAbstractType
      * <li>{@link #BRCL_DOUBLE}
      * <li>{@link #BRCL_SHADOW}
      */
+    @Internal
     public byte getBrcl()
     {
         return field_6_brcl;
@@ -427,7 +450,8 @@ public abstract class PAPAbstractType
      * <li>{@link #BRCL_DOUBLE}
      * <li>{@link #BRCL_SHADOW}
      */
-    public void setBrcl(byte field_6_brcl)
+    @Internal
+    public void setBrcl( byte field_6_brcl )
     {
         this.field_6_brcl = field_6_brcl;
     }
@@ -442,6 +466,7 @@ public abstract class PAPAbstractType
      * <li>{@link #BRCP_BOX_AROUND}
      * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
      */
+    @Internal
     public byte getBrcp()
     {
         return field_7_brcp;
@@ -458,7 +483,8 @@ public abstract class PAPAbstractType
      * <li>{@link #BRCP_BOX_AROUND}
      * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
      */
-    public void setBrcp(byte field_7_brcp)
+    @Internal
+    public void setBrcp( byte field_7_brcp )
     {
         this.field_7_brcp = field_7_brcp;
     }
@@ -466,6 +492,7 @@ public abstract class PAPAbstractType
     /**
      * List level if non-zero.
      */
+    @Internal
     public byte getIlvl()
     {
         return field_8_ilvl;
@@ -474,7 +501,8 @@ public abstract class PAPAbstractType
     /**
      * List level if non-zero.
      */
-    public void setIlvl(byte field_8_ilvl)
+    @Internal
+    public void setIlvl( byte field_8_ilvl )
     {
         this.field_8_ilvl = field_8_ilvl;
     }
@@ -482,6 +510,7 @@ public abstract class PAPAbstractType
     /**
      * 1-based index into the pllfo (lists structure), if non-zero.
      */
+    @Internal
     public int getIlfo()
     {
         return field_9_ilfo;
@@ -490,7 +519,8 @@ public abstract class PAPAbstractType
     /**
      * 1-based index into the pllfo (lists structure), if non-zero.
      */
-    public void setIlfo(int field_9_ilfo)
+    @Internal
+    public void setIlfo( int field_9_ilfo )
     {
         this.field_9_ilfo = field_9_ilfo;
     }
@@ -498,6 +528,7 @@ public abstract class PAPAbstractType
     /**
      * No line numbering.
      */
+    @Internal
     public boolean getFNoLnn()
     {
         return field_10_fNoLnn;
@@ -506,7 +537,8 @@ public abstract class PAPAbstractType
     /**
      * No line numbering.
      */
-    public void setFNoLnn(boolean field_10_fNoLnn)
+    @Internal
+    public void setFNoLnn( boolean field_10_fNoLnn )
     {
         this.field_10_fNoLnn = field_10_fNoLnn;
     }
@@ -514,6 +546,7 @@ public abstract class PAPAbstractType
     /**
      * Line spacing descriptor.
      */
+    @Internal
     public LineSpacingDescriptor getLspd()
     {
         return field_11_lspd;
@@ -522,7 +555,8 @@ public abstract class PAPAbstractType
     /**
      * Line spacing descriptor.
      */
-    public void setLspd(LineSpacingDescriptor field_11_lspd)
+    @Internal
+    public void setLspd( LineSpacingDescriptor field_11_lspd )
     {
         this.field_11_lspd = field_11_lspd;
     }
@@ -530,6 +564,7 @@ public abstract class PAPAbstractType
     /**
      * Space before paragraph.
      */
+    @Internal
     public int getDyaBefore()
     {
         return field_12_dyaBefore;
@@ -538,7 +573,8 @@ public abstract class PAPAbstractType
     /**
      * Space before paragraph.
      */
-    public void setDyaBefore(int field_12_dyaBefore)
+    @Internal
+    public void setDyaBefore( int field_12_dyaBefore )
     {
         this.field_12_dyaBefore = field_12_dyaBefore;
     }
@@ -546,6 +582,7 @@ public abstract class PAPAbstractType
     /**
      * Space after paragraph.
      */
+    @Internal
     public int getDyaAfter()
     {
         return field_13_dyaAfter;
@@ -554,7 +591,8 @@ public abstract class PAPAbstractType
     /**
      * Space after paragraph.
      */
-    public void setDyaAfter(int field_13_dyaAfter)
+    @Internal
+    public void setDyaAfter( int field_13_dyaAfter )
     {
         this.field_13_dyaAfter = field_13_dyaAfter;
     }
@@ -562,6 +600,7 @@ public abstract class PAPAbstractType
     /**
      * Paragraph is in table flag.
      */
+    @Internal
     public boolean getFInTable()
     {
         return field_14_fInTable;
@@ -570,7 +609,8 @@ public abstract class PAPAbstractType
     /**
      * Paragraph is in table flag.
      */
-    public void setFInTable(boolean field_14_fInTable)
+    @Internal
+    public void setFInTable( boolean field_14_fInTable )
     {
         this.field_14_fInTable = field_14_fInTable;
     }
@@ -578,6 +618,7 @@ public abstract class PAPAbstractType
     /**
      * Archaic paragraph is in table flag.
      */
+    @Internal
     public boolean getFinTableW97()
     {
         return field_15_finTableW97;
@@ -586,7 +627,8 @@ public abstract class PAPAbstractType
     /**
      * Archaic paragraph is in table flag.
      */
-    public void setFinTableW97(boolean field_15_finTableW97)
+    @Internal
+    public void setFinTableW97( boolean field_15_finTableW97 )
     {
         this.field_15_finTableW97 = field_15_finTableW97;
     }
@@ -594,6 +636,7 @@ public abstract class PAPAbstractType
     /**
      * Table trailer paragraph (last in table row).
      */
+    @Internal
     public boolean getFTtp()
     {
         return field_16_fTtp;
@@ -602,7 +645,8 @@ public abstract class PAPAbstractType
     /**
      * Table trailer paragraph (last in table row).
      */
-    public void setFTtp(boolean field_16_fTtp)
+    @Internal
+    public void setFTtp( boolean field_16_fTtp )
     {
         this.field_16_fTtp = field_16_fTtp;
     }
@@ -610,6 +654,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dxaAbs field for the PAP record.
      */
+    @Internal
     public int getDxaAbs()
     {
         return field_17_dxaAbs;
@@ -618,7 +663,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dxaAbs field for the PAP record.
      */
-    public void setDxaAbs(int field_17_dxaAbs)
+    @Internal
+    public void setDxaAbs( int field_17_dxaAbs )
     {
         this.field_17_dxaAbs = field_17_dxaAbs;
     }
@@ -626,6 +672,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dyaAbs field for the PAP record.
      */
+    @Internal
     public int getDyaAbs()
     {
         return field_18_dyaAbs;
@@ -634,7 +681,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dyaAbs field for the PAP record.
      */
-    public void setDyaAbs(int field_18_dyaAbs)
+    @Internal
+    public void setDyaAbs( int field_18_dyaAbs )
     {
         this.field_18_dyaAbs = field_18_dyaAbs;
     }
@@ -642,6 +690,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dxaWidth field for the PAP record.
      */
+    @Internal
     public int getDxaWidth()
     {
         return field_19_dxaWidth;
@@ -650,7 +699,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dxaWidth field for the PAP record.
      */
-    public void setDxaWidth(int field_19_dxaWidth)
+    @Internal
+    public void setDxaWidth( int field_19_dxaWidth )
     {
         this.field_19_dxaWidth = field_19_dxaWidth;
     }
@@ -658,6 +708,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fBrLnAbove field for the PAP record.
      */
+    @Internal
     public boolean getFBrLnAbove()
     {
         return field_20_fBrLnAbove;
@@ -666,7 +717,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fBrLnAbove field for the PAP record.
      */
-    public void setFBrLnAbove(boolean field_20_fBrLnAbove)
+    @Internal
+    public void setFBrLnAbove( boolean field_20_fBrLnAbove )
     {
         this.field_20_fBrLnAbove = field_20_fBrLnAbove;
     }
@@ -674,6 +726,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fBrLnBelow field for the PAP record.
      */
+    @Internal
     public boolean getFBrLnBelow()
     {
         return field_21_fBrLnBelow;
@@ -682,7 +735,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fBrLnBelow field for the PAP record.
      */
-    public void setFBrLnBelow(boolean field_21_fBrLnBelow)
+    @Internal
+    public void setFBrLnBelow( boolean field_21_fBrLnBelow )
     {
         this.field_21_fBrLnBelow = field_21_fBrLnBelow;
     }
@@ -690,6 +744,7 @@ public abstract class PAPAbstractType
     /**
      * Get the pcVert field for the PAP record.
      */
+    @Internal
     public byte getPcVert()
     {
         return field_22_pcVert;
@@ -698,7 +753,8 @@ public abstract class PAPAbstractType
     /**
      * Set the pcVert field for the PAP record.
      */
-    public void setPcVert(byte field_22_pcVert)
+    @Internal
+    public void setPcVert( byte field_22_pcVert )
     {
         this.field_22_pcVert = field_22_pcVert;
     }
@@ -706,6 +762,7 @@ public abstract class PAPAbstractType
     /**
      * Get the pcHorz field for the PAP record.
      */
+    @Internal
     public byte getPcHorz()
     {
         return field_23_pcHorz;
@@ -714,7 +771,8 @@ public abstract class PAPAbstractType
     /**
      * Set the pcHorz field for the PAP record.
      */
-    public void setPcHorz(byte field_23_pcHorz)
+    @Internal
+    public void setPcHorz( byte field_23_pcHorz )
     {
         this.field_23_pcHorz = field_23_pcHorz;
     }
@@ -722,6 +780,7 @@ public abstract class PAPAbstractType
     /**
      * Get the wr field for the PAP record.
      */
+    @Internal
     public byte getWr()
     {
         return field_24_wr;
@@ -730,7 +789,8 @@ public abstract class PAPAbstractType
     /**
      * Set the wr field for the PAP record.
      */
-    public void setWr(byte field_24_wr)
+    @Internal
+    public void setWr( byte field_24_wr )
     {
         this.field_24_wr = field_24_wr;
     }
@@ -738,6 +798,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fNoAutoHyph field for the PAP record.
      */
+    @Internal
     public boolean getFNoAutoHyph()
     {
         return field_25_fNoAutoHyph;
@@ -746,7 +807,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fNoAutoHyph field for the PAP record.
      */
-    public void setFNoAutoHyph(boolean field_25_fNoAutoHyph)
+    @Internal
+    public void setFNoAutoHyph( boolean field_25_fNoAutoHyph )
     {
         this.field_25_fNoAutoHyph = field_25_fNoAutoHyph;
     }
@@ -754,6 +816,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dyaHeight field for the PAP record.
      */
+    @Internal
     public int getDyaHeight()
     {
         return field_26_dyaHeight;
@@ -762,7 +825,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dyaHeight field for the PAP record.
      */
-    public void setDyaHeight(int field_26_dyaHeight)
+    @Internal
+    public void setDyaHeight( int field_26_dyaHeight )
     {
         this.field_26_dyaHeight = field_26_dyaHeight;
     }
@@ -774,6 +838,7 @@ public abstract class PAPAbstractType
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
+    @Internal
     public boolean getFMinHeight()
     {
         return field_27_fMinHeight;
@@ -787,7 +852,8 @@ public abstract class PAPAbstractType
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
-    public void setFMinHeight(boolean field_27_fMinHeight)
+    @Internal
+    public void setFMinHeight( boolean field_27_fMinHeight )
     {
         this.field_27_fMinHeight = field_27_fMinHeight;
     }
@@ -795,6 +861,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dcs field for the PAP record.
      */
+    @Internal
     public DropCapSpecifier getDcs()
     {
         return field_28_dcs;
@@ -803,7 +870,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dcs field for the PAP record.
      */
-    public void setDcs(DropCapSpecifier field_28_dcs)
+    @Internal
+    public void setDcs( DropCapSpecifier field_28_dcs )
     {
         this.field_28_dcs = field_28_dcs;
     }
@@ -811,6 +879,7 @@ public abstract class PAPAbstractType
     /**
      * Vertical distance between text and absolutely positioned object.
      */
+    @Internal
     public int getDyaFromText()
     {
         return field_29_dyaFromText;
@@ -819,7 +888,8 @@ public abstract class PAPAbstractType
     /**
      * Vertical distance between text and absolutely positioned object.
      */
-    public void setDyaFromText(int field_29_dyaFromText)
+    @Internal
+    public void setDyaFromText( int field_29_dyaFromText )
     {
         this.field_29_dyaFromText = field_29_dyaFromText;
     }
@@ -827,6 +897,7 @@ public abstract class PAPAbstractType
     /**
      * Horizontal distance between text and absolutely positioned object.
      */
+    @Internal
     public int getDxaFromText()
     {
         return field_30_dxaFromText;
@@ -835,7 +906,8 @@ public abstract class PAPAbstractType
     /**
      * Horizontal distance between text and absolutely positioned object.
      */
-    public void setDxaFromText(int field_30_dxaFromText)
+    @Internal
+    public void setDxaFromText( int field_30_dxaFromText )
     {
         this.field_30_dxaFromText = field_30_dxaFromText;
     }
@@ -843,6 +915,7 @@ public abstract class PAPAbstractType
     /**
      * Anchor of an absolutely positioned frame is locked.
      */
+    @Internal
     public boolean getFLocked()
     {
         return field_31_fLocked;
@@ -851,7 +924,8 @@ public abstract class PAPAbstractType
     /**
      * Anchor of an absolutely positioned frame is locked.
      */
-    public void setFLocked(boolean field_31_fLocked)
+    @Internal
+    public void setFLocked( boolean field_31_fLocked )
     {
         this.field_31_fLocked = field_31_fLocked;
     }
@@ -859,6 +933,7 @@ public abstract class PAPAbstractType
     /**
      * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
      */
+    @Internal
     public boolean getFWidowControl()
     {
         return field_32_fWidowControl;
@@ -867,7 +942,8 @@ public abstract class PAPAbstractType
     /**
      * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
      */
-    public void setFWidowControl(boolean field_32_fWidowControl)
+    @Internal
+    public void setFWidowControl( boolean field_32_fWidowControl )
     {
         this.field_32_fWidowControl = field_32_fWidowControl;
     }
@@ -875,6 +951,7 @@ public abstract class PAPAbstractType
     /**
      * apply Kinsoku rules when performing line wrapping.
      */
+    @Internal
     public boolean getFKinsoku()
     {
         return field_33_fKinsoku;
@@ -883,7 +960,8 @@ public abstract class PAPAbstractType
     /**
      * apply Kinsoku rules when performing line wrapping.
      */
-    public void setFKinsoku(boolean field_33_fKinsoku)
+    @Internal
+    public void setFKinsoku( boolean field_33_fKinsoku )
     {
         this.field_33_fKinsoku = field_33_fKinsoku;
     }
@@ -891,6 +969,7 @@ public abstract class PAPAbstractType
     /**
      * perform word wrap.
      */
+    @Internal
     public boolean getFWordWrap()
     {
         return field_34_fWordWrap;
@@ -899,7 +978,8 @@ public abstract class PAPAbstractType
     /**
      * perform word wrap.
      */
-    public void setFWordWrap(boolean field_34_fWordWrap)
+    @Internal
+    public void setFWordWrap( boolean field_34_fWordWrap )
     {
         this.field_34_fWordWrap = field_34_fWordWrap;
     }
@@ -907,6 +987,7 @@ public abstract class PAPAbstractType
     /**
      * apply overflow punctuation rules when performing line wrapping.
      */
+    @Internal
     public boolean getFOverflowPunct()
     {
         return field_35_fOverflowPunct;
@@ -915,7 +996,8 @@ public abstract class PAPAbstractType
     /**
      * apply overflow punctuation rules when performing line wrapping.
      */
-    public void setFOverflowPunct(boolean field_35_fOverflowPunct)
+    @Internal
+    public void setFOverflowPunct( boolean field_35_fOverflowPunct )
     {
         this.field_35_fOverflowPunct = field_35_fOverflowPunct;
     }
@@ -923,6 +1005,7 @@ public abstract class PAPAbstractType
     /**
      * perform top line punctuation processing.
      */
+    @Internal
     public boolean getFTopLinePunct()
     {
         return field_36_fTopLinePunct;
@@ -931,7 +1014,8 @@ public abstract class PAPAbstractType
     /**
      * perform top line punctuation processing.
      */
-    public void setFTopLinePunct(boolean field_36_fTopLinePunct)
+    @Internal
+    public void setFTopLinePunct( boolean field_36_fTopLinePunct )
     {
         this.field_36_fTopLinePunct = field_36_fTopLinePunct;
     }
@@ -939,6 +1023,7 @@ public abstract class PAPAbstractType
     /**
      * auto space East Asian and alphabetic characters.
      */
+    @Internal
     public boolean getFAutoSpaceDE()
     {
         return field_37_fAutoSpaceDE;
@@ -947,7 +1032,8 @@ public abstract class PAPAbstractType
     /**
      * auto space East Asian and alphabetic characters.
      */
-    public void setFAutoSpaceDE(boolean field_37_fAutoSpaceDE)
+    @Internal
+    public void setFAutoSpaceDE( boolean field_37_fAutoSpaceDE )
     {
         this.field_37_fAutoSpaceDE = field_37_fAutoSpaceDE;
     }
@@ -955,6 +1041,7 @@ public abstract class PAPAbstractType
     /**
      * auto space East Asian and numeric characters.
      */
+    @Internal
     public boolean getFAutoSpaceDN()
     {
         return field_38_fAutoSpaceDN;
@@ -963,7 +1050,8 @@ public abstract class PAPAbstractType
     /**
      * auto space East Asian and numeric characters.
      */
-    public void setFAutoSpaceDN(boolean field_38_fAutoSpaceDN)
+    @Internal
+    public void setFAutoSpaceDN( boolean field_38_fAutoSpaceDN )
     {
         this.field_38_fAutoSpaceDN = field_38_fAutoSpaceDN;
     }
@@ -978,6 +1066,7 @@ public abstract class PAPAbstractType
      * <li>{@link #WALIGNFONT_VARIABLE}
      * <li>{@link #WALIGNFONT_AUTO}
      */
+    @Internal
     public int getWAlignFont()
     {
         return field_39_wAlignFont;
@@ -994,7 +1083,8 @@ public abstract class PAPAbstractType
      * <li>{@link #WALIGNFONT_VARIABLE}
      * <li>{@link #WALIGNFONT_AUTO}
      */
-    public void setWAlignFont(int field_39_wAlignFont)
+    @Internal
+    public void setWAlignFont( int field_39_wAlignFont )
     {
         this.field_39_wAlignFont = field_39_wAlignFont;
     }
@@ -1002,6 +1092,7 @@ public abstract class PAPAbstractType
     /**
      * Used internally by Word.
      */
+    @Internal
     public short getFontAlign()
     {
         return field_40_fontAlign;
@@ -1010,7 +1101,8 @@ public abstract class PAPAbstractType
     /**
      * Used internally by Word.
      */
-    public void setFontAlign(short field_40_fontAlign)
+    @Internal
+    public void setFontAlign( short field_40_fontAlign )
     {
         this.field_40_fontAlign = field_40_fontAlign;
     }
@@ -1018,6 +1110,7 @@ public abstract class PAPAbstractType
     /**
      * Outline level.
      */
+    @Internal
     public byte getLvl()
     {
         return field_41_lvl;
@@ -1026,7 +1119,8 @@ public abstract class PAPAbstractType
     /**
      * Outline level.
      */
-    public void setLvl(byte field_41_lvl)
+    @Internal
+    public void setLvl( byte field_41_lvl )
     {
         this.field_41_lvl = field_41_lvl;
     }
@@ -1034,6 +1128,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fBiDi field for the PAP record.
      */
+    @Internal
     public boolean getFBiDi()
     {
         return field_42_fBiDi;
@@ -1042,7 +1137,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fBiDi field for the PAP record.
      */
-    public void setFBiDi(boolean field_42_fBiDi)
+    @Internal
+    public void setFBiDi( boolean field_42_fBiDi )
     {
         this.field_42_fBiDi = field_42_fBiDi;
     }
@@ -1050,6 +1146,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fNumRMIns field for the PAP record.
      */
+    @Internal
     public boolean getFNumRMIns()
     {
         return field_43_fNumRMIns;
@@ -1058,7 +1155,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fNumRMIns field for the PAP record.
      */
-    public void setFNumRMIns(boolean field_43_fNumRMIns)
+    @Internal
+    public void setFNumRMIns( boolean field_43_fNumRMIns )
     {
         this.field_43_fNumRMIns = field_43_fNumRMIns;
     }
@@ -1066,6 +1164,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fCrLf field for the PAP record.
      */
+    @Internal
     public boolean getFCrLf()
     {
         return field_44_fCrLf;
@@ -1074,7 +1173,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fCrLf field for the PAP record.
      */
-    public void setFCrLf(boolean field_44_fCrLf)
+    @Internal
+    public void setFCrLf( boolean field_44_fCrLf )
     {
         this.field_44_fCrLf = field_44_fCrLf;
     }
@@ -1082,6 +1182,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fUsePgsuSettings field for the PAP record.
      */
+    @Internal
     public boolean getFUsePgsuSettings()
     {
         return field_45_fUsePgsuSettings;
@@ -1090,7 +1191,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fUsePgsuSettings field for the PAP record.
      */
-    public void setFUsePgsuSettings(boolean field_45_fUsePgsuSettings)
+    @Internal
+    public void setFUsePgsuSettings( boolean field_45_fUsePgsuSettings )
     {
         this.field_45_fUsePgsuSettings = field_45_fUsePgsuSettings;
     }
@@ -1098,6 +1200,7 @@ public abstract class PAPAbstractType
     /**
      * Get the fAdjustRight field for the PAP record.
      */
+    @Internal
     public boolean getFAdjustRight()
     {
         return field_46_fAdjustRight;
@@ -1106,7 +1209,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fAdjustRight field for the PAP record.
      */
-    public void setFAdjustRight(boolean field_46_fAdjustRight)
+    @Internal
+    public void setFAdjustRight( boolean field_46_fAdjustRight )
     {
         this.field_46_fAdjustRight = field_46_fAdjustRight;
     }
@@ -1114,6 +1218,7 @@ public abstract class PAPAbstractType
     /**
      * Table nesting level.
      */
+    @Internal
     public int getItap()
     {
         return field_47_itap;
@@ -1122,7 +1227,8 @@ public abstract class PAPAbstractType
     /**
      * Table nesting level.
      */
-    public void setItap(int field_47_itap)
+    @Internal
+    public void setItap( int field_47_itap )
     {
         this.field_47_itap = field_47_itap;
     }
@@ -1130,6 +1236,7 @@ public abstract class PAPAbstractType
     /**
      * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
+    @Internal
     public boolean getFInnerTableCell()
     {
         return field_48_fInnerTableCell;
@@ -1138,7 +1245,8 @@ public abstract class PAPAbstractType
     /**
      * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
      */
-    public void setFInnerTableCell(boolean field_48_fInnerTableCell)
+    @Internal
+    public void setFInnerTableCell( boolean field_48_fInnerTableCell )
     {
         this.field_48_fInnerTableCell = field_48_fInnerTableCell;
     }
@@ -1146,6 +1254,7 @@ public abstract class PAPAbstractType
     /**
      * Ensure the Table Cell char doesn't show up as zero height.
      */
+    @Internal
     public boolean getFOpenTch()
     {
         return field_49_fOpenTch;
@@ -1154,7 +1263,8 @@ public abstract class PAPAbstractType
     /**
      * Ensure the Table Cell char doesn't show up as zero height.
      */
-    public void setFOpenTch(boolean field_49_fOpenTch)
+    @Internal
+    public void setFOpenTch( boolean field_49_fOpenTch )
     {
         this.field_49_fOpenTch = field_49_fOpenTch;
     }
@@ -1162,6 +1272,7 @@ public abstract class PAPAbstractType
     /**
      * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
+    @Internal
     public boolean getFTtpEmbedded()
     {
         return field_50_fTtpEmbedded;
@@ -1170,7 +1281,8 @@ public abstract class PAPAbstractType
     /**
      * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
      */
-    public void setFTtpEmbedded(boolean field_50_fTtpEmbedded)
+    @Internal
+    public void setFTtpEmbedded( boolean field_50_fTtpEmbedded )
     {
         this.field_50_fTtpEmbedded = field_50_fTtpEmbedded;
     }
@@ -1178,6 +1290,7 @@ public abstract class PAPAbstractType
     /**
      * Right indent in character units.
      */
+    @Internal
     public short getDxcRight()
     {
         return field_51_dxcRight;
@@ -1186,7 +1299,8 @@ public abstract class PAPAbstractType
     /**
      * Right indent in character units.
      */
-    public void setDxcRight(short field_51_dxcRight)
+    @Internal
+    public void setDxcRight( short field_51_dxcRight )
     {
         this.field_51_dxcRight = field_51_dxcRight;
     }
@@ -1194,6 +1308,7 @@ public abstract class PAPAbstractType
     /**
      * Left indent in character units.
      */
+    @Internal
     public short getDxcLeft()
     {
         return field_52_dxcLeft;
@@ -1202,7 +1317,8 @@ public abstract class PAPAbstractType
     /**
      * Left indent in character units.
      */
-    public void setDxcLeft(short field_52_dxcLeft)
+    @Internal
+    public void setDxcLeft( short field_52_dxcLeft )
     {
         this.field_52_dxcLeft = field_52_dxcLeft;
     }
@@ -1210,6 +1326,7 @@ public abstract class PAPAbstractType
     /**
      * First line indent in character units.
      */
+    @Internal
     public short getDxcLeft1()
     {
         return field_53_dxcLeft1;
@@ -1218,7 +1335,8 @@ public abstract class PAPAbstractType
     /**
      * First line indent in character units.
      */
-    public void setDxcLeft1(short field_53_dxcLeft1)
+    @Internal
+    public void setDxcLeft1( short field_53_dxcLeft1 )
     {
         this.field_53_dxcLeft1 = field_53_dxcLeft1;
     }
@@ -1226,6 +1344,7 @@ public abstract class PAPAbstractType
     /**
      * Vertical spacing before is automatic.
      */
+    @Internal
     public boolean getFDyaBeforeAuto()
     {
         return field_54_fDyaBeforeAuto;
@@ -1234,7 +1353,8 @@ public abstract class PAPAbstractType
     /**
      * Vertical spacing before is automatic.
      */
-    public void setFDyaBeforeAuto(boolean field_54_fDyaBeforeAuto)
+    @Internal
+    public void setFDyaBeforeAuto( boolean field_54_fDyaBeforeAuto )
     {
         this.field_54_fDyaBeforeAuto = field_54_fDyaBeforeAuto;
     }
@@ -1242,6 +1362,7 @@ public abstract class PAPAbstractType
     /**
      * Vertical spacing after is automatic.
      */
+    @Internal
     public boolean getFDyaAfterAuto()
     {
         return field_55_fDyaAfterAuto;
@@ -1250,7 +1371,8 @@ public abstract class PAPAbstractType
     /**
      * Vertical spacing after is automatic.
      */
-    public void setFDyaAfterAuto(boolean field_55_fDyaAfterAuto)
+    @Internal
+    public void setFDyaAfterAuto( boolean field_55_fDyaAfterAuto )
     {
         this.field_55_fDyaAfterAuto = field_55_fDyaAfterAuto;
     }
@@ -1258,6 +1380,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dxaRight field for the PAP record.
      */
+    @Internal
     public int getDxaRight()
     {
         return field_56_dxaRight;
@@ -1266,7 +1389,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dxaRight field for the PAP record.
      */
-    public void setDxaRight(int field_56_dxaRight)
+    @Internal
+    public void setDxaRight( int field_56_dxaRight )
     {
         this.field_56_dxaRight = field_56_dxaRight;
     }
@@ -1274,6 +1398,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dxaLeft field for the PAP record.
      */
+    @Internal
     public int getDxaLeft()
     {
         return field_57_dxaLeft;
@@ -1282,7 +1407,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dxaLeft field for the PAP record.
      */
-    public void setDxaLeft(int field_57_dxaLeft)
+    @Internal
+    public void setDxaLeft( int field_57_dxaLeft )
     {
         this.field_57_dxaLeft = field_57_dxaLeft;
     }
@@ -1290,6 +1416,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dxaLeft1 field for the PAP record.
      */
+    @Internal
     public int getDxaLeft1()
     {
         return field_58_dxaLeft1;
@@ -1298,7 +1425,8 @@ public abstract class PAPAbstractType
     /**
      * Set the dxaLeft1 field for the PAP record.
      */
-    public void setDxaLeft1(int field_58_dxaLeft1)
+    @Internal
+    public void setDxaLeft1( int field_58_dxaLeft1 )
     {
         this.field_58_dxaLeft1 = field_58_dxaLeft1;
     }
@@ -1306,6 +1434,7 @@ public abstract class PAPAbstractType
     /**
      * Get the jc field for the PAP record.
      */
+    @Internal
     public byte getJc()
     {
         return field_59_jc;
@@ -1314,360 +1443,430 @@ public abstract class PAPAbstractType
     /**
      * Set the jc field for the PAP record.
      */
-    public void setJc(byte field_59_jc)
+    @Internal
+    public void setJc( byte field_59_jc )
     {
         this.field_59_jc = field_59_jc;
     }
 
     /**
-     * Get the fNoAllowOverlap field for the PAP record.
-     */
-    public boolean getFNoAllowOverlap()
-    {
-        return field_60_fNoAllowOverlap;
-    }
-
-    /**
-     * Set the fNoAllowOverlap field for the PAP record.
-     */
-    public void setFNoAllowOverlap(boolean field_60_fNoAllowOverlap)
-    {
-        this.field_60_fNoAllowOverlap = field_60_fNoAllowOverlap;
-    }
-
-    /**
      * Get the brcTop field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcTop()
     {
-        return field_61_brcTop;
+        return field_60_brcTop;
     }
 
     /**
      * Set the brcTop field for the PAP record.
      */
-    public void setBrcTop(BorderCode field_61_brcTop)
+    @Internal
+    public void setBrcTop( BorderCode field_60_brcTop )
     {
-        this.field_61_brcTop = field_61_brcTop;
+        this.field_60_brcTop = field_60_brcTop;
     }
 
     /**
      * Get the brcLeft field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcLeft()
     {
-        return field_62_brcLeft;
+        return field_61_brcLeft;
     }
 
     /**
      * Set the brcLeft field for the PAP record.
      */
-    public void setBrcLeft(BorderCode field_62_brcLeft)
+    @Internal
+    public void setBrcLeft( BorderCode field_61_brcLeft )
     {
-        this.field_62_brcLeft = field_62_brcLeft;
+        this.field_61_brcLeft = field_61_brcLeft;
     }
 
     /**
      * Get the brcBottom field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcBottom()
     {
-        return field_63_brcBottom;
+        return field_62_brcBottom;
     }
 
     /**
      * Set the brcBottom field for the PAP record.
      */
-    public void setBrcBottom(BorderCode field_63_brcBottom)
+    @Internal
+    public void setBrcBottom( BorderCode field_62_brcBottom )
     {
-        this.field_63_brcBottom = field_63_brcBottom;
+        this.field_62_brcBottom = field_62_brcBottom;
     }
 
     /**
      * Get the brcRight field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcRight()
     {
-        return field_64_brcRight;
+        return field_63_brcRight;
     }
 
     /**
      * Set the brcRight field for the PAP record.
      */
-    public void setBrcRight(BorderCode field_64_brcRight)
+    @Internal
+    public void setBrcRight( BorderCode field_63_brcRight )
     {
-        this.field_64_brcRight = field_64_brcRight;
+        this.field_63_brcRight = field_63_brcRight;
     }
 
     /**
      * Get the brcBetween field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcBetween()
     {
-        return field_65_brcBetween;
+        return field_64_brcBetween;
     }
 
     /**
      * Set the brcBetween field for the PAP record.
      */
-    public void setBrcBetween(BorderCode field_65_brcBetween)
+    @Internal
+    public void setBrcBetween( BorderCode field_64_brcBetween )
     {
-        this.field_65_brcBetween = field_65_brcBetween;
+        this.field_64_brcBetween = field_64_brcBetween;
     }
 
     /**
      * Get the brcBar field for the PAP record.
      */
+    @Internal
     public BorderCode getBrcBar()
     {
-        return field_66_brcBar;
+        return field_65_brcBar;
     }
 
     /**
      * Set the brcBar field for the PAP record.
      */
-    public void setBrcBar(BorderCode field_66_brcBar)
+    @Internal
+    public void setBrcBar( BorderCode field_65_brcBar )
     {
-        this.field_66_brcBar = field_66_brcBar;
+        this.field_65_brcBar = field_65_brcBar;
     }
 
     /**
      * Get the shd field for the PAP record.
      */
+    @Internal
     public ShadingDescriptor getShd()
     {
-        return field_67_shd;
+        return field_66_shd;
     }
 
     /**
      * Set the shd field for the PAP record.
      */
-    public void setShd(ShadingDescriptor field_67_shd)
+    @Internal
+    public void setShd( ShadingDescriptor field_66_shd )
     {
-        this.field_67_shd = field_67_shd;
+        this.field_66_shd = field_66_shd;
     }
 
     /**
      * Get the anld field for the PAP record.
      */
+    @Internal
     public byte[] getAnld()
     {
-        return field_68_anld;
+        return field_67_anld;
     }
 
     /**
      * Set the anld field for the PAP record.
      */
-    public void setAnld(byte[] field_68_anld)
+    @Internal
+    public void setAnld( byte[] field_67_anld )
     {
-        this.field_68_anld = field_68_anld;
+        this.field_67_anld = field_67_anld;
     }
 
     /**
      * Get the phe field for the PAP record.
      */
+    @Internal
     public byte[] getPhe()
     {
-        return field_69_phe;
+        return field_68_phe;
     }
 
     /**
      * Set the phe field for the PAP record.
      */
-    public void setPhe(byte[] field_69_phe)
+    @Internal
+    public void setPhe( byte[] field_68_phe )
     {
-        this.field_69_phe = field_69_phe;
+        this.field_68_phe = field_68_phe;
     }
 
     /**
      * Get the fPropRMark field for the PAP record.
      */
+    @Internal
     public boolean getFPropRMark()
     {
-        return field_70_fPropRMark;
+        return field_69_fPropRMark;
     }
 
     /**
      * Set the fPropRMark field for the PAP record.
      */
-    public void setFPropRMark(boolean field_70_fPropRMark)
+    @Internal
+    public void setFPropRMark( boolean field_69_fPropRMark )
     {
-        this.field_70_fPropRMark = field_70_fPropRMark;
+        this.field_69_fPropRMark = field_69_fPropRMark;
     }
 
     /**
      * Get the ibstPropRMark field for the PAP record.
      */
+    @Internal
     public int getIbstPropRMark()
     {
-        return field_71_ibstPropRMark;
+        return field_70_ibstPropRMark;
     }
 
     /**
      * Set the ibstPropRMark field for the PAP record.
      */
-    public void setIbstPropRMark(int field_71_ibstPropRMark)
+    @Internal
+    public void setIbstPropRMark( int field_70_ibstPropRMark )
     {
-        this.field_71_ibstPropRMark = field_71_ibstPropRMark;
+        this.field_70_ibstPropRMark = field_70_ibstPropRMark;
     }
 
     /**
      * Get the dttmPropRMark field for the PAP record.
      */
+    @Internal
     public DateAndTime getDttmPropRMark()
     {
-        return field_72_dttmPropRMark;
+        return field_71_dttmPropRMark;
     }
 
     /**
      * Set the dttmPropRMark field for the PAP record.
      */
-    public void setDttmPropRMark(DateAndTime field_72_dttmPropRMark)
+    @Internal
+    public void setDttmPropRMark( DateAndTime field_71_dttmPropRMark )
     {
-        this.field_72_dttmPropRMark = field_72_dttmPropRMark;
+        this.field_71_dttmPropRMark = field_71_dttmPropRMark;
     }
 
     /**
-     * Get the itbdMac field for the PAP record.
+     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
      */
+    @Internal
     public int getItbdMac()
     {
-        return field_73_itbdMac;
+        return field_72_itbdMac;
     }
 
     /**
-     * Set the itbdMac field for the PAP record.
+     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
      */
-    public void setItbdMac(int field_73_itbdMac)
+    @Internal
+    public void setItbdMac( int field_72_itbdMac )
     {
-        this.field_73_itbdMac = field_73_itbdMac;
+        this.field_72_itbdMac = field_72_itbdMac;
     }
 
     /**
-     * Get the rgdxaTab field for the PAP record.
+     * Array of positions of itbdMac tab stops. itbdMax==64.
      */
+    @Internal
     public int[] getRgdxaTab()
     {
-        return field_74_rgdxaTab;
+        return field_73_rgdxaTab;
     }
 
     /**
-     * Set the rgdxaTab field for the PAP record.
+     * Array of positions of itbdMac tab stops. itbdMax==64.
      */
-    public void setRgdxaTab(int[] field_74_rgdxaTab)
+    @Internal
+    public void setRgdxaTab( int[] field_73_rgdxaTab )
     {
-        this.field_74_rgdxaTab = field_74_rgdxaTab;
+        this.field_73_rgdxaTab = field_73_rgdxaTab;
     }
 
     /**
-     * Get the rgtbd field for the PAP record.
+     * Array of itbdMac tab descriptors.
      */
-    public byte[] getRgtbd()
+    @Internal
+    public TabDescriptor[] getRgtbd()
     {
-        return field_75_rgtbd;
+        return field_74_rgtbd;
     }
 
     /**
-     * Set the rgtbd field for the PAP record.
+     * Array of itbdMac tab descriptors.
      */
-    public void setRgtbd(byte[] field_75_rgtbd)
+    @Internal
+    public void setRgtbd( TabDescriptor[] field_74_rgtbd )
     {
-        this.field_75_rgtbd = field_75_rgtbd;
+        this.field_74_rgtbd = field_74_rgtbd;
     }
 
     /**
      * Get the numrm field for the PAP record.
      */
+    @Internal
     public byte[] getNumrm()
     {
-        return field_76_numrm;
+        return field_75_numrm;
     }
 
     /**
      * Set the numrm field for the PAP record.
      */
-    public void setNumrm(byte[] field_76_numrm)
+    @Internal
+    public void setNumrm( byte[] field_75_numrm )
     {
-        this.field_76_numrm = field_76_numrm;
+        this.field_75_numrm = field_75_numrm;
     }
 
     /**
      * Get the ptap field for the PAP record.
      */
+    @Internal
     public byte[] getPtap()
     {
-        return field_77_ptap;
+        return field_76_ptap;
     }
 
     /**
      * Set the ptap field for the PAP record.
      */
-    public void setPtap(byte[] field_77_ptap)
+    @Internal
+    public void setPtap( byte[] field_76_ptap )
     {
-        this.field_77_ptap = field_77_ptap;
+        this.field_76_ptap = field_76_ptap;
+    }
+
+    /**
+     * When 1, absolutely positioned paragraph cannot overlap with another paragraph.
+     */
+    @Internal
+    public boolean getFNoAllowOverlap()
+    {
+        return field_77_fNoAllowOverlap;
+    }
+
+    /**
+     * When 1, absolutely positioned paragraph cannot overlap with another paragraph.
+     */
+    @Internal
+    public void setFNoAllowOverlap( boolean field_77_fNoAllowOverlap )
+    {
+        this.field_77_fNoAllowOverlap = field_77_fNoAllowOverlap;
+    }
+
+    /**
+     * HTML DIV ID for this paragraph.
+     */
+    @Internal
+    public long getIpgp()
+    {
+        return field_78_ipgp;
+    }
+
+    /**
+     * HTML DIV ID for this paragraph.
+     */
+    @Internal
+    public void setIpgp( long field_78_ipgp )
+    {
+        this.field_78_ipgp = field_78_ipgp;
+    }
+
+    /**
+     * Save ID for last time this PAP was revised.
+     */
+    @Internal
+    public long getRsid()
+    {
+        return field_79_rsid;
+    }
+
+    /**
+     * Save ID for last time this PAP was revised.
+     */
+    @Internal
+    public void setRsid( long field_79_rsid )
+    {
+        this.field_79_rsid = field_79_rsid;
     }
 
     /**
      * Sets the fVertical field value.
      * 
      */
-    public void setFVertical(boolean value)
+    @Internal
+    public void setFVertical( boolean value )
     {
         field_40_fontAlign = (short)fVertical.setBoolean(field_40_fontAlign, value);
-
-        
     }
 
     /**
      * 
      * @return  the fVertical field value.
      */
+    @Internal
     public boolean isFVertical()
     {
         return fVertical.isSet(field_40_fontAlign);
-        
     }
 
     /**
      * Sets the fBackward field value.
      * 
      */
-    public void setFBackward(boolean value)
+    @Internal
+    public void setFBackward( boolean value )
     {
         field_40_fontAlign = (short)fBackward.setBoolean(field_40_fontAlign, value);
-
-        
     }
 
     /**
      * 
      * @return  the fBackward field value.
      */
+    @Internal
     public boolean isFBackward()
     {
         return fBackward.isSet(field_40_fontAlign);
-        
     }
 
     /**
      * Sets the fRotateFont field value.
      * 
      */
-    public void setFRotateFont(boolean value)
+    @Internal
+    public void setFRotateFont( boolean value )
     {
         field_40_fontAlign = (short)fRotateFont.setBoolean(field_40_fontAlign, value);
-
-        
     }
 
     /**
      * 
      * @return  the fRotateFont field value.
      */
+    @Internal
     public boolean isFRotateFont()
     {
         return fRotateFont.isSet(field_40_fontAlign);
-        
     }
 
 }  // END OF CLASS

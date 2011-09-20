@@ -17,30 +17,25 @@
 
 package org.apache.poi.hwpf.model.types;
 
-import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
-import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
+
+import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.util.*;
 
 /**
- * "Table Properties (TAP). This structure is never written out to disk but can
- * be built from the appropriate property modifiers. For this reason no offsets
- * into the structure are given."
+ * Table Properties. Properties descriptions quoted from official 97-2007 binary file
+        format specification.
+    
  * <p>
- * Class and properties descriptions quoted from Microsoft Office Word 97-2007
- * Binary File Format Specification [*.doc]
+ * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
+ *       remove the record in src/types/definitions.
  * <p>
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/records/definitions.
- * 
+ * This class is internal. It content or properties may change without notice 
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
+
  * @author S. Ryan Ackley
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
-public abstract class TAPAbstractType implements HDFType
+public abstract class TAPAbstractType
 {
 
     protected short field_1_istd;
@@ -56,19 +51,19 @@ public abstract class TAPAbstractType implements HDFType
     protected short field_11_wWidthBefore;
     protected short field_12_wWidthAfter;
     protected int field_13_widthAndFitsFlags;
-    private static BitField fAutofit = new BitField( 0x00000001 );
-    private static BitField fKeepFollow = new BitField( 0x00000002 );
-    private static BitField ftsWidth = new BitField( 0x0000001c );
-    private static BitField ftsWidthIndent = new BitField( 0x000000e0 );
-    private static BitField ftsWidthBefore = new BitField( 0x00000700 );
-    private static BitField ftsWidthAfter = new BitField( 0x00003800 );
-    private static BitField fNeverBeenAutofit = new BitField( 0x00004000 );
-    private static BitField fInvalAutofit = new BitField( 0x00008000 );
-    private static BitField widthAndFitsFlags_empty1 = new BitField( 0x00070000 );
-    private static BitField fVert = new BitField( 0x00080000 );
-    private static BitField pcVert = new BitField( 0x00300000 );
-    private static BitField pcHorz = new BitField( 0x00c00000 );
-    private static BitField widthAndFitsFlags_empty2 = new BitField( 0xff000000 );
+    /**/private static BitField fAutofit = new BitField(0x00000001);
+    /**/private static BitField fKeepFollow = new BitField(0x00000002);
+    /**/private static BitField ftsWidth = new BitField(0x0000001c);
+    /**/private static BitField ftsWidthIndent = new BitField(0x000000e0);
+    /**/private static BitField ftsWidthBefore = new BitField(0x00000700);
+    /**/private static BitField ftsWidthAfter = new BitField(0x00003800);
+    /**/private static BitField fNeverBeenAutofit = new BitField(0x00004000);
+    /**/private static BitField fInvalAutofit = new BitField(0x00008000);
+    /**/private static BitField widthAndFitsFlags_empty1 = new BitField(0x00070000);
+    /**/private static BitField fVert = new BitField(0x00080000);
+    /**/private static BitField pcVert = new BitField(0x00300000);
+    /**/private static BitField pcHorz = new BitField(0x00c00000);
+    /**/private static BitField widthAndFitsFlags_empty2 = new BitField(0xff000000);
     protected int field_14_dxaAbs;
     protected int field_15_dyaAbs;
     protected int field_16_dxaFromText;
@@ -81,12 +76,12 @@ public abstract class TAPAbstractType implements HDFType
     protected byte field_23_fSpare;
     protected int field_24_grpfTap;
     protected int field_25_internalFlags;
-    private static BitField fFirstRow = new BitField( 0x0001 );
-    private static BitField fLastRow = new BitField( 0x0002 );
-    private static BitField fOutline = new BitField( 0x0004 );
-    private static BitField fOrigWordTableRules = new BitField( 0x0008 );
-    private static BitField fCellSpacing = new BitField( 0x0010 );
-    private static BitField grpfTap_unused = new BitField( 0xffe0 );
+    /**/private static BitField fFirstRow = new BitField(0x0001);
+    /**/private static BitField fLastRow = new BitField(0x0002);
+    /**/private static BitField fOutline = new BitField(0x0004);
+    /**/private static BitField fOrigWordTableRules = new BitField(0x0008);
+    /**/private static BitField fCellSpacing = new BitField(0x0010);
+    /**/private static BitField grpfTap_unused = new BitField(0xffe0);
     protected short field_26_itcMac;
     protected int field_27_dxaAdjust;
     protected int field_28_dxaWebView;
@@ -94,12 +89,12 @@ public abstract class TAPAbstractType implements HDFType
     protected int field_30_dxaColWidthWwd;
     protected short field_31_pctWwd;
     protected int field_32_viewFlags;
-    private static BitField fWrapToWwd = new BitField( 0x0001 );
-    private static BitField fNotPageView = new BitField( 0x0002 );
-    private static BitField viewFlags_unused1 = new BitField( 0x0004 );
-    private static BitField fWebView = new BitField( 0x0008 );
-    private static BitField fAdjusted = new BitField( 0x0010 );
-    private static BitField viewFlags_unused2 = new BitField( 0xffe0 );
+    /**/private static BitField fWrapToWwd = new BitField(0x0001);
+    /**/private static BitField fNotPageView = new BitField(0x0002);
+    /**/private static BitField viewFlags_unused1 = new BitField(0x0004);
+    /**/private static BitField fWebView = new BitField(0x0008);
+    /**/private static BitField fAdjusted = new BitField(0x0010);
+    /**/private static BitField viewFlags_unused2 = new BitField(0xffe0);
     protected short[] field_33_rgdxaCenter;
     protected short[] field_34_rgdxaCenterPrint;
     protected ShadingDescriptor field_35_shdTable;
@@ -150,548 +145,432 @@ public abstract class TAPAbstractType implements HDFType
     protected BorderCode field_80_rgbrcInsideDefault_0;
     protected BorderCode field_81_rgbrcInsideDefault_1;
 
-    public TAPAbstractType()
+    protected TAPAbstractType()
     {
-
+        this.field_8_tlp = new TableAutoformatLookSpecifier();
+        this.field_33_rgdxaCenter = new short[0];
+        this.field_34_rgdxaCenterPrint = new short[0];
+        this.field_35_shdTable = new ShadingDescriptor();
+        this.field_36_brcBottom = new BorderCode();
+        this.field_37_brcTop = new BorderCode();
+        this.field_38_brcLeft = new BorderCode();
+        this.field_39_brcRight = new BorderCode();
+        this.field_40_brcVertical = new BorderCode();
+        this.field_41_brcHorizontal = new BorderCode();
+        this.field_74_rgtc = new TableCellDescriptor[0];
+        this.field_75_rgshd = new ShadingDescriptor[0];
+        this.field_80_rgbrcInsideDefault_0 = new BorderCode();
+        this.field_81_rgbrcInsideDefault_1 = new BorderCode();
     }
+
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "[TAP]\n" );
-
-        buffer.append( "    .istd                 = " );
-        buffer.append( " (" ).append( getIstd() ).append( " )\n" );
-
-        buffer.append( "    .jc                   = " );
-        buffer.append( " (" ).append( getJc() ).append( " )\n" );
-
-        buffer.append( "    .dxaGapHalf           = " );
-        buffer.append( " (" ).append( getDxaGapHalf() ).append( " )\n" );
-
-        buffer.append( "    .dyaRowHeight         = " );
-        buffer.append( " (" ).append( getDyaRowHeight() ).append( " )\n" );
-
-        buffer.append( "    .fCantSplit           = " );
-        buffer.append( " (" ).append( getFCantSplit() ).append( " )\n" );
-
-        buffer.append( "    .fCantSplit90         = " );
-        buffer.append( " (" ).append( getFCantSplit90() ).append( " )\n" );
-
-        buffer.append( "    .fTableHeader         = " );
-        buffer.append( " (" ).append( getFTableHeader() ).append( " )\n" );
-
-        buffer.append( "    .tlp                  = " );
-        buffer.append( " (" ).append( getTlp() ).append( " )\n" );
-
-        buffer.append( "    .wWidth               = " );
-        buffer.append( " (" ).append( getWWidth() ).append( " )\n" );
-
-        buffer.append( "    .wWidthIndent         = " );
-        buffer.append( " (" ).append( getWWidthIndent() ).append( " )\n" );
-
-        buffer.append( "    .wWidthBefore         = " );
-        buffer.append( " (" ).append( getWWidthBefore() ).append( " )\n" );
-
-        buffer.append( "    .wWidthAfter          = " );
-        buffer.append( " (" ).append( getWWidthAfter() ).append( " )\n" );
-
-        buffer.append( "    .widthAndFitsFlags    = " );
-        buffer.append( " (" ).append( getWidthAndFitsFlags() ).append( " )\n" );
-        buffer.append( "         .fAutofit                 = " )
-                .append( isFAutofit() ).append( '\n' );
-        buffer.append( "         .fKeepFollow              = " )
-                .append( isFKeepFollow() ).append( '\n' );
-        buffer.append( "         .ftsWidth                 = " )
-                .append( getFtsWidth() ).append( '\n' );
-        buffer.append( "         .ftsWidthIndent           = " )
-                .append( getFtsWidthIndent() ).append( '\n' );
-        buffer.append( "         .ftsWidthBefore           = " )
-                .append( getFtsWidthBefore() ).append( '\n' );
-        buffer.append( "         .ftsWidthAfter            = " )
-                .append( getFtsWidthAfter() ).append( '\n' );
-        buffer.append( "         .fNeverBeenAutofit        = " )
-                .append( isFNeverBeenAutofit() ).append( '\n' );
-        buffer.append( "         .fInvalAutofit            = " )
-                .append( isFInvalAutofit() ).append( '\n' );
-        buffer.append( "         .widthAndFitsFlags_empty1     = " )
-                .append( getWidthAndFitsFlags_empty1() ).append( '\n' );
-        buffer.append( "         .fVert                    = " )
-                .append( isFVert() ).append( '\n' );
-        buffer.append( "         .pcVert                   = " )
-                .append( getPcVert() ).append( '\n' );
-        buffer.append( "         .pcHorz                   = " )
-                .append( getPcHorz() ).append( '\n' );
-        buffer.append( "         .widthAndFitsFlags_empty2     = " )
-                .append( getWidthAndFitsFlags_empty2() ).append( '\n' );
-
-        buffer.append( "    .dxaAbs               = " );
-        buffer.append( " (" ).append( getDxaAbs() ).append( " )\n" );
-
-        buffer.append( "    .dyaAbs               = " );
-        buffer.append( " (" ).append( getDyaAbs() ).append( " )\n" );
-
-        buffer.append( "    .dxaFromText          = " );
-        buffer.append( " (" ).append( getDxaFromText() ).append( " )\n" );
-
-        buffer.append( "    .dyaFromText          = " );
-        buffer.append( " (" ).append( getDyaFromText() ).append( " )\n" );
-
-        buffer.append( "    .dxaFromTextRight     = " );
-        buffer.append( " (" ).append( getDxaFromTextRight() ).append( " )\n" );
-
-        buffer.append( "    .dyaFromTextBottom    = " );
-        buffer.append( " (" ).append( getDyaFromTextBottom() ).append( " )\n" );
-
-        buffer.append( "    .fBiDi                = " );
-        buffer.append( " (" ).append( getFBiDi() ).append( " )\n" );
-
-        buffer.append( "    .fRTL                 = " );
-        buffer.append( " (" ).append( getFRTL() ).append( " )\n" );
-
-        buffer.append( "    .fNoAllowOverlap      = " );
-        buffer.append( " (" ).append( getFNoAllowOverlap() ).append( " )\n" );
-
-        buffer.append( "    .fSpare               = " );
-        buffer.append( " (" ).append( getFSpare() ).append( " )\n" );
-
-        buffer.append( "    .grpfTap              = " );
-        buffer.append( " (" ).append( getGrpfTap() ).append( " )\n" );
-
-        buffer.append( "    .internalFlags        = " );
-        buffer.append( " (" ).append( getInternalFlags() ).append( " )\n" );
-        buffer.append( "         .fFirstRow                = " )
-                .append( isFFirstRow() ).append( '\n' );
-        buffer.append( "         .fLastRow                 = " )
-                .append( isFLastRow() ).append( '\n' );
-        buffer.append( "         .fOutline                 = " )
-                .append( isFOutline() ).append( '\n' );
-        buffer.append( "         .fOrigWordTableRules      = " )
-                .append( isFOrigWordTableRules() ).append( '\n' );
-        buffer.append( "         .fCellSpacing             = " )
-                .append( isFCellSpacing() ).append( '\n' );
-        buffer.append( "         .grpfTap_unused           = " )
-                .append( getGrpfTap_unused() ).append( '\n' );
-
-        buffer.append( "    .itcMac               = " );
-        buffer.append( " (" ).append( getItcMac() ).append( " )\n" );
-
-        buffer.append( "    .dxaAdjust            = " );
-        buffer.append( " (" ).append( getDxaAdjust() ).append( " )\n" );
-
-        buffer.append( "    .dxaWebView           = " );
-        buffer.append( " (" ).append( getDxaWebView() ).append( " )\n" );
-
-        buffer.append( "    .dxaRTEWrapWidth      = " );
-        buffer.append( " (" ).append( getDxaRTEWrapWidth() ).append( " )\n" );
-
-        buffer.append( "    .dxaColWidthWwd       = " );
-        buffer.append( " (" ).append( getDxaColWidthWwd() ).append( " )\n" );
-
-        buffer.append( "    .pctWwd               = " );
-        buffer.append( " (" ).append( getPctWwd() ).append( " )\n" );
-
-        buffer.append( "    .viewFlags            = " );
-        buffer.append( " (" ).append( getViewFlags() ).append( " )\n" );
-        buffer.append( "         .fWrapToWwd               = " )
-                .append( isFWrapToWwd() ).append( '\n' );
-        buffer.append( "         .fNotPageView             = " )
-                .append( isFNotPageView() ).append( '\n' );
-        buffer.append( "         .viewFlags_unused1        = " )
-                .append( isViewFlags_unused1() ).append( '\n' );
-        buffer.append( "         .fWebView                 = " )
-                .append( isFWebView() ).append( '\n' );
-        buffer.append( "         .fAdjusted                = " )
-                .append( isFAdjusted() ).append( '\n' );
-        buffer.append( "         .viewFlags_unused2        = " )
-                .append( getViewFlags_unused2() ).append( '\n' );
-
-        buffer.append( "    .rgdxaCenter          = " );
-        buffer.append( " (" ).append( getRgdxaCenter() ).append( " )\n" );
-
-        buffer.append( "    .rgdxaCenterPrint     = " );
-        buffer.append( " (" ).append( getRgdxaCenterPrint() ).append( " )\n" );
-
-        buffer.append( "    .shdTable             = " );
-        buffer.append( " (" ).append( getShdTable() ).append( " )\n" );
-
-        buffer.append( "    .brcBottom            = " );
-        buffer.append( " (" ).append( getBrcBottom() ).append( " )\n" );
-
-        buffer.append( "    .brcTop               = " );
-        buffer.append( " (" ).append( getBrcTop() ).append( " )\n" );
-
-        buffer.append( "    .brcLeft              = " );
-        buffer.append( " (" ).append( getBrcLeft() ).append( " )\n" );
-
-        buffer.append( "    .brcRight             = " );
-        buffer.append( " (" ).append( getBrcRight() ).append( " )\n" );
-
-        buffer.append( "    .brcVertical          = " );
-        buffer.append( " (" ).append( getBrcVertical() ).append( " )\n" );
-
-        buffer.append( "    .brcHorizontal        = " );
-        buffer.append( " (" ).append( getBrcHorizontal() ).append( " )\n" );
-
-        buffer.append( "    .wCellPaddingDefaultTop = " );
-        buffer.append( " (" ).append( getWCellPaddingDefaultTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingDefaultLeft = " );
-        buffer.append( " (" ).append( getWCellPaddingDefaultLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingDefaultBottom = " );
-        buffer.append( " (" ).append( getWCellPaddingDefaultBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingDefaultRight = " );
-        buffer.append( " (" ).append( getWCellPaddingDefaultRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingDefaultTop = " );
-        buffer.append( " (" ).append( getFtsCellPaddingDefaultTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingDefaultLeft = " );
-        buffer.append( " (" ).append( getFtsCellPaddingDefaultLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingDefaultBottom = " );
-        buffer.append( " (" ).append( getFtsCellPaddingDefaultBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingDefaultRight = " );
-        buffer.append( " (" ).append( getFtsCellPaddingDefaultRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingDefaultTop = " );
-        buffer.append( " (" ).append( getWCellSpacingDefaultTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingDefaultLeft = " );
-        buffer.append( " (" ).append( getWCellSpacingDefaultLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingDefaultBottom = " );
-        buffer.append( " (" ).append( getWCellSpacingDefaultBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingDefaultRight = " );
-        buffer.append( " (" ).append( getWCellSpacingDefaultRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingDefaultTop = " );
-        buffer.append( " (" ).append( getFtsCellSpacingDefaultTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingDefaultLeft = " );
-        buffer.append( " (" ).append( getFtsCellSpacingDefaultLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingDefaultBottom = " );
-        buffer.append( " (" ).append( getFtsCellSpacingDefaultBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingDefaultRight = " );
-        buffer.append( " (" ).append( getFtsCellSpacingDefaultRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingOuterTop = " );
-        buffer.append( " (" ).append( getWCellPaddingOuterTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingOuterLeft = " );
-        buffer.append( " (" ).append( getWCellPaddingOuterLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingOuterBottom = " );
-        buffer.append( " (" ).append( getWCellPaddingOuterBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellPaddingOuterRight = " );
-        buffer.append( " (" ).append( getWCellPaddingOuterRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingOuterTop = " );
-        buffer.append( " (" ).append( getFtsCellPaddingOuterTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingOuterLeft = " );
-        buffer.append( " (" ).append( getFtsCellPaddingOuterLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingOuterBottom = " );
-        buffer.append( " (" ).append( getFtsCellPaddingOuterBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellPaddingOuterRight = " );
-        buffer.append( " (" ).append( getFtsCellPaddingOuterRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingOuterTop = " );
-        buffer.append( " (" ).append( getWCellSpacingOuterTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingOuterLeft = " );
-        buffer.append( " (" ).append( getWCellSpacingOuterLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingOuterBottom = " );
-        buffer.append( " (" ).append( getWCellSpacingOuterBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .wCellSpacingOuterRight = " );
-        buffer.append( " (" ).append( getWCellSpacingOuterRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingOuterTop = " );
-        buffer.append( " (" ).append( getFtsCellSpacingOuterTop() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingOuterLeft = " );
-        buffer.append( " (" ).append( getFtsCellSpacingOuterLeft() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingOuterBottom = " );
-        buffer.append( " (" ).append( getFtsCellSpacingOuterBottom() )
-                .append( " )\n" );
-
-        buffer.append( "    .ftsCellSpacingOuterRight = " );
-        buffer.append( " (" ).append( getFtsCellSpacingOuterRight() )
-                .append( " )\n" );
-
-        buffer.append( "    .rgtc                 = " );
-        buffer.append( " (" ).append( getRgtc() ).append( " )\n" );
-
-        buffer.append( "    .rgshd                = " );
-        buffer.append( " (" ).append( getRgshd() ).append( " )\n" );
-
-        buffer.append( "    .fPropRMark           = " );
-        buffer.append( " (" ).append( getFPropRMark() ).append( " )\n" );
-
-        buffer.append( "    .fHasOldProps         = " );
-        buffer.append( " (" ).append( getFHasOldProps() ).append( " )\n" );
-
-        buffer.append( "    .cHorzBands           = " );
-        buffer.append( " (" ).append( getCHorzBands() ).append( " )\n" );
-
-        buffer.append( "    .cVertBands           = " );
-        buffer.append( " (" ).append( getCVertBands() ).append( " )\n" );
-
-        buffer.append( "    .rgbrcInsideDefault_0 = " );
-        buffer.append( " (" ).append( getRgbrcInsideDefault_0() )
-                .append( " )\n" );
-
-        buffer.append( "    .rgbrcInsideDefault_1 = " );
-        buffer.append( " (" ).append( getRgbrcInsideDefault_1() )
-                .append( " )\n" );
-
-        buffer.append( "[/TAP]\n" );
-        return buffer.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("[TAP]\n");
+        builder.append("    .istd                 = ");
+        builder.append(" (").append(getIstd()).append(" )\n");
+        builder.append("    .jc                   = ");
+        builder.append(" (").append(getJc()).append(" )\n");
+        builder.append("    .dxaGapHalf           = ");
+        builder.append(" (").append(getDxaGapHalf()).append(" )\n");
+        builder.append("    .dyaRowHeight         = ");
+        builder.append(" (").append(getDyaRowHeight()).append(" )\n");
+        builder.append("    .fCantSplit           = ");
+        builder.append(" (").append(getFCantSplit()).append(" )\n");
+        builder.append("    .fCantSplit90         = ");
+        builder.append(" (").append(getFCantSplit90()).append(" )\n");
+        builder.append("    .fTableHeader         = ");
+        builder.append(" (").append(getFTableHeader()).append(" )\n");
+        builder.append("    .tlp                  = ");
+        builder.append(" (").append(getTlp()).append(" )\n");
+        builder.append("    .wWidth               = ");
+        builder.append(" (").append(getWWidth()).append(" )\n");
+        builder.append("    .wWidthIndent         = ");
+        builder.append(" (").append(getWWidthIndent()).append(" )\n");
+        builder.append("    .wWidthBefore         = ");
+        builder.append(" (").append(getWWidthBefore()).append(" )\n");
+        builder.append("    .wWidthAfter          = ");
+        builder.append(" (").append(getWWidthAfter()).append(" )\n");
+        builder.append("    .widthAndFitsFlags    = ");
+        builder.append(" (").append(getWidthAndFitsFlags()).append(" )\n");
+        builder.append("         .fAutofit                 = ").append(isFAutofit()).append('\n');
+        builder.append("         .fKeepFollow              = ").append(isFKeepFollow()).append('\n');
+        builder.append("         .ftsWidth                 = ").append(getFtsWidth()).append('\n');
+        builder.append("         .ftsWidthIndent           = ").append(getFtsWidthIndent()).append('\n');
+        builder.append("         .ftsWidthBefore           = ").append(getFtsWidthBefore()).append('\n');
+        builder.append("         .ftsWidthAfter            = ").append(getFtsWidthAfter()).append('\n');
+        builder.append("         .fNeverBeenAutofit        = ").append(isFNeverBeenAutofit()).append('\n');
+        builder.append("         .fInvalAutofit            = ").append(isFInvalAutofit()).append('\n');
+        builder.append("         .widthAndFitsFlags_empty1     = ").append(getWidthAndFitsFlags_empty1()).append('\n');
+        builder.append("         .fVert                    = ").append(isFVert()).append('\n');
+        builder.append("         .pcVert                   = ").append(getPcVert()).append('\n');
+        builder.append("         .pcHorz                   = ").append(getPcHorz()).append('\n');
+        builder.append("         .widthAndFitsFlags_empty2     = ").append(getWidthAndFitsFlags_empty2()).append('\n');
+        builder.append("    .dxaAbs               = ");
+        builder.append(" (").append(getDxaAbs()).append(" )\n");
+        builder.append("    .dyaAbs               = ");
+        builder.append(" (").append(getDyaAbs()).append(" )\n");
+        builder.append("    .dxaFromText          = ");
+        builder.append(" (").append(getDxaFromText()).append(" )\n");
+        builder.append("    .dyaFromText          = ");
+        builder.append(" (").append(getDyaFromText()).append(" )\n");
+        builder.append("    .dxaFromTextRight     = ");
+        builder.append(" (").append(getDxaFromTextRight()).append(" )\n");
+        builder.append("    .dyaFromTextBottom    = ");
+        builder.append(" (").append(getDyaFromTextBottom()).append(" )\n");
+        builder.append("    .fBiDi                = ");
+        builder.append(" (").append(getFBiDi()).append(" )\n");
+        builder.append("    .fRTL                 = ");
+        builder.append(" (").append(getFRTL()).append(" )\n");
+        builder.append("    .fNoAllowOverlap      = ");
+        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
+        builder.append("    .fSpare               = ");
+        builder.append(" (").append(getFSpare()).append(" )\n");
+        builder.append("    .grpfTap              = ");
+        builder.append(" (").append(getGrpfTap()).append(" )\n");
+        builder.append("    .internalFlags        = ");
+        builder.append(" (").append(getInternalFlags()).append(" )\n");
+        builder.append("         .fFirstRow                = ").append(isFFirstRow()).append('\n');
+        builder.append("         .fLastRow                 = ").append(isFLastRow()).append('\n');
+        builder.append("         .fOutline                 = ").append(isFOutline()).append('\n');
+        builder.append("         .fOrigWordTableRules      = ").append(isFOrigWordTableRules()).append('\n');
+        builder.append("         .fCellSpacing             = ").append(isFCellSpacing()).append('\n');
+        builder.append("         .grpfTap_unused           = ").append(getGrpfTap_unused()).append('\n');
+        builder.append("    .itcMac               = ");
+        builder.append(" (").append(getItcMac()).append(" )\n");
+        builder.append("    .dxaAdjust            = ");
+        builder.append(" (").append(getDxaAdjust()).append(" )\n");
+        builder.append("    .dxaWebView           = ");
+        builder.append(" (").append(getDxaWebView()).append(" )\n");
+        builder.append("    .dxaRTEWrapWidth      = ");
+        builder.append(" (").append(getDxaRTEWrapWidth()).append(" )\n");
+        builder.append("    .dxaColWidthWwd       = ");
+        builder.append(" (").append(getDxaColWidthWwd()).append(" )\n");
+        builder.append("    .pctWwd               = ");
+        builder.append(" (").append(getPctWwd()).append(" )\n");
+        builder.append("    .viewFlags            = ");
+        builder.append(" (").append(getViewFlags()).append(" )\n");
+        builder.append("         .fWrapToWwd               = ").append(isFWrapToWwd()).append('\n');
+        builder.append("         .fNotPageView             = ").append(isFNotPageView()).append('\n');
+        builder.append("         .viewFlags_unused1        = ").append(isViewFlags_unused1()).append('\n');
+        builder.append("         .fWebView                 = ").append(isFWebView()).append('\n');
+        builder.append("         .fAdjusted                = ").append(isFAdjusted()).append('\n');
+        builder.append("         .viewFlags_unused2        = ").append(getViewFlags_unused2()).append('\n');
+        builder.append("    .rgdxaCenter          = ");
+        builder.append(" (").append(getRgdxaCenter()).append(" )\n");
+        builder.append("    .rgdxaCenterPrint     = ");
+        builder.append(" (").append(getRgdxaCenterPrint()).append(" )\n");
+        builder.append("    .shdTable             = ");
+        builder.append(" (").append(getShdTable()).append(" )\n");
+        builder.append("    .brcBottom            = ");
+        builder.append(" (").append(getBrcBottom()).append(" )\n");
+        builder.append("    .brcTop               = ");
+        builder.append(" (").append(getBrcTop()).append(" )\n");
+        builder.append("    .brcLeft              = ");
+        builder.append(" (").append(getBrcLeft()).append(" )\n");
+        builder.append("    .brcRight             = ");
+        builder.append(" (").append(getBrcRight()).append(" )\n");
+        builder.append("    .brcVertical          = ");
+        builder.append(" (").append(getBrcVertical()).append(" )\n");
+        builder.append("    .brcHorizontal        = ");
+        builder.append(" (").append(getBrcHorizontal()).append(" )\n");
+        builder.append("    .wCellPaddingDefaultTop = ");
+        builder.append(" (").append(getWCellPaddingDefaultTop()).append(" )\n");
+        builder.append("    .wCellPaddingDefaultLeft = ");
+        builder.append(" (").append(getWCellPaddingDefaultLeft()).append(" )\n");
+        builder.append("    .wCellPaddingDefaultBottom = ");
+        builder.append(" (").append(getWCellPaddingDefaultBottom()).append(" )\n");
+        builder.append("    .wCellPaddingDefaultRight = ");
+        builder.append(" (").append(getWCellPaddingDefaultRight()).append(" )\n");
+        builder.append("    .ftsCellPaddingDefaultTop = ");
+        builder.append(" (").append(getFtsCellPaddingDefaultTop()).append(" )\n");
+        builder.append("    .ftsCellPaddingDefaultLeft = ");
+        builder.append(" (").append(getFtsCellPaddingDefaultLeft()).append(" )\n");
+        builder.append("    .ftsCellPaddingDefaultBottom = ");
+        builder.append(" (").append(getFtsCellPaddingDefaultBottom()).append(" )\n");
+        builder.append("    .ftsCellPaddingDefaultRight = ");
+        builder.append(" (").append(getFtsCellPaddingDefaultRight()).append(" )\n");
+        builder.append("    .wCellSpacingDefaultTop = ");
+        builder.append(" (").append(getWCellSpacingDefaultTop()).append(" )\n");
+        builder.append("    .wCellSpacingDefaultLeft = ");
+        builder.append(" (").append(getWCellSpacingDefaultLeft()).append(" )\n");
+        builder.append("    .wCellSpacingDefaultBottom = ");
+        builder.append(" (").append(getWCellSpacingDefaultBottom()).append(" )\n");
+        builder.append("    .wCellSpacingDefaultRight = ");
+        builder.append(" (").append(getWCellSpacingDefaultRight()).append(" )\n");
+        builder.append("    .ftsCellSpacingDefaultTop = ");
+        builder.append(" (").append(getFtsCellSpacingDefaultTop()).append(" )\n");
+        builder.append("    .ftsCellSpacingDefaultLeft = ");
+        builder.append(" (").append(getFtsCellSpacingDefaultLeft()).append(" )\n");
+        builder.append("    .ftsCellSpacingDefaultBottom = ");
+        builder.append(" (").append(getFtsCellSpacingDefaultBottom()).append(" )\n");
+        builder.append("    .ftsCellSpacingDefaultRight = ");
+        builder.append(" (").append(getFtsCellSpacingDefaultRight()).append(" )\n");
+        builder.append("    .wCellPaddingOuterTop = ");
+        builder.append(" (").append(getWCellPaddingOuterTop()).append(" )\n");
+        builder.append("    .wCellPaddingOuterLeft = ");
+        builder.append(" (").append(getWCellPaddingOuterLeft()).append(" )\n");
+        builder.append("    .wCellPaddingOuterBottom = ");
+        builder.append(" (").append(getWCellPaddingOuterBottom()).append(" )\n");
+        builder.append("    .wCellPaddingOuterRight = ");
+        builder.append(" (").append(getWCellPaddingOuterRight()).append(" )\n");
+        builder.append("    .ftsCellPaddingOuterTop = ");
+        builder.append(" (").append(getFtsCellPaddingOuterTop()).append(" )\n");
+        builder.append("    .ftsCellPaddingOuterLeft = ");
+        builder.append(" (").append(getFtsCellPaddingOuterLeft()).append(" )\n");
+        builder.append("    .ftsCellPaddingOuterBottom = ");
+        builder.append(" (").append(getFtsCellPaddingOuterBottom()).append(" )\n");
+        builder.append("    .ftsCellPaddingOuterRight = ");
+        builder.append(" (").append(getFtsCellPaddingOuterRight()).append(" )\n");
+        builder.append("    .wCellSpacingOuterTop = ");
+        builder.append(" (").append(getWCellSpacingOuterTop()).append(" )\n");
+        builder.append("    .wCellSpacingOuterLeft = ");
+        builder.append(" (").append(getWCellSpacingOuterLeft()).append(" )\n");
+        builder.append("    .wCellSpacingOuterBottom = ");
+        builder.append(" (").append(getWCellSpacingOuterBottom()).append(" )\n");
+        builder.append("    .wCellSpacingOuterRight = ");
+        builder.append(" (").append(getWCellSpacingOuterRight()).append(" )\n");
+        builder.append("    .ftsCellSpacingOuterTop = ");
+        builder.append(" (").append(getFtsCellSpacingOuterTop()).append(" )\n");
+        builder.append("    .ftsCellSpacingOuterLeft = ");
+        builder.append(" (").append(getFtsCellSpacingOuterLeft()).append(" )\n");
+        builder.append("    .ftsCellSpacingOuterBottom = ");
+        builder.append(" (").append(getFtsCellSpacingOuterBottom()).append(" )\n");
+        builder.append("    .ftsCellSpacingOuterRight = ");
+        builder.append(" (").append(getFtsCellSpacingOuterRight()).append(" )\n");
+        builder.append("    .rgtc                 = ");
+        builder.append(" (").append(getRgtc()).append(" )\n");
+        builder.append("    .rgshd                = ");
+        builder.append(" (").append(getRgshd()).append(" )\n");
+        builder.append("    .fPropRMark           = ");
+        builder.append(" (").append(getFPropRMark()).append(" )\n");
+        builder.append("    .fHasOldProps         = ");
+        builder.append(" (").append(getFHasOldProps()).append(" )\n");
+        builder.append("    .cHorzBands           = ");
+        builder.append(" (").append(getCHorzBands()).append(" )\n");
+        builder.append("    .cVertBands           = ");
+        builder.append(" (").append(getCVertBands()).append(" )\n");
+        builder.append("    .rgbrcInsideDefault_0 = ");
+        builder.append(" (").append(getRgbrcInsideDefault_0()).append(" )\n");
+        builder.append("    .rgbrcInsideDefault_1 = ");
+        builder.append(" (").append(getRgbrcInsideDefault_1()).append(" )\n");
+
+        builder.append("[/TAP]\n");
+        return builder.toString();
     }
 
     /**
-     * Size of record (exluding 4 byte header)
+     * Table style for the Table.
      */
-    public int getSize()
-    {
-        return 4 + +2 + 2 + 4 + 4 + 0 + 0 + 0 + 4 + 2 + 2 + 2 + 2 + 4 + 4 + 4
-                + 4 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 2
-                + 2 + 130 + 130 + 10 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2
-                + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2
-                + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 1 + 1 + 1 + 1 + 0 + 0 + 1 + 1
-                + 1 + 1 + 8 + 8;
-    }
-
-    /**
-     * Get the istd field for the TAP record.
-     */
+    @Internal
     public short getIstd()
     {
         return field_1_istd;
     }
 
     /**
-     * Set the istd field for the TAP record.
+     * Table style for the Table.
      */
+    @Internal
     public void setIstd( short field_1_istd )
     {
         this.field_1_istd = field_1_istd;
     }
 
     /**
-     * Get the jc field for the TAP record.
+     * Justification code. specifies how table row should be justified within its column. 0 -- left justify, 1 -- center, 2 -- right justify.
      */
+    @Internal
     public short getJc()
     {
         return field_2_jc;
     }
 
     /**
-     * Set the jc field for the TAP record.
+     * Justification code. specifies how table row should be justified within its column. 0 -- left justify, 1 -- center, 2 -- right justify.
      */
+    @Internal
     public void setJc( short field_2_jc )
     {
         this.field_2_jc = field_2_jc;
     }
 
     /**
-     * Get the dxaGapHalf field for the TAP record.
+     * Measures half of the white space that will be maintained between text in adjacent columns of a table row. A dxaGapHalf width of white space will be maintained on both sides of a column boundary..
      */
+    @Internal
     public int getDxaGapHalf()
     {
         return field_3_dxaGapHalf;
     }
 
     /**
-     * Set the dxaGapHalf field for the TAP record.
+     * Measures half of the white space that will be maintained between text in adjacent columns of a table row. A dxaGapHalf width of white space will be maintained on both sides of a column boundary..
      */
+    @Internal
     public void setDxaGapHalf( int field_3_dxaGapHalf )
     {
         this.field_3_dxaGapHalf = field_3_dxaGapHalf;
     }
 
     /**
-     * Get the dyaRowHeight field for the TAP record.
+     * When greater than 0, guarantees that the height of the table will be at least dyaRowHeight high. When less than 0, guarantees that the height of the table will be exactly absolute value of dyaRowHeight high. When 0, table will be given a height large enough to represent all of the text in all of the cells of the table. Cells with vertical text flow make no contribution to the computation of the height of rows with auto or at least height. Neither do vertically merged cells, except in the last row of the vertical merge. If an auto height row consists entirely of cells which have vertical text direction or are vertically merged, and the row does not contain the last cell in any vertical cell merge, then the row is given height equal to that of the end of cell mark in the first cell..
      */
+    @Internal
     public int getDyaRowHeight()
     {
         return field_4_dyaRowHeight;
     }
 
     /**
-     * Set the dyaRowHeight field for the TAP record.
+     * When greater than 0, guarantees that the height of the table will be at least dyaRowHeight high. When less than 0, guarantees that the height of the table will be exactly absolute value of dyaRowHeight high. When 0, table will be given a height large enough to represent all of the text in all of the cells of the table. Cells with vertical text flow make no contribution to the computation of the height of rows with auto or at least height. Neither do vertically merged cells, except in the last row of the vertical merge. If an auto height row consists entirely of cells which have vertical text direction or are vertically merged, and the row does not contain the last cell in any vertical cell merge, then the row is given height equal to that of the end of cell mark in the first cell..
      */
+    @Internal
     public void setDyaRowHeight( int field_4_dyaRowHeight )
     {
         this.field_4_dyaRowHeight = field_4_dyaRowHeight;
     }
 
     /**
-     * Get the fCantSplit field for the TAP record.
+     * When 1, table row may not be split across page bounds.
      */
+    @Internal
     public boolean getFCantSplit()
     {
         return field_5_fCantSplit;
     }
 
     /**
-     * Set the fCantSplit field for the TAP record.
+     * When 1, table row may not be split across page bounds.
      */
+    @Internal
     public void setFCantSplit( boolean field_5_fCantSplit )
     {
         this.field_5_fCantSplit = field_5_fCantSplit;
     }
 
     /**
-     * Get the fCantSplit90 field for the TAP record.
+     * When 1, table row may not be split across page bounds. Used for Word 2000 and Word 97..
      */
+    @Internal
     public boolean getFCantSplit90()
     {
         return field_6_fCantSplit90;
     }
 
     /**
-     * Set the fCantSplit90 field for the TAP record.
+     * When 1, table row may not be split across page bounds. Used for Word 2000 and Word 97..
      */
+    @Internal
     public void setFCantSplit90( boolean field_6_fCantSplit90 )
     {
         this.field_6_fCantSplit90 = field_6_fCantSplit90;
     }
 
     /**
-     * Get the fTableHeader field for the TAP record.
+     * When 1, table row is to be used as the header of the table.
      */
+    @Internal
     public boolean getFTableHeader()
     {
         return field_7_fTableHeader;
     }
 
     /**
-     * Set the fTableHeader field for the TAP record.
+     * When 1, table row is to be used as the header of the table.
      */
+    @Internal
     public void setFTableHeader( boolean field_7_fTableHeader )
     {
         this.field_7_fTableHeader = field_7_fTableHeader;
     }
 
     /**
-     * Get the tlp field for the TAP record.
+     * Table look specifier.
      */
+    @Internal
     public TableAutoformatLookSpecifier getTlp()
     {
         return field_8_tlp;
     }
 
     /**
-     * Set the tlp field for the TAP record.
+     * Table look specifier.
      */
+    @Internal
     public void setTlp( TableAutoformatLookSpecifier field_8_tlp )
     {
         this.field_8_tlp = field_8_tlp;
     }
 
     /**
-     * Get the wWidth field for the TAP record.
+     * Preferred table width.
      */
+    @Internal
     public short getWWidth()
     {
         return field_9_wWidth;
     }
 
     /**
-     * Set the wWidth field for the TAP record.
+     * Preferred table width.
      */
+    @Internal
     public void setWWidth( short field_9_wWidth )
     {
         this.field_9_wWidth = field_9_wWidth;
     }
 
     /**
-     * Get the wWidthIndent field for the TAP record.
+     * Left Indent.
      */
+    @Internal
     public short getWWidthIndent()
     {
         return field_10_wWidthIndent;
     }
 
     /**
-     * Set the wWidthIndent field for the TAP record.
+     * Left Indent.
      */
+    @Internal
     public void setWWidthIndent( short field_10_wWidthIndent )
     {
         this.field_10_wWidthIndent = field_10_wWidthIndent;
     }
 
     /**
-     * Get the wWidthBefore field for the TAP record.
+     * Width of invisible cell (used for layout purposes) before the first visible cell in the row..
      */
+    @Internal
     public short getWWidthBefore()
     {
         return field_11_wWidthBefore;
     }
 
     /**
-     * Set the wWidthBefore field for the TAP record.
+     * Width of invisible cell (used for layout purposes) before the first visible cell in the row..
      */
+    @Internal
     public void setWWidthBefore( short field_11_wWidthBefore )
     {
         this.field_11_wWidthBefore = field_11_wWidthBefore;
     }
 
     /**
-     * Get the wWidthAfter field for the TAP record.
+     * Width of invisible cell (used for layout purposes) after the last visible cell in the row..
      */
+    @Internal
     public short getWWidthAfter()
     {
         return field_12_wWidthAfter;
     }
 
     /**
-     * Set the wWidthAfter field for the TAP record.
+     * Width of invisible cell (used for layout purposes) after the last visible cell in the row..
      */
+    @Internal
     public void setWWidthAfter( short field_12_wWidthAfter )
     {
         this.field_12_wWidthAfter = field_12_wWidthAfter;
@@ -700,6 +579,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the widthAndFitsFlags field for the TAP record.
      */
+    @Internal
     public int getWidthAndFitsFlags()
     {
         return field_13_widthAndFitsFlags;
@@ -708,358 +588,403 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the widthAndFitsFlags field for the TAP record.
      */
+    @Internal
     public void setWidthAndFitsFlags( int field_13_widthAndFitsFlags )
     {
         this.field_13_widthAndFitsFlags = field_13_widthAndFitsFlags;
     }
 
     /**
-     * Get the dxaAbs field for the TAP record.
+     * Absolute horizontal position.
      */
+    @Internal
     public int getDxaAbs()
     {
         return field_14_dxaAbs;
     }
 
     /**
-     * Set the dxaAbs field for the TAP record.
+     * Absolute horizontal position.
      */
+    @Internal
     public void setDxaAbs( int field_14_dxaAbs )
     {
         this.field_14_dxaAbs = field_14_dxaAbs;
     }
 
     /**
-     * Get the dyaAbs field for the TAP record.
+     * Absolute vertical position.
      */
+    @Internal
     public int getDyaAbs()
     {
         return field_15_dyaAbs;
     }
 
     /**
-     * Set the dyaAbs field for the TAP record.
+     * Absolute vertical position.
      */
+    @Internal
     public void setDyaAbs( int field_15_dyaAbs )
     {
         this.field_15_dyaAbs = field_15_dyaAbs;
     }
 
     /**
-     * Get the dxaFromText field for the TAP record.
+     * Left distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public int getDxaFromText()
     {
         return field_16_dxaFromText;
     }
 
     /**
-     * Set the dxaFromText field for the TAP record.
+     * Left distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public void setDxaFromText( int field_16_dxaFromText )
     {
         this.field_16_dxaFromText = field_16_dxaFromText;
     }
 
     /**
-     * Get the dyaFromText field for the TAP record.
+     * Top distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public int getDyaFromText()
     {
         return field_17_dyaFromText;
     }
 
     /**
-     * Set the dyaFromText field for the TAP record.
+     * Top distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public void setDyaFromText( int field_17_dyaFromText )
     {
         this.field_17_dyaFromText = field_17_dyaFromText;
     }
 
     /**
-     * Get the dxaFromTextRight field for the TAP record.
+     * Right distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public int getDxaFromTextRight()
     {
         return field_18_dxaFromTextRight;
     }
 
     /**
-     * Set the dxaFromTextRight field for the TAP record.
+     * Right distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public void setDxaFromTextRight( int field_18_dxaFromTextRight )
     {
         this.field_18_dxaFromTextRight = field_18_dxaFromTextRight;
     }
 
     /**
-     * Get the dyaFromTextBottom field for the TAP record.
+     * Bottom distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public int getDyaFromTextBottom()
     {
         return field_19_dyaFromTextBottom;
     }
 
     /**
-     * Set the dyaFromTextBottom field for the TAP record.
+     * Bottom distance from surrounding text when absolutely positioned.
      */
+    @Internal
     public void setDyaFromTextBottom( int field_19_dyaFromTextBottom )
     {
         this.field_19_dyaFromTextBottom = field_19_dyaFromTextBottom;
     }
 
     /**
-     * Get the fBiDi field for the TAP record.
+     * When 1, table is right-to-left. Logical right-to-left table: The CP stream of a right-to-left table is meant to be displayed from right to left. So for example the first table cell is displayed on the right side of the table instead of the left..
      */
+    @Internal
     public byte getFBiDi()
     {
         return field_20_fBiDi;
     }
 
     /**
-     * Set the fBiDi field for the TAP record.
+     * When 1, table is right-to-left. Logical right-to-left table: The CP stream of a right-to-left table is meant to be displayed from right to left. So for example the first table cell is displayed on the right side of the table instead of the left..
      */
+    @Internal
     public void setFBiDi( byte field_20_fBiDi )
     {
         this.field_20_fBiDi = field_20_fBiDi;
     }
 
     /**
-     * Get the fRTL field for the TAP record.
+     * Word 2000 style right-to-left table. Visual right-to-left table: The CP stream of a right-to-left table is displayed from left to right just as for a normal table. So, the text which is meant to be in the first (rightmost) table cell must be placed in the last table cell in the CP stream..
      */
+    @Internal
     public byte getFRTL()
     {
         return field_21_fRTL;
     }
 
     /**
-     * Set the fRTL field for the TAP record.
+     * Word 2000 style right-to-left table. Visual right-to-left table: The CP stream of a right-to-left table is displayed from left to right just as for a normal table. So, the text which is meant to be in the first (rightmost) table cell must be placed in the last table cell in the CP stream..
      */
+    @Internal
     public void setFRTL( byte field_21_fRTL )
     {
         this.field_21_fRTL = field_21_fRTL;
     }
 
     /**
-     * Get the fNoAllowOverlap field for the TAP record.
+     * When set to 1, do not allow absolutely positioned table to overlap with other tables.
      */
+    @Internal
     public byte getFNoAllowOverlap()
     {
         return field_22_fNoAllowOverlap;
     }
 
     /**
-     * Set the fNoAllowOverlap field for the TAP record.
+     * When set to 1, do not allow absolutely positioned table to overlap with other tables.
      */
+    @Internal
     public void setFNoAllowOverlap( byte field_22_fNoAllowOverlap )
     {
         this.field_22_fNoAllowOverlap = field_22_fNoAllowOverlap;
     }
 
     /**
-     * Get the fSpare field for the TAP record.
+     * Not used.
      */
+    @Internal
     public byte getFSpare()
     {
         return field_23_fSpare;
     }
 
     /**
-     * Set the fSpare field for the TAP record.
+     * Not used.
      */
+    @Internal
     public void setFSpare( byte field_23_fSpare )
     {
         this.field_23_fSpare = field_23_fSpare;
     }
 
     /**
-     * Get the grpfTap field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getGrpfTap()
     {
         return field_24_grpfTap;
     }
 
     /**
-     * Set the grpfTap field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setGrpfTap( int field_24_grpfTap )
     {
         this.field_24_grpfTap = field_24_grpfTap;
     }
 
     /**
-     * Get the internalFlags field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getInternalFlags()
     {
         return field_25_internalFlags;
     }
 
     /**
-     * Set the internalFlags field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setInternalFlags( int field_25_internalFlags )
     {
         this.field_25_internalFlags = field_25_internalFlags;
     }
 
     /**
-     * Get the itcMac field for the TAP record.
+     * Count of cells defined for this row. itcMac must be >= 0 and less than or equal to 64..
      */
+    @Internal
     public short getItcMac()
     {
         return field_26_itcMac;
     }
 
     /**
-     * Set the itcMac field for the TAP record.
+     * Count of cells defined for this row. itcMac must be >= 0 and less than or equal to 64..
      */
+    @Internal
     public void setItcMac( short field_26_itcMac )
     {
         this.field_26_itcMac = field_26_itcMac;
     }
 
     /**
-     * Get the dxaAdjust field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getDxaAdjust()
     {
         return field_27_dxaAdjust;
     }
 
     /**
-     * Set the dxaAdjust field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setDxaAdjust( int field_27_dxaAdjust )
     {
         this.field_27_dxaAdjust = field_27_dxaAdjust;
     }
 
     /**
-     * Get the dxaWebView field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getDxaWebView()
     {
         return field_28_dxaWebView;
     }
 
     /**
-     * Set the dxaWebView field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setDxaWebView( int field_28_dxaWebView )
     {
         this.field_28_dxaWebView = field_28_dxaWebView;
     }
 
     /**
-     * Get the dxaRTEWrapWidth field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getDxaRTEWrapWidth()
     {
         return field_29_dxaRTEWrapWidth;
     }
 
     /**
-     * Set the dxaRTEWrapWidth field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setDxaRTEWrapWidth( int field_29_dxaRTEWrapWidth )
     {
         this.field_29_dxaRTEWrapWidth = field_29_dxaRTEWrapWidth;
     }
 
     /**
-     * Get the dxaColWidthWwd field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getDxaColWidthWwd()
     {
         return field_30_dxaColWidthWwd;
     }
 
     /**
-     * Set the dxaColWidthWwd field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setDxaColWidthWwd( int field_30_dxaColWidthWwd )
     {
         this.field_30_dxaColWidthWwd = field_30_dxaColWidthWwd;
     }
 
     /**
-     * Get the pctWwd field for the TAP record.
+     * Used internally by Word: percent of Window size for AutoFit in WebView.
      */
+    @Internal
     public short getPctWwd()
     {
         return field_31_pctWwd;
     }
 
     /**
-     * Set the pctWwd field for the TAP record.
+     * Used internally by Word: percent of Window size for AutoFit in WebView.
      */
+    @Internal
     public void setPctWwd( short field_31_pctWwd )
     {
         this.field_31_pctWwd = field_31_pctWwd;
     }
 
     /**
-     * Get the viewFlags field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public int getViewFlags()
     {
         return field_32_viewFlags;
     }
 
     /**
-     * Set the viewFlags field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setViewFlags( int field_32_viewFlags )
     {
         this.field_32_viewFlags = field_32_viewFlags;
     }
 
     /**
-     * Get the rgdxaCenter field for the TAP record.
+     * rgdxaCenter[0] is the left boundary of cell 0 measured relative to margin rgdxaCenter[tap.itcMac - 1] is left boundary of last cell rgdxaCenter[tap.itcMac] is right boundary of last cell..
      */
+    @Internal
     public short[] getRgdxaCenter()
     {
         return field_33_rgdxaCenter;
     }
 
     /**
-     * Set the rgdxaCenter field for the TAP record.
+     * rgdxaCenter[0] is the left boundary of cell 0 measured relative to margin rgdxaCenter[tap.itcMac - 1] is left boundary of last cell rgdxaCenter[tap.itcMac] is right boundary of last cell..
      */
+    @Internal
     public void setRgdxaCenter( short[] field_33_rgdxaCenter )
     {
         this.field_33_rgdxaCenter = field_33_rgdxaCenter;
     }
 
     /**
-     * Get the rgdxaCenterPrint field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public short[] getRgdxaCenterPrint()
     {
         return field_34_rgdxaCenterPrint;
     }
 
     /**
-     * Set the rgdxaCenterPrint field for the TAP record.
+     * Used internally by Word.
      */
+    @Internal
     public void setRgdxaCenterPrint( short[] field_34_rgdxaCenterPrint )
     {
         this.field_34_rgdxaCenterPrint = field_34_rgdxaCenterPrint;
     }
 
     /**
-     * Get the shdTable field for the TAP record.
+     * Table shading.
      */
+    @Internal
     public ShadingDescriptor getShdTable()
     {
         return field_35_shdTable;
     }
 
     /**
-     * Set the shdTable field for the TAP record.
+     * Table shading.
      */
+    @Internal
     public void setShdTable( ShadingDescriptor field_35_shdTable )
     {
         this.field_35_shdTable = field_35_shdTable;
@@ -1068,6 +993,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcBottom field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcBottom()
     {
         return field_36_brcBottom;
@@ -1076,6 +1002,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcBottom field for the TAP record.
      */
+    @Internal
     public void setBrcBottom( BorderCode field_36_brcBottom )
     {
         this.field_36_brcBottom = field_36_brcBottom;
@@ -1084,6 +1011,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcTop field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcTop()
     {
         return field_37_brcTop;
@@ -1092,6 +1020,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcTop field for the TAP record.
      */
+    @Internal
     public void setBrcTop( BorderCode field_37_brcTop )
     {
         this.field_37_brcTop = field_37_brcTop;
@@ -1100,6 +1029,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcLeft field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcLeft()
     {
         return field_38_brcLeft;
@@ -1108,6 +1038,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcLeft field for the TAP record.
      */
+    @Internal
     public void setBrcLeft( BorderCode field_38_brcLeft )
     {
         this.field_38_brcLeft = field_38_brcLeft;
@@ -1116,6 +1047,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcRight field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcRight()
     {
         return field_39_brcRight;
@@ -1124,6 +1056,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcRight field for the TAP record.
      */
+    @Internal
     public void setBrcRight( BorderCode field_39_brcRight )
     {
         this.field_39_brcRight = field_39_brcRight;
@@ -1132,6 +1065,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcVertical field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcVertical()
     {
         return field_40_brcVertical;
@@ -1140,6 +1074,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcVertical field for the TAP record.
      */
+    @Internal
     public void setBrcVertical( BorderCode field_40_brcVertical )
     {
         this.field_40_brcVertical = field_40_brcVertical;
@@ -1148,6 +1083,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the brcHorizontal field for the TAP record.
      */
+    @Internal
     public BorderCode getBrcHorizontal()
     {
         return field_41_brcHorizontal;
@@ -1156,541 +1092,584 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the brcHorizontal field for the TAP record.
      */
+    @Internal
     public void setBrcHorizontal( BorderCode field_41_brcHorizontal )
     {
         this.field_41_brcHorizontal = field_41_brcHorizontal;
     }
 
     /**
-     * Get the wCellPaddingDefaultTop field for the TAP record.
+     * Default top cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingDefaultTop()
     {
         return field_42_wCellPaddingDefaultTop;
     }
 
     /**
-     * Set the wCellPaddingDefaultTop field for the TAP record.
+     * Default top cell margin/padding.
      */
+    @Internal
     public void setWCellPaddingDefaultTop( short field_42_wCellPaddingDefaultTop )
     {
         this.field_42_wCellPaddingDefaultTop = field_42_wCellPaddingDefaultTop;
     }
 
     /**
-     * Get the wCellPaddingDefaultLeft field for the TAP record.
+     * Default left cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingDefaultLeft()
     {
         return field_43_wCellPaddingDefaultLeft;
     }
 
     /**
-     * Set the wCellPaddingDefaultLeft field for the TAP record.
+     * Default left cell margin/padding.
      */
-    public void setWCellPaddingDefaultLeft(
-            short field_43_wCellPaddingDefaultLeft )
+    @Internal
+    public void setWCellPaddingDefaultLeft( short field_43_wCellPaddingDefaultLeft )
     {
         this.field_43_wCellPaddingDefaultLeft = field_43_wCellPaddingDefaultLeft;
     }
 
     /**
-     * Get the wCellPaddingDefaultBottom field for the TAP record.
+     * Default bottom cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingDefaultBottom()
     {
         return field_44_wCellPaddingDefaultBottom;
     }
 
     /**
-     * Set the wCellPaddingDefaultBottom field for the TAP record.
+     * Default bottom cell margin/padding.
      */
-    public void setWCellPaddingDefaultBottom(
-            short field_44_wCellPaddingDefaultBottom )
+    @Internal
+    public void setWCellPaddingDefaultBottom( short field_44_wCellPaddingDefaultBottom )
     {
         this.field_44_wCellPaddingDefaultBottom = field_44_wCellPaddingDefaultBottom;
     }
 
     /**
-     * Get the wCellPaddingDefaultRight field for the TAP record.
+     * Default right cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingDefaultRight()
     {
         return field_45_wCellPaddingDefaultRight;
     }
 
     /**
-     * Set the wCellPaddingDefaultRight field for the TAP record.
+     * Default right cell margin/padding.
      */
-    public void setWCellPaddingDefaultRight(
-            short field_45_wCellPaddingDefaultRight )
+    @Internal
+    public void setWCellPaddingDefaultRight( short field_45_wCellPaddingDefaultRight )
     {
         this.field_45_wCellPaddingDefaultRight = field_45_wCellPaddingDefaultRight;
     }
 
     /**
-     * Get the ftsCellPaddingDefaultTop field for the TAP record.
+     * Default top cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingDefaultTop()
     {
         return field_46_ftsCellPaddingDefaultTop;
     }
 
     /**
-     * Set the ftsCellPaddingDefaultTop field for the TAP record.
+     * Default top cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingDefaultTop(
-            byte field_46_ftsCellPaddingDefaultTop )
+    @Internal
+    public void setFtsCellPaddingDefaultTop( byte field_46_ftsCellPaddingDefaultTop )
     {
         this.field_46_ftsCellPaddingDefaultTop = field_46_ftsCellPaddingDefaultTop;
     }
 
     /**
-     * Get the ftsCellPaddingDefaultLeft field for the TAP record.
+     * Default left cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingDefaultLeft()
     {
         return field_47_ftsCellPaddingDefaultLeft;
     }
 
     /**
-     * Set the ftsCellPaddingDefaultLeft field for the TAP record.
+     * Default left cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingDefaultLeft(
-            byte field_47_ftsCellPaddingDefaultLeft )
+    @Internal
+    public void setFtsCellPaddingDefaultLeft( byte field_47_ftsCellPaddingDefaultLeft )
     {
         this.field_47_ftsCellPaddingDefaultLeft = field_47_ftsCellPaddingDefaultLeft;
     }
 
     /**
-     * Get the ftsCellPaddingDefaultBottom field for the TAP record.
+     * Default bottom cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingDefaultBottom()
     {
         return field_48_ftsCellPaddingDefaultBottom;
     }
 
     /**
-     * Set the ftsCellPaddingDefaultBottom field for the TAP record.
+     * Default bottom cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingDefaultBottom(
-            byte field_48_ftsCellPaddingDefaultBottom )
+    @Internal
+    public void setFtsCellPaddingDefaultBottom( byte field_48_ftsCellPaddingDefaultBottom )
     {
         this.field_48_ftsCellPaddingDefaultBottom = field_48_ftsCellPaddingDefaultBottom;
     }
 
     /**
-     * Get the ftsCellPaddingDefaultRight field for the TAP record.
+     * Default right cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingDefaultRight()
     {
         return field_49_ftsCellPaddingDefaultRight;
     }
 
     /**
-     * Set the ftsCellPaddingDefaultRight field for the TAP record.
+     * Default right cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingDefaultRight(
-            byte field_49_ftsCellPaddingDefaultRight )
+    @Internal
+    public void setFtsCellPaddingDefaultRight( byte field_49_ftsCellPaddingDefaultRight )
     {
         this.field_49_ftsCellPaddingDefaultRight = field_49_ftsCellPaddingDefaultRight;
     }
 
     /**
-     * Get the wCellSpacingDefaultTop field for the TAP record.
+     * Default top cell spacings.
      */
+    @Internal
     public short getWCellSpacingDefaultTop()
     {
         return field_50_wCellSpacingDefaultTop;
     }
 
     /**
-     * Set the wCellSpacingDefaultTop field for the TAP record.
+     * Default top cell spacings.
      */
+    @Internal
     public void setWCellSpacingDefaultTop( short field_50_wCellSpacingDefaultTop )
     {
         this.field_50_wCellSpacingDefaultTop = field_50_wCellSpacingDefaultTop;
     }
 
     /**
-     * Get the wCellSpacingDefaultLeft field for the TAP record.
+     * Default left cell spacings.
      */
+    @Internal
     public short getWCellSpacingDefaultLeft()
     {
         return field_51_wCellSpacingDefaultLeft;
     }
 
     /**
-     * Set the wCellSpacingDefaultLeft field for the TAP record.
+     * Default left cell spacings.
      */
-    public void setWCellSpacingDefaultLeft(
-            short field_51_wCellSpacingDefaultLeft )
+    @Internal
+    public void setWCellSpacingDefaultLeft( short field_51_wCellSpacingDefaultLeft )
     {
         this.field_51_wCellSpacingDefaultLeft = field_51_wCellSpacingDefaultLeft;
     }
 
     /**
-     * Get the wCellSpacingDefaultBottom field for the TAP record.
+     * Default bottom cell spacings.
      */
+    @Internal
     public short getWCellSpacingDefaultBottom()
     {
         return field_52_wCellSpacingDefaultBottom;
     }
 
     /**
-     * Set the wCellSpacingDefaultBottom field for the TAP record.
+     * Default bottom cell spacings.
      */
-    public void setWCellSpacingDefaultBottom(
-            short field_52_wCellSpacingDefaultBottom )
+    @Internal
+    public void setWCellSpacingDefaultBottom( short field_52_wCellSpacingDefaultBottom )
     {
         this.field_52_wCellSpacingDefaultBottom = field_52_wCellSpacingDefaultBottom;
     }
 
     /**
-     * Get the wCellSpacingDefaultRight field for the TAP record.
+     * Default right cell spacings.
      */
+    @Internal
     public short getWCellSpacingDefaultRight()
     {
         return field_53_wCellSpacingDefaultRight;
     }
 
     /**
-     * Set the wCellSpacingDefaultRight field for the TAP record.
+     * Default right cell spacings.
      */
-    public void setWCellSpacingDefaultRight(
-            short field_53_wCellSpacingDefaultRight )
+    @Internal
+    public void setWCellSpacingDefaultRight( short field_53_wCellSpacingDefaultRight )
     {
         this.field_53_wCellSpacingDefaultRight = field_53_wCellSpacingDefaultRight;
     }
 
     /**
-     * Get the ftsCellSpacingDefaultTop field for the TAP record.
+     * Default top cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingDefaultTop()
     {
         return field_54_ftsCellSpacingDefaultTop;
     }
 
     /**
-     * Set the ftsCellSpacingDefaultTop field for the TAP record.
+     * Default top cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingDefaultTop(
-            byte field_54_ftsCellSpacingDefaultTop )
+    @Internal
+    public void setFtsCellSpacingDefaultTop( byte field_54_ftsCellSpacingDefaultTop )
     {
         this.field_54_ftsCellSpacingDefaultTop = field_54_ftsCellSpacingDefaultTop;
     }
 
     /**
-     * Get the ftsCellSpacingDefaultLeft field for the TAP record.
+     * Default left cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingDefaultLeft()
     {
         return field_55_ftsCellSpacingDefaultLeft;
     }
 
     /**
-     * Set the ftsCellSpacingDefaultLeft field for the TAP record.
+     * Default left cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingDefaultLeft(
-            byte field_55_ftsCellSpacingDefaultLeft )
+    @Internal
+    public void setFtsCellSpacingDefaultLeft( byte field_55_ftsCellSpacingDefaultLeft )
     {
         this.field_55_ftsCellSpacingDefaultLeft = field_55_ftsCellSpacingDefaultLeft;
     }
 
     /**
-     * Get the ftsCellSpacingDefaultBottom field for the TAP record.
+     * Default bottom cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingDefaultBottom()
     {
         return field_56_ftsCellSpacingDefaultBottom;
     }
 
     /**
-     * Set the ftsCellSpacingDefaultBottom field for the TAP record.
+     * Default bottom cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingDefaultBottom(
-            byte field_56_ftsCellSpacingDefaultBottom )
+    @Internal
+    public void setFtsCellSpacingDefaultBottom( byte field_56_ftsCellSpacingDefaultBottom )
     {
         this.field_56_ftsCellSpacingDefaultBottom = field_56_ftsCellSpacingDefaultBottom;
     }
 
     /**
-     * Get the ftsCellSpacingDefaultRight field for the TAP record.
+     * Default right cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingDefaultRight()
     {
         return field_57_ftsCellSpacingDefaultRight;
     }
 
     /**
-     * Set the ftsCellSpacingDefaultRight field for the TAP record.
+     * Default right cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingDefaultRight(
-            byte field_57_ftsCellSpacingDefaultRight )
+    @Internal
+    public void setFtsCellSpacingDefaultRight( byte field_57_ftsCellSpacingDefaultRight )
     {
         this.field_57_ftsCellSpacingDefaultRight = field_57_ftsCellSpacingDefaultRight;
     }
 
     /**
-     * Get the wCellPaddingOuterTop field for the TAP record.
+     * Default outer top cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingOuterTop()
     {
         return field_58_wCellPaddingOuterTop;
     }
 
     /**
-     * Set the wCellPaddingOuterTop field for the TAP record.
+     * Default outer top cell margin/padding.
      */
+    @Internal
     public void setWCellPaddingOuterTop( short field_58_wCellPaddingOuterTop )
     {
         this.field_58_wCellPaddingOuterTop = field_58_wCellPaddingOuterTop;
     }
 
     /**
-     * Get the wCellPaddingOuterLeft field for the TAP record.
+     * Default outer left cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingOuterLeft()
     {
         return field_59_wCellPaddingOuterLeft;
     }
 
     /**
-     * Set the wCellPaddingOuterLeft field for the TAP record.
+     * Default outer left cell margin/padding.
      */
+    @Internal
     public void setWCellPaddingOuterLeft( short field_59_wCellPaddingOuterLeft )
     {
         this.field_59_wCellPaddingOuterLeft = field_59_wCellPaddingOuterLeft;
     }
 
     /**
-     * Get the wCellPaddingOuterBottom field for the TAP record.
+     * Default outer bottom cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingOuterBottom()
     {
         return field_60_wCellPaddingOuterBottom;
     }
 
     /**
-     * Set the wCellPaddingOuterBottom field for the TAP record.
+     * Default outer bottom cell margin/padding.
      */
-    public void setWCellPaddingOuterBottom(
-            short field_60_wCellPaddingOuterBottom )
+    @Internal
+    public void setWCellPaddingOuterBottom( short field_60_wCellPaddingOuterBottom )
     {
         this.field_60_wCellPaddingOuterBottom = field_60_wCellPaddingOuterBottom;
     }
 
     /**
-     * Get the wCellPaddingOuterRight field for the TAP record.
+     * Default outer right cell margin/padding.
      */
+    @Internal
     public short getWCellPaddingOuterRight()
     {
         return field_61_wCellPaddingOuterRight;
     }
 
     /**
-     * Set the wCellPaddingOuterRight field for the TAP record.
+     * Default outer right cell margin/padding.
      */
+    @Internal
     public void setWCellPaddingOuterRight( short field_61_wCellPaddingOuterRight )
     {
         this.field_61_wCellPaddingOuterRight = field_61_wCellPaddingOuterRight;
     }
 
     /**
-     * Get the ftsCellPaddingOuterTop field for the TAP record.
+     * Default outer top cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingOuterTop()
     {
         return field_62_ftsCellPaddingOuterTop;
     }
 
     /**
-     * Set the ftsCellPaddingOuterTop field for the TAP record.
+     * Default outer top cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public void setFtsCellPaddingOuterTop( byte field_62_ftsCellPaddingOuterTop )
     {
         this.field_62_ftsCellPaddingOuterTop = field_62_ftsCellPaddingOuterTop;
     }
 
     /**
-     * Get the ftsCellPaddingOuterLeft field for the TAP record.
+     * Default outer left cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingOuterLeft()
     {
         return field_63_ftsCellPaddingOuterLeft;
     }
 
     /**
-     * Set the ftsCellPaddingOuterLeft field for the TAP record.
+     * Default outer left cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingOuterLeft(
-            byte field_63_ftsCellPaddingOuterLeft )
+    @Internal
+    public void setFtsCellPaddingOuterLeft( byte field_63_ftsCellPaddingOuterLeft )
     {
         this.field_63_ftsCellPaddingOuterLeft = field_63_ftsCellPaddingOuterLeft;
     }
 
     /**
-     * Get the ftsCellPaddingOuterBottom field for the TAP record.
+     * Default outer bottom cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingOuterBottom()
     {
         return field_64_ftsCellPaddingOuterBottom;
     }
 
     /**
-     * Set the ftsCellPaddingOuterBottom field for the TAP record.
+     * Default outer bottom cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingOuterBottom(
-            byte field_64_ftsCellPaddingOuterBottom )
+    @Internal
+    public void setFtsCellPaddingOuterBottom( byte field_64_ftsCellPaddingOuterBottom )
     {
         this.field_64_ftsCellPaddingOuterBottom = field_64_ftsCellPaddingOuterBottom;
     }
 
     /**
-     * Get the ftsCellPaddingOuterRight field for the TAP record.
+     * Default outer right cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellPaddingOuterRight()
     {
         return field_65_ftsCellPaddingOuterRight;
     }
 
     /**
-     * Set the ftsCellPaddingOuterRight field for the TAP record.
+     * Default outer right cell margin/padding units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellPaddingOuterRight(
-            byte field_65_ftsCellPaddingOuterRight )
+    @Internal
+    public void setFtsCellPaddingOuterRight( byte field_65_ftsCellPaddingOuterRight )
     {
         this.field_65_ftsCellPaddingOuterRight = field_65_ftsCellPaddingOuterRight;
     }
 
     /**
-     * Get the wCellSpacingOuterTop field for the TAP record.
+     * Default outer top cell spacing.
      */
+    @Internal
     public short getWCellSpacingOuterTop()
     {
         return field_66_wCellSpacingOuterTop;
     }
 
     /**
-     * Set the wCellSpacingOuterTop field for the TAP record.
+     * Default outer top cell spacing.
      */
+    @Internal
     public void setWCellSpacingOuterTop( short field_66_wCellSpacingOuterTop )
     {
         this.field_66_wCellSpacingOuterTop = field_66_wCellSpacingOuterTop;
     }
 
     /**
-     * Get the wCellSpacingOuterLeft field for the TAP record.
+     * Default outer left cell spacing.
      */
+    @Internal
     public short getWCellSpacingOuterLeft()
     {
         return field_67_wCellSpacingOuterLeft;
     }
 
     /**
-     * Set the wCellSpacingOuterLeft field for the TAP record.
+     * Default outer left cell spacing.
      */
+    @Internal
     public void setWCellSpacingOuterLeft( short field_67_wCellSpacingOuterLeft )
     {
         this.field_67_wCellSpacingOuterLeft = field_67_wCellSpacingOuterLeft;
     }
 
     /**
-     * Get the wCellSpacingOuterBottom field for the TAP record.
+     * Default outer bottom cell spacing.
      */
+    @Internal
     public short getWCellSpacingOuterBottom()
     {
         return field_68_wCellSpacingOuterBottom;
     }
 
     /**
-     * Set the wCellSpacingOuterBottom field for the TAP record.
+     * Default outer bottom cell spacing.
      */
-    public void setWCellSpacingOuterBottom(
-            short field_68_wCellSpacingOuterBottom )
+    @Internal
+    public void setWCellSpacingOuterBottom( short field_68_wCellSpacingOuterBottom )
     {
         this.field_68_wCellSpacingOuterBottom = field_68_wCellSpacingOuterBottom;
     }
 
     /**
-     * Get the wCellSpacingOuterRight field for the TAP record.
+     * Default outer right cell spacing.
      */
+    @Internal
     public short getWCellSpacingOuterRight()
     {
         return field_69_wCellSpacingOuterRight;
     }
 
     /**
-     * Set the wCellSpacingOuterRight field for the TAP record.
+     * Default outer right cell spacing.
      */
+    @Internal
     public void setWCellSpacingOuterRight( short field_69_wCellSpacingOuterRight )
     {
         this.field_69_wCellSpacingOuterRight = field_69_wCellSpacingOuterRight;
     }
 
     /**
-     * Get the ftsCellSpacingOuterTop field for the TAP record.
+     * Default outer top cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingOuterTop()
     {
         return field_70_ftsCellSpacingOuterTop;
     }
 
     /**
-     * Set the ftsCellSpacingOuterTop field for the TAP record.
+     * Default outer top cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public void setFtsCellSpacingOuterTop( byte field_70_ftsCellSpacingOuterTop )
     {
         this.field_70_ftsCellSpacingOuterTop = field_70_ftsCellSpacingOuterTop;
     }
 
     /**
-     * Get the ftsCellSpacingOuterLeft field for the TAP record.
+     * Default outer left cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingOuterLeft()
     {
         return field_71_ftsCellSpacingOuterLeft;
     }
 
     /**
-     * Set the ftsCellSpacingOuterLeft field for the TAP record.
+     * Default outer left cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingOuterLeft(
-            byte field_71_ftsCellSpacingOuterLeft )
+    @Internal
+    public void setFtsCellSpacingOuterLeft( byte field_71_ftsCellSpacingOuterLeft )
     {
         this.field_71_ftsCellSpacingOuterLeft = field_71_ftsCellSpacingOuterLeft;
     }
 
     /**
-     * Get the ftsCellSpacingOuterBottom field for the TAP record.
+     * Default outer bottom cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingOuterBottom()
     {
         return field_72_ftsCellSpacingOuterBottom;
     }
 
     /**
-     * Set the ftsCellSpacingOuterBottom field for the TAP record.
+     * Default outer bottom cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingOuterBottom(
-            byte field_72_ftsCellSpacingOuterBottom )
+    @Internal
+    public void setFtsCellSpacingOuterBottom( byte field_72_ftsCellSpacingOuterBottom )
     {
         this.field_72_ftsCellSpacingOuterBottom = field_72_ftsCellSpacingOuterBottom;
     }
 
     /**
-     * Get the ftsCellSpacingOuterRight field for the TAP record.
+     * Default outer right cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
+    @Internal
     public byte getFtsCellSpacingOuterRight()
     {
         return field_73_ftsCellSpacingOuterRight;
     }
 
     /**
-     * Set the ftsCellSpacingOuterRight field for the TAP record.
+     * Default outer right cell spacings units. 0 -- null; 1-2 -- not relevant; 3 -- twips..
      */
-    public void setFtsCellSpacingOuterRight(
-            byte field_73_ftsCellSpacingOuterRight )
+    @Internal
+    public void setFtsCellSpacingOuterRight( byte field_73_ftsCellSpacingOuterRight )
     {
         this.field_73_ftsCellSpacingOuterRight = field_73_ftsCellSpacingOuterRight;
     }
@@ -1698,6 +1677,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the rgtc field for the TAP record.
      */
+    @Internal
     public TableCellDescriptor[] getRgtc()
     {
         return field_74_rgtc;
@@ -1706,6 +1686,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the rgtc field for the TAP record.
      */
+    @Internal
     public void setRgtc( TableCellDescriptor[] field_74_rgtc )
     {
         this.field_74_rgtc = field_74_rgtc;
@@ -1714,6 +1695,7 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Get the rgshd field for the TAP record.
      */
+    @Internal
     public ShadingDescriptor[] getRgshd()
     {
         return field_75_rgshd;
@@ -1722,667 +1704,618 @@ public abstract class TAPAbstractType implements HDFType
     /**
      * Set the rgshd field for the TAP record.
      */
+    @Internal
     public void setRgshd( ShadingDescriptor[] field_75_rgshd )
     {
         this.field_75_rgshd = field_75_rgshd;
     }
 
     /**
-     * Get the fPropRMark field for the TAP record.
+     * Set to 1 if property revision.
      */
+    @Internal
     public byte getFPropRMark()
     {
         return field_76_fPropRMark;
     }
 
     /**
-     * Set the fPropRMark field for the TAP record.
+     * Set to 1 if property revision.
      */
+    @Internal
     public void setFPropRMark( byte field_76_fPropRMark )
     {
         this.field_76_fPropRMark = field_76_fPropRMark;
     }
 
     /**
-     * Get the fHasOldProps field for the TAP record.
+     * Has old properties.
      */
+    @Internal
     public byte getFHasOldProps()
     {
         return field_77_fHasOldProps;
     }
 
     /**
-     * Set the fHasOldProps field for the TAP record.
+     * Has old properties.
      */
+    @Internal
     public void setFHasOldProps( byte field_77_fHasOldProps )
     {
         this.field_77_fHasOldProps = field_77_fHasOldProps;
     }
 
     /**
-     * Get the cHorzBands field for the TAP record.
+     * Size of each horizontal style band, in number of rows.
      */
+    @Internal
     public short getCHorzBands()
     {
         return field_78_cHorzBands;
     }
 
     /**
-     * Set the cHorzBands field for the TAP record.
+     * Size of each horizontal style band, in number of rows.
      */
+    @Internal
     public void setCHorzBands( short field_78_cHorzBands )
     {
         this.field_78_cHorzBands = field_78_cHorzBands;
     }
 
     /**
-     * Get the cVertBands field for the TAP record.
+     * Size of a vertical style band, in number of columns.
      */
+    @Internal
     public short getCVertBands()
     {
         return field_79_cVertBands;
     }
 
     /**
-     * Set the cVertBands field for the TAP record.
+     * Size of a vertical style band, in number of columns.
      */
+    @Internal
     public void setCVertBands( short field_79_cVertBands )
     {
         this.field_79_cVertBands = field_79_cVertBands;
     }
 
     /**
-     * Get the rgbrcInsideDefault_0 field for the TAP record.
+     * Border definition for inside horizontal borders.
      */
+    @Internal
     public BorderCode getRgbrcInsideDefault_0()
     {
         return field_80_rgbrcInsideDefault_0;
     }
 
     /**
-     * Set the rgbrcInsideDefault_0 field for the TAP record.
+     * Border definition for inside horizontal borders.
      */
-    public void setRgbrcInsideDefault_0(
-            BorderCode field_80_rgbrcInsideDefault_0 )
+    @Internal
+    public void setRgbrcInsideDefault_0( BorderCode field_80_rgbrcInsideDefault_0 )
     {
         this.field_80_rgbrcInsideDefault_0 = field_80_rgbrcInsideDefault_0;
     }
 
     /**
-     * Get the rgbrcInsideDefault_1 field for the TAP record.
+     * Border definition for inside vertical borders.
      */
+    @Internal
     public BorderCode getRgbrcInsideDefault_1()
     {
         return field_81_rgbrcInsideDefault_1;
     }
 
     /**
-     * Set the rgbrcInsideDefault_1 field for the TAP record.
+     * Border definition for inside vertical borders.
      */
-    public void setRgbrcInsideDefault_1(
-            BorderCode field_81_rgbrcInsideDefault_1 )
+    @Internal
+    public void setRgbrcInsideDefault_1( BorderCode field_81_rgbrcInsideDefault_1 )
     {
         this.field_81_rgbrcInsideDefault_1 = field_81_rgbrcInsideDefault_1;
     }
 
     /**
-     * Sets the fAutofit field value. When set to 1, AutoFit this table
+     * Sets the fAutofit field value.
+     * When set to 1, AutoFit this table
      */
+    @Internal
     public void setFAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = fAutofit.setBoolean(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)fAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * When set to 1, AutoFit this table
-     * 
-     * @return the fAutofit field value.
+     * @return  the fAutofit field value.
      */
+    @Internal
     public boolean isFAutofit()
     {
-        return fAutofit.isSet( field_13_widthAndFitsFlags );
-
+        return fAutofit.isSet(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the fKeepFollow field value. When set to 1, keep this row with the
-     * following row
+     * Sets the fKeepFollow field value.
+     * When set to 1, keep this row with the following row
      */
+    @Internal
     public void setFKeepFollow( boolean value )
     {
-        field_13_widthAndFitsFlags = fKeepFollow.setBoolean(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)fKeepFollow.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * When set to 1, keep this row with the following row
-     * 
-     * @return the fKeepFollow field value.
+     * @return  the fKeepFollow field value.
      */
+    @Internal
     public boolean isFKeepFollow()
     {
-        return fKeepFollow.isSet( field_13_widthAndFitsFlags );
-
+        return fKeepFollow.isSet(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the ftsWidth field value. Units for wWidth: 0 -- null; 1 -- auto,
-     * ignores wWidth, 2 -- percentage (in 50ths of a percent), 3 -- twips
+     * Sets the ftsWidth field value.
+     * Units for wWidth: 0 -- null; 1 -- auto, ignores wWidth, 2 -- percentage (in 50ths of a percent), 3 -- twips
      */
+    @Internal
     public void setFtsWidth( byte value )
     {
-        field_13_widthAndFitsFlags = ftsWidth.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)ftsWidth.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Units for wWidth: 0 -- null; 1 -- auto, ignores wWidth, 2 -- percentage
-     * (in 50ths of a percent), 3 -- twips
-     * 
-     * @return the ftsWidth field value.
+     * Units for wWidth: 0 -- null; 1 -- auto, ignores wWidth, 2 -- percentage (in 50ths of a percent), 3 -- twips
+     * @return  the ftsWidth field value.
      */
+    @Internal
     public byte getFtsWidth()
     {
-        return (byte) ftsWidth.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )ftsWidth.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the ftsWidthIndent field value. Units for wWidthIndent: 0 -- null; 1
-     * -- auto, ignores wWidthIndent, 2 -- percentage (in 50ths of a percent), 3
-     * -- twips
+     * Sets the ftsWidthIndent field value.
+     * Units for wWidthIndent: 0 -- null; 1 -- auto, ignores wWidthIndent, 2 -- percentage (in 50ths of a percent), 3 -- twips
      */
+    @Internal
     public void setFtsWidthIndent( byte value )
     {
-        field_13_widthAndFitsFlags = ftsWidthIndent.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)ftsWidthIndent.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Units for wWidthIndent: 0 -- null; 1 -- auto, ignores wWidthIndent, 2 --
-     * percentage (in 50ths of a percent), 3 -- twips
-     * 
-     * @return the ftsWidthIndent field value.
+     * Units for wWidthIndent: 0 -- null; 1 -- auto, ignores wWidthIndent, 2 -- percentage (in 50ths of a percent), 3 -- twips
+     * @return  the ftsWidthIndent field value.
      */
+    @Internal
     public byte getFtsWidthIndent()
     {
-        return (byte) ftsWidthIndent.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )ftsWidthIndent.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the ftsWidthBefore field value. Units for wWidthBefore: 0 -- null; 1
-     * -- auto, ignores wWidthBefore, 2 -- percentage (in 50ths of a percent), 3
-     * -- twips
+     * Sets the ftsWidthBefore field value.
+     * Units for wWidthBefore: 0 -- null; 1 -- auto, ignores wWidthBefore, 2 -- percentage (in 50ths of a percent), 3 -- twips
      */
+    @Internal
     public void setFtsWidthBefore( byte value )
     {
-        field_13_widthAndFitsFlags = ftsWidthBefore.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)ftsWidthBefore.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Units for wWidthBefore: 0 -- null; 1 -- auto, ignores wWidthBefore, 2 --
-     * percentage (in 50ths of a percent), 3 -- twips
-     * 
-     * @return the ftsWidthBefore field value.
+     * Units for wWidthBefore: 0 -- null; 1 -- auto, ignores wWidthBefore, 2 -- percentage (in 50ths of a percent), 3 -- twips
+     * @return  the ftsWidthBefore field value.
      */
+    @Internal
     public byte getFtsWidthBefore()
     {
-        return (byte) ftsWidthBefore.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )ftsWidthBefore.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the ftsWidthAfter field value. Units for wWidthAfter: 0 -- null; 1
-     * -- auto, ignores wWidthAfter, 2 -- percentage (in 50ths of a percent), 3
-     * -- twips
+     * Sets the ftsWidthAfter field value.
+     * Units for wWidthAfter: 0 -- null; 1 -- auto, ignores wWidthAfter, 2 -- percentage (in 50ths of a percent), 3 -- twips
      */
+    @Internal
     public void setFtsWidthAfter( byte value )
     {
-        field_13_widthAndFitsFlags = ftsWidthAfter.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)ftsWidthAfter.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Units for wWidthAfter: 0 -- null; 1 -- auto, ignores wWidthAfter, 2 --
-     * percentage (in 50ths of a percent), 3 -- twips
-     * 
-     * @return the ftsWidthAfter field value.
+     * Units for wWidthAfter: 0 -- null; 1 -- auto, ignores wWidthAfter, 2 -- percentage (in 50ths of a percent), 3 -- twips
+     * @return  the ftsWidthAfter field value.
      */
+    @Internal
     public byte getFtsWidthAfter()
     {
-        return (byte) ftsWidthAfter.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )ftsWidthAfter.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the fNeverBeenAutofit field value. When 1, table has never been
-     * autofit
+     * Sets the fNeverBeenAutofit field value.
+     * When 1, table has never been autofit
      */
+    @Internal
     public void setFNeverBeenAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = fNeverBeenAutofit.setBoolean(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)fNeverBeenAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * When 1, table has never been autofit
-     * 
-     * @return the fNeverBeenAutofit field value.
+     * @return  the fNeverBeenAutofit field value.
      */
+    @Internal
     public boolean isFNeverBeenAutofit()
     {
-        return fNeverBeenAutofit.isSet( field_13_widthAndFitsFlags );
-
+        return fNeverBeenAutofit.isSet(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the fInvalAutofit field value. When 1, TAP is still valid, but
-     * autofit properties aren't
+     * Sets the fInvalAutofit field value.
+     * When 1, TAP is still valid, but autofit properties aren't
      */
+    @Internal
     public void setFInvalAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = fInvalAutofit.setBoolean(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)fInvalAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * When 1, TAP is still valid, but autofit properties aren't
-     * 
-     * @return the fInvalAutofit field value.
+     * @return  the fInvalAutofit field value.
      */
+    @Internal
     public boolean isFInvalAutofit()
     {
-        return fInvalAutofit.isSet( field_13_widthAndFitsFlags );
-
+        return fInvalAutofit.isSet(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the widthAndFitsFlags_empty1 field value. Not used
+     * Sets the widthAndFitsFlags_empty1 field value.
+     * Not used
      */
+    @Internal
     public void setWidthAndFitsFlags_empty1( byte value )
     {
-        field_13_widthAndFitsFlags = widthAndFitsFlags_empty1.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)widthAndFitsFlags_empty1.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * Not used
-     * 
-     * @return the widthAndFitsFlags_empty1 field value.
+     * @return  the widthAndFitsFlags_empty1 field value.
      */
+    @Internal
     public byte getWidthAndFitsFlags_empty1()
     {
-        return (byte) widthAndFitsFlags_empty1
-                .getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )widthAndFitsFlags_empty1.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the fVert field value. When 1, positioned in vertical text flow
+     * Sets the fVert field value.
+     * When 1, positioned in vertical text flow
      */
+    @Internal
     public void setFVert( boolean value )
     {
-        field_13_widthAndFitsFlags = fVert.setBoolean(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)fVert.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * When 1, positioned in vertical text flow
-     * 
-     * @return the fVert field value.
+     * @return  the fVert field value.
      */
+    @Internal
     public boolean isFVert()
     {
-        return fVert.isSet( field_13_widthAndFitsFlags );
-
+        return fVert.isSet(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the pcVert field value. Vertical position code. Specifies coordinate
-     * frame to use when paragraphs are absolutely positioned. 0 -- vertical
-     * position coordinates are relative to margin; 1 -- coordinates are
-     * relative to page; 2 -- coordinates are relative to text. This means:
-     * relative to where the next non-APO text would have been placed if this
-     * APO did not exist.
+     * Sets the pcVert field value.
+     * Vertical position code. Specifies coordinate frame to use when paragraphs are absolutely positioned. 0 -- vertical position coordinates are relative to margin; 1 -- coordinates are relative to page; 2 -- coordinates are relative to text. This means: relative to where the next non-APO text would have been placed if this APO did not exist.
      */
+    @Internal
     public void setPcVert( byte value )
     {
-        field_13_widthAndFitsFlags = pcVert.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)pcVert.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Vertical position code. Specifies coordinate frame to use when paragraphs
-     * are absolutely positioned. 0 -- vertical position coordinates are
-     * relative to margin; 1 -- coordinates are relative to page; 2 --
-     * coordinates are relative to text. This means: relative to where the next
-     * non-APO text would have been placed if this APO did not exist.
-     * 
-     * @return the pcVert field value.
+     * Vertical position code. Specifies coordinate frame to use when paragraphs are absolutely positioned. 0 -- vertical position coordinates are relative to margin; 1 -- coordinates are relative to page; 2 -- coordinates are relative to text. This means: relative to where the next non-APO text would have been placed if this APO did not exist.
+     * @return  the pcVert field value.
      */
+    @Internal
     public byte getPcVert()
     {
-        return (byte) pcVert.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )pcVert.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the pcHorz field value. Horizontal position code. Specifies
-     * coordinate frame to use when paragraphs are absolutely positioned. 0 --
-     * horizontal position coordinates are relative to column; 1 -- coordinates
-     * are relative to margin; 2 -- coordinates are relative to page
+     * Sets the pcHorz field value.
+     * Horizontal position code. Specifies coordinate frame to use when paragraphs are absolutely positioned. 0 -- horizontal position coordinates are relative to column; 1 -- coordinates are relative to margin; 2 -- coordinates are relative to page
      */
+    @Internal
     public void setPcHorz( byte value )
     {
-        field_13_widthAndFitsFlags = pcHorz.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)pcHorz.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
-     * Horizontal position code. Specifies coordinate frame to use when
-     * paragraphs are absolutely positioned. 0 -- horizontal position
-     * coordinates are relative to column; 1 -- coordinates are relative to
-     * margin; 2 -- coordinates are relative to page
-     * 
-     * @return the pcHorz field value.
+     * Horizontal position code. Specifies coordinate frame to use when paragraphs are absolutely positioned. 0 -- horizontal position coordinates are relative to column; 1 -- coordinates are relative to margin; 2 -- coordinates are relative to page
+     * @return  the pcHorz field value.
      */
+    @Internal
     public byte getPcHorz()
     {
-        return (byte) pcHorz.getValue( field_13_widthAndFitsFlags );
-
+        return ( byte )pcHorz.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the widthAndFitsFlags_empty2 field value. Not used
+     * Sets the widthAndFitsFlags_empty2 field value.
+     * Not used
      */
+    @Internal
     public void setWidthAndFitsFlags_empty2( short value )
     {
-        field_13_widthAndFitsFlags = widthAndFitsFlags_empty2.setValue(
-                field_13_widthAndFitsFlags, value );
-
+        field_13_widthAndFitsFlags = (int)widthAndFitsFlags_empty2.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
      * Not used
-     * 
-     * @return the widthAndFitsFlags_empty2 field value.
+     * @return  the widthAndFitsFlags_empty2 field value.
      */
+    @Internal
     public short getWidthAndFitsFlags_empty2()
     {
-        return (short) widthAndFitsFlags_empty2
-                .getValue( field_13_widthAndFitsFlags );
-
+        return ( short )widthAndFitsFlags_empty2.getValue(field_13_widthAndFitsFlags);
     }
 
     /**
-     * Sets the fFirstRow field value. Used internally by Word: first row
+     * Sets the fFirstRow field value.
+     * Used internally by Word: first row
      */
+    @Internal
     public void setFFirstRow( boolean value )
     {
-        field_25_internalFlags = fFirstRow.setBoolean( field_25_internalFlags,
-                value );
-
+        field_25_internalFlags = (int)fFirstRow.setBoolean(field_25_internalFlags, value);
     }
 
     /**
      * Used internally by Word: first row
-     * 
-     * @return the fFirstRow field value.
+     * @return  the fFirstRow field value.
      */
+    @Internal
     public boolean isFFirstRow()
     {
-        return fFirstRow.isSet( field_25_internalFlags );
-
+        return fFirstRow.isSet(field_25_internalFlags);
     }
 
     /**
-     * Sets the fLastRow field value. Used internally by Word: last row
+     * Sets the fLastRow field value.
+     * Used internally by Word: last row
      */
+    @Internal
     public void setFLastRow( boolean value )
     {
-        field_25_internalFlags = fLastRow.setBoolean( field_25_internalFlags,
-                value );
-
+        field_25_internalFlags = (int)fLastRow.setBoolean(field_25_internalFlags, value);
     }
 
     /**
      * Used internally by Word: last row
-     * 
-     * @return the fLastRow field value.
+     * @return  the fLastRow field value.
      */
+    @Internal
     public boolean isFLastRow()
     {
-        return fLastRow.isSet( field_25_internalFlags );
-
+        return fLastRow.isSet(field_25_internalFlags);
     }
 
     /**
-     * Sets the fOutline field value. Used internally by Word: row was cached
-     * for outline mode
+     * Sets the fOutline field value.
+     * Used internally by Word: row was cached for outline mode
      */
+    @Internal
     public void setFOutline( boolean value )
     {
-        field_25_internalFlags = fOutline.setBoolean( field_25_internalFlags,
-                value );
-
+        field_25_internalFlags = (int)fOutline.setBoolean(field_25_internalFlags, value);
     }
 
     /**
      * Used internally by Word: row was cached for outline mode
-     * 
-     * @return the fOutline field value.
+     * @return  the fOutline field value.
      */
+    @Internal
     public boolean isFOutline()
     {
-        return fOutline.isSet( field_25_internalFlags );
-
+        return fOutline.isSet(field_25_internalFlags);
     }
 
     /**
-     * Sets the fOrigWordTableRules field value. Used internally by Word: table
-     * combining like Word 5.x for the Macintosh and WinWord 1.x
+     * Sets the fOrigWordTableRules field value.
+     * Used internally by Word: table combining like Word 5.x for the Macintosh and WinWord 1.x
      */
+    @Internal
     public void setFOrigWordTableRules( boolean value )
     {
-        field_25_internalFlags = fOrigWordTableRules.setBoolean(
-                field_25_internalFlags, value );
-
+        field_25_internalFlags = (int)fOrigWordTableRules.setBoolean(field_25_internalFlags, value);
     }
 
     /**
-     * Used internally by Word: table combining like Word 5.x for the Macintosh
-     * and WinWord 1.x
-     * 
-     * @return the fOrigWordTableRules field value.
+     * Used internally by Word: table combining like Word 5.x for the Macintosh and WinWord 1.x
+     * @return  the fOrigWordTableRules field value.
      */
+    @Internal
     public boolean isFOrigWordTableRules()
     {
-        return fOrigWordTableRules.isSet( field_25_internalFlags );
-
+        return fOrigWordTableRules.isSet(field_25_internalFlags);
     }
 
     /**
-     * Sets the fCellSpacing field value. Used internally by Word: When set to 1
-     * cell spacing is allowed
+     * Sets the fCellSpacing field value.
+     * Used internally by Word: When set to 1 cell spacing is allowed
      */
+    @Internal
     public void setFCellSpacing( boolean value )
     {
-        field_25_internalFlags = fCellSpacing.setBoolean(
-                field_25_internalFlags, value );
-
+        field_25_internalFlags = (int)fCellSpacing.setBoolean(field_25_internalFlags, value);
     }
 
     /**
      * Used internally by Word: When set to 1 cell spacing is allowed
-     * 
-     * @return the fCellSpacing field value.
+     * @return  the fCellSpacing field value.
      */
+    @Internal
     public boolean isFCellSpacing()
     {
-        return fCellSpacing.isSet( field_25_internalFlags );
-
+        return fCellSpacing.isSet(field_25_internalFlags);
     }
 
     /**
-     * Sets the grpfTap_unused field value. Not used
+     * Sets the grpfTap_unused field value.
+     * Not used
      */
+    @Internal
     public void setGrpfTap_unused( short value )
     {
-        field_25_internalFlags = grpfTap_unused.setValue(
-                field_25_internalFlags, value );
-
+        field_25_internalFlags = (int)grpfTap_unused.setValue(field_25_internalFlags, value);
     }
 
     /**
      * Not used
-     * 
-     * @return the grpfTap_unused field value.
+     * @return  the grpfTap_unused field value.
      */
+    @Internal
     public short getGrpfTap_unused()
     {
-        return (short) grpfTap_unused.getValue( field_25_internalFlags );
-
+        return ( short )grpfTap_unused.getValue(field_25_internalFlags);
     }
 
     /**
-     * Sets the fWrapToWwd field value. Used internally by Word: Wrap to window
-     * is on when set to 1
+     * Sets the fWrapToWwd field value.
+     * Used internally by Word: Wrap to window is on when set to 1
      */
+    @Internal
     public void setFWrapToWwd( boolean value )
     {
-        field_32_viewFlags = fWrapToWwd.setBoolean( field_32_viewFlags, value );
-
+        field_32_viewFlags = (int)fWrapToWwd.setBoolean(field_32_viewFlags, value);
     }
 
     /**
      * Used internally by Word: Wrap to window is on when set to 1
-     * 
-     * @return the fWrapToWwd field value.
+     * @return  the fWrapToWwd field value.
      */
+    @Internal
     public boolean isFWrapToWwd()
     {
-        return fWrapToWwd.isSet( field_32_viewFlags );
-
+        return fWrapToWwd.isSet(field_32_viewFlags);
     }
 
     /**
-     * Sets the fNotPageView field value. Used internally by Word: when set to 1
-     * we are not in Page View
+     * Sets the fNotPageView field value.
+     * Used internally by Word: when set to 1 we are not in Page View
      */
+    @Internal
     public void setFNotPageView( boolean value )
     {
-        field_32_viewFlags = fNotPageView
-                .setBoolean( field_32_viewFlags, value );
-
+        field_32_viewFlags = (int)fNotPageView.setBoolean(field_32_viewFlags, value);
     }
 
     /**
      * Used internally by Word: when set to 1 we are not in Page View
-     * 
-     * @return the fNotPageView field value.
+     * @return  the fNotPageView field value.
      */
+    @Internal
     public boolean isFNotPageView()
     {
-        return fNotPageView.isSet( field_32_viewFlags );
-
+        return fNotPageView.isSet(field_32_viewFlags);
     }
 
     /**
-     * Sets the viewFlags_unused1 field value. Not used
+     * Sets the viewFlags_unused1 field value.
+     * Not used
      */
+    @Internal
     public void setViewFlags_unused1( boolean value )
     {
-        field_32_viewFlags = viewFlags_unused1.setBoolean( field_32_viewFlags,
-                value );
-
+        field_32_viewFlags = (int)viewFlags_unused1.setBoolean(field_32_viewFlags, value);
     }
 
     /**
      * Not used
-     * 
-     * @return the viewFlags_unused1 field value.
+     * @return  the viewFlags_unused1 field value.
      */
+    @Internal
     public boolean isViewFlags_unused1()
     {
-        return viewFlags_unused1.isSet( field_32_viewFlags );
-
+        return viewFlags_unused1.isSet(field_32_viewFlags);
     }
 
     /**
-     * Sets the fWebView field value. Used internally by Word: Web View is on
-     * when set to 1
+     * Sets the fWebView field value.
+     * Used internally by Word: Web View is on when set to 1
      */
+    @Internal
     public void setFWebView( boolean value )
     {
-        field_32_viewFlags = fWebView.setBoolean( field_32_viewFlags, value );
-
+        field_32_viewFlags = (int)fWebView.setBoolean(field_32_viewFlags, value);
     }
 
     /**
      * Used internally by Word: Web View is on when set to 1
-     * 
-     * @return the fWebView field value.
+     * @return  the fWebView field value.
      */
+    @Internal
     public boolean isFWebView()
     {
-        return fWebView.isSet( field_32_viewFlags );
-
+        return fWebView.isSet(field_32_viewFlags);
     }
 
     /**
-     * Sets the fAdjusted field value. Used internally by Word
+     * Sets the fAdjusted field value.
+     * Used internally by Word
      */
+    @Internal
     public void setFAdjusted( boolean value )
     {
-        field_32_viewFlags = fAdjusted.setBoolean( field_32_viewFlags, value );
-
+        field_32_viewFlags = (int)fAdjusted.setBoolean(field_32_viewFlags, value);
     }
 
     /**
      * Used internally by Word
-     * 
-     * @return the fAdjusted field value.
+     * @return  the fAdjusted field value.
      */
+    @Internal
     public boolean isFAdjusted()
     {
-        return fAdjusted.isSet( field_32_viewFlags );
-
+        return fAdjusted.isSet(field_32_viewFlags);
     }
 
     /**
-     * Sets the viewFlags_unused2 field value. Not used
+     * Sets the viewFlags_unused2 field value.
+     * Not used
      */
+    @Internal
     public void setViewFlags_unused2( short value )
     {
-        field_32_viewFlags = viewFlags_unused2.setValue( field_32_viewFlags,
-                value );
-
+        field_32_viewFlags = (int)viewFlags_unused2.setValue(field_32_viewFlags, value);
     }
 
     /**
      * Not used
-     * 
-     * @return the viewFlags_unused2 field value.
+     * @return  the viewFlags_unused2 field value.
      */
+    @Internal
     public short getViewFlags_unused2()
     {
-        return (short) viewFlags_unused2.getValue( field_32_viewFlags );
-
+        return ( short )viewFlags_unused2.getValue(field_32_viewFlags);
     }
 
-} // END OF CLASS
+}  // END OF CLASS

@@ -254,11 +254,6 @@ public final class ParagraphSprmCompressor
       // sprmPDcs 
       size += SprmUtils.addSprm((short)0x442C, newPAP.getDcs().toShort(), null, sprmList);
     }
-    if (newPAP.getShd() != null && !newPAP.getShd().equals(oldPAP.getShd()))
-    {
-      // sprmPShd80 
-      size += SprmUtils.addSprm((short)0x442D, newPAP.getShd().toShort(), null, sprmList);
-    }
     if (newPAP.getDyaFromText() != oldPAP.getDyaFromText())
     {
       // sprmPDyaFromText
@@ -375,12 +370,27 @@ public final class ParagraphSprmCompressor
       size += SprmUtils.addSprm((short)0x244c, newPAP.getFTtpEmbedded(), sprmList);
     }
 
+    if (newPAP.getShd() != null && !newPAP.getShd().equals(oldPAP.getShd()))
+    {
+        // size += SprmUtils.addSprm((short)0x442D, newPAP.getShd().toShort(), null, sprmList);
+        // sprmPShd  -- 0xc64d 
+        size += SprmUtils.addSprm( (short) 0xc64d, 0, newPAP.getShd().serialize(), sprmList );
+    }
+
     // Page 55 of public specification begins
     if (newPAP.getItap() != oldPAP.getItap())
     {
       // sprmPItap
       size += SprmUtils.addSprm((short)0x6649, newPAP.getItap(), null, sprmList);
     }
+
+        if ( newPAP.getRsid() != oldPAP.getRsid() )
+        {
+            // sprmPRsid
+            byte[] value = new byte[4];
+            LittleEndian.putUInt( value, newPAP.getRsid() );
+            size += SprmUtils.addSprm( (short) 0x6467, 0, value, sprmList );
+        }
 
     return SprmUtils.getGrpprl(sprmList, size);
 

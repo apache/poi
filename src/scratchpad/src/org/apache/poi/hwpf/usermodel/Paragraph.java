@@ -55,7 +55,8 @@ public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_FNOAUTOHYPH = 0x242A;
   public final static short SPRM_WHEIGHTABS = 0x442B;
   public final static short SPRM_DCS = 0x442C;
-  public final static short SPRM_SHD = 0x442D;
+  public final static short SPRM_SHD80 = 0x442D;
+  public final static short SPRM_SHD = (short)0xC64D;
   public final static short SPRM_DYAFROMTEXT = (short)0x842E;
   public final static short SPRM_DXAFROMTEXT = (short)0x842F;
   public final static short SPRM_FLOCKED = 0x2430;
@@ -422,7 +423,8 @@ public class Paragraph extends Range implements Cloneable {
   public void setShading(ShadingDescriptor shd)
   {
     _props.setShd(shd);
-    _papx.updateSprm(SPRM_SHD, shd.toShort());
+    //TODO: remove old one
+    _papx.addSprm( SPRM_SHD, shd.serialize() );
   }
 
   public DropCapSpecifier getDropCap()
@@ -477,6 +479,28 @@ public class Paragraph extends Range implements Cloneable {
     _props.setFTtp(val);
     _papx.updateSprm(SPRM_FTTP, val);
   }
+
+    /**
+     * Returns number of tabs stops defined for paragraph. Must be >= 0 and <=
+     * 64.
+     * 
+     * @return number of tabs stops defined for paragraph. Must be >= 0 and <=
+     *         64
+     */
+    public int getTabStopsNumber()
+    {
+        return _props.getItbdMac();
+    }
+
+    /**
+     * Returns array of positions of itbdMac tab stops
+     * 
+     * @return array of positions of itbdMac tab stops
+     */
+    public int[] getTabStopsPositions()
+    {
+        return _props.getRgdxaTab();
+    }
 
   /**
    * clone the ParagraphProperties object associated with this Paragraph so
