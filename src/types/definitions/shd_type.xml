@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="SHD" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The SHD is a substructure of the CHP, PAP, and TC for Word 2000. &lt;p&gt;Class
+        and
+        fields descriptions are quoted from Microsoft Office Word 97-2007 Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc]
+    </author>
+    <fields>
+        <field type="Colorref" size="4" name="cvFore" description="24-bit foreground color"/>
+        <field type="Colorref" size="4" name="cvBack" description="24-bit background color"/>
+        <field type="int" size="2" name="ipat" description="Shading pattern"/>
+    </fields>
+</record>

@@ -14,55 +14,33 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.hwpf.model;
 
-package org.apache.poi.hwpf.usermodel;
-
-import org.apache.poi.hwpf.model.types.SHDAbstractType;
+import org.apache.poi.hwpf.model.types.TBDAbstractType;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 
 /**
- * The SHD is a substructure of the CHP, PAP, and TC for Word 2000.
+ * Tab descriptor. Part of {@link ParagraphProperties}.
  * 
  * @author vlsergey
  */
-public final class ShadingDescriptor extends SHDAbstractType implements
-        Cloneable
+public class TabDescriptor extends TBDAbstractType
 {
 
-    public ShadingDescriptor()
+    public TabDescriptor()
     {
     }
 
-    public ShadingDescriptor( byte[] buf, int offset )
+    public TabDescriptor( byte[] bytes, int offset )
     {
-        super();
-        fillFields( buf, offset );
+        fillFields( bytes, offset );
     }
 
-    public ShadingDescriptor clone() throws CloneNotSupportedException
+    public byte[] toByteArray()
     {
-        return (ShadingDescriptor) super.clone();
-    }
-
-    public boolean isEmpty()
-    {
-        return field_3_ipat == 0;
-    }
-
-    public byte[] serialize()
-    {
-        byte[] result = new byte[getSize()];
-        serialize( result, 0 );
-        return result;
-    }
-
-    @Override
-    public String toString()
-    {
-        if ( isEmpty() )
-            return "[SHD] EMPTY";
-
-        return "[SHD] (cvFore: " + getCvFore() + "; cvBack: " + getCvBack()
-                + "; iPat: " + getIpat() + ")";
+        byte[] buf = new byte[getSize()];
+        serialize( buf, 0 );
+        return buf;
     }
 
 }

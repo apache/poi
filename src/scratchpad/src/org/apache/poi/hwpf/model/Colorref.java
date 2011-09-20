@@ -27,6 +27,48 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public class Colorref implements Cloneable
 {
+    public static Colorref valueOfIco( int ico )
+    {
+
+        switch ( ico )
+        {
+        case 1:
+            return new Colorref( 0x00000000 );
+        case 2:
+            return new Colorref( 0x00FF0000 );
+        case 3:
+            return new Colorref( 0x00FFFF00 );
+        case 4:
+            return new Colorref( 0x0000FF00 );
+        case 5:
+            return new Colorref( 0x00FF00FF );
+        case 6:
+            return new Colorref( 0x000000FF );
+        case 7:
+            return new Colorref( 0x0000FFFF );
+        case 8:
+            return new Colorref( 0x00FFFFFF );
+        case 9:
+            return new Colorref( 0x008B0000 );
+        case 10:
+            return new Colorref( 0x008B8B00 );
+        case 11:
+            return new Colorref( 0x00006400 );
+        case 12:
+            return new Colorref( 0x008B008B );
+        case 13:
+            return new Colorref( 0x0000008B );
+        case 14:
+            return new Colorref( 0x0000CCFF );
+        case 15:
+            return new Colorref( 0x00A9A9A9 );
+        case 16:
+            return new Colorref( 0x00C0C0C0 );
+        default:
+            return new Colorref( 0x00000000 );
+        }
+    }
+
     private int value;
 
     public Colorref()
@@ -81,6 +123,11 @@ public class Colorref implements Cloneable
         return value == -1;
     }
 
+    public void serialize( byte[] data, int offset )
+    {
+        LittleEndian.putInt( data, offset, this.value );
+    }
+
     public void setValue( int value )
     {
         this.value = value;
@@ -93,7 +140,7 @@ public class Colorref implements Cloneable
                     "Structure state (EMPTY) is not good for serialization" );
 
         byte[] bs = new byte[4];
-        LittleEndian.putInt( bs, 0, this.value );
+        serialize( bs, 0 );
         return bs;
     }
 

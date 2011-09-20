@@ -132,8 +132,6 @@
 
         <field type="byte" size="1" name="jc"/>
 
-        <field type="boolean" size="1" name="fNoAllowOverlap"/>
-
         <field type="BorderCode" size="4" name="brcTop"/>
         <field type="BorderCode" size="4" name="brcLeft"/>
         <field type="BorderCode" size="4" name="brcBottom"/>
@@ -141,17 +139,22 @@
         <field type="BorderCode" size="4" name="brcBetween"/>
         <field type="BorderCode" size="4" name="brcBar"/>
 
-        <field type="ShadingDescriptor" size="2" name="shd"/>
+        <field type="ShadingDescriptor" size="10" name="shd"/>
         <field type="byte[]" size="84" name="anld"/>
         <field type="byte[]" size="12" name="phe"/>
         <field type="boolean" size="1" name="fPropRMark"/>
         <field type="int" size="2" name="ibstPropRMark"/>
         <field type="DateAndTime" size="4" name="dttmPropRMark"/>
 
-        <field type="int" size="2" name="itbdMac"/>
-        <field type="int[]" size="128" name="rgdxaTab"/>
-        <field type="byte[]" size="128" name="rgtbd"/>
+        <field type="int" size="2" name="itbdMac" description="Number of tabs stops defined for paragraph. Must be &gt;= 0 and &lt;= 64."/>
+        <field type="int[]" size="128" name="rgdxaTab" description="Array of positions of itbdMac tab stops. itbdMax==64"/>
+        <field type="TabDescriptor[]" size="64" name="rgtbd" description="Array of itbdMac tab descriptors"/>
+
         <field type="byte[]" size="128" name="numrm"/>
         <field type="byte[]" size="4" name="ptap"/>
+
+        <field type="boolean" size="1" name="fNoAllowOverlap" description="When 1, absolutely positioned paragraph cannot overlap with another paragraph"/>
+        <field type="long" size="4" name="ipgp" description="HTML DIV ID for this paragraph"/>
+        <field type="long" size="4" name="rsid" description="Save ID for last time this PAP was revised"/>
     </fields>
 </record>
