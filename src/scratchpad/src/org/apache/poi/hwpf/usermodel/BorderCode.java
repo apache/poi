@@ -65,7 +65,7 @@ public final class BorderCode implements Cloneable {
 
   public boolean isEmpty()
   {
-    return _info == 0 && _info2 == 0;
+    return _info == 0 && _info2 == 0 || _info == -1;
   }
 
   public boolean equals(Object o)
