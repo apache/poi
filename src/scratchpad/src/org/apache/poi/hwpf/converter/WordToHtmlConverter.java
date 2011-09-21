@@ -579,7 +579,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     pElement.appendChild( span );
 
                     Text textNode = htmlDocumentFacade.createText( bulletText
-                            .substring( 0, bulletText.length() - 1 ) );
+                            .substring( 0, bulletText.length() - 1 )
+                            + UNICODECHAR_ZERO_WIDTH_SPACE
+                            + UNICODECHAR_NO_BREAK_SPACE );
                     span.appendChild( textNode );
                 }
                 else
@@ -731,8 +733,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
         tableElement
                 .setAttribute(
                         "class",
-                        htmlDocumentFacade.getOrCreateCssClass(
-                                "t", "table-layout:fixed;border-collapse:collapse;border-spacing:0;" ) );
+                        htmlDocumentFacade
+                                .getOrCreateCssClass( "t",
+                                        "table-layout:fixed;border-collapse:collapse;border-spacing:0;" ) );
         if ( tableHeader.hasChildNodes() )
         {
             tableElement.appendChild( tableHeader );

@@ -105,6 +105,8 @@ public abstract class AbstractWordConverter
 
     private static final byte SPECCHAR_DRAWN_OBJECT = 8;
 
+    protected static final char UNICODECHAR_NO_BREAK_SPACE = '\u00a0';
+
     protected static final char UNICODECHAR_NONBREAKING_HYPHEN = '\u2011';
 
     protected static final char UNICODECHAR_ZERO_WIDTH_SPACE = '\u200b';
