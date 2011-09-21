@@ -689,7 +689,6 @@ public final class HWPFLister
             return;
         }
         HWPFDocument hwpfDocument = (HWPFDocument) _doc;
-        ListTables listTables = hwpfDocument.getListTables();
 
         for ( int s = 0; s < hwpfDocument.getStyleSheet().numStyles(); s++ )
         {
@@ -702,13 +701,13 @@ public final class HWPFLister
                     + styleDescription.getName() + "' ===" );
             System.out.println( styleDescription );
 
-            ParagraphProperties paragraph = styleDescription.getPAP();
-            System.out.println( "PAP: " + paragraph );
-            if ( paragraph != null )
-            {
-                dumpParagraphLevels( listTables, paragraph );
-            }
-            System.out.println( "CHP: " + styleDescription.getCHP() );
+            if ( styleDescription.getPAPX() != null )
+                dumpSprms( new SprmIterator( styleDescription.getPAPX(), 2 ),
+                        "Style's PAP SPRM: " );
+
+            if ( styleDescription.getCHPX() != null )
+                dumpSprms( new SprmIterator( styleDescription.getCHPX(), 0 ),
+                        "Style's CHP SPRM: " );
         }
     }
 
