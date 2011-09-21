@@ -689,8 +689,8 @@ public final class HWPFLister
             if ( styleDescription == null )
                 continue;
 
-            System.out.println( "=== Style: '" + styleDescription.getName()
-                    + "' ===" );
+            System.out.println( "=== Style #" + s + " '"
+                    + styleDescription.getName() + "' ===" );
             System.out.println( styleDescription );
             System.out.println( "PAP:" + styleDescription.getPAP() );
             System.out.println( "CHP:" + styleDescription.getCHP() );
