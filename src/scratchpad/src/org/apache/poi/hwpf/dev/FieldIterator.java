@@ -50,7 +50,7 @@ public class FieldIterator
         {
             String javaFieldName = RecordUtil.getFieldName( fieldNumber,
                     fieldName, 0 );
-            return result + " (" + javaFieldName + ".length() *2)";
+            return result + " ( " + javaFieldName + ".length() *2)";
         }
         else if ( "varword".equals( size ) )
         {
@@ -70,39 +70,55 @@ public class FieldIterator
         String result = "";
 
         if ( type.equals( "short[]" ) )
-            result = "LittleEndian.getSimpleShortArray(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset," + size + ")";
+            result = "LittleEndian.getSimpleShortArray( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset, " + size
+                    + " )";
         else if ( type.equals( "byte[]" ) )
-            result = "LittleEndian.getByteArray(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset," + size + ")";
+            result = "LittleEndian.getByteArray( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset," + size
+                    + " )";
         else if ( type.equals( "BorderCode" ) )
-            result = "new BorderCode(data, 0x" + Integer.toHexString( offset )
-                    + " + offset)";
+            result = "new BorderCode( data, 0x" + Integer.toHexString( offset )
+                    + " + offset )";
         else if ( type.equals( "Colorref" ) )
-            result = "new Colorref(data, 0x" + Integer.toHexString( offset )
-                    + " + offset)";
+            result = "new Colorref( data, 0x" + Integer.toHexString( offset )
+                    + " + offset )";
         else if ( type.equals( "DateAndTime" ) )
-            result = "new DateAndTime(data, 0x" + Integer.toHexString( offset )
-                    + " + offset)";
+            result = "new DateAndTime( data, 0x" + Integer.toHexString( offset )
+                    + " + offset )";
         else if ( size.equals( "2" ) )
-            result = "LittleEndian.getShort(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset)";
+            result = "LittleEndian.getShort( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset )";
         else if ( size.equals( "4" ) )
             if ( type.equals( "long" ) )
             {
-                result = "LittleEndian.getUInt(data, 0x"
-                        + Integer.toHexString( offset ) + " + offset)";
+                result = "LittleEndian.getUInt( data, 0x"
+                        + Integer.toHexString( offset ) + " + offset )";
             }
             else
             {
-                result = "LittleEndian.getInt(data, 0x"
-                        + Integer.toHexString( offset ) + " + offset)";
+                result = "LittleEndian.getInt( data, 0x"
+                        + Integer.toHexString( offset ) + " + offset )";
             }
         else if ( size.equals( "1" ) )
-            result = "data[ 0x" + Integer.toHexString( offset ) + " + offset ]";
+            if ( type.equals( "short" ) )
+            {
+                result = "(short) LittleEndian.getUnsignedByte( data, 0x"
+                        + Integer.toHexString( offset ) + " + offset )";
+            }
+            else if ( type.equals( "int" ) || type.equals( "long" ) )
+            {
+                result = "LittleEndian.getUnsignedByte( data, 0x"
+                        + Integer.toHexString( offset ) + " + offset )";
+            }
+            else
+            {
+                result = "data[ 0x" + Integer.toHexString( offset )
+                        + " + offset ]";
+            }
         else if ( type.equals( "double" ) )
             result = "LittleEndian.getDouble(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset)";
+                    + Integer.toHexString( offset ) + " + offset )";
 
         try
         {
@@ -124,61 +140,70 @@ public class FieldIterator
         String result = "";
 
         if ( type.equals( "short[]" ) )
-            result = "LittleEndian.putShortArray(data, 0x"
+            result = "LittleEndian.putShortArray( data, 0x"
                     + Integer.toHexString( offset ) + " + offset, "
-                    + javaFieldName + ");";
+                    + javaFieldName + " );";
         else if ( type.equals( "byte[]" ) )
-            result = "System.arraycopy(" + javaFieldName + ", 0, data, 0x"
+            result = "System.arraycopy( " + javaFieldName + ", 0, data, 0x"
                     + Integer.toHexString( offset ) + " + offset, "
-                    + javaFieldName + ".length);";
+                    + javaFieldName + ".length );";
         else if ( type.equals( "BorderCode" ) )
-            result = javaFieldName + ".serialize(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset);";
+            result = javaFieldName + ".serialize( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset );";
         else if ( type.equals( "Colorref" ) )
-            result = javaFieldName + ".serialize(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset);";
+            result = javaFieldName + ".serialize( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset );";
         else if ( type.equals( "DateAndTime" ) )
-            result = javaFieldName + ".serialize(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset);";
+            result = javaFieldName + ".serialize( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset );";
         else if ( size.equals( "2" ) )
             if ( type.equals( "short" ) )
             {
-                result = "LittleEndian.putShort(data, 0x"
+                result = "LittleEndian.putShort( data, 0x"
                         + Integer.toHexString( offset ) + " + offset, "
-                        + javaFieldName + ");";
+                        + javaFieldName + " );";
             }
             else if ( type.equals( "int" ) )
             {
-                result = "LittleEndian.putUShort(data, 0x"
+                result = "LittleEndian.putUShort( data, 0x"
                         + Integer.toHexString( offset ) + " + offset, "
-                        + javaFieldName + ");";
+                        + javaFieldName + " );";
             }
             else
             {
-                result = "LittleEndian.putShort(data, 0x"
+                result = "LittleEndian.putShort( data, 0x"
                         + Integer.toHexString( offset ) + " + offset, (short)"
-                        + javaFieldName + ");";
+                        + javaFieldName + " );";
             }
         else if ( size.equals( "4" ) )
             if ( type.equals( "long" ) )
             {
-                result = "LittleEndian.putUInt(data, 0x"
+                result = "LittleEndian.putUInt( data, 0x"
                         + Integer.toHexString( offset ) + " + offset, "
-                        + javaFieldName + ");";
+                        + javaFieldName + " );";
             }
             else
             {
-                result = "LittleEndian.putInt(data, 0x"
+                result = "LittleEndian.putInt( data, 0x"
                         + Integer.toHexString( offset ) + " + offset, "
-                        + javaFieldName + ");";
+                        + javaFieldName + " );";
             }
         else if ( size.equals( "1" ) )
-            result = "data[ 0x" + Integer.toHexString( offset )
-                    + " + offset] = " + javaFieldName + ";";
+            if ( type.equals( "byte" ) )
+            {
+                result = "data[ 0x" + Integer.toHexString( offset )
+                        + " + offset ] = " + javaFieldName + ";";
+            }
+            else
+            {
+                result = "LittleEndian.putUByte( data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, "
+                        + javaFieldName + " );";
+            }
         else if ( type.equals( "double" ) )
             result = "LittleEndian.putDouble(data, 0x"
                     + Integer.toHexString( offset ) + " + offset, "
-                    + javaFieldName + ");";
+                    + javaFieldName + " );";
 
         try
         {
