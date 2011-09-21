@@ -133,9 +133,24 @@ public class FieldIterator
             result = javaFieldName + ".serialize(data, 0x"
                     + Integer.toHexString( offset ) + " + offset);";
         else if ( size.equals( "2" ) )
-            result = "LittleEndian.putShort(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset, (short)"
-                    + javaFieldName + ");";
+            if ( type.equals( "short" ) )
+            {
+                result = "LittleEndian.putShort(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, "
+                        + javaFieldName + ");";
+            }
+            else if ( type.equals( "int" ) )
+            {
+                result = "LittleEndian.putUShort(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, "
+                        + javaFieldName + ");";
+            }
+            else
+            {
+                result = "LittleEndian.putShort(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, (short)"
+                        + javaFieldName + ");";
+            }
         else if ( size.equals( "4" ) )
             result = "LittleEndian.putInt(data, 0x"
                     + Integer.toHexString( offset ) + " + offset, "
