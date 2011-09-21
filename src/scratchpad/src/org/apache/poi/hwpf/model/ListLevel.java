@@ -19,6 +19,8 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.model.types.LVLFAbstractType;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -29,26 +31,25 @@ import org.apache.poi.util.LittleEndian;
  * See page 170 for details.
  */
 @Internal
-public final class ListLevel
+public final class ListLevel 
 {
-    private static final int RGBXCH_NUMS_SIZE = 9;
-
-    private int _iStartAt;
-    private byte _nfc;
-    private byte _info;
-    /*   */private static BitField _jc;
-    /*   */private static BitField _fLegal;
-    /*   */private static BitField _fNoRestart;
-    /*   */private static BitField _fPrev;
-    /*   */private static BitField _fPrevSpace;
-    /*   */private static BitField _fWord6;
-    private byte[] _rgbxchNums;
-    private byte _ixchFollow;
-    private int _dxaSpace;
-    private int _dxaIndent;
-    private int _cbGrpprlChpx;
-    private int _cbGrpprlPapx;
-    private short _reserved;
+//    private int _iStartAt;
+//    private byte _nfc;
+//    private byte _info;
+//    /*   */private static BitField _jc;
+//    /*   */private static BitField _fLegal;
+//    /*   */private static BitField _fNoRestart;
+//    /*   */private static BitField _fPrev;
+//    /*   */private static BitField _fPrevSpace;
+//    /*   */private static BitField _fWord6;
+//    private byte[] _rgbxchNums;
+//    private byte _ixchFollow;
+//    private int _dxaSpace;
+//    private int _dxaIndent;
+//    private int _cbGrpprlChpx;
+//    private int _cbGrpprlPapx;
+//    private short _reserved;
+    private LVLF _lvlf;
     private byte[] _grpprlPapx;
     private byte[] _grpprlChpx;
     private char[] _numberText = null;
@@ -57,31 +58,16 @@ public final class ListLevel
     {
         int offset = originalOffset;
 
-        _iStartAt = LittleEndian.getInt( buf, offset );
-        offset += LittleEndian.INT_SIZE;
-        _nfc = buf[offset++];
-        _info = buf[offset++];
+        _lvlf = new LVLF(buf, offset);
+        offset += LVLF.getSize();
 
-        _rgbxchNums = new byte[RGBXCH_NUMS_SIZE];
-        System.arraycopy( buf, offset, _rgbxchNums, 0, RGBXCH_NUMS_SIZE );
-        offset += RGBXCH_NUMS_SIZE;
+        _grpprlPapx = new byte[_lvlf.getCbGrpprlPapx()];
+        System.arraycopy( buf, offset, _grpprlPapx, 0, _lvlf.getCbGrpprlPapx() );
+        offset += _lvlf.getCbGrpprlPapx();
 
-        _ixchFollow = buf[offset++];
-        _dxaSpace = LittleEndian.getInt( buf, offset );
-        offset += LittleEndian.INT_SIZE;
-        _dxaIndent = LittleEndian.getInt( buf, offset );
-        offset += LittleEndian.INT_SIZE;
-        _cbGrpprlChpx = LittleEndian.getUnsignedByte( buf, offset++ );
-        _cbGrpprlPapx = LittleEndian.getUnsignedByte( buf, offset++ );
-        _reserved = LittleEndian.getShort( buf, offset );
-        offset += LittleEndian.SHORT_SIZE;
-
-        _grpprlPapx = new byte[_cbGrpprlPapx];
-        _grpprlChpx = new byte[_cbGrpprlChpx];
-        System.arraycopy( buf, offset, _grpprlPapx, 0, _cbGrpprlPapx );
-        offset += _cbGrpprlPapx;
-        System.arraycopy( buf, offset, _grpprlChpx, 0, _cbGrpprlChpx );
-        offset += _cbGrpprlChpx;
+        _grpprlChpx = new byte[_lvlf.getCbGrpprlChpx()];
+        System.arraycopy( buf, offset, _grpprlChpx, 0, _lvlf.getCbGrpprlChpx() );
+        offset += _lvlf.getCbGrpprlChpx();
 
         int numberTextLength = LittleEndian.getShort( buf, offset );
         /* sometimes numberTextLength<0 */
@@ -101,15 +87,15 @@ public final class ListLevel
 
     public ListLevel( int level, boolean numbered )
     {
-        _iStartAt = 1;
+        _lvlf = new LVLF();
+        setStartAt( 1 );
         _grpprlPapx = new byte[0];
         _grpprlChpx = new byte[0];
         _numberText = new char[0];
-        _rgbxchNums = new byte[RGBXCH_NUMS_SIZE];
-
+        
         if ( numbered )
         {
-            _rgbxchNums[0] = 1;
+            _lvlf.getRgbxchNums()[0] = 1;
             _numberText = new char[] { (char) level, '.' };
         }
         else
@@ -121,9 +107,10 @@ public final class ListLevel
     public ListLevel( int startAt, int numberFormatCode, int alignment,
             byte[] numberProperties, byte[] entryProperties, String numberText )
     {
-        _iStartAt = startAt;
-        _nfc = (byte) numberFormatCode;
-        _jc.setValue( _info, alignment );
+        _lvlf = new LVLF();
+        setStartAt( startAt );
+        _lvlf.setNfc( (short) numberFormatCode );
+        _lvlf.setJc( (byte) alignment );
         _grpprlChpx = numberProperties;
         _grpprlPapx = entryProperties;
         _numberText = numberText.toCharArray();
@@ -135,16 +122,10 @@ public final class ListLevel
             return false;
 
         ListLevel lvl = (ListLevel) obj;
-        return _cbGrpprlChpx == lvl._cbGrpprlChpx
-                && lvl._cbGrpprlPapx == _cbGrpprlPapx
-                && lvl._dxaIndent == _dxaIndent && lvl._dxaSpace == _dxaSpace
+        return lvl._lvlf.equals( this._lvlf )
                 && Arrays.equals( lvl._grpprlChpx, _grpprlChpx )
                 && Arrays.equals( lvl._grpprlPapx, _grpprlPapx )
-                && lvl._info == _info && lvl._iStartAt == _iStartAt
-                && lvl._ixchFollow == _ixchFollow && lvl._nfc == _nfc
-                && Arrays.equals( lvl._numberText, _numberText )
-                && Arrays.equals( lvl._rgbxchNums, _rgbxchNums )
-                && lvl._reserved == _reserved;
+                && Arrays.equals( lvl._numberText, _numberText );
     }
 
     /**
@@ -152,7 +133,7 @@ public final class ListLevel
      */
     public int getAlignment()
     {
-        return _jc.getValue( _info );
+        return _lvlf.getJc();
     }
 
     public byte[] getLevelProperties()
@@ -165,7 +146,7 @@ public final class ListLevel
      */
     public int getNumberFormat()
     {
-        return _nfc;
+        return _lvlf.getNfc();
     }
 
     public String getNumberText()
@@ -178,9 +159,8 @@ public final class ListLevel
 
     public int getSizeInBytes()
     {
-        int result = 6 // int byte byte
-                + RGBXCH_NUMS_SIZE + 13 // byte int int byte byte short
-                + _cbGrpprlChpx + _cbGrpprlPapx + 2; // numberText length
+        int result = LVLF.getSize() + _lvlf.getCbGrpprlChpx()
+                + _lvlf.getCbGrpprlPapx() + 2; // numberText length
         if ( _numberText != null )
         {
             result += _numberText.length * LittleEndian.SHORT_SIZE;
@@ -190,7 +170,7 @@ public final class ListLevel
 
     public int getStartAt()
     {
-        return _iStartAt;
+        return _lvlf.getIStartAt();
     }
 
     /**
@@ -198,12 +178,12 @@ public final class ListLevel
      */
     public byte getTypeOfCharFollowingTheNumber()
     {
-        return this._ixchFollow;
+        return _lvlf.getIxchFollow();
     }
 
     public void setAlignment( int alignment )
     {
-        _jc.setValue( _info, alignment );
+        _lvlf.setJc( (byte) alignment );
     }
 
     public void setLevelProperties( byte[] grpprl )
@@ -213,7 +193,7 @@ public final class ListLevel
 
     public void setNumberFormat( int numberFormatCode )
     {
-        _nfc = (byte) numberFormatCode;
+        _lvlf.setNfc( (short) numberFormatCode );
     }
 
     public void setNumberProperties( byte[] grpprl )
@@ -224,39 +204,28 @@ public final class ListLevel
 
     public void setStartAt( int startAt )
     {
-        _iStartAt = startAt;
+        _lvlf.setIStartAt( startAt );
     }
 
     public void setTypeOfCharFollowingTheNumber( byte value )
     {
-        this._ixchFollow = value;
+        _lvlf.setIxchFollow( value );
     }
 
     public byte[] toByteArray()
     {
         byte[] buf = new byte[getSizeInBytes()];
         int offset = 0;
-        LittleEndian.putInt( buf, offset, _iStartAt );
-        offset += LittleEndian.INT_SIZE;
-        buf[offset++] = _nfc;
-        buf[offset++] = _info;
-        System.arraycopy( _rgbxchNums, 0, buf, offset, RGBXCH_NUMS_SIZE );
-        offset += RGBXCH_NUMS_SIZE;
-        buf[offset++] = _ixchFollow;
-        LittleEndian.putInt( buf, offset, _dxaSpace );
-        offset += LittleEndian.INT_SIZE;
-        LittleEndian.putInt( buf, offset, _dxaIndent );
-        offset += LittleEndian.INT_SIZE;
 
-        buf[offset++] = (byte) _cbGrpprlChpx;
-        buf[offset++] = (byte) _cbGrpprlPapx;
-        LittleEndian.putShort( buf, offset, _reserved );
-        offset += LittleEndian.SHORT_SIZE;
+        _lvlf.setCbGrpprlChpx( (short) _grpprlChpx.length );
+        _lvlf.setCbGrpprlPapx( (short) _grpprlPapx.length );
+        _lvlf.serialize( buf, offset );
+        offset += LVLF.getSize();
 
-        System.arraycopy( _grpprlPapx, 0, buf, offset, _cbGrpprlPapx );
-        offset += _cbGrpprlPapx;
-        System.arraycopy( _grpprlChpx, 0, buf, offset, _cbGrpprlChpx );
-        offset += _cbGrpprlChpx;
+        System.arraycopy( _grpprlPapx, 0, buf, offset, _grpprlPapx.length );
+        offset += _grpprlPapx.length;
+        System.arraycopy( _grpprlChpx, 0, buf, offset, _grpprlChpx.length );
+        offset += _grpprlChpx.length;
 
         if ( _numberText == null )
         {
