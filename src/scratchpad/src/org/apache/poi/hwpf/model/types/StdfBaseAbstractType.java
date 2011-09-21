@@ -22,8 +22,8 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Each individual style description is stored in an STD structure. <p>Class and
-        fields descriptions are quoted from Microsoft Office Word 97-2007 Binary File Format and
+ * The StdfBase structure specifies general information about a style. <p>Class
+        and fields descriptions are quoted from Microsoft Office Word 97-2007 Binary File Format and
         [MS-DOC] - v20110608 Word (.doc) Binary File Format
     
  * <p>
@@ -38,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
     
  */
 @Internal
-public abstract class STDAbstractType
+public abstract class StdfBaseAbstractType
 {
 
     protected short field_1_info1;
@@ -70,7 +70,7 @@ public abstract class STDAbstractType
     /**/private static final BitField fQFormat = new BitField(0x1000);
     /**/private static final BitField fReserved = new BitField(0xE000);
 
-    protected STDAbstractType()
+    protected StdfBaseAbstractType()
     {
     }
 
@@ -103,7 +103,7 @@ public abstract class STDAbstractType
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("[STD]\n");
+        builder.append("[StdfBase]\n");
         builder.append("    .info1                = ");
         builder.append(" (").append(getInfo1()).append(" )\n");
         builder.append("         .sti                      = ").append(getSti()).append('\n');
@@ -138,12 +138,12 @@ public abstract class STDAbstractType
         builder.append("         .fQFormat                 = ").append(isFQFormat()).append('\n');
         builder.append("         .fReserved                = ").append(getFReserved()).append('\n');
 
-        builder.append("[/STD]\n");
+        builder.append("[/StdfBase]\n");
         return builder.toString();
     }
 
     /**
-     * Get the info1 field for the STD record.
+     * Get the info1 field for the StdfBase record.
      */
     @Internal
     public short getInfo1()
@@ -152,7 +152,7 @@ public abstract class STDAbstractType
     }
 
     /**
-     * Set the info1 field for the STD record.
+     * Set the info1 field for the StdfBase record.
      */
     @Internal
     public void setInfo1( short field_1_info1 )
@@ -161,7 +161,7 @@ public abstract class STDAbstractType
     }
 
     /**
-     * Get the info2 field for the STD record.
+     * Get the info2 field for the StdfBase record.
      */
     @Internal
     public short getInfo2()
@@ -170,7 +170,7 @@ public abstract class STDAbstractType
     }
 
     /**
-     * Set the info2 field for the STD record.
+     * Set the info2 field for the StdfBase record.
      */
     @Internal
     public void setInfo2( short field_2_info2 )
@@ -179,7 +179,7 @@ public abstract class STDAbstractType
     }
 
     /**
-     * Get the info3 field for the STD record.
+     * Get the info3 field for the StdfBase record.
      */
     @Internal
     public short getInfo3()
@@ -188,7 +188,7 @@ public abstract class STDAbstractType
     }
 
     /**
-     * Set the info3 field for the STD record.
+     * Set the info3 field for the StdfBase record.
      */
     @Internal
     public void setInfo3( short field_3_info3 )
