@@ -45,4 +45,10 @@ public final class UPX
     UPX upx = (UPX)o;
     return Arrays.equals(_upx, upx._upx);
   }
+
+    @Override
+    public String toString()
+    {
+        return "[UPX] " + Arrays.toString( _upx );
+    }
 }
