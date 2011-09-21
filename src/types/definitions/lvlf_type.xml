@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="LVLF" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The LVLF structure contains formatting properties for an individual level in a
+        list. &lt;p&gt;Class and fields descriptions are quoted from Microsoft Office Word 97-2007
+        Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </author>
+    <fields>
+        <field type="int" size="4" name="iStartAt"/>
+        <field type="short" size="2" name="info2">
+            <bit mask="0x00FF" name="nfc"
+                description="An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets."/>
+            <bit mask="0x0300" name="jc"
+                description="An unsigned integer that specifies the justification of this level"/>
+            <bit mask="0x0400" name="fLegal"
+                description="A bit that specifies whether this level overrides the nfc of all inherited level numbers. If the original nfc of a level number is msonfcArabicLZ, it is preserved. Otherwise, the nfc of the level number is overridden by msonfcArabic."/>
+            <bit mask="0x0800" name="fNoRestart"
+                description="A bit that specifies whether the number sequence of the level does not restart after a level is encountered that is more significant than the level to which this LVLF corresponds"/>
+            <bit mask="0x1000" name="fIndentSav"
+                description="A bit that specifies whether the level indented the text it was applied to and that the indent needs to be removed when numbering is removed. The indent to be removed is stored in dxaIndentSav"/>
+            <bit mask="0x2000" name="fConverted"
+                description="A bit that specifies whether the nfc of this LVLF structure was previously a temporary value used for bidirectional compatibility that was converted into a standard MSONFC"/>
+            <bit mask="0x4000" name="unused1" description="This bit MUST be ignored"/>
+            <bit mask="0x8000" name="fTentative"
+                description="A bit that specifies whether the format of the level is tentative"/>
+        </field>
+        <field type="byte[]" size="9" name="rgbxchNums"
+            description="An array of 8-bit integers. Each integer specifies a one-based character offset to a level placeholder in the xst.rgtchar of the LVL that contains this LVLF. This array is zero-terminated, unless it is full. The count of elements in this array, before to the first terminating zero, MUST be less than or equal to the one-based level of the list to which this LVL corresponds. The integers in this array, before the first terminating zero, MUST be in ascending order, and MUST be unique"/>
+        <field type="byte" size="1" name="ixchFollow"
+            description="An unsigned integer that specifies the character that follows the number text"/>
+        <field type="int" size="4" name="dxaIndentSav"
+            description="If fIndentSav is nonzero, this is a signed integer that specifies the size, in twips, of the indent that needs to be removed when the numbering is removed. This MUST be less than or equal to 0x00007BC0 or greater than or equal to 0xFFFF8440. If fIndentSav is zero, this MUST be ignored"/>
+        <field type="int" size="4" name="unused2" description="This field MUST be ignored"/>
+        <field type="short" size="1" name="cbGrpprlChpx"
+            description="An unsigned integer that specifies the size, in bytes, of the grpprlChpx in the LVL that contains this LVLF"/>
+        <field type="short" size="1" name="cbGrpprlPapx"
+            description="An unsigned integer that specifies the size, in bytes, of the grpprlPapx in the LVL that contains this LVLF"/>
+        <field type="short" size="1" name="ilvlRestartLim"
+            description="An unsigned integer that specifies the first (most-significant) zero-based level after which the number sequence of this level does not restart. The number sequence of this level does restart after any level that is more significant than the specified level. This MUST be less than or equal to the zero-based level of the list to which this LVLF corresponds. If fNoRestart is zero, this MUST be ignored. If this level does not have a number sequence (see nfc), this MUST be ignored"/>
+        <field type="short" size="1" name="grfhic"
+            description="A grfhic that specifies the HTML incompatibilities of the level."/>
+    </fields>
+</record>

@@ -186,6 +186,24 @@ public class LittleEndian implements LittleEndianConsts {
     }
 
     /**
+     * put an unsigned byte value into a byte array
+     * 
+     * @param data
+     *            the byte array
+     * @param offset
+     *            a starting offset into the byte array
+     * @param value
+     *            the short (16-bit) value
+     * 
+     * @exception ArrayIndexOutOfBoundsException
+     *                may be thrown
+     */
+    public static void putUByte( byte[] data, int offset, short value )
+    {
+        data[offset] = (byte) ( value & 0xFF );
+    }
+
+    /**
      * put an unsigned short value into a byte array
      *
      * @param data the byte array
