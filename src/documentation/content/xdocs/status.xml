@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">51804 - include Master Slide text in XSLF text extraction</action>
            <action dev="poi-developers" type="add">New PackagePart method getRelatedPart(PackageRelationship) to simplify navigation of relations between OPC Parts</action>
            <action dev="poi-developers" type="fix">51832 - handle XLS files where the WRITEPROTECT record preceeds the FILEPASS one, rather than following as normal</action>
            <action dev="poi-developers" type="fix">51809 - correct GTE handling in COUNTIF</action>
