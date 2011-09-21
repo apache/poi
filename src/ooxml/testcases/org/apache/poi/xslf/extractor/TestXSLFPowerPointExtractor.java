@@ -68,22 +68,18 @@ public class TestXSLFPowerPointExtractor extends TestCase {
          "Fifth level\n";
 		
 		// Just slides, no notes
-		text = extractor.getText(true, false);
+		text = extractor.getText(true, false, false);
 		assertEquals(
 				"Lorem ipsum dolor sit amet\n" +
 				"Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
 				"\n" +
-				masterText +
-            "\n\n\n" +
 				"Lorem ipsum dolor sit amet\n" +
 				"Lorem\n" +
 				"ipsum\n" +
 				"dolor\n" +
 				"sit\n" +
 				"amet\n" +
-				"\n" +
-            masterText +
-				"\n\n\n"
+				"\n"
 				, text
 		);
 		
@@ -94,24 +90,60 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 		);
 		
 		// Both
-		text = extractor.getText(true, true);
+		text = extractor.getText(true, true, false);
 		assertEquals(
 				"Lorem ipsum dolor sit amet\n" +
 				"Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
-            "\n" +
-            masterText +
-				"\n\n\n\n\n" +
+            "\n\n\n" +
 				"Lorem ipsum dolor sit amet\n" +
 				"Lorem\n" +
 				"ipsum\n" +
 				"dolor\n" +
 				"sit\n" +
 				"amet\n" +
-				"\n" +
-            masterText +
-            "\n\n\n\n\n"
+				"\n\n\n"
 				, text
 		);
+		
+		// With Slides and Master Text
+      text = extractor.getText(true, false, true);
+      assertEquals(
+            "Lorem ipsum dolor sit amet\n" +
+            "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
+            "\n" +
+            masterText +
+            "\n\n\n" +
+            "Lorem ipsum dolor sit amet\n" +
+            "Lorem\n" +
+            "ipsum\n" +
+            "dolor\n" +
+            "sit\n" +
+            "amet\n" +
+            "\n" +
+            masterText +
+            "\n\n\n"
+            , text
+      );
+		
+		// With Slides, Notes and Master Text
+      text = extractor.getText(true, true, true);
+      assertEquals(
+            "Lorem ipsum dolor sit amet\n" +
+            "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
+            "\n" +
+            masterText +
+            "\n\n\n\n\n" +
+            "Lorem ipsum dolor sit amet\n" +
+            "Lorem\n" +
+            "ipsum\n" +
+            "dolor\n" +
+            "sit\n" +
+            "amet\n" +
+            "\n" +
+            masterText +
+            "\n\n\n\n\n"
+            , text
+      );
 		
 		// Via set defaults
 		extractor.setSlidesByDefault(false);
