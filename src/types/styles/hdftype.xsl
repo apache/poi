@@ -90,6 +90,16 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
             <xsl:when test="@type='int'"/>
             <xsl:when test="@type='short'"/>
             <xsl:when test="@type='long'"/>
+            <xsl:when test="@type='byte[]'">
+                <xsl:call-template name="indent"/>
+                <xsl:call-template name="indent"/>
+                <xsl:text>this.</xsl:text>
+                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+                <xsl:text> = new byte[</xsl:text>
+                <xsl:value-of select="@size"/>
+                <xsl:text>];</xsl:text>
+                <xsl:call-template name="linebreak"/>
+            </xsl:when>
             <xsl:when test="substring(@type, string-length(@type) - 1) = '[]'">
                 <xsl:call-template name="indent"/>
                 <xsl:call-template name="indent"/>
@@ -152,6 +162,14 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     <xsl:call-template name="indent"/>
     <xsl:text>}</xsl:text>
     <xsl:call-template name="linebreak"/>
+    <xsl:text>
+    public byte[] serialize()
+    {
+        final byte[] result = new byte[ getSize() ];
+        serialize( result, 0 );
+        return result;
+    }
+</xsl:text>
     <xsl:text>
     /**
      * Size of record
