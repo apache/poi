@@ -20,8 +20,6 @@ package org.apache.poi.hwpf.model;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.sprm.SprmIterator;
-
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.Internal;
@@ -51,7 +49,9 @@ public final class StyleDescription implements HDFType
 
   UPX[] _upxs;
   String _name;
+  @Deprecated
   ParagraphProperties _pap;
+  @Deprecated
   CharacterProperties _chp;
 
   public StyleDescription()
@@ -173,18 +173,22 @@ public final class StyleDescription implements HDFType
         return null;
     }
   }
+  @Deprecated
   public ParagraphProperties getPAP()
   {
       return _pap;
   }
+  @Deprecated
   public CharacterProperties getCHP()
   {
       return _chp;
   }
+  @Deprecated
   void setPAP(ParagraphProperties pap)
   {
       _pap = pap;
   }
+  @Deprecated
   void setCHP(CharacterProperties chp)
   {
       _chp = chp;

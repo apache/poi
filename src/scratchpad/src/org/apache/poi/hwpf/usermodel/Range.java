@@ -60,12 +60,19 @@ public class Range { // TODO -instantiable superclass
 
     private POILogger logger = POILogFactory.getLogger( Range.class );
     
+    @Deprecated
 	public static final int TYPE_PARAGRAPH = 0;
+    @Deprecated
 	public static final int TYPE_CHARACTER = 1;
+    @Deprecated
 	public static final int TYPE_SECTION = 2;
+    @Deprecated
 	public static final int TYPE_TEXT = 3;
+    @Deprecated
 	public static final int TYPE_LISTENTRY = 4;
+    @Deprecated
 	public static final int TYPE_TABLE = 5;
+    @Deprecated
 	public static final int TYPE_UNDEFINED = 6;
 
 	/** Needed so inserts and deletes will ripple up through containing Ranges */
@@ -880,20 +887,7 @@ public class Range { // TODO -instantiable superclass
                     + "; " + _parEnd + ")" );
 
 		PAPX papx = _paragraphs.get(index + _parStart);
-
-		ParagraphProperties props = papx.getParagraphProperties(_doc.getStyleSheet());
-		Paragraph pap = null;
-		if (props.getIlfo() > 0) {
-			pap = new ListEntry(papx, this, _doc.getListTables());
-		} else {
-            if (((index + _parStart)==0) && papx.getStart()>0) {
-                pap = new Paragraph(papx, this, 0);
-            } else {
-    			pap = new Paragraph(papx, this);
-            }
-		}
-
-		return pap;
+		return Paragraph.newParagraph( this, papx );
 	}
 
 	/**
@@ -902,6 +896,7 @@ public class Range { // TODO -instantiable superclass
 	 *
 	 * @return A TYPE constant.
 	 */
+	@Deprecated
 	public int type() {
 		return TYPE_UNDEFINED;
 	}
@@ -930,8 +925,8 @@ public class Range { // TODO -instantiable superclass
 
         if ( r._parStart != 0 )
         {
-            Paragraph previous = new Paragraph(
-                    _paragraphs.get( r._parStart - 1 ), this );
+            Paragraph previous = Paragraph.newParagraph( this,
+                    _paragraphs.get( r._parStart - 1 ) );
             if ( previous.isInTable() && //
                     previous.getTableLevel() == tableLevel //
                     && previous._sectionEnd >= r._sectionStart )
@@ -945,8 +940,8 @@ public class Range { // TODO -instantiable superclass
         int limit = _paragraphs.size();
         for ( ; tableEndInclusive < limit - 1; tableEndInclusive++ )
         {
-            Paragraph next = new Paragraph(
-                    _paragraphs.get( tableEndInclusive + 1 ), overallRange );
+            Paragraph next = Paragraph.newParagraph( overallRange,
+                    _paragraphs.get( tableEndInclusive + 1 ) );
             if ( !next.isInTable() || next.getTableLevel() < tableLevel )
                 break;
         }

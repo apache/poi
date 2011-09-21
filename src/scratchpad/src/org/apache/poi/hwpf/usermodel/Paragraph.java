@@ -17,9 +17,17 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.HWPFDocumentCore;
+
+import org.apache.poi.hwpf.model.ListFormatOverride;
+import org.apache.poi.hwpf.model.ListLevel;
+import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmCompressor;
+import org.apache.poi.util.Internal;
 
 public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_JC = 0x2403;
@@ -80,11 +88,55 @@ public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_USEPGSUSETTINGS = 0x2447;
   public final static short SPRM_FADJUSTRIGHT = 0x2448;
 
+    @Internal
+    static Paragraph newParagraph( Range parent, PAPX papx )
+    {
+        HWPFDocumentCore doc = parent._doc;
+        ListTables listTables = doc.getListTables();
+        StyleSheet styleSheet = doc.getStyleSheet();
+
+        ParagraphProperties properties = new ParagraphProperties();
+        properties.setIstd( papx.getIstd() );
+
+        if ( styleSheet != null )
+        {
+            int style = papx.getIstd();
+            byte[] grpprl = styleSheet.getPAPX( style );
+            properties = ParagraphSprmUncompressor.uncompressPAP( properties,
+                    grpprl, 2 );
+        }
+
+        properties = ParagraphSprmUncompressor.uncompressPAP( properties,
+                papx.getGrpprl(), 2 );
+
+        if ( properties.getIlfo() != 0 && listTables != null )
+        {
+            final ListFormatOverride listFormatOverride = listTables
+                    .getOverride( properties.getIlfo() );
+            final ListLevel listLevel = listTables.getLevel(
+                    listFormatOverride.getLsid(), properties.getIlvl() );
+
+            if ( listLevel.getGrpprlPapx() != null )
+            {
+                properties = ParagraphSprmUncompressor.uncompressPAP(
+                        properties, listLevel.getGrpprlPapx(), 0 );
+                // reapply PAPX properties
+                properties = ParagraphSprmUncompressor.uncompressPAP(
+                        properties, papx.getGrpprl(), 2 );
+            }
+        }
+
+        if ( properties.getIlfo() > 0 )
+            return new ListEntry( papx, properties, parent );
+
+        return new Paragraph( papx, properties, parent );
+    }
 
   protected short _istd;
   protected ParagraphProperties _props;
   protected SprmBuffer _papx;
 
+    @Deprecated
     protected Paragraph( int startIdxInclusive, int endIdxExclusive,
             Table parent )
     {
@@ -97,27 +149,42 @@ public class Paragraph extends Range implements Cloneable {
         _istd = papx.getIstd();
     }
 
-  protected Paragraph(PAPX papx, Range parent)
-  {
-    super(Math.max(parent._start, papx.getStart()), Math.min(parent._end, papx.getEnd()), parent);
-    _props = papx.getParagraphProperties(_doc.getStyleSheet());
-    _papx = papx.getSprmBuf();
-    _istd = papx.getIstd();
-  }
+    @Deprecated
+    protected Paragraph( PAPX papx, Range parent )
+    {
+        super( Math.max( parent._start, papx.getStart() ), Math.min(
+                parent._end, papx.getEnd() ), parent );
+        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
+        _papx = papx.getSprmBuf();
+        _istd = papx.getIstd();
+    }
 
-  protected Paragraph(PAPX papx, Range parent, int start)
-  {
-    super(Math.max(parent._start, start), Math.min(parent._end, papx.getEnd()), parent);
-    _props = papx.getParagraphProperties(_doc.getStyleSheet());
-    _papx = papx.getSprmBuf();
-    _istd = papx.getIstd();
-  }
+    @Deprecated
+    protected Paragraph( PAPX papx, Range parent, int start )
+    {
+        super( Math.max( parent._start, start ), Math.min( parent._end,
+                papx.getEnd() ), parent );
+        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
+        _papx = papx.getSprmBuf();
+        _istd = papx.getIstd();
+    }
 
-  public short getStyleIndex()
+    @Internal
+    Paragraph( PAPX papx, ParagraphProperties properties, Range parent )
+    {
+        super( Math.max( parent._start, papx.getStart() ), Math.min(
+                parent._end, papx.getEnd() ), parent );
+        _props = properties;
+        _papx = papx.getSprmBuf();
+        _istd = papx.getIstd();
+    }
+
+public short getStyleIndex()
   {
     return _istd;
   }
 
+  @Deprecated
   public int type()
   {
     return TYPE_PARAGRAPH;

@@ -31,34 +31,18 @@ import org.apache.poi.util.LittleEndian;
  * See page 170 for details.
  */
 @Internal
-public final class ListLevel 
+public final class ListLevel
 {
-//    private int _iStartAt;
-//    private byte _nfc;
-//    private byte _info;
-//    /*   */private static BitField _jc;
-//    /*   */private static BitField _fLegal;
-//    /*   */private static BitField _fNoRestart;
-//    /*   */private static BitField _fPrev;
-//    /*   */private static BitField _fPrevSpace;
-//    /*   */private static BitField _fWord6;
-//    private byte[] _rgbxchNums;
-//    private byte _ixchFollow;
-//    private int _dxaSpace;
-//    private int _dxaIndent;
-//    private int _cbGrpprlChpx;
-//    private int _cbGrpprlPapx;
-//    private short _reserved;
-    private LVLF _lvlf;
-    private byte[] _grpprlPapx;
     private byte[] _grpprlChpx;
+    private byte[] _grpprlPapx;
+    private LVLF _lvlf;
     private char[] _numberText = null;
 
     public ListLevel( final byte[] buf, final int originalOffset )
     {
         int offset = originalOffset;
 
-        _lvlf = new LVLF(buf, offset);
+        _lvlf = new LVLF( buf, offset );
         offset += LVLF.getSize();
 
         _grpprlPapx = new byte[_lvlf.getCbGrpprlPapx()];
@@ -92,7 +76,7 @@ public final class ListLevel
         _grpprlPapx = new byte[0];
         _grpprlChpx = new byte[0];
         _numberText = new char[0];
-        
+
         if ( numbered )
         {
             _lvlf.getRgbxchNums()[0] = 1;
@@ -134,6 +118,16 @@ public final class ListLevel
     public int getAlignment()
     {
         return _lvlf.getJc();
+    }
+
+    public byte[] getGrpprlChpx()
+    {
+        return _grpprlChpx;
+    }
+
+    public byte[] getGrpprlPapx()
+    {
+        return _grpprlPapx;
     }
 
     public byte[] getLevelProperties()
@@ -245,4 +239,12 @@ public final class ListLevel
         return buf;
     }
 
+    @Override
+    public String toString()
+    {
+        return "ListLevel: " + ( "\n" + _lvlf ).replaceAll( "\n", "\n    " )
+                + "\n"
+                + ( "PAPX's grpprl: " + Arrays.toString( _grpprlPapx ) + "\n" )
+                + ( "CHPX's grpprl: " + Arrays.toString( _grpprlChpx ) + "\n" );
+    }
 }

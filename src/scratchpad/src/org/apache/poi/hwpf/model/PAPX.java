@@ -134,6 +134,8 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     return (SprmBuffer)_buf;
   }
 
+  @Deprecated
+  @Internal
   public ParagraphProperties getParagraphProperties(StyleSheet ss)
   {
     if(ss == null) {
