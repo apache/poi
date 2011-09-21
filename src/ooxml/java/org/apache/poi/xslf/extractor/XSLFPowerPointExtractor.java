@@ -30,6 +30,7 @@ import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
@@ -105,12 +106,19 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
          try {
             XSLFNotes notes = slide.getNotes();
             XSLFComments comments = slide.getComments();
+            XSLFSlideMaster master = slide.getMasterSheet();
 
             // TODO Do the slide's name
+            // (Stored in docProps/app.xml)
 
             // Do the slide's text if requested
             if (slideText) {
                extractText(slide.getCommonSlideData(), text);
+               
+               // If there's a master sheet, grab text from there
+               if(master != null) {
+                  extractText(master.getCommonSlideData(), text);
+               }
 
                // If the slide has comments, do those too
                if (comments != null) {
