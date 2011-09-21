@@ -17,30 +17,37 @@
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.LFOAbstractType;
 import org.apache.poi.util.Internal;
 
 @Internal
-public final class ListFormatOverride extends LFOAbstractType
+public final class ListFormatOverride
 {
+
     private ListFormatOverrideLevel[] _levelOverrides;
+
+    private LFO _lfo;
 
     public ListFormatOverride( byte[] buf, int offset )
     {
-        fillFields( buf, offset );
-
-        _levelOverrides = new ListFormatOverrideLevel[getClfolvl()];
+        _lfo = new LFO( buf, offset );
+        _levelOverrides = new ListFormatOverrideLevel[_lfo.getClfolvl()];
     }
 
     public ListFormatOverride( int lsid )
     {
-        setLsid( lsid );
+        _lfo = new LFO();
+        _lfo.setLsid( lsid );
         _levelOverrides = new ListFormatOverrideLevel[0];
     }
 
     public ListFormatOverrideLevel[] getLevelOverrides()
     {
         return _levelOverrides;
+    }
+
+    public int getLsid()
+    {
+        return _lfo.getLsid();
     }
 
     public ListFormatOverrideLevel getOverrideLevel( int level )
@@ -60,7 +67,12 @@ public final class ListFormatOverride extends LFOAbstractType
 
     public int numOverrides()
     {
-        return getClfolvl();
+        return _lfo.getClfolvl();
+    }
+
+    public void setLsid( int lsid )
+    {
+        _lfo.setLsid( lsid );
     }
 
     public void setOverride( int index, ListFormatOverrideLevel lfolvl )
@@ -70,8 +82,6 @@ public final class ListFormatOverride extends LFOAbstractType
 
     public byte[] toByteArray()
     {
-        byte[] bs = new byte[getSize()];
-        serialize( bs, 0 );
-        return bs;
+        return _lfo.serialize();
     }
 }

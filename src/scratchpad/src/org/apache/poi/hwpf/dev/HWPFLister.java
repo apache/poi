@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,8 +31,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.poi.hwpf.model.StyleDescription;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -42,9 +41,13 @@ import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
+import org.apache.poi.hwpf.model.ListFormatOverride;
+import org.apache.poi.hwpf.model.ListLevel;
+import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.PlexOfCps;
+import org.apache.poi.hwpf.model.StyleDescription;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.sprm.SprmIterator;
@@ -54,6 +57,7 @@ import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.Field;
 import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -560,11 +564,7 @@ public final class HWPFLister
                     {
                         SprmIterator sprmIt = new SprmIterator(
                                 papx.getGrpprl(), 2 );
-                        while ( sprmIt.hasNext() )
-                        {
-                            SprmOperation sprm = sprmIt.next();
-                            System.out.println( "*** " + sprm.toString() );
-                        }
+                        dumpSprms( sprmIt, "*** " );
                     }
 
                 }
@@ -578,31 +578,33 @@ public final class HWPFLister
                 if ( papx != null && withSprms )
                 {
                     SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
-                    while ( sprmIt.hasNext() )
-                    {
-                        SprmOperation sprm = sprmIt.next();
-                        System.out.println( "*** " + sprm.toString() );
-                    }
+                    dumpSprms( sprmIt, "*** " );
                 }
             }
         }
+
+        Method newParagraph = Paragraph.class.getDeclaredMethod(
+                "newParagraph", Range.class, PAPX.class );
+        newParagraph.setAccessible( true );
+        java.lang.reflect.Field _props = Paragraph.class
+                .getDeclaredField( "_props" );
+        _props.setAccessible( true );
 
         for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
         {
             System.out.println( papx );
 
             if ( withProperties )
-                System.out.println( papx.getParagraphProperties( _doc
-                        .getStyleSheet() ) );
+            {
+                Paragraph paragraph = (Paragraph) newParagraph.invoke( null,
+                        _doc.getOverallRange(), papx );
+                System.out.println( _props.get( paragraph ) );
+            }
 
             if ( true )
             {
                 SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
-                while ( sprmIt.hasNext() )
-                {
-                    SprmOperation sprm = sprmIt.next();
-                    System.out.println( "\t" + sprm.toString() );
-                }
+                dumpSprms( sprmIt, "\t" );
             }
         }
     }
@@ -629,11 +631,7 @@ public final class HWPFLister
 
                         SprmIterator sprmIt = new SprmIterator(
                                 papx.getGrpprl(), 2 );
-                        while ( sprmIt.hasNext() )
-                        {
-                            SprmOperation sprm = sprmIt.next();
-                            System.out.println( "** " + sprm.toString() );
-                        }
+                        dumpSprms( sprmIt, "** " );
                     }
                 }
                 if ( !hasAssotiatedPapx )
@@ -642,6 +640,15 @@ public final class HWPFLister
                             + "NO PAPX ASSOTIATED WITH PARAGRAPH!" );
                 }
             }
+        }
+    }
+
+    protected void dumpSprms( SprmIterator sprmIt, String linePrefix )
+    {
+        while ( sprmIt.hasNext() )
+        {
+            SprmOperation sprm = sprmIt.next();
+            System.out.println( linePrefix + sprm.toString() );
         }
     }
 
@@ -682,6 +689,8 @@ public final class HWPFLister
             return;
         }
         HWPFDocument hwpfDocument = (HWPFDocument) _doc;
+        ListTables listTables = hwpfDocument.getListTables();
+
         for ( int s = 0; s < hwpfDocument.getStyleSheet().numStyles(); s++ )
         {
             StyleDescription styleDescription = hwpfDocument.getStyleSheet()
@@ -692,8 +701,44 @@ public final class HWPFLister
             System.out.println( "=== Style #" + s + " '"
                     + styleDescription.getName() + "' ===" );
             System.out.println( styleDescription );
-            System.out.println( "PAP:" + styleDescription.getPAP() );
-            System.out.println( "CHP:" + styleDescription.getCHP() );
+
+            ParagraphProperties paragraph = styleDescription.getPAP();
+            System.out.println( "PAP: " + paragraph );
+            if ( paragraph != null )
+            {
+                dumpParagraphLevels( listTables, paragraph );
+            }
+            System.out.println( "CHP: " + styleDescription.getCHP() );
+        }
+    }
+
+    protected void dumpParagraphLevels( ListTables listTables,
+            ParagraphProperties paragraph )
+    {
+        if ( paragraph.getIlfo() != 0 )
+        {
+            final ListFormatOverride listFormatOverride = listTables
+                    .getOverride( paragraph.getIlfo() );
+
+            System.out.println( "PAP's LFO: " + listFormatOverride );
+
+            final ListLevel listLevel = listTables.getLevel(
+                    listFormatOverride.getLsid(), paragraph.getIlvl() );
+
+            System.out.println( "PAP's ListLevel: " + listLevel );
+            if ( listLevel.getGrpprlPapx() != null )
+            {
+                System.out.println( "PAP's ListLevel PAPX:" );
+                dumpSprms( new SprmIterator( listLevel.getGrpprlPapx(), 0 ),
+                        "* " );
+            }
+
+            if ( listLevel.getGrpprlPapx() != null )
+            {
+                System.out.println( "PAP's ListLevel CHPX:" );
+                dumpSprms( new SprmIterator( listLevel.getGrpprlChpx(), 0 ),
+                        "* " );
+            }
         }
     }
 

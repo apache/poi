@@ -47,9 +47,13 @@ public final class StyleSheet implements HDFType {
   private static final int SEP_TYPE = 4;
   private static final int TAP_TYPE = 5;
 
+    @Deprecated
+    private final static ParagraphProperties NIL_PAP = new ParagraphProperties();
+    @Deprecated
+    private final static CharacterProperties NIL_CHP = new CharacterProperties();
 
-  private final static ParagraphProperties NIL_PAP = new ParagraphProperties();
-  private final static CharacterProperties NIL_CHP = new CharacterProperties();
+  private final static byte[] NIL_CHPX = new byte[] {};
+  private final static byte[] NIL_PAPX = new byte[] {0, 0};
 
     /**
      * Size of the STSHI structure
@@ -205,6 +209,7 @@ public final class StyleSheet implements HDFType {
    * @param istd The index of the StyleDescription to create the
    *        ParagraphProperties  from (and also place the finished PAP in)
    */
+  @Deprecated
   private void createPap(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
@@ -248,6 +253,7 @@ public final class StyleSheet implements HDFType {
    * @param istd The index of the StyleDescription to create the
    *        CharacterProperties object from.
    */
+  @Deprecated
   private void createChp(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
@@ -292,48 +298,107 @@ public final class StyleSheet implements HDFType {
       return _styleDescriptions.length;
   }
 
-  /**
-   * Gets the StyleDescription at index x.
-   *
-   * @param x the index of the desired StyleDescription.
-   */
-  public StyleDescription getStyleDescription(int x)
-  {
-      return _styleDescriptions[x];
-  }
-
-  public CharacterProperties getCharacterStyle(int x)
-  {
-    if (x == NIL_STYLE)
+    /**
+     * Gets the StyleDescription at index x.
+     * 
+     * @param styleIndex
+     *            the index of the desired StyleDescription.
+     */
+    public StyleDescription getStyleDescription( int styleIndex )
     {
-      return NIL_CHP;
+        return _styleDescriptions[styleIndex];
     }
 
-    if (x>=_styleDescriptions.length) {
-        return NIL_CHP;
+    @Deprecated
+    public CharacterProperties getCharacterStyle( int styleIndex )
+    {
+        if ( styleIndex == NIL_STYLE )
+        {
+            return NIL_CHP;
+        }
+
+        if ( styleIndex >= _styleDescriptions.length )
+        {
+            return NIL_CHP;
+        }
+
+        return ( _styleDescriptions[styleIndex] != null ? _styleDescriptions[styleIndex]
+                .getCHP() : NIL_CHP );
     }
 
-    return (_styleDescriptions[x] != null ? _styleDescriptions[x].getCHP() : NIL_CHP);
-  }
+    @Deprecated
+    public ParagraphProperties getParagraphStyle( int styleIndex )
+    {
+        if ( styleIndex == NIL_STYLE )
+        {
+            return NIL_PAP;
+        }
 
-  public ParagraphProperties getParagraphStyle(int x)
-  {
-    if (x == NIL_STYLE) {
-        return NIL_PAP;
+        if ( styleIndex >= _styleDescriptions.length )
+        {
+            return NIL_PAP;
+        }
+
+        if ( _styleDescriptions[styleIndex] == null )
+        {
+            return NIL_PAP;
+        }
+
+        if ( _styleDescriptions[styleIndex].getPAP() == null )
+        {
+            return NIL_PAP;
+        }
+
+        return _styleDescriptions[styleIndex].getPAP();
     }
 
-    if (x >= _styleDescriptions.length) {
-      return NIL_PAP;
+    public byte[] getCHPX( int styleIndex )
+    {
+        if ( styleIndex == NIL_STYLE )
+        {
+            return NIL_CHPX;
+        }
+
+        if ( styleIndex >= _styleDescriptions.length )
+        {
+            return NIL_CHPX;
+        }
+
+        if ( _styleDescriptions[styleIndex] == null )
+        {
+            return NIL_CHPX;
+        }
+
+        if ( _styleDescriptions[styleIndex].getCHPX() == null )
+        {
+            return NIL_CHPX;
+        }
+
+        return _styleDescriptions[styleIndex].getCHPX();
     }
 
-    if (_styleDescriptions[x]==null) {
-      return NIL_PAP;
-    }
+    public byte[] getPAPX( int styleIndex )
+    {
+        if ( styleIndex == NIL_STYLE )
+        {
+            return NIL_PAPX;
+        }
 
-    if (_styleDescriptions[x].getPAP()==null) {
-      return NIL_PAP;
-    }
+        if ( styleIndex >= _styleDescriptions.length )
+        {
+            return NIL_PAPX;
+        }
 
-    return _styleDescriptions[x].getPAP();
-  }
+        if ( _styleDescriptions[styleIndex] == null )
+        {
+            return NIL_PAPX;
+        }
+
+        if ( _styleDescriptions[styleIndex].getPAPX() == null )
+        {
+            return NIL_PAPX;
+        }
+
+        return _styleDescriptions[styleIndex].getPAPX();
+    }
 }
