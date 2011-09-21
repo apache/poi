@@ -88,8 +88,16 @@ public class FieldIterator
             result = "LittleEndian.getShort(data, 0x"
                     + Integer.toHexString( offset ) + " + offset)";
         else if ( size.equals( "4" ) )
-            result = "LittleEndian.getInt(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset)";
+            if ( type.equals( "long" ) )
+            {
+                result = "LittleEndian.getUInt(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset)";
+            }
+            else
+            {
+                result = "LittleEndian.getInt(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset)";
+            }
         else if ( size.equals( "1" ) )
             result = "data[ 0x" + Integer.toHexString( offset ) + " + offset ]";
         else if ( type.equals( "double" ) )
@@ -152,9 +160,18 @@ public class FieldIterator
                         + javaFieldName + ");";
             }
         else if ( size.equals( "4" ) )
-            result = "LittleEndian.putInt(data, 0x"
-                    + Integer.toHexString( offset ) + " + offset, "
-                    + javaFieldName + ");";
+            if ( type.equals( "long" ) )
+            {
+                result = "LittleEndian.putUInt(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, "
+                        + javaFieldName + ");";
+            }
+            else
+            {
+                result = "LittleEndian.putInt(data, 0x"
+                        + Integer.toHexString( offset ) + " + offset, "
+                        + javaFieldName + ");";
+            }
         else if ( size.equals( "1" ) )
             result = "data[ 0x" + Integer.toHexString( offset )
                     + " + offset] = " + javaFieldName + ";";
