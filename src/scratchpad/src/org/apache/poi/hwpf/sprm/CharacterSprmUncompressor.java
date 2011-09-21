@@ -620,6 +620,9 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x74:
         // sprmCRgLid1
         break;
+      default:
+          logger.log( POILogger.DEBUG, "Unknown CHP sprm ignored: " + sprm );
+          break;
     }
   }
 
