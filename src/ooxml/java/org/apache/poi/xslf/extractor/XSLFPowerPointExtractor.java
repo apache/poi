@@ -45,6 +45,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	private XMLSlideShow slideshow;
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;
+   private boolean masterByDefault = false;
 	
 	public XSLFPowerPointExtractor(XMLSlideShow slideshow) {
 		super(slideshow);
@@ -84,6 +85,13 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 		this.notesByDefault = notesByDefault;
 	}
 	
+   /**
+    * Should a call to getText() return text from master? Default is no
+    */
+   public void setMasterByDefault(boolean masterByDefault) {
+       this.masterByDefault = masterByDefault;
+   }
+	
 	/**
 	 * Gets the slide text, but not the notes text
 	 */
@@ -97,6 +105,16 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
     * @param notesText Should we retrieve text from notes?
     */
    public String getText(boolean slideText, boolean notesText) {
+      return getText(slideText, notesText, masterByDefault);
+   }
+   
+   /**
+    * Gets the requested text from the file
+    * @param slideText Should we retrieve text from slides?
+    * @param notesText Should we retrieve text from notes?
+    * @param masterText Should we retrieve text from master slides?
+    */
+   public String getText(boolean slideText, boolean notesText, boolean masterText) {
       StringBuffer text = new StringBuffer();
 
       XSLFSlide[] slides = slideshow.getSlides();
@@ -115,8 +133,8 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
             if (slideText) {
                extractText(slide.getCommonSlideData(), text);
                
-               // If there's a master sheet, grab text from there
-               if(master != null) {
+               // If there's a master sheet and it's requested, grab text from there
+               if(masterText && master != null) {
                   extractText(master.getCommonSlideData(), text);
                }
 

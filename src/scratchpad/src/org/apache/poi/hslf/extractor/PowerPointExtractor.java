@@ -39,14 +39,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Nick Burch
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-	private HSLFSlideShow _hslfshow;
-	private SlideShow _show;
-	private Slide[] _slides;
+   private HSLFSlideShow _hslfshow;
+   private SlideShow _show;
+   private Slide[] _slides;
 
-	private boolean _slidesByDefault = true;
-	private boolean _notesByDefault = false;
-	private boolean _commentsByDefault = false;
-    private boolean _masterByDefault = false;
+   private boolean _slidesByDefault = true;
+   private boolean _notesByDefault = false;
+   private boolean _commentsByDefault = false;
+   private boolean _masterByDefault = false;
 
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes
