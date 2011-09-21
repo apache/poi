@@ -98,14 +98,8 @@ public class Paragraph extends Range implements Cloneable {
         ParagraphProperties properties = new ParagraphProperties();
         properties.setIstd( papx.getIstd() );
 
-        if ( styleSheet != null )
-        {
-            int style = papx.getIstd();
-            byte[] grpprl = styleSheet.getPAPX( style );
-            properties = ParagraphSprmUncompressor.uncompressPAP( properties,
-                    grpprl, 2 );
-        }
-
+        properties = newParagraph_applyStyleProperties( styleSheet, papx,
+                properties );
         properties = ParagraphSprmUncompressor.uncompressPAP( properties,
                 papx.getGrpprl(), 2 );
 
@@ -120,7 +114,9 @@ public class Paragraph extends Range implements Cloneable {
             {
                 properties = ParagraphSprmUncompressor.uncompressPAP(
                         properties, listLevel.getGrpprlPapx(), 0 );
-                // reapply PAPX properties
+                // reapply style and local PAPX properties
+                properties = newParagraph_applyStyleProperties( styleSheet,
+                        papx, properties );
                 properties = ParagraphSprmUncompressor.uncompressPAP(
                         properties, papx.getGrpprl(), 2 );
             }
@@ -130,6 +126,17 @@ public class Paragraph extends Range implements Cloneable {
             return new ListEntry( papx, properties, parent );
 
         return new Paragraph( papx, properties, parent );
+    }
+
+    protected static ParagraphProperties newParagraph_applyStyleProperties(
+            StyleSheet styleSheet, PAPX papx, ParagraphProperties properties )
+    {
+        if ( styleSheet == null )
+            return properties;
+
+        int style = papx.getIstd();
+        byte[] grpprl = styleSheet.getPAPX( style );
+        return ParagraphSprmUncompressor.uncompressPAP( properties, grpprl, 2 );
     }
 
   protected short _istd;
