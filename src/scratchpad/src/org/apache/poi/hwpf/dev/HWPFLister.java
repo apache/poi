@@ -31,6 +31,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hwpf.model.StyleDescription;
+
 import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -113,7 +115,8 @@ public final class HWPFLister
                     + "\t\t[--paragraphs] [--paragraphsText]\n"
                     + "\t\t[--bookmarks]\n" + "\t\t[--escher]\n"
                     + "\t\t[--fields]\n" + "\t\t[--pictures]\n"
-                    + "\t\t[--officeDrawings]\n" + "\t\t[--writereadback]\n" );
+                    + "\t\t[--officeDrawings]\n" + "\t\t[--styles]\n"
+                    + "\t\t[--writereadback]\n" );
             System.exit( 1 );
         }
 
@@ -138,6 +141,7 @@ public final class HWPFLister
         boolean outputFields = false;
         boolean outputPictures = false;
         boolean outputOfficeDrawings = false;
+        boolean outputStyles = false;
 
         boolean writereadback = false;
 
@@ -176,10 +180,12 @@ public final class HWPFLister
                 outputEscher = true;
             if ( "--fields".equals( arg ) )
                 outputFields = true;
-            if ( "--officeDrawings".equals( arg ) )
-                outputOfficeDrawings = true;
             if ( "--pictures".equals( arg ) )
                 outputPictures = true;
+            if ( "--officeDrawings".equals( arg ) )
+                outputOfficeDrawings = true;
+            if ( "--styles".equals( arg ) )
+                outputStyles = true;
 
             if ( "--writereadback".equals( arg ) )
                 writereadback = true;
@@ -206,7 +212,7 @@ public final class HWPFLister
 
         System.out.println( "== OLE streams ==" );
         listerOriginal.dumpFileSystem();
-        
+
         System.out.println( "== FIB (original) ==" );
         listerOriginal.dumpFIB();
 
@@ -277,6 +283,12 @@ public final class HWPFLister
         {
             System.out.println( "== PICTURES (rebuilded) ==" );
             listerRebuilded.dumpPictures();
+        }
+
+        if ( outputStyles )
+        {
+            System.out.println( "== STYLES (rebuilded) ==" );
+            listerRebuilded.dumpStyles();
         }
     }
 
@@ -412,6 +424,33 @@ public final class HWPFLister
         System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
     }
 
+    public void dumpFIB()
+    {
+        FileInformationBlock fib = _doc.getFileInformationBlock();
+        System.out.println( fib );
+
+    }
+
+    private void dumpFields()
+    {
+        if ( !( _doc instanceof HWPFDocument ) )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+
+        HWPFDocument document = (HWPFDocument) _doc;
+
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
+        {
+            System.out.println( "=== Document part: " + part + " ===" );
+            for ( Field field : document.getFields().getFields( part ) )
+            {
+                System.out.println( field );
+            }
+        }
+    }
+
     public void dumpFileSystem() throws Exception
     {
         java.lang.reflect.Field field = POIDocument.class
@@ -445,33 +484,6 @@ public final class HWPFLister
             return dumpFileSystem( (DirectoryEntry) entry );
 
         return entry.getName();
-    }
-
-    public void dumpFIB()
-    {
-        FileInformationBlock fib = _doc.getFileInformationBlock();
-        System.out.println( fib );
-
-    }
-
-    private void dumpFields()
-    {
-        if ( !( _doc instanceof HWPFDocument ) )
-        {
-            System.out.println( "Word 95 not supported so far" );
-            return;
-        }
-
-        HWPFDocument document = (HWPFDocument) _doc;
-
-        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
-        {
-            System.out.println( "=== Document part: " + part + " ===" );
-            for ( Field field : document.getFields().getFields( part ) )
-            {
-                System.out.println( field );
-            }
-        }
     }
 
     private void dumpOfficeDrawings()
@@ -659,6 +671,29 @@ public final class HWPFLister
         for ( Picture picture : allPictures )
         {
             System.out.println( picture.toString() );
+        }
+    }
+
+    private void dumpStyles()
+    {
+        if ( _doc instanceof HWPFOldDocument )
+        {
+            System.out.println( "Word 95 not supported so far" );
+            return;
+        }
+        HWPFDocument hwpfDocument = (HWPFDocument) _doc;
+        for ( int s = 0; s < hwpfDocument.getStyleSheet().numStyles(); s++ )
+        {
+            StyleDescription styleDescription = hwpfDocument.getStyleSheet()
+                    .getStyleDescription( s );
+            if ( styleDescription == null )
+                continue;
+
+            System.out.println( "=== Style: '" + styleDescription.getName()
+                    + "' ===" );
+            System.out.println( styleDescription );
+            System.out.println( "PAP:" + styleDescription.getPAP() );
+            System.out.println( "CHP:" + styleDescription.getCHP() );
         }
     }
 

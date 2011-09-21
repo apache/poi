@@ -251,4 +251,11 @@ public final class StyleDescription implements HDFType
             return false;
         return true;
     }
+
+    @Override
+    public String toString()
+    {
+        return "[STD]: '" + _name + "'"
+                + ( "\n" + _stdfBase ).replaceAll( "\n", "\n    " );
+    }
 }

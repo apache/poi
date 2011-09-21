@@ -66,7 +66,6 @@ public class RecordUtil
                     + ");";
 
         return retVal;
-
     }
 
     public static String getBitFieldSet( String name, String bitMask,
@@ -77,11 +76,29 @@ public class RecordUtil
         String retVal = null;
 
         if ( type.equals( "boolean" ) )
-            retVal = "(" + parentType + ")" + getFieldName( name, 0 )
-                    + ".setBoolean(" + parentField + ", value)";
+            if ( parentType.equals( "int" ) )
+            {
+                retVal = getFieldName( name, 0 ) + ".setBoolean(" + parentField
+                        + ", value)";
+            }
+            else
+            {
+                retVal = "(" + parentType + ")" + getFieldName( name, 0 )
+                        + ".setBoolean(" + parentField + ", value)";
+            }
         else
-            retVal = "(" + parentType + ")" + getFieldName( name, 0 )
-                    + ".setValue(" + parentField + ", value)";
+        {
+            if ( parentType.equals( "int" ) )
+            {
+                retVal = getFieldName( name, 0 ) + ".setValue(" + parentField
+                        + ", value)";
+            }
+            else
+            {
+                retVal = "(" + parentType + ")" + getFieldName( name, 0 )
+                        + ".setValue(" + parentField + ", value)";
+            }
+        }
         return retVal;
     }
 
