@@ -20,10 +20,14 @@ package org.apache.poi.hwpf.model;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.sprm.SprmIterator;
+
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Comment me
@@ -34,6 +38,8 @@ import org.apache.poi.util.LittleEndian;
 public final class StyleDescription implements HDFType
 {
 
+    private static final POILogger logger = POILogFactory.getLogger( StyleDescription.class );
+    
   private final static int PARAGRAPH_STYLE = 1;
   private final static int CHARACTER_STYLE = 2;
   private final static int TABLE_STYLE = 3;
@@ -41,6 +47,7 @@ public final class StyleDescription implements HDFType
 
   private int _baseLength;
   private StdfBase _stdfBase;
+  private StdfPost2000 _stdfPost2000;
 
   UPX[] _upxs;
   String _name;
@@ -56,9 +63,31 @@ public final class StyleDescription implements HDFType
   {
      _baseLength = baseLength;
      int nameStart = offset + baseLength;
-     
+
+        boolean readStdfPost2000 = false;
+        if ( baseLength == 0x0012 )
+        {
+            readStdfPost2000 = true;
+        }
+        else if ( baseLength == 0x000A )
+        {
+            readStdfPost2000 = false;
+        }
+        else
+        {
+            logger.log( POILogger.WARN,
+                    "Style definition has non-standard size of ",
+                    Integer.valueOf( baseLength ) );
+        }
+
      _stdfBase = new StdfBase(std, offset);
       offset += StdfBase.getSize();
+
+        if ( readStdfPost2000 )
+        {
+            _stdfPost2000 = new StdfPost2000( std, offset );
+            offset += StdfPost2000.getSize();
+        }
 
       //first byte(s) of variable length section of std is the length of the
       //style name and aliases string
@@ -255,7 +284,18 @@ public final class StyleDescription implements HDFType
     @Override
     public String toString()
     {
-        return "[STD]: '" + _name + "'"
-                + ( "\n" + _stdfBase ).replaceAll( "\n", "\n    " );
+        StringBuilder result = new StringBuilder();
+        result.append( "[STD]: '" );
+        result.append( _name );
+        result.append( "'" );
+        result.append( ( "\nStdfBase:\t" + _stdfBase ).replaceAll( "\n",
+                "\n    " ) );
+        result.append( ( "\nStdfPost2000:\t" + _stdfPost2000 ).replaceAll(
+                "\n", "\n    " ) );
+        for ( UPX upx : _upxs )
+        {
+            result.append( ( "\nUPX:\t" + upx ).replaceAll( "\n", "\n    " ) );
+        }
+        return result.toString();
     }
 }
