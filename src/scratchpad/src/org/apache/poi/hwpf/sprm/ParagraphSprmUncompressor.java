@@ -229,30 +229,25 @@ public final class ParagraphSprmUncompressor
         break;
 
         // BrcXXX1 is older Version. Brc is used
-      case 0x1c:
+        // case 0x1c:
+        // newPAP.setBrcTop1((short)param);
+        // break;
+        // case 0x1d:
+        // newPAP.setBrcLeft1((short)param);
+        // break;
+        // case 0x1e:
+        // newPAP.setBrcBottom1((short)param);
+        // break;
+        // case 0x1f:
+        // newPAP.setBrcRight1((short)param);
+        // break;
+        // case 0x20:
+        // newPAP.setBrcBetween1((short)param);
+        // break;
+        // case 0x21:
+        // newPAP.setBrcBar1((byte)param);
+        // break;
 
-        //newPAP.setBrcTop1((short)param);
-        break;
-      case 0x1d:
-
-        //newPAP.setBrcLeft1((short)param);
-        break;
-      case 0x1e:
-
-        //newPAP.setBrcBottom1((short)param);
-        break;
-      case 0x1f:
-
-        //newPAP.setBrcRight1((short)param);
-        break;
-      case 0x20:
-
-        //newPAP.setBrcBetween1((short)param);
-        break;
-      case 0x21:
-
-        //newPAP.setBrcBar1((byte)param);
-        break;
       case 0x22:
         newPAP.setDxaFromText (sprm.getOperand());
         break;
@@ -302,10 +297,6 @@ public final class ParagraphSprmUncompressor
       case 0x31:
         newPAP.setFWidowControl (sprm.getOperand() != 0);
         break;
-      case 0x32:
-
-        //undocumented
-        break;
       case 0x33:
         newPAP.setFKinsoku (sprm.getOperand() != 0);
         break;
@@ -331,7 +322,6 @@ public final class ParagraphSprmUncompressor
         newPAP.setFontAlign ((short) sprm.getOperand());
         break;
       case 0x3b:
-
         //obsolete
         break;
       case 0x3e:
@@ -345,18 +335,11 @@ public final class ParagraphSprmUncompressor
       case 0x3f:
         //don't really need this. spec is confusing regarding this
         //sprm
-        try
-        {
           byte[] varParam = sprm.getGrpprl();
           int offset = sprm.getGrpprlOffset();
           newPAP.setFPropRMark (varParam[offset]  != 0 );
           newPAP.setIbstPropRMark (LittleEndian.getShort (varParam, offset + 1));
           newPAP.setDttmPropRMark (new DateAndTime(varParam, offset + 3));
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace ();
-        }
         break;
       case 0x40:
         // This condition commented out, as Word seems to set outline levels even for 
