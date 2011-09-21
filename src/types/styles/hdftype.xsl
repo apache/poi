@@ -230,7 +230,7 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
 
     <xsl:template match="bit">
         <xsl:call-template name="indent"/>
-        <xsl:text>/**/private static BitField </xsl:text>
+        <xsl:text>/**/private static final BitField </xsl:text>
         <xsl:value-of select="@name"/>
         <xsl:text> = new BitField(</xsl:text>
         <xsl:value-of select="@mask"/>
