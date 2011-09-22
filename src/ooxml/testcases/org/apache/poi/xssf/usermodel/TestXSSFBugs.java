@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -31,7 +30,11 @@ import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -1168,5 +1171,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, rels1.size());
 
         assertEquals(rels0.get(0).getPackageRelationship(), rels1.get(0).getPackageRelationship());
+    }
+    
+    /**
+     * Add comments to Sheet 1, when Sheet 2 already has
+     *  comments (so /xl/comments1.xml is taken)
+     */
+    public void DISABLEDtest51850() {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51850.xlsx");
+       XSSFSheet sh1 = wb.getSheetAt(0);
+       XSSFSheet sh2 = wb.getSheetAt(1);
+ 
+       // Sheet 2 has comments
+       assertNotNull(sh2.getCommentsTable(false));
+       
+       // Sheet 1 doesn't (yet)
+       assertNull(sh1.getCommentsTable(false));
+       
+       // Try to add comments to Sheet 1
+       CreationHelper factory = wb.getCreationHelper();
+       Drawing drawing = sh1.createDrawingPatriarch();
+
+       ClientAnchor anchor = factory.createClientAnchor();
+       anchor.setCol1(0);
+       anchor.setCol2(4);
+       anchor.setRow1(0);
+       anchor.setRow2(1);
+
+       Comment excelComment = drawing.createCellComment(anchor);
+       excelComment.setString(
+             factory.createRichTextString("I like this cell. It's my favourite."));
+       excelComment.setAuthor("Bob T. Fish");
+
+       Cell c = sh1.getRow(0).getCell(4);
+       c.setCellComment(excelComment);
     }
 }

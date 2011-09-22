@@ -40,6 +40,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -716,7 +717,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		// Check if the specified part name already exists
 		if (partList.containsKey(partName)
 				&& !partList.get(partName).isDeleted()) {
-			throw new InvalidOperationException(
+			throw new PartAlreadyExistsException(
 					"A part with the name '"
 							+ partName.getName()
 							+ "' already exists : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");

@@ -17,20 +17,20 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Test Open Packaging Convention package model compliance.
@@ -102,7 +102,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
 		pkg.createPart(name1, ContentTypes.XML);
 		try {
 			pkg.createPart(name2, ContentTypes.XML);
-		} catch (InvalidOperationException e) {
+		} catch (PartAlreadyExistsException e) {
 			return;
 		}
 		fail("Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
