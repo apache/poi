@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -360,8 +361,13 @@ public class POIXMLDocumentPart {
                 addRelation(rel.getId(),doc);
             }
             return doc;
+        } catch (PartAlreadyExistsException pae) {
+           // Return the specific exception so the user knows
+           //  that the name is already taken
+           throw pae;
         } catch (Exception e){
-            throw new POIXMLException(e);
+           // Give a general wrapped exception for the problem
+           throw new POIXMLException(e);
         }
     }
 
