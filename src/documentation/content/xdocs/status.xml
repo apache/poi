@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51850 - support creating comments in XSSF on an earlier slide when later ones already have them</action>
            <action dev="poi-developers" type="add">51804 - optionally include Master Slide text in XSLF text extraction, as HSLF already offers</action>
            <action dev="poi-developers" type="add">New PackagePart method getRelatedPart(PackageRelationship) to simplify navigation of relations between OPC Parts</action>
            <action dev="poi-developers" type="fix">51832 - handle XLS files where the WRITEPROTECT record preceeds the FILEPASS one, rather than following as normal</action>

@@ -35,6 +35,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
@@ -2613,7 +2614,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected CommentsTable getCommentsTable(boolean create) {
         if(sheetComments == null && create){
-            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
+           // Try to create a comments table with the same number as
+           //  the sheet has (i.e. sheet 1 -> comments 1)
+           try {
+              sheetComments = (CommentsTable)createRelationship(
+                    XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
+           } catch(PartAlreadyExistsException e) {
+              // Technically a sheet doesn't need the same number as
+              //  it's comments, and clearly someone has already pinched
+              //  our number! Go for the next available one instead
+              sheetComments = (CommentsTable)createRelationship(
+                    XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), -1);
+           }
         }
         return sheetComments;
     }

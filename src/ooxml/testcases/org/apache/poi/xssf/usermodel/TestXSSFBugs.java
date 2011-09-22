@@ -1177,13 +1177,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Add comments to Sheet 1, when Sheet 2 already has
      *  comments (so /xl/comments1.xml is taken)
      */
-    public void DISABLEDtest51850() {
+    public void test51850() {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51850.xlsx");
        XSSFSheet sh1 = wb.getSheetAt(0);
        XSSFSheet sh2 = wb.getSheetAt(1);
  
        // Sheet 2 has comments
        assertNotNull(sh2.getCommentsTable(false));
+       assertEquals(1, sh2.getCommentsTable(false).getNumberOfComments());
        
        // Sheet 1 doesn't (yet)
        assertNull(sh1.getCommentsTable(false));
@@ -1198,12 +1199,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        anchor.setRow1(0);
        anchor.setRow2(1);
 
-       Comment excelComment = drawing.createCellComment(anchor);
-       excelComment.setString(
+       Comment comment1 = drawing.createCellComment(anchor);
+       comment1.setString(
              factory.createRichTextString("I like this cell. It's my favourite."));
-       excelComment.setAuthor("Bob T. Fish");
+       comment1.setAuthor("Bob T. Fish");
+       
+       Comment comment2 = drawing.createCellComment(anchor);
+       comment2.setString(
+             factory.createRichTextString("This is much less fun..."));
+       comment2.setAuthor("Bob T. Fish");
 
-       Cell c = sh1.getRow(0).getCell(4);
-       c.setCellComment(excelComment);
+       Cell c1 = sh1.getRow(0).createCell(4);
+       c1.setCellValue(2.3);
+       c1.setCellComment(comment1);
+       
+       Cell c2 = sh1.getRow(0).createCell(5);
+       c2.setCellValue(2.1);
+       c2.setCellComment(comment2);
+       
+       
+       // Save and re-load
+       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+       sh1 = wb.getSheetAt(0);
+       sh2 = wb.getSheetAt(1);
+       
+       // Check the comments
+       assertNotNull(sh2.getCommentsTable(false));
+       assertEquals(1, sh2.getCommentsTable(false).getNumberOfComments());
+       
+       assertNotNull(sh1.getCommentsTable(false));
+       assertEquals(2, sh1.getCommentsTable(false).getNumberOfComments());
     }
 }
