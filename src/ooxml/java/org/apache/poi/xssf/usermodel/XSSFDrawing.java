@@ -37,15 +37,14 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 /**

@@ -17,12 +17,15 @@
 
 package org.apache.poi.openxml4j.exceptions;
 
+import org.apache.poi.openxml4j.opc.PackagePart;
+
 /**
- * Throw when an invalid operation is done.
+ * Throw when trying to create a {@link PackagePart} but one
+ *  already exists with that name.
  */
 @SuppressWarnings("serial")
-public class InvalidOperationException extends OpenXML4JRuntimeException{
-	public InvalidOperationException(String message){
+public final class PartAlreadyExistsException extends InvalidOperationException {
+	public PartAlreadyExistsException(String message){
 		super(message);
 	}
 }
