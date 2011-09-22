@@ -183,7 +183,8 @@ public abstract class AbstractWordConverter
         return colSpan;
     }
 
-    protected int getNumberRowsSpanned( Table table, int currentRowIndex,
+    protected int getNumberRowsSpanned( Table table,
+            final int[] tableCellEdges, int currentRowIndex,
             int currentColumnIndex, TableCell tableCell )
     {
         if ( !tableCell.isFirstVerticallyMerged() )
@@ -197,6 +198,35 @@ public abstract class AbstractWordConverter
             TableRow nextRow = table.getRow( r1 );
             if ( currentColumnIndex >= nextRow.numCells() )
                 break;
+
+            // we need to skip row if he don't have cells at all
+            boolean hasCells = false;
+            int currentEdgeIndex = 0;
+            for ( int c = 0; c < nextRow.numCells(); c++ )
+            {
+                TableCell nextTableCell = nextRow.getCell( c );
+                if ( !nextTableCell.isVerticallyMerged()
+                        || nextTableCell.isFirstVerticallyMerged() )
+                {
+                    int colSpan = getNumberColumnsSpanned( tableCellEdges,
+                            currentEdgeIndex, nextTableCell );
+                    currentEdgeIndex += colSpan;
+
+                    if ( colSpan != 0 )
+                    {
+                        hasCells = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    currentEdgeIndex += getNumberColumnsSpanned(
+                            tableCellEdges, currentEdgeIndex, nextTableCell );
+                }
+            }
+            if ( !hasCells )
+                continue;
+
             TableCell nextCell = nextRow.getCell( currentColumnIndex );
             if ( !nextCell.isVerticallyMerged()
                     || nextCell.isFirstVerticallyMerged() )
@@ -209,35 +239,6 @@ public abstract class AbstractWordConverter
     public PicturesManager getPicturesManager()
     {
         return picturesManager;
-    }
-
-    protected int getTableCellEdgesIndexSkipCount( Table table, int r,
-            int[] tableCellEdges, int currentEdgeIndex, int c,
-            TableCell tableCell )
-    {
-        TableCell upperCell = null;
-        for ( int r1 = r - 1; r1 >= 0; r1-- )
-        {
-            final TableRow row = table.getRow( r1 );
-            if ( row == null || c >= row.numCells() )
-                continue;
-
-            final TableCell prevCell = row.getCell( c );
-            if ( prevCell != null && prevCell.isFirstVerticallyMerged() )
-            {
-                upperCell = prevCell;
-                break;
-            }
-        }
-        if ( upperCell == null )
-        {
-            logger.log( POILogger.WARN, "First vertically merged cell for ",
-                    tableCell, " not found" );
-            return 0;
-        }
-
-        return getNumberColumnsSpanned( tableCellEdges, currentEdgeIndex,
-                tableCell );
     }
 
     protected abstract void outputCharacters( Element block,

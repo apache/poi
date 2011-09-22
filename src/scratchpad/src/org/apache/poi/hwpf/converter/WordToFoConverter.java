@@ -557,8 +557,8 @@ public class WordToFoConverter extends AbstractWordConverter
                 if ( tableCell.isVerticallyMerged()
                         && !tableCell.isFirstVerticallyMerged() )
                 {
-                    currentEdgeIndex += getTableCellEdgesIndexSkipCount( table,
-                            r, tableCellEdges, currentEdgeIndex, c, tableCell );
+                    currentEdgeIndex += getNumberColumnsSpanned(
+                            tableCellEdges, currentEdgeIndex, tableCell );
                     continue;
                 }
 
@@ -578,8 +578,8 @@ public class WordToFoConverter extends AbstractWordConverter
                     tableCellElement.setAttribute( "number-columns-spanned",
                             String.valueOf( colSpan ) );
 
-                final int rowSpan = getNumberRowsSpanned( table, r, c,
-                        tableCell );
+                final int rowSpan = getNumberRowsSpanned( table,
+                        tableCellEdges, r, c, tableCell );
                 if ( rowSpan > 1 )
                     tableCellElement.setAttribute( "number-rows-spanned",
                             String.valueOf( rowSpan ) );
