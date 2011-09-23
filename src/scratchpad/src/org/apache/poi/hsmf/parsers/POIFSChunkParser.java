@@ -121,13 +121,23 @@ public final class POIFSChunkParser {
       
       // Split it into its parts
       int splitAt = entryName.lastIndexOf('_');
-      if(splitAt == -1 || splitAt > (entryName.length()-8)) {
+      String namePrefix = entryName.substring(0, splitAt+1);
+      String ids = entryName.substring(splitAt+1);
+      
+      // Make sure we got what we expected, should be of 
+      //  the form __<name>_<id><type>
+      if(namePrefix.equals("Olk10SideProps")) {
+         // This is some odd Outlook 2002 thing, skip
+         return;
+      } else if(splitAt <= entryName.length()-8) {
+         // In the right form for a normal chunk
+         // We'll process this further in a little bit
+      } else {
+         // Underscores not the right place, something's wrong
          throw new IllegalArgumentException("Invalid chunk name " + entryName);
       }
       
       // Now try to turn it into id + type
-      String namePrefix = entryName.substring(0, splitAt+1);
-      String ids = entryName.substring(splitAt+1);
       try {
          int chunkId = Integer.parseInt(ids.substring(0, 4), 16);
          int type    = Integer.parseInt(ids.substring(4, 8), 16);
