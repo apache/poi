@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51873 - update HSMF to ignore Outlook 2002 Olk10SideProp entries, which don't behave like normal chunks</action>
            <action dev="poi-developers" type="fix">51850 - support creating comments in XSSF on an earlier slide when later ones already have them</action>
            <action dev="poi-developers" type="add">51804 - optionally include Master Slide text in XSLF text extraction, as HSLF already offers</action>
            <action dev="poi-developers" type="add">New PackagePart method getRelatedPart(PackageRelationship) to simplify navigation of relations between OPC Parts</action>
