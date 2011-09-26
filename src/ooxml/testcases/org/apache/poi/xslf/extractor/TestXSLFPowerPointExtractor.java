@@ -58,8 +58,12 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 		assertTrue(text.startsWith("Lorem ipsum dolor sit amet\n"));
 		assertTrue(text.contains("amet\n\n"));
 
-		// Our master text, for tests
+		// Our placeholder master text
+		// This shouldn't show up in the output
 		String masterText =
+         "Click to edit Master title style\n" +
+         "Click to edit Master subtitle style\n" +
+         "\n\n\n\n\n\n" +
          "Click to edit Master title style\n" +
          "Click to edit Master text styles\n" +
          "Second level\n" +
@@ -111,17 +115,13 @@ public class TestXSLFPowerPointExtractor extends TestCase {
             "Lorem ipsum dolor sit amet\n" +
             "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
             "\n" +
-            masterText +
-            "\n\n\n" +
             "Lorem ipsum dolor sit amet\n" +
             "Lorem\n" +
             "ipsum\n" +
             "dolor\n" +
             "sit\n" +
             "amet\n" +
-            "\n" +
-            masterText +
-            "\n\n\n"
+            "\n"
             , text
       );
 		
@@ -131,17 +131,14 @@ public class TestXSLFPowerPointExtractor extends TestCase {
             "Lorem ipsum dolor sit amet\n" +
             "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
             "\n" +
-            masterText +
-            "\n\n\n\n\n" +
+            "\n\n" +
             "Lorem ipsum dolor sit amet\n" +
             "Lorem\n" +
             "ipsum\n" +
             "dolor\n" +
             "sit\n" +
             "amet\n" +
-            "\n" +
-            masterText +
-            "\n\n\n\n\n"
+            "\n\n\n"
             , text
       );
 		
@@ -176,6 +173,9 @@ public class TestXSLFPowerPointExtractor extends TestCase {
          new XSLFSlideShow(OPCPackage.open(slTests.openResourceAsStream("WithMaster.pptx")));
       XSLFPowerPointExtractor extractor = 
          new XSLFPowerPointExtractor(xml);
+      extractor.setSlidesByDefault(true);
+      extractor.setNotesByDefault(false);
+      extractor.setMasterByDefault(true);
       
       String text = extractor.getText();
       assertTrue(text.length() > 0);
@@ -183,17 +183,28 @@ public class TestXSLFPowerPointExtractor extends TestCase {
       // Check master text is there
       assertTrue("Unable to find expected word in text\n" + text, 
             text.contains("Footer from the master slide"));
+
+      // Theme text shouldn't show up
+      String themeText = 
+         "Theme Master Title\n" +
+         "Theme Master first level\n" +
+         "And the 2nd level\n" +
+         "Our 3rd level goes here\n" +
+         "And onto the 4th, such fun….\n" +
+         "Finally is the Fifth level\n";
       
       // Check the whole text
       assertEquals(
             "First page title\n" +
             "First page subtitle\n" +
-//            "This text comes from the Master Slide\n" + // TODO
-//            "This is the Master Title\n" + // TODO
-            "\n" + // TODO Should be the above
+            "This is the Master Title\n" +
+            "This text comes from the Master Slide\n" +
+            "\n" +
+            // TODO Detect we didn't have a title, and include the master one
             "2nd page subtitle\n" +
-//          "This text comes from the Master Slide\n" + // TODO
-            "Footer from the master slide\n"
+            "Footer from the master slide\n" +
+            "This is the Master Title\n" +
+            "This text comes from the Master Slide\n"
             , text
       );
 	}
