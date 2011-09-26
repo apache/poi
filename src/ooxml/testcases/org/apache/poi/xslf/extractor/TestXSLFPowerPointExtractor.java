@@ -181,7 +181,21 @@ public class TestXSLFPowerPointExtractor extends TestCase {
       assertTrue(text.length() > 0);
 
       // Check master text is there
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("Master footer is here"));
+      assertTrue("Unable to find expected word in text\n" + text, 
+            text.contains("Footer from the master slide"));
+      
+      // Check the whole text
+      assertEquals(
+            "First page title\n" +
+            "First page subtitle\n" +
+//            "This text comes from the Master Slide\n" + // TODO
+//            "This is the Master Title\n" + // TODO
+            "\n" + // TODO Should be the above
+            "2nd page subtitle\n" +
+//          "This text comes from the Master Slide\n" + // TODO
+            "Footer from the master slide\n"
+            , text
+      );
 	}
 
     public void testTable() throws Exception {

@@ -274,14 +274,17 @@ public final class TestExtractor extends TestCase {
     }
     
    public void testSlideMasterText() throws Exception {
-      String masterText = "Master footer is here";
+      String masterTitleText = "This is the Master Title";
+      String masterRandomText = "This text comes from the Master Slide";
+      String masterFooterText = "Footer from the master slide";
       HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("WithMaster.ppt"));
       
       ppe = new PowerPointExtractor(hslf);
       
       String text = ppe.getText();
-      assertContains(text, "Master");
-      assertContains(text, masterText);
+      //assertContains(text, masterTitleText); // TODO Is this available in PPT?
+      //assertContains(text, masterRandomText); // TODO Extract
+      assertContains(text, masterFooterText);
    }
 
     public void testMasterText() throws Exception {
@@ -299,13 +302,13 @@ public final class TestExtractor extends TestCase {
        
        // Now with another file only containing master text
        // Will always show up
-       String masterText = "Master footer is here";
+       String masterText = "Footer from the master slide";
        HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("WithMaster.ppt"));
        
        ppe = new PowerPointExtractor(hslf);
        
        text = ppe.getText();
-       assertContains(text, "Master");
+       assertContains(text.toLowerCase(), "master");
        assertContains(text, masterText);
     }
 
