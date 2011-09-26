@@ -23,6 +23,8 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
+import org.apache.poi.xslf.usermodel.DrawingTextBody;
+import org.apache.poi.xslf.usermodel.DrawingTextPlaceholder;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFCommentAuthors;
 import org.apache.poi.xslf.usermodel.XSLFComments;
@@ -30,6 +32,7 @@ import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
@@ -124,6 +127,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
          try {
             XSLFNotes notes = slide.getNotes();
             XSLFComments comments = slide.getComments();
+            XSLFSlideLayout layout = slide.getSlideLayout();
             XSLFSlideMaster master = slide.getMasterSheet();
 
             // TODO Do the slide's name
@@ -131,11 +135,16 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 
             // Do the slide's text if requested
             if (slideText) {
-               extractText(slide.getCommonSlideData(), text);
+               extractText(slide.getCommonSlideData(), false, text);
                
-               // If there's a master sheet and it's requested, grab text from there
-               if(masterText && master != null) {
-                  extractText(master.getCommonSlideData(), text);
+               // If requested, get text from the master and it's layout 
+               if(masterText) {
+                  if(layout != null) {
+                     extractText(layout.getCommonSlideData(), true, text);
+                  }
+                  if(master != null) {
+                     extractText(master.getCommonSlideData(), true, text);
+                  }
                }
 
                // If the slide has comments, do those too
@@ -158,7 +167,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 
             // Do the notes if requested
             if (notesText && notes != null) {
-               extractText(notes.getCommonSlideData(), text);
+               extractText(notes.getCommonSlideData(), false, text);
             }
          } catch (Exception e) {
             throw new RuntimeException(e);
@@ -168,10 +177,20 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
       return text.toString();
    }
 	
-	private void extractText(XSLFCommonSlideData data, StringBuffer text) {
-        for (DrawingParagraph p : data.getText()) {
+	private void extractText(XSLFCommonSlideData data, boolean skipPlaceholders, StringBuffer text) {
+	   for(DrawingTextBody textBody : data.getDrawingText()) {
+	      if(skipPlaceholders && textBody instanceof DrawingTextPlaceholder) {
+	         DrawingTextPlaceholder ph = (DrawingTextPlaceholder)textBody;
+	         if(! ph.isPlaceholderCustom()) {
+	            // Skip non-customised placeholder text
+	            continue;
+	         }
+	      }
+	      
+	      for (DrawingParagraph p : textBody.getParagraphs()) {
             text.append(p.getText());
             text.append("\n");
-        }
-    }
+	      }
+	   }
+	}
 }

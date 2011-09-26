@@ -17,26 +17,41 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.util.List;
-
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-public class DrawingTextBody {
-    private final CTTextBody textBody;
+/**
+ * A {@link DrawingTextBody} which is a placeholder
+ * @author nick
+ *
+ */
+public class DrawingTextPlaceholder extends DrawingTextBody {
+    private final CTPlaceholder placeholder;
 
-    public DrawingTextBody(CTTextBody textBody) {
-       this.textBody = textBody;
+    public DrawingTextPlaceholder(CTTextBody textBody, CTPlaceholder placeholder) {
+       super(textBody);
+       this.placeholder = placeholder;
+    }
+    
+    /**
+     * What kind of placeholder is this?
+     */
+    public String getPlaceholderType() {
+       return placeholder.getType().toString();
     }
 
-    public DrawingParagraph[] getParagraphs() {
-        List<CTTextParagraph> paragraphs = textBody.getPList();
-        DrawingParagraph[] o = new DrawingParagraph[paragraphs.size()];
+    /**
+     * What kind of placeholder is this?
+     */
+    public STPlaceholderType.Enum getPlaceholderTypeEnum() {
+       return placeholder.getType();
+    }
 
-        for (int i=0; i<o.length; i++) {
-            o[i] = new DrawingParagraph(paragraphs.get(i));
-        }
-
-        return o;
+    /**
+     * Is the PlaceHolder text customised?
+     */
+    public boolean isPlaceholderCustom() {
+       return placeholder.getHasCustomPrompt();
     }
 }
