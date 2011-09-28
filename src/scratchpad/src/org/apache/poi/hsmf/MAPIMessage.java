@@ -363,7 +363,8 @@ public class MAPIMessage extends POIDocument {
          String[] headers = getHeaders();
          if(headers != null && headers.length > 0) {
             // Look for a content type with a charset
-            Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?(.*?)[\"']?");
+            Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
+
             for(String header : headers) {
                if(header.startsWith("Content-Type")) {
                   Matcher m = p.matcher(header);
