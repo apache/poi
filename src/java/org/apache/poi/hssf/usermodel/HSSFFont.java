@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
@@ -190,6 +191,15 @@ public final class HSSFFont implements Font {
     public short getColor()
     {
         return font.getColorPaletteIndex();
+    }
+    
+    /**
+     * get the color value for the font
+     */
+    public HSSFColor getHSSFColor(HSSFWorkbook wb)
+    {
+       HSSFPalette pallette = wb.getCustomPalette();
+       return pallette.getColor( getColor() );
     }
 
     /**
