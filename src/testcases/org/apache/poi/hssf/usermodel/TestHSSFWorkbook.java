@@ -540,7 +540,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampeFile("Simple.xls"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"))).getRoot();
        
        // Open without preserving nodes 
        for(DirectoryNode dir : files) {
@@ -563,7 +563,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampeFile("WithEmbeddedObjects.xls"))).getRoot();
+       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"))).getRoot();
        
        // Check the embedded parts
        for(DirectoryNode root : files) {

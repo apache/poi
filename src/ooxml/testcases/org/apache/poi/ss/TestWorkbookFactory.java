@@ -77,7 +77,21 @@ public final class TestWorkbookFactory extends TestCase {
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
+		
+		// File -> either
+      wb = WorkbookFactory.create(
+            HSSFTestDataSamples.getSampleFile(xls)
+      );
+      assertNotNull(wb);
+      assertTrue(wb instanceof HSSFWorkbook);
 
+      wb = WorkbookFactory.create(
+            HSSFTestDataSamples.getSampleFile(xlsx)
+      );
+      assertNotNull(wb);
+      assertTrue(wb instanceof XSSFWorkbook);
+
+		// Invalid type -> exception
 		try {
 			wb = WorkbookFactory.create(
 					HSSFTestDataSamples.openSampleFileStream(txt)
