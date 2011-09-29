@@ -38,7 +38,7 @@ public final class HSSFTestDataSamples {
 	public static InputStream openSampleFileStream(String sampleFileName) {
 		return _inst.openResourceAsStream(sampleFileName);
 	}
-	public static File getSampeFile(String sampleFileName) {
+	public static File getSampleFile(String sampleFileName) {
 	   return _inst.getFile(sampleFileName);
 	}
 	public static byte[] getTestDataFileContent(String fileName) {
