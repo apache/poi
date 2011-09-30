@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
@@ -26,55 +25,32 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 
 /**
- * String table containing the history of the last few revisions ("saves") of the document.
- * Read-only for the time being.
- *
+ * String table containing the history of the last few revisions ("saves") of
+ * the document. Read-only for the time being.
+ * 
  * @author Daniel Noll
  */
 @Internal
 public final class SavedByTable
 {
+    /**
+     * Array of entries.
+     */
+    private SavedByEntry[] entries;
 
-  /**
-   * Array of entries.
-   */
-  private SavedByEntry[] entries;
-
-  /**
-   * Constructor to read the table from the table stream.
-   *
-   * @param tableStream the table stream.
-   * @param offset the offset into the byte array.
-   * @param size the size of the table in the byte array.
-   */
-  public SavedByTable(byte[] tableStream, int offset, int size)
-  {      
-//    // Read the value that I don't know what it does. :-)
-//    unknownValue = LittleEndian.getShort(tableStream, offset);
-//    offset += 2;
-//
-//    // The stored int is the number of strings, and there are two strings per entry.
-//    int numEntries = LittleEndian.getInt(tableStream, offset) / 2;
-//    offset += 4;
-//
-//    entries = new SavedByEntry[numEntries];
-//    for (int i = 0; i < numEntries; i++)
-//    {
-//      int len = LittleEndian.getShort(tableStream, offset);
-//      offset += 2;
-//      String userName = StringUtil.getFromUnicodeLE(tableStream, offset, len);
-//      offset += len * 2;
-//      len = LittleEndian.getShort(tableStream, offset);
-//      offset += 2;
-//      String saveLocation = StringUtil.getFromUnicodeLE(tableStream, offset, len);
-//      offset += len * 2;
-//
-//      entries[i] = new SavedByEntry(userName, saveLocation);
-//    }
-
-        // first value is mark for extended STTBF ;) -- sergey
-        String[] strings = SttbfUtils.read( tableStream, offset );
-
+    /**
+     * Constructor to read the table from the table stream.
+     * 
+     * @param tableStream
+     *            the table stream.
+     * @param offset
+     *            the offset into the byte array.
+     * @param size
+     *            the size of the table in the byte array.
+     */
+    public SavedByTable( byte[] tableStream, int offset, int size )
+    {
+        String[] strings = SttbUtils.readSttbSavedBy( tableStream, offset );
         int numEntries = strings.length / 2;
         entries = new SavedByEntry[numEntries];
         for ( int i = 0; i < numEntries; i++ )
@@ -83,15 +59,15 @@ public final class SavedByTable
         }
     }
 
-  /**
-   * Gets the entries.  The returned list cannot be modified.
-   *
-   * @return the list of entries.
-   */
-  public List<SavedByEntry> getEntries()
-  {
-    return Collections.unmodifiableList(Arrays.asList(entries));
-  }
+    /**
+     * Gets the entries. The returned list cannot be modified.
+     * 
+     * @return the list of entries.
+     */
+    public List<SavedByEntry> getEntries()
+    {
+        return Collections.unmodifiableList( Arrays.asList( entries ) );
+    }
 
     /**
      * Writes this table to the table stream.
@@ -110,7 +86,7 @@ public final class SavedByTable
             toSave[counter++] = entry.getUserName();
             toSave[counter++] = entry.getSaveLocation();
         }
-        SttbfUtils.write( tableStream, toSave );
+        SttbUtils.writeSttbSavedBy( toSave, tableStream );
     }
 
 }

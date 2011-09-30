@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.util.POILogFactory;
-
-import org.apache.poi.util.POILogger;
-
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 @Internal
 public class BookmarksTables
@@ -120,8 +118,8 @@ public class BookmarksTables
         int namesLength = fib.getLcbSttbfbkmk();
 
         if ( namesStart != 0 && namesLength != 0 )
-            this.names = new ArrayList<String>( Arrays.asList( SttbfUtils.read(
-                    tableStream, namesStart ) ) );
+            this.names = new ArrayList<String>( Arrays.asList( SttbUtils
+                    .readSttbfBkmk( tableStream, namesStart ) ) );
 
         int firstDescriptorsStart = fib.getFcPlcfbkf();
         int firstDescriptorsLength = fib.getLcbPlcfbkf();
@@ -196,8 +194,8 @@ public class BookmarksTables
         }
 
         int start = tableStream.getOffset();
-        SttbfUtils
-                .write( tableStream, names.toArray( new String[names.size()] ) );
+        SttbUtils.writeSttbfBkmk( names.toArray( new String[names.size()] ),
+                tableStream );
         int end = tableStream.getOffset();
 
         fib.setFcSttbfbkmk( start );
