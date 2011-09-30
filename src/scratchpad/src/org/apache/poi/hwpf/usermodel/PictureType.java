@@ -21,7 +21,8 @@ package org.apache.poi.hwpf.usermodel;
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public enum PictureType {
+public enum PictureType
+{
     BMP( "image/bmp", "bmp", new byte[][] { { 'B', 'M' } } ),
 
     EMF( "image/x-emf", "emf", new byte[][] { { 0x01, 0x00, 0x00, 0x00 } } ),
@@ -29,6 +30,8 @@ public enum PictureType {
     GIF( "image/gif", "gif", new byte[][] { { 'G', 'I', 'F' } } ),
 
     JPEG( "image/jpeg", "jpg", new byte[][] { { (byte) 0xFF, (byte) 0xD8 } } ),
+
+    PICT( "image/pict", ".pict", new byte[0][] ),
 
     PNG( "image/png", "png", new byte[][] { { (byte) 0x89, 0x50, 0x4E, 0x47,
             0x0D, 0x0A, 0x1A, 0x0A } } ),

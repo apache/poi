@@ -23,8 +23,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.InflaterInputStream;
 
-import org.apache.poi.hwpf.model.PictureDescriptor;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.ddf.EscherSimpleProperty;
+
+import org.apache.poi.ddf.EscherProperty;
+
+import org.apache.poi.ddf.EscherOptRecord;
+
+import org.apache.poi.ddf.EscherContainerRecord;
+
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hwpf.model.PICF;
+import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -33,91 +44,229 @@ import org.apache.poi.util.POILogger;
  * 
  * @author Dmitry Romanov
  */
-public final class Picture extends PictureDescriptor
+public final class Picture
 {
-    private static final POILogger log = POILogFactory
-            .getLogger( Picture.class );
-
-    // public static final int FILENAME_OFFSET = 0x7C;
-    // public static final int FILENAME_SIZE_OFFSET = 0x6C;
-    static final int PICF_OFFSET = 0x0;
-    static final int PICT_HEADER_OFFSET = 0x4;
-    static final int MFPMM_OFFSET = 0x6;
-    static final int PICF_SHAPE_OFFSET = 0xE;
-    static final int UNKNOWN_HEADER_SIZE = 0x49;
-
     @Deprecated
-    public static final byte[] GIF = PictureType.GIF.getSignatures()[0];
-    @Deprecated
-    public static final byte[] PNG = PictureType.PNG.getSignatures()[0];
-    @Deprecated
-    public static final byte[] JPG = PictureType.JPEG.getSignatures()[0];
-    @Deprecated
-    public static final byte[] BMP = PictureType.BMP.getSignatures()[0];
-    @Deprecated
-    public static final byte[] TIFF = PictureType.TIFF.getSignatures()[0];
-    @Deprecated
-    public static final byte[] TIFF1 = PictureType.TIFF.getSignatures()[1];
-
-    @Deprecated
-    public static final byte[] EMF = PictureType.EMF.getSignatures()[0];
-    @Deprecated
-    public static final byte[] WMF1 = PictureType.WMF.getSignatures()[0];
-    // Windows 3.x
-    @Deprecated
-    public static final byte[] WMF2 = PictureType.WMF.getSignatures()[1];
-    // TODO: DIB, PICT
-
-    public static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
+    public static final byte[] BMP = new byte[] { 'B', 'M' };
 
     public static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
+
     public static final byte[] COMPRESSED2 = { (byte) 0xFE, 0x78, (byte) 0x9C };
 
-    private int dataBlockStartOfsset;
-    private int pictureBytesStartOffset;
-    private int dataBlockSize;
-    private int size;
-    // private String fileName;
-    private byte[] rawContent;
+    @Deprecated
+    public static final byte[] EMF = { 0x01, 0x00, 0x00, 0x00 };
+
+    @Deprecated
+    public static final byte[] GIF = new byte[] { 'G', 'I', 'F' };
+    public static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
+    @Deprecated
+    public static final byte[] JPG = new byte[] { (byte) 0xFF, (byte) 0xD8 };
+    private static final POILogger log = POILogFactory
+            .getLogger( Picture.class );
+    @Deprecated
+    public static final byte[] PNG = new byte[] { (byte) 0x89, 0x50, 0x4E,
+            0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+    @Deprecated
+    public static final byte[] TIFF = new byte[] { 0x49, 0x49, 0x2A, 0x00 };
+
+    @Deprecated
+    public static final byte[] TIFF1 = new byte[] { 0x4D, 0x4D, 0x00, 0x2A };
+    @Deprecated
+    public static final byte[] WMF1 = { (byte) 0xD7, (byte) 0xCD, (byte) 0xC6,
+            (byte) 0x9A, 0x00, 0x00 };
+    // Windows 3.x
+    @Deprecated
+    public static final byte[] WMF2 = { 0x01, 0x00, 0x09, 0x00, 0x00, 0x03 }; // Windows
+                                                                              // 3.x
+
+    private static int getBigEndianInt( byte[] data, int offset )
+    {
+        return ( ( ( data[offset] & 0xFF ) << 24 )
+                + ( ( data[offset + 1] & 0xFF ) << 16 )
+                + ( ( data[offset + 2] & 0xFF ) << 8 ) + ( data[offset + 3] & 0xFF ) );
+    }
+
+    private static int getBigEndianShort( byte[] data, int offset )
+    {
+        return ( ( ( data[offset] & 0xFF ) << 8 ) + ( data[offset + 1] & 0xFF ) );
+    }
+
+    private static boolean matchSignature( byte[] pictureData,
+            byte[] signature, int offset )
+    {
+        boolean matched = offset < pictureData.length;
+        for ( int i = 0; ( i + offset ) < pictureData.length
+                && i < signature.length; i++ )
+        {
+            if ( pictureData[i + offset] != signature[i] )
+            {
+                matched = false;
+                break;
+            }
+        }
+        return matched;
+    }
+
+    private PICF _picf;
+    private PICFAndOfficeArtData _picfAndOfficeArtData;
+
     private byte[] content;
-    private byte[] _dataStream;
+    private int dataBlockStartOfsset;
+
     private int height = -1;
     private int width = -1;
-
-    public Picture( int dataBlockStartOfsset, byte[] _dataStream,
-            boolean fillBytes )
-    {
-        super( _dataStream, dataBlockStartOfsset );
-
-        this._dataStream = _dataStream;
-        this.dataBlockStartOfsset = dataBlockStartOfsset;
-        this.dataBlockSize = LittleEndian.getInt( _dataStream,
-                dataBlockStartOfsset );
-        this.pictureBytesStartOffset = getPictureBytesStartOffset(
-                dataBlockStartOfsset, _dataStream, dataBlockSize );
-        this.size = dataBlockSize
-                - ( pictureBytesStartOffset - dataBlockStartOfsset );
-
-        if ( size < 0 )
-        {
-
-        }
-
-        if ( fillBytes )
-        {
-            fillImageContent();
-        }
-    }
 
     public Picture( byte[] _dataStream )
     {
         super();
 
-        this._dataStream = _dataStream;
-        this.dataBlockStartOfsset = 0;
-        this.dataBlockSize = _dataStream.length;
-        this.pictureBytesStartOffset = 0;
-        this.size = _dataStream.length;
+        // XXX: implement
+        // this._dataStream = _dataStream;
+        // this.dataBlockStartOfsset = 0;
+        // this.dataBlockSize = _dataStream.length;
+        // this.pictureBytesStartOffset = 0;
+        // this.size = _dataStream.length;
+    }
+
+    public Picture( int dataBlockStartOfsset, byte[] _dataStream,
+            boolean fillBytes )
+    {
+        _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream,
+                dataBlockStartOfsset );
+        _picf = _picfAndOfficeArtData.getPicf();
+
+        this.dataBlockStartOfsset = dataBlockStartOfsset;
+
+        if ( fillBytes )
+            fillImageContent();
+    }
+
+    private void fillImageContent()
+    {
+        if ( content != null && content.length > 0 )
+            return;
+
+        byte[] rawContent = getRawContent();
+
+        /*
+         * HACK: Detect compressed images. In reality there should be some way
+         * to determine this from the first 32 bytes, but I can't see any
+         * similarity between all the samples I have obtained, nor any
+         * similarity in the data block contents.
+         */
+        if ( matchSignature( rawContent, COMPRESSED1, 32 )
+                || matchSignature( rawContent, COMPRESSED2, 32 ) )
+        {
+            try
+            {
+                InflaterInputStream in = new InflaterInputStream(
+                        new ByteArrayInputStream( rawContent, 33,
+                                rawContent.length - 33 ) );
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buf = new byte[4096];
+                int readBytes;
+                while ( ( readBytes = in.read( buf ) ) > 0 )
+                {
+                    out.write( buf, 0, readBytes );
+                }
+                content = out.toByteArray();
+            }
+            catch ( IOException e )
+            {
+                /*
+                 * Problems reading from the actual ByteArrayInputStream should
+                 * never happen so this will only ever be a ZipException.
+                 */
+                log.log( POILogger.INFO,
+                        "Possibly corrupt compression or non-compressed data",
+                        e );
+            }
+        }
+        else
+        {
+            // Raw data is not compressed.
+            content = rawContent;
+        }
+    }
+
+    private void fillJPGWidthHeight()
+    {
+        /*
+         * http://www.codecomments.com/archive281-2004-3-158083.html
+         * 
+         * Algorhitm proposed by Patrick TJ McPhee:
+         * 
+         * read 2 bytes make sure they are 'ffd8'x repeatedly: read 2 bytes make
+         * sure the first one is 'ff'x if the second one is 'd9'x stop else if
+         * the second one is c0 or c2 (or possibly other values ...) skip 2
+         * bytes read one byte into depth read two bytes into height read two
+         * bytes into width else read two bytes into length skip forward
+         * length-2 bytes
+         * 
+         * Also used Ruby code snippet from:
+         * http://www.bigbold.com/snippets/posts/show/805 for reference
+         */
+        byte[] jpegContent = getContent();
+
+        int pointer = 2;
+        int firstByte = jpegContent[pointer];
+        int secondByte = jpegContent[pointer + 1];
+        int endOfPicture = jpegContent.length;
+        while ( pointer < endOfPicture - 1 )
+        {
+            do
+            {
+                firstByte = jpegContent[pointer];
+                secondByte = jpegContent[pointer + 1];
+                pointer += 2;
+            }
+            while ( !( firstByte == (byte) 0xFF ) && pointer < endOfPicture - 1 );
+
+            if ( firstByte == ( (byte) 0xFF ) && pointer < endOfPicture - 1 )
+            {
+                if ( secondByte == (byte) 0xD9 || secondByte == (byte) 0xDA )
+                {
+                    break;
+                }
+                else if ( ( secondByte & 0xF0 ) == 0xC0
+                        && secondByte != (byte) 0xC4
+                        && secondByte != (byte) 0xC8
+                        && secondByte != (byte) 0xCC )
+                {
+                    pointer += 5;
+                    this.height = getBigEndianShort( jpegContent, pointer );
+                    this.width = getBigEndianShort( jpegContent, pointer + 2 );
+                    break;
+                }
+                else
+                {
+                    pointer++;
+                    pointer++;
+                    int length = getBigEndianShort( jpegContent, pointer );
+                    pointer += length;
+                }
+            }
+            else
+            {
+                pointer++;
+            }
+        }
+    }
+
+    void fillPNGWidthHeight()
+    {
+        byte[] pngContent = getContent();
+        /*
+         * Used PNG file format description from
+         * http://www.wotsit.org/download.asp?f=png
+         */
+        int HEADER_START = PNG.length + 4;
+        if ( matchSignature( pngContent, IHDR, HEADER_START ) )
+        {
+            int IHDR_CHUNK_WIDTH = HEADER_START + 4;
+            this.width = getBigEndianInt( pngContent, IHDR_CHUNK_WIDTH );
+            this.height = getBigEndianInt( pngContent, IHDR_CHUNK_WIDTH + 4 );
+        }
     }
 
     private void fillWidthHeight()
@@ -139,48 +288,23 @@ public final class Picture extends PictureDescriptor
     }
 
     /**
-     * Tries to suggest a filename: hex representation of picture structure
-     * offset in "Data" stream plus extension that is tried to determine from
-     * first byte of picture's content.
-     * 
-     * @return suggested file name
+     * @return the horizontal aspect ratio for picture provided by user
+     * @deprecated use more precise {@link #getHorizontalScalingFactor()}
      */
-    public String suggestFullFileName()
+    @Deprecated
+    public int getAspectRatioX()
     {
-        String fileExt = suggestFileExtension();
-        return Integer.toHexString( dataBlockStartOfsset )
-                + ( fileExt.length() > 0 ? "." + fileExt : "" );
+        return _picf.getMx() / 10;
     }
 
     /**
-     * Writes Picture's content bytes to specified OutputStream. Is useful when
-     * there is need to write picture bytes directly to stream, omitting its
-     * representation in memory as distinct byte array.
-     * 
-     * @param out
-     *            a stream to write to
-     * @throws IOException
-     *             if some exception is occured while writing to specified out
+     * @retrn the vertical aspect ratio for picture provided by user
+     * @deprecated use more precise {@link #getVerticalScalingFactor()}
      */
-    public void writeImageContent( OutputStream out ) throws IOException
+    @Deprecated
+    public int getAspectRatioY()
     {
-        if ( rawContent != null && rawContent.length > 0 )
-        {
-            out.write( rawContent, 0, size );
-        }
-        else
-        {
-            out.write( _dataStream, pictureBytesStartOffset, size );
-        }
-    }
-
-    /**
-     * @return The offset of this picture in the picture bytes, used when
-     *         matching up with {@link CharacterRun#getPicOffset()}
-     */
-    public int getStartOffset()
-    {
-        return dataBlockStartOfsset;
+        return _picf.getMy() / 10;
     }
 
     /**
@@ -193,61 +317,39 @@ public final class Picture extends PictureDescriptor
     }
 
     /**
-     * Returns picture's content as it stored in Word file, i.e. possibly in
-     * compressed form.
-     * 
-     * @return picture's content as it stored in Word file
-     */
-    public byte[] getRawContent()
-    {
-        fillRawImageContent();
-        return rawContent;
-    }
-
-    /**
-     * 
-     * @return size in bytes of the picture
-     */
-    public int getSize()
-    {
-        return size;
-    }
-
-    /**
-     * @return the horizontal aspect ratio for picture provided by user
-     * @deprecated use more precise {@link #getHorizontalScalingFactor()}
+     * @return The amount the picture has been cropped on the left in twips
      */
     @Deprecated
-    public int getAspectRatioX()
+    public int getDxaCropLeft()
     {
-        return mx / 10;
+        // TODO: use new properties
+        // if (_picfAndOfficeArtData == null || _picfAndOfficeArtData.getShape()
+        // == null)
+        // return 0;
+        //
+        // final EscherContainerRecord shape = _picfAndOfficeArtData.getShape();
+        // EscherOptRecord optRecord = shape.getChildById( (short) 0xF00B );
+        // if (optRecord == null)
+        // return 0;
+        //
+        // EscherProperty property = optRecord.lookup( 0x0102 );
+        // if (property == null || !(property instanceof EscherSimpleProperty))
+        // return 0;
+        //
+        // EscherSimpleProperty simpleProperty = (EscherSimpleProperty)
+        // property;
+        // return simpleProperty.getPropertyValue();
+
+        return _picf.getDxaReserved1();
     }
 
     /**
-     * @return Horizontal scaling factor supplied by user expressed in .001%
-     *         units
-     */
-    public int getHorizontalScalingFactor()
-    {
-        return mx;
-    }
-
-    /**
-     * @retrn the vertical aspect ratio for picture provided by user
-     * @deprecated use more precise {@link #getVerticalScalingFactor()}
+     * @return The amount the picture has been cropped on the right in twips
      */
     @Deprecated
-    public int getAspectRatioY()
+    public int getDxaCropRight()
     {
-        return my / 10;
-    }
-
-    /**
-     * @return Vertical scaling factor supplied by user expressed in .001% units
-     */
-    public int getVerticalScalingFactor()
-    {
-        return my;
+        return _picf.getDxaReserved2();
     }
 
     /**
@@ -258,7 +360,25 @@ public final class Picture extends PictureDescriptor
      */
     public int getDxaGoal()
     {
-        return dxaGoal;
+        return _picf.getDxaGoal();
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the bottom in twips
+     */
+    @Deprecated
+    public int getDyaCropBottom()
+    {
+        return _picf.getDyaReserved2();
+    }
+
+    /**
+     * @return The amount the picture has been cropped on the top in twips
+     */
+    @Deprecated
+    public int getDyaCropTop()
+    {
+        return _picf.getDyaReserved1();
     }
 
     /**
@@ -269,50 +389,29 @@ public final class Picture extends PictureDescriptor
      */
     public int getDyaGoal()
     {
-        return dyaGoal;
+        return _picf.getDyaGoal();
     }
 
     /**
-     * @return The amount the picture has been cropped on the left in twips
+     * returns pixel height of the picture or -1 if dimensions determining was
+     * failed
      */
-    public int getDxaCropLeft()
+    public int getHeight()
     {
-        return dxaCropLeft;
+        if ( height == -1 )
+        {
+            fillWidthHeight();
+        }
+        return height;
     }
 
     /**
-     * @return The amount the picture has been cropped on the top in twips
+     * @return Horizontal scaling factor supplied by user expressed in .001%
+     *         units
      */
-    public int getDyaCropTop()
+    public int getHorizontalScalingFactor()
     {
-        return dyaCropTop;
-    }
-
-    /**
-     * @return The amount the picture has been cropped on the right in twips
-     */
-    public int getDxaCropRight()
-    {
-        return dxaCropRight;
-    }
-
-    /**
-     * @return The amount the picture has been cropped on the bottom in twips
-     */
-    public int getDyaCropBottom()
-    {
-        return dyaCropBottom;
-    }
-
-    /**
-     * tries to suggest extension for picture's file by matching signatures of
-     * popular image formats to first bytes of picture's contents
-     * 
-     * @return suggested file extension
-     */
-    public String suggestFileExtension()
-    {
-        return suggestPictureType().getExtension();
+        return _picf.getMx();
     }
 
     /**
@@ -325,219 +424,56 @@ public final class Picture extends PictureDescriptor
         return suggestPictureType().getMime();
     }
 
-    public PictureType suggestPictureType()
+    /**
+     * Returns picture's content as it stored in Word file, i.e. possibly in
+     * compressed form.
+     * 
+     * @return picture's content as it stored in Word file
+     */
+    public byte[] getRawContent()
     {
-        return PictureType.findMatchingType( getContent() );
+        if ( _picfAndOfficeArtData.getBlipRecords().size() != 1 )
+            return new byte[0];
+
+        EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
+                0 );
+        if ( escherRecord instanceof EscherBlipRecord )
+        {
+            return ( (EscherBlipRecord) escherRecord ).getPicturedata();
+        }
+
+        if ( escherRecord instanceof EscherBSERecord )
+        {
+            return ( (EscherBSERecord) escherRecord ).getBlipRecord()
+                    .getPicturedata();
+        }
+        return new byte[0];
     }
 
-    // public String getFileName()
-    // {
-    // return fileName;
-    // }
-
-    // private static String extractFileName(int blockStartIndex, byte[]
-    // dataStream) {
-    // int fileNameStartOffset = blockStartIndex + 0x7C;
-    // int fileNameSizeOffset = blockStartIndex + FILENAME_SIZE_OFFSET;
-    // int fileNameSize = LittleEndian.getShort(dataStream, fileNameSizeOffset);
-    //
-    // int fileNameIndex = fileNameStartOffset;
-    // char[] fileNameChars = new char[(fileNameSize-1)/2];
-    // int charIndex = 0;
-    // while(charIndex<fileNameChars.length) {
-    // short aChar = LittleEndian.getShort(dataStream, fileNameIndex);
-    // fileNameChars[charIndex] = (char)aChar;
-    // charIndex++;
-    // fileNameIndex += 2;
-    // }
-    // String fileName = new String(fileNameChars);
-    // return fileName.trim();
-    // }
-
-    private void fillRawImageContent()
+    /**
+     * 
+     * @return size in bytes of the picture
+     */
+    public int getSize()
     {
-        if ( rawContent != null && rawContent.length > 0 )
-            return;
-
-        this.rawContent = new byte[size];
-        System.arraycopy( _dataStream, pictureBytesStartOffset, rawContent, 0,
-                size );
+        return getContent().length;
     }
 
-    private void fillImageContent()
+    /**
+     * @return The offset of this picture in the picture bytes, used when
+     *         matching up with {@link CharacterRun#getPicOffset()}
+     */
+    public int getStartOffset()
     {
-        if ( content != null && content.length > 0 )
-            return;
-
-        byte[] rawContent = getRawContent();
-
-        // HACK: Detect compressed images. In reality there should be some way
-        // to determine
-        // this from the first 32 bytes, but I can't see any similarity between
-        // all the
-        // samples I have obtained, nor any similarity in the data block
-        // contents.
-        if ( matchSignature( rawContent, COMPRESSED1, 32 )
-                || matchSignature( rawContent, COMPRESSED2, 32 ) )
-        {
-            try
-            {
-                InflaterInputStream in = new InflaterInputStream(
-                        new ByteArrayInputStream( rawContent, 33,
-                                rawContent.length - 33 ) );
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                byte[] buf = new byte[4096];
-                int readBytes;
-                while ( ( readBytes = in.read( buf ) ) > 0 )
-                {
-                    out.write( buf, 0, readBytes );
-                }
-                content = out.toByteArray();
-            }
-            catch ( IOException e )
-            {
-                // Problems reading from the actual ByteArrayInputStream should
-                // never happen
-                // so this will only ever be a ZipException.
-                log.log( POILogger.INFO,
-                        "Possibly corrupt compression or non-compressed data",
-                        e );
-            }
-        }
-        else
-        {
-            // Raw data is not compressed.
-            content = rawContent;
-        }
+        return dataBlockStartOfsset;
     }
 
-    private static boolean matchSignature( byte[] pictureData,
-            byte[] signature, int offset )
+    /**
+     * @return Vertical scaling factor supplied by user expressed in .001% units
+     */
+    public int getVerticalScalingFactor()
     {
-        boolean matched = offset < pictureData.length;
-        for ( int i = 0; ( i + offset ) < pictureData.length
-                && i < signature.length; i++ )
-        {
-            if ( pictureData[i + offset] != signature[i] )
-            {
-                matched = false;
-                break;
-            }
-        }
-        return matched;
-    }
-
-    private static int getPictureBytesStartOffset( int dataBlockStartOffset,
-            byte[] _dataStream, int dataBlockSize )
-    {
-        int realPicoffset = dataBlockStartOffset;
-        final int dataBlockEndOffset = dataBlockSize + dataBlockStartOffset;
-
-        // Skip over the PICT block
-        int PICTFBlockSize = LittleEndian.getShort( _dataStream,
-                dataBlockStartOffset + PICT_HEADER_OFFSET ); // Should be 68
-                                                             // bytes
-
-        // Now the PICTF1
-        int PICTF1BlockOffset = PICTFBlockSize + PICT_HEADER_OFFSET;
-        short MM_TYPE = LittleEndian.getShort( _dataStream,
-                dataBlockStartOffset + PICT_HEADER_OFFSET + 2 );
-        if ( MM_TYPE == 0x66 )
-        {
-            // Skip the stPicName
-            int cchPicName = LittleEndian.getUnsignedByte( _dataStream,
-                    PICTF1BlockOffset );
-            PICTF1BlockOffset += 1 + cchPicName;
-        }
-        int PICTF1BlockSize = LittleEndian.getShort( _dataStream,
-                dataBlockStartOffset + PICTF1BlockOffset );
-
-        int unknownHeaderOffset = ( PICTF1BlockSize + PICTF1BlockOffset ) < dataBlockEndOffset ? ( PICTF1BlockSize + PICTF1BlockOffset )
-                : PICTF1BlockOffset;
-        realPicoffset += ( unknownHeaderOffset + UNKNOWN_HEADER_SIZE );
-        if ( realPicoffset >= dataBlockEndOffset )
-        {
-            realPicoffset -= UNKNOWN_HEADER_SIZE;
-        }
-        return realPicoffset;
-    }
-
-    private void fillJPGWidthHeight()
-    {
-        /*
-         * http://www.codecomments.com/archive281-2004-3-158083.html
-         * 
-         * Algorhitm proposed by Patrick TJ McPhee:
-         * 
-         * read 2 bytes make sure they are 'ffd8'x repeatedly: read 2 bytes make
-         * sure the first one is 'ff'x if the second one is 'd9'x stop else if
-         * the second one is c0 or c2 (or possibly other values ...) skip 2
-         * bytes read one byte into depth read two bytes into height read two
-         * bytes into width else read two bytes into length skip forward
-         * length-2 bytes
-         * 
-         * Also used Ruby code snippet from:
-         * http://www.bigbold.com/snippets/posts/show/805 for reference
-         */
-        int pointer = pictureBytesStartOffset + 2;
-        int firstByte = _dataStream[pointer];
-        int secondByte = _dataStream[pointer + 1];
-
-        int endOfPicture = pictureBytesStartOffset + size;
-        while ( pointer < endOfPicture - 1 )
-        {
-            do
-            {
-                firstByte = _dataStream[pointer];
-                secondByte = _dataStream[pointer + 1];
-                pointer += 2;
-            }
-            while ( !( firstByte == (byte) 0xFF ) && pointer < endOfPicture - 1 );
-
-            if ( firstByte == ( (byte) 0xFF ) && pointer < endOfPicture - 1 )
-            {
-                if ( secondByte == (byte) 0xD9 || secondByte == (byte) 0xDA )
-                {
-                    break;
-                }
-                else if ( ( secondByte & 0xF0 ) == 0xC0
-                        && secondByte != (byte) 0xC4
-                        && secondByte != (byte) 0xC8
-                        && secondByte != (byte) 0xCC )
-                {
-                    pointer += 5;
-                    this.height = getBigEndianShort( _dataStream, pointer );
-                    this.width = getBigEndianShort( _dataStream, pointer + 2 );
-                    break;
-                }
-                else
-                {
-                    pointer++;
-                    pointer++;
-                    int length = getBigEndianShort( _dataStream, pointer );
-                    pointer += length;
-                }
-            }
-            else
-            {
-                pointer++;
-            }
-        }
-    }
-
-    private void fillPNGWidthHeight()
-    {
-        /*
-         * Used PNG file format description from
-         * http://www.wotsit.org/download.asp?f=png
-         */
-        int HEADER_START = pictureBytesStartOffset + PNG.length + 4;
-        if ( matchSignature( _dataStream, IHDR, HEADER_START ) )
-        {
-            int IHDR_CHUNK_WIDTH = HEADER_START + 4;
-            this.width = getBigEndianInt( _dataStream, IHDR_CHUNK_WIDTH );
-            this.height = getBigEndianInt( _dataStream, IHDR_CHUNK_WIDTH + 4 );
-        }
+        return _picf.getMy();
     }
 
     /**
@@ -554,28 +490,106 @@ public final class Picture extends PictureDescriptor
     }
 
     /**
-     * returns pixel height of the picture or -1 if dimensions determining was
-     * failed
+     * tries to suggest extension for picture's file by matching signatures of
+     * popular image formats to first bytes of picture's contents
+     * 
+     * @return suggested file extension
      */
-    public int getHeight()
+    public String suggestFileExtension()
     {
-        if ( height == -1 )
+        return suggestPictureType().getExtension();
+    }
+
+    /**
+     * Tries to suggest a filename: hex representation of picture structure
+     * offset in "Data" stream plus extension that is tried to determine from
+     * first byte of picture's content.
+     * 
+     * @return suggested file name
+     */
+    public String suggestFullFileName()
+    {
+        String fileExt = suggestFileExtension();
+        return Integer.toHexString( dataBlockStartOfsset )
+                + ( fileExt.length() > 0 ? "." + fileExt : "" );
+    }
+
+    public PictureType suggestPictureType()
+    {
+        if ( _picfAndOfficeArtData.getBlipRecords().size() != 1 )
+            return PictureType.UNKNOWN;
+
+        EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
+                0 );
+        switch ( escherRecord.getRecordId() )
         {
-            fillWidthHeight();
+        case (short) 0xF007:
+        {
+            EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
+            switch ( bseRecord.getBlipTypeWin32() )
+            {
+            case 0x00:
+                return PictureType.UNKNOWN;
+            case 0x01:
+                return PictureType.UNKNOWN;
+            case 0x02:
+                return PictureType.EMF;
+            case 0x03:
+                return PictureType.WMF;
+            case 0x04:
+                return PictureType.PICT;
+            case 0x05:
+                return PictureType.JPEG;
+            case 0x06:
+                return PictureType.PNG;
+            case 0x07:
+                return PictureType.BMP;
+            case 0x11:
+                return PictureType.TIFF;
+            case 0x12:
+                return PictureType.JPEG;
+            default:
+                return PictureType.UNKNOWN;
+            }
         }
-        return height;
+        case (short) 0xF01A:
+            return PictureType.EMF;
+        case (short) 0xF01B:
+            return PictureType.WMF;
+        case (short) 0xF01C:
+            return PictureType.PICT;
+        case (short) 0xF01D:
+            return PictureType.JPEG;
+        case (short) 0xF01E:
+            return PictureType.PNG;
+        case (short) 0xF01F:
+            return PictureType.BMP;
+        case (short) 0xF029:
+            return PictureType.TIFF;
+        case (short) 0xF02A:
+            return PictureType.JPEG;
+        default:
+            return PictureType.UNKNOWN;
+        }
     }
 
-    private static int getBigEndianInt( byte[] data, int offset )
+    /**
+     * Writes Picture's content bytes to specified OutputStream. Is useful when
+     * there is need to write picture bytes directly to stream, omitting its
+     * representation in memory as distinct byte array.
+     * 
+     * @param out
+     *            a stream to write to
+     * @throws IOException
+     *             if some exception is occured while writing to specified out
+     */
+    public void writeImageContent( OutputStream out ) throws IOException
     {
-        return ( ( ( data[offset] & 0xFF ) << 24 )
-                + ( ( data[offset + 1] & 0xFF ) << 16 )
-                + ( ( data[offset + 2] & 0xFF ) << 8 ) + ( data[offset + 3] & 0xFF ) );
-    }
-
-    private static int getBigEndianShort( byte[] data, int offset )
-    {
-        return ( ( ( data[offset] & 0xFF ) << 8 ) + ( data[offset + 1] & 0xFF ) );
+        byte[] content = getContent();
+        if ( content != null && content.length > 0 )
+        {
+            out.write( content, 0, content.length );
+        }
     }
 
 }
