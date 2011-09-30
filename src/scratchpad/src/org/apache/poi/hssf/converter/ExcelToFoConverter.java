@@ -328,6 +328,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             block.setAttribute( "overflow", "hidden" );
             block.setAttribute( "height", normalHeightPt + "pt" );
             block.setAttribute( "keep-together.within-line", "always" );
+            block.setAttribute( "wrap-option", "no-wrap" );
         }
 
         processCellStyle( workbook, cell.getCellStyle(), tableCellElement,
