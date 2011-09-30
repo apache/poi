@@ -210,26 +210,26 @@ public final class TestPictures extends TestCase {
        // Look at the pictures table
        List<Picture> pictures = pictureTable.getAllPictures();
        assertEquals(4, pictures.size());
-       
-       Picture picture = pictures.get(0);
-       assertEquals("", picture.suggestFileExtension());
-       assertEquals("0", picture.suggestFullFileName());
-       assertEquals("image/unknown", picture.getMimeType());
-       
-       picture = pictures.get(1);
-       assertEquals("", picture.suggestFileExtension());
-       assertEquals("469", picture.suggestFullFileName());
-       assertEquals("image/unknown", picture.getMimeType());
-       
-       picture = pictures.get(2);
-       assertEquals("", picture.suggestFileExtension());
-       assertEquals("8c7", picture.suggestFullFileName());
-       assertEquals("image/unknown", picture.getMimeType());
-       
-       picture = pictures.get(3);
-       assertEquals("", picture.suggestFileExtension());
-       assertEquals("10a8", picture.suggestFullFileName());
-       assertEquals("image/unknown", picture.getMimeType());
+
+        Picture picture = pictures.get( 0 );
+        assertEquals( "emf", picture.suggestFileExtension() );
+        assertEquals( "0.emf", picture.suggestFullFileName() );
+        assertEquals( "image/x-emf", picture.getMimeType() );
+
+        picture = pictures.get( 1 );
+        assertEquals( "emf", picture.suggestFileExtension() );
+        assertEquals( "469.emf", picture.suggestFullFileName() );
+        assertEquals( "image/x-emf", picture.getMimeType() );
+
+        picture = pictures.get( 2 );
+        assertEquals( "emf", picture.suggestFileExtension() );
+        assertEquals( "8c7.emf", picture.suggestFullFileName() );
+        assertEquals( "image/x-emf", picture.getMimeType() );
+
+        picture = pictures.get( 3 );
+        assertEquals( "emf", picture.suggestFileExtension() );
+        assertEquals( "10a8.emf", picture.suggestFullFileName() );
+        assertEquals( "image/x-emf", picture.getMimeType() );
     }
 
     public void testEquation()

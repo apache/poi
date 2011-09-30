@@ -420,11 +420,26 @@ public class LittleEndian implements LittleEndianConsts {
      * @param  data    the byte array.
      * @param  offset  a starting offset into the byte array.
      * @return         the unsigned value of the byte as a 32 bit integer
+     * @deprecated Use {@link #getUByte(byte[], int)} instead
      */
+    @Deprecated
     public static int getUnsignedByte(byte[] data, int offset) {
         return data[offset] & 0xFF;
     }
 
+    /**
+     * get the unsigned value of a byte.
+     * 
+     * @param data
+     *            the byte array.
+     * @param offset
+     *            a starting offset into the byte array.
+     * @return the unsigned value of the byte as a 16 bit short
+     */
+    public static short getUByte( byte[] data, int offset )
+    {
+        return (short) ( data[offset] & 0xFF );
+    }
 
     /**
      *  Copy a portion of a byte array

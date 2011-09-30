@@ -18,17 +18,13 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -41,8 +37,10 @@ import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Test different problems reported in Apache Bugzilla
@@ -52,6 +50,8 @@ import org.apache.poi.util.LittleEndian;
  */
 public class TestBugs extends TestCase
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( TestBugs.class );
 
     public static void assertEquals( String expected, String actual )
     {
@@ -187,11 +187,6 @@ public class TestBugs extends TestCase
 
         assertNotNull( pic.getContent() );
         assertNotNull( pic.getRawContent() );
-
-        // These are probably some sort of offset, need to figure them out
-        assertEquals( 4, pic.getSize() );
-        assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getContent() ) );
-        assertEquals( 0x80000000l, LittleEndian.getUInt( pic.getRawContent() ) );
 
         /*
          * This is a file with empty EMF image, but present Office Drawing
@@ -688,6 +683,21 @@ public class TestBugs extends TestCase
             WordExtractor wordExtractor = new WordExtractor( hwpfDocument );
             wordExtractor.getText();
         }
+    }
 
+    /**
+     * [FIXED] Bug 51902 - Picture.fillRawImageContent -
+     * ArrayIndexOutOfBoundsException
+     */
+    public void testBug51890()
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug51890.doc" );
+        for ( Picture picture : doc.getPicturesTable().getAllPictures() )
+        {
+            PictureType pictureType = picture.suggestPictureType();
+            logger.log( POILogger.DEBUG,
+                    "Picture at offset " + picture.getStartOffset()
+                            + " has type " + pictureType );
+        }
     }
 }
