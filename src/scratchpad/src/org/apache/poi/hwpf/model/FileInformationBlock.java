@@ -24,14 +24,15 @@ import java.util.HashSet;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The File Information Block (FIB). Holds pointers
  *  to various bits of the file, and lots of flags which
  *  specify properties of the document.
  *
- * The parent class, {@link FIBAbstractType}, holds the
- *  first 32 bytes, which make up the FibBase.
+ * The {@link FibBase} class, holds the
+ *  first 32 bytes.
  * The next part, the fibRgW / FibRgW97, is handled
  *  by {@link FIBShortHandler}.
  * The next part, the fibRgLw / The FibRgLw97, is
@@ -42,26 +43,37 @@ import org.apache.poi.util.Internal;
  * @author  andy
  */
 @Internal
-public final class FileInformationBlock  implements Cloneable
+public final class FileInformationBlock implements Cloneable
 {
 
     private FibBase _fibBase;
-    
+    private int _csw;
+    private FibRgW97 _fibRgW97;
+
     FIBLongHandler _longHandler;
-    FIBShortHandler _shortHandler;
     FIBFieldHandler _fieldHandler;
 
     /** Creates a new instance of FileInformationBlock */
-    public FileInformationBlock(byte[] mainDocument)
+    public FileInformationBlock( byte[] mainDocument )
     {
-        _fibBase = new FibBase(mainDocument, 0);
+        int offset = 0;
+
+        _fibBase = new FibBase( mainDocument, offset );
+        offset = FibBase.getSize();
+        assert offset == 32;
+
+        _csw = LittleEndian.getUShort( mainDocument, offset );
+        offset += 2;
+        assert offset == 34;
+
+        _fibRgW97 = new FibRgW97( mainDocument, 34 );
+        offset += FibRgW97.getSize();
+        assert offset == 62;
     }
 
     public void fillVariableFields( byte[] mainDocument, byte[] tableStream )
     {
-        _shortHandler = new FIBShortHandler( mainDocument );
-        _longHandler = new FIBLongHandler( mainDocument, FIBShortHandler.START
-                + _shortHandler.sizeInBytes() );
+        _longHandler = new FIBLongHandler( mainDocument, 62 );
 
         /*
          * Listed fields won't be treat as UnhandledDataStructure. For all other
@@ -102,9 +114,8 @@ public final class FileInformationBlock  implements Cloneable
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.MODIFIED ) );
 
         _fieldHandler = new FIBFieldHandler( mainDocument,
-                FIBShortHandler.START + _shortHandler.sizeInBytes()
-                        + _longHandler.sizeInBytes(), tableStream,
-                knownFieldSet, true );
+                62 + _longHandler.sizeInBytes(), tableStream, knownFieldSet,
+                true );
     }
 
     @Override
@@ -964,8 +975,11 @@ public final class FileInformationBlock  implements Cloneable
         _fibBase.serialize( mainStream, 0 );
         int offset = FibBase.getSize();
 
-        _shortHandler.serialize( mainStream );
-        offset += _shortHandler.sizeInBytes();
+        LittleEndian.putUShort( mainStream, offset, _csw );
+        offset += 2;
+        
+        _fibRgW97.serialize( mainStream, offset );
+        offset += FibRgW97.getSize();
 
         _longHandler.serialize( mainStream, offset );
         offset += _longHandler.sizeInBytes();
@@ -975,7 +989,7 @@ public final class FileInformationBlock  implements Cloneable
 
     public int getSize()
     {
-        return FibBase.getSize() + _shortHandler.sizeInBytes()
+        return FibBase.getSize() + 2 + FibRgW97.getSize()
                 + _longHandler.sizeInBytes() + _fieldHandler.sizeInBytes();
     }
 
