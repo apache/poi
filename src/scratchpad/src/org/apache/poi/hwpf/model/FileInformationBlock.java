@@ -48,9 +48,10 @@ public final class FileInformationBlock implements Cloneable
 
     private FibBase _fibBase;
     private int _csw;
-    private FibRgW97 _fibRgW97;
+    private FibRgW97 _fibRgW;
+    private int _cslw;
+    private FibRgLw97 _fibRgLw;
 
-    FIBLongHandler _longHandler;
     FIBFieldHandler _fieldHandler;
 
     /** Creates a new instance of FileInformationBlock */
@@ -66,15 +67,21 @@ public final class FileInformationBlock implements Cloneable
         offset += 2;
         assert offset == 34;
 
-        _fibRgW97 = new FibRgW97( mainDocument, 34 );
+        _fibRgW = new FibRgW97( mainDocument, offset );
         offset += FibRgW97.getSize();
         assert offset == 62;
+
+        _cslw = LittleEndian.getUShort( mainDocument, offset );
+        offset += 2;
+        assert offset == 64;
+
+        _fibRgLw = new FibRgLw97( mainDocument, offset );
+        offset += FibRgLw97.getSize();
+        assert offset == 152;
     }
 
     public void fillVariableFields( byte[] mainDocument, byte[] tableStream )
     {
-        _longHandler = new FIBLongHandler( mainDocument, 62 );
-
         /*
          * Listed fields won't be treat as UnhandledDataStructure. For all other
          * fields FIBFieldHandler will load it content into
@@ -113,9 +120,8 @@ public final class FileInformationBlock implements Cloneable
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBSAVEDBY ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.MODIFIED ) );
 
-        _fieldHandler = new FIBFieldHandler( mainDocument,
-                62 + _longHandler.sizeInBytes(), tableStream, knownFieldSet,
-                true );
+        _fieldHandler = new FIBFieldHandler( mainDocument, 152, tableStream,
+                knownFieldSet, true );
     }
 
     @Override
@@ -535,16 +541,18 @@ public final class FileInformationBlock implements Cloneable
     /**
      * How many bytes of the main stream contain real data.
      */
-    public int getCbMac() {
-       return _longHandler.getLong(FIBLongHandler.CBMAC);
+    public int getCbMac()
+    {
+        return _fibRgLw.getCbMac();
     }
 
     /**
      * Updates the count of the number of bytes in the
      * main stream which contain real data
      */
-    public void setCbMac(int cbMac) {
-       _longHandler.setLong(FIBLongHandler.CBMAC, cbMac);
+    public void setCbMac( int cbMac )
+    {
+        _fibRgLw.setCbMac( cbMac );
     }
 
     /**
@@ -555,7 +563,7 @@ public final class FileInformationBlock implements Cloneable
         if ( type == null )
             throw new IllegalArgumentException( "argument 'type' is null" );
 
-        return _longHandler.getLong( type.getFibLongFieldIndex() );
+        return _fibRgLw.getSubdocumentTextStreamLength( type );
     }
 
     public void setSubdocumentTextStreamLength( SubdocumentType type, int length )
@@ -568,119 +576,8 @@ public final class FileInformationBlock implements Cloneable
                             + length + "). " + "If there is no subdocument "
                             + "length must be set to zero." );
 
-        _longHandler.setLong( type.getFibLongFieldIndex(), length );
+        _fibRgLw.setSubdocumentTextStreamLength( type, length );
     }
-
-    /**
-     * The count of CPs in the main document
-     */
-    @Deprecated
-    public int getCcpText() {
-       return _longHandler.getLong(FIBLongHandler.CCPTEXT);
-    }
-    /**
-     * Updates the count of CPs in the main document
-     */
-    @Deprecated
-    public void setCcpText(int ccpText) {
-       _longHandler.setLong(FIBLongHandler.CCPTEXT, ccpText);
-    }
-
-    /**
-     * The count of CPs in the footnote subdocument
-     */
-    @Deprecated
-    public int getCcpFtn() {
-       return _longHandler.getLong(FIBLongHandler.CCPFTN);
-    }
-    /**
-     * Updates the count of CPs in the footnote subdocument
-     */
-    @Deprecated
-    public void setCcpFtn(int ccpFtn) {
-       _longHandler.setLong(FIBLongHandler.CCPFTN, ccpFtn);
-    }
-
-    /**
-     * The count of CPs in the header story subdocument
-     */
-    @Deprecated
-    public int getCcpHdd() {
-       return _longHandler.getLong(FIBLongHandler.CCPHDD);
-    }
-    /**
-     * Updates the count of CPs in the header story subdocument
-     */
-    @Deprecated
-    public void setCcpHdd(int ccpHdd) {
-       _longHandler.setLong(FIBLongHandler.CCPHDD, ccpHdd);
-    }
-
-    /**
-     * The count of CPs in the comments (atn) subdocument
-     */
-    @Deprecated
-    public int getCcpAtn() {
-       return _longHandler.getLong(FIBLongHandler.CCPATN);
-    }
-
-    @Deprecated
-    public int getCcpCommentAtn() {
-       return getCcpAtn();
-    }
-    /**
-     * Updates the count of CPs in the comments (atn) story subdocument
-     */
-    @Deprecated
-    public void setCcpAtn(int ccpAtn) {
-       _longHandler.setLong(FIBLongHandler.CCPATN, ccpAtn);
-    }
-
-    /**
-     * The count of CPs in the end note subdocument
-     */
-    @Deprecated
-    public int getCcpEdn() {
-       return _longHandler.getLong(FIBLongHandler.CCPEDN);
-    }
-    /**
-     * Updates the count of CPs in the end note subdocument
-     */
-    @Deprecated
-    public void setCcpEdn(int ccpEdn) {
-       _longHandler.setLong(FIBLongHandler.CCPEDN, ccpEdn);
-    }
-
-    /**
-     * The count of CPs in the main document textboxes
-     */
-    @Deprecated
-    public int getCcpTxtBx() {
-       return _longHandler.getLong(FIBLongHandler.CCPTXBX);
-    }
-    /**
-     * Updates the count of CPs in the main document textboxes
-     */
-    @Deprecated
-    public void setCcpTxtBx(int ccpTxtBx) {
-       _longHandler.setLong(FIBLongHandler.CCPTXBX, ccpTxtBx);
-    }
-
-    /**
-     * The count of CPs in the header textboxes
-     */
-    @Deprecated
-    public int getCcpHdrTxtBx() {
-       return _longHandler.getLong(FIBLongHandler.CCPHDRTXBX);
-    }
-    /**
-     * Updates the count of CPs in the header textboxes
-     */
-    @Deprecated
-    public void setCcpHdrTxtBx(int ccpTxtBx) {
-       _longHandler.setLong(FIBLongHandler.CCPHDRTXBX, ccpTxtBx);
-    }
-
 
     public void clearOffsetsSizes()
     {
@@ -977,20 +874,23 @@ public final class FileInformationBlock implements Cloneable
 
         LittleEndian.putUShort( mainStream, offset, _csw );
         offset += 2;
-        
-        _fibRgW97.serialize( mainStream, offset );
+
+        _fibRgW.serialize( mainStream, offset );
         offset += FibRgW97.getSize();
 
-        _longHandler.serialize( mainStream, offset );
-        offset += _longHandler.sizeInBytes();
+        LittleEndian.putUShort( mainStream, offset, _cslw );
+        offset += 2;
+
+        _fibRgLw.serialize( mainStream, offset );
+        offset += FibRgLw97.getSize();
 
         _fieldHandler.writeTo( mainStream, offset, tableStream );
     }
 
     public int getSize()
     {
-        return FibBase.getSize() + 2 + FibRgW97.getSize()
-                + _longHandler.sizeInBytes() + _fieldHandler.sizeInBytes();
+        return FibBase.getSize() + 2 + FibRgW97.getSize() + 2
+                + FibRgLw97.getSize() + _fieldHandler.sizeInBytes();
     }
 
     public FibBase getFibBase()

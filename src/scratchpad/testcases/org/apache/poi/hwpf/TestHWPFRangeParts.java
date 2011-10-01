@@ -98,53 +98,6 @@ public final class TestHWPFRangeParts extends TestCase {
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 	}
 
-	/**
-	 * Note - this test runs several times, to ensure that things
-	 *  don't get broken as we write out and read back in again
-	 * TODO - Make this work with 3+ runs
-	 */
-	public void testBasics() {
-	   HWPFDocument doc = docAscii;
-	   for(int run=0; run<3; run++) {
-   		// First check the start and end bits
-   		assertEquals(
-   				0,
-   				doc._cpSplit.getMainDocumentStart()
-   		);
-   		assertEquals(
-   				a_page_1.length() +
-   				2 + // page break
-   				a_page_2.length(),
-   				doc._cpSplit.getMainDocumentEnd()
-   		);
-   
-   		assertEquals(
-   				238,
-   				doc._cpSplit.getFootnoteStart()
-   		);
-   		assertEquals(
-   				238,
-   				doc._cpSplit.getFootnoteEnd()
-   		);
-   
-   		assertEquals(
-   				238,
-   				doc._cpSplit.getHeaderStoryStart()
-   		);
-   		assertEquals(
-   				238 + headerDef.length() + a_header.length() +
-   				footerDef.length() + a_footer.length() + endHeaderFooter.length(),
-   				doc._cpSplit.getHeaderStoryEnd()
-   		);
-   		
-   		// Write out and read back in again, ready for
-   		//  the next run of the test
-   		// TODO run more than once
-   		if(run < 1)
-   		   doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
-	   }
-	}
-
    /**
     * Note - this test runs several times, to ensure that things
     *  don't get broken as we write out and read back in again
@@ -188,53 +141,6 @@ public final class TestHWPFRangeParts extends TestCase {
    				r.text()
    		);
          
-         // Write out and read back in again, ready for
-         //  the next run of the test
-         // TODO run more than once
-         if(run < 1)
-            doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
-      }
-	}
-
-   /**
-    * Note - this test runs several times, to ensure that things
-    *  don't get broken as we write out and read back in again
-    */
-	public void testBasicsUnicode() {
-      HWPFDocument doc = docUnicode;
-      for(int run=0; run<3; run++) {
-   		// First check the start and end bits
-   		assertEquals(
-   				0,
-   				doc._cpSplit.getMainDocumentStart()
-   		);
-   		assertEquals(
-   				u_page_1.length() +
-   				2 + // page break
-   				u_page_2.length(),
-   				doc._cpSplit.getMainDocumentEnd()
-   		);
-   
-   		assertEquals(
-   				408,
-   				doc._cpSplit.getFootnoteStart()
-   		);
-   		assertEquals(
-   				408,
-   				doc._cpSplit.getFootnoteEnd()
-   		);
-   
-   		assertEquals(
-   				408,
-   				doc._cpSplit.getHeaderStoryStart()
-   		);
-   		// TODO - fix this one
-   		assertEquals(
-   				408 + headerDef.length() + u_header.length() +
-   				footerDef.length() + u_footer.length() + endHeaderFooter.length(),
-   				doc._cpSplit.getHeaderStoryEnd()
-   		);
-   		
          // Write out and read back in again, ready for
          //  the next run of the test
          // TODO run more than once

@@ -51,7 +51,7 @@ public class SectionTable
 
   public SectionTable(byte[] documentStream, byte[] tableStream, int offset,
                       int size, int fcMin,
-                      TextPieceTable tpt, CPSplitCalculator cps)
+                      TextPieceTable tpt, int mainLength)
   {
     PlexOfCps sedPlex = new PlexOfCps(tableStream, offset, size, SED_SIZE);
     this.tpt = tpt;
@@ -89,7 +89,7 @@ public class SectionTable
     // Some files seem to lie about their unicode status, which
     //  is very very pesky. Try to work around these, but this
     //  is getting on for black magic...
-    int mainEndsAt = cps.getMainDocumentEnd();
+    int mainEndsAt = mainLength;
     boolean matchAt = false;
     boolean matchHalf = false;
     for(int i=0; i<_sections.size(); i++) {

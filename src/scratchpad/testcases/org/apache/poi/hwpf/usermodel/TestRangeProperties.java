@@ -190,7 +190,6 @@ public final class TestRangeProperties extends TestCase {
 
 		// Check that the last paragraph ends where it should do
 		assertEquals(531, u.getOverallRange().text().length());
-		assertEquals(530, u.getCPSplitCalculator().getHeaderTextboxEnd());
 		PAPX pLast = pDefs.get(34);
 //		assertEquals(530, pLast.getEnd());
 

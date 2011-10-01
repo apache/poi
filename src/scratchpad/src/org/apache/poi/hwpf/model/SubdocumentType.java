@@ -25,21 +25,22 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public enum SubdocumentType {
-    MAIN( FIBLongHandler.CCPTEXT ),
+    MAIN(),
 
-    FOOTNOTE( FIBLongHandler.CCPFTN ),
+    FOOTNOTE(),
 
-    HEADER( FIBLongHandler.CCPHDD ),
+    HEADER(),
 
-    MACRO( FIBLongHandler.CCPMCR ),
+    @Deprecated
+    MACRO(),
 
-    ANNOTATION( FIBLongHandler.CCPATN ),
+    ANNOTATION(),
 
-    ENDNOTE( FIBLongHandler.CCPEDN ),
+    ENDNOTE(),
 
-    TEXTBOX( FIBLongHandler.CCPTXBX ),
+    TEXTBOX(),
 
-    HEADER_TEXTBOX( FIBLongHandler.CCPHDRTXBX );
+    HEADER_TEXTBOX();
 
     /**
      * Array of {@link SubdocumentType}s ordered by document position and FIB
@@ -49,16 +50,8 @@ public enum SubdocumentType {
             MAIN, FOOTNOTE, HEADER, MACRO, ANNOTATION, ENDNOTE, TEXTBOX,
             HEADER_TEXTBOX };
 
-    private final int fibLongFieldIndex;
-
-    private SubdocumentType( int fibLongFieldIndex )
+    private SubdocumentType()
     {
-        this.fibLongFieldIndex = fibLongFieldIndex;
-    }
-
-    public int getFibLongFieldIndex()
-    {
-        return fibLongFieldIndex;
     }
 
 }
