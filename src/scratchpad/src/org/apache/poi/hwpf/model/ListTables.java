@@ -42,7 +42,6 @@ import org.apache.poi.util.POILogger;
 public final class ListTables
 {
   private static final int LIST_DATA_SIZE = 28;
-  private static final int LIST_FORMAT_OVERRIDE_SIZE = 16;
   private static POILogger log = POILogFactory.getLogger(ListTables.class);
 
   ListMap _listMap = new ListMap();
@@ -53,7 +52,7 @@ public final class ListTables
 
   }
 
-  public ListTables(byte[] tableStream, int lstOffset, int lfoOffset)
+  public ListTables(byte[] tableStream, int lstOffset, final int lfoOffset)
   {
     // get the list data
     int length = LittleEndian.getShort(tableStream, lstOffset);
@@ -75,28 +74,51 @@ public final class ListTables
       }
     }
 
-    // now get the list format overrides. The size is an int unlike the LST size
-    length = LittleEndian.getInt(tableStream, lfoOffset);
-    lfoOffset += LittleEndian.INT_SIZE;
-    int lfolvlOffset = lfoOffset + (LIST_FORMAT_OVERRIDE_SIZE * length);
-    for (int x = 0; x < length; x++)
-    {
-      ListFormatOverride lfo = new ListFormatOverride(tableStream, lfoOffset);
-      lfoOffset += LIST_FORMAT_OVERRIDE_SIZE;
-      int num = lfo.numOverrides();
-      for (int y = 0; y < num; y++)
-      {
-        while(tableStream[lfolvlOffset] == -1)
         {
-          lfolvlOffset++;
+            /*
+             * The PlfLfo structure contains the list format override data for
+             * the document. -- Page 424 of 621. [MS-DOC] -- v20110315 Word
+             * (.doc) Binary File Format
+             */
+            int offset = lfoOffset;
+
+            /*
+             * lfoMac (4 bytes): An unsigned integer that specifies the count of
+             * elements in both the rgLfo and rgLfoData arrays. -- Page 424 of
+             * 621. [MS-DOC] -- v20110315 Word (.doc) Binary File Format
+             */
+            long lfoMac = LittleEndian.getUInt( tableStream, offset );
+            offset += LittleEndian.INT_SIZE;
+
+            /*
+             * An array of LFO structures. The number of elements in this array
+             * is specified by lfoMac. -- Page 424 of 621. [MS-DOC] -- v20110315
+             * Word (.doc) Binary File Format
+             */
+            for ( int x = 0; x < lfoMac; x++ )
+            {
+                ListFormatOverride lfo = new ListFormatOverride( tableStream,
+                        offset );
+                offset += LFO.getSize();
+                _overrideList.add( lfo );
+            }
+
+            /*
+             * An array of LFOData that is parallel to rgLfo. The number of
+             * elements that are contained in this array is specified by lfoMac.
+             * -- Page 424 of 621. [MS-DOC] -- v20110315 Word (.doc) Binary File
+             * Format
+             */
+            for ( int x = 0; x < lfoMac; x++ )
+            {
+                ListFormatOverride lfo = _overrideList.get( x );
+                LFOData lfoData = new LFOData( tableStream, offset,
+                        lfo.numOverrides() );
+                lfo.setLfoData( lfoData );
+                offset += lfoData.getSizeInBytes();
+            }
         }
-        ListFormatOverrideLevel lfolvl = new ListFormatOverrideLevel(tableStream, lfolvlOffset);
-        lfo.setOverride(y, lfolvl);
-        lfolvlOffset += lfolvl.getSizeInBytes();
-      }
-      _overrideList.add(lfo);
     }
-  }
 
   public int addList(ListData lst, ListFormatOverride override)
   {
@@ -135,32 +157,21 @@ public final class ListTables
     tableStream.write(levelBuf.toByteArray());
   }
 
-  public void writeListOverridesTo(HWPFOutputStream tableStream)
-    throws IOException
-  {
-
-    // use this stream as a buffer for the levels since their size varies.
-    ByteArrayOutputStream levelBuf = new ByteArrayOutputStream();
-
-    int size = _overrideList.size();
-
-    byte[] intHolder = new byte[4];
-    LittleEndian.putInt(intHolder, size);
-    tableStream.write(intHolder);
-
-    for (int x = 0; x < size; x++)
+    public void writeListOverridesTo( HWPFOutputStream tableStream )
+            throws IOException
     {
-      ListFormatOverride lfo = _overrideList.get(x);
-      tableStream.write(lfo.toByteArray());
-      ListFormatOverrideLevel[] lfolvls = lfo.getLevelOverrides();
-      for (int y = 0; y < lfolvls.length; y++)
-      {
-        levelBuf.write(lfolvls[y].toByteArray());
-      }
-    }
-    tableStream.write(levelBuf.toByteArray());
+        LittleEndian.putUInt( _overrideList.size(), tableStream );
 
-  }
+        for ( ListFormatOverride lfo : _overrideList )
+        {
+            tableStream.write( lfo.getLfo().serialize() );
+        }
+
+        for ( ListFormatOverride lfo : _overrideList )
+        {
+            lfo.getLfoData().writeTo( tableStream );
+        }
+    }
 
   public ListFormatOverride getOverride(int lfoIndex)
   {

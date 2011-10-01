@@ -19,9 +19,6 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.model.types.LVLFAbstractType;
-
-import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 

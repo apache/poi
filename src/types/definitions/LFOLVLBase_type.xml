@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="LFOLVLBase" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The LFOLVL structure contains information that is used to override the formatting
+        information of a corresponding LVL. &lt;p&gt;Class and fields descriptions are quoted from
+        Microsoft Office Word 97-2007 Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary
+        File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </author>
+    <fields>
+        <field type="int" size="4" name="iStartAt"
+            description="If fStartAt is set to 0x1, this is a signed integer that specifies the start-at value that overrides lvlf.iStartAt of the corresponding LVL. This value MUST be less than or equal to 0x7FFF and MUST be greater than or equal to zero. If both fStartAt and fFormatting are set to 0x1, or if fStartAt is set to 0x0, this value is undefined and MUST be ignored"/>
+        <field type="int" size="4" name="flags">
+            <bit mask="0x0000000F" name="iLvl"
+                description="An unsigned integer that specifies the zero-based level of the list that this overrides. This LFOLVL overrides the LVL that specifies the level formatting of this level of the LSTF that is specified by the lsid field of the LFO to which this LFOLVL corresponds. This value MUST be less than or equal to 0x08"/>
+            <bit mask="0x00000010" name="fStartAt"
+                description="A bit that specifies whether this LFOLVL overrides the start-at value of the level."/>
+            <bit mask="0x00000020" name="fFormatting"
+                description="A bit that specifies whether lvl is an LVL that overrides the corresponding LVL"/>
+            <bit mask="0x00003FC0" name="grfhic"
+                description="A grfhic that specifies the HTML incompatibilities of the overriding level formatting"/>
+            <bit mask="0x1FFFC000" name="unused1" deprecated="true" description="This MUST be ignored"/>
+            <bit mask="0xE0000000" name="unused2" deprecated="true" description="This MUST be ignored"/>
+        </field>
+    </fields>
+</record>
