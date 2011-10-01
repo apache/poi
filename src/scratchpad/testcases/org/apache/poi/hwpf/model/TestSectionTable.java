@@ -36,7 +36,7 @@ public final class TestSectionTable
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFcMin();
+    int fcMin = fib.getFibBase().getFcMin();
 
     CPSplitCalculator cps = new CPSplitCalculator(fib);
 

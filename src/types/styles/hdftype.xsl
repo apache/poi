@@ -50,6 +50,11 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
 
 </xsl:text>
     <xsl:for-each select="//fields/field">
+        <xsl:if test="@deprecated='true'">
+            <xsl:call-template name="indent"/>
+            <xsl:text>@Deprecated</xsl:text>
+            <xsl:call-template name="linebreak"/>
+        </xsl:if>
         <xsl:call-template name="indent"/>
         <xsl:text>protected </xsl:text>
         <xsl:value-of select="@type"/>
@@ -236,10 +241,26 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
 
     /**
      * <xsl:value-of select="@description"/>
-     * @return  the <xsl:value-of select="@name"/> field value.
-     */
-    @Internal
-    public <xsl:value-of select="recutil:getBitFieldFunction(@name,@mask,../@type, 'true')"/>()
+     * @return  the <xsl:value-of select="@name"/><xsl:text> field value.</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:if test="@deprecated='true'">
+        <xsl:call-template name="indent"/>
+        <xsl:text> * @deprecated This field should not be used according to specification</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:if>
+    <xsl:call-template name="indent"/>
+    <xsl:text> */</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>@Internal</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:if test="@deprecated='true'">
+        <xsl:call-template name="indent"/>
+        <xsl:text>@Deprecated</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:if>
+    <xsl:call-template name="indent"/>
+    <xsl:text>public </xsl:text><xsl:value-of select="recutil:getBitFieldFunction(@name,@mask,../@type, 'true')"/><xsl:text>()</xsl:text>
     {
         return <xsl:value-of select="recutil:getBitFieldGet(@name, @mask,../@type, recutil:getFieldName($fieldNum,../@name,0))"/>
     }

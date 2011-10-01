@@ -35,7 +35,7 @@ public final class TestFileInformationBlock
     int size = _fileInformationBlock.getSize();
     byte[] buf = new byte[size];
 
-    _fileInformationBlock.serialize(buf, 0);
+    _fileInformationBlock.getFibBase().serialize(buf, 0);
 
     FileInformationBlock newFileInformationBlock =
       new FileInformationBlock(buf);

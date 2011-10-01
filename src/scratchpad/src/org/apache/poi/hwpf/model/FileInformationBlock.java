@@ -23,7 +23,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.hwpf.model.types.FIBAbstractType;
 import org.apache.poi.util.Internal;
 
 /**
@@ -43,10 +42,11 @@ import org.apache.poi.util.Internal;
  * @author  andy
  */
 @Internal
-public final class FileInformationBlock extends FIBAbstractType
-  implements Cloneable
+public final class FileInformationBlock  implements Cloneable
 {
 
+    private FibBase _fibBase;
+    
     FIBLongHandler _longHandler;
     FIBShortHandler _shortHandler;
     FIBFieldHandler _fieldHandler;
@@ -54,7 +54,7 @@ public final class FileInformationBlock extends FIBAbstractType
     /** Creates a new instance of FileInformationBlock */
     public FileInformationBlock(byte[] mainDocument)
     {
-        fillFields(mainDocument, 0);
+        _fibBase = new FibBase(mainDocument, 0);
     }
 
     public void fillVariableFields( byte[] mainDocument, byte[] tableStream )
@@ -110,7 +110,8 @@ public final class FileInformationBlock extends FIBAbstractType
     @Override
     public String toString()
     {
-        StringBuilder stringBuilder = new StringBuilder( super.toString() );
+        StringBuilder stringBuilder = new StringBuilder(  );
+        stringBuilder.append( _fibBase );
         stringBuilder.append( "[FIB2]\n" );
         stringBuilder.append( "\tSubdocuments info:\n" );
         for ( SubdocumentType type : SubdocumentType.values() )
@@ -954,38 +955,32 @@ public final class FileInformationBlock extends FIBAbstractType
                 offset );
     }
 
-    public void writeTo( byte[] mainStream, HWPFOutputStream tableStream)
-      throws IOException
+    public void writeTo( byte[] mainStream, HWPFOutputStream tableStream )
+            throws IOException
     {
-      //HWPFOutputStream mainDocument = sys.getStream("WordDocument");
-      //HWPFOutputStream tableStream = sys.getStream("1Table");
+        // HWPFOutputStream mainDocument = sys.getStream("WordDocument");
+        // HWPFOutputStream tableStream = sys.getStream("1Table");
 
-      super.serialize(mainStream, 0);
+        _fibBase.serialize( mainStream, 0 );
+        int offset = FibBase.getSize();
 
-      int size = super.getSize();
-      _shortHandler.serialize(mainStream);
-      _longHandler.serialize(mainStream, size + _shortHandler.sizeInBytes());
-      _fieldHandler.writeTo(mainStream,
-        super.getSize() + _shortHandler.sizeInBytes() + _longHandler.sizeInBytes(), tableStream);
+        _shortHandler.serialize( mainStream );
+        offset += _shortHandler.sizeInBytes();
 
+        _longHandler.serialize( mainStream, offset );
+        offset += _longHandler.sizeInBytes();
+
+        _fieldHandler.writeTo( mainStream, offset, tableStream );
     }
 
     public int getSize()
     {
-      return super.getSize() + _shortHandler.sizeInBytes() +
-        _longHandler.sizeInBytes() + _fieldHandler.sizeInBytes();
+        return FibBase.getSize() + _shortHandler.sizeInBytes()
+                + _longHandler.sizeInBytes() + _fieldHandler.sizeInBytes();
     }
-//    public Object clone()
-//    {
-//      try
-//      {
-//        return super.clone();
-//      }
-//      catch (CloneNotSupportedException e)
-//      {
-//        e.printStackTrace();
-//        return null;
-//      }
-//    }
 
+    public FibBase getFibBase()
+    {
+        return _fibBase;
+    }
 }

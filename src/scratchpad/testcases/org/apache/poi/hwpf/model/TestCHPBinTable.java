@@ -44,7 +44,7 @@ public final class TestCHPBinTable
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFcMin();
+    int fcMin = fib.getFibBase().getFcMin();
 
     _cHPBinTable = new CHPBinTable(mainStream, tableStream, fib.getFcPlcfbteChpx(), fib.getLcbPlcfbteChpx(), fakeTPT);
 
