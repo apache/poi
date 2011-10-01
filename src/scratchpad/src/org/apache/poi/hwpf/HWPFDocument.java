@@ -226,13 +226,13 @@ public final class HWPFDocument extends HWPFDocumentCore
     _cpSplit = new CPSplitCalculator(_fib);
     
     // Is this document too old for us?
-    if(_fib.getNFib() < 106) {
+    if(_fib.getFibBase().getNFib() < 106) {
         throw new OldWordFileFormatException("The document is too old - Word 95 or older. Try HWPFOldDocument instead?");
     }
 
     // use the fib to determine the name of the table stream.
     String name = STREAM_TABLE_0;
-    if (_fib.isFWhichTblStm())
+    if (_fib.getFibBase().isFWhichTblStm())
     {
       name = STREAM_TABLE_1;
     }
@@ -904,8 +904,8 @@ public final class HWPFDocument extends HWPFDocumentCore
     tableOffset = tableStream.getOffset();
 
     // set some variables in the FileInformationBlock.
-    _fib.setFcMin(fcMin);
-    _fib.setFcMac(fcMac);
+    _fib.getFibBase().setFcMin(fcMin);
+    _fib.getFibBase().setFcMac(fcMac);
     _fib.setCbMac(wordDocumentStream.getOffset());
 
     // make sure that the table, doc and data streams use big blocks.
@@ -918,7 +918,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
 
         // Table1 stream will be used
-        _fib.setFWhichTblStm( true );
+        _fib.getFibBase().setFWhichTblStm( true );
 
     // write out the FileInformationBlock.
     //_fib.serialize(mainBuf, 0);

@@ -53,7 +53,7 @@ public final class HWPFDocFixture
       _fib = new FileInformationBlock(_mainStream);
 
       String name = "0Table";
-      if (_fib.isFWhichTblStm())
+      if (_fib.getFibBase().isFWhichTblStm())
       {
         name = "1Table";
       }
