@@ -51,8 +51,8 @@ public final class FileInformationBlock implements Cloneable
     private FibRgW97 _fibRgW;
     private int _cslw;
     private FibRgLw97 _fibRgLw;
-
-    FIBFieldHandler _fieldHandler;
+    private int _cbRgFcLcb;
+    private FIBFieldHandler _fieldHandler;
 
     /** Creates a new instance of FileInformationBlock */
     public FileInformationBlock( byte[] mainDocument )
@@ -64,7 +64,7 @@ public final class FileInformationBlock implements Cloneable
         assert offset == 32;
 
         _csw = LittleEndian.getUShort( mainDocument, offset );
-        offset += 2;
+        offset += LittleEndian.SHORT_SIZE;
         assert offset == 34;
 
         _fibRgW = new FibRgW97( mainDocument, offset );
@@ -72,12 +72,16 @@ public final class FileInformationBlock implements Cloneable
         assert offset == 62;
 
         _cslw = LittleEndian.getUShort( mainDocument, offset );
-        offset += 2;
+        offset += LittleEndian.SHORT_SIZE;
         assert offset == 64;
 
         _fibRgLw = new FibRgLw97( mainDocument, offset );
         offset += FibRgLw97.getSize();
         assert offset == 152;
+        
+        _cbRgFcLcb = LittleEndian.getUShort( mainDocument, offset );
+        offset += LittleEndian.SHORT_SIZE;
+        assert offset == 154;
     }
 
     public void fillVariableFields( byte[] mainDocument, byte[] tableStream )
@@ -120,8 +124,8 @@ public final class FileInformationBlock implements Cloneable
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STTBSAVEDBY ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.MODIFIED ) );
 
-        _fieldHandler = new FIBFieldHandler( mainDocument, 152, tableStream,
-                knownFieldSet, true );
+        _fieldHandler = new FIBFieldHandler( mainDocument, 154, _cbRgFcLcb,
+                tableStream, knownFieldSet, true );
     }
 
     @Override
@@ -866,31 +870,34 @@ public final class FileInformationBlock implements Cloneable
     public void writeTo( byte[] mainStream, HWPFOutputStream tableStream )
             throws IOException
     {
-        // HWPFOutputStream mainDocument = sys.getStream("WordDocument");
-        // HWPFOutputStream tableStream = sys.getStream("1Table");
+        _cbRgFcLcb = _fieldHandler.getFieldsCount();
 
         _fibBase.serialize( mainStream, 0 );
         int offset = FibBase.getSize();
 
         LittleEndian.putUShort( mainStream, offset, _csw );
-        offset += 2;
+        offset += LittleEndian.SHORT_SIZE;
 
         _fibRgW.serialize( mainStream, offset );
         offset += FibRgW97.getSize();
 
         LittleEndian.putUShort( mainStream, offset, _cslw );
-        offset += 2;
+        offset += LittleEndian.SHORT_SIZE;
 
         _fibRgLw.serialize( mainStream, offset );
         offset += FibRgLw97.getSize();
+
+        LittleEndian.putUShort( mainStream, offset, _cbRgFcLcb );
+        offset += LittleEndian.SHORT_SIZE;
 
         _fieldHandler.writeTo( mainStream, offset, tableStream );
     }
 
     public int getSize()
     {
-        return FibBase.getSize() + 2 + FibRgW97.getSize() + 2
-                + FibRgLw97.getSize() + _fieldHandler.sizeInBytes();
+        return FibBase.getSize() + LittleEndian.SHORT_SIZE + FibRgW97.getSize()
+                + LittleEndian.SHORT_SIZE + FibRgLw97.getSize()
+                + LittleEndian.SHORT_SIZE + _fieldHandler.sizeInBytes();
     }
 
     public FibBase getFibBase()
