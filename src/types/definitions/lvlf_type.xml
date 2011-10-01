@@ -27,22 +27,23 @@
         Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
     </author>
     <fields>
-        <field type="int" size="4" name="iStartAt"/>
-        <field type="short" size="2" name="info2">
-            <bit mask="0x00FF" name="nfc"
-                description="An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets."/>
-            <bit mask="0x0300" name="jc"
+        <field type="int" size="4" name="iStartAt"
+            description="A signed integer that specifies the beginning number for the number sequence belonging to this level. This value MUST be less than or equal to 0x7FFF and MUST be greater than or equal to zero. If this level does not have a number sequence (see nfc), this MUST be ignored"/>
+        <field type="byte" size="1" name="nfc"
+            description="An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets"/>
+        <field type="byte" size="1" name="info">
+            <bit mask="0x03" name="jc"
                 description="An unsigned integer that specifies the justification of this level"/>
-            <bit mask="0x0400" name="fLegal"
+            <bit mask="0x04" name="fLegal"
                 description="A bit that specifies whether this level overrides the nfc of all inherited level numbers. If the original nfc of a level number is msonfcArabicLZ, it is preserved. Otherwise, the nfc of the level number is overridden by msonfcArabic."/>
-            <bit mask="0x0800" name="fNoRestart"
+            <bit mask="0x08" name="fNoRestart"
                 description="A bit that specifies whether the number sequence of the level does not restart after a level is encountered that is more significant than the level to which this LVLF corresponds"/>
-            <bit mask="0x1000" name="fIndentSav"
+            <bit mask="0x10" name="fIndentSav"
                 description="A bit that specifies whether the level indented the text it was applied to and that the indent needs to be removed when numbering is removed. The indent to be removed is stored in dxaIndentSav"/>
-            <bit mask="0x2000" name="fConverted"
+            <bit mask="0x20" name="fConverted"
                 description="A bit that specifies whether the nfc of this LVLF structure was previously a temporary value used for bidirectional compatibility that was converted into a standard MSONFC"/>
-            <bit mask="0x4000" name="unused1" description="This bit MUST be ignored"/>
-            <bit mask="0x8000" name="fTentative"
+            <bit mask="0x40" name="unused1" deprecated="true" description="This bit MUST be ignored"/>
+            <bit mask="0x80" name="fTentative"
                 description="A bit that specifies whether the format of the level is tentative"/>
         </field>
         <field type="byte[]" size="9" name="rgbxchNums"

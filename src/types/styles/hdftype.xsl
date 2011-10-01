@@ -224,12 +224,24 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
     <xsl:text>) obj;</xsl:text>
     <xsl:call-template name="linebreak"/>
     <xsl:for-each select="//fields/field">
+        <xsl:variable name="fieldName" select="recutil:getFieldName(position(),@name,0)"/>
         <xsl:call-template name="indent"/>
         <xsl:call-template name="indent"/>
         <xsl:text>if ( </xsl:text>
-        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
-        <xsl:text> != other.</xsl:text>
-        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+        <xsl:choose>
+            <xsl:when test="@type='byte[]'">
+                <xsl:text>!Arrays.equals( </xsl:text>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text>, other.</xsl:text>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text> )</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text> != other.</xsl:text>
+                <xsl:value-of select="$fieldName"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:text> )</xsl:text>
         <xsl:call-template name="linebreak"/>
         <xsl:call-template name="indent"/>
@@ -261,7 +273,16 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
         <xsl:call-template name="indent"/>
         <xsl:call-template name="indent"/>
         <xsl:text>result = prime * result + </xsl:text>
-        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+        <xsl:choose>
+            <xsl:when test="@type='byte[]'">
+                <xsl:text>Arrays.hashCode( </xsl:text>
+                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+                <xsl:text> )</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:text>;</xsl:text>
         <xsl:call-template name="linebreak"/>
     </xsl:for-each>
