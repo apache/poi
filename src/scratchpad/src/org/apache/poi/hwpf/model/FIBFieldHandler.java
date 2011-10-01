@@ -149,14 +149,12 @@ public final class FIBFieldHandler
   private int[] _fields;
 
 
-  public FIBFieldHandler(byte[] mainStream, int startOffset, byte[] tableStream,
+  FIBFieldHandler(byte[] mainStream, int offset, int cbRgFcLcb, byte[] tableStream,
                          HashSet<Integer> offsetList, boolean areKnown)
   {
-    int numFields = LittleEndian.getShort(mainStream, startOffset);
-    int offset = startOffset + LittleEndian.SHORT_SIZE;
-    _fields = new int[numFields * 2];
+    _fields = new int[cbRgFcLcb * 2];
 
-    for (int x = 0; x < numFields; x++)
+    for (int x = 0; x < cbRgFcLcb; x++)
     {
       int fieldOffset = (x * FIELD_SIZE) + offset;
       int dsOffset = LittleEndian.getInt(mainStream, fieldOffset);
@@ -213,17 +211,17 @@ public final class FIBFieldHandler
 
   public int sizeInBytes()
   {
-    return (_fields.length * LittleEndian.INT_SIZE) + LittleEndian.SHORT_SIZE;
+    return (_fields.length * LittleEndian.INT_SIZE);
   }
 
+  public int getFieldsCount() {
+      return _fields.length / 2;
+  }
+  
   void writeTo(byte[] mainStream, int offset, HWPFOutputStream tableStream)
     throws IOException
   {
-    int length = _fields.length/2;
-    LittleEndian.putShort(mainStream, offset, (short)length);
-    offset += LittleEndian.SHORT_SIZE;
-
-    for (int x = 0; x < length; x++)
+    for (int x = 0; x < _fields.length/2; x++)
     {
       UnhandledDataStructure ds = _unknownMap.get(Integer.valueOf(x));
       if (ds != null)
