@@ -25,6 +25,11 @@
 
     <xsl:output method="text"/>
 
+    <xsl:template name="outputClassName">
+        <xsl:value-of select="/record/@name"/>
+        <xsl:value-of select="/record/suffix"/>
+    </xsl:template>
+
 <xsl:template match="record">
 
 <xsl:if test="@package">
@@ -45,7 +50,7 @@ import org.apache.poi.util.*;
 <xsl:apply-templates select="author"/><xsl:text>
  */
 @Internal
-public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>AbstractType
+public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl:text>
 {
 
 </xsl:text>
@@ -195,6 +200,78 @@ public abstract class </xsl:text><xsl:value-of select="@name"/><xsl:text>Abstrac
     <xsl:text>}</xsl:text>
     <xsl:call-template name="linebreak"/>
 </xsl:if>
+
+    <!-- equals() -->
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>@Override</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+</xsl:text>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="outputClassName"/>
+    <xsl:text> other = (</xsl:text>
+    <xsl:call-template name="outputClassName"/>
+    <xsl:text>) obj;</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:for-each select="//fields/field">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>if ( </xsl:text>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+        <xsl:text> != other.</xsl:text>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+        <xsl:text> )</xsl:text>
+        <xsl:call-template name="linebreak"/>
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>return false;</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:for-each>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>return true;</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
+
+    <!-- hashCode() -->
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>@Override</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+</xsl:text>
+    <xsl:for-each select="//fields/field">
+        <xsl:call-template name="indent"/>
+        <xsl:call-template name="indent"/>
+        <xsl:text>result = prime * result + </xsl:text>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+        <xsl:text>;</xsl:text>
+        <xsl:call-template name="linebreak"/>
+    </xsl:for-each>
+    <xsl:call-template name="indent"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>return result;</xsl:text>
+    <xsl:call-template name="linebreak"/>
+    <xsl:call-template name="indent"/>
+    <xsl:text>}</xsl:text>
+    <xsl:call-template name="linebreak"/>
 
     <xsl:call-template name="linebreak"/>
     <xsl:call-template name="indent"/>

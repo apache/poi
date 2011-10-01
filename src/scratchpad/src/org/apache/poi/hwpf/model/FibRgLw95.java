@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.FibRgLw97AbstractType;
+import org.apache.poi.hwpf.model.types.FibRgLw95AbstractType;
 import org.apache.poi.util.Internal;
 
 /**
@@ -31,14 +31,14 @@ import org.apache.poi.util.Internal;
  *         (.doc) Binary File Format
  */
 @Internal
-class FibRgLw97 extends FibRgLw97AbstractType implements FibRgLw
+class FibRgLw95 extends FibRgLw95AbstractType implements FibRgLw 
 {
 
-    public FibRgLw97()
+    public FibRgLw95()
     {
     }
 
-    public FibRgLw97( byte[] std, int offset )
+    public FibRgLw95( byte[] std, int offset )
     {
         fillFields( std, offset );
     }
@@ -55,7 +55,7 @@ class FibRgLw97 extends FibRgLw97AbstractType implements FibRgLw
         case HEADER:
             return getCcpHdd();
         case MACRO:
-            return field_7_reserved3;
+            return getCcpMcr();
         case ANNOTATION:
             return getCcpAtn();
         case ENDNOTE:
@@ -85,7 +85,7 @@ class FibRgLw97 extends FibRgLw97AbstractType implements FibRgLw
             setCcpHdd( newLength );
             return;
         case MACRO:
-            field_7_reserved3 = newLength;
+            setCbMac( newLength );
             return;
         case ANNOTATION:
             setCcpAtn( newLength );

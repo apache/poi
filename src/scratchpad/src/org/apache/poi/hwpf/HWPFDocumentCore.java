@@ -154,9 +154,6 @@ public abstract class HWPFDocumentCore extends POIDocument
 
     // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
-    if (_fib.getFibBase().isFEncrypted()) {
-      throw new EncryptedDocumentException("Cannot process encrypted word files!");
-    }
 
     DirectoryEntry objectPoolEntry;
     try {
