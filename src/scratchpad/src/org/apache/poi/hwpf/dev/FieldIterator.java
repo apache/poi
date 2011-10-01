@@ -103,7 +103,7 @@ public class FieldIterator
         else if ( size.equals( "1" ) )
             if ( type.equals( "short" ) )
             {
-                result = "(short) LittleEndian.getUnsignedByte( data, 0x"
+                result = "LittleEndian.getUByte( data, 0x"
                         + Integer.toHexString( offset ) + " + offset )";
             }
             else if ( type.equals( "int" ) || type.equals( "long" ) )

@@ -90,7 +90,7 @@ public final class ListLevel
     {
         _lvlf = new LVLF();
         setStartAt( startAt );
-        _lvlf.setNfc( (short) numberFormatCode );
+        _lvlf.setNfc( (byte) numberFormatCode );
         _lvlf.setJc( (byte) alignment );
         _grpprlChpx = numberProperties;
         _grpprlPapx = entryProperties;
@@ -184,7 +184,7 @@ public final class ListLevel
 
     public void setNumberFormat( int numberFormatCode )
     {
-        _lvlf.setNfc( (short) numberFormatCode );
+        _lvlf.setNfc( (byte) numberFormatCode );
     }
 
     public void setNumberProperties( byte[] grpprl )

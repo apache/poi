@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model.types;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -41,55 +43,57 @@ public abstract class LVLFAbstractType
 {
 
     protected int field_1_iStartAt;
-    protected short field_2_info2;
-    /**/private static final BitField nfc = new BitField(0x00FF);
-    /**/private static final BitField jc = new BitField(0x0300);
-    /**/private static final BitField fLegal = new BitField(0x0400);
-    /**/private static final BitField fNoRestart = new BitField(0x0800);
-    /**/private static final BitField fIndentSav = new BitField(0x1000);
-    /**/private static final BitField fConverted = new BitField(0x2000);
-    /**/private static final BitField unused1 = new BitField(0x4000);
-    /**/private static final BitField fTentative = new BitField(0x8000);
-    protected byte[] field_3_rgbxchNums;
-    protected byte field_4_ixchFollow;
-    protected int field_5_dxaIndentSav;
-    protected int field_6_unused2;
-    protected short field_7_cbGrpprlChpx;
-    protected short field_8_cbGrpprlPapx;
-    protected short field_9_ilvlRestartLim;
-    protected short field_10_grfhic;
+    protected byte field_2_nfc;
+    protected byte field_3_info;
+    /**/private static final BitField jc = new BitField(0x03);
+    /**/private static final BitField fLegal = new BitField(0x04);
+    /**/private static final BitField fNoRestart = new BitField(0x08);
+    /**/private static final BitField fIndentSav = new BitField(0x10);
+    /**/private static final BitField fConverted = new BitField(0x20);
+    /**/private static final BitField unused1 = new BitField(0x40);
+    /**/private static final BitField fTentative = new BitField(0x80);
+    protected byte[] field_4_rgbxchNums;
+    protected byte field_5_ixchFollow;
+    protected int field_6_dxaIndentSav;
+    protected int field_7_unused2;
+    protected short field_8_cbGrpprlChpx;
+    protected short field_9_cbGrpprlPapx;
+    protected short field_10_ilvlRestartLim;
+    protected short field_11_grfhic;
 
     protected LVLFAbstractType()
     {
-        this.field_3_rgbxchNums = new byte[9];
+        this.field_4_rgbxchNums = new byte[9];
     }
 
     protected void fillFields( byte[] data, int offset )
     {
         field_1_iStartAt               = LittleEndian.getInt( data, 0x0 + offset );
-        field_2_info2                  = LittleEndian.getShort( data, 0x4 + offset );
-        field_3_rgbxchNums             = LittleEndian.getByteArray( data, 0x6 + offset,9 );
-        field_4_ixchFollow             = data[ 0xf + offset ];
-        field_5_dxaIndentSav           = LittleEndian.getInt( data, 0x10 + offset );
-        field_6_unused2                = LittleEndian.getInt( data, 0x14 + offset );
-        field_7_cbGrpprlChpx           = (short) LittleEndian.getUnsignedByte( data, 0x18 + offset );
-        field_8_cbGrpprlPapx           = (short) LittleEndian.getUnsignedByte( data, 0x19 + offset );
-        field_9_ilvlRestartLim         = (short) LittleEndian.getUnsignedByte( data, 0x1a + offset );
-        field_10_grfhic                = (short) LittleEndian.getUnsignedByte( data, 0x1b + offset );
+        field_2_nfc                    = data[ 0x4 + offset ];
+        field_3_info                   = data[ 0x5 + offset ];
+        field_4_rgbxchNums             = LittleEndian.getByteArray( data, 0x6 + offset,9 );
+        field_5_ixchFollow             = data[ 0xf + offset ];
+        field_6_dxaIndentSav           = LittleEndian.getInt( data, 0x10 + offset );
+        field_7_unused2                = LittleEndian.getInt( data, 0x14 + offset );
+        field_8_cbGrpprlChpx           = LittleEndian.getUByte( data, 0x18 + offset );
+        field_9_cbGrpprlPapx           = LittleEndian.getUByte( data, 0x19 + offset );
+        field_10_ilvlRestartLim        = LittleEndian.getUByte( data, 0x1a + offset );
+        field_11_grfhic                = LittleEndian.getUByte( data, 0x1b + offset );
     }
 
     public void serialize( byte[] data, int offset )
     {
         LittleEndian.putInt( data, 0x0 + offset, field_1_iStartAt );
-        LittleEndian.putShort( data, 0x4 + offset, field_2_info2 );
-        System.arraycopy( field_3_rgbxchNums, 0, data, 0x6 + offset, field_3_rgbxchNums.length );
-        data[ 0xf + offset ] = field_4_ixchFollow;
-        LittleEndian.putInt( data, 0x10 + offset, field_5_dxaIndentSav );
-        LittleEndian.putInt( data, 0x14 + offset, field_6_unused2 );
-        LittleEndian.putUByte( data, 0x18 + offset, field_7_cbGrpprlChpx );
-        LittleEndian.putUByte( data, 0x19 + offset, field_8_cbGrpprlPapx );
-        LittleEndian.putUByte( data, 0x1a + offset, field_9_ilvlRestartLim );
-        LittleEndian.putUByte( data, 0x1b + offset, field_10_grfhic );
+        data[ 0x4 + offset ] = field_2_nfc;
+        data[ 0x5 + offset ] = field_3_info;
+        System.arraycopy( field_4_rgbxchNums, 0, data, 0x6 + offset, field_4_rgbxchNums.length );
+        data[ 0xf + offset ] = field_5_ixchFollow;
+        LittleEndian.putInt( data, 0x10 + offset, field_6_dxaIndentSav );
+        LittleEndian.putInt( data, 0x14 + offset, field_7_unused2 );
+        LittleEndian.putUByte( data, 0x18 + offset, field_8_cbGrpprlChpx );
+        LittleEndian.putUByte( data, 0x19 + offset, field_9_cbGrpprlPapx );
+        LittleEndian.putUByte( data, 0x1a + offset, field_10_ilvlRestartLim );
+        LittleEndian.putUByte( data, 0x1b + offset, field_11_grfhic );
     }
 
     public byte[] serialize()
@@ -104,7 +108,61 @@ public abstract class LVLFAbstractType
      */
     public static int getSize()
     {
-        return 0 + 4 + 2 + 9 + 1 + 4 + 4 + 1 + 1 + 1 + 1;
+        return 0 + 4 + 1 + 1 + 9 + 1 + 4 + 4 + 1 + 1 + 1 + 1;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        LVLFAbstractType other = (LVLFAbstractType) obj;
+        if ( field_1_iStartAt != other.field_1_iStartAt )
+            return false;
+        if ( field_2_nfc != other.field_2_nfc )
+            return false;
+        if ( field_3_info != other.field_3_info )
+            return false;
+        if ( !Arrays.equals( field_4_rgbxchNums, other.field_4_rgbxchNums ) )
+            return false;
+        if ( field_5_ixchFollow != other.field_5_ixchFollow )
+            return false;
+        if ( field_6_dxaIndentSav != other.field_6_dxaIndentSav )
+            return false;
+        if ( field_7_unused2 != other.field_7_unused2 )
+            return false;
+        if ( field_8_cbGrpprlChpx != other.field_8_cbGrpprlChpx )
+            return false;
+        if ( field_9_cbGrpprlPapx != other.field_9_cbGrpprlPapx )
+            return false;
+        if ( field_10_ilvlRestartLim != other.field_10_ilvlRestartLim )
+            return false;
+        if ( field_11_grfhic != other.field_11_grfhic )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_iStartAt;
+        result = prime * result + field_2_nfc;
+        result = prime * result + field_3_info;
+        result = prime * result + Arrays.hashCode( field_4_rgbxchNums );
+        result = prime * result + field_5_ixchFollow;
+        result = prime * result + field_6_dxaIndentSav;
+        result = prime * result + field_7_unused2;
+        result = prime * result + field_8_cbGrpprlChpx;
+        result = prime * result + field_9_cbGrpprlPapx;
+        result = prime * result + field_10_ilvlRestartLim;
+        result = prime * result + field_11_grfhic;
+        return result;
     }
 
     public String toString()
@@ -113,9 +171,10 @@ public abstract class LVLFAbstractType
         builder.append("[LVLF]\n");
         builder.append("    .iStartAt             = ");
         builder.append(" (").append(getIStartAt()).append(" )\n");
-        builder.append("    .info2                = ");
-        builder.append(" (").append(getInfo2()).append(" )\n");
-        builder.append("         .nfc                      = ").append(getNfc()).append('\n');
+        builder.append("    .nfc                  = ");
+        builder.append(" (").append(getNfc()).append(" )\n");
+        builder.append("    .info                 = ");
+        builder.append(" (").append(getInfo()).append(" )\n");
         builder.append("         .jc                       = ").append(getJc()).append('\n');
         builder.append("         .fLegal                   = ").append(isFLegal()).append('\n');
         builder.append("         .fNoRestart               = ").append(isFNoRestart()).append('\n');
@@ -145,7 +204,7 @@ public abstract class LVLFAbstractType
     }
 
     /**
-     * Get the iStartAt field for the LVLF record.
+     * A signed integer that specifies the beginning number for the number sequence belonging to this level. This value MUST be less than or equal to 0x7FFF and MUST be greater than or equal to zero. If this level does not have a number sequence (see nfc), this MUST be ignored.
      */
     @Internal
     public int getIStartAt()
@@ -154,7 +213,7 @@ public abstract class LVLFAbstractType
     }
 
     /**
-     * Set the iStartAt field for the LVLF record.
+     * A signed integer that specifies the beginning number for the number sequence belonging to this level. This value MUST be less than or equal to 0x7FFF and MUST be greater than or equal to zero. If this level does not have a number sequence (see nfc), this MUST be ignored.
      */
     @Internal
     public void setIStartAt( int field_1_iStartAt )
@@ -163,21 +222,39 @@ public abstract class LVLFAbstractType
     }
 
     /**
-     * Get the info2 field for the LVLF record.
+     * An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets.
      */
     @Internal
-    public short getInfo2()
+    public byte getNfc()
     {
-        return field_2_info2;
+        return field_2_nfc;
     }
 
     /**
-     * Set the info2 field for the LVLF record.
+     * An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets.
      */
     @Internal
-    public void setInfo2( short field_2_info2 )
+    public void setNfc( byte field_2_nfc )
     {
-        this.field_2_info2 = field_2_info2;
+        this.field_2_nfc = field_2_nfc;
+    }
+
+    /**
+     * Get the info field for the LVLF record.
+     */
+    @Internal
+    public byte getInfo()
+    {
+        return field_3_info;
+    }
+
+    /**
+     * Set the info field for the LVLF record.
+     */
+    @Internal
+    public void setInfo( byte field_3_info )
+    {
+        this.field_3_info = field_3_info;
     }
 
     /**
@@ -186,16 +263,16 @@ public abstract class LVLFAbstractType
     @Internal
     public byte[] getRgbxchNums()
     {
-        return field_3_rgbxchNums;
+        return field_4_rgbxchNums;
     }
 
     /**
      * An array of 8-bit integers. Each integer specifies a one-based character offset to a level placeholder in the xst.rgtchar of the LVL that contains this LVLF. This array is zero-terminated, unless it is full. The count of elements in this array, before to the first terminating zero, MUST be less than or equal to the one-based level of the list to which this LVL corresponds. The integers in this array, before the first terminating zero, MUST be in ascending order, and MUST be unique.
      */
     @Internal
-    public void setRgbxchNums( byte[] field_3_rgbxchNums )
+    public void setRgbxchNums( byte[] field_4_rgbxchNums )
     {
-        this.field_3_rgbxchNums = field_3_rgbxchNums;
+        this.field_4_rgbxchNums = field_4_rgbxchNums;
     }
 
     /**
@@ -204,16 +281,16 @@ public abstract class LVLFAbstractType
     @Internal
     public byte getIxchFollow()
     {
-        return field_4_ixchFollow;
+        return field_5_ixchFollow;
     }
 
     /**
      * An unsigned integer that specifies the character that follows the number text.
      */
     @Internal
-    public void setIxchFollow( byte field_4_ixchFollow )
+    public void setIxchFollow( byte field_5_ixchFollow )
     {
-        this.field_4_ixchFollow = field_4_ixchFollow;
+        this.field_5_ixchFollow = field_5_ixchFollow;
     }
 
     /**
@@ -222,16 +299,16 @@ public abstract class LVLFAbstractType
     @Internal
     public int getDxaIndentSav()
     {
-        return field_5_dxaIndentSav;
+        return field_6_dxaIndentSav;
     }
 
     /**
      * If fIndentSav is nonzero, this is a signed integer that specifies the size, in twips, of the indent that needs to be removed when the numbering is removed. This MUST be less than or equal to 0x00007BC0 or greater than or equal to 0xFFFF8440. If fIndentSav is zero, this MUST be ignored.
      */
     @Internal
-    public void setDxaIndentSav( int field_5_dxaIndentSav )
+    public void setDxaIndentSav( int field_6_dxaIndentSav )
     {
-        this.field_5_dxaIndentSav = field_5_dxaIndentSav;
+        this.field_6_dxaIndentSav = field_6_dxaIndentSav;
     }
 
     /**
@@ -240,16 +317,16 @@ public abstract class LVLFAbstractType
     @Internal
     public int getUnused2()
     {
-        return field_6_unused2;
+        return field_7_unused2;
     }
 
     /**
      * This field MUST be ignored.
      */
     @Internal
-    public void setUnused2( int field_6_unused2 )
+    public void setUnused2( int field_7_unused2 )
     {
-        this.field_6_unused2 = field_6_unused2;
+        this.field_7_unused2 = field_7_unused2;
     }
 
     /**
@@ -258,16 +335,16 @@ public abstract class LVLFAbstractType
     @Internal
     public short getCbGrpprlChpx()
     {
-        return field_7_cbGrpprlChpx;
+        return field_8_cbGrpprlChpx;
     }
 
     /**
      * An unsigned integer that specifies the size, in bytes, of the grpprlChpx in the LVL that contains this LVLF.
      */
     @Internal
-    public void setCbGrpprlChpx( short field_7_cbGrpprlChpx )
+    public void setCbGrpprlChpx( short field_8_cbGrpprlChpx )
     {
-        this.field_7_cbGrpprlChpx = field_7_cbGrpprlChpx;
+        this.field_8_cbGrpprlChpx = field_8_cbGrpprlChpx;
     }
 
     /**
@@ -276,16 +353,16 @@ public abstract class LVLFAbstractType
     @Internal
     public short getCbGrpprlPapx()
     {
-        return field_8_cbGrpprlPapx;
+        return field_9_cbGrpprlPapx;
     }
 
     /**
      * An unsigned integer that specifies the size, in bytes, of the grpprlPapx in the LVL that contains this LVLF.
      */
     @Internal
-    public void setCbGrpprlPapx( short field_8_cbGrpprlPapx )
+    public void setCbGrpprlPapx( short field_9_cbGrpprlPapx )
     {
-        this.field_8_cbGrpprlPapx = field_8_cbGrpprlPapx;
+        this.field_9_cbGrpprlPapx = field_9_cbGrpprlPapx;
     }
 
     /**
@@ -294,16 +371,16 @@ public abstract class LVLFAbstractType
     @Internal
     public short getIlvlRestartLim()
     {
-        return field_9_ilvlRestartLim;
+        return field_10_ilvlRestartLim;
     }
 
     /**
      * An unsigned integer that specifies the first (most-significant) zero-based level after which the number sequence of this level does not restart. The number sequence of this level does restart after any level that is more significant than the specified level. This MUST be less than or equal to the zero-based level of the list to which this LVLF corresponds. If fNoRestart is zero, this MUST be ignored. If this level does not have a number sequence (see nfc), this MUST be ignored.
      */
     @Internal
-    public void setIlvlRestartLim( short field_9_ilvlRestartLim )
+    public void setIlvlRestartLim( short field_10_ilvlRestartLim )
     {
-        this.field_9_ilvlRestartLim = field_9_ilvlRestartLim;
+        this.field_10_ilvlRestartLim = field_10_ilvlRestartLim;
     }
 
     /**
@@ -312,36 +389,16 @@ public abstract class LVLFAbstractType
     @Internal
     public short getGrfhic()
     {
-        return field_10_grfhic;
+        return field_11_grfhic;
     }
 
     /**
      * A grfhic that specifies the HTML incompatibilities of the level..
      */
     @Internal
-    public void setGrfhic( short field_10_grfhic )
+    public void setGrfhic( short field_11_grfhic )
     {
-        this.field_10_grfhic = field_10_grfhic;
-    }
-
-    /**
-     * Sets the nfc field value.
-     * An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets.
-     */
-    @Internal
-    public void setNfc( short value )
-    {
-        field_2_info2 = (short)nfc.setValue(field_2_info2, value);
-    }
-
-    /**
-     * An MSONFC, as specified in [MS-OSHARED] section 2.2.1.3, that specifies the format of the level numbers that replace the placeholders for this level in the xst fields of the LVLs in this list. This value MUST not be equal to 0x08, 0x09, 0x0F, or 0x13. If this is equal to 0xFF or 0x17, this level does not have a number sequence and therefore has no number formatting. If this is equal to 0x17, the level uses bullets.
-     * @return  the nfc field value.
-     */
-    @Internal
-    public short getNfc()
-    {
-        return ( short )nfc.getValue(field_2_info2);
+        this.field_11_grfhic = field_11_grfhic;
     }
 
     /**
@@ -351,7 +408,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setJc( byte value )
     {
-        field_2_info2 = (short)jc.setValue(field_2_info2, value);
+        field_3_info = (byte)jc.setValue(field_3_info, value);
     }
 
     /**
@@ -361,7 +418,7 @@ public abstract class LVLFAbstractType
     @Internal
     public byte getJc()
     {
-        return ( byte )jc.getValue(field_2_info2);
+        return ( byte )jc.getValue(field_3_info);
     }
 
     /**
@@ -371,7 +428,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setFLegal( boolean value )
     {
-        field_2_info2 = (short)fLegal.setBoolean(field_2_info2, value);
+        field_3_info = (byte)fLegal.setBoolean(field_3_info, value);
     }
 
     /**
@@ -381,7 +438,7 @@ public abstract class LVLFAbstractType
     @Internal
     public boolean isFLegal()
     {
-        return fLegal.isSet(field_2_info2);
+        return fLegal.isSet(field_3_info);
     }
 
     /**
@@ -391,7 +448,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setFNoRestart( boolean value )
     {
-        field_2_info2 = (short)fNoRestart.setBoolean(field_2_info2, value);
+        field_3_info = (byte)fNoRestart.setBoolean(field_3_info, value);
     }
 
     /**
@@ -401,7 +458,7 @@ public abstract class LVLFAbstractType
     @Internal
     public boolean isFNoRestart()
     {
-        return fNoRestart.isSet(field_2_info2);
+        return fNoRestart.isSet(field_3_info);
     }
 
     /**
@@ -411,7 +468,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setFIndentSav( boolean value )
     {
-        field_2_info2 = (short)fIndentSav.setBoolean(field_2_info2, value);
+        field_3_info = (byte)fIndentSav.setBoolean(field_3_info, value);
     }
 
     /**
@@ -421,7 +478,7 @@ public abstract class LVLFAbstractType
     @Internal
     public boolean isFIndentSav()
     {
-        return fIndentSav.isSet(field_2_info2);
+        return fIndentSav.isSet(field_3_info);
     }
 
     /**
@@ -431,7 +488,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setFConverted( boolean value )
     {
-        field_2_info2 = (short)fConverted.setBoolean(field_2_info2, value);
+        field_3_info = (byte)fConverted.setBoolean(field_3_info, value);
     }
 
     /**
@@ -441,7 +498,7 @@ public abstract class LVLFAbstractType
     @Internal
     public boolean isFConverted()
     {
-        return fConverted.isSet(field_2_info2);
+        return fConverted.isSet(field_3_info);
     }
 
     /**
@@ -451,17 +508,19 @@ public abstract class LVLFAbstractType
     @Internal
     public void setUnused1( boolean value )
     {
-        field_2_info2 = (short)unused1.setBoolean(field_2_info2, value);
+        field_3_info = (byte)unused1.setBoolean(field_3_info, value);
     }
 
     /**
      * This bit MUST be ignored
      * @return  the unused1 field value.
+     * @deprecated This field should not be used according to specification
      */
     @Internal
+    @Deprecated
     public boolean isUnused1()
     {
-        return unused1.isSet(field_2_info2);
+        return unused1.isSet(field_3_info);
     }
 
     /**
@@ -471,7 +530,7 @@ public abstract class LVLFAbstractType
     @Internal
     public void setFTentative( boolean value )
     {
-        field_2_info2 = (short)fTentative.setBoolean(field_2_info2, value);
+        field_3_info = (byte)fTentative.setBoolean(field_3_info, value);
     }
 
     /**
@@ -481,7 +540,7 @@ public abstract class LVLFAbstractType
     @Internal
     public boolean isFTentative()
     {
-        return fTentative.isSet(field_2_info2);
+        return fTentative.isSet(field_3_info);
     }
 
 }  // END OF CLASS

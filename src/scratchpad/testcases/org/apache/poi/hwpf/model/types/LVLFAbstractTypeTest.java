@@ -14,30 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.apache.poi.hwpf.model.types;
 
-import org.apache.poi.hwpf.model.types.LVLFAbstractType;
-import org.apache.poi.util.Internal;
+import junit.framework.TestCase;
 
 /**
- * The LVLF structure contains formatting properties for an individual level in
- * a list
+ * Test cases for {@link LVLFAbstractType}
  * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format Specification [*.doc] and [MS-DOC] - v20110608 Word
- *         (.doc) Binary File Format
+ * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-@Internal
-class LVLF extends LVLFAbstractType
+public class LVLFAbstractTypeTest extends TestCase
 {
 
-    public LVLF()
+    public void testGetSize()
     {
-    }
-
-    public LVLF( byte[] std, int offset )
-    {
-        fillFields( std, offset );
+        assertEquals( 28, LVLFAbstractType.getSize() );
     }
 
 }
