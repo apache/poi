@@ -147,6 +147,93 @@ public abstract class FibRgLw97AbstractType
         return 0 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        FibRgLw97AbstractType other = (FibRgLw97AbstractType) obj;
+        if ( field_1_cbMac != other.field_1_cbMac )
+            return false;
+        if ( field_2_reserved1 != other.field_2_reserved1 )
+            return false;
+        if ( field_3_reserved2 != other.field_3_reserved2 )
+            return false;
+        if ( field_4_ccpText != other.field_4_ccpText )
+            return false;
+        if ( field_5_ccpFtn != other.field_5_ccpFtn )
+            return false;
+        if ( field_6_ccpHdd != other.field_6_ccpHdd )
+            return false;
+        if ( field_7_reserved3 != other.field_7_reserved3 )
+            return false;
+        if ( field_8_ccpAtn != other.field_8_ccpAtn )
+            return false;
+        if ( field_9_ccpEdn != other.field_9_ccpEdn )
+            return false;
+        if ( field_10_ccpTxbx != other.field_10_ccpTxbx )
+            return false;
+        if ( field_11_ccpHdrTxbx != other.field_11_ccpHdrTxbx )
+            return false;
+        if ( field_12_reserved4 != other.field_12_reserved4 )
+            return false;
+        if ( field_13_reserved5 != other.field_13_reserved5 )
+            return false;
+        if ( field_14_reserved6 != other.field_14_reserved6 )
+            return false;
+        if ( field_15_reserved7 != other.field_15_reserved7 )
+            return false;
+        if ( field_16_reserved8 != other.field_16_reserved8 )
+            return false;
+        if ( field_17_reserved9 != other.field_17_reserved9 )
+            return false;
+        if ( field_18_reserved10 != other.field_18_reserved10 )
+            return false;
+        if ( field_19_reserved11 != other.field_19_reserved11 )
+            return false;
+        if ( field_20_reserved12 != other.field_20_reserved12 )
+            return false;
+        if ( field_21_reserved13 != other.field_21_reserved13 )
+            return false;
+        if ( field_22_reserved14 != other.field_22_reserved14 )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_cbMac;
+        result = prime * result + field_2_reserved1;
+        result = prime * result + field_3_reserved2;
+        result = prime * result + field_4_ccpText;
+        result = prime * result + field_5_ccpFtn;
+        result = prime * result + field_6_ccpHdd;
+        result = prime * result + field_7_reserved3;
+        result = prime * result + field_8_ccpAtn;
+        result = prime * result + field_9_ccpEdn;
+        result = prime * result + field_10_ccpTxbx;
+        result = prime * result + field_11_ccpHdrTxbx;
+        result = prime * result + field_12_reserved4;
+        result = prime * result + field_13_reserved5;
+        result = prime * result + field_14_reserved6;
+        result = prime * result + field_15_reserved7;
+        result = prime * result + field_16_reserved8;
+        result = prime * result + field_17_reserved9;
+        result = prime * result + field_18_reserved10;
+        result = prime * result + field_19_reserved11;
+        result = prime * result + field_20_reserved12;
+        result = prime * result + field_21_reserved13;
+        result = prime * result + field_22_reserved14;
+        return result;
+    }
+
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
