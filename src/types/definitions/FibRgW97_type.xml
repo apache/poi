@@ -27,31 +27,31 @@
         Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
     </author>
     <fields>
-        <field type="short" size="2" name="reserved1" deprecated="true"
+        <field type="short" size="2" name="wMagicCreated" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved2" deprecated="true"
+        <field type="short" size="2" name="wMagicRevised" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved3" deprecated="true"
+        <field type="short" size="2" name="wMagicCreatedPrivate" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved4" deprecated="true"
+        <field type="short" size="2" name="wMagicRevisedPrivate" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved5" deprecated="true"
+        <field type="short" size="2" name="pnFbpChpFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved6" deprecated="true"
+        <field type="short" size="2" name="pnChpFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved7" deprecated="true"
+        <field type="short" size="2" name="cpnBteChp_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved8" deprecated="true"
+        <field type="short" size="2" name="pnFbpPapFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved9" deprecated="true"
+        <field type="short" size="2" name="pnPapFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved10" deprecated="true"
+        <field type="short" size="2" name="cpnBtePap_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved11" deprecated="true"
+        <field type="short" size="2" name="pnFbpLvcFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved12" deprecated="true"
+        <field type="short" size="2" name="pnLvcFirst_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
-        <field type="short" size="2" name="reserved13" deprecated="true"
+        <field type="short" size="2" name="cpnBteLvc_W6" deprecated="true"
             description="This value is undefined and MUST be ignored"/>
         <field type="short" size="2" name="lidFE" description="A LID whose meaning depends on the nFib value"/>
     </fields>
