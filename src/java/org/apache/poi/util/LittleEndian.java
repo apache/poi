@@ -19,6 +19,7 @@ package org.apache.poi.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *  a utility class for handling little-endian numbers, which the 80x86 world is
@@ -96,7 +97,6 @@ public class LittleEndian implements LittleEndianConsts {
         int b3 = data[i++] & 0xFF;
         return (b3 << 24) + (b2 << 16) + (b1 << 8) + (b0 << 0);
     }
-
 
     /**
      *  get an int value from the beginning of a byte array
@@ -255,6 +255,25 @@ public class LittleEndian implements LittleEndianConsts {
     }
 
     /**
+     * Put int into output stream
+     * 
+     * @param value
+     *            the int (32-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putInt( int value, OutputStream outputStream )
+            throws IOException
+    {
+        outputStream.write( (byte) ( ( value >>> 0 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 8 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 16 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 24 ) & 0xFF ) );
+    }
+
+    /**
      * put an unsigned int value into a byte array
      *
      * @param data the byte array
@@ -279,6 +298,25 @@ public class LittleEndian implements LittleEndianConsts {
      */
     public static void putUInt(byte[] data, long value) {
         putUInt(data, 0, value);
+    }
+
+    /**
+     * Put unsigned int into output stream
+     * 
+     * @param value
+     *            the int (32-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putUInt( long value, OutputStream outputStream )
+            throws IOException
+    {
+        outputStream.write( (byte) ( ( value >>> 0 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 8 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 16 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 24 ) & 0xFF ) );
     }
 
     /**

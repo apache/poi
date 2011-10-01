@@ -22,27 +22,34 @@ import org.apache.poi.util.Internal;
 @Internal
 public final class ListFormatOverride
 {
-
-    private ListFormatOverrideLevel[] _levelOverrides;
-
     private LFO _lfo;
+
+    private LFOData _lfoData;
 
     public ListFormatOverride( byte[] buf, int offset )
     {
         _lfo = new LFO( buf, offset );
-        _levelOverrides = new ListFormatOverrideLevel[_lfo.getClfolvl()];
     }
 
     public ListFormatOverride( int lsid )
     {
         _lfo = new LFO();
         _lfo.setLsid( lsid );
-        _levelOverrides = new ListFormatOverrideLevel[0];
     }
 
     public ListFormatOverrideLevel[] getLevelOverrides()
     {
-        return _levelOverrides;
+        return _lfoData.getRgLfoLvl();
+    }
+
+    LFO getLfo()
+    {
+        return _lfo;
+    }
+
+    LFOData getLfoData()
+    {
+        return _lfoData;
     }
 
     public int getLsid()
@@ -52,14 +59,12 @@ public final class ListFormatOverride
 
     public ListFormatOverrideLevel getOverrideLevel( int level )
     {
-
         ListFormatOverrideLevel retLevel = null;
-
-        for ( int x = 0; x < _levelOverrides.length; x++ )
+        for ( int x = 0; x < getLevelOverrides().length; x++ )
         {
-            if ( _levelOverrides[x].getLevelNum() == level )
+            if ( getLevelOverrides()[x].getLevelNum() == level )
             {
-                retLevel = _levelOverrides[x];
+                retLevel = getLevelOverrides()[x];
             }
         }
         return retLevel;
@@ -70,6 +75,11 @@ public final class ListFormatOverride
         return _lfo.getClfolvl();
     }
 
+    void setLfoData( LFOData _lfoData )
+    {
+        this._lfoData = _lfoData;
+    }
+
     public void setLsid( int lsid )
     {
         _lfo.setLsid( lsid );
@@ -77,7 +87,7 @@ public final class ListFormatOverride
 
     public void setOverride( int index, ListFormatOverrideLevel lfolvl )
     {
-        _levelOverrides[index] = lfolvl;
+        getLevelOverrides()[index] = lfolvl;
     }
 
     public byte[] toByteArray()
