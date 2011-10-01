@@ -38,15 +38,13 @@ public final class TestSectionTable
     byte[] tableStream = _hWPFDocFixture._tableStream;
     int fcMin = fib.getFibBase().getFcMin();
 
-    CPSplitCalculator cps = new CPSplitCalculator(fib);
-
     ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream, fib.getFcClx(), fcMin);
     TextPieceTable tpt = cft.getTextPieceTable();
 
     SectionTable sectionTable = new SectionTable(mainStream, tableStream,
                                                  fib.getFcPlcfsed(),
                                                  fib.getLcbPlcfsed(),
-                                                 fcMin, tpt, cps);
+                                                 fcMin, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
     sectionTable.writeTo(fileSys, 0);
@@ -58,7 +56,7 @@ public final class TestSectionTable
 
     SectionTable newSectionTable = new SectionTable(
     		newMainStream, newTableStream, 0,
-    		newTableStream.length, 0, tpt, cps);
+    		newTableStream.length, 0, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
 
     ArrayList oldSections = sectionTable.getSections();
     ArrayList newSections = newSectionTable.getSections();

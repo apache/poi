@@ -28,7 +28,6 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.CHPBinTable;
-import org.apache.poi.hwpf.model.CPSplitCalculator;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.DocumentProperties;
 import org.apache.poi.hwpf.model.EscherRecordHolder;
@@ -87,10 +86,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     private static final String STREAM_DATA = "Data";
     private static final String STREAM_TABLE_0 = "0Table";
     private static final String STREAM_TABLE_1 = "1Table";
-
-  /** And for making sense of CP lengths in the FIB */
-  @Deprecated
-  protected CPSplitCalculator _cpSplit;
 
   /** table stream buffer*/
   protected byte[] _tableStream;
@@ -222,9 +217,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     // Also handles HPSF bits
     super(directory);
 
-    // Do the CP Split
-    _cpSplit = new CPSplitCalculator(_fib);
-    
     // Is this document too old for us?
     if(_fib.getFibBase().getNFib() < 106) {
         throw new OldWordFileFormatException("The document is too old - Word 95 or older. Try HWPFOldDocument instead?");
@@ -350,7 +342,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     _officeDrawingsHeaders = new OfficeDrawingsImpl( _fspaHeaders, _escherRecordHolder, _mainStream );
     _officeDrawingsMain = new OfficeDrawingsImpl( _fspaMain , _escherRecordHolder, _mainStream);
 
-    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _cpSplit);
+    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN));
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
@@ -399,12 +391,6 @@ public final class HWPFDocument extends HWPFDocumentCore
     {
         return _text;
     }
-
-  @Deprecated
-  public CPSplitCalculator getCPSplitCalculator()
-  {
-    return _cpSplit;
-  }
 
   public DocumentProperties getDocProperties()
   {
