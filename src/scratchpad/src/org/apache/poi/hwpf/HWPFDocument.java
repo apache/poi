@@ -801,46 +801,40 @@ public final class HWPFDocument extends HWPFDocumentCore
     _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
-        /*
-         * plcflst (list formats) Written immediately after the end of the
-         * previously recorded, if there are any lists defined in the document.
-         * This begins with a short count of LSTF structures followed by those
-         * LSTF structures. This is immediately followed by the allocated data
-         * hanging off the LSTFs. This data consists of the array of LVLs for
-         * each LSTF. (Each LVL consists of an LVLF followed by two grpprls and
-         * an XST.)
-         * 
-         * Microsoft Office Word 97-2007 Binary File Format (.doc)
-         * Specification; Page 25 of 210
-         */
+        // write out the list tables
+        if ( _lt != null )
+        {
+            /*
+             * plcflst (list formats) Written immediately after the end of the
+             * previously recorded, if there are any lists defined in the
+             * document. This begins with a short count of LSTF structures
+             * followed by those LSTF structures. This is immediately followed
+             * by the allocated data hanging off the LSTFs. This data consists
+             * of the array of LVLs for each LSTF. (Each LVL consists of an LVLF
+             * followed by two grpprls and an XST.)
+             * 
+             * Microsoft Office Word 97-2007 Binary File Format (.doc)
+             * Specification; Page 25 of 210
+             */
+            _lt.writeListDataTo( _fib, tableStream );
+            tableOffset = tableStream.getOffset();
 
-    // write out the list tables
-    if (_lt != null)
-    {
-      _fib.setFcPlcfLst(tableOffset);
-      _lt.writeListDataTo(tableStream);
-      _fib.setLcbPlcfLst(tableStream.getOffset() - tableOffset);
-    }
-
-    /*
-     * plflfo (more list formats) Written immediately after the end of the
-     * plcflst and its accompanying data, if there are any lists defined in
-     * the document. This consists first of a PL of LFO records, followed by
-     * the allocated data (if any) hanging off the LFOs. The allocated data
-     * consists of the array of LFOLVLFs for each LFO (and each LFOLVLF is
-     * immediately followed by some LVLs).
-     * 
-     * Microsoft Office Word 97-2007 Binary File Format (.doc)
-     * Specification; Page 26 of 210
-     */
-
-    if (_lt != null)
-    {
-      _fib.setFcPlfLfo(tableStream.getOffset());
-      _lt.writeListOverridesTo(tableStream);
-      _fib.setLcbPlfLfo(tableStream.getOffset() - tableOffset);
-      tableOffset = tableStream.getOffset();
-    }
+            /*
+             * plflfo (more list formats) Written immediately after the end of
+             * the plcflst and its accompanying data, if there are any lists
+             * defined in the document. This consists first of a PL of LFO
+             * records, followed by the allocated data (if any) hanging off the
+             * LFOs. The allocated data consists of the array of LFOLVLFs for
+             * each LFO (and each LFOLVLF is immediately followed by some LVLs).
+             * 
+             * Microsoft Office Word 97-2007 Binary File Format (.doc)
+             * Specification; Page 26 of 210
+             */
+            _fib.setFcPlfLfo( tableStream.getOffset() );
+            _lt.writeListOverridesTo( tableStream );
+            _fib.setLcbPlfLfo( tableStream.getOffset() - tableOffset );
+            tableOffset = tableStream.getOffset();
+        }
 
         /*
          * sttbfBkmk (table of bookmark name strings) Written immediately after

@@ -45,7 +45,7 @@ public final class TestListTables
 
       HWPFOutputStream tableOut = fileSys.getStream ("1Table");
 
-      listTables.writeListDataTo (tableOut);
+      listTables.writeListDataTo (fib, tableOut);
       int offset = tableOut.getOffset ();
       listTables.writeListOverridesTo (tableOut);
 
