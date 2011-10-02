@@ -185,15 +185,14 @@ public class PropertySet
     /**
      * <p>The sections in this {@link PropertySet}.</p>
      */
-    protected List sections;
-
+    protected List<Section> sections;
 
     /**
      * <p>Returns the {@link Section}s in the property set.</p>
      *
      * @return The {@link Section}s in the property set.
      */
-    public List getSections()
+    public List<Section> getSections()
     {
         return sections;
     }
@@ -440,7 +439,7 @@ public class PropertySet
          * Summary Information stream has 2. Everything else is a rare
          * exception and is no longer fostered by Microsoft.
          */
-        sections = new ArrayList(sectionCount);
+        sections = new ArrayList<Section>( sectionCount );
 
         /*
          * Loop over the section descriptor array. Each descriptor
@@ -468,7 +467,7 @@ public class PropertySet
     {
         if (sections.size() <= 0)
             return false;
-        return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
+        return Util.equal(sections.get(0).getFormatID().getBytes(),
                           SectionIDMap.SUMMARY_INFORMATION_ID);
     }
 
@@ -485,7 +484,7 @@ public class PropertySet
     {
         if (sections.size() <= 0)
             return false;
-        return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
+        return Util.equal(sections.get(0).getFormatID().getBytes(),
                           SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
     }
 
@@ -601,7 +600,7 @@ public class PropertySet
     {
         if (getSectionCount() < 1)
             throw new MissingSectionException("Property set does not contain any sections.");
-        return ((Section) sections.get(0));
+        return sections.get(0);
     }
 
 
@@ -618,7 +617,7 @@ public class PropertySet
         if (sectionCount != 1)
             throw new NoSingleSectionException
                 ("Property set contains " + sectionCount + " sections.");
-        return ((Section) sections.get(0));
+        return sections.get(0);
     }
 
 
@@ -690,9 +689,8 @@ public class PropertySet
         b.append(", sectionCount: ");
         b.append(sectionCount);
         b.append(", sections: [\n");
-        final List sections = getSections();
-        for (int i = 0; i < sectionCount; i++)
-            b.append(((Section) sections.get(i)).toString());
+        for (Section section: getSections())
+            b.append(section);
         b.append(']');
         b.append(']');
         return b.toString();
