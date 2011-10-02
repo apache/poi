@@ -108,6 +108,13 @@ public class MutableProperty extends Property
         int length = 0;
         long variantType = getType();
 
+        if ( variantType == 0x0002 )
+        {
+            TypeWriter
+                    .writeToStream( out, ( (Number) getValue() ).shortValue() );
+            return 2;
+        }
+
         /* Ensure that wide strings are written if the codepage is Unicode. */
         if (codepage == Constants.CP_UNICODE && variantType == Variant.VT_LPSTR)
             variantType = Variant.VT_LPWSTR;
