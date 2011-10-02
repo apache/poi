@@ -505,19 +505,23 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_LPWSTR:
             {
-                final int nrOfChars = ((String) value).length() + 1;
-                length += TypeWriter.writeUIntToStream(out, nrOfChars);
-                char[] s = Util.pad4((String) value);
-                for (int i = 0; i < s.length; i++)
+                final int nrOfChars = ( (String) value ).length() + 1;
+                length += TypeWriter.writeUIntToStream( out, nrOfChars );
+                char[] s = ( (String) value ).toCharArray();
+                for ( int i = 0; i < s.length; i++ )
                 {
-                    final int high = ((s[i] & 0x0000ff00) >> 8);
-                    final int low = (s[i] & 0x000000ff);
+                    final int high = ( ( s[i] & 0x0000ff00 ) >> 8 );
+                    final int low = ( s[i] & 0x000000ff );
                     final byte highb = (byte) high;
                     final byte lowb = (byte) low;
-                    out.write(lowb);
-                    out.write(highb);
+                    out.write( lowb );
+                    out.write( highb );
                     length += 2;
                 }
+                // NullTerminator
+                out.write( 0x00 );
+                out.write( 0x00 );
+                length += 2;
                 break;
             }
             case Variant.VT_CF:
