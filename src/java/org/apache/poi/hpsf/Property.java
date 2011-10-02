@@ -18,7 +18,7 @@
 package org.apache.poi.hpsf;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.poi.util.HexDump;
@@ -193,7 +193,7 @@ public class Property
      * @throws UnsupportedEncodingException if the dictionary's codepage is not
      *         (yet) supported.
      */
-    protected Map readDictionary(final byte[] src, final long offset,
+    protected Map<?, ?> readDictionary(final byte[] src, final long offset,
                                  final int length, final int codepage)
     throws UnsupportedEncodingException
     {
@@ -210,7 +210,8 @@ public class Property
         final long nrEntries = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
 
-        final Map m = new HashMap((int) nrEntries, (float) 1.0);
+        final Map<Object, Object> m = new LinkedHashMap<Object, Object>(
+                (int) nrEntries, (float) 1.0 );
 
         try
         {
