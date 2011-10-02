@@ -27,7 +27,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
@@ -37,7 +37,6 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
-import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests the basic HPSF functionality.</p>
@@ -194,6 +193,6 @@ public final class TestBasic extends TestCase {
         Assert.assertNotNull(s.getProperties());
         Assert.assertEquals(17, s.getPropertyCount());
         Assert.assertEquals("Titel", s.getProperty(2));
-        Assert.assertEquals(1748, s.getSize());
+        Assert.assertEquals(1764, s.getSize());
     }
 }
