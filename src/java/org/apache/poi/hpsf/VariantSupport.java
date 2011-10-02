@@ -482,8 +482,7 @@ public class VariantSupport extends Variant
                 else
                     trueOrFalse = (short) 0x0000;
                 TypeWriter.writeUShortToStream( out, trueOrFalse );
-                TypeWriter.writeUShortToStream( out, (short) 0x0000 );
-                length += 4;
+                length += 2;
                 break;
             }
             case Variant.VT_LPSTR:
@@ -515,9 +514,6 @@ public class VariantSupport extends Variant
                     out.write(highb);
                     length += 2;
                 }
-                out.write(0x00);
-                out.write(0x00);
-                length += 2;
                 break;
             }
             case Variant.VT_CF:
@@ -536,13 +532,7 @@ public class VariantSupport extends Variant
             case Variant.VT_I2:
             {
                 TypeWriter.writeToStream(out, ((Integer) value).shortValue());
-                // length = LittleEndianConsts.SHORT_SIZE;
-                TypeWriter.writeToStream( out, (short) 0x0000 );
-                /*
-                 * MUST be a 16-bit signed integer, followed by zero padding to 4
-                 * bytes -- http://msdn.microsoft.com/en-us/library/dd942532(v=PROT.13).aspx
-                 */
-                length = LittleEndianConsts.INT_SIZE;
+                length = LittleEndianConsts.SHORT_SIZE;
                 break;
             }
             case Variant.VT_I4:
@@ -597,6 +587,13 @@ public class VariantSupport extends Variant
                     throw new WritingNotSupportedException(type, value);
                 break;
             }
+        }
+
+        /* pad values to 4-bytes */
+        while ( ( length & 0x3 ) != 0 )
+        {
+            out.write( 0x00 );
+            length++;
         }
 
         return length;

@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51834 - Opening and Writing .doc file results in corrupt document</action>
            <action dev="poi-developers" type="fix">51902 - Picture.fillRawImageContent - ArrayIndexOutOfBoundsException (duplicate)</action>
            <action dev="poi-developers" type="fix">51890 - ArrayIndexOutOfBounds ExceptionPicture.fillRawImageContent</action>
            <action dev="poi-developers" type="add">Allow the passing of a File object to WorkbookFactory.create, which permits lower memory processing than the InputStream version</action>
