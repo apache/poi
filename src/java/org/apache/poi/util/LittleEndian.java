@@ -495,4 +495,42 @@ public class LittleEndian implements LittleEndianConsts {
 
         return copy;
     }
+
+    /**
+     * Read short array
+     * 
+     * @param  data                        the original byte array
+     * @param  offset                      Where to start copying from.
+     * @param  size                        Number of bytes to copy.
+     * @throws IndexOutOfBoundsException
+     *             - if read would cause access of data outside array bounds.
+     */
+    public static short[] getShortArray( byte[] data, int offset, int size )
+    {
+        short[] result = new short[size / SHORT_SIZE];
+        for ( int i = 0; i < result.length; i++ )
+        {
+            result[i] = getShort( data, offset + i * SHORT_SIZE );
+        }
+        return result;
+    }
+
+    /**
+     * Stores short array in buffer
+     * 
+     * @param data
+     *            the byte array
+     * @param offset
+     *            a starting offset into the byte array
+     * @param value
+     *            the short (16-bit) values
+     */
+    public static void putShortArray( byte[] data, int offset, short[] value )
+    {
+        for ( short s : value )
+        {
+            putShort( data, offset, s );
+            offset += SHORT_SIZE;
+        }
+    }
 }
