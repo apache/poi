@@ -477,11 +477,12 @@ public class VariantSupport extends Variant
             case Variant.VT_BOOL:
             {
                 int trueOrFalse;
-                if (((Boolean) value).booleanValue())
-                    trueOrFalse = 1;
+                if ( ( (Boolean) value ).booleanValue() )
+                    trueOrFalse = 0xFFFF;
                 else
-                    trueOrFalse = 0;
-                length = TypeWriter.writeUIntToStream(out, trueOrFalse);
+                    trueOrFalse = 0x0000;
+                TypeWriter.writeUShortToStream( out, trueOrFalse );
+                length += 2;
                 break;
             }
             case Variant.VT_LPSTR:
@@ -534,7 +535,13 @@ public class VariantSupport extends Variant
             case Variant.VT_I2:
             {
                 TypeWriter.writeToStream(out, ((Integer) value).shortValue());
-                length = LittleEndianConsts.SHORT_SIZE;
+                // length = LittleEndianConsts.SHORT_SIZE;
+                TypeWriter.writeToStream( out, (short) 0x0000 );
+                /*
+                 * MUST be a 16-bit signed integer, followed by zero padding to 4
+                 * bytes -- http://msdn.microsoft.com/en-us/library/dd942532(v=PROT.13).aspx
+                 */
+                length = LittleEndianConsts.INT_SIZE;
                 break;
             }
             case Variant.VT_I4:
