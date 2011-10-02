@@ -17,7 +17,9 @@
 package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -38,6 +41,7 @@ import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -699,5 +703,20 @@ public class TestBugs extends TestCase
                     "Picture at offset " + picture.getStartOffset()
                             + " has type " + pictureType );
         }
+    }
+
+    /**
+     * [RESOLVED FIXED] Bug 51834 - Opening and Writing .doc file results in
+     * corrupt document
+     */
+    public void testBug51834() throws Exception
+    {
+        /*
+         * we don't have Java test for this file - it should be checked using
+         * Microsoft BFF Validator. But check read-write-read anyway. -- sergey
+         */
+        HWPFTestDataSamples.openSampleFile( "Bug51834.doc" );
+        HWPFTestDataSamples.writeOutAndReadBack( HWPFTestDataSamples
+                .openSampleFile( "Bug51834.doc" ) );
     }
 }
