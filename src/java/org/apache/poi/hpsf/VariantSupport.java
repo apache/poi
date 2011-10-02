@@ -476,12 +476,16 @@ public class VariantSupport extends Variant
         {
             case Variant.VT_BOOL:
             {
-                short trueOrFalse;
                 if ( ( (Boolean) value ).booleanValue() )
-                    trueOrFalse = (short) 0xFFFF;
+                {
+                    out.write( 0xff );
+                    out.write( 0xff );
+                }
                 else
-                    trueOrFalse = (short) 0x0000;
-                TypeWriter.writeUShortToStream( out, trueOrFalse );
+                {
+                    out.write( 0x00 );
+                    out.write( 0x00 );
+                }
                 length += 2;
                 break;
             }
