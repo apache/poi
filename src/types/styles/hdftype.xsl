@@ -229,7 +229,7 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
         <xsl:call-template name="indent"/>
         <xsl:text>if ( </xsl:text>
         <xsl:choose>
-            <xsl:when test="@type='byte[]'">
+            <xsl:when test="substring(@type, string-length(@type)-1)='[]'">
                 <xsl:text>!Arrays.equals( </xsl:text>
                 <xsl:value-of select="$fieldName"/>
                 <xsl:text>, other.</xsl:text>
@@ -274,7 +274,7 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
         <xsl:call-template name="indent"/>
         <xsl:text>result = prime * result + </xsl:text>
         <xsl:choose>
-            <xsl:when test="@type='byte[]'">
+            <xsl:when test="substring(@type, string-length(@type)-1)='[]'">
                 <xsl:text>Arrays.hashCode( </xsl:text>
                 <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
                 <xsl:text> )</xsl:text>

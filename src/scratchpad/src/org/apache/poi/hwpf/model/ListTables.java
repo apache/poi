@@ -52,27 +52,36 @@ public final class ListTables
 
   }
 
-  public ListTables(byte[] tableStream, int lstOffset, final int lfoOffset)
-  {
-    // get the list data
-    int length = LittleEndian.getShort(tableStream, lstOffset);
-    lstOffset += LittleEndian.SHORT_SIZE;
-    int levelOffset = lstOffset + (length * LIST_DATA_SIZE);
-
-    for (int x = 0; x < length; x++)
+    public ListTables( byte[] tableStream, final int lstOffset,
+            final int lfoOffset )
     {
-      ListData lst = new ListData(tableStream, lstOffset);
-      _listMap.put(Integer.valueOf(lst.getLsid()), lst);
-      lstOffset += LIST_DATA_SIZE;
+        {
+            /*
+             * The PlfLst structure contains the list formatting information for
+             * the document. -- Page 425 of 621. [MS-DOC] -- v20110315 Word
+             * (.doc) Binary File Format
+             */
+            int offset = lstOffset;
 
-      int num = lst.numLevels();
-      for (int y = 0; y < num; y++)
-      {
-        ListLevel lvl = new ListLevel(tableStream, levelOffset);
-        lst.setLevel(y, lvl);
-        levelOffset += lvl.getSizeInBytes();
-      }
-    }
+            int cLst = LittleEndian.getShort( tableStream, offset );
+            offset += LittleEndian.SHORT_SIZE;
+            int levelOffset = offset + ( cLst * LIST_DATA_SIZE );
+
+            for ( int x = 0; x < cLst; x++ )
+            {
+                ListData lst = new ListData( tableStream, offset );
+                _listMap.put( Integer.valueOf( lst.getLsid() ), lst );
+                offset += LSTF.getSize();
+
+                int num = lst.numLevels();
+                for ( int y = 0; y < num; y++ )
+                {
+                    ListLevel lvl = new ListLevel( tableStream, levelOffset );
+                    lst.setLevel( y, lvl );
+                    levelOffset += lvl.getSizeInBytes();
+                }
+            }
+        }
 
         {
             /*
@@ -133,9 +142,12 @@ public final class ListTables
     return lsid;
   }
 
-  public void writeListDataTo(HWPFOutputStream tableStream)
-    throws IOException
-  {
+    public void writeListDataTo( FileInformationBlock fib,
+            HWPFOutputStream tableStream ) throws IOException
+    {
+        final int startOffset = tableStream.getOffset();
+        fib.setFcPlcfLst( startOffset );
+
     int listSize = _listMap.size();
 
     // use this stream as a buffer for the levels since their size varies.
@@ -154,8 +166,15 @@ public final class ListTables
         levelBuf.write(lvls[y].toByteArray());
       }
     }
-    tableStream.write(levelBuf.toByteArray());
-  }
+
+        /*
+         * An array of LVLs is appended to the PlfLst. lcbPlfLst does not
+         * account for the array of LVLs. -- Page 76 of 621 -- [MS-DOC] --
+         * v20110315 Word (.doc) Binary File Format
+         */
+        fib.setLcbPlcfLst( tableStream.getOffset() - startOffset );
+        tableStream.write( levelBuf.toByteArray() );
+    }
 
     public void writeListOverridesTo( HWPFOutputStream tableStream )
             throws IOException
