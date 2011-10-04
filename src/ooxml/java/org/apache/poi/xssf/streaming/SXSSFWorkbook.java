@@ -161,7 +161,6 @@ public class SXSSFWorkbook implements Workbook
     SXSSFSheet getSXSSFSheet(XSSFSheet sheet)
     {
         SXSSFSheet result=_xFromSxHash.get(sheet);
-        assert result!=null;
         return result;
     }
 

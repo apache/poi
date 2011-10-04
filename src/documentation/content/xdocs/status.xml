@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51716 - Removed incorrect assert in SXSSFSheet#getSXSSFSheet</action>
            <action dev="poi-developers" type="fix">51834 - Opening and Writing .doc file results in corrupt document</action>
            <action dev="poi-developers" type="fix">51902 - Picture.fillRawImageContent - ArrayIndexOutOfBoundsException (duplicate)</action>
            <action dev="poi-developers" type="fix">51890 - ArrayIndexOutOfBounds ExceptionPicture.fillRawImageContent</action>
