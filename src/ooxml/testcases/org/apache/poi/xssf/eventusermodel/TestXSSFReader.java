@@ -55,6 +55,13 @@ public final class TestXSSFReader extends TestCase {
 
 		assertEquals(3, r.getStylesTable().getFonts().size());
 		assertEquals(0, r.getStylesTable()._getNumberFormatSize());
+		
+		// The Styles Table should have the themes associated with it too
+		assertNotNull(r.getStylesTable().getTheme());
+		
+		// Check we get valid data for the two
+		assertNotNull(r.getStylesData());
+      assertNotNull(r.getThemesData());
 	}
 
 	public void testStrings() throws Exception {
