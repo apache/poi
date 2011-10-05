@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
@@ -83,7 +84,15 @@ public class XSSFReader {
      */
     public StylesTable getStylesTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.STYLES.getContentType());
-        return parts.size() == 0 ? null : new StylesTable(parts.get(0), null);
+        if(parts.size() == 0) return null;
+        
+        // Create the Styles Table, and associate the Themes if present
+        StylesTable styles = new StylesTable(parts.get(0), null);
+        parts = pkg.getPartsByContentType( XSSFRelation.THEME.getContentType());
+        if(parts.size() != 0) {
+           styles.setTheme(new ThemesTable(parts.get(0), null));
+        }
+        return styles;
     }
 
 
@@ -102,6 +111,14 @@ public class XSSFReader {
      */
     public InputStream getStylesData() throws IOException, InvalidFormatException {
         return XSSFRelation.STYLES.getContents(workbookPart);
+    }
+
+    /**
+     * Returns an InputStream to read the contents of the
+     *  themes table.
+     */
+    public InputStream getThemesData() throws IOException, InvalidFormatException {
+        return XSSFRelation.THEME.getContents(workbookPart);
     }
 
     /**
