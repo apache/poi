@@ -126,7 +126,8 @@ public final class POIFSChunkParser {
       
       // Make sure we got what we expected, should be of 
       //  the form __<name>_<id><type>
-      if(namePrefix.equals("Olk10SideProps")) {
+      if(namePrefix.equals("Olk10SideProps") ||
+         namePrefix.equals("Olk10SideProps_")) {
          // This is some odd Outlook 2002 thing, skip
          return;
       } else if(splitAt <= entryName.length()-8) {
