@@ -152,13 +152,20 @@ public class AreaReference {
      *  unbroken) area, or is it made up of
      *  several different parts?
      * (If it is, you will need to call
-     *  ....
+     *  {@link #generateContiguous(String)})
      */
     public static boolean isContiguous(String reference) {
-        if(reference.indexOf(',') == -1) {
-            return true;
-        }
-        return false;
+       // If there's a sheet name, strip it off
+       int sheetRefEnd = reference.indexOf('!'); 
+       if(sheetRefEnd != -1) {
+          reference = reference.substring(sheetRefEnd);
+       }
+
+       // Check for the , as a sign of non-coniguous
+       if(reference.indexOf(',') == -1) {
+          return true;
+       }
+       return false;
     }
 
     public static AreaReference getWholeRow(String start, String end) {

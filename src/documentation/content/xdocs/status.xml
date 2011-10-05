@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">51963 - Correct AreaReference handling of references containing a sheet name which includes a comma</action>
            <action dev="poi-developers" type="fix">51955 - XSSFReader supplied StylesTables need to have the theme data available</action>
            <action dev="poi-developers" type="fix">51716 - Removed incorrect assert in SXSSFSheet#getSXSSFSheet</action>
            <action dev="poi-developers" type="fix">51834 - Opening and Writing .doc file results in corrupt document</action>
