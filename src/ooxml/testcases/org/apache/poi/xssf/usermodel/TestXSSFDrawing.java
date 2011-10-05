@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
 /**
  * @author Yegor Kozlov
@@ -44,7 +45,6 @@ public class TestXSSFDrawing extends TestCase {
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
         assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
-
     }
 
     public void testNew(){
@@ -85,7 +85,27 @@ public class TestXSSFDrawing extends TestCase {
         c4.setText(rt);
 
         c4.setNoFill(true);
+        
+        
+        // Save and re-load it
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        
+        // Check
+        dr1 = sheet.createDrawingPatriarch();
+        CTDrawing ctDrawing = dr1.getCTDrawing();
+        
+        // Connector, shapes and text boxes are all two cell anchors
+        assertEquals(0, ctDrawing.sizeOfAbsoluteAnchorArray());
+        assertEquals(0, ctDrawing.sizeOfOneCellAnchorArray());
+        // TODO Fix this!
+//        assertEquals(4, ctDrawing.sizeOfTwoCellAnchorArray());
+        
+        // Ensure it got the right namespaces
+        String xml = ctDrawing.toString();
+        assertEquals("<xdr:wsDr", xml.substring(0, 9));
     }
+    
     public void testMultipleDrawings(){
         XSSFWorkbook wb = new XSSFWorkbook();
         for (int i = 0; i < 3; i++) {
