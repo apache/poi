@@ -351,15 +351,20 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFFootnote getFootnoteByID(int id) {
-        return footnotes.getFootnoteById(id);
+       if(footnotes == null) return null;
+       return footnotes.getFootnoteById(id);
     }
 
     public XWPFFootnote getEndnoteByID(int id) {
-        return endnotes.get(id);
+       if(endnotes == null) return null;
+       return endnotes.get(id);
     }
 
     public List<XWPFFootnote> getFootnotes() {
-		return footnotes.getFootnotesList();
+       if(footnotes == null) {
+          return Collections.emptyList();
+       }
+       return footnotes.getFootnotesList();
     }
 
     public XWPFHyperlink[] getHyperlinks() {
