@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1229,5 +1230,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        
        assertNotNull(sh1.getCommentsTable(false));
        assertEquals(2, sh1.getCommentsTable(false).getNumberOfComments());
+    }
+    
+    /**
+     * Sheet names with a , in them
+     */
+    public void test51963() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51963.xlsx");
+       XSSFSheet sheet = wb.getSheetAt(0);
+       assertEquals("Abc,1", sheet.getSheetName());
+       
+       Name name = wb.getName("Intekon.ProdCodes");
+       assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
+       
+       AreaReference ref = new AreaReference(name.getRefersToFormula());
+       assertEquals(0, ref.getFirstCell().getRow());
+       assertEquals(0, ref.getFirstCell().getCol());
+       assertEquals(1, ref.getLastCell().getRow());
+       assertEquals(0, ref.getLastCell().getCol());
     }
 }
