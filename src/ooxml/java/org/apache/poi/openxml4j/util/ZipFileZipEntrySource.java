@@ -28,21 +28,23 @@ import java.util.zip.ZipFile;
  *  normal ZipFile implementation is.
  */
 public class ZipFileZipEntrySource implements ZipEntrySource {
-	private ZipFile zipArchive;
-	public ZipFileZipEntrySource(ZipFile zipFile) {
-		this.zipArchive = zipFile;
-	}
-	
-	public void close() throws IOException {
-		zipArchive.close();
-		zipArchive = null;
-	}
-	
-	public Enumeration<? extends ZipEntry> getEntries() {
-		return zipArchive.entries();
-	}
-	
-	public InputStream getInputStream(ZipEntry entry) throws IOException {
-		return zipArchive.getInputStream(entry);
-	}
+   private ZipFile zipArchive;
+   public ZipFileZipEntrySource(ZipFile zipFile) {
+      this.zipArchive = zipFile;
+   }
+
+   public void close() throws IOException {
+      if(zipArchive != null) {
+         zipArchive.close();
+      }
+      zipArchive = null;
+   }
+
+   public Enumeration<? extends ZipEntry> getEntries() {
+      return zipArchive.entries();
+   }
+
+   public InputStream getInputStream(ZipEntry entry) throws IOException {
+      return zipArchive.getInputStream(entry);
+   }
 }
