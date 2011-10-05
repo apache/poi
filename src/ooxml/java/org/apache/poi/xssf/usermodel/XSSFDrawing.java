@@ -85,6 +85,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     protected XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         drawing = CTDrawing.Factory.parse(part.getInputStream());
+        isNew = false;
     }
 
     /**
@@ -116,7 +117,13 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
                 xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
                 xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">
         */
-        if(isNew) xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr"));
+        if(isNew) {
+           // Have it wrapped in a <xdr:wsDr> tag
+           xmlOptions.setSaveSyntheticDocumentElement(
+                 new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr")
+           );
+           isNew = false;
+        }
         Map<String, String> map = new HashMap<String, String>();
         map.put(NAMESPACE_A, "a");
         map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
