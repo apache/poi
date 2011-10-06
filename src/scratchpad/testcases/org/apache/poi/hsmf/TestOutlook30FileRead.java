@@ -134,7 +134,7 @@ private MAPIMessage mapiMessage;
     * Ensure we can get the HTML and RTF versions
     */
    public void testReadBodyContents() throws Exception {
-      String html = mapiMessage.getHmtlBody();
+      String html = mapiMessage.getHtmlBody();
       String rtf = mapiMessage.getRtfBody();
       assertNotNull(html);
       assertNotNull(rtf);

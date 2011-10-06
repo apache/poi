@@ -222,7 +222,7 @@ public final class TestBasics extends TestCase {
          fail("File doesn't have headers!");
       } catch(ChunkNotFoundException e) {}
       
-      String html = chinese.getHmtlBody();
+      String html = chinese.getHtmlBody();
       assertTrue("Charset not found:\n" + html, html.contains("text/html; charset=big5"));
       
       // Defaults to CP1251
