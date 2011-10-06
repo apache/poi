@@ -185,11 +185,15 @@ public class MAPIMessage extends POIDocument {
     * @return The string representation of the 'html' version of the body, if available.
     * @throws ChunkNotFoundException
     */
-   public String getHmtlBody() throws ChunkNotFoundException {
+   public String getHtmlBody() throws ChunkNotFoundException {
       if(mainChunks.htmlBodyChunkBinary != null) {
          return mainChunks.htmlBodyChunkBinary.getAs7bitString();
       }
       return getStringFromChunk(mainChunks.htmlBodyChunkString);
+   }
+   @Deprecated
+   public String getHmtlBody() throws ChunkNotFoundException {
+      return getHtmlBody();
    }
 
    /**
