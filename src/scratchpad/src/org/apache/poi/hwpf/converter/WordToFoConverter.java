@@ -366,49 +366,6 @@ public class WordToFoConverter extends AbstractWordConverter
                     basicLink );
     }
 
-    /**
-     * This method shall store image bytes in external file and convert it if
-     * necessary. Images shall be stored using PNG format (for bitmap) or SVG
-     * (for vector). Other formats may be not supported by your XSL FO
-     * processor.
-     * <p>
-     * Please note the
-     * {@link WordToFoUtils#setPictureProperties(Picture, Element)} method.
-     * 
-     * @param currentBlock
-     *            currently processed FO element, like <tt>fo:block</tt>. Shall
-     *            be used as parent of newly created
-     *            <tt>fo:external-graphic</tt> or
-     *            <tt>fo:instream-foreign-object</tt>
-     * @param inlined
-     *            if image is inlined
-     * @param picture
-     *            HWPF object, contained picture data and properties
-     */
-    protected void processImage( Element currentBlock, boolean inlined,
-            Picture picture )
-    {
-        PicturesManager fileManager = getPicturesManager();
-        if ( fileManager != null )
-        {
-            String url = fileManager
-                    .savePicture( picture.getContent(),
-                            picture.suggestPictureType(),
-                            picture.suggestFullFileName() );
-
-            if ( WordToFoUtils.isNotEmpty( url ) )
-            {
-                processImage( currentBlock, inlined, picture, url );
-                return;
-            }
-        }
-
-        // no default implementation -- skip
-        currentBlock.appendChild( foDocumentFacade.document
-                .createComment( "Image link to '"
-                        + picture.suggestFullFileName() + "' can be here" ) );
-    }
-
     protected void processImage( Element currentBlock, boolean inlined,
             Picture picture, String url )
     {
@@ -416,6 +373,16 @@ public class WordToFoConverter extends AbstractWordConverter
                 .createExternalGraphic( url );
         WordToFoUtils.setPictureProperties( picture, externalGraphic );
         currentBlock.appendChild( externalGraphic );
+    }
+
+    @Override
+    protected void processImageWithoutPicturesManager( Element currentBlock,
+            boolean inlined, Picture picture )
+    {
+        // no default implementation -- skip
+        currentBlock.appendChild( foDocumentFacade.document
+                .createComment( "Image link to '"
+                        + picture.suggestFullFileName() + "' can be here" ) );
     }
 
     @Override

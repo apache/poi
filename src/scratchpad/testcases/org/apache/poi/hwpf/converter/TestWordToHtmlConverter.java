@@ -69,7 +69,8 @@ public class TestWordToHtmlConverter extends TestCase
             wordToHtmlConverter.setPicturesManager( new PicturesManager()
             {
                 public String savePicture( byte[] content,
-                        PictureType pictureType, String suggestedName )
+                        PictureType pictureType, String suggestedName,
+                        float widthInches, float heightInches )
                 {
                     return suggestedName;
                 }

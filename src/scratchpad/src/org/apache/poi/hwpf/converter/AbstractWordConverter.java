@@ -49,6 +49,7 @@ import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -672,9 +673,17 @@ public abstract class AbstractWordConverter
             // usual shape?
             return;
 
+        float width = officeDrawing.getRectangleRight()
+                - officeDrawing.getRectangleLeft()
+                / AbstractWordUtils.TWIPS_PER_INCH;
+        float height = ( officeDrawing.getRectangleBottom() - officeDrawing
+                .getRectangleTop() ) / AbstractWordUtils.TWIPS_PER_INCH;
+
         final PictureType type = PictureType.findMatchingType( pictureData );
-        String path = getPicturesManager().savePicture( pictureData, type,
-                "s" + characterRun.getStartOffset() + "." + type );
+        String path = getPicturesManager()
+                .savePicture( pictureData, type,
+                        "s" + characterRun.getStartOffset() + "." + type,
+                        width, height );
 
         processDrawnObject( doc, characterRun, officeDrawing, path, block );
     }
@@ -778,8 +787,43 @@ public abstract class AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink );
 
+    protected void processImage( Element currentBlock, boolean inlined,
+            Picture picture )
+    {
+        PicturesManager fileManager = getPicturesManager();
+        if ( fileManager != null )
+        {
+            final int aspectRatioX = picture.getHorizontalScalingFactor();
+            final int aspectRatioY = picture.getVerticalScalingFactor();
+
+            final float imageWidth = aspectRatioX > 0 ? picture.getDxaGoal()
+                    * aspectRatioX / 1000 / AbstractWordUtils.TWIPS_PER_INCH
+                    : picture.getDxaGoal() / AbstractWordUtils.TWIPS_PER_INCH;
+            final float imageHeight = aspectRatioY > 0 ? picture.getDyaGoal()
+                    * aspectRatioY / 1000 / AbstractWordUtils.TWIPS_PER_INCH
+                    : picture.getDyaGoal() / AbstractWordUtils.TWIPS_PER_INCH;
+
+            String url = fileManager.savePicture( picture.getContent(),
+                    picture.suggestPictureType(),
+                    picture.suggestFullFileName(), imageWidth, imageHeight );
+
+            if ( WordToFoUtils.isNotEmpty( url ) )
+            {
+                processImage( currentBlock, inlined, picture, url );
+                return;
+            }
+        }
+
+        processImageWithoutPicturesManager( currentBlock, inlined, picture );
+
+    }
+
+    @Internal
+    protected abstract void processImageWithoutPicturesManager(
+            Element currentBlock, boolean inlined, Picture picture );
+
     protected abstract void processImage( Element currentBlock,
-            boolean inlined, Picture picture );
+            boolean inlined, Picture picture, String url );
 
     protected abstract void processLineBreak( Element block,
             CharacterRun characterRun );
