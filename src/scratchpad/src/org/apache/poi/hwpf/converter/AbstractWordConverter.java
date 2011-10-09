@@ -673,9 +673,8 @@ public abstract class AbstractWordConverter
             // usual shape?
             return;
 
-        float width = officeDrawing.getRectangleRight()
-                - officeDrawing.getRectangleLeft()
-                / AbstractWordUtils.TWIPS_PER_INCH;
+        float width = ( officeDrawing.getRectangleRight() - officeDrawing
+                .getRectangleLeft() ) / AbstractWordUtils.TWIPS_PER_INCH;
         float height = ( officeDrawing.getRectangleBottom() - officeDrawing
                 .getRectangleTop() ) / AbstractWordUtils.TWIPS_PER_INCH;
 
