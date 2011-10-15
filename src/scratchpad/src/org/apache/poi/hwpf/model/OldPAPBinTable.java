@@ -45,7 +45,7 @@ public final class OldPAPBinTable extends PAPBinTable
     {
       GenericPropertyNode node = binTable.getProperty(x);
 
-      int pageNum = LittleEndian.getShort(node.getBytes());
+      int pageNum = LittleEndian.getUShort(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
