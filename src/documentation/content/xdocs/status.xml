@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">52035 - Fix signed issue with very large word 6 files</action>
            <action dev="poi-developers" type="fix">51949 - Avoid NPE on double close of ZipFileZipEntrySource</action>
            <action dev="poi-developers" type="fix">51950 - XWPF fix for footnotes not always being present in a document</action>
            <action dev="poi-developers" type="fix">51963 - Correct AreaReference handling of references containing a sheet name which includes a comma</action>

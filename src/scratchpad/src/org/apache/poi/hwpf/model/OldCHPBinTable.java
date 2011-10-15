@@ -53,7 +53,7 @@ public final class OldCHPBinTable extends CHPBinTable
     {
       GenericPropertyNode node = binTable.getProperty(x);
 
-      int pageNum = LittleEndian.getShort(node.getBytes());
+      int pageNum = LittleEndian.getUShort(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
