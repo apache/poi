@@ -355,6 +355,11 @@ public final class HSLFSlideShow extends POIDocument {
             int imgsize = LittleEndian.getInt(pictstream, pos);
             pos += LittleEndian.INT_SIZE;
 
+            // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
+            //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
+            if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117)))
+                break;
+
 			// The image size must be 0 or greater
 			// (0 is allowed, but odd, since we do wind on by the header each
 			//  time, so we won't get stuck)
