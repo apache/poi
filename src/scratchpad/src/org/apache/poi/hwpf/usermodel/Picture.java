@@ -432,7 +432,9 @@ public final class Picture
      */
     public byte[] getRawContent()
     {
-        if ( _picfAndOfficeArtData.getBlipRecords().size() != 1 )
+        if ( _picfAndOfficeArtData == null ||
+           	 _picfAndOfficeArtData.getBlipRecords()== null || 
+           	 _picfAndOfficeArtData.getBlipRecords().size() != 1 )
             return new byte[0];
 
         EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
@@ -516,7 +518,9 @@ public final class Picture
 
     public PictureType suggestPictureType()
     {
-        if ( _picfAndOfficeArtData.getBlipRecords().size() != 1 )
+        if ( _picfAndOfficeArtData == null ||
+        	 _picfAndOfficeArtData.getBlipRecords()== null || 
+        	 _picfAndOfficeArtData.getBlipRecords().size() != 1 )
             return PictureType.UNKNOWN;
 
         EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
