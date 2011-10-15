@@ -607,7 +607,13 @@ public class TestWrite extends TestCase
                                 variantType, codepage);
         if (objRead instanceof byte[])
         {
-            final int diff = diff((byte[]) value, (byte[]) objRead);
+            byte[] valueB = (byte[])value;
+            byte[] readB = (byte[])objRead;
+            if (valueB.length != readB.length)
+               fail("Byte arrays are different length - expected " + valueB.length +
+                     " but found " + readB.length);
+
+            final int diff = diff(valueB, readB);
             if (diff >= 0)
                 fail("Byte arrays are different. First different byte is at " +
                      "index " + diff + ".");
