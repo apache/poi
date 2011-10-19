@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">52050 - Support for the Excel RATE function</action>
            <action dev="poi-developers" type="fix">51566 - HSLF fix for finishing parsing the picture stream on the first non-valid type</action>
            <action dev="poi-developers" type="fix">51974 - Avoid HWPF issue when identifying the picture type</action>
            <action dev="poi-developers" type="fix">52035 - Fix signed issue with very large word 6 files</action>
