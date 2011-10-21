@@ -112,7 +112,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the int (32-bit) value
+     * @deprecated Use {@link #getInt(byte[], int)}
      */
+    @Deprecated
     public static int getInt( byte[] data )
     {
         return getInt( data, 0 );
@@ -164,7 +166,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the short (16-bit) value
+     * @deprecated Use {@link #getShort(byte[], int)} instead
      */
+    @Deprecated
     public static short getShort( byte[] data )
     {
         return getShort( data, 0 );
@@ -228,7 +232,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the unsigned int (32-bit) value in a long
+     * @deprecated Use {@link #getUInt(byte[], int)}
      */
+    @Deprecated
     public static long getUInt( byte[] data )
     {
         return getUInt( data, 0 );
@@ -271,7 +277,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the unsigned short (16-bit) value in an int
+     * @deprecated Use {@link #getUShort(byte[], int)}
      */
+    @Deprecated
     public static int getUShort( byte[] data )
     {
         return getUShort( data, 0 );
@@ -376,7 +384,9 @@ public class LittleEndian implements LittleEndianConsts
      *            the byte array
      * @param value
      *            the int (32-bit) value
+     * @deprecated Use {@link #putInt(byte[], int, int)} instead
      */
+    @Deprecated
     public static void putInt( byte[] data, int value )
     {
         putInt( data, 0, value );
@@ -489,7 +499,9 @@ public class LittleEndian implements LittleEndianConsts
      *            the byte array
      * @param value
      *            the short (16-bit) value
+     * @deprecated Use {@link #putShort(byte[], int, short)} instead
      */
+    @Deprecated
     public static void putShort( byte[] data, short value )
     {
         putShort( data, 0, value );
@@ -522,7 +534,8 @@ public class LittleEndian implements LittleEndianConsts
      * @param value
      *            the short (16-bit) values
      */
-    public static void putShortArray( byte[] data, int startOffset, short[] value )
+    public static void putShortArray( byte[] data, int startOffset,
+            short[] value )
     {
         int offset = startOffset;
         for ( short s : value )
@@ -579,7 +592,9 @@ public class LittleEndian implements LittleEndianConsts
      *            the byte array
      * @param value
      *            the int (32-bit) value
+     * @deprecated Use {@link #putUInt(byte[], int, long)} instead
      */
+    @Deprecated
     public static void putUInt( byte[] data, long value )
     {
         putUInt( data, 0, value );
