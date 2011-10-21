@@ -625,6 +625,23 @@ public class LittleEndian implements LittleEndianConsts
     }
 
     /**
+     * Put unsigned short into output stream
+     * 
+     * @param value
+     *            the unsigned short (16-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putUShort( int value, OutputStream outputStream )
+            throws IOException
+    {
+        outputStream.write( (byte) ( ( value >>> 0 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 8 ) & 0xFF ) );
+    }
+
+    /**
      * get an int value from an InputStream
      * 
      * @param stream
