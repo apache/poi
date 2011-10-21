@@ -111,34 +111,45 @@ public class XSLFFreeformShape extends XSLFAutoShape {
         return numPoints;
     }
 
+    /**
+     * Gets the shape path.
+     * <p>
+     *     The path is translated in the shape's coordinate system, i.e.
+     *     freeform.getPath().getBounds2D() equals to freeform.getAnchor()
+     *     (small discrepancies are possible due to rounding errors)
+     * </p>
+     *
+     * @return the path
+     */
     public GeneralPath getPath() {
         GeneralPath path = new GeneralPath();
         Rectangle2D bounds = getAnchor();
-        int x0 = Units.toEMU(bounds.getX());
-        int y0 = Units.toEMU(bounds.getY());
+
         CTCustomGeometry2D geom = getSpPr().getCustGeom();
         for(CTPath2D spPath : geom.getPathLst().getPathList()){
+            double scaleW = bounds.getWidth() / Units.toPoints(spPath.getW());
+            double scaleH = bounds.getHeight() / Units.toPoints(spPath.getH());
             for(XmlObject ch : spPath.selectPath("*")){
                 if(ch instanceof CTPath2DMoveTo){
                     CTAdjPoint2D pt = ((CTPath2DMoveTo)ch).getPt();
-                    path.moveTo((float)Units.toPoints((Long)pt.getX() + x0),
-                                (float)Units.toPoints((Long)pt.getY() + y0));
+                    path.moveTo((float)Units.toPoints((Long)pt.getX())*scaleW,
+                                (float)Units.toPoints((Long)pt.getY())*scaleH);
                 } else if (ch instanceof CTPath2DLineTo){
                     CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
-                    path.lineTo((float)Units.toPoints((Long)pt.getX() + x0),
-                                (float)Units.toPoints((Long)pt.getY() + y0));
+                    path.lineTo((float)Units.toPoints((Long)pt.getX()),
+                                (float)Units.toPoints((Long)pt.getY()));
                 } else if (ch instanceof CTPath2DCubicBezierTo){
                     CTPath2DCubicBezierTo bez = ((CTPath2DCubicBezierTo)ch);
                     CTAdjPoint2D pt1 = bez.getPtArray(0);
                     CTAdjPoint2D pt2 = bez.getPtArray(1);
                     CTAdjPoint2D pt3 = bez.getPtArray(2);
                     path.curveTo(
-                            (float)Units.toPoints((Long) pt1.getX() + x0),
-                            (float)Units.toPoints((Long) pt1.getY() + y0),
-                            (float)Units.toPoints((Long) pt2.getX() + x0),
-                            (float)Units.toPoints((Long) pt2.getY() + y0),
-                            (float)Units.toPoints((Long) pt3.getX() + x0),
-                            (float)Units.toPoints((Long) pt3.getY() + y0)
+                            (float)Units.toPoints((Long) pt1.getX())*scaleW,
+                            (float)Units.toPoints((Long) pt1.getY())*scaleH,
+                            (float)Units.toPoints((Long) pt2.getX())*scaleW,
+                            (float)Units.toPoints((Long) pt2.getY())*scaleH,
+                            (float)Units.toPoints((Long) pt3.getX())*scaleW,
+                            (float)Units.toPoints((Long) pt3.getY())*scaleH
                     );
 
                 } else if (ch instanceof CTPath2DClose){
@@ -147,7 +158,11 @@ public class XSLFFreeformShape extends XSLFAutoShape {
             }
         }
 
-        return path;
+        // the created path starts at (x=0, y=0).
+        // The returned path should fit in the bounding rectangle
+        AffineTransform at = new AffineTransform();
+        at.translate(bounds.getX(), bounds.getY());
+        return new GeneralPath(at.createTransformedShape(path));
     }
     /**
      * @param shapeId 1-based shapeId
@@ -173,6 +188,11 @@ public class XSLFFreeformShape extends XSLFAutoShape {
         rect.setL("l");
         geom.addNewPathLst();
         return ct;
+    }
+
+    @Override
+    protected java.awt.Shape getOutline(){
+        return getPath();
     }
 
 }

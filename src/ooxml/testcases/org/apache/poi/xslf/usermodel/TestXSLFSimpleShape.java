@@ -21,8 +21,10 @@ import junit.framework.TestCase;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.usermodel.LineCap;
 import org.apache.poi.xslf.usermodel.LineDash;
+import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 
 import java.awt.*;
 
@@ -127,6 +129,109 @@ public class TestXSLFSimpleShape extends TestCase {
         shape.setFillColor(null);
         assertNull(shape.getFillColor());
         assertFalse(shape.getSpPr().isSetSolidFill());
+    }
+
+    public void testDefaultProperties() {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
+
+        XSLFSlide slide6 = ppt.getSlides()[5];
+        XSLFShape[] shapes = slide6.getShapes();
+        for(int i = 1; i < shapes.length; i++){
+            XSLFSimpleShape s = (XSLFSimpleShape) shapes[i];
+            // all shapes have a theme color="accent1"
+            assertEquals("accent1", s.getSpStyle().getFillRef().getSchemeClr().getVal().toString());
+            assertEquals(2.0, s.getLineWidth());
+            assertEquals(LineCap.FLAT, s.getLineCap());
+            // YK: calculated color is slightly different from PowerPoint
+            assertEquals(new Color(40, 65, 95), s.getLineColor());
+        }
+
+        XSLFSimpleShape s0 = (XSLFSimpleShape) shapes[0];
+        // fill is not set
+        assertNull(s0.getSpPr().getSolidFill());
+        assertEquals(slide6.getTheme().getColor("accent1").getColor(), s0.getFillColor());
+        assertEquals(new Color(79, 129, 189), s0.getFillColor());
+
+        // lighter 80%
+        XSLFSimpleShape s1 = (XSLFSimpleShape)shapes[1];
+        CTSchemeColor ref1 = s1.getSpPr().getSolidFill().getSchemeClr();
+        assertEquals(1, ref1.sizeOfLumModArray());
+        assertEquals(1, ref1.sizeOfLumOffArray());
+        assertEquals(20000, ref1.getLumModArray(0).getVal());
+        assertEquals(80000, ref1.getLumOffArray(0).getVal());
+        assertEquals("accent1", ref1.getVal().toString());
+        assertEquals(new Color(220, 230, 242), s1.getFillColor());
+
+        // lighter 60%
+        XSLFSimpleShape s2 = (XSLFSimpleShape)shapes[2];
+        CTSchemeColor ref2 = s2.getSpPr().getSolidFill().getSchemeClr();
+        assertEquals(1, ref2.sizeOfLumModArray());
+        assertEquals(1, ref2.sizeOfLumOffArray());
+        assertEquals(40000, ref2.getLumModArray(0).getVal());
+        assertEquals(60000, ref2.getLumOffArray(0).getVal());
+        assertEquals("accent1", ref2.getVal().toString());
+        assertEquals(new Color(185, 205, 229), s2.getFillColor());
+
+        // lighter 40%
+        XSLFSimpleShape s3 = (XSLFSimpleShape)shapes[3];
+        CTSchemeColor ref3 = s3.getSpPr().getSolidFill().getSchemeClr();
+        assertEquals(1, ref3.sizeOfLumModArray());
+        assertEquals(1, ref3.sizeOfLumOffArray());
+        assertEquals(60000, ref3.getLumModArray(0).getVal());
+        assertEquals(40000, ref3.getLumOffArray(0).getVal());
+        assertEquals("accent1", ref3.getVal().toString());
+        assertEquals(new Color(149, 179, 215), s3.getFillColor());
+
+        // darker 25%
+        XSLFSimpleShape s4 = (XSLFSimpleShape)shapes[4];
+        CTSchemeColor ref4 = s4.getSpPr().getSolidFill().getSchemeClr();
+        assertEquals(1, ref4.sizeOfLumModArray());
+        assertEquals(0, ref4.sizeOfLumOffArray());
+        assertEquals(75000, ref4.getLumModArray(0).getVal());
+        assertEquals("accent1", ref3.getVal().toString());
+        // YK: calculated color is slightly different from PowerPoint
+        assertEquals(new Color(59, 97, 142), s4.getFillColor());
+
+        XSLFSimpleShape s5 = (XSLFSimpleShape)shapes[5];
+        CTSchemeColor ref5 = s5.getSpPr().getSolidFill().getSchemeClr();
+        assertEquals(1, ref5.sizeOfLumModArray());
+        assertEquals(0, ref5.sizeOfLumOffArray());
+        assertEquals(50000, ref5.getLumModArray(0).getVal());
+        assertEquals("accent1", ref5.getVal().toString());
+        // YK: calculated color is slightly different from PowerPoint
+        assertEquals(new Color(40, 65, 95), s5.getFillColor());
+    }
+
+    public void testAnchor(){
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
+        XSLFSlide[] slide = ppt.getSlides();
+
+        XSLFSlide slide2 = slide[1];
+        XSLFSlideLayout layout2 = slide2.getSlideLayout();
+        XSLFShape[] shapes2 = slide2.getShapes();
+        XSLFTextShape sh1 = (XSLFTextShape)shapes2[0];
+        assertEquals(Placeholder.CENTERED_TITLE, sh1.getTextType());
+        assertEquals("PPTX Title", sh1.getText());
+        assertNull(sh1.getSpPr().getXfrm()); // xfrm is not set, the query is delegated to the slide layout
+        assertEquals(sh1.getAnchor(), layout2.getTextShapeByType(Placeholder.CENTERED_TITLE).getAnchor());
+
+        XSLFTextShape sh2 = (XSLFTextShape)shapes2[1];
+        assertEquals("Subtitle\nAnd second line", sh2.getText());
+        assertEquals(Placeholder.SUBTITLE, sh2.getTextType());
+        assertNull(sh2.getSpPr().getXfrm()); // xfrm is not set, the query is delegated to the slide layout
+        assertEquals(sh2.getAnchor(), layout2.getTextShapeByType(Placeholder.SUBTITLE).getAnchor());
+
+        XSLFSlide slide5 = slide[4];
+        XSLFSlideLayout layout5 = slide5.getSlideLayout();
+        XSLFTextShape shTitle = slide5.getTextShapeByType(Placeholder.TITLE);
+        assertEquals("Hyperlinks", shTitle.getText());
+        // xfrm is not set, the query is delegated to the slide layout
+        assertNull(shTitle.getSpPr().getXfrm());
+        // xfrm is not set, the query is delegated to the slide master
+        assertNull(layout5.getTextShapeByType(Placeholder.TITLE).getSpPr().getXfrm());
+        assertNotNull(layout5.getSlideMaster().getTextShapeByType(Placeholder.TITLE).getSpPr().getXfrm());
+        assertEquals(shTitle.getAnchor(), layout5.getSlideMaster().getTextShapeByType(Placeholder.TITLE).getAnchor());
+
     }
 
 }

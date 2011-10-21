@@ -24,6 +24,8 @@ import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterTextStyles;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -101,4 +103,24 @@ import java.util.Map;
         }
         return _theme;
     }
+
+    protected CTTextListStyle getTextProperties(Placeholder textType) {
+        CTTextListStyle props;
+        CTSlideMasterTextStyles txStyles = getXmlObject().getTxStyles();
+        switch (textType){
+            case TITLE:
+            case CENTERED_TITLE:
+            case SUBTITLE:
+                props = txStyles.getTitleStyle();
+                break;
+            case BODY:
+                props = txStyles.getBodyStyle();
+                break;
+            default:
+                props = txStyles.getOtherStyle();
+                break;
+        }
+        return props;
+    }
+
 }

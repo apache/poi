@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.*;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -23,16 +24,20 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 @Beta
 public final class XSLFSlide extends XSLFSheet {
@@ -112,6 +117,7 @@ public final class XSLFSlide extends XSLFSheet {
         return getSlideLayout().getSlideMaster();
     }
 
+    @Override
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
              for (POIXMLDocumentPart p : getRelations()) {
@@ -125,7 +131,12 @@ public final class XSLFSlide extends XSLFSheet {
         }
         return _layout;
     }
-    
+
+    @Override
+    public XSLFSlideMaster getSlideMaster(){
+        return getSlideLayout().getSlideMaster();
+    }
+
     public XSLFComments getComments() {
        if(_comments == null) {
           for (POIXMLDocumentPart p : getRelations()) {
@@ -165,4 +176,37 @@ public final class XSLFSlide extends XSLFSheet {
     public boolean getFollowMasterBackground(){
         return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();    
     }
+
+    /**
+     *
+     * @return title of this slide or empty string if title is not set
+     */
+    public String getTitle(){
+        XSLFTextShape txt = getTextShapeByType(Placeholder.TITLE);
+        return txt == null ? "" : txt.getText();
+    }
+    
+    public XSLFTheme getTheme(){
+    	return getSlideLayout().getSlideMaster().getTheme();
+    }
+
+    @Override
+    public void draw(Graphics2D graphics){
+
+        if (getFollowMasterBackground()){
+            XSLFSlideLayout layout = getSlideLayout();
+            layout.draw(graphics);
+        }
+
+        super.draw(graphics);
+    }
+
+    @Override
+    public XSLFBackground getBackground(){
+        if(_slide.getCSld().isSetBg()) {
+            return new XSLFBackground(_slide.getCSld().getBg(), this);
+        }
+        return null;
+    }
+
 }

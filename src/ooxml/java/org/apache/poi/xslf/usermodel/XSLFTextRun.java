@@ -17,6 +17,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.xslf.model.CharacterPropertyFetcher;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
@@ -24,6 +26,9 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.awt.*;
 
@@ -66,6 +71,23 @@ public class XSLFTextRun {
         clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
     }
 
+    public Color getFontColor(){
+        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+
+        CharacterPropertyFetcher<Color> fetcher = new CharacterPropertyFetcher<Color>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                CTSolidColorFillProperties solidFill = props.getSolidFill();
+                if(solidFill != null){
+                    setValue(theme.getSolidFillColor(solidFill));
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue();
+    }
+
     /**
      *
      * @param fontSize  font size in points.
@@ -84,9 +106,17 @@ public class XSLFTextRun {
      * @return font size in points or -1 if font size is not set.
      */
     public double getFontSize(){
-        if(!_r.isSetRPr() || !_r.getRPr().isSetSz()) return -1;
-
-        return _r.getRPr().getSz()*0.01;
+        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetSz()){
+                    setValue(props.getSz()*0.01);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? -1 : fetcher.getValue();
     }
 
     /**
@@ -120,12 +150,30 @@ public class XSLFTextRun {
     }
 
     /**
-     * @return  font family or null if niot set
+     * @return  font family or null if not set
      */
     public String getFontFamily(){
-        if(!_r.isSetRPr() || !_r.getRPr().isSetLatin()) return null;
+        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
 
-        return _r.getRPr().getLatin().getTypeface();
+        CharacterPropertyFetcher<String> visitor = new CharacterPropertyFetcher<String>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                CTTextFont font = props.getLatin();
+                if(font != null){
+                    String typeface = font.getTypeface();
+                    if("+mj-lt".equals(typeface)) {
+                        typeface = theme.getMajorFont();
+                    } else if ("+mn-lt".equals(typeface)){
+                        typeface = theme.getMinorFont();
+                    }
+                    setValue(typeface);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(visitor);
+
+        return  visitor.getValue();
     }
 
     /**
@@ -140,10 +188,18 @@ public class XSLFTextRun {
     /**
      * @return whether a run of text will be formatted as strikethrough text. Default is false.
      */
-    public boolean isStrikethrough(){
-        if(!_r.isSetRPr()) return false;
-
-        return _r.getRPr().getStrike() == STTextStrikeType.SNG_STRIKE;
+    public boolean isStrikethrough() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetStrike()){
+                    setValue(props.getStrike() != STTextStrikeType.NO_STRIKE);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
     /**
@@ -159,9 +215,17 @@ public class XSLFTextRun {
      * @return whether this run of text is formatted as bold text
      */
     public boolean isBold(){
-        if(!_r.isSetRPr()) return false;
-
-        return _r.getRPr().getB();
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetB()){
+                    setValue(props.getB());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
     /**
@@ -175,9 +239,17 @@ public class XSLFTextRun {
      * @return whether this run of text is formatted as italic text
      */
     public boolean isItalic(){
-        if(!_r.isSetRPr()) return false;
-
-        return _r.getRPr().getI();
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetI()){
+                    setValue(props.getI());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
     /**
@@ -191,9 +263,17 @@ public class XSLFTextRun {
      * @return whether this run of text is formatted as underlined text
      */
     public boolean isUnderline(){
-        if(!_r.isSetRPr() || !_r.getRPr().isSetU()) return false;
-
-        return _r.getRPr().getU() != STTextUnderlineType.NONE;
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetU()){
+                    setValue(props.getU() != STTextUnderlineType.NONE);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
     protected CTTextCharacterProperties getRpR(){
@@ -216,4 +296,22 @@ public class XSLFTextRun {
 
         return new XSLFHyperlink(_r.getRPr().getHlinkClick(), this);
     }
+
+    private boolean fetchCharacterProperty(CharacterPropertyFetcher fetcher){
+        boolean ok = false;
+
+        if(_r.isSetRPr()) ok = fetcher.fetch(_r.getRPr());
+
+        if(!ok) {
+            XSLFTextShape shape = _p.getParentShape();
+            ok = shape.fetchShapeProperty(fetcher);
+            if(!ok) {
+                CTTextParagraphProperties defaultProps = _p.getDefaultStyle();
+                if(defaultProps != null) ok = fetcher.fetch(defaultProps);
+            }
+        }
+
+        return ok;
+    }
+
 }

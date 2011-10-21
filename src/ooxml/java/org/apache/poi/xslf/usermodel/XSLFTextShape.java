@@ -21,18 +21,20 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.model.PropertyFetcher;
+import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,43 +81,6 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
         return paragraph;
     }
 
-    /**
-     * Specifies a solid color fill. The shape is filled entirely with the specified color.
-     *
-     * @param color the solid color fill.
-     * The value of <code>null</code> unsets the solidFIll attribute from the underlying xml
-     */
-    public void setFillColor(Color color) {
-        CTShapeProperties spPr = getSpPr();
-        if (color == null) {
-            if(spPr.isSetSolidFill()) spPr.unsetSolidFill();
-        }
-        else {
-            CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
-
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
-
-            fill.setSrgbClr(rgb);
-        }
-    }
-
-    /**
-     *
-     * @return solid fill color of null if not set
-     */
-    public Color getFillColor(){
-        CTShapeProperties spPr = getSpPr();
-        if(!spPr.isSetSolidFill() ) return null;
-
-        CTSolidColorFillProperties fill = spPr.getSolidFill();
-        if(!fill.isSetSrgbClr()) {
-            // TODO for now return null for all colors except explicit RGB
-            return null;
-        }
-        byte[] val = fill.getSrgbClr().getVal();
-        return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
-    }
 
     /**
      * Sets the type of vertical alignment for the text.
@@ -140,14 +105,18 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the type of alignment
      */
     public VerticalAlignment getVerticalAlignment(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            STTextAnchoringType.Enum val = bodyPr.getAnchor();
-            if(val != null){
-                return VerticalAlignment.values()[val.intValue() - 1];
+        PropertyFetcher<VerticalAlignment> fetcher = new TextBodyPropertyFetcher<VerticalAlignment>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetAnchor()){
+                    int val = props.getAnchor().intValue();
+                    setValue(VerticalAlignment.values()[val - 1]);
+                    return true;
+                }
+                return false;
             }
-        }
-        return VerticalAlignment.TOP;
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? VerticalAlignment.TOP : fetcher.getValue();
     }
 
     /**
@@ -185,11 +154,18 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the bottom margin or -1 if not set
      */
     public double getMarginBottom(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            return bodyPr.isSetBIns() ? Units.toPoints(bodyPr.getBIns()) : -1;
-        }
-        return -1;
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetBIns()){
+                    double val = Units.toPoints(props.getBIns());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -200,11 +176,18 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the left margin
      */
     public double getMarginLeft(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            return bodyPr.isSetLIns() ? Units.toPoints(bodyPr.getLIns()) : -1;
-        }
-        return -1;
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetLIns()){
+                    double val = Units.toPoints(props.getLIns());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -215,11 +198,18 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the right margin
      */
     public double getMarginRight(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            return bodyPr.isSetRIns() ? Units.toPoints(bodyPr.getRIns()) : -1;
-        }
-        return -1;
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetRIns()){
+                    double val = Units.toPoints(props.getRIns());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -229,11 +219,18 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the top margin
      */
     public double getMarginTop(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            return bodyPr.isSetTIns() ? Units.toPoints(bodyPr.getTIns()) : -1;
-        }
-        return -1;
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetTIns()){
+                    double val = Units.toPoints(props.getTIns());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -300,11 +297,17 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
      * @return the value indicating word wrap
      */
     public boolean getWordWrap(){
-        CTTextBodyProperties bodyPr = getTextBodyPr();
-        if (bodyPr != null) {
-            return bodyPr.getWrap() == STTextWrappingType.SQUARE;
-        }
-        return false;
+        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+            public boolean fetch(CTTextBodyProperties props){
+               if(props.isSetWrap()){
+                    setValue(props.getWrap() == STTextWrappingType.SQUARE);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? true : fetcher.getValue();
     }
 
     /**
@@ -362,4 +365,132 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
 
 
     protected abstract CTTextBody getTextBody(boolean create);
+
+
+    public Placeholder getTextType(){
+        CTPlaceholder ph;
+        XmlObject[] obj = getXmlObject().selectPath(
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph");
+        if(obj.length == 1){
+            ph = (CTPlaceholder)obj[0];
+            int val = ph.getType().intValue();
+            return Placeholder.values()[val - 1];
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D graphics){
+        java.awt.Shape outline = getOutline();
+
+        // shadow
+        XSLFShadow shadow = getShadow();
+        if(shadow != null) shadow.draw(graphics);
+
+        //fill
+        Color fillColor = getFillColor();
+        if (fillColor != null) {
+            graphics.setColor(fillColor);
+            applyFill(graphics);
+            graphics.fill(outline);
+        }
+ 
+        //border
+        Color lineColor = getLineColor();
+        if (lineColor != null){
+            graphics.setColor(lineColor);
+            applyStroke(graphics);
+            graphics.draw(outline);
+        }
+
+        // text
+        if(getText().length() > 0) drawText(graphics);
+    }    
+
+    /**
+     * Compute the cumulative height occupied by the text
+     */
+    private double getTextHeight(){
+        // dry-run in a 1x1 image and return the vertical advance
+        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        return drawParagraphs(img.createGraphics(), 0, 0);
+    }
+
+    void breakText(Graphics2D graphics){
+        for(XSLFTextParagraph p : _paragraphs) p.breakText(graphics);
+    }
+
+    public void drawText(Graphics2D graphics) {
+        breakText(graphics);
+
+        Rectangle2D anchor = getAnchor();
+        double x = anchor.getX() + getMarginLeft();
+        double y = anchor.getY();
+
+        // first dry-run to calculate the total height of the text
+        double textHeight = getTextHeight();
+
+        switch (getVerticalAlignment()){
+            case TOP:
+                y += getMarginTop();
+                break;
+            case BOTTOM:
+                y += anchor.getHeight() - textHeight - getMarginBottom();
+                break;
+            default:
+            case MIDDLE:
+                double delta = anchor.getHeight() - textHeight -
+                        getMarginTop() - getMarginBottom();
+                y += getMarginTop()  + delta/2;
+                break;
+        }
+
+        drawParagraphs(graphics, x, y);
+
+    }
+
+
+    /**
+     * pain the paragraphs starting from top left (x,y)
+     *
+     * @return  the vertical advance, i.e. the cumulative space occupied by the text
+     */
+    private double drawParagraphs(Graphics2D graphics,  double x, double y) {
+        double y0 = y;
+        for(int i = 0; i < _paragraphs.size(); i++){
+            XSLFTextParagraph p = _paragraphs.get(i);
+            java.util.List<XSLFTextParagraph.TextFragment> lines = p.getTextLines();
+
+            if(i > 0 && lines.size() > 0) {
+                // the amount of vertical white space before the paragraph
+                double spaceBefore = p.getSpaceBefore();
+                if(spaceBefore > 0) {
+                    // positive value means percentage spacing of the height of the first line, e.g.
+                    // the higher the first line, the bigger the space before the paragraph
+                    y += spaceBefore*0.01*lines.get(0).getHeight();
+                } else {
+                    // negative value means the absolute spacing in points
+                    y += -spaceBefore;
+                }
+            }
+
+            y += p.draw(graphics, x, y);
+
+            if(i < _paragraphs.size() - 1) {
+                double spaceAfter = p.getSpaceAfter();
+                if(spaceAfter > 0) {
+                    // positive value means percentage spacing of the height of the last line, e.g.
+                    // the higher the last line, the bigger the space after the paragraph
+                    y += spaceAfter*0.01*lines.get(lines.size() - 1).getHeight();
+                } else {
+                    // negative value means the absolute spacing in points
+                    y += -spaceAfter;
+                }
+            }
+        }
+        return y - y0;
+    }
+
 }

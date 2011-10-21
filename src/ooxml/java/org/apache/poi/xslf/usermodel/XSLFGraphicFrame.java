@@ -23,8 +23,16 @@ import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeGroup;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -61,11 +69,31 @@ public class XSLFGraphicFrame extends XSLFShape {
     }
 
     public Rectangle2D getAnchor(){
-        throw new RuntimeException("NotImplemented");
+        CTTransform2D xfrm = _shape.getXfrm();
+        CTPoint2D off = xfrm.getOff();
+        long x = off.getX();
+        long y = off.getY();
+        CTPositiveSize2D ext = xfrm.getExt();
+        long cx = ext.getCx();
+        long cy = ext.getCy();
+        return new Rectangle2D.Double(
+                Units.toPoints(x), Units.toPoints(y),
+                Units.toPoints(cx), Units.toPoints(cy));
     }
 
     public void setAnchor(Rectangle2D anchor){
-        throw new RuntimeException("NotImplemented");
+        CTTransform2D xfrm = _shape.getXfrm();
+        CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
+        long x = Units.toEMU(anchor.getX());
+        long y = Units.toEMU(anchor.getY());
+        off.setX(x);
+        off.setY(y);
+        CTPositiveSize2D ext = xfrm.isSetExt() ? xfrm.getExt() : xfrm
+                .addNewExt();
+        long cx = Units.toEMU(anchor.getWidth());
+        long cy = Units.toEMU(anchor.getHeight());
+        ext.setCx(cx);
+        ext.setCy(cy);
     }
 
 
@@ -77,5 +105,57 @@ public class XSLFGraphicFrame extends XSLFShape {
             return new XSLFGraphicFrame(shape, sheet);
         }
     }
+
+    /**
+     * Rotate this shape.
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @param theta the rotation angle in degrees.
+     */
+    public void setRotation(double theta){
+    	throw new IllegalArgumentException("Operation not supported");
+    }
+   
+    /**
+     * Rotation angle in degrees
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @return rotation angle in degrees
+     */
+    public double getRotation(){
+    	return 0;
+    }
+
+    public void setFlipHorizontal(boolean flip){
+    	throw new IllegalArgumentException("Operation not supported");
+    }
+
+    public void setFlipVertical(boolean flip){
+    	throw new IllegalArgumentException("Operation not supported");
+    }
+    
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+    public boolean getFlipHorizontal(){
+    	return false;
+    }
+
+    public boolean getFlipVertical(){
+    	return false;
+    }
+
+    public void draw(Graphics2D graphics){
+
+    }
+
 
 }

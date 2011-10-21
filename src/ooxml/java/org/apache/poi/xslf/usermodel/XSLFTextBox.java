@@ -21,16 +21,22 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
+
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -82,16 +88,6 @@ public class XSLFTextBox extends XSLFAutoShape {
             if(nv.isSetPh()) nv.unsetPh();
         } else {
             nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
-        }
-    }
-
-    public Placeholder getPlaceholder(){
-        CTShape sh =  (CTShape)getXmlObject();
-        CTPlaceholder ph = sh.getNvSpPr().getNvPr().getPh();
-        if(ph == null) return null;
-        else {
-            int val = ph.getType().intValue();
-            return Placeholder.values()[val - 1];
         }
     }
 }

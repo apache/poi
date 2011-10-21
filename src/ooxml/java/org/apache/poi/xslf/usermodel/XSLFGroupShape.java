@@ -33,11 +33,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -215,6 +218,82 @@ public class XSLFGroupShape extends XSLFShape {
         sh.resize();
         _shapes.add(sh);
         return sh;
+    }
+
+
+    public void setFlipHorizontal(boolean flip){
+        _spPr.getXfrm().setFlipH(flip);
+    }
+
+    public void setFlipVertical(boolean flip){
+        _spPr.getXfrm().setFlipV(flip);
+    }
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+    public boolean getFlipHorizontal(){
+         return _spPr.getXfrm().getFlipH();
+    }
+
+    public boolean getFlipVertical(){
+         return _spPr.getXfrm().getFlipV();
+    }
+
+    /**
+     * Rotate this shape.
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @param theta the rotation angle in degrees.
+     */
+    public void setRotation(double theta){
+        _spPr.getXfrm().setRot((int)(theta*60000));
+    }
+
+    /**
+     * Rotation angle in degrees
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @return rotation angle in degrees
+     */
+    public double getRotation(){
+        return (double)_spPr.getXfrm().getRot()/60000;
+    }
+
+    public void draw(Graphics2D graphics){
+
+    	// the coordinate system of this group of shape
+        Rectangle2D interior = getInteriorAnchor();
+        // anchor of this group relative to the parent shape
+        Rectangle2D exterior = getAnchor();
+
+        graphics.translate(exterior.getX(), exterior.getY());
+        double scaleX = exterior.getWidth() / interior.getWidth();
+        double scaleY = exterior.getHeight() / interior.getHeight();
+        graphics.scale(scaleX, scaleY);
+        graphics.translate(-interior.getX(), -interior.getY());
+
+        for (XSLFShape shape : getShapes()) {
+        	// remember the initial transform and restore it after we are done with the drawing
+        	AffineTransform at0 = graphics.getTransform();
+            graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
+
+            // apply rotation and flipping
+        	shape.applyTransform(graphics);
+
+        	shape.draw(graphics);
+
+            // restore the coordinate system
+            graphics.setTransform(at0);
+            graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
+        }
     }
 
 }

@@ -19,15 +19,28 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.model.PropertyFetcher;
+import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.font.TextLayout;
+import java.awt.font.TextAttribute;
+import java.awt.font.LineBreakMeasurer;
+import java.text.AttributedString;
+import java.text.AttributedCharacterIterator;
 
 /**
  * Represents a paragraph of text within the containing text body.
@@ -41,20 +54,29 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     private final CTTextParagraph _p;
     private final List<XSLFTextRun> _runs;
     private final XSLFTextShape _shape;
+    private List<TextFragment> _lines;
+    private TextFragment _bullet;
 
     XSLFTextParagraph(CTTextParagraph p, XSLFTextShape shape){
         _p = p;
         _runs = new ArrayList<XSLFTextRun>();
         _shape = shape;
+
         for (CTRegularTextRun r : _p.getRList()) {
+            _runs.add(new XSLFTextRun(r, this));
+        }
+
+        for (CTTextField f : _p.getFldList()) {
+            CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
+            r.setT(f.getT());
             _runs.add(new XSLFTextRun(r, this));
         }
     }
 
     public String getText(){
         StringBuilder out = new StringBuilder();
-        for (CTRegularTextRun r : _p.getRList()) {
-            out.append(r.getT());
+        for (XSLFTextRun r : _runs) {
+            out.append(r.getText());
         }
         return out.toString();
     }
@@ -95,10 +117,18 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return ??? alignment that is applied to the paragraph
      */
     public TextAlign getTextAlign(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetAlgn()) return TextAlign.LEFT;
-
-        return TextAlign.values()[pr.getAlgn().intValue() - 1];
+        ParagraphPropertyFetcher<TextAlign> fetcher = new ParagraphPropertyFetcher<TextAlign>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetAlgn()){
+                    TextAlign val = TextAlign.values()[props.getAlgn().intValue() - 1];
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? TextAlign.LEFT : fetcher.getValue();
     }
 
     /**
@@ -115,6 +145,74 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         } else {
             pr.setAlgn(STTextAlignType.Enum.forInt(align.ordinal() + 1));
         }
+    }
+
+
+    /**
+     * @return the font to be used on bullet characters within a given paragraph
+     */
+    public String getBulletFont(){
+        ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetBuFont()){
+                    setValue(props.getBuFont().getTypeface());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue();
+    }
+
+    /**
+     * @return the character to be used in place of the standard bullet point
+     */
+    public String getBulletCharacter(){
+        ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetBuChar()){
+                    setValue(props.getBuChar().getChar());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue();
+    }
+
+    public Color getBulletFontColor(){
+        final XSLFTheme theme = getParentShape().getSheet().getTheme();
+        ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetBuClr()){
+                    setValue(theme.getColor(props.getBuClr()));
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue();
+    }
+
+    public double getBulletFontSize(){
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetBuSzPct()){
+                    setValue(props.getBuSzPct().getVal() * 0.001);
+                    return true;
+                }
+                if(props.isSetBuSzPts()){
+                    setValue( - props.getBuSzPts().getVal() * 0.01);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 100 : fetcher.getValue();
     }
 
     /**
@@ -137,10 +235,19 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return the indent applied to the first line of text in the paragraph.
      */
     public double getIndent(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetIndent()) return 0;
 
-        return Units.toPoints(pr.getIndent());
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetIndent()){
+                    setValue(Units.toPoints(props.getIndent()));
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -160,10 +267,18 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return the left margin of the paragraph
      */
     public double getLeftMargin(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetMarL()) return 0;
-
-        return Units.toPoints(pr.getMarL());
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetMarL()){
+                    double val = Units.toPoints(props.getMarL());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -206,13 +321,20 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return the vertical line spacing.
      */
     public double getLineSpacing(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetLnSpc()) return 100; // TODO fetch from master
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetLnSpc()){
+                    CTTextSpacing spc = props.getLnSpc();
 
-        CTTextSpacing spc = pr.getLnSpc();
-        if(spc.isSetSpcPct()) return spc.getSpcPct().getVal()*0.001;
-        else if (spc.isSetSpcPts()) return -spc.getSpcPts().getVal()*0.01;
-        else return 100;
+                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 100 : fetcher.getValue();
     }
 
     /**
@@ -253,13 +375,20 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return the vertical white space before the paragraph
      */
     public double getSpaceBefore(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetSpcBef()) return 0;  // TODO fetch from master
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetSpcBef()){
+                    CTTextSpacing spc = props.getSpcBef();
 
-        CTTextSpacing spc = pr.getSpcBef();
-        if(spc.isSetSpcPct()) return spc.getSpcPct().getVal()*0.001;
-        else if (spc.isSetSpcPts()) return -spc.getSpcPts().getVal()*0.01;
-        else return 0;
+                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -300,13 +429,20 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * @return the vertical white space after the paragraph
      */
     public double getSpaceAfter(){
-        CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null || !pr.isSetSpcAft()) return 0; // TODO fetch from master
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetSpcAft()){
+                    CTTextSpacing spc = props.getSpcAft();
 
-        CTTextSpacing spc = pr.getSpcAft();
-        if(spc.isSetSpcPct()) return spc.getSpcPct().getVal()*0.001;
-        else if (spc.isSetSpcPts()) return -spc.getSpcPts().getVal()*0.01;
-        else return 0;
+                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -334,8 +470,256 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
     }
 
+    /**
+     * Returns whether this paragraph has bullets
+     */
+    public boolean isBullet() {
+        ParagraphPropertyFetcher<Boolean> fetcher = new ParagraphPropertyFetcher<Boolean>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetBuNone()) {
+                    setValue(false);
+                    return true;
+                }
+                if(props.isSetBuFont()){
+                    setValue(true);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+
     @Override
     public String toString(){
         return "[" + getClass() + "]" + getText();
     }
+
+    public List<TextFragment> getTextLines(){
+        return _lines;
+    }
+
+    public double draw(Graphics2D graphics, double x, double y){
+        double marginLeft = _shape.getMarginLeft();
+        double marginRight = _shape.getMarginRight();
+        Rectangle2D anchor = _shape.getAnchor();
+        double penY = y;
+
+        double textOffset = getLeftMargin();
+        for(TextFragment line : _lines){
+            double penX = x;
+            switch (getTextAlign()) {
+                case CENTER:
+                    penX += textOffset + (anchor.getWidth() - textOffset - line.getWidth() - marginLeft - marginRight) / 2;
+                    break;
+                case RIGHT:
+                    penX += (anchor.getWidth() - line.getWidth() - marginLeft - marginRight);
+                    break;
+                default:
+                    penX = x + textOffset;
+                    break;
+            }
+
+            if(_bullet != null){
+                _bullet.draw(graphics, penX  + getIndent(),  penY);
+            }
+            line.draw(graphics, penX,  penY);
+
+            //The vertical line spacing
+            double spacing = getLineSpacing();
+            if(spacing > 0) {
+                // If linespacing >= 0, then linespacing is a percentage of normal line height.
+                penY += spacing*0.01*line.getHeight();
+            } else {
+                // positive value means absolute spacing in points
+                penY += -spacing;
+            }
+        }
+        return penY - y;
+    }
+
+    static class TextFragment {
+        private TextLayout _layout;
+        private AttributedString _str;
+
+        TextFragment(TextLayout layout, AttributedString str){
+            _layout = layout;
+            _str = str;
+        }
+
+        void draw(Graphics2D graphics, double x, double y){
+            double yBaseline = y + _layout.getAscent();
+
+            graphics.drawString(_str.getIterator(), (float)x, (float)yBaseline );
+
+        }
+        
+        public float getHeight(){
+            return _layout.getAscent() + _layout.getDescent() + _layout.getLeading();
+        }
+        public float getWidth(){
+            return _layout.getAdvance();
+        }
+
+    }
+
+    public AttributedString getAttributedString(){
+        String text = getText();
+
+        AttributedString string = new AttributedString(text);
+
+        int startIndex = 0;
+        for (XSLFTextRun run : _runs){
+            int length = run.getText().length();
+            if(length == 0) {
+                // skip empty runs
+                continue;
+            }
+            int endIndex = startIndex + length;
+
+            string.addAttribute(TextAttribute.FOREGROUND, run.getFontColor(), startIndex, endIndex);
+            string.addAttribute(TextAttribute.FAMILY, run.getFontFamily(), startIndex, endIndex);
+            string.addAttribute(TextAttribute.SIZE, run.getFontSize(), startIndex, endIndex);
+            if(run.isBold()) {
+                string.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIndex, endIndex);
+            }
+            if(run.isItalic()) {
+                string.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIndex, endIndex);
+            }
+            if(run.isUnderline()) {
+                string.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIndex, endIndex);
+            }
+            if(run.isStrikethrough()) {
+                string.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, startIndex, endIndex);
+            }
+
+            startIndex = endIndex;
+        }
+
+        return string;
+    }
+
+    void breakText(Graphics2D graphics){
+        _lines = new ArrayList<TextFragment>();
+
+        AttributedString at = getAttributedString();
+        AttributedCharacterIterator it = at.getIterator();
+        if(it.getBeginIndex() == it.getEndIndex()) {
+            return;
+        }
+        LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
+        for (;;) {
+            int startIndex = measurer.getPosition();
+            double wrappingWidth = getWrappingWidth() + 1; // add a pixel to compensate rounding errors
+            TextLayout layout = measurer.nextLayout((float)wrappingWidth, it.getEndIndex(), true);
+             if (layout == null) {
+                 // layout can be null if the entire word at the current position
+                 // does not fit within the wrapping width. Try with requireNextWord=false.
+                 layout = measurer.nextLayout((float)wrappingWidth, it.getEndIndex(), false);
+             }
+
+            int endIndex = measurer.getPosition();
+
+            if(getTextAlign() == TextAlign.JUSTIFY) {
+                layout = layout.getJustifiedLayout((float)wrappingWidth);
+            }
+            
+            AttributedString str = new AttributedString(it, startIndex, endIndex);
+            TextFragment line = new TextFragment(layout, str);
+            _lines.add(line);
+
+            if(endIndex == it.getEndIndex()) break;
+        }
+
+        if(isBullet()) {
+            String buCharacter = getBulletCharacter();
+            String buFont = getBulletFont();
+            if(buCharacter != null && buFont != null && _lines.size() > 0) {
+                AttributedString str = new AttributedString(buCharacter);
+
+                TextFragment firstLine = _lines.get(0);
+                AttributedCharacterIterator bit = firstLine._str.getIterator();
+
+                Color buColor = getBulletFontColor();
+                str.addAttribute(TextAttribute.FOREGROUND, buColor == null ?
+                        bit.getAttribute(TextAttribute.FOREGROUND) : buColor);
+                str.addAttribute(TextAttribute.FAMILY, buFont);
+
+                double fontSize = (Double)bit.getAttribute(TextAttribute.SIZE);
+                double buSz = getBulletFontSize();
+                if(buSz > 0) fontSize *= buSz* 0.01;
+                else fontSize = -buSz;
+
+                str.addAttribute(TextAttribute.SIZE, fontSize);
+
+                TextLayout layout = new TextLayout(str.getIterator(), graphics.getFontRenderContext());
+                _bullet = new TextFragment(layout, str);
+            }
+        }
+
+    }
+
+    double getWrappingWidth(){
+        double width;
+        if(!_shape.getWordWrap()) {
+            width = _shape.getSheet().getSlideShow().getPageSize().getWidth();
+        } else {
+            width = _shape.getAnchor().getWidth() -
+                    _shape.getMarginLeft() - _shape.getMarginRight() - getLeftMargin();
+        }
+        return width;
+    }
+
+    CTTextParagraphProperties getDefaultStyle(){
+        CTPlaceholder ph = _shape.getCTPlaceholder();
+        String defaultStyleSelector;
+        if(ph == null) defaultStyleSelector = "otherStyle";
+        else {
+            switch(ph.getType().intValue()){
+                case STPlaceholderType.INT_TITLE:
+                case STPlaceholderType.INT_CTR_TITLE:
+                    defaultStyleSelector = "titleStyle";
+                    break;
+                case STPlaceholderType.INT_FTR:
+                case STPlaceholderType.INT_SLD_NUM:
+                case STPlaceholderType.INT_DT:
+                    defaultStyleSelector = "otherStyle";
+                    break;
+                default:
+                    defaultStyleSelector = "bodyStyle";
+                    break;
+            }
+        }
+
+        int level = getLevel();
+        XmlObject[] o = _shape.getSheet().getSlideMaster().getXmlObject().selectPath(
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
+                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                ".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr");
+        if(o.length == 1){
+            return (CTTextParagraphProperties)o[0];
+        }
+        throw new IllegalArgumentException("Failed to fetch default style for " +
+                defaultStyleSelector + " and level=" + level);
+    }
+
+
+    private boolean fetchParagraphProperty(ParagraphPropertyFetcher visitor){
+        boolean ok = false;
+
+        if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
+
+        if(!ok) {
+            XSLFTextShape shape = getParentShape();
+            ok = shape.fetchShapeProperty(visitor);
+            if(!ok) {
+                CTTextParagraphProperties defaultProps = getDefaultStyle();
+                if(defaultProps != null) ok = visitor.fetch(defaultProps);
+            }
+        }
+
+        return ok;
+    }
+
 }
